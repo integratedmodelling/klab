@@ -5,9 +5,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.eclipse.xtext.diagnostics.Severity;
@@ -57,7 +55,7 @@ public enum Models implements IModelService {
 	 * index for local models
 	 */
 	private ModelKbox kbox = null;
-	Map<String, Integer> recheckModelNS = new HashMap<>();
+//	Map<String, Integer> recheckModelNS = new HashMap<>();
 
 	private Models() {
 		IInjectorProvider injectorProvider = new KimInjectorProvider();
@@ -124,15 +122,15 @@ public enum Models implements IModelService {
 		return ret;
 	}
 
-	@Override
-	public void releaseNamespace(INamespace namespace, IMonitor monitor) throws KlabException {
-		int cmodel = kbox.removeIfOlder(namespace, monitor);
-		if (cmodel > 0) {
-			recheckModelNS.put(namespace.getName(), cmodel);
-		}
+//	@Override
+	public void releaseNamespace(String namespaceId, IMonitor monitor) throws KlabException {
+		/*int cmodel = */kbox.remove(namespaceId, monitor);
+//		if (cmodel > 0) {
+//			recheckModelNS.put(namespace.getName(), cmodel);
+//		}
 	}
 
-	@Override
+//	@Override
 	public void index(IModel model, IMonitor monitor) throws KlabException {
 	    
 	    // wrong and non-semantic models don't get indexed
@@ -160,14 +158,14 @@ public enum Models implements IModelService {
 	 */
 	public void finalizeNamespace(INamespace namespace, IMonitor monitor) {
 
-		Integer storingNamespace = recheckModelNS.remove(namespace.getId());
-		if (storingNamespace != null && storingNamespace > 0 && (namespace.getProject() == null || !(namespace.getProject().isRemote()))) {
-			try {
+//		Integer storingNamespace = recheckModelNS.remove(namespace.getId());
+//		if (storingNamespace != null && storingNamespace > 0 && (namespace.getProject() == null || !(namespace.getProject().isRemote()))) {
+//			try {
 				kbox.store(namespace, monitor);
-			} catch (Exception e) {
-				monitor.error("error storing namespace", e);
-			}
-		}
+//			} catch (Exception e) {
+//				monitor.error("error storing namespace", e);
+//			}
+//		}
 	}
 
 }

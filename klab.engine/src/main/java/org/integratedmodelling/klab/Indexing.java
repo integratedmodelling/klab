@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IIndexingService;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
 import org.integratedmodelling.klab.engine.indexing.SearchContext;
@@ -29,5 +31,10 @@ public enum Indexing implements IIndexingService {
 	public Context createContext(Set<Match.Type> matchTypes, Set<IKimConcept.Type> semanticTypes) {
 		return new SearchContext(matchTypes, semanticTypes);
 	}
+
+    public void releaseNamespace(String namespaceId, IMonitor monitor) {
+        // TODO Auto-generated method stub
+        
+    }
 
 }

@@ -60,8 +60,8 @@ public enum Observations implements IObservationService {
 		return Resolver.INSTANCE.resolve(urn, context, scenarios);
 	}
 
-	@Override
-	public void releaseNamespace(INamespace namespace, IMonitor monitor) throws KlabException {
+//	@Override
+	public void releaseNamespace(String namespaceId, IMonitor monitor) throws KlabException {
 		// TODO remove all artifacts from local kbox
 	}
 

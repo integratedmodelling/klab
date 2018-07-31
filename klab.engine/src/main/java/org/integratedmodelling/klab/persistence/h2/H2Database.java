@@ -257,8 +257,6 @@ public class H2Database {
 
       class RH implements SQL.ResultHandler {
 
-        int n = 0;
-
         @Override
         public void onRow(ResultSet rs) {
           try {
@@ -274,6 +272,7 @@ public class H2Database {
 
       RH rh = new RH();
       this.query("select table_name from information_schema.tables;", rh);
+      
     }
     return tables.contains(tableName) || tables.contains(tableName.toUpperCase());
   }

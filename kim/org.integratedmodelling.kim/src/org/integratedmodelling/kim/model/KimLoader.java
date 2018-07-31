@@ -71,7 +71,6 @@ public class KimLoader implements IKimLoader {
     private Map<File, NsInfo> nonDependentResources = new HashMap<>();
     private Map<String, File> namespaceFiles = new HashMap<>();
     private List<String> sortedNames = new ArrayList<>();
-    private XtextResourceSet resourceSet;
     private IResourceValidator validator;
     private Graph<File, DefaultEdge> dependencyGraph;
     private Set<File> projectLocations = new HashSet<>();
@@ -218,11 +217,10 @@ public class KimLoader implements IKimLoader {
     }
 
     private XtextResourceSet getResourceSet() {
-        if (this.resourceSet == null) {
-            this.resourceSet = getInjector().getInstance(XtextResourceSet.class);
-            this.resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
-        }
-        return this.resourceSet;
+        // don't save this! It's an actual set and won't reload resources when called again
+        XtextResourceSet ret = getInjector().getInstance(XtextResourceSet.class);
+        ret.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
+        return ret;
     }
 
     private List<File> collectDependencies(IKimNamespace namespace) {
@@ -260,24 +258,24 @@ public class KimLoader implements IKimLoader {
         if (info == null || info.namespace == null) {
             throw new IllegalArgumentException("can't delete a namespace that was not loaded: " + namespaceProxy);
         }
-        
+
         List<File> dependencies = collectDependencies(info.namespace);
-        
-        Kim.INSTANCE.removeNamespace((Namespace) ((KimNamespace)info.namespace).getEObject());
-        Kim.INSTANCE.removeNamespaceConcepts((Namespace) ((KimNamespace)info.namespace).getEObject());
-        
+
+        Kim.INSTANCE.removeNamespace((Namespace) ((KimNamespace) info.namespace).getEObject());
+        Kim.INSTANCE.removeNamespaceConcepts((Namespace) ((KimNamespace) info.namespace).getEObject());
+
         dependencyGraph.removeVertex(file);
         dependentResources.remove(file);
         nonDependentResources.remove(file);
         sortedNames.remove(info.namespace.getName());
         namespaceFiles.remove(info.namespace.getName());
-        
+
         return dependencies.isEmpty() ? new ArrayList<>() : loadFiles(dependencies, true);
     }
 
     @Override
     public IKimNamespace add(Object namespaceResource) {
-        
+
         File file = getFile(namespaceResource);
         NamespaceLocation location = WorkspaceUtils.getNamespaceLocation(file);
         if (location == null) {
@@ -297,13 +295,13 @@ public class KimLoader implements IKimLoader {
         } else {
             nonDependentResources.put(file, new NsInfo(project));
         }
-        
+
         Collection<IKimNamespace> namespaces = loadFiles(Collections.singleton(file), false);
-        
+
         if (namespaces.size() > 0) {
             return namespaces.iterator().next();
         }
-        
+
         return null;
     }
 

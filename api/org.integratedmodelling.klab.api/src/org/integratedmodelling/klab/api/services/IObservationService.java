@@ -89,14 +89,14 @@ public interface IObservationService {
   IDataflow<IArtifact> resolve(String urn, ISubject context, String[] scenarios)
       throws KlabException;
 
-  /**
-   * Release all information pertaining to named namespace, both in live and persistent storage.
-   *
-   * @param namespace a {@link org.integratedmodelling.klab.api.model.INamespace} object.
-   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
-   * @throws org.integratedmodelling.klab.exceptions.KlabException
-   */
-  void releaseNamespace(INamespace namespace, IMonitor monitor) throws KlabException;
+//  /**
+//   * Release all information pertaining to named namespace, both in live and persistent storage.
+//   *
+//   * @param namespace a {@link org.integratedmodelling.klab.api.model.INamespace} object.
+//   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
+//   * @throws org.integratedmodelling.klab.exceptions.KlabException
+//   */
+//  void releaseNamespace(INamespace namespace, IMonitor monitor) throws KlabException;
 
   /**
    * Index passed observation definition for retrieval.

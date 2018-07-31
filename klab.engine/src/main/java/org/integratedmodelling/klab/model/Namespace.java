@@ -25,257 +25,258 @@ import org.integratedmodelling.klab.owl.Ontology;
 
 public class Namespace extends KimObject implements INamespace {
 
-  private static final long serialVersionUID = -6469868584021658804L;
+    private static final long serialVersionUID = -6469868584021658804L;
 
-  private String            name;
-  private Ontology          ontology;
-  private IProject          project;
-  private boolean           internal         = false;
-  private boolean           canonical        = false;
-  private boolean           scenario         = false;
-  private boolean           inactive         = false;
-  private boolean           isPrivate        = false;
-  private long              timestamp        = 0l;
+    private String name;
+    private Ontology ontology;
+    private IProject project;
+    private boolean internal = false;
+    private boolean canonical = false;
+    private boolean scenario = false;
+    private boolean inactive = false;
+    private boolean isPrivate = false;
+    private long timestamp = 0l;
 
-  List<IKimObject>          objects          = new ArrayList<>();
-  Map<String, IKimObject>   objectsByName    = new HashMap<>();
-  Map<String, Object>       symbolTable      = new HashMap<>();
+    List<IKimObject> objects = new ArrayList<>();
+    Map<String, IKimObject> objectsByName = new HashMap<>();
+    Map<String, Object> symbolTable = new HashMap<>();
 
-  /*
-   * for incremental building of the knowledge
-   */
-  List<IAxiom>              axioms           = new ArrayList<>();
+    /*
+     * for incremental building of the knowledge
+     */
+    List<IAxiom> axioms = new ArrayList<>();
 
-  public Namespace(IKimNamespace namespace) {
-    super((KimNamespace) namespace);
-    this.name = namespace.getName();
-    this.isPrivate = namespace.isPrivate();
-    this.inactive = namespace.isInactive();
-    this.scenario = namespace.isScenario();
-    this.ontology = Ontologies.INSTANCE.require(name);
-    if (namespace.getProject() != null) {
-    	this.project = Resources.INSTANCE.retrieveOrCreate(namespace.getProject());
+    public Namespace(IKimNamespace namespace) {
+        super((KimNamespace) namespace);
+        this.name = namespace.getName();
+        this.isPrivate = namespace.isPrivate();
+        this.inactive = namespace.isInactive();
+        this.scenario = namespace.isScenario();
+        this.ontology = Ontologies.INSTANCE.require(name);
+        if (namespace.getProject() != null) {
+            this.project = Resources.INSTANCE.retrieveOrCreate(namespace.getProject());
+        }
+        this.timestamp = namespace.getTimestamp();
+        if (this.timestamp == 0) {
+            this.timestamp = System.currentTimeMillis();
+        }
+        setDeprecated(namespace.isDeprecated());
     }
-    this.timestamp = namespace.getTimestamp();
-    if (this.timestamp == 0) {
-        this.timestamp = System.currentTimeMillis();
+
+    /*
+     * This is ONLY for OWL namespaces
+     */
+    public Namespace(String id, @Nullable File file, Ontology ontology) {
+        super(null);
+        setStatement(new KimNamespace(id, file));
+        this.name = id;
+        this.ontology = ontology;
+        this.internal = ontology.isInternal();
+        this.timestamp = file == null ? System.currentTimeMillis() : file.lastModified();
     }
-    setDeprecated(namespace.isDeprecated());
-  }
 
-  /*
-   * This is ONLY for OWL namespaces
-   */
-  public Namespace(String id, @Nullable File file, Ontology ontology) {
-    super(null);
-    setStatement(new KimNamespace(id, file));
-    this.name = id;
-    this.ontology = ontology;
-    this.timestamp = file == null ? System.currentTimeMillis() : file.lastModified();
-  }
-
-  public void addAxiom(IAxiom axiom) {
-    this.axioms.add(axiom);
-  }
-
-  public void define() {
-    this.ontology.define(this.axioms);
-    this.axioms.clear();
-  }
-
-  @Override
-  public IKimNamespace getStatement() {
-    return (IKimNamespace) super.getStatement();
-  }
-
-  @Override
-  public long getTimeStamp() {
-    return timestamp;
-  }
-
-  @Override
-  public IConcept getDomain() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public IProject getProject() {
-    return project;
-  }
-
-  @Override
-  public Collection<INamespace> getImportedNamespaces() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public List<String> getTrainingNamespaces() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public List<String> getLookupNamespaces() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public IScale getCoverage(IMonitor monitor) {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public boolean hasErrors() {
-    // TODO Auto-generated method stub
-    return false;
-  }
-
-  @Override
-  public boolean hasWarnings() {
-    // TODO Auto-generated method stub
-    return false;
-  }
-
-  @Override
-  public Collection<ICompileNotification> getCodeAnnotations() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public Ontology getOntology() {
-    return ontology;
-  }
-
-  @Override
-  public Map<String, Object> getSymbolTable() {
-    return symbolTable;
-  }
-
-  @Override
-  public boolean isScenario() {
-    return scenario;
-  }
-
-  @Override
-  public IMetadata getResolutionCriteria() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public Collection<String> getDisjointNamespaces() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public File getLocalFile() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public boolean isPrivate() {
-    return isPrivate;
-  }
-
-  @Override
-  public boolean isInactive() {
-    return inactive;
-  }
-
-  @Override
-  public String getDescription() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public IDocumentation getDocumentation() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  public void setInternal(boolean b) {
-    this.internal = b;
-  }
-
-  @Override
-  public boolean isInternal() {
-    return this.internal;
-  }
-
-  @Override
-  public String getName() {
-    return name;
-  }
-
-  @Override
-  public List<IKimObject> getObjects() {
-    return objects;
-  }
-
-  /**
-   * Add each top-level object to the object list, and index it and all children by name.
-   * 
-   * @param object
-   */
-  public void addObject(IKimObject object) {
-    indexObject(object);
-    this.objects.add(object);
-  }
-
-  private void indexObject(IKimObject object) {
-    this.objectsByName.put(object.getId(), object);
-    for (IKimObject child : object.getChildren()) {
-      addObject(child);
+    public void addAxiom(IAxiom axiom) {
+        this.axioms.add(axiom);
     }
-  }
 
-  @Override
-  public List<IKimObject> getAllObjects() {
-    List<IKimObject> ret = new ArrayList<>();
-    for (IKimObject object : objects) {
-      addObjectToList(object, ret);
+    public void define() {
+        this.ontology.define(this.axioms);
+        this.axioms.clear();
     }
-    return ret;
-  }
 
-  private void addObjectToList(IKimObject object, List<IKimObject> ret) {
-    ret.add(object);
-    for (IKimObject child : object.getChildren()) {
-      addObjectToList(child, ret);
+    @Override
+    public IKimNamespace getStatement() {
+        return (IKimNamespace) super.getStatement();
     }
-  }
 
-  @Override
-  public IKimObject getObject(String id) {
-    return objectsByName.get(id);
-  }
+    @Override
+    public long getTimeStamp() {
+        return timestamp;
+    }
 
-  @Override
-  public boolean isCanonical() {
-    return canonical;
-  }
+    @Override
+    public IConcept getDomain() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-  public String toString() {
-    return "[NS " + getName() + " (" + getObjects().size() + " objects)]";
-  }
+    @Override
+    public IProject getProject() {
+        return project;
+    }
 
-  @Override
-  public String getId() {
-    return name;
-  }
+    @Override
+    public Collection<INamespace> getImportedNamespaces() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-@Override
-public boolean isProjectKnowledge() {
-    // TODO Auto-generated method stub
-    return false;
-}
+    @Override
+    public List<String> getTrainingNamespaces() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<String> getLookupNamespaces() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IScale getCoverage(IMonitor monitor) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean hasErrors() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean hasWarnings() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public Collection<ICompileNotification> getCodeAnnotations() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Ontology getOntology() {
+        return ontology;
+    }
+
+    @Override
+    public Map<String, Object> getSymbolTable() {
+        return symbolTable;
+    }
+
+    @Override
+    public boolean isScenario() {
+        return scenario;
+    }
+
+    @Override
+    public IMetadata getResolutionCriteria() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Collection<String> getDisjointNamespaces() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public File getLocalFile() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+
+    @Override
+    public boolean isInactive() {
+        return inactive;
+    }
+
+    @Override
+    public String getDescription() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IDocumentation getDocumentation() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public void setInternal(boolean b) {
+        this.internal = b;
+    }
+
+    @Override
+    public boolean isInternal() {
+        return this.internal;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public List<IKimObject> getObjects() {
+        return objects;
+    }
+
+    /**
+     * Add each top-level object to the object list, and index it and all children by name.
+     * 
+     * @param object
+     */
+    public void addObject(IKimObject object) {
+        indexObject(object);
+        this.objects.add(object);
+    }
+
+    private void indexObject(IKimObject object) {
+        this.objectsByName.put(object.getId(), object);
+        for (IKimObject child : object.getChildren()) {
+            addObject(child);
+        }
+    }
+
+    @Override
+    public List<IKimObject> getAllObjects() {
+        List<IKimObject> ret = new ArrayList<>();
+        for (IKimObject object : objects) {
+            addObjectToList(object, ret);
+        }
+        return ret;
+    }
+
+    private void addObjectToList(IKimObject object, List<IKimObject> ret) {
+        ret.add(object);
+        for (IKimObject child : object.getChildren()) {
+            addObjectToList(child, ret);
+        }
+    }
+
+    @Override
+    public IKimObject getObject(String id) {
+        return objectsByName.get(id);
+    }
+
+    @Override
+    public boolean isCanonical() {
+        return canonical;
+    }
+
+    public String toString() {
+        return "[NS " + getName() + " (" + getObjects().size() + " objects)]";
+    }
+
+    @Override
+    public String getId() {
+        return name;
+    }
+
+    @Override
+    public boolean isProjectKnowledge() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
 }

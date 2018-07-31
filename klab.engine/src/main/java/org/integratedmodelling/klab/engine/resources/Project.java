@@ -128,4 +128,14 @@ public class Project implements IProject {
 		return delegate;
 	}
 
+    public File createScript(String namespaceId, String scriptName) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public File createTestCase(String namespaceId, String scriptName) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

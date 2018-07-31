@@ -143,16 +143,8 @@ public class KimNotifier implements Kim.Notifier {
     @Override
     public INamespace synchronizeNamespaceWithRuntime(IKimNamespace namespace) {
 
-        Namespace ns = Namespaces.INSTANCE.getNamespace(namespace.getName());
-        if (ns != null) {
-            try {
-                Namespaces.INSTANCE.release(ns, monitor);
-            } catch (KlabException e) {
-                monitor.error(e);
-            }
-        }
-
-        ns = new Namespace(namespace);
+        Namespaces.INSTANCE.release(namespace.getName(), monitor);
+        Namespace ns = new Namespace(namespace);
 
         ErrorNotifyingMonitor monitor = new ErrorNotifyingMonitor((Monitor) this.monitor, ns);
         

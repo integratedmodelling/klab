@@ -81,24 +81,24 @@ public interface IModelService {
     int getPriority();
 
   }
+//
+//  /**
+//   * Release all models pertaining to named namespace, both in live and persistent storage.
+//   *
+//   * @param namespace a {@link org.integratedmodelling.klab.api.model.INamespace} object.
+//   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
+//   * @throws org.integratedmodelling.klab.exceptions.KlabException
+//   */
+//  void releaseNamespace(INamespace namespace, IMonitor monitor) throws KlabException;
 
-  /**
-   * Release all models pertaining to named namespace, both in live and persistent storage.
-   *
-   * @param namespace a {@link org.integratedmodelling.klab.api.model.INamespace} object.
-   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
-   * @throws org.integratedmodelling.klab.exceptions.KlabException
-   */
-  void releaseNamespace(INamespace namespace, IMonitor monitor) throws KlabException;
-
-  /**
-   * Index the passed model in kbox.
-   *
-   * @param model a {@link org.integratedmodelling.klab.api.model.IModel} object.
-   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
-   * @throws org.integratedmodelling.klab.exceptions.KlabException
-   */
-  void index(IModel model, IMonitor monitor) throws KlabException;
+//  /**
+//   * Index the passed model in kbox.
+//   *
+//   * @param model a {@link org.integratedmodelling.klab.api.model.IModel} object.
+//   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
+//   * @throws org.integratedmodelling.klab.exceptions.KlabException
+//   */
+//  void index(IModel model, IMonitor monitor) throws KlabException;
 
   /**
    * Resolve the passed observable to a list of ranked models, ordered from best to worst. The

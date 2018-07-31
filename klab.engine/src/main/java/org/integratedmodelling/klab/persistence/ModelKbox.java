@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IPrioritizer;
@@ -485,6 +486,10 @@ public class ModelKbox extends ObservableKbox {
 
 		initialize(monitor);
 
+		if (o instanceof INamespace && ((INamespace)o).isInternal()) {
+		    return 0;
+		}
+		
 		ArrayList<Object> toStore = new ArrayList<>();
 
 		if (o instanceof org.integratedmodelling.klab.model.Model) {
