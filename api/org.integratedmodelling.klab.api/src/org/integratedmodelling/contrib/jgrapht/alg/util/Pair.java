@@ -88,6 +88,7 @@ public class Pair<A, B>
      * 
      * @param <E> the element type
      */
+    @SuppressWarnings("unlikely-arg-type")
     public <E> boolean hasElement(E e)
     {
         if (e == null) {

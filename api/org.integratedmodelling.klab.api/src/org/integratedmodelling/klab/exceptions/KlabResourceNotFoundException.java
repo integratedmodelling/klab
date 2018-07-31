@@ -22,7 +22,6 @@ package org.integratedmodelling.klab.exceptions;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-@SuppressWarnings("javadoc")
 public class KlabResourceNotFoundException extends KlabException {
 
     private static final long serialVersionUID = 8333122286382736773L;

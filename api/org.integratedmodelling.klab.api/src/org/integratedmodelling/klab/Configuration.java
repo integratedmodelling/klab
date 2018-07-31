@@ -252,4 +252,9 @@ public enum Configuration implements IConfigurationService {
 		// TODO tie to engine configuration property + live setting
 		return 10;
 	}
+
+    public boolean useInMemoryDatabase() {
+        // TODO Auto-generated method stub
+        return getProperties().getProperty(KLAB_USE_IN_MEMORY_DATABASE, "false").equals("true");
+    }
 }

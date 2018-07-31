@@ -711,7 +711,7 @@ public class DragonConsole extends JPanel implements KeyListener, CaretListener,
 	private Color getStyleColorFromCode(char code) {
 		for (int i = 0; i < textColors.size(); i++) {
 			TextColor tc = textColors.get(i);
-			if (tc.equals(code))
+			if (tc.getCharCode() == code)
 				return tc.getColor();
 		}
 

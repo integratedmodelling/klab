@@ -29,281 +29,287 @@ import org.integratedmodelling.klab.utils.OS;
  */
 public interface IConfigurationService {
 
-	/**
-	 * The package containing all REST resource beans.
-	 */
-	static final public String REST_RESOURCES_PACKAGE_ID = "org.integratedmodelling.klab.rest";
+    /**
+     * The package containing all REST resource beans.
+     */
+    static final public String REST_RESOURCES_PACKAGE_ID = "org.integratedmodelling.klab.rest";
 
-	public static final int DEFAULT_ENGINE_PORT = 8283;
-	public static final int DEFAULT_HUB_PORT = 8284;
-	public static final int DEFAULT_NODE_PORT = 8287;
+    public static final int DEFAULT_ENGINE_PORT = 8283;
+    public static final int DEFAULT_HUB_PORT = 8284;
+    public static final int DEFAULT_NODE_PORT = 8287;
 
-	/** The Constant KLAB_CLIENT_PROJECTS. */
-	public static final String KLAB_CLIENT_PROJECTS = "klab.client.workspace";
+    /** The Constant KLAB_CLIENT_PROJECTS. */
+    public static final String KLAB_CLIENT_PROJECTS = "klab.client.workspace";
 
-	/** The Constant KLAB_OFFLINE. */
-	public static final String KLAB_OFFLINE = "klab.offline";
+    /** The Constant KLAB_OFFLINE. */
+    public static final String KLAB_OFFLINE = "klab.offline";
 
-	/** The Constant KLAB_USE_CONTEXT_QUALITIES. */
-	public static final String KLAB_USE_CONTEXT_QUALITIES = "klab.use.context.qualities";
+    /** The Constant KLAB_USE_CONTEXT_QUALITIES. */
+    public static final String KLAB_USE_CONTEXT_QUALITIES = "klab.use.context.qualities";
 
-	/** The Constant KLAB_EXPORT_PATH. */
-	public static final String KLAB_EXPORT_PATH = "klab.export.path";
+    /** The Constant KLAB_EXPORT_PATH. */
+    public static final String KLAB_EXPORT_PATH = "klab.export.path";
 
-	/** The Constant KLAB_REASONING. */
-	public static final String KLAB_REASONING = "klab.reasoning";
+    /** The Constant KLAB_REASONING. */
+    public static final String KLAB_REASONING = "klab.reasoning";
 
-	/** The Constant KLAB_DEBUG. */
-	public static final String KLAB_DEBUG = "klab.debug";
+    /** The Constant KLAB_DEBUG. */
+    public static final String KLAB_DEBUG = "klab.debug";
 
-	/** The Constant CERTFILE_PROPERTY. */
-	public static final String CERTFILE_PROPERTY = "klab.certificate";
+    /**
+     * Set to false to store the kbox on disk if the model base is large and doesn't change. Startup
+     * and search time will be affected but RAM footprint will be smaller.
+     */
+    public static final String KLAB_USE_IN_MEMORY_DATABASE = "klab.database.inmemory";
 
-	/** The Constant KLAB_SOURCE_DISTRIBUTION. */
-	public static final String KLAB_SOURCE_DISTRIBUTION = "thinklab.source.distribution";
+    /** The Constant CERTFILE_PROPERTY. */
+    public static final String CERTFILE_PROPERTY = "klab.certificate";
 
-	/** The Constant KLAB_CONNECTION_TIMEOUT. */
-	public static final String KLAB_CONNECTION_TIMEOUT = "klab.connection.timeout";
+    /** The Constant KLAB_SOURCE_DISTRIBUTION. */
+    public static final String KLAB_SOURCE_DISTRIBUTION = "thinklab.source.distribution";
 
-	/*
-	 * these properties can be set to define what states to store during
-	 * contextualization when the defaults are inadequate. They're mostly
-	 * unsupported at this time.
-	 */
-	/** The Constant KLAB_STORE_RAW_DATA. */
-	public static final String KLAB_STORE_RAW_DATA = "klab.store.raw";
+    /** The Constant KLAB_CONNECTION_TIMEOUT. */
+    public static final String KLAB_CONNECTION_TIMEOUT = "klab.connection.timeout";
 
-	/** The Constant KLAB_STORE_INTERMEDIATE_DATA. */
-	public static final String KLAB_STORE_INTERMEDIATE_DATA = "klab.store.intermediate";
+    /*
+     * these properties can be set to define what states to store during
+     * contextualization when the defaults are inadequate. They're mostly
+     * unsupported at this time.
+     */
+    /** The Constant KLAB_STORE_RAW_DATA. */
+    public static final String KLAB_STORE_RAW_DATA = "klab.store.raw";
 
-	/** The Constant KLAB_STORE_CONDITIONAL_DATA. */
-	public static final String KLAB_STORE_CONDITIONAL_DATA = "klab.store.conditional";
+    /** The Constant KLAB_STORE_INTERMEDIATE_DATA. */
+    public static final String KLAB_STORE_INTERMEDIATE_DATA = "klab.store.intermediate";
 
-	/** The Constant KLAB_STORE_MEDIATED_DATA. */
-	public static final String KLAB_STORE_MEDIATED_DATA = "klab.store.mediated";
+    /** The Constant KLAB_STORE_CONDITIONAL_DATA. */
+    public static final String KLAB_STORE_CONDITIONAL_DATA = "klab.store.conditional";
 
-	/**
-	 * Minutes after which a session times out. Default 60.
-	 */
-	public static final String KLAB_SESSION_TIMEOUT_MINUTES = "klab.session.timeout";
+    /** The Constant KLAB_STORE_MEDIATED_DATA. */
+    public static final String KLAB_STORE_MEDIATED_DATA = "klab.store.mediated";
 
-	/**
-	 * Absolute path of work directory. Overrides the default which is
-	 * ${user.home}/THINKLAB_WORK_DIRECTORY
-	 */
-	public static final String KLAB_DATA_DIRECTORY = "klab.data.directory";
+    /**
+     * Minutes after which a session times out. Default 60.
+     */
+    public static final String KLAB_SESSION_TIMEOUT_MINUTES = "klab.session.timeout";
 
-	/**
-	 * Name of work directory relative to ${user.home}. Ignored if
-	 * THINKLAB_DATA_DIRECTORY_PROPERTY is specified.
-	 */
-	public static final String KLAB_WORK_DIRECTORY = "klab.work.directory";
+    /**
+     * Absolute path of work directory. Overrides the default which is
+     * ${user.home}/THINKLAB_WORK_DIRECTORY
+     */
+    public static final String KLAB_DATA_DIRECTORY = "klab.data.directory";
 
-	/**
-	 * Points to a comma-separated list of directories where components are loaded
-	 * from their Maven development tree.
-	 */
-	public static final String KLAB_LOCAL_COMPONENTS = "klab.local.components";
+    /**
+     * Name of work directory relative to ${user.home}. Ignored if
+     * THINKLAB_DATA_DIRECTORY_PROPERTY is specified.
+     */
+    public static final String KLAB_WORK_DIRECTORY = "klab.work.directory";
 
-	/** The Constant KLAB_ENGINE_CERTIFICATE. */
-	public static final String KLAB_ENGINE_CERTIFICATE = "klab.engine.certificate";
+    /**
+     * Points to a comma-separated list of directories where components are loaded
+     * from their Maven development tree.
+     */
+    public static final String KLAB_LOCAL_COMPONENTS = "klab.local.components";
 
-	/** The Constant KLAB_ENGINE_DATADIR. */
-	public static final String KLAB_ENGINE_DATADIR = "klab.engine.datadir";
+    /** The Constant KLAB_ENGINE_CERTIFICATE. */
+    public static final String KLAB_ENGINE_CERTIFICATE = "klab.engine.certificate";
 
-	/** The Constant KLAB_ENGINE_DEBUG_PORT. */
-	public static final String KLAB_ENGINE_DEBUG_PORT = "klab.engine.debugPort";
+    /** The Constant KLAB_ENGINE_DATADIR. */
+    public static final String KLAB_ENGINE_DATADIR = "klab.engine.datadir";
 
-	/** The Constant KLAB_ENGINE_USE_DEBUG. */
-	public static final String KLAB_ENGINE_USE_DEBUG = "klab.engine.useDebug";
+    /** The Constant KLAB_ENGINE_DEBUG_PORT. */
+    public static final String KLAB_ENGINE_DEBUG_PORT = "klab.engine.debugPort";
 
-	/** The Constant KLAB_ENGINE_KLAB_DEBUG. */
-	public static final String KLAB_ENGINE_KLAB_DEBUG = "klab.engine.klabDebug";
+    /** The Constant KLAB_ENGINE_USE_DEBUG. */
+    public static final String KLAB_ENGINE_USE_DEBUG = "klab.engine.useDebug";
 
-	/** The Constant KLAB_ENGINE_USE_DEVELOPER_NETWORK. */
-	public static final String KLAB_ENGINE_USE_DEVELOPER_NETWORK = "klab.engine.useDeveloperNetwork";
+    /** The Constant KLAB_ENGINE_KLAB_DEBUG. */
+    public static final String KLAB_ENGINE_KLAB_DEBUG = "klab.engine.klabDebug";
 
-	/** The Constant KLAB_ENGINE_USE_LOCAL_INSTALLATION. */
-	public static final String KLAB_ENGINE_USE_LOCAL_INSTALLATION = "klab.engine.useLocalInstallation";
+    /** The Constant KLAB_ENGINE_USE_DEVELOPER_NETWORK. */
+    public static final String KLAB_ENGINE_USE_DEVELOPER_NETWORK = "klab.engine.useDeveloperNetwork";
 
-	/** The Constant KLAB_ENGINE_SHUTDOWN_ON_EXIT. */
-	public static final String KLAB_ENGINE_SHUTDOWN_ON_EXIT = "klab.engine.shutdownOnExit";
+    /** The Constant KLAB_ENGINE_USE_LOCAL_INSTALLATION. */
+    public static final String KLAB_ENGINE_USE_LOCAL_INSTALLATION = "klab.engine.useLocalInstallation";
 
-	/** The Constant KLAB_ENGINE_UPGRADE_AUTOMATICALLY. */
-	public static final String KLAB_ENGINE_UPGRADE_AUTOMATICALLY = "klab.engine.upgradeAutomatically";
+    /** The Constant KLAB_ENGINE_SHUTDOWN_ON_EXIT. */
+    public static final String KLAB_ENGINE_SHUTDOWN_ON_EXIT = "klab.engine.shutdownOnExit";
 
-	/** The Constant KLAB_ENGINE_LAUNCH_AUTOMATICALLY. */
-	public static final String KLAB_ENGINE_LAUNCH_AUTOMATICALLY = "klab.engine.launchAutomatically";
+    /** The Constant KLAB_ENGINE_UPGRADE_AUTOMATICALLY. */
+    public static final String KLAB_ENGINE_UPGRADE_AUTOMATICALLY = "klab.engine.upgradeAutomatically";
 
-	/**
-	 * Create derived concepts in the common ontology owned by the reasoner (true)
-	 * or in the ontology holding the main concept in the declaration (false).
-	 */
-	public static final String KLAB_USE_COMMON_ONTOLOGY = "klab.engine.useCommonOntology";
+    /** The Constant KLAB_ENGINE_LAUNCH_AUTOMATICALLY. */
+    public static final String KLAB_ENGINE_LAUNCH_AUTOMATICALLY = "klab.engine.launchAutomatically";
 
-	/**
-	 * Class to choose to create storage - used only to disambiguate if > 1 storage
-	 * providers are available.
-	 */
-	public static final String STORAGE_PROVIDER_COMPONENT = "klab.storage.provider.class";
+    /**
+     * Create derived concepts in the common ontology owned by the reasoner (true)
+     * or in the ontology holding the main concept in the declaration (false).
+     */
+    public static final String KLAB_USE_COMMON_ONTOLOGY = "klab.engine.useCommonOntology";
 
-	/**
-	 * Class to choose to create dataflow runtimes - used only to disambiguate if >
-	 * 1 runtime providers are available.
-	 */
-	public static final String RUNTIME_PROVIDER_COMPONENT = "klab.runtime.provider.class";
+    /**
+     * Class to choose to create storage - used only to disambiguate if > 1 storage
+     * providers are available.
+     */
+    public static final String STORAGE_PROVIDER_COMPONENT = "klab.storage.provider.class";
 
-	/**
-	 * The main properties, read and written by default to
-	 * ${user.dir}/.klab/klab.properties.
-	 *
-	 * @return the properties. Created if absent, never null.
-	 */
-	Properties getProperties();
+    /**
+     * Class to choose to create dataflow runtimes - used only to disambiguate if >
+     * 1 runtime providers are available.
+     */
+    public static final String RUNTIME_PROVIDER_COMPONENT = "klab.runtime.provider.class";
 
-	/**
-	 * The operating system where we are running. Only recognizes the three main
-	 * ones.
-	 *
-	 * @return the OS identifier.
-	 */
-	OS getOS();
+    /**
+     * The main properties, read and written by default to
+     * ${user.dir}/.klab/klab.properties.
+     *
+     * @return the properties. Created if absent, never null.
+     */
+    Properties getProperties();
 
-	/**
-	 * Create (if necessary) and return a subdirectory within the k.LAB workspace.
-	 * Slash-separated subspace strings can be used to specify nested
-	 * subdirectories.
-	 *
-	 * @param subspace
-	 *            a {@link java.lang.String} object.
-	 * @return the file directory created.
-	 */
-	File getDataPath(String subspace);
+    /**
+     * The operating system where we are running. Only recognizes the three main
+     * ones.
+     *
+     * @return the OS identifier.
+     */
+    OS getOS();
 
-	/**
-	 * <p>
-	 * isOffline.
-	 * </p>
-	 *
-	 * @return a boolean.
-	 */
-	boolean isOffline();
+    /**
+     * Create (if necessary) and return a subdirectory within the k.LAB workspace.
+     * Slash-separated subspace strings can be used to specify nested
+     * subdirectories.
+     *
+     * @param subspace
+     *            a {@link java.lang.String} object.
+     * @return the file directory created.
+     */
+    File getDataPath(String subspace);
 
-	/**
-	 * Return the k.LAB workspace, by default ${user.dir}/.klab.
-	 *
-	 * @return the k.LAB workspace directory.
-	 */
-	File getDataPath();
+    /**
+     * <p>
+     * isOffline.
+     * </p>
+     *
+     * @return a boolean.
+     */
+    boolean isOffline();
 
-	/**
-	 * Create derived concepts in the common ontology owned by the reasoner (true)
-	 * or in the ontology holding the main concept in the declaration (false).
-	 * Default is true.
-	 *
-	 * @return the value of this setting (default true, should be false only for
-	 *         special purposes, such as using k.LAB only as an OWL processor)
-	 */
-	boolean useCommonOntology();
+    /**
+     * Return the k.LAB workspace, by default ${user.dir}/.klab.
+     *
+     * @return the k.LAB workspace directory.
+     */
+    File getDataPath();
 
-	/**
-	 * True if debugging mode has been enabled.
-	 *
-	 * @return debugging mode
-	 */
-	boolean isDebuggingEnabled();
+    /**
+     * Create derived concepts in the common ontology owned by the reasoner (true)
+     * or in the ontology holding the main concept in the declaration (false).
+     * Default is true.
+     *
+     * @return the value of this setting (default true, should be false only for
+     *         special purposes, such as using k.LAB only as an OWL processor)
+     */
+    boolean useCommonOntology();
 
-	/**
-	 * <p>
-	 * isRemoteResolutionEnabled.
-	 * </p>
-	 *
-	 * @return a boolean.
-	 */
-	boolean isRemoteResolutionEnabled();
+    /**
+     * True if debugging mode has been enabled.
+     *
+     * @return debugging mode
+     */
+    boolean isDebuggingEnabled();
 
-	/**
-	 * <p>
-	 * getDataflowThreadCount.
-	 * </p>
-	 *
-	 * @return a int.
-	 */
-	int getDataflowThreadCount();
+    /**
+     * <p>
+     * isRemoteResolutionEnabled.
+     * </p>
+     *
+     * @return a boolean.
+     */
+    boolean isRemoteResolutionEnabled();
 
-	/**
-	 * <p>
-	 * getTaskThreadCount.
-	 * </p>
-	 *
-	 * @return a int.
-	 */
-	int getTaskThreadCount();
+    /**
+     * <p>
+     * getDataflowThreadCount.
+     * </p>
+     *
+     * @return a int.
+     */
+    int getDataflowThreadCount();
 
-	/**
-	 * <p>
-	 * getScriptThreadCount.
-	 * </p>
-	 *
-	 * @return a int.
-	 */
-	int getScriptThreadCount();
+    /**
+     * <p>
+     * getTaskThreadCount.
+     * </p>
+     *
+     * @return a int.
+     */
+    int getTaskThreadCount();
 
-	/**
-	 * Check whether anonymous usage is allowed, resulting in the generation of an
-	 * anonymous certificate (which won't connect to the network) if the certfile is
-	 * not in place. Default is true, which should be connected to something
-	 * different than the property file.
-	 * 
-	 * @return true if anonymous usage is allowed
-	 */
-	boolean allowAnonymousUsage();
+    /**
+     * <p>
+     * getScriptThreadCount.
+     * </p>
+     *
+     * @return a int.
+     */
+    int getScriptThreadCount();
 
-	/**
-	 * The logging level (linked to property klab.logging.level, default ERROR)
-	 * controls which notifications sent to {@link IMonitor monitors} are also
-	 * logged.
-	 * 
-	 * @return the level of logging for monitor notifications.
-	 */
-	Level getLoggingLevel();
+    /**
+     * Check whether anonymous usage is allowed, resulting in the generation of an
+     * anonymous certificate (which won't connect to the network) if the certfile is
+     * not in place. Default is true, which should be connected to something
+     * different than the property file.
+     * 
+     * @return true if anonymous usage is allowed
+     */
+    boolean allowAnonymousUsage();
 
-	/**
-	 * The notification level (linked to property klab.logging.level, default INFO)
-	 * controls which notifications sent to {@link IMonitor monitors} are sent to
-	 * subscribers.
-	 * 
-	 * @return the level of logging for monitor notifications.
-	 */
-	Level getNotificationLevel();
+    /**
+     * The logging level (linked to property klab.logging.level, default ERROR)
+     * controls which notifications sent to {@link IMonitor monitors} are also
+     * logged.
+     * 
+     * @return the level of logging for monitor notifications.
+     */
+    Level getLoggingLevel();
 
-	/**
-	 * Return the proportion of error (0-1) allowed when subsets of grids are
-	 * created during scale mediation. If the error in a subsetting operation is
-	 * higher than what is returned, a much more expensive non-conformant grid
-	 * mediator will be used instead of snapping the subgrid to the original one for
-	 * 1-to-1 rescaling.
-	 * 
-	 * @return the accepted subsetting proportion of error
-	 */
-	double getAcceptedSubsettingError();
+    /**
+     * The notification level (linked to property klab.logging.level, default INFO)
+     * controls which notifications sent to {@link IMonitor monitors} are sent to
+     * subscribers.
+     * 
+     * @return the level of logging for monitor notifications.
+     */
+    Level getNotificationLevel();
 
-	/**
-	 * If true, each instance created by instantiatiors will be resolved
-	 * independently using the k.LAB network. This may make for more accurate
-	 * resolution when instances and context have widely different scales, but will
-	 * use much more time and resources if the instances are many. The default is
-	 * false.
-	 * 
-	 * @return true to force independent resolution of instances
-	 */
-	boolean resolveAllInstances();
+    /**
+     * Return the proportion of error (0-1) allowed when subsets of grids are
+     * created during scale mediation. If the error in a subsetting operation is
+     * higher than what is returned, a much more expensive non-conformant grid
+     * mediator will be used instead of snapping the subgrid to the original one for
+     * 1-to-1 rescaling.
+     * 
+     * @return the accepted subsetting proportion of error
+     */
+    double getAcceptedSubsettingError();
 
-	/**
-	 * The maximum number of root contexts kept alive per session. Defaults at 10.
-	 * 
-	 * @return the maximum number of live contexts
-	 */
-	int getMaxLiveObservationContextsPerSession();
+    /**
+     * If true, each instance created by instantiatiors will be resolved
+     * independently using the k.LAB network. This may make for more accurate
+     * resolution when instances and context have widely different scales, but will
+     * use much more time and resources if the instances are many. The default is
+     * false.
+     * 
+     * @return true to force independent resolution of instances
+     */
+    boolean resolveAllInstances();
+
+    /**
+     * The maximum number of root contexts kept alive per session. Defaults at 10.
+     * 
+     * @return the maximum number of live contexts
+     */
+    int getMaxLiveObservationContextsPerSession();
 
 }

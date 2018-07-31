@@ -69,23 +69,23 @@ public abstract class H2Kbox {
 //    this.monitor = monitor;
   }
 
-  public H2Kbox(String name, File directory) {
-    database = H2Database.get(directory, name);
-//    this.monitor = monitor;
-  }
+//  public H2Kbox(String name, File directory) {
+//    database = H2Database.get(directory, name);
+////    this.monitor = monitor;
+//  }
 
   public <T> List<T> query(String query, Class<T> cls, IMonitor monitor) throws KlabException {
     return querySql(query, cls, monitor);
   }
 
-  /**
-   * Call the H2 recover tool.
-   * 
-   * @throws KlabException
-   */
-  public void recover() throws KlabException {
-    database.recover();
-  }
+//  /**
+//   * Call the H2 recover tool.
+//   * 
+//   * @throws KlabException
+//   */
+//  public void recover() throws KlabException {
+//    database.recover();
+//  }
 
   public <T> List<T> querySql(String query, Class<T> cls, IMonitor monitor) throws KlabException {
 
