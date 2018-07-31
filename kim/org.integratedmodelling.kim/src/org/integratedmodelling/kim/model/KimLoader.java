@@ -128,7 +128,7 @@ public class KimLoader implements IKimLoader {
     }
 
     @Override
-    public void loadProjectFiles(Collection<File> projectRoots) {
+    public Collection<IKimProject> loadProjectFiles(Collection<File> projectRoots) {
         List<IKimProject> projects = new ArrayList<>();
         for (File root : projectRoots) {
             if (!projectLocations.contains(root)) {
@@ -139,6 +139,7 @@ public class KimLoader implements IKimLoader {
         if (!projects.isEmpty()) {
             load(projects);
         }
+        return projects;
     }
 
     @Override

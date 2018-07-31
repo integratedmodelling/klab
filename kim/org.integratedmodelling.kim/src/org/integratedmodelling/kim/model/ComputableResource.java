@@ -326,5 +326,22 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	public List<ComputableResource> getSiblings() {
 		return siblings;
 	}
+
+    @Override
+    public void visit(Visitor visitor) {
+        if (classification != null) {
+            classification.visit(visitor);
+        } else if (lookupTable != null) {
+            lookupTable.visit(visitor);
+        } else if (serviceCall != null) {
+            serviceCall.visit(visitor);
+        }
+        if (condition != null) {
+            condition.visit(visitor);
+        }
+        for (ComputableResource sibling : siblings) {
+            sibling.visit(visitor);
+        }
+    }
 	
 }

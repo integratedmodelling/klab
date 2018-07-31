@@ -80,13 +80,16 @@ public class KimObserver extends KimStatement implements IKimObserver {
     public void setDocstring(String docstring) {
         this.docstring = docstring;
     }
-    
-	@Override
-	public void visit(Visitor visitor) {
-		visitor.visitObserver(this);
-		observable.visit(visitor);
-		for (IKimScope child : getChildren()) {
-			child.visit(visitor);
-		}
-	}
+
+    @Override
+    public void visit(Visitor visitor) {
+        visitor.visitObserver(this);
+        observable.visit(visitor);
+        for (IKimScope child : getChildren()) {
+            child.visit(visitor);
+        }
+        for (IKimObservable state : states) {
+            state.visit(visitor);
+        }
+    }
 }

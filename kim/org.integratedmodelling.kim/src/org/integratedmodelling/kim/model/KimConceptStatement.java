@@ -468,7 +468,9 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 		for (IKimConcept c : traitsInherited) {
 			c.visit(visitor);
 		}
-
+        for (IKimScope c : children) {
+            c.visit(visitor);
+        }
 	}
 
 	@Override

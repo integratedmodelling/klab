@@ -28,7 +28,7 @@ import org.integratedmodelling.klab.utils.Pair;
  * @author Ferd
  *
  */
-public interface IComputableResource {
+public interface IComputableResource extends IKimStatement {
 
 	/**
 	 * The target observable for this computation; null if the target is the main

@@ -34,9 +34,11 @@ import org.integratedmodelling.klab.ide.model.KlabEngine;
 import org.integratedmodelling.klab.ide.model.KlabExplorer;
 import org.integratedmodelling.klab.ide.model.KlabSession;
 import org.integratedmodelling.klab.ide.model.KlabUser;
+import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.ProjectLoadRequest;
+import org.integratedmodelling.klab.rest.ProjectLoadResponse;
 import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
@@ -167,6 +169,8 @@ public class Activator extends AbstractUIPlugin {
         List<File> projectFiles = new ArrayList<>();
         for (IProject project : Eclipse.INSTANCE.getProjects()) {
             projectFiles.add(project.getLocation().toFile());
+            // this preloads all resources with offline status so they can be updated when the engine is connected
+            klab.synchronizeProjectResources(project.getName(), project.getLocation().toFile());
         }
         return projectFiles;
     }
@@ -245,7 +249,8 @@ public class Activator extends AbstractUIPlugin {
                 }
             }
             if (projectFiles.size() > 0) {
-                post(IMessage.MessageClass.ProjectLifecycle, IMessage.Type.NotifyProjects, new ProjectLoadRequest(projectFiles));
+                post(IMessage.MessageClass.ProjectLifecycle, IMessage.Type.NotifyProjects,
+                        new ProjectLoadRequest(projectFiles));
             }
         });
     }

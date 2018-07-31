@@ -3,7 +3,6 @@ package org.integratedmodelling.kim.api;
 import java.io.File;
 import java.net.URI;
 import java.util.Collection;
-import java.util.List;
 
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 
@@ -48,7 +47,7 @@ public interface IKimLoader {
      * 
      * @param projectRoots
      */
-    void loadProjectFiles(Collection<File> projectRoots);
+    Collection<IKimProject> loadProjectFiles(Collection<File> projectRoots);
 
     /**
      * Pass either a {@link File}, {@link IKimNamespace} or {@link URI} to ensure

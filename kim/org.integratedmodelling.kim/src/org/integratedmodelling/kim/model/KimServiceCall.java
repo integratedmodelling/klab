@@ -100,8 +100,13 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 
 		return super.getSourceCode();
 	}
+	
+	@Override
+    public void visit(Visitor visitor) {
+	    // TODO must visit concept declarations in maps
+    }
 
-	private String getStringValue(Object val) {
+    private String getStringValue(Object val) {
 		
 		if (val instanceof List) {
 			String ret = "(";

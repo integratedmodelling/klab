@@ -20,7 +20,6 @@ import java.util.logging.Level;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.utils.OS;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface IConfigurationService.
  *

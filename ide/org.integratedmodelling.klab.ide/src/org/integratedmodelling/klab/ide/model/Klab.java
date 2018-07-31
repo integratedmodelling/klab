@@ -48,24 +48,24 @@ public class Klab {
 	private Map<String, Map<String, EResourceReference>> resourceCatalog = Collections.synchronizedMap(new HashMap<>());
 
 
-	private void synchronizeProjectResources(EProject project) {
+	public void synchronizeProjectResources(String projectName, File projectRoot) {
 
-		if (!projectsSynchronized.contains(project.getName())) {
+		if (!projectsSynchronized.contains(projectName)) {
 
 			List<String> urns = new ArrayList<>();
 
-			projectsSynchronized.add(project.getName());
-			File resourceFolder = new File(project.getRoot() + File.separator + "resources");
+			projectsSynchronized.add(projectName);
+			File resourceFolder = new File(projectRoot + File.separator + "resources");
 			if (resourceFolder.exists()) {
 				for (File rfolder : resourceFolder.listFiles()) {
 					if (rfolder.isDirectory()) {
 						File rdesc = new File(rfolder + File.separator + "resource.json");
 						if (rdesc.exists()) {
 							ResourceReference resource = JsonUtils.load(rdesc, ResourceReference.class);
-							Map<String, EResourceReference> catalog = resourceCatalog.get(project.getName());
+							Map<String, EResourceReference> catalog = resourceCatalog.get(projectName);
 							if (catalog == null) {
 								catalog = new LinkedHashMap<>();
-								resourceCatalog.put(project.getName(), catalog);
+								resourceCatalog.put(projectName, catalog);
 							}
 							catalog.put(resource.getUrn(), new EResourceReference(resource));
 							urns.add(resource.getUrn());
@@ -83,7 +83,7 @@ public class Klab {
 	 * @return
 	 */
 	public Collection<EResourceReference> getProjectResources(EProject project) {
-		synchronizeProjectResources(project);
+		synchronizeProjectResources(project.getName(), project.getRoot());
 		return resourceCatalog.containsKey(project.getName()) ? resourceCatalog.get(project.getName()).values()
 				: new ArrayList<>();
 	}
@@ -123,7 +123,6 @@ public class Klab {
 	private void handleMessage(IMessage message) {
 		switch (message.getType()) {
 		case EngineUp:
-		    System.out.println("SYNCING RESOURCES - SHOULD BE GREEN AFTER THIS");
 			synchronizeProjectResources(message.getPayload(Capabilities.class).getLocalWorkspaceProjects());
 			KlabNavigator.refresh();
 			break;

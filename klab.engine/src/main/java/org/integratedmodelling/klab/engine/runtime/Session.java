@@ -18,6 +18,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.integratedmodelling.kim.api.IKimNamespace;
+import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
@@ -59,6 +60,7 @@ import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.InterruptTask;
 import org.integratedmodelling.klab.rest.ObservationRequest;
 import org.integratedmodelling.klab.rest.ProjectLoadRequest;
+import org.integratedmodelling.klab.rest.ProjectLoadResponse;
 import org.integratedmodelling.klab.rest.ProjectModificationNotification;
 import org.integratedmodelling.klab.rest.ProjectModificationRequest;
 import org.integratedmodelling.klab.rest.ResourceImportRequest;
@@ -474,7 +476,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
         case CreateCalibration:
         case CreateScript:
         case CreateNamespace:
-            
+
             File file = null;
             switch (message.getType()) {
             case CreateTestCase:
@@ -490,7 +492,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
                 // can't happen when calibrations are implemented
                 throw new KlabUnimplementedException("can't yet create a calibration");
             }
-            
+
             monitor.send(Message
                     .create(token, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.QueryResult,
                             new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION, file))
@@ -499,9 +501,9 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
             // an issue
             Resources.INSTANCE.getLoader().add(file);
             break;
-            
+
         case CreateProject:
-            
+
             project = (Project) Resources.INSTANCE.getLocalWorkspace().createProject(request.getProjectId(), monitor);
             monitor.send(Message.create(token, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.CreateProject,
                     new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION,
@@ -509,9 +511,9 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
                     .inResponseTo(message));
             Resources.INSTANCE.getLoader().add(project.getStatement());
             break;
-            
+
         case CreateScenario:
-            
+
             file = project.createNamespace(request.getAssetId(), true);
             monitor.send(Message
                     .create(token, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.CreateScenario,
@@ -519,14 +521,14 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
                     .inResponseTo(message));
             Resources.INSTANCE.getLoader().add(file);
             break;
-            
+
         case DeleteLocalResource:
             break;
-            
+
         case DeleteScript:
         case DeleteNamespace:
         case DeleteTestCase:
-            
+
             IKimNamespace ns = Kim.INSTANCE.getNamespace(request.getAssetId());
             if (ns != null) {
                 Resources.INSTANCE.getLoader().delete(ns.getFile());
@@ -538,7 +540,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
                                 .inResponseTo(message));
             }
             break;
-            
+
         case DeleteProject:
             break;
         case DeleteResource:
@@ -599,13 +601,19 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
     }
 
     @MessageHandler
-    private void handleProjectLoadRequest(final ProjectLoadRequest request) {
+    private void handleProjectLoadRequest(final ProjectLoadRequest request, IMessage message) {
         new Thread() {
 
             @Override
             public void run() {
-                Resources.INSTANCE.getLoader().loadProjectFiles(request.getProjectLocations());
-                ;
+                ProjectLoadResponse response = new ProjectLoadResponse();
+                for (IKimProject project : Resources.INSTANCE.getLoader()
+                        .loadProjectFiles(request.getProjectLocations())) {
+                    IProject proj = Resources.INSTANCE.getProject(project.getName());
+                    response.getProjects().add(Resources.INSTANCE.createProjectDescriptor(proj));
+                }
+                monitor.send(Message.create(token, IMessage.MessageClass.ProjectLifecycle,
+                        IMessage.Type.UserProjectOpened, response).inResponseTo(message));
             }
 
         }.start();

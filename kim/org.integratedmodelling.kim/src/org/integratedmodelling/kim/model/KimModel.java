@@ -228,6 +228,15 @@ public class KimModel extends KimStatement implements IKimModel {
 		for (IKimObservable observable : getObservables()) {
 			observable.visit(visitor);
 		}
+		for (IKimObservable dependency : dependencies) {
+		    dependency.visit(visitor);
+		}
+		if (reinterpretingRole != null) {
+		    reinterpretingRole.visit(visitor);
+		}
+		for (IComputableResource resource : getContextualization()) {
+		    resource.visit(visitor);
+		}
 	}
 	
 }
