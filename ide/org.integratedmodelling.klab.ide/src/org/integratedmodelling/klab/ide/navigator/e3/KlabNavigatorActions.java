@@ -5,6 +5,7 @@ import java.io.File;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IWorkbenchPage;
+import org.integratedmodelling.kim.api.IKimNamespace.Role;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
@@ -17,6 +18,7 @@ import org.integratedmodelling.klab.ide.navigator.model.ETestCase;
 import org.integratedmodelling.klab.ide.navigator.model.ETestFolder;
 import org.integratedmodelling.klab.ide.ui.wizards.NewNamespaceWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.NewProjectWizard;
+import org.integratedmodelling.klab.ide.ui.wizards.NewScriptWizard;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.ProjectModificationNotification;
 import org.integratedmodelling.klab.rest.ProjectModificationRequest;
@@ -61,7 +63,10 @@ public class KlabNavigatorActions {
     }
 
     public static void addScript(EScriptFolder folder) {
-
+        WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(),
+                new NewScriptWizard(folder, folder.getEParent(EProject.class).getProject(), Role.SCRIPT));
+        dialog.create();
+        dialog.open();
     }
 
     public static void deleteScript(EScript script, IWorkbenchPage page) {
@@ -78,7 +83,10 @@ public class KlabNavigatorActions {
     }
 
     public static void addTestCase(ETestFolder folder) {
-
+        WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(),
+                new NewScriptWizard(folder, folder.getEParent(EProject.class).getProject(), Role.SCRIPT));
+        dialog.create();
+        dialog.open();
     }
 
     public static void deleteTestCase(ETestCase testCase, IWorkbenchPage page) {

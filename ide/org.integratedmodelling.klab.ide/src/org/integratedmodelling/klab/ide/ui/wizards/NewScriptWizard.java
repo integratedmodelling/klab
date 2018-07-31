@@ -37,6 +37,8 @@ import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
+import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
+import org.integratedmodelling.klab.ide.navigator.model.EScriptFolder;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.ide.utils.StringUtils;
 import org.integratedmodelling.klab.rest.ProjectModificationNotification;
@@ -44,75 +46,83 @@ import org.integratedmodelling.klab.rest.ProjectModificationRequest;
 
 public class NewScriptWizard extends Wizard {
 
-	private NewScript page;
-	private IKimProject target = null;
-	private Role role;
-	
-	public NewScriptWizard(IKimProject target, Role role) {
-		setWindowTitle("Create a new k.LAB Namespace");
-		this.target = target;
-		this.role = role;
-	}
+    private NewScript page;
+    private IKimProject target = null;
+    private Role role;
+    private String path;
 
-	@Override
-	public void addPages() {
-		addPage(this.page = new NewScript(target, role));
-	}
+    public NewScriptWizard(ENavigatorItem folder, IKimProject target, Role role) {
+        setWindowTitle("Create a new k.LAB Namespace");
+        this.target = target;
+        this.role = role;
+        this.path = "";
+        ENavigatorItem item = folder;
+        while (item.getEParent() instanceof EScriptFolder) {
+            path = ((EScriptFolder)item.getEParent()).getId() + (path.isEmpty() ? "" : "/") + path;
+            item = item.getEParent();
+        }
+    }
 
-	@Override
-	public boolean performFinish() {
+    @Override
+    public void addPages() {
+        addPage(this.page = new NewScript(target, role));
+    }
 
-		final String nspc = page.getNamespace().getText().trim();
+    @Override
+    public boolean performFinish() {
 
-		if (validate(nspc, target)) {
-			Activator.post((message) -> {
-				File file = message.getPayload(ProjectModificationNotification.class).getFile();
-				Activator.loader().add(file);
-				Display.getDefault().asyncExec(() -> {
-				    Eclipse.INSTANCE.openFile(
-						Eclipse.INSTANCE.getIFile(file),
-						0);
-				    KlabNavigator.refresh();
-				});
-			}, IMessage.MessageClass.ProjectLifecycle,
-					role == Role.SCRIPT ? IMessage.Type.CreateScript : IMessage.Type.CreateTestCase,
-					new ProjectModificationRequest(page.getTargetProject().getText(), nspc));
-			return true;
-		}
+        final String nspc = page.getNamespace().getText().trim();
 
-		return false;
-	}
+        if (validate(nspc, target)) {
+            ProjectModificationRequest request = new ProjectModificationRequest(page.getTargetProject().getText(),
+                    nspc);
+            request.setScriptName(page.getScriptName().getText());
+            request.setScriptPath(path);
+            Activator.post((message) -> {
+                File file = message.getPayload(ProjectModificationNotification.class).getFile();
+                Activator.loader().add(file);
+                Display.getDefault().asyncExec(() -> {
+                    Eclipse.INSTANCE.openFile(Eclipse.INSTANCE.getIFile(file), 0);
+                    KlabNavigator.refresh();
+                });
+            }, IMessage.MessageClass.ProjectLifecycle,
+                    role == Role.SCRIPT ? IMessage.Type.CreateScript : IMessage.Type.CreateTestCase, request);
+            return true;
+        }
 
-	private boolean validate(String nspc, IKimProject project) {
+        return false;
+    }
 
-		if (project == null) {
-			return false;
-		}
+    private boolean validate(String nspc, IKimProject project) {
 
-		/*
-		 * 1. check that namespace is not already there; set error on page if so 2.
-		 * check that source folder is valid (later - we only list valid ones)
-		 */
+        if (project == null) {
+            return false;
+        }
 
-		for (IKimProject p : Kim.INSTANCE.getProjects()) {
-			for (IKimNamespace n : p.getNamespaces()) {
-				if (n.getName().equals(nspc)) {
-					this.page.setErrorMessage("Namespace " + nspc + " already exists in project " + p.getName());
-					return false;
-				}
-			}
-		}
+        /*
+         * 1. check that namespace is not already there; set error on page if so 2.
+         * check that source folder is valid (later - we only list valid ones)
+         */
 
-		if (StringUtils.containsAny(nspc, StringUtils.UPPERCASE | StringUtils.WHITESPACE | StringUtils.NONLETTERS)) {
-			page.setErrorMessage("namespace identifiers must contain only lowercase letters with no whitespace");
-			return false;
-		}
+        for (IKimProject p : Kim.INSTANCE.getProjects()) {
+            for (IKimNamespace n : p.getNamespaces()) {
+                if (n.getName().equals(nspc)) {
+                    this.page.setErrorMessage("Namespace " + nspc + " already exists in project " + p.getName());
+                    return false;
+                }
+            }
+        }
 
-		return true;
-	}
+        if (StringUtils.containsAny(nspc, StringUtils.UPPERCASE | StringUtils.WHITESPACE | StringUtils.NONLETTERS)) {
+            page.setErrorMessage("namespace identifiers must contain only lowercase letters with no whitespace");
+            return false;
+        }
 
-	public IKimProject getProject() {
-		return target;
-	}
+        return true;
+    }
+
+    public IKimProject getProject() {
+        return target;
+    }
 
 }

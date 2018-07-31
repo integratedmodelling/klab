@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.engine.resources;
 import java.io.File;
 import java.io.IOException;
 
+import org.integratedmodelling.kim.templates.KimTemplates;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
@@ -14,74 +15,59 @@ import org.integratedmodelling.klab.utils.FileUtils;
 
 public class MonitorableFileWorkspace extends AbstractWorkspace implements IWorkspace {
 
-	DirectoryWatcher watcher = null;
+    DirectoryWatcher watcher = null;
 
-	static String[] projectDirectories = new String[] { "META-INF", "apps", "resources", "dataflows", "src" };
+    static String[] projectDirectories = new String[] { "META-INF", "apps", "resources", "dataflows", "src" };
 
-	static String projectTemplate = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n" + "<projectDescription>\r\n"
-			+ "	<name>__PROJECT__</name>\r\n" + "	<comment></comment>\r\n" + "	<projects>\r\n" + "	</projects>\r\n"
-			+ "	<buildSpec>\r\n" + "		<buildCommand>\r\n"
-			+ "			<name>org.eclipse.xtext.ui.shared.xtextBuilder</name>\r\n" + "			<arguments>\r\n"
-			+ "			</arguments>\r\n" + "		</buildCommand>\r\n" + "		<buildCommand>\r\n"
-			+ "			<name>org.integratedmodelling.klab.ide.klabBuilder</name>\r\n" + "			<arguments>\r\n"
-			+ "			</arguments>\r\n" + "		</buildCommand>\r\n" + "	</buildSpec>\r\n" + "	<natures>\r\n"
-			+ "		<nature>org.integratedmodelling.klab.ide.klabNature</nature>\r\n"
-			+ "		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>\r\n" + "	</natures>\r\n"
-			+ "</projectDescription>";
+    MonitorableFileWorkspace() {
+    }
 
-	static String resourceTemplate = "{\n}";
-	static String propertiesTemplate = "klab.version = 0.0.1\n";
-	static String knowledgeTemplate = "namespace __PROJECT__;\n\n";
+    public MonitorableFileWorkspace(File root, File... overridingProjects) {
+        super(root, overridingProjects);
+    }
 
-	MonitorableFileWorkspace() {
-	}
+    @Override
+    public IProject createProject(String projectId, IMonitor monitor) {
 
-	public MonitorableFileWorkspace(File root, File... overridingProjects) {
-		super(root, overridingProjects);
-	}
+        if (getProjectNames().contains(projectId)) {
+            throw new IllegalStateException(
+                    "cannot create project " + projectId + " because it already exists in the workspace");
+        }
 
-	@Override
-	public IProject createProject(String projectId, IMonitor monitor) {
+        File dir = new File(getRoot() + File.separator + projectId);
+        dir.mkdir();
 
-		if (getProjectNames().contains(projectId)) {
-			throw new IllegalStateException(
-					"cannot create project " + projectId + " because it already exists in the workspace");
-		}
+        for (String s : projectDirectories) {
+            new File(dir + File.separator + s).mkdir();
+        }
 
-		File dir = new File(getRoot() + File.separator + projectId);
-		dir.mkdir();
+        try {
+            FileUtils.writeStringToFile(new File(dir + File.separator + ".project"),
+                    KimTemplates.projectTemplate.replaceAll("__PROJECT__", projectId), false);
+            FileUtils.writeStringToFile(
+                    new File(dir + File.separator + "META-INF" + File.separator + "klab.properties"),
+                    KimTemplates.propertiesTemplate, false);
+            FileUtils.writeStringToFile(new File(dir + File.separator + "META-INF" + File.separator + "knowledge.kim"),
+                    KimTemplates.knowledgeTemplate.replaceAll("__PROJECT__", projectId), false);
+            FileUtils.writeStringToFile(
+                    new File(dir + File.separator + "resources" + File.separator + "resources.json"),
+                    KimTemplates.resourceTemplate, false);
+        } catch (IOException e) {
+            throw new KlabIOException(e);
+        }
 
-		for (String s : projectDirectories) {
-			new File(dir + File.separator + s).mkdir();
-		}
+        delegate.loadProject(dir);
 
-		try {
-			FileUtils.writeStringToFile(new File(dir + File.separator + ".project"),
-					projectTemplate.replaceAll("__PROJECT__", projectId), false);
-			FileUtils.writeStringToFile(
-					new File(dir + File.separator + "META-INF" + File.separator + "klab.properties"),
-					propertiesTemplate, false);
-			FileUtils.writeStringToFile(new File(dir + File.separator + "META-INF" + File.separator + "knowledge.kim"),
-					knowledgeTemplate.replaceAll("__PROJECT__", projectId), false);
-			FileUtils.writeStringToFile(
-					new File(dir + File.separator + "resources" + File.separator + "resources.json"), resourceTemplate,
-					false);
-		} catch (IOException e) {
-			throw new KlabIOException(e);
-		}
+        IProject ret = getProject(projectId);
 
-		delegate.loadProject(dir);
+        /*
+         * Inform any UIs or other listeners that a new project was created.
+         */
+        monitor.send(IMessage.MessageClass.ProjectLifecycle, IMessage.Type.UserProjectOpened,
+                Resources.INSTANCE.createProjectDescriptor(ret));
 
-		IProject ret = getProject(projectId);
+        return ret;
 
-		/*
-		 * Inform any UIs or other listeners that a new project was created.
-		 */
-		monitor.send(IMessage.MessageClass.ProjectLifecycle, IMessage.Type.UserProjectOpened,
-				Resources.INSTANCE.createProjectDescriptor(ret));
-
-		return ret;
-
-	}
+    }
 
 }

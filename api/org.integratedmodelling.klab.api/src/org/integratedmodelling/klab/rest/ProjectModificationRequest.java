@@ -5,6 +5,7 @@ public class ProjectModificationRequest {
 	private String projectId;
 	private String assetId;
 	private String scriptName;
+    private String scriptPath;
 	
 	public ProjectModificationRequest() {}
 
@@ -51,5 +52,13 @@ public class ProjectModificationRequest {
 	public void setAssetId(String assetId) {
 		this.assetId = assetId;
 	}
+
+    public String getScriptPath() {
+        return scriptPath;
+    }
+
+    public void setScriptPath(String scriptPath) {
+        this.scriptPath = scriptPath;
+    }
 
 }

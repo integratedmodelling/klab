@@ -132,4 +132,7 @@ public class NewScript extends WizardPage {
     public Text getNamespace() {
         return text;
     }
+    public Text getScriptName() {
+        return scriptName;
+    }
 }

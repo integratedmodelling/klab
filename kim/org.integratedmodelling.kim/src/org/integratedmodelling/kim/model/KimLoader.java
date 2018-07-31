@@ -536,7 +536,7 @@ public class KimLoader implements IKimLoader {
         this.dependencyGraph = new DefaultDirectedGraph<>(DefaultEdge.class);
 
         for (IKimNamespace namespace : getNamespaces()) {
-            if (namespace.getFile() != null) {
+            if (namespace != null && namespace.getFile() != null) {
                 this.dependencyGraph.addVertex(namespace.getFile());
                 for (String s : namespace.getImportedNamespaceIds(true)) {
                     if (namespaceFiles.containsKey(s)) {
