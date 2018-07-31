@@ -3,6 +3,7 @@ package org.integratedmodelling.kim.model;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -24,11 +25,14 @@ import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kim.KimStandaloneSetup;
 import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimNamespace;
+import org.integratedmodelling.kim.api.IKimNamespace.Role;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.model.Kim.Notifier;
 import org.integratedmodelling.kim.utils.ResourceSorter;
+import org.integratedmodelling.kim.utils.WorkspaceUtils;
+import org.integratedmodelling.kim.utils.WorkspaceUtils.NamespaceLocation;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.common.CompileNotification;
@@ -187,13 +191,13 @@ public class KimLoader implements IKimLoader {
             if (recurseDependencies) {
                 dependencies.addAll(collectDependencies(ours));
             }
-            ret.addAll(loadFiles(dependencies));
+            ret.addAll(loadFiles(dependencies, true));
         }
 
         return ret;
     }
 
-    private Collection<? extends IKimNamespace> loadFiles(Collection<File> files) {
+    private Collection<IKimNamespace> loadFiles(Collection<File> files, boolean isReloading) {
 
         Map<URI, File> fileMap = new HashMap<>();
         XtextResourceSet resourceSet = getResourceSet();
@@ -210,7 +214,7 @@ public class KimLoader implements IKimLoader {
             }
         }
 
-        return loadResources(resources, fileMap, true);
+        return loadResources(resources, fileMap, isReloading);
     }
 
     private XtextResourceSet getResourceSet() {
@@ -247,17 +251,59 @@ public class KimLoader implements IKimLoader {
     }
 
     @Override
-    public List<IKimNamespace> delete(Object namespaceProxy) {
-        // TODO Auto-generated method stub
-        // TODO if project, remove all files
-        // TODO if file or URL or namespace, remove that and reload all
-        // dependents
-        return null;
+    public Collection<IKimNamespace> delete(Object namespaceProxy) {
+        File file = getFile(namespaceProxy);
+        if (file == null) {
+            throw new IllegalArgumentException("can't delete a namespace that was not loaded: " + namespaceProxy);
+        }
+        NsInfo info = getNamespaceInfo(file);
+        if (info == null || info.namespace == null) {
+            throw new IllegalArgumentException("can't delete a namespace that was not loaded: " + namespaceProxy);
+        }
+        
+        List<File> dependencies = collectDependencies(info.namespace);
+        
+        Kim.INSTANCE.removeNamespace((Namespace) ((KimNamespace)info.namespace).getEObject());
+        Kim.INSTANCE.removeNamespaceConcepts((Namespace) ((KimNamespace)info.namespace).getEObject());
+        
+        dependencyGraph.removeVertex(file);
+        dependentResources.remove(file);
+        nonDependentResources.remove(file);
+        sortedNames.remove(info.namespace.getName());
+        namespaceFiles.remove(info.namespace.getName());
+        
+        return dependencies.isEmpty() ? new ArrayList<>() : loadFiles(dependencies, true);
     }
 
     @Override
     public IKimNamespace add(Object namespaceResource) {
-        // TODO Auto-generated method stub
+        
+        File file = getFile(namespaceResource);
+        NamespaceLocation location = WorkspaceUtils.getNamespaceLocation(file);
+        if (location == null) {
+            throw new IllegalArgumentException(
+                    "KimLoader: can't add " + namespaceResource + ": unable to determine role in project");
+        }
+
+        IKimProject project = Kim.INSTANCE.getProject(location.projectId);
+
+        if (project == null) {
+            throw new IllegalArgumentException("KimLoader: can't add " + namespaceResource
+                    + ": unable to find source project " + location.projectId);
+        }
+
+        if (location.namespaceRole == Role.KNOWLEDGE) {
+            dependentResources.put(file, new NsInfo(project));
+        } else {
+            nonDependentResources.put(file, new NsInfo(project));
+        }
+        
+        Collection<IKimNamespace> namespaces = loadFiles(Collections.singleton(file), false);
+        
+        if (namespaces.size() > 0) {
+            return namespaces.iterator().next();
+        }
+        
         return null;
     }
 
@@ -287,7 +333,7 @@ public class KimLoader implements IKimLoader {
         }
 
         if (!(namespaceProxy instanceof File)) {
-            throw new IllegalArgumentException("cannot infer a namespace file from " + namespaceProxy);
+            throw new IllegalArgumentException("cannot infer a namespace from " + namespaceProxy);
         }
 
         return (File) namespaceProxy;
@@ -397,7 +443,7 @@ public class KimLoader implements IKimLoader {
                 info.name = name;
                 info.namespace = Kim.INSTANCE.getNamespace(name);
                 info.issues.clear();
-                
+
                 for (Issue issue : issues) {
                     ICompileNotification notification = getNotification(info.namespace, issue);
                     if (notification != null) {

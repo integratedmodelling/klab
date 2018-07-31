@@ -12,6 +12,9 @@ public class CliStartupOptions extends EngineStartupOptions {
 	@Option(name = "-output", usage = "output <file.owl>", metaVar = "<FILE_PATH>")
 	File outputFile = null;
 
+	@Option(name = "-network", usage = "start network services automatically")
+	boolean network;
+	
 	@Argument(multiValued = true)
 	List<String> args = new ArrayList<>();
 
@@ -19,6 +22,10 @@ public class CliStartupOptions extends EngineStartupOptions {
 		return outputFile;
 	}
 
+	public boolean isNetwork() {
+	    return network;
+	}
+	
 	public String[] getArguments() {
 		return args.toArray(new String[args.size()]);
 	}

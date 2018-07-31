@@ -134,6 +134,12 @@ public enum Models implements IModelService {
 
 	@Override
 	public void index(IModel model, IMonitor monitor) throws KlabException {
+	    
+	    // wrong and non-semantic models don't get indexed
+	    if (model.getStatement().isErrors() || model.getObservables().size() == 0) {
+	        return;
+	    }
+	    
 		kbox.store(model, monitor);
 		if (!model.isPrivate()) {
 		    Indexer.INSTANCE.index(model.getStatement(), model.getNamespace().getName());

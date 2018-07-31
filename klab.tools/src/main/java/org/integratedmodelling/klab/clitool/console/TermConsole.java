@@ -116,6 +116,7 @@ public class TermConsole implements IConsole {
 
 				@Override
 				public void run() {
+				    
 					String buildInfo = "";
 					if (!Version.VERSION_BUILD.equals("VERSION_BUILD")) {
 						buildInfo = " build " + Version.VERSION_BUILD + " (" + Version.VERSION_BRANCH + " "

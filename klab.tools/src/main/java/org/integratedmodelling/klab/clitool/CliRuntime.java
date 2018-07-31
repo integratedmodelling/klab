@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Logo;
-import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.clitool.api.IConsole;
 import org.integratedmodelling.klab.clitool.console.CommandProcessor;
@@ -38,7 +37,7 @@ public enum CliRuntime {
 		return engine;
 	}
 
-	public void initialize(IConsole console, IEngineStartupOptions options) {
+	public void initialize(IConsole console, CliStartupOptions options) {
 		console.disableInput();
 		this.engine = Engine.start(options);
 		this.session = engine.createSession().setDefault();
@@ -48,6 +47,11 @@ public enum CliRuntime {
 		console.scream("\n");
 		console.scream(Logo.ENGINE_BANNER);
 		console.scream("\nSession established: ID is " + this.session.getId() + "\n");
+		
+		if (options.isNetwork()) {
+		    console.echo("Starting network services....\n");
+		    startNetwork(() -> console.scream("Network services started."));
+		}
 
 	}
 

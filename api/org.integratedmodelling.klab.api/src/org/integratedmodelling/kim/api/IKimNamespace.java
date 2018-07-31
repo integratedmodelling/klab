@@ -16,6 +16,21 @@ import org.integratedmodelling.klab.utils.Pair;
 public interface IKimNamespace extends IKimStatement {
 
     /**
+     * Roles a namespace can play within a project. Not fully integrated at the moment, although the namespace
+     * should have a getRole() method to expose it.
+     * 
+     * @author Ferd
+     *
+     */
+    public enum Role {
+        KNOWLEDGE,
+        SCRIPT,
+        TESTCASE,
+        CALIBRATION,
+        SCENARIO
+    }
+
+    /**
      * The namespace ID: either the stated name (when the namespace is a regular
      * one) or an id composed of the adopted worldview and the unique resource path
      * for the namespace when this represents a script, test, calibration or sidecar

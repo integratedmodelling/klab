@@ -467,27 +467,29 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			break;
 		case CreateNamespace:
 			File file = project.createNamespace(request.getAssetId(), false);
-			Resources.INSTANCE.getLoader().add(file);
 			monitor.send(Message
 					.create(token, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.QueryResult,
 							new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION, file))
 					.inResponseTo(message));
+			// send the message before adding, as the addition will trigger a modification message which would cause
+			// an issue
+            Resources.INSTANCE.getLoader().add(file);
 			break;
 		case CreateProject:
 			project = (Project) Resources.INSTANCE.getLocalWorkspace().createProject(request.getProjectId(), monitor);
-			Resources.INSTANCE.getLoader().add(project.getStatement());
-			monitor.send(Message.create(token, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.CreateScenario,
+			monitor.send(Message.create(token, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.CreateProject,
 					new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION,
 							project.getRoot()))
 					.inResponseTo(message));
+            Resources.INSTANCE.getLoader().add(project.getStatement());
 			break;
 		case CreateScenario:
 			file = project.createNamespace(request.getAssetId(), true);
-			Resources.INSTANCE.getLoader().add(file);
 			monitor.send(Message
 					.create(token, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.CreateScenario,
 							new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION, file))
 					.inResponseTo(message));
+            Resources.INSTANCE.getLoader().add(file);
 			break;
 		case CreateScript:
 			break;
@@ -500,6 +502,10 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			if (ns != null) {
 				Resources.INSTANCE.getLoader().delete(ns.getFile());
 				FileUtils.deleteQuietly(ns.getFile());
+	            monitor.send(Message
+	                    .create(token, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.DeleteNamespace,
+	                            new ProjectModificationNotification(ProjectModificationNotification.Type.DELETION, ns.getFile()))
+	                    .inResponseTo(message));
 			}
 			break;
 		case DeleteProject:

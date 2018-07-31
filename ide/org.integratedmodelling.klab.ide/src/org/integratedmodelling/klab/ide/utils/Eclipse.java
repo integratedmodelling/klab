@@ -33,8 +33,10 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.CheckedTreeSelectionDialog;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
@@ -245,6 +247,23 @@ public enum Eclipse {
         return null;
     }
 
+    public void closeEditor(File file, IWorkbenchPage page) {
+
+        IFile resource = getIFile(file);
+        if (resource != null) {
+            for (IEditorReference eref : page.getEditorReferences()) {
+                try {
+                    IFile open = eref.getEditorInput().getAdapter(IFile.class);
+                    if (open != null && open.equals(resource)) {
+                        Display.getDefault().asyncExec(() -> page.closeEditor(eref.getEditor(true), true));
+                    }
+                } catch (PartInitException e) {
+                    handleException(e);
+                }
+            }
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public <T> Collection<T> chooseMany(String question, Collection<T> alternatives, Function<T, Image> imageProvider) {
 
@@ -342,6 +361,10 @@ public enum Eclipse {
             }
         } catch (MalformedURLException | URISyntaxException e) {
         }
+
+        if (ret == null) {
+            System.out.println("ZIOCAN IFILE IS NULL " + file);
+        }
         return ret;
     }
 
@@ -399,9 +422,9 @@ public enum Eclipse {
 
                 for (CompileNotificationReference inot : notifications) {
 
-                	System.out.println("UPDATING MARKERS " + file + ": " + inot);
-                	
-                	if (inot.getLevel() == Level.SEVERE.intValue()) {
+                    System.out.println("UPDATING MARKERS " + file + ": " + inot);
+
+                    if (inot.getLevel() == Level.SEVERE.intValue()) {
                         addMarker(file, inot.getMessage(), inot.getFirstLine(), IMarker.SEVERITY_ERROR);
                     } else if (inot.getLevel() == Level.WARNING.intValue()) {
                         addMarker(file, inot.getMessage(), inot.getFirstLine(), IMarker.SEVERITY_WARNING);
