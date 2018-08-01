@@ -1,21 +1,38 @@
 package org.integratedmodelling.klab.ide.navigator.e3;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.dnd.URLTransfer;
+import org.eclipse.ui.actions.CopyFilesAndFoldersOperation;
 import org.eclipse.ui.navigator.CommonDropAdapter;
 import org.eclipse.ui.navigator.resources.ResourceDropAdapterAssistant;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
+import org.integratedmodelling.klab.ide.navigator.model.EResource;
 import org.integratedmodelling.klab.ide.navigator.model.EResourceFolder;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 
 public class KlabDropAssistant extends ResourceDropAdapterAssistant {
 
 	public KlabDropAssistant() {
+	}
+
+	@Override
+	public boolean isSupportedType(TransferData aTransferType) {
+		if (URLTransfer.getInstance().isSupportedType(aTransferType)) {
+			// succeeds but doesn't let drop URLs anyway.
+			return true;
+		}
+		return super.isSupportedType(aTransferType);
 	}
 
 	@Override
@@ -26,26 +43,45 @@ public class KlabDropAssistant extends ResourceDropAdapterAssistant {
 		return Status.CANCEL_STATUS;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public IStatus handleDrop(CommonDropAdapter aDropAdapter, DropTargetEvent event, Object target) {
 
-		if (target instanceof EResourceFolder && event.data instanceof String[]) {
-			File file = new File(((String[]) event.data)[0]);
-			if (file.exists() && file.isFile()) {
-				if (Activator.engineMonitor().isRunning()) {
-					Activator.session().importFileResource(file,
-							((EResourceFolder) target).getEParent(EProject.class).getName());
-					return Status.OK_STATUS;
-				} else {
-					Eclipse.INSTANCE.alert("You must be connected to an engine to import resources.");
-				}
-			} else {
-				/*
-				 * Check for URL - either
-				 */
+		List<Object> eventData = new ArrayList<>();
+		if (event.data instanceof IStructuredSelection) {
+			eventData.addAll(((IStructuredSelection) event.data).toList());
+		} else if (event.data instanceof String[]) {
+			for (String s : ((String[]) event.data)) {
+				eventData.add(s);
 			}
 		}
-		return Status.CANCEL_STATUS;
+
+		for (Object eventItem : eventData) {
+
+			if (eventItem instanceof ENavigatorItem) {
+
+				if (eventItem instanceof EResource && target instanceof EResourceFolder) {
+					KlabNavigatorActions.copyResource((EResource) eventItem, (EResourceFolder) target);
+				}
+
+			} else if (target instanceof EResourceFolder && eventItem instanceof String) {
+				File file = new File(eventItem.toString());
+				if (file.exists() && file.isFile()) {
+					if (Activator.engineMonitor().isRunning()) {
+						Activator.session().importFileResource(file,
+								((EResourceFolder) target).getEParent(EProject.class).getName());
+					} else {
+						Eclipse.INSTANCE.alert("You must be connected to an engine to import resources.");
+					}
+				} else {
+					/*
+					 * Check for URL - either
+					 */
+				}
+			}
+		}
+		return Status.OK_STATUS;
+
 	}
 
 }

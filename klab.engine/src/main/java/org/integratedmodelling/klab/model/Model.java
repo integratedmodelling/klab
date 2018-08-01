@@ -31,8 +31,6 @@ import org.integratedmodelling.klab.scale.Scale;
 
 public class Model extends KimObject implements IModel {
 
-	private static final long serialVersionUID = 6405594042208542702L;
-
 	private String id;
 	private Optional<IDocumentation> documentation = Optional.empty();
 	private List<IObservable> observables = new ArrayList<>();
@@ -256,7 +254,7 @@ public class Model extends KimObject implements IModel {
 
 	@Override
 	public String getName() {
-		return this.namespace.getId() + "." + id;
+		return this.namespace.getName() + "." + id;
 	}
 
 	@Override
@@ -296,7 +294,7 @@ public class Model extends KimObject implements IModel {
 
 	@Override
 	public boolean isPrivate() {
-		return isPrivate || namespace.isPrivate();
+		return isPrivate || namespace.isPrivate() || !isSemantic();
 	}
 
 	/**
@@ -383,6 +381,16 @@ public class Model extends KimObject implements IModel {
 
 	public void setInactive(boolean inactive) {
 		this.inactive = inactive;
+	}
+
+	@Override
+	public IKimModel getStatement() {
+		return (IKimModel)super.getStatement();
+	}
+	
+	@Override
+	public boolean isSemantic() {
+		return getStatement().isSemantic();
 	}
 
 }

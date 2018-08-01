@@ -5,48 +5,55 @@ import java.util.Optional;
 
 public interface IKimModel extends IKimActiveStatement {
 
-    public static enum Type {
-        SEMANTIC,
-        NUMBER,
-        TEXT,
-        BOOLEAN
-    }
+	public static enum Type {
+		SEMANTIC, NUMBER, TEXT, BOOLEAN
+	}
 
-    Optional<IKimConcept> getReinterpretingRole();
+	Optional<IKimConcept> getReinterpretingRole();
 
-    List<IKimObservable> getDependencies();
+	List<IKimObservable> getDependencies();
 
-    List<IKimObservable> getObservables();
+	List<IKimObservable> getObservables();
 
-    boolean isPrivate();
+	boolean isPrivate();
 
-    Type getType();
+	Type getType();
 
-    List<String> getResourceUrns();
+	List<String> getResourceUrns();
 
-    boolean isAssessmentModel();
+	boolean isAssessmentModel();
 
-    boolean isLearningModel();
+	boolean isLearningModel();
 
-    boolean isInterpreter();
+	boolean isInterpreter();
 
-    boolean isAbstract();
+	boolean isAbstract();
 
-    boolean isInactive();
+	boolean isInactive();
 
-    boolean isInstantiator();
+	boolean isInstantiator();
 
-    String getName();
-   
-    Optional<Object> getInlineValue();
+	String getName();
 
-    Optional<IServiceCall> getResourceFunction();
-    
-    /**
-     * Contextualizer or processor(s) given after 'using'
-     * @return computables or an empty list
-     */
-    List<IComputableResource> getContextualization();
+	Optional<Object> getInlineValue();
 
-    String getDocstring();
+	Optional<IServiceCall> getResourceFunction();
+
+	/**
+	 * Contextualizer or processor(s) given after 'using'
+	 * 
+	 * @return computables or an empty list
+	 */
+	List<IComputableResource> getContextualization();
+
+	String getDocstring();
+
+	/**
+	 * Normally true, it will return false in models that were expressed as
+	 * non-semantic operations, using the 'number', 'text', etc. keywords. These are
+	 * also, by default, private and are used only directly by name.
+	 * 
+	 * @return
+	 */
+	boolean isSemantic();
 }

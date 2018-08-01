@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IComputableResource;
@@ -12,86 +14,105 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.rest.SpatialExtent;
 
 public class Observer extends KimObject implements IObserver {
 
-  private static final long serialVersionUID = 2777161073171784334L;
+	private Observable observable;
+	private String name;
+	private Namespace namespace;
+	private Behavior behavior;
+	private List<IObservable> states = new ArrayList<>();
 
-  private Observable        observable;
-  private String            name;
-  private Namespace         namespace;
-  private Behavior          behavior;
-  private List<IObservable> states           = new ArrayList<>();
+	public Observer(IKimObserver statement, Namespace namespace, Monitor monitor) {
 
-  public Observer(IKimObserver statement, Namespace namespace, Monitor monitor) {
-      
-    super(statement);
-    this.observable = Observables.INSTANCE.declare(statement.getObservable(), monitor);
-    /*
-     * resolving the observable for an acknowledged observation is always optional.
-     */
-    this.observable.setOptional(true);
-    this.namespace = namespace;
-    this.name = statement.getName();
-    this.behavior = new Behavior(statement.getBehavior(), this);
-  }
+		super(statement);
+		this.observable = Observables.INSTANCE.declare(statement.getObservable(), monitor);
+		/*
+		 * resolving the observable for an acknowledged observation is always optional.
+		 */
+		this.observable.setOptional(true);
+		this.namespace = namespace;
+		this.name = statement.getName();
+		this.behavior = new Behavior(statement.getBehavior(), this);
+	}
 
-  public String toString() {
-    return "[" + getName() + "]";
-  }
+	public Observer(SpatialExtent regionOfInterest, Observable observable, Namespace namespace) {
+		super(null);
+		this.namespace = namespace;
+		this.observable = observable;
+		this.name = "Region of interest";
+		this.behavior = new Behavior(null, this) {
+			@Override
+			public Collection<IExtent> getExtents(IMonitor monitor) throws KlabException {
+				// TODO use adaptive resolution
+				return Collections.singletonList(Space.create(Shape.create(regionOfInterest.getEast(), regionOfInterest.getSouth(),
+						regionOfInterest.getWest(), regionOfInterest.getNorth(), Projection.getLatLon()), 1000.));
+			}
+		};
+	}
 
-  @Override
-  public String getId() {
-    return name;
-  }
+	public String toString() {
+		return "[" + getName() + "]";
+	}
 
-  @Override
-  public String getName() {
-    return namespace.getId() + "." + getId();
-  }
+	@Override
+	public String getId() {
+		return name;
+	}
 
-  @Override
-  public Namespace getNamespace() {
-    return namespace;
-  }
+	@Override
+	public String getName() {
+		return namespace.getId() + "." + getId();
+	}
 
-  @Override
-  public Behavior getBehavior() {
-    return behavior;
-  }
+	@Override
+	public Namespace getNamespace() {
+		return namespace;
+	}
 
-  @Override
-  public Observable getObservable() {
-    return observable;
-  }
+	@Override
+	public Behavior getBehavior() {
+		return behavior;
+	}
 
-  @Override
-  public List<IObservable> getStates() {
-    return states;
-  }
+	@Override
+	public Observable getObservable() {
+		return observable;
+	}
 
-  @Override
-  public int hashCode() {
-    return getName().hashCode();
-  }
+	@Override
+	public List<IObservable> getStates() {
+		return states;
+	}
 
-  @Override
-  public boolean equals(Object obj) {
-    return obj instanceof Observer && ((Observer) obj).getName().equals(getName());
-  }
+	@Override
+	public int hashCode() {
+		return getName().hashCode();
+	}
 
-  @Override
-  public List<IComputableResource> getComputation(ILocator transition) {
-    List<IComputableResource> ret = new ArrayList<>();
-    for (Trigger trigger : Dataflows.INSTANCE.getActionTriggersFor(transition)) {
-      for (IAction action : behavior.getActions(trigger)) {
-        ret.addAll(action.getComputation(transition));
-      }
-    }
-    return ret;
-  }
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof Observer && ((Observer) obj).getName().equals(getName());
+	}
 
+	@Override
+	public List<IComputableResource> getComputation(ILocator transition) {
+		List<IComputableResource> ret = new ArrayList<>();
+		for (Trigger trigger : Dataflows.INSTANCE.getActionTriggersFor(transition)) {
+			for (IAction action : behavior.getActions(trigger)) {
+				ret.addAll(action.getComputation(transition));
+			}
+		}
+		return ret;
+	}
 
 }

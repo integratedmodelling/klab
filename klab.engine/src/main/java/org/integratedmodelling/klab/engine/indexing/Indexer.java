@@ -37,186 +37,187 @@ import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 
 public enum Indexer {
 
-    INSTANCE;
+	INSTANCE;
 
-    private Directory index;
-    private IndexWriter writer;
-    private StandardAnalyzer analyzer;
-    private ReferenceManager<IndexSearcher> searcherManager;
-    private ControlledRealTimeReopenThread<IndexSearcher> nrtReopenThread;
+	private Directory index;
+	private IndexWriter writer;
+	private StandardAnalyzer analyzer;
+	private ReferenceManager<IndexSearcher> searcherManager;
+	private ControlledRealTimeReopenThread<IndexSearcher> nrtReopenThread;
 
-    public static final int MAX_RESULT_COUNT = 9;
-    
-    private Indexer() {
-        try {
-            this.index = new RAMDirectory(); // new MMapDirectory(Configuration.INSTANCE.getDataPath("index").toPath());
-            this.analyzer = new StandardAnalyzer();
-            IndexWriterConfig config = new IndexWriterConfig(this.analyzer);
-            this.writer = new IndexWriter(index, config);
+	public static final int MAX_RESULT_COUNT = 9;
 
-            this.searcherManager = new SearcherManager(writer, true, true, null);
+	private Indexer() {
+		try {
+			this.index = new RAMDirectory(); // new MMapDirectory(Configuration.INSTANCE.getDataPath("index").toPath());
+			this.analyzer = new StandardAnalyzer();
+			IndexWriterConfig config = new IndexWriterConfig(this.analyzer);
+			this.writer = new IndexWriter(index, config);
 
-            /**
-            * Thread supporting near-realtime index background refresh
-            */
-            nrtReopenThread = new ControlledRealTimeReopenThread<IndexSearcher>(writer, searcherManager, 1.0, 0.1);
-            nrtReopenThread.setName("NRT Reopen Thread");
-            nrtReopenThread.setPriority(Math.min(Thread.currentThread().getPriority() + 2, Thread.MAX_PRIORITY));
-            nrtReopenThread.setDaemon(true);
-            nrtReopenThread.start();
+			this.searcherManager = new SearcherManager(writer, true, true, null);
 
-        } catch (IOException e) {
-            throw new KlabIOException(e);
-        }
-    }
+			/**
+			 * Thread supporting near-realtime index background refresh
+			 */
+			nrtReopenThread = new ControlledRealTimeReopenThread<IndexSearcher>(writer, searcherManager, 1.0, 0.1);
+			nrtReopenThread.setName("NRT Reopen Thread");
+			nrtReopenThread.setPriority(Math.min(Thread.currentThread().getPriority() + 2, Thread.MAX_PRIORITY));
+			nrtReopenThread.setDaemon(true);
+			nrtReopenThread.start();
 
-    public Match index(IKimStatement object, String namespaceId) {
-        
-        SearchMatch ret = null;
-        
-        if (object.isErrors()) {
-            return null;
-        }
-        
-        if (object instanceof IKimConceptStatement) {
+		} catch (IOException e) {
+			throw new KlabIOException(e);
+		}
+	}
 
-            ret = new SearchMatch(Match.Type.CONCEPT, ((IKimConceptStatement) object).getType());
-            ret.setDescription(((IKimConceptStatement) object).getDocstring());
-            ret.setId(namespaceId + ":" + ((IKimConceptStatement) object).getName());
-            ret.setName(((IKimConceptStatement) object).getName());
+	public Match index(IKimStatement object, String namespaceId) {
 
-            // concept that 'equals' something should index its definition with high weight
-            // concept that 'is' something should index its parent's definition with lower weight
+		SearchMatch ret = null;
 
-            for (IKimScope child : object.getChildren()) {
-                if (child instanceof IKimConceptStatement) {
-                    index((IKimConceptStatement) child, namespaceId);
-                }
-            }
+		if (object.isErrors()) {
+			return null;
+		}
 
-        } else if (object instanceof IKimModel) {
+		if (object instanceof IKimConceptStatement) {
 
-            ret = new SearchMatch(Match.Type.MODEL, ((IKimModel) object).getObservables().get(0).getMain().getType());
-            ret.setDescription(((IKimModel) object).getDocstring());
-            ret.setName(((IKimModel) object).getName());
-            ret.setId(((IKimModel) object).getName());
+			ret = new SearchMatch(Match.Type.CONCEPT, ((IKimConceptStatement) object).getType());
+			ret.setDescription(((IKimConceptStatement) object).getDocstring());
+			ret.setId(namespaceId + ":" + ((IKimConceptStatement) object).getName());
+			ret.setName(((IKimConceptStatement) object).getName());
 
-        } else if (object instanceof IKimObserver) {
+			// concept that 'equals' something should index its definition with high weight
+			// concept that 'is' something should index its parent's definition with lower
+			// weight
 
-            ret = new SearchMatch(Match.Type.OBSERVATION, ((IKimObserver) object).getObservable().getMain().getType());
-            ret.setDescription(((IKimObserver) object).getDocstring());
-            ret.setName(((IKimObserver) object).getName());
-            ret.setId(((IKimObserver) object).getName());
-        }
+			for (IKimScope child : object.getChildren()) {
+				if (child instanceof IKimConceptStatement) {
+					index((IKimConceptStatement) child, namespaceId);
+				}
+			}
 
-        if (ret != null) {
+		} else if (object instanceof IKimModel && ((IKimModel) object).isSemantic()) {
 
-            try {
+			ret = new SearchMatch(Match.Type.MODEL, ((IKimModel) object).getObservables().get(0).getMain().getType());
+			ret.setDescription(((IKimModel) object).getDocstring());
+			ret.setName(((IKimModel) object).getName());
+			ret.setId(((IKimModel) object).getName());
 
-                Document document = new Document();
+		} else if (object instanceof IKimObserver) {
 
-                document.add(new StringField("id", ret.getId(), Store.YES));
-                document.add(new StringField("namespace", namespaceId, Store.YES));
-                document.add(new TextField("name", ret.getName(), Store.YES));
-                document.add(new TextField("description", ret.getDescription(), Store.YES));
-                for (String key : ret.getIndexableFields().keySet()) {
-                    document.add(new TextField(key, ret.getIndexableFields().get(key), Store.YES));
-                }
-                // index type and concepttype as ints
-                document.add(new IntPoint("ctype", Kim.INSTANCE.getFundamentalType(ret.conceptType).ordinal()));
-                document.add(new IntPoint("mtype", ret.getMatchType().ordinal()));
-                document.add(new IntPoint("abstract", ret.isAbstract() ? 1 : 0));
-                // ..store them 
-                document.add(new StoredField("vctype", Kim.INSTANCE.getFundamentalType(ret.conceptType).ordinal()));
-                document.add(new StoredField("vmtype", ret.getMatchType().ordinal()));
-                this.writer.addDocument(document);
+			ret = new SearchMatch(Match.Type.OBSERVATION, ((IKimObserver) object).getObservable().getMain().getType());
+			ret.setDescription(((IKimObserver) object).getDocstring());
+			ret.setName(((IKimObserver) object).getName());
+			ret.setId(((IKimObserver) object).getName());
+		}
 
-            } catch (Throwable e) {
-                throw new KlabInternalErrorException(e);
-            }
-        }
+		if (ret != null) {
 
-        return ret;
-    }
+			try {
 
-    public void commitChanges() {
-        try {
-            this.writer.commit();
-        } catch (IOException e) {
-            throw new KlabIOException(e);
-        }
-    }
-    
-    public void updateNamespace(INamespace namespace) {
-        
-        Thread writerThread = new Thread() {
+				Document document = new Document();
 
-            @Override
-            public void run() {
-                try {
-                    System.out.println("TODO: DELETE NAMESPACE FROM INDEX BEFORE REINDEXING!");
-                    // delete everything within namespace
-                    // reindex namespace
-//                    for (int i = 0; i < 100000; ++i) {
-//                        Document doc = new Document();
-//                        doc.add(new LongPoint("time", System.currentTimeMillis()));
-//                        doc.add(new StringField("counter", "" + i, Field.Store.YES));
-//                        writer.addDocument(doc);
-//                        searcherManager.maybeRefresh();
-//                        Thread.sleep(100);
-//                    }
-//                    writer.commit();
-                } catch (Exception e) {
-                    throw new KlabIOException(e);
-                }
-            }
-        };
-        writerThread.start();
-    }
+				document.add(new StringField("id", ret.getId(), Store.YES));
+				document.add(new StringField("namespace", namespaceId, Store.YES));
+				document.add(new TextField("name", ret.getName(), Store.YES));
+				document.add(new TextField("description", ret.getDescription(), Store.YES));
+				for (String key : ret.getIndexableFields().keySet()) {
+					document.add(new TextField(key, ret.getIndexableFields().get(key), Store.YES));
+				}
+				// index type and concepttype as ints
+				document.add(new IntPoint("ctype", Kim.INSTANCE.getFundamentalType(ret.conceptType).ordinal()));
+				document.add(new IntPoint("mtype", ret.getMatchType().ordinal()));
+				document.add(new IntPoint("abstract", ret.isAbstract() ? 1 : 0));
+				// ..store them
+				document.add(new StoredField("vctype", Kim.INSTANCE.getFundamentalType(ret.conceptType).ordinal()));
+				document.add(new StoredField("vmtype", ret.getMatchType().ordinal()));
+				this.writer.addDocument(document);
 
-    public boolean ensureClosed() {
-        nrtReopenThread.close();
-        if (this.writer.isOpen()) {
-            try {
-                this.writer.close();
-            } catch (IOException e) {
-                Logging.INSTANCE.error(e);
-                return false;
-            }
-        }
-        return true;
-    }
-    
-    public List<Match> query(String currentTerm, Context searchContext) {
-    	return query(currentTerm, searchContext, MAX_RESULT_COUNT);
-    }
-    
-    public List<Match> query(String currentTerm, Context searchContext, int maxResults) {
-        
-        SearchContext context = (SearchContext)searchContext;
-        List<Match> ret = new ArrayList<>();
-        try {
-            IndexSearcher searcher = searcherManager.acquire();
-            TopDocs docs = searcher.search(context.buildQuery(currentTerm, this.analyzer), maxResults);
-            ScoreDoc[] hits = docs.scoreDocs;
-            for (ScoreDoc hit : hits) {
-                
-                Document document = searcher.doc(hit.doc);
-                
-                SearchMatch match = new SearchMatch();
-                match.setId(document.get("id"));
-                match.setName(document.get("name"));
-                match.setDescription(document.get("description"));
-                match.setScore(hit.score);
-                match.setMatchType(Match.Type.values()[Integer.parseInt(document.get("vmtype"))]);
-                match.getConceptType().add(IKimConcept.Type.values()[Integer.parseInt(document.get("vctype"))]);
-                
-                ret.add(match);
-                
-            }
-        } catch (Exception e) {
-            throw new KlabIOException(e);
-        }
-        return ret;
-    }
+			} catch (Throwable e) {
+				throw new KlabInternalErrorException(e);
+			}
+		}
+
+		return ret;
+	}
+
+	public void commitChanges() {
+		try {
+			this.writer.commit();
+		} catch (IOException e) {
+			throw new KlabIOException(e);
+		}
+	}
+
+	public void updateNamespace(INamespace namespace) {
+
+		Thread writerThread = new Thread() {
+
+			@Override
+			public void run() {
+				try {
+					System.out.println("TODO: DELETE NAMESPACE FROM INDEX BEFORE REINDEXING!");
+					// delete everything within namespace
+					// reindex namespace
+					// for (int i = 0; i < 100000; ++i) {
+					// Document doc = new Document();
+					// doc.add(new LongPoint("time", System.currentTimeMillis()));
+					// doc.add(new StringField("counter", "" + i, Field.Store.YES));
+					// writer.addDocument(doc);
+					// searcherManager.maybeRefresh();
+					// Thread.sleep(100);
+					// }
+					// writer.commit();
+				} catch (Exception e) {
+					throw new KlabIOException(e);
+				}
+			}
+		};
+		writerThread.start();
+	}
+
+	public boolean ensureClosed() {
+		nrtReopenThread.close();
+		if (this.writer.isOpen()) {
+			try {
+				this.writer.close();
+			} catch (IOException e) {
+				Logging.INSTANCE.error(e);
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public List<Match> query(String currentTerm, Context searchContext) {
+		return query(currentTerm, searchContext, MAX_RESULT_COUNT);
+	}
+
+	public List<Match> query(String currentTerm, Context searchContext, int maxResults) {
+
+		SearchContext context = (SearchContext) searchContext;
+		List<Match> ret = new ArrayList<>();
+		try {
+			IndexSearcher searcher = searcherManager.acquire();
+			TopDocs docs = searcher.search(context.buildQuery(currentTerm, this.analyzer), maxResults);
+			ScoreDoc[] hits = docs.scoreDocs;
+			for (ScoreDoc hit : hits) {
+
+				Document document = searcher.doc(hit.doc);
+
+				SearchMatch match = new SearchMatch();
+				match.setId(document.get("id"));
+				match.setName(document.get("name"));
+				match.setDescription(document.get("description"));
+				match.setScore(hit.score);
+				match.setMatchType(Match.Type.values()[Integer.parseInt(document.get("vmtype"))]);
+				match.getConceptType().add(IKimConcept.Type.values()[Integer.parseInt(document.get("vctype"))]);
+
+				ret.add(match);
+
+			}
+		} catch (Exception e) {
+			throw new KlabIOException(e);
+		}
+		return ret;
+	}
 }

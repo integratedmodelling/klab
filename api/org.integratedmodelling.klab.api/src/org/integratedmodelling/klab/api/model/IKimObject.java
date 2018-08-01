@@ -15,7 +15,6 @@
  */
 package org.integratedmodelling.klab.api.model;
 
-import java.io.Serializable;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimStatement;
@@ -30,7 +29,7 @@ import org.integratedmodelling.kim.api.IKimStatement;
  * @author Ferd
  * @version $Id: $Id
  */
-public interface IKimObject extends Serializable {
+public interface IKimObject {
 
     /**
      * The object's ID is its unique name within the namespace. The fully qualified name is returned by

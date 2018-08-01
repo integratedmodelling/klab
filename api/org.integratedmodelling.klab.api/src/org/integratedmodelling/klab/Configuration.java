@@ -35,7 +35,7 @@ import org.integratedmodelling.klab.utils.OS;
  * @version $Id: $Id
  */
 public enum Configuration implements IConfigurationService {
-	
+
 	INSTANCE;
 
 	private OS os;
@@ -253,8 +253,7 @@ public enum Configuration implements IConfigurationService {
 		return 10;
 	}
 
-    public boolean useInMemoryDatabase() {
-        // TODO Auto-generated method stub
-        return getProperties().getProperty(KLAB_USE_IN_MEMORY_DATABASE, "false").equals("true");
-    }
+	public boolean useInMemoryDatabase() {
+		return getProperties().getProperty(KLAB_USE_IN_MEMORY_DATABASE, "true").equals("true");
+	}
 }

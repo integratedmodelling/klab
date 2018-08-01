@@ -133,7 +133,7 @@ public enum Models implements IModelService {
 //	@Override
 	public void index(IModel model, IMonitor monitor) throws KlabException {
 	    
-	    // wrong and non-semantic models don't get indexed
+	    // wrong models don't get indexed; non-semantic models do (as private)
 	    if (model.getStatement().isErrors() || model.getObservables().size() == 0) {
 	        return;
 	    }

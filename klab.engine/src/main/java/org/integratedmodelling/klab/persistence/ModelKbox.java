@@ -635,7 +635,7 @@ public class ModelKbox extends ObservableKbox {
 
 			m.setId(model.getId());
 			m.setName(model.getName());
-			m.setNamespaceId(model.getNamespace().getId());
+			m.setNamespaceId(model.getNamespace().getName());
 			if (model.getNamespace().getProject() != null) {
 				m.setProjectId(model.getNamespace().getProject().getName());
 				if (model.getNamespace().getProject().isRemote()) {

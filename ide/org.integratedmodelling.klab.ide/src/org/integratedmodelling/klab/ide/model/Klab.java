@@ -125,7 +125,6 @@ public class Klab {
 		switch (message.getType()) {
 		case EngineUp:
 			synchronizeProjectResources(message.getPayload(Capabilities.class).getLocalWorkspaceProjects());
-			KlabNavigatorActionProvider.getAction("NewProject").activate(true);
 			KlabNavigator.refresh();
 			break;
 		case EngineDown:
@@ -134,7 +133,6 @@ public class Klab {
 					resourceCatalog.get(project).get(urn).setOnline(false);
 				}
 			}
-			KlabNavigatorActionProvider.getAction("NewProject").activate(false);
 			KlabNavigator.refresh();
 			break;
 		case ProjectFileAdded:

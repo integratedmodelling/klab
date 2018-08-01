@@ -308,6 +308,9 @@ public class ModelReference {
 	 *            the new namespace id
 	 */
 	public void setNamespaceId(String namespaceId) {
+		if (namespaceId.startsWith("file:")) {
+			System.out.println("HOSTIA");
+		}
 		this.namespaceId = namespaceId;
 	}
 

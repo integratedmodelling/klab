@@ -26,7 +26,6 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.ide.navigator.e3;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
@@ -35,9 +34,6 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.navigator.model.EWorkspace;
-import org.integratedmodelling.klab.ide.utils.Eclipse;
-import org.integratedmodelling.klab.rest.Capabilities;
-import org.integratedmodelling.klab.rest.ProjectReference;
 
 public class KlabNavigator extends CommonNavigator  {
 
@@ -51,12 +47,10 @@ public class KlabNavigator extends CommonNavigator  {
     private void handleMessage(IMessage message) {
     	switch (message.getType()) {
 		case EngineDown:
-			final Capabilities capabilities = message.getPayload(Capabilities.class);
-			for (ProjectReference project : capabilities.getLocalWorkspaceProjects()) {
-				IProject p = Eclipse.INSTANCE.getProject(project.getName());
-			}
+			KlabNavigatorActionProvider.getAction("NewProject").activate(false);
 			break;
 		case EngineUp:
+			KlabNavigatorActionProvider.getAction("NewProject").activate(true);
 			break;
 		default:
 			break;

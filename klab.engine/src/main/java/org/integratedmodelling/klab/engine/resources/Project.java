@@ -131,7 +131,9 @@ public class Project implements IProject {
 
 	public File createScript(String namespaceId, String scriptName, String scriptPath) {
 		
-		File ret = new File(getRoot() + File.separator + IKimProject.SCRIPT_FOLDER + File.separator
+		File ret = new File(getRoot() + File.separator + IKimProject.SCRIPT_FOLDER);
+		ret.mkdirs();
+		ret = new File(getRoot() + File.separator + IKimProject.SCRIPT_FOLDER + File.separator
 				+ scriptPath.replaceAll("\\/", File.separator) + namespaceId.replace('.', File.separatorChar) + ".kim");
 		try (PrintWriter out = new PrintWriter(ret)) {
 			out.print(KimTemplates.scriptTemplate.replaceAll("__NAME__", namespaceId)
@@ -146,7 +148,9 @@ public class Project implements IProject {
 
 	public File createTestCase(String namespaceId, String scriptName, String scriptPath) {
 		
-		File ret = new File(getRoot() + File.separator + IKimProject.TESTS_FOLDER + File.separator
+		File ret = new File(getRoot() + File.separator + IKimProject.TESTS_FOLDER);
+		ret.mkdirs();
+		ret = new File(getRoot() + File.separator + IKimProject.TESTS_FOLDER + File.separator
 				+ scriptPath.replaceAll("\\/", File.separator) + namespaceId.replace('.', File.separatorChar) + ".kim");
 		try (PrintWriter out = new PrintWriter(ret)) {
 			out.print(KimTemplates.testCaseTemplate.replaceAll("__NAME__", namespaceId)

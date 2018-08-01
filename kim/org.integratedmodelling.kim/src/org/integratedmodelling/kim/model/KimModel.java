@@ -214,13 +214,13 @@ public class KimModel extends KimStatement implements IKimModel {
 		return contextualization;
 	}
 
-    public String getDocstring() {
-        return docstring;
-    }
+	public String getDocstring() {
+		return docstring;
+	}
 
-    public void setDocstring(String docstring) {
-        this.docstring = docstring;
-    }
+	public void setDocstring(String docstring) {
+		this.docstring = docstring;
+	}
 
 	@Override
 	public void visit(Visitor visitor) {
@@ -229,14 +229,19 @@ public class KimModel extends KimStatement implements IKimModel {
 			observable.visit(visitor);
 		}
 		for (IKimObservable dependency : dependencies) {
-		    dependency.visit(visitor);
+			dependency.visit(visitor);
 		}
 		if (reinterpretingRole != null) {
-		    reinterpretingRole.visit(visitor);
+			reinterpretingRole.visit(visitor);
 		}
 		for (IComputableResource resource : getContextualization()) {
-		    resource.visit(visitor);
+			resource.visit(visitor);
 		}
 	}
-	
+
+	@Override
+	public boolean isSemantic() {
+		return observables.size() > 0 && observables.get(0).getNonSemanticType() == null;
+	}
+
 }

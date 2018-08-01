@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.integratedmodelling.kim.api.IComputableResource;
-import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Behavior;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
@@ -56,25 +57,28 @@ public class RankedModel extends Model implements IRankedModel {
 			IKimObject m = Resources.INSTANCE.getModelObject(modelUrn);
 			if (m instanceof Model) {
 				delegate = (Model) m;
+			} else {
+				throw new KlabInternalErrorException("cannot locate model resulting from kbox query: " + modelUrn);
 			}
 		}
 		return delegate;
 	}
 
 	/**
-	 * Return the underlying model data. These may be ranked again in a different scale.
+	 * Return the underlying model data. These may be ranked again in a different
+	 * scale.
 	 * 
 	 * @return
 	 */
 	public ModelReference getModelData() {
 		return modelData;
 	}
-	
+
 	public List<IKimObject> getChildren() {
 		return getDelegate().getChildren();
 	}
 
-	public IKimStatement getStatement() {
+	public IKimModel getStatement() {
 		return getDelegate().getStatement();
 	}
 

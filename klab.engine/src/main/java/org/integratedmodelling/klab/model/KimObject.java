@@ -8,11 +8,10 @@ import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.data.Metadata;
 
 public abstract class KimObject implements IKimObject {
-
-	private static final long serialVersionUID = -4651845572772680648L;
 
 	private IKimStatement statement;
 	private boolean deprecated;
@@ -68,4 +67,6 @@ public abstract class KimObject implements IKimObject {
 	public void setDeprecated(boolean deprecated) {
 		this.deprecated = deprecated;
 	}
+
+	abstract public INamespace getNamespace();
 }

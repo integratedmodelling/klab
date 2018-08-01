@@ -25,8 +25,6 @@ import org.integratedmodelling.klab.owl.Ontology;
 
 public class Namespace extends KimObject implements INamespace {
 
-    private static final long serialVersionUID = -6469868584021658804L;
-
     private String name;
     private Ontology ontology;
     private IProject project;
@@ -49,6 +47,9 @@ public class Namespace extends KimObject implements INamespace {
     public Namespace(IKimNamespace namespace) {
         super((KimNamespace) namespace);
         this.name = namespace.getName();
+        if (this.name.startsWith("file:")) {
+        	System.out.println("POROCO");
+        }
         this.isPrivate = namespace.isPrivate();
         this.inactive = namespace.isInactive();
         this.scenario = namespace.isScenario();
@@ -278,5 +279,10 @@ public class Namespace extends KimObject implements INamespace {
         // TODO Auto-generated method stub
         return false;
     }
+
+	@Override
+	public INamespace getNamespace() {
+		return this;
+	}
 
 }

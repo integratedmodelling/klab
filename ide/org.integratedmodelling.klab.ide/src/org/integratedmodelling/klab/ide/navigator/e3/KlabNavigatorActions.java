@@ -130,4 +130,14 @@ public class KlabNavigatorActions {
 
     }
 
+	public static void copyResource(EResource resource, EResourceFolder folder) {
+		
+		EProject sourceProject = resource.getEParent(EProject.class);
+		EProject targetProject = folder.getEParent(EProject.class);
+		if (sourceProject.equals(targetProject)) {
+			return;
+		}
+		// TODO call engine to copy resource from project to another
+	}
+
 }

@@ -69,7 +69,7 @@ public interface ISession extends IEngineSessionIdentity, Closeable {
 	 * @return a Future that is observing the URN.
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
-	Future<ISubject> observe(String urn, String... scenarios) throws KlabException;
+	Future<ISubject> observe(String urn, String... scenarios);
 
 
 	/**
@@ -111,7 +111,7 @@ public interface ISession extends IEngineSessionIdentity, Closeable {
 	 * @return the running script
 	 * @throws KlabException
 	 */
-	IScript run(URL url) throws KlabException;
+	IScript run(URL url);
 
 	/**
 	 * The geometry of interest depends on user actions and starts empty. As the

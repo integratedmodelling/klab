@@ -25,6 +25,11 @@ public class EModel extends EKimObject implements IKimModel {
     }
 
     public IKimConcept.Type getCoreObservableType() {
+    	
+    	if (!isSemantic()) {
+    		return IKimConcept.Type.QUALITY;
+    	}
+    	
         IKimConcept main = delegate.getObservables().size() > 0 ? delegate.getObservables().get(0).getMain() : null;
         Set<IKimConcept.Type> type = main == null
                 ? ((delegate.getObservables().size() > 0
@@ -122,4 +127,9 @@ public class EModel extends EKimObject implements IKimModel {
     public <T> T getAdapter(Class<T> adapter) {
         return null;
     }
+
+	@Override
+	public boolean isSemantic() {
+		return delegate.isSemantic();
+	}
 }

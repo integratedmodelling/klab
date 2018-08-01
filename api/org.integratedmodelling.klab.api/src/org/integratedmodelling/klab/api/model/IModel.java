@@ -192,4 +192,11 @@ public interface IModel
 	 */
 	boolean isInactive();
 
+	/**
+	 * True if model has concepts associated. Only false for the private non-semantic models.
+	 * 
+	 * @return true if semantic
+	 */
+	boolean isSemantic();
+
 }

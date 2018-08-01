@@ -2,6 +2,8 @@ package org.integratedmodelling.klab;
 
 import java.text.NumberFormat;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
@@ -19,6 +21,7 @@ import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
@@ -29,19 +32,25 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservationService;
+import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.model.Behavior;
 import org.integratedmodelling.klab.model.Namespace;
+import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Concept;
+import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.rest.Histogram;
 import org.integratedmodelling.klab.rest.Histogram.Builder;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
+import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
 
@@ -59,7 +68,7 @@ public enum Observations implements IObservationService {
 		return Resolver.INSTANCE.resolve(urn, context, scenarios);
 	}
 
-//	@Override
+	// @Override
 	public void releaseNamespace(String namespaceId, IMonitor monitor) throws KlabException {
 		// TODO remove all artifacts from local kbox
 	}
@@ -189,7 +198,7 @@ public enum Observations implements IObservationService {
 		ret.setObservable(observation.getObservable().getType().getDefinition());
 		ret.setSiblingCount(observation.groupSize());
 		ret.getSemantics().addAll(((Concept) observation.getObservable().getType()).getTypeSet());
-		
+
 		ISpace space = ((IScale) observation.getGeometry()).getSpace();
 		ITime time = ((IScale) observation.getGeometry()).getTime();
 
@@ -235,8 +244,8 @@ public enum Observations implements IObservationService {
 		if (observation instanceof IState) {
 			ret.setValueCount(observation.getScale().size());
 			if (observation.getScale().size() == 1) {
-			ret.setLiteralValue(formatValue(observation.getObservable(),
-					((IState) observation).get(observation.getScale().getLocator(0))));
+				ret.setLiteralValue(formatValue(observation.getObservable(),
+						((IState) observation).get(observation.getScale().getLocator(0))));
 			}
 		}
 
@@ -260,6 +269,14 @@ public enum Observations implements IObservationService {
 		}
 
 		return ret;
+	}
+
+	public Observer makeROIObserver(final SpatialExtent regionOfInterest, final Namespace namespace, IMonitor monitor) {
+		// TODO use configured concept from worldview!
+		final Observable observable = Observable.promote(Concepts.c("earth:Region"));
+		observable.setName("Region of interest");
+		observable.setOptional(true);
+		return new Observer(regionOfInterest, observable, (Namespace) namespace);
 	}
 
 }
