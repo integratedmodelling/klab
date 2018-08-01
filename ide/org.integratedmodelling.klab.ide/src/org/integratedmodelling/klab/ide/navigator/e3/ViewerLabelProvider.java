@@ -176,7 +176,11 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
         if (element instanceof IKimObserver)
 
         {
-            return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/realm.png");
+        	if (Type.EVENT == ((EObserver)element).getCoreObservableType()) {	
+        		return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/eventObservation.gif");
+        	} else {
+        		return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/subjectObservation.gif");
+        	}
         }
         if (element instanceof EResourceFolder) {
             return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/Database.png");

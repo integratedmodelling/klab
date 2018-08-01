@@ -35,13 +35,13 @@ import org.integratedmodelling.klab.utils.NameGenerator;
 
 public class KlabNavigatorActionProvider extends CommonActionProvider {
 
-	private static Map<String,Action> actions = new HashMap<>();
+	private static Map<String, KlabAction> actions = new HashMap<>();
     
     public KlabNavigatorActionProvider() {
 
         toolbar("New project...", "Create and load a new k.LAB project", "k-lab-icon-16.gif",
-                () -> KlabNavigatorActions.createProject()).saveAs("NewProject");
-
+                () -> KlabNavigatorActions.createProject()).activate().saveAs("NewProject");
+        
         action("Delete project", "Delete the selected project", "k-lab-icon-16.gif", EProject.class,
                 (project) -> KlabNavigatorActions.deleteProject(project));
         action("New namespace...", "Create a new namespace", "namespace-checked.png", EProject.class,
@@ -208,14 +208,11 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 
         @Override
         public boolean isEnabled() {
-
-        	if (descriptor.activate) {
-        		return true;
-        	}
         	
-            if (!Activator.engineMonitor().isRunning()) {
+            if (!descriptor.activate && !Activator.engineMonitor().isRunning()) {
                 return false;
             }
+            
             if (descriptor.action != null) {
                 ISelection selection = provider.getSelection();
                 if (!selection.isEmpty()) {
@@ -245,6 +242,12 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
                 Eclipse.INSTANCE.handleException(e);
             }
         }
+        
+        public void activate(boolean b) {
+        	System.out.println("ACTIVATING " + this.descriptor.title);
+        	this.descriptor.activate = b;
+        	setEnabled(b);
+        }
 
         @Override
         public String getId() {
@@ -252,7 +255,7 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
         }
     }
     
-    public static Action getAction(String id) {
+    public static KlabAction getAction(String id) {
     	return actions.get(id);
     }
 

@@ -84,7 +84,7 @@ public class KlabNavigatorActions {
 
     public static void addTestCase(ETestFolder folder) {
         WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(),
-                new NewScriptWizard(folder, folder.getEParent(EProject.class).getProject(), Role.SCRIPT));
+                new NewScriptWizard(folder, folder.getEParent(EProject.class).getProject(), Role.TESTCASE));
         dialog.create();
         dialog.open();
     }

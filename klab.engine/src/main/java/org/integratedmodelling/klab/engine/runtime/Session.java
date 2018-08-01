@@ -463,7 +463,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
      * @param request
      */
     @MessageHandler
-    private void handlerProjectModificationRequest(IMessage message, final ProjectModificationRequest request) {
+    private void handleProjectModificationRequest(IMessage message, final ProjectModificationRequest request) {
 
         Project project = Resources.INSTANCE.getProject(request.getProjectId());
 
@@ -480,10 +480,10 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
             File file = null;
             switch (message.getType()) {
             case CreateTestCase:
-                file = project.createTestCase(request.getAssetId(), request.getScriptName());
+                file = project.createTestCase(request.getAssetId(), request.getScriptName(), request.getScriptPath());
                 break;
             case CreateScript:
-                file = project.createScript(request.getAssetId(), request.getScriptName());
+                file = project.createScript(request.getAssetId(), request.getScriptName(), request.getScriptPath());
                 break;
             case CreateNamespace:
                 file = project.createNamespace(request.getAssetId(), false);

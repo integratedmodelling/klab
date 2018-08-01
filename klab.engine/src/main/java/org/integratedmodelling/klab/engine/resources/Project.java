@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimProject;
+import org.integratedmodelling.kim.templates.KimTemplates;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.knowledge.IProject;
@@ -118,24 +119,44 @@ public class Project implements IProject {
 		} catch (Exception e) {
 			throw new KlabIOException(e);
 		}
-		
+
 		return ret;
 
 	}
-	
+
 	@Override
 	public IKimProject getStatement() {
 		return delegate;
 	}
 
-    public File createScript(String namespaceId, String scriptName) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	public File createScript(String namespaceId, String scriptName, String scriptPath) {
+		
+		File ret = new File(getRoot() + File.separator + IKimProject.SCRIPT_FOLDER + File.separator
+				+ scriptPath.replaceAll("\\/", File.separator) + namespaceId.replace('.', File.separatorChar) + ".kim");
+		try (PrintWriter out = new PrintWriter(ret)) {
+			out.print(KimTemplates.scriptTemplate.replaceAll("__NAME__", namespaceId)
+					.replaceAll("__WORLDVIEW__", Resources.INSTANCE.getWorldview().getName())
+					.replaceAll("__SCRIPT_NAME__", scriptName));
+		} catch (Exception e) {
+			throw new KlabIOException(e);
+		}
 
-    public File createTestCase(String namespaceId, String scriptName) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+		return ret;
+	}
+
+	public File createTestCase(String namespaceId, String scriptName, String scriptPath) {
+		
+		File ret = new File(getRoot() + File.separator + IKimProject.TESTS_FOLDER + File.separator
+				+ scriptPath.replaceAll("\\/", File.separator) + namespaceId.replace('.', File.separatorChar) + ".kim");
+		try (PrintWriter out = new PrintWriter(ret)) {
+			out.print(KimTemplates.testCaseTemplate.replaceAll("__NAME__", namespaceId)
+					.replaceAll("__WORLDVIEW__", Resources.INSTANCE.getWorldview().getName())
+					.replaceAll("__TEST_NAME__", scriptName));
+		} catch (Exception e) {
+			throw new KlabIOException(e);
+		}
+
+		return ret;
+	}
 
 }
