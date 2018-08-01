@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.client.utils.JsonUtils;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
+import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigatorActionProvider;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
 import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
@@ -124,6 +125,7 @@ public class Klab {
 		switch (message.getType()) {
 		case EngineUp:
 			synchronizeProjectResources(message.getPayload(Capabilities.class).getLocalWorkspaceProjects());
+			KlabNavigatorActionProvider.getAction("NewProject").setEnabled(true);
 			KlabNavigator.refresh();
 			break;
 		case EngineDown:
@@ -132,6 +134,7 @@ public class Klab {
 					resourceCatalog.get(project).get(urn).setOnline(false);
 				}
 			}
+			KlabNavigatorActionProvider.getAction("NewProject").setEnabled(false);
 			KlabNavigator.refresh();
 			break;
 		case ProjectFileAdded:

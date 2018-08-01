@@ -205,6 +205,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             class="org.integratedmodelling.klab.ide.perspective.KlabPerspective"
+            icon="icons/k-lab-icon-16.gif"
             id="org.integratedmodelling.klab.ide.perspective.KlabPerspective"
             name="k.LAB">
       </perspective>

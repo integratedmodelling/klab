@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.ide.navigator.e3;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -33,10 +35,12 @@ import org.integratedmodelling.klab.utils.NameGenerator;
 
 public class KlabNavigatorActionProvider extends CommonActionProvider {
 
+	private static Map<String,Action> actions = new HashMap<>();
+    
     public KlabNavigatorActionProvider() {
 
         toolbar("New project...", "Create and load a new k.LAB project", "k-lab-icon-16.gif",
-                () -> KlabNavigatorActions.createProject());
+                () -> KlabNavigatorActions.createProject()).saveAs("NewProject");
 
         action("Delete project", "Delete the selected project", "k-lab-icon-16.gif", EProject.class,
                 (project) -> KlabNavigatorActions.deleteProject(project));
@@ -62,6 +66,8 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
                 (namespace) -> KlabNavigatorActions.deleteTestCase(namespace, wSite.getPage()));
         action("Bulk import resources...", "Bulk import from a directory or a web service URL", "Database.png",
                 EResourceFolder.class, (folder) -> KlabNavigatorActions.importResources(folder));
+        action("Copy URN", "Copy the resource's URN to the clipboard", "copy.gif", EResource.class,
+                (resource) -> Eclipse.INSTANCE.copyToClipboard(resource.getResource().getUrn())).activate();
         action("Edit resource", "Edit the selected resource", "resource.gif", EResource.class,
                 (resource) -> KlabNavigatorActions.editResource(resource));
         action("Delete resource", "Delete the selected resource", "resource.gif", EResource.class,
@@ -79,10 +85,23 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
         Function<ENavigatorItem, Boolean> checker;
         Consumer<ENavigatorItem> action;
         Runnable voidAction;
+        // 0 = with engine on; 1 = always active
+        boolean activate;
+        String saveAs;
+        
+        ActionDescriptor activate() {
+        	this.activate = true;
+        	return this;
+        }
+        
+        ActionDescriptor saveAs(String id) {
+        	this.saveAs = id;
+        	return this;
+        }
     }
 
     @SuppressWarnings("unchecked")
-    <T extends ENavigatorItem> void action(String title, String tooltip, String icon, Class<T> applicable,
+    <T extends ENavigatorItem> ActionDescriptor action(String title, String tooltip, String icon, Class<T> applicable,
             Consumer<T> action) {
 
         ActionDescriptor ad = new ActionDescriptor();
@@ -93,9 +112,11 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
         ad.action = (Consumer<ENavigatorItem>) action;
 
         contextualDescriptors.add(ad);
+        
+        return ad;
     }
 
-    <T extends ENavigatorItem> void toolbar(String title, String tooltip, String icon, Runnable action) {
+    <T extends ENavigatorItem> ActionDescriptor toolbar(String title, String tooltip, String icon, Runnable action) {
 
         ActionDescriptor ad = new ActionDescriptor();
         ad.title = title;
@@ -105,6 +126,8 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
         ad.voidAction = action;
 
         globalDescriptors.add(ad);
+        
+        return ad;
     }
 
     List<ActionDescriptor> contextualDescriptors = new ArrayList<>();
@@ -171,18 +194,25 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
         public KlabAction(ActionDescriptor descriptor) {
 
             this.descriptor = descriptor;
-
             this.page = wSite.getPage();
             this.provider = wSite.getSelectionProvider();
             this.setText(descriptor.title);
             this.setToolTipText(descriptor.tooltip);
             this.setImageDescriptor(
                     ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/" + descriptor.icon));
+            
+            if (descriptor.saveAs != null) {
+            	actions.put(descriptor.saveAs, this);
+            }
         }
 
         @Override
         public boolean isEnabled() {
 
+        	if (descriptor.activate) {
+        		return true;
+        	}
+        	
             if (!Activator.engineMonitor().isRunning()) {
                 return false;
             }
@@ -220,6 +250,10 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
         public String getId() {
             return NameGenerator.shortUUID();
         }
+    }
+    
+    public static Action getAction(String id) {
+    	return actions.get(id);
     }
 
 }

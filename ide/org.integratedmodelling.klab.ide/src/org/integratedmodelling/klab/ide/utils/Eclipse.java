@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.ide.utils;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -469,4 +472,12 @@ public enum Eclipse {
         //		NotificationsPlugin.getDefault().getService().notify(Collections.singletonList(notification));
     }
 
+    public void copyToClipboard(String string) {
+
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Clipboard clipboard = toolkit.getSystemClipboard();
+        StringSelection strSel = new StringSelection(string);
+        clipboard.setContents(strSel, null);
+
+    }
 }
