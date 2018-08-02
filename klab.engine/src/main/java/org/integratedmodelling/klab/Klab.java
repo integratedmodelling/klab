@@ -515,6 +515,8 @@ public enum Klab implements IRuntimeService {
 			IUserIdentity uid = ((Engine)rootIdentity).getDefaultEngineUser();
 			ret.setOwner(new IdentityReference(uid.getUsername(), uid.getEmailAddress(), uid.getLastLogin().toString()));
 		}
+		ret.getResourceAdapters().addAll(Resources.INSTANCE.getResourceAdapterTypes());
+		
 //		IUserIdentity parent = rootIdentity.getParentIdentity(IUserIdentity.class);
 
 		return ret;

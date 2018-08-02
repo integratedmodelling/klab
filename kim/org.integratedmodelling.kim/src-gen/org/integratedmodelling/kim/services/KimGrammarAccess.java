@@ -2898,16 +2898,19 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cVersionNumberParserRuleCall_8_1 = (RuleCall)cGroup_8.eContents().get(1);
 		private final Group cGroup_9 = (Group)cGroup.eContents().get(9);
 		private final Keyword cNumberSignKeyword_9_0 = (Keyword)cGroup_9.eContents().get(0);
-		private final RuleCall cLOWERCASE_IDTerminalRuleCall_9_1 = (RuleCall)cGroup_9.eContents().get(1);
+		private final Alternatives cAlternatives_9_1 = (Alternatives)cGroup_9.eContents().get(1);
+		private final RuleCall cLOWERCASE_IDTerminalRuleCall_9_1_0 = (RuleCall)cAlternatives_9_1.eContents().get(0);
+		private final RuleCall cLOWERCASE_DASHIDTerminalRuleCall_9_1_1 = (RuleCall)cAlternatives_9_1.eContents().get(1);
 		
 		///**
 		// * URN is 4 sections and admits a version number and a fragment (with only lowercase_id chars in it). It is
 		// * legal, but not required, to start with the default prefix urn:klab:
 		// */ UrnId:
-		//	'urn:klab:'? PathName ':' PathName ':' PathName ':' Path (':' VersionNumber)? ('#' LOWERCASE_ID)?;
+		//	'urn:klab:'? PathName ':' PathName ':' PathName ':' Path (':' VersionNumber)? ('#' (LOWERCASE_ID |
+		//	LOWERCASE_DASHID))?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'urn:klab:'? PathName ':' PathName ':' PathName ':' Path (':' VersionNumber)? ('#' LOWERCASE_ID)?
+		//'urn:klab:'? PathName ':' PathName ':' PathName ':' Path (':' VersionNumber)? ('#' (LOWERCASE_ID | LOWERCASE_DASHID))?
 		public Group getGroup() { return cGroup; }
 		
 		//'urn:klab:'?
@@ -2943,14 +2946,20 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//VersionNumber
 		public RuleCall getVersionNumberParserRuleCall_8_1() { return cVersionNumberParserRuleCall_8_1; }
 		
-		//('#' LOWERCASE_ID)?
+		//('#' (LOWERCASE_ID | LOWERCASE_DASHID))?
 		public Group getGroup_9() { return cGroup_9; }
 		
 		//'#'
 		public Keyword getNumberSignKeyword_9_0() { return cNumberSignKeyword_9_0; }
 		
+		//LOWERCASE_ID | LOWERCASE_DASHID
+		public Alternatives getAlternatives_9_1() { return cAlternatives_9_1; }
+		
 		//LOWERCASE_ID
-		public RuleCall getLOWERCASE_IDTerminalRuleCall_9_1() { return cLOWERCASE_IDTerminalRuleCall_9_1; }
+		public RuleCall getLOWERCASE_IDTerminalRuleCall_9_1_0() { return cLOWERCASE_IDTerminalRuleCall_9_1_0; }
+		
+		//LOWERCASE_DASHID
+		public RuleCall getLOWERCASE_DASHIDTerminalRuleCall_9_1_1() { return cLOWERCASE_DASHIDTerminalRuleCall_9_1_1; }
 	}
 	public class LocalFilePathElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.LocalFilePath");
@@ -3124,7 +3133,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	(urn=Urn 'as')?
 		//	concept=NamedObservableSemantics
 		//	docstring=STRING? ('extends' parents+=PathName (',' parents+=PathName)*)?
-		//	=> actions+=ActionSpecification* ('observing'
+		//	actions+=ActionSpecification* ('observing'
 		//	// validator will ensure that the semantics has an associated value
 		//	states+=ObservableSemantics (',' states+=ObservableSemantics)*)? ('with'
 		//	// validator will ensure that the semantics has an associated value
@@ -3133,14 +3142,14 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(urn=Urn 'as')? concept=NamedObservableSemantics docstring=STRING? ('extends' parents+=PathName (','
-		//parents+=PathName)*)? => actions+=ActionSpecification* ('observing' // validator will ensure that the semantics has an associated value
+		//parents+=PathName)*)? actions+=ActionSpecification* ('observing' // validator will ensure that the semantics has an associated value
 		//states+=ObservableSemantics (',' states+=ObservableSemantics)*)? ('with' // validator will ensure that the semantics has an associated value
 		//observations+=ObserveStatementBody (',' observations+=ObserveStatementBody)*)? ('using' accessor=Function?)? & ('with'
 		//'metadata' metadata=Metadata)? ('with' 'documentation' documentation=Metadata)?
 		public UnorderedGroup getUnorderedGroup() { return cUnorderedGroup; }
 		
 		//(urn=Urn 'as')? concept=NamedObservableSemantics docstring=STRING? ('extends' parents+=PathName (','
-		//parents+=PathName)*)? => actions+=ActionSpecification* ('observing' // validator will ensure that the semantics has an associated value
+		//parents+=PathName)*)? actions+=ActionSpecification* ('observing' // validator will ensure that the semantics has an associated value
 		//states+=ObservableSemantics (',' states+=ObservableSemantics)*)? ('with' // validator will ensure that the semantics has an associated value
 		//observations+=ObserveStatementBody (',' observations+=ObserveStatementBody)*)? ('using' accessor=Function?)?
 		public Group getGroup_0() { return cGroup_0; }
@@ -3193,7 +3202,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//PathName
 		public RuleCall getParentsPathNameParserRuleCall_0_3_2_1_0() { return cParentsPathNameParserRuleCall_0_3_2_1_0; }
 		
-		//=> actions+=ActionSpecification*
+		//actions+=ActionSpecification*
 		public Assignment getActionsAssignment_0_4() { return cActionsAssignment_0_4; }
 		
 		//ActionSpecification
@@ -8504,51 +8513,77 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	public class PathNameElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.PathName");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final RuleCall cLOWERCASE_IDTerminalRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
+		private final Alternatives cAlternatives_0 = (Alternatives)cGroup.eContents().get(0);
+		private final RuleCall cLOWERCASE_IDTerminalRuleCall_0_0 = (RuleCall)cAlternatives_0.eContents().get(0);
+		private final RuleCall cLOWERCASE_DASHIDTerminalRuleCall_0_1 = (RuleCall)cAlternatives_0.eContents().get(1);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
 		private final Keyword cFullStopKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
-		private final RuleCall cLOWERCASE_IDTerminalRuleCall_1_1 = (RuleCall)cGroup_1.eContents().get(1);
+		private final Alternatives cAlternatives_1_1 = (Alternatives)cGroup_1.eContents().get(1);
+		private final RuleCall cLOWERCASE_IDTerminalRuleCall_1_1_0 = (RuleCall)cAlternatives_1_1.eContents().get(0);
+		private final RuleCall cLOWERCASE_DASHIDTerminalRuleCall_1_1_1 = (RuleCall)cAlternatives_1_1.eContents().get(1);
 		
 		//PathName:
-		//	LOWERCASE_ID ('.' LOWERCASE_ID)*;
+		//	(LOWERCASE_ID | LOWERCASE_DASHID) ('.' (LOWERCASE_ID | LOWERCASE_DASHID))*;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//LOWERCASE_ID ('.' LOWERCASE_ID)*
+		//(LOWERCASE_ID | LOWERCASE_DASHID) ('.' (LOWERCASE_ID | LOWERCASE_DASHID))*
 		public Group getGroup() { return cGroup; }
 		
-		//LOWERCASE_ID
-		public RuleCall getLOWERCASE_IDTerminalRuleCall_0() { return cLOWERCASE_IDTerminalRuleCall_0; }
+		//LOWERCASE_ID | LOWERCASE_DASHID
+		public Alternatives getAlternatives_0() { return cAlternatives_0; }
 		
-		//('.' LOWERCASE_ID)*
+		//LOWERCASE_ID
+		public RuleCall getLOWERCASE_IDTerminalRuleCall_0_0() { return cLOWERCASE_IDTerminalRuleCall_0_0; }
+		
+		//LOWERCASE_DASHID
+		public RuleCall getLOWERCASE_DASHIDTerminalRuleCall_0_1() { return cLOWERCASE_DASHIDTerminalRuleCall_0_1; }
+		
+		//('.' (LOWERCASE_ID | LOWERCASE_DASHID))*
 		public Group getGroup_1() { return cGroup_1; }
 		
 		//'.'
 		public Keyword getFullStopKeyword_1_0() { return cFullStopKeyword_1_0; }
 		
+		//LOWERCASE_ID | LOWERCASE_DASHID
+		public Alternatives getAlternatives_1_1() { return cAlternatives_1_1; }
+		
 		//LOWERCASE_ID
-		public RuleCall getLOWERCASE_IDTerminalRuleCall_1_1() { return cLOWERCASE_IDTerminalRuleCall_1_1; }
+		public RuleCall getLOWERCASE_IDTerminalRuleCall_1_1_0() { return cLOWERCASE_IDTerminalRuleCall_1_1_0; }
+		
+		//LOWERCASE_DASHID
+		public RuleCall getLOWERCASE_DASHIDTerminalRuleCall_1_1_1() { return cLOWERCASE_DASHIDTerminalRuleCall_1_1_1; }
 	}
 	public class PathElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.Path");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final RuleCall cLOWERCASE_IDTerminalRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
+		private final Alternatives cAlternatives_0 = (Alternatives)cGroup.eContents().get(0);
+		private final RuleCall cLOWERCASE_IDTerminalRuleCall_0_0 = (RuleCall)cAlternatives_0.eContents().get(0);
+		private final RuleCall cLOWERCASE_DASHIDTerminalRuleCall_0_1 = (RuleCall)cAlternatives_0.eContents().get(1);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
 		private final Alternatives cAlternatives_1_0 = (Alternatives)cGroup_1.eContents().get(0);
 		private final Keyword cFullStopKeyword_1_0_0 = (Keyword)cAlternatives_1_0.eContents().get(0);
 		private final Keyword cSolidusKeyword_1_0_1 = (Keyword)cAlternatives_1_0.eContents().get(1);
-		private final RuleCall cLOWERCASE_IDTerminalRuleCall_1_1 = (RuleCall)cGroup_1.eContents().get(1);
+		private final Alternatives cAlternatives_1_1 = (Alternatives)cGroup_1.eContents().get(1);
+		private final RuleCall cLOWERCASE_IDTerminalRuleCall_1_1_0 = (RuleCall)cAlternatives_1_1.eContents().get(0);
+		private final RuleCall cLOWERCASE_DASHIDTerminalRuleCall_1_1_1 = (RuleCall)cAlternatives_1_1.eContents().get(1);
 		
 		//Path:
-		//	LOWERCASE_ID (('.' | '/') LOWERCASE_ID)*;
+		//	(LOWERCASE_ID | LOWERCASE_DASHID) (('.' | '/') (LOWERCASE_ID | LOWERCASE_DASHID))*;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//LOWERCASE_ID (('.' | '/') LOWERCASE_ID)*
+		//(LOWERCASE_ID | LOWERCASE_DASHID) (('.' | '/') (LOWERCASE_ID | LOWERCASE_DASHID))*
 		public Group getGroup() { return cGroup; }
 		
-		//LOWERCASE_ID
-		public RuleCall getLOWERCASE_IDTerminalRuleCall_0() { return cLOWERCASE_IDTerminalRuleCall_0; }
+		//LOWERCASE_ID | LOWERCASE_DASHID
+		public Alternatives getAlternatives_0() { return cAlternatives_0; }
 		
-		//(('.' | '/') LOWERCASE_ID)*
+		//LOWERCASE_ID
+		public RuleCall getLOWERCASE_IDTerminalRuleCall_0_0() { return cLOWERCASE_IDTerminalRuleCall_0_0; }
+		
+		//LOWERCASE_DASHID
+		public RuleCall getLOWERCASE_DASHIDTerminalRuleCall_0_1() { return cLOWERCASE_DASHIDTerminalRuleCall_0_1; }
+		
+		//(('.' | '/') (LOWERCASE_ID | LOWERCASE_DASHID))*
 		public Group getGroup_1() { return cGroup_1; }
 		
 		//'.' | '/'
@@ -8560,8 +8595,14 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'/'
 		public Keyword getSolidusKeyword_1_0_1() { return cSolidusKeyword_1_0_1; }
 		
+		//LOWERCASE_ID | LOWERCASE_DASHID
+		public Alternatives getAlternatives_1_1() { return cAlternatives_1_1; }
+		
 		//LOWERCASE_ID
-		public RuleCall getLOWERCASE_IDTerminalRuleCall_1_1() { return cLOWERCASE_IDTerminalRuleCall_1_1; }
+		public RuleCall getLOWERCASE_IDTerminalRuleCall_1_1_0() { return cLOWERCASE_IDTerminalRuleCall_1_1_0; }
+		
+		//LOWERCASE_DASHID
+		public RuleCall getLOWERCASE_DASHIDTerminalRuleCall_1_1_1() { return cLOWERCASE_DASHIDTerminalRuleCall_1_1_1; }
 	}
 	public class NamespaceIdElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.NamespaceId");
@@ -9319,7 +9360,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	// * URN is 4 sections and admits a version number and a fragment (with only lowercase_id chars in it). It is
 	// * legal, but not required, to start with the default prefix urn:klab:
 	// */ UrnId:
-	//	'urn:klab:'? PathName ':' PathName ':' PathName ':' Path (':' VersionNumber)? ('#' LOWERCASE_ID)?;
+	//	'urn:klab:'? PathName ':' PathName ':' PathName ':' Path (':' VersionNumber)? ('#' (LOWERCASE_ID |
+	//	LOWERCASE_DASHID))?;
 	public UrnIdElements getUrnIdAccess() {
 		return pUrnId;
 	}
@@ -9359,7 +9401,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	(urn=Urn 'as')?
 	//	concept=NamedObservableSemantics
 	//	docstring=STRING? ('extends' parents+=PathName (',' parents+=PathName)*)?
-	//	=> actions+=ActionSpecification* ('observing'
+	//	actions+=ActionSpecification* ('observing'
 	//	// validator will ensure that the semantics has an associated value
 	//	states+=ObservableSemantics (',' states+=ObservableSemantics)*)? ('with'
 	//	// validator will ensure that the semantics has an associated value
@@ -10063,7 +10105,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//PathName:
-	//	LOWERCASE_ID ('.' LOWERCASE_ID)*;
+	//	(LOWERCASE_ID | LOWERCASE_DASHID) ('.' (LOWERCASE_ID | LOWERCASE_DASHID))*;
 	public PathNameElements getPathNameAccess() {
 		return pPathName;
 	}
@@ -10073,7 +10115,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Path:
-	//	LOWERCASE_ID (('.' | '/') LOWERCASE_ID)*;
+	//	(LOWERCASE_ID | LOWERCASE_DASHID) (('.' | '/') (LOWERCASE_ID | LOWERCASE_DASHID))*;
 	public PathElements getPathAccess() {
 		return pPath;
 	}

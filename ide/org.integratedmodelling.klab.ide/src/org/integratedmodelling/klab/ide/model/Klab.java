@@ -15,7 +15,6 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.client.utils.JsonUtils;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
-import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigatorActionProvider;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
 import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
@@ -47,7 +46,7 @@ public class Klab {
 	 * view.
 	 */
 	private Map<String, Map<String, EResourceReference>> resourceCatalog = Collections.synchronizedMap(new HashMap<>());
-
+	private Set<String> resourceAdapters = new HashSet<>();
 
 	public void synchronizeProjectResources(String projectName, File projectRoot) {
 
@@ -104,6 +103,15 @@ public class Klab {
 		}
 	}
 
+	/**
+	 * All the resource adapters supported by the engine.
+	 * 
+	 * @return resource adapters
+	 */
+	public Collection<String> getResourceAdapters() {
+		return resourceAdapters;
+	}
+	
 	/*
 	 * called by the session peer, the true receiver for the message
 	 */
@@ -125,6 +133,7 @@ public class Klab {
 		switch (message.getType()) {
 		case EngineUp:
 			synchronizeProjectResources(message.getPayload(Capabilities.class).getLocalWorkspaceProjects());
+			resourceAdapters.addAll(message.getPayload(Capabilities.class).getResourceAdapters());
 			KlabNavigator.refresh();
 			break;
 		case EngineDown:
@@ -133,6 +142,7 @@ public class Klab {
 					resourceCatalog.get(project).get(urn).setOnline(false);
 				}
 			}
+			resourceAdapters.clear();
 			KlabNavigator.refresh();
 			break;
 		case ProjectFileAdded:

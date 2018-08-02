@@ -190,19 +190,22 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 	@Override
 	public Future<ISubject> observe(String urn, String... scenarios) {
-		
+
 		touch();
 		IKimObject object = Resources.INSTANCE.getModelObject(urn);
 
 		if (!(object instanceof Observer)) {
 
 			if (regionOfInterest != null && object instanceof KimObject) {
-				INamespace namespace = ((KimObject)object).getNamespace();
-				Observer observer = Observations.INSTANCE.makeROIObserver(regionOfInterest, (Namespace) namespace, monitor);
+				INamespace namespace = ((KimObject) object).getNamespace();
+				Observer observer = Observations.INSTANCE.makeROIObserver(regionOfInterest, (Namespace) namespace,
+						monitor);
 				try {
-					ISubject subject = new ObserveContextTask(this, observer, CollectionUtils.arrayToList(scenarios)).get();
+					ISubject subject = new ObserveContextTask(this, observer, CollectionUtils.arrayToList(scenarios))
+							.get();
 					if (subject != null) {
-						// the inner task gets lost - should not matter as this is simply handling an asynchronous 
+						// the inner task gets lost - should not matter as this is simply handling an
+						// asynchronous
 						// UI action.
 						subject.observe(urn);
 						return ConcurrentUtils.constantFuture(subject);
@@ -374,13 +377,20 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			monitor.error("cannot import resource: project " + request.getProjectName() + " is unknown");
 		} else {
 			new Thread() {
-
 				@Override
 				public void run() {
-					IResource resource = Resources.INSTANCE.importResource(request.getImportUrl(), project);
-					if (resource != null) {
-						monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
-								((Resource) resource).getReference());
+					if (request.isBulkImport()) {
+						for (IResource resource : Resources.INSTANCE.importResources(request.getImportUrl(), project,
+								request.getAdapter())) {
+							monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
+									((Resource) resource).getReference());
+						}
+					} else {
+						IResource resource = Resources.INSTANCE.importResource(request.getImportUrl(), project);
+						if (resource != null) {
+							monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
+									((Resource) resource).getReference());
+						}
 					}
 				}
 

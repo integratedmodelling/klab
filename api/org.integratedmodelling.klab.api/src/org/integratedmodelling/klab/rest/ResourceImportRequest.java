@@ -7,6 +7,7 @@ public class ResourceImportRequest {
 	private URL importUrl;
 	private String adapter;
 	private String projectName;
+	private boolean bulkImport;
 
 	public ResourceImportRequest() {
 	}
@@ -38,6 +39,14 @@ public class ResourceImportRequest {
 
 	public void setProjectName(String projectName) {
 		this.projectName = projectName;
+	}
+
+	public boolean isBulkImport() {
+		return bulkImport;
+	}
+
+	public void setBulkImport(boolean bulkImport) {
+		this.bulkImport = bulkImport;
 	}
 
 }

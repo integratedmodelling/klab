@@ -232,7 +232,7 @@ Import:
  * legal, but not required, to start with the default prefix urn:klab:
  */
 UrnId:
-	('urn:klab:')? PathName ':'  PathName ':' PathName ':' Path (':' VersionNumber)? ('#' LOWERCASE_ID)?;
+	('urn:klab:')? PathName ':'  PathName ':' PathName ':' Path (':' VersionNumber)? ('#' (LOWERCASE_ID|LOWERCASE_DASHID))?;
 	
 /**
  * Local file paths become locally based URNs and can be used wherever URNs are accepted. Their interpretation depends
@@ -837,11 +837,11 @@ terminal LOWERCASE_DASHID:
 	('a'..'z') ('a'..'z' | '0'..'9'| '-')*;
 
 PathName:
-	LOWERCASE_ID ('.' LOWERCASE_ID)*
+	(LOWERCASE_ID|LOWERCASE_DASHID) ('.' (LOWERCASE_ID|LOWERCASE_DASHID))*
 ;
 
 Path:
-	LOWERCASE_ID (('.' | '/') LOWERCASE_ID)*
+	(LOWERCASE_ID|LOWERCASE_DASHID) (('.' | '/') (LOWERCASE_ID|LOWERCASE_DASHID))*
 ;
 
 terminal SEPARATOR:

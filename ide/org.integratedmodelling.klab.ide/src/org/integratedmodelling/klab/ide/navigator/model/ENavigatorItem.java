@@ -28,7 +28,6 @@ public abstract class ENavigatorItem implements IAdaptable {
 		if (cls.isAssignableFrom(this.getClass())) {
 			return (T) this;
 		}
-		ENavigatorItem parent = getEParent();
 		return parent == null ? null : parent.getEParent(cls);
 	}
 

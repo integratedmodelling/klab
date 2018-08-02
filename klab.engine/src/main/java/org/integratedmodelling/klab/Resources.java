@@ -804,7 +804,7 @@ public enum Resources implements IResourceService {
 		if (rdef.exists()) {
 			ResourceReference rref = JsonUtils.load(rdef, ResourceReference.class);
 			if (!getLocalResourceCatalog().containsKey(rref.getUrn())) {
-				Logging.INSTANCE.info("synchronizing project resource " + rref.getUrn());
+//				Logging.INSTANCE.info("synchronizing project resource " + rref.getUrn());
 				getLocalResourceCatalog().put(rref.getUrn(), new Resource(rref));
 			}
 			return rref;
@@ -872,5 +872,9 @@ public enum Resources implements IResourceService {
 	 */
 	public IKimLoader getLoader() {
 		return loader;
+	}
+
+	public Collection<String> getResourceAdapterTypes() {
+		return resourceAdapters.keySet();
 	}
 }

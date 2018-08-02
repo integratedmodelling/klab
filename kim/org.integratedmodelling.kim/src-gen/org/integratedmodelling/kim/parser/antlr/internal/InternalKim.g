@@ -5092,13 +5092,23 @@ ruleUrnId returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
 				$current.merge(kw);
 				newLeafNode(kw, grammarAccess.getUrnIdAccess().getNumberSignKeyword_9_0());
 			}
-			this_LOWERCASE_ID_11=RULE_LOWERCASE_ID
-			{
-				$current.merge(this_LOWERCASE_ID_11);
-			}
-			{
-				newLeafNode(this_LOWERCASE_ID_11, grammarAccess.getUrnIdAccess().getLOWERCASE_IDTerminalRuleCall_9_1());
-			}
+			(
+				this_LOWERCASE_ID_11=RULE_LOWERCASE_ID
+				{
+					$current.merge(this_LOWERCASE_ID_11);
+				}
+				{
+					newLeafNode(this_LOWERCASE_ID_11, grammarAccess.getUrnIdAccess().getLOWERCASE_IDTerminalRuleCall_9_1_0());
+				}
+				    |
+				this_LOWERCASE_DASHID_12=RULE_LOWERCASE_DASHID
+				{
+					$current.merge(this_LOWERCASE_DASHID_12);
+				}
+				{
+					newLeafNode(this_LOWERCASE_DASHID_12, grammarAccess.getUrnIdAccess().getLOWERCASE_DASHIDTerminalRuleCall_9_1_1());
+				}
+			)
 		)?
 	)
 ;
@@ -5418,10 +5428,6 @@ ruleObserveStatementBody returns [EObject current=null]
 								)*
 							)?
 							(
-								((
-									ruleActionSpecification
-								)
-								)=>
 								(
 									{
 										newCompositeNode(grammarAccess.getObserveStatementBodyAccess().getActionsActionSpecificationParserRuleCall_0_4_0());
@@ -14616,26 +14622,46 @@ rulePathName returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken(
 	leaveRule();
 }:
 	(
-		this_LOWERCASE_ID_0=RULE_LOWERCASE_ID
-		{
-			$current.merge(this_LOWERCASE_ID_0);
-		}
-		{
-			newLeafNode(this_LOWERCASE_ID_0, grammarAccess.getPathNameAccess().getLOWERCASE_IDTerminalRuleCall_0());
-		}
+		(
+			this_LOWERCASE_ID_0=RULE_LOWERCASE_ID
+			{
+				$current.merge(this_LOWERCASE_ID_0);
+			}
+			{
+				newLeafNode(this_LOWERCASE_ID_0, grammarAccess.getPathNameAccess().getLOWERCASE_IDTerminalRuleCall_0_0());
+			}
+			    |
+			this_LOWERCASE_DASHID_1=RULE_LOWERCASE_DASHID
+			{
+				$current.merge(this_LOWERCASE_DASHID_1);
+			}
+			{
+				newLeafNode(this_LOWERCASE_DASHID_1, grammarAccess.getPathNameAccess().getLOWERCASE_DASHIDTerminalRuleCall_0_1());
+			}
+		)
 		(
 			kw='.'
 			{
 				$current.merge(kw);
 				newLeafNode(kw, grammarAccess.getPathNameAccess().getFullStopKeyword_1_0());
 			}
-			this_LOWERCASE_ID_2=RULE_LOWERCASE_ID
-			{
-				$current.merge(this_LOWERCASE_ID_2);
-			}
-			{
-				newLeafNode(this_LOWERCASE_ID_2, grammarAccess.getPathNameAccess().getLOWERCASE_IDTerminalRuleCall_1_1());
-			}
+			(
+				this_LOWERCASE_ID_3=RULE_LOWERCASE_ID
+				{
+					$current.merge(this_LOWERCASE_ID_3);
+				}
+				{
+					newLeafNode(this_LOWERCASE_ID_3, grammarAccess.getPathNameAccess().getLOWERCASE_IDTerminalRuleCall_1_1_0());
+				}
+				    |
+				this_LOWERCASE_DASHID_4=RULE_LOWERCASE_DASHID
+				{
+					$current.merge(this_LOWERCASE_DASHID_4);
+				}
+				{
+					newLeafNode(this_LOWERCASE_DASHID_4, grammarAccess.getPathNameAccess().getLOWERCASE_DASHIDTerminalRuleCall_1_1_1());
+				}
+			)
 		)*
 	)
 ;
@@ -14656,13 +14682,23 @@ rulePath returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
 	leaveRule();
 }:
 	(
-		this_LOWERCASE_ID_0=RULE_LOWERCASE_ID
-		{
-			$current.merge(this_LOWERCASE_ID_0);
-		}
-		{
-			newLeafNode(this_LOWERCASE_ID_0, grammarAccess.getPathAccess().getLOWERCASE_IDTerminalRuleCall_0());
-		}
+		(
+			this_LOWERCASE_ID_0=RULE_LOWERCASE_ID
+			{
+				$current.merge(this_LOWERCASE_ID_0);
+			}
+			{
+				newLeafNode(this_LOWERCASE_ID_0, grammarAccess.getPathAccess().getLOWERCASE_IDTerminalRuleCall_0_0());
+			}
+			    |
+			this_LOWERCASE_DASHID_1=RULE_LOWERCASE_DASHID
+			{
+				$current.merge(this_LOWERCASE_DASHID_1);
+			}
+			{
+				newLeafNode(this_LOWERCASE_DASHID_1, grammarAccess.getPathAccess().getLOWERCASE_DASHIDTerminalRuleCall_0_1());
+			}
+		)
 		(
 			(
 				kw='.'
@@ -14677,13 +14713,23 @@ rulePath returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
 					newLeafNode(kw, grammarAccess.getPathAccess().getSolidusKeyword_1_0_1());
 				}
 			)
-			this_LOWERCASE_ID_3=RULE_LOWERCASE_ID
-			{
-				$current.merge(this_LOWERCASE_ID_3);
-			}
-			{
-				newLeafNode(this_LOWERCASE_ID_3, grammarAccess.getPathAccess().getLOWERCASE_IDTerminalRuleCall_1_1());
-			}
+			(
+				this_LOWERCASE_ID_4=RULE_LOWERCASE_ID
+				{
+					$current.merge(this_LOWERCASE_ID_4);
+				}
+				{
+					newLeafNode(this_LOWERCASE_ID_4, grammarAccess.getPathAccess().getLOWERCASE_IDTerminalRuleCall_1_1_0());
+				}
+				    |
+				this_LOWERCASE_DASHID_5=RULE_LOWERCASE_DASHID
+				{
+					$current.merge(this_LOWERCASE_DASHID_5);
+				}
+				{
+					newLeafNode(this_LOWERCASE_DASHID_5, grammarAccess.getPathAccess().getLOWERCASE_DASHIDTerminalRuleCall_1_1_1());
+				}
+			)
 		)*
 	)
 ;

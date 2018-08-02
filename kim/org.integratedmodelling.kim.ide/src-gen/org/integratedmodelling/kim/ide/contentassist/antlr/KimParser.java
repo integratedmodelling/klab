@@ -82,6 +82,7 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getNamespaceAccess().getAlternatives_2(), "rule__Namespace__Alternatives_2");
 					put(grammarAccess.getNamespaceAccess().getAlternatives_5_3_2(), "rule__Namespace__Alternatives_5_3_2");
 					put(grammarAccess.getImportAccess().getAlternatives_0_0(), "rule__Import__Alternatives_0_0");
+					put(grammarAccess.getUrnIdAccess().getAlternatives_9_1(), "rule__UrnId__Alternatives_9_1");
 					put(grammarAccess.getLocalFilePathAccess().getAlternatives_0(), "rule__LocalFilePath__Alternatives_0");
 					put(grammarAccess.getLocalFilePathAccess().getAlternatives_1_1(), "rule__LocalFilePath__Alternatives_1_1");
 					put(grammarAccess.getObservableSemanticsAccess().getAlternatives_3_4(), "rule__ObservableSemantics__Alternatives_3_4");
@@ -176,7 +177,11 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getNumberAccess().getAlternatives_0(), "rule__Number__Alternatives_0");
 					put(grammarAccess.getNumberAccess().getExponentialAlternatives_3_0_0_0(), "rule__Number__ExponentialAlternatives_3_0_0_0");
 					put(grammarAccess.getNumberAccess().getAlternatives_3_0_1(), "rule__Number__Alternatives_3_0_1");
+					put(grammarAccess.getPathNameAccess().getAlternatives_0(), "rule__PathName__Alternatives_0");
+					put(grammarAccess.getPathNameAccess().getAlternatives_1_1(), "rule__PathName__Alternatives_1_1");
+					put(grammarAccess.getPathAccess().getAlternatives_0(), "rule__Path__Alternatives_0");
 					put(grammarAccess.getPathAccess().getAlternatives_1_0(), "rule__Path__Alternatives_1_0");
+					put(grammarAccess.getPathAccess().getAlternatives_1_1(), "rule__Path__Alternatives_1_1");
 					put(grammarAccess.getPropertyIdAccess().getAlternatives_0(), "rule__PropertyId__Alternatives_0");
 					put(grammarAccess.getPropertyIdAccess().getAlternatives_2(), "rule__PropertyId__Alternatives_2");
 					put(grammarAccess.getVersionNumberAccess().getAlternatives_3(), "rule__VersionNumber__Alternatives_3");
