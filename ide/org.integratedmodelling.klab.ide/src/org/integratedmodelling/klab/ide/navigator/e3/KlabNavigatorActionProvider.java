@@ -20,6 +20,7 @@ import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import org.eclipse.ui.navigator.ICommonViewerSite;
 import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 import org.eclipse.wb.swt.ResourceManager;
+import org.integratedmodelling.klab.api.resources.ResourceUtils;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
@@ -36,227 +37,230 @@ import org.integratedmodelling.klab.utils.NameGenerator;
 public class KlabNavigatorActionProvider extends CommonActionProvider {
 
 	private static Map<String, KlabAction> actions = new HashMap<>();
-    
-    public KlabNavigatorActionProvider() {
 
-        toolbar("New project...", "Create and load a new k.LAB project", "k-lab-icon-16.gif",
-                () -> KlabNavigatorActions.createProject()).activate().saveAs("NewProject");
-        
-        action("Delete project", "Delete the selected project", "k-lab-icon-16.gif", EProject.class,
-                (project) -> KlabNavigatorActions.deleteProject(project));
-        action("New namespace...", "Create a new namespace", "namespace-checked.png", EProject.class,
-                (project) -> KlabNavigatorActions.addNamespace(project));
-        action("Delete namespace", "Delete the selected namespace", "namespace-checked.png", ENamespace.class,
-                (namespace) -> KlabNavigatorActions.deleteNamespace(namespace, wSite.getPage()));
-        action("New script...", "Create a new script file", "script.gif", EScriptFolder.class,
-                (folder) -> KlabNavigatorActions.addScript(folder));
-        action("New test case...", "Create a new test case", "test.gif", ETestFolder.class,
-                (folder) -> KlabNavigatorActions.addTestCase(folder));
-        action("Run test suite", "Run all the scripts in this folder as a test suite", "scripts.gif", ETestFolder.class,
-                (folder) -> KlabNavigatorActions.runTestSuite(folder));
-        action("View test reports", "View the test reports of all saved runs", "scripts.gif", ETestFolder.class,
-                (folder) -> KlabNavigatorActions.viewTestReports(folder));
-        action("Run script", "Delete the selected script", "script.gif", EScript.class,
-                (namespace) -> KlabNavigatorActions.runScript(namespace));
-        action("Run test case", "Delete the selected test case", "test.gif", ETestCase.class,
-                (namespace) -> KlabNavigatorActions.runTestCase(namespace));
-        action("Delete script", "Delete the selected script", "script.gif", EScript.class,
-                (namespace) -> KlabNavigatorActions.deleteScript(namespace, wSite.getPage()));
-        action("Delete test case", "Delete the selected test case", "test.gif", ETestCase.class,
-                (namespace) -> KlabNavigatorActions.deleteTestCase(namespace, wSite.getPage()));
-        action("Bulk import resources...", "Bulk import from a directory or a web service URL", "Database.png",
-                EResourceFolder.class, (folder) -> KlabNavigatorActions.importResources(folder));
-        action("Copy URN", "Copy the resource's URN to the clipboard", "copy.gif", EResource.class,
-                (resource) -> Eclipse.INSTANCE.copyToClipboard(resource.getResource().getUrn())).activate();
-        action("Edit resource", "Edit the selected resource", "resource.gif", EResource.class,
-                (resource) -> KlabNavigatorActions.editResource(resource));
-        action("Delete resource", "Delete the selected resource", "resource.gif", EResource.class,
-                (resource) -> KlabNavigatorActions.deleteResource(resource));
-    }
+	public KlabNavigatorActionProvider() {
 
-    private ICommonViewerWorkbenchSite wSite;
-    private boolean globalCreated;
+		toolbar("New project...", "Create and load a new k.LAB project", "k-lab-icon-16.gif",
+				() -> KlabNavigatorActions.createProject()).activate().saveAs("NewProject");
 
-    static class ActionDescriptor {
+		action("Delete project", "Delete the selected project", "k-lab-icon-16.gif", EProject.class,
+				(project) -> KlabNavigatorActions.deleteProject(project));
+		action("New namespace...", "Create a new namespace", "namespace-checked.png", EProject.class,
+				(project) -> KlabNavigatorActions.addNamespace(project));
+		action("Delete namespace", "Delete the selected namespace", "namespace-checked.png", ENamespace.class,
+				(namespace) -> KlabNavigatorActions.deleteNamespace(namespace, wSite.getPage()));
+		action("New script...", "Create a new script file", "script.gif", EScriptFolder.class,
+				(folder) -> KlabNavigatorActions.addScript(folder));
+		action("New test case...", "Create a new test case", "test.gif", ETestFolder.class,
+				(folder) -> KlabNavigatorActions.addTestCase(folder));
+		action("Run test suite", "Run all the scripts in this folder as a test suite", "scripts.gif", ETestFolder.class,
+				(folder) -> KlabNavigatorActions.runTestSuite(folder));
+		action("View test reports", "View the test reports of all saved runs", "scripts.gif", ETestFolder.class,
+				(folder) -> KlabNavigatorActions.viewTestReports(folder));
+		action("Run script", "Delete the selected script", "script.gif", EScript.class,
+				(namespace) -> KlabNavigatorActions.runScript(namespace));
+		action("Run test case", "Delete the selected test case", "test.gif", ETestCase.class,
+				(namespace) -> KlabNavigatorActions.runTestCase(namespace));
+		action("Delete script", "Delete the selected script", "script.gif", EScript.class,
+				(namespace) -> KlabNavigatorActions.deleteScript(namespace, wSite.getPage()));
+		action("Delete test case", "Delete the selected test case", "test.gif", ETestCase.class,
+				(namespace) -> KlabNavigatorActions.deleteTestCase(namespace, wSite.getPage()));
+		action("Bulk import resources...", "Bulk import from a directory or a web service URL", "Database.png",
+				EResourceFolder.class, (folder) -> KlabNavigatorActions.importResources(folder));
+		action("Copy URN", "Copy the resource's URN to the clipboard", "copy.gif", EResource.class,
+				(resource) -> Eclipse.INSTANCE.copyToClipboard(resource.getResource().getUrn())).activate();
+		action("Copy shape", "Copy the resource's bounding box to the clipboard", "copy.gif", EResource.class,
+				(resource) -> Eclipse.INSTANCE
+						.copyToClipboard(ResourceUtils.extractShapeSpecification(resource.getResource()))).activate();
+		action("Edit resource", "Edit the selected resource", "resource.gif", EResource.class,
+				(resource) -> KlabNavigatorActions.editResource(resource));
+		action("Delete resource", "Delete the selected resource", "resource.gif", EResource.class,
+				(resource) -> KlabNavigatorActions.deleteResource(resource));
+	}
 
-        String title;
-        String tooltip;
-        String icon;
-        Function<ENavigatorItem, Boolean> checker;
-        Consumer<ENavigatorItem> action;
-        Runnable voidAction;
-        // 0 = with engine on; 1 = always active
-        boolean activate;
-        String saveAs;
-        
-        ActionDescriptor activate() {
-        	this.activate = true;
-        	return this;
-        }
-        
-        ActionDescriptor saveAs(String id) {
-        	this.saveAs = id;
-        	return this;
-        }
-    }
+	private ICommonViewerWorkbenchSite wSite;
+	private boolean globalCreated;
 
-    @SuppressWarnings("unchecked")
-    <T extends ENavigatorItem> ActionDescriptor action(String title, String tooltip, String icon, Class<T> applicable,
-            Consumer<T> action) {
+	static class ActionDescriptor {
 
-        ActionDescriptor ad = new ActionDescriptor();
-        ad.title = title;
-        ad.tooltip = tooltip;
-        ad.icon = icon;
-        ad.checker = (item) -> applicable.equals(item.getClass());
-        ad.action = (Consumer<ENavigatorItem>) action;
+		String title;
+		String tooltip;
+		String icon;
+		Function<ENavigatorItem, Boolean> checker;
+		Consumer<ENavigatorItem> action;
+		Runnable voidAction;
+		// 0 = with engine on; 1 = always active
+		boolean activate;
+		String saveAs;
 
-        contextualDescriptors.add(ad);
-        
-        return ad;
-    }
+		ActionDescriptor activate() {
+			this.activate = true;
+			return this;
+		}
 
-    <T extends ENavigatorItem> ActionDescriptor toolbar(String title, String tooltip, String icon, Runnable action) {
+		ActionDescriptor saveAs(String id) {
+			this.saveAs = id;
+			return this;
+		}
+	}
 
-        ActionDescriptor ad = new ActionDescriptor();
-        ad.title = title;
-        ad.tooltip = tooltip;
-        ad.icon = icon;
-        ad.checker = (item) -> true;
-        ad.voidAction = action;
+	@SuppressWarnings("unchecked")
+	<T extends ENavigatorItem> ActionDescriptor action(String title, String tooltip, String icon, Class<T> applicable,
+			Consumer<T> action) {
 
-        globalDescriptors.add(ad);
-        
-        return ad;
-    }
+		ActionDescriptor ad = new ActionDescriptor();
+		ad.title = title;
+		ad.tooltip = tooltip;
+		ad.icon = icon;
+		ad.checker = (item) -> applicable.equals(item.getClass());
+		ad.action = (Consumer<ENavigatorItem>) action;
 
-    List<ActionDescriptor> contextualDescriptors = new ArrayList<>();
-    List<ActionDescriptor> globalDescriptors = new ArrayList<>();
+		contextualDescriptors.add(ad);
 
-    @Override
-    public void init(ICommonActionExtensionSite aSite) {
-        super.init(aSite);
-        ICommonViewerSite viewSite = aSite.getViewSite();
-        if (viewSite instanceof ICommonViewerWorkbenchSite) {
-            this.wSite = (ICommonViewerWorkbenchSite) viewSite;
-        }
-    }
+		return ad;
+	}
 
-    @Override
-    public void fillContextMenu(IMenuManager menu) {
+	<T extends ENavigatorItem> ActionDescriptor toolbar(String title, String tooltip, String icon, Runnable action) {
 
-        super.fillContextMenu(menu);
+		ActionDescriptor ad = new ActionDescriptor();
+		ad.title = title;
+		ad.tooltip = tooltip;
+		ad.icon = icon;
+		ad.checker = (item) -> true;
+		ad.voidAction = action;
 
-        List<KlabAction> actions = new ArrayList<>();
+		globalDescriptors.add(ad);
 
-        ISelection selection = wSite.getSelectionProvider().getSelection();
-        if (!selection.isEmpty() && selection instanceof IStructuredSelection
-                && ((IStructuredSelection) selection).size() == 1
-                && ((IStructuredSelection) selection).getFirstElement() instanceof ENavigatorItem) {
-            ENavigatorItem item = (ENavigatorItem) (((IStructuredSelection) selection).getFirstElement());
-            for (ActionDescriptor descriptor : contextualDescriptors) {
-                if (descriptor.checker.apply(item)) {
-                    actions.add(new KlabAction(descriptor));
-                }
-            }
-        }
+		return ad;
+	}
 
-        if (actions.size() > 0) {
-            String topOfMenu = menu.getItems()[0].getId();
-            for (int i = actions.size() - 1; i >= 0; i--) {
-                menu.insertBefore(menu.getItems()[0].getId(), actions.get(i));
-            }
-            menu.insertBefore(topOfMenu, new Separator());
+	List<ActionDescriptor> contextualDescriptors = new ArrayList<>();
+	List<ActionDescriptor> globalDescriptors = new ArrayList<>();
 
-        }
-    }
+	@Override
+	public void init(ICommonActionExtensionSite aSite) {
+		super.init(aSite);
+		ICommonViewerSite viewSite = aSite.getViewSite();
+		if (viewSite instanceof ICommonViewerWorkbenchSite) {
+			this.wSite = (ICommonViewerWorkbenchSite) viewSite;
+		}
+	}
 
-    @Override
-    public void fillActionBars(IActionBars actionBars) {
+	@Override
+	public void fillContextMenu(IMenuManager menu) {
 
-        super.fillActionBars(actionBars);
+		super.fillContextMenu(menu);
 
-        if (!globalCreated) {
-            globalCreated = true;
-            for (ActionDescriptor action : globalDescriptors) {
-                actionBars.getToolBarManager().add(new KlabAction(action));
-            }
-        }
-    }
+		List<KlabAction> actions = new ArrayList<>();
 
-    public class KlabAction extends Action {
+		ISelection selection = wSite.getSelectionProvider().getSelection();
+		if (!selection.isEmpty() && selection instanceof IStructuredSelection
+				&& ((IStructuredSelection) selection).size() == 1
+				&& ((IStructuredSelection) selection).getFirstElement() instanceof ENavigatorItem) {
+			ENavigatorItem item = (ENavigatorItem) (((IStructuredSelection) selection).getFirstElement());
+			for (ActionDescriptor descriptor : contextualDescriptors) {
+				if (descriptor.checker.apply(item)) {
+					actions.add(new KlabAction(descriptor));
+				}
+			}
+		}
 
-        ISelectionProvider provider;
-        IWorkbenchPage page;
-        ENavigatorItem data;
-        ActionDescriptor descriptor;
+		if (actions.size() > 0) {
+			String topOfMenu = menu.getItems()[0].getId();
+			for (int i = actions.size() - 1; i >= 0; i--) {
+				menu.insertBefore(menu.getItems()[0].getId(), actions.get(i));
+			}
+			menu.insertBefore(topOfMenu, new Separator());
 
-        public KlabAction(ActionDescriptor descriptor) {
+		}
+	}
 
-            this.descriptor = descriptor;
-            this.page = wSite.getPage();
-            this.provider = wSite.getSelectionProvider();
-            this.setText(descriptor.title);
-            this.setToolTipText(descriptor.tooltip);
-            this.setImageDescriptor(
-                    ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/" + descriptor.icon));
-            
-            if (descriptor.saveAs != null) {
-            	actions.put(descriptor.saveAs, this);
-            }
-        }
+	@Override
+	public void fillActionBars(IActionBars actionBars) {
 
-        @Override
-        public boolean isEnabled() {
-        	
-            if (!descriptor.activate && !Activator.engineMonitor().isRunning()) {
-                return false;
-            }
-            
-            if (descriptor.action != null) {
-                ISelection selection = provider.getSelection();
-                if (!selection.isEmpty()) {
-                    IStructuredSelection ssel = (IStructuredSelection) selection;
-                    if (ssel.size() == 1 && ssel.getFirstElement() instanceof ENavigatorItem) {
-                        data = (ENavigatorItem) (ssel.getFirstElement());
-                        return descriptor.checker.apply(data);
-                    }
-                }
-            }
-            return descriptor.voidAction != null;
-        }
+		super.fillActionBars(actionBars);
 
-        @Override
-        public void run() {
+		if (!globalCreated) {
+			globalCreated = true;
+			for (ActionDescriptor action : globalDescriptors) {
+				actionBars.getToolBarManager().add(new KlabAction(action));
+			}
+		}
+	}
 
-            try {
-                if (descriptor.action != null) {
-                    if (data == null) {
-                        return;
-                    }
-                    descriptor.action.accept(data);
-                } else {
-                    descriptor.voidAction.run();
-                }
-            } catch (Throwable e) {
-                Eclipse.INSTANCE.handleException(e);
-            }
-        }
-        
-        public void activate(boolean b) {
-        	System.out.println("ACTIVATING " + this.descriptor.title);
-        	this.descriptor.activate = b;
-        	setEnabled(b);
-        }
+	public class KlabAction extends Action {
 
-        @Override
-        public String getId() {
-            return NameGenerator.shortUUID();
-        }
-    }
-    
-    public static KlabAction getAction(String id) {
-    	return actions.get(id);
-    }
+		ISelectionProvider provider;
+		IWorkbenchPage page;
+		ENavigatorItem data;
+		ActionDescriptor descriptor;
+
+		public KlabAction(ActionDescriptor descriptor) {
+
+			this.descriptor = descriptor;
+			this.page = wSite.getPage();
+			this.provider = wSite.getSelectionProvider();
+			this.setText(descriptor.title);
+			this.setToolTipText(descriptor.tooltip);
+			this.setImageDescriptor(
+					ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/" + descriptor.icon));
+
+			if (descriptor.saveAs != null) {
+				actions.put(descriptor.saveAs, this);
+			}
+		}
+
+		@Override
+		public boolean isEnabled() {
+
+			if (!descriptor.activate && !Activator.engineMonitor().isRunning()) {
+				return false;
+			}
+
+			if (descriptor.action != null) {
+				ISelection selection = provider.getSelection();
+				if (!selection.isEmpty()) {
+					IStructuredSelection ssel = (IStructuredSelection) selection;
+					if (ssel.size() == 1 && ssel.getFirstElement() instanceof ENavigatorItem) {
+						data = (ENavigatorItem) (ssel.getFirstElement());
+						return descriptor.checker.apply(data);
+					}
+				}
+			}
+			return descriptor.voidAction != null;
+		}
+
+		@Override
+		public void run() {
+
+			try {
+				if (descriptor.action != null) {
+					if (data == null) {
+						return;
+					}
+					descriptor.action.accept(data);
+				} else {
+					descriptor.voidAction.run();
+				}
+			} catch (Throwable e) {
+				Eclipse.INSTANCE.handleException(e);
+			}
+		}
+
+		public void activate(boolean b) {
+			System.out.println("ACTIVATING " + this.descriptor.title);
+			this.descriptor.activate = b;
+			setEnabled(b);
+		}
+
+		@Override
+		public String getId() {
+			return NameGenerator.shortUUID();
+		}
+	}
+
+	public static KlabAction getAction(String id) {
+		return actions.get(id);
+	}
 
 }

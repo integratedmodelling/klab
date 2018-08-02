@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.api.resources;
 
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.rest.ResourceReference;
 
 /**
@@ -17,7 +20,24 @@ public class ResourceUtils {
 	 * 
 	 * @return the shape specifications, or null if the resource has no space
 	 */
-	public String extractShapeSpecification(ResourceReference resource) {
+	public static String extractShapeSpecification(ResourceReference resource) {
+		
+		Geometry geometry = Geometry.create(resource.getGeometry());
+		Dimension space = geometry.getDimension(Type.SPACE);
+		if (space != null) {
+			double[] bbox = space.getParameters().get(Geometry.PARAMETER_SPACE_BOUNDINGBOX, double[].class);
+			String projection = space.getParameters().get(Geometry.PARAMETER_SPACE_PROJECTION, String.class);
+			if (bbox != null && projection != null) {				
+				String ret = projection + " POLYGON(("
+					+ bbox[0] + " " + bbox[1] + ", "
+					+ bbox[2] + " " + bbox[1] + ", "
+					+ bbox[2] + " " + bbox[3] + ", "
+					+ bbox[0] + " " + bbox[3] + ", "
+					+ bbox[0] + " " + bbox[1] + "))";
+				
+				return "\"" + ret + "\"";
+			}
+		}
 		return null;
 	}
 }
