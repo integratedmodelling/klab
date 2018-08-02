@@ -63,4 +63,25 @@ public enum Urns {
 		return "local:" + owner + ":" + project.getName() + ":" + resourceId;
 	}
 
+	/**
+	 * Create a new local URN with the passed project instead of the original.
+	 * 
+	 * @param originalUrn
+	 * @param name
+	 * @return
+	 */
+	public String changeLocalProject(String urn, String projectName) {
+		if (!isLocal(urn)) {
+			throw new IllegalArgumentException("cannot change project name in non-local URN " + urn);
+		}
+		int fieldIndex = urn.startsWith(LOCAL_URN_PREFIX) ? 4 : 2; 
+		String ret = "";
+		int i = 0;
+		for (String field : urn.split(":")) {
+			ret += (ret.isEmpty() ? "" : ":") + (i == fieldIndex ? projectName : field);
+			i++;
+		}
+		return ret;
+	}
+
 }

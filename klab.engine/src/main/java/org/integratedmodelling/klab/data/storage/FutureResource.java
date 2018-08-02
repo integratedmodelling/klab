@@ -152,4 +152,9 @@ public class FutureResource implements IResource, Future<IResource> {
         return getDelegate(timeout).getLocalName();
     }
 
+	@Override
+	public String getLocalProjectName() {
+		return getDelegate(timeout).getLocalProjectName();
+	}
+
 }

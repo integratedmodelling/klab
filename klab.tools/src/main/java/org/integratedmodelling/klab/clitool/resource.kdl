@@ -55,3 +55,11 @@ void update
 {
 	class org.integratedmodelling.klab.clitool.console.commands.resources.Update
 }
+
+void move
+	"Move resource(s) between projects. The last argument is a destination project name. If there is one
+	other argument and it's a project name, all resources from the first project are moved to the
+	second. Otherwise all arguments besides the last must be URNs and they are moved to the project."
+{
+	class org.integratedmodelling.klab.clitool.console.commands.resources.Move
+}

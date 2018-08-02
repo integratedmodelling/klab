@@ -39,11 +39,11 @@ public class ResourceReference {
 		this.localName = other.localName;
 		this.type = other.type;
 		this.resourceTimestamp = other.resourceTimestamp;
-		this.metadata = other.metadata;
-		this.parameters = other.parameters;
-		this.localPaths = other.localPaths;
-		this.history = other.history;
-		this.notifications = other.notifications;
+		this.metadata.putAll(other.metadata);
+		this.parameters.putAll(other.parameters);
+		this.localPaths.addAll(other.localPaths);
+		this.history.addAll(other.history);
+		this.notifications.addAll(other.notifications);
 	}
 
 

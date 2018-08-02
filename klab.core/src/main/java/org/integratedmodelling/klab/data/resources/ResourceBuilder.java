@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.data.Metadata;
+import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Parameters;
 
@@ -47,7 +48,7 @@ public class ResourceBuilder implements IResource.Builder {
 	private IGeometry geometry;
 	private String localPath;
 	private List<String> resourcePaths = new ArrayList<>();
-	private List<IResource> history = new ArrayList<>();
+	private List<ResourceReference> history = new ArrayList<>();
 	private List<INotification> notifications = new ArrayList<>();
 	private long resourceTimestamp = System.currentTimeMillis();
 	private Version resourceVersion;
@@ -142,7 +143,7 @@ public class ResourceBuilder implements IResource.Builder {
 	/** {@inheritDoc} */
 	@Override
 	public ResourceBuilder addHistory(IResource notification) {
-		this.history.add(notification);
+		this.history.add(((Resource)notification).getReference());
 		return this;
 	}
 

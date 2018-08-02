@@ -33,6 +33,11 @@ public class WcsImporter implements IResourceImporter {
 			WCSService wcs = WcsAdapter.getService(importLocation, Version.create(wcsVersion));
 			for (WCSLayer layer : wcs.getLayers()) {
 
+				if (layer.isError()) {
+					Logging.INSTANCE.warn("skipping corrupted WCS layer " + layer.getIdentifier());
+					continue;
+				}
+				
 				try {
 					
 					Parameters<String> parameters = new Parameters<>();

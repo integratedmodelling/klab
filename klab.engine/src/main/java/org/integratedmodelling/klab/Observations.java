@@ -2,8 +2,6 @@ package org.integratedmodelling.klab;
 
 import java.text.NumberFormat;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
@@ -21,7 +19,6 @@ import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
@@ -32,15 +29,13 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservationService;
-import org.integratedmodelling.klab.components.geospace.extents.Projection;
-import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
+import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.model.Behavior;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Concept;
@@ -273,7 +268,7 @@ public enum Observations implements IObservationService {
 
 	public Observer makeROIObserver(final SpatialExtent regionOfInterest, final Namespace namespace, IMonitor monitor) {
 		// TODO use configured concept from worldview!
-		final Observable observable = Observable.promote(Concepts.c("earth:Region"));
+		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
 		observable.setName("Region of interest");
 		observable.setOptional(true);
 		return new Observer(regionOfInterest, observable, (Namespace) namespace);

@@ -350,7 +350,7 @@ public interface IResource extends Serializable {
      * directory where all the {@link #getLocalPaths() local file resources} are
      * found.
      * 
-     * @return
+     * @return local path
      */
     String getLocalPath();
 
@@ -359,7 +359,15 @@ public interface IResource extends Serializable {
      * to in k.IM <strong>within the project that owns it</strong>. It will be null
      * in public resources and won't be recognized within different local projects.
      * 
-     * @return
+     * @return local name
      */
     String getLocalName();
+
+    /**
+     * In local resources, this is the name of the containing project and must be
+     * valid. In public resources it must be null.
+     * 
+     * @return project name
+     */
+	String getLocalProjectName();
 }

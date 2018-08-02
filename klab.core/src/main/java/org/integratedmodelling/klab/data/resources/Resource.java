@@ -71,14 +71,14 @@ public class Resource implements IResource {
 	IMetadata metadata = new Metadata();
 	Parameters<String> parameters = new Parameters<>();
 	List<String> localPaths = new ArrayList<>();
-	List<IResource> history = new ArrayList<>();
+	List<ResourceReference> history = new ArrayList<>();
 	List<INotification> notifications = new ArrayList<>();
 	String projectName;
 	String localName;
 
 	// folder where all the resource files were uploaded, only for the publisher
 	File uploadFolder = null;
-	
+
 	public Resource(ResourceReference reference) {
 		this.urn = reference.getUrn();
 		this.version = Version.create(reference.getVersion());
@@ -90,9 +90,9 @@ public class Resource implements IResource {
 		this.geometry = Geometry.create(reference.getGeometry());
 		this.projectName = reference.getProjectName();
 		this.localName = reference.getLocalName();
-		
+
 		for (ResourceReference ref : reference.getHistory()) {
-			this.history.add(new Resource(ref));
+			this.history.add(ref);
 		}
 		for (String key : reference.getParameters().keySet()) {
 			this.parameters.put(key, Utils.asPOD(reference.getParameters().get(key)));
@@ -101,14 +101,15 @@ public class Resource implements IResource {
 			this.metadata.put(key, Utils.asPOD(reference.getParameters().get(key)));
 		}
 		for (Notification notification : reference.getNotifications()) {
-			this.notifications.add(new KimNotification(notification.getMessage(), notification.getLevel(),
+			this.notifications.add(new KimNotification(notification.getMessage(), Level.parse(notification.getLevel()),
 					notification.getTimestamp()));
 		}
 	}
 
 	public ResourceReference getReference() {
-		
+
 		ResourceReference ret = new ResourceReference();
+
 		ret.setUrn(this.urn);
 		ret.setVersion(this.version.toString());
 		ret.setGeometry(this.getGeometry().encode());
@@ -119,9 +120,9 @@ public class Resource implements IResource {
 		ret.setProjectName(this.projectName);
 		ret.setLocalName(this.localName);
 		ret.setType(this.type);
-		
-		for (IResource h : this.history) {
-			ret.getHistory().add(((Resource) h).getReference());
+
+		for (ResourceReference h : this.history) {
+			ret.getHistory().add(h);
 		}
 		for (String key : this.parameters.keySet()) {
 			if (Utils.isPOD(this.parameters.get(key))) {
@@ -134,8 +135,8 @@ public class Resource implements IResource {
 			}
 		}
 		for (INotification notification : this.notifications) {
-			ret.getNotifications().add(
-					new Notification(notification.getMessage(), notification.getLevel(), notification.getTimestamp()));
+			ret.getNotifications().add(new Notification(notification.getMessage(), notification.getLevel().getName(),
+					notification.getTimestamp()));
 		}
 
 		return ret;
@@ -183,7 +184,11 @@ public class Resource implements IResource {
 	/** {@inheritDoc} */
 	@Override
 	public List<IResource> getHistory() {
-		return history;
+		List<IResource> ret = new ArrayList<>();
+		for (ResourceReference ref : history) {
+			ret.add(new Resource(ref));
+		}
+		return ret;
 	}
 
 	/** {@inheritDoc} */
@@ -232,7 +237,7 @@ public class Resource implements IResource {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Set the upload folder
 	 * 
@@ -240,8 +245,8 @@ public class Resource implements IResource {
 	 * @return
 	 */
 	public Resource in(File uploadFolder) {
-	    this.uploadFolder = uploadFolder;
-	    return this;
+		this.uploadFolder = uploadFolder;
+		return this;
 	}
 
 	public void validate(IResourceService resourceService) {
@@ -280,13 +285,46 @@ public class Resource implements IResource {
 	}
 
 	@Override
+	public String getLocalProjectName() {
+		return projectName;
+	}
+
+	@Override
 	public IArtifact.Type getType() {
 		return type;
 	}
-	
+
 	@Override
 	public String getLocalName() {
-	    return localName;
+		return localName;
+	}
+
+	/**
+	 * Copy the current resource state to the history so that it can be modified
+	 * with full records, adding a notification to explain the change.
+	 * 
+	 * FIXME: creates unrecoverable issues when deserializing any array - when
+	 * containing 1 object, the field gets set to the object itself instead of an
+	 * array.
+	 */
+	public void copyToHistory(String modificationLog) {
+		 ResourceReference ref = this.getReference();
+		 ref.getNotifications().add(new Notification(modificationLog,
+		 Level.INFO.getName(), System.currentTimeMillis()));
+		 ref.getHistory().clear();
+		 history.add(ref);
+	}
+
+	public void setLocalProject(String name) {
+		this.projectName = name;
+	}
+
+	public void setUrn(String urn) {
+		this.urn = urn;
+	}
+
+	public void setLocalPath(String string) {
+		this.localPath = string;
 	}
 
 }
