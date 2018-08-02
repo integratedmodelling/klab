@@ -38,6 +38,7 @@ import org.integratedmodelling.kim.kim.KimPackage;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isProbability <em>Probability</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isAssessment <em>Assessment</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isUncertainty <em>Uncertainty</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isMagnitude <em>Magnitude</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isType <em>Type</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isObservability <em>Observability</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isProportion <em>Proportion</em>}</li>
@@ -271,6 +272,26 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
    * @ordered
    */
   protected boolean uncertainty = UNCERTAINTY_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isMagnitude() <em>Magnitude</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isMagnitude()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean MAGNITUDE_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isMagnitude() <em>Magnitude</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isMagnitude()
+   * @generated
+   * @ordered
+   */
+  protected boolean magnitude = MAGNITUDE_EDEFAULT;
 
   /**
    * The default value of the '{@link #isType() <em>Type</em>}' attribute.
@@ -764,6 +785,29 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
    * <!-- end-user-doc -->
    * @generated
    */
+  public boolean isMagnitude()
+  {
+    return magnitude;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setMagnitude(boolean newMagnitude)
+  {
+    boolean oldMagnitude = magnitude;
+    magnitude = newMagnitude;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT__MAGNITUDE, oldMagnitude, magnitude));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public boolean isType()
   {
     return type;
@@ -1049,6 +1093,8 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return isAssessment();
       case KimPackage.CONCEPT__UNCERTAINTY:
         return isUncertainty();
+      case KimPackage.CONCEPT__MAGNITUDE:
+        return isMagnitude();
       case KimPackage.CONCEPT__TYPE:
         return isType();
       case KimPackage.CONCEPT__OBSERVABILITY:
@@ -1114,6 +1160,9 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return;
       case KimPackage.CONCEPT__UNCERTAINTY:
         setUncertainty((Boolean)newValue);
+        return;
+      case KimPackage.CONCEPT__MAGNITUDE:
+        setMagnitude((Boolean)newValue);
         return;
       case KimPackage.CONCEPT__TYPE:
         setType((Boolean)newValue);
@@ -1189,6 +1238,9 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
       case KimPackage.CONCEPT__UNCERTAINTY:
         setUncertainty(UNCERTAINTY_EDEFAULT);
         return;
+      case KimPackage.CONCEPT__MAGNITUDE:
+        setMagnitude(MAGNITUDE_EDEFAULT);
+        return;
       case KimPackage.CONCEPT__TYPE:
         setType(TYPE_EDEFAULT);
         return;
@@ -1251,6 +1303,8 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return assessment != ASSESSMENT_EDEFAULT;
       case KimPackage.CONCEPT__UNCERTAINTY:
         return uncertainty != UNCERTAINTY_EDEFAULT;
+      case KimPackage.CONCEPT__MAGNITUDE:
+        return magnitude != MAGNITUDE_EDEFAULT;
       case KimPackage.CONCEPT__TYPE:
         return type != TYPE_EDEFAULT;
       case KimPackage.CONCEPT__OBSERVABILITY:
@@ -1302,6 +1356,8 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
     result.append(assessment);
     result.append(", uncertainty: ");
     result.append(uncertainty);
+    result.append(", magnitude: ");
+    result.append(magnitude);
     result.append(", type: ");
     result.append(type);
     result.append(", observability: ");

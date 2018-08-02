@@ -295,7 +295,11 @@ public interface IKimConcept extends IKimStatement {
         /**
          * Only for concept peers of non-semantic types: this should never appear in a declared concept
          */
-        CATEGORY
+        CATEGORY,
+        /**
+         * 
+         */
+        MAGNITUDE
     }
 
     /**
@@ -340,7 +344,8 @@ public interface IKimConcept extends IKimStatement {
             Type.LENGTH, Type.MASS, Type.VOLUME, Type.WEIGHT, Type.MONEY, Type.DURATION, Type.AREA, Type.ACCELERATION,
             Type.PRIORITY, Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE, Type.RESISTIVITY, Type.PRESSURE,
             Type.ANGLE, Type.VELOCITY, Type.TEMPERATURE, Type.VISCOSITY, Type.UNCERTAINTY, Type.RATIO, Type.PROPORTION,
-            Type.PROBABILITY, Type.NUMEROSITY, Type.DISTANCE, Type.VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.AMOUNT);
+            Type.PROBABILITY, Type.NUMEROSITY, Type.DISTANCE, Type.VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.AMOUNT,
+            Type.MAGNITUDE);
 
     /**
      * All direct observables

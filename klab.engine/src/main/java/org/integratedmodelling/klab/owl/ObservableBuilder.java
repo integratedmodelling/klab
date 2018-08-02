@@ -212,6 +212,9 @@ public class ObservableBuilder implements Builder {
             case OBSERVABILITY:
                 reset(makeObservability(build(), false));
                 break;
+            case MAGNITUDE:
+                reset(makeMagnitude(build(), false));
+                break;
             case TYPE:
                 reset(makeType(build(), false));
                 break;
@@ -554,6 +557,55 @@ public class ObservableBuilder implements Builder {
              * observability is inherent to the thing that's present.
              */
             OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), (IConcept) concept);
+        }
+
+        return ontology.getConcept(conceptId);
+    }
+
+    
+    /**
+     * Turn a concept into its probability if it's not already one, implementing the corresponding
+     * semantic operator. Also makes the original concept the numerosity's inherent.
+     * 
+     * @param concept the untransformed concept. Must be an event.
+     * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass true if
+     *        used from outside the builder
+     * @return the transformed concept
+     */
+    public static Concept makeMagnitude(IConcept concept, boolean addDefinition) {
+
+        if (Kim.intersection(((Concept)concept).getTypeSet(), IKimConcept.CONTINUOUS_QUALITY_TYPES).size() == 0) {
+            throw new KlabValidationException("magnitudes can only be observed only for quantifiable qualities");
+        }
+
+        String cName = getCleanId(concept) + "Magnitude";
+        String definition = UnarySemanticOperator.MAGNITUDE.declaration[0]
+                + " " + concept.getDefinition();
+        Ontology ontology = (Ontology) concept.getOntology();
+        String conceptId = ontology.getIdForDefinition(definition);
+
+        if (conceptId == null) {
+
+            conceptId = ontology.createIdForDefinition(definition);
+
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.MAGNITUDE.name());
+
+            ArrayList<IAxiom> ax = new ArrayList<>();
+            ax.add(Axiom.ClassAssertion(conceptId, newType));
+            ax.add(Axiom.SubClass(NS.CORE_MAGNITUDE, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
+            if (addDefinition) {
+                ax.add(Axiom
+                        .AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
+            }
+            ontology.define(ax);
+            IConcept ret = ontology.getConcept(conceptId);
+
+            /*
+             * probability is inherent to the event that's possible.
+             */
+            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), concept);
         }
 
         return ontology.getConcept(conceptId);

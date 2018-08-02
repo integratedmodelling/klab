@@ -798,6 +798,8 @@ public enum Kim {
             if (t == Type.DISTANCE) {
                 // this does not go in by itself
                 ret.add(Type.EXTENSIVE_PROPERTY);
+            } else if (t == Type.MAGNITUDE) {
+                ret.add(Type.SUBJECTIVE);
             }
         }
         ret.add(Type.QUALITY);
@@ -847,6 +849,8 @@ public enum Kim {
             return EnumSet.of(Type.VOLUME, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE);
         case "weight":
             return EnumSet.of(Type.WEIGHT, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE);
+        case "magnitude":
+            return EnumSet.of(Type.MAGNITUDE, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.SUBJECTIVE);        
         case "money":
             return EnumSet.of(Type.MONEY, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE);
         case "duration":
@@ -940,7 +944,7 @@ public enum Kim {
         return "";
     }
 
-    static public EnumSet<Type> intersection(EnumSet<Type> a, EnumSet<Type> b) {
+    static public EnumSet<Type> intersection(Set<Type> a, Set<Type> b) {
         EnumSet<Type> x = EnumSet.copyOf(a);
         x.retainAll(b);
         return x;

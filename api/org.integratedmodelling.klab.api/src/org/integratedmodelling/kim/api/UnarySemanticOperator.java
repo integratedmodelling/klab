@@ -19,6 +19,7 @@ public enum UnarySemanticOperator {
     OCCURRENCE("occurrence of"),
     ASSESSMENT("assessment of"),
     OBSERVABILITY("observability of"),
+    MAGNITUDE("magnitude of"),
     TYPE("type of");
 
     public String[] declaration;

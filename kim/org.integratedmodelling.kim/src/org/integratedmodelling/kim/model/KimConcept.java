@@ -439,6 +439,9 @@ public class KimConcept extends KimStatement implements IKimConcept {
         } else if (declaration.isAssessment()) {
             observationType = UnarySemanticOperator.ASSESSMENT;
             operator = Type.ASSESSMENT;
+        } else if (declaration.isMagnitude()) {
+            observationType = UnarySemanticOperator.MAGNITUDE;
+            operator = Type.MAGNITUDE;
         }
 
         if (operator != null) {

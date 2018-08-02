@@ -55,6 +55,7 @@ import org.integratedmodelling.klab.utils.CamelCase
 import org.integratedmodelling.klab.utils.Pair
 import org.integratedmodelling.kim.model.KimConceptStatement.ApplicableConceptImpl
 
+
 /**
  * This class contains custom validation rules. 
  * 
@@ -1070,6 +1071,13 @@ class KimValidator extends AbstractKimValidator {
 							KimPackage.CONCEPT__CONCEPT)
 					}
 					operator.add(Type.DISTANCE)
+				} else if (concept.isMagnitude) {
+					if (Kim.intersection(flags, IKimConcept.CONTINUOUS_QUALITY_TYPES).size() == 0) {
+						error("Magnitudes can only be observed for quantifiable qualities", concept.concept, null,
+							KimPackage.CONCEPT__CONCEPT)
+					}
+					operator.add(Type.MAGNITUDE)
+					operator.add(Type.SUBJECTIVE)
 				} else if (concept.isOccurrence || concept.isPresence) {
 					if (!flags.contains(Type.DIRECT_OBSERVABLE)) {
 						error((if(concept.isOccurrence) 'Occurrence' else 'Presence') +

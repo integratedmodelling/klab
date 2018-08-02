@@ -270,6 +270,7 @@ public class CoreOntology extends AbstractWorkspace {
 		public static final String CORE_LENGTH = "observation:Length";
 		public static final String CORE_MASS = "observation:Mass";
 		public static final String CORE_PROBABILITY = "observation:Probability";
+        public static final String CORE_MAGNITUDE = "observation:Magnitude";
 		public static final String CORE_RELATIVE_QUANTITY = "observation:RelativeQuantity";
 		public static final String CORE_VOLUME = "observation:Volume";
 		public static final String CORE_WEIGHT = "observation:Weight";

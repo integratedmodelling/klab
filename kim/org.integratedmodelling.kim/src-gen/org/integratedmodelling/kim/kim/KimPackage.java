@@ -2230,13 +2230,22 @@ public interface KimPackage extends EPackage
   int CONCEPT__UNCERTAINTY = 11;
 
   /**
+   * The feature id for the '<em><b>Magnitude</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__MAGNITUDE = 12;
+
+  /**
    * The feature id for the '<em><b>Type</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONCEPT__TYPE = 12;
+  int CONCEPT__TYPE = 13;
 
   /**
    * The feature id for the '<em><b>Observability</b></em>' attribute.
@@ -2245,7 +2254,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__OBSERVABILITY = 13;
+  int CONCEPT__OBSERVABILITY = 14;
 
   /**
    * The feature id for the '<em><b>Proportion</b></em>' attribute.
@@ -2254,7 +2263,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__PROPORTION = 14;
+  int CONCEPT__PROPORTION = 15;
 
   /**
    * The feature id for the '<em><b>Other</b></em>' containment reference.
@@ -2263,7 +2272,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__OTHER = 15;
+  int CONCEPT__OTHER = 16;
 
   /**
    * The feature id for the '<em><b>Ratio</b></em>' attribute.
@@ -2272,7 +2281,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__RATIO = 16;
+  int CONCEPT__RATIO = 17;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -2281,7 +2290,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__VALUE = 17;
+  int CONCEPT__VALUE = 18;
 
   /**
    * The feature id for the '<em><b>Occurrence</b></em>' attribute.
@@ -2290,7 +2299,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__OCCURRENCE = 18;
+  int CONCEPT__OCCURRENCE = 19;
 
   /**
    * The feature id for the '<em><b>Declaration</b></em>' containment reference.
@@ -2299,7 +2308,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__DECLARATION = 19;
+  int CONCEPT__DECLARATION = 20;
 
   /**
    * The number of structural features of the '<em>Concept</em>' class.
@@ -2308,7 +2317,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_FEATURE_COUNT = 20;
+  int CONCEPT_FEATURE_COUNT = 21;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.UpperOntologyDefinitionImpl <em>Upper Ontology Definition</em>}' class.
@@ -6368,6 +6377,17 @@ public interface KimPackage extends EPackage
   EAttribute getConcept_Uncertainty();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Concept#isMagnitude <em>Magnitude</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Magnitude</em>'.
+   * @see org.integratedmodelling.kim.kim.Concept#isMagnitude()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Magnitude();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Concept#isType <em>Type</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -10054,6 +10074,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute CONCEPT__UNCERTAINTY = eINSTANCE.getConcept_Uncertainty();
+
+    /**
+     * The meta object literal for the '<em><b>Magnitude</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__MAGNITUDE = eINSTANCE.getConcept_Magnitude();
 
     /**
      * The meta object literal for the '<em><b>Type</b></em>' attribute feature.

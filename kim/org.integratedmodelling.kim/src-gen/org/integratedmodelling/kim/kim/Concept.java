@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isProbability <em>Probability</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isAssessment <em>Assessment</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isUncertainty <em>Uncertainty</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Concept#isMagnitude <em>Magnitude</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isType <em>Type</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isObservability <em>Observability</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isProportion <em>Proportion</em>}</li>
@@ -354,6 +355,32 @@ public interface Concept extends EObject
    * @generated
    */
   void setUncertainty(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Magnitude</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Magnitude</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Magnitude</em>' attribute.
+   * @see #setMagnitude(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConcept_Magnitude()
+   * @model
+   * @generated
+   */
+  boolean isMagnitude();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Concept#isMagnitude <em>Magnitude</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Magnitude</em>' attribute.
+   * @see #isMagnitude()
+   * @generated
+   */
+  void setMagnitude(boolean value);
 
   /**
    * Returns the value of the '<em><b>Type</b></em>' attribute.
