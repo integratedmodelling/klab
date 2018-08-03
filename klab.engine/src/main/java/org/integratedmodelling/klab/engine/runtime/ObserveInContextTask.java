@@ -9,6 +9,7 @@ import java.util.concurrent.TimeoutException;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
@@ -18,6 +19,7 @@ import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.rest.DataflowReference;
@@ -79,6 +81,10 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 					 */
 					IResolvable resolvable = Resources.INSTANCE.getResolvableResource(urn);
 
+					if (resolvable instanceof IModel) {
+						resolvable = Observable.promote((IModel)resolvable);
+					}
+					
 					if (resolvable == null) {
 						throw new IllegalArgumentException("URN " + urn + " does not represent a resolvable entity");
 					}

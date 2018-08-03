@@ -295,7 +295,7 @@ public interface IKimConcept extends IKimStatement {
         /**
          * Only for concept peers of non-semantic types: this should never appear in a declared concept
          */
-        CATEGORY,
+       CATEGORY,
         /**
          * 
          */
@@ -413,10 +413,6 @@ public interface IKimConcept extends IKimStatement {
     String getAuthorityTerm();
 
     String getAuthority();
-
-    //  IKimConcept getDownTo();
-    //
-    //  IKimConcept getByTrait();
 
     UnarySemanticOperator getObservationType();
 

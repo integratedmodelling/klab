@@ -798,9 +798,9 @@ public enum Kim {
             if (t == Type.DISTANCE) {
                 // this does not go in by itself
                 ret.add(Type.EXTENSIVE_PROPERTY);
-            } else if (t == Type.MAGNITUDE) {
-                ret.add(Type.SUBJECTIVE);
-            }
+            } // else if (t == Type.MAGNITUDE) {
+//                ret.add(Type.SUBJECTIVE);
+//            }
         }
         ret.add(Type.QUALITY);
         ret.add(Type.OBSERVABLE);
@@ -849,8 +849,8 @@ public enum Kim {
             return EnumSet.of(Type.VOLUME, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE);
         case "weight":
             return EnumSet.of(Type.WEIGHT, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE);
-        case "magnitude":
-            return EnumSet.of(Type.MAGNITUDE, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.SUBJECTIVE);        
+//        case "magnitude":
+//            return EnumSet.of(Type.MAGNITUDE, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.SUBJECTIVE);        
         case "money":
             return EnumSet.of(Type.MONEY, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE);
         case "duration":
@@ -1001,28 +1001,6 @@ public enum Kim {
     public void eraseOrphanNamespace(String uri) {
         orphanNamespaceRegistry.remove(uri);
     }
-
-    // public KimProject getCommonProject() {
-    // KimWorkspace workspace = getCommonWorkspace();
-    // return workspace.getProjects().iterator().next();
-    // }
-    //
-    // public KimWorkspace getCommonWorkspace() {
-    // if (this.commonWorkspace == null) {
-    // File tempDir = new File(System.getProperty("java.io.tmpdir"));
-    // try {
-    // this.commonWorkspace = new KimWorkspace(tempDir.toURI().toURL(), tempDir);
-    // URL url = new URL(this.commonWorkspace.getURL() + "/" + COMMON_PROJECT_ID);
-    // KimProject ret = new KimProject(COMMON_PROJECT_ID, commonWorkspace, new
-    // Properties());
-    // this.commonWorkspace.registerProject(ret, url);
-    // } catch (MalformedURLException e) {
-    // // fffff
-    // throw new RuntimeException(e);
-    // }
-    // }
-    // return this.commonWorkspace;
-    // }
 
     /**
      * 

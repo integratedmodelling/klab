@@ -23,6 +23,9 @@ public abstract class ObservedArtifact extends Artifact implements IArtifact {
 	private IMetadata metadata = new Metadata();
 	private String token = "o" + NameGenerator.shortUUID();
 
+	protected ObservedArtifact() {
+	}
+	
 	public ObservedArtifact(IGeometry geometry, IRuntimeContext context) {
 		this.geometry = geometry;
 		this.runtimeContext = context;

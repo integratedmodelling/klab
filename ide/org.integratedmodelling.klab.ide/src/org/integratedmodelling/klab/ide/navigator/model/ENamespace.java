@@ -80,7 +80,7 @@ public class ENamespace extends EKimObject implements IKimNamespace {
 				ret.add(new EConcept(delegate.getName() + ":" + ((IKimConceptStatement) child).getName(),
 						(IKimConceptStatement) child, this, this));
 			} else if (child instanceof IKimModel) {
-				ret.add(new EModel(delegate.getName() + ":" + ((IKimModel) child).getName(), (IKimModel) child, this));
+				ret.add(new EModel(delegate.getName() + "." + ((IKimModel) child).getName(), (IKimModel) child, this));
 			} else if (child instanceof IKimObserver) {
 				ret.add(new EObserver(delegate.getName() + "." + ((IKimObserver) child).getName(), (IKimObserver) child,
 						this, this));

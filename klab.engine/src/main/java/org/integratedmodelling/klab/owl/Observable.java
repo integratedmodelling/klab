@@ -66,6 +66,12 @@ public class Observable extends Concept implements IObservable {
 	public static Observable promote(IConceptDefinition concept) {
 		return promote(concept.getConcept());
 	}
+	
+	public static Observable promote(IModel model) {
+		Observable ret = new Observable((Observable)model.getObservables().get(0));
+		ret.resolvedModel = model;
+		return ret;
+	}
 
 	public static Observable promote(IConcept concept) {
 		Observable ret = new Observable((Concept) concept);

@@ -15,10 +15,10 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.scale.Scale;
 
 /**
@@ -46,7 +46,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	public IArtifact run(IScale scale, IMonitor monitor) throws KlabException {
 
 		if (actuators.size() == 0) {
-			return Artifact.empty();
+			return Observation.empty();
 		}
 
 		/*

@@ -35,6 +35,28 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	public String getUrn() {
 		return "local:observation:" + getParentIdentity(Session.class).getId() + ":" + getId();
 	}
+	
+	public static Observation empty() {
+		return new Observation() {
+			@Override
+			public IObservation at(ILocator locator) {
+				return this;
+			}
+
+			@Override
+			public IArtifact.Type getType() {
+				return IArtifact.Type.VOID;
+			}
+
+			@Override
+			public boolean isEmpty() {
+				return true;
+			}
+		};
+	}
+	
+	private Observation() {
+	}
 
 	protected Observation(Observable observable, Scale scale, IRuntimeContext context) {
 		super(scale, context);
