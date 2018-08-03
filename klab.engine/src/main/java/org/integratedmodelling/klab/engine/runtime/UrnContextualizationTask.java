@@ -5,14 +5,17 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -43,9 +46,9 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
 		this.taskDescription = parent.taskDescription;
 		this.descriptor = parent.descriptor;
 	}
-	
+
 	public UrnContextualizationTask(Session session, IResource resource) {
-		
+
 		Engine engine = session.getParentIdentity(Engine.class);
 		try {
 
@@ -77,55 +80,47 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
 								IMessage.Type.TaskStarted, UrnContextualizationTask.this.descriptor));
 
 						/*
-						 * 0. Create bogus computation context for the non-computations that follows. Build a scale
-						 *    that's appropriate for previewing the full context.
+						 * Create bogus computation context for the non-computations that follows. Build
+						 * a scale that's appropriate for previewing the full context.
 						 */
 						IScale scale = Scale.create(resource.getGeometry()).adaptForExample();
-						IObservable observable = Observable.promote(OWL.INSTANCE.getNonsemanticPeer("TestContext", IArtifact.Type.OBJECT));
-						SimpleContext context = new SimpleContext(observable, scale);
+						IObservable observable = Observable
+								.promote(OWL.INSTANCE.getNonsemanticPeer("TestContext", IArtifact.Type.OBJECT));
+						SimpleContext context = new SimpleContext(observable, scale, monitor);
+						ret = (ISubject) context.getTargetArtifact();
 
 						/*
-						 * 1. create context observation from URN geometry and notify it. 
+						 * let the session know
 						 */
-						
+						session.getMonitor().send(Message.create(session.getId(),
+								IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation,
+								Observations.INSTANCE
+										.createArtifactDescriptor((IObservation) ret, null, ITime.INITIALIZATION, -1)
+										.withTaskId(token)));
+
 						/*
-						 * 2. build data observation(s) directly from resource and notify the resulting
-						 *    artifact.
+						 * Go for the actual data
 						 */
-						IKlabData data = Resources.INSTANCE.getResourceData(resource, scale, context);
-						
-						// TODO just notify data.getArtifact()
-						
-//						// TODO put all this logics in the resolver, call it from within Observations
-//						// and use that here.
-//						ResolutionScope scope = Resolver.INSTANCE.resolve(observer, monitor, scenarios);
-//						if (scope.getCoverage().isRelevant()) {
+						IKlabData data = Resources.INSTANCE.getResourceData(resource, scale,
+								context.getChild(null, resource));
 
-//							Dataflow dataflow = Dataflows.INSTANCE
-//									.compile("local:task:" + session.getId() + ":" + token, scope);
-//
-//							session.getMonitor()
-//									.send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
-//											IMessage.Type.DataflowCompiled,
-//											new DataflowReference(token, dataflow.getKdlCode())));
+						/*
+						 * notify
+						 */
+						session.getMonitor()
+								.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+										IMessage.Type.NewObservation,
+										Observations.INSTANCE
+												.createArtifactDescriptor((IObservation) data.getArtifact(), ret,
+														ITime.INITIALIZATION, -1)
+												.withTaskId(token)));
 
-							/* make a copy of the coverage so that we ensure it's a scale, behaving properly
-							 * at merge.
-							 */
-//							ret = (ISubject) dataflow.run(scope.getCoverage().copy(), monitor);
-
-							/*
-							 * Register the observation context with the session. It will be disposed of 
-							 * and/or persisted by the session itself.
-							 */
-							session.registerObservationContext(((Observation)ret).getRuntimeContext());
-							
-							/*
-							 * Unregister the task
-							 */
-							session.unregisterTask(UrnContextualizationTask.this);
-							
-//						}
+						/*
+						 * Register the observation context with the session. It will be disposed of
+						 * and/or persisted by the session itself.
+						 */
+						session.registerObservationContext(((Observation) ret).getRuntimeContext());
+						session.unregisterTask(UrnContextualizationTask.this);
 						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 								IMessage.Type.TaskFinished, UrnContextualizationTask.this.descriptor));
 
@@ -208,5 +203,5 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
 	public ITaskTree<ISubject> createChild() {
 		return new UrnContextualizationTask(this);
 	}
-	
+
 }

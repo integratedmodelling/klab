@@ -1130,7 +1130,7 @@ public class Scale implements IScale {
 	 */
 	public Scale adaptForExample() {
 		// TODO Auto-generated method stub
-		return null;
+		return this;
 	}
 
 }

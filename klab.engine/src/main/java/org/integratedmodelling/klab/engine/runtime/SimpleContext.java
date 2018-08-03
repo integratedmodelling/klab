@@ -2,11 +2,13 @@ package org.integratedmodelling.klab.engine.runtime;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Namespaces;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -50,13 +52,16 @@ public class SimpleContext implements IRuntimeContext {
 	IScale scale = null;
 	IObservation target = null;
 	Graph<IArtifact, DefaultEdge> structure;
-
-	public SimpleContext(IObservable observable, IScale scale) {
+	IMonitor monitor;
+	
+	public SimpleContext(IObservable observable, IScale scale, IMonitor monitor) {
 		this.observable = observable;
 		this.scale = scale;
 		this.structure = new DefaultDirectedGraph<>(DefaultEdge.class);
 		this.namespace = Namespaces.INSTANCE.getNamespace(observable.getType().getNamespace());
 		this.target = new Subject(observable.getLocalName(), (Observable) observable, (Scale) scale, this);
+		this.structure.addVertex(this.target);
+		this.monitor = monitor;
 	}
 
 	@Override
@@ -111,8 +116,7 @@ public class SimpleContext implements IRuntimeContext {
 
 	@Override
 	public IMonitor getMonitor() {
-		// TODO Auto-generated method stub
-		return null;
+		return monitor;
 	}
 
 	@Override
@@ -123,8 +127,7 @@ public class SimpleContext implements IRuntimeContext {
 
 	@Override
 	public IScale getScale() {
-		// TODO Auto-generated method stub
-		return null;
+		return scale;
 	}
 
 	@Override
@@ -190,15 +193,20 @@ public class SimpleContext implements IRuntimeContext {
 
 	@Override
 	public IDirectObservation getParentOf(IObservation observation) {
-		// TODO Auto-generated method stub
+		for (DefaultEdge edge : this.structure.outgoingEdgesOf(observation)) {
+			IArtifact source = this.structure.getEdgeTarget(edge);
+			if (source instanceof IDirectObservation) {
+				return (IDirectObservation) source;
+			}
+		}
 		return null;
 	}
 
 	@Override
 	public Collection<IObservation> getChildrenOf(IObservation observation) {
-		// TODO Auto-generated method stub
-		return null;
+		return getChildren(observation, IObservation.class);
 	}
+
 
 	@Override
 	public <K> K get(String name, Class<? extends K> cls) {
@@ -376,20 +384,41 @@ public class SimpleContext implements IRuntimeContext {
 
 	@Override
 	public Graph<? extends IArtifact, ?> getStructure() {
-		// TODO Auto-generated method stub
-		return null;
+		return structure;
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public <T extends IArtifact> Collection<T> getChildren(IArtifact artifact, Class<T> cls) {
-		// TODO Auto-generated method stub
-		return null;
+		List<T> ret = new ArrayList<>();
+		for (DefaultEdge edge : this.structure.incomingEdgesOf(artifact)) {
+			IArtifact source = this.structure.getEdgeSource(edge);
+			if (cls.isAssignableFrom(source.getClass())) {
+				ret.add((T) source);
+			}
+		}
+		return ret;
 	}
+
 
 	@Override
 	public void link(IArtifact parent, IArtifact child) {
 		this.structure.addVertex(child);
 		this.structure.addEdge(child, parent);
+	}
+
+	/**
+	 * Return a child context that can be used to build the observation of the passed resource
+	 * in our scale. If the observable is null, create a non-semantic observable.
+	 * 
+	 * @param resource
+	 * @return
+	 */
+	public SimpleContext getChild(IObservable observable, IResource resource) {
+		if (resource.getType() == IArtifact.Type.OBJECT) {
+			return this;
+		}
+		return null;
 	}
 
 }
