@@ -849,8 +849,8 @@ public enum Kim {
             return EnumSet.of(Type.VOLUME, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE);
         case "weight":
             return EnumSet.of(Type.WEIGHT, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE);
-//        case "magnitude":
-//            return EnumSet.of(Type.MAGNITUDE, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.SUBJECTIVE);        
+        case "magnitude":
+            return EnumSet.of(Type.MAGNITUDE, Type.QUALITY, Type.OBSERVABLE, Type.SUBJECTIVE);        
         case "money":
             return EnumSet.of(Type.MONEY, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE);
         case "duration":
