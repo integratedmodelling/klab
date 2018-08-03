@@ -13,15 +13,15 @@ import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.ITask;
-import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.ObserveInContextTask;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 
 public class Subject extends CountableObservation implements ISubject {
 
-  public Subject(String name, Observable observable, Scale scale, RuntimeContext context) {
+  public Subject(String name, Observable observable, Scale scale, IRuntimeContext context) {
     super(name, observable, scale, context);
   }
   

@@ -215,6 +215,7 @@ public enum Observations implements IObservationService {
 					shape = shape.substring(n + 1);
 				}
 				ret.setEncodedShape(shape);
+				// FIXME this sends a null
 				ret.setSpatialProjection(pcode);
 			}
 

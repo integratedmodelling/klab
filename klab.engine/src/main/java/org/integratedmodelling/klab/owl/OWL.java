@@ -922,21 +922,27 @@ public enum OWL {
 		case BOOLEAN:
 			qualityType = Type.PRESENCE;
 			break;
+		case OBJECT:
+			qualityType = Type.SUBJECT;
+			break;
 		default:
 			throw new IllegalArgumentException("wrong type passed for non-semantic peer generation: " + type);
 		}
-		EnumSet<Type> identity = EnumSet.of(Type.QUALITY, Type.OBSERVABLE, qualityType);
+		EnumSet<Type> identity = type == IArtifact.Type.OBJECT
+				? EnumSet.of(Type.SUBJECT, Type.OBSERVABLE, Type.DIRECT_OBSERVABLE, Type.COUNTABLE)
+				: EnumSet.of(Type.QUALITY, Type.OBSERVABLE, qualityType);
 
 		Concept ret = nonSemanticConcepts.getConcept(conceptId);
 		if (ret != null) {
 			if (!ret.is(qualityType)) {
-				throw new KlabInternalErrorException("non-semantic peer concept for " + name + " was declared previously with a different type");
+				throw new KlabInternalErrorException(
+						"non-semantic peer concept for " + name + " was declared previously with a different type");
 			}
 			return ret;
 		}
-		
+
 		nonSemanticConcepts.define(Collections.singletonList(Axiom.ClassAssertion(conceptId, identity)));
-		
+
 		return nonSemanticConcepts.getConcept(conceptId);
 	}
 

@@ -1122,4 +1122,15 @@ public class Scale implements IScale {
 		return asGeometry().getOffset(globalOffset, dimension);
 	}
 
+	/**
+	 * Return a scale that has enough resolution to demonstrate an observation at our
+	 * extents, without making it too large to visualize or too small to be useful.
+	 * 
+	 * @return a new scale
+	 */
+	public Scale adaptForExample() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

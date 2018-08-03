@@ -82,7 +82,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	String targetName;
 	ISubject rootSubject;
 	Map<String, IObservation> observations;
-	Scheduler scheduler;
+	Scheduler<?> scheduler;
 
 	// root scope of the entire dataflow, unchanging, for downstream resolutions
 	ResolutionScope resolutionScope;

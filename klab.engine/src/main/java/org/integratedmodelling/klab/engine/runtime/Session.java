@@ -136,7 +136,6 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			.synchronizedMap(new HashMap<>());
 
 	public interface Listener {
-
 		void onClose(ISession session);
 	}
 
@@ -194,6 +193,16 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		touch();
 		IKimObject object = Resources.INSTANCE.getModelObject(urn);
 
+		if (object == null) {
+			// check for URN and launch a viewer task if so.
+			IResource resource = Resources.INSTANCE.resolveResource(urn);
+			if (resource != null) {
+				return new UrnContextualizationTask(this, resource);
+			} else {
+				throw new KlabContextualizationException("cannot resolve URN " + urn);
+			}
+		}
+		
 		if (!(object instanceof Observer)) {
 
 			if (regionOfInterest != null && object instanceof KimObject) {
@@ -218,6 +227,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 			throw new KlabContextualizationException("URN " + urn + " does not specify an observation");
 		}
+		
 		return new ObserveContextTask(this, (Observer) object, CollectionUtils.arrayToList(scenarios));
 	}
 

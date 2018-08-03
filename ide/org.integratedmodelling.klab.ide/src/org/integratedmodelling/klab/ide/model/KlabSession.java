@@ -124,8 +124,9 @@ public class KlabSession extends KlabPeer {
                 new ObservationRequest(dropped.getId(), addToContext ? currentContextId : null, null));
     }
 
-    public void previewResource(ResourceReference dropped) {
+    public void previewResource(ResourceReference resource) {
         // TODO Auto-generated method stub
+    	System.out.println("FOCC preview this: " + resource.getUrn());
     }
 
     public long startQuery(String query) {

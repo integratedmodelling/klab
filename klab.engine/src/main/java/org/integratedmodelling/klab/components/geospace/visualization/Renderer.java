@@ -120,7 +120,7 @@ public enum Renderer {
 					((Projection) projection).getCoordinateReferenceSystem(), ((Envelope) envelope).getJTSEnvelope(),
 					screenSize, w2s);
 			RasterSymbolizer rasterSymbolizer = getRasterSymbolizer(state, locator);
-
+			System.out.println("Creating image " + imagesize[0] + " x " + imagesize[1] + " in viewport " + viewport);
 			Rectangle imageBounds = new Rectangle(imagesize[0], imagesize[1]);
 			BufferedImage image = new BufferedImage(imagesize[0], imagesize[1], BufferedImage.TYPE_INT_ARGB);
 			Graphics2D gr = image.createGraphics();

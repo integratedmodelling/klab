@@ -97,7 +97,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
 	@Override
 	public Builder startObject(String artifactName, String objectName, IScale scale) {
 
-		IObservable observable = ((IRuntimeContext) context).getSemantics(artifactName);
+		IObservable observable = context.getSemantics(artifactName);
 		if (observable == null) {
 			throw new IllegalArgumentException(
 					"data builder: cannot find semantics for the artifact named " + artifactName);

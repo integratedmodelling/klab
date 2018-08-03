@@ -6,7 +6,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.components.runtime.RuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
 
@@ -14,7 +14,7 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 
     String name;
     
-    protected DirectObservation(String name, Observable observable, Scale scale, RuntimeContext context) {
+    protected DirectObservation(String name, Observable observable, Scale scale, IRuntimeContext context) {
         super(observable, scale, context);
         this.name = name;
     }

@@ -54,6 +54,24 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 			}
 		};
 	}
+
+	public static IObservation empty(IObservable observable, IScale scale) {
+		Observation ret = new Observation((Observable) observable, (Scale) scale, null) {
+
+			@Override
+			public IArtifact.Type getType() {
+				return IArtifact.Type.VOID;
+			}
+
+			@Override
+			public IObservation at(ILocator locator) {
+				return this;
+			}
+			
+		};
+		ret.setEmpty(true);
+		return ret;
+	}
 	
 	private Observation() {
 	}
@@ -161,22 +179,5 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 				+ "}";
 	}
 
-	public static IObservation empty(IObservable observable, IScale scale) {
-		Observation ret = new Observation((Observable) observable, (Scale) scale, null) {
-
-			@Override
-			public IArtifact.Type getType() {
-				return IArtifact.Type.VOID;
-			}
-
-			@Override
-			public IObservation at(ILocator locator) {
-				return this;
-			}
-			
-		};
-		ret.setEmpty(true);
-		return ret;
-	}
 
 }
