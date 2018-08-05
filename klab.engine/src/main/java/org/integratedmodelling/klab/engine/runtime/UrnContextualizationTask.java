@@ -20,7 +20,6 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.Engine;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.OWL;
@@ -84,8 +83,9 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
 						 * a scale that's appropriate for previewing the full context.
 						 */
 						IScale scale = Scale.create(resource.getGeometry()).adaptForExample();
+						
 						IObservable observable = Observable
-								.promote(OWL.INSTANCE.getNonsemanticPeer("TestContext", IArtifact.Type.OBJECT));
+								.promote(OWL.INSTANCE.getNonsemanticPeer("Context", IArtifact.Type.OBJECT));
 						SimpleContext context = new SimpleContext(observable, scale, monitor);
 						ret = (ISubject) context.getTargetArtifact();
 
@@ -99,7 +99,8 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
 										.withTaskId(token)));
 
 						/*
-						 * Go for the actual data
+						 * Go for the actual data. Surprisingly easy given the diversity of possible
+						 * results.
 						 */
 						IKlabData data = Resources.INSTANCE.getResourceData(resource, scale,
 								context.getChild(null, resource));

@@ -14,11 +14,11 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.data.storage.DataIterator;
 import org.integratedmodelling.klab.data.storage.MediatingState;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
 
@@ -36,7 +36,7 @@ public class State extends Observation implements IState, IKeyHolder {
 	IDataKey dataKey;
 	Map<IArtifact.Type, IDataArtifact> layers = new HashMap<>();
 
-	public State(Observable observable, Scale scale, RuntimeContext context, IDataArtifact data) {
+	public State(Observable observable, Scale scale, IRuntimeContext context, IDataArtifact data) {
 		super(observable, scale, context);
 		this.storage = data;
 		this.layers.put(data.getType(), data);

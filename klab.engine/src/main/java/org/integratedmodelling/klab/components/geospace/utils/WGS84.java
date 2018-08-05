@@ -18,7 +18,7 @@ package org.integratedmodelling.klab.components.geospace.utils;
  * @see <a href="https://stackoverflow.com/questions/176137/java-convert-lat-lon-to-utm">Stack
  *      Overflow</a>
  * @see <a href="https://en.wikipedia.org/wiki/World_Geodetic_System">Wikipedia-entry on WGS-84</a>
- * @author Rolf Rander N�ss
+ * @author Rolf Rander Noess
  *
  */
 public class WGS84 {
@@ -70,6 +70,7 @@ public class WGS84 {
   }
 
   private void fromUTM(int zone, char letter, double easting, double northing) {
+      
     double north;
     if (letter > 'M') {
       north = northing;

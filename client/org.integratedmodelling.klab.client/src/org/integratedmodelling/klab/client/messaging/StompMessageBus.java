@@ -17,7 +17,6 @@ import javax.websocket.WebSocketContainer;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
-import org.integratedmodelling.klab.api.services.IRuntimeService;
 import org.integratedmodelling.klab.client.utils.JsonUtils;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;

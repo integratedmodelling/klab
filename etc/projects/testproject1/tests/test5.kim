@@ -22,7 +22,7 @@ model geography:Slope by im:Level
 model geography:Elevation by im:Level
 	using gis.terrain()
 	lookup (self, *, ?) into 
-		  elevation | concept                 | magnitude
+		  elevation | concept                 | level
 	      --------------------------------------------------------
 	      < 500     | geography:Elevation     | im:Low,
 	      < 1500    | geography:Slope         | im:Moderate,
@@ -32,4 +32,4 @@ model geography:Elevation by im:Level
 
 // special handling for data reduction trait, otherwise must be a classification. Need the category in 
 // the core ontologies. Basic models for all these should be in the standard im.data-like asset.
-model im:Normalized using di.normalize();		
+model im:Normalized using data.operator.normalize();		

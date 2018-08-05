@@ -63,10 +63,10 @@ public interface IEnvelope extends IReferenced {
      * <p>transform.</p>
      *
      * @param projection a {@link org.integratedmodelling.klab.api.observations.scale.space.IProjection} object.
-     * @param b a boolean.
+     * @param b use lenient transformation if necessary (see JTS docs).
      * @return a {@link org.integratedmodelling.klab.api.observations.scale.space.IEnvelope} object.
      */
-    IEnvelope transform(IProjection projection, boolean b);
+    IEnvelope transform(IProjection projection, boolean lenient);
 
     /**
      * <p>getCenterCoordinates.</p>

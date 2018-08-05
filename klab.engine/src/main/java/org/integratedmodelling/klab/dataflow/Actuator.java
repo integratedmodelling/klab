@@ -142,7 +142,8 @@ public class Actuator implements IActuator {
 	 *            the final artifact being computed. If this actuator handles an
 	 *            instantiation, the passed target is null and will be set to the
 	 *            first object in the result chain, or to the empty artifact if no
-	 *            instances are created.
+	 *            instances are created. In the end the method will always return
+	 *            a non-null artifact.
 	 * @param runtimeContext
 	 *            the runtime context
 	 * @return the finalized observation data. TODO when an instantiator returns no

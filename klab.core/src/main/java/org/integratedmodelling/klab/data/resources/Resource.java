@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.Utils;
 
 /**
@@ -59,272 +60,270 @@ import org.integratedmodelling.klab.utils.Utils;
  */
 public class Resource implements IResource {
 
-	private static final long serialVersionUID = -923039635832182164L;
+    private static final long serialVersionUID = -923039635832182164L;
 
-	String urn;
-	Version version;
-	String adapterType;
-	String localPath;
-	IGeometry geometry;
-	IArtifact.Type type;
-	long resourceTimestamp;
-	IMetadata metadata = new Metadata();
-	Parameters<String> parameters = new Parameters<>();
-	List<String> localPaths = new ArrayList<>();
-	List<ResourceReference> history = new ArrayList<>();
-	List<INotification> notifications = new ArrayList<>();
-	String projectName;
-	String localName;
+    String                    urn;
+    Version                   version;
+    String                    adapterType;
+    String                    localPath;
+    IGeometry                 geometry;
+    IArtifact.Type            type;
+    long                      resourceTimestamp;
+    IMetadata                 metadata         = new Metadata();
+    Parameters<String>        parameters       = new Parameters<>();
+    List<String>              localPaths       = new ArrayList<>();
+    List<ResourceReference>   history          = new ArrayList<>();
+    List<INotification>       notifications    = new ArrayList<>();
+    String                    projectName;
+    String                    localName;
 
-	// folder where all the resource files were uploaded, only for the publisher
-	File uploadFolder = null;
+    // folder where all the resource files were uploaded, only for the publisher
+    File                      uploadFolder     = null;
 
-	public Resource(ResourceReference reference) {
-		this.urn = reference.getUrn();
-		this.version = Version.create(reference.getVersion());
-		this.adapterType = reference.getAdapterType();
-		this.localPath = reference.getLocalPath();
-		this.type = reference.getType();
-		this.resourceTimestamp = reference.getResourceTimestamp();
-		this.localPaths.addAll(reference.getLocalPaths());
-		this.geometry = Geometry.create(reference.getGeometry());
-		this.projectName = reference.getProjectName();
-		this.localName = reference.getLocalName();
+    public Resource(ResourceReference reference) {
+        this.urn = reference.getUrn();
+        this.version = Version.create(reference.getVersion());
+        this.adapterType = reference.getAdapterType();
+        this.localPath = reference.getLocalPath();
+        this.type = reference.getType();
+        this.resourceTimestamp = reference.getResourceTimestamp();
+        this.localPaths.addAll(reference.getLocalPaths());
+        this.geometry = Geometry.create(reference.getGeometry());
+        this.projectName = reference.getProjectName();
+        this.localName = reference.getLocalName();
 
-		for (ResourceReference ref : reference.getHistory()) {
-			this.history.add(ref);
-		}
-		for (String key : reference.getParameters().keySet()) {
-			this.parameters.put(key, Utils.asPOD(reference.getParameters().get(key)));
-		}
-		for (String key : reference.getMetadata().keySet()) {
-			this.metadata.put(key, Utils.asPOD(reference.getParameters().get(key)));
-		}
-		for (Notification notification : reference.getNotifications()) {
-			this.notifications.add(new KimNotification(notification.getMessage(), Level.parse(notification.getLevel()),
-					notification.getTimestamp()));
-		}
-	}
+        for (ResourceReference ref : reference.getHistory()) {
+            this.history.add(ref);
+        }
+        for (String key : reference.getParameters().keySet()) {
+            this.parameters.put(key, Utils.asPOD(reference.getParameters().get(key)));
+        }
+        for (String key : reference.getMetadata().keySet()) {
+            this.metadata.put(key, Utils.asPOD(reference.getParameters().get(key)));
+        }
+        for (Notification notification : reference.getNotifications()) {
+            this.notifications.add(new KimNotification(notification.getMessage(), Level
+                    .parse(notification.getLevel()), notification.getTimestamp()));
+        }
+    }
 
-	public ResourceReference getReference() {
+    public ResourceReference getReference() {
 
-		ResourceReference ret = new ResourceReference();
+        ResourceReference ret = new ResourceReference();
 
-		ret.setUrn(this.urn);
-		ret.setVersion(this.version.toString());
-		ret.setGeometry(this.getGeometry().encode());
-		ret.setAdapterType(this.getAdapterType());
-		ret.setLocalPath(this.localPath);
-		ret.getLocalPaths().addAll(this.localPaths);
-		ret.setResourceTimestamp(this.resourceTimestamp);
-		ret.setProjectName(this.projectName);
-		ret.setLocalName(this.localName);
-		ret.setType(this.type);
+        ret.setUrn(this.urn);
+        ret.setVersion(this.version.toString());
+        ret.setGeometry(this.getGeometry().encode());
+        ret.setAdapterType(this.getAdapterType());
+        ret.setLocalPath(this.localPath);
+        ret.getLocalPaths().addAll(this.localPaths);
+        ret.setResourceTimestamp(this.resourceTimestamp);
+        ret.setProjectName(this.projectName);
+        ret.setLocalName(this.localName);
+        ret.setType(this.type);
 
-		for (ResourceReference h : this.history) {
-			ret.getHistory().add(h);
-		}
-		for (String key : this.parameters.keySet()) {
-			if (Utils.isPOD(this.parameters.get(key))) {
-				ret.getParameters().put(key, this.parameters.get(key).toString());
-			}
-		}
-		for (String key : this.metadata.keySet()) {
-			if (Utils.isPOD(this.metadata.get(key))) {
-				ret.getParameters().put(key, this.metadata.get(key).toString());
-			}
-		}
-		for (INotification notification : this.notifications) {
-			ret.getNotifications().add(new Notification(notification.getMessage(), notification.getLevel().getName(),
-					notification.getTimestamp()));
-		}
+        for (ResourceReference h : this.history) {
+            ret.getHistory().add(h);
+        }
+        for (String key : this.parameters.keySet()) {
+            if (Utils.isPOD(this.parameters.get(key))) {
+                ret.getParameters().put(key, this.parameters.get(key).toString());
+            }
+        }
+        for (String key : this.metadata.keySet()) {
+            if (Utils.isPOD(this.metadata.get(key))) {
+                ret.getParameters().put(key, this.metadata.get(key).toString());
+            }
+        }
+        for (INotification notification : this.notifications) {
+            ret.getNotifications().add(new Notification(notification.getMessage(), notification.getLevel()
+                    .getName(), notification.getTimestamp()));
+        }
 
-		return ret;
-	}
+        return ret;
+    }
 
-	Resource() {
-	}
+    Resource() {
+    }
 
-	/**
-	 * Create a resource with the passed URN and a list of errors.
-	 *
-	 * @param urn
-	 *            the urn
-	 * @param errors
-	 *            the errors
-	 * @return the resource
-	 */
-	public static Resource error(String urn, List<Throwable> errors) {
-		Resource ret = new Resource();
-		ret.urn = urn;
-		for (Throwable t : errors) {
-			ret.notifications.add(new KimNotification(t.getMessage(), Level.SEVERE));
-		}
-		return ret;
-	}
+    /**
+     * Create a resource with the passed URN and a list of errors.
+     *
+     * @param urn
+     *            the urn
+     * @param errors
+     *            the errors
+     * @return the resource
+     */
+    public static Resource error(String urn, List<Throwable> errors) {
+        Resource ret = new Resource();
+        ret.urn = urn;
+        for (Throwable t : errors) {
+            ret.notifications.add(new KimNotification(t.getMessage(), Level.SEVERE));
+        }
+        return ret;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public Version getVersion() {
-		return version;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public Version getVersion() {
+        return version;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public IMetadata getMetadata() {
-		return metadata;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public IMetadata getMetadata() {
+        return metadata;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public String getUrn() {
-		return urn;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public String getUrn() {
+        return urn;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public List<IResource> getHistory() {
-		List<IResource> ret = new ArrayList<>();
-		for (ResourceReference ref : history) {
-			ret.add(new Resource(ref));
-		}
-		return ret;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public List<IResource> getHistory() {
+        List<IResource> ret = new ArrayList<>();
+        for (ResourceReference ref : history) {
+            ret.add(new Resource(ref));
+        }
+        return ret;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public IGeometry getGeometry() {
-		return geometry;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public IGeometry getGeometry() {
+        return geometry;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public IParameters<String> getParameters() {
-		return parameters;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public IParameters<String> getParameters() {
+        return parameters;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public String getAdapterType() {
-		return adapterType;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public String getAdapterType() {
+        return adapterType;
+    }
 
-	@Override
-	public List<String> getLocalPaths() {
-		return localPaths;
-	}
+    @Override
+    public List<String> getLocalPaths() {
+        return localPaths;
+    }
 
-	/**
-	 * <p>
-	 * Getter for the field <code>resourceTimestamp</code>.
-	 * </p>
-	 *
-	 * @return a long.
-	 */
-	public long getResourceTimestamp() {
-		return resourceTimestamp;
-	}
+    /**
+     * <p>
+     * Getter for the field <code>resourceTimestamp</code>.
+     * </p>
+     *
+     * @return a long.
+     */
+    public long getResourceTimestamp() {
+        return resourceTimestamp;
+    }
 
-	/** {@inheritDoc} */
-	@Override
-	public boolean hasErrors() {
-		if (notifications != null) {
-			for (INotification notification : notifications) {
-				if (notification.getLevel() == Level.SEVERE) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    /** {@inheritDoc} */
+    @Override
+    public boolean hasErrors() {
+        if (notifications != null) {
+            for (INotification notification : notifications) {
+                if (notification.getLevel() == Level.SEVERE) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-	/**
-	 * Set the upload folder
-	 * 
-	 * @param uploadFolder
-	 * @return
-	 */
-	public Resource in(File uploadFolder) {
-		this.uploadFolder = uploadFolder;
-		return this;
-	}
+    /**
+     * Set the upload folder
+     * 
+     * @param uploadFolder
+     * @return
+     */
+    public Resource in(File uploadFolder) {
+        this.uploadFolder = uploadFolder;
+        return this;
+    }
 
-	public void validate(IResourceService resourceService) {
+    public void validate(IResourceService resourceService) {
 
-		if (!hasErrors()) {
+        if (!hasErrors()) {
 
-			if (adapterType == null) {
-				throw new IllegalStateException("invalid resource: adapter type is undefined");
-			}
-			if (version == null) {
-				throw new IllegalStateException("invalid resource: version is undefined");
-			}
-			if (geometry == null) {
-				throw new IllegalStateException("invalid resource: geometry is undefined");
-			}
-			if (urn == null) {
-				throw new IllegalStateException("invalid resource: urn is undefined");
-			}
+            if (adapterType == null) {
+                throw new IllegalStateException("invalid resource: adapter type is undefined");
+            }
+            if (version == null) {
+                throw new IllegalStateException("invalid resource: version is undefined");
+            }
+            if (geometry == null) {
+                throw new IllegalStateException("invalid resource: geometry is undefined");
+            }
+            if (urn == null) {
+                throw new IllegalStateException("invalid resource: urn is undefined");
+            }
 
-			// TODO metadata consistency check for adapter
-		}
+            // TODO metadata consistency check for adapter
+        }
 
-		// TODO more checks: consistent version history
-	}
+        // TODO more checks: consistent version history
+    }
 
-	@Override
-	public String toString() {
-		return "Resource [urn=" + urn + ", version=" + version + ", adapterType=" + adapterType + ", geometry="
-				+ geometry + ", parameters=" + parameters + ", history=" + history + ", notifications=" + notifications
-				+ "]";
-	}
+    @Override
+    public String toString() {
+        return "Resource [urn=" + urn + ", version=" + version + ", adapterType=" + adapterType
+                + ", geometry="
+                + geometry + ", parameters=" + parameters + ", history=" + history + ", notifications="
+                + notifications
+                + "]";
+    }
 
-	@Override
-	public String getLocalPath() {
-		return localPath;
-	}
+    @Override
+    public String getLocalPath() {
+        return localPath;
+    }
 
-	@Override
-	public String getLocalProjectName() {
-		return projectName;
-	}
+    @Override
+    public String getLocalProjectName() {
+        return projectName;
+    }
 
-	@Override
-	public IArtifact.Type getType() {
-		return type;
-	}
+    @Override
+    public IArtifact.Type getType() {
+        return type;
+    }
 
-	@Override
-	public String getLocalName() {
-		return localName;
-	}
+    @Override
+    public String getLocalName() {
+        return localName == null ? Path.getLast(urn, ':') : localName;
+    }
 
-	/**
-	 * Copy the current resource state to the history so that it can be modified
-	 * with full records, adding a notification to explain the change.
-	 * 
-	 * FIXME: creates unrecoverable issues when deserializing any array - when
-	 * containing 1 object, the field gets set to the object itself instead of an
-	 * array.
-	 */
-	public void copyToHistory(String modificationLog) {
-		 ResourceReference ref = this.getReference();
-		 ref.getNotifications().add(new Notification(modificationLog,
-		 Level.INFO.getName(), System.currentTimeMillis()));
-		 ref.getHistory().clear();
-		 history.add(ref);
-	}
+    /**
+     * Copy the current resource state to the history so that it can be modified
+     * with full records, adding a notification to explain the change.
+     */
+    public void copyToHistory(String modificationLog) {
+        ResourceReference ref = this.getReference();
+        ref.getNotifications()
+                .add(new Notification(modificationLog, Level.INFO.getName(), System.currentTimeMillis()));
+        ref.getHistory().clear();
+        history.add(ref);
+    }
 
-	public void setLocalProject(String name) {
-		this.projectName = name;
-	}
+    public void setLocalProject(String name) {
+        this.projectName = name;
+    }
 
-	public void setUrn(String urn) {
-		this.urn = urn;
-	}
+    public void setUrn(String urn) {
+        this.urn = urn;
+    }
 
-	public void setLocalPath(String string) {
-		this.localPath = string;
-	}
+    public void setLocalPath(String string) {
+        this.localPath = string;
+    }
 
 }
