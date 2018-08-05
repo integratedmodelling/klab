@@ -1138,7 +1138,7 @@ public class Scale implements IScale {
             if (extent instanceof ISpace) {
                 Shape shape = (Shape) ((ISpace) extent).getShape();
                 // make it a grid with a good res for visualization
-                exts.add(Space.create(shape, (double) shape.getEnvelope().getResolutionForZoomLevel(50)
+                exts.add(Space.create(shape, (double) shape.getEnvelope().getResolutionForZoomLevel(50, 1)
                         .getFirst()));
             } else if (extent instanceof ITime) {
                 if (extent.size() > 1) {

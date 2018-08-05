@@ -8,69 +8,96 @@ import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Mask;
 import org.integratedmodelling.klab.components.geospace.processing.Rasterizer;
 
+import com.vividsolutions.jts.geom.Coordinate;
+
 public class GridMask extends BitSet implements IGrid.Mask {
 
-	private static final long serialVersionUID = 1066602180194149853L;
-	private IGrid grid;
+    private static final long serialVersionUID                = 1066602180194149853L;
+    private static final int  MAX_GRID_SIZE_FOR_RASTERIZATION = 1024 * 1024;
+    private IGrid             grid;
+    private IShape            shape;
+    private boolean           useShape;
 
-	public GridMask(IGrid grid, IShape shape) {
-		this.grid = grid;
-		Rasterizer<Boolean> rasterizer = new Rasterizer<>(grid);
-		rasterizer.add(shape, (s) -> true);
-		rasterizer.finish((b, xy) -> { if (b != null && b) set((int)grid.getOffset(xy[0], xy[1])); } );
-//		System.out.println("Mask has " + cardinality() + " out of " + grid.getCellCount());
-	}
+    public GridMask(IGrid grid, IShape shape) {
+        this.grid = grid;
+        this.shape = shape;
+        if (grid.getCellCount() < MAX_GRID_SIZE_FOR_RASTERIZATION) {
+            Rasterizer<Boolean> rasterizer = new Rasterizer<>(grid);
+            rasterizer.add(shape, (s) -> true);
+            rasterizer.finish((b, xy) -> {
+                if (b != null && b)
+                    set((int) grid.getOffset(xy[0], xy[1]));
+            });
+        } else {
+            useShape = true;
+        }
+    }
 
-	@Override
-	public void merge(Mask other, LogicalConnector connector) {
-		if (connector.equals(LogicalConnector.UNION)) {
-			or((GridMask) other);
-		} else if (connector.equals(LogicalConnector.UNION)) {
-			and((GridMask) other);
-		} else
-			throw new IllegalArgumentException("grid masks can only merge in UNION or INTERSECTION");
-	}
+    @Override
+    public void merge(Mask other, LogicalConnector connector) {
+        if (connector.equals(LogicalConnector.UNION)) {
+            or((GridMask) other);
+        } else if (connector.equals(LogicalConnector.UNION)) {
+            and((GridMask) other);
+        } else
+            throw new IllegalArgumentException("grid masks can only merge in UNION or INTERSECTION");
+    }
 
-	@Override
-	public boolean isActive(long x, long y) {
-		return get((int) grid.getOffset(x, y));
-	}
+    @Override
+    public boolean isActive(long x, long y) {
+        if (useShape) {
+            double[] coords = grid.getCoordinates(grid.getOffset(x, y));
+            return ((Shape) shape).getJTSGeometry().contains(((Shape) shape).getJTSGeometry().getFactory()
+                    .createPoint(new Coordinate(coords[0], coords[1])));
+        }
+        return get((int) grid.getOffset(x, y));
+    }
 
-	@Override
-	public void activate(long x, long y) {
-		set((int) grid.getOffset(x, y));
-	}
+    @Override
+    public void activate(long x, long y) {
+        if (!useShape) {
+            set((int) grid.getOffset(x, y));
+        }
+    }
 
-	@Override
-	public void deactivate(long x, long y) {
-		set((int) grid.getOffset(x, y), false);
-	}
+    @Override
+    public void deactivate(long x, long y) {
+        if (!useShape) {
+            set((int) grid.getOffset(x, y), false);
+        }
+    }
 
-	@Override
-	public long totalActiveCells() {
-		return cardinality();
-	}
+    @Override
+    public long totalActiveCells() {
+        return useShape ? grid.getCellCount() : cardinality();
+    }
 
-	@Override
-	public long nextActiveOffset(long fromOffset) {
-		return nextSetBit((int) fromOffset);
-	}
+    @Override
+    public long nextActiveOffset(long fromOffset) {
+        return useShape ? fromOffset + 1 : nextSetBit((int) fromOffset);
+    }
 
-	@Override
-	public void invert() {
-		for (int i = 0; i < this.size(); i++) {
-			flip(i);
-		}
-	}
+    @Override
+    public void invert() {
+        if (!useShape) {
+            for (int i = 0; i < this.size(); i++) {
+                flip(i);
+            }
+        }
+    }
 
-	@Override
-	public void deactivate() {
-		clear();
-	}
+    @Override
+    public void deactivate() {
+        if (!useShape) {
+            clear();
+        }
+    }
 
-	@Override
-	public void activate() {
-		set(0, size());
-	}
+    @Override
+    public void activate() {
+        if (!useShape) {
+            set(0, size());
+        }
+    }
 
 }

@@ -867,9 +867,6 @@ public class Grid extends Area implements IGrid {
 	}
 
 	public boolean isCovered(long granule) {
-		if (mask == null) {
-			return true;
-		}
 		long[] xy = getXYOffsets(granule);
 		return mask.isActive(xy[0], xy[1]);
 	}
