@@ -8,6 +8,7 @@ import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -186,6 +187,11 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 
 		List<CandidateObservable> ret = new ArrayList<>();
 
+		/*
+		 * if we get here, we already know that the original observable isn't available.
+		 * First strip any data reduction traits that we know how to handle and save them.
+		 */
+		
 		if (observable.is(Type.PRESENCE)) {
 			IConcept inherent = Observables.INSTANCE.getInherentType(observable.getType());
 			if (inherent != null) {
@@ -207,7 +213,7 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 			}
 		} else if (observable.is(Type.RATIO)) {
 			// TODO
-		}
+		} 
 
 		return ret;
 	}

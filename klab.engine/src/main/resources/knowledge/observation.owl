@@ -1018,6 +1018,14 @@ Importantly, a deliberative agent can access history, although the full meaning 
     
 
 
+    <!-- http://integratedmodelling.org/ks/observation.owl#ObservationTransformation -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#ObservationTransformation">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Attribute"/>
+    </owl:Class>
+    
+
+
     <!-- http://integratedmodelling.org/ks/observation.owl#ObservedQuality -->
 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#ObservedQuality">
