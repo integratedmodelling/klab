@@ -149,6 +149,11 @@ public class ObservationReference {
 	private List<ObservationReference> siblings = new ArrayList<>();
 
 	/**
+	 * Actions connected with each observation
+	 */
+	private List<ActionReference> actions = new ArrayList<>();
+
+	/**
 	 * Structure pertaining to the observation in case the observation is a network
 	 * configuration.
 	 */
@@ -442,6 +447,14 @@ public class ObservationReference {
 
 	public void setTaskId(String taskId) {
 		this.taskId = taskId;
+	}
+
+	public List<ActionReference> getActions() {
+		return actions;
+	}
+
+	public void setActions(List<ActionReference> actions) {
+		this.actions = actions;
 	}
 
 }

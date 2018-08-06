@@ -6,17 +6,23 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.services.IObservableService;
+import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.ObservableReasoner.CandidateObservable;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * An observable reasoner implements all context-dependent inferences on
@@ -189,8 +195,35 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 
 		/*
 		 * if we get here, we already know that the original observable isn't available.
-		 * First strip any data reduction traits that we know how to handle and save them.
+		 * First strip any data reduction traits that we know how to handle and save
+		 * them.
 		 */
+		Pair<IObservable, List<IConcept>> untransformed = Traits.INSTANCE.removeTraits(observable,
+				Concepts.c(NS.CORE_OBSERVATION_TRANSFORMATION));
+
+		if (untransformed.getSecond().size() > 0) {
+			boolean ok = true;
+			// TODO Simple strategy assuming that transformations are not contextual. Should become
+			// smarter to include other attributes, and be called lazily (currently it's not).
+			List<IModel> transformers = new ArrayList<>();
+			for (IConcept trait : untransformed.getSecond()) {
+				IModel transformer = Models.INSTANCE.resolve(trait, this.scope);
+				if (transformer == null) {
+					ok = false;
+					break;
+				}
+				transformers.add(transformer);
+			}
+
+			if (ok)	{
+				List<IComputableResource> transformations = new ArrayList<>();
+				for (IModel model : transformers) {
+					transformations.addAll(model.getComputation(ITime.INITIALIZATION));
+				}
+				ret.add(new CandidateObservable((Observable)untransformed.getFirst(), Mode.RESOLUTION, transformations));
+			}
+			
+		}
 		
 		if (observable.is(Type.PRESENCE)) {
 			IConcept inherent = Observables.INSTANCE.getInherentType(observable.getType());
@@ -213,7 +246,7 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 			}
 		} else if (observable.is(Type.RATIO)) {
 			// TODO
-		} 
+		}
 
 		return ret;
 	}

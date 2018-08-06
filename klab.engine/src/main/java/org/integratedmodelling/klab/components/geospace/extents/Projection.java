@@ -150,34 +150,34 @@ public class Projection implements IProjection {
 		}
 	}
 
-	/**
-	 * The haversine formula calculates great-circle distance between two points on
-	 * a sphere from their longitudes and latitudes.
-	 * 
-	 * From http://rosettacode.org/wiki/Haversine_formula#Java
-	 * 
-	 * @param lat1
-	 *            PointOne latitude
-	 * @param lon1
-	 *            PointOne longitude
-	 * @param lat2
-	 *            PointTwo latitude
-	 * @param lon2
-	 *            PointTwo longitude
-	 * @return distance in meters
-	 */
-	public static double haversine(double lat1, double lon1, double lat2, double lon2) {
-		double R = 6372800; // in m
-		double dLat = Math.toRadians(lat2 - lat1);
-		double dLon = Math.toRadians(lon2 - lon1);
-		lat1 = Math.toRadians(lat1);
-		lat2 = Math.toRadians(lat2);
-
-		double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-				+ Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
-		double c = 2 * Math.asin(Math.sqrt(a));
-		return R * c;
-	}
+//	/**
+//	 * The haversine formula calculates great-circle distance between two points on
+//	 * a sphere from their longitudes and latitudes.
+//	 * 
+//	 * From http://rosettacode.org/wiki/Haversine_formula#Java
+//	 * 
+//	 * @param lat1
+//	 *            PointOne latitude
+//	 * @param lon1
+//	 *            PointOne longitude
+//	 * @param lat2
+//	 *            PointTwo latitude
+//	 * @param lon2
+//	 *            PointTwo longitude
+//	 * @return distance in meters
+//	 */
+//	public static double haversine(double lat1, double lon1, double lat2, double lon2) {
+//		double R = 6372800; // in m
+//		double dLat = Math.toRadians(lat2 - lat1);
+//		double dLon = Math.toRadians(lon2 - lon1);
+//		lat1 = Math.toRadians(lat1);
+//		lat2 = Math.toRadians(lat2);
+//
+//		double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+//				+ Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+//		double c = 2 * Math.asin(Math.sqrt(a));
+//		return R * c;
+//	}
 
 	private static final int EARTH_RADIUS = 6372800; // Approx Earth radius in m
 	private static final int EARTH_CIRCUMFERENCE = 40007860;
@@ -186,7 +186,7 @@ public class Projection implements IProjection {
 
 		// dumb fix for the fact that these situations (more or less sensibly) return no distance.
 		// there must be a smarter way.
-		if ((endLong - startLong) == 360 && startLat == endLat) {
+		if ((endLong - startLong) > 359 && startLat == endLat) {
 			return EARTH_CIRCUMFERENCE;
 		}
 
@@ -207,7 +207,6 @@ public class Projection implements IProjection {
 	}
 
 	public int getSRID() {
-		// TODO Auto-generated method stub
 		return Integer.parseInt(code.split(":")[1]);
 	}
 

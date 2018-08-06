@@ -19,6 +19,7 @@ import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.Notifier;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -27,11 +28,13 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
+import org.integratedmodelling.klab.engine.runtime.code.Expression.Context;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.KimNotifier;
 import org.integratedmodelling.klab.model.Namespace;
+import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.persistence.ModelKbox;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.utils.xtext.KimInjectorProvider;
@@ -55,7 +58,7 @@ public enum Models implements IModelService {
 	 * index for local models
 	 */
 	private ModelKbox kbox = null;
-//	Map<String, Integer> recheckModelNS = new HashMap<>();
+	// Map<String, Integer> recheckModelNS = new HashMap<>();
 
 	private Models() {
 		IInjectorProvider injectorProvider = new KimInjectorProvider();
@@ -103,13 +106,13 @@ public enum Models implements IModelService {
 				}
 
 				// recover the namespace that was parsed
-				IKimNamespace namespace = Kim.INSTANCE/*.getCommonProject()*/
+				IKimNamespace namespace = Kim.INSTANCE/* .getCommonProject() */
 						.getNamespace(model.getNamespace(), true);
 
 				if (namespace != null) {
 					for (Notifier notifier : Kim.INSTANCE.getNotifiers()) {
 						if (notifier instanceof KimNotifier) {
-							ret = (Namespace) ((KimNotifier)notifier).with((Monitor) monitor)
+							ret = (Namespace) ((KimNotifier) notifier).with((Monitor) monitor)
 									.synchronizeNamespaceWithRuntime(namespace);
 						}
 					}
@@ -122,25 +125,25 @@ public enum Models implements IModelService {
 		return ret;
 	}
 
-//	@Override
+	// @Override
 	public void releaseNamespace(String namespaceId, IMonitor monitor) throws KlabException {
-		/*int cmodel = */kbox.remove(namespaceId, monitor);
-//		if (cmodel > 0) {
-//			recheckModelNS.put(namespace.getName(), cmodel);
-//		}
+		/* int cmodel = */kbox.remove(namespaceId, monitor);
+		// if (cmodel > 0) {
+		// recheckModelNS.put(namespace.getName(), cmodel);
+		// }
 	}
 
-//	@Override
+	// @Override
 	public void index(IModel model, IMonitor monitor) throws KlabException {
-	    
-	    // wrong models don't get indexed; non-semantic models do (as private)
-	    if (model.getStatement().isErrors() || model.getObservables().size() == 0) {
-	        return;
-	    }
-	    
+
+		// wrong models don't get indexed; non-semantic models do (as private)
+		if (model.getStatement().isErrors() || model.getObservables().size() == 0) {
+			return;
+		}
+
 		kbox.store(model, monitor);
 		if (!model.isPrivate()) {
-		    Indexer.INSTANCE.index(model.getStatement(), model.getNamespace().getName());
+			Indexer.INSTANCE.index(model.getStatement(), model.getNamespace().getName());
 		}
 	}
 
@@ -158,14 +161,29 @@ public enum Models implements IModelService {
 	 */
 	public void finalizeNamespace(INamespace namespace, IMonitor monitor) {
 
-//		Integer storingNamespace = recheckModelNS.remove(namespace.getId());
-//		if (storingNamespace != null && storingNamespace > 0 && (namespace.getProject() == null || !(namespace.getProject().isRemote()))) {
-//			try {
-				kbox.store(namespace, monitor);
-//			} catch (Exception e) {
-//				monitor.error("error storing namespace", e);
-//			}
-//		}
+		// Integer storingNamespace = recheckModelNS.remove(namespace.getId());
+		// if (storingNamespace != null && storingNamespace > 0 &&
+		// (namespace.getProject() == null || !(namespace.getProject().isRemote()))) {
+		// try {
+		kbox.store(namespace, monitor);
+		// } catch (Exception e) {
+		// monitor.error("error storing namespace", e);
+		// }
+		// }
+	}
+
+	/**
+	 * Simplest query for any model observing the passed concept. Should only be
+	 * used for transformations or other commodity models. May be removed after the
+	 * resolver can deal with these quickly and more flexibly.
+	 * 
+	 * @param trait
+	 * @return the "best" model or null. There's no ranking so no need to choose
+	 *         from a list.
+	 */
+	public IModel resolve(IConcept trait, IResolutionScope scope) {
+		List<IRankedModel> ret = kbox.query(Observable.promote(trait), (ResolutionScope)scope);
+		return ret.isEmpty() ? null : ret.get(0);
 	}
 
 }

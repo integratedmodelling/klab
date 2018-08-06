@@ -41,6 +41,7 @@ import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.Resolver;
+import org.integratedmodelling.klab.rest.ActionReference;
 import org.integratedmodelling.klab.rest.Histogram;
 import org.integratedmodelling.klab.rest.Histogram.Builder;
 import org.integratedmodelling.klab.rest.ObservationReference;
@@ -231,11 +232,15 @@ public enum Observations implements IObservationService {
 		}
 
 		if (observation instanceof IState) {
+			
 			ret.setValueCount(observation.getScale().size());
 			if (observation.getScale().size() == 1) {
 				ret.setLiteralValue(formatValue(observation.getObservable(),
 						((IState) observation).get(observation.getScale().getLocator(0))));
 			}
+			
+			// FIXME REMOVE this is just for testing
+			ret.getActions().add(new ActionReference("Export as GeoTiff", "ExportGeotiff"));
 		}
 
 		return ret;

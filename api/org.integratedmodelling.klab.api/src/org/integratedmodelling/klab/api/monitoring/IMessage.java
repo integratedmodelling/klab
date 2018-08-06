@@ -156,7 +156,13 @@ public interface IMessage {
 		 * A previously reported observation had its contents modified. Back->Front.
 		 */
 		ModifiedObservation,
-
+		
+		/**
+		 * F->B: user has selected an action among those supplied by the engine with
+		 * each observation. 
+		 */
+		ExecuteObservationAction,
+		
 		/*
 		 * --- Task lifecycle ---
 		 */
