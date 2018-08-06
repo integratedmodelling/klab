@@ -6,6 +6,29 @@
 @klab 0.10.0
 @version 0.10.0
 
+annotation reliability for models
+	"The reliability score forms part of the strategy used by k.LAB to rank models during resolution. The value 
+     is used as part of the set of subjective rankings, which are combined using a multiple criteria algorithm
+     and added to the remaining, objective ranking criteria. When not specified, a model has an implicit value
+     of 50."
+{
+	number 'value' 
+		"A value between 0 and 100 for unreliable to completely reliable. In normal situations
+	     only the range 25-75 should be used, leaving the extremes for internal use."
+}
+
+annotation documented for models
+	"Documentation for each model is tied to phases of execution and is written as a template, which is 
+     computed at run time and used to assemble the final contextualization report using the provenance
+     diagram as a guide. It is kept in a separate, hidden file; the ID specified here ties a model to
+     its documentation in the corresponding file. The k.LAB IDE automatically manages the editing and 
+     maintenance of documentation."
+{
+	text 'value' 
+		"An identifier that specifies the documentation for this model. It is needed to avoid confusion
+         if model names change due to changing observables."
+}
+
 /**
  * Deprecation
  */
@@ -14,7 +37,7 @@ annotation deprecated
      users of the need to prepare for their future removal."
 {
 	
-	optional input defaultvalue
+	optional input 'value'
 		"A string description of the reason for deprecation and the suggested
          alternatives."
 		default ""
