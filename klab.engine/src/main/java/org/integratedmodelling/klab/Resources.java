@@ -659,6 +659,7 @@ public enum Resources implements IResourceService {
 
 	@Override
 	public IResolvable getResolvableResource(String urn) {
+
 		IKimObject obj = getModelObject(urn);
 		if (obj instanceof IResolvable) {
 			return (IResolvable) obj;
