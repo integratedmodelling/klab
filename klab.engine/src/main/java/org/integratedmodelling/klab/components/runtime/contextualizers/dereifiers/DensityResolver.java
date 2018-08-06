@@ -29,7 +29,7 @@ public class DensityResolver implements IResolver<IDataArtifact>, IExpression {
 	public DensityResolver() {
 	}
 
-	public DensityResolver(IParameters parameters, IComputationContext context) {
+	public DensityResolver(IParameters<String> parameters, IComputationContext context) {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -43,7 +43,7 @@ public class DensityResolver implements IResolver<IDataArtifact>, IExpression {
 	}
 
 	@Override
-	public Object eval(IParameters parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
 		return new DensityResolver(parameters, context);
 	}
 

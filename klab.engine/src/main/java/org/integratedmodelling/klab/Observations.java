@@ -125,6 +125,7 @@ public enum Observations implements IObservationService {
 			}
 		}
 
+		ret.setDegenerate(ndata == 0 || !Double.isFinite(statistics.getMax()) || !Double.isFinite(statistics.getMax()));
 		ret.setNodataPercentage((double) nndat / (double) ndata);
 		ret.setRange(Arrays.asList(statistics.getMin(), statistics.getMax()));
 		ret.setValueCount(ndata + nndat);
@@ -232,13 +233,13 @@ public enum Observations implements IObservationService {
 		}
 
 		if (observation instanceof IState) {
-			
+
 			ret.setValueCount(observation.getScale().size());
 			if (observation.getScale().size() == 1) {
 				ret.setLiteralValue(formatValue(observation.getObservable(),
 						((IState) observation).get(observation.getScale().getLocator(0))));
 			}
-			
+
 			// FIXME REMOVE this is just for testing
 			ret.getActions().add(new ActionReference("Export as GeoTiff", "ExportGeotiff"));
 		}

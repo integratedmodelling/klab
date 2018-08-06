@@ -47,6 +47,9 @@ public class StateSummary {
 	 * The value count
 	 */
 	private long valueCount;
+	
+	// if false, we have proper intervals and some nodata values
+	private boolean degenerate;
 
 	/**
 	 * The percentage of no-data values in the value count
@@ -109,6 +112,12 @@ public class StateSummary {
 		this.nodataPercentage = nodataPercentage;
 	}
 
-	
+	public boolean isDegenerate() {
+		return this.degenerate;
+	}
+
+	public void setDegenerate(boolean b) {
+		this.degenerate = b;
+	}
 	
 }
