@@ -50,6 +50,17 @@ public class Projection implements IProjection {
 		return latlonProjection;
 	}
 
+	@Override
+	public String getSimpleSRS() {
+		try {
+			Integer integer = CRS.lookupEpsgCode(crs, true);
+			return "EPSG:" + integer;
+		} catch (FactoryException e) {
+			// shut up
+		}
+		return null;
+	}
+
 	/**
 	 * Get the UTM projection most appropriate to geolocate the passed envelope,
 	 * which can be in any projection.
@@ -166,6 +177,33 @@ public class Projection implements IProjection {
 				+ Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
 		double c = 2 * Math.asin(Math.sqrt(a));
 		return R * c;
+	}
+
+	private static final int EARTH_RADIUS = 6372800; // Approx Earth radius in m
+	private static final int EARTH_CIRCUMFERENCE = 40007860;
+
+	public static double distance(double startLat, double startLong, double endLat, double endLong) {
+
+		// dumb fix for the fact that these situations (more or less sensibly) return no distance.
+		// there must be a smarter way.
+		if ((endLong - startLong) == 360 && startLat == endLat) {
+			return EARTH_CIRCUMFERENCE;
+		}
+
+		double dLat = Math.toRadians((endLat - startLat));
+		double dLong = Math.toRadians((endLong - startLong));
+
+		startLat = Math.toRadians(startLat);
+		endLat = Math.toRadians(endLat);
+
+		double a = haversin(dLat) + Math.cos(startLat) * Math.cos(endLat) * haversin(dLong);
+		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+		return EARTH_RADIUS * c; // <-- d
+	}
+
+	public static double haversin(double val) {
+		return Math.pow(Math.sin(val / 2), 2);
 	}
 
 	public int getSRID() {

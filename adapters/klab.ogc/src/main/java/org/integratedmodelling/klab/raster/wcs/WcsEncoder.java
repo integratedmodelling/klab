@@ -79,10 +79,12 @@ public class WcsEncoder implements IResourceEncoder {
 			// connection.setReadTimeout(timeout);
 			// }
 
+			System.out.println("Opening URL " + getCov);
 			try (InputStream input = getCov.openStream()) {
 				coverageFile = File.createTempFile("geo", ".tiff");
 				coverageFile.deleteOnExit();
 				FileUtils.copyInputStreamToFile(input, coverageFile);
+				System.out.println("Data have arrived in " + coverageFile);
 				WcsAdapter.setCachedFile(coverageFile, layer.getIdentifier(), geometry);
 			} catch (Throwable e) {
 				throw new KlabIOException(e);

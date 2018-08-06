@@ -1034,8 +1034,8 @@ public class Grid extends Area implements IGrid {
 		// Case 2: CRS uses degrees
 		else {
 			// get height and width in meters
-			double height = Projection.haversine(env.getMinY(), env.getMinX(), env.getMaxY(), env.getMinX());
-			double width = Projection.haversine(env.getMinY(), env.getMinX(), env.getMinY(), env.getMaxX());
+			double height = Projection.distance(env.getMinY(), env.getMinX(), env.getMaxY(), env.getMinX());
+			double width = Projection.distance(env.getMinY(), env.getMinX(), env.getMinY(), env.getMaxX());
 			x = (long) Math.ceil(width / squareSize);
 			y = (long) Math.ceil(height / squareSize);
 

@@ -45,4 +45,11 @@ public interface IProjection {
 	 * @return true if projection is silly
 	 */
 	boolean flipsCoordinates();
+
+	/**
+	 * Return a simple string in the format "EPSG:nnnn". Used to interface to dumber
+	 * projection APIs. Do not expect this to work for non-EPSG CRSs though.
+	 * @return
+	 */
+	String getSimpleSRS();
 }

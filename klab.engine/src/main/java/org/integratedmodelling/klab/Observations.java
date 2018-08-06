@@ -208,15 +208,8 @@ public enum Observations implements IObservationService {
 			 */
 			if (observation instanceof IDirectObservation) {
 				String shape = space.getShape().toString();
-				String pcode = null;
-				if (shape.startsWith("EPSG:") || shape.startsWith("urn:")) {
-					int n = shape.indexOf(' ');
-					pcode = shape.substring(0, n);
-					shape = shape.substring(n + 1);
-				}
 				ret.setEncodedShape(shape);
-				// FIXME this sends a null
-				ret.setSpatialProjection(pcode);
+				ret.setSpatialProjection(space.getProjection().getSimpleSRS());
 			}
 
 			GeometryType gtype = GeometryType.SHAPE;
