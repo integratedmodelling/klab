@@ -243,6 +243,9 @@ public enum Observations implements IObservationService {
 			ret.getActions().add(new ActionReference("Export as GeoTiff", "ExportGeotiff"));
 		}
 
+		ret.getActions().add(ActionReference.separator());
+		ret.getActions().add(new ActionReference("Show metadata", "ShowMetadata"));
+
 		return ret;
 	}
 

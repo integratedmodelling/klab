@@ -67,4 +67,10 @@ public class ActionReference {
 		this.submenu = submenu;
 	}
 
+	public static ActionReference separator() {
+		ActionReference ret = new ActionReference();
+		ret.separator = true;
+		return ret;
+	}
+
 }
