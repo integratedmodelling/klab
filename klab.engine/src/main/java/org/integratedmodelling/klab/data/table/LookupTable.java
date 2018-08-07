@@ -1,12 +1,17 @@
 package org.integratedmodelling.klab.data.table;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimLookupTable;
+import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
 import org.integratedmodelling.klab.api.data.general.ITable;
 
 public class LookupTable implements ILookupTable {
+
+	protected List<IClassifier[]> rows = new ArrayList<>();
+	protected List<String> headers = null;
 
 	public LookupTable(IKimLookupTable lookupTable) {
 		// TODO Auto-generated constructor stub

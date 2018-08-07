@@ -237,7 +237,7 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
             return "Test cases";
         }
         if (element instanceof EResource) {
-            return ((EResource) element).getId();
+            return ((EResource) element).getResource().getLocalName();
         }
         return delegate.getText(element);
     }
