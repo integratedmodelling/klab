@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.ide.model;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -62,6 +63,10 @@ public class Klab {
 						File rdesc = new File(rfolder + File.separator + "resource.json");
 						if (rdesc.exists()) {
 							ResourceReference resource = JsonUtils.load(rdesc, ResourceReference.class);
+							// FIXME this should be removed once the local name is mandatory on creation
+							if (resource.getLocalName() == null) {
+								resource.setLocalName(org.integratedmodelling.klab.utils.Path.getLast(resource.getUrn(), ':'));
+							}
 							Map<String, EResourceReference> catalog = resourceCatalog.get(projectName);
 							if (catalog == null) {
 								catalog = new LinkedHashMap<>();

@@ -31,6 +31,11 @@ import org.springframework.web.socket.messaging.WebSocketStompClient;
 import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.Transport;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
+import org.springframework.web.socket.sockjs.frame.Jackson2SockJsMessageCodec;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * A websockets-driven message bus. The messages to be exchanged should be
@@ -45,160 +50,171 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
  */
 public class StompMessageBus extends StompSessionHandlerAdapter implements IMessageBus {
 
-    // private static final String URL = "ws://localhost:8283/modeler/message";
-    private static final Set<Object> emptySet = new HashSet<Object>();
+	// private static final String URL = "ws://localhost:8283/modeler/message";
+	private static final Set<Object> emptySet = new HashSet<Object>();
+	
+	private ObjectMapper objectMapper = new ObjectMapper()
+			// I'll never understand why this shit isn't enabled by default
+			.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+			.disable(MapperFeature.DEFAULT_VIEW_INCLUSION)
+			.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+	
+	private StompSession session;
+	private Map<String, Consumer<IMessage>> responders = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, Set<Object>> receivers = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, Subscription> subscriptions = Collections.synchronizedMap(new HashMap<>());
+	private Reactor reactor = new Reactor(this);
 
-    private StompSession session;
-    private Map<String, Consumer<IMessage>> responders = Collections.synchronizedMap(new HashMap<>());
-    private Map<String, Set<Object>> receivers = Collections.synchronizedMap(new HashMap<>());
-    private Map<String, Subscription> subscriptions = Collections.synchronizedMap(new HashMap<>());
-    private Reactor reactor = new Reactor(this);
+	public StompMessageBus(String url) {
 
-    public StompMessageBus(String url) {
+		/*
+		 * Took two days to figure the next three lines out.
+		 */
+		WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+		container.setDefaultMaxBinaryMessageBufferSize(1024 * 1024);
+		container.setDefaultMaxTextMessageBufferSize(1024 * 1024);
+		List<Transport> transports = new ArrayList<>(1);
+		transports.add(new WebSocketTransport(new StandardWebSocketClient(container)));
+		SockJsClient transport = new SockJsClient(transports);
+		
+		/*
+		 * and three more for the next one
+		 */
+		transport.setMessageCodec(new Jackson2SockJsMessageCodec(objectMapper));
+		WebSocketStompClient stompClient = new WebSocketStompClient(transport);
+		stompClient.setInboundMessageSizeLimit(1024 * 1024);
+		stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+		try {
+			this.session = stompClient.connect(url, this).get();
+		} catch (Throwable e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-        /*
-         * Took two days to figure the next three lines out.
-         */
-        WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-        container.setDefaultMaxBinaryMessageBufferSize(1024 * 1024);
-        container.setDefaultMaxTextMessageBufferSize(1024 * 1024);
-        List<Transport> transports = new ArrayList<>(1);
-        transports.add(new WebSocketTransport(new StandardWebSocketClient(container)));
-        SockJsClient transport = new SockJsClient(transports);
-        WebSocketStompClient stompClient = new WebSocketStompClient(transport);
-        stompClient.setInboundMessageSizeLimit(1024 * 1024);
-        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
-        try {
-            this.session = stompClient.connect(url, this).get();
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
-    }
+	@Override
+	public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload,
+			Throwable exception) {
+		throw new RuntimeException("STOMP exception: " + exception.getMessage());
+	}
 
-    @Override
-    public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload,
-            Throwable exception) {
-        throw new RuntimeException("STOMP exception: " + exception.getMessage());
-    }
+	@Override
+	public Type getPayloadType(StompHeaders headers) {
+		return Message.class;
+	}
 
-    @Override
-    public Type getPayloadType(StompHeaders headers) {
-        return Message.class;
-    }
+	@Override
+	public void handleFrame(StompHeaders headers, Object payload) {
+		// won't happen
+	}
 
-    @Override
-    public void handleFrame(StompHeaders headers, Object payload) {
-        // won't happen
-    }
+	@Override
+	public void post(IMessage message) {
+		session.send("/klab/message", message);
+	}
 
-    @Override
-    public void post(IMessage message) {
-        session.send("/klab/message", message);
-    }
+	@Override
+	public void post(IMessage message, Consumer<IMessage> responder) {
+		responders.put(((Message) message).getId(), responder);
+		post(message);
+	}
 
-    @Override
-    public void post(IMessage message, Consumer<IMessage> responder) {
-        responders.put(((Message) message).getId(), responder);
-        post(message);
-    }
+	@Override
+	public Collection<Object> getReceivers(String identity) {
+		Set<Object> ret = receivers.get(identity);
+		if (ret == null) {
+			return emptySet;
+		}
+		return ret;
+	}
 
-    @Override
-    public Collection<Object> getReceivers(String identity) {
-        Set<Object> ret = receivers.get(identity);
-        if (ret == null) {
-            return emptySet;
-        }
-        return ret;
-    }
+	@Override
+	public void subscribe(String identity, Object receiver) {
 
-    @Override
-    public void subscribe(String identity, Object receiver) {
+		Set<Object> ret = receivers.get(identity);
 
-        Set<Object> ret = receivers.get(identity);
+		if (ret == null) {
+			ret = new HashSet<>();
+			Subscription subscription = session.subscribe("/message/" + identity, new StompFrameHandler() {
 
-        if (ret == null) {
-            ret = new HashSet<>();
-            Subscription subscription = session.subscribe("/message/" + identity, new StompFrameHandler() {
+				@Override
+				public synchronized void handleFrame(StompHeaders arg0, Object payload) {
 
-                @Override
-                public synchronized void handleFrame(StompHeaders arg0, Object payload) {
+					try {
+						final Message message = (Message) payload;
 
-                    try {
-                        final Message message = (Message) payload;
+						/*
+						 * No automatic translation at the receiving end
+						 */
+						if (message.getPayload() instanceof Map && message.getPayloadClass() != null) {
+							message.setPayload(JsonUtils.convert(message.getPayload(),
+									Class.forName(IConfigurationService.REST_RESOURCES_PACKAGE_ID + "."
+											+ message.getPayloadClass())));
+						}
 
-                        /*
-                         * No automatic translation at the receiving end
-                         */
-                        if (message.getPayload() instanceof Map && message.getPayloadClass() != null) {
-                            message.setPayload(JsonUtils.convert(message.getPayload(),
-                                    Class.forName(IConfigurationService.REST_RESOURCES_PACKAGE_ID + "."
-                                            + message.getPayloadClass())));
-                        }
+						new Thread() {
 
-                        new Thread() {
+							@Override
+							public void run() {
 
-                            @Override
-                            public void run() {
+								if (message.getInResponseTo() != null) {
+									Consumer<IMessage> responder = responders.remove(message.getInResponseTo());
+									if (responder != null) {
+										responder.accept(message);
+										return;
+									}
+								}
 
-                                if (message.getInResponseTo() != null) {
-                                    Consumer<IMessage> responder = responders.remove(message.getInResponseTo());
-                                    if (responder != null) {
-                                        responder.accept(message);
-                                        return;
-                                    }
-                                }
+								for (Object identity : getReceivers(message.getIdentity())) {
+									reactor.dispatchMessage(message, identity);
+								}
+							}
+						}.start();
 
-                                for (Object identity : getReceivers(message.getIdentity())) {
-                                    reactor.dispatchMessage(message, identity);
-                                }
-                            }
-                        }.start();
+					} catch (Throwable e) {
+						throw new RuntimeException(e);
+					}
+				}
 
-                    } catch (Throwable e) {
-                        throw new RuntimeException(e);
-                    }
-                }
+				@Override
+				public Type getPayloadType(StompHeaders arg0) {
+					return Message.class;
+				}
+			});
 
-                @Override
-                public Type getPayloadType(StompHeaders arg0) {
-                    return Message.class;
-                }
-            });
+			subscriptions.put(identity, subscription);
+			receivers.put(identity, ret);
+		}
+		ret.add(receiver);
+	}
 
-            subscriptions.put(identity, subscription);
-            receivers.put(identity, ret);
-        }
-        ret.add(receiver);
-    }
+	@Override
+	public void unsubscribe(String identity) {
 
-    @Override
-    public void unsubscribe(String identity) {
+		if (subscriptions.containsKey(identity)) {
+			subscriptions.get(identity).unsubscribe();
+			subscriptions.remove(identity);
+		}
+		receivers.remove(identity);
+	}
 
-        if (subscriptions.containsKey(identity)) {
-            subscriptions.get(identity).unsubscribe();
-            subscriptions.remove(identity);
-        }
-        receivers.remove(identity);
-    }
+	@Override
+	public void unsubscribe(String identity, Object receiver) {
+		Set<Object> ret = receivers.get(identity);
+		if (ret != null) {
+			ret.remove(receiver);
+			if (ret.isEmpty()) {
+				unsubscribe(identity);
+			}
+		}
+	}
 
-    @Override
-    public void unsubscribe(String identity, Object receiver) {
-        Set<Object> ret = receivers.get(identity);
-        if (ret != null) {
-            ret.remove(receiver);
-            if (ret.isEmpty()) {
-                unsubscribe(identity);
-            }
-        }
-    }
-
-    public void stop() {
-        if (session.isConnected()) {
-            for (Subscription subscription : subscriptions.values()) {
-                subscription.unsubscribe();
-            }
-        }
-        subscriptions.clear();
-    }
+	public void stop() {
+		if (session.isConnected()) {
+			for (Subscription subscription : subscriptions.values()) {
+				subscription.unsubscribe();
+			}
+		}
+		subscriptions.clear();
+	}
 
 }
