@@ -1583,6 +1583,19 @@ public class KimValidator extends AbstractKimValidator {
     boolean isAlias = concept.isAlias();
     List<KimConceptStatement.ParentConcept> declaredParents = CollectionLiterals.<KimConceptStatement.ParentConcept>newArrayList();
     boolean template = false;
+    int ai = 0;
+    EList<Annotation> _annotations = concept.getAnnotations();
+    for (final Annotation annotation : _annotations) {
+      {
+        final KimAnnotation ann = new KimAnnotation(annotation, namespace, ret);
+        ret.getAnnotations().add(ann);
+        List<KimNotification> _validateUsage = ann.validateUsage(ann);
+        for (final KimNotification notification : _validateUsage) {
+          this.notify(notification, concept, KimPackage.Literals.CONCEPT_STATEMENT__ANNOTATIONS, ai);
+        }
+        ai++;
+      }
+    }
     String _name = namespace.getName();
     String _plus = (_name + ":");
     String _name_1 = concept.getName();

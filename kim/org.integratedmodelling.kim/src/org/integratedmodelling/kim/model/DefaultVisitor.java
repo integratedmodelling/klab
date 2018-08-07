@@ -17,7 +17,7 @@ import org.integratedmodelling.kim.api.IKimScope;
  * @author ferdinando.villa
  *
  */
-public abstract class DefaultVisitor implements IKimScope.Visitor {
+public class DefaultVisitor implements IKimScope.Visitor {
 
 	@Override
 	public void visitAuthority(String authority, String term) {

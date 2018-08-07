@@ -309,7 +309,7 @@ public class DataflowCompiler {
 						ret.addComputation(adapter);
 					}
 				}
-				ret.getAnnotations().addAll(Annotations.INSTANCE.collectAnnotations(model));
+				ret.getAnnotations().addAll(Annotations.INSTANCE.collectAnnotations(observable, model));
 			} else {
 				ret.setReference(true);
 			}

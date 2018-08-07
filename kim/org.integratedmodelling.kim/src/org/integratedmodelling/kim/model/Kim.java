@@ -798,9 +798,10 @@ public enum Kim {
             if (t == Type.DISTANCE) {
                 // this does not go in by itself
                 ret.add(Type.EXTENSIVE_PROPERTY);
-            } // else if (t == Type.MAGNITUDE) {
-//                ret.add(Type.SUBJECTIVE);
-//            }
+            } else if (t == Type.MAGNITUDE) {
+            	// this neither
+                ret.add(Type.SUBJECTIVE);
+            }
         }
         ret.add(Type.QUALITY);
         ret.add(Type.OBSERVABLE);

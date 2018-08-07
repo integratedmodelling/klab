@@ -104,4 +104,9 @@ public class ModelTests {
 	public void simpleClassification() throws Exception {
 		engine.run(getClass().getClassLoader().getResource("kim/test12.kim")).get();
 	}
+	
+	@Test
+	public void normalization() throws Exception {
+		engine.run(getClass().getClassLoader().getResource("kim/test13.kim")).get();
+	}
 }

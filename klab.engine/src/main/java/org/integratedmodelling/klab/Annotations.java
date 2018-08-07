@@ -131,9 +131,15 @@ public enum Annotations implements IAnnotationService {
 	 * @param object
 	 * @return all annotations from upstream
 	 */
-	public Collection<IAnnotation> collectAnnotations(IKimObject object) {
+	public Collection<IAnnotation> collectAnnotations(Object... objects) {
 		Map<String, IAnnotation> ret = new HashMap<>();
-		collectAnnotations(object, ret);
+		for (Object object : objects) {
+			if (object instanceof IKimObject) {
+				collectAnnotations((IKimObject) object, ret);
+			} else if (object instanceof ISemantic) {
+				collectAnnotations((ISemantic) object, ret);
+			}
+		}
 		return ret.values();
 	}
 

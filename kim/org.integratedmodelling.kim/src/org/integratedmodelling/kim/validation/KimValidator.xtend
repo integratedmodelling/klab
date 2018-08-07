@@ -55,7 +55,6 @@ import org.integratedmodelling.klab.utils.CamelCase
 import org.integratedmodelling.klab.utils.Pair
 import org.integratedmodelling.kim.model.KimConceptStatement.ApplicableConceptImpl
 
-
 /**
  * This class contains custom validation rules. 
  * 
@@ -130,7 +129,7 @@ class KimValidator extends AbstractKimValidator {
 	def checkUrn(Urn urn) {
 
 		var EObject mo = urn.eContainer?.eContainer;
-		var ModelStatement model = if (mo !== null && mo instanceof ModelStatement) mo as ModelStatement else null;
+		var ModelStatement model = if(mo !== null && mo instanceof ModelStatement) mo as ModelStatement else null;
 		for (u : model.body.urns) {
 			val UrnDescriptor ud = Kim.INSTANCE.getUrnDescriptor(u.name);
 			if (ud === null || ud.isDead || !ud.isAccessible) {
@@ -344,12 +343,12 @@ class KimValidator extends AbstractKimValidator {
 				var ns = Kim.INSTANCE.getNamespace(namespace, true)
 
 				var descriptor = new KimModel(statement, ns);
-				
+
 				if (!ok) {
 					descriptor.errors = true;
 					ns.errors = true;
 				}
-				
+
 				descriptor.observables.addAll(observables)
 				descriptor.dependencies.addAll(dependencies)
 				descriptor.instantiator = model.isInstantiator
@@ -363,7 +362,7 @@ class KimValidator extends AbstractKimValidator {
 				for (urn : model.urns) {
 					descriptor.resourceUrns.add(urn.name)
 				}
-				
+
 				if (model.function !== null) {
 					descriptor.resourceFunction = new KimServiceCall(model.function, descriptor)
 					for (notification : (descriptor.resourceFunction.get() as KimServiceCall).validateUsage(null)) {
@@ -514,7 +513,7 @@ class KimValidator extends AbstractKimValidator {
 		if (observation === null) {
 			return null
 		}
-		
+
 		var semantics = Kim.INSTANCE.declareObservable(observation.concept)
 		if (semantics !== null) {
 			if (!semantics.descriptor.is(Type.SUBJECT) && !semantics.descriptor.is(Type.EVENT)) {
@@ -1232,7 +1231,6 @@ class KimValidator extends AbstractKimValidator {
 //			notify(notification, ann, KimPackage.Literals.ANNOTATION__NAME, 0)
 //		}
 //	}
-
 	def KimConceptStatement validateConceptBody(ConceptStatementBody concept, KimNamespace namespace,
 		KimConceptStatement parent, EnumSet<Type> type) {
 
@@ -1241,6 +1239,16 @@ class KimValidator extends AbstractKimValidator {
 		var isAlias = concept.alias
 		var List<ParentConcept> declaredParents = newArrayList
 		var template = false
+
+		var ai = 0
+		for (annotation : concept.annotations) {
+			val ann = new KimAnnotation(annotation, namespace, ret)
+			ret.annotations.add(ann)
+			for (notification : ann.validateUsage(ann)) {
+				notify(notification, concept, KimPackage.Literals.CONCEPT_STATEMENT__ANNOTATIONS, ai)
+			}
+			ai++
+		}
 
 		if (Kim.INSTANCE.getConceptDescriptor(namespace.name + ":" + concept.name) !== null) {
 			error('A concept can only be declared once', concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__NAME)
@@ -1299,11 +1307,11 @@ class KimValidator extends AbstractKimValidator {
 
 					var ptype = checkDeclaration(p)
 					var ctype = EnumSet.copyOf(type);
-	
+
 					ctype.addAll(ptype)
 					ctype.remove(Type.ABSTRACT)
 					ptype.remove(Type.ABSTRACT)
-					
+
 					if (Kim.intersection(ctype, IKimConcept.DECLARABLE_TYPES).size() != 1) {
 						error('This is not a suitable parent for the declared type', concept,
 							KimPackage.Literals.CONCEPT_STATEMENT_BODY__PARENTS, i)

@@ -4,10 +4,15 @@ worldview im;
     name = "tests.normalization.quality.simple",
     description  = "Test normalization by trait",
     observations = ("im:Normalized geography:Elevation")
-    // assert values are 0 to 1
+    // TODO assert values are 0 to 1
 )
-// change the concept to the one you want; add a URN optionally
 observe earth:Region named normalization
     // add any space and/or time extents: for example
     over space(shape="EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))", grid="1 km")
 ;
+
+model im:Normalized 
+	using klab.data.normalize();
+
+model geography:Elevation in m
+	using gis.terrain();
