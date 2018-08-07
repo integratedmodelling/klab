@@ -81,6 +81,12 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 		}
 	}
 
+	public KimServiceCall(String name, Map<String, Object> parameters) {
+		super((EObject) null, null);
+		this.name = name;
+		this.parameters.putAll(parameters);
+	}
+
 	@Override
 	public String getSourceCode() {
 
@@ -100,14 +106,14 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 
 		return super.getSourceCode();
 	}
-	
-	@Override
-    public void visit(Visitor visitor) {
-	    // TODO must visit concept declarations in maps
-    }
 
-    private String getStringValue(Object val) {
-		
+	@Override
+	public void visit(Visitor visitor) {
+		// TODO must visit concept declarations in maps
+	}
+
+	private String getStringValue(Object val) {
+
 		if (val instanceof List) {
 			String ret = "(";
 			for (Object o : ((List<?>) val)) {

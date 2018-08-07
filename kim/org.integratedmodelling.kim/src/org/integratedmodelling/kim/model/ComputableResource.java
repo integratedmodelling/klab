@@ -105,6 +105,8 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		this.requiredResourceNames = requiredResourceNames;
 	}
 
+	protected ComputableResource() {}
+	
 	public ComputableResource(ValueAssignment statement, IKimStatement parent) {
 
 		super(statement, parent);

@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.services.IObservableService;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
+import org.integratedmodelling.klab.engine.runtime.code.Transformation;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.ObservableReasoner.CandidateObservable;
@@ -203,8 +204,10 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 
 		if (untransformed.getSecond().size() > 0) {
 			boolean ok = true;
-			// TODO Simple strategy assuming that transformations are not contextual. Should become
-			// smarter to include other attributes, and be called lazily (currently it's not).
+			// TODO Simple strategy assuming that transformations are not contextual. Should
+			// become
+			// smarter to include other attributes, and be called lazily (currently it's
+			// not).
 			List<IModel> transformers = new ArrayList<>();
 			for (IConcept trait : untransformed.getSecond()) {
 				IModel transformer = Models.INSTANCE.resolve(trait, this.scope);
@@ -215,18 +218,20 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 				transformers.add(transformer);
 			}
 
-			if (ok)	{
+			if (ok) {
 				List<IComputableResource> transformations = new ArrayList<>();
 				for (IModel model : transformers) {
-					transformations.addAll(model.getComputation(ITime.INITIALIZATION));
+					for (IComputableResource computation : model.getComputation(ITime.INITIALIZATION)) {
+						transformations.add(new Transformation(computation, untransformed.getFirst()));
+					}
 				}
-				Observable newobs = new Observable((Observable)untransformed.getFirst());
+				Observable newobs = new Observable((Observable) untransformed.getFirst());
 				newobs.setName(observable.getLocalName());
 				ret.add(new CandidateObservable(newobs, Mode.RESOLUTION, transformations));
 			}
-			
+
 		}
-		
+
 		if (observable.is(Type.PRESENCE)) {
 			IConcept inherent = Observables.INSTANCE.getInherentType(observable.getType());
 			if (inherent != null) {

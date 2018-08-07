@@ -7,6 +7,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -20,10 +21,11 @@ public class NormalizingTransformation implements IResolver<IState>, IExpression
 	
 	public NormalizingTransformation(IParameters<String> parameters, IComputationContext context) {
 		
-		if (!(context.getTargetArtifact() instanceof IState) || context.getTargetArtifact().getType() != Type.NUMBER) {
+		IArtifact artifact = context.getArtifact(parameters.get("artifact", String.class));
+		if (!(artifact instanceof IState) || artifact.getType() != Type.NUMBER) {
 			throw new IllegalArgumentException("normalization operations can only be performed on numeric states");
 		}
-		this.state = (IState) context.getTargetArtifact();
+		this.state = (IState) artifact;
 	}
 
 	@Override
@@ -43,10 +45,10 @@ public class NormalizingTransformation implements IResolver<IState>, IExpression
 
 	@Override
 	public IState resolve(IState ret, IComputationContext context) throws KlabException {
-		StateSummary summary = Observations.INSTANCE.getStateSummary(ret, context.getScale());
+		StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
 		if (!summary.isDegenerate()) {
 			for (ILocator locator : context.getScale()) {
-				Object value = ret.get(locator);
+				Object value = state.get(locator);
 				if (value instanceof Number && !Double.isNaN(((Number) value).doubleValue())) {
 					double nval = ((Number) value).doubleValue();
 					nval = (nval - summary.getRange().get(0)) / (summary.getRange().get(1) - summary.getRange().get(0));
