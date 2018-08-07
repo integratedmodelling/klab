@@ -316,8 +316,16 @@ public enum Renderer {
 				labels[i] = "" + values[i];
 			}
 
-		} else {
-			// build value array
+		} else if (state.getDataKey() != null && colors != null) {
+
+			values = new double[state.getDataKey().size()];
+			labels = new String[state.getDataKey().size()];
+			int i = 0;
+			for (Pair<Object, String> pair : state.getDataKey().getAllValues()) {
+				values[i] = ((Number)pair.getFirst()).doubleValue();
+				labels[i] = pair.getSecond();
+				i++;
+			}
 		}
 
 		ColorMap colorMap = styleBuilder.createColorMap(labels, values, colors, colormapType);

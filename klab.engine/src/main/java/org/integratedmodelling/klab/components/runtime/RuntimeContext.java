@@ -589,4 +589,14 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		return this.scheduler;
 	}
 
+	@Override
+	public void replaceTarget(IArtifact target) {
+		this.target = target;
+		if (target != null) {
+			Map<String, IArtifact> newCatalog = new HashMap<>();
+			newCatalog.put(targetName, target);
+			this.catalog = newCatalog;
+		}
+	}
+
 }

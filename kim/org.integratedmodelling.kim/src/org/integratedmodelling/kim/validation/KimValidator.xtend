@@ -410,7 +410,11 @@ class KimValidator extends AbstractKimValidator {
 				}
 
 				if (model.lookupTableId !== null) {
-					descriptor.contextualization.add(new ComputableResource(descriptor, model.lookupTableId))
+					descriptor.contextualization.add(new ComputableResource(descriptor, model.lookupTableId, true))
+				}
+				
+				if (model.classificationProperty !== null) {
+					descriptor.contextualization.add(new ComputableResource(descriptor, model.classificationProperty, false))
 				}
 
 				if (model.name !== null) {
@@ -1221,6 +1225,7 @@ class KimValidator extends AbstractKimValidator {
 				}
 			}
 		}
+		
 	}
 
 //	@Check

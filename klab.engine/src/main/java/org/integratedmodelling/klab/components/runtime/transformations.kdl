@@ -5,3 +5,7 @@
 contextualizer normalize {
 	class org.integratedmodelling.klab.data.transformations.NormalizingTransformation
 }
+
+contextualizer standardize {
+	class org.integratedmodelling.klab.data.transformations.StandardizingTransformation
+}

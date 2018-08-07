@@ -7,6 +7,7 @@ import org.integratedmodelling.kim.api.IKimLookupTable;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
 import org.integratedmodelling.klab.api.data.general.ITable;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class LookupTable implements ILookupTable {
 
@@ -45,6 +46,12 @@ public class LookupTable implements ILookupTable {
 	public boolean isOrdered() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public List<Pair<Object, String>> getAllValues() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

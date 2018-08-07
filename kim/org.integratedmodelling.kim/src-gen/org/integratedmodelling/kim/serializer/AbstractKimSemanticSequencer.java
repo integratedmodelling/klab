@@ -437,11 +437,11 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         restrictions+=RestrictionStatement | 
 	 *                         metadata=Metadata
 	 *                     )? 
-	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
-	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
 	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
-	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
 	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
+	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
+	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
+	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
 	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
 	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
@@ -598,15 +598,18 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *     (
 	 *         name=STRING? 
 	 *         main+=Concept+ 
+	 *         motivation=SimpleConceptDeclaration? 
 	 *         (
-	 *             inherency=SimpleConceptDeclaration | 
-	 *             motivation=SimpleConceptDeclaration | 
-	 *             compresent=SimpleConceptDeclaration | 
-	 *             causant=SimpleConceptDeclaration | 
-	 *             adjacent=SimpleConceptDeclaration | 
-	 *             container=SimpleConceptDeclaration | 
-	 *             contained=SimpleConceptDeclaration | 
-	 *             caused=SimpleConceptDeclaration
+	 *             (
+	 *                 inherency=SimpleConceptDeclaration | 
+	 *                 compresent=SimpleConceptDeclaration | 
+	 *                 causant=SimpleConceptDeclaration | 
+	 *                 adjacent=SimpleConceptDeclaration | 
+	 *                 container=SimpleConceptDeclaration | 
+	 *                 contained=SimpleConceptDeclaration | 
+	 *                 caused=SimpleConceptDeclaration
+	 *             )? 
+	 *             motivation=SimpleConceptDeclaration?
 	 *         )* 
 	 *         context=SimpleConceptDeclaration? 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)*
@@ -626,15 +629,18 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *     (
 	 *         name=STRING? 
 	 *         main+=Concept+ 
+	 *         motivation=SimpleConceptDeclaration? 
 	 *         (
-	 *             inherency=SimpleConceptDeclaration | 
-	 *             motivation=SimpleConceptDeclaration | 
-	 *             compresent=SimpleConceptDeclaration | 
-	 *             causant=SimpleConceptDeclaration | 
-	 *             adjacent=SimpleConceptDeclaration | 
-	 *             container=SimpleConceptDeclaration | 
-	 *             contained=SimpleConceptDeclaration | 
-	 *             caused=SimpleConceptDeclaration
+	 *             (
+	 *                 inherency=SimpleConceptDeclaration | 
+	 *                 compresent=SimpleConceptDeclaration | 
+	 *                 causant=SimpleConceptDeclaration | 
+	 *                 adjacent=SimpleConceptDeclaration | 
+	 *                 container=SimpleConceptDeclaration | 
+	 *                 contained=SimpleConceptDeclaration | 
+	 *                 caused=SimpleConceptDeclaration
+	 *             )? 
+	 *             motivation=SimpleConceptDeclaration?
 	 *         )* 
 	 *         context=SimpleConceptDeclaration? 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)* 
@@ -1020,12 +1026,11 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *         docstring=STRING? 
 	 *         (dependencies+=Dependency dependencies+=Dependency*)? 
 	 *         (contextualizers+=ValueExecution contextualizers+=ValueExecution*)? 
-	 *         ((discretization?='discretized'? classification=Classification) | classificationProperty=PropertyId)? 
+	 *         (discretization?='discretized'? (classification=Classification | classificationProperty=PropertyId))? 
 	 *         (
 	 *             (
 	 *                 (lookupTableArgs+=LOWERCASE_ID | lookupTableArgs+='?' | lookupTableArgs+='*') 
-	 *                 lookupTableArgs+=LOWERCASE_ID? 
-	 *                 ((lookupTableArgs+='?' | lookupTableArgs+='*')? lookupTableArgs+=LOWERCASE_ID?)*
+	 *                 (lookupTableArgs+=LOWERCASE_ID | lookupTableArgs+='?' | lookupTableArgs+='*')*
 	 *             )? 
 	 *             (lookupTable=Table | lookupTableId=LOWERCASE_ID)
 	 *         )? 

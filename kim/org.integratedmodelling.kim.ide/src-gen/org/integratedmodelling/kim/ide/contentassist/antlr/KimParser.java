@@ -37,8 +37,8 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getModelBodyStatementAccess().getAlternatives_1_0(), "rule__ModelBodyStatement__Alternatives_1_0");
 					put(grammarAccess.getModelBodyStatementAccess().getBooleanAlternatives_1_0_3_0(), "rule__ModelBodyStatement__BooleanAlternatives_1_0_3_0");
 					put(grammarAccess.getModelBodyStatementAccess().getAlternatives_2(), "rule__ModelBodyStatement__Alternatives_2");
-					put(grammarAccess.getModelBodyStatementAccess().getAlternatives_6(), "rule__ModelBodyStatement__Alternatives_6");
-					put(grammarAccess.getModelBodyStatementAccess().getAlternatives_6_0_0(), "rule__ModelBodyStatement__Alternatives_6_0_0");
+					put(grammarAccess.getModelBodyStatementAccess().getAlternatives_6_0(), "rule__ModelBodyStatement__Alternatives_6_0");
+					put(grammarAccess.getModelBodyStatementAccess().getAlternatives_6_1(), "rule__ModelBodyStatement__Alternatives_6_1");
 					put(grammarAccess.getModelBodyStatementAccess().getLookupTableArgsAlternatives_7_1_1_0(), "rule__ModelBodyStatement__LookupTableArgsAlternatives_7_1_1_0");
 					put(grammarAccess.getModelBodyStatementAccess().getLookupTableArgsAlternatives_7_1_2_1_0(), "rule__ModelBodyStatement__LookupTableArgsAlternatives_7_1_2_1_0");
 					put(grammarAccess.getModelBodyStatementAccess().getAlternatives_7_3(), "rule__ModelBodyStatement__Alternatives_7_3");
@@ -203,9 +203,9 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getModelBodyStatementAccess().getGroup_4_2(), "rule__ModelBodyStatement__Group_4_2__0");
 					put(grammarAccess.getModelBodyStatementAccess().getGroup_5(), "rule__ModelBodyStatement__Group_5__0");
 					put(grammarAccess.getModelBodyStatementAccess().getGroup_5_2(), "rule__ModelBodyStatement__Group_5_2__0");
-					put(grammarAccess.getModelBodyStatementAccess().getGroup_6_0(), "rule__ModelBodyStatement__Group_6_0__0");
-					put(grammarAccess.getModelBodyStatementAccess().getGroup_6_0_1(), "rule__ModelBodyStatement__Group_6_0_1__0");
-					put(grammarAccess.getModelBodyStatementAccess().getGroup_6_1(), "rule__ModelBodyStatement__Group_6_1__0");
+					put(grammarAccess.getModelBodyStatementAccess().getGroup_6(), "rule__ModelBodyStatement__Group_6__0");
+					put(grammarAccess.getModelBodyStatementAccess().getGroup_6_1_0(), "rule__ModelBodyStatement__Group_6_1_0__0");
+					put(grammarAccess.getModelBodyStatementAccess().getGroup_6_1_1(), "rule__ModelBodyStatement__Group_6_1_1__0");
 					put(grammarAccess.getModelBodyStatementAccess().getGroup_7(), "rule__ModelBodyStatement__Group_7__0");
 					put(grammarAccess.getModelBodyStatementAccess().getGroup_7_1(), "rule__ModelBodyStatement__Group_7_1__0");
 					put(grammarAccess.getModelBodyStatementAccess().getGroup_7_1_2(), "rule__ModelBodyStatement__Group_7_1_2__0");
@@ -518,9 +518,9 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getModelBodyStatementAccess().getDependenciesAssignment_4_2_1(), "rule__ModelBodyStatement__DependenciesAssignment_4_2_1");
 					put(grammarAccess.getModelBodyStatementAccess().getContextualizersAssignment_5_1(), "rule__ModelBodyStatement__ContextualizersAssignment_5_1");
 					put(grammarAccess.getModelBodyStatementAccess().getContextualizersAssignment_5_2_1(), "rule__ModelBodyStatement__ContextualizersAssignment_5_2_1");
-					put(grammarAccess.getModelBodyStatementAccess().getDiscretizationAssignment_6_0_0_1(), "rule__ModelBodyStatement__DiscretizationAssignment_6_0_0_1");
-					put(grammarAccess.getModelBodyStatementAccess().getClassificationAssignment_6_0_1_1(), "rule__ModelBodyStatement__ClassificationAssignment_6_0_1_1");
-					put(grammarAccess.getModelBodyStatementAccess().getClassificationPropertyAssignment_6_1_2(), "rule__ModelBodyStatement__ClassificationPropertyAssignment_6_1_2");
+					put(grammarAccess.getModelBodyStatementAccess().getDiscretizationAssignment_6_0_1(), "rule__ModelBodyStatement__DiscretizationAssignment_6_0_1");
+					put(grammarAccess.getModelBodyStatementAccess().getClassificationAssignment_6_1_0_1(), "rule__ModelBodyStatement__ClassificationAssignment_6_1_0_1");
+					put(grammarAccess.getModelBodyStatementAccess().getClassificationPropertyAssignment_6_1_1_2(), "rule__ModelBodyStatement__ClassificationPropertyAssignment_6_1_1_2");
 					put(grammarAccess.getModelBodyStatementAccess().getLookupTableArgsAssignment_7_1_1(), "rule__ModelBodyStatement__LookupTableArgsAssignment_7_1_1");
 					put(grammarAccess.getModelBodyStatementAccess().getLookupTableArgsAssignment_7_1_2_1(), "rule__ModelBodyStatement__LookupTableArgsAssignment_7_1_2_1");
 					put(grammarAccess.getModelBodyStatementAccess().getLookupTableAssignment_7_3_0(), "rule__ModelBodyStatement__LookupTableAssignment_7_3_0");

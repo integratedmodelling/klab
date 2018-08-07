@@ -143,9 +143,10 @@ public interface IRuntimeContext extends IComputationContext {
 	 */
 	@Override
 	Provenance getProvenance();
-	
+
 	/**
-	 * Return the context structure (all father-child relationships) as a JGraphT graph.
+	 * Return the context structure (all father-child relationships) as a JGraphT
+	 * graph.
 	 * 
 	 * @return the structure
 	 */
@@ -173,5 +174,15 @@ public interface IRuntimeContext extends IComputationContext {
 	 * @param child
 	 */
 	void link(IArtifact parent, IArtifact child);
+
+	/**
+	 * Set the passed artifact as the current target, ensuring it is properly
+	 * pointed to by the target name. Only called on copies to ensure the proper
+	 * layer for a state is pointed to, so it's authorized to make a copy of the catalog to
+	 * avoid affecting all other contexts in the chain.
+	 * 
+	 * @param self
+	 */
+	void replaceTarget(IArtifact self);
 
 }

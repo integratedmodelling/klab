@@ -326,11 +326,14 @@ public class Classification implements IClassification {
 	}
 
 	public static Classification create(IConcept rootClass) {
-		return new Classification(rootClass);
+		Classification ret = new Classification(rootClass);
+		// TODO this doesn't do much interesting, should probably be hidden
+		return ret;
 	}
-
+	
 	public void addClassifier(Classifier classifier, IConcept c) {
 		classifiers.add(new Pair<>(c, classifier));
+		conceptOrder.add(c);
 	}
 
 	@Override
@@ -360,6 +363,15 @@ public class Classification implements IClassification {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public List<Pair<Object, String>> getAllValues() {
+		List<Pair<Object,String>> ret = new ArrayList<>();
+		for (IConcept c : conceptOrder) {
+			ret.add(new Pair<>(getRank(c), Concepts.INSTANCE.getDisplayName(c)));
+		}
+		return ret;
 	}
 
 }

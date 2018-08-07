@@ -13,7 +13,9 @@ import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.knowledge.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
@@ -154,6 +156,9 @@ public class Model extends KimObject implements IModel {
 			resource.setValidatedResource(new Classification(resource.getClassification()));
 		} else if (resource.getLookupTable() != null) {
 			resource.setValidatedResource(new LookupTable(resource.getLookupTable()));
+		} else if (resource.getAccordingTo() != null) {
+			IClassification classification = Types.INSTANCE.createClassificationFromMetadata(observables.get(0), resource.getAccordingTo());
+			resource.setValidatedResource(classification);
 		}
 		return resource;
 	}
@@ -385,9 +390,9 @@ public class Model extends KimObject implements IModel {
 
 	@Override
 	public IKimModel getStatement() {
-		return (IKimModel)super.getStatement();
+		return (IKimModel) super.getStatement();
 	}
-	
+
 	@Override
 	public boolean isSemantic() {
 		return getStatement().isSemantic();

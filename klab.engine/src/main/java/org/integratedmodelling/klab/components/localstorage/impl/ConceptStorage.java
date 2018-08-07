@@ -63,7 +63,7 @@ public class ConceptStorage extends Storage implements IDataArtifact, IKeyHolder
 			data[(int) offset] = cValue;
 		} else {
 			throw new KlabValidationException(
-					"cannot set a value of type " + value.getClass().getCanonicalName() + " into a concept storage");
+					"cannot set value of type " + value.getClass().getCanonicalName() + " into a concept storage");
 		}
 
 		return offset;

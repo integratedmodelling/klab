@@ -342,13 +342,14 @@ public enum Types implements ITypeService {
 	 * Create a classification based on the encodings stored as metadata in the
 	 * concept hierarchy.
 	 * 
+	 * TODO this may be called multiple times, so it should cache the result.
+	 * 
 	 * @param rootClass
 	 * @param metadataEncodingProperty
 	 * @return classification
 	 * @throws KlabValidationException
 	 */
-	public IClassification createClassificationFromMetadata(IConcept rootClass, String metadataEncodingProperty,
-			String metadataFormat) throws KlabValidationException {
+	public IClassification createClassificationFromMetadata(IConcept rootClass, String metadataEncodingProperty) throws KlabValidationException {
 
 		Classification ret = Classification.create(rootClass);
 
@@ -357,21 +358,12 @@ public enum Types implements ITypeService {
 			IMetadata m = c.getMetadata();
 			Object o = m.get(metadataEncodingProperty);
 
-			if (metadataFormat != null && (o != null && !(o instanceof Double && Double.isNaN((Double) o)))) {
-				switch (metadataFormat) {
-				case "text":
-					o = o.toString();
-				case "integer":
-					o = Integer.parseInt(o.toString());
-				default:
-					throw new KlabValidationException("cannot interpret value " + o + " as " + metadataFormat);
-				}
-			}
-
-			if (o != null) {
+			if (o != null && !(o instanceof Double && Double.isNaN((Double) o))) {
 				ret.addClassifier(Classifier.create(o), (IConcept) c);
 			}
 		}
+		
+		ret.initialize();
 
 		return ret;
 	}

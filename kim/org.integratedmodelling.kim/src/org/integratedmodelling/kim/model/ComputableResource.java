@@ -21,6 +21,7 @@ import org.integratedmodelling.kim.kim.ValueAssignment;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class ComputableResource extends KimStatement implements IComputableResource {
@@ -118,10 +119,15 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		this.setPostProcessor(true);
 	}
 
-	public ComputableResource(IKimStatement parent, String classificationProperty) {
+	public ComputableResource(IKimStatement parent, String classificationProperty, boolean isLookupTableId) {
 
 		super(null, parent);
-		this.accordingTo = classificationProperty;
+		if (isLookupTableId) {
+			// TODO
+			throw new KlabUnimplementedException("UNIMPLEMENTED: MODEL COMPUTABLE RESOURCE FROM LOOKUP TABLE ID");
+		} else {
+			this.accordingTo = classificationProperty;
+		}
 		this.setPostProcessor(true);
 	}
 

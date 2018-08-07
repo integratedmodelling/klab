@@ -32,13 +32,19 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimConceptStatement;
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Namespaces;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
+import org.integratedmodelling.klab.api.model.IConceptDefinition;
+import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.owl.OntologyUtilities.RestrictionVisitor;
@@ -508,6 +514,10 @@ public class Concept extends Knowledge implements IConcept {
         this.metadata = new org.integratedmodelling.klab.data.Metadata();
       }
       this.metadata = new OWLMetadata(_owl, ontology.ontology);
+      IKimObject object = Resources.INSTANCE.getModelObject(getUrn());
+      if (object instanceof IConceptDefinition && ((IConceptDefinition)object).getStatement().getMetadata() != null) {
+    	  this.metadata.putAll(((IConceptDefinition)object).getStatement().getMetadata().getData());
+      }
     }
     return this.metadata;
   }

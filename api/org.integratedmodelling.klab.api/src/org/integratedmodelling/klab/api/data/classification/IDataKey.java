@@ -2,6 +2,8 @@ package org.integratedmodelling.klab.api.data.classification;
 
 import java.util.List;
 
+import org.integratedmodelling.klab.utils.Pair;
+
 /**
  * Tag interface for an object that supplements the semantics of a state's
  * values by providing an indexed key for interpretation. This could be a
@@ -37,6 +39,12 @@ public interface IDataKey {
 	 * @return
 	 */
 	List<String> getLabels();
+	
+	
+	/**
+	 * Get value/label pairs
+	 */
+	List<Pair<Object, String>> getAllValues();
 
 	/**
 	 * True if the keyed categories reflect an ordering. 

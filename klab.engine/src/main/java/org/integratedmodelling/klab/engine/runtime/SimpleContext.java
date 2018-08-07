@@ -372,4 +372,10 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
         return observations.get(observationId);
     }
 
+	@Override
+	public void replaceTarget(IArtifact self) {
+		// should never be called
+		throw new IllegalStateException("replaceTarget called on a simple context: this context should never be used in computations");
+	}
+
 }

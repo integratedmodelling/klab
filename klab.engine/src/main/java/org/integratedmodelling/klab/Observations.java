@@ -129,7 +129,10 @@ public enum Observations implements IObservationService {
 		ret.setNodataPercentage((double) nndat / (double) ndata);
 		ret.setRange(Arrays.asList(statistics.getMin(), statistics.getMax()));
 		ret.setValueCount(ndata + nndat);
-
+		ret.setMean(statistics.getMean());
+		ret.setVariance(statistics.getVariance());
+		ret.setStandardDeviation(statistics.getStandardDeviation());
+		
 		if (ret.getNodataPercentage() > 0) {
 			Builder histogram = Histogram.builder(statistics.getMin(), statistics.getMax(),
 					state.getDataKey() == null ? 10 : state.getDataKey().size());

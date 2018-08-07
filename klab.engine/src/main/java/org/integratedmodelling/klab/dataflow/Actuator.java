@@ -142,8 +142,8 @@ public class Actuator implements IActuator {
 	 *            the final artifact being computed. If this actuator handles an
 	 *            instantiation, the passed target is null and will be set to the
 	 *            first object in the result chain, or to the empty artifact if no
-	 *            instances are created. In the end the method will always return
-	 *            a non-null artifact.
+	 *            instances are created. In the end the method will always return a
+	 *            non-null artifact.
 	 * @param runtimeContext
 	 *            the runtime context
 	 * @return the finalized observation data. TODO when an instantiator returns no
@@ -250,9 +250,12 @@ public class Actuator implements IActuator {
 			session.getMonitor()
 					.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 							IMessage.Type.NewObservation,
-							Observations.INSTANCE.createArtifactDescriptor((IObservation) ret,
-									ctx.getContextObservation().equals(ret) ? null : ctx.getContextObservation(),
-									ITime.INITIALIZATION, -1).withTaskId(ctx.getMonitor().getIdentity().getId())));
+							Observations.INSTANCE
+									.createArtifactDescriptor((IObservation) ret,
+											ctx.getContextObservation().equals(ret) ? null
+													: ctx.getContextObservation(),
+											ITime.INITIALIZATION, -1)
+									.withTaskId(ctx.getMonitor().getIdentity().getId())));
 		}
 
 		/*
@@ -273,14 +276,16 @@ public class Actuator implements IActuator {
 		/*
 		 * This is what we get as the original content of self, which may be null or an
 		 * empty state, or contain the result of the previous computation, including
-		 * those that create state layers of a different type.
+		 * those that create state layers of a different type. This is the one to use
+		 * as INPUT for computations involving self.
 		 */
 		IArtifact self = ret;
 
 		if (ret instanceof IState) {
 			/*
 			 * Establish the container for the output: switch the storage in the state to
-			 * the type needed in the compute chain, creating a layer if necessary.
+			 * the type needed in the compute chain, creating a layer if necessary. This is
+			 * the layer to WRITE INTO.
 			 */
 			ret = ((IState) ret).as(contextualizer.getType());
 		}
@@ -290,15 +295,15 @@ public class Actuator implements IActuator {
 			/*
 			 * pass the distributed computation to the runtime provider for possible
 			 * parallelization instead of hard-coding a loop here.
+			 * 
+			 * TODO CHECK THE USE OF AT() - CALLED FROM setupContext already has this
+			 * applied
 			 */
 			ret = Klab.INSTANCE.getRuntimeProvider().distributeComputation((IStateResolver) contextualizer,
-					(IState) ret, addParameters(ctx, self, resource), /*
-																		 * TODO CHECK THE USE OF AT() - CALLED FROM
-																		 * setupContext already has this applied
-																		 */ scale.at(ITime.INITIALIZATION));
+					(IState) ret, addParameters(ctx, self, resource), scale.at(ITime.INITIALIZATION));
 
 		} else if (contextualizer instanceof IResolver) {
-			ret = ((IResolver<IArtifact>) contextualizer).resolve(ret, addParameters(ctx, self, resource));
+			ret = ((IResolver<IArtifact>) contextualizer).resolve(ret, addParameters(ctx, ret, resource));
 		} else if (contextualizer instanceof IInstantiator) {
 			for (IObjectArtifact object : ((IInstantiator) contextualizer).instantiate(observable,
 					addParameters(ctx, self, resource))) {
@@ -331,13 +336,15 @@ public class Actuator implements IActuator {
 	 * @return
 	 */
 	private IRuntimeContext addParameters(IRuntimeContext ctx, IArtifact self, IComputableResource resource) {
+		IRuntimeContext ret = ctx.copy();
 		if (self != null) {
-			ctx.set("self", self);
+			ret.replaceTarget(self);
+			ret.set("self", self);
 		}
 		for (String name : resource.getParameters().keySet()) {
-			ctx.set(name, resource.getParameters().get(name));
+			ret.set(name, resource.getParameters().get(name));
 		}
-		return ctx;
+		return ret;
 	}
 
 	private IRuntimeContext setupContext(IArtifact target, final IRuntimeContext runtimeContext, ILocator locator)
@@ -610,7 +617,7 @@ public class Actuator implements IActuator {
 		 */
 		if (observation instanceof IState && computationStrategy.size() > 0) {
 			IComputableResource lastResource = computationStrategy.get(computationStrategy.size() - 1).getSecond();
-			if (lastResource.getClassification() != null) {
+			if (lastResource.getClassification() != null || lastResource.getAccordingTo() != null) {
 				if (observation instanceof IKeyHolder) {
 					((IKeyHolder) observation).setDataKey(
 							((ComputableResource) lastResource).getValidatedResource(IClassification.class));

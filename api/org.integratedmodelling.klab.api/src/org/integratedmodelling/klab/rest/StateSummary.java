@@ -43,6 +43,12 @@ public class StateSummary {
 	 */
 	private List<Double> range;
 
+	private double mean;
+	
+	private double standardDeviation;
+
+	private double variance;
+	
 	/**
 	 * The value count
 	 */
@@ -119,5 +125,28 @@ public class StateSummary {
 	public void setDegenerate(boolean b) {
 		this.degenerate = b;
 	}
-	
+
+	public double getMean() {
+		return mean;
+	}
+
+	public void setMean(double mean) {
+		this.mean = mean;
+	}
+
+	public double getStandardDeviation() {
+		return standardDeviation;
+	}
+
+	public void setStandardDeviation(double standardDeviation) {
+		this.standardDeviation = standardDeviation;
+	}
+
+	public double getVariance() {
+		return variance;
+	}
+
+	public void setVariance(double variance) {
+		this.variance = variance;
+	}
 }

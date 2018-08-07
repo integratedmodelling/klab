@@ -307,7 +307,7 @@ public class WCSService {
 				Object next = it.next();
 				if (next instanceof Map && !((Map<?, ?>) next).isEmpty()) {
 					if (((Map<?, ?>) next).containsKey("field")) {
-						List<?> bandefs = (List<?>)((Map<?, ?>) next).get("field");
+						List<?> bandefs = (List<?>) ((Map<?, ?>) next).get("field");
 						for (Object o : bandefs) {
 							bands.add(new Band((Map<?, ?>) o));
 						}
@@ -458,16 +458,16 @@ public class WCSService {
 
 				s = serviceUrl + "?service=WCS&version=" + version + "&request=GetCoverage&coverage="
 						+ layer.getRequestIdentifier() + "&bbox=" + west + "," + south + "," + east + "," + north
-						+ "&crs=" + rcrs + "&responseCRS=" + rcrs + "&width=" + xc + "&height=" + yc + "&format="
-						+ "GeoTIFF";
+						+ "&crs=" + crs.getSimpleSRS() + "&responseCRS=" + crs.getSimpleSRS() + "&width=" + xc
+						+ "&height=" + yc + "&format=" + "GeoTIFF";
 
 			} else {
 
 				// TODO WRONG!
 				s = serviceUrl + "?service=WCS&version=" + version + "&request=GetCoverage&identifier="
 						+ layer.getRequestIdentifier() + "&boundingbox=" + west + "," + south + "," + east + "," + north
-						+ "," + rcrs + "&responseCRS=" + rcrs + "&width=" + xc + "&height=" + yc + "&format="
-						+ "GeoTIFF";
+						+ "," + crs.getSimpleSRS() + "&responseCRS=" + crs.getSimpleSRS() + "&width=" + xc + "&height="
+						+ yc + "&format=" + "GeoTIFF";
 			}
 		} else if (version.getMajor() == 2) {
 			// TODO

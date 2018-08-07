@@ -256,21 +256,21 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cCommaKeyword_5_2_0 = (Keyword)cGroup_5_2.eContents().get(0);
 		private final Assignment cContextualizersAssignment_5_2_1 = (Assignment)cGroup_5_2.eContents().get(1);
 		private final RuleCall cContextualizersValueExecutionParserRuleCall_5_2_1_0 = (RuleCall)cContextualizersAssignment_5_2_1.eContents().get(0);
-		private final Alternatives cAlternatives_6 = (Alternatives)cGroup.eContents().get(6);
-		private final Group cGroup_6_0 = (Group)cAlternatives_6.eContents().get(0);
-		private final Alternatives cAlternatives_6_0_0 = (Alternatives)cGroup_6_0.eContents().get(0);
-		private final Keyword cClassifiedKeyword_6_0_0_0 = (Keyword)cAlternatives_6_0_0.eContents().get(0);
-		private final Assignment cDiscretizationAssignment_6_0_0_1 = (Assignment)cAlternatives_6_0_0.eContents().get(1);
-		private final Keyword cDiscretizationDiscretizedKeyword_6_0_0_1_0 = (Keyword)cDiscretizationAssignment_6_0_0_1.eContents().get(0);
-		private final Group cGroup_6_0_1 = (Group)cGroup_6_0.eContents().get(1);
-		private final Keyword cIntoKeyword_6_0_1_0 = (Keyword)cGroup_6_0_1.eContents().get(0);
-		private final Assignment cClassificationAssignment_6_0_1_1 = (Assignment)cGroup_6_0_1.eContents().get(1);
-		private final RuleCall cClassificationClassificationParserRuleCall_6_0_1_1_0 = (RuleCall)cClassificationAssignment_6_0_1_1.eContents().get(0);
-		private final Group cGroup_6_1 = (Group)cAlternatives_6.eContents().get(1);
-		private final Keyword cAccordingKeyword_6_1_0 = (Keyword)cGroup_6_1.eContents().get(0);
-		private final Keyword cToKeyword_6_1_1 = (Keyword)cGroup_6_1.eContents().get(1);
-		private final Assignment cClassificationPropertyAssignment_6_1_2 = (Assignment)cGroup_6_1.eContents().get(2);
-		private final RuleCall cClassificationPropertyPropertyIdParserRuleCall_6_1_2_0 = (RuleCall)cClassificationPropertyAssignment_6_1_2.eContents().get(0);
+		private final Group cGroup_6 = (Group)cGroup.eContents().get(6);
+		private final Alternatives cAlternatives_6_0 = (Alternatives)cGroup_6.eContents().get(0);
+		private final Keyword cClassifiedKeyword_6_0_0 = (Keyword)cAlternatives_6_0.eContents().get(0);
+		private final Assignment cDiscretizationAssignment_6_0_1 = (Assignment)cAlternatives_6_0.eContents().get(1);
+		private final Keyword cDiscretizationDiscretizedKeyword_6_0_1_0 = (Keyword)cDiscretizationAssignment_6_0_1.eContents().get(0);
+		private final Alternatives cAlternatives_6_1 = (Alternatives)cGroup_6.eContents().get(1);
+		private final Group cGroup_6_1_0 = (Group)cAlternatives_6_1.eContents().get(0);
+		private final Keyword cIntoKeyword_6_1_0_0 = (Keyword)cGroup_6_1_0.eContents().get(0);
+		private final Assignment cClassificationAssignment_6_1_0_1 = (Assignment)cGroup_6_1_0.eContents().get(1);
+		private final RuleCall cClassificationClassificationParserRuleCall_6_1_0_1_0 = (RuleCall)cClassificationAssignment_6_1_0_1.eContents().get(0);
+		private final Group cGroup_6_1_1 = (Group)cAlternatives_6_1.eContents().get(1);
+		private final Keyword cAccordingKeyword_6_1_1_0 = (Keyword)cGroup_6_1_1.eContents().get(0);
+		private final Keyword cToKeyword_6_1_1_1 = (Keyword)cGroup_6_1_1.eContents().get(1);
+		private final Assignment cClassificationPropertyAssignment_6_1_1_2 = (Assignment)cGroup_6_1_1.eContents().get(2);
+		private final RuleCall cClassificationPropertyPropertyIdParserRuleCall_6_1_1_2_0 = (RuleCall)cClassificationPropertyAssignment_6_1_1_2.eContents().get(0);
 		private final Group cGroup_7 = (Group)cGroup.eContents().get(7);
 		private final Keyword cLookupKeyword_7_0 = (Keyword)cGroup_7.eContents().get(0);
 		private final Group cGroup_7_1 = (Group)cGroup_7.eContents().get(1);
@@ -313,8 +313,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	'as')? (name=LOWERCASE_ID | observables+=ObservableSemantics (',' observables+=ObservableSemantics)*)
 		//	docstring=STRING? ('observing' dependencies+=Dependency (',' dependencies+=Dependency)*)? ('using'
 		//	contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)? (('classified' |
-		//	discretization?='discretized') ('into' classification=Classification) | 'according' 'to'
-		//	classificationProperty=PropertyId)? ('lookup' ('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (','
+		//	discretization?='discretized') ('into' classification=Classification | 'according' 'to'
+		//	classificationProperty=PropertyId))? ('lookup' ('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (','
 		//	lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')?
 		//	'into' (lookupTable=Table | lookupTableId=LOWERCASE_ID))?
 		//	actions+=ActionSpecification* ('with' 'metadata' metadata=Metadata)? ('with' 'documentation'
@@ -325,8 +325,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//concept=SimpleObservableSemantics) 'as')? (name=LOWERCASE_ID | observables+=ObservableSemantics (','
 		//observables+=ObservableSemantics)*) docstring=STRING? ('observing' dependencies+=Dependency (','
 		//dependencies+=Dependency)*)? ('using' contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
-		//(('classified' | discretization?='discretized') ('into' classification=Classification) | 'according' 'to'
-		//classificationProperty=PropertyId)? ('lookup' ('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (','
+		//(('classified' | discretization?='discretized') ('into' classification=Classification | 'according' 'to'
+		//classificationProperty=PropertyId))? ('lookup' ('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (','
 		//lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')? 'into' (lookupTable=Table | lookupTableId=LOWERCASE_ID))?
 		//actions+=ActionSpecification* ('with' 'metadata' metadata=Metadata)? ('with' 'documentation'
 		//documentation=Documentation)?
@@ -486,51 +486,51 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//ValueExecution
 		public RuleCall getContextualizersValueExecutionParserRuleCall_5_2_1_0() { return cContextualizersValueExecutionParserRuleCall_5_2_1_0; }
 		
-		//(('classified' | discretization?='discretized') ('into' classification=Classification) | 'according' 'to'
-		//classificationProperty=PropertyId)?
-		public Alternatives getAlternatives_6() { return cAlternatives_6; }
-		
-		//('classified' | discretization?='discretized') ('into' classification=Classification)
-		public Group getGroup_6_0() { return cGroup_6_0; }
+		//(('classified' | discretization?='discretized') ('into' classification=Classification | 'according' 'to'
+		//classificationProperty=PropertyId))?
+		public Group getGroup_6() { return cGroup_6; }
 		
 		//'classified' | discretization?='discretized'
-		public Alternatives getAlternatives_6_0_0() { return cAlternatives_6_0_0; }
+		public Alternatives getAlternatives_6_0() { return cAlternatives_6_0; }
 		
 		//'classified'
-		public Keyword getClassifiedKeyword_6_0_0_0() { return cClassifiedKeyword_6_0_0_0; }
+		public Keyword getClassifiedKeyword_6_0_0() { return cClassifiedKeyword_6_0_0; }
 		
 		//discretization?='discretized'
-		public Assignment getDiscretizationAssignment_6_0_0_1() { return cDiscretizationAssignment_6_0_0_1; }
+		public Assignment getDiscretizationAssignment_6_0_1() { return cDiscretizationAssignment_6_0_1; }
 		
 		//'discretized'
-		public Keyword getDiscretizationDiscretizedKeyword_6_0_0_1_0() { return cDiscretizationDiscretizedKeyword_6_0_0_1_0; }
+		public Keyword getDiscretizationDiscretizedKeyword_6_0_1_0() { return cDiscretizationDiscretizedKeyword_6_0_1_0; }
+		
+		//'into' classification=Classification | 'according' 'to' classificationProperty=PropertyId
+		public Alternatives getAlternatives_6_1() { return cAlternatives_6_1; }
 		
 		//'into' classification=Classification
-		public Group getGroup_6_0_1() { return cGroup_6_0_1; }
+		public Group getGroup_6_1_0() { return cGroup_6_1_0; }
 		
 		//'into'
-		public Keyword getIntoKeyword_6_0_1_0() { return cIntoKeyword_6_0_1_0; }
+		public Keyword getIntoKeyword_6_1_0_0() { return cIntoKeyword_6_1_0_0; }
 		
 		//classification=Classification
-		public Assignment getClassificationAssignment_6_0_1_1() { return cClassificationAssignment_6_0_1_1; }
+		public Assignment getClassificationAssignment_6_1_0_1() { return cClassificationAssignment_6_1_0_1; }
 		
 		//Classification
-		public RuleCall getClassificationClassificationParserRuleCall_6_0_1_1_0() { return cClassificationClassificationParserRuleCall_6_0_1_1_0; }
+		public RuleCall getClassificationClassificationParserRuleCall_6_1_0_1_0() { return cClassificationClassificationParserRuleCall_6_1_0_1_0; }
 		
 		//'according' 'to' classificationProperty=PropertyId
-		public Group getGroup_6_1() { return cGroup_6_1; }
+		public Group getGroup_6_1_1() { return cGroup_6_1_1; }
 		
 		//'according'
-		public Keyword getAccordingKeyword_6_1_0() { return cAccordingKeyword_6_1_0; }
+		public Keyword getAccordingKeyword_6_1_1_0() { return cAccordingKeyword_6_1_1_0; }
 		
 		//'to'
-		public Keyword getToKeyword_6_1_1() { return cToKeyword_6_1_1; }
+		public Keyword getToKeyword_6_1_1_1() { return cToKeyword_6_1_1_1; }
 		
 		//classificationProperty=PropertyId
-		public Assignment getClassificationPropertyAssignment_6_1_2() { return cClassificationPropertyAssignment_6_1_2; }
+		public Assignment getClassificationPropertyAssignment_6_1_1_2() { return cClassificationPropertyAssignment_6_1_1_2; }
 		
 		//PropertyId
-		public RuleCall getClassificationPropertyPropertyIdParserRuleCall_6_1_2_0() { return cClassificationPropertyPropertyIdParserRuleCall_6_1_2_0; }
+		public RuleCall getClassificationPropertyPropertyIdParserRuleCall_6_1_1_2_0() { return cClassificationPropertyPropertyIdParserRuleCall_6_1_1_2_0; }
 		
 		//('lookup' ('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (',' lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')?
 		//'into' (lookupTable=Table | lookupTableId=LOWERCASE_ID))?
@@ -9103,8 +9103,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	'as')? (name=LOWERCASE_ID | observables+=ObservableSemantics (',' observables+=ObservableSemantics)*)
 	//	docstring=STRING? ('observing' dependencies+=Dependency (',' dependencies+=Dependency)*)? ('using'
 	//	contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)? (('classified' |
-	//	discretization?='discretized') ('into' classification=Classification) | 'according' 'to'
-	//	classificationProperty=PropertyId)? ('lookup' ('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (','
+	//	discretization?='discretized') ('into' classification=Classification | 'according' 'to'
+	//	classificationProperty=PropertyId))? ('lookup' ('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (','
 	//	lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')?
 	//	'into' (lookupTable=Table | lookupTableId=LOWERCASE_ID))?
 	//	actions+=ActionSpecification* ('with' 'metadata' metadata=Metadata)? ('with' 'documentation'

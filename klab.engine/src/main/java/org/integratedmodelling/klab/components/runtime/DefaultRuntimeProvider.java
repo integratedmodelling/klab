@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
@@ -216,6 +217,10 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		} else if (resource.getClassification() != null) {
 			return ClassifyingStateResolver
 					.getServiceCall(((ComputableResource) resource).getValidatedResource(IClassification.class));
+		} else if (resource.getAccordingTo() != null) {
+			IClassification classification = Types.INSTANCE.createClassificationFromMetadata(
+					((Actuator) target).getObservable().getType(), resource.getAccordingTo());
+			return ClassifyingStateResolver.getServiceCall(classification);
 		}
 
 		// temp
