@@ -220,7 +220,9 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 				for (IModel model : transformers) {
 					transformations.addAll(model.getComputation(ITime.INITIALIZATION));
 				}
-				ret.add(new CandidateObservable((Observable)untransformed.getFirst(), Mode.RESOLUTION, transformations));
+				Observable newobs = new Observable((Observable)untransformed.getFirst());
+				newobs.setName(observable.getLocalName());
+				ret.add(new CandidateObservable(newobs, Mode.RESOLUTION, transformations));
 			}
 			
 		}
