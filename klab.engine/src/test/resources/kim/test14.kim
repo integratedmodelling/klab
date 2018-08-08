@@ -1,0 +1,21 @@
+worldview im;
+
+@test(
+    name = "test.lookuptable.quality.simple",
+    description  = "Classification through a lookup table",
+    observations = ("geography:Elevation by im:Level")
+)
+observe earth:Region named testlookup
+    over space(shape="EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))", grid="1 km")
+;
+
+model geography:Elevation by im:Level
+	observing geography:Elevation in m
+	lookup (elevation, ?) into 
+		elevation    |   level 
+		------------------------
+		   < 300     |   im:Low,
+		   < 1500    |   im:Moderate,
+		      *      |   im:High
+;
+
