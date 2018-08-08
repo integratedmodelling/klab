@@ -7,6 +7,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
@@ -44,7 +45,7 @@ public class StandardizingTransformation implements IResolver<IState>, IExpressi
 
 	@Override
 	public IState resolve(IState ret, IComputationContext context) throws KlabException {
-		StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
+		StateSummary summary = Observations.INSTANCE.getStateSummary(state, ITime.INITIALIZATION);
 		if (!summary.isDegenerate()) {
 			for (ILocator locator : context.getScale()) {
 				Object value = state.get(locator);

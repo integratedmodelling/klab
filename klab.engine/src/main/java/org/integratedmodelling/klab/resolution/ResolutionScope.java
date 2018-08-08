@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -57,7 +58,7 @@ public class ResolutionScope implements IResolutionScope {
 			this.target = target;
 			this.computation = computation;
 		}
-		
+
 		public ResolutionScope getSource() {
 			return ResolutionScope.this;
 		}
@@ -65,7 +66,7 @@ public class ResolutionScope implements IResolutionScope {
 		public ResolutionScope getTarget() {
 			return target;
 		}
-		
+
 		public List<IComputableResource> getComputation() {
 			return computation;
 		}
@@ -195,8 +196,11 @@ public class ResolutionScope implements IResolutionScope {
 		this.monitor = monitor;
 
 		/*
-		 * TODO must instantiate any pre-existing observables already resolved in the
-		 * subject if they are to be used to resolve lower-level states.
+		 * TODO pre-existing observables do not need any resolution: they can be just
+		 * referred to by name, so they don't go in resolvedObservables, which is a
+		 * cache for the current resolution only. At worst they may be called a different
+		 * name, so we should preset paths for naming them differently in the dataflow.
+		 * Those are simply INPUT PORTS - 'import' statements - with 'as' if necessary.
 		 */
 	}
 
@@ -287,7 +291,7 @@ public class ResolutionScope implements IResolutionScope {
 		 * make the link, increment the use count for the observable, and return
 		 * coverage.
 		 */
-		ResolutionScope previous = getObservable(observable, mode, resolveIndirectly);
+		ResolutionScope previous = getObservable(observable, mode, false);
 		if (previous != null) {
 			ret.coverage = previous.coverage;
 		} else {
@@ -309,34 +313,39 @@ public class ResolutionScope implements IResolutionScope {
 		 * make the link, increment the use count for the observable, and return
 		 * coverage.
 		 */
-		ResolutionScope previous = getObservable(observable, mode, resolveIndirectly);
+		ResolutionScope previous = getObservable(observable, mode, false);
 		if (previous != null) {
 			ret.coverage = previous.coverage;
 		}
 
 		return ret;
 	}
-	
+
 	/**
 	 * Return a scope to resolve a relationship that will link the passed subjects.
 	 * 
-	 * @param observable must be a relationship observable
-	 * @param scale scale of the relationship
-	 * @param source the source subject
-	 * @param target the target subject
+	 * @param observable
+	 *            must be a relationship observable
+	 * @param scale
+	 *            scale of the relationship
+	 * @param source
+	 *            the source subject
+	 * @param target
+	 *            the target subject
 	 * @return a new scope
 	 */
 	public ResolutionScope getChildScope(Observable observable, Scale scale, Subject source, Subject target) {
 
 		if (!observable.is(Type.RELATIONSHIP)) {
-			throw new KlabInternalErrorException("cannot create scope for non-relationships with a source and target subject");
+			throw new KlabInternalErrorException(
+					"cannot create scope for non-relationships with a source and target subject");
 		}
 
 		ResolutionScope ret = getChildScope(observable, Mode.RESOLUTION, scale);
-		
+
 		ret.relationshipSource = source;
 		ret.relationshipTarget = target;
-		
+
 		return ret;
 	}
 
@@ -442,7 +451,7 @@ public class ResolutionScope implements IResolutionScope {
 	 * needed coverage.
 	 * 
 	 * @param childScope
-	 * @param computation 
+	 * @param computation
 	 */
 	void link(ResolutionScope childScope, List<IComputableResource> computation) {
 		links.addAll(childScope.links);
