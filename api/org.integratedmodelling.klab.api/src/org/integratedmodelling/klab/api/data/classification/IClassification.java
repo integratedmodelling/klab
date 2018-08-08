@@ -16,7 +16,7 @@
 package org.integratedmodelling.klab.api.data.classification;
 
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -58,13 +58,11 @@ public interface IClassification extends IDataKey, Iterable<Pair<IConcept, IClas
 	 *
 	 * @param object
 	 *            a {@link java.lang.Object} object.
-	 * @param monitor
-	 *            a
-	 *            {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor}
-	 *            object.
+	 * @param context
+	 *            context of computation
 	 * @return a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
 	 */
-	IConcept classify(Object object, IMonitor monitor);
+	IConcept classify(Object object, IComputationContext context);
 
 	/**
 	 * Get the undiscretized value for the passed concept. If the concept is not in
@@ -95,10 +93,10 @@ public interface IClassification extends IDataKey, Iterable<Pair<IConcept, IClas
 	 *
 	 * @param o
 	 *            the object to classify
-	 * @param monitor
-	 *            a monitor
+	 * @param context
+	 *            a context
 	 * @return a numeric ranking - equivalent to calling getNumericCode(classify(o))
 	 */
-	int classifyToIndex(Object o, IMonitor monitor);
+	int classifyToIndex(Object o, IComputationContext context);
 
 }

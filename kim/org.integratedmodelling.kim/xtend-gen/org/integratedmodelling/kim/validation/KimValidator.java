@@ -44,6 +44,7 @@ import org.integratedmodelling.kim.kim.Currency;
 import org.integratedmodelling.kim.kim.Dependency;
 import org.integratedmodelling.kim.kim.Documentation;
 import org.integratedmodelling.kim.kim.Function;
+import org.integratedmodelling.kim.kim.HeaderRow;
 import org.integratedmodelling.kim.kim.IdentityRequirement;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.Metadata;
@@ -57,6 +58,7 @@ import org.integratedmodelling.kim.kim.ObserveStatementBody;
 import org.integratedmodelling.kim.kim.RestrictionStatement;
 import org.integratedmodelling.kim.kim.Statement;
 import org.integratedmodelling.kim.kim.Table;
+import org.integratedmodelling.kim.kim.TableRow;
 import org.integratedmodelling.kim.kim.Unit;
 import org.integratedmodelling.kim.kim.Urn;
 import org.integratedmodelling.kim.kim.ValueAssignment;
@@ -66,6 +68,7 @@ import org.integratedmodelling.kim.model.KimAnnotation;
 import org.integratedmodelling.kim.model.KimBehavior;
 import org.integratedmodelling.kim.model.KimConcept;
 import org.integratedmodelling.kim.model.KimConceptStatement;
+import org.integratedmodelling.kim.model.KimLookupTable;
 import org.integratedmodelling.kim.model.KimMacro;
 import org.integratedmodelling.kim.model.KimMetadata;
 import org.integratedmodelling.kim.model.KimModel;
@@ -77,9 +80,9 @@ import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.kim.model.KimStatement;
 import org.integratedmodelling.kim.validation.AbstractKimValidator;
 import org.integratedmodelling.kim.validation.KimNotification;
-import org.integratedmodelling.klab.common.SemanticType;
 import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.SemanticType;
 
 /**
  * This class contains custom validation rules.
@@ -101,6 +104,8 @@ public class KimValidator extends AbstractKimValidator {
   public final static String NO_NAMESPACE = "noNamespace";
   
   public final static String BAD_NAMESPACE_ID = "badNamespaceId";
+  
+  public final static String BAD_TABLE_FORMAT = "badTableFormat";
   
   private final static Set<String> nonSemanticModels = Collections.<String>unmodifiableSet(CollectionLiterals.<String>newHashSet("number", "text", "boolean"));
   
@@ -209,6 +214,33 @@ public class KimValidator extends AbstractKimValidator {
             model.setInactive(true);
           }
         }
+      }
+    }
+  }
+  
+  @Check
+  public void checkTable(final Table table) {
+    int ncols = (-1);
+    HeaderRow _headers = table.getHeaders();
+    boolean _tripleNotEquals = (_headers != null);
+    if (_tripleNotEquals) {
+      ncols = table.getHeaders().getElements().size();
+    }
+    int i = 0;
+    EList<TableRow> _rows = table.getRows();
+    for (final TableRow row : _rows) {
+      {
+        if ((ncols < 0)) {
+          ncols = row.getElements().size();
+        } else {
+          int _size = row.getElements().size();
+          boolean _notEquals = (_size != ncols);
+          if (_notEquals) {
+            this.error(("Inconsistent number of elements in row table: expecting " + Integer.valueOf(ncols)), 
+              KimPackage.Literals.TABLE__ROWS, i, KimValidator.BAD_TABLE_FORMAT);
+          }
+        }
+        i++;
       }
     }
   }
@@ -411,6 +443,56 @@ public class KimValidator extends AbstractKimValidator {
       }
     }
     if (((model.getLookupTable() != null) || (model.getLookupTableId() != null))) {
+      KimLookupTable _xifexpression_3 = null;
+      String _lookupTableId = model.getLookupTableId();
+      boolean _tripleNotEquals_2 = (_lookupTableId != null);
+      if (_tripleNotEquals_2) {
+        _xifexpression_3 = null;
+      } else {
+        Table _lookupTable = model.getLookupTable();
+        EList<String> _lookupTableArgs = model.getLookupTableArgs();
+        _xifexpression_3 = new KimLookupTable(_lookupTable, _lookupTableArgs, null);
+      }
+      KimLookupTable table = _xifexpression_3;
+      int _size_1 = model.getLookupTableArgs().size();
+      int _columnCount = table.getColumnCount();
+      boolean _notEquals = (_size_1 != _columnCount);
+      if (_notEquals) {
+        this.error(
+          "The number of arguments does not match the number of columns. Use ? for the arguments to look up or * for arguments to ignore", 
+          KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, KimValidator.BAD_TABLE_FORMAT);
+      }
+      int o = 0;
+      boolean checkFound = false;
+      EList<String> _lookupTableArgs_1 = model.getLookupTableArgs();
+      for (final String arg : _lookupTableArgs_1) {
+        {
+          if (((!Objects.equal(arg, "?")) && (!Objects.equal(arg, "*")))) {
+            boolean found = false;
+            for (final KimObservable dependency : dependencies) {
+              if (((dependency.getName() != null) && Objects.equal(dependency.getName(), arg))) {
+                found = true;
+              }
+            }
+            if ((!found)) {
+            }
+          } else {
+            boolean _equals = Objects.equal(arg, "?");
+            if (_equals) {
+              if (checkFound) {
+                this.error("Only one \'?\' is allowed in the argument list, to mark the result column", 
+                  KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, o, KimValidator.BAD_TABLE_FORMAT);
+              }
+              checkFound = true;
+            }
+          }
+          if ((!checkFound)) {
+            this.error("One and only one \'?\' must be present the argument list to mark the result column", 
+              KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, KimValidator.BAD_TABLE_FORMAT);
+          }
+          o++;
+        }
+      }
     }
     EList<ValueAssignment> _contextualizers = model.getContextualizers();
     for (final ValueAssignment contextualizer : _contextualizers) {
@@ -436,8 +518,8 @@ public class KimValidator extends AbstractKimValidator {
           descriptor.getResourceUrns().add(urn.getName());
         }
         Function _function = model.getFunction();
-        boolean _tripleNotEquals_2 = (_function != null);
-        if (_tripleNotEquals_2) {
+        boolean _tripleNotEquals_3 = (_function != null);
+        if (_tripleNotEquals_3) {
           Function _function_1 = model.getFunction();
           KimServiceCall _kimServiceCall = new KimServiceCall(_function_1, descriptor);
           descriptor.setResourceFunction(_kimServiceCall);
@@ -448,13 +530,13 @@ public class KimValidator extends AbstractKimValidator {
           }
         } else {
           String _boolean = model.getBoolean();
-          boolean _tripleNotEquals_3 = (_boolean != null);
-          if (_tripleNotEquals_3) {
+          boolean _tripleNotEquals_4 = (_boolean != null);
+          if (_tripleNotEquals_4) {
             descriptor.setInlineValue(Boolean.valueOf(Boolean.parseBoolean(model.getBoolean())));
           } else {
             org.integratedmodelling.kim.kim.Number _number = model.getNumber();
-            boolean _tripleNotEquals_4 = (_number != null);
-            if (_tripleNotEquals_4) {
+            boolean _tripleNotEquals_5 = (_number != null);
+            if (_tripleNotEquals_5) {
               descriptor.setInlineValue(Kim.INSTANCE.parseNumber(model.getNumber()));
             }
           }
@@ -502,60 +584,60 @@ public class KimValidator extends AbstractKimValidator {
           _contextualization.add(_computableResource);
         }
         Classification _classification_1 = model.getClassification();
-        boolean _tripleNotEquals_5 = (_classification_1 != null);
-        if (_tripleNotEquals_5) {
+        boolean _tripleNotEquals_6 = (_classification_1 != null);
+        if (_tripleNotEquals_6) {
           List<IComputableResource> _contextualization_1 = descriptor.getContextualization();
           Classification _classification_2 = model.getClassification();
           boolean _isDiscretization = model.isDiscretization();
           ComputableResource _computableResource_1 = new ComputableResource(_classification_2, _isDiscretization, descriptor);
           _contextualization_1.add(_computableResource_1);
         }
-        Table _lookupTable = model.getLookupTable();
-        boolean _tripleNotEquals_6 = (_lookupTable != null);
-        if (_tripleNotEquals_6) {
+        Table _lookupTable_1 = model.getLookupTable();
+        boolean _tripleNotEquals_7 = (_lookupTable_1 != null);
+        if (_tripleNotEquals_7) {
           List<IComputableResource> _contextualization_2 = descriptor.getContextualization();
-          Table _lookupTable_1 = model.getLookupTable();
-          EList<String> _lookupTableArgs = model.getLookupTableArgs();
-          ComputableResource _computableResource_2 = new ComputableResource(_lookupTable_1, _lookupTableArgs, descriptor);
+          Table _lookupTable_2 = model.getLookupTable();
+          EList<String> _lookupTableArgs_2 = model.getLookupTableArgs();
+          ComputableResource _computableResource_2 = new ComputableResource(_lookupTable_2, _lookupTableArgs_2, descriptor);
           _contextualization_2.add(_computableResource_2);
         }
-        String _lookupTableId = model.getLookupTableId();
-        boolean _tripleNotEquals_7 = (_lookupTableId != null);
-        if (_tripleNotEquals_7) {
+        String _lookupTableId_1 = model.getLookupTableId();
+        boolean _tripleNotEquals_8 = (_lookupTableId_1 != null);
+        if (_tripleNotEquals_8) {
           List<IComputableResource> _contextualization_3 = descriptor.getContextualization();
-          String _lookupTableId_1 = model.getLookupTableId();
-          ComputableResource _computableResource_3 = new ComputableResource(descriptor, _lookupTableId_1, true);
+          String _lookupTableId_2 = model.getLookupTableId();
+          ComputableResource _computableResource_3 = new ComputableResource(descriptor, _lookupTableId_2, true);
           _contextualization_3.add(_computableResource_3);
         }
         String _classificationProperty = model.getClassificationProperty();
-        boolean _tripleNotEquals_8 = (_classificationProperty != null);
-        if (_tripleNotEquals_8) {
+        boolean _tripleNotEquals_9 = (_classificationProperty != null);
+        if (_tripleNotEquals_9) {
           List<IComputableResource> _contextualization_4 = descriptor.getContextualization();
           String _classificationProperty_1 = model.getClassificationProperty();
           ComputableResource _computableResource_4 = new ComputableResource(descriptor, _classificationProperty_1, false);
           _contextualization_4.add(_computableResource_4);
         }
         String _name_1 = model.getName();
-        boolean _tripleNotEquals_9 = (_name_1 != null);
-        if (_tripleNotEquals_9) {
+        boolean _tripleNotEquals_10 = (_name_1 != null);
+        if (_tripleNotEquals_10) {
           descriptor.name = model.getName();
         } else {
-          int _size_1 = descriptor.getObservables().size();
-          boolean _greaterThan_1 = (_size_1 > 0);
+          int _size_2 = descriptor.getObservables().size();
+          boolean _greaterThan_1 = (_size_2 > 0);
           if (_greaterThan_1) {
             String _formalName = descriptor.getObservables().get(0).getFormalName();
-            boolean _tripleNotEquals_10 = (_formalName != null);
-            if (_tripleNotEquals_10) {
+            boolean _tripleNotEquals_11 = (_formalName != null);
+            if (_tripleNotEquals_11) {
               descriptor.name = observables.get(0).getFormalName();
             } else {
-              String _xifexpression_3 = null;
+              String _xifexpression_4 = null;
               boolean _isInstantiator = model.isInstantiator();
               if (_isInstantiator) {
-                _xifexpression_3 = "instantiator";
+                _xifexpression_4 = "instantiator";
               } else {
-                _xifexpression_3 = "contextualizer";
+                _xifexpression_4 = "contextualizer";
               }
-              String name = _xifexpression_3;
+              String name = _xifexpression_4;
               String _name_2 = descriptor.getObservables().get(0).getMain().getObservable().getName();
               SemanticType st = new SemanticType(_name_2);
               String _lowerCase = CamelCase.toLowerCase(st.getName(), '-');
@@ -575,15 +657,15 @@ public class KimValidator extends AbstractKimValidator {
           ((KimObservable) _get_2).setFormalName(descriptor.name);
         }
         Metadata _metadata = model.getMetadata();
-        boolean _tripleNotEquals_11 = (_metadata != null);
-        if (_tripleNotEquals_11) {
+        boolean _tripleNotEquals_12 = (_metadata != null);
+        if (_tripleNotEquals_12) {
           Metadata _metadata_1 = model.getMetadata();
           KimMetadata _kimMetadata = new KimMetadata(_metadata_1, descriptor);
           descriptor.setMetadata(_kimMetadata);
         }
         Documentation _documentation = model.getDocumentation();
-        boolean _tripleNotEquals_12 = (_documentation != null);
-        if (_tripleNotEquals_12) {
+        boolean _tripleNotEquals_13 = (_documentation != null);
+        if (_tripleNotEquals_13) {
         }
         int n = 0;
         List<IKimScope> _children = ns.getChildren();

@@ -46,7 +46,7 @@ public class ClassifyingStateResolver implements IStateResolver, IExpression {
 
 	@Override
 	public Object resolve(IObservable observable, IComputationContext context) throws KlabException {
-		return classification.classify(context.get("self"), context.getMonitor());
+		return classification.classify(context.get("self"), context);
 	}
 
 	@Override

@@ -594,6 +594,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		this.target = target;
 		if (target != null) {
 			Map<String, IArtifact> newCatalog = new HashMap<>();
+			newCatalog.putAll(this.catalog);
 			newCatalog.put(targetName, target);
 			this.catalog = newCatalog;
 		}

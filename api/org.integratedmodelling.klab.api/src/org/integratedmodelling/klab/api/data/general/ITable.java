@@ -98,6 +98,15 @@ public interface ITable<T> {
 	 */
 	T[] getColumn(int columnIndex);
 
+	
+	/**
+	 * This may return a list of header names or a list of variables like "$1" if
+	 * headers were not defined.
+	 * 
+	 * @return headers. Never null.
+	 */
+	List<String> getHeaders();
+
 
 
 }

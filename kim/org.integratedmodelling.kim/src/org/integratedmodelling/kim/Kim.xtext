@@ -17,11 +17,16 @@ Statement:
 	conceptStatement=ConceptStatement ';' |
 	modelStatement=ModelStatement ';' |
 	upperOntologyStatement=UpperOntologyDefinition ';' |
+	defineStatement=DefineStatement ';' |
 	observeStatement=ObserveStatement ';' 
 ;
 
 ModelStatement:
 	 annotations+=Annotation* ((inactive?='void')? & (private?='private')?) model=MODEL_TYPE body=ModelBodyStatement
+;
+
+DefineStatement:
+	'define' name=UPPERCASE_ID 'as' value=Value ';'
 ;
 
 ModelBodyStatement:

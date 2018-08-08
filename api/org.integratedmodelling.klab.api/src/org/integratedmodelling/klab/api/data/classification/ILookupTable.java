@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.api.data.classification;
 
+import java.util.List;
+
 import org.integratedmodelling.klab.api.data.general.ITable;
 
 /**
@@ -14,11 +16,20 @@ import org.integratedmodelling.klab.api.data.general.ITable;
 public interface ILookupTable extends IDataKey {
 
 	/**
-	 * The table we use for lookup.
+	 * The table we use for lookup. Classifiers are the most general
+	 * content type for it.
 	 * 
 	 * @return
 	 */
-	ITable<?> getTable();
+	ITable<IClassifier> getTable();
+	
+	
+	/**
+	 * The variables we look up.
+	 * 
+	 * @return vars
+	 */
+	List<String> getArguments();
 
 //	/**
 //	 * Lookup values in columnIndex based on matching the other values to the other

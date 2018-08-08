@@ -17,7 +17,7 @@ import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
@@ -241,7 +241,7 @@ public class Classification implements IClassification {
 	}
 
 	@Override
-	public IConcept classify(Object object, IMonitor monitor) {
+	public IConcept classify(Object object, IComputationContext context) {
 		
         if (object instanceof Number && Double.isNaN(((Number) object).doubleValue())) {
         	object = null;
@@ -252,7 +252,7 @@ public class Classification implements IClassification {
         }
 
         for (Pair<IConcept, IClassifier> p : this.classifiers) {
-            if (p.getSecond().classify(object, monitor)) {
+            if (p.getSecond().classify(object,context)) {
                 return p.getFirst();
             }
         }
@@ -309,7 +309,7 @@ public class Classification implements IClassification {
 
 
 	@Override
-	public int classifyToIndex(Object o, IMonitor monitor) {
+	public int classifyToIndex(Object o, IComputationContext monitor) {
 		
         if (conceptIndexes == null) {
             conceptIndexes = new HashMap<>();

@@ -9,11 +9,11 @@ import java.util.Random;
 import org.integratedmodelling.kim.api.IKimClassifier;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.engine.runtime.code.Expression;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -25,10 +25,10 @@ public class Classifier implements IClassifier {
 		// TODO Auto-generated constructor stub
 	}
 
-	Classifier(IKimClassifier statement) {
+	public Classifier(IKimClassifier statement) {
 
 		this.sourceCode = statement.getSourceCode().trim();
-		
+
 		this.numberMatch = statement.getNumberMatch();
 		this.anythingMatch = statement.isCatchAnything();
 		this.catchAll = statement.isCatchAll();
@@ -52,7 +52,10 @@ public class Classifier implements IClassifier {
 				this.classifierMatches.add(new Classifier(cstatement));
 			}
 		}
-		// this.expressionMatch = statement.getExpressionMatch();
+		if (statement.getExpressionMatch() != null) {
+			this.expressionMatch = Extensions.INSTANCE.compileExpression(statement.getExpressionMatch().getCode(),
+					statement.getExpressionMatch().getLanguage());
+		}
 	}
 
 	private ArrayList<Classifier> classifierMatches = null;
@@ -116,7 +119,7 @@ public class Classifier implements IClassifier {
 	}
 
 	@Override
-	public boolean classify(Object o, IMonitor monitor) {
+	public boolean classify(Object o, IComputationContext context) {
 
 		if (anythingMatch) {
 			return true;
@@ -144,7 +147,7 @@ public class Classifier implements IClassifier {
 		} else if (classifierMatches != null) {
 
 			for (Classifier cl : classifierMatches) {
-				if (cl.classify(o, monitor))
+				if (cl.classify(o, context))
 					return true;
 			}
 
@@ -165,18 +168,11 @@ public class Classifier implements IClassifier {
 		} else if (expressionMatch != null) {
 
 			try {
-				/*
-				 * TODO find an elegant way to communicate external parameter maps, and set
-				 * :self = o in it.
-				 */
 				Parameters<String> parms = new Parameters<>();
+				parms.putAll(context);
 				parms.put("self", o);
-				// FIXME pass a proper monitor
-				return negated
-						? !(Boolean) expressionMatch.eval(parms,
-								/* TODO pass a context */ Expression.emptyContext(monitor))
-						: (Boolean) expressionMatch.eval(parms,
-								/* TODO pass a context */ Expression.emptyContext(monitor));
+				return negated ? !(Boolean) expressionMatch.eval(parms, context)
+						: (Boolean) expressionMatch.eval(parms, context);
 
 			} catch (Exception e) {
 				throw new KlabValidationException(e);
@@ -424,20 +420,13 @@ public class Classifier implements IClassifier {
 		} else if (booleanMatch != null) {
 			return booleanMatch;
 		} else if (intervalMatch != null) {
-
 			return intervalMatch.getLowerBound()
 					+ (new Random().nextDouble() * (intervalMatch.getUpperBound() - intervalMatch.getLowerBound()));
-
 		} else if (conceptMatch != null) {
-
 			return conceptMatch;
-
 		} else if (stringMatch != null) {
-
 			return stringMatch;
-
 		} else if (expressionMatch != null) {
-
 			return expressionMatch;
 		}
 		return null;

@@ -15,7 +15,7 @@
  */
 package org.integratedmodelling.klab.api.data.classification;
 
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -31,11 +31,11 @@ public interface IClassifier {
 	 *
 	 * @param o
 	 *            the o
-	 * @param monitor
-	 *            the monitor
+	 * @param context
+	 *            the context
 	 * @return True if passed object matches the conditions of the classifier
 	 */
-	public boolean classify(Object o, IMonitor monitor);
+	public boolean classify(Object o, IComputationContext context);
 
 	/**
 	 * True if this classifier matches everything.

@@ -32,6 +32,7 @@ import org.integratedmodelling.kim.kim.ObservableSemantics
 import org.integratedmodelling.kim.kim.ObserveStatement
 import org.integratedmodelling.kim.kim.ObserveStatementBody
 import org.integratedmodelling.kim.kim.Statement
+import org.integratedmodelling.kim.kim.Table
 import org.integratedmodelling.kim.kim.Urn
 import org.integratedmodelling.kim.model.ComputableResource
 import org.integratedmodelling.kim.model.Kim
@@ -41,6 +42,7 @@ import org.integratedmodelling.kim.model.KimAnnotation
 import org.integratedmodelling.kim.model.KimBehavior
 import org.integratedmodelling.kim.model.KimConcept
 import org.integratedmodelling.kim.model.KimConceptStatement
+import org.integratedmodelling.kim.model.KimConceptStatement.ApplicableConceptImpl
 import org.integratedmodelling.kim.model.KimConceptStatement.ParentConcept
 import org.integratedmodelling.kim.model.KimMacro
 import org.integratedmodelling.kim.model.KimMetadata
@@ -50,10 +52,10 @@ import org.integratedmodelling.kim.model.KimObservable
 import org.integratedmodelling.kim.model.KimObserver
 import org.integratedmodelling.kim.model.KimProject
 import org.integratedmodelling.kim.model.KimServiceCall
-import org.integratedmodelling.klab.common.SemanticType
 import org.integratedmodelling.klab.utils.CamelCase
 import org.integratedmodelling.klab.utils.Pair
-import org.integratedmodelling.kim.model.KimConceptStatement.ApplicableConceptImpl
+import org.integratedmodelling.klab.utils.SemanticType
+import org.integratedmodelling.kim.model.KimLookupTable
 
 /**
  * This class contains custom validation rules. 
@@ -69,6 +71,7 @@ class KimValidator extends AbstractKimValidator {
 	public static val PROBLEMATIC_URN = 'problematicURN'
 	public static val NO_NAMESPACE = 'noNamespace'
 	public static val BAD_NAMESPACE_ID = 'badNamespaceId'
+	public static val BAD_TABLE_FORMAT = 'badTableFormat'
 
 	static val nonSemanticModels = #{'number', 'text', 'boolean'}
 
@@ -154,6 +157,24 @@ class KimValidator extends AbstractKimValidator {
 					model.inactive = true;
 				}
 			}
+		}
+	}
+
+	@Check
+	def checkTable(Table table) {
+		var ncols = -1;
+		if (table.headers !== null) {
+			ncols = table.headers.elements.size
+		}
+		var i = 0
+		for (row : table.rows) {
+			if (ncols < 0) {
+				ncols = row.elements.size
+			} else if (row.elements.size != ncols) {
+				error('Inconsistent number of elements in row table: expecting ' + ncols,
+					KimPackage.Literals.TABLE__ROWS, i, BAD_TABLE_FORMAT)
+			}
+			i++
 		}
 	}
 
@@ -324,8 +345,47 @@ class KimValidator extends AbstractKimValidator {
 		}
 
 		if (model.lookupTable !== null || model.lookupTableId !== null) {
-			// TODO validate argument list agains dependency names, resolve reference
-			// TODO intercept errors from lookup table (such as different # items per row)
+
+			// just for validation
+			var KimLookupTable table = if (model.lookupTableId !== null)
+					null /* TODO get from symbol table */
+				else
+					new KimLookupTable(model.lookupTable, model.lookupTableArgs, null)
+			if (model.lookupTableArgs.size != table.columnCount) {
+				error(
+					'The number of arguments does not match the number of columns. Use ? for the arguments to look up or * for arguments to ignore',
+					 KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, BAD_TABLE_FORMAT)
+			}
+			var o = 0
+			var checkFound = false
+			for (arg : model.lookupTableArgs) {
+				
+				if (arg != "?" && arg != "*") {
+					var found = false
+					for (dependency : dependencies) {
+						// TODO dependency.name returns too many nulls to check effectively
+						if (dependency.name !== null && dependency.name == arg) {
+							found = true;
+						}
+					}
+					if (!found) {
+						// TODO reintegrate, or at worst move into engine
+//						error('Argument ' + arg + ' is unknown within this model',
+//								 KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, o, BAD_TABLE_FORMAT)
+					}
+				} else if (arg == "?") {
+					if (checkFound) {
+						error("Only one '?' is allowed in the argument list, to mark the result column",
+								 KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, o, BAD_TABLE_FORMAT)
+					}
+					checkFound = true
+				}
+				if (!checkFound) {
+						error("One and only one '?' must be present the argument list to mark the result column",
+								 KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, BAD_TABLE_FORMAT)
+				}
+				o ++
+			}
 		}
 
 		for (contextualizer : model.contextualizers) {
@@ -412,9 +472,10 @@ class KimValidator extends AbstractKimValidator {
 				if (model.lookupTableId !== null) {
 					descriptor.contextualization.add(new ComputableResource(descriptor, model.lookupTableId, true))
 				}
-				
+
 				if (model.classificationProperty !== null) {
-					descriptor.contextualization.add(new ComputableResource(descriptor, model.classificationProperty, false))
+					descriptor.contextualization.add(
+						new ComputableResource(descriptor, model.classificationProperty, false))
 				}
 
 				if (model.name !== null) {
@@ -1225,7 +1286,7 @@ class KimValidator extends AbstractKimValidator {
 				}
 			}
 		}
-		
+
 	}
 
 //	@Check

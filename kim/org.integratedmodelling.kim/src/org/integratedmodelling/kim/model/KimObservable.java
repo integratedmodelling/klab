@@ -12,6 +12,7 @@ import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 import org.integratedmodelling.kim.validation.KimValidator;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Range;
 
 public class KimObservable extends KimStatement implements IKimObservable {
@@ -76,6 +77,17 @@ public class KimObservable extends KimStatement implements IKimObservable {
 
 	public void setMain(IKimConcept main) {
 		this.main = main;
+	}
+	
+	public String getName() {
+		if (formalName != null) {
+			return formalName;
+		}
+		if (main != null) {
+			return CamelCase.toLowerCase(main.getName(), '_');
+		}
+		// TODO the rest
+		return null;
 	}
 
 	public static KimObservable normalize(ObservableSemantics declaration, IKimStatement parent) {
