@@ -19,5 +19,14 @@ temporalextent time
 		 units. Example: '1 day'."
 		default ""
 
+	optional input year
+		"A year is an integer number, interpreted as the period covering the entire year."
+		default 0
+		
+	optional input realtime
+		"If the realtime parameter is true, all time transition will be performed in real time from the 
+         start of contextualization."
+		default false
+		
 	class org.integratedmodelling.klab.components.time.services.Time
 }

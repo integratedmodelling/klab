@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.components.geospace.visualization;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
@@ -128,7 +130,18 @@ public enum Renderer {
 			Graphics2D gr = image.createGraphics();
 			gr.setPaint(new Color(0f, 0f, 0f, 0f));
 			gr.fill(imageBounds);
-			renderer.paint(gr, coverage, rasterSymbolizer);
+			if (rasterSymbolizer != null) {
+				renderer.paint(gr, coverage, rasterSymbolizer);
+			} else {
+				String s = "NO DATA";
+				Font f = new Font("SansSerif", Font.BOLD, 72);
+				gr.setColor(Color.red);
+				gr.setFont(f);
+			    FontMetrics fm = gr.getFontMetrics();
+			    int x = (imagesize[0] - fm.stringWidth(s)) / 2;
+			    int y = (fm.getAscent() + (imagesize[1] - (fm.getAscent() + fm.getDescent())) / 2);
+			    gr.drawString(s, x, y);
+			}
 			return image;
 
 		} catch (Exception e) {
@@ -140,6 +153,10 @@ public enum Renderer {
 
 		StateSummary summary = Observations.INSTANCE.getStateSummary(state, locator);
 
+		if (summary.isDegenerate()) {
+			return null;
+		}
+		
 		float opacity = 1f;
 		Color[] colors = null;
 		double[] values = null;
