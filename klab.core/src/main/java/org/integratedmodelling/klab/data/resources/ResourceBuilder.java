@@ -56,6 +56,7 @@ public class ResourceBuilder implements IResource.Builder {
 	private String adapterType;
 	private IArtifact.Type type;
 	private String projectName;
+	private String localName;
 	
 	// for importers
 	private String resourceId;
@@ -79,6 +80,7 @@ public class ResourceBuilder implements IResource.Builder {
 		ret.localPaths.addAll(resourcePaths);
 		ret.type = type;
 		ret.projectName = this.projectName;
+		ret.localName = this.localName;
 		
 		return ret;
 	}
@@ -209,6 +211,12 @@ public class ResourceBuilder implements IResource.Builder {
 	@Override
 	public void addImportedFile(File file) {
 		this.importedFiles.add(file);
+	}
+
+	@Override
+	public Builder withLocalName(String localName) {
+		this.localName = localName;
+		return this;
 	}
 
 }

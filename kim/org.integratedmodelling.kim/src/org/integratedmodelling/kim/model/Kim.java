@@ -49,7 +49,6 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.kim.ClassifierRHS;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.Literal;
-import org.integratedmodelling.kim.kim.LookupTable;
 import org.integratedmodelling.kim.kim.MapEntry;
 import org.integratedmodelling.kim.kim.Metadata;
 import org.integratedmodelling.kim.kim.ModelBodyStatement;
@@ -434,7 +433,7 @@ public enum Kim {
 		} else if (value.getMap() != null) {
 			return parseMap(value.getMap(), namespace);
 		} else if (value.getTable() != null) {
-			return parseTable(value.getTable(), /* FIXME? Tables as values are orphans */ null, namespace);
+			return new KimTable(value.getTable().getTable(), namespace);
 		} else if (value.getConcept() != null) {
 			return declareConcept(value.getConcept());
 		} else if (value.getExpr() != null) {
@@ -444,11 +443,6 @@ public enum Kim {
 		return null;
 	}
 
-	private KimLookupTable parseTable(LookupTable table, IKimStatement parent, IKimNamespace namespace) {
-		KimLookupTable ret = new KimLookupTable(table, parent);
-		// TODO
-		return ret;
-	}
 
 	/*
 	 * The k.IM map preserves order.

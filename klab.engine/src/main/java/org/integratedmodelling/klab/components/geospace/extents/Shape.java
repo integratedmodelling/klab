@@ -79,7 +79,7 @@ public class Shape extends AbstractExtent implements IShape {
 
     @Override
     public String toString() {
-        return projection.getCode() + " " + geometry;
+        return projection.getSimpleSRS() + " " + geometry;
     }
 
     public static Shape create(String wkt) throws KlabValidationException {

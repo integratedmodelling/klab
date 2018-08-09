@@ -8,6 +8,7 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -68,6 +69,8 @@ public enum Renderer {
 
 	INSTANCE;
 
+	private static final String NO_DATA_MESSAGE = "NO DATA";
+	
 	private Map<String, ColorScheme> colorSchemata = new HashMap<>();
 	private Map<String, Style> styles = new HashMap<>();
 	private StyleBuilder styleBuilder = new StyleBuilder();
@@ -121,7 +124,7 @@ public enum Renderer {
 			GridCoverageRenderer renderer = new GridCoverageRenderer(
 					((Projection) projection).getCoordinateReferenceSystem(), ((Envelope) envelope).getJTSEnvelope(),
 					screenSize, w2s);
-			RasterSymbolizer rasterSymbolizer = getRasterSymbolizer(state, locator);
+			Pair<RasterSymbolizer, String> rasterSymbolizer = getRasterSymbolizer(state, locator);
 			// TODO the previous should return null, and if so, the image returned should be one from the resources
 			// describing a full nodata coverage
 			System.out.println("Creating image " + imagesize[0] + " x " + imagesize[1] + " in viewport " + viewport);
@@ -130,12 +133,12 @@ public enum Renderer {
 			Graphics2D gr = image.createGraphics();
 			gr.setPaint(new Color(0f, 0f, 0f, 0f));
 			gr.fill(imageBounds);
-			if (rasterSymbolizer != null) {
-				renderer.paint(gr, coverage, rasterSymbolizer);
+			if (rasterSymbolizer.getFirst() != null) {
+				renderer.paint(gr, coverage, rasterSymbolizer.getFirst());
 			} else {
-				String s = "NO DATA";
-				Font f = new Font("SansSerif", Font.BOLD, 72);
-				gr.setColor(Color.red);
+				String s = rasterSymbolizer.getSecond();
+				Font f = new Font("SansSerif", Font.BOLD, 172);
+				gr.setColor(s.equals(NO_DATA_MESSAGE) ? Color.red : Color.white);
 				gr.setFont(f);
 			    FontMetrics fm = gr.getFontMetrics();
 			    int x = (imagesize[0] - fm.stringWidth(s)) / 2;
@@ -149,12 +152,16 @@ public enum Renderer {
 		}
 	}
 
-	public RasterSymbolizer getRasterSymbolizer(IState state, ILocator locator) {
+	public Pair<RasterSymbolizer, String> getRasterSymbolizer(IState state, ILocator locator) {
 
 		StateSummary summary = Observations.INSTANCE.getStateSummary(state, locator);
 
 		if (summary.isDegenerate()) {
-			return null;
+			return new Pair<>(null, NO_DATA_MESSAGE);
+		}
+		
+		if (summary.getRange().get(0).equals(summary.getRange().get(1))) {
+			return new Pair<>(null, "All values = " + NumberFormat.getNumberInstance().format(summary.getRange().get(0)));
 		}
 		
 		float opacity = 1f;
@@ -384,7 +391,7 @@ public enum Renderer {
 			ret.setShadedRelief(srl);
 		}
 
-		return ret;
+		return new Pair<>(ret, null);
 	}
 
 	private Color parseColor(Object o) {

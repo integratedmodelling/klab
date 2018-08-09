@@ -137,7 +137,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 
 		super(lookupTable, parent);
 		setCode(lookupTable);
-		this.lookupTable = new KimLookupTable(lookupTable, lookupTableArgs, parent);
+		this.lookupTable = new KimLookupTable(new KimTable(lookupTable, parent), lookupTableArgs, parent);
 		this.setPostProcessor(true);
 	}
 

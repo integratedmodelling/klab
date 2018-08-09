@@ -1,54 +1,17 @@
-//package org.integratedmodelling.klab.components.geospace.processing.osm;
-//
-//import java.io.InputStream;
-//import java.net.URL;
-//import java.util.ArrayList;
-//import java.util.Collection;
-//import java.util.HashMap;
-//import java.util.HashSet;
-//import java.util.List;
-//import java.util.Map;
-//import java.util.Set;
-//
-//import org.geotools.geometry.jts.JTS;
-//import org.geotools.geometry.jts.ReferencedEnvelope;
-//import org.integratedmodelling.api.data.IList;
-//import org.integratedmodelling.api.knowledge.IConcept;
-//import org.integratedmodelling.api.knowledge.IObservation;
-//import org.integratedmodelling.api.modelling.IActiveSubject;
-//import org.integratedmodelling.api.modelling.IExtent;
-//import org.integratedmodelling.api.modelling.IModel;
-//import org.integratedmodelling.api.modelling.IObservableSemantics;
-//import org.integratedmodelling.api.modelling.IScale;
-//import org.integratedmodelling.api.modelling.IState;
-//import org.integratedmodelling.api.modelling.ISubject;
-//import org.integratedmodelling.api.modelling.contextualization.ISubjectInstantiator;
-//import org.integratedmodelling.api.modelling.resolution.IResolutionScope;
-//import org.integratedmodelling.api.modelling.scheduling.ITransition;
-//import org.integratedmodelling.api.monitoring.IMonitor;
-//import org.integratedmodelling.api.monitoring.Messages;
-//import org.integratedmodelling.api.project.IProject;
-//import org.integratedmodelling.api.provenance.IProvenance;
-//import org.integratedmodelling.api.services.annotations.Prototype;
-//import org.integratedmodelling.api.space.ISpatialExtent;
-//import org.integratedmodelling.common.configuration.KLAB;
-//import org.integratedmodelling.common.utils.CamelCase;
-//import org.integratedmodelling.common.utils.Escape;
-//import org.integratedmodelling.common.vocabulary.NS;
-//import org.integratedmodelling.common.vocabulary.ObservableSemantics;
-//import org.integratedmodelling.engine.geospace.Geospace;
-//import org.integratedmodelling.engine.geospace.literals.ShapeValue;
-//import org.integratedmodelling.engine.modelling.runtime.Scale;
-//import org.integratedmodelling.exceptions.KlabException;
-//import org.integratedmodelling.exceptions.KlabIOException;
-//import org.integratedmodelling.exceptions.KlabValidationException;
-//
-//import com.vividsolutions.jts.geom.Geometry;
-//import com.vividsolutions.jts.geom.LineString;
-//import com.vividsolutions.jts.geom.MultiPolygon;
-//import com.vividsolutions.jts.geom.Polygon;
-//import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
-//
+package org.integratedmodelling.klab.components.geospace.processing.osm;
+
+import java.util.List;
+
+import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
+import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.exceptions.KlabException;
+
 //import de.topobyte.osm4j.core.access.OsmIterator;
 //import de.topobyte.osm4j.core.dataset.InMemoryMapDataSet;
 //import de.topobyte.osm4j.core.dataset.MapDataSetLoader;
@@ -67,25 +30,25 @@
 //import de.topobyte.osm4j.geometry.WayBuilder;
 //import de.topobyte.osm4j.geometry.WayBuilderResult;
 //import de.topobyte.osm4j.xml.dynsax.OsmXmlIterator;
-//
-///**
-// * Subject instantiator to extract features from OSM. Either pass an Overpass query
-// * directly, or build it using the parameters. Tries to comply with the geometric
-// * requests. If temporal = true, uses timestamps to create objects and events at the time
-// * of their existence. Otherwise simply builds objects at initialization regardless of
-// * timestamps.
-// * 
-// * Should also return a single ID by identifier, to annotate as we please. This should
-// * become usable within observe statements (using ...) so that we can construct contexts
-// * from OSM through Nominatim queries.
-// * 
-// * TODO pass a zoom level from metadata (call it an extent metric or something, with 0 =
-// * total for the worldview) and void the correspondent model if the current context has a
-// * zoom level below that.
-// * 
-// * @author ferdinando.villa
-// *
-// */
+
+/**
+ * Subject instantiator to extract features from OSM. Either pass an Overpass query
+ * directly, or build it using the parameters. Tries to comply with the geometric
+ * requests. If temporal = true, uses timestamps to create objects and events at the time
+ * of their existence. Otherwise simply builds objects at initialization regardless of
+ * timestamps.
+ * 
+ * Should also return a single ID by identifier, to annotate as we please. This should
+ * become usable within observe statements (using ...) so that we can construct contexts
+ * from OSM through Nominatim queries.
+ * 
+ * TODO pass a zoom level from metadata (call it an extent metric or something, with 0 =
+ * total for the worldview) and void the correspondent model if the current context has a
+ * zoom level below that.
+ * 
+ * @author ferdinando.villa
+ *
+ */
 //@Prototype(
 //        id = "osm.query-features",
 //        published = true,
@@ -117,11 +80,39 @@
 //                "# simplify-polygons",
 //                Prototype.BOOLEAN, },
 //        returnTypes = { NS.SUBJECT_INSTANTIATOR })
-//public class OSMSubjectInstantiator implements ISubjectInstantiator {
-//
-//    // TODO this may be configurable or contain a set of alternative URLs to try.
-//    public static final String OVERPASS_URL   = "http://overpass-api.de/api/interpreter";
-//
+public class OSMSubjectInstantiator implements IInstantiator, IExpression {
+
+    // TODO this may be configurable or contain a set of alternative URLs to try.
+    public static final String OVERPASS_URL   = "http://overpass-api.de/api/interpreter";
+
+	public OSMSubjectInstantiator(IParameters<String> parameters, IComputationContext context) {
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public IGeometry getGeometry() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Type getType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context) throws KlabException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+		// TODO Auto-generated method stub
+		return new OSMSubjectInstantiator(parameters, context);
+	}
+
 //    IList                      matching       = null;
 //    IList                      notmatching    = null;
 //    IList                      equal          = null;
@@ -462,5 +453,5 @@
 //            return null;
 //        }
 //    }
-//
-//}
+
+}

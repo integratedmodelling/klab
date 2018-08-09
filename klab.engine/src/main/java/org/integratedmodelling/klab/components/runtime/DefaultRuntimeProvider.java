@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
+import org.integratedmodelling.klab.api.data.classification.ILookupTable;
 import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -43,6 +44,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.Classifyi
 import org.integratedmodelling.klab.components.runtime.contextualizers.ConversionResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ExpressionResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver;
+import org.integratedmodelling.klab.components.runtime.contextualizers.LookupStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.UrnInstantiator;
 import org.integratedmodelling.klab.components.runtime.contextualizers.UrnResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.DensityResolver;
@@ -221,6 +223,9 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			IClassification classification = Types.INSTANCE.createClassificationFromMetadata(
 					((Actuator) target).getObservable().getType(), resource.getAccordingTo());
 			return ClassifyingStateResolver.getServiceCall(classification);
+		} else if (resource.getLookupTable() != null) {
+			return LookupStateResolver
+					.getServiceCall(((ComputableResource) resource).getValidatedResource(ILookupTable.class));
 		}
 
 		// temp

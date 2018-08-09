@@ -12,7 +12,7 @@ import org.integratedmodelling.kim.kim.KeyValuePair;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
-import org.integratedmodelling.klab.api.data.general.ITable;
+import org.integratedmodelling.klab.api.data.classification.ILookupTable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.utils.Escape;
@@ -134,9 +134,10 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 				ret += (ret.isEmpty() ? "" : ", ") + o.getSecond().getSourceCode() + " : '" + o.getFirst() + "'";
 			}
 			return "{" + ret + "}";
-		} else if (val instanceof ITable) {
+		} else if (val instanceof ILookupTable) {
 			String ret = "";
 			// TODO table literal
+			// TODO must also pass argument list to the same function...
 			return "{{" + ret + "}}";
 		}
 		return val.toString();

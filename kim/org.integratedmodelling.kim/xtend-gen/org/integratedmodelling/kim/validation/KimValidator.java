@@ -78,6 +78,7 @@ import org.integratedmodelling.kim.model.KimObserver;
 import org.integratedmodelling.kim.model.KimProject;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.kim.model.KimStatement;
+import org.integratedmodelling.kim.model.KimTable;
 import org.integratedmodelling.kim.validation.AbstractKimValidator;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.utils.CamelCase;
@@ -450,16 +451,17 @@ public class KimValidator extends AbstractKimValidator {
         _xifexpression_3 = null;
       } else {
         Table _lookupTable = model.getLookupTable();
+        KimTable _kimTable = new KimTable(_lookupTable, null);
         EList<String> _lookupTableArgs = model.getLookupTableArgs();
-        _xifexpression_3 = new KimLookupTable(_lookupTable, _lookupTableArgs, null);
+        _xifexpression_3 = new KimLookupTable(_kimTable, _lookupTableArgs, null);
       }
       KimLookupTable table = _xifexpression_3;
       int _size_1 = model.getLookupTableArgs().size();
-      int _columnCount = table.getColumnCount();
-      boolean _notEquals = (_size_1 != _columnCount);
-      if (_notEquals) {
+      int _columnCount = table.getTable().getColumnCount();
+      boolean _greaterThan_1 = (_size_1 > _columnCount);
+      if (_greaterThan_1) {
         this.error(
-          "The number of arguments does not match the number of columns. Use ? for the arguments to look up or * for arguments to ignore", 
+          "The number of arguments exceeds the number of columns. Use ? for the arguments to look up or * for arguments to ignore", 
           KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, KimValidator.BAD_TABLE_FORMAT);
       }
       int o = 0;
@@ -489,8 +491,9 @@ public class KimValidator extends AbstractKimValidator {
           o++;
         }
       }
-      if ((!checkFound)) {
-        this.error("One and only one \'?\' must be present the argument list to mark the result column", 
+      if (((!checkFound) && (model.getLookupTableArgs().size() > 2))) {
+        this.error(
+          "One \'?\' must be present in the argument list to mark the result column when the table has more than 2 columns. Use * to mark columns to ignore.", 
           KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, KimValidator.BAD_TABLE_FORMAT);
       }
     }
@@ -623,8 +626,8 @@ public class KimValidator extends AbstractKimValidator {
           descriptor.name = model.getName();
         } else {
           int _size_2 = descriptor.getObservables().size();
-          boolean _greaterThan_1 = (_size_2 > 0);
-          if (_greaterThan_1) {
+          boolean _greaterThan_2 = (_size_2 > 0);
+          if (_greaterThan_2) {
             String _formalName = descriptor.getObservables().get(0).getFormalName();
             boolean _tripleNotEquals_11 = (_formalName != null);
             if (_tripleNotEquals_11) {

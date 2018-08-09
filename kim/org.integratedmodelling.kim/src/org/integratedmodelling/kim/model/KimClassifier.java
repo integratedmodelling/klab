@@ -12,6 +12,8 @@ import org.integratedmodelling.kim.kim.Classifier;
 import org.integratedmodelling.kim.kim.ClassifierRHS;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.utils.Range;
 
 public class KimClassifier extends KimStatement implements IKimClassifier {
@@ -32,6 +34,7 @@ public class KimClassifier extends KimStatement implements IKimClassifier {
 	private ArrayList<IKimConcept> conceptMatches;
 	private String stringMatch;
 	private IKimExpression expressionMatch;
+    private IArtifact.Type type = Type.VOID;
     
 	// this produces a catch-all and should only be called when isOtherwise() == true
     public KimClassifier(Classifier statement, IKimStatement parent) {
@@ -50,17 +53,21 @@ public class KimClassifier extends KimStatement implements IKimClassifier {
         
         if (statement == null && matchedConcept != null) {
             conceptMatch = matchedConcept;
+            type = Type.CONCEPT;
             return;
         } 
         
         if (statement.isAnything()) {
         	catchAnything = true;
+        	type = Type.VALUE;
         	return;
         } else if (statement.getNum() != null) {
             Number n = Kim.INSTANCE.parseNumber(statement.getNum());
             this.numberMatch = n.doubleValue();
+        	type = Type.NUMBER;
         } else if (statement.getBoolean() != null) {
             this.booleanMatch = statement.getBoolean().equals("true");
+        	type = Type.BOOLEAN;
         } else if (statement.getInt0() != null) {
 
             Number from = Kim.INSTANCE.parseNumber(statement.getInt0());
@@ -73,6 +80,7 @@ public class KimClassifier extends KimStatement implements IKimClassifier {
                 rt = "exclusive";
             this.intervalMatch = new Range(from.doubleValue(), to.doubleValue(), lt
                     .equals("exclusive"), rt.equals("exclusive"));
+        	type = Type.RANGE;
 
         } else if (statement.getOp() != null) {
 
@@ -97,11 +105,18 @@ public class KimClassifier extends KimStatement implements IKimClassifier {
             if (ni != null) {
                 this.intervalMatch = ni;
             }
+            
+        	type = Type.RANGE;
+
 
         } else if (statement.getNodata() != null) {
-            this.nullMatch = true;
+
+        	this.nullMatch = true;
+        	type = Type.VOID;
+
         } else if (statement.getSet() != null) {
 
+        	// TODO these should be validated as all of same type
             for (Object o : Kim.INSTANCE.parseList(statement.getSet(), namespace)) {
                 if (o instanceof Number) {
                     addClassifier(createNumberMatcher((Number) o));
@@ -116,6 +131,8 @@ public class KimClassifier extends KimStatement implements IKimClassifier {
                 }
             }
 
+            type = classifierMatches.size() > 0 ? classifierMatches.get(0).getType() : Type.VOID;
+            
         } else if (statement.getToResolve() != null && statement.getToResolve().size() > 0) {
 
             for (ConceptDeclaration cdu : statement.getToResolve()) {
@@ -124,6 +141,9 @@ public class KimClassifier extends KimStatement implements IKimClassifier {
                 }
                 conceptMatches.add(Kim.INSTANCE.declareConcept(cdu));
             }
+            
+        	type = Type.CONCEPT;
+
 
         } else if (statement.getConcept() != null) {
         	
@@ -132,15 +152,18 @@ public class KimClassifier extends KimStatement implements IKimClassifier {
         } else if (statement.getString() != null) {
         
         	this.stringMatch = statement.getString();
-        
+        	type = Type.TEXT;
+
         } else if (statement.getExpr() != null) {
         
         	this.expressionMatch = new KimExpression(statement.getExpr(), null);
-        
+        	type = Type.VALUE;
+
         } else if (statement.isStar()) {
         
         	catchAll = true;
-        
+        	type = Type.VOID;
+
         }
     }
 
@@ -281,6 +304,11 @@ public class KimClassifier extends KimStatement implements IKimClassifier {
 
 	public void setExpressionMatch(IKimExpression expressionMatch) {
 		this.expressionMatch = expressionMatch;
+	}
+
+	@Override
+	public Type getType() {
+		return type;
 	}
 
 }

@@ -3,68 +3,60 @@ package org.integratedmodelling.kim.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IKimClassifier;
 import org.integratedmodelling.kim.api.IKimLookupTable;
 import org.integratedmodelling.kim.api.IKimStatement;
-import org.integratedmodelling.kim.kim.ClassifierRHS;
-import org.integratedmodelling.kim.kim.LookupTable;
-import org.integratedmodelling.kim.kim.Table;
-import org.integratedmodelling.kim.kim.TableRow;
+import org.integratedmodelling.kim.api.IKimTable;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 
 public class KimLookupTable extends KimStatement implements IKimLookupTable {
 
     private static final long serialVersionUID = -8962809767778643579L;
 
-    protected List<IKimClassifier[]> rows    = new ArrayList<>();
-    protected List<String>             headers = null;
     List<String> arguments = new ArrayList<>();
+    IKimTable table;
+    int searchColumn = -1;
+    IArtifact.Type lookupType;
     
-    public KimLookupTable(Table statement, List<String> arguments, IKimStatement parent) {
-        super(statement, parent);
+    public KimLookupTable(IKimTable table, List<String> arguments, IKimStatement parent) {
+        super(((KimStatement)table).getEObject(), parent);
+        this.table = table;
         this.arguments.addAll(arguments);
         int ncols = -1;
-        if (statement.getHeaders() != null) {
-        	headers = new ArrayList<>(statement.getHeaders().getElements());
-        	ncols = headers.size();
+        boolean haveSearch = arguments.contains("?");
+        // pad any needed argument with the most likely implied
+        while (arguments.size() < ncols) {
+        	arguments.add((ncols == 2 && arguments.size() == 1 && !haveSearch) ? "?" : "*");
         }
-        for (TableRow row : statement.getRows()) {
-        	IKimClassifier[] rowElements = new IKimClassifier[ncols];
-        	int i = 0;
-        	for (ClassifierRHS classifier : row.getElements()) {
-        		rowElements[i++] = new KimClassifier(classifier, false, null, this);
+        for (int i = 0; i < arguments.size(); i++) {
+        	if (arguments.get(i).equals("?")) {
+        		searchColumn = i;
+        		break;
         	}
-        	rows.add(rowElements);
         }
+		if (searchColumn >= 0) {
+			
+		}
     }
-    
-    @Override
-    public List<String> getHeaders() {
-    	return headers;
-	}
-    
-    @Override
-    public int getColumnCount() {
-    	return rows.size() > 0 ? rows.get(0).length : 0;
-    }
-
-    @Override
-    public int getRowCount() {
-    	return rows.size();
-    }
-
-    public KimLookupTable(LookupTable table, IKimStatement parent) {
-        super(table, parent);
-        // TODO Auto-generated constructor stub
-    }
-
-	@Override
-	public IKimClassifier[] getRow(int i) {
-		return rows.get(i);
-	}
 
 	@Override
 	public List<String> getArguments() {
 		return arguments;
+	}
+
+	@Override
+	public Type getLookupType() {
+		return this.lookupType;
+	}
+
+	@Override
+	public IKimTable getTable() {
+		return this.table;
+	}
+
+	@Override
+	public int getLookupColumnIndex() {
+		return searchColumn;
 	}
 
 }

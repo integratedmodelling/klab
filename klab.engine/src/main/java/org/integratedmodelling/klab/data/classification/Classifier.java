@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.NumberUtils;
@@ -21,6 +22,8 @@ import org.integratedmodelling.klab.utils.Range;
 
 public class Classifier implements IClassifier {
 
+	private Type type;
+
 	private Classifier() {
 		// TODO Auto-generated constructor stub
 	}
@@ -28,7 +31,7 @@ public class Classifier implements IClassifier {
 	public Classifier(IKimClassifier statement) {
 
 		this.sourceCode = statement.getSourceCode().trim();
-
+		this.type = statement.getType();
 		this.numberMatch = statement.getNumberMatch();
 		this.anythingMatch = statement.isCatchAnything();
 		this.catchAll = statement.isCatchAll();
@@ -95,14 +98,19 @@ public class Classifier implements IClassifier {
 
 		if (o instanceof Number) {
 			numberMatch = ((Number) o).doubleValue();
+			sourceCode = "" + o;
 		} else if (o instanceof String) {
 			stringMatch = (String) o;
+			sourceCode = "'" + o + "'";
 		} else if (o instanceof IConcept) {
 			conceptMatch = (IConcept) o;
+			sourceCode = ((IConcept)o).getDefinition();
 		} else if (o instanceof Range) {
 			intervalMatch = (Range) o;
+			sourceCode = o.toString();
 		} else if (o == null) {
 			nullMatch = true;
+			sourceCode = "#";
 		} else {
 			throw new KlabValidationException("cannot create classifier to match unsupported object type: " + o);
 		}
@@ -439,5 +447,10 @@ public class Classifier implements IClassifier {
 	@Override
 	public String getSourceCode() {
 		return sourceCode;
+	}
+	
+	@Override
+	public Type getType() {
+		return type;
 	}
 }

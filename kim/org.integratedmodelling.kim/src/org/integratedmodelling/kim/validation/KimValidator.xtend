@@ -44,6 +44,7 @@ import org.integratedmodelling.kim.model.KimConcept
 import org.integratedmodelling.kim.model.KimConceptStatement
 import org.integratedmodelling.kim.model.KimConceptStatement.ApplicableConceptImpl
 import org.integratedmodelling.kim.model.KimConceptStatement.ParentConcept
+import org.integratedmodelling.kim.model.KimLookupTable
 import org.integratedmodelling.kim.model.KimMacro
 import org.integratedmodelling.kim.model.KimMetadata
 import org.integratedmodelling.kim.model.KimModel
@@ -52,10 +53,10 @@ import org.integratedmodelling.kim.model.KimObservable
 import org.integratedmodelling.kim.model.KimObserver
 import org.integratedmodelling.kim.model.KimProject
 import org.integratedmodelling.kim.model.KimServiceCall
+import org.integratedmodelling.kim.model.KimTable
 import org.integratedmodelling.klab.utils.CamelCase
 import org.integratedmodelling.klab.utils.Pair
 import org.integratedmodelling.klab.utils.SemanticType
-import org.integratedmodelling.kim.model.KimLookupTable
 
 /**
  * This class contains custom validation rules. 
@@ -350,10 +351,10 @@ class KimValidator extends AbstractKimValidator {
 			var KimLookupTable table = if (model.lookupTableId !== null)
 					null /* TODO get from symbol table */
 				else
-					new KimLookupTable(model.lookupTable, model.lookupTableArgs, null)
-			if (model.lookupTableArgs.size != table.columnCount) {
+					new KimLookupTable(new KimTable(model.lookupTable, null), model.lookupTableArgs, null)
+			if (model.lookupTableArgs.size > table.table.columnCount) {
 				error(
-					'The number of arguments does not match the number of columns. Use ? for the arguments to look up or * for arguments to ignore',
+					'The number of arguments exceeds the number of columns. Use ? for the arguments to look up or * for arguments to ignore',
 					KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, BAD_TABLE_FORMAT)
 			}
 			var o = 0
@@ -382,8 +383,9 @@ class KimValidator extends AbstractKimValidator {
 				}
 				o++
 			}
-			if (!checkFound) {
-				error("One and only one '?' must be present the argument list to mark the result column",
+			if (!checkFound && model.lookupTableArgs.size() > 2) {
+				error(
+					"One '?' must be present in the argument list to mark the result column when the table has more than 2 columns. Use * to mark columns to ignore.",
 					KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, BAD_TABLE_FORMAT)
 			}
 		}

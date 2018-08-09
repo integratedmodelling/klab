@@ -27,8 +27,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.swing.JFrame;
-import org.geotools.coverage.GridSampleDimension;
+
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.data.DataUtilities;
 import org.geotools.factory.CommonFactoryFinder;
@@ -41,9 +42,6 @@ import org.geotools.map.GridCoverageLayer;
 import org.geotools.map.Layer;
 import org.geotools.map.MapContent;
 import org.geotools.map.MapViewport;
-import org.geotools.styling.ChannelSelection;
-import org.geotools.styling.ColorMap;
-import org.geotools.styling.ContrastEnhancement;
 import org.geotools.styling.FeatureTypeStyle;
 import org.geotools.styling.Fill;
 import org.geotools.styling.Graphic;
@@ -51,13 +49,10 @@ import org.geotools.styling.LineSymbolizer;
 import org.geotools.styling.Mark;
 import org.geotools.styling.PointSymbolizer;
 import org.geotools.styling.PolygonSymbolizer;
-import org.geotools.styling.RasterSymbolizer;
 import org.geotools.styling.Rule;
 import org.geotools.styling.SLD;
-import org.geotools.styling.SelectedChannelType;
 import org.geotools.styling.Stroke;
 import org.geotools.styling.Style;
-import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.StyleFactory;
 import org.geotools.swing.JMapFrame;
 import org.integratedmodelling.klab.Concepts;
@@ -77,7 +72,7 @@ import org.integratedmodelling.klab.visualization.Viewport;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.FilterFactory;
-import org.opengis.style.ContrastMethod;
+
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
@@ -109,7 +104,7 @@ public class SpatialDisplay {
 		Layer getLayer() {
 			GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage(state);
 			Layer layer = new GridCoverageLayer(coverage,
-					SLD.wrapSymbolizers(Renderer.INSTANCE.getRasterSymbolizer(state, ITime.INITIALIZATION)));
+					SLD.wrapSymbolizers(Renderer.INSTANCE.getRasterSymbolizer(state, ITime.INITIALIZATION).getFirst()));
 			layer.setTitle(state.getObservable().getLocalName());
 			return layer;
 		}

@@ -15,9 +15,9 @@
  */
 package org.integratedmodelling.klab.api.data.classification;
 
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface IClassifier.
  *
@@ -74,5 +74,12 @@ public interface IClassifier {
 	 * @return the value this classifier resolves to.
 	 */
 	Object asValue();
+
+	/**
+	 * Return the type of the classifier when used as a value.
+	 * 
+	 * @return
+	 */
+	Type getType();
 
 }

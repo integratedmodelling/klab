@@ -66,6 +66,21 @@ contextualizer classify
 
 }
 
+contextualizer lookup
+	"Return a state contextualizer that classifies its inputs using a lookup table"
+{
+	
+	object table
+		"A table stated in k.IM"
+
+	list arguments 
+		"A set of arguments to match to the columns of the table"
+
+	class org.integratedmodelling.klab.components.runtime.contextualizers.LookupStateResolver
+
+}
+
+
 contextualizer resolve
 	"Return a resolver for a URN-specified resource"
 {

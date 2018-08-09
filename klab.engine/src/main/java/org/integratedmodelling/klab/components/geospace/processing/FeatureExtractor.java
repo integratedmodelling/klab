@@ -303,7 +303,7 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 	}
 
 	@Override
-	public Object eval(IParameters parameters, IComputationContext context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
 		return new FeatureExtractor(parameters, context);
 	}
 

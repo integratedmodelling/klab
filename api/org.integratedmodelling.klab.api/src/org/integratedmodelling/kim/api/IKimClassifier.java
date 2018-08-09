@@ -2,6 +2,7 @@ package org.integratedmodelling.kim.api;
 
 import java.util.ArrayList;
 
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.utils.Range;
 
 /**
@@ -36,5 +37,12 @@ public interface IKimClassifier extends IKimStatement {
 	String getStringMatch();
 
 	ArrayList<IKimConcept> getConceptMatches();
+	
+	/**
+	 * The type of the object incarnated by this classifier
+	 * 
+	 * @return
+	 */
+	IArtifact.Type getType();
 
 }
