@@ -8,6 +8,7 @@ import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IKimTable;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public class KimLookupTable extends KimStatement implements IKimLookupTable {
 
@@ -17,8 +18,9 @@ public class KimLookupTable extends KimStatement implements IKimLookupTable {
     IKimTable table;
     int searchColumn = -1;
     IArtifact.Type lookupType;
+    String error;
     
-    public KimLookupTable(IKimTable table, List<String> arguments, IKimStatement parent) {
+	public KimLookupTable(IKimTable table, List<String> arguments, IKimStatement parent) {
         super(((KimStatement)table).getEObject(), parent);
         this.table = table;
         this.arguments.addAll(arguments);
@@ -35,10 +37,20 @@ public class KimLookupTable extends KimStatement implements IKimLookupTable {
         	}
         }
 		if (searchColumn >= 0) {
-			
+			for (int i = 0; i < table.getRowCount(); i++) {
+				if (lookupType == null) {
+					lookupType = table.getRow(i)[searchColumn].getType();
+				} else if (table.getRow(i)[searchColumn].getType() != lookupType) {
+					this.error = "the type of the objects in the search column must be uniform";
+				}
+			}
 		}
     }
 
+	public String getError() {
+		return error;
+	}
+	
 	@Override
 	public List<String> getArguments() {
 		return arguments;

@@ -144,10 +144,10 @@ public class KimClassifier extends KimStatement implements IKimClassifier {
             
         	type = Type.CONCEPT;
 
-
         } else if (statement.getConcept() != null) {
         	
         	conceptMatch = Kim.INSTANCE.declareConcept(statement.getConcept());
+        	type = Type.CONCEPT;
         
         } else if (statement.getString() != null) {
         

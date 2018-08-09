@@ -25,7 +25,8 @@ public class LookupTable implements ILookupTable {
 		this.searchIndex = lookupTable.getLookupColumnIndex();
 		this.type = lookupTable.getLookupType();
 		
-		// analyze the vars and establish if we are functional and if the result column is a key
+		// analyze the vars and establish if we are functional and if the result column is a possible key, in which
+		// case build the necessary structures to support value indexing
 		
 	}
 

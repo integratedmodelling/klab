@@ -357,6 +357,9 @@ class KimValidator extends AbstractKimValidator {
 					'The number of arguments exceeds the number of columns. Use ? for the arguments to look up or * for arguments to ignore',
 					KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, BAD_TABLE_FORMAT)
 			}
+			if (table.getError() !== null) {
+				error(table.getError(), KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE, BAD_TABLE_FORMAT)
+			}
 			var o = 0
 			var checkFound = false
 			for (arg : model.lookupTableArgs) {
