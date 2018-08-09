@@ -256,4 +256,9 @@ public enum Configuration implements IConfigurationService {
 	public boolean useInMemoryDatabase() {
 		return getProperties().getProperty(KLAB_USE_IN_MEMORY_DATABASE, "true").equals("true");
 	}
+
+	public long getResourceRecheckIntervalMs() {
+		// TODO tie to engine configuration property. This is 10 minutes
+		return 10 * 60 * 1000;
+	}
 }

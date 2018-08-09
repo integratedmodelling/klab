@@ -18,6 +18,8 @@ import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.kim.OwlImport;
 import org.integratedmodelling.klab.common.SemanticType;
@@ -45,6 +47,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 	private boolean annotationsScanned = false;
 	private Set<String> importsScanned = null;
 	private IKimLoader loader;
+	private List<IServiceCall> extents = new ArrayList<>();
 	
 	public KimNamespace(Namespace namespace, KimProject project) {
 		super(namespace, null);
@@ -68,6 +71,9 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 		this.scenario = namespace.isScenario();
 		for (OwlImport imp : namespace.getOwlImports()) {
 			owlImports.add(new Pair<>(imp.getName(), imp.getPrefix()));
+		}
+		for (Function extent : namespace.getCoverage()) {
+			extents.add(new KimServiceCall(extent, this));
 		}
 		Kim.INSTANCE.registerNamespace(this);
 	}
@@ -305,4 +311,9 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
     public void setLoader(IKimLoader loader) {
         this.loader = loader;
     }
+
+	@Override
+	public List<IServiceCall> getExtents() {
+		return extents;
+	}
 }

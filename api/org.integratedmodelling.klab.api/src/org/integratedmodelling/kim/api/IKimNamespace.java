@@ -143,4 +143,11 @@ public interface IKimNamespace extends IKimStatement {
      * @return
      */
     IKimLoader getLoader();
+    
+    /**
+     * If functions were given to constrain the namespace to a scale, return them.
+     * 
+     * @return
+     */
+    List<IServiceCall> getExtents();
 }

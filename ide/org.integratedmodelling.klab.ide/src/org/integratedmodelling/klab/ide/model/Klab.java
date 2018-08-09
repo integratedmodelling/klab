@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.ide.model;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,6 +20,7 @@ import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.Capabilities;
 import org.integratedmodelling.klab.rest.LocalResourceReference;
+import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
 import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.rest.ResourceReference;
 
@@ -48,6 +48,7 @@ public class Klab {
 	 */
 	private Map<String, Map<String, EResourceReference>> resourceCatalog = Collections.synchronizedMap(new HashMap<>());
 	private Set<String> resourceAdapters = new HashSet<>();
+	private Map<String, NamespaceCompilationResult> namespaceStatus = new HashMap<>();
 
 	public void synchronizeProjectResources(String projectName, File projectRoot) {
 
@@ -65,7 +66,8 @@ public class Klab {
 							ResourceReference resource = JsonUtils.load(rdesc, ResourceReference.class);
 							// FIXME this should be removed once the local name is mandatory on creation
 							if (resource.getLocalName() == null) {
-								resource.setLocalName(org.integratedmodelling.klab.utils.Path.getLast(resource.getUrn(), ':'));
+								resource.setLocalName(
+										org.integratedmodelling.klab.utils.Path.getLast(resource.getUrn(), ':'));
 							}
 							Map<String, EResourceReference> catalog = resourceCatalog.get(projectName);
 							if (catalog == null) {
@@ -116,7 +118,7 @@ public class Klab {
 	public Collection<String> getResourceAdapters() {
 		return resourceAdapters;
 	}
-	
+
 	/*
 	 * called by the session peer, the true receiver for the message
 	 */
@@ -151,11 +153,26 @@ public class Klab {
 			KlabNavigator.refresh();
 			break;
 		case ProjectFileAdded:
-			
+
 			break;
 		default:
 			break;
 		}
+	}
+
+	public void setNamespaceStatus(String name, NamespaceCompilationResult report) {
+		this.namespaceStatus.put(name, report);
+	}
+
+	/**
+	 * Return the latest available compilation report for this namespace from the
+	 * engine.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public NamespaceCompilationResult getNamespaceStatus(String name) {
+		return this.namespaceStatus.get(name);
 	}
 
 }

@@ -37,7 +37,7 @@ import org.integratedmodelling.klab.model.ConceptStatement;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
-import org.integratedmodelling.klab.rest.CompilationResult;
+import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
 import org.integratedmodelling.klab.rest.CompileNotificationReference;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Pair;
@@ -116,7 +116,7 @@ public class KimNotifier implements Kim.Notifier {
                 nrefs.add(((CompileNotification) notification).getReference());
             }
             send(IMessage.MessageClass.KimLifecycle, IMessage.Type.NamespaceCompilationIssues,
-                    new CompilationResult(namespace.getName(), nrefs));
+                    new NamespaceCompilationResult(namespace.getName(), namespace.isPublishable(), nrefs));
         }
 
     }

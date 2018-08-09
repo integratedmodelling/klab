@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Behavior;
 import org.integratedmodelling.klab.model.Model;
+import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.ModelReference;
 import org.integratedmodelling.klab.scale.Scale;
@@ -174,7 +175,7 @@ public class RankedModel extends Model implements IRankedModel {
 		getDelegate().setAttributeObservables(attributeObservables);
 	}
 
-	public void setNamespace(INamespace namespace) {
+	public void setNamespace(Namespace namespace) {
 		getDelegate().setNamespace(namespace);
 	}
 

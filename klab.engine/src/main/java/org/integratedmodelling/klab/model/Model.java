@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,17 +12,23 @@ import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.model.ComputableResource;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.knowledge.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.data.table.LookupTable;
@@ -38,13 +45,23 @@ public class Model extends KimObject implements IModel {
 	private List<IObservable> observables = new ArrayList<>();
 	private List<IObservable> dependencies = new ArrayList<>();
 	private Map<String, IObservable> attributeObservables = new HashMap<>();
-	private INamespace namespace;
+	private Namespace namespace;
 	private Behavior behavior;
 	private List<IComputableResource> resources = new ArrayList<>();
 	private boolean isPrivate;
 	private boolean instantiator;
 	private boolean reinterpreter;
 	private boolean inactive;
+	// saved at resource read, to be intersected with own coverage when requested
+	private Scale resourceCoverage;
+	// own coverage, resulting of own specs if any, namespace's if any, and
+	// resource's if any
+	private Scale coverage;
+
+	// remember resources to be able to reassess their online status
+	private List<IResource> resourcesUsed = new ArrayList<>();
+	private long lastResourceCheck;
+	private boolean available = true;
 
 	// only for the delegate RankedModel
 	protected Model() {
@@ -58,11 +75,11 @@ public class Model extends KimObject implements IModel {
 	 * @param monitor
 	 * @return a new model
 	 */
-	public static Model create(IKimModel model, INamespace namespace, IMonitor monitor) {
+	public static Model create(IKimModel model, Namespace namespace, IMonitor monitor) {
 		return new Model(model, namespace, monitor);
 	}
 
-	private Model(IKimModel model, INamespace namespace, IMonitor monitor) {
+	private Model(IKimModel model, Namespace namespace, IMonitor monitor) {
 
 		super(model);
 
@@ -151,15 +168,44 @@ public class Model extends KimObject implements IModel {
 	 */
 	private ComputableResource validate(ComputableResource resource, IMonitor monitor) {
 
-		// TODO Auto-generated method stub
 		if (resource.getClassification() != null) {
+
 			resource.setValidatedResource(new Classification(resource.getClassification()));
+
 		} else if (resource.getLookupTable() != null) {
+
 			resource.setValidatedResource(new LookupTable(resource.getLookupTable()));
+
 		} else if (resource.getAccordingTo() != null) {
-			IClassification classification = Types.INSTANCE.createClassificationFromMetadata(observables.get(0), resource.getAccordingTo());
+
+			IClassification classification = Types.INSTANCE.createClassificationFromMetadata(observables.get(0),
+					resource.getAccordingTo());
 			resource.setValidatedResource(classification);
+
+		} else if (resource.getUrn() != null) {
+
+			// ensure resource is online; turn model off if not
+			IResource res = Resources.INSTANCE.resolveResource(resource.getUrn());
+			if (res == null) {
+				// monitor.send(new CompileNo);
+				this.setInactive(true);
+			}
+			if (res != null) {
+
+				// store resource
+				resourcesUsed.add(res);
+				
+				// store geometry from resource, to be merged with model's when coverage is
+				// asked for
+				this.resourceCoverage = Scale.create(res.getGeometry());
+
+				// if resource is local, make the namespace unpublishable
+				if (Urns.INSTANCE.isLocal(resource.getUrn())) {
+					namespace.setPublishable(false);
+				}
+			}
 		}
+
 		return resource;
 	}
 
@@ -204,6 +250,7 @@ public class Model extends KimObject implements IModel {
 
 	@Override
 	public boolean isResolved() {
+
 		// TODO all resources have no parameters or all parameters are resolved through
 		// resources with
 		// no parameters.
@@ -243,8 +290,18 @@ public class Model extends KimObject implements IModel {
 
 	@Override
 	public boolean isAvailable() {
-		// TODO Auto-generated method stub
-		return true;
+		
+		long now = System.currentTimeMillis();
+		if ((now - this.lastResourceCheck) > Configuration.INSTANCE.getResourceRecheckIntervalMs()) {
+			this.available = true;
+			for (IResource resource : resourcesUsed) {
+				if (!Resources.INSTANCE.isResourceOnline(resource)) {
+					this.available = false;
+					break;
+				}
+			}
+		}
+		return this.available;
 	}
 
 	@Override
@@ -288,7 +345,7 @@ public class Model extends KimObject implements IModel {
 		this.attributeObservables = attributeObservables;
 	}
 
-	public void setNamespace(INamespace namespace) {
+	public void setNamespace(Namespace namespace) {
 		this.namespace = namespace;
 	}
 
@@ -311,7 +368,17 @@ public class Model extends KimObject implements IModel {
 	 * @throws KlabException
 	 */
 	public Scale getCoverage(IMonitor monitor) throws KlabException {
-		return Scale.create(behavior.getExtents(monitor));
+		if (this.coverage == null) {
+			this.coverage = Scale.create(behavior.getExtents(monitor));
+			if (resourceCoverage != null) {
+				this.coverage = this.coverage.merge(resourceCoverage, LogicalConnector.INTERSECTION);
+			}
+			Scale nsScale = namespace.getCoverage(monitor);
+			if (nsScale != null) {
+				this.coverage = this.coverage.merge(nsScale, LogicalConnector.INTERSECTION);
+			}
+		}
+		return this.coverage;
 	}
 
 	/**
@@ -375,8 +442,7 @@ public class Model extends KimObject implements IModel {
 
 	@Override
 	public List<IComputableResource> getResources() {
-		// TODO Auto-generated method stub
-		return null;
+		return resources;
 	}
 
 	@Override
