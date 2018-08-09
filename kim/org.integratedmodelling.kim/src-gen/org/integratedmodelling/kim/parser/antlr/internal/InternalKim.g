@@ -246,18 +246,18 @@ ruleStatement returns [EObject current=null]
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getStatementAccess().getObserveStatementObserveStatementParserRuleCall_3_0_0());
+						newCompositeNode(grammarAccess.getStatementAccess().getDefineStatementDefineStatementParserRuleCall_3_0_0());
 					}
-					lv_observeStatement_6_0=ruleObserveStatement
+					lv_defineStatement_6_0=ruleDefineStatement
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getStatementRule());
 						}
 						set(
 							$current,
-							"observeStatement",
-							lv_observeStatement_6_0,
-							"org.integratedmodelling.kim.Kim.ObserveStatement");
+							"defineStatement",
+							lv_defineStatement_6_0,
+							"org.integratedmodelling.kim.Kim.DefineStatement");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -265,6 +265,32 @@ ruleStatement returns [EObject current=null]
 			otherlv_7=';'
 			{
 				newLeafNode(otherlv_7, grammarAccess.getStatementAccess().getSemicolonKeyword_3_1());
+			}
+		)
+		    |
+		(
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getStatementAccess().getObserveStatementObserveStatementParserRuleCall_4_0_0());
+					}
+					lv_observeStatement_8_0=ruleObserveStatement
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getStatementRule());
+						}
+						set(
+							$current,
+							"observeStatement",
+							lv_observeStatement_8_0,
+							"org.integratedmodelling.kim.Kim.ObserveStatement");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			otherlv_9=';'
+			{
+				newLeafNode(otherlv_9, grammarAccess.getStatementAccess().getSemicolonKeyword_4_1());
 			}
 		)
 	)
@@ -418,6 +444,89 @@ ruleModelStatement returns [EObject current=null]
 finally {
 	myUnorderedGroupState.restore();
 }
+
+// Entry rule entryRuleDefineStatement
+entryRuleDefineStatement returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getDefineStatementRule()); }
+	iv_ruleDefineStatement=ruleDefineStatement
+	{ $current=$iv_ruleDefineStatement.current; }
+	EOF;
+
+// Rule DefineStatement
+ruleDefineStatement returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getDefineStatementAccess().getAnnotationsAnnotationParserRuleCall_0_0());
+				}
+				lv_annotations_0_0=ruleAnnotation
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getDefineStatementRule());
+					}
+					add(
+						$current,
+						"annotations",
+						lv_annotations_0_0,
+						"org.integratedmodelling.kim.Kim.Annotation");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)*
+		otherlv_1='define'
+		{
+			newLeafNode(otherlv_1, grammarAccess.getDefineStatementAccess().getDefineKeyword_1());
+		}
+		(
+			(
+				lv_name_2_0=RULE_UPPERCASE_ID
+				{
+					newLeafNode(lv_name_2_0, grammarAccess.getDefineStatementAccess().getNameUPPERCASE_IDTerminalRuleCall_2_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getDefineStatementRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"name",
+						lv_name_2_0,
+						"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
+				}
+			)
+		)
+		otherlv_3='as'
+		{
+			newLeafNode(otherlv_3, grammarAccess.getDefineStatementAccess().getAsKeyword_3());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getDefineStatementAccess().getValueValueParserRuleCall_4_0());
+				}
+				lv_value_4_0=ruleValue
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getDefineStatementRule());
+					}
+					set(
+						$current,
+						"value",
+						lv_value_4_0,
+						"org.integratedmodelling.kim.Kim.Value");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+	)
+;
 
 // Entry rule entryRuleModelBodyStatement
 entryRuleModelBodyStatement returns [EObject current=null]:
@@ -15050,7 +15159,7 @@ RULE_LOWERCASE_DASHID : 'a'..'z' ('a'..'z'|'0'..'9'|'-')*;
 
 RULE_SEPARATOR : '---' '-'*;
 
-RULE_UPPERCASE_ID : 'A'..'Z' ('A'..'Z')*;
+RULE_UPPERCASE_ID : 'A'..'Z' ('A'..'Z'|'_')*;
 
 RULE_UPPERCASE_PATH : RULE_UPPERCASE_ID ('.' RULE_UPPERCASE_ID)*;
 

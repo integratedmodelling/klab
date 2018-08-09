@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.Statement#getConceptStatement <em>Concept Statement</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Statement#getModelStatement <em>Model Statement</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Statement#getUpperOntologyStatement <em>Upper Ontology Statement</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Statement#getDefineStatement <em>Define Statement</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Statement#getObserveStatement <em>Observe Statement</em>}</li>
  * </ul>
  *
@@ -104,6 +105,32 @@ public interface Statement extends EObject
    * @generated
    */
   void setUpperOntologyStatement(UpperOntologyDefinition value);
+
+  /**
+   * Returns the value of the '<em><b>Define Statement</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Define Statement</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Define Statement</em>' containment reference.
+   * @see #setDefineStatement(DefineStatement)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getStatement_DefineStatement()
+   * @model containment="true"
+   * @generated
+   */
+  DefineStatement getDefineStatement();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Statement#getDefineStatement <em>Define Statement</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Define Statement</em>' containment reference.
+   * @see #getDefineStatement()
+   * @generated
+   */
+  void setDefineStatement(DefineStatement value);
 
   /**
    * Returns the value of the '<em><b>Observe Statement</b></em>' containment reference.

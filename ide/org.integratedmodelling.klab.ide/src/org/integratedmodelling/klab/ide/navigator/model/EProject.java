@@ -77,4 +77,8 @@ public class EProject extends ENavigatorItem {
 		return delegate;
 	}
 
+	public boolean isWorldview() {
+		return delegate.getDefinedWorldview() != null;
+	}
+
 }

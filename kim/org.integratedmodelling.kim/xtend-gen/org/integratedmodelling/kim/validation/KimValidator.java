@@ -486,12 +486,12 @@ public class KimValidator extends AbstractKimValidator {
               checkFound = true;
             }
           }
-          if ((!checkFound)) {
-            this.error("One and only one \'?\' must be present the argument list to mark the result column", 
-              KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, KimValidator.BAD_TABLE_FORMAT);
-          }
           o++;
         }
+      }
+      if ((!checkFound)) {
+        this.error("One and only one \'?\' must be present the argument list to mark the result column", 
+          KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, KimValidator.BAD_TABLE_FORMAT);
       }
     }
     EList<ValueAssignment> _contextualizers = model.getContextualizers();

@@ -87,17 +87,23 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cUpperOntologyStatementUpperOntologyDefinitionParserRuleCall_2_0_0 = (RuleCall)cUpperOntologyStatementAssignment_2_0.eContents().get(0);
 		private final Keyword cSemicolonKeyword_2_1 = (Keyword)cGroup_2.eContents().get(1);
 		private final Group cGroup_3 = (Group)cAlternatives.eContents().get(3);
-		private final Assignment cObserveStatementAssignment_3_0 = (Assignment)cGroup_3.eContents().get(0);
-		private final RuleCall cObserveStatementObserveStatementParserRuleCall_3_0_0 = (RuleCall)cObserveStatementAssignment_3_0.eContents().get(0);
+		private final Assignment cDefineStatementAssignment_3_0 = (Assignment)cGroup_3.eContents().get(0);
+		private final RuleCall cDefineStatementDefineStatementParserRuleCall_3_0_0 = (RuleCall)cDefineStatementAssignment_3_0.eContents().get(0);
 		private final Keyword cSemicolonKeyword_3_1 = (Keyword)cGroup_3.eContents().get(1);
+		private final Group cGroup_4 = (Group)cAlternatives.eContents().get(4);
+		private final Assignment cObserveStatementAssignment_4_0 = (Assignment)cGroup_4.eContents().get(0);
+		private final RuleCall cObserveStatementObserveStatementParserRuleCall_4_0_0 = (RuleCall)cObserveStatementAssignment_4_0.eContents().get(0);
+		private final Keyword cSemicolonKeyword_4_1 = (Keyword)cGroup_4.eContents().get(1);
 		
 		//Statement:
 		//	conceptStatement=ConceptStatement ';' | modelStatement=ModelStatement ';' |
-		//	upperOntologyStatement=UpperOntologyDefinition ';' | observeStatement=ObserveStatement ';';
+		//	upperOntologyStatement=UpperOntologyDefinition ';' | defineStatement=DefineStatement ';' |
+		//	observeStatement=ObserveStatement ';';
 		@Override public ParserRule getRule() { return rule; }
 		
 		//conceptStatement=ConceptStatement ';' | modelStatement=ModelStatement ';' |
-		//upperOntologyStatement=UpperOntologyDefinition ';' | observeStatement=ObserveStatement ';'
+		//upperOntologyStatement=UpperOntologyDefinition ';' | defineStatement=DefineStatement ';' |
+		//observeStatement=ObserveStatement ';'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//conceptStatement=ConceptStatement ';'
@@ -136,17 +142,29 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//';'
 		public Keyword getSemicolonKeyword_2_1() { return cSemicolonKeyword_2_1; }
 		
-		//observeStatement=ObserveStatement ';'
+		//defineStatement=DefineStatement ';'
 		public Group getGroup_3() { return cGroup_3; }
 		
-		//observeStatement=ObserveStatement
-		public Assignment getObserveStatementAssignment_3_0() { return cObserveStatementAssignment_3_0; }
+		//defineStatement=DefineStatement
+		public Assignment getDefineStatementAssignment_3_0() { return cDefineStatementAssignment_3_0; }
 		
-		//ObserveStatement
-		public RuleCall getObserveStatementObserveStatementParserRuleCall_3_0_0() { return cObserveStatementObserveStatementParserRuleCall_3_0_0; }
+		//DefineStatement
+		public RuleCall getDefineStatementDefineStatementParserRuleCall_3_0_0() { return cDefineStatementDefineStatementParserRuleCall_3_0_0; }
 		
 		//';'
 		public Keyword getSemicolonKeyword_3_1() { return cSemicolonKeyword_3_1; }
+		
+		//observeStatement=ObserveStatement ';'
+		public Group getGroup_4() { return cGroup_4; }
+		
+		//observeStatement=ObserveStatement
+		public Assignment getObserveStatementAssignment_4_0() { return cObserveStatementAssignment_4_0; }
+		
+		//ObserveStatement
+		public RuleCall getObserveStatementObserveStatementParserRuleCall_4_0_0() { return cObserveStatementObserveStatementParserRuleCall_4_0_0; }
+		
+		//';'
+		public Keyword getSemicolonKeyword_4_1() { return cSemicolonKeyword_4_1; }
 	}
 	public class ModelStatementElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.ModelStatement");
@@ -202,6 +220,49 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//ModelBodyStatement
 		public RuleCall getBodyModelBodyStatementParserRuleCall_3_0() { return cBodyModelBodyStatementParserRuleCall_3_0; }
+	}
+	public class DefineStatementElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.DefineStatement");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cAnnotationsAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cAnnotationsAnnotationParserRuleCall_0_0 = (RuleCall)cAnnotationsAssignment_0.eContents().get(0);
+		private final Keyword cDefineKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Assignment cNameAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cNameUPPERCASE_IDTerminalRuleCall_2_0 = (RuleCall)cNameAssignment_2.eContents().get(0);
+		private final Keyword cAsKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final Assignment cValueAssignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final RuleCall cValueValueParserRuleCall_4_0 = (RuleCall)cValueAssignment_4.eContents().get(0);
+		
+		//DefineStatement:
+		//	annotations+=Annotation* 'define' name=UPPERCASE_ID 'as' value=Value;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//annotations+=Annotation* 'define' name=UPPERCASE_ID 'as' value=Value
+		public Group getGroup() { return cGroup; }
+		
+		//annotations+=Annotation*
+		public Assignment getAnnotationsAssignment_0() { return cAnnotationsAssignment_0; }
+		
+		//Annotation
+		public RuleCall getAnnotationsAnnotationParserRuleCall_0_0() { return cAnnotationsAnnotationParserRuleCall_0_0; }
+		
+		//'define'
+		public Keyword getDefineKeyword_1() { return cDefineKeyword_1; }
+		
+		//name=UPPERCASE_ID
+		public Assignment getNameAssignment_2() { return cNameAssignment_2; }
+		
+		//UPPERCASE_ID
+		public RuleCall getNameUPPERCASE_IDTerminalRuleCall_2_0() { return cNameUPPERCASE_IDTerminalRuleCall_2_0; }
+		
+		//'as'
+		public Keyword getAsKeyword_3() { return cAsKeyword_3; }
+		
+		//value=Value
+		public Assignment getValueAssignment_4() { return cValueAssignment_4; }
+		
+		//Value
+		public RuleCall getValueValueParserRuleCall_4_0() { return cValueValueParserRuleCall_4_0; }
 	}
 	public class ModelBodyStatementElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.ModelBodyStatement");
@@ -8840,6 +8901,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	private final ModelElements pModel;
 	private final StatementElements pStatement;
 	private final ModelStatementElements pModelStatement;
+	private final DefineStatementElements pDefineStatement;
 	private final ModelBodyStatementElements pModelBodyStatement;
 	private final AttributeIdentifierElements pAttributeIdentifier;
 	private final ClassificationElements pClassification;
@@ -8943,6 +9005,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		this.pModel = new ModelElements();
 		this.pStatement = new StatementElements();
 		this.pModelStatement = new ModelStatementElements();
+		this.pDefineStatement = new DefineStatementElements();
 		this.pModelBodyStatement = new ModelBodyStatementElements();
 		this.pAttributeIdentifier = new AttributeIdentifierElements();
 		this.pClassification = new ClassificationElements();
@@ -9078,7 +9141,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//Statement:
 	//	conceptStatement=ConceptStatement ';' | modelStatement=ModelStatement ';' |
-	//	upperOntologyStatement=UpperOntologyDefinition ';' | observeStatement=ObserveStatement ';';
+	//	upperOntologyStatement=UpperOntologyDefinition ';' | defineStatement=DefineStatement ';' |
+	//	observeStatement=ObserveStatement ';';
 	public StatementElements getStatementAccess() {
 		return pStatement;
 	}
@@ -9095,6 +9159,16 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public ParserRule getModelStatementRule() {
 		return getModelStatementAccess().getRule();
+	}
+	
+	//DefineStatement:
+	//	annotations+=Annotation* 'define' name=UPPERCASE_ID 'as' value=Value;
+	public DefineStatementElements getDefineStatementAccess() {
+		return pDefineStatement;
+	}
+	
+	public ParserRule getDefineStatementRule() {
+		return getDefineStatementAccess().getRule();
 	}
 	
 	//ModelBodyStatement:
@@ -10155,7 +10229,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//terminal UPPERCASE_ID:
-	//	'A'..'Z' 'A'..'Z'*;
+	//	'A'..'Z' ('A'..'Z' | '_')*;
 	public TerminalRule getUPPERCASE_IDRule() {
 		return tUPPERCASE_ID;
 	}

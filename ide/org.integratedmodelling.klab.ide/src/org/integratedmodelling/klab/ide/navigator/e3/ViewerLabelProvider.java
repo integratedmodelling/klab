@@ -50,6 +50,10 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 		return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "/icons/template_co.gif");
 	}
 
+	Image getWorldviewMarker() {
+		return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "/icons/worldview_co.gif");
+	}
+
 	WorkbenchLabelProvider delegate = new WorkbenchLabelProvider();
 
 	public Image getImage(Object element) {
@@ -79,7 +83,8 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 	public Image getBaseImage(Object element) {
 
 		if (element instanceof EProject) {
-			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/k-lab-icon-16.gif");
+			return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
+					((EProject) element).isWorldview() ? "icons/worldview_project.png" : "icons/k-lab-icon-16.gif");
 		}
 		if (element instanceof ETestCase) {
 			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/test.gif");
@@ -91,9 +96,10 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 		}
 		if (element instanceof ENamespace) {
 			NamespaceCompilationResult status = Activator.klab().getNamespaceStatus(((ENamespace) element).getName());
+			boolean sonderklass = (status != null && status.isPublishable())
+					|| ((ENamespace) element).getEParent(EProject.class).isWorldview();
 			return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
-					(status == null || !status.isPublishable())? "icons/namespace-unchecked.png"
-							: "icons/namespace-checked.png");
+					sonderklass ? "icons/namespace-checked.png" : "icons/namespace-unchecked.png");
 		}
 		if (element instanceof EConcept) {
 			/*

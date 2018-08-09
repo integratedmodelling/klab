@@ -29,6 +29,7 @@ import org.integratedmodelling.kim.kim.ConceptStatement;
 import org.integratedmodelling.kim.kim.ConceptStatementBody;
 import org.integratedmodelling.kim.kim.Currency;
 import org.integratedmodelling.kim.kim.DataType;
+import org.integratedmodelling.kim.kim.DefineStatement;
 import org.integratedmodelling.kim.kim.Dependency;
 import org.integratedmodelling.kim.kim.DocSelector;
 import org.integratedmodelling.kim.kim.Documentation;
@@ -124,6 +125,7 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
       case KimPackage.MODEL: return createModel();
       case KimPackage.STATEMENT: return createStatement();
       case KimPackage.MODEL_STATEMENT: return createModelStatement();
+      case KimPackage.DEFINE_STATEMENT: return createDefineStatement();
       case KimPackage.MODEL_BODY_STATEMENT: return createModelBodyStatement();
       case KimPackage.ATTRIBUTE_IDENTIFIER: return createAttributeIdentifier();
       case KimPackage.CLASSIFICATION: return createClassification();
@@ -247,6 +249,17 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
   {
     ModelStatementImpl modelStatement = new ModelStatementImpl();
     return modelStatement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public DefineStatement createDefineStatement()
+  {
+    DefineStatementImpl defineStatement = new DefineStatementImpl();
+    return defineStatement;
   }
 
   /**

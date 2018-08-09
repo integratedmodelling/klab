@@ -52,6 +52,15 @@ public interface KimFactory extends EFactory
   ModelStatement createModelStatement();
 
   /**
+   * Returns a new object of class '<em>Define Statement</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Define Statement</em>'.
+   * @generated
+   */
+  DefineStatement createDefineStatement();
+
+  /**
    * Returns a new object of class '<em>Model Body Statement</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

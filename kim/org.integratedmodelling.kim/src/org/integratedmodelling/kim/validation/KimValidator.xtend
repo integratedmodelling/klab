@@ -354,12 +354,12 @@ class KimValidator extends AbstractKimValidator {
 			if (model.lookupTableArgs.size != table.columnCount) {
 				error(
 					'The number of arguments does not match the number of columns. Use ? for the arguments to look up or * for arguments to ignore',
-					 KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, BAD_TABLE_FORMAT)
+					KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, BAD_TABLE_FORMAT)
 			}
 			var o = 0
 			var checkFound = false
 			for (arg : model.lookupTableArgs) {
-				
+
 				if (arg != "?" && arg != "*") {
 					var found = false
 					for (dependency : dependencies) {
@@ -376,15 +376,15 @@ class KimValidator extends AbstractKimValidator {
 				} else if (arg == "?") {
 					if (checkFound) {
 						error("Only one '?' is allowed in the argument list, to mark the result column",
-								 KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, o, BAD_TABLE_FORMAT)
+							KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, o, BAD_TABLE_FORMAT)
 					}
 					checkFound = true
 				}
-				if (!checkFound) {
-						error("One and only one '?' must be present the argument list to mark the result column",
-								 KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, BAD_TABLE_FORMAT)
-				}
-				o ++
+				o++
+			}
+			if (!checkFound) {
+				error("One and only one '?' must be present the argument list to mark the result column",
+					KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, BAD_TABLE_FORMAT)
 			}
 		}
 

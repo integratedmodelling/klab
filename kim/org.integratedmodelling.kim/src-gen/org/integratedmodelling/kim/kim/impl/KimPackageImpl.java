@@ -28,6 +28,7 @@ import org.integratedmodelling.kim.kim.ConceptStatement;
 import org.integratedmodelling.kim.kim.ConceptStatementBody;
 import org.integratedmodelling.kim.kim.Currency;
 import org.integratedmodelling.kim.kim.DataType;
+import org.integratedmodelling.kim.kim.DefineStatement;
 import org.integratedmodelling.kim.kim.Dependency;
 import org.integratedmodelling.kim.kim.DocSelector;
 import org.integratedmodelling.kim.kim.Documentation;
@@ -95,6 +96,13 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   private EClass modelStatementEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass defineStatementEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -601,9 +609,19 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getStatement_ObserveStatement()
+  public EReference getStatement_DefineStatement()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getStatement_ObserveStatement()
+  {
+    return (EReference)statementEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -664,6 +682,46 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   public EReference getModelStatement_Body()
   {
     return (EReference)modelStatementEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getDefineStatement()
+  {
+    return defineStatementEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getDefineStatement_Annotations()
+  {
+    return (EReference)defineStatementEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getDefineStatement_Name()
+  {
+    return (EAttribute)defineStatementEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getDefineStatement_Value()
+  {
+    return (EReference)defineStatementEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -4445,6 +4503,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(statementEClass, STATEMENT__CONCEPT_STATEMENT);
     createEReference(statementEClass, STATEMENT__MODEL_STATEMENT);
     createEReference(statementEClass, STATEMENT__UPPER_ONTOLOGY_STATEMENT);
+    createEReference(statementEClass, STATEMENT__DEFINE_STATEMENT);
     createEReference(statementEClass, STATEMENT__OBSERVE_STATEMENT);
 
     modelStatementEClass = createEClass(MODEL_STATEMENT);
@@ -4453,6 +4512,11 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEAttribute(modelStatementEClass, MODEL_STATEMENT__PRIVATE);
     createEAttribute(modelStatementEClass, MODEL_STATEMENT__MODEL);
     createEReference(modelStatementEClass, MODEL_STATEMENT__BODY);
+
+    defineStatementEClass = createEClass(DEFINE_STATEMENT);
+    createEReference(defineStatementEClass, DEFINE_STATEMENT__ANNOTATIONS);
+    createEAttribute(defineStatementEClass, DEFINE_STATEMENT__NAME);
+    createEReference(defineStatementEClass, DEFINE_STATEMENT__VALUE);
 
     modelBodyStatementEClass = createEClass(MODEL_BODY_STATEMENT);
     createEAttribute(modelBodyStatementEClass, MODEL_BODY_STATEMENT__INSTANTIATOR);
@@ -4921,6 +4985,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getStatement_ConceptStatement(), this.getConceptStatement(), null, "conceptStatement", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_ModelStatement(), this.getModelStatement(), null, "modelStatement", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_UpperOntologyStatement(), this.getUpperOntologyDefinition(), null, "upperOntologyStatement", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getStatement_DefineStatement(), this.getDefineStatement(), null, "defineStatement", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_ObserveStatement(), this.getObserveStatement(), null, "observeStatement", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(modelStatementEClass, ModelStatement.class, "ModelStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -4929,6 +4994,11 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEAttribute(getModelStatement_Private(), ecorePackage.getEBoolean(), "private", null, 0, 1, ModelStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getModelStatement_Model(), ecorePackage.getEString(), "model", null, 0, 1, ModelStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getModelStatement_Body(), this.getModelBodyStatement(), null, "body", null, 0, 1, ModelStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(defineStatementEClass, DefineStatement.class, "DefineStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getDefineStatement_Annotations(), this.getAnnotation(), null, "annotations", null, 0, -1, DefineStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getDefineStatement_Name(), ecorePackage.getEString(), "name", null, 0, 1, DefineStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getDefineStatement_Value(), this.getValue(), null, "value", null, 0, 1, DefineStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(modelBodyStatementEClass, ModelBodyStatement.class, "ModelBodyStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getModelBodyStatement_Instantiator(), ecorePackage.getEBoolean(), "instantiator", null, 0, 1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

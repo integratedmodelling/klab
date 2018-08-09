@@ -26,6 +26,7 @@ import org.integratedmodelling.kim.kim.ConceptReference;
 import org.integratedmodelling.kim.kim.ConceptStatement;
 import org.integratedmodelling.kim.kim.ConceptStatementBody;
 import org.integratedmodelling.kim.kim.Currency;
+import org.integratedmodelling.kim.kim.DefineStatement;
 import org.integratedmodelling.kim.kim.Dependency;
 import org.integratedmodelling.kim.kim.DocSelector;
 import org.integratedmodelling.kim.kim.Documentation;
@@ -141,6 +142,11 @@ public class KimAdapterFactory extends AdapterFactoryImpl
       public Adapter caseModelStatement(ModelStatement object)
       {
         return createModelStatementAdapter();
+      }
+      @Override
+      public Adapter caseDefineStatement(DefineStatement object)
+      {
+        return createDefineStatementAdapter();
       }
       @Override
       public Adapter caseModelBodyStatement(ModelBodyStatement object)
@@ -450,6 +456,21 @@ public class KimAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createModelStatementAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.DefineStatement <em>Define Statement</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.DefineStatement
+   * @generated
+   */
+  public Adapter createDefineStatementAdapter()
   {
     return null;
   }

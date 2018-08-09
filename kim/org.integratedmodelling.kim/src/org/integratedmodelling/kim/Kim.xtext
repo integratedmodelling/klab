@@ -26,7 +26,7 @@ ModelStatement:
 ;
 
 DefineStatement:
-	'define' name=UPPERCASE_ID 'as' value=Value ';'
+	annotations+=Annotation* 'define' name=UPPERCASE_ID 'as' value=Value
 ;
 
 ModelBodyStatement:
@@ -855,7 +855,7 @@ terminal SEPARATOR:
 ;
 
 terminal UPPERCASE_ID:
-	('A'..'Z') ('A'..'Z')*;
+	('A'..'Z') ('A'..'Z' | '_')*;
 
 terminal UPPERCASE_PATH:
 	UPPERCASE_ID ('.' UPPERCASE_ID)*;

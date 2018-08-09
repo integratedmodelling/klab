@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.integratedmodelling.kim.kim.ConceptStatement;
+import org.integratedmodelling.kim.kim.DefineStatement;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.ModelStatement;
 import org.integratedmodelling.kim.kim.ObserveStatement;
@@ -31,6 +32,7 @@ import org.integratedmodelling.kim.kim.UpperOntologyDefinition;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.StatementImpl#getConceptStatement <em>Concept Statement</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.StatementImpl#getModelStatement <em>Model Statement</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.StatementImpl#getUpperOntologyStatement <em>Upper Ontology Statement</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.StatementImpl#getDefineStatement <em>Define Statement</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.StatementImpl#getObserveStatement <em>Observe Statement</em>}</li>
  * </ul>
  *
@@ -67,6 +69,16 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * @ordered
    */
   protected UpperOntologyDefinition upperOntologyStatement;
+
+  /**
+   * The cached value of the '{@link #getDefineStatement() <em>Define Statement</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDefineStatement()
+   * @generated
+   * @ordered
+   */
+  protected DefineStatement defineStatement;
 
   /**
    * The cached value of the '{@link #getObserveStatement() <em>Observe Statement</em>}' containment reference.
@@ -248,6 +260,54 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * <!-- end-user-doc -->
    * @generated
    */
+  public DefineStatement getDefineStatement()
+  {
+    return defineStatement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetDefineStatement(DefineStatement newDefineStatement, NotificationChain msgs)
+  {
+    DefineStatement oldDefineStatement = defineStatement;
+    defineStatement = newDefineStatement;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.STATEMENT__DEFINE_STATEMENT, oldDefineStatement, newDefineStatement);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setDefineStatement(DefineStatement newDefineStatement)
+  {
+    if (newDefineStatement != defineStatement)
+    {
+      NotificationChain msgs = null;
+      if (defineStatement != null)
+        msgs = ((InternalEObject)defineStatement).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.STATEMENT__DEFINE_STATEMENT, null, msgs);
+      if (newDefineStatement != null)
+        msgs = ((InternalEObject)newDefineStatement).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.STATEMENT__DEFINE_STATEMENT, null, msgs);
+      msgs = basicSetDefineStatement(newDefineStatement, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.STATEMENT__DEFINE_STATEMENT, newDefineStatement, newDefineStatement));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public ObserveStatement getObserveStatement()
   {
     return observeStatement;
@@ -307,6 +367,8 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         return basicSetModelStatement(null, msgs);
       case KimPackage.STATEMENT__UPPER_ONTOLOGY_STATEMENT:
         return basicSetUpperOntologyStatement(null, msgs);
+      case KimPackage.STATEMENT__DEFINE_STATEMENT:
+        return basicSetDefineStatement(null, msgs);
       case KimPackage.STATEMENT__OBSERVE_STATEMENT:
         return basicSetObserveStatement(null, msgs);
     }
@@ -329,6 +391,8 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         return getModelStatement();
       case KimPackage.STATEMENT__UPPER_ONTOLOGY_STATEMENT:
         return getUpperOntologyStatement();
+      case KimPackage.STATEMENT__DEFINE_STATEMENT:
+        return getDefineStatement();
       case KimPackage.STATEMENT__OBSERVE_STATEMENT:
         return getObserveStatement();
     }
@@ -353,6 +417,9 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         return;
       case KimPackage.STATEMENT__UPPER_ONTOLOGY_STATEMENT:
         setUpperOntologyStatement((UpperOntologyDefinition)newValue);
+        return;
+      case KimPackage.STATEMENT__DEFINE_STATEMENT:
+        setDefineStatement((DefineStatement)newValue);
         return;
       case KimPackage.STATEMENT__OBSERVE_STATEMENT:
         setObserveStatement((ObserveStatement)newValue);
@@ -380,6 +447,9 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
       case KimPackage.STATEMENT__UPPER_ONTOLOGY_STATEMENT:
         setUpperOntologyStatement((UpperOntologyDefinition)null);
         return;
+      case KimPackage.STATEMENT__DEFINE_STATEMENT:
+        setDefineStatement((DefineStatement)null);
+        return;
       case KimPackage.STATEMENT__OBSERVE_STATEMENT:
         setObserveStatement((ObserveStatement)null);
         return;
@@ -403,6 +473,8 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         return modelStatement != null;
       case KimPackage.STATEMENT__UPPER_ONTOLOGY_STATEMENT:
         return upperOntologyStatement != null;
+      case KimPackage.STATEMENT__DEFINE_STATEMENT:
+        return defineStatement != null;
       case KimPackage.STATEMENT__OBSERVE_STATEMENT:
         return observeStatement != null;
     }

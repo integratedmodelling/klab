@@ -24,6 +24,7 @@ import org.integratedmodelling.kim.kim.ConceptReference;
 import org.integratedmodelling.kim.kim.ConceptStatement;
 import org.integratedmodelling.kim.kim.ConceptStatementBody;
 import org.integratedmodelling.kim.kim.Currency;
+import org.integratedmodelling.kim.kim.DefineStatement;
 import org.integratedmodelling.kim.kim.Dependency;
 import org.integratedmodelling.kim.kim.DocSelector;
 import org.integratedmodelling.kim.kim.Documentation;
@@ -143,6 +144,13 @@ public class KimSwitch<T> extends Switch<T>
       {
         ModelStatement modelStatement = (ModelStatement)theEObject;
         T result = caseModelStatement(modelStatement);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.DEFINE_STATEMENT:
+      {
+        DefineStatement defineStatement = (DefineStatement)theEObject;
+        T result = caseDefineStatement(defineStatement);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -538,6 +546,22 @@ public class KimSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseModelStatement(ModelStatement object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Define Statement</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Define Statement</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseDefineStatement(DefineStatement object)
   {
     return null;
   }
