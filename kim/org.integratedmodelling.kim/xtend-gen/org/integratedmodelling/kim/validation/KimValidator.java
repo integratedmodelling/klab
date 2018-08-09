@@ -41,6 +41,7 @@ import org.integratedmodelling.kim.kim.ConceptReference;
 import org.integratedmodelling.kim.kim.ConceptStatement;
 import org.integratedmodelling.kim.kim.ConceptStatementBody;
 import org.integratedmodelling.kim.kim.Currency;
+import org.integratedmodelling.kim.kim.DefineStatement;
 import org.integratedmodelling.kim.kim.Dependency;
 import org.integratedmodelling.kim.kim.Documentation;
 import org.integratedmodelling.kim.kim.Function;
@@ -146,6 +147,11 @@ public class KimValidator extends AbstractKimValidator {
   
   @Check
   public Object checkFunction(final Function function) {
+    return null;
+  }
+  
+  @Check
+  public Object checkDefine(final DefineStatement statement) {
     return null;
   }
   

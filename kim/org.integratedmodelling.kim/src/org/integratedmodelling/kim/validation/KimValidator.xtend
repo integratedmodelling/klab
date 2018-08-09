@@ -22,6 +22,7 @@ import org.integratedmodelling.kim.kim.Concept
 import org.integratedmodelling.kim.kim.ConceptDeclaration
 import org.integratedmodelling.kim.kim.ConceptStatement
 import org.integratedmodelling.kim.kim.ConceptStatementBody
+import org.integratedmodelling.kim.kim.DefineStatement
 import org.integratedmodelling.kim.kim.Function
 import org.integratedmodelling.kim.kim.KimPackage
 import org.integratedmodelling.kim.kim.Model
@@ -114,6 +115,11 @@ class KimValidator extends AbstractKimValidator {
 	@Check
 	def checkFunction(Function function) {
 		// TODO check parameters
+	}
+
+	@Check
+	def checkDefine(DefineStatement statement) {
+		// TODO
 	}
 
 	@Check
