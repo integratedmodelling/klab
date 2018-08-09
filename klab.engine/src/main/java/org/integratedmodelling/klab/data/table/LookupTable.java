@@ -76,6 +76,7 @@ public class LookupTable implements ILookupTable {
 
 	@Override
 	public Object lookup(IParameters<String> parameters, IComputationContext context) {
+	    
         for (IClassifier[] row : table.getRows()) {
             boolean ok = true;
             for (int i = 0; i < variables.size(); i++) {
@@ -96,8 +97,7 @@ public class LookupTable implements ILookupTable {
 	
 	@Override
 	public IArtifact.Type getResultType() {
-		// TODO
-		return null;
+		return type;
 	}
 
 }

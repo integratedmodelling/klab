@@ -25,14 +25,14 @@ public class CompatibleObservable extends Observable {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((observable == null) ? 0 : observable.hashCode());
+    result = prime * result + ((getType() == null) ? 0 : getType().hashCode());
     return result;
   }
 
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof Observable) {
-      return this.observable.equals(((Observable) obj).getObservable());
+      return this.getType().equals(((Observable) obj).getType());
     }
     return false;
   }
