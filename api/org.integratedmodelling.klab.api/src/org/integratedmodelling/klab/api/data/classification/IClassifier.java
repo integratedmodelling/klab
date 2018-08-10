@@ -71,9 +71,12 @@ public interface IClassifier {
 	 * it's matching a single one, or possibly a random object among the choices if
 	 * it's in OR.
 	 *
+	 * @param context
+	 *            pass a context for complex evaluations, like expressions
+	 * 
 	 * @return the value this classifier resolves to.
 	 */
-	Object asValue();
+	Object asValue(IComputationContext context);
 
 	/**
 	 * Return the type of the classifier when used as a value.

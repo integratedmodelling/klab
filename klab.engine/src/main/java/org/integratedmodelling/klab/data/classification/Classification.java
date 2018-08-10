@@ -366,8 +366,8 @@ public class Classification implements IClassification {
 	}
 
 	@Override
-	public List<Pair<Object, String>> getAllValues() {
-		List<Pair<Object,String>> ret = new ArrayList<>();
+	public List<Pair<Integer, String>> getAllValues() {
+		List<Pair<Integer,String>> ret = new ArrayList<>();
 		for (IConcept c : conceptOrder) {
 			ret.add(new Pair<>(getRank(c), Concepts.INSTANCE.getDisplayName(c)));
 		}

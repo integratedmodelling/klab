@@ -1,13 +1,21 @@
 package org.integratedmodelling.klab.data.table;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimLookupTable;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
 import org.integratedmodelling.klab.api.data.general.ITable;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -17,17 +25,23 @@ public class LookupTable implements ILookupTable {
 	List<String> variables;
 	IArtifact.Type type;
 	int searchIndex;
-	
+
+	Map<IConcept, Integer> key;
+
 	public LookupTable(IKimLookupTable lookupTable) {
 
 		this.table = Table.create(lookupTable.getTable());
 		this.variables = lookupTable.getArguments();
 		this.searchIndex = lookupTable.getLookupColumnIndex();
 		this.type = lookupTable.getLookupType();
-		
-		// analyze the vars and establish if we are functional and if the result column is a possible key, in which
-		// case build the necessary structures to support value indexing
-		
+
+		if (this.type == Type.CONCEPT) {
+			this.key = new LinkedHashMap<>();
+			for (int i = 0; i < table.getRowCount(); i++) {
+				this.key.put((IConcept) table.getRow(i)[searchIndex].asValue(null), i);
+			}
+		}
+
 	}
 
 	/**
@@ -36,9 +50,9 @@ public class LookupTable implements ILookupTable {
 	 * @return
 	 */
 	public boolean isKey() {
-		return false;
+		return key != null;
 	}
-		
+
 	@Override
 	public ITable<IClassifier> getTable() {
 		return table;
@@ -46,7 +60,7 @@ public class LookupTable implements ILookupTable {
 
 	@Override
 	public int reverseLookup(Object value) {
-		return -1;
+		return key.get(value);
 	}
 
 	@Override
@@ -56,17 +70,25 @@ public class LookupTable implements ILookupTable {
 
 	@Override
 	public List<String> getLabels() {
-		return null;
+		List<String> ret = new ArrayList<>();
+		for (IConcept concept : key.keySet()) {
+			ret.add(Concepts.INSTANCE.getDisplayName(concept));
+		}
+		return ret;
 	}
 
 	@Override
 	public boolean isOrdered() {
-		return false;
+		return key != null && ((IConcept) table.getRow(0)[searchIndex].asValue(null)).is(IKimConcept.Type.ORDERING);
 	}
 
 	@Override
-	public List<Pair<Object, String>> getAllValues() {
-		return null;
+	public List<Pair<Integer, String>> getAllValues() {
+		List<Pair<Integer, String>> ret = new ArrayList<>();
+		for (Entry<IConcept, Integer> entry : key.entrySet()) {
+			ret.add(new Pair<>(entry.getValue(), Concepts.INSTANCE.getDisplayName(entry.getKey())));
+		}
+		return ret;
 	}
 
 	@Override
@@ -76,25 +98,25 @@ public class LookupTable implements ILookupTable {
 
 	@Override
 	public Object lookup(IParameters<String> parameters, IComputationContext context) {
-	    
-        for (IClassifier[] row : table.getRows()) {
-            boolean ok = true;
-            for (int i = 0; i < variables.size(); i++) {
-            	if (i == searchIndex || variables.get(i).charAt(0) == '*') {
-            		continue;
-            	}
-                if (!row[i].classify(parameters.get(variables.get(i)), context)) {
-                    ok = false;
-                    break;
-                }
-            }
-            if (ok) {
-                return row[searchIndex].asValue();
-            }
-        }
+
+		for (IClassifier[] row : table.getRows()) {
+			boolean ok = true;
+			for (int i = 0; i < variables.size(); i++) {
+				if (i == searchIndex || variables.get(i).charAt(0) == '*') {
+					continue;
+				}
+				if (!row[i].classify(parameters.get(variables.get(i)), context)) {
+					ok = false;
+					break;
+				}
+			}
+			if (ok) {
+				return row[searchIndex].asValue(context);
+			}
+		}
 		return null;
 	}
-	
+
 	@Override
 	public IArtifact.Type getResultType() {
 		return type;

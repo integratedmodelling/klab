@@ -421,21 +421,22 @@ public class Classifier implements IClassifier {
 	}
 
 	@Override
-	public Object asValue() {
+	public Object asValue(IComputationContext context) {
 
 		if (numberMatch != null) {
 			return numberMatch;
 		} else if (booleanMatch != null) {
 			return booleanMatch;
 		} else if (intervalMatch != null) {
-			return intervalMatch.getLowerBound()
-					+ (new Random().nextDouble() * (intervalMatch.getUpperBound() - intervalMatch.getLowerBound()));
+			// an interval should be a fine return value. States decide what to do with it.
+			return intervalMatch/*.getLowerBound()
+					+ (new Random().nextDouble() * (intervalMatch.getUpperBound() - intervalMatch.getLowerBound()))*/;
 		} else if (conceptMatch != null) {
 			return conceptMatch;
 		} else if (stringMatch != null) {
 			return stringMatch;
 		} else if (expressionMatch != null) {
-			return expressionMatch;
+			return expressionMatch.eval(context, context);
 		}
 		return null;
 	}

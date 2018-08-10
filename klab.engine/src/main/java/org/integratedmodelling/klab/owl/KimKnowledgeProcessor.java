@@ -275,6 +275,8 @@ public enum KimKnowledgeProcessor {
 
 			ret.setObservable((Concept)classifiedType);
 			ret.setBy(by);
+			// force re-creation of name
+			ret.setName(null);
 			ret.setDownTo(downTo);
 			ret.setDeclaration(classifiedType.getDefinition());
 			

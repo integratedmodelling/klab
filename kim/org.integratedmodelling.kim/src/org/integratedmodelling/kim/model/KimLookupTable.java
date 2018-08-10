@@ -8,7 +8,6 @@ import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IKimTable;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public class KimLookupTable extends KimStatement implements IKimLookupTable {
 

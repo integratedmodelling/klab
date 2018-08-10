@@ -66,9 +66,9 @@ public class Observable extends Concept implements IObservable {
 	public static Observable promote(IConceptDefinition concept) {
 		return promote(concept.getConcept());
 	}
-	
+
 	public static Observable promote(IModel model) {
-		Observable ret = new Observable((Observable)model.getObservables().get(0));
+		Observable ret = new Observable((Observable) model.getObservables().get(0));
 		ret.resolvedModel = model;
 		return ret;
 	}
@@ -543,7 +543,7 @@ public class Observable extends Concept implements IObservable {
 
 	@Override
 	public IArtifact.Type getArtifactType() {
-		
+
 		if (observable != null) {
 			if (by != null || observable.is(Type.CLASS) || observable.is(Type.TRAIT)) {
 				return IArtifact.Type.CONCEPT;

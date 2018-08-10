@@ -44,7 +44,7 @@ public interface IDataKey {
 	/**
 	 * Get value/label pairs
 	 */
-	List<Pair<Object, String>> getAllValues();
+	List<Pair<Integer, String>> getAllValues();
 
 	/**
 	 * True if the keyed categories reflect an ordering. 

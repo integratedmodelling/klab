@@ -310,16 +310,27 @@ public enum Renderer {
 				colors = jet(1.0f);
 			} else {
 
-				// establish if we have an ordering
+				// establish if we have an ordering; if so, partition the Jet colormap into enough classes to 
+				// cover the full range and use the concept values/data.
 				if (state.getDataKey().isOrdered()) {
-					// TODO intervals! This is a PLACEHOLDER ONLY
+					
+					colormapType = ColorMap.TYPE_VALUES;
+
+					List<Pair<Integer, String>> valabs = state.getDataKey().getAllValues();
 					colors = new Color[state.getDataKey().size()];
+					values = new double[state.getDataKey().size()];
+					labels = new String[state.getDataKey().size()];
+					
 					Color[] jetcolors = jet(1.0f);
+					
 					for (int i = 0; i < state.getDataKey().size(); i++) {
 						int index = (int) (((double) (i + 1) / (double) state.getDataKey().size())
 								* (double) (jetcolors.length - 1));
 						colors[i] = jetcolors[index];
+						values[i] = valabs.get(i).getFirst();
+						labels[i] = valabs.get(i).getSecond();
 					}
+					
 				} else {
 					if (state.getDataKey().size() <= random20.length) {
 						colors = Arrays.copyOf(random20, state.getDataKey().size());
@@ -347,7 +358,7 @@ public enum Renderer {
 			values = new double[state.getDataKey().size()];
 			labels = new String[state.getDataKey().size()];
 			int i = 0;
-			for (Pair<Object, String> pair : state.getDataKey().getAllValues()) {
+			for (Pair<Integer, String> pair : state.getDataKey().getAllValues()) {
 				values[i] = ((Number)pair.getFirst()).doubleValue();
 				labels[i] = pair.getSecond();
 				i++;

@@ -11,7 +11,7 @@ observe earth:Terrestrial earth:Region named tanzania-grr
 model geography:Elevation by im:Level
 	using gis.terrain()
 	lookup (self, *, ?) into 
-		  elevation | concept                 | level
+		  elevation | concept_ignore          | level
 	      --------------------------------------------------------
 	      < 500     | geography:Elevation     | im:Low,
 	      < 1500    | geography:Slope         | im:Moderate,
