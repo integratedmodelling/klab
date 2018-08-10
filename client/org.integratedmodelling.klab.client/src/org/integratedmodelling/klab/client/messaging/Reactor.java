@@ -19,12 +19,13 @@ import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.client.messaging.Reactor.ReceiverDescription.MethodDescriptor;
 import org.integratedmodelling.klab.monitoring.Message;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Reactor {
 
 	private Map<Class<?>, ReceiverDescription> receiverTypes = Collections.synchronizedMap(new HashMap<>());
-	ObjectMapper objectMapper = new ObjectMapper();
+	ObjectMapper objectMapper = new ObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
 	IMessageBus bus;
 
 	public Reactor(IMessageBus bus) {

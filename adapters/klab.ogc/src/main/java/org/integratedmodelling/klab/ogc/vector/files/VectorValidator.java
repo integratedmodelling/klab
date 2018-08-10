@@ -96,8 +96,6 @@ public class VectorValidator implements IResourceValidator {
 
 	protected void validateCollection(FeatureSource<SimpleFeatureType, SimpleFeature> source, Builder ret,
 			IParameters<String> userData, IMonitor monitor) throws IOException {
-
-		
 		
 		Filter filter = Filter.INCLUDE;
 		FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures(filter);
@@ -192,10 +190,11 @@ public class VectorValidator implements IResourceValidator {
 		}
 		if (!ret.hasErrors()) {
 
-			Geometry geometry = Geometry
-					.create("#s" + shapeDimension).withBoundingBox(envelope.getMinimum(0), envelope.getMaximum(0),
-							envelope.getMinimum(1), envelope.getMaximum(1))
-					.withProjection(crsCode).withSpatialShape(collection.size());
+			Geometry geometry = Geometry.create("#s" + shapeDimension)
+							.withBoundingBox(envelope.getMinimum(0), envelope.getMaximum(0),
+									envelope.getMinimum(1), envelope.getMaximum(1))
+							.withProjection(crsCode)
+							.withSpatialShape(collection.size());
 
 			ret.withGeometry(geometry);
 		}

@@ -514,7 +514,9 @@ public enum Resources implements IResourceService {
 				String owner = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class).getUsername();
 
 				IResource resource = builder.withResourceVersion(Version.create("0.0.1"))
-						.withProjectName(project.getName()).withParameters(parameters).withAdapterType(adapterType)
+						.withProjectName(project.getName())
+						.withParameters(parameters)
+						.withAdapterType(adapter.getName())
 						.withLocalPath(project.getName() + "/resources/" + builder.getResourceId())
 						.build(Urns.INSTANCE.getLocalUrn(builder.getResourceId(), project, owner));
 
@@ -805,7 +807,7 @@ public enum Resources implements IResourceService {
 		if (rdef.exists()) {
 			ResourceReference rref = JsonUtils.load(rdef, ResourceReference.class);
 			if (!getLocalResourceCatalog().containsKey(rref.getUrn())) {
-//				Logging.INSTANCE.info("synchronizing project resource " + rref.getUrn());
+				// Logging.INSTANCE.info("synchronizing project resource " + rref.getUrn());
 				getLocalResourceCatalog().put(rref.getUrn(), new Resource(rref));
 			}
 			return rref;

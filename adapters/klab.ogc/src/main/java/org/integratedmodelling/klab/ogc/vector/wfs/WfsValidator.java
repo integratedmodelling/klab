@@ -45,7 +45,7 @@ public class WfsValidator extends VectorValidator {
 			throw new IllegalArgumentException("WFS specifications are invalid or incomplete");
 		}
 		
-		IResource.Builder ret = Resources.INSTANCE.createResourceBuilder();
+		IResource.Builder ret = Resources.INSTANCE.createResourceBuilder().withAdapterType("wfs");
 		Version version = Version.create(userData.get("wfsVersion", "1.0.0"));
 
 		try {

@@ -48,7 +48,8 @@ public class WcsImporter implements IResourceImporter {
 					Builder builder = validator.validate(new URL(importLocation), parameters, monitor);
 
 					if (builder != null) {
-						builder.setResourceId(layer.getIdentifier().toLowerCase().replaceAll("__", "."));
+						String layerId = layer.getIdentifier().toLowerCase().replaceAll("__", ".");
+						builder.withLocalName(layerId).setResourceId(layerId);
 						ret.add(builder);
 					}
 

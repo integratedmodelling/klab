@@ -266,8 +266,6 @@ public class Resource implements IResource {
             if (urn == null) {
                 throw new IllegalStateException("invalid resource: urn is undefined");
             }
-
-            // TODO metadata consistency check for adapter
         }
 
         // TODO more checks: consistent version history
