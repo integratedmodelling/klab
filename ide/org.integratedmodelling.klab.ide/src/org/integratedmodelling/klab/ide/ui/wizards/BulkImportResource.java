@@ -45,6 +45,7 @@ import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.model.EResourceFolder;
+import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 
 public class BulkImportResource extends WizardPage {
 
@@ -96,8 +97,8 @@ public class BulkImportResource extends WizardPage {
 		lblNewLabel_1.setText("URL or folder");
 
 		combo.add(NO_CHOICE);
-		for (String adapter : Activator.klab().getResourceAdapters()) {
-			combo.add(adapter);
+		for (ResourceAdapterReference adapter : Activator.klab().getResourceAdapters()) {
+			combo.add(adapter.getName());
 		}
 		combo.select(0);
 

@@ -15,6 +15,8 @@
  */
 package org.integratedmodelling.klab.api.data.adapters;
 
+import org.integratedmodelling.kim.api.IPrototype;
+
 /**
  * A {@code IResourceAdapter} is the interface for a plug-in providing a new
  * adapter for a resource type. A class implementing {@code IResourceAdapter}
@@ -82,5 +84,13 @@ public interface IResourceAdapter {
 	 *         importing.
 	 */
 	IResourceImporter getImporter();
+
+	/**
+	 * Return a prototype describing all the user-modifiable parameters that can be
+	 * understood in resources using this adapter.
+	 * 
+	 * @return
+	 */
+	IPrototype getResourceConfiguration();
 
 }

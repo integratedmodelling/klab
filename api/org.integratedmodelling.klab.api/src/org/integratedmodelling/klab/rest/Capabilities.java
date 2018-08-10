@@ -21,7 +21,7 @@ public class Capabilities {
 	private List<ComponentReference> staticComponents = new ArrayList<>();
 	private List<ComponentReference> dynamicComponents = new ArrayList<>();
 	private List<String> mirrors = new ArrayList<>();
-	private List<String> resourceAdapters = new ArrayList<>();
+	private List<ResourceAdapterReference> resourceAdapters = new ArrayList<>();
 	private long refreshFrequencyMillis;
 	private int loadFactor;
 	private boolean online;
@@ -225,11 +225,11 @@ public class Capabilities {
 		this.localWorkspaceProjects = localWorkspaceProjects;
 	}
 
-	public List<String> getResourceAdapters() {
+	public List<ResourceAdapterReference> getResourceAdapters() {
 		return resourceAdapters;
 	}
 
-	public void setResourceAdapters(List<String> resourceAdapters) {
+	public void setResourceAdapters(List<ResourceAdapterReference> resourceAdapters) {
 		this.resourceAdapters = resourceAdapters;
 	}
 }

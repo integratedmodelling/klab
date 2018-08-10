@@ -60,6 +60,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.LocalResourceReference;
 import org.integratedmodelling.klab.rest.ProjectReference;
+import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
@@ -877,7 +878,13 @@ public enum Resources implements IResourceService {
 		return loader;
 	}
 
-	public Collection<String> getResourceAdapterTypes() {
-		return resourceAdapters.keySet();
+	public Collection<ResourceAdapterReference> describeResourceAdapters() {
+		List<ResourceAdapterReference> ret = new ArrayList<>();
+		for (String adapter : resourceAdapters.keySet()) {
+			ResourceAdapterReference ref = new ResourceAdapterReference();
+			ref.setName(adapter);
+			ret.add(ref);
+		}
+		return ret;
 	}
 }

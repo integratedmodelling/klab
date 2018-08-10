@@ -25,6 +25,9 @@ public class KimTable extends KimStatement implements IKimTable {
         	ncols = headers.size();
         }
         for (TableRow row : statement.getRows()) {
+        	if (ncols < 0) {
+        		ncols = row.getElements().size();
+        	}
         	IKimClassifier[] rowElements = new IKimClassifier[ncols];
         	int i = 0;
         	for (ClassifierRHS classifier : row.getElements()) {

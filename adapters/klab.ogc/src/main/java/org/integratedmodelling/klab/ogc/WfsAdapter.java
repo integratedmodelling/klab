@@ -22,6 +22,8 @@ import java.util.Map;
 
 import org.geotools.data.wfs.WFSDataStore;
 import org.geotools.data.wfs.WFSDataStoreFactory;
+import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
@@ -29,6 +31,7 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
+import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.ogc.vector.wfs.WfsEncoder;
 import org.integratedmodelling.klab.ogc.vector.wfs.WfsImporter;
 import org.integratedmodelling.klab.ogc.vector.wfs.WfsPublisher;
@@ -101,5 +104,13 @@ public class WfsAdapter implements IResourceAdapter {
 	@Override
 	public IResourceImporter getImporter() {
 		return new WfsImporter();
+	}
+	
+	@Override
+	public IPrototype getResourceConfiguration() {
+		return new Prototype(
+				Dataflows.INSTANCE.declare(getClass().getClassLoader().getResource("ogc/prototypes/wfs.kdl"))
+						.getActuators().iterator().next(),
+				null);
 	}
 }

@@ -17,6 +17,8 @@ package org.integratedmodelling.klab.ogc;
 
 import java.util.Set;
 
+import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
@@ -24,6 +26,7 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
+import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.ogc.vector.files.VectorEncoder;
 import org.integratedmodelling.klab.ogc.vector.files.VectorImporter;
 import org.integratedmodelling.klab.ogc.vector.files.VectorPublisher;
@@ -73,5 +76,12 @@ public class VectorAdapter implements IResourceAdapter {
 	public IResourceImporter getImporter() {
 		return new VectorImporter();
 	}
-
+	
+	@Override
+	public IPrototype getResourceConfiguration() {
+		return new Prototype(
+				Dataflows.INSTANCE.declare(getClass().getClassLoader().getResource("ogc/prototypes/vector.kdl"))
+						.getActuators().iterator().next(),
+				null);
+	}
 }

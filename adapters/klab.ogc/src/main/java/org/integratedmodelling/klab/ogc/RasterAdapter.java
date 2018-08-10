@@ -17,6 +17,8 @@ package org.integratedmodelling.klab.ogc;
 
 import java.util.Set;
 
+import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
@@ -24,6 +26,7 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
+import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
 import org.integratedmodelling.klab.raster.files.RasterImporter;
 import org.integratedmodelling.klab.raster.files.RasterPublisher;
@@ -36,12 +39,10 @@ import com.google.common.collect.Sets;
  * 
  * TODO evaluate: simple transformations
  * 
- * 	clipRange (clip to it)
- *  dataRange (not in range -> NaN)
- *  legalRange (not in range -> exception)
- *  transform (expr for each true datapoint)
- *  valueFilter (expr tied to specific values 10 -> 1 or 10 -> [x * 2])
- *  
+ * clipRange (clip to it) dataRange (not in range -> NaN) legalRange (not in
+ * range -> exception) transform (expr for each true datapoint) valueFilter
+ * (expr tied to specific values 10 -> 1 or 10 -> [x * 2])
+ * 
  * Store range and percent nodata when validating?
  */
 @ResourceAdapter(type = "raster", version = Version.CURRENT, requires = { "fileUrl" }, optional = { "band",
@@ -92,6 +93,14 @@ public class RasterAdapter implements IResourceAdapter {
 	@Override
 	public IResourceImporter getImporter() {
 		return new RasterImporter();
+	}
+
+	@Override
+	public IPrototype getResourceConfiguration() {
+		return new Prototype(
+				Dataflows.INSTANCE.declare(getClass().getClassLoader().getResource("ogc/prototypes/raster.kdl"))
+						.getActuators().iterator().next(),
+				null);
 	}
 
 }

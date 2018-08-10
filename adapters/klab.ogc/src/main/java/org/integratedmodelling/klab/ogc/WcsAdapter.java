@@ -19,6 +19,8 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
@@ -27,6 +29,7 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
+import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.raster.wcs.WCSService;
 import org.integratedmodelling.klab.raster.wcs.WcsEncoder;
 import org.integratedmodelling.klab.raster.wcs.WcsImporter;
@@ -104,5 +107,13 @@ public class WcsAdapter implements IResourceAdapter {
 	@Override
 	public IResourceImporter getImporter() {
 		return new WcsImporter();
+	}
+	
+	@Override
+	public IPrototype getResourceConfiguration() {
+		return new Prototype(
+				Dataflows.INSTANCE.declare(getClass().getClassLoader().getResource("ogc/prototypes/wcs.kdl"))
+						.getActuators().iterator().next(),
+				null);
 	}
 }

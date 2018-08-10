@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.rest.Capabilities;
 import org.integratedmodelling.klab.rest.LocalResourceReference;
 import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
 import org.integratedmodelling.klab.rest.ProjectReference;
+import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.integratedmodelling.klab.rest.ResourceReference;
 
 /**
@@ -47,7 +48,7 @@ public class Klab {
 	 * view.
 	 */
 	private Map<String, Map<String, EResourceReference>> resourceCatalog = Collections.synchronizedMap(new HashMap<>());
-	private Set<String> resourceAdapters = new HashSet<>();
+	private List<ResourceAdapterReference> resourceAdapters = new ArrayList<>();
 	private Map<String, NamespaceCompilationResult> namespaceStatus = new HashMap<>();
 
 	public void synchronizeProjectResources(String projectName, File projectRoot) {
@@ -115,7 +116,7 @@ public class Klab {
 	 * 
 	 * @return resource adapters
 	 */
-	public Collection<String> getResourceAdapters() {
+	public Collection<ResourceAdapterReference> getResourceAdapters() {
 		return resourceAdapters;
 	}
 
