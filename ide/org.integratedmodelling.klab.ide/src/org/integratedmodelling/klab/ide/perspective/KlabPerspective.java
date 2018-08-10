@@ -17,8 +17,8 @@ public class KlabPerspective implements IPerspectiveFactory {
 		// ugly trick to stack specific views in editor area. 
 		if (layout instanceof ModeledPageLayout) {
 			ModeledPageLayout layout4 = (ModeledPageLayout) layout;
-			layout4.stackView(DocumentationEditor.ID + ":*", layout.getEditorArea(), false);
-			layout4.stackView(ResourceEditor.ID + ":*", layout.getEditorArea(), false);
+			layout4.stackView(DocumentationEditor.ID, layout.getEditorArea(), false);
+			layout4.stackView(ResourceEditor.ID, layout.getEditorArea(), false);
 		}
 
 //		String editorArea = layout.getEditorArea();

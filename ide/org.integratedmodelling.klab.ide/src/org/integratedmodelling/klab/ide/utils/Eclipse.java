@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Level;
 
@@ -37,6 +38,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -44,6 +46,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.CheckedTreeSelectionDialog;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
@@ -58,6 +61,43 @@ import org.integratedmodelling.klab.rest.CompileNotificationReference;
 public enum Eclipse {
 
 	INSTANCE;
+
+	/**
+	 * Open the passed view. Optionally pass an action to call when the view has been
+	 * shown.
+	 * 
+	 * @param id ID of the view
+	 * @param action an action to perform on the view once open, or null
+	 */
+	public void openView(final String id, final Consumer<IViewPart> action) {
+		
+		class Job extends UIJob {
+			public Job() {
+				super("");
+			}
+
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				try {
+					IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(id);
+					if (view != null && action != null) {
+						action.accept(view);
+					}
+				} catch (PartInitException e) {
+					handleException(e);
+				}
+				return Status.OK_STATUS;
+			}
+		}
+		Job job = new Job();
+		job.setUser(false);
+		job.schedule();
+		try {
+			job.join();
+		} catch (InterruptedException e) {
+			handleException(e);
+		}
+	}
 
 	public Shell getShell() {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();

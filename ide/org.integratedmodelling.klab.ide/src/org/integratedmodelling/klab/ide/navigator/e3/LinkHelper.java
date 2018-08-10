@@ -7,7 +7,9 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.navigator.ILinkHelper;
@@ -18,49 +20,59 @@ import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.ide.navigator.model.EResource;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.ide.views.ResourceEditor;
 
 public class LinkHelper implements ILinkHelper {
 
-    @Override
-    public IStructuredSelection findSelection(IEditorInput anInput) {
+	@Override
+	public IStructuredSelection findSelection(IEditorInput anInput) {
 
-        IEditorPart editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findEditor(anInput);
-        StyledText text = (StyledText) editor.getAdapter(Control.class);
-        int caret = text.getCaretOffset();
+		IEditorPart editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findEditor(anInput);
+		StyledText text = (StyledText) editor.getAdapter(Control.class);
+		int caret = text.getCaretOffset();
 
-        IFile file = ResourceUtil.getFile(anInput);
-        if (file != null) {
-            String namespaceId = Eclipse.INSTANCE.getNamespaceIdFromIFile(file);
-            if (namespaceId != null) {
-                IKimNamespace namespace = Kim.INSTANCE.getNamespace(namespaceId);
-                if (namespace != null) {
-                    Object selection = KimData.INSTANCE.findObjectAt(caret, namespace);
-                    /*
-                     * FIXME Won't do it unless already expanded. Needs treeselection with full path?
-                     */
-                    return selection == null ? StructuredSelection.EMPTY : new StructuredSelection(selection);
-                }
-            }
-        }
-        return StructuredSelection.EMPTY;
-    }
+		IFile file = ResourceUtil.getFile(anInput);
+		if (file != null) {
+			String namespaceId = Eclipse.INSTANCE.getNamespaceIdFromIFile(file);
+			if (namespaceId != null) {
+				IKimNamespace namespace = Kim.INSTANCE.getNamespace(namespaceId);
+				if (namespace != null) {
+					Object selection = KimData.INSTANCE.findObjectAt(caret, namespace);
+					/*
+					 * FIXME Won't do it unless already expanded. Needs treeselection with full
+					 * path?
+					 */
+					return selection == null ? StructuredSelection.EMPTY : new StructuredSelection(selection);
+				}
+			}
+		}
+		return StructuredSelection.EMPTY;
+	}
 
-    @Override
-    public void activateEditor(IWorkbenchPage aPage, IStructuredSelection aSelection) {
+	@Override
+	public void activateEditor(IWorkbenchPage aPage, IStructuredSelection aSelection) {
 
-        if (aSelection == null || aSelection.isEmpty()) {
-            return;
-        }
+		if (aSelection == null || aSelection.isEmpty()) {
+			return;
+		}
 
-        if (aSelection.getFirstElement() instanceof ENamespace) {
-            Eclipse.INSTANCE.openFile(((ENamespace) aSelection.getFirstElement()).getIFile(), 0);
-        } else if (aSelection.getFirstElement() instanceof EKimObject) {
-            EKimObject kob = (EKimObject) aSelection.getFirstElement();
-            ENamespace kns = kob.getEParent(ENamespace.class);
-            Eclipse.INSTANCE.openFile(kns.getIFile(), kob.getFirstLine());
-        } else if (aSelection.getFirstElement() instanceof EResource) {
-        	// open resource editor
-        }
-    }
+		if (aSelection.getFirstElement() instanceof ENamespace) {
+			Eclipse.INSTANCE.openFile(((ENamespace) aSelection.getFirstElement()).getIFile(), 0);
+		} else if (aSelection.getFirstElement() instanceof EKimObject) {
+			EKimObject kob = (EKimObject) aSelection.getFirstElement();
+			ENamespace kns = kob.getEParent(ENamespace.class);
+			Eclipse.INSTANCE.openFile(kns.getIFile(), kob.getFirstLine());
+		} else if (aSelection.getFirstElement() instanceof EResource) {
+			try {
+				IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+						.showView(ResourceEditor.ID);
+				if (view != null) {
+					((ResourceEditor) view).loadResource(((EResource) aSelection.getFirstElement()).getResource());
+				}
+			} catch (PartInitException e) {
+				Eclipse.INSTANCE.handleException(e);
+			}
+		}
+	}
 
 }
