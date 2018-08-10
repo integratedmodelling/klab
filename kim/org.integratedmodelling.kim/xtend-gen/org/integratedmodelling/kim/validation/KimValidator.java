@@ -79,6 +79,7 @@ import org.integratedmodelling.kim.model.KimObserver;
 import org.integratedmodelling.kim.model.KimProject;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.kim.model.KimStatement;
+import org.integratedmodelling.kim.model.KimSymbolDefinition;
 import org.integratedmodelling.kim.model.KimTable;
 import org.integratedmodelling.kim.validation.AbstractKimValidator;
 import org.integratedmodelling.kim.validation.KimNotification;
@@ -151,8 +152,25 @@ public class KimValidator extends AbstractKimValidator {
   }
   
   @Check
-  public Object checkDefine(final DefineStatement statement) {
-    return null;
+  public void checkDefine(final DefineStatement statement) {
+    EObject _eContainer = statement.eContainer().eContainer();
+    final Namespace namespace = ((Model) _eContainer).getNamespace();
+    KimNamespace ns = Kim.INSTANCE.getNamespace(namespace, true);
+    final KimSymbolDefinition definition = new KimSymbolDefinition(statement, ns);
+    int i = 0;
+    EList<Annotation> _annotations = statement.getAnnotations();
+    for (final Annotation annotation : _annotations) {
+      {
+        KimAnnotation ann = new KimAnnotation(annotation, ns, definition);
+        definition.getAnnotations().add(ann);
+        List<KimNotification> _validateUsage = ann.validateUsage(definition);
+        for (final KimNotification notification : _validateUsage) {
+          this.notify(notification, statement, KimPackage.Literals.DEFINE_STATEMENT__ANNOTATIONS, i);
+        }
+        i++;
+      }
+    }
+    ns.addChild(definition);
   }
   
   @Check

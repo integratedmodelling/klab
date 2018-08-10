@@ -227,19 +227,18 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cAnnotationsAssignment_0 = (Assignment)cGroup.eContents().get(0);
 		private final RuleCall cAnnotationsAnnotationParserRuleCall_0_0 = (RuleCall)cAnnotationsAssignment_0.eContents().get(0);
 		private final Keyword cDefineKeyword_1 = (Keyword)cGroup.eContents().get(1);
-		private final Assignment cNameAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cNameUPPERCASE_IDTerminalRuleCall_2_0 = (RuleCall)cNameAssignment_2.eContents().get(0);
-		private final Keyword cAsKeyword_3 = (Keyword)cGroup.eContents().get(3);
-		private final Assignment cValueAssignment_4 = (Assignment)cGroup.eContents().get(4);
-		private final RuleCall cValueValueParserRuleCall_4_0 = (RuleCall)cValueAssignment_4.eContents().get(0);
+		private final Assignment cDefineBodyAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cDefineBodyDefinitionBodyParserRuleCall_2_0 = (RuleCall)cDefineBodyAssignment_2.eContents().get(0);
 		
 		//DefineStatement:
-		//	annotations+=Annotation* 'define' name=UPPERCASE_ID 'as' value=Value;
+		//	annotations+=Annotation* 'define' defineBody=DefinitionBody;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//annotations+=Annotation* 'define' name=UPPERCASE_ID 'as' value=Value
+		//// ridiculous to split like this, but makes the highlighting logics work
+		//annotations+=Annotation* 'define' defineBody=DefinitionBody
 		public Group getGroup() { return cGroup; }
 		
+		//// ridiculous to split like this, but makes the highlighting logics work
 		//annotations+=Annotation*
 		public Assignment getAnnotationsAssignment_0() { return cAnnotationsAssignment_0; }
 		
@@ -249,20 +248,42 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'define'
 		public Keyword getDefineKeyword_1() { return cDefineKeyword_1; }
 		
+		//defineBody=DefinitionBody
+		public Assignment getDefineBodyAssignment_2() { return cDefineBodyAssignment_2; }
+		
+		//DefinitionBody
+		public RuleCall getDefineBodyDefinitionBodyParserRuleCall_2_0() { return cDefineBodyDefinitionBodyParserRuleCall_2_0; }
+	}
+	public class DefinitionBodyElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.DefinitionBody");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cNameUPPERCASE_IDTerminalRuleCall_0_0 = (RuleCall)cNameAssignment_0.eContents().get(0);
+		private final Keyword cAsKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Assignment cValueAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cValueValueParserRuleCall_2_0 = (RuleCall)cValueAssignment_2.eContents().get(0);
+		
+		//DefinitionBody:
+		//	name=UPPERCASE_ID 'as' value=Value;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//name=UPPERCASE_ID 'as' value=Value
+		public Group getGroup() { return cGroup; }
+		
 		//name=UPPERCASE_ID
-		public Assignment getNameAssignment_2() { return cNameAssignment_2; }
+		public Assignment getNameAssignment_0() { return cNameAssignment_0; }
 		
 		//UPPERCASE_ID
-		public RuleCall getNameUPPERCASE_IDTerminalRuleCall_2_0() { return cNameUPPERCASE_IDTerminalRuleCall_2_0; }
+		public RuleCall getNameUPPERCASE_IDTerminalRuleCall_0_0() { return cNameUPPERCASE_IDTerminalRuleCall_0_0; }
 		
 		//'as'
-		public Keyword getAsKeyword_3() { return cAsKeyword_3; }
+		public Keyword getAsKeyword_1() { return cAsKeyword_1; }
 		
 		//value=Value
-		public Assignment getValueAssignment_4() { return cValueAssignment_4; }
+		public Assignment getValueAssignment_2() { return cValueAssignment_2; }
 		
 		//Value
-		public RuleCall getValueValueParserRuleCall_4_0() { return cValueValueParserRuleCall_4_0; }
+		public RuleCall getValueValueParserRuleCall_2_0() { return cValueValueParserRuleCall_2_0; }
 	}
 	public class ModelBodyStatementElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.ModelBodyStatement");
@@ -8902,6 +8923,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	private final StatementElements pStatement;
 	private final ModelStatementElements pModelStatement;
 	private final DefineStatementElements pDefineStatement;
+	private final DefinitionBodyElements pDefinitionBody;
 	private final ModelBodyStatementElements pModelBodyStatement;
 	private final AttributeIdentifierElements pAttributeIdentifier;
 	private final ClassificationElements pClassification;
@@ -9006,6 +9028,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		this.pStatement = new StatementElements();
 		this.pModelStatement = new ModelStatementElements();
 		this.pDefineStatement = new DefineStatementElements();
+		this.pDefinitionBody = new DefinitionBodyElements();
 		this.pModelBodyStatement = new ModelBodyStatementElements();
 		this.pAttributeIdentifier = new AttributeIdentifierElements();
 		this.pClassification = new ClassificationElements();
@@ -9162,13 +9185,23 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//DefineStatement:
-	//	annotations+=Annotation* 'define' name=UPPERCASE_ID 'as' value=Value;
+	//	annotations+=Annotation* 'define' defineBody=DefinitionBody;
 	public DefineStatementElements getDefineStatementAccess() {
 		return pDefineStatement;
 	}
 	
 	public ParserRule getDefineStatementRule() {
 		return getDefineStatementAccess().getRule();
+	}
+	
+	//DefinitionBody:
+	//	name=UPPERCASE_ID 'as' value=Value;
+	public DefinitionBodyElements getDefinitionBodyAccess() {
+		return pDefinitionBody;
+	}
+	
+	public ParserRule getDefinitionBodyRule() {
+		return getDefinitionBodyAccess().getRule();
 	}
 	
 	//ModelBodyStatement:

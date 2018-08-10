@@ -142,12 +142,14 @@
       <view
             category="org.integratedmodelling.klab.ide.category"
             class="org.integratedmodelling.klab.ide.views.RuntimeView"
+            icon="icons/runtime.gif"
             id="org.integratedmodelling.klab.ide.views.RuntimeView"
             name="k.LAB Runtime">
       </view>
       <view
             category="org.integratedmodelling.klab.ide.category"
             class="org.integratedmodelling.klab.ide.views.ContextView"
+            icon="icons/subjectObservation.gif"
             id="org.integratedmodelling.klab.ide.views.ContextView"
             name="Context"
             restorable="true">
@@ -155,14 +157,32 @@
       <view
             category="org.integratedmodelling.klab.ide.category"
             class="org.integratedmodelling.klab.ide.views.ResourcesView"
+            icon="icons/Database.png"
             id="org.integratedmodelling.klab.ide.views.ResourcesView"
             name="Resources">
       </view>
       <view
             category="org.integratedmodelling.klab.ide.category"
             class="org.integratedmodelling.klab.ide.views.SearchView"
+            icon="icons/search.gif"
             id="org.integratedmodelling.klab.ide.views.SearchView"
             name="Knowledge Search">
+      </view>
+      <view
+            allowMultiple="true"
+            category="org.integratedmodelling.klab.ide.category"
+            class="org.integratedmodelling.klab.ide.views.ResourceEditor"
+            icon="icons/resource.gif"
+            id="org.integratedmodelling.klab.ide.views.ResourceEditor"
+            name="Resource editor">
+      </view>
+      <view
+            allowMultiple="true"
+            category="org.integratedmodelling.klab.ide.category"
+            class="org.integratedmodelling.klab.ide.views.DocumentationEditor"
+            icon="icons/documentation.gif"
+            id="org.integratedmodelling.klab.ide.views.DocumentationEditor"
+            name="Documentation editor">
       </view>
    </extension>
    <extension

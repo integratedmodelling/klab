@@ -17,6 +17,7 @@ import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.IKimSymbolDefinition;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.utils.Pair;
@@ -85,6 +86,8 @@ public class ENamespace extends EKimObject implements IKimNamespace {
 			} else if (child instanceof IKimObserver) {
 				ret.add(new EObserver(delegate.getName() + "." + ((IKimObserver) child).getName(), (IKimObserver) child,
 						this, this));
+			} else if (child instanceof IKimSymbolDefinition) {
+				ret.add(new EDefinition((IKimSymbolDefinition) child, this));
 			}
 		}
 		return ret.toArray(new ENavigatorItem[ret.size()]);
@@ -142,7 +145,7 @@ public class ENamespace extends EKimObject implements IKimNamespace {
 	public boolean isProjectKnowledge() {
 		return delegate.isProjectKnowledge();
 	}
-	
+
 	public void visit(Visitor visitor) {
 		delegate.visit(visitor);
 	}
@@ -152,10 +155,10 @@ public class ENamespace extends EKimObject implements IKimNamespace {
 		return delegate.getImportedNamespaceIds(scanUsages);
 	}
 
-    @Override
-    public IKimLoader getLoader() {
-        return delegate.getLoader();
-    }
+	@Override
+	public IKimLoader getLoader() {
+		return delegate.getLoader();
+	}
 
 	@Override
 	public List<IServiceCall> getExtents() {

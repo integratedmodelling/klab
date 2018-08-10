@@ -26,7 +26,12 @@ ModelStatement:
 ;
 
 DefineStatement:
-	annotations+=Annotation* 'define' name=UPPERCASE_ID 'as' value=Value
+	// ridiculous to split like this, but makes the highlighting logics work
+	annotations+=Annotation* 'define' defineBody=DefinitionBody
+;
+
+DefinitionBody:
+	name=UPPERCASE_ID 'as' value=Value
 ;
 
 ModelBodyStatement:

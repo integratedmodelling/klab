@@ -1,46 +1,60 @@
 package org.integratedmodelling.klab.ide.perspective;
 
+import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
-import org.eclipse.ui.IFolderLayout;
-
+import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout;
+import org.integratedmodelling.klab.ide.views.DocumentationEditor;
+import org.integratedmodelling.klab.ide.views.ResourceEditor;
 
 public class KlabPerspective implements IPerspectiveFactory {
 
-    /**
-     * Creates the initial layout for a page.
-     */
-    public void createInitialLayout(IPageLayout layout) {
-        String editorArea = layout.getEditorArea();
-        addFastViews(layout);
-        addViewShortcuts(layout);
-        addPerspectiveShortcuts(layout);
-    	layout.addView("org.integratedmodelling.thinkcap.ide.navigator", IPageLayout.LEFT, 0.24f, IPageLayout.ID_EDITOR_AREA);
-    	layout.addView("org.integratedmodelling.klab.ide.views.RuntimeView", IPageLayout.RIGHT, 0.72f, IPageLayout.ID_EDITOR_AREA);
-    	{
-    		IFolderLayout folderLayout = layout.createFolder("folder", IPageLayout.BOTTOM, 0.73f, IPageLayout.ID_EDITOR_AREA);
-    		folderLayout.addView("org.integratedmodelling.klab.ide.views.SearchView");
-    		folderLayout.addView("org.integratedmodelling.klab.ide.views.ResourcesView");
-    	}
-    	layout.addView("org.integratedmodelling.klab.ide.views.ContextView", IPageLayout.BOTTOM, 0.73f, "org.integratedmodelling.thinkcap.ide.navigator");
-    }
+	/**
+	 * Creates the initial layout for a page.
+	 */
+	public void createInitialLayout(IPageLayout layout) {
+		
+		// ugly trick to stack specific views in editor area. 
+		if (layout instanceof ModeledPageLayout) {
+			ModeledPageLayout layout4 = (ModeledPageLayout) layout;
+			layout4.stackView(DocumentationEditor.ID + ":*", layout.getEditorArea(), false);
+			layout4.stackView(ResourceEditor.ID + ":*", layout.getEditorArea(), false);
+		}
 
-    /**
-     * Add fast views to the perspective.
-     */
-    private void addFastViews(IPageLayout layout) {
-    }
+//		String editorArea = layout.getEditorArea();
+		addFastViews(layout);
+		addViewShortcuts(layout);
+		addPerspectiveShortcuts(layout);
+		layout.addView("org.integratedmodelling.thinkcap.ide.navigator", IPageLayout.LEFT, 0.24f,
+				IPageLayout.ID_EDITOR_AREA);
+		layout.addView("org.integratedmodelling.klab.ide.views.RuntimeView", IPageLayout.RIGHT, 0.72f,
+				IPageLayout.ID_EDITOR_AREA);
+		{
+			IFolderLayout folderLayout = layout.createFolder("folder", IPageLayout.BOTTOM, 0.73f,
+					IPageLayout.ID_EDITOR_AREA);
+			folderLayout.addView("org.integratedmodelling.klab.ide.views.SearchView");
+			folderLayout.addView("org.integratedmodelling.klab.ide.views.ResourcesView");
+		}
+		layout.addView("org.integratedmodelling.klab.ide.views.ContextView", IPageLayout.BOTTOM, 0.73f,
+				"org.integratedmodelling.thinkcap.ide.navigator");
+	}
 
-    /**
-     * Add view shortcuts to the perspective.
-     */
-    private void addViewShortcuts(IPageLayout layout) {
-    }
+	/**
+	 * Add fast views to the perspective.
+	 */
+	private void addFastViews(IPageLayout layout) {
+	}
 
-    /**
-     * Add perspective shortcuts to the perspective.
-     */
-    private void addPerspectiveShortcuts(IPageLayout layout) {
-    }
+	/**
+	 * Add view shortcuts to the perspective.
+	 */
+	private void addViewShortcuts(IPageLayout layout) {
+	}
+
+	/**
+	 * Add perspective shortcuts to the perspective.
+	 */
+	private void addPerspectiveShortcuts(IPageLayout layout) {
+	}
 
 }

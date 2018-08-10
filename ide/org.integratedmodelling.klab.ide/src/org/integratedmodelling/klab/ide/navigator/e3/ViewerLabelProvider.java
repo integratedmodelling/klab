@@ -15,6 +15,7 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.model.EConcept;
+import org.integratedmodelling.klab.ide.navigator.model.EDefinition;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.EModel;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
@@ -208,6 +209,9 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 		if (element instanceof EResource) {
 			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/resource.gif");
 		}
+		if (element instanceof EDefinition) {
+			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/define.gif");
+		}
 		return delegate.getImage(element);
 	}
 
@@ -236,6 +240,9 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 		}
 		if (element instanceof EProject) {
 			return ((EProject) element).getName();
+		}
+		if (element instanceof EDefinition) {
+			return ((EDefinition) element).getName();
 		}
 		if (element instanceof EResourceFolder) {
 			return "Resources";

@@ -22,8 +22,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.integratedmodelling.kim.kim.Annotation;
 import org.integratedmodelling.kim.kim.DefineStatement;
+import org.integratedmodelling.kim.kim.DefinitionBody;
 import org.integratedmodelling.kim.kim.KimPackage;
-import org.integratedmodelling.kim.kim.Value;
 
 /**
  * <!-- begin-user-doc -->
@@ -34,8 +34,7 @@ import org.integratedmodelling.kim.kim.Value;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.DefineStatementImpl#getAnnotations <em>Annotations</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.DefineStatementImpl#getName <em>Name</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.DefineStatementImpl#getValue <em>Value</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.DefineStatementImpl#getDefineBody <em>Define Body</em>}</li>
  * </ul>
  *
  * @generated
@@ -53,34 +52,14 @@ public class DefineStatementImpl extends MinimalEObjectImpl.Container implements
   protected EList<Annotation> annotations;
 
   /**
-   * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+   * The cached value of the '{@link #getDefineBody() <em>Define Body</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getName()
+   * @see #getDefineBody()
    * @generated
    * @ordered
    */
-  protected static final String NAME_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getName()
-   * @generated
-   * @ordered
-   */
-  protected String name = NAME_EDEFAULT;
-
-  /**
-   * The cached value of the '{@link #getValue() <em>Value</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getValue()
-   * @generated
-   * @ordered
-   */
-  protected Value value;
+  protected DefinitionBody defineBody;
 
   /**
    * <!-- begin-user-doc -->
@@ -122,9 +101,9 @@ public class DefineStatementImpl extends MinimalEObjectImpl.Container implements
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getName()
+  public DefinitionBody getDefineBody()
   {
-    return name;
+    return defineBody;
   }
 
   /**
@@ -132,36 +111,13 @@ public class DefineStatementImpl extends MinimalEObjectImpl.Container implements
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setName(String newName)
+  public NotificationChain basicSetDefineBody(DefinitionBody newDefineBody, NotificationChain msgs)
   {
-    String oldName = name;
-    name = newName;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.DEFINE_STATEMENT__NAME, oldName, name));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Value getValue()
-  {
-    return value;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetValue(Value newValue, NotificationChain msgs)
-  {
-    Value oldValue = value;
-    value = newValue;
+    DefinitionBody oldDefineBody = defineBody;
+    defineBody = newDefineBody;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.DEFINE_STATEMENT__VALUE, oldValue, newValue);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.DEFINE_STATEMENT__DEFINE_BODY, oldDefineBody, newDefineBody);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -172,20 +128,20 @@ public class DefineStatementImpl extends MinimalEObjectImpl.Container implements
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setValue(Value newValue)
+  public void setDefineBody(DefinitionBody newDefineBody)
   {
-    if (newValue != value)
+    if (newDefineBody != defineBody)
     {
       NotificationChain msgs = null;
-      if (value != null)
-        msgs = ((InternalEObject)value).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.DEFINE_STATEMENT__VALUE, null, msgs);
-      if (newValue != null)
-        msgs = ((InternalEObject)newValue).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.DEFINE_STATEMENT__VALUE, null, msgs);
-      msgs = basicSetValue(newValue, msgs);
+      if (defineBody != null)
+        msgs = ((InternalEObject)defineBody).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.DEFINE_STATEMENT__DEFINE_BODY, null, msgs);
+      if (newDefineBody != null)
+        msgs = ((InternalEObject)newDefineBody).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.DEFINE_STATEMENT__DEFINE_BODY, null, msgs);
+      msgs = basicSetDefineBody(newDefineBody, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.DEFINE_STATEMENT__VALUE, newValue, newValue));
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.DEFINE_STATEMENT__DEFINE_BODY, newDefineBody, newDefineBody));
   }
 
   /**
@@ -200,8 +156,8 @@ public class DefineStatementImpl extends MinimalEObjectImpl.Container implements
     {
       case KimPackage.DEFINE_STATEMENT__ANNOTATIONS:
         return ((InternalEList<?>)getAnnotations()).basicRemove(otherEnd, msgs);
-      case KimPackage.DEFINE_STATEMENT__VALUE:
-        return basicSetValue(null, msgs);
+      case KimPackage.DEFINE_STATEMENT__DEFINE_BODY:
+        return basicSetDefineBody(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -218,10 +174,8 @@ public class DefineStatementImpl extends MinimalEObjectImpl.Container implements
     {
       case KimPackage.DEFINE_STATEMENT__ANNOTATIONS:
         return getAnnotations();
-      case KimPackage.DEFINE_STATEMENT__NAME:
-        return getName();
-      case KimPackage.DEFINE_STATEMENT__VALUE:
-        return getValue();
+      case KimPackage.DEFINE_STATEMENT__DEFINE_BODY:
+        return getDefineBody();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -241,11 +195,8 @@ public class DefineStatementImpl extends MinimalEObjectImpl.Container implements
         getAnnotations().clear();
         getAnnotations().addAll((Collection<? extends Annotation>)newValue);
         return;
-      case KimPackage.DEFINE_STATEMENT__NAME:
-        setName((String)newValue);
-        return;
-      case KimPackage.DEFINE_STATEMENT__VALUE:
-        setValue((Value)newValue);
+      case KimPackage.DEFINE_STATEMENT__DEFINE_BODY:
+        setDefineBody((DefinitionBody)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -264,11 +215,8 @@ public class DefineStatementImpl extends MinimalEObjectImpl.Container implements
       case KimPackage.DEFINE_STATEMENT__ANNOTATIONS:
         getAnnotations().clear();
         return;
-      case KimPackage.DEFINE_STATEMENT__NAME:
-        setName(NAME_EDEFAULT);
-        return;
-      case KimPackage.DEFINE_STATEMENT__VALUE:
-        setValue((Value)null);
+      case KimPackage.DEFINE_STATEMENT__DEFINE_BODY:
+        setDefineBody((DefinitionBody)null);
         return;
     }
     super.eUnset(featureID);
@@ -286,29 +234,10 @@ public class DefineStatementImpl extends MinimalEObjectImpl.Container implements
     {
       case KimPackage.DEFINE_STATEMENT__ANNOTATIONS:
         return annotations != null && !annotations.isEmpty();
-      case KimPackage.DEFINE_STATEMENT__NAME:
-        return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-      case KimPackage.DEFINE_STATEMENT__VALUE:
-        return value != null;
+      case KimPackage.DEFINE_STATEMENT__DEFINE_BODY:
+        return defineBody != null;
     }
     return super.eIsSet(featureID);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public String toString()
-  {
-    if (eIsProxy()) return super.toString();
-
-    StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (name: ");
-    result.append(name);
-    result.append(')');
-    return result.toString();
   }
 
 } //DefineStatementImpl

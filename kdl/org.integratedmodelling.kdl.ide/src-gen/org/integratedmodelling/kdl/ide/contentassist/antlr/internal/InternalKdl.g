@@ -1352,6 +1352,12 @@ rule__TARGET__Alternatives
 		'observers'
 		{ after(grammarAccess.getTARGETAccess().getObserversKeyword_2()); }
 	)
+	|
+	(
+		{ before(grammarAccess.getTARGETAccess().getDefinitionsKeyword_3()); }
+		'definitions'
+		{ after(grammarAccess.getTARGETAccess().getDefinitionsKeyword_3()); }
+	)
 ;
 finally {
 	restoreStackSize(stackSize);

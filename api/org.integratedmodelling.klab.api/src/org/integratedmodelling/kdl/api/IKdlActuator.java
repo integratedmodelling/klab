@@ -17,7 +17,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 public interface IKdlActuator extends IKdlStatement {
 
   public enum Target {
-    MODELS, OBSERVERS, CONCEPTS
+    MODELS, OBSERVERS, CONCEPTS, DEFINITIONS
   }
 
   /**

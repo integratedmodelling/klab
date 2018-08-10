@@ -486,40 +486,78 @@ ruleDefineStatement returns [EObject current=null]
 		}
 		(
 			(
-				lv_name_2_0=RULE_UPPERCASE_ID
 				{
-					newLeafNode(lv_name_2_0, grammarAccess.getDefineStatementAccess().getNameUPPERCASE_IDTerminalRuleCall_2_0());
+					newCompositeNode(grammarAccess.getDefineStatementAccess().getDefineBodyDefinitionBodyParserRuleCall_2_0());
 				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getDefineStatementRule());
-					}
-					setWithLastConsumed(
-						$current,
-						"name",
-						lv_name_2_0,
-						"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
-				}
-			)
-		)
-		otherlv_3='as'
-		{
-			newLeafNode(otherlv_3, grammarAccess.getDefineStatementAccess().getAsKeyword_3());
-		}
-		(
-			(
-				{
-					newCompositeNode(grammarAccess.getDefineStatementAccess().getValueValueParserRuleCall_4_0());
-				}
-				lv_value_4_0=ruleValue
+				lv_defineBody_2_0=ruleDefinitionBody
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getDefineStatementRule());
 					}
 					set(
 						$current,
+						"defineBody",
+						lv_defineBody_2_0,
+						"org.integratedmodelling.kim.Kim.DefinitionBody");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+	)
+;
+
+// Entry rule entryRuleDefinitionBody
+entryRuleDefinitionBody returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getDefinitionBodyRule()); }
+	iv_ruleDefinitionBody=ruleDefinitionBody
+	{ $current=$iv_ruleDefinitionBody.current; }
+	EOF;
+
+// Rule DefinitionBody
+ruleDefinitionBody returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			(
+				lv_name_0_0=RULE_UPPERCASE_ID
+				{
+					newLeafNode(lv_name_0_0, grammarAccess.getDefinitionBodyAccess().getNameUPPERCASE_IDTerminalRuleCall_0_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getDefinitionBodyRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"name",
+						lv_name_0_0,
+						"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
+				}
+			)
+		)
+		otherlv_1='as'
+		{
+			newLeafNode(otherlv_1, grammarAccess.getDefinitionBodyAccess().getAsKeyword_1());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getDefinitionBodyAccess().getValueValueParserRuleCall_2_0());
+				}
+				lv_value_2_0=ruleValue
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getDefinitionBodyRule());
+					}
+					set(
+						$current,
 						"value",
-						lv_value_4_0,
+						lv_value_2_0,
 						"org.integratedmodelling.kim.Kim.Value");
 					afterParserOrEnumRuleCall();
 				}

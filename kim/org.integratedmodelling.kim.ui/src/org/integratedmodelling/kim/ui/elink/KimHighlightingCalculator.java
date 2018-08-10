@@ -18,7 +18,7 @@ import org.integratedmodelling.kim.kim.Annotation;
 import org.integratedmodelling.kim.kim.Concept;
 import org.integratedmodelling.kim.kim.ConceptReference;
 import org.integratedmodelling.kim.kim.ConceptStatementBody;
-import org.integratedmodelling.kim.kim.DefineStatement;
+import org.integratedmodelling.kim.kim.DefinitionBody;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.ModelStatement;
@@ -204,11 +204,11 @@ public class KimHighlightingCalculator extends DefaultSemanticHighlightingCalcul
 									KimHighlightingConfiguration.DEFINITION_ID);
 						}
 
-					} else if (node.getSemanticElement() instanceof DefineStatement
-							&& ((DefineStatement) node.getSemanticElement()).getName() != null) {
+					} else if (node.getSemanticElement() instanceof DefinitionBody
+							&& ((DefinitionBody) node.getSemanticElement()).getName() != null) {
 
 						List<INode> nodes = NodeModelUtils.findNodesForFeature(node.getSemanticElement(),
-								KimPackage.Literals.DEFINE_STATEMENT__NAME);
+								KimPackage.Literals.DEFINITION_BODY__NAME);
 						if (nodes.size() == 1 && nodes.get(0).getOffset() > start) {
 							acceptor.addPosition(start = nodes.get(0).getOffset(), nodes.get(0).getLength(),
 									KimHighlightingConfiguration.DEFINITION_ID);

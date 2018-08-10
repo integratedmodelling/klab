@@ -18,8 +18,7 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.DefineStatement#getAnnotations <em>Annotations</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.DefineStatement#getName <em>Name</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.DefineStatement#getValue <em>Value</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.DefineStatement#getDefineBody <em>Define Body</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kim.kim.KimPackage#getDefineStatement()
@@ -45,55 +44,29 @@ public interface DefineStatement extends EObject
   EList<Annotation> getAnnotations();
 
   /**
-   * Returns the value of the '<em><b>Name</b></em>' attribute.
+   * Returns the value of the '<em><b>Define Body</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Name</em>' attribute isn't clear,
+   * If the meaning of the '<em>Define Body</em>' containment reference isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Name</em>' attribute.
-   * @see #setName(String)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getDefineStatement_Name()
-   * @model
-   * @generated
-   */
-  String getName();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.DefineStatement#getName <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Name</em>' attribute.
-   * @see #getName()
-   * @generated
-   */
-  void setName(String value);
-
-  /**
-   * Returns the value of the '<em><b>Value</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Value</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Value</em>' containment reference.
-   * @see #setValue(Value)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getDefineStatement_Value()
+   * @return the value of the '<em>Define Body</em>' containment reference.
+   * @see #setDefineBody(DefinitionBody)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getDefineStatement_DefineBody()
    * @model containment="true"
    * @generated
    */
-  Value getValue();
+  DefinitionBody getDefineBody();
 
   /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.DefineStatement#getValue <em>Value</em>}' containment reference.
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.DefineStatement#getDefineBody <em>Define Body</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Value</em>' containment reference.
-   * @see #getValue()
+   * @param value the new value of the '<em>Define Body</em>' containment reference.
+   * @see #getDefineBody()
    * @generated
    */
-  void setValue(Value value);
+  void setDefineBody(DefinitionBody value);
 
 } // DefineStatement

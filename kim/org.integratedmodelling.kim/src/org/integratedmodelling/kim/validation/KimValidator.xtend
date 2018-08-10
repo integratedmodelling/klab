@@ -54,6 +54,7 @@ import org.integratedmodelling.kim.model.KimObservable
 import org.integratedmodelling.kim.model.KimObserver
 import org.integratedmodelling.kim.model.KimProject
 import org.integratedmodelling.kim.model.KimServiceCall
+import org.integratedmodelling.kim.model.KimSymbolDefinition
 import org.integratedmodelling.kim.model.KimTable
 import org.integratedmodelling.klab.utils.CamelCase
 import org.integratedmodelling.klab.utils.Pair
@@ -114,12 +115,23 @@ class KimValidator extends AbstractKimValidator {
 
 	@Check
 	def checkFunction(Function function) {
-		// TODO check parameters
 	}
 
 	@Check
 	def checkDefine(DefineStatement statement) {
-		// TODO
+		val namespace = (statement.eContainer.eContainer as Model).namespace
+		var ns = Kim.INSTANCE.getNamespace(namespace, true)
+		val KimSymbolDefinition definition = new KimSymbolDefinition(statement, ns)
+		var i = 0
+		for (annotation : statement.annotations) {
+			var ann = new KimAnnotation(annotation, ns, definition)
+			definition.annotations.add(ann)
+			for (notification : ann.validateUsage(definition)) {
+				notify(notification, statement, KimPackage.Literals.DEFINE_STATEMENT__ANNOTATIONS, i)
+			}
+			i++
+		}
+		ns.addChild(definition)
 	}
 
 	@Check

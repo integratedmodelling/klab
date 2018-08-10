@@ -16,6 +16,7 @@ import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.ide.kim.KimData;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
+import org.integratedmodelling.klab.ide.navigator.model.EResource;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 
 public class LinkHelper implements ILinkHelper {
@@ -57,6 +58,8 @@ public class LinkHelper implements ILinkHelper {
             EKimObject kob = (EKimObject) aSelection.getFirstElement();
             ENamespace kns = kob.getEParent(ENamespace.class);
             Eclipse.INSTANCE.openFile(kns.getIFile(), kob.getFirstLine());
+        } else if (aSelection.getFirstElement() instanceof EResource) {
+        	// open resource editor
         }
     }
 

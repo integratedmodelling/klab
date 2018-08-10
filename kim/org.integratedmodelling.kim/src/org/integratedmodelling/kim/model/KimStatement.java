@@ -224,9 +224,9 @@ public class KimStatement extends KimScope implements IKimStatement {
      */
     public static IKimStatement createDummy(Issue issue) {
         KimStatement ret = new KimStatement(null, null);
-        ret.setFirstLine(issue.getLineNumber());
-        ret.setFirstCharOffset(issue.getOffset());
-        ret.setLastCharOffset(issue.getOffset() + issue.getLength());
+        ret.setFirstLine(issue.getLineNumber() == null ? -1 : issue.getLineNumber());
+        ret.setFirstCharOffset(issue.getOffset() == null ? -1 : issue.getOffset());
+        ret.setLastCharOffset(issue.getOffset() == null ? -1 : issue.getOffset() + issue.getLength());
         return ret;
     }
 

@@ -29,6 +29,7 @@ import org.integratedmodelling.kim.kim.ConceptStatementBody;
 import org.integratedmodelling.kim.kim.Currency;
 import org.integratedmodelling.kim.kim.DataType;
 import org.integratedmodelling.kim.kim.DefineStatement;
+import org.integratedmodelling.kim.kim.DefinitionBody;
 import org.integratedmodelling.kim.kim.Dependency;
 import org.integratedmodelling.kim.kim.DocSelector;
 import org.integratedmodelling.kim.kim.Documentation;
@@ -103,6 +104,13 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   private EClass defineStatementEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass definitionBodyEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -709,9 +717,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getDefineStatement_Name()
+  public EReference getDefineStatement_DefineBody()
   {
-    return (EAttribute)defineStatementEClass.getEStructuralFeatures().get(1);
+    return (EReference)defineStatementEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -719,9 +727,29 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getDefineStatement_Value()
+  public EClass getDefinitionBody()
   {
-    return (EReference)defineStatementEClass.getEStructuralFeatures().get(2);
+    return definitionBodyEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getDefinitionBody_Name()
+  {
+    return (EAttribute)definitionBodyEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getDefinitionBody_Value()
+  {
+    return (EReference)definitionBodyEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -4515,8 +4543,11 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
     defineStatementEClass = createEClass(DEFINE_STATEMENT);
     createEReference(defineStatementEClass, DEFINE_STATEMENT__ANNOTATIONS);
-    createEAttribute(defineStatementEClass, DEFINE_STATEMENT__NAME);
-    createEReference(defineStatementEClass, DEFINE_STATEMENT__VALUE);
+    createEReference(defineStatementEClass, DEFINE_STATEMENT__DEFINE_BODY);
+
+    definitionBodyEClass = createEClass(DEFINITION_BODY);
+    createEAttribute(definitionBodyEClass, DEFINITION_BODY__NAME);
+    createEReference(definitionBodyEClass, DEFINITION_BODY__VALUE);
 
     modelBodyStatementEClass = createEClass(MODEL_BODY_STATEMENT);
     createEAttribute(modelBodyStatementEClass, MODEL_BODY_STATEMENT__INSTANTIATOR);
@@ -4997,8 +5028,11 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
     initEClass(defineStatementEClass, DefineStatement.class, "DefineStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getDefineStatement_Annotations(), this.getAnnotation(), null, "annotations", null, 0, -1, DefineStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getDefineStatement_Name(), ecorePackage.getEString(), "name", null, 0, 1, DefineStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getDefineStatement_Value(), this.getValue(), null, "value", null, 0, 1, DefineStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getDefineStatement_DefineBody(), this.getDefinitionBody(), null, "defineBody", null, 0, 1, DefineStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(definitionBodyEClass, DefinitionBody.class, "DefinitionBody", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getDefinitionBody_Name(), ecorePackage.getEString(), "name", null, 0, 1, DefinitionBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getDefinitionBody_Value(), this.getValue(), null, "value", null, 0, 1, DefinitionBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(modelBodyStatementEClass, ModelBodyStatement.class, "ModelBodyStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getModelBodyStatement_Instantiator(), ecorePackage.getEBoolean(), "instantiator", null, 0, 1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

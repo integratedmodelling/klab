@@ -1879,6 +1879,12 @@ ruleTARGET returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
 			$current.merge(kw);
 			newLeafNode(kw, grammarAccess.getTARGETAccess().getObserversKeyword_2());
 		}
+		    |
+		kw='definitions'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getTARGETAccess().getDefinitionsKeyword_3());
+		}
 	)
 ;
 
