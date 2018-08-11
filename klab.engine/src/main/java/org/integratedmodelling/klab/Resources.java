@@ -18,6 +18,7 @@ import javax.annotation.Nullable;
 import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
@@ -883,6 +884,9 @@ public enum Resources implements IResourceService {
 		for (String adapter : resourceAdapters.keySet()) {
 			ResourceAdapterReference ref = new ResourceAdapterReference();
 			ref.setName(adapter);
+			IPrototype configuration = resourceAdapters.get(adapter).getResourceConfiguration();
+			ref.setDescription(configuration.getDescription());
+			ref.setParameters(Extensions.INSTANCE.describePrototype(configuration));
 			ret.add(ref);
 		}
 		return ret;

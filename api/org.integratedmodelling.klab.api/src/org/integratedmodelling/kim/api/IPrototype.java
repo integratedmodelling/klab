@@ -97,6 +97,13 @@ public interface IPrototype {
 	String getName();
 
 	/**
+	 * Service description if provided; empty string otherwise.
+	 * 
+	 * @return the description. Never null.
+	 */
+	String getDescription();
+	
+	/**
 	 * Stated type of the computed artifacts.
 	 * 
 	 * @return return type

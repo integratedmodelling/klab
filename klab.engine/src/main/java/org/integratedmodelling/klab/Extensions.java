@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.Prototype;
+import org.integratedmodelling.klab.rest.ServicePrototype;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 
@@ -144,6 +145,18 @@ public enum Extensions implements IExtensionService {
             component.addService(prototype);
             prototypes.put(prototype.getName(), prototype);
         }
+    }
+    
+    /**
+     * Produce the javabean describing the passed service prototype.
+     * 
+     * @param prototype
+     * @return a new prototype descriptor
+     */
+    public ServicePrototype describePrototype(IPrototype prototype) {
+        ServicePrototype ret = new ServicePrototype();
+        // TODO
+        return ret;
     }
 
     public void registerResourceAdapter(ResourceAdapter annotation, Class<?> cls) throws KlabException {

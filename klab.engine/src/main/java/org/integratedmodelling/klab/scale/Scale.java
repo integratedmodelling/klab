@@ -974,7 +974,7 @@ public class Scale implements IScale {
                 // I want you just the way you are
                 return this;
             } else {
-                // just remove time
+                return minus(IGeometry.Dimension.Type.TIME);
             }
         } else if (locator instanceof IExtent) {
             if (((AbstractExtent) locator).isOwnExtent(this)) {
@@ -992,6 +992,16 @@ public class Scale implements IScale {
             throw new IllegalArgumentException("cannot use " + locator + " as a scale locator");
         }
         return null;
+    }
+
+    public Scale minus(Type extent) {
+        List<IExtent> exts = new ArrayList<>();
+        for (IExtent ext : extents) {
+            if (ext.getType() != extent) {
+                exts.add(ext);
+            }
+        }
+        return create(exts);
     }
 
     @Override
