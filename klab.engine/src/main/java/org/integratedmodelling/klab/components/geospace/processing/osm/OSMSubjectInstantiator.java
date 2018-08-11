@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.components.geospace.processing.osm;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -11,11 +13,11 @@ import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -28,13 +30,12 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
-import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CamelCase;
+import org.integratedmodelling.klab.utils.Escape;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
@@ -42,16 +43,24 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 
+import de.topobyte.osm4j.core.access.OsmIterator;
 import de.topobyte.osm4j.core.dataset.InMemoryMapDataSet;
+import de.topobyte.osm4j.core.dataset.MapDataSetLoader;
 import de.topobyte.osm4j.core.model.iface.OsmEntity;
+import de.topobyte.osm4j.core.model.iface.OsmNode;
 import de.topobyte.osm4j.core.model.iface.OsmRelation;
 import de.topobyte.osm4j.core.model.iface.OsmWay;
 import de.topobyte.osm4j.core.model.util.OsmModelUtil;
+import de.topobyte.osm4j.core.resolve.EntityFinder;
+import de.topobyte.osm4j.core.resolve.EntityFinders;
 import de.topobyte.osm4j.core.resolve.EntityNotFoundException;
+import de.topobyte.osm4j.core.resolve.EntityNotFoundStrategy;
+import de.topobyte.osm4j.geometry.GeometryBuilder;
 import de.topobyte.osm4j.geometry.RegionBuilder;
 import de.topobyte.osm4j.geometry.RegionBuilderResult;
 import de.topobyte.osm4j.geometry.WayBuilder;
 import de.topobyte.osm4j.geometry.WayBuilderResult;
+import de.topobyte.osm4j.xml.dynsax.OsmXmlIterator;
 
 /**
  * Subject instantiator to extract features from OSM. Either pass an Overpass query
@@ -104,9 +113,10 @@ import de.topobyte.osm4j.geometry.WayBuilderResult;
 // returnTypes = { NS.SUBJECT_INSTANTIATOR })
 public class OSMSubjectInstantiator implements IInstantiator, IExpression {
 
-    // TODO this may be configurable or contain a set of alternative URLs to try.
+    // TODO this should be configurable. Also we must provide all this machinery as a remote resource using its own OSM mirror.
     public static final String OVERPASS_URL = "http://overpass-api.de/api/interpreter";
 
+    @SuppressWarnings("unchecked")
     public OSMSubjectInstantiator(IParameters<String> parameters, IComputationContext context) {
 
         this.filters = parameters.get("filters", List.class);
@@ -153,7 +163,99 @@ public class OSMSubjectInstantiator implements IInstantiator, IExpression {
     @Override
     public List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context)
             throws KlabException {
-        // TODO Auto-generated method stub
+
+        if (query == null) {
+            query = buildQuery();
+            Logging.INSTANCE.info("Overpass query " + query);
+        }
+
+        List<IObjectArtifact> ret = new ArrayList<>();
+
+        if (query /* still */ == null) {
+            return ret;
+        }
+
+        /*
+        * TODO use cache if available, unless caching is disabled in parameters.
+        */
+        if (useCache) {
+
+        }
+
+        String url = OVERPASS_URL + "?data=" + Escape.forURL(query);
+        try (InputStream input = new URL(url).openStream()) {
+
+            OsmIterator iterator = new OsmXmlIterator(input, true);
+            InMemoryMapDataSet data = MapDataSetLoader.read(iterator, true, true, true);
+
+            if ((type == null || type.contains("node") || type.contains("point"))
+                    && !data.getNodes().isEmpty()) {
+                for (OsmNode node : data.getNodes().valueCollection()) {
+                    Geometry point = new GeometryBuilder().build(node);
+                    if (fixGeometries && (this.type.equals("polygon") || this.type.equals("area"))) {
+                        point = point.buffer(bufferDistance);
+                    }
+                    ISubject subject = makeSubject(semantics, point, node, context);
+                    if (subject != null) {
+                        ret.add(subject);
+                    }
+                }
+            }
+
+            // relations first, so later we can exclude ways that compose them
+            Set<OsmWay> waysInRelations = new HashSet<>();
+            EntityFinder wayFinder = EntityFinders.create(data, EntityNotFoundStrategy.IGNORE);
+
+            if ((type == null || type.contains("relation") || type.contains("area")
+                    || type.contains("polygon"))
+                    && !data.getRelations().isEmpty()) {
+                for (OsmRelation rel : data.getRelations().valueCollection()) {
+                    Geometry polygon = getPolygon(rel, data);
+                    try {
+                        wayFinder.findMemberWays(rel, waysInRelations);
+                    } catch (EntityNotFoundException e) {
+                        // won't happen
+                    }
+                    if (this.fixGeometries && this.type.equals("point")) {
+                        polygon = polygon.getCentroid();
+                    }
+                    ISubject subject = makeSubject(semantics, polygon, rel, context);
+                    if (subject != null) {
+                        ret.add(subject);
+                    }
+                }
+            }
+
+            if ((type == null || type.contains("way") || type.contains("area") || type.contains("polygon")
+                    || type.contains("line"))
+                    && !data.getWays().isEmpty()) {
+                for (OsmWay way : data.getWays().valueCollection()) {
+
+                    // bele vist
+                    if (waysInRelations.contains(way)) {
+                        continue;
+                    }
+                    Geometry line = (fixGeometries
+                            && (this.type.equals("polygon") || this.type.equals("area")))
+                                    ? getPolygon(way, data)
+                                    : new GeometryBuilder().build(way, data);
+                    ISubject subject = makeSubject(semantics, line, way, context);
+                    if (subject != null) {
+                        ret.add(subject);
+                    }
+                }
+            }
+        } catch (Throwable e) {
+            throw new KlabIOException(e);
+        }
+
+        /*
+        * TODO cache query and results in session data if OK, unless caching is disabled
+        * in parameters.
+        */
+
+        monitor.info(this.nsubjs + " objects retrieved from OpenStreetMap");
+
         return null;
     }
 
@@ -196,20 +298,6 @@ public class OSMSubjectInstantiator implements IInstantiator, IExpression {
     private int           timeout        = 600;
     private boolean       simplifyShapes = false;
     double                bufferDistance = Double.NaN;
-
-    // @Override
-    // public void initialize(IActiveSubject contextSubject, IResolutionScope context, IModel callingModel,
-    // Map<String, IObservableSemantics> expectedInputs, Map<String, IObservableSemantics> expectedOutputs,
-    // IMonitor monitor)
-    // throws KlabException {
-    //
-    // this.observable = callingModel.getObservable().getType();
-    // this.monitor = monitor;
-    //
-    // canDispose = !contextSubject.getScale().isTemporallyDistributed();
-    // this.context = contextSubject;
-    // this.scope = context;
-    // }
 
     private String buildQuery() throws KlabValidationException {
 
@@ -266,114 +354,7 @@ public class OSMSubjectInstantiator implements IInstantiator, IExpression {
         return ret;
     }
 
-    //
-    // @Override
-    // public Map<String, IObservation> createSubjects(IActiveSubject context, ITransition transition,
-    // Map<String, IState> inputs)
-    // throws KlabException {
-    //
-    // if (transition != null) {
-    // canDispose = transition.isLast();
-    // if (!isTemporal) {
-    // return null;
-    // }
-    // }
-    //
-    // if (query == null) {
-    // query = buildQuery();
-    // KLAB.info("Overpass query " + query);
-    // }
-    //
-    // Map<String, IObservation> ret = new HashMap<>();
-    //
-    // if (query /* still */ == null) {
-    // return ret;
-    // }
-    //
-    // /*
-    // * TODO use cache if available, unless caching is disabled in parameters.
-    // */
-    // if (useCache) {
-    //
-    // }
-    //
-    // String url = OVERPASS_URL + "?data=" + Escape.forURL(query);
-    // try (InputStream input = new URL(url).openStream()) {
-    //
-    // OsmIterator iterator = new OsmXmlIterator(input, true);
-    // InMemoryMapDataSet data = MapDataSetLoader.read(iterator, true, true, true);
-    //
-    // if ((type == null || type.contains("node") || type.contains("point"))
-    // && !data.getNodes().isEmpty()) {
-    // for (OsmNode node : data.getNodes().valueCollection()) {
-    // Geometry point = new GeometryBuilder().build(node);
-    // if (fixGeometries && (this.type.equals("polygon") || this.type.equals("area"))) {
-    // point = point.buffer(bufferDistance);
-    // }
-    // ISubject subject = makeSubject(point, node);
-    // if (subject != null) {
-    // ret.put(subject.getName(), subject);
-    // }
-    // }
-    // }
-    //
-    // // relations first, so later we can exclude ways that compose them
-    // Set<OsmWay> waysInRelations = new HashSet<>();
-    // EntityFinder wayFinder = EntityFinders.create(data, EntityNotFoundStrategy.IGNORE);
-    //
-    // if ((type == null || type.contains("relation") || type.contains("area")
-    // || type.contains("polygon"))
-    // && !data.getRelations().isEmpty()) {
-    // for (OsmRelation rel : data.getRelations().valueCollection()) {
-    // Geometry polygon = getPolygon(rel, data);
-    // try {
-    // wayFinder.findMemberWays(rel, waysInRelations);
-    // } catch (EntityNotFoundException e) {
-    // // won't happen
-    // }
-    // if (this.fixGeometries && this.type.equals("point")) {
-    // polygon = polygon.getCentroid();
-    // }
-    // ISubject subject = makeSubject(polygon, rel);
-    // if (subject != null) {
-    // ret.put(subject.getName(), subject);
-    // }
-    // }
-    // }
-    //
-    // if ((type == null || type.contains("way") || type.contains("area") || type.contains("polygon")
-    // || type.contains("line"))
-    // && !data.getWays().isEmpty()) {
-    // for (OsmWay way : data.getWays().valueCollection()) {
-    //
-    // // bele vist
-    // if (waysInRelations.contains(way)) {
-    // continue;
-    // }
-    // Geometry line = (fixGeometries
-    // && (this.type.equals("polygon") || this.type.equals("area")))
-    // ? getPolygon(way, data) : new GeometryBuilder().build(way, data);
-    // ISubject subject = makeSubject(line, way);
-    // if (subject != null) {
-    // ret.put(subject.getName(), subject);
-    // }
-    // }
-    // }
-    // } catch (Throwable e) {
-    // throw new KlabIOException(e);
-    // }
-    //
-    // /*
-    // * TODO cache query and results in session data if OK, unless caching is disabled
-    // * in parameters.
-    // */
-    //
-    // monitor.info(this.nsubjs + " objects retrieved from OpenStreetMap", Messages.INFOCLASS_DOWNLOAD);
-    //
-    // return ret;
-    // }
-    //
-    private ISubject makeSubject(IObservable observable, Geometry geometry, OsmEntity node, IRuntimeContext context)
+    private ISubject makeSubject(IObservable observable, Geometry geometry, OsmEntity node, IComputationContext context)
             throws KlabException {
 
         this.nsubjs++;
