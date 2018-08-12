@@ -100,12 +100,10 @@ public class ResourceEditor extends ViewPart {
 			}
 			{
 				urnLabel = new Label(grpResourceData, SWT.NONE);
-				urnLabel.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
+				urnLabel.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 				urnLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
 				urnLabel.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
-				GridData gd_urnLabel = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-				gd_urnLabel.heightHint = 32;
-				urnLabel.setLayoutData(gd_urnLabel);
+				urnLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 			}
 			
 			Label lblLocalName = new Label(grpResourceData, SWT.NONE);
@@ -113,12 +111,10 @@ public class ResourceEditor extends ViewPart {
 			lblLocalName.setText("Local name:");
 			
 			localName = new Label(grpResourceData, SWT.NONE);
-			localName.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
+			localName.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 			localName.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_CYAN));
 			localName.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
-			GridData gd_localName = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-			gd_localName.heightHint = 32;
-			localName.setLayoutData(gd_localName);
+			localName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		}
 		{
 			Group grpGeometry = new Group(container, SWT.NONE);
