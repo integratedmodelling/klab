@@ -1,8 +1,8 @@
-@namespace gis
+@namespace gis.extract
 @klab 0.10.0
 @version 0.10.0
 
-number terrain 
+object features 
 	"The terrain function generates a random fractal surface that can be parameterized to
 	 realistically mimic various patterns of the Earth surface, such as elevation or slope."
 {

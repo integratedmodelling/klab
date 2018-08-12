@@ -667,7 +667,7 @@ public class KimValidator extends AbstractKimValidator {
               if (_isInstantiator) {
                 _xifexpression_4 = "instantiator";
               } else {
-                _xifexpression_4 = "contextualizer";
+                _xifexpression_4 = "resolver";
               }
               String name = _xifexpression_4;
               String _name_2 = descriptor.getObservables().get(0).getMain().getObservable().getName();

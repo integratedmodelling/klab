@@ -507,7 +507,7 @@ class KimValidator extends AbstractKimValidator {
 					if (descriptor.observables.get(0).formalName !== null) {
 						descriptor.name = observables.get(0).formalName
 					} else {
-						var name = if(model.instantiator) "instantiator" else "contextualizer";
+						var name = if(model.instantiator) "instantiator" else "resolver";
 						// TODO maybe if there are traits or roles we should add those too
 						var st = new SemanticType(descriptor.observables.get(0).main.observable.name)
 						descriptor.name = CamelCase.toLowerCase(st.name, '-') + "-" + name

@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -27,7 +28,6 @@ import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -68,56 +68,56 @@ import de.topobyte.osm4j.xml.dynsax.OsmXmlIterator;
  * requests. If temporal = true, uses timestamps to create objects and events at the time
  * of their existence. Otherwise simply builds objects at initialization regardless of
  * timestamps.
- * 
- * Should also return a single ID by identifier, to annotate as we please. This should
- * become usable within observe statements (using ...) so that we can construct contexts
- * from OSM through Nominatim queries.
- * 
- * TODO pass a zoom level from metadata (call it an extent metric or something, with 0 =
- * total for the worldview) and void the correspondent model if the current context has a
- * zoom level below that.
- * 
+ *  
  * @author ferdinando.villa
  *
  */
-// @Prototype(
-// id = "osm.query-features",
-// published = true,
-// args = {
-// "# id",
-// Prototype.INT,
-// "# filters", // more complex queries already in overpass format, one per
-// // type
-// Prototype.LIST,
-// "# feature-type",
-// Prototype.TEXT, // "node|way|relation|polygon|area|line|point" or
-// // comma-separated combinations
-// "# max-objects",
-// Prototype.INT,
-// "# timeout",
-// Prototype.INT,
-// "# equal",
-// Prototype.LIST,
-// "# temporal",
-// Prototype.BOOLEAN,
-// "# not-equal",
-// Prototype.LIST,
-// "# matching",
-// Prototype.LIST,
-// "# not-matching",
-// Prototype.LIST,
-// "# use-cache",
-// Prototype.BOOLEAN,
-// "# simplify-polygons",
-// Prototype.BOOLEAN, },
-// returnTypes = { NS.SUBJECT_INSTANTIATOR })
 public class OSMSubjectInstantiator implements IInstantiator, IExpression {
 
-    // TODO this should be configurable. Also we must provide all this machinery as a remote resource using its own OSM mirror.
-    public static final String OVERPASS_URL = "http://overpass-api.de/api/interpreter";
+    List<Object>               matching       = null;
+    List<Object>               notmatching    = null;
+    List<Object>               equal          = null;
+    List<Object>               notequal       = null;
+
+    List<Object>               filters        = null;
+
+    String                     type           = null;
+
+    boolean                    isTemporal     = false;
+    boolean                    fixGeometries  = false;
+
+    // String outputType = null;
+    String                     query          = null;
+
+    boolean                    canDispose     = false;
+    boolean                    useCache       = true;
+
+    IDirectObservation         contextSubject = null;
+
+    // forced types
+    Set<String>                geometryTypes  = new HashSet<>();
+
+    private int                nsubjs         = 0;
+    int                        maxObjects     = 0;
+
+    private WayBuilder         wayBuilder     = new WayBuilder();
+    private RegionBuilder      regionBuilder  = new RegionBuilder();
+
+    private int                timeout        = 600;
+    private boolean            simplifyShapes = false;
+    double                     bufferDistance = Double.NaN;
+
+    // TODO this should be configurable. Also we must provide all this machinery as a remote resource using
+    // its own OSM mirror.
+    public static final String OVERPASS_URL   = "http://overpass-api.de/api/interpreter";
+
+    public OSMSubjectInstantiator() {
+    }
 
     @SuppressWarnings("unchecked")
     public OSMSubjectInstantiator(IParameters<String> parameters, IComputationContext context) {
+
+        this.contextSubject = context.getContextObservation();
 
         this.filters = parameters.get("filters", List.class);
         this.equal = parameters.get("equal", List.class);
@@ -253,51 +253,15 @@ public class OSMSubjectInstantiator implements IInstantiator, IExpression {
         * TODO cache query and results in session data if OK, unless caching is disabled
         * in parameters.
         */
+        context.getMonitor().info(this.nsubjs + " objects retrieved from OpenStreetMap");
 
-        monitor.info(this.nsubjs + " objects retrieved from OpenStreetMap");
-
-        return null;
+        return ret;
     }
 
     @Override
     public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
         return new OSMSubjectInstantiator(parameters, context);
     }
-
-    List<Object>          matching       = null;
-    List<Object>          notmatching    = null;
-    List<Object>          equal          = null;
-    List<Object>          notequal       = null;
-
-    List<Object>          filters        = null;
-
-    String                type           = null;
-
-    boolean               isTemporal     = false;
-    boolean               fixGeometries  = false;
-
-    // String outputType = null;
-    String                query          = null;
-
-    boolean               canDispose     = false;
-    boolean               useCache       = true;
-
-    ISubject              contextSubject = null;
-    IResolutionScope      scope          = null;
-
-    // forced types
-    Set<String>           geometryTypes  = new HashSet<>();
-
-    private int           nsubjs         = 0;
-    private IMonitor      monitor;
-    int                   maxObjects     = 0;
-
-    private WayBuilder    wayBuilder     = new WayBuilder();
-    private RegionBuilder regionBuilder  = new RegionBuilder();
-
-    private int           timeout        = 600;
-    private boolean       simplifyShapes = false;
-    double                bufferDistance = Double.NaN;
 
     private String buildQuery() throws KlabValidationException {
 
@@ -398,8 +362,7 @@ public class OSMSubjectInstantiator implements IInstantiator, IExpression {
         return ret;
     }
 
-    //
-    private IScale getScale(ISpace extent, ISubject context) throws KlabException {
+    private IScale getScale(ISpace extent, IDirectObservation context) throws KlabException {
 
         List<IExtent> exts = new ArrayList<>();
         for (IExtent e : context.getScale().getExtents()) {
