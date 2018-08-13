@@ -32,11 +32,12 @@ public class WorldWidget extends Canvas {
 					int y = 180 - (int) (geometry.getSouth() + 90);
 					int width = (int) (geometry.getEast() - geometry.getWest());
 					int height = (int) (geometry.getNorth() - geometry.getSouth());
+					System.out.println("x = " + x + ", y = " + y + ", width = " + width + ", height = " + height);
 					if (width < 2 || height < 2) {
 						e.gc.drawImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/target_red.png"), x,
 								y - height);
 					} else {
-						e.gc.drawRectangle(x - 8, y + 7, width, height);
+						e.gc.drawRectangle(x, y, width, height);
 					}
 				}
 			}
