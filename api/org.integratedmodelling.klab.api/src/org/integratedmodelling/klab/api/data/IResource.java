@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.services.IResourceService;
+import org.integratedmodelling.klab.rest.SpatialExtent;
 
 /**
  * A IResource represents non-semantic information content that is identified by
@@ -220,6 +221,14 @@ public interface IResource extends Serializable {
 		 * @return the builder itself
 		 */
 		Builder addHistory(IResource previousResource);
+		
+		/**
+		 * For display.
+		 * 
+		 * @param extent
+		 * @return
+		 */
+		Builder withSpatialExtent(SpatialExtent extent);
 
 		/**
 		 * True if error() was ever called.

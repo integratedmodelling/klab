@@ -221,6 +221,7 @@ public enum Observations implements IObservationService {
 			if (observation instanceof IState && space.isRegular() && space.size() > 1) {
 				gtype = GeometryType.RASTER;
 			}
+			
 			ret.getGeometryTypes().add(gtype);
 		}
 

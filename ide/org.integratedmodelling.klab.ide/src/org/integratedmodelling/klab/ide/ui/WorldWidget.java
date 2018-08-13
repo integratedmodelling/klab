@@ -1,34 +1,45 @@
 package org.integratedmodelling.klab.ide.ui;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.wb.swt.ResourceManager;
-import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.rest.SpatialExtent;
 
 public class WorldWidget extends Canvas {
 
-	public WorldWidget(IGeometry geometry, Composite parent, int style) {
-		
+	SpatialExtent geometry;
+
+	public void setExtent(SpatialExtent geometry) {
+		this.geometry = geometry;
+		redraw();
+	}
+
+	public WorldWidget(Composite parent, int style) {
+
 		super(parent, style);
-        this.setSize(360, 181);
-        this.setBackgroundImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/worldscaled.png"));
-		if (geometry.getDimension(Type.SPACE) != null) {
-//			GC gc = new GC(image);
-//			gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
-//			double[] bbox = geometry.getDimension(Type.SPACE).getParameters().get(Geometry.PARAMETER_SPACE_BOUNDINGBOX, double[].class);
-//			if (bbox != null) {
-//				int x = (int)(bbox[0] + 180);
-//				int y = (int)(bbox[2] + 90);
-//				int width = (int)(bbox[1] - bbox[0]);
-//				int height = (int)(bbox[3] - bbox[2]);
-//				gc.drawRectangle(
-//						x, 
-//						y, 
-//						width, 
-//						height);
-//			}
-		}
+		this.setSize(360, 181);
+		addPaintListener(new PaintListener() {
+			public void paintControl(PaintEvent e) {
+				setBackgroundImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/worldscaled.png"));
+				if (geometry != null) {
+					e.gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+					int x = (int) (geometry.getWest() + 180);
+					int y = 180 - (int) (geometry.getSouth() + 90);
+					int width = (int) (geometry.getEast() - geometry.getWest());
+					int height = (int) (geometry.getNorth() - geometry.getSouth());
+					if (width < 2 || height < 2) {
+						e.gc.drawImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/target_red.png"), x,
+								y);
+					} else {
+						e.gc.drawRectangle(x, y - height, width, height);
+					}
+				}
+			}
+		});
 	}
 }

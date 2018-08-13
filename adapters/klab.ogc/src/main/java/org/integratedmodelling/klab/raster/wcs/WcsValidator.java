@@ -76,7 +76,11 @@ public class WcsValidator implements IResourceValidator {
 		}
 		IGeometry geometry = layer.getGeometry();
 
-		return new ResourceBuilder().withParameters(userData).withType(Type.NUMBER).withGeometry(geometry);
+		return new ResourceBuilder()
+				.withParameters(userData)
+				.withType(Type.NUMBER)
+				.withGeometry(geometry)
+				.withSpatialExtent(layer.getSpatialExtent());
 	}
 
 	@Override

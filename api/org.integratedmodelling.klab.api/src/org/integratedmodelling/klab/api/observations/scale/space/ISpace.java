@@ -17,6 +17,7 @@ package org.integratedmodelling.klab.api.observations.scale.space;
 
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.rest.SpatialExtent;
 
 /**
  * The Interface ISpace.
@@ -61,5 +62,13 @@ public interface ISpace extends IExtent {
      */
     @Override
     ISpace at(ILocator locator);
+
+    /**
+     * Build a lat/lon descriptor for the extent we represent. This shouldn't really be
+     * API.
+     * 
+     * @return
+     */
+	SpatialExtent getExtentDescriptor();
 
 }

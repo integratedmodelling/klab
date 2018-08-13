@@ -26,12 +26,15 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.rest.ResourceReference;
+import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Parameters;
 
@@ -57,10 +60,11 @@ public class ResourceBuilder implements IResource.Builder {
 	private IArtifact.Type type;
 	private String projectName;
 	private String localName;
-	
+
 	// for importers
 	private String resourceId;
 	private List<File> importedFiles = new ArrayList<>();
+	private SpatialExtent spatialExtent;
 
 	/** {@inheritDoc} */
 	@Override
@@ -81,7 +85,8 @@ public class ResourceBuilder implements IResource.Builder {
 		ret.type = type;
 		ret.projectName = this.projectName;
 		ret.localName = this.localName;
-		
+		ret.spatialExtent = this.spatialExtent;
+
 		return ret;
 	}
 
@@ -98,13 +103,12 @@ public class ResourceBuilder implements IResource.Builder {
 		parameters.put(key, value);
 		return this;
 	}
-	
+
 	@Override
 	public ResourceBuilder withLocalPath(String localPath) {
 		this.localPath = localPath;
 		return this;
 	}
-
 
 	/** {@inheritDoc} */
 	@Override
@@ -145,7 +149,7 @@ public class ResourceBuilder implements IResource.Builder {
 	/** {@inheritDoc} */
 	@Override
 	public ResourceBuilder addHistory(IResource notification) {
-		this.history.add(((Resource)notification).getReference());
+		this.history.add(((Resource) notification).getReference());
 		return this;
 	}
 
@@ -153,6 +157,10 @@ public class ResourceBuilder implements IResource.Builder {
 	@Override
 	public ResourceBuilder withGeometry(IGeometry s) {
 		this.geometry = s;
+		if (this.geometry.getDimension(Dimension.Type.SPACE) instanceof ISpace) {
+			this.spatialExtent = ((ISpace) this.geometry.getDimension(Dimension.Type.SPACE)).getExtentDescriptor();
+		}
+
 		return this;
 	}
 
@@ -197,7 +205,7 @@ public class ResourceBuilder implements IResource.Builder {
 	public Collection<File> getImportedFiles() {
 		return importedFiles;
 	}
-	
+
 	@Override
 	public String getResourceId() {
 		return resourceId;
@@ -216,6 +224,12 @@ public class ResourceBuilder implements IResource.Builder {
 	@Override
 	public Builder withLocalName(String localName) {
 		this.localName = localName;
+		return this;
+	}
+
+	@Override
+	public Builder withSpatialExtent(SpatialExtent extent) {
+		this.spatialExtent = extent;
 		return this;
 	}
 

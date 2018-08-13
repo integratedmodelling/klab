@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.scale.AbstractExtent;
 
 /**
@@ -582,7 +583,7 @@ public class Grid extends Area implements IGrid {
 
 		@Override
 		public String encode() {
-			return "S2(1,1){shape=" + ((Shape) getShape()).getWKB() + ",proj=" + getProjection().getCode() + "}";
+			return "S2(1,1){shape=" + ((Shape) getShape()).getWKB() + ",proj=" + getProjection().getSimpleSRS() + "}";
 		}
 
 		@Override
@@ -603,6 +604,11 @@ public class Grid extends Area implements IGrid {
 		@Override
 		public IServiceCall getKimSpecification() {
 			return getShape().getKimSpecification();
+		}
+
+		@Override
+		public SpatialExtent getExtentDescriptor() {
+			return getShape().getExtentDescriptor();
 		}
 	}
 

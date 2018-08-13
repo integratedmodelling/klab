@@ -77,10 +77,11 @@ public class VectorValidator implements IResourceValidator {
 				try {
 					ECQL.toFilter(userData.get("filter", String.class));
 				} catch (CQLException e) {
-					ret.addError("CQL filter expression '" + userData.get("filter", String.class) + "' has syntax errors");
+					ret.addError(
+							"CQL filter expression '" + userData.get("filter", String.class) + "' has syntax errors");
 				}
 			}
-			
+
 			DataStore dataStore = DataStoreFinder.getDataStore(map);
 			String typeName = dataStore.getTypeNames()[0];
 			FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(typeName);
@@ -96,7 +97,7 @@ public class VectorValidator implements IResourceValidator {
 
 	protected void validateCollection(FeatureSource<SimpleFeatureType, SimpleFeature> source, Builder ret,
 			IParameters<String> userData, IMonitor monitor) throws IOException {
-		
+
 		Filter filter = Filter.INCLUDE;
 		FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures(filter);
 
@@ -106,12 +107,13 @@ public class VectorValidator implements IResourceValidator {
 			// we only do this when importing, so let's go through them
 			envelope = collection.getBounds();
 		}
+		ret.withSpatialExtent(Envelope.create(envelope).asShape().getExtentDescriptor());
 
 		Map<String, Class<?>> attributeTypes = new HashMap<>();
 
 		int shapeDimension = 0;
 		for (AttributeDescriptor ad : source.getSchema().getAttributeDescriptors()) {
-			
+
 			if (ad.getLocalName().equals("the_geom")) {
 				// set shape dimensionality from geometry type: 0 = point, 1 = line, 2 = polygon
 				if (com.vividsolutions.jts.geom.Geometry.class.isAssignableFrom(ad.getType().getBinding())) {
@@ -130,9 +132,9 @@ public class VectorValidator implements IResourceValidator {
 				attributeTypes.put(ad.getLocalName(), ad.getType().getBinding());
 			}
 		}
-		
+
 		// TODO if attributes are requested, validate their type and name
-		
+
 		// TODO if attributes are requested, set the type in the builder accordingly
 		ret.withType(IArtifact.Type.OBJECT);
 
@@ -190,11 +192,10 @@ public class VectorValidator implements IResourceValidator {
 		}
 		if (!ret.hasErrors()) {
 
-			Geometry geometry = Geometry.create("#s" + shapeDimension)
-							.withBoundingBox(envelope.getMinimum(0), envelope.getMaximum(0),
-									envelope.getMinimum(1), envelope.getMaximum(1))
-							.withProjection(crsCode)
-							.withSpatialShape(collection.size());
+			Geometry geometry = Geometry
+					.create("#s" + shapeDimension).withBoundingBox(envelope.getMinimum(0), envelope.getMaximum(0),
+							envelope.getMinimum(1), envelope.getMaximum(1))
+					.withProjection(crsCode).withSpatialShape(collection.size());
 
 			ret.withGeometry(geometry);
 		}

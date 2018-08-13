@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeT
 import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToShape;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.scale.AbstractExtent;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -524,7 +525,7 @@ public class Shape extends AbstractExtent implements IShape {
     @Override
     public String encode() {
         return "s2(1,1){shape=" + ((Shape) getShape()).getWKB() + "," + getEnvelope().encode() + ",proj="
-                + getProjection().getCode() + "}";
+                + getProjection().getSimpleSRS() + "}";
     }
 
     @Override
@@ -571,5 +572,16 @@ public class Shape extends AbstractExtent implements IShape {
         }
         return ret;
     }
+
+	@Override
+	public SpatialExtent getExtentDescriptor() {
+		Envelope stdEnvelope = getEnvelope().transform(Projection.getLatLon(), true);
+		SpatialExtent ret = new SpatialExtent();
+		ret.setEast(stdEnvelope.getMinX());
+		ret.setWest(stdEnvelope.getMaxX());
+		ret.setSouth(stdEnvelope.getMinY());
+		ret.setNorth(stdEnvelope.getMaxY());
+		return ret;
+	}
 
 }

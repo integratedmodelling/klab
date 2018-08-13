@@ -24,6 +24,7 @@ import org.geotools.coverage.grid.GridGeometry2D;
 import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.GridFormatFinder;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.integratedmodelling.kim.api.IParameters;
@@ -34,6 +35,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.ogc.RasterAdapter;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
@@ -66,6 +68,9 @@ public class RasterValidator implements IResourceValidator {
 			Envelope envelope = coverage.getEnvelope();
 			CoordinateReferenceSystem crs = coverage.getCoordinateReferenceSystem();
 			GridGeometry2D grid = coverage.getGridGeometry();
+			org.integratedmodelling.klab.components.geospace.extents.Envelope refenv = org.integratedmodelling.klab.components.geospace.extents.Envelope
+					.create(envelope, Projection.create(crs));
+			ret.withSpatialExtent(refenv.asShape().getExtentDescriptor());
 
 			String crsCode = null;
 			if (crs == null) {
@@ -124,7 +129,7 @@ public class RasterValidator implements IResourceValidator {
 						.withSpatialShape((long) grid.getGridRange().getSpan(0), (long) grid.getGridRange().getSpan(1));
 
 				ret.withGeometry(geometry);
-				
+
 			} else {
 				monitor.info("Raster file is invalid; resource has errors");
 			}

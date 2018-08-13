@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.components.geospace.extents.mediators.Subgri
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.scale.Extent;
 import org.integratedmodelling.klab.scale.Scale.Mediator;
 import org.integratedmodelling.klab.utils.collections.IterableAdapter;
@@ -584,9 +585,9 @@ public class Space extends Extent implements ISpace {
 	public String encode() {
 		if (grid != null) {
 			return "S2(" + grid.getXCells() + "," + grid.getYCells() + "){" + grid.getEnvelope().encode() + ",shape="
-					+ getShape().getWKB() + ",proj=" + getProjection().getCode() + "}";
+					+ getShape().getWKB() + ",proj=" + getProjection().getSimpleSRS() + "}";
 		} else if (features != null) {
-			return "s1(" + features.size() + "){proj=" + getProjection().getCode() + "," + getEnvelope().encode() + "}";
+			return "s1(" + features.size() + "){proj=" + getProjection().getSimpleSRS() + "," + getEnvelope().encode() + "}";
 		}
 		return getShape().encode();
 	}
@@ -605,18 +606,18 @@ public class Space extends Extent implements ISpace {
 			if (other instanceof Space && ((Space) other).grid != null) {
 				return new GridToGrid(grid, ((Space) other).grid);
 			} else if (other instanceof Space && ((Space) other).features != null) {
-				return new GridToFeatures(grid, ((Space)other).features);
+				return new GridToFeatures(grid, ((Space) other).features);
 			} else {
-				return new GridToShape(grid, (Shape)other.getShape());
+				return new GridToShape(grid, (Shape) other.getShape());
 			}
-			
+
 		} else if (features != null) {
 			if (other instanceof Space && ((Space) other).grid != null) {
 
 			} else if (features != null && other instanceof Shape) {
 
 			} else {
-				return new FeaturesToShape(features, (Shape)other.getShape());
+				return new FeaturesToShape(features, (Shape) other.getShape());
 			}
 		} else {
 			if (other instanceof Space && ((Space) other).grid != null) {
@@ -624,7 +625,7 @@ public class Space extends Extent implements ISpace {
 			} else if (other instanceof Space && ((Space) other).features != null) {
 				return new ShapeToFeatures(getShape(), ((Space) other).features);
 			} else {
-				return new ShapeToShape(getShape(), (Shape)other.getShape());
+				return new ShapeToShape(getShape(), (Shape) other.getShape());
 			}
 		}
 
@@ -664,4 +665,8 @@ public class Space extends Extent implements ISpace {
 		return new Space(common);
 	}
 
+	@Override
+	public SpatialExtent getExtentDescriptor() {
+		return getShape().getExtentDescriptor();
+	}
 }

@@ -27,6 +27,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
+import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Range;
 
@@ -356,9 +357,23 @@ public class WCSService {
 				ret = ret
 						.withBoundingBox(originalEnvelope.getMinX(), originalEnvelope.getMaxX(),
 								originalEnvelope.getMinY(), originalEnvelope.getMaxY())
-						.withProjection(originalProjection.getCode());
+						.withProjection(originalProjection.getSimpleSRS());
 			}
 
+			return ret;
+		}
+		
+		
+		public SpatialExtent getSpatialExtent() {
+			
+			if (wgs84envelope == null) {
+				return null;
+			}
+			SpatialExtent ret = new SpatialExtent();
+			ret.setWest(wgs84envelope.getMinX());
+			ret.setEast(wgs84envelope.getMaxX());
+			ret.setSouth(wgs84envelope.getMinY());
+			ret.setNorth(wgs84envelope.getMaxY());
 			return ret;
 		}
 	}

@@ -3,23 +3,21 @@ package org.integratedmodelling.klab.ide.views;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowData;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.part.ViewPart;
-import org.integratedmodelling.klab.common.Geometry;
-import org.integratedmodelling.klab.ide.ui.WorldWidget;
-import org.integratedmodelling.klab.rest.ResourceReference;
-import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.layout.RowData;
+import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
+import org.eclipse.wb.swt.SWTResourceManager;
+import org.integratedmodelling.klab.ide.ui.WorldWidget;
+import org.integratedmodelling.klab.rest.ResourceReference;
 
 public class ResourceEditor extends ViewPart {
 
@@ -30,6 +28,8 @@ public class ResourceEditor extends ViewPart {
 	private Label geometryDefinition;
 	private Label localName;
 	private Group grpAdapterData;
+
+	private WorldWidget worldWidget;
 	
 //	private final FormToolkit toolkit = new FormToolkit(Display.getCurrent());
 
@@ -37,14 +37,11 @@ public class ResourceEditor extends ViewPart {
 	}
 	
 	public void loadResource(ResourceReference resource) {
-		// TODO
 		urnLabel.setText(resource.getUrn());
         geometryDefinition.setText(resource.getGeometry());
         localName.setText(resource.getLocalName());
         grpAdapterData.setText(resource.getAdapterType().toUpperCase() + " adapter data");
-		Geometry geometry = Geometry.create(resource.getGeometry());
-		WorldWidget worldWidget = new WorldWidget(geometry, mapHolder, SWT.NONE);
-//		worldWidget.setLayout(new FillLayout());
+		worldWidget.setExtent(resource.getSpatialExtent());
 	}
 
 	/**
@@ -127,7 +124,8 @@ public class ResourceEditor extends ViewPart {
 			gd_mapHolder.heightHint = 181;
 			gd_mapHolder.widthHint = 360;
 			mapHolder.setLayoutData(gd_mapHolder);
-			
+			this.worldWidget = new WorldWidget(mapHolder, SWT.NONE);
+
 			Composite composite_1 = new Composite(grpGeometry, SWT.NONE);
 			composite_1.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 			{

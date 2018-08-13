@@ -25,7 +25,8 @@ public class ResourceReference {
     private List<String> localPaths = new ArrayList<>();
     private List<ResourceReference> history = new ArrayList<>();
     private List<Notification> notifications = new ArrayList<>();
-
+    private SpatialExtent spatialExtent;
+    
     public ResourceReference() {
     }
 
@@ -43,6 +44,7 @@ public class ResourceReference {
 		this.parameters.putAll(other.parameters);
 		this.localPaths.addAll(other.localPaths);
 		this.history.addAll(other.history);
+		this.spatialExtent = other.spatialExtent;
 		this.notifications.addAll(other.notifications);
 	}
 
@@ -159,5 +161,13 @@ public class ResourceReference {
     public void setLocalName(String localName) {
         this.localName = localName;
     }
+
+	public SpatialExtent getSpatialExtent() {
+		return spatialExtent;
+	}
+
+	public void setSpatialExtent(SpatialExtent spatialExtent) {
+		this.spatialExtent = spatialExtent;
+	}
 
 }
