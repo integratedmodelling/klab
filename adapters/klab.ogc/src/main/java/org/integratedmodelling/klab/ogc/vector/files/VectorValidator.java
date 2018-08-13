@@ -86,7 +86,10 @@ public class VectorValidator implements IResourceValidator {
 			String typeName = dataStore.getTypeNames()[0];
 			FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(typeName);
 
-			validateCollection(source, ret, userData, monitor);
+			/*
+			 * Assume data will come with straight projection.
+			 */
+			validateCollection(source, ret, userData, false, monitor);
 
 		} catch (Throwable e) {
 			ret.addError("Error validating " + e.getMessage());
@@ -96,25 +99,29 @@ public class VectorValidator implements IResourceValidator {
 	}
 
 	protected void validateCollection(FeatureSource<SimpleFeatureType, SimpleFeature> source, Builder ret,
-			IParameters<String> userData, IMonitor monitor) throws IOException {
+			IParameters<String> userData, boolean swapLatlonAxes, IMonitor monitor) throws IOException {
 
 		Filter filter = Filter.INCLUDE;
 		FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures(filter);
+		String geomName = source.getSchema().getGeometryDescriptor().getName().toString();
 
 		ReferencedEnvelope envelope = source.getBounds();
 		CoordinateReferenceSystem crs = collection.getSchema().getCoordinateReferenceSystem();
+		swapLatlonAxes = swapLatlonAxes && crs != null && crs.equals(DefaultGeographicCRS.WGS84);
+		
 		if (envelope == null) {
 			// we only do this when importing, so let's go through them
 			envelope = collection.getBounds();
 		}
-		ret.withSpatialExtent(Envelope.create(envelope).asShape().getExtentDescriptor());
+
+		ret.withSpatialExtent(Envelope.create(envelope, swapLatlonAxes).asShape().getExtentDescriptor());
 
 		Map<String, Class<?>> attributeTypes = new HashMap<>();
 
 		int shapeDimension = 0;
 		for (AttributeDescriptor ad : source.getSchema().getAttributeDescriptors()) {
 
-			if (ad.getLocalName().equals("the_geom")) {
+			if (ad.getLocalName().equals(geomName)) {
 				// set shape dimensionality from geometry type: 0 = point, 1 = line, 2 = polygon
 				if (com.vividsolutions.jts.geom.Geometry.class.isAssignableFrom(ad.getType().getBinding())) {
 					if (Arrays.contains(ad.getType().getBinding().getInterfaces(), Lineal.class)) {
@@ -140,23 +147,27 @@ public class VectorValidator implements IResourceValidator {
 
 		// Compute union or convex hull if requested
 		if (userData.get("computeUnion", false) || userData.get("computeHull", false)) {
-			com.vividsolutions.jts.geom.Geometry geometry = null;
-			try (FeatureIterator<SimpleFeature> features = collection.features()) {
-				while (features.hasNext()) {
-					SimpleFeature feature = features.next();
-					Object shape = feature.getDefaultGeometryProperty().getValue();
-					if (shape instanceof com.vividsolutions.jts.geom.Geometry) {
-						geometry = geometry == null ? (com.vividsolutions.jts.geom.Geometry) shape
-								: geometry.union((com.vividsolutions.jts.geom.Geometry) shape);
+			if (!swapLatlonAxes) {
+				com.vividsolutions.jts.geom.Geometry geometry = null;
+				try (FeatureIterator<SimpleFeature> features = collection.features()) {
+					while (features.hasNext()) {
+						SimpleFeature feature = features.next();
+						Object shape = feature.getDefaultGeometryProperty().getValue();
+						if (shape instanceof com.vividsolutions.jts.geom.Geometry) {
+							geometry = geometry == null ? (com.vividsolutions.jts.geom.Geometry) shape
+									: geometry.union((com.vividsolutions.jts.geom.Geometry) shape);
+						}
 					}
 				}
-			}
-			if (geometry != null) {
-				if (userData.get("computeHull", false)) {
-					geometry = geometry.convexHull();
+				if (geometry != null) {
+					if (userData.get("computeHull", false)) {
+						geometry = geometry.convexHull();
+					}
+					geometry = TopologyPreservingSimplifier.simplify(geometry, 0.01);
+					ret.withParameter("shape", WKBWriter.toHex(new WKBWriter().write(geometry)));
 				}
-				geometry = TopologyPreservingSimplifier.simplify(geometry, 0.01);
-				ret.withParameter("shape", WKBWriter.toHex(new WKBWriter().write(geometry)));
+			} else {
+				monitor.warn("unimplemented feature: shape unions not computed in lat/lon order with swapped axes");
 			}
 		}
 

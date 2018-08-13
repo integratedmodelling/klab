@@ -27,27 +27,35 @@ public class WfsImporter implements IResourceImporter {
 
 		List<Builder> ret = new ArrayList<>();
 
-		// TODO parse from parameter string - for now just force it
-		String wfsVersion = "1.1.0";
+		// TODO parse from parameter string - for now just force it. USE 1.0.0 OR THE WFS
+		// AXIS SWAP WILL TAKE OVER ANY EFFORT TO CIRCUMVENT IT.
+		String wfsVersion = "1.0.0";
 		try {
 			int index = importLocation.indexOf('?');
 			importLocation = importLocation.substring(0, index);
 			WFSDataStore dataStore = WfsAdapter.getDatastore(importLocation, Version.create(wfsVersion));
 
+			/*
+			 * capabilities will come with EPSG:4326 lat/lon in all services except 1.0.0.
+			 */
+			// validator.swapLatlonAxes(!wfsVersion.equals("1.0.0"));
+
 			for (String layer : dataStore.getTypeNames()) {
 
 				try {
+
 					Parameters<String> parameters = new Parameters<>();
 					parameters.putAll(userData);
 					parameters.put("serviceUrl", importLocation);
 					parameters.put("wfsVersion", wfsVersion);
 					parameters.put("wfsIdentifier", layer);
+
 					Builder builder = validator.validate(new URL(importLocation), parameters, monitor);
 
 					if (builder != null) {
 						String layerId = layer.toLowerCase().replaceAll("__", ".").replaceAll("\\:", "_");
 						builder.withLocalName(layerId).setResourceId(layerId);
-						ret.add(builder);
+						ret.add(builder.withParameters(parameters));
 					}
 
 					Logging.INSTANCE.info("importing WCS resource " + layer + " from service " + importLocation);

@@ -34,9 +34,9 @@ public class WorldWidget extends Canvas {
 					int height = (int) (geometry.getNorth() - geometry.getSouth());
 					if (width < 2 || height < 2) {
 						e.gc.drawImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/target_red.png"), x,
-								y);
+								y - height);
 					} else {
-						e.gc.drawRectangle(x, y - height, width, height);
+						e.gc.drawRectangle(x - 8, y + 7, width, height);
 					}
 				}
 			}

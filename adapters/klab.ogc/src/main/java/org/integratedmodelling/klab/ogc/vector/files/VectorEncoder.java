@@ -103,12 +103,15 @@ public class VectorEncoder implements IResourceEncoder {
 
 		Filter filter = null;
 
+		String geomName = source.getSchema().getGeometryDescriptor().getName().toString();
+
 		Map<String, Class<?>> attributes = new HashMap<>();
 		for (AttributeDescriptor ad : source.getSchema().getAttributeDescriptors()) {
-			if (!ad.getLocalName().equals("the_geom")) {
+			if (!ad.getLocalName().equals(geomName)) {
 				attributes.put(ad.getLocalName(), ad.getType().getBinding());
 			}
 		}
+		
 
 		if (resource.getParameters().contains("filter")) {
 			try {
@@ -133,7 +136,7 @@ public class VectorEncoder implements IResourceEncoder {
 
 		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(GeoTools.getDefaultHints());
 
-		Filter bbfilter = ff.bbox(ff.property("the_geom"), ((Envelope) envelopeInOriginalProjection).getJTSEnvelope());
+		Filter bbfilter = ff.bbox(ff.property(geomName), ((Envelope) envelopeInOriginalProjection).getJTSEnvelope());
 		if (filter != null) {
 			bbfilter = ff.and(bbfilter, filter);
 		}
@@ -145,7 +148,7 @@ public class VectorEncoder implements IResourceEncoder {
 		 * moment - the scale will be that of contextualization, not the geometry for
 		 * the actuator, which may depend on context.
 		 */
-		boolean rasterize = context.getTargetSemantics().is(Type.QUALITY);
+		boolean rasterize = context.getTargetSemantics() != null && context.getTargetSemantics().is(Type.QUALITY);
 
 		Rasterizer<Object> rasterizer = null;
 		if (rasterize) {

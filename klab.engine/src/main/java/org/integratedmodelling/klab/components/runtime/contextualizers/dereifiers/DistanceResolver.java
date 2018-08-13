@@ -3,15 +3,22 @@ package org.integratedmodelling.klab.components.runtime.contextualizers.dereifie
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.components.geospace.api.ISpatialIndex;
+import org.integratedmodelling.klab.components.geospace.indexing.SpatialIndex;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
@@ -25,28 +32,51 @@ public class DistanceResolver implements IResolver<IDataArtifact>, IExpression {
 
 	static final public String FUNCTION_ID = "klab.runtime.dereifiers.distance";
 
+	String artifactId;
+	IUnit unit;
+
 	// don't remove - only used as expression
 	public DistanceResolver() {
 	}
 
 	public DistanceResolver(IParameters<String> parameters, IComputationContext context) {
-		// TODO Auto-generated constructor stub
+		this.artifactId = parameters.get("artifact", String.class);
+		this.unit = Units.INSTANCE.getUnit(parameters.get("unit", String.class));
 	}
 
 	public static IServiceCall getServiceCall(IObservable availableType, IObservable desiredObservation) {
 		IServiceCall ret = KimServiceCall.create(FUNCTION_ID);
-	    ret.getParameters().put("artifact", availableType.getLocalName());
+		ret.getParameters().put("artifact", availableType.getLocalName());
 		ret.getParameters().put("unit", desiredObservation.getUnit().toString());
 		return ret;
 	}
 
 	@Override
 	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+		if (context.getScale().getSpace() == null) {
+			throw new IllegalArgumentException("cannot compute distances in a non-spatial context");
+		}
 		return new DistanceResolver(parameters, context);
 	}
 
 	@Override
 	public IDataArtifact resolve(IDataArtifact ret, IComputationContext context) throws KlabException {
+
+		if (context.getArtifact(this.artifactId) == null || context.getArtifact(this.artifactId).isEmpty()) {
+			return ret;
+		}
+
+		ISpatialIndex index = new SpatialIndex(context.getScale().getSpace());
+		for (IArtifact a : context.getArtifact(this.artifactId)) {
+			if (a instanceof IDirectObservation && ((IDirectObservation) a).getSpace() != null) {
+				IDirectObservation obs = (IDirectObservation) a;
+				index.add(obs);
+			}
+		}
+
+		for (ILocator locator : (IScale) ret.getGeometry()) {
+			ret.set(locator, index.distanceToNearestObjectFrom(locator, this.unit));
+		}
 
 		return ret;
 	}
@@ -55,7 +85,7 @@ public class DistanceResolver implements IResolver<IDataArtifact>, IExpression {
 	public IGeometry getGeometry() {
 		return Geometry.create("S2");
 	}
-	
+
 	@Override
 	public IArtifact.Type getType() {
 		return Type.NUMBER;

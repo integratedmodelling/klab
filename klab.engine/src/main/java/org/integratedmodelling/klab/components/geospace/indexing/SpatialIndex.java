@@ -1,49 +1,86 @@
-//package org.integratedmodelling.klab.components.geospace.indexing;
-//
-//import java.util.ArrayList;
-//import java.util.Collection;
-//import java.util.Comparator;
-//import java.util.HashMap;
-//import java.util.HashSet;
-//import java.util.List;
-//import java.util.Map;
-//import java.util.Properties;
-//import java.util.Set;
-//
-//import org.geotools.geometry.jts.ReferencedEnvelope;
-//import org.integratedmodelling.klab.api.data.ILocator;
-//import org.integratedmodelling.klab.api.observations.IDirectObservation;
-//import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-//import org.integratedmodelling.klab.components.geospace.Geospace;
-//import org.integratedmodelling.klab.components.geospace.api.ISpatialIndex;
-//import org.integratedmodelling.klab.components.geospace.extents.Projection;
-//import org.integratedmodelling.klab.components.geospace.extents.Shape;
-//import org.integratedmodelling.klab.components.runtime.observations.Observation;
-//import org.integratedmodelling.klab.utils.Pair;
-//
-//import com.infomatiq.jsi.Rectangle;
-//import com.infomatiq.jsi.rtree.RTree;
-//import com.slimjars.dist.gnu.trove.procedure.TIntProcedure;
-//import com.vividsolutions.jts.geom.Coordinate;
-//import com.vividsolutions.jts.geom.Geometry;
-//import com.vividsolutions.jts.geom.Point;
-//import com.vividsolutions.jts.operation.distance.DistanceOp;
-//
-//public class SpatialIndex implements ISpatialIndex {
-//
-//    RTree                           rtree  = new RTree();
-//    Map<String, Integer>            ids    = new HashMap<>();
-//    Map<Integer, String>            names  = new HashMap<>();
-//    Map<String, ISpace>             exts   = new HashMap<>();
-//    Map<String, IDirectObservation> id2obs = new HashMap<>();
-//    ISpace                          extent;
-//    int                             nextId = 1;
-//
-//    public SpatialIndex(ISpace extent) {
-//        this.extent = extent;
+package org.integratedmodelling.klab.components.geospace.indexing;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.data.utils.IPair;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.components.geospace.Geospace;
+import org.integratedmodelling.klab.components.geospace.api.ISpatialIndex;
+import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
+import org.integratedmodelling.klab.utils.Pair;
+
+import com.infomatiq.jsi.Rectangle;
+import com.infomatiq.jsi.rtree.RTree;
+import com.slimjars.dist.gnu.trove.procedure.TIntProcedure;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.operation.distance.DistanceOp;
+
+public class SpatialIndex implements ISpatialIndex {
+
+    RTree                           rtree  = new RTree();
+    Map<String, Integer>            ids    = new HashMap<>();
+    Map<Integer, String>            names  = new HashMap<>();
+    Map<String, ISpace>             exts   = new HashMap<>();
+    Map<String, IDirectObservation> id2obs = new HashMap<>();
+    ISpace                          extent;
+    int                             nextId = 1;
+
+    public SpatialIndex(ISpace extent) {
+        this.extent = extent;
 //        this.rtree.init(new Properties());
-//    }
-//
+    }
+
+	@Override
+	public void add(IDirectObservation observation) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public IPair<IDirectObservation, Double> getNearestObject(IDirectObservation obs) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<IPair<IDirectObservation, Double>> getNear(IDirectObservation obs, int maxResults) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public int size() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Object distanceToNearestObjectFrom(ILocator locator, IUnit unit) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public double distanceToNearestObjectFrom(IDirectObservation observation, IUnit unit) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 //    @Override
 //    public void add(ISpace extent, String name) {
 //        exts.put(name, extent);
@@ -275,4 +312,4 @@
 //
 //        return ret;
 //    }
-//}
+}

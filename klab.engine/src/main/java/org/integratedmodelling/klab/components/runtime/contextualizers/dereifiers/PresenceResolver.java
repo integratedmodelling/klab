@@ -62,7 +62,7 @@ public class PresenceResolver implements IResolver<IDataArtifact>, IExpression {
 		}
 
 		Rasterizer<Boolean> rasterizer = new Rasterizer<>(((Space) space).getGrid().get());
-
+		
 		return ret;
 	}
 

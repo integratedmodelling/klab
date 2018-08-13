@@ -83,7 +83,7 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
 						 * a scale that's appropriate for previewing the full context.
 						 */
 						IScale scale = Scale.create(resource.getGeometry()).adaptForExample();
-						
+
 						IObservable observable = Observable
 								.promote(OWL.INSTANCE.getNonsemanticPeer("Context", IArtifact.Type.OBJECT));
 						SimpleContext context = new SimpleContext(observable, scale, monitor);
@@ -97,13 +97,14 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
 								Observations.INSTANCE
 										.createArtifactDescriptor((IObservation) ret, null, ITime.INITIALIZATION, -1)
 										.withTaskId(token)));
-
+						
 						/*
 						 * Go for the actual data. Surprisingly easy given the diversity of possible
 						 * results.
 						 */
 						IKlabData data = Resources.INSTANCE.getResourceData(resource, scale,
-								context.getChild(null, resource));
+								context.getChild(Observable
+										.promote(OWL.INSTANCE.getNonsemanticPeer("DataObject", resource.getType())), resource));
 
 						/*
 						 * notify

@@ -38,6 +38,8 @@ import org.opengis.feature.simple.SimpleFeatureType;
  */
 public class WfsValidator extends VectorValidator {
 
+	private boolean swapLatlonAxes;
+
 	@Override
 	public IResource.Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
 
@@ -63,7 +65,7 @@ public class WfsValidator extends VectorValidator {
 			FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore
 					.getFeatureSource(userData.get("wfsIdentifier", String.class));
 
-			validateCollection(source, ret, userData, monitor);
+			validateCollection(source, ret, userData, swapLatlonAxes, monitor);
 
 		} catch (Throwable e) {
 			ret.addError("Error validating " + e.getMessage());
@@ -80,5 +82,9 @@ public class WfsValidator extends VectorValidator {
 	@Override
 	public Collection<File> getAllFilesForResource(File file) {
 		throw new IllegalStateException("the WFS adapter does not handle files");
+	}
+
+	public void swapLatlonAxes(boolean b) {
+		this.swapLatlonAxes = b;
 	}
 }

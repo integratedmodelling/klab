@@ -22,6 +22,8 @@ import java.util.Map;
 
 import org.geotools.data.wfs.WFSDataStore;
 import org.geotools.data.wfs.WFSDataStoreFactory;
+import org.geotools.factory.Hints;
+import org.geotools.referencing.ReferencingFactoryFinder;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Version;
@@ -40,18 +42,17 @@ import org.integratedmodelling.klab.ogc.vector.wfs.WfsValidator;
 /**
  * The Class WfsAdapter.
  */
-@ResourceAdapter(
-		type = "wfs", version = Version.CURRENT, 
-		requires = { "serviceUrl", "wfsIdentifier" }, 
-		optional = {
-				// TODO check out http://docs.geotools.org/latest/userguide/library/data/wfs-ng.html
-				// TODO find a way to provide documentation for all these options
-				"wfsVersion", "bufferSize", "serverType", "timeoutSeconds", 
-				"filter", "computeShape", "sanitize"
-		})
+@ResourceAdapter(type = "wfs", version = Version.CURRENT, requires = { "serviceUrl", "wfsIdentifier" }, optional = {
+		// TODO check out
+		// http://docs.geotools.org/latest/userguide/library/data/wfs-ng.html
+		// TODO find a way to provide documentation for all these options
+		"wfsVersion", "bufferSize", "serverType", "timeoutSeconds", "filter", "computeShape", "sanitize" })
 public class WfsAdapter implements IResourceAdapter {
 
 	static Map<String, WFSDataStore> dataStores = new HashMap<>();
+
+	public static final int TIMEOUT = 100000;
+	public static final int BUFFER_SIZE = 512;
 
 	@Override
 	public String getName() {
@@ -78,19 +79,28 @@ public class WfsAdapter implements IResourceAdapter {
 		WFSDataStore ret = dataStores.get(serverUrl);
 
 		if (ret == null) {
+
+			Integer wfsTimeout = TIMEOUT;
+			Integer wfsBufsize = BUFFER_SIZE;
+
+			final Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
+			ReferencingFactoryFinder.getCRSAuthorityFactory("EPSG", hints);
+
 			String getCapabilities = serverUrl + "?SERVICE=wfs&REQUEST=getCapabilities&version=" + version;
 			WFSDataStoreFactory dsf = new WFSDataStoreFactory();
 			try {
-				
+
 				Map<String, Serializable> connectionParameters = new HashMap<>();
-				connectionParameters.put("WFSDataStoreFactory:GET_CAPABILITIES_URL", getCapabilities);
-				
+				connectionParameters.put(WFSDataStoreFactory.URL.key, getCapabilities);
+				connectionParameters.put(WFSDataStoreFactory.TIMEOUT.key, wfsTimeout);
+				connectionParameters.put(WFSDataStoreFactory.BUFFER_SIZE.key, wfsBufsize);
+
 				/*
 				 * TODO all other parameters
 				 */
-				
-				
+
 				ret = dsf.createDataStore(connectionParameters);
+				
 				dataStores.put(serverUrl, ret);
 
 			} catch (IOException ex) {
@@ -105,7 +115,7 @@ public class WfsAdapter implements IResourceAdapter {
 	public IResourceImporter getImporter() {
 		return new WfsImporter();
 	}
-	
+
 	@Override
 	public IPrototype getResourceConfiguration() {
 		return new Prototype(

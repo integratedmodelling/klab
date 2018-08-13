@@ -17,15 +17,14 @@ package org.integratedmodelling.klab.ogc.vector.wfs;
 
 import java.io.IOException;
 
-import org.geotools.data.DataStore;
 import org.geotools.data.FeatureSource;
+import org.geotools.data.wfs.WFSDataStore;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.ogc.WfsAdapter;
 import org.integratedmodelling.klab.ogc.vector.files.VectorEncoder;
-import org.integratedmodelling.klab.utils.NetUtilities;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -37,7 +36,7 @@ public class WfsEncoder extends VectorEncoder {
 
 	@Override
 	protected FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(IResource resource, IGeometry geometry) {
-		DataStore dataStore = WfsAdapter.getDatastore(resource.getParameters().get("serviceUrl", String.class),
+		WFSDataStore dataStore = WfsAdapter.getDatastore(resource.getParameters().get("serviceUrl", String.class),
 				Version.create(resource.getParameters().get("wfsVersion", "1.0.0")));
 		try {
 			return dataStore.getFeatureSource(resource.getParameters().get("wfsIdentifier", String.class));
