@@ -577,11 +577,11 @@ public class Shape extends AbstractExtent implements IShape {
 	public SpatialExtent getExtentDescriptor() {
 		Envelope stdEnvelope = getEnvelope().transform(Projection.getLatLon(), true);
 		SpatialExtent ret = new SpatialExtent();
-		ret.setEast(stdEnvelope.getMinX());
-		ret.setWest(stdEnvelope.getMaxX());
+		ret.setEast(stdEnvelope.getMaxX());
+		ret.setWest(stdEnvelope.getMinX());
 		ret.setSouth(stdEnvelope.getMinY());
 		ret.setNorth(stdEnvelope.getMaxY());
-		return ret;
+		return ret.normalize();
 	}
 
 }

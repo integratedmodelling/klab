@@ -207,7 +207,9 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 					SWTResourceManager.TOP_LEFT);
 		}
 		if (element instanceof EResource) {
-			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/resource.gif");
+			return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
+					((EResource) element).getResource().getGeometry().startsWith("#") ? "icons/resources.gif"
+							: "icons/resource.gif");
 		}
 		if (element instanceof EDefinition) {
 			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/define.gif");

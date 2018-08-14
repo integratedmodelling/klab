@@ -15,7 +15,7 @@ public class WorldWidget extends Canvas {
 	SpatialExtent geometry;
 
 	public void setExtent(SpatialExtent geometry) {
-		this.geometry = geometry;
+		this.geometry = geometry.normalize();
 		redraw();
 	}
 
@@ -29,15 +29,13 @@ public class WorldWidget extends Canvas {
 				if (geometry != null) {
 					e.gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 					int x = (int) (geometry.getWest() + 180);
-					int y = 180 - (int) (geometry.getSouth() + 90);
+					int y = (int) (geometry.getSouth() + 90);
 					int width = (int) (geometry.getEast() - geometry.getWest());
 					int height = (int) (geometry.getNorth() - geometry.getSouth());
-					System.out.println("x = " + x + ", y = " + y + ", width = " + width + ", height = " + height);
 					if (width < 2 || height < 2) {
-						e.gc.drawImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/target_red.png"), x,
-								y - height);
+						e.gc.drawImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/target_red.png"), x - 8, 180 - y - 8);
 					} else {
-						e.gc.drawRectangle(x, y, width, height);
+						e.gc.drawRectangle(x, 180 - y - height, width, height);
 					}
 				}
 			}

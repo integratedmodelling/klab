@@ -84,8 +84,31 @@ public class SpatialExtent {
 
 	@Override
 	public String toString() {
-		return "SpatialExtent [east=" + east + ", west=" + west + ", north=" + north + ", south=" + south + "]";
+		return "SpatialExtent [west=" + west + ", east=" + east + ", south=" + south + ", north=" + north + "]";
 	}
 
-		
+	/*
+	 * Stuff coming out of WCS sometimes needs this, particularly large layers that
+	 * assume they go around the world the wrong way after being transformed from
+	 * another projection. Call it to ensure the bounding box is kosher.
+	 */
+	public SpatialExtent normalize() {
+		SpatialExtent ret = new SpatialExtent();
+		if (east < west) {
+			ret.east = west;
+			ret.west = east;
+		} else {
+			ret.west = west;
+			ret.east = east;
+		}
+		if (north < south) {
+			ret.north = south;
+			ret.west = north;
+		} else {
+			ret.south = south;
+			ret.north = north;
+		}
+		return ret;
+	}
+
 }

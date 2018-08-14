@@ -23,7 +23,7 @@ Model:
 	// 'as' must ONLY BE LEGAL FOR IMPORTS
 // if multiple, semantics must be given to recognize the observables
 ActorDefinition:
-	((exported?='export' |
+	(final?='final')? ((exported?='export' |
 	((optional?='optional')? imported?='import') (multiple?='multiple' | arity=INT (minimum?='+')?)?))? 
 	// parameters denotes the ability of the implementation of accepting modified values during run
 	// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios

@@ -34,6 +34,7 @@ import org.integratedmodelling.kdl.kdl.Value;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isFinal <em>Final</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isExported <em>Exported</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isOptional <em>Optional</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isImported <em>Imported</em>}</li>
@@ -58,6 +59,26 @@ import org.integratedmodelling.kdl.kdl.Value;
  */
 public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements ActorDefinition
 {
+  /**
+   * The default value of the '{@link #isFinal() <em>Final</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isFinal()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean FINAL_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isFinal() <em>Final</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isFinal()
+   * @generated
+   * @ordered
+   */
+  protected boolean final_ = FINAL_EDEFAULT;
+
   /**
    * The default value of the '{@link #isExported() <em>Exported</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -367,6 +388,29 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   protected EClass eStaticClass()
   {
     return KdlPackage.Literals.ACTOR_DEFINITION;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public boolean isFinal()
+  {
+    return final_;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setFinal(boolean newFinal)
+  {
+    boolean oldFinal = final_;
+    final_ = newFinal;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__FINAL, oldFinal, final_));
   }
 
   /**
@@ -890,6 +934,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
+      case KdlPackage.ACTOR_DEFINITION__FINAL:
+        return isFinal();
       case KdlPackage.ACTOR_DEFINITION__EXPORTED:
         return isExported();
       case KdlPackage.ACTOR_DEFINITION__OPTIONAL:
@@ -941,6 +987,9 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
+      case KdlPackage.ACTOR_DEFINITION__FINAL:
+        setFinal((Boolean)newValue);
+        return;
       case KdlPackage.ACTOR_DEFINITION__EXPORTED:
         setExported((Boolean)newValue);
         return;
@@ -1012,6 +1061,9 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
+      case KdlPackage.ACTOR_DEFINITION__FINAL:
+        setFinal(FINAL_EDEFAULT);
+        return;
       case KdlPackage.ACTOR_DEFINITION__EXPORTED:
         setExported(EXPORTED_EDEFAULT);
         return;
@@ -1080,6 +1132,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
+      case KdlPackage.ACTOR_DEFINITION__FINAL:
+        return final_ != FINAL_EDEFAULT;
       case KdlPackage.ACTOR_DEFINITION__EXPORTED:
         return exported != EXPORTED_EDEFAULT;
       case KdlPackage.ACTOR_DEFINITION__OPTIONAL:
@@ -1131,7 +1185,9 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (exported: ");
+    result.append(" (final: ");
+    result.append(final_);
+    result.append(", exported: ");
     result.append(exported);
     result.append(", optional: ");
     result.append(optional);

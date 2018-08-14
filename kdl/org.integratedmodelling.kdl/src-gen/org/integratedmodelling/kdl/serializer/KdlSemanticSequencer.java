@@ -155,6 +155,7 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 * Constraint:
 	 *     (
 	 *         (
+	 *             final?='final'? 
 	 *             (exported?='export' | (optional?='optional'? imported?='import' (multiple?='multiple' | (arity=INT minimum?='+'?))?))? 
 	 *             parameter?='parameter'? 
 	 *             type=ACTOR 

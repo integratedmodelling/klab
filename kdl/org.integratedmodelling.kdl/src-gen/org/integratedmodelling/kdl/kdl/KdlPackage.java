@@ -205,13 +205,22 @@ public interface KdlPackage extends EPackage
   int ACTOR_DEFINITION = 1;
 
   /**
+   * The feature id for the '<em><b>Final</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTOR_DEFINITION__FINAL = 0;
+
+  /**
    * The feature id for the '<em><b>Exported</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__EXPORTED = 0;
+  int ACTOR_DEFINITION__EXPORTED = 1;
 
   /**
    * The feature id for the '<em><b>Optional</b></em>' attribute.
@@ -220,7 +229,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__OPTIONAL = 1;
+  int ACTOR_DEFINITION__OPTIONAL = 2;
 
   /**
    * The feature id for the '<em><b>Imported</b></em>' attribute.
@@ -229,7 +238,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__IMPORTED = 2;
+  int ACTOR_DEFINITION__IMPORTED = 3;
 
   /**
    * The feature id for the '<em><b>Multiple</b></em>' attribute.
@@ -238,7 +247,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__MULTIPLE = 3;
+  int ACTOR_DEFINITION__MULTIPLE = 4;
 
   /**
    * The feature id for the '<em><b>Arity</b></em>' attribute.
@@ -247,7 +256,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__ARITY = 4;
+  int ACTOR_DEFINITION__ARITY = 5;
 
   /**
    * The feature id for the '<em><b>Minimum</b></em>' attribute.
@@ -256,7 +265,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__MINIMUM = 5;
+  int ACTOR_DEFINITION__MINIMUM = 6;
 
   /**
    * The feature id for the '<em><b>Parameter</b></em>' attribute.
@@ -265,7 +274,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__PARAMETER = 6;
+  int ACTOR_DEFINITION__PARAMETER = 7;
 
   /**
    * The feature id for the '<em><b>Type</b></em>' attribute.
@@ -274,7 +283,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__TYPE = 7;
+  int ACTOR_DEFINITION__TYPE = 8;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -283,7 +292,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__NAME = 8;
+  int ACTOR_DEFINITION__NAME = 9;
 
   /**
    * The feature id for the '<em><b>Targets</b></em>' attribute list.
@@ -292,7 +301,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__TARGETS = 9;
+  int ACTOR_DEFINITION__TARGETS = 10;
 
   /**
    * The feature id for the '<em><b>Docstring</b></em>' attribute.
@@ -301,7 +310,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__DOCSTRING = 10;
+  int ACTOR_DEFINITION__DOCSTRING = 11;
 
   /**
    * The feature id for the '<em><b>Body</b></em>' containment reference.
@@ -310,7 +319,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__BODY = 11;
+  int ACTOR_DEFINITION__BODY = 12;
 
   /**
    * The feature id for the '<em><b>Local Name</b></em>' attribute.
@@ -319,7 +328,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__LOCAL_NAME = 12;
+  int ACTOR_DEFINITION__LOCAL_NAME = 13;
 
   /**
    * The feature id for the '<em><b>Coverage</b></em>' containment reference list.
@@ -328,7 +337,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__COVERAGE = 13;
+  int ACTOR_DEFINITION__COVERAGE = 14;
 
   /**
    * The feature id for the '<em><b>Enum Values</b></em>' attribute list.
@@ -337,7 +346,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__ENUM_VALUES = 14;
+  int ACTOR_DEFINITION__ENUM_VALUES = 15;
 
   /**
    * The feature id for the '<em><b>Default</b></em>' containment reference.
@@ -346,7 +355,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__DEFAULT = 15;
+  int ACTOR_DEFINITION__DEFAULT = 16;
 
   /**
    * The feature id for the '<em><b>Range Min</b></em>' containment reference.
@@ -355,7 +364,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__RANGE_MIN = 16;
+  int ACTOR_DEFINITION__RANGE_MIN = 17;
 
   /**
    * The feature id for the '<em><b>Range Max</b></em>' containment reference.
@@ -364,7 +373,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__RANGE_MAX = 17;
+  int ACTOR_DEFINITION__RANGE_MAX = 18;
 
   /**
    * The number of structural features of the '<em>Actor Definition</em>' class.
@@ -373,7 +382,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION_FEATURE_COUNT = 18;
+  int ACTOR_DEFINITION_FEATURE_COUNT = 19;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.DataflowBodyImpl <em>Dataflow Body</em>}' class.
@@ -1722,6 +1731,17 @@ public interface KdlPackage extends EPackage
    * @generated
    */
   EClass getActorDefinition();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isFinal <em>Final</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Final</em>'.
+   * @see org.integratedmodelling.kdl.kdl.ActorDefinition#isFinal()
+   * @see #getActorDefinition()
+   * @generated
+   */
+  EAttribute getActorDefinition_Final();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isExported <em>Exported</em>}'.
@@ -3221,6 +3241,14 @@ public interface KdlPackage extends EPackage
      * @generated
      */
     EClass ACTOR_DEFINITION = eINSTANCE.getActorDefinition();
+
+    /**
+     * The meta object literal for the '<em><b>Final</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ACTOR_DEFINITION__FINAL = eINSTANCE.getActorDefinition_Final();
 
     /**
      * The meta object literal for the '<em><b>Exported</b></em>' attribute feature.
