@@ -36,7 +36,6 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.provenance.Provenance;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CamelCase;
@@ -199,12 +198,7 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 	@Override
 	public IObjectArtifact newObservation(IObservable observable, String name, IScale scale) throws KlabException {
 		
-	    IArtifact rootArtifact = null;
-	    if (artifacts.containsKey(observable.getLocalName())) {
-	        rootArtifact = artifacts.get(observable.getLocalName());
-	    }
-	    
-		IObjectArtifact ret = null;
+		IDirectObservation ret = null;
 		if (observable.is(Type.SUBJECT)) {
 			ret = new Subject(name, (Observable)observable, (Scale)scale, this);
 		} else if (observable.is(Type.EVENT)) {
@@ -215,12 +209,7 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 		
 		if (ret != null) { 
 
-		    if (rootArtifact == null) {
-	            artifacts.put(observable.getLocalName(), ret);
-	        } else {
-	            ((Artifact)rootArtifact).chain(ret);
-	        }
-	        
+			observations.put(ret.getId(), ret);
 			structure.addVertex(ret);
 			if (parent != null && parent.target != null) {
 				structure.addEdge(ret, parent.target);
