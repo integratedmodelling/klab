@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.utils;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Map;
 
 public class Utils {
 

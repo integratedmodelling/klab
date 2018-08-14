@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
@@ -30,14 +31,14 @@ public class PresenceResolver implements IResolver<IDataArtifact>, IExpression {
 
 	static final public String FUNCTION_ID = "klab.runtime.dereifiers.presence";
 
-	IArtifact artifact = null;
+	private String artifactId = null;
 
 	// don't remove - only used as expression
 	public PresenceResolver() {
 	}
 
 	public PresenceResolver(IParameters<String> parameters, IComputationContext context) {
-		this.artifact = context.getArtifact(parameters.get("artifact", String.class));
+		this.artifactId = parameters.get("artifact", String.class);
 	}
 
 	public static IServiceCall getServiceCall(IObservable availableType, IObservable desiredObservation) {
@@ -62,6 +63,14 @@ public class PresenceResolver implements IResolver<IDataArtifact>, IExpression {
 		}
 
 		Rasterizer<Boolean> rasterizer = new Rasterizer<>(((Space) space).getGrid().get());
+		for (IArtifact a : context.getArtifact(this.artifactId)) {
+			if (a instanceof IDirectObservation && ((IDirectObservation) a).getSpace() != null) {
+				rasterizer.add(((IDirectObservation) a).getSpace().getShape(), (shape) -> true);
+			}
+		}
+		
+		// TODO use a more general xy locator so we can intercept non-grid extent as well
+		rasterizer.finish((present, xy) -> {ret.set(((Scale)ret.getGeometry()).getLocator(xy), present); });
 		
 		return ret;
 	}

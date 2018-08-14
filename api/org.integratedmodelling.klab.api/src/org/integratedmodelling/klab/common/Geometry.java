@@ -529,6 +529,14 @@ public class Geometry implements IGeometry {
 		return new OffsetLocator(offsets);
 	}
 
+	public OffsetLocator locate(int... offsets) {
+		long[] ofs = new long[offsets.length];
+		for (int i = 0; i < offsets.length; i++) {
+			ofs[i] = offsets[i];
+		}
+		return new OffsetLocator(ofs);
+	}
+	
 	@Override
 	public ILocator at(ILocator locator) {
 		if (locator instanceof OffsetLocator) {

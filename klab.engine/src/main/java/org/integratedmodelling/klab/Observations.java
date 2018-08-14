@@ -49,6 +49,7 @@ import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Utils;
 
 public enum Observations implements IObservationService {
 
@@ -225,6 +226,13 @@ public enum Observations implements IObservationService {
 			ret.getGeometryTypes().add(gtype);
 		}
 
+		for (String key : observation.getMetadata().keySet()) {
+			Object value = observation.getMetadata().get(key);
+			if (Utils.isPOD(value)) {
+				ret.getMetadata().put(key, value.toString());
+			}
+		}
+		
 		if (time != null) {
 			// TODO
 		}

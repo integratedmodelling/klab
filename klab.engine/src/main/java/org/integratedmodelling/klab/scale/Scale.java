@@ -1130,6 +1130,10 @@ public class Scale implements IScale {
     public ILocator getLocator(long offset) {
         return asGeometry().getLocator(offset);
     }
+    
+    public ILocator getLocator(int... offsets) {
+        return asGeometry().locate(offsets);
+    }
 
     @Override
     public long getOffset(long globalOffset, Type dimension) {
