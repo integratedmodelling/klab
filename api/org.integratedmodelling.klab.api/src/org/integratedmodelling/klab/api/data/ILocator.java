@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.api.data;
 
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
+
 /**
  * Any geometry or subset of it can be used as a locator. Scales and extents are also locators and
  * can produce their component locators as appropriate. They can also "relocate" by producing lazy
@@ -26,5 +28,13 @@ public interface ILocator {
    *         either in extent or geometry.
    */
   ILocator at(ILocator locator);
+  
+  /**
+   * Get a locator of the passed interface from this one, or null.
+   * 
+   * @param type
+   * @return
+   */
+  <T extends ILocator> T as(Class<T> cls);
 
 }

@@ -26,106 +26,99 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.components.geospace.extents;
 
-import org.integratedmodelling.klab.Concepts;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
-import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpaceLocator;
 
 /**
- * Simple serializable object to use in requests for partial states. Can specify a given
- * timeslice, all of them, or the latest. Only real utility for this class is that it can 
- * be passed to IScale.locate() and recognized.
+ * Simplest locator for space. Limited to point locations and able to carry
+ * grid coordinates when applicable.
  * 
  * @author ferdinando.villa
  *
  */
-public class SpaceLocator /* extends AbstractLocator */ {
+public class SpaceLocator implements ISpaceLocator {
 
-    public int    x   = -1;
-    public int    y   = -1;
-    public double lon = 0;
-    public double lat = 0;
+	private long xGrid = -1;
+	private long yGrid = -1;
+	private long offset = -1;
+	private double x = Double.NaN;
+	private double y = Double.NaN;
+	private boolean latLon = false;
+	
+	SpaceLocator(long x, long y, long offset) {
+		this.xGrid = x;
+		this.yGrid = y;
+		this.offset = offset;
+	}
 
-    public SpaceLocator(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
+	SpaceLocator(double x, double y) {
+		this.x = x;
+		this.y = y;
+	}
+	
+	SpaceLocator(double x, double y, long xgrid, long ygrid, long offset) {
+		this.x = x;
+		this.y = y;
+		this.xGrid = xgrid;
+		this.yGrid = ygrid;
+		this.offset = offset;
+	}
 
-    public SpaceLocator(double lon, double lat) {
-        this.x = -3;
-        this.y = -3;
-        this.lon = lon;
-        this.lat = lat;
-    }
+	@Override
+	public ILocator at(ILocator locator) {
+		throw new IllegalArgumentException("a simple space locator cannot be further located");
+	}
 
-    public SpaceLocator(String s) {
-        if (!s.startsWith("S")) {
-            throw new KlabValidationException("error parsing space locator: " + s);
-        }
-        String[] ss = s.substring(2).split(",");
-        if (s.charAt(1) == 'l') {
-            x = y = -3;
-            lon = Double.parseDouble(ss[0]);
-            lat = Double.parseDouble(ss[1]);
-        } else {
-            x = Integer.parseInt(ss[0]);
-            y = Integer.parseInt(ss[1]);
-        }
-    }
+	@Override
+	public <T extends ILocator> T as(Class<T> cls) {
+		throw new IllegalArgumentException("a simple space locator cannot be further located");
+	}
 
-    @Override
-    public String toString() {
-        if (isLatLon()) {
-            return "Sl" + lon + "," + lat;
-        }
-        return "Si" + x + "," + y;
-    }
+	@Override
+	public double getXCoordinate() {
+		return x;
+	}
 
-    /**
-     * Create a locator for a geographical position identified by world coordinates. Use x on horizontal
-     * coordinates.
-     * 
-     * @param lon
-     * @param lat
-     * @return a new space locator
-     */
-    public static SpaceLocator get(double lon, double lat) {
-        return new SpaceLocator(lon, lat);
-    }
+	@Override
+	public double getYCoordinate() {
+		return y;
+	}
 
-    /**
-     * Create a locator for a geographical position identified by world coordinates. Use x on horizontal
-     * coordinates.
-     * 
-     * @param x
-     * @param y
-     * @return a new space locator
-     */
-    public static SpaceLocator get(int x, int y) {
-        return new SpaceLocator(x, y);
-    }
+	@Override
+	public boolean inGrid() {
+		return xGrid >= 0;
+	}
 
-    public static SpaceLocator all() {
-        return new SpaceLocator(-1, -1);
-    }
+	@Override
+	public long getXIndex() {
+		return xGrid;
+	}
 
-//    @Override
-    public boolean isAll() {
-        return x == -1 && y == -1;
-    }
+	@Override
+	public long getYIndex() {
+		return yGrid;
+	}
 
-    public boolean isLatLon() {
-        return x == -3;
-    }
+	public boolean isLatLon() {
+		return latLon;
+	}
 
-//    @Override
-    public int getDimensionCount() {
-        return 2;
-    }
+	public void setLatLon(boolean latLon) {
+		this.latLon = latLon;
+	}
 
-//    @Override
-    public IConcept getExtent() {
-        return Concepts.c(NS.SPACE_DOMAIN);
-    }
+	public long getOffset() {
+		return offset;
+	}
+
+	public void setOffset(long offset) {
+		this.offset = offset;
+	}
+
+	public void setWorldCoordinates(double x, double y) {
+		this.x = x;
+		this.y = y;
+	}
+
 
 }

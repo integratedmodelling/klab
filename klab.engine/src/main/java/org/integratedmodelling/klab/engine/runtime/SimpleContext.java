@@ -72,10 +72,8 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 	ISubject rootSubject;
 	Map<String, IObservable> semantics;
 
-	// counter for objects
-	int countObjects = 1;
 	/**
-	 * Root context. Don't use for any of the child ones.
+	 * Root context. Don't use this to build a child.
 	 * 
 	 * @param observable
 	 * @param scale
@@ -106,7 +104,6 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 		this.observations = parent.observations;
 		this.rootSubject = parent.rootSubject;
 		this.semantics = parent.semantics;
-		this.countObjects = parent.countObjects;
 	}
 
 	@Override

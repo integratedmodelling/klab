@@ -569,6 +569,11 @@ public class Geometry implements IGeometry {
 		public ILocator at(ILocator locator) {
 			throw new IllegalArgumentException("offset locator cannot be further located");
 		}
+
+		@Override
+		public <T extends ILocator> T as(Class<T> cls) {
+			throw new IllegalArgumentException("offset locator cannot be further located");
+		}
 	}
 
 	public long computeOffset(long[] offsets) {
@@ -639,6 +644,12 @@ public class Geometry implements IGeometry {
 			this.cursor = new MultidimensionalCursor(this);
 		}
 		return cursor.getElementIndexes(globalOffset)[dimIndex];
+	}
+
+	@Override
+	public <T extends ILocator> T as(Class<T> cls) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

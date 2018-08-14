@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpaceLocator;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
@@ -668,5 +669,14 @@ public class Space extends Extent implements ISpace {
 	@Override
 	public SpatialExtent getExtentDescriptor() {
 		return getShape().getExtentDescriptor();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends ILocator> T as(Class<T> cls) {
+		if (ISpaceLocator.class.isAssignableFrom(cls)) {
+			return (T)envelope.asLocator();
+		}
+		return null;
 	}
 }

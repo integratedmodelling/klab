@@ -47,7 +47,8 @@ public class DoubleStorage extends Storage implements IDataArtifact {
 			// mediation needed
 			throw new KlabUnsupportedFeatureException("DIRECT SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
 		}
-		data[(int) offset] = value instanceof Number ? ((Number) value).doubleValue() : convert(value);
+		data[(int) offset] = value instanceof Number ? ((Number) value).doubleValue()
+				: (value == null ? Double.NaN : convert(value));
 		// data.update(offset, value instanceof Number ? ((Number) value).floatValue() :
 		// convert(value));
 		return offset;

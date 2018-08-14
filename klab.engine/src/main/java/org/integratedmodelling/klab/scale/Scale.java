@@ -1163,4 +1163,15 @@ public class Scale implements IScale {
         return new Scale(exts);
     }
 
+	@Override
+	public <T extends ILocator> T as(Class<T> cls) {
+		for (IExtent extent : getExtents()) {
+			T ret = extent.as(cls);
+			if (ret != null) {
+				return ret;
+			}
+		}
+		return null;
+	}
+
 }

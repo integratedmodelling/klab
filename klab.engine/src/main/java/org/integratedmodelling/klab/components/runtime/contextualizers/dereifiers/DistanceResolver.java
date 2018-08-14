@@ -66,6 +66,7 @@ public class DistanceResolver implements IResolver<IDataArtifact>, IExpression {
 			return ret;
 		}
 
+		// TODO this will need to be switched to a cost surface analysis when available.
 		ISpatialIndex index = new SpatialIndex(context.getScale().getSpace());
 		for (IArtifact a : context.getArtifact(this.artifactId)) {
 			if (a instanceof IDirectObservation && ((IDirectObservation) a).getSpace() != null) {

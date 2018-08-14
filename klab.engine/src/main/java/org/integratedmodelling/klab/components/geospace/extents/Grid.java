@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpaceLocator;
 import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
@@ -609,6 +610,17 @@ public class Grid extends Area implements IGrid {
 		@Override
 		public SpatialExtent getExtentDescriptor() {
 			return getShape().getExtentDescriptor();
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public <T extends ILocator> T as(Class<T> cls) {
+			if (ISpaceLocator.class.isAssignableFrom(cls)) {
+				SpaceLocator ret = new SpaceLocator(getX(), getY(), getOffsetInGrid());
+				ret.setWorldCoordinates(getEast() + (getEast() - getWest())/2., getSouth() + (getNorth() - getSouth())/2.);
+				return (T)ret;
+			}
+			return null;
 		}
 	}
 

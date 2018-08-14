@@ -584,4 +584,10 @@ public class Shape extends AbstractExtent implements IShape {
 		return ret.normalize();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends ILocator> T as(Class<T> cls) {
+		return (T) envelope.asLocator();
+	}
+
 }

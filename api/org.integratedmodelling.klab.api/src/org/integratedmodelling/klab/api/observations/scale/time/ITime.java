@@ -26,62 +26,70 @@ import org.integratedmodelling.klab.api.observations.scale.IExtent;
  */
 public interface ITime extends IExtent {
 
-  /** Constant <code>MIN_SCALE_RANK=0</code> */
-  int      MIN_SCALE_RANK = 0;
-  /** Constant <code>MAX_SCALE_RANK=19</code> */
-  int      MAX_SCALE_RANK = 19;
+	/** Constant <code>MIN_SCALE_RANK=0</code> */
+	int MIN_SCALE_RANK = 0;
+	/** Constant <code>MAX_SCALE_RANK=19</code> */
+	int MAX_SCALE_RANK = 19;
 
-  /**
-   * The empty, non-descript initialization locator refers to the extent before any extent exists.
-   */
-  ILocator INITIALIZATION = new ILocator() {
+	/**
+	 * The empty, non-descript initialization locator refers to the extent before
+	 * any extent exists.
+	 */
+	ILocator INITIALIZATION = new ILocator() {
 
-                            @Override
-                            public ILocator at(ILocator locator) {
-                              return this;
-                            }
-                          };
+		@Override
+		public ILocator at(ILocator locator) {
+			return this;
+		}
 
-  /**
-   * {@inheritDoc}
-   *
-   * Overriding to require that the collapsed type is ITimePeriod. This allows simpler coding
-   * against the API, and is the most logical way to enforce that getValueCount() == 1.
-   */
-  @Override
-  ITimePeriod collapse();
+		@Override
+		public <T extends ILocator> T as(Class<T> cls) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+	};
 
-  /**
-   * May be null in partially specified extents.
-   *
-   * @return start time
-   */
-  ITimeInstant getStart();
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Overriding to require that the collapsed type is ITimePeriod. This allows
+	 * simpler coding against the API, and is the most logical way to enforce that
+	 * getValueCount() == 1.
+	 */
+	@Override
+	ITimePeriod collapse();
 
-  /**
-   * May be null in partially specified extents.
-   *
-   * @return end time
-   */
-  ITimeInstant getEnd();
+	/**
+	 * May be null in partially specified extents.
+	 *
+	 * @return start time
+	 */
+	ITimeInstant getStart();
 
-  /**
-   * If multiplicity is 1, return the whole temporal extent.
-   *
-   * FIXME this should only be defined if time is a grid - as done in ISpatialExtent (use a Grid
-   * object).
-   *
-   * @return step if any
-   */
-  ITimeDuration getStep();
+	/**
+	 * May be null in partially specified extents.
+	 *
+	 * @return end time
+	 */
+	ITimeInstant getEnd();
 
-  /**
-   * {@inheritDoc}
-   *
-   * The time implementation of {@link ILocator#at(ILocator)} always return a time and can only use
-   * another time as locator.
-   */
-  @Override
-  ITime at(ILocator locator);
+	/**
+	 * If multiplicity is 1, return the whole temporal extent.
+	 *
+	 * FIXME this should only be defined if time is a grid - as done in
+	 * ISpatialExtent (use a Grid object).
+	 *
+	 * @return step if any
+	 */
+	ITimeDuration getStep();
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * The time implementation of {@link ILocator#at(ILocator)} always return a time
+	 * and can only use another time as locator.
+	 */
+	@Override
+	ITime at(ILocator locator);
 
 }

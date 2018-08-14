@@ -43,7 +43,7 @@ public interface ISpatialIndex {
 	 * @param unit
 	 * @return
 	 */
-	Object distanceToNearestObjectFrom(ILocator locator, IUnit unit);
+	double distanceToNearestObjectFrom(ILocator locator, IUnit unit);
 
 	/**
 	 * 

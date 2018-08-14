@@ -212,7 +212,7 @@ public class Time extends Extent implements ITime {
     }
 
     @Override
-    public IParameters getParameters() {
+    public IParameters<String> getParameters() {
       // TODO Auto-generated method stub
       return null;
     }
@@ -231,6 +231,12 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public AbstractExtent mergeCoverage(IExtent other, LogicalConnector connector) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T extends ILocator> T as(Class<T> cls) {
 		// TODO Auto-generated method stub
 		return null;
 	}
