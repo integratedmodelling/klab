@@ -59,7 +59,7 @@ public class WfsImporter implements IResourceImporter {
 						ret.add(builder.withParameters(parameters));
 					}
 
-					Logging.INSTANCE.info("importing WCS resource " + layer + " from service " + importLocation);
+					Logging.INSTANCE.info("importing WFS resource " + layer + " from service " + importLocation);
 
 				} catch (KlabResourceNotFoundException e) {
 

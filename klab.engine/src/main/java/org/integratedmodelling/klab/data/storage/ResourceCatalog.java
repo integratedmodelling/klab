@@ -160,10 +160,16 @@ public class ResourceCatalog implements IResourceCatalog {
 	public void clear() {
 		for (IResource resource : values()) {
 			if (resource.getLocalPath() != null) {
-				File respath = new File(Resources.INSTANCE.getLocalWorkspace().getRoot() + File.separator + resource.getLocalPath());
-				if (respath.isDirectory()) {
+	            String resPath = resource.getLocalPath();
+	            IProject project = Resources.INSTANCE.getProject(resource.getLocalProjectName());
+	            if (project == null) {
+	                throw new KlabIOException("resource belongs to invalid project " + resource.getLocalProjectName());
+	            }
+	            resPath = resPath.substring(resource.getLocalProjectName().length() + 1);
+	            File resourcePath = new File(project.getRoot() + File.separator + resPath);
+				if (resourcePath.isDirectory()) {
 					try {
-						FileUtils.deleteDirectory(respath);
+						FileUtils.deleteDirectory(resourcePath);
 					} catch (IOException e) {
 						throw new KlabIOException(e);
 					}
