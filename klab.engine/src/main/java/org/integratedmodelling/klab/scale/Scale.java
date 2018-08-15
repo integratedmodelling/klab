@@ -1130,7 +1130,7 @@ public class Scale implements IScale {
     public ILocator getLocator(long offset) {
         return asGeometry().getLocator(offset);
     }
-    
+
     public ILocator getLocator(int... offsets) {
         return asGeometry().locate(offsets);
     }
@@ -1152,7 +1152,7 @@ public class Scale implements IScale {
             if (extent instanceof ISpace) {
                 Shape shape = (Shape) ((ISpace) extent).getShape();
                 // make it a grid with a good res for visualization
-                exts.add(Space.create(shape, (double) shape.getEnvelope().getResolutionForZoomLevel(50, 1)
+                exts.add(Space.create(shape, (double) shape.getEnvelope().getResolutionForZoomLevel(50, 2)
                         .getFirst()));
             } else if (extent instanceof ITime) {
                 if (extent.size() > 1) {
@@ -1167,15 +1167,15 @@ public class Scale implements IScale {
         return new Scale(exts);
     }
 
-	@Override
-	public <T extends ILocator> T as(Class<T> cls) {
-		for (IExtent extent : getExtents()) {
-			T ret = extent.as(cls);
-			if (ret != null) {
-				return ret;
-			}
-		}
-		return null;
-	}
+    @Override
+    public <T extends ILocator> T as(Class<T> cls) {
+        for (IExtent extent : getExtents()) {
+            T ret = extent.as(cls);
+            if (ret != null) {
+                return ret;
+            }
+        }
+        return null;
+    }
 
 }

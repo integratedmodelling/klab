@@ -125,6 +125,10 @@ public class Klab {
 	 */
 	public void notifyResourceImport(ResourceReference resource) {
 		Map<String, EResourceReference> list = resourceCatalog.get(resource.getProjectName());
+		if (list == null) {
+		    list = new HashMap<>();
+		    resourceCatalog.put(resource.getProjectName(), list);
+		}
 		list.put(resource.getUrn(), new EResourceReference(resource, true));
 		KlabNavigator.refresh();
 		Eclipse.INSTANCE.notification("New resource imported",

@@ -34,7 +34,7 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public class FileUtils  extends org.apache.commons.io.FileUtils {
+public class FileUtils extends org.apache.commons.io.FileUtils {
 
     /**
      * Create a md5sum file digest for a directory in a directory.
@@ -92,7 +92,7 @@ public class FileUtils  extends org.apache.commons.io.FileUtils {
 
     /**
      * Given a file and a set of extensions, return a collection containing the original 
-     * file plus any other file that with any of the passed extensions and the same name as
+     * file plus any other file having any of the passed extensions and the same name as
      * the original, after ensuring that it exists alongside the original.
      * 
      * @param original
@@ -100,25 +100,17 @@ public class FileUtils  extends org.apache.commons.io.FileUtils {
      * @return the original file and all sidecar files
      */
     public static Collection<File> getSidecarFiles(File original, Collection<String> extensions) {
-    	Set<File> ret = new HashSet<>();
-    	ret.add(original);
-    	String base = MiscUtilities.getFilePath(original.toString()) + File.separator + MiscUtilities.getFileBaseName(original);
-    	for (String extension : extensions) {
-    		File sidecar = new File(base + "." + extension);
-    		if (sidecar.exists() && sidecar.isFile()) {
-    			ret.add(sidecar);
-    		}
-    	}
-    	return ret;
+        Set<File> ret = new HashSet<>();
+        ret.add(original);
+        String base = MiscUtilities.getFilePath(original.toString()) + File.separator
+                + MiscUtilities.getFileBaseName(original);
+        for (String extension : extensions) {
+            File sidecar = new File(base + "." + extension);
+            if (sidecar.exists() && sidecar.isFile()) {
+                ret.add(sidecar);
+            }
+        }
+        return ret;
     }
-    
-    /**
-     * The main method.
-     *
-     * @param args the arguments
-     * @throws Exception the exception
-     */
-    public static void main(String[] args) throws Exception {
-        createMD5Digest(new File("C:/Users/ferdinando.villa/.tl/server"), "zioporco.txt");
-    }
+
 }

@@ -97,7 +97,13 @@ public class ResourceCatalog implements IResourceCatalog {
 			/*
 			 * Save resource data as JSON in resource path
 			 */
-			File resourcePath = new File(Resources.INSTANCE.getLocalWorkspace().getRoot() + File.separator + value.getLocalPath());
+		    String resPath = value.getLocalPath();
+		    IProject project = Resources.INSTANCE.getProject(value.getLocalProjectName());
+		    if (project == null) {
+		        throw new KlabIOException("resource belongs to invalid project " + value.getLocalProjectName());
+		    }
+		    resPath = resPath.substring(value.getLocalProjectName().length() + 1);
+			File resourcePath = new File(project.getRoot() + File.separator + resPath);
 			resourcePath.mkdir();
 			try {
 				FileUtils.writeStringToFile(new File(resourcePath + File.separator + "resource.json"),
@@ -124,7 +130,13 @@ public class ResourceCatalog implements IResourceCatalog {
 		IResource ret = get(key);
 		resources.remove(eq("urn", key));
 		if (ret != null && ret.getLocalPath() != null) {
-			File resourcePath = new File(Resources.INSTANCE.getLocalWorkspace().getRoot() + File.separator + ret.getLocalPath());
+            String resPath = ret.getLocalPath();
+            IProject project = Resources.INSTANCE.getProject(ret.getLocalProjectName());
+            if (project == null) {
+                throw new KlabIOException("resource belongs to invalid project " + ret.getLocalProjectName());
+            }
+            resPath = resPath.substring(ret.getLocalProjectName().length() + 1);
+            File resourcePath = new File(project.getRoot() + File.separator + resPath);
 			if (resourcePath.exists()) {
 				try {
 					FileUtils.deleteDirectory(resourcePath);

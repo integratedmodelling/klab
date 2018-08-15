@@ -370,7 +370,7 @@ public class WCSService {
 				return null;
 			}
 			SpatialExtent ret = new SpatialExtent();
-			ret.setWest(wgs84envelope.getMaxX());
+			ret.setWest(wgs84envelope.getMinX());
 			ret.setEast(wgs84envelope.getMaxX());
 			ret.setSouth(wgs84envelope.getMinY());
 			ret.setNorth(wgs84envelope.getMaxY());

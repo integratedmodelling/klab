@@ -12,7 +12,7 @@ public class List implements ICommand {
 	public Object execute(IServiceCall call, ISession session) throws Exception {
 
 		String ret = "";
-		for (IProject project : Resources.INSTANCE.getLocalWorkspace().getProjects()) {
+		for (IProject project : Resources.INSTANCE.getProjects()) {
 			ret +=(ret.isEmpty() ? "   " : "\n   ") + project.getName();
 			// TODO add info about namespaces, resources etc (linked to -a option)
 		}

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IIndexingService;
 import org.integratedmodelling.klab.engine.indexing.Indexer;

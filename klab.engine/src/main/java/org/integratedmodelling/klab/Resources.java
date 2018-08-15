@@ -236,6 +236,14 @@ public enum Resources implements IResourceService {
 		IKimProject project = Kim.INSTANCE.getProject(name);
 		return project == null ? null : retrieveOrCreate(project);
 	}
+	
+	public Collection<IProject> getProjects() {
+	    List<IProject> ret = new ArrayList<>();
+	    for (IKimProject project : Kim.INSTANCE.getProjects()) {
+	        ret.add(retrieveOrCreate(project));
+	    }
+	    return ret;
+	}
 
 	/**
 	 * Return the IProject wrapper for a IKimProject, creating it if it does not

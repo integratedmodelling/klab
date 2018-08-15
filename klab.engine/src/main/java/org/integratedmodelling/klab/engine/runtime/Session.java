@@ -396,7 +396,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 	@MessageHandler
 	private void importResource(final ResourceImportRequest request) {
-		IProject project = Resources.INSTANCE.getLocalWorkspace().getProject(request.getProjectName());
+		IProject project = Resources.INSTANCE.getProject(request.getProjectName());
 		if (project == null) {
 			monitor.error("cannot import resource: project " + request.getProjectName() + " is unknown");
 		} else {
