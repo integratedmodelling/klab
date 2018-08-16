@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservationService;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
@@ -213,7 +214,7 @@ public enum Observations implements IObservationService {
 			 * the same geometry as their parents.
 			 */
 			if (observation instanceof IDirectObservation) {
-				String shape = space.getShape().toString();
+				String shape = ((Shape)space.getShape()).getJTSGeometry().toString();
 				ret.setEncodedShape(shape);
 				ret.setSpatialProjection(space.getProjection().getSimpleSRS());
 			}

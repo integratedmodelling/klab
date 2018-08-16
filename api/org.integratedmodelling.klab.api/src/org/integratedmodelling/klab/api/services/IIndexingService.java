@@ -76,7 +76,8 @@ public interface IIndexingService {
             CONCEPT,
             OPERATOR,
             OBSERVATION,
-            MODEL
+            MODEL,
+            MODIFIER
         }
 
         /**

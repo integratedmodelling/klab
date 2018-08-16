@@ -32,7 +32,7 @@ public class WorldWidget extends Canvas {
 					int y = (int) (geometry.getSouth() + 90);
 					int width = (int) (geometry.getEast() - geometry.getWest());
 					int height = (int) (geometry.getNorth() - geometry.getSouth());
-					if (width < 2 || height < 2) {
+					if (width < 2 && height < 2) {
 						e.gc.drawImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/target_red.png"), x - 8, 180 - y - 8);
 					} else {
 						e.gc.drawRectangle(x, 180 - y - height, width, height);

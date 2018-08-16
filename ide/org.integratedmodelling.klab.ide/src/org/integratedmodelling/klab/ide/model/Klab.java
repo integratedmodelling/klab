@@ -95,6 +95,18 @@ public class Klab {
 		return resourceCatalog.containsKey(project.getName()) ? resourceCatalog.get(project.getName()).values()
 				: new ArrayList<>();
 	}
+	
+	/**
+	 * Get all project resources
+	 * @return
+	 */
+	public Collection<EResourceReference> getProjectResources() {
+		List<EResourceReference> ret = new ArrayList<>();
+		for (String s : resourceCatalog.keySet()) {
+			ret.addAll(resourceCatalog.get(s).values());
+		}
+		return ret;
+	}
 
 	/*
 	 * sync the resource status with the capabilities from the engine

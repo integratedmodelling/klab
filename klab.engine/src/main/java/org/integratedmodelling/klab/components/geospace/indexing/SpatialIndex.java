@@ -36,6 +36,8 @@ public class SpatialIndex implements ISpatialIndex {
 	Map<String, IDirectObservation> id2obs = new HashMap<>();
 	ISpace extent;
 	int nextId = 1;
+	
+	final static private int MAX_FEATURES_TO_COMPARE = 20;
 
 	// scale to convert distance into meters
 	private double originalWidth;
@@ -80,7 +82,7 @@ public class SpatialIndex implements ISpatialIndex {
 		if (sloc != null) {
 			double[] xy = new double[] { sloc.getXCoordinate(), sloc.getYCoordinate() };
 			// check out the 20 closest features by bounding box
-			FeatureFinder finder = new FeatureFinder(xy, 20);
+			FeatureFinder finder = new FeatureFinder(xy, MAX_FEATURES_TO_COMPARE);
 			List<Integer> ids = finder.find();
 			return finder.isOnFeature() ? 0 : convert(getDistance(xy, ids), unit);
 		}
