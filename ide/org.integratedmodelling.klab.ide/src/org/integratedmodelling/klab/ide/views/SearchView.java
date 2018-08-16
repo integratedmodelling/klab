@@ -13,10 +13,12 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
@@ -24,8 +26,6 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -37,16 +37,21 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.wb.swt.ResourceManager;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.model.KlabPeer;
+import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.rest.SearchMatch;
 import org.integratedmodelling.klab.rest.SearchRequest;
 import org.integratedmodelling.klab.rest.SearchResponse;
 
 public class SearchView extends ViewPart {
 
-	public static final String ID = "org.integratedmodelling.klab.ide.views.SearchView"; //$NON-NLS-1$
-	// private final FormToolkit toolkit = new FormToolkit(Display.getCurrent());
+	public static final String ID = "org.integratedmodelling.klab.ide.views.SearchView";
+
 	private Text text;
 	private TreeViewer treeViewer;
 	private Tree tree;
@@ -54,6 +59,9 @@ public class SearchView extends ViewPart {
 	private String contextId = null;
 	private long requestId;
 	private List<SearchMatch> accepted = new ArrayList<>();
+	private StyledText resultText;
+	private KlabPeer klab;
+	private Composite topContainer;
 
 	public SearchView() {
 	}
@@ -73,7 +81,34 @@ public class SearchView extends ViewPart {
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
 			if (element instanceof SearchMatch && columnIndex == 0) {
-				
+
+				SearchMatch match = (SearchMatch) element;
+
+				if (match.getMatchType() == Match.Type.CONCEPT) {
+
+					if (match.getSemanticType().contains(Type.QUALITY)) {
+						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/quality.png");
+					} else if (match.getSemanticType().contains(Type.SUBJECT)
+							|| match.getSemanticType().contains(Type.AGENT)) {
+						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/subject.png");
+					} else if (match.getSemanticType().contains(Type.PROCESS)) {
+						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/process.png");
+					} else if (match.getSemanticType().contains(Type.EVENT)) {
+						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/event.png");
+					} else if (match.getSemanticType().contains(Type.RELATIONSHIP)) {
+						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/relationship.png");
+					} else if (match.getSemanticType().contains(Type.IDENTITY)) {
+						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/identity.png");
+					} else if (match.getSemanticType().contains(Type.REALM)) {
+						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/realm.png");
+					} else if (match.getSemanticType().contains(Type.ATTRIBUTE)) {
+						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/attribute.png");
+					} else if (match.getSemanticType().contains(Type.ROLE)) {
+						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/role.png");
+					} else if (match.getSemanticType().contains(Type.CONFIGURATION)) {
+						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/configuration.png");
+					}
+				} // TODO else etc
 			}
 			return null;
 		}
@@ -83,7 +118,11 @@ public class SearchView extends ViewPart {
 			if (element instanceof SearchMatch) {
 				switch (columnIndex) {
 				case 0:
+					return ((SearchMatch) element).getName();
+				case 1:
 					return ((SearchMatch) element).getId();
+				case 2:
+					return ((SearchMatch) element).getDescription();
 				}
 			}
 			return null;
@@ -109,7 +148,7 @@ public class SearchView extends ViewPart {
 		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof List) {
-				return ((List<?>)parentElement).toArray();
+				return ((List<?>) parentElement).toArray();
 			}
 			return null;
 		}
@@ -124,7 +163,7 @@ public class SearchView extends ViewPart {
 
 		@Override
 		public boolean hasChildren(Object element) {
-			return element instanceof List && ((List<?>)element).size() > 0;
+			return element instanceof List && ((List<?>) element).size() > 0;
 		}
 
 	}
@@ -137,20 +176,25 @@ public class SearchView extends ViewPart {
 	@Override
 	public void createPartControl(Composite parent) {
 
-		Composite container = new Composite(parent, SWT.NONE);
+		topContainer = new Composite(parent, SWT.NONE);
 		// toolkit.paintBordersFor(container);
-		container.setLayout(new GridLayout(1, false));
-		text = new Text(container, SWT.BORDER);
+		topContainer.setLayout(new GridLayout(1, false));
+		text = new Text(topContainer, SWT.BORDER);
 		text.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
-				String t = text.getText();
-				search(t);
+				if (e.keyCode == SWT.ARROW_DOWN) {
+					treeViewer.getTree().forceFocus();
+				} else if (e.keyCode == SWT.ESC || (text.getText().isEmpty() && e.keyCode == SWT.BS)) {
+					reset();
+				} else {
+					search(text.getText());
+				}
 			}
 		});
 		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		// toolkit.adapt(text, true, true);
-		Composite composite = new Composite(container, SWT.NONE);
+		Composite composite = new Composite(topContainer, SWT.NONE);
 		composite.setLayout(new FillLayout(SWT.HORIZONTAL));
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		// toolkit.adapt(composite);
@@ -166,12 +210,12 @@ public class SearchView extends ViewPart {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
 
-				Object o = ((TreeSelection) (event.getSelection())).getFirstElement();
-				//
-				// if (o instanceof Child)
-				// o = ((Child) o)._target;
-				//
-				// showOntology(o);
+				Object object = event.getSelection() instanceof StructuredSelection
+						? ((StructuredSelection) event.getSelection()).getFirstElement()
+						: null;
+				if (object instanceof SearchMatch) {
+					acceptMatch((SearchMatch) object);
+				}
 			}
 		});
 		tree = treeViewer.getTree();
@@ -183,21 +227,9 @@ public class SearchView extends ViewPart {
 			tcl_normalSearchView.setColumnData(imageColumn, new ColumnPixelData(220, true, true));
 		}
 		TreeColumn namespaceColumn = new TreeColumn(tree, SWT.NONE);
-		namespaceColumn.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				text.forceFocus();
-			}
-		});
 		tcl_normalSearchView.setColumnData(namespaceColumn, new ColumnPixelData(130, true, true));
-		namespaceColumn.setText("Namespace");
+		namespaceColumn.setText("Full URN");
 		TreeColumn descriptionColumn = new TreeColumn(tree, SWT.NONE);
-		descriptionColumn.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				text.forceFocus();
-			}
-		});
 		tcl_normalSearchView.setColumnData(descriptionColumn, new ColumnPixelData(400, true, true));
 		descriptionColumn.setText("Description");
 		treeViewer.setContentProvider(new ContentProvider());
@@ -227,43 +259,100 @@ public class SearchView extends ViewPart {
 					}
 				});
 
-		Composite resultSet = new Composite(container, SWT.NONE);
-		resultSet.setLayout(new GridLayout(1, false));
+		Composite resultSet = new Composite(topContainer, SWT.NONE);
+		resultSet.setLayout(new GridLayout(2, false));
 		resultSet.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
 		Label lblNewLabel = new Label(resultSet, SWT.NONE);
-		lblNewLabel.setText("No results");
+		GridData gd_lblNewLabel = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_lblNewLabel.widthHint = 16;
+		lblNewLabel.setLayoutData(gd_lblNewLabel);
+
+		resultText = new StyledText(resultSet, SWT.NONE);
+		resultText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		resultText.setText("No results");
+
+		klab = new KlabPeer(Sender.ANY, (message) -> handleMessage(message));
+
 		createActions();
 		initializeToolBar();
 		initializeMenu();
+
+		text.setEnabled(Activator.engineMonitor().isRunning());
+
+	}
+
+	private void handleMessage(IMessage message) {
+
+		switch (message.getType()) {
+		case EngineDown:
+			Display.getDefault().asyncExec(() -> {
+				text.setEnabled(false);
+			});
+			break;
+		case EngineUp:
+			Display.getDefault().asyncExec(() -> {
+				text.setEnabled(true);
+			});
+			break;
+		default:
+			break;
+
+		}
+	}
+
+	protected void reset() {
+		matches.clear();
+		accepted.clear();
+		setMatchedText();
+		text.setText("");
+		contextId = null;
+	}
+
+	protected void acceptMatch(SearchMatch object) {
+		accepted.add(object);
+		setMatchedText();
+		text.setText("");
+		text.forceFocus();
 	}
 
 	protected void search(String text) {
 
-		matches.clear();
 		if (text.trim().isEmpty()) {
-			this.accepted.clear();
-			this.text.setText("");
-			this.contextId = null;
-			Display.getDefault().asyncExec(() -> treeViewer.setInput(matches));
-		} else if (text.length() > 1) {
-			
-			SearchRequest request = new SearchRequest();
-			
-			request.setMaxResults(50);
-			request.setQueryString(text);
-			request.setContextId(this.contextId);
-			request.setRequestId(this.requestId++);
-			
-			Activator.post((message) -> {
-				SearchResponse response = message.getPayload(SearchResponse.class);
-				this.matches.addAll(response.getMatches());
-				this.contextId = response.getContextId();
-				Display.getDefault().asyncExec(() -> {
-					treeViewer.setInput(matches);
-				});
-			}, IMessage.MessageClass.Search, IMessage.Type.SubmitSearch, request);
+			return;
 		}
+
+		matches.clear();
+
+		SearchRequest request = new SearchRequest();
+
+		request.setMaxResults(50);
+		request.setQueryString(text);
+		request.setContextId(this.contextId);
+		request.setRequestId(this.requestId++);
+
+		Activator.post((message) -> {
+			SearchResponse response = message.getPayload(SearchResponse.class);
+			this.matches.addAll(response.getMatches());
+			this.contextId = response.getContextId();
+			Display.getDefault().asyncExec(() -> {
+				treeViewer.setInput(matches);
+			});
+		}, IMessage.MessageClass.Search, IMessage.Type.SubmitSearch, request);
+
+	}
+
+	private void setMatchedText() {
+		String txt = "";
+		List<StyleRange> styles = new ArrayList<>();
+		for (SearchMatch match : accepted) {
+			int start = txt.length() - 1;
+			txt += (txt.isEmpty() ? "" : " ") + match.getId();
+			// Color blue = display.getSystemColor(SWT.COLOR_BLUE);
+			// StyleRange range = new StyleRange(0, 4, blue, null);
+			// resultText.setStyleRange(range);
+		}
+		resultText.setText(txt);
 	}
 
 	private String getMatchedText() {
@@ -275,7 +364,7 @@ public class SearchView extends ViewPart {
 	}
 
 	public void dispose() {
-		// toolkit.dispose();
+		klab.dispose();
 		super.dispose();
 	}
 
