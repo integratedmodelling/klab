@@ -207,8 +207,6 @@ public enum Observations implements IObservationService {
 		// fill in spatio/temporal info and mode of visualization
 		if (space != null) {
 
-			ret.setShapeType(space.getShape().getGeometryType());
-
 			/*
 			 * shapes can be huge and only make sense for direct observations, as states get
 			 * the same geometry as their parents.
@@ -217,6 +215,7 @@ public enum Observations implements IObservationService {
 				String shape = ((Shape)space.getShape()).getJTSGeometry().toString();
 				ret.setEncodedShape(shape);
 				ret.setSpatialProjection(space.getProjection().getSimpleSRS());
+				ret.setShapeType(space.getShape().getGeometryType());
 			}
 
 			GeometryType gtype = GeometryType.SHAPE;

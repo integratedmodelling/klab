@@ -72,8 +72,8 @@ public class SearchView extends ViewPart {
 
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
-			if (element instanceof SearchMatch) {
-
+			if (element instanceof SearchMatch && columnIndex == 0) {
+				
 			}
 			return null;
 		}
