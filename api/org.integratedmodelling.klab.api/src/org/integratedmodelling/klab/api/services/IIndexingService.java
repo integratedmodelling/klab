@@ -74,7 +74,8 @@ public interface IIndexingService {
 
         public enum Type {
             CONCEPT,
-            OPERATOR,
+            PREFIX_OPERATOR,
+            INFIX_OPERATOR,
             OBSERVATION,
             MODEL,
             MODIFIER

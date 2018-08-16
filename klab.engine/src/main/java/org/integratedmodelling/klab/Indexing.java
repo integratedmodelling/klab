@@ -19,7 +19,7 @@ public enum Indexing implements IIndexingService {
 	 * @return a new empty context.
 	 */
 	public Context createContext() {
-		return new SearchContext();
+		return SearchContext.createNew();
 	}
 
 	@Override

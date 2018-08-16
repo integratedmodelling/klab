@@ -36,8 +36,8 @@ public class WfsImporter implements IResourceImporter {
 			WFSDataStore dataStore = WfsAdapter.getDatastore(importLocation, Version.create(wfsVersion));
 
 			/*
-			 * capabilities will come with EPSG:4326 lat/lon in all services except 1.0.0. But the mess
-			 * is lots wors than the following line. For now just force 1.0.0 and screw it.
+			 * capabilities will come with EPSG:4326 lat/lon in all services except 1.0.0. But fixing the mess
+			 * entails lots worse than the following line. For now just force 1.0.0 and screw it.
 			 */
 			// validator.swapLatlonAxes(!wfsVersion.equals("1.0.0"));
 
