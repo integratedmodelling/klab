@@ -47,6 +47,7 @@ import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.rest.SearchMatch;
+import org.integratedmodelling.klab.rest.SearchMatchAction;
 import org.integratedmodelling.klab.rest.SearchRequest;
 import org.integratedmodelling.klab.rest.SearchResponse;
 
@@ -237,7 +238,7 @@ public class SearchView extends ViewPart {
 						? ((StructuredSelection) event.getSelection()).getFirstElement()
 						: null;
 				if (object instanceof SearchMatch) {
-					acceptMatch((SearchMatch) object);
+					acceptMatch((SearchMatch) object, matches.indexOf(object));
 				}
 			}
 		});
@@ -337,11 +338,15 @@ public class SearchView extends ViewPart {
 		contextId = null;
 	}
 
-	protected void acceptMatch(SearchMatch object) {
+	protected void acceptMatch(SearchMatch object, int matchIndex) {
 		accepted.add(object);
 		setMatchedText();
 		text.setText("");
 		text.forceFocus();
+		SearchMatchAction action = new SearchMatchAction();
+		action.setContextId(contextId);
+		action.setMatchIndex(matchIndex);
+		Activator.post(IMessage.MessageClass.Search, IMessage.Type.MatchAction, action);
 	}
 
 	protected void search(String text) {
