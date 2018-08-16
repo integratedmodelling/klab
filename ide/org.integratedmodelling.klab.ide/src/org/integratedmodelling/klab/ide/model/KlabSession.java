@@ -118,6 +118,12 @@ public class KlabSession extends KlabPeer {
         Activator.post(IMessage.MessageClass.ObservationLifecycle, IMessage.Type.RequestObservation,
                 new ObservationRequest(dropped.getId(), currentContextId, null));
     }
+    
+	public void observe(String urn) {
+        Activator.post(IMessage.MessageClass.ObservationLifecycle, IMessage.Type.RequestObservation,
+                new ObservationRequest(urn, currentContextId, null));
+	}
+
 
     public void observe(EObserver dropped, boolean addToContext) {
         Activator.post(IMessage.MessageClass.ObservationLifecycle, IMessage.Type.RequestObservation,

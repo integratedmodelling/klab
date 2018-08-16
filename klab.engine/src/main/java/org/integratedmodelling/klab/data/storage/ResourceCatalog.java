@@ -15,6 +15,8 @@ import java.util.Set;
 import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.objects.ObjectFilter;
 import org.dizitart.no2.objects.ObjectRepository;
+import org.integratedmodelling.kim.api.IKimProject;
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
@@ -84,12 +86,12 @@ public class ResourceCatalog implements IResourceCatalog {
 	public IResource put(String key, IResource value) {
 
 		((Resource) value).validate(Resources.INSTANCE);
-		
+
 		IResource ret = get(value.getUrn());
 		if (ret != null) {
 			removeDefinition(value.getUrn());
 		}
-		
+
 		ResourceReference ref = ((Resource) value).getReference();
 		resources.insert(ref);
 
@@ -97,12 +99,14 @@ public class ResourceCatalog implements IResourceCatalog {
 			/*
 			 * Save resource data as JSON in resource path
 			 */
-		    String resPath = value.getLocalPath();
-		    IProject project = Resources.INSTANCE.getProject(value.getLocalProjectName());
-		    if (project == null) {
-		        throw new KlabIOException("resource belongs to invalid project " + value.getLocalProjectName());
-		    }
-		    resPath = resPath.substring(value.getLocalProjectName().length() + 1);
+			String resPath = value.getLocalPath();
+			// ACHTUNG never call Resources.INSTANCE.getProject() here - it will recursively
+			// synch resources, resulting in stack overflow.
+			IKimProject project = Kim.INSTANCE.getProject(value.getLocalProjectName());
+			if (project == null) {
+				throw new KlabIOException("resource belongs to invalid project " + value.getLocalProjectName());
+			}
+			resPath = resPath.substring(value.getLocalProjectName().length() + 1);
 			File resourcePath = new File(project.getRoot() + File.separator + resPath);
 			resourcePath.mkdir();
 			try {
@@ -112,7 +116,7 @@ public class ResourceCatalog implements IResourceCatalog {
 				throw new KlabIOException(e);
 			}
 		}
-		
+
 		db.commit();
 
 		return ret;
@@ -124,19 +128,19 @@ public class ResourceCatalog implements IResourceCatalog {
 		db.commit();
 		return ret;
 	}
-	
+
 	@Override
 	public IResource remove(Object key) {
 		IResource ret = get(key);
 		resources.remove(eq("urn", key));
 		if (ret != null && ret.getLocalPath() != null) {
-            String resPath = ret.getLocalPath();
-            IProject project = Resources.INSTANCE.getProject(ret.getLocalProjectName());
-            if (project == null) {
-                throw new KlabIOException("resource belongs to invalid project " + ret.getLocalProjectName());
-            }
-            resPath = resPath.substring(ret.getLocalProjectName().length() + 1);
-            File resourcePath = new File(project.getRoot() + File.separator + resPath);
+			String resPath = ret.getLocalPath();
+			IKimProject project = Kim.INSTANCE.getProject(ret.getLocalProjectName());
+			if (project == null) {
+				throw new KlabIOException("resource belongs to invalid project " + ret.getLocalProjectName());
+			}
+			resPath = resPath.substring(ret.getLocalProjectName().length() + 1);
+			File resourcePath = new File(project.getRoot() + File.separator + resPath);
 			if (resourcePath.exists()) {
 				try {
 					FileUtils.deleteDirectory(resourcePath);
@@ -160,13 +164,13 @@ public class ResourceCatalog implements IResourceCatalog {
 	public void clear() {
 		for (IResource resource : values()) {
 			if (resource.getLocalPath() != null) {
-	            String resPath = resource.getLocalPath();
-	            IProject project = Resources.INSTANCE.getProject(resource.getLocalProjectName());
-	            if (project == null) {
-	                throw new KlabIOException("resource belongs to invalid project " + resource.getLocalProjectName());
-	            }
-	            resPath = resPath.substring(resource.getLocalProjectName().length() + 1);
-	            File resourcePath = new File(project.getRoot() + File.separator + resPath);
+				String resPath = resource.getLocalPath();
+				IKimProject project = Kim.INSTANCE.getProject(resource.getLocalProjectName());
+				if (project == null) {
+					throw new KlabIOException("resource belongs to invalid project " + resource.getLocalProjectName());
+				}
+				resPath = resPath.substring(resource.getLocalProjectName().length() + 1);
+				File resourcePath = new File(project.getRoot() + File.separator + resPath);
 				if (resourcePath.isDirectory()) {
 					try {
 						FileUtils.deleteDirectory(resourcePath);
@@ -240,17 +244,17 @@ public class ResourceCatalog implements IResourceCatalog {
 		if (objects != null) {
 			for (Object object : objects) {
 				if (object instanceof IProject) {
-					resources.remove(eq("projectName", ((IProject)object).getName()));
+					resources.remove(eq("projectName", ((IProject) object).getName()));
 				} else if (object instanceof IResource) {
-					resources.remove(eq("urn", ((IResource)object).getUrn()));
+					resources.remove(eq("urn", ((IResource) object).getUrn()));
 				} else if (object instanceof String) {
-					resources.remove(eq("urn", (String)object));
+					resources.remove(eq("urn", (String) object));
 				} else {
 					throw new IllegalArgumentException("cannot remove resources corresponding to selector " + object);
 				}
 			}
 		}
-		
+
 		db.commit();
 	}
 

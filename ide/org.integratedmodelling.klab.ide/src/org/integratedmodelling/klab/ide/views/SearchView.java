@@ -26,6 +26,8 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -185,10 +187,31 @@ public class SearchView extends ViewPart {
 			public void keyReleased(KeyEvent e) {
 				if (e.keyCode == SWT.ARROW_DOWN) {
 					treeViewer.getTree().forceFocus();
-				} else if (e.keyCode == SWT.ESC || (text.getText().isEmpty() && e.keyCode == SWT.BS)) {
+				} else if (e.keyCode == SWT.ESC) {
 					reset();
 				} else {
 					search(text.getText());
+				}
+			}
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (text.getText().isEmpty() && e.keyCode == SWT.BS) {
+					removeLastMatch();
+				}
+			}
+
+		});
+		text.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				if (text.getText().isEmpty() && !accepted.isEmpty() /* TODO and have observable */) {
+					observeMatching();
 				}
 			}
 		});
@@ -282,6 +305,11 @@ public class SearchView extends ViewPart {
 
 	}
 
+	protected void observeMatching() {
+		System.out.println("OBSERVING " + getMatchedText());
+		Activator.session().observe(getMatchedText());
+	}
+
 	private void handleMessage(IMessage message) {
 
 		switch (message.getType()) {
@@ -340,6 +368,15 @@ public class SearchView extends ViewPart {
 			});
 		}, IMessage.MessageClass.Search, IMessage.Type.SubmitSearch, request);
 
+	}
+
+	private void removeLastMatch() {
+		if (accepted.size() == 1) {
+			reset();
+		} else if (accepted.size() > 0) {
+			accepted.remove(accepted.size() - 1);
+			setMatchedText();
+		}
 	}
 
 	private void setMatchedText() {
