@@ -13,8 +13,8 @@ import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -61,6 +61,7 @@ import org.integratedmodelling.klab.ide.navigator.model.EObserver;
 import org.integratedmodelling.klab.ide.navigator.model.EResource;
 import org.integratedmodelling.klab.ide.navigator.model.EScript;
 import org.integratedmodelling.klab.ide.navigator.model.ETestCase;
+import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.utils.BrowserUtils;
 
@@ -197,11 +198,8 @@ public class ContextView extends ViewPart {
 			dropImage.setToolTipText("Drop a subject to define the context.");
 			dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID,
 					(Activator.engineMonitor().isRunning() ? "icons/odrop.png" : "icons/ndrop.png")));
-			// toolkit.adapt(dropImage, true, true);
 			DropTarget dropTarget = new DropTarget(dropImage, DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK);
-			dropTarget.setTransfer(new Transfer[] {
-					// BookmarkTransfer.getInstance(),
-					TextTransfer.getInstance(), LocalSelectionTransfer.getTransfer() });
+			dropTarget.setTransfer(new Transfer[] { TextTransfer.getInstance(), LocalSelectionTransfer.getTransfer() });
 			DragSource dragSource = new DragSource(dropImage, DND.DROP_MOVE | DND.DROP_COPY);
 			dragSource.setTransfer(new Transfer[] { TextTransfer.getInstance() });
 
@@ -421,9 +419,9 @@ public class ContextView extends ViewPart {
 						Eclipse.INSTANCE.alert("Please ensure the engine is running before making observations.");
 					} else {
 
-						Object dropped = event.data instanceof TreeSelection
-								? ((TreeSelection) event.data).getFirstElement()
-								: null;
+						Object dropped = event.data instanceof StructuredSelection
+								? ((StructuredSelection) event.data).getFirstElement()
+								: (event.data instanceof String ? event.data : null);
 
 						if (dropped instanceof ETestCase || dropped instanceof EScript) {
 							File file = ((EKimObject) dropped).getPhysicalFile();
@@ -445,6 +443,14 @@ public class ContextView extends ViewPart {
 							Activator.session().observe((EObserver) dropped, addToContext);
 						} else if (dropped instanceof EResource) {
 							Activator.session().previewResource(((EResource) dropped).getResource());
+						} else if (dropped instanceof String) {
+							// does not get triggered
+							EResourceReference resource = Activator.klab().getResource(dropped.toString());
+							if (resource != null) {
+								Activator.session().previewResource(resource);
+							}
+						} else if (dropped instanceof EResourceReference) {
+							Activator.session().previewResource((EResourceReference) dropped);
 						}
 					}
 

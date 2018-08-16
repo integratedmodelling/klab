@@ -42,10 +42,15 @@ Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
   javax.inject;version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Export-Package: org.integratedmodelling.klab.ide,
+ org.integratedmodelling.klab.ide.builder,
  org.integratedmodelling.klab.ide.kim,
  org.integratedmodelling.klab.ide.model,
  org.integratedmodelling.klab.ide.navigator.e3,
  org.integratedmodelling.klab.ide.navigator.model,
+ org.integratedmodelling.klab.ide.navigator.model.beans,
  org.integratedmodelling.klab.ide.perspective,
+ org.integratedmodelling.klab.ide.ui,
+ org.integratedmodelling.klab.ide.ui.wizards,
+ org.integratedmodelling.klab.ide.utils,
  org.integratedmodelling.klab.ide.views
 Automatic-Module-Name: org.integratedmodelling.klab.ide

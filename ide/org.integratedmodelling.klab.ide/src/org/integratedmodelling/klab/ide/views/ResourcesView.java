@@ -5,11 +5,22 @@ import java.util.List;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Image;
@@ -21,10 +32,14 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
+import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.ResourceReference;
 
 public class ResourcesView extends ViewPart {
@@ -133,7 +148,7 @@ public class ResourcesView extends ViewPart {
 			searchField = new Text(container, SWT.BORDER);
 			searchField.addKeyListener(new KeyAdapter() {
 				@Override
-				public void keyPressed(KeyEvent e) {
+				public void keyReleased(KeyEvent e) {
 					String t = searchField.getText();
 					search(t);
 				}
@@ -163,7 +178,57 @@ public class ResourcesView extends ViewPart {
 			}
 			tableViewer.setContentProvider(new ContentProvider());
 			tableViewer.setLabelProvider(new LabelProvider());
+			tableViewer.addDragSupport(DND.DROP_DEFAULT, new Transfer[] { TextTransfer.getInstance() },
+					new DragSourceListener() {
+
+						@Override
+						public void dragStart(DragSourceEvent event) {
+							// TODO Auto-generated method stub
+						}
+
+						@Override
+						public void dragSetData(DragSourceEvent event) {
+							if (event.getSource() instanceof EResourceReference) {
+								event.data = event.getSource();
+							}
+						}
+
+						@Override
+						public void dragFinished(DragSourceEvent event) {
+							// TODO Auto-generated method stub
+						}
+					});
 		}
+		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				Object object = event.getSelection() instanceof StructuredSelection
+						? event.getStructuredSelection().getFirstElement()
+						: null;
+				if (object instanceof EResourceReference) {
+					try {
+						IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+								.showView(ResourceEditor.ID);
+						if (view != null) {
+							((ResourceEditor) view).loadResource((EResourceReference) object);
+						}
+					} catch (PartInitException e) {
+						Eclipse.INSTANCE.handleException(e);
+					}
+				}
+			}
+		});
+		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
+			public void doubleClick(DoubleClickEvent event) {
+				Object object = event.getSelection() instanceof StructuredSelection
+						? ((StructuredSelection) event.getSelection()).getFirstElement()
+						: null;
+				if (object instanceof EResourceReference) {
+					Activator.session().previewResource((EResourceReference)object);
+				}
+			}
+		});
 		{
 			resultsLabel = new Label(container, SWT.NONE);
 			resultsLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -189,7 +254,7 @@ public class ResourcesView extends ViewPart {
 			}
 		}
 		Display.getDefault().asyncExec(() -> tableViewer.setInput(currentMatches));
-		
+
 	}
 
 	public void dispose() {

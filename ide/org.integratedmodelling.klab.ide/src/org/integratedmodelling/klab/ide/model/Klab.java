@@ -192,4 +192,20 @@ public class Klab {
 		return this.namespaceStatus.get(name);
 	}
 
+	/**
+	 * Find the first project containing the URN and return the corresponding resource.
+	 * 
+	 * @param urn
+	 * @return
+	 */
+	public EResourceReference getResource(String urn) {
+		for (Map<String, EResourceReference> container : resourceCatalog.values()) {
+			EResourceReference ret = container.get(urn);
+			if (ret != null) {
+				return ret;
+			}
+		}
+		return null;
+	}
+
 }

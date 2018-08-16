@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.ide.views;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -9,6 +10,7 @@ import org.eclipse.jface.layout.TreeColumnLayout;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeSelection;
@@ -24,16 +26,22 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.part.ViewPart;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.rest.SearchMatch;
+import org.integratedmodelling.klab.rest.SearchRequest;
+import org.integratedmodelling.klab.rest.SearchResponse;
 
 public class SearchView extends ViewPart {
 
@@ -42,65 +50,85 @@ public class SearchView extends ViewPart {
 	private Text text;
 	private TreeViewer treeViewer;
 	private Tree tree;
+	private List<SearchMatch> matches = new ArrayList<>();
+	private String contextId = null;
+	private long requestId;
+	private List<SearchMatch> accepted = new ArrayList<>();
 
 	public SearchView() {
 	}
 
-    class ContentProvider implements ITreeContentProvider {
+	class SearchLabelProvider extends LabelProvider implements ITableLabelProvider {
 
-        @Override
-        public void dispose() {
-        }
+		@Override
+		public Image getImage(Object element) {
+			return null;
+		}
 
-        @Override
-        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        }
+		@Override
+		public String getText(Object element) {
+			return null;
+		}
 
-        @Override
-        public Object[] getElements(Object inputElement) {
-            return getChildren(inputElement);
-        }
+		@Override
+		public Image getColumnImage(Object element, int columnIndex) {
+			if (element instanceof SearchMatch) {
 
-        @SuppressWarnings("unchecked")
-        @Override
-        public Object[] getChildren(Object parentElement) {
-//            if (parentElement instanceof Collection<?>) {
-//                return ((ArrayList<Object>) parentElement).toArray();
-//            } else if (parentElement instanceof IConcept) {
-//                return expandConcept((IConcept) parentElement);
-//            } else if (parentElement instanceof Child) {
-//                return ((Child) parentElement).getChildren();
-//            }
-            return null;
-        }
+			}
+			return null;
+		}
 
-        @Override
-        public Object getParent(Object element) {
-//            if (!(element instanceof Collection<?>)) {
-//                return matches;
-//            } else if (element instanceof Child) {
-//                return ((Child) element)._parent;
-//            }
-            return null;
-        }
+		@Override
+		public String getColumnText(Object element, int columnIndex) {
+			if (element instanceof SearchMatch) {
+				switch (columnIndex) {
+				case 0:
+					return ((SearchMatch) element).getId();
+				}
+			}
+			return null;
+		}
 
-        @SuppressWarnings("unchecked")
-        @Override
-        public boolean hasChildren(Object element) {
-//            if (element instanceof Collection<?>) {
-//                return ((ArrayList<Object>) element).size() > 0;
-//            } else if (element instanceof Child) {
-//                return ((Child) element).hasChildren();
-//            } else if (element instanceof IConcept) {
-//                return ((IConcept) element).getChildren().size() > 0 ||
-//                        ((IConcept) element).getAllParents().size() > 0;
-//            }
+	}
 
-            return false;
-        }
+	class ContentProvider implements ITreeContentProvider {
 
-    }
-	
+		@Override
+		public void dispose() {
+		}
+
+		@Override
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
+
+		@Override
+		public Object[] getElements(Object inputElement) {
+			return getChildren(inputElement);
+		}
+
+		@Override
+		public Object[] getChildren(Object parentElement) {
+			if (parentElement instanceof List) {
+				return ((List<?>)parentElement).toArray();
+			}
+			return null;
+		}
+
+		@Override
+		public Object getParent(Object element) {
+			if (!(element instanceof Collection<?>)) {
+				return matches;
+			}
+			return null;
+		}
+
+		@Override
+		public boolean hasChildren(Object element) {
+			return element instanceof List && ((List<?>)element).size() > 0;
+		}
+
+	}
+
 	/**
 	 * Create contents of the view part.
 	 * 
@@ -108,7 +136,7 @@ public class SearchView extends ViewPart {
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
-		
+
 		Composite container = new Composite(parent, SWT.NONE);
 		// toolkit.paintBordersFor(container);
 		container.setLayout(new GridLayout(1, false));
@@ -117,7 +145,7 @@ public class SearchView extends ViewPart {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				String t = text.getText();
-				// search(t);
+				search(t);
 			}
 		});
 		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -149,8 +177,6 @@ public class SearchView extends ViewPart {
 		tree = treeViewer.getTree();
 		tree.setHeaderVisible(true);
 		tree.setLinesVisible(true);
-		// toolkit.adapt(tree);
-		// toolkit.paintBordersFor(tree);
 		{
 			TreeColumn imageColumn = new TreeColumn(tree, SWT.NONE);
 			imageColumn.setText("Name");
@@ -160,8 +186,6 @@ public class SearchView extends ViewPart {
 		namespaceColumn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				text.setText("namespace:");
-				text.setSelection("namespace:".length());
 				text.forceFocus();
 			}
 		});
@@ -171,15 +195,13 @@ public class SearchView extends ViewPart {
 		descriptionColumn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				text.setText("description:");
-				text.setSelection("description:".length());
 				text.forceFocus();
 			}
 		});
 		tcl_normalSearchView.setColumnData(descriptionColumn, new ColumnPixelData(400, true, true));
 		descriptionColumn.setText("Description");
 		treeViewer.setContentProvider(new ContentProvider());
-		treeViewer.setLabelProvider(new LabelProvider());
+		treeViewer.setLabelProvider(new SearchLabelProvider());
 		treeViewer.addDragSupport(DND.DROP_DEFAULT, new Transfer[] { TextTransfer.getInstance() },
 				new DragSourceListener() {
 
@@ -204,16 +226,52 @@ public class SearchView extends ViewPart {
 						// System.out.println("ciao");
 					}
 				});
-		
+
 		Composite resultSet = new Composite(container, SWT.NONE);
 		resultSet.setLayout(new GridLayout(1, false));
 		resultSet.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-		
-				Label lblNewLabel = new Label(resultSet, SWT.NONE);
-				lblNewLabel.setText("No results");
+
+		Label lblNewLabel = new Label(resultSet, SWT.NONE);
+		lblNewLabel.setText("No results");
 		createActions();
 		initializeToolBar();
 		initializeMenu();
+	}
+
+	protected void search(String text) {
+
+		matches.clear();
+		if (text.trim().isEmpty()) {
+			this.accepted.clear();
+			this.text.setText("");
+			this.contextId = null;
+			Display.getDefault().asyncExec(() -> treeViewer.setInput(matches));
+		} else if (text.length() > 1) {
+			
+			SearchRequest request = new SearchRequest();
+			
+			request.setMaxResults(50);
+			request.setQueryString(text);
+			request.setContextId(this.contextId);
+			request.setRequestId(this.requestId++);
+			
+			Activator.post((message) -> {
+				SearchResponse response = message.getPayload(SearchResponse.class);
+				this.matches.addAll(response.getMatches());
+				this.contextId = response.getContextId();
+				Display.getDefault().asyncExec(() -> {
+					treeViewer.setInput(matches);
+				});
+			}, IMessage.MessageClass.Search, IMessage.Type.SubmitSearch, request);
+		}
+	}
+
+	private String getMatchedText() {
+		String ret = "";
+		for (SearchMatch match : accepted) {
+			ret += (ret.isEmpty() ? "" : " ") + match.getId();
+		}
+		return ret;
 	}
 
 	public void dispose() {
