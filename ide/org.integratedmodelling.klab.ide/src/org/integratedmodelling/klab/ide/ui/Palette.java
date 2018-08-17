@@ -39,7 +39,7 @@ public class Palette extends Composite {
 		super(parent, style);
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout gl_composite = new GridLayout(1, false);
-		gl_composite.marginBottom = 5;
+		gl_composite.marginWidth = 0;
 		gl_composite.marginHeight = 0;
 		gl_composite.verticalSpacing = 0;
 		gl_composite.horizontalSpacing = 0;
@@ -50,7 +50,12 @@ public class Palette extends Composite {
 		scroll.setExpandVertical(true);
 		scroll.setExpandHorizontal(true);
 		this.container = new Composite(scroll, SWT.NONE);
-		container.setLayout(new GridLayout(1, false));
+		GridLayout gl_container = new GridLayout(1, false);
+		gl_container.marginWidth = 0;
+		gl_container.verticalSpacing = 0;
+		gl_container.marginHeight = 0;
+		gl_container.horizontalSpacing = 0;
+		container.setLayout(gl_container);
 		DropTarget dropTarget = new DropTarget(container, DND.DROP_MOVE);
 		dropTarget.setTransfer(new Transfer[] { FileTransfer.getInstance() });
 		dropTarget.addDropListener(new DropTargetAdapter() {
@@ -72,17 +77,7 @@ public class Palette extends Composite {
 		// TODO adding this it does scroll, but not intelligently. Without this, no
 		// scrolling happens
 		Rectangle rr = parent.getClientArea();
-		scroll.setMinSize(parent.computeSize(rr.width, rr.height));
 		scroll.setContent(container);
-		{
-			Composite toolArea = new Composite(composite, SWT.NONE);
-			toolArea.setBackground(SWTResourceManager.getColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
-			GridData gd_toolArea = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-			gd_toolArea.heightHint = 30;
-			toolArea.setLayoutData(gd_toolArea);
-			// toolkit.adapt(toolArea);
-			// toolkit.paintBordersFor(toolArea);
-		}
 		scroll.addControlListener(new ControlAdapter() {
 			@Override
 			public void controlResized(ControlEvent e) {

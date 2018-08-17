@@ -20,138 +20,150 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public class SearchContext implements IIndexingService.Context {
 
-    // these are in OR - anything matching any of these is acceptable. No
-    // constraints means everything is acceptable.
-    private List<Constraint> constraints     = new ArrayList<>();
-    private Set<Type>        constraintTypes = EnumSet.noneOf(Type.class);
-    private SearchContext    parent          = null;
+	// these are in OR - anything matching any of these is acceptable. No
+	// constraints means everything is acceptable.
+	private List<Constraint> constraints = new ArrayList<>();
+	private Set<Type> constraintTypes = EnumSet.noneOf(Type.class);
+	private SearchContext parent = null;
 
-    public static Context createNew() {
-        SearchContext ret = new SearchContext();
-        // first context can select operators, non-abstract traits or non-abstract observables
-        ret.constraints.add(Constraint.allPrefixOperators());
-        ret.constraints.add(Constraint.allTraits(false));
-        ret.constraints.add(Constraint.allObservables(false));
-        return ret;
-    }
+	public static Context createNew() {
+		SearchContext ret = new SearchContext();
+		// first context can select operators, non-abstract traits or non-abstract
+		// observables
+		ret.constraints.add(Constraint.allPrefixOperators());
+		ret.constraints.add(Constraint.allTraits(false));
+		ret.constraints.add(Constraint.allObservables(false));
+		return ret;
+	}
 
-    private SearchContext() {
-    }
+	private SearchContext() {
+	}
 
-    private SearchContext(SearchContext parent) {
-        this.parent = parent;
-    }
+	private SearchContext(SearchContext parent) {
+		this.parent = parent;
+	}
 
-    public SearchContext(Set<Type> matchTypes,
-            Set<org.integratedmodelling.kim.api.IKimConcept.Type> semanticTypes) {
-        // TODO Auto-generated constructor stub
-    }
+	static class Condition {
 
-    static class Condition {
+		Type type;
+		Set<IKimConcept.Type> semantics;
+		IConcept c1;
+		IConcept c2;
 
-        Type                  type;
-        Set<IKimConcept.Type> semantics;
-        IConcept              c1;
-        IConcept              c2;
+		public Condition(Type type) {
+			this.type = type;
+		}
 
-        public Condition(Type type) {
-            this.type = type;
-        }
+		public Condition(IKimConcept.Type... semantics) {
+			this.semantics = EnumSet.noneOf(IKimConcept.Type.class);
+			for (IKimConcept.Type type : semantics) {
+				this.semantics.add(type);
+			}
+		}
 
-        public Condition(IKimConcept.Type... semantics) {
-            this.semantics = EnumSet.noneOf(IKimConcept.Type.class);
-            for (IKimConcept.Type type : semantics) {
-                this.semantics.add(type);
-            }
-        }
+		boolean match(Document document) {
+			// TODO
+			return true;
+		}
+	}
 
-        boolean match(Document document) {
-            // TODO
-            return true;
-        }
-    }
+	static class Constraint {
 
-    static class Constraint {
+		// these are in AND
+		List<Condition> conditions = new ArrayList<>();
 
-        // these are in AND
-        List<Condition> conditions = new ArrayList<>();
+		boolean match(Document document) {
+			for (Condition condition : conditions) {
+				if (!condition.match(document)) {
+					return false;
+				}
+			}
+			return true;
+		}
 
-        boolean match(Document document) {
-            for (Condition condition : conditions) {
-                if (!condition.match(document)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        
-        public static Constraint allObservables(boolean allowAbstract) {
-            Constraint ret = new Constraint();
-            ret.conditions.add(new Condition(IKimConcept.Type.OBSERVABLE));
-            return ret;
-        }
+		public static Constraint allObservables(boolean allowAbstract) {
+			Constraint ret = new Constraint();
+			ret.conditions.add(new Condition(IKimConcept.Type.OBSERVABLE));
+			return ret;
+		}
 
-        public static Constraint allTraits(boolean allowAbstract) {
-            Constraint ret = new Constraint();
-            ret.conditions.add(new Condition(IKimConcept.Type.TRAIT));
-            return ret;
-        }
+		public static Constraint allTraits(boolean allowAbstract) {
+			Constraint ret = new Constraint();
+			ret.conditions.add(new Condition(IKimConcept.Type.TRAIT));
+			return ret;
+		}
 
-        public static Constraint allPrefixOperators() {
-            Constraint ret = new Constraint();
-            ret.conditions.add(new Condition(Type.PREFIX_OPERATOR));
-            return ret;
-        }
+		public static Constraint allPrefixOperators() {
+			Constraint ret = new Constraint();
+			ret.conditions.add(new Condition(Type.PREFIX_OPERATOR));
+			return ret;
+		}
 
-    }
+	}
 
-    @Override
-    public SearchContext accept(Match match) {
-        SearchContext ret = new SearchContext(this);
-        // TODO define constraints for the next match
-        return ret;
-    }
+	@Override
+	public SearchContext accept(Match match) {
+		SearchContext ret = new SearchContext(this);
+		// TODO define constraints for the next match
+		return ret;
+	}
 
-    public boolean isAllowed(Type type) {
-        return constraintTypes.isEmpty() || constraintTypes.contains(type);
-    }
+	public boolean isAllowed(Type type) {
+		return constraintTypes.isEmpty() || constraintTypes.contains(type);
+	}
 
-    @Override
-    public boolean isEnd() {
-        return false;
-    }
+	@Override
+	public boolean isEnd() {
+		return false;
+	}
 
-    @Override
-    public boolean isConsistent() {
-        return false;
-    }
+	@Override
+	public boolean isConsistent() {
+		return false;
+	}
 
-    @Override
-    public String getUrn() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public String getUrn() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public boolean isEmpty() {
-        // root context is empty
-        return parent == null;
-    }
+	@Override
+	public boolean isEmpty() {
+		// root context is empty
+		return parent == null;
+	}
 
-    @Override
-    public Context previous() {
-        return parent;
-    }
+	@Override
+	public Context previous() {
+		return parent;
+	}
 
-    public Query buildQuery(String currentTerm, Analyzer analyzer) {
-        QueryParser parser = new QueryParser("name", analyzer);
-        // parser.setAllowLeadingWildcard(true);
-        try {
-            // hai voglia
-            return parser.parse("name:" + currentTerm + "*");
-        } catch (ParseException e) {
-            throw new KlabValidationException(e);
-        }
-    }
+	public Query buildQuery(String currentTerm, Analyzer analyzer) {
+		QueryParser parser = new QueryParser("name", analyzer);
+		// parser.setAllowLeadingWildcard(true);
+		try {
+			// hai voglia
+			return parser.parse("name:" + currentTerm + "*");
+		} catch (ParseException e) {
+			throw new KlabValidationException(e);
+		}
+	}
+
+	public static Context createNew(Set<Type> matchTypes,
+			Set<org.integratedmodelling.kim.api.IKimConcept.Type> semanticTypes) {
+		SearchContext ret = new SearchContext();
+		if (matchTypes.isEmpty() && semanticTypes.isEmpty()) {
+			// first context can select operators, non-abstract traits or non-abstract
+			// observables
+			ret.constraints.add(Constraint.allPrefixOperators());
+			ret.constraints.add(Constraint.allTraits(false));
+			ret.constraints.add(Constraint.allObservables(false));
+		} else {
+			// TODO
+		}
+		return ret;
+
+	}
 
 }

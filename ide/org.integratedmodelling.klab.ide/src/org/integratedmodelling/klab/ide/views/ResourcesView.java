@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -178,7 +179,7 @@ public class ResourcesView extends ViewPart {
 			}
 			tableViewer.setContentProvider(new ContentProvider());
 			tableViewer.setLabelProvider(new LabelProvider());
-			tableViewer.addDragSupport(DND.DROP_DEFAULT, new Transfer[] { TextTransfer.getInstance() },
+			tableViewer.addDragSupport(DND.DROP_DEFAULT, new Transfer[] { TextTransfer.getInstance(), LocalSelectionTransfer.getTransfer() },
 					new DragSourceListener() {
 
 						@Override

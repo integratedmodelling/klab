@@ -28,7 +28,7 @@ public enum Indexing implements IIndexingService {
 	}
 
 	public Context createContext(Set<Match.Type> matchTypes, Set<IKimConcept.Type> semanticTypes) {
-		return new SearchContext(matchTypes, semanticTypes);
+		return SearchContext.createNew(matchTypes, semanticTypes);
 	}
 
     public void releaseNamespace(String namespaceId, IMonitor monitor) {

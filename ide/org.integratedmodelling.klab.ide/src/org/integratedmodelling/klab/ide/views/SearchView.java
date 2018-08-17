@@ -7,6 +7,7 @@ import java.util.List;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.layout.TreeColumnLayout;
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -29,7 +30,6 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -46,6 +46,7 @@ import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
+import org.integratedmodelling.klab.ide.ui.Palette;
 import org.integratedmodelling.klab.rest.SearchMatch;
 import org.integratedmodelling.klab.rest.SearchMatchAction;
 import org.integratedmodelling.klab.rest.SearchRequest;
@@ -65,6 +66,12 @@ public class SearchView extends ViewPart {
 	private StyledText resultText;
 	private KlabPeer klab;
 	private Composite topContainer;
+	private Composite searchView;
+	private Palette paletteView;
+	GridData gd_paletteView, gd_searchView;
+	private Composite actionArea;
+
+	private boolean searchShowStatus;
 
 	public SearchView() {
 	}
@@ -217,19 +224,36 @@ public class SearchView extends ViewPart {
 			}
 		});
 		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		// toolkit.adapt(text, true, true);
-		Composite composite = new Composite(topContainer, SWT.NONE);
-		composite.setLayout(new FillLayout(SWT.HORIZONTAL));
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		// toolkit.adapt(composite);
-		// toolkit.paintBordersFor(composite);
-		// TODO put a palette in here, show the tree only when typing
-		Composite normalSearchView = new Composite(composite, SWT.NONE);
-		// toolkit.adapt(normalSearchView);
-		// toolkit.paintBordersFor(normalSearchView);
-		TreeColumnLayout tcl_normalSearchView = new TreeColumnLayout();
-		normalSearchView.setLayout(tcl_normalSearchView);
-		treeViewer = new TreeViewer(normalSearchView, SWT.BORDER);
+
+		actionArea = new Composite(topContainer, SWT.NONE);
+		GridLayout gl_actionArea = new GridLayout(1, false);
+		gl_actionArea.verticalSpacing = 0;
+		gl_actionArea.marginWidth = 0;
+		gl_actionArea.marginHeight = 0;
+		gl_actionArea.horizontalSpacing = 0;
+		actionArea.setLayout(gl_actionArea);
+		actionArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+
+		// begin comment out
+		paletteView = new Palette(null, actionArea, SWT.NONE);
+		paletteView.setVisible(true);
+		gd_paletteView = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+		gd_paletteView.exclude = false;
+		paletteView.setLayoutData(gd_paletteView);
+		// end comment out
+		
+		searchView = new Composite(actionArea, SWT.NONE);
+		gd_searchView = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+
+		// begin comment out
+		searchView.setVisible(false);
+		gd_searchView.exclude = true;
+		// end comment out
+		
+		searchView.setLayoutData(gd_searchView);
+		TreeColumnLayout tcl_searchView = new TreeColumnLayout();
+		searchView.setLayout(tcl_searchView);
+		treeViewer = new TreeViewer(searchView, SWT.BORDER);
 		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
@@ -248,17 +272,19 @@ public class SearchView extends ViewPart {
 		{
 			TreeColumn imageColumn = new TreeColumn(tree, SWT.NONE);
 			imageColumn.setText("Name");
-			tcl_normalSearchView.setColumnData(imageColumn, new ColumnPixelData(220, true, true));
+			tcl_searchView.setColumnData(imageColumn, new ColumnPixelData(220, true, true));
 		}
 		TreeColumn namespaceColumn = new TreeColumn(tree, SWT.NONE);
-		tcl_normalSearchView.setColumnData(namespaceColumn, new ColumnPixelData(130, true, true));
+		tcl_searchView.setColumnData(namespaceColumn, new ColumnPixelData(130, true, true));
 		namespaceColumn.setText("Full URN");
 		TreeColumn descriptionColumn = new TreeColumn(tree, SWT.NONE);
-		tcl_normalSearchView.setColumnData(descriptionColumn, new ColumnPixelData(400, true, true));
+		tcl_searchView.setColumnData(descriptionColumn, new ColumnPixelData(400, true, true));
 		descriptionColumn.setText("Description");
+
 		treeViewer.setContentProvider(new ContentProvider());
 		treeViewer.setLabelProvider(new SearchLabelProvider());
-		treeViewer.addDragSupport(DND.DROP_DEFAULT, new Transfer[] { TextTransfer.getInstance() },
+		treeViewer.addDragSupport(DND.DROP_DEFAULT,
+				new Transfer[] { TextTransfer.getInstance(), LocalSelectionTransfer.getTransfer() },
 				new DragSourceListener() {
 
 					@Override
@@ -283,7 +309,7 @@ public class SearchView extends ViewPart {
 					}
 				});
 
-		Composite resultSet = new Composite(topContainer, SWT.NONE);
+		Composite resultSet = new Composite(topContainer, SWT.BORDER | SWT.EMBEDDED);
 		resultSet.setLayout(new GridLayout(2, false));
 		resultSet.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
@@ -331,11 +357,45 @@ public class SearchView extends ViewPart {
 	}
 
 	protected void reset() {
-		matches.clear();
+		clearMatches();
 		accepted.clear();
 		setMatchedText();
 		text.setText("");
 		contextId = null;
+	}
+
+	// probably doing way more than needed but I spent enough time. Secret to success was layout() instead of pack().
+	private void showSearchResults(boolean show) {
+
+		if (this.searchShowStatus != show) {
+
+			this.searchShowStatus = show;
+
+			if (show) {
+				
+				gd_paletteView.exclude = true;
+				gd_searchView.exclude = false;
+				paletteView.setVisible(false);
+				searchView.setVisible(true);
+				gd_searchView.grabExcessHorizontalSpace = true;
+				gd_searchView.grabExcessVerticalSpace = true;
+				gd_searchView.horizontalAlignment = SWT.FILL;
+				gd_searchView.verticalAlignment = SWT.FILL;
+
+			} else {
+
+				gd_paletteView.exclude = false;
+				gd_searchView.exclude = true;
+				paletteView.setVisible(true);
+				searchView.setVisible(false);
+				gd_paletteView.grabExcessHorizontalSpace = true;
+				gd_paletteView.grabExcessVerticalSpace = true;
+				gd_paletteView.horizontalAlignment = SWT.FILL;
+				gd_paletteView.verticalAlignment = SWT.FILL;
+			}
+			actionArea.layout(true, true);
+
+		}
 	}
 
 	protected void acceptMatch(SearchMatch object, int matchIndex) {
@@ -343,10 +403,17 @@ public class SearchView extends ViewPart {
 		setMatchedText();
 		text.setText("");
 		text.forceFocus();
+		clearMatches();
 		SearchMatchAction action = new SearchMatchAction();
 		action.setContextId(contextId);
 		action.setMatchIndex(matchIndex);
 		Activator.post(IMessage.MessageClass.Search, IMessage.Type.MatchAction, action);
+	}
+
+	private void clearMatches() {
+		matches.clear();
+		showSearchResults(false);
+		treeViewer.setInput(matches);
 	}
 
 	protected void search(String text) {
@@ -355,6 +422,7 @@ public class SearchView extends ViewPart {
 			return;
 		}
 
+		showSearchResults(true);
 		matches.clear();
 
 		SearchRequest request = new SearchRequest();
