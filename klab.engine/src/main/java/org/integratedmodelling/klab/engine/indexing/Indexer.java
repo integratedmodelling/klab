@@ -2,7 +2,9 @@ package org.integratedmodelling.klab.engine.indexing;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -13,6 +15,7 @@ import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.ControlledRealTimeReopenThread;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ReferenceManager;
@@ -22,18 +25,21 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimModel;
+import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.services.IIndexingService.Context;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
+import org.integratedmodelling.klab.engine.indexing.SearchContext.Constraint;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.utils.NumberUtils;
 
 public enum Indexer {
 
@@ -44,6 +50,7 @@ public enum Indexer {
 	private StandardAnalyzer analyzer;
 	private ReferenceManager<IndexSearcher> searcherManager;
 	private ControlledRealTimeReopenThread<IndexSearcher> nrtReopenThread;
+	private QueryParser namespaceRemover;
 
 	public static final int MAX_RESULT_COUNT = 9;
 
@@ -55,7 +62,7 @@ public enum Indexer {
 			this.writer = new IndexWriter(index, config);
 
 			this.searcherManager = new SearcherManager(writer, true, true, null);
-
+			this.namespaceRemover = new QueryParser("namespace", analyzer);
 			/**
 			 * Thread supporting near-realtime index background refresh
 			 */
@@ -73,7 +80,8 @@ public enum Indexer {
 	public Match index(IKimStatement object, String namespaceId) {
 
 		SearchMatch ret = null;
-
+		Set<IKimConcept.Type> semanticType = null;
+		
 		if (object.isErrors()) {
 			return null;
 		}
@@ -84,7 +92,9 @@ public enum Indexer {
 			ret.setDescription(((IKimConceptStatement) object).getDocstring());
 			ret.setId(namespaceId + ":" + ((IKimConceptStatement) object).getName());
 			ret.setName(((IKimConceptStatement) object).getName());
-
+			
+			semanticType = (((IKimConceptStatement) object).getType());
+			
 			// concept that 'equals' something should index its definition with high weight
 			// concept that 'is' something should index its parent's definition with lower
 			// weight
@@ -101,6 +111,7 @@ public enum Indexer {
 			ret.setDescription(((IKimModel) object).getDocstring());
 			ret.setName(((IKimModel) object).getName());
 			ret.setId(((IKimModel) object).getName());
+			semanticType = (((IKimModel) object).getObservables().get(0).getMain().getType());
 
 		} else if (object instanceof IKimObserver) {
 
@@ -108,6 +119,7 @@ public enum Indexer {
 			ret.setDescription(((IKimObserver) object).getDocstring());
 			ret.setName(((IKimObserver) object).getName());
 			ret.setId(((IKimObserver) object).getName());
+			semanticType = (((IKimObserver) object).getObservable().getMain().getType());
 		}
 
 		if (ret != null) {
@@ -123,6 +135,7 @@ public enum Indexer {
 				for (String key : ret.getIndexableFields().keySet()) {
 					document.add(new TextField(key, ret.getIndexableFields().get(key), Store.YES));
 				}
+
 				// index type and concepttype as ints
 				document.add(new IntPoint("ctype", Kim.INSTANCE.getFundamentalType(ret.conceptType).ordinal()));
 				document.add(new IntPoint("mtype", ret.getMatchType().ordinal()));
@@ -130,6 +143,8 @@ public enum Indexer {
 				// ..store them
 				document.add(new StoredField("vctype", Kim.INSTANCE.getFundamentalType(ret.conceptType).ordinal()));
 				document.add(new StoredField("vmtype", ret.getMatchType().ordinal()));
+				document.add(new StoredField("smtype", encodeType(semanticType)));
+
 				this.writer.addDocument(document);
 
 			} catch (Throwable e) {
@@ -137,6 +152,17 @@ public enum Indexer {
 			}
 		}
 
+		return ret;
+	}
+
+	private String encodeType(Set<Type> semanticType) {
+
+		String ret = "";
+		if (semanticType != null) {
+			for (Type type : semanticType) {
+				ret += (ret.isEmpty()? "" : ",") + type.ordinal();
+			}
+		}
 		return ret;
 	}
 
@@ -148,25 +174,20 @@ public enum Indexer {
 		}
 	}
 
-	public void updateNamespace(INamespace namespace) {
+	public void updateNamespace(IKimNamespace namespace) {
 
 		Thread writerThread = new Thread() {
 
 			@Override
 			public void run() {
 				try {
-					System.out.println("TODO: DELETE NAMESPACE FROM INDEX BEFORE REINDEXING!");
-					// delete everything within namespace
-					// reindex namespace
-					// for (int i = 0; i < 100000; ++i) {
-					// Document doc = new Document();
-					// doc.add(new LongPoint("time", System.currentTimeMillis()));
-					// doc.add(new StringField("counter", "" + i, Field.Store.YES));
-					// writer.addDocument(doc);
-					// searcherManager.maybeRefresh();
-					// Thread.sleep(100);
-					// }
-					// writer.commit();
+					writer.deleteDocuments(namespaceRemover.parse(namespace.getName()));
+					for (IKimScope statement : namespace.getChildren()) {
+						if (statement instanceof IKimStatement) {
+							index((IKimStatement)statement, namespace.getName());
+						}
+					}
+					writer.commit();
 				} catch (Exception e) {
 					throw new KlabIOException(e);
 				}
@@ -196,27 +217,64 @@ public enum Indexer {
 
 		SearchContext context = (SearchContext) searchContext;
 		List<Match> ret = new ArrayList<>();
-		try {
-			IndexSearcher searcher = searcherManager.acquire();
-			TopDocs docs = searcher.search(context.buildQuery(currentTerm, this.analyzer), maxResults);
-			ScoreDoc[] hits = docs.scoreDocs;
-			for (ScoreDoc hit : hits) {
 
-				Document document = searcher.doc(hit.doc);
+		for (Constraint constraint : context.getConstraints()) {
 
-				SearchMatch match = new SearchMatch();
-				match.setId(document.get("id"));
-				match.setName(document.get("name"));
-				match.setDescription(document.get("description"));
-				match.setScore(hit.score);
-				match.setMatchType(Match.Type.values()[Integer.parseInt(document.get("vmtype"))]);
-				match.getConceptType().add(IKimConcept.Type.values()[Integer.parseInt(document.get("vctype"))]);
+			List<Match> cret = new ArrayList<>();
 
-				ret.add(match);
-
+			if (constraint.isMatcher()) {
+				cret.addAll(constraint.getMatches(currentTerm));
 			}
-		} catch (Exception e) {
-			throw new KlabIOException(e);
+			
+			if (constraint.isQuery()) {
+				try {
+
+					IndexSearcher searcher = searcherManager.acquire();
+					TopDocs docs = searcher.search(constraint.buildQuery(currentTerm, this.analyzer), maxResults);
+					ScoreDoc[] hits = docs.scoreDocs;
+
+					for (ScoreDoc hit : hits) {
+
+						Document document = searcher.doc(hit.doc);
+
+						SearchMatch match = new SearchMatch();
+						match.setId(document.get("id"));
+						match.setName(document.get("name"));
+						match.setDescription(document.get("description"));
+						match.setScore(hit.score);
+						match.setSemantics(decodeType(document.get("smtype")));
+						match.setMatchType(Match.Type.values()[Integer.parseInt(document.get("vmtype"))]);
+						match.getConceptType().add(IKimConcept.Type.values()[Integer.parseInt(document.get("vctype"))]);
+
+						cret.add(match);
+
+					}
+				} catch (Exception e) {
+					throw new KlabIOException(e);
+				}
+			}
+			
+			if (constraint.isFilter()) {
+				List<Match> fret = new ArrayList<>();
+				for (Match match : cret) {
+					if (constraint.filter(match)) {
+						fret.add(match);
+					}
+				}
+				cret = fret;
+			}
+
+			ret.addAll(cret);
+
+		}
+
+		return ret;
+	}
+
+	private Set<Type> decodeType(String string) {
+		EnumSet<Type> ret = EnumSet.noneOf(Type.class);
+		for (int n : NumberUtils.intArrayFromString(string)) {
+			ret.add(Type.values()[n]);
 		}
 		return ret;
 	}

@@ -1,5 +1,10 @@
 package org.integratedmodelling.kim.api;
 
+import java.util.EnumSet;
+import java.util.Set;
+
+import org.integratedmodelling.kim.api.IKimConcept.Type;
+
 /**
  * All the semantic operators available in k.IM.
  * 
@@ -8,23 +13,34 @@ package org.integratedmodelling.kim.api;
  */
 public enum UnarySemanticOperator {
 
-    PRESENCE("presence of"),
-    PROPORTION("proportion of", "in"),
-    RATIO("ratio of", "to"),
-    DISTANCE("distance to"),
-    PROBABILITY("probability of"),
-    UNCERTAINTY("uncertainty of"),
-    COUNT("count of"),
-    VALUE("value of", "over"),
-    OCCURRENCE("occurrence of"),
-    ASSESSMENT("assessment of"),
-    OBSERVABILITY("observability of"),
-    MAGNITUDE("magnitude of"),
-    TYPE("type of");
+	NOT(new Type[] { Type.DENIABLE }, "not"),
+    PRESENCE(new Type[] { Type.COUNTABLE }, "presence of"),
+    // FIXME does not account for the different operands
+    PROPORTION(new Type[] { Type.TRAIT, Type.QUANTIFIABLE }, "proportion of", "in"),
+    RATIO(new Type[] {Type.QUANTIFIABLE}, "ratio of", "to"),
+    // also must be geolocated
+    DISTANCE(new Type[] { Type.COUNTABLE }, "distance to"),
+    PROBABILITY(new Type[] { Type.EVENT }, "probability of"),
+    UNCERTAINTY(new Type[] { Type.QUALITY }, "uncertainty of"),
+    COUNT(new Type[] { Type.COUNTABLE }, "count of"),
+    VALUE(new Type[] { Type.OBSERVABLE, Type.CONFIGURATION }, "value of", "over"),
+    OCCURRENCE(new Type[] { Type.COUNTABLE }, "occurrence of"),
+    ASSESSMENT(new Type[] { Type.QUALITY }, "assessment of"),
+    OBSERVABILITY(new Type[] { Type.OBSERVABLE }, "observability of"),
+    MAGNITUDE(new Type[] { Type.QUANTIFIABLE }, "magnitude of"),
+    TYPE(new Type[] { Type.TRAIT }, "type of");
 
     public String[] declaration;
+    public Set<Type> allowedOperandTypes = EnumSet.noneOf(Type.class);
 
-    UnarySemanticOperator(String... decl) {
+    UnarySemanticOperator(Type[] allowedOpTypes, String... decl) {
         this.declaration = decl;
+        for (Type type : allowedOpTypes) {
+        	allowedOperandTypes.add(type);
+        }
     }
+
+	public Set<Type> getAllowedOperandTypes() {
+		return allowedOperandTypes;
+	}
 }

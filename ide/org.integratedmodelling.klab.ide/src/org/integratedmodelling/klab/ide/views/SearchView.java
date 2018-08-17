@@ -118,7 +118,11 @@ public class SearchView extends ViewPart {
 					} else if (match.getSemanticType().contains(Type.CONFIGURATION)) {
 						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/configuration.png");
 					}
-				} // TODO else etc
+				} else if (match.getMatchType() == Match.Type.PREFIX_OPERATOR
+						|| match.getMatchType() == Match.Type.INFIX_OPERATOR
+						|| match.getMatchType() == Match.Type.MODIFIER) {
+					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/operation.gif");
+				}
 			}
 			return null;
 		}
@@ -197,6 +201,8 @@ public class SearchView extends ViewPart {
 					treeViewer.getTree().forceFocus();
 				} else if (e.keyCode == SWT.ESC) {
 					reset();
+				} else if (text.getText().trim().isEmpty()) {
+					clearMatches();
 				} else {
 					search(text.getText());
 				}
@@ -206,6 +212,10 @@ public class SearchView extends ViewPart {
 			public void keyPressed(KeyEvent e) {
 				if (text.getText().isEmpty() && e.keyCode == SWT.BS) {
 					removeLastMatch();
+				} else if (e.keyCode == '(') {
+					openParenthesis();
+				} else if (e.keyCode == ')') {
+					closeParenthesis();
 				}
 			}
 
@@ -241,7 +251,7 @@ public class SearchView extends ViewPart {
 		gd_paletteView.exclude = false;
 		paletteView.setLayoutData(gd_paletteView);
 		// end comment out
-		
+
 		searchView = new Composite(actionArea, SWT.NONE);
 		gd_searchView = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 
@@ -249,7 +259,7 @@ public class SearchView extends ViewPart {
 		searchView.setVisible(false);
 		gd_searchView.exclude = true;
 		// end comment out
-		
+
 		searchView.setLayoutData(gd_searchView);
 		TreeColumnLayout tcl_searchView = new TreeColumnLayout();
 		searchView.setLayout(tcl_searchView);
@@ -332,6 +342,26 @@ public class SearchView extends ViewPart {
 
 	}
 
+	protected void closeParenthesis() {
+		SearchMatch closed = new SearchMatch();
+		closed.setId(")");
+		closed.setName(")");
+		closed.setCloseGroup(true);
+		accepted.add(closed);
+		setMatchedText();
+		text.setText("");
+	}
+
+	protected void openParenthesis() {
+		SearchMatch open = new SearchMatch();
+		open.setId("(");
+		open.setName("(");
+		open.setOpenGroup(true);
+		accepted.add(open);
+		setMatchedText();
+		text.setText("");
+	}
+
 	protected void observeMatching() {
 		System.out.println("OBSERVING " + getMatchedText());
 		Activator.session().observe(getMatchedText());
@@ -342,11 +372,13 @@ public class SearchView extends ViewPart {
 		switch (message.getType()) {
 		case EngineDown:
 			Display.getDefault().asyncExec(() -> {
+				reset();
 				text.setEnabled(false);
 			});
 			break;
 		case EngineUp:
 			Display.getDefault().asyncExec(() -> {
+				reset();
 				text.setEnabled(true);
 			});
 			break;
@@ -364,7 +396,8 @@ public class SearchView extends ViewPart {
 		contextId = null;
 	}
 
-	// probably doing way more than needed but I spent enough time. Secret to success was layout() instead of pack().
+	// probably doing way more than needed but I spent enough time. Secret to
+	// success was layout() instead of pack().
 	private void showSearchResults(boolean show) {
 
 		if (this.searchShowStatus != show) {
@@ -372,7 +405,7 @@ public class SearchView extends ViewPart {
 			this.searchShowStatus = show;
 
 			if (show) {
-				
+
 				gd_paletteView.exclude = true;
 				gd_searchView.exclude = false;
 				paletteView.setVisible(false);

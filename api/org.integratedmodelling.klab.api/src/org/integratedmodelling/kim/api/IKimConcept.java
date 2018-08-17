@@ -171,6 +171,9 @@ public interface IKimConcept extends IKimStatement {
          * 
          */
         CHARGE,
+        /**
+         * 
+         */
         RESISTANCE,
         /**
          * 
@@ -299,7 +302,11 @@ public interface IKimConcept extends IKimStatement {
         /**
          * 
          */
-        MAGNITUDE
+        MAGNITUDE,
+        /**
+         * A quality that can be quantified numerically
+         */
+        QUANTIFIABLE
     }
 
     /**

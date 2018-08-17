@@ -1485,8 +1485,12 @@ class KimValidator extends AbstractKimValidator {
 					KimPackage.Literals.CONCEPT_STATEMENT_BODY__CHILDREN)
 				ok = false
 			} else {
+					
+				var ctype = EnumSet.copyOf(type);
+				ctype.remove(Type.ABSTRACT)
+				
 				for (child : concept.children) {
-					var childsc = validateConceptBody(child, namespace, ret, type)
+					var childsc = validateConceptBody(child, namespace, ret, ctype)
 					if (childsc === null) {
 						ok = false
 					} else {

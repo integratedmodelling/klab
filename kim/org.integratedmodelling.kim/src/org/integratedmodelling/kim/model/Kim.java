@@ -816,7 +816,7 @@ public enum Kim {
 		case "class":
 			return EnumSet.of(Type.CLASS, Type.QUALITY, Type.OBSERVABLE);
 		case "quantity":
-			return EnumSet.of(Type.QUANTITY, Type.QUALITY, Type.OBSERVABLE);
+			return EnumSet.of(Type.QUANTITY, Type.QUALITY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "quality":
 			return EnumSet.of(Type.QUALITY, Type.OBSERVABLE);
 		case "ordering":
@@ -832,67 +832,67 @@ public enum Kim {
 		case "domain":
 			return EnumSet.of(Type.DOMAIN);
 		case "energy":
-			return EnumSet.of(Type.ENERGY, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE);
+			return EnumSet.of(Type.ENERGY, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "entropy":
-			return EnumSet.of(Type.ENTROPY, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE);
+			return EnumSet.of(Type.ENTROPY, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "length":
-			return EnumSet.of(Type.LENGTH, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE);
+			return EnumSet.of(Type.LENGTH, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "mass":
-			return EnumSet.of(Type.MASS, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE);
+			return EnumSet.of(Type.MASS, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "volume":
-			return EnumSet.of(Type.VOLUME, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE);
+			return EnumSet.of(Type.VOLUME, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "weight":
-			return EnumSet.of(Type.WEIGHT, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE);
+			return EnumSet.of(Type.WEIGHT, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "magnitude":
-			return EnumSet.of(Type.MAGNITUDE, Type.QUALITY, Type.OBSERVABLE, Type.SUBJECTIVE);
+			return EnumSet.of(Type.MAGNITUDE, Type.QUALITY, Type.OBSERVABLE, Type.SUBJECTIVE, Type.QUANTIFIABLE);
 		case "money":
-			return EnumSet.of(Type.MONEY, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE);
+			return EnumSet.of(Type.MONEY, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "duration":
-			return EnumSet.of(Type.DURATION, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE);
+			return EnumSet.of(Type.DURATION, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "area":
-			return EnumSet.of(Type.AREA, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE);
+			return EnumSet.of(Type.AREA, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "presence":
 			return EnumSet.of(Type.PRESENCE, Type.QUALITY, Type.OBSERVABLE);
 		case "proportion":
-			return EnumSet.of(Type.PROPORTION, Type.QUALITY, Type.OBSERVABLE);
+			return EnumSet.of(Type.PROPORTION, Type.QUALITY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "uncertainty":
-			return EnumSet.of(Type.UNCERTAINTY, Type.QUALITY, Type.OBSERVABLE);
+			return EnumSet.of(Type.UNCERTAINTY, Type.QUALITY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "acceleration":
-			return EnumSet.of(Type.ACCELERATION, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE);
+			return EnumSet.of(Type.ACCELERATION, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "priority":
-			return EnumSet.of(Type.PRIORITY, Type.QUALITY, Type.OBSERVABLE);
+			return EnumSet.of(Type.PRIORITY, Type.QUALITY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "value":
-			return EnumSet.of(Type.VALUE, Type.QUALITY, Type.OBSERVABLE);
+			return EnumSet.of(Type.VALUE, Type.QUALITY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "ratio":
-			return EnumSet.of(Type.RATIO, Type.QUALITY, Type.OBSERVABLE);
+			return EnumSet.of(Type.RATIO, Type.QUALITY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "count":
-			return EnumSet.of(Type.NUMEROSITY, Type.QUALITY, Type.OBSERVABLE);
+			return EnumSet.of(Type.NUMEROSITY, Type.QUALITY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "electric-potential":
-			return EnumSet.of(Type.ELECTRIC_POTENTIAL, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE);
+			return EnumSet.of(Type.ELECTRIC_POTENTIAL, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "charge":
-			return EnumSet.of(Type.CHARGE, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE);
+			return EnumSet.of(Type.CHARGE, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "resistance":
-			return EnumSet.of(Type.RESISTANCE, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE);
+			return EnumSet.of(Type.RESISTANCE, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "amount":
-			return EnumSet.of(Type.AMOUNT, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE);
+			return EnumSet.of(Type.AMOUNT, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "resistivity":
-			return EnumSet.of(Type.RESISTIVITY, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE);
+			return EnumSet.of(Type.RESISTIVITY, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "occurrence":
-			return EnumSet.of(Type.OCCURRENCE, Type.QUALITY, Type.OBSERVABLE);
+			return EnumSet.of(Type.OCCURRENCE, Type.QUALITY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "probability":
-			return EnumSet.of(Type.PROBABILITY, Type.QUALITY, Type.OBSERVABLE);
+			return EnumSet.of(Type.PROBABILITY, Type.QUALITY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "pressure":
-			return EnumSet.of(Type.PRESSURE, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE);
+			return EnumSet.of(Type.PRESSURE, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "angle":
-			return EnumSet.of(Type.ANGLE, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE);
+			return EnumSet.of(Type.ANGLE, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "velocity":
-			return EnumSet.of(Type.VELOCITY, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE);
+			return EnumSet.of(Type.VELOCITY, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "temperature":
-			return EnumSet.of(Type.TEMPERATURE, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE);
+			return EnumSet.of(Type.TEMPERATURE, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "viscosity":
-			return EnumSet.of(Type.VISCOSITY, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE);
+			return EnumSet.of(Type.VISCOSITY, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "distance":
-			return EnumSet.of(Type.DISTANCE, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE);
+			return EnumSet.of(Type.DISTANCE, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "process":
 			return EnumSet.of(Type.PROCESS, Type.DIRECT_OBSERVABLE, Type.OBSERVABLE);
 		case "assessment":

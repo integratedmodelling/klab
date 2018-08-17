@@ -21,6 +21,10 @@ public class SearchMatch {
     private IKimConcept.Type            mainSemanticType;
     private Set<IKimConcept.Type>       semanticType = EnumSet.noneOf(IKimConcept.Type.class);
     private IIndexingService.Match.Type matchType;
+    
+    // these correspond to beginning and end of concept definition in parenthesis.
+    private boolean openGroup;
+    private boolean closeGroup;
 
     /**
      * Name to show users
@@ -95,5 +99,21 @@ public class SearchMatch {
     public void setMainSemanticType(IKimConcept.Type mainSemanticType) {
         this.mainSemanticType = mainSemanticType;
     }
+
+	public boolean isOpenGroup() {
+		return openGroup;
+	}
+
+	public void setOpenGroup(boolean openGroup) {
+		this.openGroup = openGroup;
+	}
+
+	public boolean isCloseGroup() {
+		return closeGroup;
+	}
+
+	public void setCloseGroup(boolean closeGroup) {
+		this.closeGroup = closeGroup;
+	}
 
 }

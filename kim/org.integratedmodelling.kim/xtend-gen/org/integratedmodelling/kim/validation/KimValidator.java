@@ -1896,10 +1896,12 @@ public class KimValidator extends AbstractKimValidator {
           KimPackage.Literals.CONCEPT_STATEMENT_BODY__CHILDREN);
         ok = false;
       } else {
+        EnumSet<IKimConcept.Type> ctype = EnumSet.<IKimConcept.Type>copyOf(type);
+        ctype.remove(IKimConcept.Type.ABSTRACT);
         EList<ConceptStatementBody> _children = concept.getChildren();
         for (final ConceptStatementBody child : _children) {
           {
-            KimConceptStatement childsc = this.validateConceptBody(child, namespace, ret, type);
+            KimConceptStatement childsc = this.validateConceptBody(child, namespace, ret, ctype);
             if ((childsc == null)) {
               ok = false;
             } else {

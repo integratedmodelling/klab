@@ -330,7 +330,9 @@ ConceptDeclaration:
 			// containing - subject
 			('containing' contained=SimpleConceptDeclaration)? &
 			// cause towards event (?)
-			('causing'   caused=SimpleConceptDeclaration)? 
+			('causing'   caused=SimpleConceptDeclaration)? &
+			// concomitant with event (?)
+			('during'   during=SimpleConceptDeclaration)? 		
 		)
 		// context or secondary inherency
 		('within' context=SimpleConceptDeclaration)?
@@ -341,15 +343,16 @@ ConceptReference:
 	name=NamespaceId  |
 	templateType=('${' | '#{') (
 			// identifiers for target of semantic ops; also used to connect to UO with 'model' statements
-			name='context'    (type=CONCEPT_TYPE | 'extends' extends=Concept) |
-			name='inherent'   (type=CONCEPT_TYPE | 'extends' extends=Concept) |
-			name='compresent' (type=CONCEPT_TYPE | 'extends' extends=Concept) |
-			name='adjacent'   (type=CONCEPT_TYPE | 'extends' extends=Concept) |
-			name='container'  (type=CONCEPT_TYPE | 'extends' extends=Concept) |
-			name='contained'  (type=CONCEPT_TYPE | 'extends' extends=Concept) |
-			name='purpose'    (type=CONCEPT_TYPE | 'extends' extends=Concept) |
-			name='causant'    (type=CONCEPT_TYPE | 'extends' extends=Concept) |
-			name='caused'     (type=CONCEPT_TYPE | 'extends' extends=Concept) 
+			name='context'     (type=CONCEPT_TYPE | 'extends' extends=Concept) |
+			name='inherent'    (type=CONCEPT_TYPE | 'extends' extends=Concept) |
+			name='compresent'  (type=CONCEPT_TYPE | 'extends' extends=Concept) |
+			name='adjacent'    (type=CONCEPT_TYPE | 'extends' extends=Concept) |
+			name='container'   (type=CONCEPT_TYPE | 'extends' extends=Concept) |
+			name='contained'   (type=CONCEPT_TYPE | 'extends' extends=Concept) |
+			name='purpose'     (type=CONCEPT_TYPE | 'extends' extends=Concept) |
+			name='causant'     (type=CONCEPT_TYPE | 'extends' extends=Concept) |
+			name='caused'      (type=CONCEPT_TYPE | 'extends' extends=Concept) |
+			name='concomitant' (type=CONCEPT_TYPE | 'extends' extends=Concept) 
 		) template?='}'
 ;
 
