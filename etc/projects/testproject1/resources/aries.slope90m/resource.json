@@ -1,0 +1,26 @@
+{
+  "urn" : "local:ferdinando.villa:testproject1:aries.slope90m",
+  "version" : "0.0.1",
+  "adapterType" : "wcs",
+  "localPath" : "testproject1/resources/aries.slope90m",
+  "geometry" : "S2(431999,144000){bbox=[-180.0 180.00041727194446 -60.00041678777778 60.00041727194444],proj=EPSG:4326}",
+  "projectName" : "testproject1",
+  "localName" : "aries.slope90m",
+  "type" : "NUMBER",
+  "resourceTimestamp" : 1534598239873,
+  "metadata" : { },
+  "parameters" : {
+    "wcsIdentifier" : "aries__slope90m",
+    "serviceUrl" : "http://150.241.222.1/geoserver/ows",
+    "wcsVersion" : "2.0.1"
+  },
+  "localPaths" : [ ],
+  "history" : [ ],
+  "notifications" : [ ],
+  "spatialExtent" : {
+    "east" : 180.00041727194446,
+    "west" : -180.0,
+    "north" : 60.00041727194444,
+    "south" : -60.00041678777778
+  }
+}

@@ -28,7 +28,7 @@ public class SearchContext implements IIndexingService.Context {
     // these are in OR - anything matching any of these is acceptable. No
     // constraints means everything is acceptable.
     private List<Constraint> constraints     = new ArrayList<>();
-    private Set<Type>        constraintTypes = EnumSet.noneOf(Type.class);
+    private Set<Type>        constrainttypes = EnumSet.noneOf(Type.class);
     private SearchContext    parent          = null;
     private SearchMatch      acceptedMatch;
 
@@ -43,6 +43,11 @@ public class SearchContext implements IIndexingService.Context {
     }
 
     private SearchContext() {
+    }
+    
+    public void addConstraint(Constraint constraint) {
+        constraints.add(constraint);
+        constrainttypes.add(constraint.getType());
     }
 
     private SearchContext(SearchContext parent) {
@@ -103,6 +108,14 @@ public class SearchContext implements IIndexingService.Context {
         // only effective if filtering
         private boolean         allowAbstract;
 
+        private Constraint(Type type) {
+            this.type = type;
+        }
+        
+        Type getType() {
+            return type;
+        }
+        
         /**
          * true if it wants to filter matches once produced by a query (usually when
          * reasoning is required). Adding conditions will set this to true.
@@ -221,7 +234,7 @@ public class SearchContext implements IIndexingService.Context {
         }
 
         public static Constraint allObservables(boolean allowAbstract) {
-            Constraint ret = new Constraint();
+            Constraint ret = new Constraint(Type.CONCEPT);
             ret.semantics = EnumSet.of(IKimConcept.Type.OBSERVABLE);
             ret.query = true;
             ret.filter = true;
@@ -230,7 +243,7 @@ public class SearchContext implements IIndexingService.Context {
         }
 
         public static Constraint allTraits(boolean allowAbstract) {
-            Constraint ret = new Constraint();
+            Constraint ret = new Constraint(Type.CONCEPT);
             ret.semantics = EnumSet.of(IKimConcept.Type.TRAIT);
             ret.query = true;
             ret.filter = true;
@@ -245,7 +258,7 @@ public class SearchContext implements IIndexingService.Context {
          * @return
          */
         public static Constraint with(Set<IKimConcept.Type> types) {
-            Constraint ret = new Constraint();
+            Constraint ret = new Constraint(Type.CONCEPT);
             ret.semantics = types;
             ret.query = true;
             ret.filter = true;
@@ -261,7 +274,7 @@ public class SearchContext implements IIndexingService.Context {
          * @return
          */
         public static Constraint with(Set<IKimConcept.Type> types, int matchCount) {
-            Constraint ret = new Constraint();
+            Constraint ret = new Constraint(Type.CONCEPT);
             ret.semantics = types;
             ret.query = true;
             ret.filter = true;
@@ -270,8 +283,7 @@ public class SearchContext implements IIndexingService.Context {
         }
 
         public static Constraint allPrefixOperators() {
-            Constraint ret = new Constraint();
-            ret.type = Type.PREFIX_OPERATOR;
+            Constraint ret = new Constraint(Type.PREFIX_OPERATOR);
             ret.matcher = true;
             return ret;
         }
@@ -456,7 +468,7 @@ public class SearchContext implements IIndexingService.Context {
     }
 
     public boolean isAllowed(Type type) {
-        return constraintTypes.isEmpty() || constraintTypes.contains(type);
+        return constrainttypes.isEmpty() || constrainttypes.contains(type);
     }
 
     @Override

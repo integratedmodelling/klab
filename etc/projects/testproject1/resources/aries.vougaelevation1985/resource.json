@@ -1,0 +1,27 @@
+{
+  "urn" : "local:ferdinando.villa:testproject1:aries.vougaelevation1985",
+  "version" : "0.0.1",
+  "adapterType" : "wcs",
+  "localPath" : "testproject1/resources/aries.vougaelevation1985",
+  "geometry" : "S2(3685,2646){bbox=[-61210.599665244314 49369.400334755686 64141.300348548306 143551.3003485483],proj=EPSG:3763}",
+  "projectName" : "testproject1",
+  "localName" : "aries.vougaelevation1985",
+  "type" : "NUMBER",
+  "resourceTimestamp" : 1534598256213,
+  "metadata" : { },
+  "parameters" : {
+    "wcsIdentifier" : "aries__vougaelevation1985",
+    "serviceUrl" : "http://150.241.222.1/geoserver/ows",
+    "nodata" : "-3.4028234663852886E38",
+    "wcsVersion" : "2.0.1"
+  },
+  "localPaths" : [ ],
+  "history" : [ ],
+  "notifications" : [ ],
+  "spatialExtent" : {
+    "east" : -7.546681569722524,
+    "west" : -8.860179181348318,
+    "north" : 40.96101789827996,
+    "south" : 40.243696208068926
+  }
+}

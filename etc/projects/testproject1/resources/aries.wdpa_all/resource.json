@@ -1,0 +1,27 @@
+{
+  "urn" : "local:ferdinando.villa:testproject1:aries.wdpa_all",
+  "version" : "0.0.1",
+  "adapterType" : "wcs",
+  "localPath" : "testproject1/resources/aries.wdpa_all",
+  "geometry" : "S2(17999,7660){bbox=[-180.0 180.0 -69.48999989000002 83.73000011],proj=EPSG:4326}",
+  "projectName" : "testproject1",
+  "localName" : "aries.wdpa_all",
+  "type" : "NUMBER",
+  "resourceTimestamp" : 1534598296905,
+  "metadata" : { },
+  "parameters" : {
+    "wcsIdentifier" : "aries__wdpa_all",
+    "serviceUrl" : "http://150.241.222.1/geoserver/ows",
+    "nodata" : "-1.7E308",
+    "wcsVersion" : "2.0.1"
+  },
+  "localPaths" : [ ],
+  "history" : [ ],
+  "notifications" : [ ],
+  "spatialExtent" : {
+    "east" : 180.0,
+    "west" : -180.0,
+    "north" : 83.73000011,
+    "south" : -69.48999989000002
+  }
+}

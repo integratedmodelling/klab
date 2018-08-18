@@ -1,0 +1,27 @@
+{
+  "urn" : "local:ferdinando.villa:testproject1:aries.bathymetry",
+  "version" : "0.0.1",
+  "adapterType" : "wcs",
+  "localPath" : "testproject1/resources/aries.bathymetry",
+  "geometry" : "S2(203,417){bbox=[512537.56059678004 532937.56059678 4481555.940395118 4523355.940395118],proj=EPSG:32629}",
+  "projectName" : "testproject1",
+  "localName" : "aries.bathymetry",
+  "type" : "NUMBER",
+  "resourceTimestamp" : 1534598257312,
+  "metadata" : { },
+  "parameters" : {
+    "wcsIdentifier" : "aries__bathymetry",
+    "serviceUrl" : "http://150.241.222.1/geoserver/ows",
+    "nodata" : "-1.7976931348623157E308",
+    "wcsVersion" : "2.0.1"
+  },
+  "localPaths" : [ ],
+  "history" : [ ],
+  "notifications" : [ ],
+  "spatialExtent" : {
+    "east" : -8.609182250439702,
+    "west" : -8.85206984284865,
+    "north" : 40.86116541256916,
+    "south" : 40.48404216639846
+  }
+}

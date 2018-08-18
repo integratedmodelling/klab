@@ -1,0 +1,26 @@
+{
+  "urn" : "local:ferdinando.villa:testproject1:aries.interpolate_simple1_flora_ll",
+  "version" : "0.0.1",
+  "adapterType" : "wcs",
+  "localPath" : "testproject1/resources/aries.interpolate_simple1_flora_ll",
+  "geometry" : "S2(3185,1865){bbox=[12.3332730408378 15.665324748998422 36.489174306662285 38.440714949294964],proj=EPSG:4326}",
+  "projectName" : "testproject1",
+  "localName" : "aries.interpolate_simple1_flora_ll",
+  "type" : "NUMBER",
+  "resourceTimestamp" : 1534598319089,
+  "metadata" : { },
+  "parameters" : {
+    "wcsIdentifier" : "aries__Interpolate_simple1_flora_ll",
+    "serviceUrl" : "http://150.241.222.1/geoserver/ows",
+    "wcsVersion" : "2.0.1"
+  },
+  "localPaths" : [ ],
+  "history" : [ ],
+  "notifications" : [ ],
+  "spatialExtent" : {
+    "east" : 15.665324748998422,
+    "west" : 12.3332730408378,
+    "north" : 38.440714949294964,
+    "south" : 36.489174306662285
+  }
+}

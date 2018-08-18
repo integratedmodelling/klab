@@ -1,0 +1,27 @@
+{
+  "urn" : "local:ferdinando.villa:testproject1:aries.biodiversity_degree_ll",
+  "version" : "0.0.1",
+  "adapterType" : "wcs",
+  "localPath" : "testproject1/resources/aries.biodiversity_degree_ll",
+  "geometry" : "S2(3033,1575){bbox=[12.407401167016548 15.653730454344366 36.61738253790789 38.303676195399206],proj=EPSG:4326}",
+  "projectName" : "testproject1",
+  "localName" : "aries.biodiversity_degree_ll",
+  "type" : "NUMBER",
+  "resourceTimestamp" : 1534598281230,
+  "metadata" : { },
+  "parameters" : {
+    "wcsIdentifier" : "aries__biodiversity_degree_ll",
+    "serviceUrl" : "http://150.241.222.1/geoserver/ows",
+    "nodata" : "0.0",
+    "wcsVersion" : "2.0.1"
+  },
+  "localPaths" : [ ],
+  "history" : [ ],
+  "notifications" : [ ],
+  "spatialExtent" : {
+    "east" : 15.653730454344366,
+    "west" : 12.407401167016548,
+    "north" : 38.303676195399206,
+    "south" : 36.61738253790789
+  }
+}

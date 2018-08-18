@@ -1,0 +1,26 @@
+{
+  "urn" : "local:ferdinando.villa:testproject1:aries.ndvi_may2015",
+  "version" : "0.0.1",
+  "adapterType" : "wcs",
+  "localPath" : "testproject1/resources/aries.ndvi_may2015",
+  "geometry" : "S2(11414,7153){bbox=[250020.0 592470.0 4048620.0 4263240.0],proj=EPSG:32633}",
+  "projectName" : "testproject1",
+  "localName" : "aries.ndvi_may2015",
+  "type" : "NUMBER",
+  "resourceTimestamp" : 1534598275028,
+  "metadata" : { },
+  "parameters" : {
+    "wcsIdentifier" : "aries__ndvi_may2015",
+    "serviceUrl" : "http://150.241.222.1/geoserver/ows",
+    "wcsVersion" : "2.0.1"
+  },
+  "localPaths" : [ ],
+  "history" : [ ],
+  "notifications" : [ ],
+  "spatialExtent" : {
+    "east" : 16.060634737800555,
+    "west" : 12.134153841319144,
+    "north" : 38.51751632455615,
+    "south" : 36.550322405018896
+  }
+}

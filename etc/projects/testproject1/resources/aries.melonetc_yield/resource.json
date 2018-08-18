@@ -1,0 +1,26 @@
+{
+  "urn" : "local:ferdinando.villa:testproject1:aries.melonetc_yield",
+  "version" : "0.0.1",
+  "adapterType" : "wcs",
+  "localPath" : "testproject1/resources/aries.melonetc_yield",
+  "geometry" : "S2(1749,1187){bbox=[-0.5 1749.5 -0.5 1187.5],proj=EPSG:4326}",
+  "projectName" : "testproject1",
+  "localName" : "aries.melonetc_yield",
+  "type" : "NUMBER",
+  "resourceTimestamp" : 1534598224030,
+  "metadata" : { },
+  "parameters" : {
+    "wcsIdentifier" : "aries__Melonetc_Yield",
+    "serviceUrl" : "http://150.241.222.1/geoserver/ows",
+    "wcsVersion" : "2.0.1"
+  },
+  "localPaths" : [ ],
+  "history" : [ ],
+  "notifications" : [ ],
+  "spatialExtent" : {
+    "east" : 1749.5,
+    "west" : -0.5,
+    "north" : 1187.5,
+    "south" : -0.5
+  }
+}

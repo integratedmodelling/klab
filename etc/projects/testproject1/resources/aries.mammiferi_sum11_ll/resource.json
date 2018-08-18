@@ -1,0 +1,26 @@
+{
+  "urn" : "local:ferdinando.villa:testproject1:aries.mammiferi_sum11_ll",
+  "version" : "0.0.1",
+  "adapterType" : "wcs",
+  "localPath" : "testproject1/resources/aries.mammiferi_sum11_ll",
+  "geometry" : "S2(3291,1865){bbox=[12.333334078447521 15.787810764016083 36.48261667992818 38.44071312442117],proj=EPSG:4326}",
+  "projectName" : "testproject1",
+  "localName" : "aries.mammiferi_sum11_ll",
+  "type" : "NUMBER",
+  "resourceTimestamp" : 1534598232016,
+  "metadata" : { },
+  "parameters" : {
+    "wcsIdentifier" : "aries__mammiferi_sum11_ll",
+    "serviceUrl" : "http://150.241.222.1/geoserver/ows",
+    "wcsVersion" : "2.0.1"
+  },
+  "localPaths" : [ ],
+  "history" : [ ],
+  "notifications" : [ ],
+  "spatialExtent" : {
+    "east" : 15.787810764016083,
+    "west" : 12.333334078447521,
+    "north" : 38.44071312442117,
+    "south" : 36.48261667992818
+  }
+}

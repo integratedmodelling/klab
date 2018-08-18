@@ -1,0 +1,27 @@
+{
+  "urn" : "local:ferdinando.villa:testproject1:aries.friction_sicilia_ll",
+  "version" : "0.0.1",
+  "adapterType" : "wcs",
+  "localPath" : "testproject1/resources/aries.friction_sicilia_ll",
+  "geometry" : "S2(3235,1464){bbox=[12.22036726052349 15.7205823819832 36.63801474598 38.22263005900178],proj=EPSG:4326}",
+  "projectName" : "testproject1",
+  "localName" : "aries.friction_sicilia_ll",
+  "type" : "NUMBER",
+  "resourceTimestamp" : 1534598280804,
+  "metadata" : { },
+  "parameters" : {
+    "wcsIdentifier" : "aries__friction_sicilia_ll",
+    "serviceUrl" : "http://150.241.222.1/geoserver/ows",
+    "nodata" : "0.0",
+    "wcsVersion" : "2.0.1"
+  },
+  "localPaths" : [ ],
+  "history" : [ ],
+  "notifications" : [ ],
+  "spatialExtent" : {
+    "east" : 15.7205823819832,
+    "west" : 12.22036726052349,
+    "north" : 38.22263005900178,
+    "south" : 36.63801474598
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "urn" : "local:ferdinando.villa:testproject1:aries.wsv",
+  "version" : "0.0.1",
+  "adapterType" : "wcs",
+  "localPath" : "testproject1/resources/aries.wsv",
+  "geometry" : "S2(4499,1743){bbox=[-179.99900834271713 180.00099165728287 -55.885673108815155 83.63432689118486],proj=EPSG:4326}",
+  "projectName" : "testproject1",
+  "localName" : "aries.wsv",
+  "type" : "NUMBER",
+  "resourceTimestamp" : 1534598304097,
+  "metadata" : { },
+  "parameters" : {
+    "wcsIdentifier" : "aries__wsv",
+    "serviceUrl" : "http://150.241.222.1/geoserver/ows",
+    "nodata" : "-1.7E308",
+    "wcsVersion" : "2.0.1"
+  },
+  "localPaths" : [ ],
+  "history" : [ ],
+  "notifications" : [ ],
+  "spatialExtent" : {
+    "east" : 180.00099165728287,
+    "west" : -179.99900834271713,
+    "north" : 83.63432689118486,
+    "south" : -55.885673108815155
+  }
+}

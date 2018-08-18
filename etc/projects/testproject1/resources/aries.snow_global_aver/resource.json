@@ -1,0 +1,26 @@
+{
+  "urn" : "local:ferdinando.villa:testproject1:aries.snow_global_aver",
+  "version" : "0.0.1",
+  "adapterType" : "wcs",
+  "localPath" : "testproject1/resources/aries.snow_global_aver",
+  "geometry" : "S2(86399,43199){bbox=[-180.0 179.99999999027773 -89.99999999527779 90.0],proj=EPSG:4326}",
+  "projectName" : "testproject1",
+  "localName" : "aries.snow_global_aver",
+  "type" : "NUMBER",
+  "resourceTimestamp" : 1534598230946,
+  "metadata" : { },
+  "parameters" : {
+    "wcsIdentifier" : "aries__snow_global_aver",
+    "serviceUrl" : "http://150.241.222.1/geoserver/ows",
+    "wcsVersion" : "2.0.1"
+  },
+  "localPaths" : [ ],
+  "history" : [ ],
+  "notifications" : [ ],
+  "spatialExtent" : {
+    "east" : 179.99999999027773,
+    "west" : -180.0,
+    "north" : 90.0,
+    "south" : -89.99999999527779
+  }
+}

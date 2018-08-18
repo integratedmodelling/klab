@@ -1,0 +1,27 @@
+{
+  "urn" : "local:ferdinando.villa:testproject1:aries.bird_weighted_sum_ll",
+  "version" : "0.0.1",
+  "adapterType" : "wcs",
+  "localPath" : "testproject1/resources/aries.bird_weighted_sum_ll",
+  "geometry" : "S2(3113,1720){bbox=[12.37724104224067 15.655697512005691 36.62088666418561 38.43277606189454],proj=EPSG:4326}",
+  "projectName" : "testproject1",
+  "localName" : "aries.bird_weighted_sum_ll",
+  "type" : "NUMBER",
+  "resourceTimestamp" : 1534598318667,
+  "metadata" : { },
+  "parameters" : {
+    "wcsIdentifier" : "aries__bird_weighted_sum_ll",
+    "serviceUrl" : "http://150.241.222.1/geoserver/ows",
+    "nodata" : "-3.4028234663852886E38",
+    "wcsVersion" : "2.0.1"
+  },
+  "localPaths" : [ ],
+  "history" : [ ],
+  "notifications" : [ ],
+  "spatialExtent" : {
+    "east" : 15.655697512005691,
+    "west" : 12.37724104224067,
+    "north" : 38.43277606189454,
+    "south" : 36.62088666418561
+  }
+}

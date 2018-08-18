@@ -156,5 +156,10 @@ public class SearchMatch implements IIndexingService.Match {
         this.modifier = modifier;
     }
 
+    @Override
+    public String toString() {
+        return "SearchMatch [id=" + id + ", matchType=" + matchType + ", semantics=" + semantics + "]";
+    }
+
 
 }

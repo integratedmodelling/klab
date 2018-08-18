@@ -1,0 +1,26 @@
+{
+  "urn" : "local:ferdinando.villa:testproject1:aries.esacci-lc-l4-lccs-map-300m-p5y-2010-v1.6.1",
+  "version" : "0.0.1",
+  "adapterType" : "wcs",
+  "localPath" : "testproject1/resources/aries.esacci-lc-l4-lccs-map-300m-p5y-2010-v1.6.1",
+  "geometry" : "S2(129599,64799){bbox=[-180.00000033927267 179.99998973456252 -89.9999950369176 90.0],proj=EPSG:4326}",
+  "projectName" : "testproject1",
+  "localName" : "aries.esacci-lc-l4-lccs-map-300m-p5y-2010-v1.6.1",
+  "type" : "NUMBER",
+  "resourceTimestamp" : 1534598294165,
+  "metadata" : { },
+  "parameters" : {
+    "wcsIdentifier" : "aries__ESACCI-LC-L4-LCCS-Map-300m-P5Y-2010-v1.6.1",
+    "serviceUrl" : "http://150.241.222.1/geoserver/ows",
+    "wcsVersion" : "2.0.1"
+  },
+  "localPaths" : [ ],
+  "history" : [ ],
+  "notifications" : [ ],
+  "spatialExtent" : {
+    "east" : 179.99998973456252,
+    "west" : -180.00000033927267,
+    "north" : 90.0,
+    "south" : -89.9999950369176
+  }
+}

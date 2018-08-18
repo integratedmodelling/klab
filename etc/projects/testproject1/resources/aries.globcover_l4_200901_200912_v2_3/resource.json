@@ -1,0 +1,27 @@
+{
+  "urn" : "local:ferdinando.villa:testproject1:aries.globcover_l4_200901_200912_v2_3",
+  "version" : "0.0.1",
+  "adapterType" : "wcs",
+  "localPath" : "testproject1/resources/aries.globcover_l4_200901_200912_v2_3",
+  "geometry" : "S2(129599,55799){bbox=[-180.0013888888889 179.9986111111111 -64.99861111111112 90.00138888888888],proj=EPSG:4326}",
+  "projectName" : "testproject1",
+  "localName" : "aries.globcover_l4_200901_200912_v2_3",
+  "type" : "NUMBER",
+  "resourceTimestamp" : 1534598218292,
+  "metadata" : { },
+  "parameters" : {
+    "wcsIdentifier" : "aries__GLOBCOVER_L4_200901_200912_V2_3",
+    "serviceUrl" : "http://150.241.222.1/geoserver/ows",
+    "nodata" : "0.0",
+    "wcsVersion" : "2.0.1"
+  },
+  "localPaths" : [ ],
+  "history" : [ ],
+  "notifications" : [ ],
+  "spatialExtent" : {
+    "east" : 179.9986111111111,
+    "west" : -180.0013888888889,
+    "north" : 90.00138888888888,
+    "south" : -64.99861111111112
+  }
+}
