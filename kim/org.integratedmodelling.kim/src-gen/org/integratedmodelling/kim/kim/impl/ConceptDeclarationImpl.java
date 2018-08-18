@@ -43,6 +43,7 @@ import org.integratedmodelling.kim.kim.KimPackage;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getContainer <em>Container</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getContained <em>Contained</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getCaused <em>Caused</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getDuring <em>During</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getContext <em>Context</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getOperators <em>Operators</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getOperands <em>Operands</em>}</li>
@@ -161,6 +162,16 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
    * @ordered
    */
   protected ConceptDeclaration caused;
+
+  /**
+   * The cached value of the '{@link #getDuring() <em>During</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDuring()
+   * @generated
+   * @ordered
+   */
+  protected ConceptDeclaration during;
 
   /**
    * The cached value of the '{@link #getContext() <em>Context</em>}' containment reference.
@@ -639,6 +650,54 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
+  public ConceptDeclaration getDuring()
+  {
+    return during;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetDuring(ConceptDeclaration newDuring, NotificationChain msgs)
+  {
+    ConceptDeclaration oldDuring = during;
+    during = newDuring;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_DECLARATION__DURING, oldDuring, newDuring);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setDuring(ConceptDeclaration newDuring)
+  {
+    if (newDuring != during)
+    {
+      NotificationChain msgs = null;
+      if (during != null)
+        msgs = ((InternalEObject)during).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.CONCEPT_DECLARATION__DURING, null, msgs);
+      if (newDuring != null)
+        msgs = ((InternalEObject)newDuring).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.CONCEPT_DECLARATION__DURING, null, msgs);
+      msgs = basicSetDuring(newDuring, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_DECLARATION__DURING, newDuring, newDuring));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public ConceptDeclaration getContext()
   {
     return context;
@@ -738,6 +797,8 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
         return basicSetContained(null, msgs);
       case KimPackage.CONCEPT_DECLARATION__CAUSED:
         return basicSetCaused(null, msgs);
+      case KimPackage.CONCEPT_DECLARATION__DURING:
+        return basicSetDuring(null, msgs);
       case KimPackage.CONCEPT_DECLARATION__CONTEXT:
         return basicSetContext(null, msgs);
       case KimPackage.CONCEPT_DECLARATION__OPERANDS:
@@ -776,6 +837,8 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
         return getContained();
       case KimPackage.CONCEPT_DECLARATION__CAUSED:
         return getCaused();
+      case KimPackage.CONCEPT_DECLARATION__DURING:
+        return getDuring();
       case KimPackage.CONCEPT_DECLARATION__CONTEXT:
         return getContext();
       case KimPackage.CONCEPT_DECLARATION__OPERATORS:
@@ -827,6 +890,9 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
         return;
       case KimPackage.CONCEPT_DECLARATION__CAUSED:
         setCaused((ConceptDeclaration)newValue);
+        return;
+      case KimPackage.CONCEPT_DECLARATION__DURING:
+        setDuring((ConceptDeclaration)newValue);
         return;
       case KimPackage.CONCEPT_DECLARATION__CONTEXT:
         setContext((ConceptDeclaration)newValue);
@@ -883,6 +949,9 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
       case KimPackage.CONCEPT_DECLARATION__CAUSED:
         setCaused((ConceptDeclaration)null);
         return;
+      case KimPackage.CONCEPT_DECLARATION__DURING:
+        setDuring((ConceptDeclaration)null);
+        return;
       case KimPackage.CONCEPT_DECLARATION__CONTEXT:
         setContext((ConceptDeclaration)null);
         return;
@@ -926,6 +995,8 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
         return contained != null;
       case KimPackage.CONCEPT_DECLARATION__CAUSED:
         return caused != null;
+      case KimPackage.CONCEPT_DECLARATION__DURING:
+        return during != null;
       case KimPackage.CONCEPT_DECLARATION__CONTEXT:
         return context != null;
       case KimPackage.CONCEPT_DECLARATION__OPERATORS:

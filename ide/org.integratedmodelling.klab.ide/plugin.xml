@@ -184,6 +184,12 @@
             id="org.integratedmodelling.klab.ide.views.DocumentationEditor"
             name="Documentation editor">
       </view>
+      <view
+            category="org.integratedmodelling.klab.ide.category"
+            class="org.integratedmodelling.klab.ide.views.SpatialReferenceView"
+            id="org.integratedmodelling.klab.ide.views.SpatialReferenceView"
+            name="Geolocation">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

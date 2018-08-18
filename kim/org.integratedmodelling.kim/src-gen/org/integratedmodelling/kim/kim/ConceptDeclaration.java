@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getContainer <em>Container</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getContained <em>Contained</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getCaused <em>Caused</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getDuring <em>During</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getContext <em>Context</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getOperators <em>Operators</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getOperands <em>Operands</em>}</li>
@@ -287,6 +288,32 @@ public interface ConceptDeclaration extends EObject
    * @generated
    */
   void setCaused(ConceptDeclaration value);
+
+  /**
+   * Returns the value of the '<em><b>During</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>During</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>During</em>' containment reference.
+   * @see #setDuring(ConceptDeclaration)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptDeclaration_During()
+   * @model containment="true"
+   * @generated
+   */
+  ConceptDeclaration getDuring();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getDuring <em>During</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>During</em>' containment reference.
+   * @see #getDuring()
+   * @generated
+   */
+  void setDuring(ConceptDeclaration value);
 
   /**
    * Returns the value of the '<em><b>Context</b></em>' containment reference.

@@ -2095,13 +2095,22 @@ public interface KimPackage extends EPackage
   int CONCEPT_DECLARATION__CAUSED = 9;
 
   /**
+   * The feature id for the '<em><b>During</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__DURING = 10;
+
+  /**
    * The feature id for the '<em><b>Context</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__CONTEXT = 10;
+  int CONCEPT_DECLARATION__CONTEXT = 11;
 
   /**
    * The feature id for the '<em><b>Operators</b></em>' attribute list.
@@ -2110,7 +2119,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__OPERATORS = 11;
+  int CONCEPT_DECLARATION__OPERATORS = 12;
 
   /**
    * The feature id for the '<em><b>Operands</b></em>' containment reference list.
@@ -2119,7 +2128,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__OPERANDS = 12;
+  int CONCEPT_DECLARATION__OPERANDS = 13;
 
   /**
    * The number of structural features of the '<em>Concept Declaration</em>' class.
@@ -2128,7 +2137,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION_FEATURE_COUNT = 13;
+  int CONCEPT_DECLARATION_FEATURE_COUNT = 14;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ConceptReferenceImpl <em>Concept Reference</em>}' class.
@@ -6295,6 +6304,17 @@ public interface KimPackage extends EPackage
   EReference getConceptDeclaration_Caused();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getDuring <em>During</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>During</em>'.
+   * @see org.integratedmodelling.kim.kim.ConceptDeclaration#getDuring()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EReference getConceptDeclaration_During();
+
+  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getContext <em>Context</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -10112,6 +10132,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EReference CONCEPT_DECLARATION__CAUSED = eINSTANCE.getConceptDeclaration_Caused();
+
+    /**
+     * The meta object literal for the '<em><b>During</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT_DECLARATION__DURING = eINSTANCE.getConceptDeclaration_During();
 
     /**
      * The meta object literal for the '<em><b>Context</b></em>' containment reference feature.
