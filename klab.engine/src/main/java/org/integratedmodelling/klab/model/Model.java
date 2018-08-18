@@ -391,10 +391,16 @@ public class Model extends KimObject implements IModel {
 	 */
 	@Override
 	public List<IComputableResource> getComputation(ILocator transition) {
-		List<IComputableResource> ret = new ArrayList<>(resources);
+	    
+		List<IComputableResource> ret = new ArrayList<>();
+		for (IComputableResource resource : resources) {
+		    ret.add(((ComputableResource)resource).copy());
+		}
 		for (Trigger trigger : Dataflows.INSTANCE.getActionTriggersFor(transition)) {
 			for (IAction action : behavior.getActions(trigger)) {
-				ret.addAll(action.getComputation(transition));
+			    for (IComputableResource resource : action.getComputation(transition)) {
+			        ret.add(((ComputableResource)resource).copy());
+			    }
 			}
 		}
 		return ret;

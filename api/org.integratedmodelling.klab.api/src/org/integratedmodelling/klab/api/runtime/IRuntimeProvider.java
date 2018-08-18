@@ -140,14 +140,12 @@ public interface IRuntimeProvider {
 	 * @param observable
 	 *            a {@link org.integratedmodelling.klab.api.knowledge.IObservable}
 	 *            object.
-	 * @param scale
-	 *            a
-	 *            {@link org.integratedmodelling.klab.api.observations.scale.IScale}
-	 *            object.
+	 * @param context
+	 *           context for the observation, which must be correct.
 	 * @return a {@link org.integratedmodelling.klab.api.observations.IObservation}
 	 *         object.
 	 */
-	IObservation createEmptyObservation(IObservable observable, IScale scale);
+	IObservation createEmptyObservation(IObservable observable, IComputationContext context);
 
 	/**
 	 * Create a state to be used for intermediate computations or temporary storage

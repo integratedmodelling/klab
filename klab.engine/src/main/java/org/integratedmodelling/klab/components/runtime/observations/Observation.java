@@ -8,10 +8,10 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
@@ -55,8 +55,8 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 		};
 	}
 
-	public static IObservation empty(IObservable observable, IScale scale) {
-		Observation ret = new Observation((Observable) observable, (Scale) scale, null) {
+	public static IObservation empty(IObservable observable, IComputationContext context) {
+		Observation ret = new Observation((Observable) observable, (Scale) context.getScale(), (IRuntimeContext) context) {
 
 			@Override
 			public IArtifact.Type getType() {

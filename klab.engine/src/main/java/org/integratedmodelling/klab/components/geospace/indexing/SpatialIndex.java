@@ -134,6 +134,7 @@ public class SpatialIndex implements ISpatialIndex {
 		private com.infomatiq.jsi.Point point;
 		private int maxReturned;
 		private boolean onFeature;
+		private int count = 0;
 
 		FeatureFinder(double[] xy, final int maxReturned) {
 			this.point = new com.infomatiq.jsi.Point((float) xy[0], (float) xy[1]);
@@ -151,14 +152,14 @@ public class SpatialIndex implements ISpatialIndex {
 
 		List<Integer> find() {
 
-			rtree.nearestN(point, new TIntProcedure() {
+			rtree.nearestNUnsorted(point, new TIntProcedure() {
 
 				@Override
 				public boolean execute(int arg0) {
 					if (!((Shape) exts.get(names.get(arg0)).getShape()).getJTSGeometry()
 							.covers(Shape.makePoint(point.x, point.y))) {
 						idx.add(arg0);
-						return true;
+						return (count++) < maxReturned;
 					}
 					onFeature = true;
 					return false;

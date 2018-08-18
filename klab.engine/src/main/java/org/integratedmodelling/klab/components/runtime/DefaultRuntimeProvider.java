@@ -277,8 +277,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	@Override
-	public IObservation createEmptyObservation(IObservable observable, IScale scale) {
-		return Observation.empty(observable, scale);
+	public IObservation createEmptyObservation(IObservable observable, IComputationContext context ) {
+		return Observation.empty(observable, context);
 	}
 
 	private static IObservation createObservation(IObservable observable, IScale scale, RuntimeContext context,

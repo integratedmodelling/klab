@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.eclipse.emf.ecore.EObject;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimClassification;
 import org.integratedmodelling.kim.api.IKimLookupTable;
@@ -21,6 +22,7 @@ import org.integratedmodelling.kim.kim.ValueAssignment;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -28,7 +30,6 @@ public class ComputableResource extends KimStatement implements IComputableResou
 
 	private static final long serialVersionUID = -5104679843126238555L;
 
-	private IObservable target;
 	private String language;
 	private Object literal;
 	private KimServiceCall serviceCall;
@@ -43,7 +44,18 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	private ComputableResource condition;
 	private Pair<IValueMediator, IValueMediator> conversion;
 	private Collection<Pair<String, IArtifact.Type>> requiredResourceNames = new ArrayList<>();
+	
+	/**
+     * Slot to save a validated resource so that it won't need to be validated
+     * twice. Shouldn't be serialized.
+     */
+    private transient Object validatedResource;
+
+	
+	// all that follows can only be set on a copy as they are runtime-dependent.
 	private String targetId;
+    private IObservable target;
+	private boolean copy = false;
 	
 	/**
 	 * If not empty, this is the first of a chain (which cannot be hierarchical). For now
@@ -51,17 +63,42 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	 */
 	private List<ComputableResource> siblings = new ArrayList<>();
 	
-	/**
-	 * Slot to save a validated resource so that it won't need to be validated
-	 * twice. Shouldn't be serialized.
-	 */
-	private transient Object validatedResource;
 
+    public IComputableResource copy() {
+        ComputableResource ret = new ComputableResource(getEObject(), getParent());
+        ret.language = this.language;
+        ret.literal = this.literal;
+        ret.serviceCall = this.serviceCall;
+        ret.lookupTable = this.lookupTable;
+        ret.expression = this.expression;
+        ret.classification = this.classification;
+        ret.urn = this.urn;
+        ret.accordingTo = this.accordingTo;
+        ret.postProcessor = this.postProcessor;
+        ret.negated = this.negated;
+        ret.mediation = this.mediation;
+        ret.condition = this.condition;
+        ret.conversion = this.conversion;
+        ret.requiredResourceNames = this.requiredResourceNames;
+        ret.validatedResource = this.validatedResource;
+        ret.target = this.target;
+        ret.targetId = this.targetId;
+        ret.copy = true;
+        return ret;
+    }
+	
+	
 	public void setTarget(IObservable target) {
+	    if (!copy) {
+	        throw new KlabInternalErrorException("cannot set the target on an original computation from k.IM code!");
+	    }
 		this.target = target;
 	}
 	
 	public void setTargetId(String targetId) {
+        if (!copy) {
+            throw new KlabInternalErrorException("cannot set the target ID on an original computation from k.IM code!");
+        }
 		this.targetId = targetId;
 	}
 	
@@ -176,7 +213,12 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		this.literal = value.get();
 	}
 
-	private void setFrom(ValueAssignment statement) {
+	public ComputableResource(EObject eObject, IKimStatement parent) {
+        super(eObject, parent);
+    }
+
+
+    private void setFrom(ValueAssignment statement) {
 
 		if (statement.getAssignedValue() != null) {
 			setFromValue(statement.getAssignedValue());
@@ -351,5 +393,6 @@ public class ComputableResource extends KimStatement implements IComputableResou
             sibling.visit(visitor);
         }
     }
+
 	
 }

@@ -316,7 +316,7 @@ public class Actuator implements IActuator {
             if (ret == null) {
                 // return an empty observation for this observable, so we know we made the
                 // observation.
-                ret = Klab.INSTANCE.getRuntimeProvider().createEmptyObservation(observable, ctx.getScale());
+                ret = Klab.INSTANCE.getRuntimeProvider().createEmptyObservation(observable, ctx);
                 ret.getAnnotations().addAll(annotations);
             }
         }
