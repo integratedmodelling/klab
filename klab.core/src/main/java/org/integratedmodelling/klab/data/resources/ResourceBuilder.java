@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.data.Metadata;
+import org.integratedmodelling.klab.rest.AttributeReference;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.utils.NotificationUtils;
@@ -53,6 +54,7 @@ public class ResourceBuilder implements IResource.Builder {
 	private List<String> resourcePaths = new ArrayList<>();
 	private List<ResourceReference> history = new ArrayList<>();
 	private List<INotification> notifications = new ArrayList<>();
+	private List<AttributeReference> attributes = new ArrayList<>();
 	private long resourceTimestamp = System.currentTimeMillis();
 	private Version resourceVersion;
 	private boolean error = false;
@@ -86,6 +88,7 @@ public class ResourceBuilder implements IResource.Builder {
 		ret.projectName = this.projectName;
 		ret.localName = this.localName;
 		ret.spatialExtent = this.spatialExtent;
+		ret.attributes.addAll(this.attributes);
 
 		return ret;
 	}
@@ -231,6 +234,13 @@ public class ResourceBuilder implements IResource.Builder {
 	public Builder withSpatialExtent(SpatialExtent extent) {
 		this.spatialExtent = extent;
 		return this;
+	}
+	
+	@Override
+	public Builder withAttribute(String name, IArtifact.Type type, boolean key, boolean optional) {
+	    AttributeReference attribute = new AttributeReference();
+	    this.attributes.add(attribute);
+	    return this;
 	}
 
 }

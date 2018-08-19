@@ -17,6 +17,7 @@ package org.integratedmodelling.klab.data.resources;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -32,6 +33,7 @@ import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.services.IResourceService;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.data.Metadata;
+import org.integratedmodelling.klab.rest.AttributeReference;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.SpatialExtent;
@@ -75,6 +77,7 @@ public class Resource implements IResource {
 	List<String> localPaths = new ArrayList<>();
 	List<ResourceReference> history = new ArrayList<>();
 	List<INotification> notifications = new ArrayList<>();
+	List<Attribute> attributes = new ArrayList<>();
 	String projectName;
 	String localName;
 	// for display in resource descriptors
@@ -96,6 +99,7 @@ public class Resource implements IResource {
 		this.projectName = reference.getProjectName();
 		this.localName = reference.getLocalName();
 		this.spatialExtent = reference.getSpatialExtent();
+		this.attributes.addAll(reference.getAttributes());
 		
 		for (ResourceReference ref : reference.getHistory()) {
 			this.history.add(ref);
@@ -145,7 +149,11 @@ public class Resource implements IResource {
 			ret.getNotifications().add(new Notification(notification.getMessage(), notification.getLevel().getName(),
 					notification.getTimestamp()));
 		}
-
+		
+		for (Attribute attribute : attributes) {
+		    ret.getAttributes().add((AttributeReference)attribute);
+		}
+		
 		return ret;
 	}
 
@@ -326,5 +334,10 @@ public class Resource implements IResource {
 	public void setLocalPath(String string) {
 		this.localPath = string;
 	}
+
+    @Override
+    public Collection<Attribute> getAttributes() {
+        return attributes;
+    }
 
 }

@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.data.storage;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -156,5 +157,10 @@ public class FutureResource implements IResource, Future<IResource> {
 	public String getLocalProjectName() {
 		return getDelegate(timeout).getLocalProjectName();
 	}
+
+    @Override
+    public Collection<Attribute> getAttributes() {
+        return getDelegate(timeout).getAttributes();
+    }
 
 }

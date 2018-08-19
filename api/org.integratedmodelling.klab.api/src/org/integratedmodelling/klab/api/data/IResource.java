@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.services.IResourceService;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 
@@ -125,11 +126,59 @@ public interface IResource extends Serializable {
     IParameters<String> getParameters();
 
     /**
+     * Each resource may expose one or more attributes, which are part of the content
+     * retrievable through the resource. This applies to objects when the resource is
+     * of type object. Use of attributes for non-object resources is reserved for later.
+     * Do not confuse this with resource parameters, which are stored with the resource
+     * by the validator to help the encoder produce the artifacts.
+     * 
+     * @author Ferd
+     *
+     */
+    Collection<Attribute> getAttributes();
+    
+    /**
      * The type of the artifact produced.
      * 
      * @return the type
      */
     IArtifact.Type getType();
+
+    /**
+     * The descriptor for each attribute. Not much at the moment.
+     * 
+     * @author Ferd
+     *
+     */
+    interface Attribute {
+        
+        /**
+         * 
+         * @return
+         */
+        String getName();
+
+        /**
+         * 
+         * @return
+         */
+        IArtifact.Type getType();
+        
+        /**
+         * True if it identifies the object it relates to uniquely.
+         * 
+         * @return
+         */
+        boolean isKey();
+        
+        /**
+         * True if it may have no data. If an attribute is a key this
+         * must return false.
+         * 
+         * @return
+         */
+        boolean isOptional();
+    }
 
     /**
      * A builder can be obtained through
@@ -338,6 +387,18 @@ public interface IResource extends Serializable {
          *            import handler)
          */
         void addImportedFile(File file);
+
+        /**
+         * Add an attribute definition to the builder. For now attributes are simple enough
+         * that we just pass all parameters instead of returning an attribute builder.
+         * 
+         * @param name
+         * @param type
+         * @param key
+         * @param optional
+         * @return
+         */
+        Builder withAttribute(String name, Type type, boolean key, boolean optional);
 
     }
 
