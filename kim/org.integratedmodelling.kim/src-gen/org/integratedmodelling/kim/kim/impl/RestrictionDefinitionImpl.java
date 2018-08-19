@@ -16,7 +16,6 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.DataType;
 import org.integratedmodelling.kim.kim.KimPackage;
-import org.integratedmodelling.kim.kim.Literal;
 import org.integratedmodelling.kim.kim.RestrictionDefinition;
 
 /**
@@ -37,9 +36,6 @@ import org.integratedmodelling.kim.kim.RestrictionDefinition;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.RestrictionDefinitionImpl#getDataType <em>Data Type</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.RestrictionDefinitionImpl#getTraitType <em>Trait Type</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.RestrictionDefinitionImpl#getSubject <em>Subject</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.RestrictionDefinitionImpl#getValue <em>Value</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.RestrictionDefinitionImpl#getMaxValue <em>Max Value</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.RestrictionDefinitionImpl#getProperty <em>Property</em>}</li>
  * </ul>
  *
  * @generated
@@ -215,46 +211,6 @@ public class RestrictionDefinitionImpl extends MinimalEObjectImpl.Container impl
    * @ordered
    */
   protected ConceptDeclaration subject;
-
-  /**
-   * The cached value of the '{@link #getValue() <em>Value</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getValue()
-   * @generated
-   * @ordered
-   */
-  protected Literal value;
-
-  /**
-   * The cached value of the '{@link #getMaxValue() <em>Max Value</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getMaxValue()
-   * @generated
-   * @ordered
-   */
-  protected org.integratedmodelling.kim.kim.Number maxValue;
-
-  /**
-   * The default value of the '{@link #getProperty() <em>Property</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getProperty()
-   * @generated
-   * @ordered
-   */
-  protected static final String PROPERTY_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getProperty() <em>Property</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getProperty()
-   * @generated
-   * @ordered
-   */
-  protected String property = PROPERTY_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -587,125 +543,6 @@ public class RestrictionDefinitionImpl extends MinimalEObjectImpl.Container impl
    * <!-- end-user-doc -->
    * @generated
    */
-  public Literal getValue()
-  {
-    return value;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetValue(Literal newValue, NotificationChain msgs)
-  {
-    Literal oldValue = value;
-    value = newValue;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.RESTRICTION_DEFINITION__VALUE, oldValue, newValue);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setValue(Literal newValue)
-  {
-    if (newValue != value)
-    {
-      NotificationChain msgs = null;
-      if (value != null)
-        msgs = ((InternalEObject)value).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.RESTRICTION_DEFINITION__VALUE, null, msgs);
-      if (newValue != null)
-        msgs = ((InternalEObject)newValue).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.RESTRICTION_DEFINITION__VALUE, null, msgs);
-      msgs = basicSetValue(newValue, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.RESTRICTION_DEFINITION__VALUE, newValue, newValue));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public org.integratedmodelling.kim.kim.Number getMaxValue()
-  {
-    return maxValue;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetMaxValue(org.integratedmodelling.kim.kim.Number newMaxValue, NotificationChain msgs)
-  {
-    org.integratedmodelling.kim.kim.Number oldMaxValue = maxValue;
-    maxValue = newMaxValue;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.RESTRICTION_DEFINITION__MAX_VALUE, oldMaxValue, newMaxValue);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setMaxValue(org.integratedmodelling.kim.kim.Number newMaxValue)
-  {
-    if (newMaxValue != maxValue)
-    {
-      NotificationChain msgs = null;
-      if (maxValue != null)
-        msgs = ((InternalEObject)maxValue).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.RESTRICTION_DEFINITION__MAX_VALUE, null, msgs);
-      if (newMaxValue != null)
-        msgs = ((InternalEObject)newMaxValue).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.RESTRICTION_DEFINITION__MAX_VALUE, null, msgs);
-      msgs = basicSetMaxValue(newMaxValue, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.RESTRICTION_DEFINITION__MAX_VALUE, newMaxValue, newMaxValue));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public String getProperty()
-  {
-    return property;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setProperty(String newProperty)
-  {
-    String oldProperty = property;
-    property = newProperty;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.RESTRICTION_DEFINITION__PROPERTY, oldProperty, property));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
@@ -717,10 +554,6 @@ public class RestrictionDefinitionImpl extends MinimalEObjectImpl.Container impl
         return basicSetTraitType(null, msgs);
       case KimPackage.RESTRICTION_DEFINITION__SUBJECT:
         return basicSetSubject(null, msgs);
-      case KimPackage.RESTRICTION_DEFINITION__VALUE:
-        return basicSetValue(null, msgs);
-      case KimPackage.RESTRICTION_DEFINITION__MAX_VALUE:
-        return basicSetMaxValue(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -755,12 +588,6 @@ public class RestrictionDefinitionImpl extends MinimalEObjectImpl.Container impl
         return getTraitType();
       case KimPackage.RESTRICTION_DEFINITION__SUBJECT:
         return getSubject();
-      case KimPackage.RESTRICTION_DEFINITION__VALUE:
-        return getValue();
-      case KimPackage.RESTRICTION_DEFINITION__MAX_VALUE:
-        return getMaxValue();
-      case KimPackage.RESTRICTION_DEFINITION__PROPERTY:
-        return getProperty();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -804,15 +631,6 @@ public class RestrictionDefinitionImpl extends MinimalEObjectImpl.Container impl
         return;
       case KimPackage.RESTRICTION_DEFINITION__SUBJECT:
         setSubject((ConceptDeclaration)newValue);
-        return;
-      case KimPackage.RESTRICTION_DEFINITION__VALUE:
-        setValue((Literal)newValue);
-        return;
-      case KimPackage.RESTRICTION_DEFINITION__MAX_VALUE:
-        setMaxValue((org.integratedmodelling.kim.kim.Number)newValue);
-        return;
-      case KimPackage.RESTRICTION_DEFINITION__PROPERTY:
-        setProperty((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -858,15 +676,6 @@ public class RestrictionDefinitionImpl extends MinimalEObjectImpl.Container impl
       case KimPackage.RESTRICTION_DEFINITION__SUBJECT:
         setSubject((ConceptDeclaration)null);
         return;
-      case KimPackage.RESTRICTION_DEFINITION__VALUE:
-        setValue((Literal)null);
-        return;
-      case KimPackage.RESTRICTION_DEFINITION__MAX_VALUE:
-        setMaxValue((org.integratedmodelling.kim.kim.Number)null);
-        return;
-      case KimPackage.RESTRICTION_DEFINITION__PROPERTY:
-        setProperty(PROPERTY_EDEFAULT);
-        return;
     }
     super.eUnset(featureID);
   }
@@ -901,12 +710,6 @@ public class RestrictionDefinitionImpl extends MinimalEObjectImpl.Container impl
         return traitType != null;
       case KimPackage.RESTRICTION_DEFINITION__SUBJECT:
         return subject != null;
-      case KimPackage.RESTRICTION_DEFINITION__VALUE:
-        return value != null;
-      case KimPackage.RESTRICTION_DEFINITION__MAX_VALUE:
-        return maxValue != null;
-      case KimPackage.RESTRICTION_DEFINITION__PROPERTY:
-        return PROPERTY_EDEFAULT == null ? property != null : !PROPERTY_EDEFAULT.equals(property);
     }
     return super.eIsSet(featureID);
   }
@@ -936,8 +739,6 @@ public class RestrictionDefinitionImpl extends MinimalEObjectImpl.Container impl
     result.append(howmany);
     result.append(", dataType: ");
     result.append(dataType);
-    result.append(", property: ");
-    result.append(property);
     result.append(')');
     return result.toString();
   }

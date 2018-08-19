@@ -15,6 +15,8 @@
  */
 package org.integratedmodelling.klab.api.data.adapters;
 
+import java.util.Map;
+
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
@@ -27,34 +29,37 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
  */
 public interface IResourceEncoder {
 
-	/**
-	 * Check if the resource can be accessed. This should ensure the ability of
-	 * calling
-	 * {@link #getEncodedData(IResource, IGeometry, org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder, IComputationContext)}
-	 * without spending too much time.
-	 * 
-	 * @param resource
-	 * @return true if resource can be used at the moment of this call.
-	 */
-	boolean isOnline(IResource resource);
+    /**
+     * Check if the resource can be accessed. This should ensure the ability of
+     * calling
+     * {@link #getEncodedData(IResource, IGeometry, org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder, IComputationContext)}
+     * without spending too much time.
+     * 
+     * @param resource
+     * @return true if resource can be used at the moment of this call.
+     */
+    boolean isOnline(IResource resource);
 
-	/**
-	 * Build the resource data corresponding to the passed resource in the passed
-	 * geometry. The data are created using a builder passed by the runtime.
-	 *
-	 * @param resource
-	 *            a {@link org.integratedmodelling.klab.api.data.IResource}. It
-	 *            should have been recently inspected with
-	 *            {@link #isOnline(IResource)} so it can be assumed that it is
-	 *            correct and active.
-	 * @param geometry
-	 *            the {@link org.integratedmodelling.klab.api.data.IGeometry} of
-	 *            reference for the query. The resolution process should guarantee
-	 *            that the intersection with the resource's geometry is not empty.
-	 * @param builder
-	 *            a suitable builder to use to build the dataset
-	 * @param context
-	 *            the context of computation
-	 */
-	void getEncodedData(IResource resource, IGeometry geometry, IKlabData.Builder builder, IComputationContext context);
+    /**
+     * Build the resource data corresponding to the passed resource in the passed
+     * geometry. The data are created using a builder passed by the runtime.
+     *
+     * @param resource
+     *            a {@link org.integratedmodelling.klab.api.data.IResource}. It
+     *            should have been recently inspected with
+     *            {@link #isOnline(IResource)} so it can be assumed that it is
+     *            correct and active.
+     * @param urnParameters
+     *            any parameters passed in the URN reference to the resource, using
+     *            the URN fragment. A single parameter without key has the key 'value'.
+     * @param geometry
+     *            the {@link org.integratedmodelling.klab.api.data.IGeometry} of
+     *            reference for the query. The resolution process should guarantee
+     *            that the intersection with the resource's geometry is not empty.
+     * @param builder
+     *            a suitable builder to use to build the dataset
+     * @param context
+     *            the context of computation
+     */
+    void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, IKlabData.Builder builder, IComputationContext context);
 }

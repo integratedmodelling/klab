@@ -63,9 +63,9 @@ import org.opengis.filter.FilterFactory2;
 public class VectorEncoder implements IResourceEncoder {
 
 	@Override
-	public void getEncodedData(IResource resource, IGeometry geometry, Builder builder, IComputationContext context) {
+	public void getEncodedData(IResource resource, Map<String,String> urnParameters, IGeometry geometry, Builder builder, IComputationContext context) {
 		FeatureSource<SimpleFeatureType, SimpleFeature> features = getFeatureSource(resource, geometry);
-		encodeFromFeatures(features, resource, geometry, builder, context);
+		encodeFromFeatures(features, resource, urnParameters, geometry, builder, context);
 	}
 
 	protected FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(IResource resource, IGeometry geometry) {
@@ -98,10 +98,16 @@ public class VectorEncoder implements IResourceEncoder {
 
 	}
 
-	private void encodeFromFeatures(FeatureSource<SimpleFeatureType, SimpleFeature> source, IResource resource,
+	// TODO use URN parameters
+	private void encodeFromFeatures(FeatureSource<SimpleFeatureType, SimpleFeature> source, IResource resource, Map<String, String> urnParameters, 
 			IGeometry geometry, Builder builder, IComputationContext context) {
 
 		Filter filter = null;
+		
+		/*
+		 * TODO
+		 * merge urn params with resource params: if attr=x, use filter, if not add to parameters
+		 */
 
 		String geomName = source.getSchema().getGeometryDescriptor().getName().toString();
 
@@ -112,7 +118,15 @@ public class VectorEncoder implements IResourceEncoder {
 			}
 		}
 		
-
+        /*
+         * TODO would be nicer to check the request geometry for the data - which may
+         * not be the scale of the result! If it's IRREGULAR MULTIPLE we want objects,
+         * otherwise we want a state. I don't think there is a way to check that at the
+         * moment - the scale will be that of contextualization, not the geometry for
+         * the actuator, which may depend on context.
+         */
+        boolean rasterize = context.getTargetSemantics() != null && context.getTargetSemantics().is(Type.QUALITY);
+        
 		if (resource.getParameters().contains("filter")) {
 			try {
 				filter = ECQL.toFilter(resource.getParameters().get("filter", String.class));
@@ -140,15 +154,6 @@ public class VectorEncoder implements IResourceEncoder {
 		if (filter != null) {
 			bbfilter = ff.and(bbfilter, filter);
 		}
-
-		/*
-		 * TODO would be nicer to check the request geometry for the data - which may
-		 * not be the scale of the result! If it's IRREGULAR MULTIPLE we want objects,
-		 * otherwise we want a state. I don't think there is a way to check that at the
-		 * moment - the scale will be that of contextualization, not the geometry for
-		 * the actuator, which may depend on context.
-		 */
-		boolean rasterize = context.getTargetSemantics() != null && context.getTargetSemantics().is(Type.QUALITY);
 
 		Rasterizer<Object> rasterizer = null;
 		if (rasterize) {

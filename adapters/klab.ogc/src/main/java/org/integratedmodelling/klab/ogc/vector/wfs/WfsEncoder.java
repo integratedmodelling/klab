@@ -36,6 +36,7 @@ public class WfsEncoder extends VectorEncoder {
 
 	@Override
 	protected FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(IResource resource, IGeometry geometry) {
+	    
 		WFSDataStore dataStore = WfsAdapter.getDatastore(resource.getParameters().get("serviceUrl", String.class),
 				Version.create(resource.getParameters().get("wfsVersion", "1.0.0")));
 		try {

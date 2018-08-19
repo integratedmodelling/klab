@@ -19,6 +19,7 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.media.jai.Interpolation;
@@ -51,7 +52,6 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.common.Geometry;
-import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
@@ -62,7 +62,6 @@ import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.ogc.RasterAdapter;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.MiscUtilities;
-import org.integratedmodelling.klab.utils.NetUtilities;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.grid.GridCoverage;
@@ -75,14 +74,16 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class RasterEncoder implements IResourceEncoder {
 
 	@Override
-	public void getEncodedData(IResource resource, IGeometry geometry, IKlabData.Builder builder,
+	public void getEncodedData(IResource resource, Map<String,String> urnParameters, IGeometry geometry, IKlabData.Builder builder,
 			IComputationContext context) {
-		encodeFromCoverage(resource, getCoverage(resource, geometry), geometry, builder, context);
+		encodeFromCoverage(resource, urnParameters, getCoverage(resource, geometry), geometry, builder, context);
 	}
 
 	/**
 	 * Take a Geotools coverage and do the rest. Separated so that WCS can use it as
 	 * is.
+	 * 
+	 * TODO use URN parameters
 	 * 
 	 * @param resource
 	 * @param coverage
@@ -90,7 +91,7 @@ public class RasterEncoder implements IResourceEncoder {
 	 * @param builder
 	 * @param context
 	 */
-	public void encodeFromCoverage(IResource resource, GridCoverage coverage, IGeometry geometry,
+	public void encodeFromCoverage(IResource resource, Map<String, String> urnParameters, GridCoverage coverage, IGeometry geometry,
 			IKlabData.Builder builder, IComputationContext context) {
 
 		/*

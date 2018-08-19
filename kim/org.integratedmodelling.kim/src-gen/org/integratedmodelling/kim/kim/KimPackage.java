@@ -2005,22 +2005,13 @@ public interface KimPackage extends EPackage
   int CONCEPT_DECLARATION = 27;
 
   /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT_DECLARATION__NAME = 0;
-
-  /**
    * The feature id for the '<em><b>Main</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__MAIN = 1;
+  int CONCEPT_DECLARATION__MAIN = 0;
 
   /**
    * The feature id for the '<em><b>Inherency</b></em>' containment reference.
@@ -2029,7 +2020,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__INHERENCY = 2;
+  int CONCEPT_DECLARATION__INHERENCY = 1;
 
   /**
    * The feature id for the '<em><b>Motivation</b></em>' containment reference.
@@ -2038,7 +2029,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__MOTIVATION = 3;
+  int CONCEPT_DECLARATION__MOTIVATION = 2;
 
   /**
    * The feature id for the '<em><b>Compresent</b></em>' containment reference.
@@ -2047,7 +2038,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__COMPRESENT = 4;
+  int CONCEPT_DECLARATION__COMPRESENT = 3;
 
   /**
    * The feature id for the '<em><b>Causant</b></em>' containment reference.
@@ -2056,7 +2047,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__CAUSANT = 5;
+  int CONCEPT_DECLARATION__CAUSANT = 4;
 
   /**
    * The feature id for the '<em><b>Adjacent</b></em>' containment reference.
@@ -2065,7 +2056,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__ADJACENT = 6;
+  int CONCEPT_DECLARATION__ADJACENT = 5;
 
   /**
    * The feature id for the '<em><b>Container</b></em>' containment reference.
@@ -2074,7 +2065,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__CONTAINER = 7;
+  int CONCEPT_DECLARATION__CONTAINER = 6;
 
   /**
    * The feature id for the '<em><b>Contained</b></em>' containment reference.
@@ -2083,7 +2074,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__CONTAINED = 8;
+  int CONCEPT_DECLARATION__CONTAINED = 7;
 
   /**
    * The feature id for the '<em><b>Caused</b></em>' containment reference.
@@ -2092,7 +2083,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__CAUSED = 9;
+  int CONCEPT_DECLARATION__CAUSED = 8;
 
   /**
    * The feature id for the '<em><b>During</b></em>' containment reference.
@@ -2101,7 +2092,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__DURING = 10;
+  int CONCEPT_DECLARATION__DURING = 9;
 
   /**
    * The feature id for the '<em><b>Context</b></em>' containment reference.
@@ -2110,7 +2101,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__CONTEXT = 11;
+  int CONCEPT_DECLARATION__CONTEXT = 10;
 
   /**
    * The feature id for the '<em><b>Operators</b></em>' attribute list.
@@ -2119,7 +2110,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__OPERATORS = 12;
+  int CONCEPT_DECLARATION__OPERATORS = 11;
 
   /**
    * The feature id for the '<em><b>Operands</b></em>' containment reference list.
@@ -2128,7 +2119,16 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__OPERANDS = 13;
+  int CONCEPT_DECLARATION__OPERANDS = 12;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__NAME = 13;
 
   /**
    * The number of structural features of the '<em>Concept Declaration</em>' class.
@@ -3265,40 +3265,13 @@ public interface KimPackage extends EPackage
   int RESTRICTION_DEFINITION__SUBJECT = 9;
 
   /**
-   * The feature id for the '<em><b>Value</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int RESTRICTION_DEFINITION__VALUE = 10;
-
-  /**
-   * The feature id for the '<em><b>Max Value</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int RESTRICTION_DEFINITION__MAX_VALUE = 11;
-
-  /**
-   * The feature id for the '<em><b>Property</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int RESTRICTION_DEFINITION__PROPERTY = 12;
-
-  /**
    * The number of structural features of the '<em>Restriction Definition</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int RESTRICTION_DEFINITION_FEATURE_COUNT = 13;
+  int RESTRICTION_DEFINITION_FEATURE_COUNT = 10;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.AnnotationImpl <em>Annotation</em>}' class.
@@ -6194,17 +6167,6 @@ public interface KimPackage extends EPackage
   EClass getConceptDeclaration();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getName <em>Name</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
-   * @see org.integratedmodelling.kim.kim.ConceptDeclaration#getName()
-   * @see #getConceptDeclaration()
-   * @generated
-   */
-  EAttribute getConceptDeclaration_Name();
-
-  /**
    * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getMain <em>Main</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -6346,6 +6308,17 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EReference getConceptDeclaration_Operands();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see org.integratedmodelling.kim.kim.ConceptDeclaration#getName()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EAttribute getConceptDeclaration_Name();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.ConceptReference <em>Concept Reference</em>}'.
@@ -7613,39 +7586,6 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EReference getRestrictionDefinition_Subject();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.RestrictionDefinition#getValue <em>Value</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Value</em>'.
-   * @see org.integratedmodelling.kim.kim.RestrictionDefinition#getValue()
-   * @see #getRestrictionDefinition()
-   * @generated
-   */
-  EReference getRestrictionDefinition_Value();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.RestrictionDefinition#getMaxValue <em>Max Value</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Max Value</em>'.
-   * @see org.integratedmodelling.kim.kim.RestrictionDefinition#getMaxValue()
-   * @see #getRestrictionDefinition()
-   * @generated
-   */
-  EReference getRestrictionDefinition_MaxValue();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.RestrictionDefinition#getProperty <em>Property</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Property</em>'.
-   * @see org.integratedmodelling.kim.kim.RestrictionDefinition#getProperty()
-   * @see #getRestrictionDefinition()
-   * @generated
-   */
-  EAttribute getRestrictionDefinition_Property();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.Annotation <em>Annotation</em>}'.
@@ -10054,14 +9994,6 @@ public interface KimPackage extends EPackage
     EClass CONCEPT_DECLARATION = eINSTANCE.getConceptDeclaration();
 
     /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONCEPT_DECLARATION__NAME = eINSTANCE.getConceptDeclaration_Name();
-
-    /**
      * The meta object literal for the '<em><b>Main</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -10164,6 +10096,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EReference CONCEPT_DECLARATION__OPERANDS = eINSTANCE.getConceptDeclaration_Operands();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT_DECLARATION__NAME = eINSTANCE.getConceptDeclaration_Name();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.ConceptReferenceImpl <em>Concept Reference</em>}' class.
@@ -11110,30 +11050,6 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EReference RESTRICTION_DEFINITION__SUBJECT = eINSTANCE.getRestrictionDefinition_Subject();
-
-    /**
-     * The meta object literal for the '<em><b>Value</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference RESTRICTION_DEFINITION__VALUE = eINSTANCE.getRestrictionDefinition_Value();
-
-    /**
-     * The meta object literal for the '<em><b>Max Value</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference RESTRICTION_DEFINITION__MAX_VALUE = eINSTANCE.getRestrictionDefinition_MaxValue();
-
-    /**
-     * The meta object literal for the '<em><b>Property</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute RESTRICTION_DEFINITION__PROPERTY = eINSTANCE.getRestrictionDefinition_Property();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.AnnotationImpl <em>Annotation</em>}' class.

@@ -42,6 +42,10 @@ import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.ResourceReference;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 
 public class ResourcesView extends ViewPart {
 
@@ -86,9 +90,11 @@ public class ResourcesView extends ViewPart {
 				switch (columnIndex) {
 				case 0:
 					return ((EResourceReference) element).getLocalName();
-				case 1:
-					return ((EResourceReference) element).getAdapterType();
+                case 1:
+                    return ((EResourceReference) element).getProjectName();
 				case 2:
+					return ((EResourceReference) element).getAdapterType();
+				case 3:
 					return describeGeometry(((EResourceReference) element).getGeometry());
 				}
 			}
@@ -167,9 +173,13 @@ public class ResourcesView extends ViewPart {
 				tblclmnUrn.setWidth(550);
 				tblclmnUrn.setText("Local name");
 			}
-			{
+            {
+                TableColumn tblclmnNewColumn = new TableColumn(table, SWT.NONE);
+                tblclmnNewColumn.setWidth(160);
+                tblclmnNewColumn.setText("Project");
+            }			{
 				TableColumn tblclmnNewColumn = new TableColumn(table, SWT.NONE);
-				tblclmnNewColumn.setWidth(100);
+				tblclmnNewColumn.setWidth(70);
 				tblclmnNewColumn.setText("Type");
 			}
 			{
@@ -177,6 +187,38 @@ public class ResourcesView extends ViewPart {
 				tblclmnGeometry.setWidth(100);
 				tblclmnGeometry.setText("Geometry");
 			}
+			
+			Menu menu = new Menu(table);
+			table.setMenu(menu);
+			
+			MenuItem mntmCopyUrn = new MenuItem(menu, SWT.NONE);
+			mntmCopyUrn.addSelectionListener(new SelectionAdapter() {
+			    @Override
+			    public void widgetSelected(SelectionEvent event) {
+	                 Object object = event.data instanceof StructuredSelection
+	                            ? ((StructuredSelection) event.data).getFirstElement()
+	                            : null;
+	                    if (object instanceof EResourceReference) {
+	                        Eclipse.INSTANCE.copyToClipboard(((EResourceReference)object).getUrn());
+	                    }
+
+			    }
+			});
+			mntmCopyUrn.setText("Copy URN");
+			
+			MenuItem mntmOpenInEditor = new MenuItem(menu, SWT.NONE);
+			mntmOpenInEditor.addSelectionListener(new SelectionAdapter() {
+			    @Override
+			    public void widgetSelected(SelectionEvent event) {
+	                Object object = event.data instanceof StructuredSelection
+	                        ? ((StructuredSelection) event.data).getFirstElement()
+	                        : null;
+	                if (object instanceof EResourceReference) {
+	                    Activator.session().previewResource((EResourceReference)object);
+	                }
+			    }
+			});
+			mntmOpenInEditor.setText("Open in editor");
 			tableViewer.setContentProvider(new ContentProvider());
 			tableViewer.setLabelProvider(new LabelProvider());
 			tableViewer.addDragSupport(DND.DROP_DEFAULT, new Transfer[] { TextTransfer.getInstance(), LocalSelectionTransfer.getTransfer() },
@@ -288,5 +330,4 @@ public class ResourcesView extends ViewPart {
 	public void setFocus() {
 		// Set the focus
 	}
-
 }

@@ -39,7 +39,6 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	protected AbstractElementAlias match_Number_PlusSignKeyword_3_0_1_0_q;
 	protected AbstractElementAlias match_ObservableSemantics_RequiredKeyword_3_5_1_a;
 	protected AbstractElementAlias match_ObserveStatementBody_UsingKeyword_0_7_0_q;
-	protected AbstractElementAlias match_RestrictionDefinition_AsKeyword_0_3_0_1_or_ForKeyword_0_3_0_0;
 	protected AbstractElementAlias match_TableClassifier_ExclusiveKeyword_1_1_1_q;
 	protected AbstractElementAlias match_TableClassifier_ExclusiveKeyword_1_4_1_q;
 	protected AbstractElementAlias match_ValueAssignment_ToKeyword_0_1_q;
@@ -63,7 +62,6 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 		match_Number_PlusSignKeyword_3_0_1_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_3_0_1_0());
 		match_ObservableSemantics_RequiredKeyword_3_5_1_a = new TokenAlias(true, true, grammarAccess.getObservableSemanticsAccess().getRequiredKeyword_3_5_1());
 		match_ObserveStatementBody_UsingKeyword_0_7_0_q = new TokenAlias(false, true, grammarAccess.getObserveStatementBodyAccess().getUsingKeyword_0_7_0());
-		match_RestrictionDefinition_AsKeyword_0_3_0_1_or_ForKeyword_0_3_0_0 = new AlternativeAlias(false, false, new TokenAlias(false, false, grammarAccess.getRestrictionDefinitionAccess().getAsKeyword_0_3_0_1()), new TokenAlias(false, false, grammarAccess.getRestrictionDefinitionAccess().getForKeyword_0_3_0_0()));
 		match_TableClassifier_ExclusiveKeyword_1_1_1_q = new TokenAlias(false, true, grammarAccess.getTableClassifierAccess().getExclusiveKeyword_1_1_1());
 		match_TableClassifier_ExclusiveKeyword_1_4_1_q = new TokenAlias(false, true, grammarAccess.getTableClassifierAccess().getExclusiveKeyword_1_4_1());
 		match_ValueAssignment_ToKeyword_0_1_q = new TokenAlias(false, true, grammarAccess.getValueAssignmentAccess().getToKeyword_0_1());
@@ -125,8 +123,6 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 				emit_ObservableSemantics_RequiredKeyword_3_5_1_a(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_ObserveStatementBody_UsingKeyword_0_7_0_q.equals(syntax))
 				emit_ObserveStatementBody_UsingKeyword_0_7_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_RestrictionDefinition_AsKeyword_0_3_0_1_or_ForKeyword_0_3_0_0.equals(syntax))
-				emit_RestrictionDefinition_AsKeyword_0_3_0_1_or_ForKeyword_0_3_0_0(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_TableClassifier_ExclusiveKeyword_1_1_1_q.equals(syntax))
 				emit_TableClassifier_ExclusiveKeyword_1_1_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_TableClassifier_ExclusiveKeyword_1_4_1_q.equals(syntax))
@@ -609,11 +605,11 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     docstring=STRING (ambiguity) (rule end)
 	 *     docstring=STRING (ambiguity) concept=NamedObservableSemantics
 	 *     docstring=STRING (ambiguity) urn=Urn
-	 *     observations+=ObserveStatementBody (ambiguity) 'with' 'documentation' documentation=Metadata
-	 *     observations+=ObserveStatementBody (ambiguity) 'with' 'metadata' metadata=Metadata
-	 *     observations+=ObserveStatementBody (ambiguity) (rule end)
-	 *     observations+=ObserveStatementBody (ambiguity) concept=NamedObservableSemantics
-	 *     observations+=ObserveStatementBody (ambiguity) urn=Urn
+	 *     observations+=ObserveStatementBody ')' (ambiguity) 'with' 'documentation' documentation=Metadata
+	 *     observations+=ObserveStatementBody ')' (ambiguity) 'with' 'metadata' metadata=Metadata
+	 *     observations+=ObserveStatementBody ')' (ambiguity) (rule end)
+	 *     observations+=ObserveStatementBody ')' (ambiguity) concept=NamedObservableSemantics
+	 *     observations+=ObserveStatementBody ')' (ambiguity) urn=Urn
 	 *     parents+=PathName (ambiguity) 'with' 'documentation' documentation=Metadata
 	 *     parents+=PathName (ambiguity) 'with' 'metadata' metadata=Metadata
 	 *     parents+=PathName (ambiguity) (rule end)
@@ -626,19 +622,6 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     states+=ObservableSemantics (ambiguity) urn=Urn
 	 */
 	protected void emit_ObserveStatementBody_UsingKeyword_0_7_0_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
-		acceptNodes(transition, nodes);
-	}
-	
-	/**
-	 * Ambiguous syntax:
-	 *     'for' | 'as'
-	 *
-	 * This ambiguous syntax occurs at:
-	 *     dataType=DataType (ambiguity) subject=ConceptDeclaration
-	 *     source=ConceptDeclaration (ambiguity) subject=ConceptDeclaration
-	 *     traitType=ConceptDeclaration (ambiguity) subject=ConceptDeclaration
-	 */
-	protected void emit_RestrictionDefinition_AsKeyword_0_3_0_1_or_ForKeyword_0_3_0_0(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

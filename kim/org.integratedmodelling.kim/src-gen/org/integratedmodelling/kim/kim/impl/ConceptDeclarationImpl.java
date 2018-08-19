@@ -33,7 +33,6 @@ import org.integratedmodelling.kim.kim.KimPackage;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getMain <em>Main</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getInherency <em>Inherency</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getMotivation <em>Motivation</em>}</li>
@@ -47,32 +46,13 @@ import org.integratedmodelling.kim.kim.KimPackage;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getContext <em>Context</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getOperators <em>Operators</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getOperands <em>Operands</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getName <em>Name</em>}</li>
  * </ul>
  *
  * @generated
  */
 public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container implements ConceptDeclaration
 {
-  /**
-   * The default value of the '{@link #getName() <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getName()
-   * @generated
-   * @ordered
-   */
-  protected static final String NAME_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getName()
-   * @generated
-   * @ordered
-   */
-  protected String name = NAME_EDEFAULT;
-
   /**
    * The cached value of the '{@link #getMain() <em>Main</em>}' containment reference list.
    * <!-- begin-user-doc -->
@@ -204,6 +184,26 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
   protected EList<ConceptDeclaration> operands;
 
   /**
+   * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getName()
+   * @generated
+   * @ordered
+   */
+  protected static final String NAME_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getName()
+   * @generated
+   * @ordered
+   */
+  protected String name = NAME_EDEFAULT;
+
+  /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -222,29 +222,6 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
   protected EClass eStaticClass()
   {
     return KimPackage.Literals.CONCEPT_DECLARATION;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public String getName()
-  {
-    return name;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setName(String newName)
-  {
-    String oldName = name;
-    name = newName;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_DECLARATION__NAME, oldName, name));
   }
 
   /**
@@ -774,6 +751,29 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getName()
+  {
+    return name;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setName(String newName)
+  {
+    String oldName = name;
+    name = newName;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_DECLARATION__NAME, oldName, name));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
@@ -817,8 +817,6 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
   {
     switch (featureID)
     {
-      case KimPackage.CONCEPT_DECLARATION__NAME:
-        return getName();
       case KimPackage.CONCEPT_DECLARATION__MAIN:
         return getMain();
       case KimPackage.CONCEPT_DECLARATION__INHERENCY:
@@ -845,6 +843,8 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
         return getOperators();
       case KimPackage.CONCEPT_DECLARATION__OPERANDS:
         return getOperands();
+      case KimPackage.CONCEPT_DECLARATION__NAME:
+        return getName();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -860,9 +860,6 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
   {
     switch (featureID)
     {
-      case KimPackage.CONCEPT_DECLARATION__NAME:
-        setName((String)newValue);
-        return;
       case KimPackage.CONCEPT_DECLARATION__MAIN:
         getMain().clear();
         getMain().addAll((Collection<? extends Concept>)newValue);
@@ -905,6 +902,9 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
         getOperands().clear();
         getOperands().addAll((Collection<? extends ConceptDeclaration>)newValue);
         return;
+      case KimPackage.CONCEPT_DECLARATION__NAME:
+        setName((String)newValue);
+        return;
     }
     super.eSet(featureID, newValue);
   }
@@ -919,9 +919,6 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
   {
     switch (featureID)
     {
-      case KimPackage.CONCEPT_DECLARATION__NAME:
-        setName(NAME_EDEFAULT);
-        return;
       case KimPackage.CONCEPT_DECLARATION__MAIN:
         getMain().clear();
         return;
@@ -961,6 +958,9 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
       case KimPackage.CONCEPT_DECLARATION__OPERANDS:
         getOperands().clear();
         return;
+      case KimPackage.CONCEPT_DECLARATION__NAME:
+        setName(NAME_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -975,8 +975,6 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
   {
     switch (featureID)
     {
-      case KimPackage.CONCEPT_DECLARATION__NAME:
-        return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case KimPackage.CONCEPT_DECLARATION__MAIN:
         return main != null && !main.isEmpty();
       case KimPackage.CONCEPT_DECLARATION__INHERENCY:
@@ -1003,6 +1001,8 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
         return operators != null && !operators.isEmpty();
       case KimPackage.CONCEPT_DECLARATION__OPERANDS:
         return operands != null && !operands.isEmpty();
+      case KimPackage.CONCEPT_DECLARATION__NAME:
+        return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
     }
     return super.eIsSet(featureID);
   }
@@ -1018,10 +1018,10 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (name: ");
-    result.append(name);
-    result.append(", operators: ");
+    result.append(" (operators: ");
     result.append(operators);
+    result.append(", name: ");
+    result.append(name);
     result.append(')');
     return result.toString();
   }

@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.engine.runtime;
 
+import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
@@ -102,7 +103,7 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
 						 * Go for the actual data. Surprisingly easy given the diversity of possible
 						 * results.
 						 */
-						IKlabData data = Resources.INSTANCE.getResourceData(resource, scale,
+						IKlabData data = Resources.INSTANCE.getResourceData(resource, new HashMap<>(), scale,
 								context.getChild(Observable
 										.promote(OWL.INSTANCE.getNonsemanticPeer("DataObject", resource.getType())), resource));
 

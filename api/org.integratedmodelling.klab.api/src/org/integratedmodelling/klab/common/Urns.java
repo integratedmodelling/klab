@@ -2,11 +2,14 @@ package org.integratedmodelling.klab.common;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.NameGenerator;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * This class encodes the rules for creating URNs that describe local resources:
@@ -17,6 +20,8 @@ public enum Urns {
 
 	INSTANCE;
 
+    final public static String SINGLE_PARAMETER_KEY = "value";
+    
 	final public static String KLAB_URN_PREFIX = "urn:klab:";
 	final public static String LOCAL_URN_PREFIX = "urn:klab:local:";
 	final public static String VOID_URN_PREFIX = "urn:klab:void:";
@@ -83,5 +88,30 @@ public enum Urns {
 		}
 		return ret;
 	}
+
+	/**
+	 * Split off the fragment and return the parsed parameter map along with the 
+	 * clean URN.
+	 * 
+	 * @param urn
+	 * @return
+	 */
+    public Pair<String, Map<String,String>> resolveParameters(String urn) {
+        Map<String,String> parameters = new HashMap<>();
+        String clean = urn;
+        if (urn.contains("#")) {
+            String[] uu = urn.split("#");
+            clean = uu[0];
+            for (String s : uu[1].split("&")) {
+                if (s.contains("=")) {
+                    String[] kv = s.split("=");
+                    parameters.put(kv[0], kv[1]);
+                } else {
+                    parameters.put(SINGLE_PARAMETER_KEY, s);
+                }
+            }
+        }
+        return new Pair<>(clean, parameters);
+    }
 
 }

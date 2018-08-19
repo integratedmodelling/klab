@@ -18,6 +18,7 @@ package org.integratedmodelling.klab.raster.wcs;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Map;
 
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -44,11 +45,11 @@ public class WcsEncoder implements IResourceEncoder {
 	RasterEncoder encoder = new RasterEncoder();
 
 	@Override
-	public void getEncodedData(IResource resource, IGeometry geometry, Builder builder, IComputationContext context) {
+	public void getEncodedData(IResource resource, Map<String,String> urnParameters, IGeometry geometry, Builder builder, IComputationContext context) {
 		WCSService service = WcsAdapter.getService(resource.getParameters().get("serviceUrl", String.class),
 				Version.create(resource.getParameters().get("wcsVersion", String.class)));
 		WCSLayer layer = service.getLayer(resource.getParameters().get("wcsIdentifier", String.class));
-		encoder.encodeFromCoverage(resource, getCoverage(layer, resource, geometry), geometry, builder, context);
+		encoder.encodeFromCoverage(resource, urnParameters, getCoverage(layer, resource, geometry), geometry, builder, context);
 	}
 
 	private GridCoverage getCoverage(WCSLayer layer, IResource resource, IGeometry geometry) {

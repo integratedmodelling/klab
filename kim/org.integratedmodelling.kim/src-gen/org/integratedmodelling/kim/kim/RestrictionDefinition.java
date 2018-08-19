@@ -25,9 +25,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.RestrictionDefinition#getDataType <em>Data Type</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.RestrictionDefinition#getTraitType <em>Trait Type</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.RestrictionDefinition#getSubject <em>Subject</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.RestrictionDefinition#getValue <em>Value</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.RestrictionDefinition#getMaxValue <em>Max Value</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.RestrictionDefinition#getProperty <em>Property</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kim.kim.KimPackage#getRestrictionDefinition()
@@ -298,83 +295,5 @@ public interface RestrictionDefinition extends EObject
    * @generated
    */
   void setSubject(ConceptDeclaration value);
-
-  /**
-   * Returns the value of the '<em><b>Value</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Value</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Value</em>' containment reference.
-   * @see #setValue(Literal)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getRestrictionDefinition_Value()
-   * @model containment="true"
-   * @generated
-   */
-  Literal getValue();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.RestrictionDefinition#getValue <em>Value</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Value</em>' containment reference.
-   * @see #getValue()
-   * @generated
-   */
-  void setValue(Literal value);
-
-  /**
-   * Returns the value of the '<em><b>Max Value</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Max Value</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Max Value</em>' containment reference.
-   * @see #setMaxValue(org.integratedmodelling.kim.kim.Number)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getRestrictionDefinition_MaxValue()
-   * @model containment="true"
-   * @generated
-   */
-  org.integratedmodelling.kim.kim.Number getMaxValue();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.RestrictionDefinition#getMaxValue <em>Max Value</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Max Value</em>' containment reference.
-   * @see #getMaxValue()
-   * @generated
-   */
-  void setMaxValue(org.integratedmodelling.kim.kim.Number value);
-
-  /**
-   * Returns the value of the '<em><b>Property</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Property</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Property</em>' attribute.
-   * @see #setProperty(String)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getRestrictionDefinition_Property()
-   * @model
-   * @generated
-   */
-  String getProperty();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.RestrictionDefinition#getProperty <em>Property</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Property</em>' attribute.
-   * @see #getProperty()
-   * @generated
-   */
-  void setProperty(String value);
 
 } // RestrictionDefinition

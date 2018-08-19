@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.components.runtime.contextualizers;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -16,24 +17,29 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class UrnInstantiator implements IExpression, IInstantiator {
 
 	public final static String FUNCTION_ID = "klab.runtime.instantiate";
 
 	private IResource resource;
+	private Map<String,String> urnParameters;
 
 	// don't remove - only used as expression
 	public UrnInstantiator() {
 	}
 
 	public UrnInstantiator(String urn) {
-		this.resource = Resources.INSTANCE.resolveResource(urn);
+	    Pair<String, Map<String, String>> call = Urns.INSTANCE.resolveParameters(urn);
+		this.resource = Resources.INSTANCE.resolveResource(call.getFirst());
 		if (this.resource == null || !Resources.INSTANCE.isResourceOnline(this.resource)) {
 			throw new KlabResourceNotFoundException("resource with URN " + urn + " is unavailable or unknown");
 		}
+		this.urnParameters = call.getSecond();
 	}
 
 	public static IServiceCall getServiceCall(String urn) {
@@ -42,7 +48,7 @@ public class UrnInstantiator implements IExpression, IInstantiator {
 
 	@Override
 	public List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context) throws KlabException {
-		IKlabData data = Resources.INSTANCE.getResourceData(resource, context.getScale(), context);
+		IKlabData data = Resources.INSTANCE.getResourceData(resource, urnParameters, context.getScale(), context);
 		return Collections.singletonList((IObjectArtifact)data.getArtifact());
 	}
 

@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab.api.services;
 
 import java.io.File;
+import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -126,11 +127,12 @@ public interface IResourceService {
 	 * errors.
 	 * 
 	 * @param resource
+	 * @param urnParameters
 	 * @param geometry
 	 * @param context
 	 * @return KlabException if anything goes wrong
 	 */
-	IKlabData getResourceData(IResource resource, IGeometry geometry, IComputationContext context);
+	IKlabData getResourceData(IResource resource, Map<String,String> urnParameters, IGeometry geometry, IComputationContext context);
 
 	/**
 	 * Create or update a locally available resource from a specification or/and by

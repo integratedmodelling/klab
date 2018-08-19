@@ -294,9 +294,11 @@ public enum Resources implements IResourceService {
 	public final static String MODEL_URN_PREFIX = Urns.KLAB_URN_PREFIX + "models:";
 
 	@Override
-	public IResource resolveResource(final String urn)
+	public IResource resolveResource(String urn)
 			throws KlabResourceNotFoundException, KlabAuthorizationException {
 
+	    urn = Urns.INSTANCE.resolveParameters(urn).getFirst();
+	    
 		if (Urns.INSTANCE.isLocal(urn)) {
 			return getLocalResourceCatalog().get(urn);
 		}
@@ -603,7 +605,7 @@ public enum Resources implements IResourceService {
 	}
 
 	@Override
-	public IKlabData getResourceData(IResource resource, IGeometry geometry, IComputationContext context) {
+	public IKlabData getResourceData(IResource resource, Map<String,String> urnParameters, IGeometry geometry, IComputationContext context) {
 
 		if (Urns.INSTANCE.isLocal(resource.getUrn())) {
 
@@ -614,7 +616,7 @@ public enum Resources implements IResourceService {
 			}
 
 			IKlabData.Builder builder = new LocalDataBuilder((IRuntimeContext) context);
-			adapter.getEncoder().getEncodedData(resource, geometry, builder, context);
+			adapter.getEncoder().getEncodedData(resource, urnParameters, geometry, builder, context);
 			return builder.build();
 
 		} else {

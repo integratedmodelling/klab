@@ -17,7 +17,6 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getMain <em>Main</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getInherency <em>Inherency</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getMotivation <em>Motivation</em>}</li>
@@ -31,6 +30,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getContext <em>Context</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getOperators <em>Operators</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getOperands <em>Operands</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getName <em>Name</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kim.kim.KimPackage#getConceptDeclaration()
@@ -39,32 +39,6 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface ConceptDeclaration extends EObject
 {
-  /**
-   * Returns the value of the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Name</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Name</em>' attribute.
-   * @see #setName(String)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptDeclaration_Name()
-   * @model
-   * @generated
-   */
-  String getName();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getName <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Name</em>' attribute.
-   * @see #getName()
-   * @generated
-   */
-  void setName(String value);
-
   /**
    * Returns the value of the '<em><b>Main</b></em>' containment reference list.
    * The list contents are of type {@link org.integratedmodelling.kim.kim.Concept}.
@@ -372,5 +346,31 @@ public interface ConceptDeclaration extends EObject
    * @generated
    */
   EList<ConceptDeclaration> getOperands();
+
+  /**
+   * Returns the value of the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Name</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Name</em>' attribute.
+   * @see #setName(String)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptDeclaration_Name()
+   * @model
+   * @generated
+   */
+  String getName();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getName <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Name</em>' attribute.
+   * @see #getName()
+   * @generated
+   */
+  void setName(String value);
 
 } // ConceptDeclaration

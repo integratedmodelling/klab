@@ -22,12 +22,12 @@ Statement:
 ;
 
 ModelStatement:
-	 annotations+=Annotation* ((inactive?='void')? & (private?='private')?) model=MODEL_TYPE body=ModelBodyStatement
+	 (annotations+=Annotation (annotations+=Annotation)*)? ((inactive?='void')? & (private?='private')?)? model=MODEL_TYPE body=ModelBodyStatement
 ;
 
 DefineStatement:
 	// ridiculous to split like this, but makes the highlighting logics work
-	annotations+=Annotation* 'define' defineBody=DefinitionBody
+	(annotations+=Annotation (annotations+=Annotation)*)? 'define' defineBody=DefinitionBody
 ;
 
 DefinitionBody:
@@ -49,7 +49,7 @@ ModelBodyStatement:
 		/*
 		 * If the observable is a single role, then concept must be the actual observable and we're reinterpreting it.
 		 */
-		 ( name=LOWERCASE_ID | observables+=ObservableSemantics (',' observables+=ObservableSemantics)*)
+		 ( (name=LOWERCASE_ID | (observables+=ObservableSemantics (',' observables+=ObservableSemantics)*)))
 		 (docstring=STRING)?
 		 ('observing' dependencies+=Dependency (',' dependencies+=Dependency)* )?
 		 ('using' contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
@@ -197,7 +197,7 @@ ExecutableValue returns ComputableValue:
 
 MODEL_TYPE:
 	'model' |
-	'assess' |
+//	'assess' |
 	'learn' |
 	'number' |
 	'text' |
@@ -210,7 +210,7 @@ MODEL_TYPE:
  * the DB unless the scenario is being computed (should be 'observe ... in scenario ....).
  */
 Namespace:
-	annotations+=Annotation* 
+	(annotations+=Annotation (annotations+=Annotation)*)?
 	(
 		(private?='private')? & 
 		(inactive?='void')?
@@ -242,7 +242,11 @@ Import:
  * legal, but not required, to start with the default prefix urn:klab:
  */
 UrnId:
-	('urn:klab:')? PathName ':'  PathName ':' PathName ':' Path (':' VersionNumber)? ('#' (LOWERCASE_ID|LOWERCASE_DASHID))?;
+	('urn:klab:')? PathName ':'  PathName ':' PathName ':' Path (':' VersionNumber)? ('#' (LOWERCASE_ID|LOWERCASE_DASHID|UrnKvp) ('&' (LOWERCASE_ID|LOWERCASE_DASHID|UrnKvp))*)?;
+	
+UrnKvp:
+	(LOWERCASE_ID|LOWERCASE_DASHID) '=' (LOWERCASE_ID|LOWERCASE_DASHID)
+;	
 	
 /**
  * Local file paths become locally based URNs and can be used wherever URNs are accepted. Their interpretation depends
@@ -253,7 +257,7 @@ LocalFilePath:
 ;	
 	
 ObserveStatement:
-	annotations+=Annotation* 'observe' body=ObserveStatementBody
+	(annotations+=Annotation (annotations+=Annotation)*)? 'observe' body=ObserveStatementBody
 ;
 		
 /**
@@ -274,7 +278,7 @@ ObserveStatementBody:
 		(
 			'with' 
 				// validator will ensure that the semantics has an associated value
-				(observations+=ObserveStatementBody) (',' observations+=ObserveStatementBody)*
+				( '(' observations+=ObserveStatementBody ')') (',' '(' observations+=ObserveStatementBody ')')*
 		)? 
 		('using' (accessor=Function)?)? &
 		('with' 'metadata' metadata=Metadata)? 
@@ -312,13 +316,13 @@ Dependency:
 
 
 ConceptDeclaration:
-	(name=STRING)? main+=Concept+ 
+	/* (name=STRING)? */ main+=Concept+ 
 		// binary semantic operators; also 'as', 'by' and 'follows' handled in other rules
 		(
 			// primary inherency (when secondary is given using 'within')
 			('of'   inherency=SimpleConceptDeclaration)? &
 			// purpose (achievement event created from target)
-			('for'  motivation=SimpleConceptDeclaration)? &
+			('for' motivation=SimpleConceptDeclaration)? &
 			// compresence (subject, process, event)
 			('with' compresent=SimpleConceptDeclaration)? &
 			// cause towards self - causant can be anything (?)
@@ -332,10 +336,10 @@ ConceptDeclaration:
 			// cause towards event (?)
 			('causing'   caused=SimpleConceptDeclaration)? &
 			// concomitant with event (?)
-			('during'   during=SimpleConceptDeclaration)? 		
-		)
-		// context or secondary inherency
-		('within' context=SimpleConceptDeclaration)?
+			('during'   during=SimpleConceptDeclaration)? &
+			// context or secondary inherency
+			('within' context=SimpleConceptDeclaration)?
+		)?
 ;
 
 ConceptReference:
@@ -528,7 +532,9 @@ ConceptStatementBody:
                *       is used if not specified.
                */
 		('has' 'role' roles+=ConceptDeclaration (',' roles+=ConceptDeclaration)*
-			('for' targetObservables+=ConceptDeclaration (',' targetObservables+=ConceptDeclaration)*)? 
+			/* FIXME 'for' here causes unexplained issues when 'for' in concept declarations is used, although there should be
+			 * complete independence between the declarations. */
+			('targeting' targetObservables+=ConceptDeclaration (',' targetObservables+=ConceptDeclaration)*)?
 			('in' restrictedObservables+=ConceptDeclaration (',' restrictedObservables+=ConceptDeclaration)*))? &
 
 	/*
@@ -620,9 +626,9 @@ RestrictionDefinition:
 	// concept restriction: the 'for' should introduce a concept, for a property defined by k.LAB
 	(only?='only' | none?='no' | ((exactly?='exactly' | ('at' atLeast?='least') | ('at' atMost?='most')) howmany=INT))?
 	(source=ConceptDeclaration | dataType=DataType) ('inheriting' traitType=ConceptDeclaration)?
-	(('for' | 'as') (subject=ConceptDeclaration))? |
+	('as' (subject=ConceptDeclaration))? /*|
 	// data restriction, only for special cases in worldview namespaces; 'for' introduces a data property from core ontologies
-	value=Literal ('to' maxValue=Number)? 'for' property=PropertyId
+	value=Literal ('to' maxValue=Number)? 'for' property=PropertyId */
 ;
 
 Annotation:
