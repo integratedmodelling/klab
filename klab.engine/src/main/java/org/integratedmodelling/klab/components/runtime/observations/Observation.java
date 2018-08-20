@@ -168,12 +168,6 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 		return (DirectObservation) getRuntimeContext().getParentOf(this);
 	}
 
-	@Override
-	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	public String toString() {
 		return "{" + Path.getLast(this.getClass().getCanonicalName(), '.') + " " + getId() + ": " + getObservable()
 				+ "}";
