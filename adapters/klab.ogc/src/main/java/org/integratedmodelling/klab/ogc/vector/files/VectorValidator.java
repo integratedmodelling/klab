@@ -46,6 +46,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.ogc.VectorAdapter;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.Utils;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -137,6 +138,7 @@ public class VectorValidator implements IResourceValidator {
 			} else {
 				// store attribute ID and type
 				attributeTypes.put(ad.getLocalName(), ad.getType().getBinding());
+				ret.withAttribute(ad.getLocalName(), Utils.getArtifactType(ad.getType().getBinding()), false, true);
 			}
 		}
 

@@ -198,9 +198,10 @@ public class ResolutionScope implements IResolutionScope {
 		/*
 		 * TODO pre-existing observables do not need any resolution: they can be just
 		 * referred to by name, so they don't go in resolvedObservables, which is a
-		 * cache for the current resolution only. At worst they may be called a different
-		 * name, so we should preset paths for naming them differently in the dataflow.
-		 * Those are simply INPUT PORTS - 'import' statements - with 'as' if necessary.
+		 * cache for the current resolution only. At worst they may be called a
+		 * different name, so we should preset paths for naming them differently in the
+		 * dataflow. Those are simply INPUT PORTS - 'import' statements - with 'as' if
+		 * necessary.
 		 */
 	}
 
@@ -211,7 +212,8 @@ public class ResolutionScope implements IResolutionScope {
 		this.observer = observer;
 		this.monitor = monitor;
 		/*
-		 * TODO instantiate all pre-existing states mentioned in the observer
+		 * TODO instantiate all pre-existing states mentioned in the observer and any
+		 * metadata.
 		 */
 	}
 

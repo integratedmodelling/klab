@@ -9,7 +9,8 @@ public class AttributeReference implements IResource.Attribute {
     private Type    type;
     private boolean key;
     private boolean optional;
-
+    private String exampleValue;
+    
     @Override
     public String getName() {
         return this.name;
@@ -51,5 +52,13 @@ public class AttributeReference implements IResource.Attribute {
         return "AttributeReference [name=" + name + ", type=" + type + ", key=" + key + ", optional="
                 + optional + "]";
     }
+
+	public String getExampleValue() {
+		return exampleValue;
+	}
+
+	public void setExampleValue(String exampleValue) {
+		this.exampleValue = exampleValue;
+	}
 
 }

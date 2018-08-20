@@ -79,4 +79,9 @@ public class EObserver extends EKimObject implements IKimObserver {
 		return null;
 	}
 
+	@Override
+	public String getUrn() {
+		return delegate.getUrn();
+	}
+
 }

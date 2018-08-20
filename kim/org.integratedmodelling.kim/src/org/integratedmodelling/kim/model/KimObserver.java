@@ -2,13 +2,13 @@ package org.integratedmodelling.kim.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.eclipse.emf.ecore.EObject;
+
 import org.integratedmodelling.kim.api.IKimBehavior;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
-import org.integratedmodelling.kim.api.IKimScope.Visitor;
+import org.integratedmodelling.kim.kim.ObserveStatementBody;
 
 public class KimObserver extends KimStatement implements IKimObserver {
 
@@ -21,11 +21,13 @@ public class KimObserver extends KimStatement implements IKimObserver {
     private List<IKimObservable> states = new ArrayList<>();
     private IKimBehavior behavior = new KimBehavior();
     private String docstring;
-
-    public KimObserver(EObject statement, IKimObservable observable, IKimStatement parent) {
+    private String urn;
+    
+    public KimObserver(ObserveStatementBody statement, IKimObservable observable, IKimStatement parent) {
         super(statement, parent);
         this.observable = observable;
         this.name = observable.getFormalName();
+        this.urn = statement.getUrn() == null ? null : statement.getUrn().getName();
     }
 
     @Override
@@ -92,4 +94,9 @@ public class KimObserver extends KimStatement implements IKimObserver {
             state.visit(visitor);
         }
     }
+
+	@Override
+	public String getUrn() {
+		return urn;
+	}
 }

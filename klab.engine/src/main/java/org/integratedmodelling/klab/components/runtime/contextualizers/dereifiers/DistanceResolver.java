@@ -17,7 +17,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.common.Geometry;
-import org.integratedmodelling.klab.components.geospace.api.ISpatialIndex;
+import org.integratedmodelling.klab.components.geospace.indexing.DistanceCalculator;
 import org.integratedmodelling.klab.components.geospace.indexing.SpatialIndex;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
@@ -65,15 +65,20 @@ public class DistanceResolver implements IResolver<IDataArtifact>, IExpression {
 		if (context.getArtifact(this.artifactId) == null || context.getArtifact(this.artifactId).isEmpty()) {
 			return ret;
 		}
+		IArtifact artifact = context.getArtifact(this.artifactId);
 
+		context.getMonitor().info("indexing " + artifact.groupSize() + " spatial objects...");
+		
 		// TODO this will need to be switched to a cost surface analysis when available.
-		ISpatialIndex index = new SpatialIndex(context.getScale().getSpace());
-		for (IArtifact a : context.getArtifact(this.artifactId)) {
+		DistanceCalculator index = new DistanceCalculator(context.getScale().getSpace(), artifact.groupSize());
+		for (IArtifact a : artifact) {
 			if (a instanceof IDirectObservation && ((IDirectObservation) a).getSpace() != null) {
 				IDirectObservation obs = (IDirectObservation) a;
 				index.add(obs);
 			}
 		}
+
+		context.getMonitor().info("computing distances over a " + ret.getGeometry().size() + "-pixel grid...");
 
 		for (ILocator locator : (IScale) ret.getGeometry()) {
 			ret.set(locator, index.distanceToNearestObjectFrom(locator, this.unit));

@@ -53,6 +53,7 @@ import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.MonitorableFileWorkspace;
 import org.integratedmodelling.klab.engine.resources.Project;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
@@ -66,6 +67,7 @@ import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
 import org.springframework.core.io.ClassPathResource;
@@ -604,6 +606,18 @@ public enum Resources implements IResourceService {
 		}
 	}
 
+	public IKlabData getResourceData(String urn, IKlabData.Builder builder, IMonitor monitor) {
+		Pair<String, Map<String, String>> split = Urns.INSTANCE.resolveParameters(urn);
+		IResource resource = resolveResource(split.getFirst());
+		IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
+		if (adapter == null) {
+			throw new KlabUnsupportedFeatureException(
+					"adapter for resource of type " + resource.getAdapterType() + " not available");
+		}
+		adapter.getEncoder().getEncodedData(resource, split.getSecond(), resource.getGeometry(), builder, Expression.emptyContext(monitor));
+		return builder.build();
+	}
+	
 	@Override
 	public IKlabData getResourceData(IResource resource, Map<String,String> urnParameters, IGeometry geometry, IComputationContext context) {
 

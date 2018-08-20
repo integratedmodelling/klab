@@ -11,6 +11,13 @@ import java.util.List;
  */
 public interface IKimObserver extends IKimActiveStatement {
     
+	/**
+	 * Optional URN to retrieve the observer from.
+	 * 
+	 * @return
+	 */
+	String getUrn();
+	
     /**
      * Mandatory name for the resulting observation.
      * 

@@ -3,6 +3,8 @@ package org.integratedmodelling.klab.utils;
 import java.io.File;
 import java.util.Arrays;
 
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
+
 public class Utils {
 
 	/**
@@ -142,6 +144,19 @@ public class Utils {
 		}
 		
 		throw new IllegalArgumentException("cannot interpret value " + ret + " as a " + cls.getCanonicalName());
+	}
+
+	public static Type getArtifactType(Class<?> cls) {
+		
+		Type ret = cls == null ? Type.VOID : Type.VALUE;
+		if (String.class.isAssignableFrom(cls)) {
+			ret = Type.TEXT;
+		} else if (Number.class.isAssignableFrom(cls)) {
+			ret = Type.NUMBER;
+		} else if (Boolean.class.isAssignableFrom(cls)) {
+			ret = Type.BOOLEAN;
+		}
+		return ret;
 	}
 
 }
