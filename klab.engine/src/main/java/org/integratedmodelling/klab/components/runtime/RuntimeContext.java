@@ -373,7 +373,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		}
 
 		// save existing target
-		ret.target = ret.createTarget((Actuator) actuator, scale, scope);
+		ret.target = ret.createTarget((Actuator) actuator, scale, scope, rootSubject);
 		if (ret.target != null && this.target != null) {
 			ret.outputs.add(actuator.getName());
 			ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());
@@ -499,14 +499,25 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	 * @param actuator
 	 * @param scope
 	 */
-	public IArtifact createTarget(Actuator actuator, IScale scale, IResolutionScope scope) {
+	public IArtifact createTarget(Actuator actuator, IScale scale, IResolutionScope scope,
+			IDirectObservation rootSubject) {
 
 		Map<String, Observable> targetObservables = new HashMap<>();
+		String catalogName = actuator.getName();
 
 		if (this.catalog.get(actuator.getName()) == null
 				&& (!actuator.getObservable().is(Type.COUNTABLE) || scope.getMode() == Mode.RESOLUTION)
 				&& !actuator.computesRescaledState()) {
 			targetObservables.put(actuator.getName(), actuator.getObservable());
+		} else if (actuator.getObservable().is(Type.COUNTABLE) && rootSubject != null && scope.getMode() == Mode.RESOLUTION) {
+			if (this.catalog.get(actuator.getName()) != null) {
+				int id = 1;
+				while (this.catalog.containsKey(actuator.getName() + "_" + id)) {
+					id ++;
+				}
+				catalogName = actuator.getName() + "_" + id;
+			}
+			targetObservables.put(catalogName, actuator.getObservable());
 		}
 
 		/*
@@ -533,7 +544,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 			// transmit all annotations and any interpretation keys to the artifact
 			actuator.notifyNewObservation(observation);
-			
+
 			/*
 			 * register the obs and potentially the root subject
 			 */
@@ -552,7 +563,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			}
 		}
 
-		return this.catalog.get(actuator.getName());
+		return this.catalog.get(catalogName);
 	}
 
 	@Override
@@ -576,7 +587,8 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	}
 
 	/**
-	 * TODO the scheduler starts right away, so this is actually "run" if the scheduler is null.
+	 * TODO the scheduler starts right away, so this is actually "run" if the
+	 * scheduler is null.
 	 */
 	@Override
 	public Scheduler<?> getScheduler() {

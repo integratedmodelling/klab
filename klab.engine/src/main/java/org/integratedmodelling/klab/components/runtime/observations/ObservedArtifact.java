@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -34,6 +37,18 @@ public abstract class ObservedArtifact extends Artifact implements IArtifact {
 	public String getId() {
 		return token;
 	}
+	
+	
+	// TODO REMOVE
+	Set<String> ids = new HashSet<>();
+	public void chain(IArtifact data) {
+		super.chain(data);
+		if (data instanceof ObservedArtifact && ids.contains(((ObservedArtifact)data).token)) {
+			System.out.println("ZIO MANNARO: " + data + ": " + System.identityHashCode(data));
+		}
+		ids.add(((ObservedArtifact)data).token);
+	}
+
 
 	@Override
 	public IGeometry getGeometry() {

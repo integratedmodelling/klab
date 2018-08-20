@@ -8,6 +8,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.integratedmodelling.kim.api.IKimNamespace.Role;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
 import org.integratedmodelling.klab.ide.navigator.model.EResource;
@@ -141,6 +142,10 @@ public class KlabNavigatorActions {
 			return;
 		}
 		// TODO call engine to copy resource from project to another
+	}
+
+	public static void editDocumentation(EKimObject model) {
+		// TODO Auto-generated method stub
 	}
 
 }

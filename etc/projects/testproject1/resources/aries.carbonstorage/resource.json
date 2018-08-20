@@ -18,6 +18,7 @@
   "localPaths" : [ ],
   "history" : [ ],
   "notifications" : [ ],
+  "attributes" : [ ],
   "spatialExtent" : {
     "east" : 179.99999999997954,
     "west" : -180.0,

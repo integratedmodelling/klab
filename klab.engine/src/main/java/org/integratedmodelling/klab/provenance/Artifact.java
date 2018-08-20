@@ -2,8 +2,10 @@ package org.integratedmodelling.klab.provenance;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -28,6 +30,7 @@ import org.integratedmodelling.klab.api.provenance.IProvenance;
 public abstract class Artifact implements IArtifact {
 
 	List<IAnnotation> annotations = new ArrayList<>();
+
 
 	/*
 	 * all observation data in a group share the same list; the pre-build object is

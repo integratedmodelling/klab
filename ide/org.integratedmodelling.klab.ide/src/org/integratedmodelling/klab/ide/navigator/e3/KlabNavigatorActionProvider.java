@@ -22,6 +22,8 @@ import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 import org.eclipse.wb.swt.ResourceManager;
 import org.integratedmodelling.klab.api.resources.ResourceUtils;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.navigator.model.EDefinition;
+import org.integratedmodelling.klab.ide.navigator.model.EModel;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
@@ -76,6 +78,12 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 				(resource) -> KlabNavigatorActions.editResource(resource));
 		action("Delete resource", "Delete the selected resource", "resource.gif", EResource.class,
 				(resource) -> KlabNavigatorActions.deleteResource(resource));
+		action("Edit documentation", "Edit the documentation for this model", "resource.gif", EModel.class,
+				(model) -> KlabNavigatorActions.editDocumentation(model))
+			.activate((model) -> model.isDocumented());
+		action("Edit documentation", "Edit the documentation for this item", "resource.gif", EDefinition.class,
+				(model) -> KlabNavigatorActions.editDocumentation(model))
+			.activate((model) -> model.isDocumented());
 	}
 
 	private ICommonViewerWorkbenchSite wSite;
@@ -90,16 +98,33 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 		Consumer<ENavigatorItem> action;
 		Runnable voidAction;
 		// 0 = with engine on; 1 = always active
-		boolean activate;
+		boolean activateUnconditionally;
+		Function<ENavigatorItem, Boolean> activationCondition;
 		String saveAs;
+		ENavigatorItem item;
 
 		ActionDescriptor activate() {
-			this.activate = true;
+			this.activateUnconditionally = true;
+			return this;
+		}
+		
+		ActionDescriptor activate(Function<ENavigatorItem, Boolean> activationCondition) {
+			this.activationCondition = activationCondition;
+			// this avoids catching the second condition if the condition is true
+			this.activateUnconditionally = true;
 			return this;
 		}
 
 		ActionDescriptor saveAs(String id) {
 			this.saveAs = id;
+			return this;
+		}
+		
+		ActionDescriptor withItem(ENavigatorItem item) {
+			// ACHTUNG just set the item in the general descriptor instead of making a 
+			// copy and returning that. Should be OK as the UI is synchronous and the item
+			// is set before each use.
+			this.item = item;
 			return this;
 		}
 	}
@@ -160,7 +185,7 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 			ENavigatorItem item = (ENavigatorItem) (((IStructuredSelection) selection).getFirstElement());
 			for (ActionDescriptor descriptor : contextualDescriptors) {
 				if (descriptor.checker.apply(item)) {
-					actions.add(new KlabAction(descriptor));
+					actions.add(new KlabAction(descriptor.withItem(item)));
 				}
 			}
 		}
@@ -212,11 +237,15 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 
 		@Override
 		public boolean isEnabled() {
-
-			if (!descriptor.activate && !Activator.engineMonitor().isRunning()) {
+			
+			if (descriptor.activationCondition != null && (descriptor.item == null || !descriptor.activationCondition.apply(descriptor.item))) {
 				return false;
 			}
-
+			
+			if (!descriptor.activateUnconditionally && !Activator.engineMonitor().isRunning()) {
+				return false;
+			}
+			
 			if (descriptor.action != null) {
 				ISelection selection = provider.getSelection();
 				if (!selection.isEmpty()) {
@@ -248,8 +277,7 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 		}
 
 		public void activate(boolean b) {
-			System.out.println("ACTIVATING " + this.descriptor.title);
-			this.descriptor.activate = b;
+			this.descriptor.activateUnconditionally = b;
 			setEnabled(b);
 		}
 

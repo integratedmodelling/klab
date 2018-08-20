@@ -53,4 +53,8 @@ public abstract class ENavigatorItem implements IAdaptable {
 				&& ((ENavigatorItem) obj).id.equals(id));
 	}
 
+	public boolean isDocumented() {
+		return false;
+	}
+
 }

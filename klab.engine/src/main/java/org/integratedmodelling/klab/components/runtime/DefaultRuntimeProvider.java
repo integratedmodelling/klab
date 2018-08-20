@@ -115,7 +115,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				/*
 				 * use a tie-breaking comparator to ensure that topologically equivalent
 				 * partitions are executed in reverse priority order (the highest priority last,
-				 * so that when extents overlap the highest ranking actuator has the final say).
+				 * so that when extents overlap the highest-ranking actuator has the final say).
 				 */
 				TopologicalOrderIterator<IActuator, DefaultEdge> sorter = new TopologicalOrderIterator<>(graph,
 						new Comparator<IActuator>() {
@@ -191,7 +191,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	public RuntimeContext createRuntimeContext(IActuator actuator, IResolutionScope scope, IScale scale,
 			IMonitor monitor) {
 		RuntimeContext ret = new RuntimeContext((Actuator) actuator, scope, scale, monitor);
-		IArtifact target = ret.createTarget((Actuator) actuator, scale, scope);
+		IArtifact target = ret.createTarget((Actuator) actuator, scale, scope, null);
 		if (target instanceof IDirectObservation) {
 			((ResolutionScope) scope).setContext((IDirectObservation) target);
 		}

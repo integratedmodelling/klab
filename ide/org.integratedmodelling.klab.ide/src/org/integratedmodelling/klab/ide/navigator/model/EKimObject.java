@@ -145,5 +145,17 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
 	public void visit(Visitor visitor) {
 		delegate_.visit(visitor);
 	}
+	
+	@Override
+	public boolean isDocumented() {
+		
+		for (IKimAnnotation annotation : delegate_.getAnnotations()) {
+			// TODO parameterize the annotations recognized
+			if (annotation.getName().equals("documented")) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 }
