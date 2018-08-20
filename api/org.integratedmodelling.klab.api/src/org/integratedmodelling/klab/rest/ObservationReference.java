@@ -97,6 +97,7 @@ public class ObservationReference {
 	private List<String> traits = new ArrayList<>();
 	private Map<String, String> metadata = new HashMap<>();
 	private String taskId;
+	private boolean empty;
 
 	/**
 	 * The observation may have more sibling than are found in the sibling list.
@@ -455,6 +456,14 @@ public class ObservationReference {
 
 	public void setActions(List<ActionReference> actions) {
 		this.actions = actions;
+	}
+
+	public boolean isEmpty() {
+		return empty;
+	}
+
+	public void setEmpty(boolean empty) {
+		this.empty = empty;
 	}
 
 }

@@ -173,6 +173,8 @@ public enum Observations implements IObservationService {
 
 		ObservationReference ret = new ObservationReference();
 
+		ret.setEmpty(observation.isEmpty());
+		
 		if (observation instanceof ISubject) {
 			ret.setObservationType(org.integratedmodelling.klab.rest.ObservationReference.ObservationType.SUBJECT);
 		} else if (observation instanceof IState) {
