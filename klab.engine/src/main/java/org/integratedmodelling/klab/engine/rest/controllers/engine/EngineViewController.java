@@ -137,7 +137,7 @@ public class EngineViewController {
 	}
 
 	/**
-	 * Get the data for a state in directly useable form, as values or images TODO
+	 * Get the data for a state in directly usable form, as values or images TODO
 	 * use filters or HttpMessageConverter/content negotiation for various media
 	 * types - see
 	 * https://stackoverflow.com/questions/3668185/how-to-define-message-converter-based-on-url-extension-in-spring-mvc
