@@ -127,7 +127,7 @@ public class EngineViewController {
 					}
 					nc++;
 				}
-				if (count > 0 && nc >= count) {
+				if (count > 0 && nc > count) {
 					break;
 				}
 			}

@@ -9,13 +9,10 @@ import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceEvent;
@@ -24,12 +21,16 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
@@ -42,10 +43,6 @@ import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.ResourceReference;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 
 public class ResourcesView extends ViewPart {
 
@@ -90,8 +87,8 @@ public class ResourcesView extends ViewPart {
 				switch (columnIndex) {
 				case 0:
 					return ((EResourceReference) element).getLocalName();
-                case 1:
-                    return ((EResourceReference) element).getProjectName();
+				case 1:
+					return ((EResourceReference) element).getProjectName();
 				case 2:
 					return ((EResourceReference) element).getAdapterType();
 				case 3:
@@ -149,6 +146,7 @@ public class ResourcesView extends ViewPart {
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
+
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout(1, false));
 		{
@@ -173,11 +171,12 @@ public class ResourcesView extends ViewPart {
 				tblclmnUrn.setWidth(550);
 				tblclmnUrn.setText("Local name");
 			}
-            {
-                TableColumn tblclmnNewColumn = new TableColumn(table, SWT.NONE);
-                tblclmnNewColumn.setWidth(160);
-                tblclmnNewColumn.setText("Project");
-            }			{
+			{
+				TableColumn tblclmnNewColumn = new TableColumn(table, SWT.NONE);
+				tblclmnNewColumn.setWidth(160);
+				tblclmnNewColumn.setText("Project");
+			}
+			{
 				TableColumn tblclmnNewColumn = new TableColumn(table, SWT.NONE);
 				tblclmnNewColumn.setWidth(70);
 				tblclmnNewColumn.setText("Type");
@@ -187,41 +186,48 @@ public class ResourcesView extends ViewPart {
 				tblclmnGeometry.setWidth(100);
 				tblclmnGeometry.setText("Geometry");
 			}
-			
+
 			Menu menu = new Menu(table);
 			table.setMenu(menu);
-			
+
 			MenuItem mntmCopyUrn = new MenuItem(menu, SWT.NONE);
 			mntmCopyUrn.addSelectionListener(new SelectionAdapter() {
-			    @Override
-			    public void widgetSelected(SelectionEvent event) {
-	                 Object object = event.data instanceof StructuredSelection
-	                            ? ((StructuredSelection) event.data).getFirstElement()
-	                            : null;
-	                    if (object instanceof EResourceReference) {
-	                        Eclipse.INSTANCE.copyToClipboard(((EResourceReference)object).getUrn());
-	                    }
-
-			    }
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					Object object = table.getSelection().length > 0 ? table.getSelection()[0].getData() : null;
+					if (object instanceof EResourceReference) {
+						Eclipse.INSTANCE.copyToClipboard(((EResourceReference) object).getUrn());
+					}
+				}
 			});
 			mntmCopyUrn.setText("Copy URN");
-			
+
 			MenuItem mntmOpenInEditor = new MenuItem(menu, SWT.NONE);
 			mntmOpenInEditor.addSelectionListener(new SelectionAdapter() {
-			    @Override
-			    public void widgetSelected(SelectionEvent event) {
-	                Object object = event.data instanceof StructuredSelection
-	                        ? ((StructuredSelection) event.data).getFirstElement()
-	                        : null;
-	                if (object instanceof EResourceReference) {
-	                    Activator.session().previewResource((EResourceReference)object);
-	                }
-			    }
+
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					Object object = table.getSelection().length > 0 ? table.getSelection()[0].getData() : null;
+					if (object instanceof EResourceReference) {
+						try {
+							IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+									.showView(ResourceEditor.ID);
+							if (view != null) {
+								((ResourceEditor) view).loadResource((EResourceReference) object);
+							}
+						} catch (PartInitException ex) {
+							Eclipse.INSTANCE.handleException(ex);
+						}
+						// Activator.session().previewResource((EResourceReference)object);
+					}
+				}
 			});
 			mntmOpenInEditor.setText("Open in editor");
+
 			tableViewer.setContentProvider(new ContentProvider());
 			tableViewer.setLabelProvider(new LabelProvider());
-			tableViewer.addDragSupport(DND.DROP_DEFAULT, new Transfer[] { TextTransfer.getInstance(), LocalSelectionTransfer.getTransfer() },
+			tableViewer.addDragSupport(DND.DROP_DEFAULT,
+					new Transfer[] { TextTransfer.getInstance(), LocalSelectionTransfer.getTransfer() },
 					new DragSourceListener() {
 
 						@Override
@@ -242,25 +248,26 @@ public class ResourcesView extends ViewPart {
 						}
 					});
 		}
-		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				Object object = event.getSelection() instanceof StructuredSelection
-						? event.getStructuredSelection().getFirstElement()
-						: null;
-				if (object instanceof EResourceReference) {
-					try {
-						IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-								.showView(ResourceEditor.ID);
-						if (view != null) {
-							((ResourceEditor) view).loadResource((EResourceReference) object);
-						}
-					} catch (PartInitException e) {
-						Eclipse.INSTANCE.handleException(e);
-					}
-				}
-			}
-		});
+		// tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		// @Override
+		// public void selectionChanged(SelectionChangedEvent event) {
+		// Object object = event.getSelection() instanceof StructuredSelection
+		// ? event.getStructuredSelection().getFirstElement()
+		// : null;
+		// if (object instanceof EResourceReference) {
+		// try {
+		// IViewPart view =
+		// PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+		// .showView(ResourceEditor.ID);
+		// if (view != null) {
+		// ((ResourceEditor) view).loadResource((EResourceReference) object);
+		// }
+		// } catch (PartInitException e) {
+		// Eclipse.INSTANCE.handleException(e);
+		// }
+		// }
+		// }
+		// });
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
@@ -268,7 +275,7 @@ public class ResourcesView extends ViewPart {
 						? ((StructuredSelection) event.getSelection()).getFirstElement()
 						: null;
 				if (object instanceof EResourceReference) {
-					Activator.session().previewResource((EResourceReference)object);
+					Activator.session().previewResource((EResourceReference) object);
 				}
 			}
 		});
