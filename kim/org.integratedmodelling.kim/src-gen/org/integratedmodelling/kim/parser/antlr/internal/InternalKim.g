@@ -1177,9 +1177,9 @@ ruleModelBodyStatement returns [EObject current=null]
 				    |
 				(
 					(
-						lv_lookupTableId_37_0=RULE_LOWERCASE_ID
+						lv_lookupTableId_37_0=RULE_UPPERCASE_ID
 						{
-							newLeafNode(lv_lookupTableId_37_0, grammarAccess.getModelBodyStatementAccess().getLookupTableIdLOWERCASE_IDTerminalRuleCall_7_3_1_0());
+							newLeafNode(lv_lookupTableId_37_0, grammarAccess.getModelBodyStatementAccess().getLookupTableIdUPPERCASE_IDTerminalRuleCall_7_3_1_0());
 						}
 						{
 							if ($current==null) {
@@ -1189,7 +1189,7 @@ ruleModelBodyStatement returns [EObject current=null]
 								$current,
 								"lookupTableId",
 								lv_lookupTableId_37_0,
-								"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
+								"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
 						}
 					)
 				)

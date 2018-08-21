@@ -58,7 +58,7 @@ ModelBodyStatement:
 		 ('lookup' 
 		 	('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (',' lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')?  
 		 	'into' 
-		 		(lookupTable=Table | lookupTableId=LOWERCASE_ID)
+		 		(lookupTable=Table | lookupTableId=UPPERCASE_ID)
 		 )?
 		 actions+=ActionSpecification*
 		 ('with' 'metadata' metadata=Metadata)? 

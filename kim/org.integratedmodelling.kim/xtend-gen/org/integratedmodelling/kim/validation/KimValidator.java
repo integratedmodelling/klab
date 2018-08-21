@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import org.eclipse.emf.common.util.EList;
@@ -26,9 +25,11 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimMacro;
 import org.integratedmodelling.kim.api.IKimModel;
+import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
+import org.integratedmodelling.kim.api.IKimTable;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.kim.ActionSpecification;
 import org.integratedmodelling.kim.kim.Annotation;
@@ -47,7 +48,9 @@ import org.integratedmodelling.kim.kim.Documentation;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.HeaderRow;
 import org.integratedmodelling.kim.kim.IdentityRequirement;
+import org.integratedmodelling.kim.kim.Import;
 import org.integratedmodelling.kim.kim.KimPackage;
+import org.integratedmodelling.kim.kim.List;
 import org.integratedmodelling.kim.kim.Metadata;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.ModelBodyStatement;
@@ -139,6 +142,42 @@ public class KimValidator extends AbstractKimValidator {
           ns.setErrors(true);
         }
       }
+      int i = 0;
+      EList<Import> _imported = namespace.getImported();
+      for (final Import import_ : _imported) {
+        {
+          IKimNamespace importedNs = Kim.INSTANCE.getNamespace(import_.getName());
+          if ((importedNs == null)) {
+            String _name = import_.getName();
+            String _plus = ("Imported namespace " + _name);
+            String _plus_1 = (_plus + " could not be found");
+            this.error(_plus_1, import_, 
+              KimPackage.Literals.NAMESPACE__IMPORTED, i, KimValidator.BAD_NAMESPACE_ID);
+            ns.setErrors(true);
+          }
+          List _imports = import_.getImports();
+          boolean _tripleNotEquals = (_imports != null);
+          if (_tripleNotEquals) {
+            java.util.List<?> importedVs = Kim.INSTANCE.parseList(import_.getImports(), ns);
+            int j = 0;
+            for (final Object variable : importedVs) {
+              {
+                Object object = importedNs.getSymbolTable().get(variable.toString());
+                if ((object == null)) {
+                  String _name_1 = import_.getName();
+                  String _plus_2 = ((("Variable " + variable) + " could not be found in symbols defined by namespace ") + _name_1);
+                  this.error(_plus_2, import_, KimPackage.Literals.IMPORT__IMPORTS, j, KimValidator.BAD_NAMESPACE_ID);
+                  ns.setErrors(true);
+                } else {
+                  ns.getSymbolTable().put(variable.toString(), object);
+                }
+                j++;
+              }
+            }
+            i++;
+          }
+        }
+      }
     }
     if (((namespace.getParameters() != null) && (!namespace.isScenario()))) {
       this.error("Parameter specifications are only allowed in scenarios", namespace, 
@@ -152,25 +191,30 @@ public class KimValidator extends AbstractKimValidator {
   }
   
   @Check
-  public void checkDefine(final DefineStatement statement) {
-    EObject _eContainer = statement.eContainer().eContainer();
-    final Namespace namespace = ((Model) _eContainer).getNamespace();
-    KimNamespace ns = Kim.INSTANCE.getNamespace(namespace, true);
-    final KimSymbolDefinition definition = new KimSymbolDefinition(statement, ns);
-    int i = 0;
-    EList<Annotation> _annotations = statement.getAnnotations();
-    for (final Annotation annotation : _annotations) {
-      {
-        KimAnnotation ann = new KimAnnotation(annotation, ns, definition);
-        definition.getAnnotations().add(ann);
-        List<KimNotification> _validateUsage = ann.validateUsage(definition);
-        for (final KimNotification notification : _validateUsage) {
-          this.notify(notification, statement, KimPackage.Literals.DEFINE_STATEMENT__ANNOTATIONS, i);
+  public Object checkDefine(final DefineStatement statement) {
+    Object _xblockexpression = null;
+    {
+      EObject _eContainer = statement.eContainer().eContainer();
+      final Namespace namespace = ((Model) _eContainer).getNamespace();
+      KimNamespace ns = Kim.INSTANCE.getNamespace(namespace, true);
+      final KimSymbolDefinition definition = new KimSymbolDefinition(statement, ns);
+      int i = 0;
+      EList<Annotation> _annotations = statement.getAnnotations();
+      for (final Annotation annotation : _annotations) {
+        {
+          KimAnnotation ann = new KimAnnotation(annotation, ns, definition);
+          definition.getAnnotations().add(ann);
+          java.util.List<KimNotification> _validateUsage = ann.validateUsage(definition);
+          for (final KimNotification notification : _validateUsage) {
+            this.notify(notification, statement, KimPackage.Literals.DEFINE_STATEMENT__ANNOTATIONS, i);
+          }
+          i++;
         }
-        i++;
       }
+      ns.addChild(definition);
+      _xblockexpression = ns.getSymbolTable().put(statement.getDefineBody().getName(), Kim.INSTANCE.parseValue(statement.getDefineBody().getValue(), ns));
     }
-    ns.addChild(definition);
+    return _xblockexpression;
   }
   
   @Check
@@ -273,8 +317,8 @@ public class KimValidator extends AbstractKimValidator {
   @Check
   public void checkModelDefinition(final ModelBodyStatement model) {
     ModelStatement statement = null;
-    List<KimObservable> observables = CollectionLiterals.<KimObservable>newArrayList();
-    List<KimObservable> dependencies = CollectionLiterals.<KimObservable>newArrayList();
+    java.util.List<KimObservable> observables = CollectionLiterals.<KimObservable>newArrayList();
+    java.util.List<KimObservable> dependencies = CollectionLiterals.<KimObservable>newArrayList();
     boolean ok = true;
     EObject _eContainer = model.eContainer();
     if ((_eContainer instanceof ModelStatement)) {
@@ -445,7 +489,7 @@ public class KimValidator extends AbstractKimValidator {
     Classification _classification = model.getClassification();
     boolean _tripleNotEquals_1 = (_classification != null);
     if (_tripleNotEquals_1) {
-      List<KimConcept> classifiers = null;
+      java.util.List<KimConcept> classifiers = null;
       classifiers = CollectionLiterals.<KimConcept>newArrayList();
       EnumSet<IKimConcept.Type> type = EnumSet.<IKimConcept.Type>noneOf(IKimConcept.Type.class);
       boolean cchecked = false;
@@ -468,62 +512,81 @@ public class KimValidator extends AbstractKimValidator {
       }
     }
     if (((model.getLookupTable() != null) || (model.getLookupTableId() != null))) {
-      KimLookupTable _xifexpression_3 = null;
+      KimLookupTable table = null;
       String _lookupTableId = model.getLookupTableId();
       boolean _tripleNotEquals_2 = (_lookupTableId != null);
       if (_tripleNotEquals_2) {
-        _xifexpression_3 = null;
+        IKimNamespace ns = Kim.INSTANCE.getNamespace(model, true);
+        Object tobj = ns.getSymbolTable().get(model.getLookupTableId());
+        if ((!(tobj instanceof IKimTable))) {
+          String _lookupTableId_1 = model.getLookupTableId();
+          String _plus_2 = ("Identifier " + _lookupTableId_1);
+          String _plus_3 = (_plus_2 + " does not specify a k.IM table");
+          this.error(_plus_3, 
+            KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID, KimValidator.BAD_TABLE_FORMAT);
+          ok = false;
+        } else {
+          EList<String> _lookupTableArgs = model.getLookupTableArgs();
+          KimLookupTable _kimLookupTable = new KimLookupTable(((IKimTable) tobj), _lookupTableArgs, null);
+          table = _kimLookupTable;
+        }
       } else {
         Table _lookupTable = model.getLookupTable();
         KimTable _kimTable = new KimTable(_lookupTable, null);
-        EList<String> _lookupTableArgs = model.getLookupTableArgs();
-        _xifexpression_3 = new KimLookupTable(_kimTable, _lookupTableArgs, null);
+        EList<String> _lookupTableArgs_1 = model.getLookupTableArgs();
+        KimLookupTable _kimLookupTable_1 = new KimLookupTable(_kimTable, _lookupTableArgs_1, null);
+        table = _kimLookupTable_1;
       }
-      KimLookupTable table = _xifexpression_3;
-      int _size_1 = model.getLookupTableArgs().size();
-      int _columnCount = table.getTable().getColumnCount();
-      boolean _greaterThan_1 = (_size_1 > _columnCount);
-      if (_greaterThan_1) {
-        this.error(
-          "The number of arguments exceeds the number of columns. Use ? for the arguments to look up or * for arguments to ignore", 
-          KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, KimValidator.BAD_TABLE_FORMAT);
-      }
-      String _error = table.getError();
-      boolean _tripleNotEquals_3 = (_error != null);
-      if (_tripleNotEquals_3) {
-        this.error(table.getError(), KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE, KimValidator.BAD_TABLE_FORMAT);
-      }
-      int o = 0;
-      boolean checkFound = false;
-      EList<String> _lookupTableArgs_1 = model.getLookupTableArgs();
-      for (final String arg : _lookupTableArgs_1) {
-        {
-          if (((!Objects.equal(arg, "?")) && (!Objects.equal(arg, "*")))) {
-            boolean found = false;
-            for (final KimObservable dependency : dependencies) {
-              if (((dependency.getName() != null) && Objects.equal(dependency.getName(), arg))) {
-                found = true;
-              }
-            }
-            if ((!found)) {
-            }
-          } else {
-            boolean _equals = Objects.equal(arg, "?");
-            if (_equals) {
-              if (checkFound) {
-                this.error("Only one \'?\' is allowed in the argument list, to mark the result column", 
-                  KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, o, KimValidator.BAD_TABLE_FORMAT);
-              }
-              checkFound = true;
-            }
-          }
-          o++;
+      if ((table != null)) {
+        int _size_1 = model.getLookupTableArgs().size();
+        int _columnCount = table.getTable().getColumnCount();
+        boolean _greaterThan_1 = (_size_1 > _columnCount);
+        if (_greaterThan_1) {
+          this.error(
+            "The number of arguments exceeds the number of columns. Use ? for the arguments to look up or * for arguments to ignore", 
+            KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, KimValidator.BAD_TABLE_FORMAT);
+          ok = false;
         }
-      }
-      if (((!checkFound) && (model.getLookupTableArgs().size() > 2))) {
-        this.error(
-          "One \'?\' must be present in the argument list to mark the result column when the table has more than 2 columns. Use * to mark columns to ignore.", 
-          KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, KimValidator.BAD_TABLE_FORMAT);
+        String _error = table.getError();
+        boolean _tripleNotEquals_3 = (_error != null);
+        if (_tripleNotEquals_3) {
+          this.error(table.getError(), KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE, KimValidator.BAD_TABLE_FORMAT);
+          ok = false;
+        }
+        int o = 0;
+        boolean checkFound = false;
+        EList<String> _lookupTableArgs_2 = model.getLookupTableArgs();
+        for (final String arg : _lookupTableArgs_2) {
+          {
+            if (((!Objects.equal(arg, "?")) && (!Objects.equal(arg, "*")))) {
+              boolean found = false;
+              for (final KimObservable dependency : dependencies) {
+                if (((dependency.getName() != null) && Objects.equal(dependency.getName(), arg))) {
+                  found = true;
+                }
+              }
+              if ((!found)) {
+              }
+            } else {
+              boolean _equals = Objects.equal(arg, "?");
+              if (_equals) {
+                if (checkFound) {
+                  this.error("Only one \'?\' is allowed in the argument list, to mark the result column", 
+                    KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, o, KimValidator.BAD_TABLE_FORMAT);
+                  ok = false;
+                }
+                checkFound = true;
+              }
+            }
+            o++;
+          }
+        }
+        if (((!checkFound) && (model.getLookupTableArgs().size() > 2))) {
+          this.error(
+            "One \'?\' must be present in the argument list to mark the result column when the table has more than 2 columns. Use * to mark columns to ignore.", 
+            KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, KimValidator.BAD_TABLE_FORMAT);
+          ok = false;
+        }
       }
     }
     EList<ValueAssignment> _contextualizers = model.getContextualizers();
@@ -531,11 +594,11 @@ public class KimValidator extends AbstractKimValidator {
     }
     if ((statement != null)) {
       if ((namespace != null)) {
-        KimNamespace ns = Kim.INSTANCE.getNamespace(namespace, true);
-        KimModel descriptor = new KimModel(statement, ns);
+        KimNamespace ns_1 = Kim.INSTANCE.getNamespace(namespace, true);
+        KimModel descriptor = new KimModel(statement, ns_1);
         if ((!ok)) {
           descriptor.setErrors(true);
-          ns.setErrors(true);
+          ns_1.setErrors(true);
         }
         descriptor.getObservables().addAll(observables);
         descriptor.getDependencies().addAll(dependencies);
@@ -556,7 +619,7 @@ public class KimValidator extends AbstractKimValidator {
           KimServiceCall _kimServiceCall = new KimServiceCall(_function_1, descriptor);
           descriptor.setResourceFunction(_kimServiceCall);
           IServiceCall _get = descriptor.getResourceFunction().get();
-          List<KimNotification> _validateUsage = ((KimServiceCall) _get).validateUsage(null);
+          java.util.List<KimNotification> _validateUsage = ((KimServiceCall) _get).validateUsage(null);
           for (final KimNotification notification : _validateUsage) {
             this.notify(notification, model.getFunction(), KimPackage.Literals.MODEL_BODY_STATEMENT__FUNCTION);
           }
@@ -573,7 +636,7 @@ public class KimValidator extends AbstractKimValidator {
             }
           }
         }
-        descriptor.setPrivate((statement.isPrivate() || ns.isPrivate()));
+        descriptor.setPrivate((statement.isPrivate() || ns_1.isPrivate()));
         descriptor.setAssessmentModel(statement.getModel().equals("assess"));
         descriptor.setLearningModel(statement.getModel().equals("learn"));
         IKimModel.Type _switchResult = null;
@@ -602,7 +665,7 @@ public class KimValidator extends AbstractKimValidator {
         for (final ActionSpecification action : _actions) {
           {
             IKimBehavior _behavior = descriptor.getBehavior();
-            List<KimNotification> _addAction = ((KimBehavior) _behavior).addAction(action, descriptor);
+            java.util.List<KimNotification> _addAction = ((KimBehavior) _behavior).addAction(action, descriptor);
             for (final KimNotification notification_1 : _addAction) {
               this.notify(notification_1, model, KimPackage.Literals.MODEL_BODY_STATEMENT__ACTIONS, i);
             }
@@ -611,14 +674,14 @@ public class KimValidator extends AbstractKimValidator {
         }
         EList<ValueAssignment> _contextualizers_1 = model.getContextualizers();
         for (final ValueAssignment contextualizer_1 : _contextualizers_1) {
-          List<IComputableResource> _contextualization = descriptor.getContextualization();
+          java.util.List<IComputableResource> _contextualization = descriptor.getContextualization();
           ComputableResource _computableResource = new ComputableResource(contextualizer_1, descriptor);
           _contextualization.add(_computableResource);
         }
         Classification _classification_1 = model.getClassification();
         boolean _tripleNotEquals_7 = (_classification_1 != null);
         if (_tripleNotEquals_7) {
-          List<IComputableResource> _contextualization_1 = descriptor.getContextualization();
+          java.util.List<IComputableResource> _contextualization_1 = descriptor.getContextualization();
           Classification _classification_2 = model.getClassification();
           boolean _isDiscretization = model.isDiscretization();
           ComputableResource _computableResource_1 = new ComputableResource(_classification_2, _isDiscretization, descriptor);
@@ -627,26 +690,28 @@ public class KimValidator extends AbstractKimValidator {
         Table _lookupTable_1 = model.getLookupTable();
         boolean _tripleNotEquals_8 = (_lookupTable_1 != null);
         if (_tripleNotEquals_8) {
-          List<IComputableResource> _contextualization_2 = descriptor.getContextualization();
+          java.util.List<IComputableResource> _contextualization_2 = descriptor.getContextualization();
           Table _lookupTable_2 = model.getLookupTable();
-          EList<String> _lookupTableArgs_2 = model.getLookupTableArgs();
-          ComputableResource _computableResource_2 = new ComputableResource(_lookupTable_2, _lookupTableArgs_2, descriptor);
+          EList<String> _lookupTableArgs_3 = model.getLookupTableArgs();
+          ComputableResource _computableResource_2 = new ComputableResource(_lookupTable_2, _lookupTableArgs_3, descriptor);
           _contextualization_2.add(_computableResource_2);
         }
-        String _lookupTableId_1 = model.getLookupTableId();
-        boolean _tripleNotEquals_9 = (_lookupTableId_1 != null);
+        String _lookupTableId_2 = model.getLookupTableId();
+        boolean _tripleNotEquals_9 = (_lookupTableId_2 != null);
         if (_tripleNotEquals_9) {
-          List<IComputableResource> _contextualization_3 = descriptor.getContextualization();
-          String _lookupTableId_2 = model.getLookupTableId();
-          ComputableResource _computableResource_3 = new ComputableResource(descriptor, _lookupTableId_2, true);
+          Object tobj_1 = ns_1.getSymbolTable().get(model.getLookupTableId());
+          EList<String> _lookupTableArgs_4 = model.getLookupTableArgs();
+          KimLookupTable table_1 = new KimLookupTable(((IKimTable) tobj_1), _lookupTableArgs_4, null);
+          java.util.List<IComputableResource> _contextualization_3 = descriptor.getContextualization();
+          ComputableResource _computableResource_3 = new ComputableResource(table_1, descriptor);
           _contextualization_3.add(_computableResource_3);
         }
         String _classificationProperty = model.getClassificationProperty();
         boolean _tripleNotEquals_10 = (_classificationProperty != null);
         if (_tripleNotEquals_10) {
-          List<IComputableResource> _contextualization_4 = descriptor.getContextualization();
+          java.util.List<IComputableResource> _contextualization_4 = descriptor.getContextualization();
           String _classificationProperty_1 = model.getClassificationProperty();
-          ComputableResource _computableResource_4 = new ComputableResource(descriptor, _classificationProperty_1, false);
+          ComputableResource _computableResource_4 = new ComputableResource(descriptor, _classificationProperty_1);
           _contextualization_4.add(_computableResource_4);
         }
         String _name_1 = model.getName();
@@ -662,29 +727,29 @@ public class KimValidator extends AbstractKimValidator {
             if (_tripleNotEquals_12) {
               descriptor.name = observables.get(0).getFormalName();
             } else {
-              String _xifexpression_4 = null;
+              String _xifexpression_3 = null;
               boolean _isInstantiator = model.isInstantiator();
               if (_isInstantiator) {
-                _xifexpression_4 = "instantiator";
+                _xifexpression_3 = "instantiator";
               } else {
-                _xifexpression_4 = "resolver";
+                _xifexpression_3 = "resolver";
               }
-              String name = _xifexpression_4;
+              String name = _xifexpression_3;
               String _name_2 = descriptor.getObservables().get(0).getMain().getObservable().getName();
               SemanticType st = new SemanticType(_name_2);
               String _lowerCase = CamelCase.toLowerCase(st.getName(), '-');
-              String _plus_2 = (_lowerCase + "-");
-              String _plus_3 = (_plus_2 + name);
-              descriptor.name = _plus_3;
+              String _plus_4 = (_lowerCase + "-");
+              String _plus_5 = (_plus_4 + name);
+              descriptor.name = _plus_5;
             }
           }
         }
         if ((KimValidator.nonSemanticModels.contains(statement.getModel()) && (descriptor.getObservables().size() > 0))) {
           IKimObservable _get_1 = descriptor.getObservables().get(0);
           String _namespaceId_1 = Kim.getNamespaceId(namespace);
-          String _plus_4 = (_namespaceId_1 + ".");
-          String _plus_5 = (_plus_4 + descriptor.name);
-          ((KimObservable) _get_1).setModelReference(_plus_5);
+          String _plus_6 = (_namespaceId_1 + ".");
+          String _plus_7 = (_plus_6 + descriptor.name);
+          ((KimObservable) _get_1).setModelReference(_plus_7);
           IKimObservable _get_2 = descriptor.getObservables().get(0);
           ((KimObservable) _get_2).setFormalName(descriptor.name);
         }
@@ -700,7 +765,7 @@ public class KimValidator extends AbstractKimValidator {
         if (_tripleNotEquals_14) {
         }
         int n = 0;
-        List<IKimScope> _children = ns.getChildren();
+        java.util.List<IKimScope> _children = ns_1.getChildren();
         for (final IKimScope object : _children) {
           if (((object instanceof KimModel) && ((KimModel) object).name.startsWith(descriptor.name))) {
             n++;
@@ -713,9 +778,9 @@ public class KimValidator extends AbstractKimValidator {
         EList<Annotation> _annotations = statement.getAnnotations();
         for (final Annotation annotation : _annotations) {
           {
-            KimAnnotation ann = new KimAnnotation(annotation, ns, descriptor);
+            KimAnnotation ann = new KimAnnotation(annotation, ns_1, descriptor);
             descriptor.getAnnotations().add(ann);
-            List<KimNotification> _validateUsage_1 = ann.validateUsage(descriptor);
+            java.util.List<KimNotification> _validateUsage_1 = ann.validateUsage(descriptor);
             for (final KimNotification notification_1 : _validateUsage_1) {
               this.notify(notification_1, statement, KimPackage.Literals.MODEL_STATEMENT__ANNOTATIONS, i);
             }
@@ -723,7 +788,7 @@ public class KimValidator extends AbstractKimValidator {
           }
         }
         model.setName(descriptor.name);
-        ns.addChild(descriptor);
+        ns_1.addChild(descriptor);
       }
     }
   }
@@ -765,7 +830,7 @@ public class KimValidator extends AbstractKimValidator {
         {
           final KimAnnotation ann = new KimAnnotation(annotation, ns, obs);
           obs.getAnnotations().add(ann);
-          List<KimNotification> _validateUsage = ann.validateUsage(obs);
+          java.util.List<KimNotification> _validateUsage = ann.validateUsage(obs);
           for (final KimNotification notification : _validateUsage) {
             this.notify(notification, observation, KimPackage.Literals.OBSERVE_STATEMENT__ANNOTATIONS, i);
           }
@@ -828,7 +893,7 @@ public class KimValidator extends AbstractKimValidator {
     for (final ActionSpecification action : _actions) {
       {
         IKimBehavior _behavior = ret.getBehavior();
-        List<KimNotification> _addAction = ((KimBehavior) _behavior).addAction(action, ret);
+        java.util.List<KimNotification> _addAction = ((KimBehavior) _behavior).addAction(action, ret);
         for (final KimNotification notification : _addAction) {
           {
             this.notify(notification, observation, KimPackage.Literals.OBSERVE_STATEMENT_BODY__ACTIONS, i);
@@ -1682,7 +1747,7 @@ public class KimValidator extends AbstractKimValidator {
           {
             final KimAnnotation ann = new KimAnnotation(annotation, namespace, concept);
             concept.getAnnotations().add(ann);
-            List<KimNotification> _validateUsage = ann.validateUsage(ann);
+            java.util.List<KimNotification> _validateUsage = ann.validateUsage(ann);
             for (final KimNotification notification : _validateUsage) {
               this.notify(notification, statement, KimPackage.Literals.CONCEPT_STATEMENT__ANNOTATIONS, i_1);
             }
@@ -1703,7 +1768,7 @@ public class KimValidator extends AbstractKimValidator {
     KimConceptStatement ret = new KimConceptStatement(concept, _xifexpression);
     boolean ok = true;
     boolean isAlias = concept.isAlias();
-    List<KimConceptStatement.ParentConcept> declaredParents = CollectionLiterals.<KimConceptStatement.ParentConcept>newArrayList();
+    java.util.List<KimConceptStatement.ParentConcept> declaredParents = CollectionLiterals.<KimConceptStatement.ParentConcept>newArrayList();
     boolean template = false;
     int ai = 0;
     EList<Annotation> _annotations = concept.getAnnotations();
@@ -1711,7 +1776,7 @@ public class KimValidator extends AbstractKimValidator {
       {
         final KimAnnotation ann = new KimAnnotation(annotation, namespace, ret);
         ret.getAnnotations().add(ann);
-        List<KimNotification> _validateUsage = ann.validateUsage(ann);
+        java.util.List<KimNotification> _validateUsage = ann.validateUsage(ann);
         for (final KimNotification notification : _validateUsage) {
           this.notify(notification, concept, KimPackage.Literals.CONCEPT_STATEMENT__ANNOTATIONS, ai);
         }

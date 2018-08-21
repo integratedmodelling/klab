@@ -31478,9 +31478,9 @@ rule__ModelBodyStatement__LookupTableIdAssignment_7_3_1
 	}
 :
 	(
-		{ before(grammarAccess.getModelBodyStatementAccess().getLookupTableIdLOWERCASE_IDTerminalRuleCall_7_3_1_0()); }
-		RULE_LOWERCASE_ID
-		{ after(grammarAccess.getModelBodyStatementAccess().getLookupTableIdLOWERCASE_IDTerminalRuleCall_7_3_1_0()); }
+		{ before(grammarAccess.getModelBodyStatementAccess().getLookupTableIdUPPERCASE_IDTerminalRuleCall_7_3_1_0()); }
+		RULE_UPPERCASE_ID
+		{ after(grammarAccess.getModelBodyStatementAccess().getLookupTableIdUPPERCASE_IDTerminalRuleCall_7_3_1_0()); }
 	)
 ;
 finally {

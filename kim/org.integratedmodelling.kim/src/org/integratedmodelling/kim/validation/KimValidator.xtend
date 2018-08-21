@@ -17,6 +17,8 @@ import org.integratedmodelling.kim.api.IKimConceptStatement.DescriptionType
 import org.integratedmodelling.kim.api.IKimMacro
 import org.integratedmodelling.kim.api.IKimMacro.Field
 import org.integratedmodelling.kim.api.IKimModel
+import org.integratedmodelling.kim.api.IKimNamespace
+import org.integratedmodelling.kim.api.IKimTable
 import org.integratedmodelling.kim.kim.ActionSpecification
 import org.integratedmodelling.kim.kim.Concept
 import org.integratedmodelling.kim.kim.ConceptDeclaration
@@ -106,6 +108,32 @@ class KimValidator extends AbstractKimValidator {
 					namespace, KimPackage.Literals.NAMESPACE__NAME, BAD_NAMESPACE_ID)
 				ns.errors = true
 			}
+
+			var i = 0
+			for (import : namespace.imported) {
+				var importedNs = Kim.INSTANCE.getNamespace(import.name)
+				if (importedNs === null) {
+					error("Imported namespace " + import.name + " could not be found", import,
+						KimPackage.Literals.NAMESPACE__IMPORTED, i, BAD_NAMESPACE_ID)
+					ns.errors = true
+				}
+				if (import.imports !== null) {
+					var importedVs = Kim.INSTANCE.parseList(import.imports, ns)
+					var j = 0
+					for (variable : importedVs) {
+						var object = importedNs.symbolTable.get(variable.toString())
+						if (object === null) {
+							error("Variable " + variable + " could not be found in symbols defined by namespace " +
+								import.name, import, KimPackage.Literals.IMPORT__IMPORTS, j, BAD_NAMESPACE_ID)
+							ns.errors = true
+						} else {
+							ns.symbolTable.put(variable.toString(), object)
+						}
+						j++
+					}
+					i++
+				}
+			}
 		}
 		if (namespace.parameters !== null && !namespace.isScenario) {
 			error("Parameter specifications are only allowed in scenarios", namespace,
@@ -132,6 +160,7 @@ class KimValidator extends AbstractKimValidator {
 			i++
 		}
 		ns.addChild(definition)
+		ns.symbolTable.put(statement.defineBody.name, Kim.INSTANCE.parseValue(statement.defineBody.value, ns))
 	}
 
 	@Check
@@ -365,49 +394,65 @@ class KimValidator extends AbstractKimValidator {
 
 		if (model.lookupTable !== null || model.lookupTableId !== null) {
 
-			// just for validation
-			var KimLookupTable table = if (model.lookupTableId !== null)
-					null /* TODO get from symbol table */
-				else
-					new KimLookupTable(new KimTable(model.lookupTable, null), model.lookupTableArgs, null)
-			if (model.lookupTableArgs.size > table.table.columnCount) {
-				error(
-					'The number of arguments exceeds the number of columns. Use ? for the arguments to look up or * for arguments to ignore',
-					KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, BAD_TABLE_FORMAT)
+			var KimLookupTable table = null;
+			if (model.lookupTableId !== null) {
+				var IKimNamespace ns = Kim.INSTANCE.getNamespace(model, true)
+				var tobj = ns.getSymbolTable().get(model.lookupTableId)
+				if (!(tobj instanceof IKimTable)) {
+					error('Identifier ' + model.lookupTableId + ' does not specify a k.IM table',
+						KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID, BAD_TABLE_FORMAT)
+					ok = false
+				} else {
+					table = new KimLookupTable(tobj as IKimTable, model.lookupTableArgs, null)
+				}
+			} else {
+				table = new KimLookupTable(new KimTable(model.lookupTable, null), model.lookupTableArgs, null)
 			}
-			if (table.getError() !== null) {
-				error(table.getError(), KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE, BAD_TABLE_FORMAT)
-			}
-			var o = 0
-			var checkFound = false
-			for (arg : model.lookupTableArgs) {
 
-				if (arg != "?" && arg != "*") {
-					var found = false
-					for (dependency : dependencies) {
-						// TODO dependency.name returns too many nulls to check effectively
-						if (dependency.name !== null && dependency.name == arg) {
-							found = true;
+			if (table !== null) {
+				if (model.lookupTableArgs.size > table.table.columnCount) {
+					error(
+						'The number of arguments exceeds the number of columns. Use ? for the arguments to look up or * for arguments to ignore',
+						KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, BAD_TABLE_FORMAT)
+					ok = false
+				}
+				if (table.getError() !== null) {
+					error(table.getError(), KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE, BAD_TABLE_FORMAT)
+					ok = false
+				}
+				var o = 0
+				var checkFound = false
+				for (arg : model.lookupTableArgs) {
+
+					if (arg != "?" && arg != "*") {
+						var found = false
+						for (dependency : dependencies) {
+							// TODO dependency.name returns too many nulls to check effectively
+							if (dependency.name !== null && dependency.name == arg) {
+								found = true;
+							}
 						}
-					}
-					if (!found) {
-						// TODO reintegrate, or at worst move into engine
+						if (!found) {
+							// TODO reintegrate, or at worst move into engine
 //						error('Argument ' + arg + ' is unknown within this model',
 //								 KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, o, BAD_TABLE_FORMAT)
+						}
+					} else if (arg == "?") {
+						if (checkFound) {
+							error("Only one '?' is allowed in the argument list, to mark the result column",
+								KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, o, BAD_TABLE_FORMAT)
+							ok = false
+						}
+						checkFound = true
 					}
-				} else if (arg == "?") {
-					if (checkFound) {
-						error("Only one '?' is allowed in the argument list, to mark the result column",
-							KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, o, BAD_TABLE_FORMAT)
-					}
-					checkFound = true
+					o++
 				}
-				o++
-			}
-			if (!checkFound && model.lookupTableArgs.size() > 2) {
-				error(
-					"One '?' must be present in the argument list to mark the result column when the table has more than 2 columns. Use * to mark columns to ignore.",
-					KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, BAD_TABLE_FORMAT)
+				if (!checkFound && model.lookupTableArgs.size() > 2) {
+					error(
+						"One '?' must be present in the argument list to mark the result column when the table has more than 2 columns. Use * to mark columns to ignore.",
+						KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, BAD_TABLE_FORMAT)
+					ok = false
+				}
 			}
 		}
 
@@ -493,12 +538,13 @@ class KimValidator extends AbstractKimValidator {
 				}
 
 				if (model.lookupTableId !== null) {
-					descriptor.contextualization.add(new ComputableResource(descriptor, model.lookupTableId, true))
+					var tobj = ns.getSymbolTable().get(model.lookupTableId)
+					var table = new KimLookupTable(tobj as IKimTable, model.lookupTableArgs, null)
+					descriptor.contextualization.add(new ComputableResource(table, descriptor))
 				}
 
 				if (model.classificationProperty !== null) {
-					descriptor.contextualization.add(
-						new ComputableResource(descriptor, model.classificationProperty, false))
+					descriptor.contextualization.add(new ComputableResource(descriptor, model.classificationProperty))
 				}
 
 				if (model.name !== null) {
@@ -1485,10 +1531,10 @@ class KimValidator extends AbstractKimValidator {
 					KimPackage.Literals.CONCEPT_STATEMENT_BODY__CHILDREN)
 				ok = false
 			} else {
-					
+
 				var ctype = EnumSet.copyOf(type);
 				ctype.remove(Type.ABSTRACT)
-				
+
 				for (child : concept.children) {
 					var childsc = validateConceptBody(child, namespace, ret, ctype)
 					if (childsc === null) {

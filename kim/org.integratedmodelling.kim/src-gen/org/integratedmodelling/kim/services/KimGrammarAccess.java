@@ -399,7 +399,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cLookupTableAssignment_7_3_0 = (Assignment)cAlternatives_7_3.eContents().get(0);
 		private final RuleCall cLookupTableTableParserRuleCall_7_3_0_0 = (RuleCall)cLookupTableAssignment_7_3_0.eContents().get(0);
 		private final Assignment cLookupTableIdAssignment_7_3_1 = (Assignment)cAlternatives_7_3.eContents().get(1);
-		private final RuleCall cLookupTableIdLOWERCASE_IDTerminalRuleCall_7_3_1_0 = (RuleCall)cLookupTableIdAssignment_7_3_1.eContents().get(0);
+		private final RuleCall cLookupTableIdUPPERCASE_IDTerminalRuleCall_7_3_1_0 = (RuleCall)cLookupTableIdAssignment_7_3_1.eContents().get(0);
 		private final Assignment cActionsAssignment_8 = (Assignment)cGroup.eContents().get(8);
 		private final RuleCall cActionsActionSpecificationParserRuleCall_8_0 = (RuleCall)cActionsAssignment_8.eContents().get(0);
 		private final Group cGroup_9 = (Group)cGroup.eContents().get(9);
@@ -422,7 +422,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	discretization?='discretized') ('into' classification=Classification | 'according' 'to'
 		//	classificationProperty=PropertyId))? ('lookup' ('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (','
 		//	lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')?
-		//	'into' (lookupTable=Table | lookupTableId=LOWERCASE_ID))?
+		//	'into' (lookupTable=Table | lookupTableId=UPPERCASE_ID))?
 		//	actions+=ActionSpecification* ('with' 'metadata' metadata=Metadata)? ('with' 'documentation'
 		//	documentation=Documentation)?;
 		@Override public ParserRule getRule() { return rule; }
@@ -433,7 +433,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//dependencies+=Dependency)*)? ('using' contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
 		//(('classified' | discretization?='discretized') ('into' classification=Classification | 'according' 'to'
 		//classificationProperty=PropertyId))? ('lookup' ('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (','
-		//lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')? 'into' (lookupTable=Table | lookupTableId=LOWERCASE_ID))?
+		//lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')? 'into' (lookupTable=Table | lookupTableId=UPPERCASE_ID))?
 		//actions+=ActionSpecification* ('with' 'metadata' metadata=Metadata)? ('with' 'documentation'
 		//documentation=Documentation)?
 		public Group getGroup() { return cGroup; }
@@ -639,7 +639,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getClassificationPropertyPropertyIdParserRuleCall_6_1_1_2_0() { return cClassificationPropertyPropertyIdParserRuleCall_6_1_1_2_0; }
 		
 		//('lookup' ('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (',' lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')?
-		//'into' (lookupTable=Table | lookupTableId=LOWERCASE_ID))?
+		//'into' (lookupTable=Table | lookupTableId=UPPERCASE_ID))?
 		public Group getGroup_7() { return cGroup_7; }
 		
 		//'lookup'
@@ -693,7 +693,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'into'
 		public Keyword getIntoKeyword_7_2() { return cIntoKeyword_7_2; }
 		
-		//lookupTable=Table | lookupTableId=LOWERCASE_ID
+		//lookupTable=Table | lookupTableId=UPPERCASE_ID
 		public Alternatives getAlternatives_7_3() { return cAlternatives_7_3; }
 		
 		//lookupTable=Table
@@ -702,11 +702,11 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//Table
 		public RuleCall getLookupTableTableParserRuleCall_7_3_0_0() { return cLookupTableTableParserRuleCall_7_3_0_0; }
 		
-		//lookupTableId=LOWERCASE_ID
+		//lookupTableId=UPPERCASE_ID
 		public Assignment getLookupTableIdAssignment_7_3_1() { return cLookupTableIdAssignment_7_3_1; }
 		
-		//LOWERCASE_ID
-		public RuleCall getLookupTableIdLOWERCASE_IDTerminalRuleCall_7_3_1_0() { return cLookupTableIdLOWERCASE_IDTerminalRuleCall_7_3_1_0; }
+		//UPPERCASE_ID
+		public RuleCall getLookupTableIdUPPERCASE_IDTerminalRuleCall_7_3_1_0() { return cLookupTableIdUPPERCASE_IDTerminalRuleCall_7_3_1_0; }
 		
 		//actions+=ActionSpecification*
 		public Assignment getActionsAssignment_8() { return cActionsAssignment_8; }
@@ -9351,7 +9351,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	discretization?='discretized') ('into' classification=Classification | 'according' 'to'
 	//	classificationProperty=PropertyId))? ('lookup' ('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (','
 	//	lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')?
-	//	'into' (lookupTable=Table | lookupTableId=LOWERCASE_ID))?
+	//	'into' (lookupTable=Table | lookupTableId=UPPERCASE_ID))?
 	//	actions+=ActionSpecification* ('with' 'metadata' metadata=Metadata)? ('with' 'documentation'
 	//	documentation=Documentation)?;
 	public ModelBodyStatementElements getModelBodyStatementAccess() {

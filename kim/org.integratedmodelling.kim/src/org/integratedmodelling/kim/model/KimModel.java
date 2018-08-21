@@ -24,7 +24,7 @@ public class KimModel extends KimStatement implements IKimModel {
 
 	private static final long serialVersionUID = -2936567328185233385L;
 
-	public String name = "UNASSIGNED";
+	public String name = "inconsistent-statement";
 
 	public KimModel(ModelStatement statement, IKimStatement parent) {
 		super(statement, parent);

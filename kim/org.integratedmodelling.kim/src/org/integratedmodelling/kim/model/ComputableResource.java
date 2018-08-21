@@ -23,7 +23,6 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
-import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class ComputableResource extends KimStatement implements IComputableResource {
@@ -44,64 +43,61 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	private ComputableResource condition;
 	private Pair<IValueMediator, IValueMediator> conversion;
 	private Collection<Pair<String, IArtifact.Type>> requiredResourceNames = new ArrayList<>();
-	
-	/**
-     * Slot to save a validated resource so that it won't need to be validated
-     * twice. Shouldn't be serialized.
-     */
-    private transient Object validatedResource;
 
-	
+	/**
+	 * Slot to save a validated resource so that it won't need to be validated
+	 * twice. Shouldn't be serialized.
+	 */
+	private transient Object validatedResource;
+
 	// all that follows can only be set on a copy as they are runtime-dependent.
 	private String targetId;
-    private IObservable target;
+	private IObservable target;
 	private boolean copy = false;
-	
+
 	/**
-	 * If not empty, this is the first of a chain (which cannot be hierarchical). For now
-	 * this only happens with URNs.
+	 * If not empty, this is the first of a chain (which cannot be hierarchical).
+	 * For now this only happens with URNs.
 	 */
 	private List<ComputableResource> siblings = new ArrayList<>();
-	
 
-    public IComputableResource copy() {
-        ComputableResource ret = new ComputableResource(getEObject(), getParent());
-        ret.language = this.language;
-        ret.literal = this.literal;
-        ret.serviceCall = this.serviceCall;
-        ret.lookupTable = this.lookupTable;
-        ret.expression = this.expression;
-        ret.classification = this.classification;
-        ret.urn = this.urn;
-        ret.accordingTo = this.accordingTo;
-        ret.postProcessor = this.postProcessor;
-        ret.negated = this.negated;
-        ret.mediation = this.mediation;
-        ret.condition = this.condition;
-        ret.conversion = this.conversion;
-        ret.requiredResourceNames = this.requiredResourceNames;
-        ret.validatedResource = this.validatedResource;
-        ret.target = this.target;
-        ret.targetId = this.targetId;
-        ret.copy = true;
-        return ret;
-    }
-	
-	
+	public IComputableResource copy() {
+		ComputableResource ret = new ComputableResource(getEObject(), getParent());
+		ret.language = this.language;
+		ret.literal = this.literal;
+		ret.serviceCall = this.serviceCall;
+		ret.lookupTable = this.lookupTable;
+		ret.expression = this.expression;
+		ret.classification = this.classification;
+		ret.urn = this.urn;
+		ret.accordingTo = this.accordingTo;
+		ret.postProcessor = this.postProcessor;
+		ret.negated = this.negated;
+		ret.mediation = this.mediation;
+		ret.condition = this.condition;
+		ret.conversion = this.conversion;
+		ret.requiredResourceNames = this.requiredResourceNames;
+		ret.validatedResource = this.validatedResource;
+		ret.target = this.target;
+		ret.targetId = this.targetId;
+		ret.copy = true;
+		return ret;
+	}
+
 	public void setTarget(IObservable target) {
-	    if (!copy) {
-	        throw new KlabInternalErrorException("cannot set the target on an original computation from k.IM code!");
-	    }
+		if (!copy) {
+			throw new KlabInternalErrorException("cannot set the target on an original computation from k.IM code!");
+		}
 		this.target = target;
 	}
-	
+
 	public void setTargetId(String targetId) {
-        if (!copy) {
-            throw new KlabInternalErrorException("cannot set the target ID on an original computation from k.IM code!");
-        }
+		if (!copy) {
+			throw new KlabInternalErrorException("cannot set the target ID on an original computation from k.IM code!");
+		}
 		this.targetId = targetId;
 	}
-	
+
 	public void setLanguage(String language) {
 		this.language = language;
 	}
@@ -142,8 +138,9 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		this.requiredResourceNames = requiredResourceNames;
 	}
 
-	protected ComputableResource() {}
-	
+	protected ComputableResource() {
+	}
+
 	public ComputableResource(ValueAssignment statement, IKimStatement parent) {
 
 		super(statement, parent);
@@ -158,15 +155,10 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		this.setPostProcessor(true);
 	}
 
-	public ComputableResource(IKimStatement parent, String classificationProperty, boolean isLookupTableId) {
+	public ComputableResource(IKimStatement parent, String classificationProperty) {
 
 		super(null, parent);
-		if (isLookupTableId) {
-			// TODO
-			throw new KlabUnimplementedException("UNIMPLEMENTED: MODEL COMPUTABLE RESOURCE FROM LOOKUP TABLE ID");
-		} else {
-			this.accordingTo = classificationProperty;
-		}
+		this.accordingTo = classificationProperty;
 		this.setPostProcessor(true);
 	}
 
@@ -175,6 +167,12 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		super(lookupTable, parent);
 		setCode(lookupTable);
 		this.lookupTable = new KimLookupTable(new KimTable(lookupTable, parent), lookupTableArgs, parent);
+		this.setPostProcessor(true);
+	}
+
+	public ComputableResource(KimLookupTable table, IKimStatement parent) {
+		super(((KimStatement) table).getEObject(), parent);
+		this.lookupTable = table;
 		this.setPostProcessor(true);
 	}
 
@@ -214,11 +212,10 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	}
 
 	public ComputableResource(EObject eObject, IKimStatement parent) {
-        super(eObject, parent);
-    }
+		super(eObject, parent);
+	}
 
-
-    private void setFrom(ValueAssignment statement) {
+	private void setFrom(ValueAssignment statement) {
 
 		if (statement.getAssignedValue() != null) {
 			setFromValue(statement.getAssignedValue());
@@ -263,7 +260,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	public String getMediationTargetId() {
 		return this.targetId;
 	}
-	
+
 	@Override
 	public String getLanguage() {
 		return this.language;
@@ -358,7 +355,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 
 	@SuppressWarnings("unchecked")
 	public <T> T getValidatedResource(Class<T> cls) {
-		return (T)validatedResource;
+		return (T) validatedResource;
 	}
 
 	public void setValidatedResource(Object validatedResource) {
@@ -367,6 +364,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 
 	/**
 	 * Chain a new resource to the current one. Only happens with URNs so far.
+	 * 
 	 * @param validate
 	 */
 	public void chainResource(ComputableResource resource) {
@@ -377,22 +375,21 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		return siblings;
 	}
 
-    @Override
-    public void visit(Visitor visitor) {
-        if (classification != null) {
-            classification.visit(visitor);
-        } else if (lookupTable != null) {
-            lookupTable.visit(visitor);
-        } else if (serviceCall != null) {
-            serviceCall.visit(visitor);
-        }
-        if (condition != null) {
-            condition.visit(visitor);
-        }
-        for (ComputableResource sibling : siblings) {
-            sibling.visit(visitor);
-        }
-    }
+	@Override
+	public void visit(Visitor visitor) {
+		if (classification != null) {
+			classification.visit(visitor);
+		} else if (lookupTable != null) {
+			lookupTable.visit(visitor);
+		} else if (serviceCall != null) {
+			serviceCall.visit(visitor);
+		}
+		if (condition != null) {
+			condition.visit(visitor);
+		}
+		for (ComputableResource sibling : siblings) {
+			sibling.visit(visitor);
+		}
+	}
 
-	
 }
