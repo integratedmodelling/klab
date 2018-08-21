@@ -245,8 +245,6 @@ public class Rasterizer<T> {
 	 */
 	public void finish(BiConsumer<T, int[]> setter) {
 
-		ImageUtil.show(raster);
-		
 		int[] xy = new int[2];
 		for (int x = 0; x < this.raster.getWidth(); x++) {
 			for (int y = 0; y < this.raster.getHeight(); y++) {
