@@ -42,7 +42,6 @@ public class BooleanStorage extends Storage implements IDataArtifact {
 			// mediation needed
 			throw new KlabUnsupportedFeatureException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
 		}
-		System.out.println("SETTING "+ offset + " TO "  + value);
 		if (value == null) {
 			mask.set((int)offset, false);
 		} else if (!(value instanceof Boolean)) {
