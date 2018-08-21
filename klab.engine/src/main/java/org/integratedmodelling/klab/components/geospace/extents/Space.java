@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpaceLocator;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.common.IndexLocator;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
@@ -532,7 +533,6 @@ public class Space extends Extent implements ISpace {
 
 	@Override
 	public ISpace at(ILocator locator) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -558,11 +558,15 @@ public class Space extends Extent implements ISpace {
 
 	@Override
 	public long getOffset(ILocator index) {
-		// TODO support latlon, shape
+
 		if (this.grid != null) {
 			if (index instanceof Cell) {
 				return this.grid.getOffset((Cell) index);
-			}
+			} else if (index instanceof IndexLocator && ((IndexLocator)index).getCoordinates().length == 2) {
+				return this.grid.getOffset(((IndexLocator)index).getCoordinates()[0], ((IndexLocator)index).getCoordinates()[1]);
+			} // TODO latlon and world coordinates
+		} else if (this.features != null) {
+			// TODO support direct indexing with IndexLocator and point indexing with latlon and point coordinates
 		}
 		throw new IllegalArgumentException("cannot use " + index + " as a space locator");
 	}

@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.utils.Utils;
+import org.integratedmodelling.klab.utils.image.ImageUtil;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -244,6 +245,8 @@ public class Rasterizer<T> {
 	 */
 	public void finish(BiConsumer<T, int[]> setter) {
 
+		ImageUtil.show(raster);
+		
 		int[] xy = new int[2];
 		for (int x = 0; x < this.raster.getWidth(); x++) {
 			for (int y = 0; y < this.raster.getHeight(); y++) {

@@ -1,27 +1,23 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
-import java.util.Iterator;
+import java.util.BitSet;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
-import org.integratedmodelling.klab.data.storage.DataIterator;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.utils.Utils;
 
-import xerial.larray.LBitArray;
-import xerial.larray.japi.LArrayJ;
-
 public class BooleanStorage extends Storage implements IDataArtifact {
 
-	private LBitArray data;
-	private LBitArray mask;
+	private BitSet data;
+	private BitSet mask;
 
 	public BooleanStorage(IGeometry scale) {
 		super(scale);
-		this.data = LArrayJ.newLBitArray(scale.size());
-		this.mask = LArrayJ.newLBitArray(scale.size());
+		this.data = new BitSet((int)scale.size());
+		this.mask = new BitSet((int)scale.size());
 	}
 
 	@Override
@@ -36,7 +32,7 @@ public class BooleanStorage extends Storage implements IDataArtifact {
 			// mediation needed
 			throw new KlabUnsupportedFeatureException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
 		}
-		return mask.apply(offset) ? data.apply(offset) : null;
+		return mask.get((int)offset) ? data.get((int)offset) : null;
 	}
 
 	@Override
@@ -46,22 +42,16 @@ public class BooleanStorage extends Storage implements IDataArtifact {
 			// mediation needed
 			throw new KlabUnsupportedFeatureException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
 		}
+		System.out.println("SETTING "+ offset + " TO "  + value);
 		if (value == null) {
-			mask.update(offset, false);
+			mask.set((int)offset, false);
 		} else if (!(value instanceof Boolean)) {
 			throw new IllegalArgumentException("cannot set a boolean state from value " + value);
 		} else {
-			data.update(offset, ((Boolean) value));
-			mask.update(offset, true);
+			data.set((int)offset, ((Boolean) value));
+			mask.set((int)offset, true);
 		}
 		return offset;
-	}
-
-	@Override
-	protected void finalize() throws Throwable {
-		data.free();
-		mask.free();
-		super.finalize();
 	}
 
 	@Override

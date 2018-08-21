@@ -65,7 +65,7 @@ public class DataIterator<T> implements Iterator<T> {
 
 		return (object) -> {
 			if (object instanceof Boolean) {
-				return (Boolean) object ? 0 : 1;
+				return NumberUtils.convertNumber(((Boolean) object) ? 1 : 0, cls);
 			} else if (object instanceof Number) {
 				return object.getClass().equals(cls) ? (Number) object
 						: NumberUtils.convertNumber((Number) object, cls);
