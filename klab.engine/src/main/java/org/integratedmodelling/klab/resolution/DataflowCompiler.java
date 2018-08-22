@@ -11,11 +11,18 @@ import java.util.Set;
 
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.Annotations;
+import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -292,10 +299,10 @@ public class DataflowCompiler {
 				Set<Model> generated) {
 
 			ret.setName(name);
-
+			
 			if (!generated.contains(model)) {
 				generated.add(model);
-				for (IComputableResource resource : model.getComputation(ITime.INITIALIZATION)) {
+				for (IComputableResource resource : getModelComputation(model, ret.getType(), ITime.INITIALIZATION)) {
 					ret.addComputation(resource);
 					if (indirectAdapters != null && resource.getTarget() == null) {
 						/*
@@ -447,6 +454,62 @@ public class DataflowCompiler {
 		}
 
 		return ret;
+	}
+
+	/**
+	 * Return all the stated computations for the passed model, inserting any 
+	 * necessary cast transformer in case the types need to be converted.
+	 * 
+	 * @param model
+	 * @param iLocator
+	 * @return
+	 */
+	public List<IComputableResource> getModelComputation(Model model, IArtifact.Type targetType, ILocator iLocator) {
+		List<IComputableResource> ret = new ArrayList<>(model.getComputation(iLocator));
+		int lastDirectPosition = -1;
+		IArtifact.Type lastDirectType = null;
+		int i = 0;
+		for (IComputableResource resource : ret) {
+			if (((ComputableResource)resource).getTarget() == null) {
+				Type resType = getResourceType(resource);
+				if (resType != null && resType != Type.VOID) {
+					lastDirectPosition = i;
+					lastDirectType = resType;
+				}
+			}
+			i ++;
+		}
+		
+		if (lastDirectType != null && lastDirectType != targetType) {
+			IComputableResource cast = Klab.INSTANCE.getRuntimeProvider().getCastingResolver(lastDirectType, targetType);
+			if (cast != null) {
+				ret.add(lastDirectPosition + 1, cast);
+			}
+		}
+		return ret;
+	}
+
+	private Type getResourceType(IComputableResource resource) {
+		
+		if (resource.getClassification() != null || resource.getAccordingTo() != null) {
+			return Type.CONCEPT;
+		}
+		if (resource.getLookupTable() != null) {
+			return resource.getLookupTable().getLookupType();
+		}
+		if (resource.getUrn() != null) {
+			IResource res = Resources.INSTANCE.resolveResource(resource.getUrn());
+			if (res != null) {
+				return res.getType();
+			}
+		}
+		if (resource.getServiceCall() != null) {
+			IPrototype prototype = Extensions.INSTANCE.getPrototype(resource.getServiceCall().getName());
+			if (prototype != null) {
+				return prototype.getType();
+			}
+		}
+		return null;
 	}
 
 	ModelD compileModel(Model model) {

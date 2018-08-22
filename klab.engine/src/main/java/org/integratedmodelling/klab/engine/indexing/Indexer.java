@@ -91,10 +91,6 @@ public enum Indexer {
 
         if (object instanceof IKimConceptStatement) {
 
-            if (((IKimConceptStatement) object).getName().equals("Normalized")) {
-                System.out.println("FOCA");
-            }
-
             ret = new SearchMatch(Match.Type.CONCEPT, ((IKimConceptStatement) object).getType());
             ret.setDescription(((IKimConceptStatement) object).getDocstring());
             ret.setId(namespaceId + ":" + ((IKimConceptStatement) object).getName());

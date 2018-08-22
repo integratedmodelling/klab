@@ -40,6 +40,7 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.contextualizers.CastingStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ClassifyingStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ConversionResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ExpressionResolver;
@@ -277,7 +278,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	@Override
-	public IObservation createEmptyObservation(IObservable observable, IComputationContext context ) {
+	public IObservation createEmptyObservation(IObservable observable, IComputationContext context) {
 		return Observation.empty(observable, context);
 	}
 
@@ -383,5 +384,19 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		if (rootActorSystem != null) {
 			rootActorSystem.terminate();
 		}
+	}
+
+	@Override
+	public IComputableResource getCastingResolver(IArtifact.Type sourceType, IArtifact.Type targetType) {
+		/*
+		 * At the moment the only admissible cast is NUMBER -> BOOLEAN, although we may
+		 * want some level of text -> X (number, boolean, concept) at some point, maybe
+		 * with a warning. Also if eventually we want to explicitly support all number
+		 * types this will have to expand.
+		 */
+		if (sourceType == IArtifact.Type.NUMBER && targetType == IArtifact.Type.BOOLEAN) {
+			return new ComputableResource(CastingStateResolver.getServiceCall(sourceType, targetType));
+		}
+		return null;
 	}
 }

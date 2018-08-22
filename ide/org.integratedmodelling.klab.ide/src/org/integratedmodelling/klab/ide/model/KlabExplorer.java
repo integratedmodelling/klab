@@ -20,5 +20,10 @@ public class KlabExplorer extends KlabPeer {
 	public void setRegionOfInterest(IMessage message, SpatialExtent extent) {
 		send(message);
 	}
+	
+//	@MessageHandler(type = IMessage.Type.ResetContext)
+//	public void resetContext(IMessage message) {
+//		send(message);
+//	}
 
 }

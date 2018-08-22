@@ -67,7 +67,7 @@ public class Actuator implements IActuator {
     // non-semantic options
     private List<IAnnotation>         annotations       = new ArrayList<>();
 
-    public void addComputation(IComputableResource resource) {
+	public void addComputation(IComputableResource resource) {
         computedResources.add(resource);
         IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource, this);
         computationStrategy.add(new Pair<>(serviceCall, resource));

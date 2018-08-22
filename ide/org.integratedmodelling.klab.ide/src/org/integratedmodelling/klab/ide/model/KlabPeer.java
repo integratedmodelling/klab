@@ -66,6 +66,12 @@ public class KlabPeer {
 		}, properties);
 	}
 
+	/**
+	 * Send a message to listening peers within the Eclipse UI. To send to the engine use
+	 * {@link Activator#post(Object...)}.
+	 * 
+	 * @param messages
+	 */
 	public void send(Object... messages) {
 
 		if (eventAdmin == null) {

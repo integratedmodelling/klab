@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.klab.Configuration;
-import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.resolution.IPrioritizer;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
@@ -81,9 +80,9 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
 							monitor.debug(describeRanks(md, 2, n++));
 						}
 						monitor.debug("------------------");
-					} else {
+					} /*else {
 						monitor.debug("No results" + (cached ? " (cached)" : ""));
-					}
+					}*/
 				}
 			}
 			_it = modelData.iterator();

@@ -43,12 +43,13 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	private ComputableResource condition;
 	private Pair<IValueMediator, IValueMediator> conversion;
 	private Collection<Pair<String, IArtifact.Type>> requiredResourceNames = new ArrayList<>();
-
+	
 	/**
 	 * Slot to save a validated resource so that it won't need to be validated
 	 * twice. Shouldn't be serialized.
 	 */
 	private transient Object validatedResource;
+	private transient Type type;
 
 	// all that follows can only be set on a copy as they are runtime-dependent.
 	private String targetId;
@@ -81,6 +82,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		ret.target = this.target;
 		ret.targetId = this.targetId;
 		ret.copy = true;
+		ret.type = this.type;
 		return ret;
 	}
 

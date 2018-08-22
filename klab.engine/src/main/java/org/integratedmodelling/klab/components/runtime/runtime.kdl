@@ -120,6 +120,21 @@ contextualizer presence
 
 }
 
+contextualizer cast
+	"Return a state resolver that will convert a value from a type to another"
+{
+	
+	// TODO make this an enum
+	text source
+		"The source type of the value"
+
+	// TODO make this an enum
+	text destination
+		"The destination type of the value"
+				
+	class org.integratedmodelling.klab.components.runtime.contextualizers.CastingStateResolver
+}
+
 contextualizer density
 	"Return a dereifying resolver turning a countable artifact into a density coverage"
 {

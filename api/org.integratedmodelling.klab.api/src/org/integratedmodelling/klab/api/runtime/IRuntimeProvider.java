@@ -186,4 +186,14 @@ public interface IRuntimeProvider {
 	 */
 	void shutdown();
 
+	/**
+	 * If the source type can be cast to the target type, return a resolver that will
+	 * perform the cast.
+	 * 
+	 * @param sourceType
+	 * @param targetType
+	 * @return a resolver or null
+	 */
+	IComputableResource getCastingResolver(IArtifact.Type sourceType, IArtifact.Type targetType);
+
 }

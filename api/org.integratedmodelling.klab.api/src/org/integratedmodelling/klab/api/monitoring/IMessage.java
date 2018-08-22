@@ -101,9 +101,13 @@ public interface IMessage {
 		RegionOfInterest,
 
 		/**
-		 * F->B.
+		 * F->B
 		 */
 		PeriodOfInterest,
+		/**
+		 * F<->B
+		 */
+		ResetContext,
 
 		/**
 		 * B->F: notification for projects in user workspace when they are opened.UIs
