@@ -236,7 +236,7 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 			
 			IConcept inherent = Observables.INSTANCE.getInherentType(observable.getType());
 			
-			if (inherent != null && !scope.isBeingResolved(inherent)) {
+			if (inherent != null && !scope.isBeingResolved(inherent, Mode.INSTANTIATION)) {
 				List<IComputableResource> dereificator = Klab.INSTANCE.getRuntimeProvider()
 						.getComputation(Observable.promote(inherent), observable);
 				if (dereificator != null) {
@@ -249,7 +249,7 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 
 			IConcept inherent = Observables.INSTANCE.getInherentType(observable.getType());
 			
-			if (inherent != null && !scope.isBeingResolved(inherent)) {
+			if (inherent != null && !scope.isBeingResolved(inherent, Mode.INSTANTIATION)) {
 				List<IComputableResource> dereificator = Klab.INSTANCE.getRuntimeProvider()
 						.getComputation(Observable.promote(inherent), observable);
 				if (dereificator != null) {

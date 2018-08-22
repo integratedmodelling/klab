@@ -848,11 +848,11 @@ public class ResolutionScope implements IResolutionScope {
 		return relationshipTarget;
 	}
 
-	public boolean isBeingResolved(IConcept observable) {
-		if (this.observable != null && this.observable.getType().equals(observable)) {
+	public boolean isBeingResolved(IConcept observable, Mode mode) {
+		if (this.observable != null && this.observable.getType().equals(observable) && this.mode == mode) {
 			return true;
 		}
-		return parent == null ? false : parent.isBeingResolved(observable);
+		return parent == null ? false : parent.isBeingResolved(observable, mode);
 	}
 
 }

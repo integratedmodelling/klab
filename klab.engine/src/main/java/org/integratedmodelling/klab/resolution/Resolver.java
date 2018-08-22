@@ -242,7 +242,8 @@ public enum Resolver {
 			if (ret.getCoverage().isEmpty()) {
 
 				ObservableReasoner reasoner = new ObservableReasoner(observable, ret);
-				for (Iterator<CandidateObservable> it = reasoner.iterator(); it.hasNext();) {
+				boolean done = false;
+				for (Iterator<CandidateObservable> it = reasoner.iterator(); !done && it.hasNext();) {
 					CandidateObservable candidate = it.next();
 					try {
 						// TODO if candidate switches to object, must switch to instantiation
@@ -253,6 +254,7 @@ public enum Resolver {
 								ret.link(mscope, candidate.computation);
 							}
 							if (ret.getCoverage().isComplete()) {
+								done = true;
 								break;
 							}
 						}
