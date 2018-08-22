@@ -106,21 +106,26 @@ public class KlabSession extends KlabPeer {
 	 * --- State and history management
 	 */
 
-	private void recordNotification(String notification, String identity, Type type) {
+	void recordNotification(String notification, String identity, Type type) {
 		// TODO Auto-generated method stub
-
+	    System.out.println("NOTIFICATION [" + identity + ", " + type + "]: " + notification);
 	}
 
 	private void recordTask(TaskReference task, Type taskstarted) {
-
+	    System.out.println("TASK " + task.getId() + " " + taskstarted);
 	}
 
 	private void recordObservation(ObservationReference observation) {
+	    
+	    boolean isctx = false;
 		if (observation.getParentId() == null) {
-			this.currentContextId = observation.getId();
+		    isctx = true;
+		    this.currentContextId = observation.getId();
 			observationCatalog.put(observation.getId(), observation);
 			contexts.add(0, observation.getId());
 		}
+		
+		System.out.println((isctx ? "CONTEXT " : "") + "OBSERVATION " + observation.getLabel() + " from task " + observation.getTaskId());
 	}
 
 	/*

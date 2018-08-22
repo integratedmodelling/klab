@@ -68,6 +68,9 @@ public class DistanceCalculator {
 	}
 
 	private double convert(double distance, IUnit unit) {
+	    if (Double.isNaN(distance)) {
+	        return distance;
+	    }
 		double ret = (distance * widthInMeters) / originalWidth;
 		return unit.equals(Units.INSTANCE.METERS) ? ret : unit.convert(ret, Units.INSTANCE.METERS).doubleValue();
 	}
@@ -77,6 +80,7 @@ public class DistanceCalculator {
 		if (isEmpty) {
 			return Double.NaN;
 		}
+		
 		Geometry point = Shape.makePoint(xy[0], xy[1]);
 		return getFinalGeometry().distance(point);
 	}
