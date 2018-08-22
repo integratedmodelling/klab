@@ -1,9 +1,7 @@
 package org.integratedmodelling.klab.components.geospace.indexing;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -53,16 +51,18 @@ public class DistanceCalculator {
 					"cannot add geometries to a distance calculator after the first distance has been computed");
 		}
 		if (observation.getScale().getSpace() != null) {
-			exts.add(((Shape)observation.getScale().getSpace()).getJTSGeometry());
+			exts.add(((Shape) observation.getScale().getSpace()).getJTSGeometry());
 			isEmpty = false;
 		}
 	}
 
 	public double distanceToNearestObjectFrom(ILocator locator, IUnit unit) {
-		ISpaceLocator sloc = locator.as(ISpaceLocator.class);
-		if (sloc != null) {
-//			System.out.println("Computing distance");
-			return convert(getDistance(new double[] { sloc.getXCoordinate(), sloc.getYCoordinate() }), unit);
+
+		if (!isEmpty) {
+			ISpaceLocator sloc = locator.as(ISpaceLocator.class);
+			if (sloc != null) {
+				return convert(getDistance(new double[] { sloc.getXCoordinate(), sloc.getYCoordinate() }), unit);
+			}
 		}
 		return Double.NaN;
 	}
@@ -73,6 +73,7 @@ public class DistanceCalculator {
 	}
 
 	private double getDistance(double[] xy) {
+		
 		if (isEmpty) {
 			return Double.NaN;
 		}

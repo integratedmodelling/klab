@@ -21,9 +21,9 @@ public class KlabExplorer extends KlabPeer {
 		send(message);
 	}
 	
-//	@MessageHandler(type = IMessage.Type.ResetContext)
-//	public void resetContext(IMessage message) {
-//		send(message);
-//	}
+	@MessageHandler(type = IMessage.Type.ResetContext)
+	public void resetContext(IMessage message, String dummyPayload) {
+		send(message);
+	}
 
 }

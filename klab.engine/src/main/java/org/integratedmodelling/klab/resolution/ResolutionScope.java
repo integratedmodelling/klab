@@ -12,6 +12,7 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Models;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -845,6 +846,13 @@ public class ResolutionScope implements IResolutionScope {
 	@Override
 	public ISubject getRelationshipTarget() {
 		return relationshipTarget;
+	}
+
+	public boolean isBeingResolved(IConcept observable) {
+		if (this.observable != null && this.observable.getType().equals(observable)) {
+			return true;
+		}
+		return parent == null ? false : parent.isBeingResolved(observable);
 	}
 
 }

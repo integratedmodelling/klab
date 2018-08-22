@@ -334,9 +334,11 @@ public class DataflowCompiler {
 				// this may be a new actuator or a reference to an existing one
 				Actuator achild = child.getActuatorTree(monitor, generated);
 				ret.getActuators().add(achild);
-				for (IComputableResource mediator : Observables.INSTANCE
-						.computeMediators(observableCatalog.get(achild.getName()), achild.getObservable())) {
-					ret.addMediation(mediator, achild);
+				if (observableCatalog.containsKey(achild.getName())) {
+					for (IComputableResource mediator : Observables.INSTANCE
+							.computeMediators(observableCatalog.get(achild.getName()), achild.getObservable())) {
+						ret.addMediation(mediator, achild);
+					}
 				}
 			}
 			return ret;

@@ -141,6 +141,21 @@ public class Utils {
 			} else {
 				return (T)Boolean.TRUE;
 			}
+		} else if (ret instanceof Boolean && Number.class.isAssignableFrom(cls)) {
+			
+			if (cls.equals(Double.class)) {
+				return (T) new Double((Boolean)ret ? 1 : 0);
+			}
+			if (cls.equals(Long.class)) {
+				return (T) new Long((Boolean)ret ? 1 : 0);
+			}
+			if (cls.equals(Integer.class)) {
+				return (T) new Integer((Boolean)ret ? 1 : 0);
+			}
+			if (cls.equals(Float.class)) {
+				return (T) new Float((Boolean)ret ? 1 : 0);
+			}
+
 		}
 		
 		throw new IllegalArgumentException("cannot interpret value " + ret + " as a " + cls.getCanonicalName());

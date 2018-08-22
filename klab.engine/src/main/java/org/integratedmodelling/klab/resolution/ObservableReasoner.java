@@ -233,24 +233,30 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 		}
 
 		if (observable.is(Type.PRESENCE)) {
+			
 			IConcept inherent = Observables.INSTANCE.getInherentType(observable.getType());
-			if (inherent != null) {
+			
+			if (inherent != null && !scope.isBeingResolved(inherent)) {
 				List<IComputableResource> dereificator = Klab.INSTANCE.getRuntimeProvider()
 						.getComputation(Observable.promote(inherent), observable);
 				if (dereificator != null) {
 					ret.add(new CandidateObservable(Observable.promote(inherent), Mode.INSTANTIATION, dereificator));
 				}
 			}
+			
 		} else if (scope.getCoverage().getSpace() != null && scope.getCoverage().getSpace().getDimensionality() >= 2
 				&& observable.is(Type.DISTANCE) || observable.is(Type.NUMEROSITY)) {
+
 			IConcept inherent = Observables.INSTANCE.getInherentType(observable.getType());
-			if (inherent != null) {
+			
+			if (inherent != null && !scope.isBeingResolved(inherent)) {
 				List<IComputableResource> dereificator = Klab.INSTANCE.getRuntimeProvider()
 						.getComputation(Observable.promote(inherent), observable);
 				if (dereificator != null) {
 					ret.add(new CandidateObservable(Observable.promote(inherent), Mode.INSTANTIATION, dereificator));
 				}
 			}
+			
 		} else if (observable.is(Type.RATIO)) {
 			// TODO
 		}

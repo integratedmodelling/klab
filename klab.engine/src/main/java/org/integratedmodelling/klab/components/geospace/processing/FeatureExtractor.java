@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Observables;
@@ -67,10 +68,15 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 	public FeatureExtractor() {
 	}
 
-	public FeatureExtractor(IParameters<String> parameters, IComputationContext context) throws KlabValidationException {
+	public FeatureExtractor(IParameters<String> parameters, IComputationContext context)
+			throws KlabValidationException {
 		if (parameters.containsKey("select")) {
+			Object expression = parameters.get("select");
+			if (expression instanceof IKimExpression) {
+				expression = ((IKimExpression) expression).getCode();
+			}
 			this.exprDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-					.describe(parameters.get("select", String.class), context);
+					.describe(expression.toString(), context);
 		}
 
 		IScale scale = context.getScale();
@@ -99,7 +105,7 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 		List<IObjectArtifact> ret = new ArrayList<>();
 		Map<IState, String> stateIdentifiers = new HashMap<>();
 		StateSummary stateSummary = null;
-		
+
 		// TODO
 		double selectFraction = Double.NaN;
 		// TODO
@@ -133,7 +139,8 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 
 		for (IState sourceState : sourceStates) {
 			/*
-			 * if the semantics is compatible with the quality's context, the instance inherits a view of each state.
+			 * if the semantics is compatible with the quality's context, the instance
+			 * inherits a view of each state.
 			 */
 			IConcept scontext = sourceState.getObservable().getContext();
 			// the first condition should never happen
@@ -154,7 +161,8 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 						"feature extractor: state for fraction extraction " + fractionState + " must be numeric");
 			}
 			// TODO
-//			StateSummary stateSummary = Observations.INSTANCE.getStateSummary(fractionState, )
+			// StateSummary stateSummary =
+			// Observations.INSTANCE.getStateSummary(fractionState, )
 		}
 
 		// build mask
@@ -176,9 +184,11 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 
 					double perc = 0;
 					if (topFraction) {
-						perc = (stateSummary.getRange().get(1) - d) / (stateSummary.getRange().get(1) - stateSummary.getRange().get(0));
+						perc = (stateSummary.getRange().get(1) - d)
+								/ (stateSummary.getRange().get(1) - stateSummary.getRange().get(0));
 					} else {
-						perc = (d - stateSummary.getRange().get(0)) / (stateSummary.getRange().get(1) - stateSummary.getRange().get(0));
+						perc = (d - stateSummary.getRange().get(0))
+								/ (stateSummary.getRange().get(1) - stateSummary.getRange().get(0));
 					}
 					o = perc <= selectFraction;
 				}
@@ -187,7 +197,7 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 
 				parameters.clear();
 				for (IState state : sourceStates) {
-					o = state.get(cell, Double.class);
+					o = state.get(cell, Object.class);
 					parameters.put(stateIdentifiers.get(state), o);
 				}
 
@@ -229,7 +239,8 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 				for (IState inherited : inheritedStates) {
 					IState stateView = Observations.INSTANCE.getStateView(inherited, instanceScale, context);
 					((IRuntimeContext) context).link(instance, stateView);
-//					System.out.println("Average elevation = " + stateView.get(instanceScale.getLocator(0)));
+					// System.out.println("Average elevation = " +
+					// stateView.get(instanceScale.getLocator(0)));
 				}
 
 				ret.add(instance);
@@ -355,5 +366,5 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 	public IArtifact.Type getType() {
 		return IArtifact.Type.OBJECT;
 	}
-	
+
 }
