@@ -161,6 +161,7 @@ public enum Renderer {
 		}
 		
 		if (summary.getRange().get(0).equals(summary.getRange().get(1))) {
+			// TODO this won't show anything when we have one value AND no-data - which is wrong.
 			return new Pair<>(null, "All values = " + NumberFormat.getNumberInstance().format(summary.getRange().get(0)));
 		}
 		

@@ -34,7 +34,7 @@ public class KlabEngine extends KlabPeer {
 			if (file != null) {
 				IFile ifile = Eclipse.INSTANCE.getIFile(file);
 				if (ifile != null) {
-					// null-safe operators, ever?
+					// null-safe operators, anyone?
 					System.out.println("NOTIFYING COMPILATION RESULT: " + report);
 					Eclipse.INSTANCE.updateMarkersForNamespace(report.getNotifications(), ifile);
 					KlabNavigator.refresh();

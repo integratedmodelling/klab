@@ -74,7 +74,7 @@ public class Observer extends KimObject implements IObserver {
 				Envelope envelope = Envelope.create(regionOfInterest.getEast(), regionOfInterest.getWest(),
 						regionOfInterest.getSouth(), regionOfInterest.getNorth(), Projection.getLatLon());
 				return Collections.singletonList(Space.create(Shape.create(envelope),
-						(double) envelope.getResolutionForZoomLevel(50).getFirst()));
+						(double) envelope.getResolutionForZoomLevel(5).getFirst()));
 			}
 		};
 	}

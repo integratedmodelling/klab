@@ -66,7 +66,7 @@ public class Utils {
 	public static boolean isPOD(Object value) {
 		return value instanceof Number || value instanceof String || value instanceof Boolean;
 	}
-	
+
 	/**
 	 * Return the closest POD that the value can be parsed into. For now only handle
 	 * int and double. May add k.IM - like maps, lists, ranges.
@@ -84,7 +84,7 @@ public class Utils {
 			return Double.parseDouble(value);
 		} catch (Throwable e) {
 		}
-		
+
 		if (value.toLowerCase().equals("true") || value.toLowerCase().equals("false")) {
 			return value.toLowerCase().equals("true");
 		}
@@ -118,51 +118,51 @@ public class Utils {
 			return (T) ret;
 		}
 
-		if (ret instanceof Number && Number.class.isAssignableFrom(cls)) {
-			if (cls.equals(Double.class)) {
-				return (T) new Double(((Number) ret).doubleValue());
-			}
-			if (cls.equals(Long.class)) {
-				return (T) new Long(((Number) ret).longValue());
-			}
-			if (cls.equals(Integer.class)) {
-				return (T) new Integer(((Number) ret).intValue());
-			}
-			if (cls.equals(Float.class)) {
-				return (T) new Float(((Number) ret).floatValue());
-			}
-		} else if (cls.equals(String.class)) {
+		if (cls.equals(String.class)) {
 			return (T) ret.toString();
-		} else if (Boolean.class.isAssignableFrom(cls)) {
-			if (ret instanceof Number) {
+		}
+
+		if (ret instanceof Number) {
+			if (Number.class.isAssignableFrom(cls)) {
+				if (cls.equals(Double.class)) {
+					return (T) new Double(((Number) ret).doubleValue());
+				}
+				if (cls.equals(Long.class)) {
+					return (T) new Long(((Number) ret).longValue());
+				}
+				if (cls.equals(Integer.class)) {
+					return (T) new Integer(((Number) ret).intValue());
+				}
+				if (cls.equals(Float.class)) {
+					return (T) new Float(((Number) ret).floatValue());
+				}
+			} else if (Boolean.class.isAssignableFrom(cls)) {
 				if (cls.equals(Boolean.class)) {
 					return (T) (NumberUtils.equal(((Number) ret).doubleValue(), 0) ? Boolean.FALSE : Boolean.TRUE);
 				}
-			} else {
-				return (T)Boolean.TRUE;
 			}
-		} else if (ret instanceof Boolean && Number.class.isAssignableFrom(cls)) {
-			
+		} else if (ret instanceof Boolean) {
+
 			if (cls.equals(Double.class)) {
-				return (T) new Double((Boolean)ret ? 1 : 0);
+				return (T) new Double(((Boolean) ret) ? 1 : 0);
 			}
 			if (cls.equals(Long.class)) {
-				return (T) new Long((Boolean)ret ? 1 : 0);
+				return (T) new Long(((Boolean) ret) ? 1 : 0);
 			}
 			if (cls.equals(Integer.class)) {
-				return (T) new Integer((Boolean)ret ? 1 : 0);
+				return (T) new Integer(((Boolean) ret) ? 1 : 0);
 			}
 			if (cls.equals(Float.class)) {
-				return (T) new Float((Boolean)ret ? 1 : 0);
+				return (T) new Float(((Boolean) ret) ? 1 : 0);
 			}
 
 		}
-		
+
 		throw new IllegalArgumentException("cannot interpret value " + ret + " as a " + cls.getCanonicalName());
 	}
 
 	public static Type getArtifactType(Class<?> cls) {
-		
+
 		Type ret = cls == null ? Type.VOID : Type.VALUE;
 		if (String.class.isAssignableFrom(cls)) {
 			ret = Type.TEXT;

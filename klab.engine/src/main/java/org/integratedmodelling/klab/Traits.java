@@ -220,7 +220,7 @@ public enum Traits implements ITraitService {
                 last = definition.substring(lastp + 1);
             }
             if (firstp >= 0 && lastp > 0) {
-                middle = definition.substring(firstp, lastp);
+                middle = definition.substring(firstp, lastp+1);
             }
 
             for (IConcept trait : traits) {
