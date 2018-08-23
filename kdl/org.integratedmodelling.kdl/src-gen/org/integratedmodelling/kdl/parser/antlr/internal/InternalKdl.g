@@ -1480,7 +1480,7 @@ ruleDataflowBody returns [EObject current=null]
 										if ($current==null) {
 											$current = createModelElementForParent(grammarAccess.getDataflowBodyRule());
 										}
-										add(
+										set(
 											$current,
 											"computations",
 											lv_computations_7_0,
@@ -1488,7 +1488,7 @@ ruleDataflowBody returns [EObject current=null]
 										afterParserOrEnumRuleCall();
 									}
 								)
-								))+
+								))
 					{ 
 						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getDataflowBodyAccess().getUnorderedGroup_2());
 					}
@@ -3080,10 +3080,29 @@ ruleValue returns [EObject current=null]
 		    |
 		(
 			(
+				lv_expression_5_0=RULE_EXPR
 				{
-					newCompositeNode(grammarAccess.getValueAccess().getTableLookupTableParserRuleCall_5_0());
+					newLeafNode(lv_expression_5_0, grammarAccess.getValueAccess().getExpressionEXPRTerminalRuleCall_5_0());
 				}
-				lv_table_5_0=ruleLookupTable
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getValueRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"expression",
+						lv_expression_5_0,
+						"org.integratedmodelling.kdl.Kdl.EXPR");
+				}
+			)
+		)
+		    |
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getValueAccess().getTableLookupTableParserRuleCall_6_0());
+				}
+				lv_table_6_0=ruleLookupTable
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getValueRule());
@@ -3091,7 +3110,7 @@ ruleValue returns [EObject current=null]
 					set(
 						$current,
 						"table",
-						lv_table_5_0,
+						lv_table_6_0,
 						"org.integratedmodelling.kdl.Kdl.LookupTable");
 					afterParserOrEnumRuleCall();
 				}
@@ -3100,9 +3119,9 @@ ruleValue returns [EObject current=null]
 		    |
 		(
 			(
-				lv_enumId_6_0=RULE_UPPERCASE_ID
+				lv_enumId_7_0=RULE_UPPERCASE_ID
 				{
-					newLeafNode(lv_enumId_6_0, grammarAccess.getValueAccess().getEnumIdUPPERCASE_IDTerminalRuleCall_6_0());
+					newLeafNode(lv_enumId_7_0, grammarAccess.getValueAccess().getEnumIdUPPERCASE_IDTerminalRuleCall_7_0());
 				}
 				{
 					if ($current==null) {
@@ -3111,7 +3130,7 @@ ruleValue returns [EObject current=null]
 					setWithLastConsumed(
 						$current,
 						"enumId",
-						lv_enumId_6_0,
+						lv_enumId_7_0,
 						"org.integratedmodelling.kdl.Kdl.UPPERCASE_ID");
 				}
 			)
@@ -4066,20 +4085,37 @@ ruleKeyValuePair returns [EObject current=null]
 	(
 		(
 			(
-				lv_name_0_0=RULE_LOWERCASE_ID
-				{
-					newLeafNode(lv_name_0_0, grammarAccess.getKeyValuePairAccess().getNameLOWERCASE_IDTerminalRuleCall_0_0());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getKeyValuePairRule());
+				(
+					lv_name_0_1=RULE_LOWERCASE_ID
+					{
+						newLeafNode(lv_name_0_1, grammarAccess.getKeyValuePairAccess().getNameLOWERCASE_IDTerminalRuleCall_0_0_0());
 					}
-					setWithLastConsumed(
-						$current,
-						"name",
-						lv_name_0_0,
-						"org.integratedmodelling.kdl.Kdl.LOWERCASE_ID");
-				}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getKeyValuePairRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"name",
+							lv_name_0_1,
+							"org.integratedmodelling.kdl.Kdl.LOWERCASE_ID");
+					}
+					    |
+					lv_name_0_2=RULE_LOWERCASE_DASHID
+					{
+						newLeafNode(lv_name_0_2, grammarAccess.getKeyValuePairAccess().getNameLOWERCASE_DASHIDTerminalRuleCall_0_0_1());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getKeyValuePairRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"name",
+							lv_name_0_2,
+							"org.integratedmodelling.kdl.Kdl.LOWERCASE_DASHID");
+					}
+				)
 			)
 		)
 		(

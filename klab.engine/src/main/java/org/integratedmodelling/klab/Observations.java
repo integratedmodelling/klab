@@ -134,7 +134,7 @@ public enum Observations implements IObservationService {
 		ret.setMean(statistics.getMean());
 		ret.setVariance(statistics.getVariance());
 		ret.setStandardDeviation(statistics.getStandardDeviation());
-		
+
 		if (ret.getNodataPercentage() > 0) {
 			Builder histogram = Histogram.builder(statistics.getMin(), statistics.getMax(),
 					state.getDataKey() == null ? 10 : state.getDataKey().size());
@@ -174,20 +174,19 @@ public enum Observations implements IObservationService {
 		ObservationReference ret = new ObservationReference();
 
 		ret.setEmpty(observation.isEmpty());
-		
+
 		if (observation instanceof ISubject) {
-			ret.setObservationType(org.integratedmodelling.klab.rest.ObservationReference.ObservationType.SUBJECT);
+			ret.setObservationType(ObservationReference.ObservationType.SUBJECT);
 		} else if (observation instanceof IState) {
-			ret.setObservationType(org.integratedmodelling.klab.rest.ObservationReference.ObservationType.STATE);
+			ret.setObservationType(ObservationReference.ObservationType.STATE);
 		} else if (observation instanceof IProcess) {
-			ret.setObservationType(org.integratedmodelling.klab.rest.ObservationReference.ObservationType.PROCESS);
+			ret.setObservationType(ObservationReference.ObservationType.PROCESS);
 		} else if (observation instanceof IEvent) {
-			ret.setObservationType(org.integratedmodelling.klab.rest.ObservationReference.ObservationType.EVENT);
+			ret.setObservationType(ObservationReference.ObservationType.EVENT);
 		} else if (observation instanceof IConfiguration) {
-			ret.setObservationType(
-					org.integratedmodelling.klab.rest.ObservationReference.ObservationType.CONFIGURATION);
+			ret.setObservationType(ObservationReference.ObservationType.CONFIGURATION);
 		} else if (observation instanceof IRelationship) {
-			ret.setObservationType(org.integratedmodelling.klab.rest.ObservationReference.ObservationType.RELATIONSHIP);
+			ret.setObservationType(ObservationReference.ObservationType.RELATIONSHIP);
 		}
 
 		if (locator != null) {
@@ -214,7 +213,7 @@ public enum Observations implements IObservationService {
 			 * the same geometry as their parents.
 			 */
 			if (observation instanceof IDirectObservation) {
-				String shape = ((Shape)space.getShape()).getJTSGeometry().toString();
+				String shape = ((Shape) space.getShape()).getJTSGeometry().toString();
 				ret.setEncodedShape(shape);
 				ret.setSpatialProjection(space.getProjection().getSimpleSRS());
 				ret.setShapeType(space.getShape().getGeometryType());
@@ -224,7 +223,7 @@ public enum Observations implements IObservationService {
 			if (observation instanceof IState && space.isRegular() && space.size() > 1) {
 				gtype = GeometryType.RASTER;
 			}
-			
+
 			ret.getGeometryTypes().add(gtype);
 		}
 
@@ -234,7 +233,7 @@ public enum Observations implements IObservationService {
 				ret.getMetadata().put(key, value.toString());
 			}
 		}
-		
+
 		if (time != null) {
 			// TODO
 		}

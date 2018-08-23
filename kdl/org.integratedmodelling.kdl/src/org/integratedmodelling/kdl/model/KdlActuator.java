@@ -128,9 +128,9 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 //        this.newObservationUrn = node.getText();
 //      }
 
-      for (Computation computation : o.getBody().getComputations()) {
+      if (o.getBody().getComputations() != null) {
         KdlComputation kc = new KdlComputation();
-        for (Function ctx : computation.getFunctions()) {
+        for (Function ctx : o.getBody().getComputations().getFunctions()) {
           kc.add(new KdlContextualizer(ctx));
         }
         this.computations.add(kc);

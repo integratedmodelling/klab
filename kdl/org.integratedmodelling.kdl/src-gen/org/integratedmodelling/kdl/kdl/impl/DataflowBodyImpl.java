@@ -87,14 +87,14 @@ public class DataflowBodyImpl extends MinimalEObjectImpl.Container implements Da
   protected Unit units;
 
   /**
-   * The cached value of the '{@link #getComputations() <em>Computations</em>}' containment reference list.
+   * The cached value of the '{@link #getComputations() <em>Computations</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see #getComputations()
    * @generated
    * @ordered
    */
-  protected EList<Computation> computations;
+  protected Computation computations;
 
   /**
    * The cached value of the '{@link #getMetadata() <em>Metadata</em>}' containment reference.
@@ -237,13 +237,47 @@ public class DataflowBodyImpl extends MinimalEObjectImpl.Container implements Da
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<Computation> getComputations()
+  public Computation getComputations()
   {
-    if (computations == null)
-    {
-      computations = new EObjectContainmentEList<Computation>(Computation.class, this, KdlPackage.DATAFLOW_BODY__COMPUTATIONS);
-    }
     return computations;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetComputations(Computation newComputations, NotificationChain msgs)
+  {
+    Computation oldComputations = computations;
+    computations = newComputations;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KdlPackage.DATAFLOW_BODY__COMPUTATIONS, oldComputations, newComputations);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setComputations(Computation newComputations)
+  {
+    if (newComputations != computations)
+    {
+      NotificationChain msgs = null;
+      if (computations != null)
+        msgs = ((InternalEObject)computations).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KdlPackage.DATAFLOW_BODY__COMPUTATIONS, null, msgs);
+      if (newComputations != null)
+        msgs = ((InternalEObject)newComputations).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KdlPackage.DATAFLOW_BODY__COMPUTATIONS, null, msgs);
+      msgs = basicSetComputations(newComputations, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.DATAFLOW_BODY__COMPUTATIONS, newComputations, newComputations));
   }
 
   /**
@@ -332,7 +366,7 @@ public class DataflowBodyImpl extends MinimalEObjectImpl.Container implements Da
       case KdlPackage.DATAFLOW_BODY__UNITS:
         return basicSetUnits(null, msgs);
       case KdlPackage.DATAFLOW_BODY__COMPUTATIONS:
-        return ((InternalEList<?>)getComputations()).basicRemove(otherEnd, msgs);
+        return basicSetComputations(null, msgs);
       case KdlPackage.DATAFLOW_BODY__METADATA:
         return basicSetMetadata(null, msgs);
     }
@@ -387,8 +421,7 @@ public class DataflowBodyImpl extends MinimalEObjectImpl.Container implements Da
         setUnits((Unit)newValue);
         return;
       case KdlPackage.DATAFLOW_BODY__COMPUTATIONS:
-        getComputations().clear();
-        getComputations().addAll((Collection<? extends Computation>)newValue);
+        setComputations((Computation)newValue);
         return;
       case KdlPackage.DATAFLOW_BODY__METADATA:
         setMetadata((Metadata)newValue);
@@ -420,7 +453,7 @@ public class DataflowBodyImpl extends MinimalEObjectImpl.Container implements Da
         setUnits((Unit)null);
         return;
       case KdlPackage.DATAFLOW_BODY__COMPUTATIONS:
-        getComputations().clear();
+        setComputations((Computation)null);
         return;
       case KdlPackage.DATAFLOW_BODY__METADATA:
         setMetadata((Metadata)null);
@@ -449,7 +482,7 @@ public class DataflowBodyImpl extends MinimalEObjectImpl.Container implements Da
       case KdlPackage.DATAFLOW_BODY__UNITS:
         return units != null;
       case KdlPackage.DATAFLOW_BODY__COMPUTATIONS:
-        return computations != null && !computations.isEmpty();
+        return computations != null;
       case KdlPackage.DATAFLOW_BODY__METADATA:
         return metadata != null;
       case KdlPackage.DATAFLOW_BODY__JAVA_CLASS:

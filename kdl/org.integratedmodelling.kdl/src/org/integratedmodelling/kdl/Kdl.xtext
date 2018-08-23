@@ -51,7 +51,7 @@ DataflowBody:
 	(dataflows+=ActorDefinition*)
 	(('geometry' geometry=Geometry)? &
 	('units' units=Unit)? &
-	(computations+=Computation*) &
+	(computations=Computation)? &
 	('metadata' metadata=Metadata)?
 	('class' javaClass=JavaClass)?);
 Computation:
@@ -113,7 +113,9 @@ Value:
 	urn=Urn | 
 	list=List |
 	map=Map | 
-	table=LookupTable | enumId=UPPERCASE_ID;
+	expression=EXPR |
+	table=LookupTable | 
+	enumId=UPPERCASE_ID;
 Urn:
 // String used when there are strange chars or keywords in the URN.
 	name=(UrnId | STRING | LocalFilePath);
@@ -170,7 +172,7 @@ LocalFilePath:
 	(CAMELCASE_ID | LOWERCASE_ID | LOWERCASE_DASHID) ('/' (CAMELCASE_ID | LOWERCASE_ID | LOWERCASE_DASHID))* ('.'
 	LOWERCASE_ID)? ('#' LOWERCASE_ID)?;
 KeyValuePair:
-	name=LOWERCASE_ID (interactive?='=?' | '=') value=Value;
+	name=(LOWERCASE_ID|LOWERCASE_DASHID) (interactive?='=?' | '=') value=Value;
 Function:
 	(mediated=LOWERCASE_ID '>>')?
 	((name=PathName '(' (parameters=ParameterList)? ')') | urn=Urn | value=Literal) ('as'

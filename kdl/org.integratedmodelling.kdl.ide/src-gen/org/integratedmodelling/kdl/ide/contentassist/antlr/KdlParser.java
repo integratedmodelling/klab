@@ -64,6 +64,7 @@ public class KdlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getTableClassifierAccess().getAlternatives_1_4(), "rule__TableClassifier__Alternatives_1_4");
 					put(grammarAccess.getLocalFilePathAccess().getAlternatives_0(), "rule__LocalFilePath__Alternatives_0");
 					put(grammarAccess.getLocalFilePathAccess().getAlternatives_1_1(), "rule__LocalFilePath__Alternatives_1_1");
+					put(grammarAccess.getKeyValuePairAccess().getNameAlternatives_0_0(), "rule__KeyValuePair__NameAlternatives_0_0");
 					put(grammarAccess.getKeyValuePairAccess().getAlternatives_1(), "rule__KeyValuePair__Alternatives_1");
 					put(grammarAccess.getFunctionAccess().getAlternatives(), "rule__Function__Alternatives");
 					put(grammarAccess.getFunctionAccess().getAlternatives_0_1(), "rule__Function__Alternatives_0_1");
@@ -284,8 +285,9 @@ public class KdlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getValueAccess().getUrnAssignment_2(), "rule__Value__UrnAssignment_2");
 					put(grammarAccess.getValueAccess().getListAssignment_3(), "rule__Value__ListAssignment_3");
 					put(grammarAccess.getValueAccess().getMapAssignment_4(), "rule__Value__MapAssignment_4");
-					put(grammarAccess.getValueAccess().getTableAssignment_5(), "rule__Value__TableAssignment_5");
-					put(grammarAccess.getValueAccess().getEnumIdAssignment_6(), "rule__Value__EnumIdAssignment_6");
+					put(grammarAccess.getValueAccess().getExpressionAssignment_5(), "rule__Value__ExpressionAssignment_5");
+					put(grammarAccess.getValueAccess().getTableAssignment_6(), "rule__Value__TableAssignment_6");
+					put(grammarAccess.getValueAccess().getEnumIdAssignment_7(), "rule__Value__EnumIdAssignment_7");
 					put(grammarAccess.getUrnAccess().getNameAssignment(), "rule__Urn__NameAssignment");
 					put(grammarAccess.getMapAccess().getEntriesAssignment_2_0(), "rule__Map__EntriesAssignment_2_0");
 					put(grammarAccess.getMapAccess().getEntriesAssignment_2_1_1(), "rule__Map__EntriesAssignment_2_1_1");

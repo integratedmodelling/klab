@@ -9,8 +9,9 @@ import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
+import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 
-public class ObservationReference {
+public class ObservationReference implements IObservationReference {
 
 	public enum ObservationType {
 		PROCESS, STATE, SUBJECT, CONFIGURATION, EVENT, RELATIONSHIP
@@ -194,6 +195,10 @@ public class ObservationReference {
 	 */
 	private long valueCount;
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getId()
+	 */
+	@Override
 	public String getId() {
 		return id;
 	}
@@ -202,6 +207,10 @@ public class ObservationReference {
 		this.id = id;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getLabel()
+	 */
+	@Override
 	public String getLabel() {
 		return label;
 	}
@@ -210,6 +219,10 @@ public class ObservationReference {
 		this.label = label;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getLiteralValue()
+	 */
+	@Override
 	public String getLiteralValue() {
 		return literalValue;
 	}
@@ -218,6 +231,10 @@ public class ObservationReference {
 		this.literalValue = literalValue;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getParentId()
+	 */
+	@Override
 	public String getParentId() {
 		return parentId;
 	}
@@ -226,6 +243,10 @@ public class ObservationReference {
 		this.parentId = parentId;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getStructure()
+	 */
+	@Override
 	public List<Connection> getStructure() {
 		return structure;
 	}
@@ -234,6 +255,10 @@ public class ObservationReference {
 		this.structure = structure;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getValueType()
+	 */
+	@Override
 	public ValueType getValueType() {
 		return valueType;
 	}
@@ -242,6 +267,10 @@ public class ObservationReference {
 		this.valueType = valueType;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getNodataPercentage()
+	 */
+	@Override
 	public double getNodataPercentage() {
 		return nodataPercentage;
 	}
@@ -250,6 +279,10 @@ public class ObservationReference {
 		this.nodataPercentage = nodataPercentage;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getMinValue()
+	 */
+	@Override
 	public double getMinValue() {
 		return minValue;
 	}
@@ -258,6 +291,10 @@ public class ObservationReference {
 		this.minValue = minValue;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getMaxValue()
+	 */
+	@Override
 	public double getMaxValue() {
 		return maxValue;
 	}
@@ -266,6 +303,10 @@ public class ObservationReference {
 		this.maxValue = maxValue;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getContextTime()
+	 */
+	@Override
 	public long getContextTime() {
 		return contextTime;
 	}
@@ -274,6 +315,10 @@ public class ObservationReference {
 		this.contextTime = contextTime;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getGeometryTypes()
+	 */
+	@Override
 	public Set<GeometryType> getGeometryTypes() {
 		return geometryTypes;
 	}
@@ -282,6 +327,10 @@ public class ObservationReference {
 		this.geometryTypes = geometryTypes;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getTraits()
+	 */
+	@Override
 	public List<String> getTraits() {
 		return traits;
 	}
@@ -290,6 +339,10 @@ public class ObservationReference {
 		this.traits = traits;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getRoles()
+	 */
+	@Override
 	public List<String> getRoles() {
 		return roles;
 	}
@@ -298,6 +351,10 @@ public class ObservationReference {
 		this.roles = roles;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getObservableType()
+	 */
+	@Override
 	public IKimConcept.Type getObservableType() {
 		return observableType;
 	}
@@ -306,6 +363,10 @@ public class ObservationReference {
 		this.observableType = observableType;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getShapeType()
+	 */
+	@Override
 	public IShape.Type getShapeType() {
 		return shapeType;
 	}
@@ -314,6 +375,10 @@ public class ObservationReference {
 		this.shapeType = shapeType;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getSiblingCount()
+	 */
+	@Override
 	public int getSiblingCount() {
 		return siblingCount;
 	}
@@ -326,10 +391,18 @@ public class ObservationReference {
 		this.urn = urn;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getUrn()
+	 */
+	@Override
 	public String getUrn() {
 		return this.urn;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getObservable()
+	 */
+	@Override
 	public String getObservable() {
 		return observable;
 	}
@@ -338,16 +411,18 @@ public class ObservationReference {
 		this.observable = observable;
 	}
 
-	/**
-	 * If {@link #getShapeType()} returns anything other than VOID, this will return
-	 * a string-codified shape (WKT or WKB).
-	 * 
-	 * @return the codified shape
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getEncodedShape()
 	 */
+	@Override
 	public String getEncodedShape() {
 		return encodedShape;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getSpatialProjection()
+	 */
+	@Override
 	public String getSpatialProjection() {
 		return spatialProjection;
 	}
@@ -360,6 +435,10 @@ public class ObservationReference {
 		this.encodedShape = encodedShape;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getFolderId()
+	 */
+	@Override
 	public String getFolderId() {
 		return folderId;
 	}
@@ -368,6 +447,10 @@ public class ObservationReference {
 		this.folderId = folderId;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getFolderLabel()
+	 */
+	@Override
 	public String getFolderLabel() {
 		return folderLabel;
 	}
@@ -376,6 +459,10 @@ public class ObservationReference {
 		this.folderLabel = folderLabel;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getChildren()
+	 */
+	@Override
 	public List<ObservationReference> getChildren() {
 		return children;
 	}
@@ -384,6 +471,10 @@ public class ObservationReference {
 		this.children = children;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getMetadata()
+	 */
+	@Override
 	public Map<String, String> getMetadata() {
 		return metadata;
 	}
@@ -392,6 +483,10 @@ public class ObservationReference {
 		this.metadata = metadata;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getSiblings()
+	 */
+	@Override
 	public List<ObservationReference> getSiblings() {
 		return siblings;
 	}
@@ -400,6 +495,10 @@ public class ObservationReference {
 		this.siblings = siblings;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getSemantics()
+	 */
+	@Override
 	public Set<IKimConcept.Type> getSemantics() {
 		return semantics;
 	}
@@ -408,6 +507,10 @@ public class ObservationReference {
 		this.semantics = semantics;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getObservationType()
+	 */
+	@Override
 	public ObservationType getObservationType() {
 		return observationType;
 	}
@@ -426,6 +529,10 @@ public class ObservationReference {
 		this.valueCount = size;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getValueCount()
+	 */
+	@Override
 	public long getValueCount() {
 		return this.valueCount;
 	}
@@ -437,11 +544,15 @@ public class ObservationReference {
 	 * @param taskId
 	 * @return
 	 */
-	public ObservationReference withTaskId(String taskId) {
+	public IObservationReference withTaskId(String taskId) {
 		this.setTaskId(taskId);
 		return this;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getTaskId()
+	 */
+	@Override
 	public String getTaskId() {
 		return taskId;
 	}
@@ -450,6 +561,10 @@ public class ObservationReference {
 		this.taskId = taskId;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#getActions()
+	 */
+	@Override
 	public List<ActionReference> getActions() {
 		return actions;
 	}
@@ -458,6 +573,10 @@ public class ObservationReference {
 		this.actions = actions;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IObservationReference#isEmpty()
+	 */
+	@Override
 	public boolean isEmpty() {
 		return empty;
 	}

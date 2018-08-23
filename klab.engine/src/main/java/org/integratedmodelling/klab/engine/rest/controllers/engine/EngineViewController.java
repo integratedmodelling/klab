@@ -20,8 +20,10 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.rest.ObservationReference;
+import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.springframework.http.MediaType;
@@ -54,7 +56,7 @@ public class EngineViewController {
 	 */
 	@RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.DESCRIBE_OBSERVATION, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public ObservationReference describeObservation(Principal principal, @PathVariable String observation,
+	public IObservationReference describeObservation(Principal principal, @PathVariable String observation,
 			@RequestParam(required = false) Integer childLevel, @RequestParam(required = false) String locator) {
 
 		ISession session = EngineSessionController.getSession(principal);
@@ -95,7 +97,7 @@ public class EngineViewController {
 	 */
 	@RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.GET_SIBLINGS_OBSERVATION, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public ObservationReference getObservationSiblings(Principal principal, @PathVariable String observation,
+	public IObservationReference getObservationSiblings(Principal principal, @PathVariable String observation,
 			@RequestParam(required = false) Integer offset, @RequestParam(required = false) Integer count,
 			@RequestParam(required = false) Integer childLevel, @RequestParam(required = false) String locator) {
 
@@ -103,7 +105,7 @@ public class EngineViewController {
 		IObservation obs = session.getObservation(observation);
 		ILocator loc = ITime.INITIALIZATION; // TODO parse locator
 
-		ObservationReference ret = null;
+		IObservationReference ret = null;
 
 		if (offset != null || count != null) {
 			if (offset == null) {
@@ -156,7 +158,7 @@ public class EngineViewController {
 
 		if (obs instanceof IState) {
 
-			if (format == ObservationReference.GeometryType.RASTER) {
+			if (format == GeometryType.RASTER) {
 				BufferedImage image = Renderer.INSTANCE.render((IState) obs, timeLocator,
 						NumberUtils.intArrayFromString(viewport == null ? "800,800" : viewport));
 				ByteArrayOutputStream os = new ByteArrayOutputStream();

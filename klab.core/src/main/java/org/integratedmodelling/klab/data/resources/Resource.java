@@ -110,7 +110,7 @@ public class Resource implements IResource {
 		for (String key : reference.getMetadata().keySet()) {
 			this.metadata.put(key, Utils.asPOD(reference.getParameters().get(key)));
 		}
-		for (Notification notification : reference.getNotifications()) {
+		for (org.integratedmodelling.klab.api.runtime.rest.INotification notification : reference.getNotifications()) {
 			this.notifications.add(new KimNotification(notification.getMessage(), Level.parse(notification.getLevel()),
 					notification.getTimestamp()));
 		}

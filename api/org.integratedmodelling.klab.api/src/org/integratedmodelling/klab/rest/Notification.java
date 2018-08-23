@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.rest;
 
-public class Notification {
+import org.integratedmodelling.klab.api.runtime.rest.INotification;
+
+public class Notification implements INotification {
 
 	private String level;
 	private long timestamp;
@@ -14,18 +16,30 @@ public class Notification {
 		this.timestamp = timestamp2;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.INotification#getLevel()
+	 */
+	@Override
 	public String getLevel() {
 		return level;
 	}
 	public void setLevel(String level) {
 		this.level = level;
 	}
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.INotification#getTimestamp()
+	 */
+	@Override
 	public long getTimestamp() {
 		return timestamp;
 	}
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
 	}
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.INotification#getMessage()
+	 */
+	@Override
 	public String getMessage() {
 		return message;
 	}

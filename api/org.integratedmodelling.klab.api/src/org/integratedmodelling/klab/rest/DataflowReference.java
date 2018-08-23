@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.rest;
 
-public class DataflowReference {
+import org.integratedmodelling.klab.api.runtime.rest.IDataflowReference;
+
+public class DataflowReference implements IDataflowReference {
 	
 	private String taskId;
 	private String kdlCode;
@@ -12,12 +14,20 @@ public class DataflowReference {
 		this.kdlCode = kdlCode;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IDataflowReference#getTaskId()
+	 */
+	@Override
 	public String getTaskId() {
 		return taskId;
 	}
 	public void setTaskId(String taskId) {
 		this.taskId = taskId;
 	}
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.IDataflowReference#getKdlCode()
+	 */
+	@Override
 	public String getKdlCode() {
 		return kdlCode;
 	}

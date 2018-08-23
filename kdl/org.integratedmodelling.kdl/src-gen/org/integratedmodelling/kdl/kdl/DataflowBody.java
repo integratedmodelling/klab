@@ -99,20 +99,30 @@ public interface DataflowBody extends EObject
   void setUnits(Unit value);
 
   /**
-   * Returns the value of the '<em><b>Computations</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kdl.kdl.Computation}.
+   * Returns the value of the '<em><b>Computations</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Computations</em>' containment reference list isn't clear,
+   * If the meaning of the '<em>Computations</em>' containment reference isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Computations</em>' containment reference list.
+   * @return the value of the '<em>Computations</em>' containment reference.
+   * @see #setComputations(Computation)
    * @see org.integratedmodelling.kdl.kdl.KdlPackage#getDataflowBody_Computations()
    * @model containment="true"
    * @generated
    */
-  EList<Computation> getComputations();
+  Computation getComputations();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.DataflowBody#getComputations <em>Computations</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Computations</em>' containment reference.
+   * @see #getComputations()
+   * @generated
+   */
+  void setComputations(Computation value);
 
   /**
    * Returns the value of the '<em><b>Metadata</b></em>' containment reference.

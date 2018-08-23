@@ -1,9 +1,12 @@
 package org.integratedmodelling.klab.rest;
 
-public class TaskReference {
+import org.integratedmodelling.klab.api.runtime.rest.ITaskReference;
+
+public class TaskReference implements ITaskReference {
 
 	private String id;
 	private String parentId;
+	private String contextId;
 	private String urn;
 	private String description;
 	private String error;
@@ -20,6 +23,10 @@ public class TaskReference {
 	}
 	
 	// TODO provenance info - agent, cause etc
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.ITaskReference#getId()
+	 */
+	@Override
 	public String getId() {
 		return id;
 	}
@@ -28,6 +35,10 @@ public class TaskReference {
 		this.id = id;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.ITaskReference#getParentId()
+	 */
+	@Override
 	public String getParentId() {
 		return parentId;
 	}
@@ -36,6 +47,10 @@ public class TaskReference {
 		this.parentId = parentId;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.ITaskReference#getUrn()
+	 */
+	@Override
 	public String getUrn() {
 		return urn;
 	}
@@ -44,6 +59,10 @@ public class TaskReference {
 		this.urn = urn;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.ITaskReference#getDescription()
+	 */
+	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -52,6 +71,10 @@ public class TaskReference {
 		this.description = description;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.integratedmodelling.klab.rest.ITaskReference#getError()
+	 */
+	@Override
 	public String getError() {
 		return error;
 	}
@@ -64,5 +87,14 @@ public class TaskReference {
     public String toString() {
         return "TaskReference [id=" + id + ", description=" + description + "]";
     }
+
+    @Override
+	public String getContextId() {
+		return contextId;
+	}
+
+	public void setContextId(String contextId) {
+		this.contextId = contextId;
+	}
 
 }

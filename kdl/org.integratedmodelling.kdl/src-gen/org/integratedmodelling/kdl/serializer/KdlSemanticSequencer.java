@@ -243,7 +243,7 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     DataflowBody returns DataflowBody
 	 *
 	 * Constraint:
-	 *     (dataflows+=ActorDefinition* (geometry=Geometry | units=Unit | computations+=Computation | metadata=Metadata | javaClass=JavaClass)*)
+	 *     (dataflows+=ActorDefinition* (geometry=Geometry | units=Unit | computations=Computation | metadata=Metadata | javaClass=JavaClass)*)
 	 */
 	protected void sequence_DataflowBody(ISerializationContext context, DataflowBody semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -270,7 +270,7 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     KeyValuePair returns KeyValuePair
 	 *
 	 * Constraint:
-	 *     (name=LOWERCASE_ID interactive?='=?'? value=Value)
+	 *     ((name=LOWERCASE_ID | name=LOWERCASE_DASHID) interactive?='=?'? value=Value)
 	 */
 	protected void sequence_KeyValuePair(ISerializationContext context, KeyValuePair semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -572,6 +572,7 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *         urn=Urn | 
 	 *         list=List | 
 	 *         map=Map | 
+	 *         expression=EXPR | 
 	 *         table=LookupTable | 
 	 *         enumId=UPPERCASE_ID
 	 *     )

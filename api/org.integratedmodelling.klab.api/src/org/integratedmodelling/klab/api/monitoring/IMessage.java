@@ -24,6 +24,11 @@ public interface IMessage {
 		Void,
 
 		/**
+		 * Used only within a UI for communicating things to react to.
+		 */
+		UserInterface,
+		
+		/**
 		 * 
 		 */
 		UserContextChange,
@@ -109,6 +114,12 @@ public interface IMessage {
 		 */
 		ResetContext,
 
+		/*
+		 * Messages with class UserInterface, local to the UI and not marshalled across
+		 * websockets.
+		 */
+		HistoryChanged, FocusChanged, Notification,
+		
 		/**
 		 * B->F: notification for projects in user workspace when they are opened.UIs
 		 * may not be aware of them and want to offer to import them. The backend does

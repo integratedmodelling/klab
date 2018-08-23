@@ -34,6 +34,7 @@ import org.integratedmodelling.kdl.kdl.Value;
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ValueImpl#getUrn <em>Urn</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ValueImpl#getList <em>List</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ValueImpl#getMap <em>Map</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ValueImpl#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ValueImpl#getTable <em>Table</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ValueImpl#getEnumId <em>Enum Id</em>}</li>
  * </ul>
@@ -91,6 +92,26 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @ordered
    */
   protected Map map;
+
+  /**
+   * The default value of the '{@link #getExpression() <em>Expression</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getExpression()
+   * @generated
+   * @ordered
+   */
+  protected static final String EXPRESSION_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getExpression() <em>Expression</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getExpression()
+   * @generated
+   * @ordered
+   */
+  protected String expression = EXPRESSION_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getTable() <em>Table</em>}' containment reference.
@@ -388,6 +409,29 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getExpression()
+  {
+    return expression;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setExpression(String newExpression)
+  {
+    String oldExpression = expression;
+    expression = newExpression;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.VALUE__EXPRESSION, oldExpression, expression));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public LookupTable getTable()
   {
     return table;
@@ -500,6 +544,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return getList();
       case KdlPackage.VALUE__MAP:
         return getMap();
+      case KdlPackage.VALUE__EXPRESSION:
+        return getExpression();
       case KdlPackage.VALUE__TABLE:
         return getTable();
       case KdlPackage.VALUE__ENUM_ID:
@@ -532,6 +578,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return;
       case KdlPackage.VALUE__MAP:
         setMap((Map)newValue);
+        return;
+      case KdlPackage.VALUE__EXPRESSION:
+        setExpression((String)newValue);
         return;
       case KdlPackage.VALUE__TABLE:
         setTable((LookupTable)newValue);
@@ -568,6 +617,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KdlPackage.VALUE__MAP:
         setMap((Map)null);
         return;
+      case KdlPackage.VALUE__EXPRESSION:
+        setExpression(EXPRESSION_EDEFAULT);
+        return;
       case KdlPackage.VALUE__TABLE:
         setTable((LookupTable)null);
         return;
@@ -598,6 +650,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return list != null;
       case KdlPackage.VALUE__MAP:
         return map != null;
+      case KdlPackage.VALUE__EXPRESSION:
+        return EXPRESSION_EDEFAULT == null ? expression != null : !EXPRESSION_EDEFAULT.equals(expression);
       case KdlPackage.VALUE__TABLE:
         return table != null;
       case KdlPackage.VALUE__ENUM_ID:
@@ -617,7 +671,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (enumId: ");
+    result.append(" (expression: ");
+    result.append(expression);
+    result.append(", enumId: ");
     result.append(enumId);
     result.append(')');
     return result.toString();

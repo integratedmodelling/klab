@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Level;
 
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
@@ -18,10 +19,14 @@ import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.EObserver;
+import org.integratedmodelling.klab.ide.navigator.model.beans.DisplayPriority;
+import org.integratedmodelling.klab.ide.navigator.model.beans.EDataflowReference;
+import org.integratedmodelling.klab.ide.navigator.model.beans.ENotification;
+import org.integratedmodelling.klab.ide.navigator.model.beans.EObservationReference;
+import org.integratedmodelling.klab.ide.navigator.model.beans.ERuntimeObject;
 import org.integratedmodelling.klab.ide.navigator.model.beans.ETaskReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.DataflowReference;
-import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationRequest;
 import org.integratedmodelling.klab.rest.ResourceImportRequest;
@@ -50,17 +55,18 @@ public class KlabSession extends KlabPeer {
 	 * runtime view. Maintains chronological order both in the task map and the task
 	 * catalog.
 	 */
-	private Map<String, Map<String, ETaskReference>> taskCatalog = Collections.synchronizedMap(new LinkedHashMap<>());
-	
+	private Map<String, ETaskReference> taskCatalog = Collections.synchronizedMap(new LinkedHashMap<>());
+
 	/*
-	 * All observation seen 
+	 * All observation seen
 	 */
-	private Map<String, ObservationReference> observationCatalog = Collections.synchronizedMap(new LinkedHashMap<>());
+	private Map<String, EObservationReference> observationCatalog = Collections.synchronizedMap(new LinkedHashMap<>());
 
 	/*
 	 * All notifications not linked to a task
 	 */
-	private List<Notification> systemNotifications = new ArrayList<>();
+	private List<ENotification> systemNotifications = Collections.synchronizedList(new ArrayList<>());
+
 	/*
 	 * Current context in UI or null
 	 */
@@ -71,6 +77,8 @@ public class KlabSession extends KlabPeer {
 	 */
 	private List<String> contexts = Collections.synchronizedList(new LinkedList<>());
 
+	private ETaskReference contextTask;
+
 	public KlabSession(String sessionId) {
 		super(Sender.SESSION, sessionId);
 	}
@@ -80,11 +88,39 @@ public class KlabSession extends KlabPeer {
 	 */
 
 	/**
+	 * Build a list describing the entire known history of the session, honoring
+	 * chosen display priority and options. The first-level objects will always be
+	 * root contexts, most recently created first.
+	 * 
+	 * @param priority
+	 * @return the session history
+	 */
+	public List<ERuntimeObject> getSessionHistory(DisplayPriority priority) {
+		List<ERuntimeObject> ret = new ArrayList<>();
+		if (contextTask != null) {
+			ret.add(contextTask);
+		}
+		for (String ctx : contexts) {
+			ret.add(observationCatalog.get(ctx));
+		}
+		return ret;
+	}
+
+	/**
+	 * ID of the current root context, or null if none is set.
+	 * 
+	 * @return
+	 */
+	public String getCurrentContextId() {
+		return currentContextId;
+	}
+
+	/**
 	 * The latest observation made, or the one set by the user.
 	 * 
 	 * @return
 	 */
-	public ObservationReference getCurrentContext() {
+	public EObservationReference getCurrentContext() {
 		return currentContextId == null ? null : observationCatalog.get(currentContextId);
 	}
 
@@ -94,8 +130,8 @@ public class KlabSession extends KlabPeer {
 	 * 
 	 * @return
 	 */
-	public List<ObservationReference> getContexts() {
-		List<ObservationReference> ret = new ArrayList<>();
+	public List<EObservationReference> getContexts() {
+		List<EObservationReference> ret = new ArrayList<>();
 		for (String id : contexts) {
 			ret.add(observationCatalog.get(id));
 		}
@@ -107,25 +143,95 @@ public class KlabSession extends KlabPeer {
 	 */
 
 	void recordNotification(String notification, String identity, Type type) {
-		// TODO Auto-generated method stub
-	    System.out.println("NOTIFICATION [" + identity + ", " + type + "]: " + notification);
+		ETaskReference parent = null;
+		if (taskCatalog.containsKey(identity)) {
+			parent = taskCatalog.get(identity);
+		}
+		
+		ENotification enote = new ENotification();
+		enote.setMessage(notification);
+		switch (type) {
+		case Debug:
+			enote.setLevel(Level.FINE.getName());
+			break;
+		case Error:
+			enote.setLevel(Level.SEVERE.getName());
+			break;
+		case Info:
+			enote.setLevel(Level.INFO.getName());
+			break;
+		case Warning:
+			enote.setLevel(Level.WARNING.getName());
+			break;
+		default:
+			break;
+		}
+		
+		enote.setParent(parent);
+		if (parent != null) {
+			parent.addNotification(enote);
+		}
+		
+		if (parent != null) {
+			send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, enote);
+		} else {
+			systemNotifications.add(enote);
+			send(IMessage.MessageClass.UserInterface, IMessage.Type.Notification, enote);
+		}
 	}
 
-	private void recordTask(TaskReference task, Type taskstarted) {
-	    System.out.println("TASK " + task.getId() + " " + taskstarted);
+	private void recordTask(TaskReference task, Type event) {
+		
+		ETaskReference etask = null;
+		EObservationReference context = null;
+		if (task.getContextId() != null) {
+			context = observationCatalog.get(task.getContextId());
+		}
+		if (event == Type.TaskStarted) {
+			etask = new ETaskReference(task, null);
+			taskCatalog.put(task.getId(), etask);
+			if (task.getContextId() == null) {
+				this.contextTask = etask;
+			}
+		} else {
+			etask = taskCatalog.get(task.getId());
+			if (this.contextTask != null && this.contextTask.getId().equals(task.getId())) {
+				if (context != null) {
+					context.setCreator(etask);
+				}
+				// if aborted just remove; if finished, put under its context
+				this.contextTask = null;
+			}
+		}
+		etask.setStatus(event);
+		send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, etask);
 	}
 
 	private void recordObservation(ObservationReference observation) {
-	    
-	    boolean isctx = false;
+
+		this.currentContextId = observation.getId();
+		EObservationReference parent = null;
+		if (observation.getParentId() != null) {
+			parent = observationCatalog.get(observation.getParentId());
+		}
+
+		EObservationReference obs = new EObservationReference(observation, parent);
+		if (observation.getTaskId() != null) {
+			ETaskReference task = taskCatalog.get(observation.getTaskId());
+			obs.setCreator(task);
+			task.addCreated(obs);
+		}
+
+		observationCatalog.put(observation.getId(), obs);
 		if (observation.getParentId() == null) {
-		    isctx = true;
-		    this.currentContextId = observation.getId();
-			observationCatalog.put(observation.getId(), observation);
+			this.currentContextId = observation.getId();
 			contexts.add(0, observation.getId());
 		}
-		
-		System.out.println((isctx ? "CONTEXT " : "") + "OBSERVATION " + observation.getLabel() + " from task " + observation.getTaskId());
+
+		send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, obs);
+		if (observation.getParentId() == null) {
+			send(IMessage.MessageClass.UserInterface, IMessage.Type.FocusChanged, obs);
+		}
 	}
 
 	/*
@@ -252,7 +358,16 @@ public class KlabSession extends KlabPeer {
 
 	@MessageHandler
 	public void handleDataflow(IMessage message, DataflowReference dataflow) {
+		ETaskReference task = taskCatalog.get(dataflow.getTaskId());
+		if (task != null) {
+			task.setDataflow(new EDataflowReference(dataflow, task));
+			send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, task);
+		}
 		send(message);
+	}
+
+	public List<ENotification> getSystemNotifications() {
+		return new ArrayList<>(systemNotifications);
 	}
 
 }

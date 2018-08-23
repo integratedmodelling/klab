@@ -787,11 +787,11 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//DataflowBody:
 		//	{DataflowBody} dataflows+=ActorDefinition* (('geometry' geometry=Geometry)? & ('units' units=Unit)? &
-		//	computations+=Computation* & ('metadata' metadata=Metadata)? ('class' javaClass=JavaClass)?);
+		//	computations=Computation? & ('metadata' metadata=Metadata)? ('class' javaClass=JavaClass)?);
 		@Override public ParserRule getRule() { return rule; }
 		
 		//{DataflowBody} dataflows+=ActorDefinition* (('geometry' geometry=Geometry)? & ('units' units=Unit)? &
-		//computations+=Computation* & ('metadata' metadata=Metadata)? ('class' javaClass=JavaClass)?)
+		//computations=Computation? & ('metadata' metadata=Metadata)? ('class' javaClass=JavaClass)?)
 		public Group getGroup() { return cGroup; }
 		
 		//{DataflowBody}
@@ -803,7 +803,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//ActorDefinition
 		public RuleCall getDataflowsActorDefinitionParserRuleCall_1_0() { return cDataflowsActorDefinitionParserRuleCall_1_0; }
 		
-		//('geometry' geometry=Geometry)? & ('units' units=Unit)? & computations+=Computation* & ('metadata' metadata=Metadata)?
+		//('geometry' geometry=Geometry)? & ('units' units=Unit)? & computations=Computation? & ('metadata' metadata=Metadata)?
 		//('class' javaClass=JavaClass)?
 		public UnorderedGroup getUnorderedGroup_2() { return cUnorderedGroup_2; }
 		
@@ -831,7 +831,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//Unit
 		public RuleCall getUnitsUnitParserRuleCall_2_1_1_0() { return cUnitsUnitParserRuleCall_2_1_1_0; }
 		
-		//computations+=Computation*
+		//computations=Computation?
 		public Assignment getComputationsAssignment_2_2() { return cComputationsAssignment_2_2; }
 		
 		//Computation
@@ -1673,17 +1673,20 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cListListParserRuleCall_3_0 = (RuleCall)cListAssignment_3.eContents().get(0);
 		private final Assignment cMapAssignment_4 = (Assignment)cAlternatives.eContents().get(4);
 		private final RuleCall cMapMapParserRuleCall_4_0 = (RuleCall)cMapAssignment_4.eContents().get(0);
-		private final Assignment cTableAssignment_5 = (Assignment)cAlternatives.eContents().get(5);
-		private final RuleCall cTableLookupTableParserRuleCall_5_0 = (RuleCall)cTableAssignment_5.eContents().get(0);
-		private final Assignment cEnumIdAssignment_6 = (Assignment)cAlternatives.eContents().get(6);
-		private final RuleCall cEnumIdUPPERCASE_IDTerminalRuleCall_6_0 = (RuleCall)cEnumIdAssignment_6.eContents().get(0);
+		private final Assignment cExpressionAssignment_5 = (Assignment)cAlternatives.eContents().get(5);
+		private final RuleCall cExpressionEXPRTerminalRuleCall_5_0 = (RuleCall)cExpressionAssignment_5.eContents().get(0);
+		private final Assignment cTableAssignment_6 = (Assignment)cAlternatives.eContents().get(6);
+		private final RuleCall cTableLookupTableParserRuleCall_6_0 = (RuleCall)cTableAssignment_6.eContents().get(0);
+		private final Assignment cEnumIdAssignment_7 = (Assignment)cAlternatives.eContents().get(7);
+		private final RuleCall cEnumIdUPPERCASE_IDTerminalRuleCall_7_0 = (RuleCall)cEnumIdAssignment_7.eContents().get(0);
 		
 		//Value:
-		//	literal=LiteralOrIdOrComma | function=Function | urn=Urn | list=List | map=Map | table=LookupTable |
-		//	enumId=UPPERCASE_ID;
+		//	literal=LiteralOrIdOrComma | function=Function | urn=Urn | list=List | map=Map | expression=EXPR | table=LookupTable
+		//	| enumId=UPPERCASE_ID;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//literal=LiteralOrIdOrComma | function=Function | urn=Urn | list=List | map=Map | table=LookupTable | enumId=UPPERCASE_ID
+		//literal=LiteralOrIdOrComma | function=Function | urn=Urn | list=List | map=Map | expression=EXPR | table=LookupTable |
+		//enumId=UPPERCASE_ID
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//literal=LiteralOrIdOrComma
@@ -1716,17 +1719,23 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//Map
 		public RuleCall getMapMapParserRuleCall_4_0() { return cMapMapParserRuleCall_4_0; }
 		
+		//expression=EXPR
+		public Assignment getExpressionAssignment_5() { return cExpressionAssignment_5; }
+		
+		//EXPR
+		public RuleCall getExpressionEXPRTerminalRuleCall_5_0() { return cExpressionEXPRTerminalRuleCall_5_0; }
+		
 		//table=LookupTable
-		public Assignment getTableAssignment_5() { return cTableAssignment_5; }
+		public Assignment getTableAssignment_6() { return cTableAssignment_6; }
 		
 		//LookupTable
-		public RuleCall getTableLookupTableParserRuleCall_5_0() { return cTableLookupTableParserRuleCall_5_0; }
+		public RuleCall getTableLookupTableParserRuleCall_6_0() { return cTableLookupTableParserRuleCall_6_0; }
 		
 		//enumId=UPPERCASE_ID
-		public Assignment getEnumIdAssignment_6() { return cEnumIdAssignment_6; }
+		public Assignment getEnumIdAssignment_7() { return cEnumIdAssignment_7; }
 		
 		//UPPERCASE_ID
-		public RuleCall getEnumIdUPPERCASE_IDTerminalRuleCall_6_0() { return cEnumIdUPPERCASE_IDTerminalRuleCall_6_0; }
+		public RuleCall getEnumIdUPPERCASE_IDTerminalRuleCall_7_0() { return cEnumIdUPPERCASE_IDTerminalRuleCall_7_0; }
 	}
 	public class UrnElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.Urn");
@@ -2275,7 +2284,9 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.KeyValuePair");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_0_0 = (RuleCall)cNameAssignment_0.eContents().get(0);
+		private final Alternatives cNameAlternatives_0_0 = (Alternatives)cNameAssignment_0.eContents().get(0);
+		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_0_0_0 = (RuleCall)cNameAlternatives_0_0.eContents().get(0);
+		private final RuleCall cNameLOWERCASE_DASHIDTerminalRuleCall_0_0_1 = (RuleCall)cNameAlternatives_0_0.eContents().get(1);
 		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
 		private final Assignment cInteractiveAssignment_1_0 = (Assignment)cAlternatives_1.eContents().get(0);
 		private final Keyword cInteractiveEqualsSignQuestionMarkKeyword_1_0_0 = (Keyword)cInteractiveAssignment_1_0.eContents().get(0);
@@ -2284,17 +2295,23 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cValueValueParserRuleCall_2_0 = (RuleCall)cValueAssignment_2.eContents().get(0);
 		
 		//KeyValuePair:
-		//	name=LOWERCASE_ID (interactive?='=?' | '=') value=Value;
+		//	name=(LOWERCASE_ID | LOWERCASE_DASHID) (interactive?='=?' | '=') value=Value;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//name=LOWERCASE_ID (interactive?='=?' | '=') value=Value
+		//name=(LOWERCASE_ID | LOWERCASE_DASHID) (interactive?='=?' | '=') value=Value
 		public Group getGroup() { return cGroup; }
 		
-		//name=LOWERCASE_ID
+		//name=(LOWERCASE_ID | LOWERCASE_DASHID)
 		public Assignment getNameAssignment_0() { return cNameAssignment_0; }
 		
+		//(LOWERCASE_ID | LOWERCASE_DASHID)
+		public Alternatives getNameAlternatives_0_0() { return cNameAlternatives_0_0; }
+		
 		//LOWERCASE_ID
-		public RuleCall getNameLOWERCASE_IDTerminalRuleCall_0_0() { return cNameLOWERCASE_IDTerminalRuleCall_0_0; }
+		public RuleCall getNameLOWERCASE_IDTerminalRuleCall_0_0_0() { return cNameLOWERCASE_IDTerminalRuleCall_0_0_0; }
+		
+		//LOWERCASE_DASHID
+		public RuleCall getNameLOWERCASE_DASHIDTerminalRuleCall_0_0_1() { return cNameLOWERCASE_DASHIDTerminalRuleCall_0_0_1; }
 		
 		//interactive?='=?' | '='
 		public Alternatives getAlternatives_1() { return cAlternatives_1; }
@@ -3199,7 +3216,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//DataflowBody:
 	//	{DataflowBody} dataflows+=ActorDefinition* (('geometry' geometry=Geometry)? & ('units' units=Unit)? &
-	//	computations+=Computation* & ('metadata' metadata=Metadata)? ('class' javaClass=JavaClass)?);
+	//	computations=Computation? & ('metadata' metadata=Metadata)? ('class' javaClass=JavaClass)?);
 	public DataflowBodyElements getDataflowBodyAccess() {
 		return pDataflowBody;
 	}
@@ -3341,8 +3358,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Value:
-	//	literal=LiteralOrIdOrComma | function=Function | urn=Urn | list=List | map=Map | table=LookupTable |
-	//	enumId=UPPERCASE_ID;
+	//	literal=LiteralOrIdOrComma | function=Function | urn=Urn | list=List | map=Map | expression=EXPR | table=LookupTable
+	//	| enumId=UPPERCASE_ID;
 	public ValueElements getValueAccess() {
 		return pValue;
 	}
@@ -3460,7 +3477,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//KeyValuePair:
-	//	name=LOWERCASE_ID (interactive?='=?' | '=') value=Value;
+	//	name=(LOWERCASE_ID | LOWERCASE_DASHID) (interactive?='=?' | '=') value=Value;
 	public KeyValuePairElements getKeyValuePairAccess() {
 		return pKeyValuePair;
 	}

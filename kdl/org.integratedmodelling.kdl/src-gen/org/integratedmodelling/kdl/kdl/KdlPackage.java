@@ -422,7 +422,7 @@ public interface KdlPackage extends EPackage
   int DATAFLOW_BODY__UNITS = 2;
 
   /**
-   * The feature id for the '<em><b>Computations</b></em>' containment reference list.
+   * The feature id for the '<em><b>Computations</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -934,13 +934,22 @@ public interface KdlPackage extends EPackage
   int VALUE__MAP = 4;
 
   /**
+   * The feature id for the '<em><b>Expression</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__EXPRESSION = 5;
+
+  /**
    * The feature id for the '<em><b>Table</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VALUE__TABLE = 5;
+  int VALUE__TABLE = 6;
 
   /**
    * The feature id for the '<em><b>Enum Id</b></em>' attribute.
@@ -949,7 +958,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__ENUM_ID = 6;
+  int VALUE__ENUM_ID = 7;
 
   /**
    * The number of structural features of the '<em>Value</em>' class.
@@ -958,7 +967,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE_FEATURE_COUNT = 7;
+  int VALUE_FEATURE_COUNT = 8;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.UrnImpl <em>Urn</em>}' class.
@@ -1985,10 +1994,10 @@ public interface KdlPackage extends EPackage
   EReference getDataflowBody_Units();
 
   /**
-   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kdl.kdl.DataflowBody#getComputations <em>Computations</em>}'.
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.DataflowBody#getComputations <em>Computations</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Computations</em>'.
+   * @return the meta object for the containment reference '<em>Computations</em>'.
    * @see org.integratedmodelling.kdl.kdl.DataflowBody#getComputations()
    * @see #getDataflowBody()
    * @generated
@@ -2503,6 +2512,17 @@ public interface KdlPackage extends EPackage
    * @generated
    */
   EReference getValue_Map();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.Value#getExpression <em>Expression</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Expression</em>'.
+   * @see org.integratedmodelling.kdl.kdl.Value#getExpression()
+   * @see #getValue()
+   * @generated
+   */
+  EAttribute getValue_Expression();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.Value#getTable <em>Table</em>}'.
@@ -3429,7 +3449,7 @@ public interface KdlPackage extends EPackage
     EReference DATAFLOW_BODY__UNITS = eINSTANCE.getDataflowBody_Units();
 
     /**
-     * The meta object literal for the '<em><b>Computations</b></em>' containment reference list feature.
+     * The meta object literal for the '<em><b>Computations</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
@@ -3827,6 +3847,14 @@ public interface KdlPackage extends EPackage
      * @generated
      */
     EReference VALUE__MAP = eINSTANCE.getValue_Map();
+
+    /**
+     * The meta object literal for the '<em><b>Expression</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE__EXPRESSION = eINSTANCE.getValue_Expression();
 
     /**
      * The meta object literal for the '<em><b>Table</b></em>' containment reference feature.
