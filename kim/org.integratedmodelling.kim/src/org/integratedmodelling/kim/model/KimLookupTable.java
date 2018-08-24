@@ -35,6 +35,13 @@ public class KimLookupTable extends KimStatement implements IKimLookupTable {
         		break;
         	}
         }
+        
+        // if no ? is given and the arguments are one less than the columns, the
+        // last column is the search column
+        if (searchColumn < 0 && arguments.size() == table.getColumnCount() - 1) {
+            searchColumn = table.getColumnCount() - 1;
+        }
+        
 		if (searchColumn >= 0) {
 			for (int i = 0; i < table.getRowCount(); i++) {
 				if (lookupType == null) {

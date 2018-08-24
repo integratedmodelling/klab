@@ -207,7 +207,7 @@ public class KlabSession extends KlabPeer {
 		send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, etask);
 	}
 
-	private void recordObservation(ObservationReference observation) {
+	public void recordObservation(ObservationReference observation) {
 
 		this.currentContextId = observation.getId();
 		EObservationReference parent = null;
@@ -223,6 +223,7 @@ public class KlabSession extends KlabPeer {
 		}
 
 		observationCatalog.put(observation.getId(), obs);
+		
 		if (observation.getParentId() == null) {
 			this.currentContextId = observation.getId();
 			contexts.add(0, observation.getId());
@@ -337,23 +338,20 @@ public class KlabSession extends KlabPeer {
 	@MessageHandler(type = Type.TaskFinished)
 	public void handleTaskFinished(IMessage message, TaskReference task, IMessageBus bus) {
 		send(message);
+        recordTask(task, Type.TaskFinished);
 		bus.unsubscribe(task.getId());
 	}
 
 	@MessageHandler(type = Type.TaskAborted)
 	public void handleTaskAborted(IMessage message, TaskReference task, IMessageBus bus) {
 		send(message);
+        recordTask(task, Type.TaskAborted);
 		bus.unsubscribe(task.getId());
 	}
 
 	@MessageHandler
-	public void handleSearchResponse(SearchResponse response) {
-
-	}
-
-	@MessageHandler
 	public void handleObservation(ObservationReference observation) {
-		recordObservation(observation);
+	    recordObservation(observation);
 	}
 
 	@MessageHandler

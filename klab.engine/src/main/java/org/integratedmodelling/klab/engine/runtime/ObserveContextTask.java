@@ -90,6 +90,7 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 							 * at merge.
 							 */
 							ret = (ISubject) dataflow.run(scope.getCoverage().copy(), monitor);
+//							ObserveContextTask.this.descriptor.setContextId(ret.getId());
 
 							/*
 							 * Register the observation context with the session. It will be disposed of 

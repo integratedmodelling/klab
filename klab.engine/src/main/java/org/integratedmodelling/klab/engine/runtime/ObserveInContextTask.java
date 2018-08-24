@@ -53,6 +53,7 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 
 		this.descriptor = new TaskReference();
 		this.descriptor.setId(token);
+		this.descriptor.setContextId(context.getId());
 		this.descriptor.setParentId(parentTask == null ? null : parentTask.getId());
 		this.descriptor.setDescription(this.taskDescription);
 
