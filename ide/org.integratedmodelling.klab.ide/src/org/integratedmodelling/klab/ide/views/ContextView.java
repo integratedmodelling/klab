@@ -83,7 +83,8 @@ public class ContextView extends ViewPart {
 	private Button btnNewButtonT;
 
 	private KlabPeer klab;
-	private Action action;
+	private Action openViewerAction;
+	private Action resetContextAction;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -485,13 +486,15 @@ public class ContextView extends ViewPart {
 		case EngineDown:
 			Display.getDefault().asyncExec(() -> {
 				dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/ndrop.png"));
-				action.setEnabled(false);
+				openViewerAction.setEnabled(false);
+                resetContextAction.setEnabled(false);
 			});
 			break;
 		case EngineUp:
 			Display.getDefault().asyncExec(() -> {
 				dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/odrop.png"));
-				action.setEnabled(true);
+				openViewerAction.setEnabled(true);
+                resetContextAction.setEnabled(true);
 			});
 			break;
 		case MatchAction:
@@ -711,7 +714,7 @@ public class ContextView extends ViewPart {
 	private void createActions() {
 
 		{
-			action = new Action("Open new viewer") {
+			openViewerAction = new Action("Open new viewer") {
 
 				@Override
 				public void run() {
@@ -722,10 +725,20 @@ public class ContextView extends ViewPart {
 				}
 
 			};
-			action.setEnabled(Activator.engineMonitor().isRunning());
-			action.setImageDescriptor(
+			openViewerAction.setEnabled(Activator.engineMonitor().isRunning());
+			openViewerAction.setImageDescriptor(
 					ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/browser.gif"));
 		}
+	    {
+	        resetContextAction = new Action("Reset context") {                @Override
+                public void run() {
+                    Activator.post(IMessage.MessageClass.UserContextChange, IMessage.Type.ResetContext, "");
+                }
+	        };
+	        resetContextAction.setEnabled(Activator.engineMonitor().isRunning());
+	        resetContextAction.setImageDescriptor(ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/target_red.png"));
+	        resetContextAction.setToolTipText("Reset context");
+	    }
 	}
 
 	/**
@@ -733,7 +746,8 @@ public class ContextView extends ViewPart {
 	 */
 	private void initializeToolBar() {
 		IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
-		tbm.add(action);
+		tbm.add(resetContextAction);
+		tbm.add(openViewerAction);
 	}
 
 	/**

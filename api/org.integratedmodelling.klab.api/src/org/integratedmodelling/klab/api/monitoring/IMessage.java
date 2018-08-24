@@ -243,6 +243,13 @@ public interface IMessage {
 	 * @return
 	 */
 	long getTimestamp();
+	
+	/**
+	 * Get the payload of the message, whatever it is.
+	 * 
+	 * @return the payload or null.
+	 */
+	Object getPayload();
 
 	/**
 	 * Get the payload of the message, ensuring it is of type T.

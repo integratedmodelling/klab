@@ -183,5 +183,14 @@ public class EObservationReference implements IObservationReference, ERuntimeObj
         return "[OBSERVATION " + getObservationType() + " " + getLabel() + "]";
     }
 
-	
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof EObservationReference && ((EObservationReference)o).getId() == this.getId();
+    }
+    
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+    }
+
 }

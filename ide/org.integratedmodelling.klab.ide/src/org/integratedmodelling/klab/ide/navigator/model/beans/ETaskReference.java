@@ -82,14 +82,17 @@ public class ETaskReference implements ITaskReference, ERuntimeObject {
 
 	@Override
 	public ERuntimeObject[] getEChildren(DisplayPriority priority) {
-		List<ERuntimeObject> ret = new ArrayList<>();
+
+	    List<ERuntimeObject> ret = new ArrayList<>();
 		if (dataflow != null) {
 			ret.add(dataflow);
 		}
 		if (priority == DisplayPriority.TASK_FIRST) {
 			ret.addAll(observations);
 		}
-		ret.addAll(tasks);
+		for (int i = tasks.size() - 1; i >= 0; i--) {
+		    ret.add(tasks.get(i));
+		}
 		ret.addAll(notifications);
 		return ret.toArray(new ERuntimeObject[ret.size()]);
 	}
@@ -104,6 +107,7 @@ public class ETaskReference implements ITaskReference, ERuntimeObject {
 	}
 
 	public void addNotification(ENotification enote) {
+	    enote.setParent(this);
 		notifications.add(enote);
 	}
 
@@ -117,8 +121,18 @@ public class ETaskReference implements ITaskReference, ERuntimeObject {
     }
 
     public void addChildTask(ETaskReference task) {
+        task.parent = this;
         tasks.add(task);
     }
-
+    
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof ETaskReference && ((ETaskReference)o).getId() == this.getId();
+    }
+    
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+    }
 	
 }

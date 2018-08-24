@@ -612,6 +612,12 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		}
 	}
 
+	@MessageHandler(type=IMessage.Type.ResetContext)
+	private void handleResetContextRequest(String dummy) {
+	    this.regionOfInterest = null;
+	    monitor.send(IMessage.Type.ResetContext, IMessage.MessageClass.UserContextChange, "");
+	}
+	
 	/**
 	 * This is all we need to react to UI events modifying the workspace or any of
 	 * its imports.

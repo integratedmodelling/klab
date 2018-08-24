@@ -104,7 +104,7 @@ public class KlabSession extends KlabPeer {
      * @param priority
      * @return the session history
      */
-    public List<ERuntimeObject> getSessionHistory(DisplayPriority priority) {
+    public List<ERuntimeObject> getSessionHistory(DisplayPriority priority, Level level) {
 
         List<ERuntimeObject> ret = new ArrayList<>();
         if (priority == DisplayPriority.ARTIFACTS_FIRST) {
@@ -139,6 +139,15 @@ public class KlabSession extends KlabPeer {
      */
     public EObservationReference getCurrentContext() {
         return currentRootContextId == null ? null : observationCatalog.get(currentRootContextId);
+    }
+    
+    /**
+     * The latest task started, or the one set by the user.
+     * 
+     * @return
+     */
+    public ETaskReference getCurrentTask() {
+        return currentRootTaskId == null ? null : taskCatalog.get(currentRootTaskId);
     }
 
     /**
@@ -202,10 +211,10 @@ public class KlabSession extends KlabPeer {
             send(IMessage.MessageClass.UserInterface, IMessage.Type.Notification, enote);
         }
 
-        System.out.println("RECEIVED NOTIFICATION [" + identity + "]: " + notification + ":");
-        System.out.println("--------------------------------------");
-        dumpHistory(DisplayPriority.TASK_FIRST);
-        System.out.println("======================================\n");
+//        System.out.println("RECEIVED NOTIFICATION [" + identity + "]: " + notification + ":");
+//        System.out.println("--------------------------------------");
+//        dumpHistory(DisplayPriority.TASK_FIRST);
+//        System.out.println("======================================\n");
 
     }
 
@@ -239,10 +248,10 @@ public class KlabSession extends KlabPeer {
         etask.setStatus(event);
         send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, etask);
 
-        System.out.println("RECEIVED TASK [" + event + "] " + etask + ":");
-        System.out.println("--------------------------------------");
-        dumpHistory(DisplayPriority.TASK_FIRST);
-        System.out.println("======================================\n");
+//        System.out.println("RECEIVED TASK [" + event + "] " + etask + ":");
+//        System.out.println("--------------------------------------");
+//        dumpHistory(DisplayPriority.TASK_FIRST);
+//        System.out.println("======================================\n");
 
     }
 
@@ -279,10 +288,10 @@ public class KlabSession extends KlabPeer {
             send(IMessage.MessageClass.UserInterface, IMessage.Type.FocusChanged, obs);
         }
 
-        System.out.println("RECEIVED OBSERVATION " + observation + ":");
-        System.out.println("--------------------------------------");
-        dumpHistory(DisplayPriority.TASK_FIRST);
-        System.out.println("======================================\n");
+//        System.out.println("RECEIVED OBSERVATION " + observation + ":");
+//        System.out.println("--------------------------------------");
+//        dumpHistory(DisplayPriority.TASK_FIRST);
+//        System.out.println("======================================\n");
     }
 
     /*
@@ -382,6 +391,13 @@ public class KlabSession extends KlabPeer {
         send(message);
     }
 
+    @MessageHandler(type=IMessage.Type.ResetContext)
+    private void handleResetContextRequest(IMessage message, String dummy) {
+        this.currentRootContextId = null;
+        this.currentRootTaskId = null;
+        send(message);
+    }
+    
     @MessageHandler(type = Type.TaskStarted)
     public void handleTaskStarted(IMessage message, TaskReference task, IMessageBus bus) {
         send(message);
@@ -418,12 +434,12 @@ public class KlabSession extends KlabPeer {
         send(message);
     }
 
-    public List<ENotification> getSystemNotifications() {
+    public List<ENotification> getSystemNotifications(Level level) {
         return new ArrayList<>(systemNotifications);
     }
 
     public void dumpHistory(DisplayPriority priority) {
-        for (ERuntimeObject e : getSessionHistory(priority)) {
+        for (ERuntimeObject e : getSessionHistory(priority, Level.FINE)) {
             dumpHistoryObject(e, priority, 0);
         }
     }

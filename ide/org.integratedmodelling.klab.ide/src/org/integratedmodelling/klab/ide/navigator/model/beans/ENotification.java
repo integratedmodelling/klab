@@ -39,5 +39,16 @@ public class ENotification extends Notification implements ERuntimeObject {
     public void setContinuation(boolean continuation) {
         this.continuation = continuation;
     }
+    
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof ENotification && ((ENotification)o).getMessage() == this.getMessage();
+    }
+    
+    @Override
+    public int hashCode() {
+        return getMessage().hashCode();
+    }
+    
 
 }

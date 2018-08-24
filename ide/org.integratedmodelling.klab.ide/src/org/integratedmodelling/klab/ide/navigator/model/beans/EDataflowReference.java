@@ -36,4 +36,15 @@ public class EDataflowReference implements IDataflowReference, ERuntimeObject {
 	    return "[DATAFLOW for " + getTaskId() + "]";
 	}
 
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof EDataflowReference && ((EDataflowReference)o).getKdlCode() == this.getKdlCode();
+    }
+    
+    @Override
+    public int hashCode() {
+        return getKdlCode().hashCode();
+    }
+    
 }
