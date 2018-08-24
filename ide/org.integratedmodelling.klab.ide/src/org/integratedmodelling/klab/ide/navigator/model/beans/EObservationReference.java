@@ -178,4 +178,10 @@ public class EObservationReference implements IObservationReference, ERuntimeObj
 		return delegate.isEmpty();
 	}
 
+    @Override
+    public String toString() {
+        return "[OBSERVATION " + getObservationType() + " " + getLabel() + "]";
+    }
+
+	
 }

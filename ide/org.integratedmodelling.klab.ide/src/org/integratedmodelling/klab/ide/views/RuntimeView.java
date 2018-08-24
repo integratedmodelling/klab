@@ -47,6 +47,7 @@ import org.integratedmodelling.klab.ide.navigator.model.beans.EObservationRefere
 import org.integratedmodelling.klab.ide.navigator.model.beans.ERuntimeObject;
 import org.integratedmodelling.klab.ide.navigator.model.beans.ETaskReference;
 import org.integratedmodelling.klab.rest.Capabilities;
+import org.eclipse.swt.widgets.Combo;
 
 public class RuntimeView extends ViewPart {
 
@@ -95,6 +96,9 @@ public class RuntimeView extends ViewPart {
 	private List<ENotification> notifications;
 	private List<ERuntimeObject> history;
 	private Composite composite_2;
+	private Group grpSessionEvents;
+	private Table table;
+	private TableViewer tableViewer_1;
 
 	public RuntimeView() {
 	}
@@ -348,81 +352,119 @@ public class RuntimeView extends ViewPart {
 			upLabel.setLayoutData(gd_upLabel);
 
 		}
-
-		label = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.SHADOW_IN);
-		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-
-		/*
-		 * I would actually prefer a single click here, but OK
-		 */
-
-		composite_1 = new Composite(parent, SWT.NONE);
-		GridLayout gl_composite_1 = new GridLayout(4, false);
-		gl_composite_1.verticalSpacing = 0;
-		gl_composite_1.marginWidth = 0;
-		gl_composite_1.marginHeight = 0;
-		gl_composite_1.horizontalSpacing = 1;
-		composite_1.setLayout(gl_composite_1);
-		composite_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-
-		lblNewLabel = new Label(composite_1, SWT.NONE);
-		lblNewLabel.setText("By ");
-
-		toggleTasks = new Button(composite_1, SWT.RADIO);
-		toggleTasks.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (toggleTasks.getSelection()) {
-					currentPriority = DisplayPriority.TASK_FIRST;
-				} else {
-					currentPriority = DisplayPriority.ARTIFACTS_FIRST;
-				}
-				refreshTaskViewer();
-				refreshSystemLog();
-			}
-		});
-
-		toggleTasks.setSelection(true);
-		toggleTasks.setFont(SWTResourceManager.getFont("Segoe UI", 8, SWT.NORMAL));
-		toggleTasks.setText("task");
-
-		toggleArtifacts = new Button(composite_1, SWT.RADIO);
-		toggleArtifacts.setFont(SWTResourceManager.getFont("Segoe UI", 8, SWT.NORMAL));
-		toggleArtifacts.setText("artifact");
-		
-		composite_2 = new Composite(composite_1, SWT.NONE);
-		composite_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		GridLayout gl_composite_2 = new GridLayout(2, false);
-		gl_composite_2.marginHeight = 0;
-		composite_2.setLayout(gl_composite_2);
-		
-		Label lblNewLabel_1 = new Label(composite_2, SWT.NONE);
-		lblNewLabel_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		
-		Button btnCheckButton = new Button(composite_2, SWT.CHECK);
-		btnCheckButton.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		btnCheckButton.setAlignment(SWT.RIGHT);
-		btnCheckButton.setText("Debug");
-		toggleArtifacts.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (toggleArtifacts.getSelection()) {
-					currentPriority = DisplayPriority.ARTIFACTS_FIRST;
-				} else {
-					currentPriority = DisplayPriority.TASK_FIRST;
-				}
-				refreshTaskViewer();
-				refreshSystemLog();
-			}
-		});
 		sashForm = new SashForm(parent, SWT.VERTICAL);
 		sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		
+		grpSessionEvents = new Group(sashForm, SWT.NONE);
+		grpSessionEvents.setText("Session events");
+				GridLayout gl_grpSessionEvents = new GridLayout(1, false);
+				gl_grpSessionEvents.verticalSpacing = 2;
+				gl_grpSessionEvents.marginHeight = 0;
+				gl_grpSessionEvents.horizontalSpacing = 0;
+				gl_grpSessionEvents.marginWidth = 0;
+				grpSessionEvents.setLayout(gl_grpSessionEvents);
+		
+				composite_1 = new Composite(grpSessionEvents, SWT.NONE);
+				composite_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+				GridLayout gl_composite_1 = new GridLayout(4, false);
+				gl_composite_1.verticalSpacing = 0;
+				gl_composite_1.marginWidth = 0;
+				gl_composite_1.marginHeight = 0;
+				gl_composite_1.horizontalSpacing = 1;
+				composite_1.setLayout(gl_composite_1);
+				
+						lblNewLabel = new Label(composite_1, SWT.NONE);
+						lblNewLabel.setText("By ");
+						
+								toggleTasks = new Button(composite_1, SWT.RADIO);
+								toggleTasks.addSelectionListener(new SelectionAdapter() {
+									@Override
+									public void widgetSelected(SelectionEvent e) {
+										if (toggleTasks.getSelection()) {
+											currentPriority = DisplayPriority.TASK_FIRST;
+										} else {
+											currentPriority = DisplayPriority.ARTIFACTS_FIRST;
+										}
+										refreshTaskViewer();
+										refreshSystemLog();
+									}
+								});
+								
+										toggleTasks.setSelection(true);
+										toggleTasks.setFont(SWTResourceManager.getFont("Segoe UI", 8, SWT.NORMAL));
+										toggleTasks.setText("task");
+										
+												toggleArtifacts = new Button(composite_1, SWT.RADIO);
+												toggleArtifacts.setFont(SWTResourceManager.getFont("Segoe UI", 8, SWT.NORMAL));
+												toggleArtifacts.setText("artifact");
+												
+												composite_2 = new Composite(composite_1, SWT.NONE);
+												composite_2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+												GridLayout gl_composite_2 = new GridLayout(2, false);
+												gl_composite_2.horizontalSpacing = 3;
+												gl_composite_2.marginWidth = 0;
+												gl_composite_2.marginHeight = 0;
+												composite_2.setLayout(gl_composite_2);
+												
+												Label lblNewLabel_1 = new Label(composite_2, SWT.NONE);
+												lblNewLabel_1.setFont(SWTResourceManager.getFont("Segoe UI", 8, SWT.NORMAL));
+												lblNewLabel_1.setText("Report level");
+												lblNewLabel_1.setAlignment(SWT.RIGHT);
+												lblNewLabel_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+												
+												Combo btnCheckButton = new Combo(composite_2, SWT.READ_ONLY);
+												btnCheckButton.setItems(new String[] {"Error", "Warning", "Info", "Debug"});
+												btnCheckButton.setFont(SWTResourceManager.getFont("Segoe UI", 8, SWT.NORMAL));
+												btnCheckButton.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+												btnCheckButton.select(2);
+												
+														taskArea = new Group(grpSessionEvents, SWT.NONE);
+														taskArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+																GridLayout gl_taskArea = new GridLayout(1, false);
+																gl_taskArea.verticalSpacing = 2;
+																gl_taskArea.horizontalSpacing = 0;
+																gl_taskArea.marginHeight = 0;
+																gl_taskArea.marginWidth = 0;
+																taskArea.setLayout(gl_taskArea);
+														
+																taskViewer = new TreeViewer(taskArea, SWT.FULL_SELECTION);
+																taskTree = taskViewer.getTree();
+																taskTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+																
+																tableViewer_1 = new TableViewer(taskArea, SWT.BORDER | SWT.FULL_SELECTION);
+																table = tableViewer_1.getTable();
+																table.setVisible(true);
+																table.setLinesVisible(true);
+																GridData gd_table = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+																gd_table.heightHint = 180;
+																gd_table.exclude = true;
+																table.setLayoutData(gd_table);
+																
+																		taskViewer.setContentProvider(new TaskContentProvider());
+																		taskViewer.setLabelProvider(new TaskLabelProvider());
+																		taskViewer.addDoubleClickListener(new IDoubleClickListener() {
 
-		taskArea = new Group(sashForm, SWT.NONE);
-		taskArea.setLayout(new FillLayout(SWT.HORIZONTAL));
-
-		taskViewer = new TreeViewer(taskArea, SWT.FULL_SELECTION);
-		taskTree = taskViewer.getTree();
+																			@Override
+																			public void doubleClick(DoubleClickEvent event) {
+																				Object o = ((StructuredSelection) (event.getSelection())).getFirstElement();
+																				if (o != null) {
+																					handleSelection(o);
+																				}
+																			}
+																		});
+												
+												toggleArtifacts.addSelectionListener(new SelectionAdapter() {
+													@Override
+													public void widgetSelected(SelectionEvent e) {
+														if (toggleArtifacts.getSelection()) {
+															currentPriority = DisplayPriority.ARTIFACTS_FIRST;
+														} else {
+															currentPriority = DisplayPriority.TASK_FIRST;
+														}
+														refreshTaskViewer();
+														refreshSystemLog();
+													}
+												});
 
 		grpMessages = new Group(sashForm, SWT.NONE);
 		grpMessages.setText("System Log");
@@ -441,23 +483,10 @@ public class RuntimeView extends ViewPart {
 		tableViewerColumn_1 = new TableViewerColumn(tableViewer, SWT.NONE);
 		notificationText = tableViewerColumn_1.getColumn();
 		notificationText.setWidth(500);
-		sashForm.setWeights(new int[] { 305, 72 });
+		sashForm.setWeights(new int[] { 188, 72 });
 
 		tableViewer.setContentProvider(new NotificationContentProvider());
 		tableViewer.setLabelProvider(new NotificationLabelProvider());
-
-		taskViewer.setContentProvider(new TaskContentProvider());
-		taskViewer.setLabelProvider(new TaskLabelProvider());
-		taskViewer.addDoubleClickListener(new IDoubleClickListener() {
-
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				Object o = ((StructuredSelection) (event.getSelection())).getFirstElement();
-				if (o != null) {
-					handleSelection(o);
-				}
-			}
-		});
 
 		createActions();
 		initializeToolBar();

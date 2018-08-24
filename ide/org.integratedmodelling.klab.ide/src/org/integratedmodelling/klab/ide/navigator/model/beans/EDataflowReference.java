@@ -30,5 +30,10 @@ public class EDataflowReference implements IDataflowReference, ERuntimeObject {
 	public ERuntimeObject[] getEChildren(DisplayPriority priority) {
 		return new ERuntimeObject[] {};
 	}
+	
+	@Override
+	public String toString() {
+	    return "[DATAFLOW for " + getTaskId() + "]";
+	}
 
 }

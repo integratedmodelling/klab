@@ -5,6 +5,7 @@ import org.integratedmodelling.klab.rest.Notification;
 public class ENotification extends Notification implements ERuntimeObject {
 	
 	private ERuntimeObject parent;
+	private boolean continuation;
 	
 	@Override
 	public ERuntimeObject getEParent() {
@@ -19,4 +20,24 @@ public class ENotification extends Notification implements ERuntimeObject {
 	public void setParent(ERuntimeObject parent) {
 		this.parent = parent;
 	}
+	
+    @Override
+    public String toString() {
+        return "[NOTIFICATION " + getLevel() + " " + getMessage() + "]";
+    }
+
+    /**
+     * If true, the notification continues a previous one that did not fit on
+     * one line.
+     * 
+     * @return
+     */
+    public boolean isContinuation() {
+        return continuation;
+    }
+
+    public void setContinuation(boolean continuation) {
+        this.continuation = continuation;
+    }
+
 }

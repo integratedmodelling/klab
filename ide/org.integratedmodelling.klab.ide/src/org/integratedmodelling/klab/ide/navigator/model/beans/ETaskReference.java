@@ -15,7 +15,7 @@ import org.integratedmodelling.klab.rest.TaskReference;
  */
 public class ETaskReference implements ITaskReference, ERuntimeObject {
 
-	private ITaskReference delegate;
+	private TaskReference delegate;
 	
 	public String getId() {
 		return delegate.getId();
@@ -41,6 +41,7 @@ public class ETaskReference implements ITaskReference, ERuntimeObject {
 	private List<ENotification> notifications = new ArrayList<>();
 	private IMessage.Type status = IMessage.Type.TaskStarted;
 	private List<EObservationReference> observations = new ArrayList<>();
+    private List<ETaskReference> tasks = new ArrayList<>();
 	private ERuntimeObject parent;
 	
 	public ETaskReference() {}
@@ -88,6 +89,7 @@ public class ETaskReference implements ITaskReference, ERuntimeObject {
 		if (priority == DisplayPriority.TASK_FIRST) {
 			ret.addAll(observations);
 		}
+		ret.addAll(tasks);
 		ret.addAll(notifications);
 		return ret.toArray(new ERuntimeObject[ret.size()]);
 	}
@@ -105,4 +107,18 @@ public class ETaskReference implements ITaskReference, ERuntimeObject {
 		notifications.add(enote);
 	}
 
+    @Override
+    public String toString() {
+        return "[TASK " + getDescription() + "context = " + getContextId() + "]";
+    }
+
+    public void setContextId(String id) {
+        delegate.setContextId(id);
+    }
+
+    public void addChildTask(ETaskReference task) {
+        tasks.add(task);
+    }
+
+	
 }

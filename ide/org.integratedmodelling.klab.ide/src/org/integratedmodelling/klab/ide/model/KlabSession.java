@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,6 +27,7 @@ import org.integratedmodelling.klab.ide.navigator.model.beans.EObservationRefere
 import org.integratedmodelling.klab.ide.navigator.model.beans.ERuntimeObject;
 import org.integratedmodelling.klab.ide.navigator.model.beans.ETaskReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.ide.utils.StringUtils;
 import org.integratedmodelling.klab.rest.DataflowReference;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationRequest;
@@ -46,326 +48,392 @@ import org.integratedmodelling.klab.rest.TaskReference;
  */
 public class KlabSession extends KlabPeer {
 
-	private AtomicLong queryCounter = new AtomicLong();
+    private AtomicLong                         queryCounter        = new AtomicLong();
 
-	/*
-	 * all tasks in the session, indexed by ID of task in maps linked to the root
-	 * context. Each task reference is linked to child descriptors for dataflow,
-	 * artifacts produced and log entries. Used to populate the task tree in the
-	 * runtime view. Maintains chronological order both in the task map and the task
-	 * catalog.
-	 */
-	private Map<String, ETaskReference> taskCatalog = Collections.synchronizedMap(new LinkedHashMap<>());
+    /*
+     * all tasks in the session
+     */
+    private Map<String, ETaskReference>        taskCatalog         = Collections
+            .synchronizedMap(new LinkedHashMap<>());
 
-	/*
-	 * All observation seen
-	 */
-	private Map<String, EObservationReference> observationCatalog = Collections.synchronizedMap(new LinkedHashMap<>());
+    /*
+     * All observation seen
+     */
+    private Map<String, EObservationReference> observationCatalog  = Collections
+            .synchronizedMap(new LinkedHashMap<>());
 
-	/*
-	 * All notifications not linked to a task
-	 */
-	private List<ENotification> systemNotifications = Collections.synchronizedList(new ArrayList<>());
+    /*
+     * All notifications not linked to a task
+     */
+    private List<ENotification>                systemNotifications = Collections
+            .synchronizedList(new ArrayList<>());
 
-	/*
-	 * Current context in UI or null
-	 */
-	private String currentContextId;
+    /*
+     * Current root context and task in UI or null
+     */
+    private String                             currentRootContextId;
+    private String                             currentRootTaskId;
 
-	/*
-	 * Historical of contexts seen. Redundant with taskCatalog.keySet() - check.
-	 */
-	private List<String> contexts = Collections.synchronizedList(new LinkedList<>());
+    // historical list of root tasks and contexts in order of appearance.
+    private List<String>                       contexts            = Collections
+            .synchronizedList(new LinkedList<>());
+    private List<String>                       tasks               = Collections
+            .synchronizedList(new LinkedList<>());
 
-	private ETaskReference contextTask;
+    /*
+     * This is to attribute new tasks to the root one they belong to. This hierarchy
+     * is unique to the UI and does not reflect the arrangement of tasks in the 
+     * engine.
+     */
+    private Map<String, ETaskReference>        taskByObservation   = Collections
+            .synchronizedMap(new HashMap<>());
 
-	public KlabSession(String sessionId) {
-		super(Sender.SESSION, sessionId);
-	}
+    public KlabSession(String sessionId) {
+        super(Sender.SESSION, sessionId);
+    }
 
-	/*
-	 * --- public methods ---
-	 */
+    /*
+     * --- public methods ---
+     */
 
-	/**
-	 * Build a list describing the entire known history of the session, honoring
-	 * chosen display priority and options. The first-level objects will always be
-	 * root contexts, most recently created first.
-	 * 
-	 * @param priority
-	 * @return the session history
-	 */
-	public List<ERuntimeObject> getSessionHistory(DisplayPriority priority) {
-		List<ERuntimeObject> ret = new ArrayList<>();
-		if (contextTask != null) {
-			ret.add(contextTask);
-		}
-		for (String ctx : contexts) {
-			ret.add(observationCatalog.get(ctx));
-		}
-		return ret;
-	}
+    /**
+     * Build a list describing the entire known history of the session, honoring
+     * chosen display priority and options. The first-level objects will always be
+     * root contexts, most recently created first.
+     * 
+     * @param priority
+     * @return the session history
+     */
+    public List<ERuntimeObject> getSessionHistory(DisplayPriority priority) {
 
-	/**
-	 * ID of the current root context, or null if none is set.
-	 * 
-	 * @return
-	 */
-	public String getCurrentContextId() {
-		return currentContextId;
-	}
+        List<ERuntimeObject> ret = new ArrayList<>();
+        if (priority == DisplayPriority.ARTIFACTS_FIRST) {
+            for (int i = contexts.size() - 1; i >= 0; i--) {
+                ret.add(observationCatalog.get(contexts.get(i)));
+            }
+        } else {
+            for (int i = tasks.size() - 1; i >= 0; i--) {
+                ret.add(taskCatalog.get(tasks.get(i)));
+            }
+        }
+        return ret;
+    }
 
-	/**
-	 * The latest observation made, or the one set by the user.
-	 * 
-	 * @return
-	 */
-	public EObservationReference getCurrentContext() {
-		return currentContextId == null ? null : observationCatalog.get(currentContextId);
-	}
+    /**
+     * ID of the current root context, or null if none is set.
+     * 
+     * @return
+     */
+    public String getCurrentContextId() {
+        return currentRootContextId;
+    }
 
-	/**
-	 * All the observations made in this session, last observed first. May be filled
-	 * on startup after rejoining a session.
-	 * 
-	 * @return
-	 */
-	public List<EObservationReference> getContexts() {
-		List<EObservationReference> ret = new ArrayList<>();
-		for (String id : contexts) {
-			ret.add(observationCatalog.get(id));
-		}
-		return ret;
-	}
+    public String getCurrentTaskId() {
+        return currentRootTaskId;
+    }
 
-	/*
-	 * --- State and history management
-	 */
+    /**
+     * The latest observation made, or the one set by the user.
+     * 
+     * @return
+     */
+    public EObservationReference getCurrentContext() {
+        return currentRootContextId == null ? null : observationCatalog.get(currentRootContextId);
+    }
 
-	void recordNotification(String notification, String identity, Type type) {
-		ETaskReference parent = null;
-		if (taskCatalog.containsKey(identity)) {
-			parent = taskCatalog.get(identity);
-		}
-		
-		ENotification enote = new ENotification();
-		enote.setMessage(notification);
-		switch (type) {
-		case Debug:
-			enote.setLevel(Level.FINE.getName());
-			break;
-		case Error:
-			enote.setLevel(Level.SEVERE.getName());
-			break;
-		case Info:
-			enote.setLevel(Level.INFO.getName());
-			break;
-		case Warning:
-			enote.setLevel(Level.WARNING.getName());
-			break;
-		default:
-			break;
-		}
-		
-		enote.setParent(parent);
-		if (parent != null) {
-			parent.addNotification(enote);
-		}
-		
-		if (parent != null) {
-			send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, enote);
-		} else {
-			systemNotifications.add(enote);
-			send(IMessage.MessageClass.UserInterface, IMessage.Type.Notification, enote);
-		}
-	}
+    /**
+     * All the observations made in this session, last observed first. May be filled
+     * on startup after rejoining a session.
+     * 
+     * @return
+     */
+    public List<EObservationReference> getContexts() {
+        List<EObservationReference> ret = new ArrayList<>();
+        for (int i = contexts.size() - 1; i >= 0; i--) {
+            ret.add(observationCatalog.get(contexts.get(i)));
+        }
+        return ret;
+    }
 
-	private void recordTask(TaskReference task, Type event) {
-		
-		ETaskReference etask = null;
-		EObservationReference context = null;
-		if (task.getContextId() != null) {
-			context = observationCatalog.get(task.getContextId());
-		}
-		if (event == Type.TaskStarted) {
-			etask = new ETaskReference(task, null);
-			taskCatalog.put(task.getId(), etask);
-			if (task.getContextId() == null) {
-				this.contextTask = etask;
-			}
-		} else {
-			etask = taskCatalog.get(task.getId());
-			if (this.contextTask != null && this.contextTask.getId().equals(task.getId())) {
-				if (context != null) {
-					context.setCreator(etask);
-				}
-				// if aborted just remove; if finished, put under its context
-				this.contextTask = null;
-			}
-		}
-		etask.setStatus(event);
-		send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, etask);
-	}
+    /*
+     * --- State and history management
+     */
 
-	public void recordObservation(ObservationReference observation) {
+    void recordNotification(String notification, String identity, Type type) {
 
-		this.currentContextId = observation.getId();
-		EObservationReference parent = null;
-		if (observation.getParentId() != null) {
-			parent = observationCatalog.get(observation.getParentId());
-		}
+        ETaskReference parent = null;
+        if (taskCatalog.containsKey(identity)) {
+            parent = taskCatalog.get(identity);
+        }
 
-		EObservationReference obs = new EObservationReference(observation, parent);
-		if (observation.getTaskId() != null) {
-			ETaskReference task = taskCatalog.get(observation.getTaskId());
-			obs.setCreator(task);
-			task.addCreated(obs);
-		}
+        /*
+         * TODO multi-line notification should be broken up into multiple ones, with
+         * continuation flag from the second on, so they can be displayed properly
+         */
 
-		observationCatalog.put(observation.getId(), obs);
-		
-		if (observation.getParentId() == null) {
-			this.currentContextId = observation.getId();
-			contexts.add(0, observation.getId());
-		}
+        ENotification enote = new ENotification();
+        enote.setMessage(notification);
+        switch (type) {
+        case Debug:
+            enote.setLevel(Level.FINE.getName());
+            break;
+        case Error:
+            enote.setLevel(Level.SEVERE.getName());
+            break;
+        case Info:
+            enote.setLevel(Level.INFO.getName());
+            break;
+        case Warning:
+            enote.setLevel(Level.WARNING.getName());
+            break;
+        default:
+            break;
+        }
 
-		send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, obs);
-		if (observation.getParentId() == null) {
-			send(IMessage.MessageClass.UserInterface, IMessage.Type.FocusChanged, obs);
-		}
-	}
+        enote.setParent(parent);
+        if (parent != null) {
+            parent.addNotification(enote);
+        }
 
-	/*
-	 * --- Front-end action triggers ---
-	 */
+        if (parent != null) {
+            send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, enote);
+        } else {
+            systemNotifications.add(enote);
+            send(IMessage.MessageClass.UserInterface, IMessage.Type.Notification, enote);
+        }
 
-	public void importFileResource(File file, String project) {
-		try {
-			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ImportResource,
-					new ResourceImportRequest(file.toURI().toURL(), project));
-		} catch (MalformedURLException e) {
-			// dio petardo
-			Eclipse.INSTANCE.handleException(e);
-		}
-	}
+        System.out.println("RECEIVED NOTIFICATION [" + identity + "]: " + notification + ":");
+        System.out.println("--------------------------------------");
+        dumpHistory(DisplayPriority.TASK_FIRST);
+        System.out.println("======================================\n");
 
-	public void launchScript(URL url) {
-		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunScript, new RunScriptRequest(url, false));
-	}
+    }
 
-	public void launchTest(URL url) {
-		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunTest, new RunScriptRequest(url, true));
-	}
+    private void recordTask(TaskReference task, Type event) {
 
-	public void observe(EKimObject dropped) {
-		Activator.post(IMessage.MessageClass.ObservationLifecycle, IMessage.Type.RequestObservation,
-				new ObservationRequest(dropped.getId(), currentContextId, null));
-	}
+        ETaskReference etask = null;
+        EObservationReference context = null;
+        if (task.getContextId() != null) {
+            context = observationCatalog.get(task.getContextId());
+        }
 
-	public void observe(String urn) {
-		Activator.post(IMessage.MessageClass.ObservationLifecycle, IMessage.Type.RequestObservation,
-				new ObservationRequest(urn, currentContextId, null));
-	}
+        if (event == Type.TaskStarted) {
+            if (task.getContextId() == null) {
+                // new root task
+                tasks.add(task.getId());
+                this.currentRootTaskId = task.getId();
+            }
+            etask = new ETaskReference(task, null);
+            taskCatalog.put(task.getId(), etask);
+            if (task.getContextId() != null) {
+                ETaskReference parent = taskByObservation.get(task.getContextId());
+                if (parent != null) {
+                    parent.addChildTask(etask);
+                }
+            }
+        } else {
+            etask = taskCatalog.get(task.getId());
+        }
+        
 
-	public void observe(EObserver dropped, boolean addToContext) {
-		Activator.post(IMessage.MessageClass.ObservationLifecycle, IMessage.Type.RequestObservation,
-				new ObservationRequest(dropped.getId(), addToContext ? currentContextId : null, null));
-	}
+        etask.setStatus(event);
+        send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, etask);
 
-	public void previewResource(ResourceReference resource) {
-		Activator.post(IMessage.MessageClass.ObservationLifecycle, IMessage.Type.RequestObservation,
-				new ObservationRequest(resource.getUrn(), null, null));
-	}
+        System.out.println("RECEIVED TASK [" + event + "] " + etask + ":");
+        System.out.println("--------------------------------------");
+        dumpHistory(DisplayPriority.TASK_FIRST);
+        System.out.println("======================================\n");
 
-	public long startQuery(String query) {
+    }
 
-		long queryIndex = queryCounter.getAndIncrement();
+    public void recordObservation(ObservationReference observation) {
 
-		SearchRequest request = new SearchRequest();
-		request.setRequestId(queryIndex);
-		request.setQueryString(query);
+        EObservationReference parent = null;
+        if (observation.getParentId() != null) {
+            parent = observationCatalog.get(observation.getParentId());
+        } else {
+            this.currentRootContextId = observation.getId();
+            contexts.add(observation.getId());
+        }
 
-		return queryIndex;
-	}
+        EObservationReference obs = new EObservationReference(observation, parent);
+        if (observation.getTaskId() != null) {
+            ETaskReference task = taskCatalog.get(observation.getTaskId());
+            obs.setCreator(task);
+            if (task.getContextId() == null) {
+                task.setContextId(observation.getId());
+            }
+            task.addCreated(obs);
+            taskByObservation.put(observation.getId(), task);
+        }
+        
+        observationCatalog.put(observation.getId(), obs);
 
-	// nah, use the response feature in the message bus and make it right
-	public void continueQuery(String query, long previous) {
-		//
-	}
+        if (observation.getParentId() == null) {
+            this.currentRootContextId = observation.getId();
+            contexts.add(0, observation.getId());
+        }
 
-	/*
-	 * ----- Back-end message handlers -----
-	 */
+        send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, obs);
+        if (observation.getParentId() == null) {
+            send(IMessage.MessageClass.UserInterface, IMessage.Type.FocusChanged, obs);
+        }
 
-	/*
-	 * All resource-related responses
-	 */
-	@MessageHandler
-	public void handleResourceLifecycle(ResourceReference resource, IMessage.Type type) {
-		/*
-		 * TODO
-		 */
-		switch (type) {
-		case ResourceImported:
-			Activator.klab().notifyResourceImport(resource);
-			break;
-		default:
-			break;
-		}
-		System.out.println("GOT RESOURCE " + type + ": " + resource);
-	}
+        System.out.println("RECEIVED OBSERVATION " + observation + ":");
+        System.out.println("--------------------------------------");
+        dumpHistory(DisplayPriority.TASK_FIRST);
+        System.out.println("======================================\n");
+    }
 
-	@MessageHandler(messageClass = IMessage.MessageClass.Notification)
-	public void handleNotification(IMessage message, String notification) {
-		if (message.getType() != IMessage.Type.Debug) {
-			send(message);
-		}
-		recordNotification(notification, message.getIdentity(), message.getType());
-	}
+    /*
+     * --- Front-end action triggers ---
+     */
 
-	@MessageHandler
-	public void handleSearchResponse(IMessage message, SearchResponse response) {
-		send(message);
-	}
+    public void importFileResource(File file, String project) {
+        try {
+            Activator
+                    .post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ImportResource, new ResourceImportRequest(file
+                            .toURI().toURL(), project));
+        } catch (MalformedURLException e) {
+            // dio petardo
+            Eclipse.INSTANCE.handleException(e);
+        }
+    }
 
-	@MessageHandler(type = Type.TaskStarted)
-	public void handleTaskStarted(IMessage message, TaskReference task, IMessageBus bus) {
-		send(message);
-		recordTask(task, Type.TaskStarted);
-		bus.subscribe(task.getId(), new KlabTask(task.getId()));
-	}
+    public void launchScript(URL url) {
+        Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunScript, new RunScriptRequest(url, false));
+    }
 
-	@MessageHandler(type = Type.TaskFinished)
-	public void handleTaskFinished(IMessage message, TaskReference task, IMessageBus bus) {
-		send(message);
+    public void launchTest(URL url) {
+        Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunTest, new RunScriptRequest(url, true));
+    }
+
+    public void observe(EKimObject dropped) {
+        Activator
+                .post(IMessage.MessageClass.ObservationLifecycle, IMessage.Type.RequestObservation, new ObservationRequest(dropped
+                        .getId(), currentRootContextId, null));
+    }
+
+    public void observe(String urn) {
+        Activator
+                .post(IMessage.MessageClass.ObservationLifecycle, IMessage.Type.RequestObservation, new ObservationRequest(urn, currentRootContextId, null));
+    }
+
+    public void observe(EObserver dropped, boolean addToContext) {
+        Activator
+                .post(IMessage.MessageClass.ObservationLifecycle, IMessage.Type.RequestObservation, new ObservationRequest(dropped
+                        .getId(), addToContext ? currentRootContextId : null, null));
+    }
+
+    public void previewResource(ResourceReference resource) {
+        Activator
+                .post(IMessage.MessageClass.ObservationLifecycle, IMessage.Type.RequestObservation, new ObservationRequest(resource
+                        .getUrn(), null, null));
+    }
+
+    public long startQuery(String query) {
+
+        long queryIndex = queryCounter.getAndIncrement();
+
+        SearchRequest request = new SearchRequest();
+        request.setRequestId(queryIndex);
+        request.setQueryString(query);
+
+        return queryIndex;
+    }
+
+    // nah, use the response feature in the message bus and make it right
+    public void continueQuery(String query, long previous) {
+        //
+    }
+
+    /*
+     * ----- Back-end message handlers -----
+     */
+
+    /*
+     * All resource-related responses
+     */
+    @MessageHandler
+    public void handleResourceLifecycle(ResourceReference resource, IMessage.Type type) {
+        /*
+         * TODO
+         */
+        switch (type) {
+        case ResourceImported:
+            Activator.klab().notifyResourceImport(resource);
+            break;
+        default:
+            break;
+        }
+        System.out.println("GOT RESOURCE " + type + ": " + resource);
+    }
+
+    @MessageHandler(messageClass = IMessage.MessageClass.Notification)
+    public void handleNotification(IMessage message, String notification) {
+        if (message.getType() != IMessage.Type.Debug) {
+            send(message);
+        }
+        recordNotification(notification, message.getIdentity(), message.getType());
+    }
+
+    @MessageHandler
+    public void handleSearchResponse(IMessage message, SearchResponse response) {
+        send(message);
+    }
+
+    @MessageHandler(type = Type.TaskStarted)
+    public void handleTaskStarted(IMessage message, TaskReference task, IMessageBus bus) {
+        send(message);
+        recordTask(task, Type.TaskStarted);
+        bus.subscribe(task.getId(), new KlabTask(task.getId()));
+    }
+
+    @MessageHandler(type = Type.TaskFinished)
+    public void handleTaskFinished(IMessage message, TaskReference task, IMessageBus bus) {
+        send(message);
         recordTask(task, Type.TaskFinished);
-		bus.unsubscribe(task.getId());
-	}
+        bus.unsubscribe(task.getId());
+    }
 
-	@MessageHandler(type = Type.TaskAborted)
-	public void handleTaskAborted(IMessage message, TaskReference task, IMessageBus bus) {
-		send(message);
+    @MessageHandler(type = Type.TaskAborted)
+    public void handleTaskAborted(IMessage message, TaskReference task, IMessageBus bus) {
+        send(message);
         recordTask(task, Type.TaskAborted);
-		bus.unsubscribe(task.getId());
-	}
+        bus.unsubscribe(task.getId());
+    }
 
-	@MessageHandler
-	public void handleObservation(ObservationReference observation) {
-	    recordObservation(observation);
-	}
+    @MessageHandler
+    public void handleObservation(ObservationReference observation) {
+        recordObservation(observation);
+    }
 
-	@MessageHandler
-	public void handleDataflow(IMessage message, DataflowReference dataflow) {
-		ETaskReference task = taskCatalog.get(dataflow.getTaskId());
-		if (task != null) {
-			task.setDataflow(new EDataflowReference(dataflow, task));
-			send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, task);
-		}
-		send(message);
-	}
+    @MessageHandler
+    public void handleDataflow(IMessage message, DataflowReference dataflow) {
+        ETaskReference task = taskCatalog.get(dataflow.getTaskId());
+        if (task != null) {
+            task.setDataflow(new EDataflowReference(dataflow, task));
+            send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, task);
+        }
+        send(message);
+    }
 
-	public List<ENotification> getSystemNotifications() {
-		return new ArrayList<>(systemNotifications);
-	}
+    public List<ENotification> getSystemNotifications() {
+        return new ArrayList<>(systemNotifications);
+    }
+
+    public void dumpHistory(DisplayPriority priority) {
+        for (ERuntimeObject e : getSessionHistory(priority)) {
+            dumpHistoryObject(e, priority, 0);
+        }
+    }
+
+    private void dumpHistoryObject(ERuntimeObject e, DisplayPriority priority, int level) {
+
+        System.out.println(StringUtils.spaces(level * 3) + e);
+        for (ERuntimeObject c : e.getEChildren(priority)) {
+            dumpHistoryObject(c, priority, level + 1);
+        }
+    }
 
 }
