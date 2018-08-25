@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
+import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.rest.ActionReference;
 import org.integratedmodelling.klab.rest.Connection;
 import org.integratedmodelling.klab.rest.ObservationReference;
@@ -16,167 +18,169 @@ import org.integratedmodelling.klab.rest.ObservationReference.ValueType;
 
 public class EObservationReference implements IObservationReference, ERuntimeObject {
 
-	private IObservationReference delegate;
-	private ERuntimeObject parent;
-	private List<EObservationReference> children = new ArrayList<>();
-	private ETaskReference creator;
+    private IObservationReference       delegate;
+    private String                      parentTaskId;
+    private String                      parentArtifactId;
+    private List<String>                childObservations = new ArrayList<>();
 
-	public EObservationReference(ObservationReference observationReference) {
-		this.delegate = observationReference;
-	}
+    public EObservationReference(ObservationReference observationReference) {
+        this.delegate = observationReference;
+    }
 
-	public EObservationReference(ObservationReference observationReference, ERuntimeObject parent) {
-		this.delegate = observationReference;
-		this.parent = parent;
-	}
+    public EObservationReference(ObservationReference observationReference, String parentTask,
+            String parentArtifact) {
+        this.delegate = observationReference;
+        this.parentTaskId = parentTask;
+        this.parentArtifactId = parentArtifact;
+    }
 
-	@Override
-	public ERuntimeObject getEParent() {
-		return parent;
-	}
+    @Override
+    public ERuntimeObject getEParent(DisplayPriority priority) {
+        return priority == DisplayPriority.ARTIFACTS_FIRST
+                ? Activator.session().getObservation(parentArtifactId)
+                : Activator.session().getTask(parentTaskId);
+    }
 
-	@Override
-	public ERuntimeObject[] getEChildren(DisplayPriority displayPriority) {
-		List<ERuntimeObject> ret = new ArrayList<>();
-		if (displayPriority == DisplayPriority.TASK_FIRST && creator != null) {
-			ret.add(creator);
-		} else {
-			ret.addAll(children);
-		}
-		return ret.toArray(new ERuntimeObject[ret.size()]);
-	}
+    @Override
+    public ERuntimeObject[] getEChildren(DisplayPriority displayPriority, Level level) {
+        List<ERuntimeObject> ret = new ArrayList<>();
+        if (displayPriority == DisplayPriority.ARTIFACTS_FIRST) {
+            for (String child : childObservations) {
+                ret.add(Activator.session().getObservation(child));
+            }
+        }
+        return ret.toArray(new ERuntimeObject[ret.size()]);
+    }
+    
+    public void addChildObservationId(String id) {
+        this.childObservations.add(id);
+    }
 
-	// --- model
+    // --- delegate methods
 
-	public void setCreator(ETaskReference task) {
+    public String getId() {
+        return delegate.getId();
+    }
 
-	}
+    public String getLabel() {
+        return delegate.getLabel();
+    }
 
-	// --- delegate methods
+    public String getLiteralValue() {
+        return delegate.getLiteralValue();
+    }
 
-	public String getId() {
-		return delegate.getId();
-	}
+    public String getParentId() {
+        return delegate.getParentId();
+    }
 
-	public String getLabel() {
-		return delegate.getLabel();
-	}
+    public List<Connection> getStructure() {
+        return delegate.getStructure();
+    }
 
-	public String getLiteralValue() {
-		return delegate.getLiteralValue();
-	}
+    public ValueType getValueType() {
+        return delegate.getValueType();
+    }
 
-	public String getParentId() {
-		return delegate.getParentId();
-	}
+    public double getNodataPercentage() {
+        return delegate.getNodataPercentage();
+    }
 
-	public List<Connection> getStructure() {
-		return delegate.getStructure();
-	}
+    public double getMinValue() {
+        return delegate.getMinValue();
+    }
 
-	public ValueType getValueType() {
-		return delegate.getValueType();
-	}
+    public double getMaxValue() {
+        return delegate.getMaxValue();
+    }
 
-	public double getNodataPercentage() {
-		return delegate.getNodataPercentage();
-	}
+    public long getContextTime() {
+        return delegate.getContextTime();
+    }
 
-	public double getMinValue() {
-		return delegate.getMinValue();
-	}
+    public Set<GeometryType> getGeometryTypes() {
+        return delegate.getGeometryTypes();
+    }
 
-	public double getMaxValue() {
-		return delegate.getMaxValue();
-	}
+    public List<String> getTraits() {
+        return delegate.getTraits();
+    }
 
-	public long getContextTime() {
-		return delegate.getContextTime();
-	}
+    public List<String> getRoles() {
+        return delegate.getRoles();
+    }
 
-	public Set<GeometryType> getGeometryTypes() {
-		return delegate.getGeometryTypes();
-	}
+    public Type getObservableType() {
+        return delegate.getObservableType();
+    }
 
-	public List<String> getTraits() {
-		return delegate.getTraits();
-	}
+    public org.integratedmodelling.klab.api.observations.scale.space.IShape.Type getShapeType() {
+        return delegate.getShapeType();
+    }
 
-	public List<String> getRoles() {
-		return delegate.getRoles();
-	}
+    public int getSiblingCount() {
+        return delegate.getSiblingCount();
+    }
 
-	public Type getObservableType() {
-		return delegate.getObservableType();
-	}
+    public String getUrn() {
+        return delegate.getUrn();
+    }
 
-	public org.integratedmodelling.klab.api.observations.scale.space.IShape.Type getShapeType() {
-		return delegate.getShapeType();
-	}
+    public String getObservable() {
+        return delegate.getObservable();
+    }
 
-	public int getSiblingCount() {
-		return delegate.getSiblingCount();
-	}
+    public String getEncodedShape() {
+        return delegate.getEncodedShape();
+    }
 
-	public String getUrn() {
-		return delegate.getUrn();
-	}
+    public String getSpatialProjection() {
+        return delegate.getSpatialProjection();
+    }
 
-	public String getObservable() {
-		return delegate.getObservable();
-	}
+    public String getFolderId() {
+        return delegate.getFolderId();
+    }
 
-	public String getEncodedShape() {
-		return delegate.getEncodedShape();
-	}
+    public String getFolderLabel() {
+        return delegate.getFolderLabel();
+    }
 
-	public String getSpatialProjection() {
-		return delegate.getSpatialProjection();
-	}
+    public List<ObservationReference> getChildren() {
+        return delegate.getChildren();
+    }
 
-	public String getFolderId() {
-		return delegate.getFolderId();
-	}
+    public Map<String, String> getMetadata() {
+        return delegate.getMetadata();
+    }
 
-	public String getFolderLabel() {
-		return delegate.getFolderLabel();
-	}
+    public List<ObservationReference> getSiblings() {
+        return delegate.getSiblings();
+    }
 
-	public List<ObservationReference> getChildren() {
-		return delegate.getChildren();
-	}
+    public Set<Type> getSemantics() {
+        return delegate.getSemantics();
+    }
 
-	public Map<String, String> getMetadata() {
-		return delegate.getMetadata();
-	}
+    public ObservationType getObservationType() {
+        return delegate.getObservationType();
+    }
 
-	public List<ObservationReference> getSiblings() {
-		return delegate.getSiblings();
-	}
+    public long getValueCount() {
+        return delegate.getValueCount();
+    }
 
-	public Set<Type> getSemantics() {
-		return delegate.getSemantics();
-	}
+    public String getTaskId() {
+        return delegate.getTaskId();
+    }
 
-	public ObservationType getObservationType() {
-		return delegate.getObservationType();
-	}
+    public List<ActionReference> getActions() {
+        return delegate.getActions();
+    }
 
-	public long getValueCount() {
-		return delegate.getValueCount();
-	}
-
-	public String getTaskId() {
-		return delegate.getTaskId();
-	}
-
-	public List<ActionReference> getActions() {
-		return delegate.getActions();
-	}
-
-	public boolean isEmpty() {
-		return delegate.isEmpty();
-	}
+    public boolean isEmpty() {
+        return delegate.isEmpty();
+    }
 
     @Override
     public String toString() {
@@ -185,12 +189,16 @@ public class EObservationReference implements IObservationReference, ERuntimeObj
 
     @Override
     public boolean equals(Object o) {
-        return o instanceof EObservationReference && ((EObservationReference)o).getId() == this.getId();
+        return o instanceof EObservationReference && ((EObservationReference) o).getId().equals(this.getId());
     }
-    
+
     @Override
     public int hashCode() {
         return getId().hashCode();
+    }
+
+    public void setCreatorTaskId(String id) {
+        this.parentTaskId = id;
     }
 
 }

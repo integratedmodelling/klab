@@ -214,6 +214,14 @@ public interface IMessage {
 		ResourceImported, ResourceDeleted, ResourceUpdated, ResourceValidated
 	}
 
+	
+	/**
+	 * Unique ID for each message.
+	 * 
+	 * @return
+	 */
+	String getId();
+	
 	/**
 	 * The message exposes the identity that created it through a token, which may
 	 * or may not be parseable at the receiving end but will be consistently linked

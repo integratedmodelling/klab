@@ -17,7 +17,7 @@ public class KlabTask extends KlabPeer {
             send(message);
         }
         // the session keeps the logs
-        Activator.session().recordNotification(notification, message.getIdentity(), message.getType());
+        Activator.session().recordNotification(notification, message.getIdentity(), message.getType(), message.getId());
     }
 
     @MessageHandler

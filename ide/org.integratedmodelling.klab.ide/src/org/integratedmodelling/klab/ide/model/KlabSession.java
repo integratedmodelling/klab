@@ -140,7 +140,7 @@ public class KlabSession extends KlabPeer {
     public EObservationReference getCurrentContext() {
         return currentRootContextId == null ? null : observationCatalog.get(currentRootContextId);
     }
-    
+
     /**
      * The latest task started, or the one set by the user.
      * 
@@ -168,7 +168,7 @@ public class KlabSession extends KlabPeer {
      * --- State and history management
      */
 
-    void recordNotification(String notification, String identity, Type type) {
+    void recordNotification(String notification, String identity, Type type, String messageId) {
 
         ETaskReference parent = null;
         if (taskCatalog.containsKey(identity)) {
@@ -180,7 +180,7 @@ public class KlabSession extends KlabPeer {
          * continuation flag from the second on, so they can be displayed properly
          */
 
-        ENotification enote = new ENotification();
+        ENotification enote = new ENotification(messageId);
         enote.setMessage(notification);
         switch (type) {
         case Debug:
@@ -211,10 +211,10 @@ public class KlabSession extends KlabPeer {
             send(IMessage.MessageClass.UserInterface, IMessage.Type.Notification, enote);
         }
 
-//        System.out.println("RECEIVED NOTIFICATION [" + identity + "]: " + notification + ":");
-//        System.out.println("--------------------------------------");
-//        dumpHistory(DisplayPriority.TASK_FIRST);
-//        System.out.println("======================================\n");
+        // System.out.println("RECEIVED NOTIFICATION [" + identity + "]: " + notification + ":");
+        // System.out.println("--------------------------------------");
+        // dumpHistory(DisplayPriority.TASK_FIRST);
+        // System.out.println("======================================\n");
 
     }
 
@@ -232,7 +232,7 @@ public class KlabSession extends KlabPeer {
                 tasks.add(task.getId());
                 this.currentRootTaskId = task.getId();
             }
-            etask = new ETaskReference(task, null);
+            etask = new ETaskReference(task);
             taskCatalog.put(task.getId(), etask);
             if (task.getContextId() != null) {
                 ETaskReference parent = taskByObservation.get(task.getContextId());
@@ -243,15 +243,14 @@ public class KlabSession extends KlabPeer {
         } else {
             etask = taskCatalog.get(task.getId());
         }
-        
 
         etask.setStatus(event);
         send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, etask);
 
-//        System.out.println("RECEIVED TASK [" + event + "] " + etask + ":");
-//        System.out.println("--------------------------------------");
-//        dumpHistory(DisplayPriority.TASK_FIRST);
-//        System.out.println("======================================\n");
+        // System.out.println("RECEIVED TASK [" + event + "] " + etask + ":");
+        // System.out.println("--------------------------------------");
+        // dumpHistory(DisplayPriority.TASK_FIRST);
+        // System.out.println("======================================\n");
 
     }
 
@@ -260,38 +259,33 @@ public class KlabSession extends KlabPeer {
         EObservationReference parent = null;
         if (observation.getParentId() != null) {
             parent = observationCatalog.get(observation.getParentId());
+            parent.addChildObservationId(observation.getId());
         } else {
             this.currentRootContextId = observation.getId();
             contexts.add(observation.getId());
         }
 
-        EObservationReference obs = new EObservationReference(observation, parent);
+        EObservationReference obs = new EObservationReference(observation, observation
+                .getTaskId(), observation.getParentId());
         if (observation.getTaskId() != null) {
             ETaskReference task = taskCatalog.get(observation.getTaskId());
-            obs.setCreator(task);
             if (task.getContextId() == null) {
                 task.setContextId(observation.getId());
             }
             task.addCreated(obs);
             taskByObservation.put(observation.getId(), task);
         }
-        
+
         observationCatalog.put(observation.getId(), obs);
 
         if (observation.getParentId() == null) {
             this.currentRootContextId = observation.getId();
-            contexts.add(0, observation.getId());
         }
 
         send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, obs);
         if (observation.getParentId() == null) {
             send(IMessage.MessageClass.UserInterface, IMessage.Type.FocusChanged, obs);
         }
-
-//        System.out.println("RECEIVED OBSERVATION " + observation + ":");
-//        System.out.println("--------------------------------------");
-//        dumpHistory(DisplayPriority.TASK_FIRST);
-//        System.out.println("======================================\n");
     }
 
     /*
@@ -383,7 +377,7 @@ public class KlabSession extends KlabPeer {
         if (message.getType() != IMessage.Type.Debug) {
             send(message);
         }
-        recordNotification(notification, message.getIdentity(), message.getType());
+        recordNotification(notification, message.getIdentity(), message.getType(), message.getId());
     }
 
     @MessageHandler
@@ -391,13 +385,13 @@ public class KlabSession extends KlabPeer {
         send(message);
     }
 
-    @MessageHandler(type=IMessage.Type.ResetContext)
+    @MessageHandler(type = IMessage.Type.ResetContext)
     private void handleResetContextRequest(IMessage message, String dummy) {
         this.currentRootContextId = null;
         this.currentRootTaskId = null;
         send(message);
     }
-    
+
     @MessageHandler(type = Type.TaskStarted)
     public void handleTaskStarted(IMessage message, TaskReference task, IMessageBus bus) {
         send(message);
@@ -428,28 +422,42 @@ public class KlabSession extends KlabPeer {
     public void handleDataflow(IMessage message, DataflowReference dataflow) {
         ETaskReference task = taskCatalog.get(dataflow.getTaskId());
         if (task != null) {
-            task.setDataflow(new EDataflowReference(dataflow, task));
+            task.setDataflow(new EDataflowReference(dataflow, message.getId(), task));
             send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, task);
         }
         send(message);
     }
 
     public List<ENotification> getSystemNotifications(Level level) {
-        return new ArrayList<>(systemNotifications);
+        List<ENotification> ret = new ArrayList<>();
+        for (int i = systemNotifications.size() - 1; i >= 0; i--) {
+            if (level.intValue() <= Level.parse(systemNotifications.get(i).getLevel()).intValue()) {
+                ret.add(systemNotifications.get(i));
+            }
+        }
+        return ret;
     }
 
-    public void dumpHistory(DisplayPriority priority) {
+    public void dumpHistory(DisplayPriority priority, Level logLevel) {
         for (ERuntimeObject e : getSessionHistory(priority, Level.FINE)) {
-            dumpHistoryObject(e, priority, 0);
+            dumpHistoryObject(e, priority, logLevel, 0);
         }
     }
 
-    private void dumpHistoryObject(ERuntimeObject e, DisplayPriority priority, int level) {
+    private void dumpHistoryObject(ERuntimeObject e, DisplayPriority priority, Level logLevel, int level) {
 
         System.out.println(StringUtils.spaces(level * 3) + e);
-        for (ERuntimeObject c : e.getEChildren(priority)) {
-            dumpHistoryObject(c, priority, level + 1);
+        for (ERuntimeObject c : e.getEChildren(priority, logLevel)) {
+            dumpHistoryObject(c, priority, logLevel, level + 1);
         }
+    }
+
+    public ETaskReference getTask(String id) {
+        return taskCatalog.get(id);
+    }
+
+    public EObservationReference getObservation(String id) {
+        return observationCatalog.get(id);
     }
 
 }

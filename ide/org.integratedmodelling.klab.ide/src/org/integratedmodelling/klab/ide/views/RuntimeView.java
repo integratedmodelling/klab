@@ -53,6 +53,8 @@ import org.integratedmodelling.klab.ide.navigator.model.beans.EObservationRefere
 import org.integratedmodelling.klab.ide.navigator.model.beans.ERuntimeObject;
 import org.integratedmodelling.klab.ide.navigator.model.beans.ETaskReference;
 import org.integratedmodelling.klab.rest.Capabilities;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 
 public class RuntimeView extends ViewPart {
 
@@ -68,7 +70,7 @@ public class RuntimeView extends ViewPart {
 
     private SashForm             sashForm;
 
-    private Group                taskArea;
+    private SashForm                taskArea;
 
     private TreeViewer           taskViewer;
 
@@ -250,7 +252,7 @@ public class RuntimeView extends ViewPart {
             if (parentElement instanceof Collection) {
                 return ((Collection<?>) parentElement).toArray();
             } else if (parentElement instanceof ERuntimeObject) {
-                return ((ERuntimeObject) parentElement).getEChildren(currentPriority);
+                return ((ERuntimeObject) parentElement).getEChildren(currentPriority, currentLogLevel);
             }
             return new Object[] {};
         }
@@ -258,8 +260,8 @@ public class RuntimeView extends ViewPart {
         @Override
         public Object getParent(Object element) {
             if (element instanceof ERuntimeObject) {
-                return ((ERuntimeObject) element).getEParent() == null ? history
-                        : ((ERuntimeObject) element).getEParent();
+                return ((ERuntimeObject) element).getEParent(currentPriority) == null ? history
+                        : ((ERuntimeObject) element).getEParent(currentPriority);
             }
             return null;
         }
@@ -269,7 +271,7 @@ public class RuntimeView extends ViewPart {
             if (element instanceof Collection) {
                 return ((Collection<?>) element).size() > 0;
             } else if (element instanceof ERuntimeObject) {
-                return ((ERuntimeObject) element).getEChildren(currentPriority).length > 0;
+                return ((ERuntimeObject) element).getEChildren(currentPriority, currentLogLevel).length > 0;
             }
             return false;
         }
@@ -455,7 +457,6 @@ public class RuntimeView extends ViewPart {
                     currentPriority = DisplayPriority.ARTIFACTS_FIRST;
                 }
                 refreshTaskViewer();
-                refreshSystemLog();
             }
         });
 
@@ -482,12 +483,33 @@ public class RuntimeView extends ViewPart {
         lblNewLabel_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
         Combo btnCheckButton = new Combo(composite_2, SWT.READ_ONLY);
+        btnCheckButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                switch (btnCheckButton.getText()) {
+                case "Info":
+                    currentLogLevel = Level.INFO;
+                    break;
+                case "Error":
+                    currentLogLevel = Level.SEVERE;
+                    break;
+                case "Warning":
+                    currentLogLevel = Level.WARNING;
+                    break;
+                case "Debug":
+                    currentLogLevel = Level.FINE;
+                    break;
+                }
+                refreshTaskViewer();
+                refreshSystemLog();
+            }
+        });
         btnCheckButton.setItems(new String[] { "Error", "Warning", "Info", "Debug" });
         btnCheckButton.setFont(SWTResourceManager.getFont("Segoe UI", 8, SWT.NORMAL));
         btnCheckButton.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         btnCheckButton.select(2);
 
-        taskArea = new Group(grpSessionEvents, SWT.NONE);
+        taskArea = new SashForm(grpSessionEvents, SWT.VERTICAL);
         taskArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         GridLayout gl_taskArea = new GridLayout(1, false);
         gl_taskArea.verticalSpacing = 2;
@@ -497,6 +519,14 @@ public class RuntimeView extends ViewPart {
         taskArea.setLayout(gl_taskArea);
 
         taskViewer = new TreeViewer(taskArea, SWT.FULL_SELECTION);
+        taskViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+            public void selectionChanged(SelectionChangedEvent event) {
+                Object o = ((StructuredSelection) (event.getSelection())).getFirstElement();
+                if (o != null) {
+                    showDetail(o);
+                }
+            }
+        });
         taskTree = taskViewer.getTree();
         taskTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
@@ -508,7 +538,8 @@ public class RuntimeView extends ViewPart {
         gd_table.heightHint = 180;
         gd_table.exclude = true;
         table.setLayoutData(gd_table);
-
+        taskArea.setMaximizedControl(taskTree);
+        
         taskViewer.setContentProvider(new TaskContentProvider());
         taskViewer.setLabelProvider(new TaskLabelProvider());
         taskViewer.addDoubleClickListener(new IDoubleClickListener() {
@@ -567,6 +598,11 @@ public class RuntimeView extends ViewPart {
         initializeMenu();
 
         klab = new KlabPeer(Sender.ANY, (message) -> handleMessage(message));
+    }
+
+    protected void showDetail(Object o) {
+        // TODO Auto-generated method stub
+        
     }
 
     protected void handleSelection(Object o) {
@@ -680,7 +716,8 @@ public class RuntimeView extends ViewPart {
                         taskViewer
                                 .setInput(history = Activator.session()
                                         .getSessionHistory(currentPriority, currentTaskLevel));
-                        taskViewer.expandToLevel(lastFocus, -1);
+                        taskViewer.collapseAll();
+                        taskViewer.expandToLevel(lastFocus, TreeViewer.ALL_LEVELS);
                     }
                 });
     }

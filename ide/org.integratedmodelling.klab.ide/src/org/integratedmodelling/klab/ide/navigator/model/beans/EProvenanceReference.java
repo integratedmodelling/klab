@@ -1,20 +1,57 @@
 package org.integratedmodelling.klab.ide.navigator.model.beans;
 
+import java.util.logging.Level;
+
 import org.integratedmodelling.klab.api.runtime.rest.IProvenanceReference;
+import org.integratedmodelling.klab.ide.Activator;
 
 public class EProvenanceReference implements IProvenanceReference, ERuntimeObject {
 
+	String parentTaskId;
+    String parentArtifactId;
+	String id;
+    
+	public EProvenanceReference(String parentTaskId, String parentArtifactId, String id) {
+	    this.parentTaskId = parentTaskId;
+        this.parentArtifactId = parentArtifactId;
+	    this.id = id;
+	}
 	
 	@Override
-	public ERuntimeObject getEParent() {
-		// TODO Auto-generated method stub
-		return null;
+	public ERuntimeObject getEParent(DisplayPriority priority) {
+        return priority == DisplayPriority.ARTIFACTS_FIRST
+                ? Activator.session().getObservation(parentArtifactId)
+                : Activator.session().getTask(parentTaskId);
 	}
 
 	@Override
-	public ERuntimeObject[] getEChildren(DisplayPriority priority) {
-		// TODO Auto-generated method stub
-		return null;
+	public ERuntimeObject[] getEChildren(DisplayPriority priority, Level level) {
+		return new ERuntimeObject[] {};
 	}
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        EProvenanceReference other = (EProvenanceReference) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        return true;
+    }
 
 }
