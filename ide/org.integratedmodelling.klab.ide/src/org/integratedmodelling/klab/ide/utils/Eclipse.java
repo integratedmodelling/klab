@@ -3,9 +3,9 @@ package org.integratedmodelling.klab.ide.utils;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.io.ByteArrayInputStream;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.InputStream;
+import java.io.FileWriter;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -17,17 +17,17 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Level;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -35,7 +35,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
@@ -43,8 +42,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IPersistableElement;
-import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -108,23 +105,33 @@ public enum Eclipse {
     }
 
     /**
-     * Open string content in passed editor.
+     * Open string content in passed editor. Use a temp file and avoid all absurdities.
      * 
      * @param content
      * @param editorId
      * @param readOnly
      */
-    public void edit(String content, String editorId, boolean readOnly) {
+    public void edit(String content, String filename, String extension, boolean readOnly) {
+        
+        File tempDir = new File(System.getProperty("java.io.tmpdir"));
+        try {
+            File tempFile = File.createTempFile(filename, "." + extension, tempDir);
+            FileWriter fileWriter = new FileWriter(tempFile, false);
+            BufferedWriter bw = new BufferedWriter(fileWriter);
+            bw.write(content);
+            bw.close();
 
-        IStorage storage = new StringStorage(content);
-        IStorageEditorInput input = new StringInput(storage);
-        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-        if (page != null) {
-            try {
-                page.openEditor(input, editorId);
-            } catch (PartInitException e) {
-                handleException(e);
+            IFileStore fileStore = EFS.getLocalFileSystem().fromLocalFile(tempFile);
+            if (fileStore.fetchInfo().exists()) {
+                IWorkbenchPage page=  PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                try {
+                    IDE.openEditorOnFileStore(page, fileStore);
+                } catch (PartInitException e) {
+                    handleException(e);
+                }
             }
+        } catch (Exception e) {
+            handleException(e);
         }
     }
 
@@ -174,6 +181,7 @@ public enum Eclipse {
             Path path = new Path(filename);
             file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
         }
+       
         openFile(file, lineNumber);
     }
 
@@ -556,70 +564,4 @@ public enum Eclipse {
         }
     }
 
-    // --- for editing string content
-
-    class StringStorage implements IStorage {
-        private String string;
-
-        StringStorage(String input) {
-            this.string = input;
-        }
-
-        public InputStream getContents() throws CoreException {
-            return new ByteArrayInputStream(string.getBytes());
-        }
-
-        public IPath getFullPath() {
-            return null;
-        }
-
-        public Object getAdapter(Class adapter) {
-            return null;
-        }
-
-        public String getName() {
-            int len = Math.min(5, string.length());
-            return string.substring(0, len).concat("..."); //$NON-NLS-1$
-        }
-
-        public boolean isReadOnly() {
-            return true;
-        }
-    }
-
-    class StringInput implements IStorageEditorInput {
-        private IStorage storage;
-
-        StringInput(IStorage storage) {
-            this.storage = storage;
-        }
-
-        public boolean exists() {
-            return true;
-        }
-
-        public ImageDescriptor getImageDescriptor() {
-            return null;
-        }
-
-        public String getName() {
-            return storage.getName();
-        }
-
-        public IPersistableElement getPersistable() {
-            return null;
-        }
-
-        public IStorage getStorage() {
-            return storage;
-        }
-
-        public String getToolTipText() {
-            return "String-based file: " + storage.getName();
-        }
-
-        public Object getAdapter(Class adapter) {
-            return null;
-        }
-    }
 }

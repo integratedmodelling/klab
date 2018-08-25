@@ -166,7 +166,7 @@ public class OSMSubjectInstantiator implements IInstantiator, IExpression {
 
         if (query == null) {
             query = buildQuery();
-            Logging.INSTANCE.info("Overpass query " + query);
+            Logging.INSTANCE.debug("Overpass query: " + query);
         }
 
         List<IObjectArtifact> ret = new ArrayList<>();

@@ -721,8 +721,7 @@ public class RuntimeView extends ViewPart {
 
     protected void handleSelection(Object o) {
         if (o instanceof EDataflowReference) {
-            Eclipse.INSTANCE.edit(((EDataflowReference) o)
-                    .getKdlCode(), KdlActivator.ORG_INTEGRATEDMODELLING_KDL_KDL, false);
+            Eclipse.INSTANCE.edit(((EDataflowReference) o).getKdlCode(), "dataflow", "kdl", false);
         }
     }
 

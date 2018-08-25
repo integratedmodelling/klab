@@ -494,7 +494,7 @@ public class ModelKbox extends ObservableKbox {
 
 		if (o instanceof org.integratedmodelling.klab.model.Model) {
 
-			Logging.INSTANCE.info("storing model " + ((IModel) o).getName());
+			Logging.INSTANCE.debug("storing model " + ((IModel) o).getName());
 
 			for (ModelReference data : inferModels((org.integratedmodelling.klab.model.Model) o, monitor)) {
 				toStore.add(data);

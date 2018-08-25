@@ -190,7 +190,7 @@ public enum Observations implements IObservationService {
 		ret.setParentId(parent == null ? null : parent.getId());
 		ret.setLabel(observation instanceof IDirectObservation ? ((IDirectObservation) observation).getName()
 				: observation.getObservable().getLocalName());
-		ret.setObservable(observation.getObservable().getType().getDefinition());
+		ret.setObservable(observation.getObservable().getDefinition());
 		ret.setSiblingCount(observation.groupSize());
 		ret.getSemantics().addAll(((Concept) observation.getObservable().getType()).getTypeSet());
 
