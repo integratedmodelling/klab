@@ -10,9 +10,12 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IFontProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -25,7 +28,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -55,13 +57,23 @@ import org.integratedmodelling.klab.ide.navigator.model.beans.ERuntimeObject;
 import org.integratedmodelling.klab.ide.navigator.model.beans.ETaskReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.Capabilities;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.swt.layout.RowLayout;
+import org.integratedmodelling.klab.utils.Pair;
+import org.eclipse.jface.viewers.Viewer;
 
 public class RuntimeView extends ViewPart {
+    private static class ContentProvider implements IStructuredContentProvider {
+        public Object[] getElements(Object inputElement) {
+            return new Object[0];
+        }
 
-    public static final String   ID               = "org.integratedmodelling.klab.ide.views.RuntimeView"; //$NON-NLS-1$
+        public void dispose() {
+        }
+
+        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        }
+    }
+
+    public static final String   ID              = "org.integratedmodelling.klab.ide.views.RuntimeView"; //$NON-NLS-1$
 
     private KlabPeer             klab;
 
@@ -102,23 +114,58 @@ public class RuntimeView extends ViewPart {
     private Button               toggleArtifacts;
     private Label                lblNewLabel;
 
-    private DisplayPriority      currentPriority  = DisplayPriority.TASK_FIRST;
+    private DisplayPriority      currentPriority = DisplayPriority.TASK_FIRST;
     private List<ENotification>  notifications;
     private List<ERuntimeObject> history;
     private Composite            composite_2;
     private Group                grpSessionEvents;
-    private Table                table;
-    private TableViewer          tableViewer_1;
+    private Table                detailTable;
+    private TableViewer          detailViewer;
 
     private ERuntimeObject       lastFocus;
-    private Level                systemLogLevel = Level.INFO;
-    private Level                currentLogLevel  = Level.INFO;
+    private Level                systemLogLevel  = Level.INFO;
+    private Level                currentLogLevel = Level.INFO;
     private ERuntimeObject       currentDetail;
-    private Composite composite_4;
-    private Label label_1;
-    private Combo combo;
+    private Composite            composite_4;
+    private Label                label_1;
+    private Combo                combo;
+    private TableColumn          tblclmnNewColumn;
+    private TableColumn          tblclmnNewColumn_1;
 
     public RuntimeView() {
+    }
+
+    class DetailLabelProvider extends LabelProvider implements ITableLabelProvider {
+
+        @Override
+        public Image getColumnImage(Object element, int columnIndex) {
+            if (columnIndex == 0) {
+                return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/property.gif");
+            }
+            return null;
+        }
+
+        @Override
+        public String getColumnText(Object element, int columnIndex) {
+            if (element instanceof Pair) {
+                return columnIndex == 0 ? ((Pair<?, ?>) element).getFirst().toString()
+                        : ((Pair<?, ?>) element).getSecond().toString();
+            }
+            return null;
+        }
+
+    }
+
+    class DetailContentProvider implements IStructuredContentProvider {
+
+        @Override
+        public Object[] getElements(Object inputElement) {
+            if (inputElement instanceof ERuntimeObject) {
+                return ((ERuntimeObject) inputElement).getProperties().toArray();
+            }
+            return new Object[] {};
+        }
+
     }
 
     class NotificationLabelProvider extends LabelProvider implements ITableLabelProvider {
@@ -536,15 +583,21 @@ public class RuntimeView extends ViewPart {
         taskTree = taskViewer.getTree();
         taskTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
-        tableViewer_1 = new TableViewer(taskArea, SWT.BORDER | SWT.FULL_SELECTION);
-        table = tableViewer_1.getTable();
-        table.setVisible(true);
-        table.setLinesVisible(true);
+        detailViewer = new TableViewer(taskArea, SWT.BORDER | SWT.FULL_SELECTION);
+        detailTable = detailViewer.getTable();
+        detailTable.setVisible(true);
         GridData gd_table = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
         gd_table.heightHint = 180;
-//        gd_table.exclude = true;
-        table.setLayoutData(gd_table);
-        taskArea.setWeights(new int[] { 72, 28 });
+        detailTable.setLayoutData(gd_table);
+
+        tblclmnNewColumn = new TableColumn(detailTable, SWT.NONE);
+        tblclmnNewColumn.setWidth(200);
+
+        tblclmnNewColumn_1 = new TableColumn(detailTable, SWT.NONE);
+        tblclmnNewColumn_1.setWidth(550);
+        detailViewer.setContentProvider(new DetailContentProvider());
+        detailViewer.setLabelProvider(new DetailLabelProvider());
+        taskArea.setWeights(new int[] { 80, 20 });
         taskArea.setMaximizedControl(taskTree);
 
         taskViewer.setContentProvider(new TaskContentProvider());
@@ -581,7 +634,7 @@ public class RuntimeView extends ViewPart {
         grpMessages = new Group(sashForm, SWT.NONE);
         grpMessages.setText("System Log");
         grpMessages.setLayout(new GridLayout(1, false));
-        
+
         composite_4 = new Composite(grpMessages, SWT.NONE);
         composite_4.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
         GridLayout gl_composite_4 = new GridLayout(2, false);
@@ -589,15 +642,15 @@ public class RuntimeView extends ViewPart {
         gl_composite_4.marginHeight = 0;
         gl_composite_4.horizontalSpacing = 3;
         composite_4.setLayout(gl_composite_4);
-        
+
         label_1 = new Label(composite_4, SWT.NONE);
         label_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
         label_1.setText("Report level");
         label_1.setFont(SWTResourceManager.getFont("Segoe UI", 8, SWT.NORMAL));
         label_1.setAlignment(SWT.RIGHT);
-        
+
         combo = new Combo(composite_4, SWT.READ_ONLY);
-        combo.setItems(new String[] {"Error", "Warning", "Info", "Debug"});
+        combo.setItems(new String[] { "Error", "Warning", "Info", "Debug" });
         combo.setFont(SWTResourceManager.getFont("Segoe UI", 8, SWT.NORMAL));
         combo.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         combo.select(2);
@@ -648,12 +701,10 @@ public class RuntimeView extends ViewPart {
     }
 
     protected void showDetail(ERuntimeObject o) {
-        
+
         if (o instanceof ENotification) {
             return;
         }
-
-        System.out.println("SHOWING DETAIL " + o);
 
         if (currentDetail != null && o.equals(currentDetail)) {
             currentDetail = null;
@@ -661,7 +712,7 @@ public class RuntimeView extends ViewPart {
         } else {
             currentDetail = o;
             Display.getDefault().asyncExec(() -> {
-                // TODO load properties
+                detailViewer.setInput(o);
                 taskArea.setMaximizedControl(null);
             });
         }
@@ -670,7 +721,8 @@ public class RuntimeView extends ViewPart {
 
     protected void handleSelection(Object o) {
         if (o instanceof EDataflowReference) {
-            Eclipse.INSTANCE.edit(((EDataflowReference)o).getKdlCode(), KdlActivator.ORG_INTEGRATEDMODELLING_KDL_KDL, false);
+            Eclipse.INSTANCE.edit(((EDataflowReference) o)
+                    .getKdlCode(), KdlActivator.ORG_INTEGRATEDMODELLING_KDL_KDL, false);
         }
     }
 

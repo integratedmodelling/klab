@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.rest.ITaskReference;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.rest.TaskReference;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * Augmented {@link TaskReference} for runtime bookkeeping.
@@ -109,6 +110,12 @@ public class ETaskReference implements ITaskReference, ERuntimeObject {
         obs.setCreatorTaskId(this.getId());
     }
 
+    @Override
+    public List<Pair<String, String>> getProperties() {
+        List<Pair<String,String>> ret = new ArrayList<>();
+        return ret;
+    }
+    
     @Override
     public String getContextId() {
         return delegate.getContextId();

@@ -86,6 +86,8 @@ public enum Observations implements IObservationService {
 	/**
 	 * Return the summary for the data in a state, computing it if necessary.
 	 * 
+	 * TODO CACHE! This is expensive and can be called multiple times.
+	 * 
 	 * @param state
 	 *            a state
 	 * @param locator
@@ -94,17 +96,7 @@ public enum Observations implements IObservationService {
 	 * @return the state summary
 	 */
 	public StateSummary getStateSummary(IState state, ILocator locator) {
-
-		// if (state.getMetadata().containsKey(State.STATE_SUMMARY_METADATA_KEY +
-		// locator)) {
-		// return state.getMetadata().get(State.STATE_SUMMARY_METADATA_KEY,
-		// StateSummary.class);
-		// }
-
 		StateSummary ret = computeStateSummary(state, locator);
-
-		// state.getMetadata().put(State.STATE_SUMMARY_METADATA_KEY + locator, ret);
-
 		return ret;
 	}
 
@@ -247,11 +239,17 @@ public enum Observations implements IObservationService {
 
 		if (observation instanceof IState) {
 
+		    StateSummary summary = getStateSummary((IState)observation, locator);
+		    
 			ret.setValueCount(observation.getScale().size());
 			if (observation.getScale().size() == 1) {
 				ret.setLiteralValue(formatValue(observation.getObservable(),
 						((IState) observation).get(observation.getScale().getLocator(0))));
 			}
+			
+			ret.setNodataPercentage(summary.getNodataPercentage());
+			ret.setMinValue(summary.getRange().get(0));
+            ret.setMaxValue(summary.getRange().get(1));
 
 			// FIXME REMOVE this is just for testing
 			ret.getActions().add(new ActionReference("Export as GeoTiff", "ExportGeotiff"));

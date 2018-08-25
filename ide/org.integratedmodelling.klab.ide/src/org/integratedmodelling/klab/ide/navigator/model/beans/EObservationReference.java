@@ -15,13 +15,14 @@ import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.rest.ObservationReference.ObservationType;
 import org.integratedmodelling.klab.rest.ObservationReference.ValueType;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class EObservationReference implements IObservationReference, ERuntimeObject {
 
-    private IObservationReference       delegate;
-    private String                      parentTaskId;
-    private String                      parentArtifactId;
-    private List<String>                childObservations = new ArrayList<>();
+    private IObservationReference delegate;
+    private String                parentTaskId;
+    private String                parentArtifactId;
+    private List<String>          childObservations = new ArrayList<>();
 
     public EObservationReference(ObservationReference observationReference) {
         this.delegate = observationReference;
@@ -51,9 +52,21 @@ public class EObservationReference implements IObservationReference, ERuntimeObj
         }
         return ret.toArray(new ERuntimeObject[ret.size()]);
     }
-    
+
     public void addChildObservationId(String id) {
         this.childObservations.add(id);
+    }
+
+    @Override
+    public List<Pair<String, String>> getProperties() {
+        List<Pair<String, String>> ret = new ArrayList<>();
+        ret.add(new Pair<>("Observable", delegate.getObservable()));
+        if (delegate.getGeometryTypes().contains(GeometryType.RASTER)) {
+            ret.add(new Pair<>("Minimum value", "" + delegate.getMinValue()));
+            ret.add(new Pair<>("Maximum value", "" + delegate.getMaxValue()));
+            ret.add(new Pair<>("% no-data values", "" + delegate.getNodataPercentage()));
+        }
+        return ret;
     }
 
     // --- delegate methods

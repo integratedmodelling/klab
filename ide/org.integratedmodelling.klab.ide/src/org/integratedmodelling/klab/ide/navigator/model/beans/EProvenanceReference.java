@@ -1,9 +1,12 @@
 package org.integratedmodelling.klab.ide.navigator.model.beans;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 import org.integratedmodelling.klab.api.runtime.rest.IProvenanceReference;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class EProvenanceReference implements IProvenanceReference, ERuntimeObject {
 
@@ -29,6 +32,12 @@ public class EProvenanceReference implements IProvenanceReference, ERuntimeObjec
 		return new ERuntimeObject[] {};
 	}
 
+    @Override
+    public List<Pair<String, String>> getProperties() {
+        List<Pair<String,String>> ret = new ArrayList<>();
+        return ret;
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;

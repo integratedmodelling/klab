@@ -1,9 +1,12 @@
 package org.integratedmodelling.klab.ide.navigator.model.beans;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 import org.integratedmodelling.klab.api.runtime.rest.IDataflowReference;
 import org.integratedmodelling.klab.rest.DataflowReference;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class EDataflowReference implements IDataflowReference, ERuntimeObject {
 
@@ -49,6 +52,12 @@ public class EDataflowReference implements IDataflowReference, ERuntimeObject {
     @Override
     public int hashCode() {
         return id.hashCode();
+    }
+
+    @Override
+    public List<Pair<String, String>> getProperties() {
+        List<Pair<String,String>> ret = new ArrayList<>();
+        return ret;
     }
     
 }
