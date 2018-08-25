@@ -138,21 +138,6 @@ public class ObservableBuilder implements Builder {
         return this;
     }
 
-//    @Override
-//    public Builder downTo(IConcept concept) {
-//        this.downTo = concept;
-//        isTrivial = false;
-//        return this;
-//    }
-//
-//    @Override
-//    public Builder by(IConcept concept) {
-//        // must be a trait and must be unique
-//        this.classifier = concept;
-//        isTrivial = false;
-//        return this;
-//    }
-
     @Override
     public Builder withGoal(IConcept goal) {
         this.goal = goal;

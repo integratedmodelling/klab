@@ -362,6 +362,7 @@ public enum Observables implements IObservableService {
 				ret.add(new ComputableResource(current.getRange(), to.getRange()));
 			}
 		}
+
 		return ret;
 	}
 

@@ -591,10 +591,10 @@ public class RuntimeView extends ViewPart {
         detailTable.setLayoutData(gd_table);
 
         tblclmnNewColumn = new TableColumn(detailTable, SWT.NONE);
-        tblclmnNewColumn.setWidth(200);
+        tblclmnNewColumn.setWidth(120);
 
         tblclmnNewColumn_1 = new TableColumn(detailTable, SWT.NONE);
-        tblclmnNewColumn_1.setWidth(550);
+        tblclmnNewColumn_1.setWidth(380);
         detailViewer.setContentProvider(new DetailContentProvider());
         detailViewer.setLabelProvider(new DetailLabelProvider());
         taskArea.setWeights(new int[] { 80, 20 });

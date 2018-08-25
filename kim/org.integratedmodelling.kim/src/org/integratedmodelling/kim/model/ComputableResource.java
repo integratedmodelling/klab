@@ -94,9 +94,9 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	}
 
 	public void setTargetId(String targetId) {
-		if (!copy) {
-			throw new KlabInternalErrorException("cannot set the target ID on an original computation from k.IM code!");
-		}
+//		if (!copy) {
+//			throw new KlabInternalErrorException("cannot set the target ID on an original computation from k.IM code!");
+//		}
 		this.targetId = targetId;
 	}
 

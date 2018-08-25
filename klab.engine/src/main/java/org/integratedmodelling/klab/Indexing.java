@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IIndexingService;
@@ -33,7 +34,10 @@ public enum Indexing implements IIndexingService {
 	}
 
     public void releaseNamespace(String namespaceId, IMonitor monitor) {
-    	Indexer.INSTANCE.updateNamespace(Kim.INSTANCE.getNamespace(namespaceId));
+        IKimNamespace namespace = Kim.INSTANCE.getNamespace(namespaceId);
+        if (namespace != null) {
+            Indexer.INSTANCE.updateNamespace(namespace);
+        }
     }
 
 }

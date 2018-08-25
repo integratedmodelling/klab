@@ -434,7 +434,7 @@ public class DataflowCompiler {
 				// only happens when the observable is resolved indirectly
 				compatibleOutput = ret.observable;
 			}
-			observableCatalog.put(ret.observable.getLocalName(), compatibleOutput);
+			observableCatalog.put(compatibleOutput.getLocalName(), compatibleOutput);
 
 			ModelD md = compileModel(model);
 			for (ResolutionEdge o : graph.incomingEdgesOf(model)) {
