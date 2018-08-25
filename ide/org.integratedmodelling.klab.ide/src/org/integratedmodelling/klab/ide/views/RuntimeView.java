@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.integratedmodelling.kdl.ui.internal.KdlActivator;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
@@ -52,9 +53,11 @@ import org.integratedmodelling.klab.ide.navigator.model.beans.ENotification;
 import org.integratedmodelling.klab.ide.navigator.model.beans.EObservationReference;
 import org.integratedmodelling.klab.ide.navigator.model.beans.ERuntimeObject;
 import org.integratedmodelling.klab.ide.navigator.model.beans.ETaskReference;
+import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.Capabilities;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.layout.RowLayout;
 
 public class RuntimeView extends ViewPart {
 
@@ -70,7 +73,7 @@ public class RuntimeView extends ViewPart {
 
     private SashForm             sashForm;
 
-    private SashForm                taskArea;
+    private SashForm             taskArea;
 
     private TreeViewer           taskViewer;
 
@@ -108,8 +111,12 @@ public class RuntimeView extends ViewPart {
     private TableViewer          tableViewer_1;
 
     private ERuntimeObject       lastFocus;
-    private Level                currentTaskLevel = Level.INFO;
+    private Level                systemLogLevel = Level.INFO;
     private Level                currentLogLevel  = Level.INFO;
+    private ERuntimeObject       currentDetail;
+    private Composite composite_4;
+    private Label label_1;
+    private Combo combo;
 
     public RuntimeView() {
     }
@@ -501,7 +508,6 @@ public class RuntimeView extends ViewPart {
                     break;
                 }
                 refreshTaskViewer();
-                refreshSystemLog();
             }
         });
         btnCheckButton.setItems(new String[] { "Error", "Warning", "Info", "Debug" });
@@ -522,8 +528,8 @@ public class RuntimeView extends ViewPart {
         taskViewer.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event) {
                 Object o = ((StructuredSelection) (event.getSelection())).getFirstElement();
-                if (o != null) {
-                    showDetail(o);
+                if (o instanceof ERuntimeObject) {
+                    showDetail((ERuntimeObject) o);
                 }
             }
         });
@@ -536,10 +542,11 @@ public class RuntimeView extends ViewPart {
         table.setLinesVisible(true);
         GridData gd_table = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
         gd_table.heightHint = 180;
-        gd_table.exclude = true;
+//        gd_table.exclude = true;
         table.setLayoutData(gd_table);
+        taskArea.setWeights(new int[] { 72, 28 });
         taskArea.setMaximizedControl(taskTree);
-        
+
         taskViewer.setContentProvider(new TaskContentProvider());
         taskViewer.setLabelProvider(new TaskLabelProvider());
         taskViewer.addDoubleClickListener(new IDoubleClickListener() {
@@ -573,10 +580,50 @@ public class RuntimeView extends ViewPart {
 
         grpMessages = new Group(sashForm, SWT.NONE);
         grpMessages.setText("System Log");
-        grpMessages.setLayout(new FillLayout(SWT.HORIZONTAL));
-
+        grpMessages.setLayout(new GridLayout(1, false));
+        
+        composite_4 = new Composite(grpMessages, SWT.NONE);
+        composite_4.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
+        GridLayout gl_composite_4 = new GridLayout(2, false);
+        gl_composite_4.marginWidth = 0;
+        gl_composite_4.marginHeight = 0;
+        gl_composite_4.horizontalSpacing = 3;
+        composite_4.setLayout(gl_composite_4);
+        
+        label_1 = new Label(composite_4, SWT.NONE);
+        label_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
+        label_1.setText("Report level");
+        label_1.setFont(SWTResourceManager.getFont("Segoe UI", 8, SWT.NORMAL));
+        label_1.setAlignment(SWT.RIGHT);
+        
+        combo = new Combo(composite_4, SWT.READ_ONLY);
+        combo.setItems(new String[] {"Error", "Warning", "Info", "Debug"});
+        combo.setFont(SWTResourceManager.getFont("Segoe UI", 8, SWT.NORMAL));
+        combo.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+        combo.select(2);
+        combo.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                switch (combo.getText()) {
+                case "Info":
+                    systemLogLevel = Level.INFO;
+                    break;
+                case "Error":
+                    systemLogLevel = Level.SEVERE;
+                    break;
+                case "Warning":
+                    systemLogLevel = Level.WARNING;
+                    break;
+                case "Debug":
+                    systemLogLevel = Level.FINE;
+                    break;
+                }
+                refreshSystemLog();
+            }
+        });
         tableViewer = new TableViewer(grpMessages, SWT.BORDER | SWT.FULL_SELECTION);
         tableMessages = tableViewer.getTable();
+        tableMessages.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         tableMessages.setLinesVisible(true);
 
         tableViewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
@@ -600,14 +647,31 @@ public class RuntimeView extends ViewPart {
         klab = new KlabPeer(Sender.ANY, (message) -> handleMessage(message));
     }
 
-    protected void showDetail(Object o) {
-        // TODO Auto-generated method stub
+    protected void showDetail(ERuntimeObject o) {
         
+        if (o instanceof ENotification) {
+            return;
+        }
+
+        System.out.println("SHOWING DETAIL " + o);
+
+        if (currentDetail != null && o.equals(currentDetail)) {
+            currentDetail = null;
+            Display.getDefault().asyncExec(() -> taskArea.setMaximizedControl(taskTree));
+        } else {
+            currentDetail = o;
+            Display.getDefault().asyncExec(() -> {
+                // TODO load properties
+                taskArea.setMaximizedControl(null);
+            });
+        }
+
     }
 
     protected void handleSelection(Object o) {
-        // TODO Auto-generated method stub
-        System.out.println("Handle selection for " + o);
+        if (o instanceof EDataflowReference) {
+            Eclipse.INSTANCE.edit(((EDataflowReference)o).getKdlCode(), KdlActivator.ORG_INTEGRATEDMODELLING_KDL_KDL, false);
+        }
     }
 
     public void dispose() {
@@ -644,9 +708,17 @@ public class RuntimeView extends ViewPart {
     private void handleMessage(IMessage message) {
 
         switch (message.getType()) {
+        case TaskStarted:
+            Display.getDefault().asyncExec(() -> {
+                taskArea.setMaximizedControl(taskTree);
+            });
+            break;
         case ResetContext:
             lastFocus = null;
-            Display.getDefault().asyncExec(() -> taskViewer.collapseAll());
+            Display.getDefault().asyncExec(() -> {
+                taskViewer.collapseAll();
+                taskArea.setMaximizedControl(taskTree);
+            });
             break;
         case FocusChanged:
             if (currentPriority == DisplayPriority.ARTIFACTS_FIRST) {
@@ -705,7 +777,7 @@ public class RuntimeView extends ViewPart {
         Display.getDefault()
                 .asyncExec(() -> tableViewer
                         .setInput(notifications = Activator.session()
-                                .getSystemNotifications(currentLogLevel)));
+                                .getSystemNotifications(systemLogLevel)));
     }
 
     public void refreshTaskViewer() {
@@ -715,7 +787,7 @@ public class RuntimeView extends ViewPart {
                     if (lastFocus != null) {
                         taskViewer
                                 .setInput(history = Activator.session()
-                                        .getSessionHistory(currentPriority, currentTaskLevel));
+                                        .getSessionHistory(currentPriority, currentLogLevel));
                         taskViewer.collapseAll();
                         taskViewer.expandToLevel(lastFocus, TreeViewer.ALL_LEVELS);
                     }

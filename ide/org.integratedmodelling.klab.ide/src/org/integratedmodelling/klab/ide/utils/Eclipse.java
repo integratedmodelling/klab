@@ -3,7 +3,9 @@ package org.integratedmodelling.klab.ide.utils;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -20,10 +22,12 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -31,6 +35,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
@@ -38,6 +43,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -60,466 +67,559 @@ import org.integratedmodelling.klab.rest.CompileNotificationReference;
 
 public enum Eclipse {
 
-	INSTANCE;
+    INSTANCE;
 
-	/**
-	 * Open the passed view. Optionally pass an action to call when the view has been
-	 * shown.
-	 * 
-	 * @param id ID of the view
-	 * @param action an action to perform on the view once open, or null
-	 */
-	public void openView(final String id, final Consumer<IViewPart> action) {
-		
-		class Job extends UIJob {
-			public Job() {
-				super("");
-			}
+    /**
+     * Open the passed view. Optionally pass an action to call when the view has been
+     * shown.
+     * 
+     * @param id ID of the view
+     * @param action an action to perform on the view once open, or null
+     */
+    public void openView(final String id, final Consumer<IViewPart> action) {
 
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				try {
-					IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(id);
-					if (view != null && action != null) {
-						action.accept(view);
-					}
-				} catch (PartInitException e) {
-					handleException(e);
-				}
-				return Status.OK_STATUS;
-			}
-		}
-		Job job = new Job();
-		job.setUser(false);
-		job.schedule();
-		try {
-			job.join();
-		} catch (InterruptedException e) {
-			handleException(e);
-		}
-	}
+        class Job extends UIJob {
+            public Job() {
+                super("");
+            }
 
-	public Shell getShell() {
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (window == null) {
-			IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-			if (windows.length > 0) {
-				return windows[0].getShell();
-			}
-		} else {
-			return window.getShell();
-		}
-		return null;
-	}
+            @Override
+            public IStatus runInUIThread(IProgressMonitor monitor) {
+                try {
+                    IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+                            .showView(id);
+                    if (view != null && action != null) {
+                        action.accept(view);
+                    }
+                } catch (PartInitException e) {
+                    handleException(e);
+                }
+                return Status.OK_STATUS;
+            }
+        }
+        Job job = new Job();
+        job.setUser(false);
+        job.schedule();
+        try {
+            job.join();
+        } catch (InterruptedException e) {
+            handleException(e);
+        }
+    }
 
-	/**
-	 * Open a file in the editor at the passed line number.
-	 * 
-	 * @param filename
-	 * @param lineNumber
-	 * @throws KlabException
-	 */
-	public void openFile(String filename, int lineNumber) throws KlabException {
+    /**
+     * Open string content in passed editor.
+     * 
+     * @param content
+     * @param editorId
+     * @param readOnly
+     */
+    public void edit(String content, String editorId, boolean readOnly) {
 
-		/*
-		 * open as workspace file - otherwise xtext gives an exception
-		 */
-		IFile file = null;
-		if (filename.startsWith("file:")) {
-			URL url = null;
-			try {
-				url = new URL(filename);
-			} catch (MalformedURLException e) {
-				throw new KlabIOException(e);
-			}
-			filename = url.getFile().toString();
-		}
-		File dfile = new File(filename);
-		if (dfile.exists()) {
-			// full file path
-			IFile[] ff = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(dfile.toURI());
-			if (ff != null && ff.length > 0) {
-				file = ff[0];
-			}
-		} else {
-			Path path = new Path(filename);
-			file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-		}
-		openFile(file, lineNumber);
-	}
+        IStorage storage = new StringStorage(content);
+        IStorageEditorInput input = new StringInput(storage);
+        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        if (page != null) {
+            try {
+                page.openEditor(input, editorId);
+            } catch (PartInitException e) {
+                handleException(e);
+            }
+        }
+    }
 
-	public void openFile(IFile file, int lineNumber) {
+    public Shell getShell() {
+        IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        if (window == null) {
+            IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+            if (windows.length > 0) {
+                return windows[0].getShell();
+            }
+        } else {
+            return window.getShell();
+        }
+        return null;
+    }
 
-		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		try {
-			if (lineNumber > 0) {
-				HashMap<String, Object> map = new HashMap<>();
-				map.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
-				IMarker marker = file.createMarker(IMarker.TEXT);
-				marker.setAttributes(map);
-				IDE.openEditor(page, marker);
-				marker.delete();
-			} else {
-				IDE.openEditor(page, file);
-			}
-		} catch (Exception e) {
-			error(e);
-		}
-	}
+    /**
+     * Open a file in the editor at the passed line number.
+     * 
+     * @param filename
+     * @param lineNumber
+     * @throws KlabException
+     */
+    public void openFile(String filename, int lineNumber) throws KlabException {
 
-	public IFile getNamespaceIFile(EKimObject object) {
-		ENamespace namespace = object.getEParent(ENamespace.class);
-		if (namespace != null) {
-			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			IProject project = root.getProject(namespace.getProject().getName());
-			String rpath = null;
-			if (namespace.isWorldviewBound()) {
-				String kimPrefix = "/";
-				if (namespace.getScriptId() != null) {
-					kimPrefix = IKimProject.SCRIPT_FOLDER + "/";
-				} else if (namespace.getTestCaseId() != null) {
-					kimPrefix = IKimProject.TESTS_FOLDER + "/";
-				} else {
-					// oh fuck
-				}
-				rpath = kimPrefix + namespace.getResourceId().substring(namespace.getResourceId().lastIndexOf('/') + 1);
-			} else {
-				rpath = "src/" + namespace.getName().replace('.', '/') + ".kim";
-			}
-			return project.getFile(rpath);
-		}
-		return null;
-	}
+        /*
+         * open as workspace file - otherwise xtext gives an exception
+         */
+        IFile file = null;
+        if (filename.startsWith("file:")) {
+            URL url = null;
+            try {
+                url = new URL(filename);
+            } catch (MalformedURLException e) {
+                throw new KlabIOException(e);
+            }
+            filename = url.getFile().toString();
+        }
+        File dfile = new File(filename);
+        if (dfile.exists()) {
+            // full file path
+            IFile[] ff = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(dfile.toURI());
+            if (ff != null && ff.length > 0) {
+                file = ff[0];
+            }
+        } else {
+            Path path = new Path(filename);
+            file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+        }
+        openFile(file, lineNumber);
+    }
 
-	public String getNamespaceIdFromIFile(IFile file) {
+    public void openFile(IFile file, int lineNumber) {
 
-		if (file.toString().endsWith(".kim")) {
-			if (file.getProject() == null) {
-				return null;
-			}
-			String project = file.getProject().getName();
-			String kimPrefix = "";
-			if (file.toString().contains(IKimProject.SOURCE_FOLDER)) {
-				kimPrefix = IKimProject.SOURCE_FOLDER;
-			} else if (file.toString().contains(IKimProject.SCRIPT_FOLDER)) {
-				kimPrefix = IKimProject.SCRIPT_FOLDER;
-			} else if (file.toString().contains(IKimProject.TESTS_FOLDER)) {
-				kimPrefix = IKimProject.TESTS_FOLDER;
-			}
-			kimPrefix = project + "/" + kimPrefix + "/";
-			String ret = file.toString().substring(file.toString().indexOf(kimPrefix) + kimPrefix.length());
-			return ret.substring(0, ret.length() - 4).replaceAll("\\/", ".");
-		}
-		return null;
-	}
+        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        try {
+            if (lineNumber > 0) {
+                HashMap<String, Object> map = new HashMap<>();
+                map.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
+                IMarker marker = file.createMarker(IMarker.TEXT);
+                marker.setAttributes(map);
+                IDE.openEditor(page, marker);
+                marker.delete();
+            } else {
+                IDE.openEditor(page, file);
+            }
+        } catch (Exception e) {
+            error(e);
+        }
+    }
 
-	private void error(Exception e) {
-		// TODO Auto-generated method stub
-		System.out.println("SHIT, HANDLE ME: " + e);
-	}
+    public IFile getNamespaceIFile(EKimObject object) {
+        ENamespace namespace = object.getEParent(ENamespace.class);
+        if (namespace != null) {
+            IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+            IProject project = root.getProject(namespace.getProject().getName());
+            String rpath = null;
+            if (namespace.isWorldviewBound()) {
+                String kimPrefix = "/";
+                if (namespace.getScriptId() != null) {
+                    kimPrefix = IKimProject.SCRIPT_FOLDER + "/";
+                } else if (namespace.getTestCaseId() != null) {
+                    kimPrefix = IKimProject.TESTS_FOLDER + "/";
+                } else {
+                    // oh fuck
+                }
+                rpath = kimPrefix
+                        + namespace.getResourceId().substring(namespace.getResourceId().lastIndexOf('/') + 1);
+            } else {
+                rpath = "src/" + namespace.getName().replace('.', '/') + ".kim";
+            }
+            return project.getFile(rpath);
+        }
+        return null;
+    }
 
-	public void openFile(String filename) throws KlabException {
-		openFile(filename, 0);
-	}
+    public String getNamespaceIdFromIFile(IFile file) {
 
-	/**
-	 * Import an Eclipse project programmatically into the workspace. Does not check
-	 * for existence and overwrites whatever is there.
-	 * 
-	 * @param baseDir
-	 * @return
-	 */
-	public IProject importExistingProject(File baseDir) {
+        if (file.toString().endsWith(".kim")) {
+            if (file.getProject() == null) {
+                return null;
+            }
+            String project = file.getProject().getName();
+            String kimPrefix = "";
+            if (file.toString().contains(IKimProject.SOURCE_FOLDER)) {
+                kimPrefix = IKimProject.SOURCE_FOLDER;
+            } else if (file.toString().contains(IKimProject.SCRIPT_FOLDER)) {
+                kimPrefix = IKimProject.SCRIPT_FOLDER;
+            } else if (file.toString().contains(IKimProject.TESTS_FOLDER)) {
+                kimPrefix = IKimProject.TESTS_FOLDER;
+            }
+            kimPrefix = project + "/" + kimPrefix + "/";
+            String ret = file.toString().substring(file.toString().indexOf(kimPrefix) + kimPrefix.length());
+            return ret.substring(0, ret.length() - 4).replaceAll("\\/", ".");
+        }
+        return null;
+    }
 
-		IProject project = null;
+    private void error(Exception e) {
+        // TODO Auto-generated method stub
+        System.out.println("SHIT, HANDLE ME: " + e);
+    }
 
-		try {
-			IProjectDescription description = ResourcesPlugin.getWorkspace()
-					.loadProjectDescription(new Path(baseDir.getPath() + "/.project"));
-			project = ResourcesPlugin.getWorkspace().getRoot().getProject(description.getName());
-			project.create(description, null);
+    public void openFile(String filename) throws KlabException {
+        openFile(filename, 0);
+    }
 
-			IOverwriteQuery overwriteQuery = new IOverwriteQuery() {
+    /**
+     * Import an Eclipse project programmatically into the workspace. Does not check
+     * for existence and overwrites whatever is there.
+     * 
+     * @param baseDir
+     * @return
+     */
+    public IProject importExistingProject(File baseDir) {
 
-				public String queryOverwrite(String file) {
-					return ALL;
-				}
-			};
+        IProject project = null;
 
-			ImportOperation importOperation = new ImportOperation(project.getFullPath(), baseDir,
-					FileSystemStructureProvider.INSTANCE, overwriteQuery);
-			importOperation.setCreateContainerStructure(false);
-			importOperation.run(new NullProgressMonitor());
+        try {
+            IProjectDescription description = ResourcesPlugin.getWorkspace()
+                    .loadProjectDescription(new Path(baseDir.getPath() + "/.project"));
+            project = ResourcesPlugin.getWorkspace().getRoot().getProject(description.getName());
+            project.create(description, null);
 
-			project.open(new NullProgressMonitor());
+            IOverwriteQuery overwriteQuery = new IOverwriteQuery() {
 
-		} catch (Exception e) {
-			error(e);
-		}
+                public String queryOverwrite(String file) {
+                    return ALL;
+                }
+            };
 
-		return project;
-	}
+            ImportOperation importOperation = new ImportOperation(project
+                    .getFullPath(), baseDir, FileSystemStructureProvider.INSTANCE, overwriteQuery);
+            importOperation.setCreateContainerStructure(false);
+            importOperation.run(new NullProgressMonitor());
 
-	public void alert(String message) {
-		try {
-			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-			Shell shell = window == null ? new Shell(new Display()) : window.getShell();
-			MessageDialog.openError(shell, "Error", message);
-		} catch (Throwable e) {
-			// last resort
-			System.out.println("ALERT: " + message);
-		}
-	}
+            project.open(new NullProgressMonitor());
 
-	public boolean confirm(String message) {
-		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		return MessageDialog.openQuestion(shell, "Confirmation", message);
-	}
+        } catch (Exception e) {
+            error(e);
+        }
 
-	public void warning(String message) {
-		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		MessageDialog.openWarning(shell, "Warning", message);
-	}
+        return project;
+    }
 
-	public void info(String message) {
-		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		MessageDialog.openInformation(shell, "Information", message);
-	}
+    public void alert(String message) {
+        try {
+            IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+            Shell shell = window == null ? new Shell(new Display()) : window.getShell();
+            MessageDialog.openError(shell, "Error", message);
+        } catch (Throwable e) {
+            // last resort
+            System.out.println("ALERT: " + message);
+        }
+    }
 
-	public <T> T chooseOne(String question, Collection<T> alternatives) {
-		return null;
-	}
+    public boolean confirm(String message) {
+        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+        return MessageDialog.openQuestion(shell, "Confirmation", message);
+    }
 
-	public void closeEditor(File file, IWorkbenchPage page) {
+    public void warning(String message) {
+        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+        MessageDialog.openWarning(shell, "Warning", message);
+    }
 
-		IFile resource = getIFile(file);
-		if (resource != null) {
-			for (IEditorReference eref : page.getEditorReferences()) {
-				try {
-					IFile open = eref.getEditorInput().getAdapter(IFile.class);
-					if (open != null && open.equals(resource)) {
-						Display.getDefault().asyncExec(() -> page.closeEditor(eref.getEditor(true), true));
-					}
-				} catch (PartInitException e) {
-					handleException(e);
-				}
-			}
-		}
-	}
+    public void info(String message) {
+        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+        MessageDialog.openInformation(shell, "Information", message);
+    }
 
-	@SuppressWarnings("unchecked")
-	public <T> Collection<T> chooseMany(String question, Collection<T> alternatives, Function<T, Image> imageProvider) {
+    public <T> T chooseOne(String question, Collection<T> alternatives) {
+        return null;
+    }
 
-		CheckedTreeSelectionDialog dialog = new CheckedTreeSelectionDialog(Eclipse.INSTANCE.getShell(),
-				new LabelProvider() {
+    public void closeEditor(File file, IWorkbenchPage page) {
 
-					@Override
-					public Image getImage(Object element) {
-						return imageProvider.apply((T) element);
-					}
-				}, new ITreeContentProvider() {
+        IFile resource = getIFile(file);
+        if (resource != null) {
+            for (IEditorReference eref : page.getEditorReferences()) {
+                try {
+                    IFile open = eref.getEditorInput().getAdapter(IFile.class);
+                    if (open != null && open.equals(resource)) {
+                        Display.getDefault().asyncExec(() -> page.closeEditor(eref.getEditor(true), true));
+                    }
+                } catch (PartInitException e) {
+                    handleException(e);
+                }
+            }
+        }
+    }
 
-					@Override
-					public boolean hasChildren(Object element) {
-						return element instanceof Collection;
-					}
+    @SuppressWarnings("unchecked")
+    public <T> Collection<T> chooseMany(String question, Collection<T> alternatives, Function<T, Image> imageProvider) {
 
-					@Override
-					public Object getParent(Object element) {
-						return element instanceof Collection ? null : alternatives;
-					}
+        CheckedTreeSelectionDialog dialog = new CheckedTreeSelectionDialog(Eclipse.INSTANCE
+                .getShell(), new LabelProvider() {
 
-					@Override
-					public Object[] getElements(Object inputElement) {
-						return getChildren(inputElement);
-					}
+                    @Override
+                    public Image getImage(Object element) {
+                        return imageProvider.apply((T) element);
+                    }
+                }, new ITreeContentProvider() {
 
-					@Override
-					public Object[] getChildren(Object parentElement) {
-						return parentElement instanceof Collection ? alternatives.toArray() : null;
-					}
-				});
+                    @Override
+                    public boolean hasChildren(Object element) {
+                        return element instanceof Collection;
+                    }
 
-		dialog.setTitle("Choose one or more");
-		dialog.setMessage(question);
-		dialog.setInput(alternatives);
-		List<T> ret = new ArrayList<T>();
+                    @Override
+                    public Object getParent(Object element) {
+                        return element instanceof Collection ? null : alternatives;
+                    }
 
-		if (dialog.open() != Window.OK) {
-			return ret;
-		}
-		Object[] result = dialog.getResult();
-		for (Object o : result) {
-			ret.add((T) o);
-		}
-		return ret;
-	}
+                    @Override
+                    public Object[] getElements(Object inputElement) {
+                        return getChildren(inputElement);
+                    }
 
-	public void error(Object message) {
-		if (message instanceof Throwable) {
-			handleException((Throwable) message);
-		} else {
-			StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, message.toString()));
-		}
-	}
+                    @Override
+                    public Object[] getChildren(Object parentElement) {
+                        return parentElement instanceof Collection ? alternatives.toArray() : null;
+                    }
+                });
 
-	public void beep() {
-		PlatformUI.getWorkbench().getDisplay().beep();
-	}
+        dialog.setTitle("Choose one or more");
+        dialog.setMessage(question);
+        dialog.setInput(alternatives);
+        List<T> ret = new ArrayList<T>();
 
-	public void handleException(Throwable e) {
-		if (e instanceof CoreException) {
-			StatusManager.getManager().handle((CoreException) e, Activator.PLUGIN_ID);
-		} else if (e instanceof KlabException) {
-			alert(e.getMessage());
-			StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Exception: ", e));
-		} else {
-			StatusManager.getManager().handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Exception: ", e));
-		}
-	}
+        if (dialog.open() != Window.OK) {
+            return ret;
+        }
+        Object[] result = dialog.getResult();
+        for (Object o : result) {
+            ret.add((T) o);
+        }
+        return ret;
+    }
 
-	/**
-	 * A more idiomatic getProject that will return null if the project does not
-	 * exist.
-	 * 
-	 * @param name
-	 * @return an Eclipse project or null
-	 */
-	public IProject getProject(String name) {
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-		return project.exists() ? project : null;
-	}
+    public void error(Object message) {
+        if (message instanceof Throwable) {
+            handleException((Throwable) message);
+        } else {
+            StatusManager.getManager()
+                    .handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, message.toString()));
+        }
+    }
 
-	public IProject[] getProjects() {
-		return ResourcesPlugin.getWorkspace().getRoot().getProjects();
-	}
+    public void beep() {
+        PlatformUI.getWorkbench().getDisplay().beep();
+    }
 
-	public IFile getIFile(File file) {
-		IFile ret = null;
-		try {
-			IFile[] files = ResourcesPlugin.getWorkspace().getRoot()
-					.findFilesForLocationURI(URIUtil.toURI(file.toURI().toURL()));
-			if (files.length > 0) {
-				ret = files[0];
-			}
-		} catch (MalformedURLException | URISyntaxException e) {
-		}
+    public void handleException(Throwable e) {
+        if (e instanceof CoreException) {
+            StatusManager.getManager().handle((CoreException) e, Activator.PLUGIN_ID);
+        } else if (e instanceof KlabException) {
+            alert(e.getMessage());
+            StatusManager.getManager()
+                    .handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Exception: ", e));
+        } else {
+            StatusManager.getManager()
+                    .handle(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Exception: ", e));
+        }
+    }
 
-		if (ret == null) {
-			System.out.println("ZIOCAN IFILE IS NULL " + file);
-		}
-		return ret;
-	}
+    /**
+     * A more idiomatic getProject that will return null if the project does not
+     * exist.
+     * 
+     * @param name
+     * @return an Eclipse project or null
+     */
+    public IProject getProject(String name) {
+        IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+        return project.exists() ? project : null;
+    }
 
-	public File getFile(IFile file) {
-		return file.getLocation().toFile();
-	}
+    public IProject[] getProjects() {
+        return ResourcesPlugin.getWorkspace().getRoot().getProjects();
+    }
 
-	// TODO substitute with a k.LAB marker type
-	private static String XTEXT_MARKER_TYPE = "org.eclipse.xtext.ui.check.normal";
+    public IFile getIFile(File file) {
+        IFile ret = null;
+        try {
+            IFile[] files = ResourcesPlugin.getWorkspace().getRoot()
+                    .findFilesForLocationURI(URIUtil.toURI(file.toURI().toURL()));
+            if (files.length > 0) {
+                ret = files[0];
+            }
+        } catch (MalformedURLException | URISyntaxException e) {
+        }
 
-	private void addMarker(IFile file, String message, int lineNumber, int severity) {
+        if (ret == null) {
+            System.out.println("ZIOCAN IFILE IS NULL " + file);
+        }
+        return ret;
+    }
 
-		if (!file.exists())
-			return;
+    public File getFile(IFile file) {
+        return file.getLocation().toFile();
+    }
 
-		try {
-			IMarker marker = file.createMarker(XTEXT_MARKER_TYPE);
-			marker.setAttribute(IMarker.MESSAGE, message);
-			marker.setAttribute(IMarker.SEVERITY, severity);
-			if (lineNumber <= 0) {
-				lineNumber = 1;
-			}
-			marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
-		} catch (CoreException e) {
-			handleException(e);
-		}
-	}
+    // TODO substitute with a k.LAB marker type
+    private static String XTEXT_MARKER_TYPE = "org.eclipse.xtext.ui.check.normal";
 
-	/**
-	 * Add all error and warning markers from k.LAB logical errors. Use XText marker
-	 * types so they will be shown in editor. NOTE: only one marker per row is
-	 * shown, and error supersede warnings. We could just remove the check and have
-	 * the multiple markers thing, but at the moment errors may be reported more
-	 * than once, and it's questionable that seeing multiple markers is more useful
-	 * than fixing one and seeing the next afterwards.
-	 * 
-	 * @param ns
-	 * @param file
-	 * @throws CoreException
-	 */
-	public void updateMarkersForNamespace(final List<CompileNotificationReference> notifications, final IFile file) {
+    private void addMarker(IFile file, String message, int lineNumber, int severity) {
 
-		WorkspaceJob job = new WorkspaceJob("") {
+        if (!file.exists())
+            return;
 
-			@Override
-			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+        try {
+            IMarker marker = file.createMarker(XTEXT_MARKER_TYPE);
+            marker.setAttribute(IMarker.MESSAGE, message);
+            marker.setAttribute(IMarker.SEVERITY, severity);
+            if (lineNumber <= 0) {
+                lineNumber = 1;
+            }
+            marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
+        } catch (CoreException e) {
+            handleException(e);
+        }
+    }
 
-				if (file == null) {
-					return Status.OK_STATUS;
-				}
+    /**
+     * Add all error and warning markers from k.LAB logical errors. Use XText marker
+     * types so they will be shown in editor. NOTE: only one marker per row is
+     * shown, and error supersede warnings. We could just remove the check and have
+     * the multiple markers thing, but at the moment errors may be reported more
+     * than once, and it's questionable that seeing multiple markers is more useful
+     * than fixing one and seeing the next afterwards.
+     * 
+     * @param ns
+     * @param file
+     * @throws CoreException
+     */
+    public void updateMarkersForNamespace(final List<CompileNotificationReference> notifications, final IFile file) {
 
-				if (file.exists()) {
-					file.deleteMarkers(XTEXT_MARKER_TYPE, true, IResource.DEPTH_ZERO);
-				}
+        WorkspaceJob job = new WorkspaceJob("") {
 
-				for (CompileNotificationReference inot : notifications) {
+            @Override
+            public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 
-					System.out.println("UPDATING MARKERS " + file + ": " + inot);
+                if (file == null) {
+                    return Status.OK_STATUS;
+                }
 
-					if (inot.getLevel() == Level.SEVERE.intValue()) {
-						addMarker(file, inot.getMessage(), inot.getFirstLine(), IMarker.SEVERITY_ERROR);
-					} else if (inot.getLevel() == Level.WARNING.intValue()) {
-						addMarker(file, inot.getMessage(), inot.getFirstLine(), IMarker.SEVERITY_WARNING);
-					} else if (inot.getLevel() == Level.INFO.intValue()) {
-						addMarker(file, inot.getMessage(), inot.getFirstLine(), IMarker.SEVERITY_INFO);
-					}
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		job.setUser(false);
-		job.schedule();
-	}
+                if (file.exists()) {
+                    file.deleteMarkers(XTEXT_MARKER_TYPE, true, IResource.DEPTH_ZERO);
+                }
 
-	public void notification(final String label, final String description) {
+                for (CompileNotificationReference inot : notifications) {
 
-		// TODO find a way to use those. So far all attempts were useless.
-		System.out.println("NOTIFICATION: " + label + "\n" + description);
+                    System.out.println("UPDATING MARKERS " + file + ": " + inot);
 
-		// AbstractNotification notification = new AbstractNotification("klab.event") {
-		//
-		// public String getLabel() {
-		// return label;
-		// }
-		//
-		// public String getDescription() {
-		// return description;
-		// }
-		//
-		// @Override
-		// public <T> T getAdapter(Class<T> adapter) {
-		// // TODO Auto-generated method stub
-		// return null;
-		// }
-		//
-		// @Override
-		// public Date getDate() {
-		// // TODO Auto-generated method stub
-		// return new Date();
-		// }
-		// };
-		// NotificationsPlugin.getDefault().getService().notify(Collections.singletonList(notification));
-	}
+                    if (inot.getLevel() == Level.SEVERE.intValue()) {
+                        addMarker(file, inot.getMessage(), inot.getFirstLine(), IMarker.SEVERITY_ERROR);
+                    } else if (inot.getLevel() == Level.WARNING.intValue()) {
+                        addMarker(file, inot.getMessage(), inot.getFirstLine(), IMarker.SEVERITY_WARNING);
+                    } else if (inot.getLevel() == Level.INFO.intValue()) {
+                        addMarker(file, inot.getMessage(), inot.getFirstLine(), IMarker.SEVERITY_INFO);
+                    }
+                }
+                return Status.OK_STATUS;
+            }
+        };
+        job.setUser(false);
+        job.schedule();
+    }
 
-	public void copyToClipboard(String string) {
-		if (string != null) {
-			Toolkit toolkit = Toolkit.getDefaultToolkit();
-			Clipboard clipboard = toolkit.getSystemClipboard();
-			StringSelection strSel = new StringSelection(string);
-			clipboard.setContents(strSel, null);
-		} else {
-			beep();
-		}
-	}
+    public void notification(final String label, final String description) {
+
+        // TODO find a way to use those. So far all attempts were useless.
+        System.out.println("NOTIFICATION: " + label + "\n" + description);
+
+        // AbstractNotification notification = new AbstractNotification("klab.event") {
+        //
+        // public String getLabel() {
+        // return label;
+        // }
+        //
+        // public String getDescription() {
+        // return description;
+        // }
+        //
+        // @Override
+        // public <T> T getAdapter(Class<T> adapter) {
+        // // TODO Auto-generated method stub
+        // return null;
+        // }
+        //
+        // @Override
+        // public Date getDate() {
+        // // TODO Auto-generated method stub
+        // return new Date();
+        // }
+        // };
+        // NotificationsPlugin.getDefault().getService().notify(Collections.singletonList(notification));
+    }
+
+    public void copyToClipboard(String string) {
+        if (string != null) {
+            Toolkit toolkit = Toolkit.getDefaultToolkit();
+            Clipboard clipboard = toolkit.getSystemClipboard();
+            StringSelection strSel = new StringSelection(string);
+            clipboard.setContents(strSel, null);
+        } else {
+            beep();
+        }
+    }
+
+    // --- for editing string content
+
+    class StringStorage implements IStorage {
+        private String string;
+
+        StringStorage(String input) {
+            this.string = input;
+        }
+
+        public InputStream getContents() throws CoreException {
+            return new ByteArrayInputStream(string.getBytes());
+        }
+
+        public IPath getFullPath() {
+            return null;
+        }
+
+        public Object getAdapter(Class adapter) {
+            return null;
+        }
+
+        public String getName() {
+            int len = Math.min(5, string.length());
+            return string.substring(0, len).concat("..."); //$NON-NLS-1$
+        }
+
+        public boolean isReadOnly() {
+            return true;
+        }
+    }
+
+    class StringInput implements IStorageEditorInput {
+        private IStorage storage;
+
+        StringInput(IStorage storage) {
+            this.storage = storage;
+        }
+
+        public boolean exists() {
+            return true;
+        }
+
+        public ImageDescriptor getImageDescriptor() {
+            return null;
+        }
+
+        public String getName() {
+            return storage.getName();
+        }
+
+        public IPersistableElement getPersistable() {
+            return null;
+        }
+
+        public IStorage getStorage() {
+            return storage;
+        }
+
+        public String getToolTipText() {
+            return "String-based file: " + storage.getName();
+        }
+
+        public Object getAdapter(Class adapter) {
+            return null;
+        }
+    }
 }
