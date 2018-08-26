@@ -17,14 +17,15 @@ package org.integratedmodelling.klab.raster.files;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridGeometry2D;
 import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.GridFormatFinder;
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.integratedmodelling.kim.api.IParameters;
@@ -35,7 +36,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
-import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.ogc.RasterAdapter;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
@@ -162,4 +163,15 @@ public class RasterValidator implements IResourceValidator {
 	public Collection<File> getAllFilesForResource(File file) {
 		return FileUtils.getSidecarFiles(file, RasterAdapter.secondaryFileExtensions);
 	}
+
+    @Override
+    public List<Operation> getAllowedOperations(IResource resource) {
+        List<Operation> ret = new ArrayList<>();
+        return ret;
+    }
+
+    @Override
+    public IResource performOperation(IResource resource, String operationName) {
+        throw new KlabUnimplementedException("resource operations unimplemented");
+    }
 }

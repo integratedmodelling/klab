@@ -20,6 +20,7 @@ import org.integratedmodelling.kim.kim.ActionSpecification;
 import org.integratedmodelling.kim.kim.FunctionOrID;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 
 import com.google.common.collect.Sets;
 
@@ -209,7 +210,8 @@ public class KimBehavior extends KimStatement implements IKimBehavior {
 
             KimAction targetAction = i == 0 ? act : new KimAction(action, this);
 
-            targetAction.set(ac);
+            // Actions are never instantiations, so RESOLUTION here should be safe
+            targetAction.set(ac, IResolutionScope.Mode.RESOLUTION);
 
             // check for temporal and single 'over time', if so set trigger to transition
             if (hasTemporalActions) {

@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
+import org.integratedmodelling.klab.api.data.CRUDOperation;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -73,6 +74,7 @@ import org.integratedmodelling.klab.rest.ProjectLoadResponse;
 import org.integratedmodelling.klab.rest.ProjectModificationNotification;
 import org.integratedmodelling.klab.rest.ProjectModificationRequest;
 import org.integratedmodelling.klab.rest.ResourceImportRequest;
+import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.RunScriptRequest;
 import org.integratedmodelling.klab.rest.SearchMatch;
 import org.integratedmodelling.klab.rest.SearchMatchAction;
@@ -394,6 +396,40 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	 * ------------------------------------------------------------------------
 	 */
 
+	@MessageHandler
+	private void copyMoveResource(final ResourceCRUDRequest request, IMessage.Type type) {
+	    IProject sourceProject = Resources.INSTANCE.getProject(request.getSourceProject());
+        IProject destinationProject = Resources.INSTANCE.getProject(request.getDestinationProject());
+        if (sourceProject == null || destinationProject == null) {
+            monitor.error("cannot move resources: unknown projects in request");
+            return;
+        }
+        for (String urn : request.getResourceUrns()) {
+            
+            IResource resource = Resources.INSTANCE.resolveResource(urn);
+            if (resource == null || !resource.getLocalProjectName().equals(sourceProject.getName())) {
+                monitor.warn("requested resource is not in source project: " + urn);
+                continue;
+            }
+            if (request.getOperation() == CRUDOperation.MOVE) {
+                monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceDeleted,
+                        ((Resource) resource).getReference());
+                resource = Resources.INSTANCE.getLocalResourceCatalog().move(resource, destinationProject);
+                monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
+                        ((Resource) resource).getReference());
+            } else if (request.getOperation() == CRUDOperation.COPY) {
+                resource = Resources.INSTANCE.getLocalResourceCatalog().copy(resource, destinationProject);
+                monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
+                        ((Resource) resource).getReference());
+            } else if (request.getOperation() == CRUDOperation.DELETE) {
+                resource = Resources.INSTANCE.getLocalResourceCatalog().remove(urn);
+                monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceDeleted,
+                        ((Resource) resource).getReference());
+            }
+
+        }
+	}
+	
 	@MessageHandler
 	private void importResource(final ResourceImportRequest request) {
 		IProject project = Resources.INSTANCE.getProject(request.getProjectName());

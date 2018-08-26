@@ -203,6 +203,7 @@ public class Actuator implements IActuator {
              */
             IObservable indirectTarget = contextualizer.getSecond().getTarget();
 
+            // HERE: if the target is indirect, it needs a context for the indirect observable.
             String targetId = indirectTarget == null ? "self_" : indirectTarget.getLocalName();
             if (!artifactTable.containsKey(targetId)) {
                 artifactTable.put(targetId, ctx.getArtifact(targetId));
@@ -213,6 +214,8 @@ public class Actuator implements IActuator {
              * new target artifact.
              * 
              * FIXME parameters are kept from previous contextualizers in ctx
+             * FIXME cannot pass same ctx - need one with the specifics of the target, only OK if the target
+             * is direct.
              */
             artifactTable.put(targetId, runContextualizer(contextualizer
                     .getFirst(), indirectTarget == null ? this.observable : indirectTarget, contextualizer

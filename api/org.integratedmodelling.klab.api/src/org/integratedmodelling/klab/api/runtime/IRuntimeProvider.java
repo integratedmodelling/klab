@@ -171,6 +171,8 @@ public interface IRuntimeProvider {
 	 * 
 	 * @param availableType
 	 *            the type of the alternative observable we have
+	 * @param resolutionMode
+	 *         the mode of the desired resolution. Always RESOLUTION this far.
 	 * @param desiredObservation
 	 *            the type of the observable we want to obtain
 	 * @return null (not an empty list) if this computation cannot be done;
@@ -178,7 +180,7 @@ public interface IRuntimeProvider {
 	 *         list will be interpreted as "no computation needed", not as "no
 	 *         strategy found".
 	 */
-	List<IComputableResource> getComputation(IObservable availableType, IObservable desiredObservation);
+	List<IComputableResource> getComputation(IObservable availableType, IResolutionScope.Mode resolutionMode, IObservable desiredObservation);
 	
 	/**
 	 * Runtime systems may create thread pools and memory mappings. This method will be called

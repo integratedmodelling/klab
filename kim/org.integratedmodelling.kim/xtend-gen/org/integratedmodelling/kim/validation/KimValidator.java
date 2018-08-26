@@ -86,6 +86,7 @@ import org.integratedmodelling.kim.model.KimSymbolDefinition;
 import org.integratedmodelling.kim.model.KimTable;
 import org.integratedmodelling.kim.validation.AbstractKimValidator;
 import org.integratedmodelling.kim.validation.KimNotification;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.SemanticType;
@@ -502,7 +503,7 @@ public class KimValidator extends AbstractKimValidator {
             type = decl.getType();
           } else {
           }
-          if ((((!Objects.equal(Boolean.valueOf(decl.is(IKimConcept.Type.SUBJECTIVE)), Integer.valueOf(0))) && (!isPrivate)) && (!cchecked))) {
+          if (((decl.is(IKimConcept.Type.SUBJECTIVE) && (!isPrivate)) && (!cchecked))) {
             this.error("A model producing subjective observables must be private", classifier, 
               KimPackage.Literals.CLASSIFIER__DECLARATION, KimValidator.BAD_OBSERVABLE);
             ok = false;
@@ -675,7 +676,14 @@ public class KimValidator extends AbstractKimValidator {
         EList<ValueAssignment> _contextualizers_1 = model.getContextualizers();
         for (final ValueAssignment contextualizer_1 : _contextualizers_1) {
           java.util.List<IComputableResource> _contextualization = descriptor.getContextualization();
-          ComputableResource _computableResource = new ComputableResource(contextualizer_1, descriptor);
+          IResolutionScope.Mode _xifexpression_3 = null;
+          boolean _isInstantiator = model.isInstantiator();
+          if (_isInstantiator) {
+            _xifexpression_3 = IResolutionScope.Mode.INSTANTIATION;
+          } else {
+            _xifexpression_3 = IResolutionScope.Mode.RESOLUTION;
+          }
+          ComputableResource _computableResource = new ComputableResource(contextualizer_1, _xifexpression_3, descriptor);
           _contextualization.add(_computableResource);
         }
         Classification _classification_1 = model.getClassification();
@@ -727,14 +735,14 @@ public class KimValidator extends AbstractKimValidator {
             if (_tripleNotEquals_12) {
               descriptor.name = observables.get(0).getFormalName();
             } else {
-              String _xifexpression_3 = null;
-              boolean _isInstantiator = model.isInstantiator();
-              if (_isInstantiator) {
-                _xifexpression_3 = "instantiator";
+              String _xifexpression_4 = null;
+              boolean _isInstantiator_1 = model.isInstantiator();
+              if (_isInstantiator_1) {
+                _xifexpression_4 = "instantiator";
               } else {
-                _xifexpression_3 = "resolver";
+                _xifexpression_4 = "resolver";
               }
-              String name = _xifexpression_3;
+              String name = _xifexpression_4;
               String _name_2 = descriptor.getObservables().get(0).getMain().getObservable().getName();
               SemanticType st = new SemanticType(_name_2);
               String _lowerCase = CamelCase.toLowerCase(st.getName(), '-');

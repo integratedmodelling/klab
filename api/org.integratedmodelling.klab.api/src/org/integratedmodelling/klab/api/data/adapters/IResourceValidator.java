@@ -16,8 +16,10 @@ package org.integratedmodelling.klab.api.data.adapters;
 import java.io.File;
 import java.net.URL;
 import java.util.Collection;
+import java.util.List;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
@@ -28,6 +30,36 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
  * @version $Id: $Id
  */
 public interface IResourceValidator {
+
+    /**
+     * Describe all additional operations that a validator can perform on
+     * a resource. Returned by getAllowedOperations.
+     * 
+     * @author Ferd
+     *
+     */
+    interface Operation {
+        /**
+         * ID of operation. Will be seen by users.
+         * 
+         * @return
+         */
+        String getName();
+        
+        /**
+         * Description. Should clarify all possible consequences and wait times.
+         * 
+         * @return
+         */
+        String getDescription();
+        
+        /**
+         * True if we should confirm before attempting the operation.
+         * 
+         * @return
+         */
+        boolean shouldConfirm();
+    }
 
 	/**
 	 * Validate the resource pointed to by the URL and tagged with the passed
@@ -52,6 +84,27 @@ public interface IResourceValidator {
 	 */
 	Builder validate(URL url, IParameters<String> userData, IMonitor monitor);
 
+	
+	/**
+	 * Return all the operations allowed on this resource. This must not include
+	 * any operations already performed whose results are irreversible.
+	 * 
+	 * @param resource
+	 * @return all allowed operations
+	 */
+	List<Operation> getAllowedOperations(IResource resource);
+	
+	/**
+	 * Perform the passed operation on a resource, returning the modifier
+	 * resource when finished. May run long so should be called in a 
+	 * separate thread. 
+	 * 
+	 * @param resource
+	 * @param operationName
+	 * @return
+	 */
+	IResource performOperation(IResource resource, String operationName);
+	
 	/**
 	 * Check if the passed file and/or parameters can be validated by this
 	 * validator. Should be a quick check.

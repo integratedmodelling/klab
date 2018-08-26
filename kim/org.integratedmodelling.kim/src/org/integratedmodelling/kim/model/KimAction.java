@@ -13,6 +13,7 @@ import org.integratedmodelling.kim.kim.Action;
 import org.integratedmodelling.kim.kim.ActionSpecification;
 import org.integratedmodelling.kim.kim.ValueAssignment;
 import org.integratedmodelling.kim.validation.KimNotification;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 
 public class KimAction extends KimStatement implements IKimAction {
 
@@ -35,7 +36,7 @@ public class KimAction extends KimStatement implements IKimAction {
     this.triggeringEvents.addAll(action.triggeringEvents);
   }
 
-  public void set(Action statement) {
+  public void set(Action statement, Mode resolutionMode) {
 
     if (statement.isAway()) {
       this.type = Type.DESTROY;
@@ -60,7 +61,7 @@ public class KimAction extends KimStatement implements IKimAction {
     }
 
     for (ValueAssignment vass : statement.getAssignments()) {
-      this.computation.add(new ComputableResource(vass, condition, getParent()));
+      this.computation.add(new ComputableResource(vass, condition, resolutionMode, getParent()));
     }
   }
 

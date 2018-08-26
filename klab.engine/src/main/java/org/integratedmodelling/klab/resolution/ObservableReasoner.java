@@ -238,7 +238,7 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 			
 			if (inherent != null && !scope.isBeingResolved(inherent, Mode.INSTANTIATION)) {
 				List<IComputableResource> dereificator = Klab.INSTANCE.getRuntimeProvider()
-						.getComputation(Observable.promote(inherent), observable);
+						.getComputation(Observable.promote(inherent), Mode.RESOLUTION, observable);
 				if (dereificator != null) {
 					ret.add(new CandidateObservable(Observable.promote(inherent), Mode.INSTANTIATION, dereificator));
 				}
@@ -251,7 +251,7 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 			
 			if (inherent != null && !scope.isBeingResolved(inherent, Mode.INSTANTIATION)) {
 				List<IComputableResource> dereificator = Klab.INSTANCE.getRuntimeProvider()
-						.getComputation(Observable.promote(inherent), observable);
+						.getComputation(Observable.promote(inherent), Mode.RESOLUTION, observable);
 				if (dereificator != null) {
 					ret.add(new CandidateObservable(Observable.promote(inherent), Mode.INSTANTIATION, dereificator));
 				}

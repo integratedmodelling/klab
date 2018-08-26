@@ -22,6 +22,8 @@ import org.integratedmodelling.kim.kim.ValueAssignment;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -40,6 +42,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	private boolean postProcessor;
 	private boolean negated;
 	private boolean mediation;
+	public IResolutionScope.Mode resolutionMode;
 	private ComputableResource condition;
 	private Pair<IValueMediator, IValueMediator> conversion;
 	private Collection<Pair<String, IArtifact.Type>> requiredResourceNames = new ArrayList<>();
@@ -83,6 +86,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		ret.targetId = this.targetId;
 		ret.copy = true;
 		ret.type = this.type;
+		ret.resolutionMode = this.resolutionMode;
 		return ret;
 	}
 
@@ -143,10 +147,10 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	protected ComputableResource() {
 	}
 
-	public ComputableResource(ValueAssignment statement, IKimStatement parent) {
+	public ComputableResource(ValueAssignment statement, Mode resolutionMode, IKimStatement parent) {
 
 		super(statement, parent);
-		setFrom(statement);
+		setFrom(statement, resolutionMode);
 	}
 
 	public ComputableResource(Classification statement, boolean isDiscretization, IKimStatement parent) {
@@ -154,6 +158,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		super(statement, parent);
 		setCode(statement);
 		this.classification = new KimClassification(statement, isDiscretization, parent);
+		this.resolutionMode = Mode.RESOLUTION;
 		this.setPostProcessor(true);
 	}
 
@@ -161,6 +166,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 
 		super(null, parent);
 		this.accordingTo = classificationProperty;
+        this.resolutionMode = Mode.RESOLUTION;
 		this.setPostProcessor(true);
 	}
 
@@ -168,6 +174,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 
 		super(lookupTable, parent);
 		setCode(lookupTable);
+        this.resolutionMode = Mode.RESOLUTION;
 		this.lookupTable = new KimLookupTable(new KimTable(lookupTable, parent), lookupTableArgs, parent);
 		this.setPostProcessor(true);
 	}
@@ -175,6 +182,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	public ComputableResource(KimLookupTable table, IKimStatement parent) {
 		super(((KimStatement) table).getEObject(), parent);
 		this.lookupTable = table;
+        this.resolutionMode = Mode.RESOLUTION;
 		this.setPostProcessor(true);
 	}
 
@@ -187,37 +195,42 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		} else if (value.getLiteral() != null) {
 			this.literal = Kim.INSTANCE.parseLiteral(value.getLiteral(), Kim.INSTANCE.getNamespace(value, false));
 		}
+        this.resolutionMode = Mode.RESOLUTION;
 	}
 
 	public ComputableResource(IValueMediator from, IValueMediator to) {
 		this.conversion = new Pair<>(from, to);
+        this.resolutionMode = Mode.RESOLUTION;
 	}
 
-	public ComputableResource(ValueAssignment statement, ComputableResource condition, IKimStatement parent) {
+	public ComputableResource(ValueAssignment statement, ComputableResource condition, Mode resolutionMode, IKimStatement parent) {
 		super(statement, parent);
-		setFrom(statement);
+ 		setFrom(statement, resolutionMode);
 		this.condition = condition;
 	}
 
-	public ComputableResource(String urn) {
+	public ComputableResource(String urn, Mode resolutionMode) {
 		this.urn = urn;
+		this.resolutionMode = resolutionMode;
 	}
 
-	public ComputableResource(IServiceCall serviceCall) {
+	public ComputableResource(IServiceCall serviceCall, Mode resolutionMode) {
 		this.serviceCall = (KimServiceCall) serviceCall;
+		this.resolutionMode = resolutionMode;
 	}
 
 	// using the optional to avoid ambiguities - only used in one point, no need to
 	// fuss.
 	public ComputableResource(Optional<Object> value) {
 		this.literal = value.get();
+        this.resolutionMode = Mode.RESOLUTION;
 	}
 
-	public ComputableResource(EObject eObject, IKimStatement parent) {
+	private ComputableResource(EObject eObject, IKimStatement parent) {
 		super(eObject, parent);
 	}
 
-	private void setFrom(ValueAssignment statement) {
+	private void setFrom(ValueAssignment statement, Mode resolutionMode) {
 
 		if (statement.getAssignedValue() != null) {
 			setFromValue(statement.getAssignedValue());
@@ -225,6 +238,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 			setFromValue(statement.getExecValue());
 		}
 		this.targetId = statement.getTarget();
+        this.resolutionMode = resolutionMode;
 	}
 
 	private void setFromValue(ComputableValue value) {
@@ -393,5 +407,10 @@ public class ComputableResource extends KimStatement implements IComputableResou
 			sibling.visit(visitor);
 		}
 	}
+
+    @Override
+    public Mode getComputationMode() {
+        return resolutionMode;
+    }
 
 }

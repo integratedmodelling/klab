@@ -18,8 +18,10 @@ package org.integratedmodelling.klab.ogc.vector.files;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.xtext.util.Arrays;
@@ -38,11 +40,13 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
+import org.integratedmodelling.klab.api.data.adapters.IResourceValidator.Operation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.ogc.VectorAdapter;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
@@ -180,11 +184,11 @@ public class VectorValidator implements IResourceValidator {
 
 			crsCode = CRS.toSRS(crs);
 
-			monitor.info("Running projection tests...");
+			monitor.debug("Running projection tests...");
 
 			try {
 
-				monitor.info("Testing reprojection to WGS84...");
+				monitor.debug("Testing reprojection to WGS84...");
 
 				CRS.findMathTransform(crs, DefaultGeographicCRS.WGS84);
 
@@ -235,4 +239,16 @@ public class VectorValidator implements IResourceValidator {
 	public Collection<File> getAllFilesForResource(File file) {
 		return FileUtils.getSidecarFiles(file, VectorAdapter.secondaryFileExtensions);
 	}
+	
+    @Override
+    public List<Operation> getAllowedOperations(IResource resource) {
+        List<Operation> ret = new ArrayList<>();
+        return ret;
+    }
+
+    @Override
+    public IResource performOperation(IResource resource, String operationName) {
+        throw new KlabUnimplementedException("resource operations unimplemented");
+    }
+
 }

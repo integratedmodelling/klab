@@ -141,7 +141,7 @@ public class VectorEncoder implements IResourceEncoder {
             }
         }
 
-        Scale scale = Scale.create(resource.getGeometry());
+//        Scale scale = Scale.create(resource.getGeometry());
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> fc;
         try {
@@ -150,8 +150,10 @@ public class VectorEncoder implements IResourceEncoder {
             throw new KlabIOException(e);
         }
 
+        Scale requestScale = geometry instanceof Scale ? (Scale)geometry : Scale.create(geometry);
+        
         Projection originalProjection = Projection.create(fc.getSchema().getCoordinateReferenceSystem());
-        IEnvelope envelopeInOriginalProjection = scale.getSpace().getEnvelope()
+        IEnvelope envelopeInOriginalProjection = requestScale.getSpace().getEnvelope()
                 .transform(originalProjection, true);
 
         FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(GeoTools.getDefaultHints());
@@ -193,8 +195,8 @@ public class VectorEncoder implements IResourceEncoder {
 
                     IShape objectShape = Shape
                             .create((com.vividsolutions.jts.geom.Geometry) shape, originalProjection)
-                            .transform(scale.getSpace().getProjection())
-                            .intersection(scale.getSpace().getShape());
+                            .transform(requestScale.getSpace().getProjection())
+                            .intersection(requestScale.getSpace().getShape());
 
                     IScale objectScale = Scale.createLike(context.getScale(), objectShape);
                     String objectName = null;

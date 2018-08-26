@@ -58,6 +58,7 @@ import org.integratedmodelling.kim.model.KimProject
 import org.integratedmodelling.kim.model.KimServiceCall
 import org.integratedmodelling.kim.model.KimSymbolDefinition
 import org.integratedmodelling.kim.model.KimTable
+import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode
 import org.integratedmodelling.klab.utils.CamelCase
 import org.integratedmodelling.klab.utils.Pair
 import org.integratedmodelling.klab.utils.SemanticType
@@ -383,7 +384,7 @@ class KimValidator extends AbstractKimValidator {
 				} else {
 					// TODO validate against both other classifiers and observable or 'by' type 
 				}
-				if (decl.is(Type.SUBJECTIVE) != 0 && !isPrivate && !cchecked) {
+				if (decl.is(Type.SUBJECTIVE) && !isPrivate && !cchecked) {
 					error('A model producing subjective observables must be private', classifier,
 						KimPackage.Literals.CLASSIFIER__DECLARATION, BAD_OBSERVABLE)
 					ok = false
@@ -523,7 +524,9 @@ class KimValidator extends AbstractKimValidator {
 
 				// add all contextualizers
 				for (contextualizer : model.contextualizers) {
-					descriptor.contextualization.add(new ComputableResource(contextualizer, descriptor))
+					descriptor.contextualization.add(
+						new ComputableResource(contextualizer,
+							if (model.instantiator) Mode.INSTANTIATION else Mode.RESOLUTION, descriptor))
 				}
 
 				// these must come after

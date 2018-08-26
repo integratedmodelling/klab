@@ -17,6 +17,8 @@ package org.integratedmodelling.klab.api.data;
 
 import java.util.Map;
 
+import org.integratedmodelling.klab.api.knowledge.IProject;
+
 /**
  * The Interface IResourceCatalog.
  *
@@ -34,6 +36,32 @@ public interface IResourceCatalog extends Map<String, IResource> {
 	 * @throws IllegalArgumentException
 	 *             if the input cannot be linked to a (set of) resource(s).
 	 */
-	public void clearOnly(Object... objects);
+    void clearOnly(Object... objects);
 
+	/**
+	 * Move resource to a different project. Return new resource.
+	 * 
+	 * @param resource
+	 * @param destinationProject
+	 * @return
+	 */
+    IResource move(IResource resource, IProject destinationProject);
+
+    /**
+     * Copy resource to a different project. Return new resource.
+     * 
+     * @param resource
+     * @param destinationProject
+     * @return
+     */
+    IResource copy(IResource resource, IProject destinationProject);
+
+    /**
+     * Rename a local resource's URN.
+     * 
+     * @param resource
+     * @param newUrn
+     * @return
+     */
+    IResource rename(IResource resource, String newUrn);
 }

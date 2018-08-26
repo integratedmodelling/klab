@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -164,6 +165,14 @@ public interface IComputableResource extends IKimStatement {
 	 */
 	Pair<IValueMediator, IValueMediator> getConversion();
 
+	/**
+	 * Add the resolution mode from the originating model to disambiguate resources that
+	 * can be used in more than one.
+	 * 
+	 * @return
+	 */
+	public Mode getComputationMode();
+	
 	/**
 	 * Only meaningful if this computable is a condition computing a (scalar or
 	 * distributed) boolean, this specifies whether this condition was given with

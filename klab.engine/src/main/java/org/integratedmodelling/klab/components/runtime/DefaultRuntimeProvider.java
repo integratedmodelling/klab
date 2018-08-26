@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
@@ -204,9 +205,9 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		if (resource.getServiceCall() != null) {
 			return resource.getServiceCall();
 		} else if (resource.getUrn() != null) {
-			return ((Actuator) target).getObservable().is(Type.COUNTABLE)
+			return (resource.getComputationMode() == Mode.INSTANTIATION
 					? UrnInstantiator.getServiceCall(resource.getUrn())
-					: UrnResolver.getServiceCall(resource.getUrn());
+					: UrnResolver.getServiceCall(resource.getUrn()));
 		} else if (resource.getExpression() != null) {
 			return ExpressionResolver.getServiceCall(resource);
 		} else if (resource.getLiteral() != null) {
@@ -355,18 +356,18 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	@Override
-	public List<IComputableResource> getComputation(IObservable availableType, IObservable desiredObservation) {
+	public List<IComputableResource> getComputation(IObservable availableType, Mode resolutionMode, IObservable desiredObservation) {
 
 		if (availableType.is(Type.COUNTABLE)) {
 			if (desiredObservation.is(Type.DISTANCE)) {
 				return Collections.singletonList(
-						new ComputableResource(DistanceResolver.getServiceCall(availableType, desiredObservation)));
+						new ComputableResource(DistanceResolver.getServiceCall(availableType, desiredObservation), resolutionMode));
 			} else if (desiredObservation.is(Type.PRESENCE)) {
 				return Collections.singletonList(
-						new ComputableResource(PresenceResolver.getServiceCall(availableType, desiredObservation)));
+						new ComputableResource(PresenceResolver.getServiceCall(availableType, desiredObservation), resolutionMode));
 			} else if (desiredObservation.is(Type.NUMEROSITY)) {
 				return Collections.singletonList(
-						new ComputableResource(DensityResolver.getServiceCall(availableType, desiredObservation)));
+						new ComputableResource(DensityResolver.getServiceCall(availableType, desiredObservation), resolutionMode));
 			}
 		}
 
@@ -395,7 +396,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		 * types this will have to expand.
 		 */
 		if (sourceType == IArtifact.Type.NUMBER && targetType == IArtifact.Type.BOOLEAN) {
-			return new ComputableResource(CastingStateResolver.getServiceCall(sourceType, targetType));
+			return new ComputableResource(CastingStateResolver.getServiceCall(sourceType, targetType), Mode.RESOLUTION);
 		}
 		return null;
 	}
