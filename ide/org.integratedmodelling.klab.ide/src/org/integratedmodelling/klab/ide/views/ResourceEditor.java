@@ -18,6 +18,9 @@ import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.klab.ide.ui.WorldWidget;
 import org.integratedmodelling.klab.rest.ResourceReference;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 
 public class ResourceEditor extends ViewPart {
 
@@ -30,6 +33,8 @@ public class ResourceEditor extends ViewPart {
 	private Group grpAdapterData;
 
 	private WorldWidget worldWidget;
+	private Text unpublishableReason;
+	private Label labelWhy;
 	
 //	private final FormToolkit toolkit = new FormToolkit(Display.getCurrent());
 
@@ -127,7 +132,28 @@ public class ResourceEditor extends ViewPart {
 			this.worldWidget = new WorldWidget(mapHolder, SWT.NONE);
 
 			Composite composite_1 = new Composite(grpGeometry, SWT.NONE);
-			composite_1.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+			composite_1.setLayout(new GridLayout(3, false));
+			composite_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+			
+			Button btnCheckButton = new Button(composite_1, SWT.CHECK);
+			btnCheckButton.addSelectionListener(new SelectionAdapter() {
+			    @Override
+			    public void widgetSelected(SelectionEvent e) {
+			        unpublishableReason.setEnabled(!btnCheckButton.getSelection());
+			        labelWhy.setEnabled(!btnCheckButton.getSelection());
+			    }
+			});
+			btnCheckButton.setSelection(true);
+			btnCheckButton.setText("Publishable");
+			
+			labelWhy = new Label(composite_1, SWT.NONE);
+			labelWhy.setEnabled(false);
+			labelWhy.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+			labelWhy.setText("Why:");
+			
+			unpublishableReason = new Text(composite_1, SWT.BORDER);
+			unpublishableReason.setEnabled(false);
+			unpublishableReason.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 			{
 			    geometryDefinition = new Label(grpGeometry, SWT.NONE);
 			    geometryDefinition.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));
@@ -143,8 +169,14 @@ public class ResourceEditor extends ViewPart {
 		TabItem tbtmProvenanceData = new TabItem(tabFolder, SWT.NONE);
 		tbtmProvenanceData.setText("Documentation");
 		
+		Composite composite_1 = new Composite(tabFolder, SWT.NONE);
+		tbtmProvenanceData.setControl(composite_1);
+		
 		TabItem tbtmPermissions = new TabItem(tabFolder, SWT.NONE);
 		tbtmPermissions.setText("Permissions");
+		
+		Composite composite_3 = new Composite(tabFolder, SWT.NONE);
+		tbtmPermissions.setControl(composite_3);
 		
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
