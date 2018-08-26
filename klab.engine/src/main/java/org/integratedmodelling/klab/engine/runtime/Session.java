@@ -73,8 +73,8 @@ import org.integratedmodelling.klab.rest.ProjectLoadRequest;
 import org.integratedmodelling.klab.rest.ProjectLoadResponse;
 import org.integratedmodelling.klab.rest.ProjectModificationNotification;
 import org.integratedmodelling.klab.rest.ProjectModificationRequest;
-import org.integratedmodelling.klab.rest.ResourceImportRequest;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
+import org.integratedmodelling.klab.rest.ResourceImportRequest;
 import org.integratedmodelling.klab.rest.RunScriptRequest;
 import org.integratedmodelling.klab.rest.SearchMatch;
 import org.integratedmodelling.klab.rest.SearchMatchAction;
@@ -397,27 +397,43 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	 */
 
 	@MessageHandler
-	private void copyMoveResource(final ResourceCRUDRequest request, IMessage.Type type) {
-	    IProject sourceProject = Resources.INSTANCE.getProject(request.getSourceProject());
-        IProject destinationProject = Resources.INSTANCE.getProject(request.getDestinationProject());
-        if (sourceProject == null || destinationProject == null) {
-            monitor.error("cannot move resources: unknown projects in request");
-            return;
-        }
+	private void handleResourceCRUDRequest(final ResourceCRUDRequest request, IMessage.Type type) {
+	    
         for (String urn : request.getResourceUrns()) {
             
             IResource resource = Resources.INSTANCE.resolveResource(urn);
-            if (resource == null || !resource.getLocalProjectName().equals(sourceProject.getName())) {
-                monitor.warn("requested resource is not in source project: " + urn);
+            if (resource == null) {
+                monitor.warn("requested resource not found: " + urn);
                 continue;
             }
+
+            IKimProject sourceProject = Kim.INSTANCE.getProject(resource.getLocalProjectName());
+            
+            if (sourceProject == null) {
+                monitor.error("resource comes from an unknown project: canceling operation");
+                return;
+            }
+            
             if (request.getOperation() == CRUDOperation.MOVE) {
+
+                IProject destinationProject = Resources.INSTANCE.getProject(request.getDestinationProject());
+                if (destinationProject == null) {
+                    monitor.error("resource target is an unknown project: canceling operation");
+                    return;
+                }
                 monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceDeleted,
                         ((Resource) resource).getReference());
                 resource = Resources.INSTANCE.getLocalResourceCatalog().move(resource, destinationProject);
                 monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
                         ((Resource) resource).getReference());
             } else if (request.getOperation() == CRUDOperation.COPY) {
+                
+                IProject destinationProject = Resources.INSTANCE.getProject(request.getDestinationProject());
+                if (destinationProject == null) {
+                    monitor.error("resource target is an unknown project: canceling operation");
+                    return;
+                }
+                
                 resource = Resources.INSTANCE.getLocalResourceCatalog().copy(resource, destinationProject);
                 monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
                         ((Resource) resource).getReference());

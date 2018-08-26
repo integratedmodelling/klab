@@ -184,7 +184,6 @@ public class Actuator implements IActuator {
          * self_ for the actuator's target).
          */
         Map<String, IArtifact> artifactTable = new HashMap<>();
-
         artifactTable.put("self_", target);
 
         /*
@@ -202,24 +201,29 @@ public class Actuator implements IActuator {
              * meaning).
              */
             IObservable indirectTarget = contextualizer.getSecond().getTarget();
+            String targetId = "self_"; 
+            IRuntimeContext context = ctx;
 
-            // HERE: if the target is indirect, it needs a context for the indirect observable.
-            String targetId = indirectTarget == null ? "self_" : indirectTarget.getLocalName();
+            if (indirectTarget != null) {
+                targetId = indirectTarget.getLocalName();
+                /*
+                 * TODO check if we should do this even for the normal target, so we don't carry
+                 * previous parameters around.
+                 */
+                context = context.createChild(indirectTarget);
+            }
+
             if (!artifactTable.containsKey(targetId)) {
-                artifactTable.put(targetId, ctx.getArtifact(targetId));
+                artifactTable.put(targetId, context.getArtifact(targetId));
             }
 
             /*
              * run the contextualizer on its target. This may get a null and instantiate a
              * new target artifact.
-             * 
-             * FIXME parameters are kept from previous contextualizers in ctx
-             * FIXME cannot pass same ctx - need one with the specifics of the target, only OK if the target
-             * is direct.
              */
             artifactTable.put(targetId, runContextualizer(contextualizer
                     .getFirst(), indirectTarget == null ? this.observable : indirectTarget, contextualizer
-                            .getSecond(), artifactTable.get(targetId), ctx, ctx.getScale()));
+                            .getSecond(), artifactTable.get(targetId), context, context.getScale()));
 
             /*
              * if we have produced the artifact (through an instantiator), set it in the
@@ -228,7 +232,7 @@ public class Actuator implements IActuator {
             if (indirectTarget == null) {
                 ret = artifactTable.get(targetId);
             } else {
-                ctx.setData(indirectTarget.getLocalName(), artifactTable.get(targetId));
+                context.setData(indirectTarget.getLocalName(), artifactTable.get(targetId));
             }
         }
 

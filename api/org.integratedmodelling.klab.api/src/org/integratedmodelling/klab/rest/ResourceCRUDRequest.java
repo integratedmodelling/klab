@@ -8,7 +8,6 @@ import org.integratedmodelling.klab.api.data.CRUDOperation;
 public class ResourceCRUDRequest {
 
     private Set<String>   resourceUrns = new HashSet<>();
-    private String        sourceProject;
     private String        destinationProject;
     private CRUDOperation operation;
 
@@ -19,15 +18,7 @@ public class ResourceCRUDRequest {
     public void setResourceUrns(Set<String> resourceUrns) {
         this.resourceUrns = resourceUrns;
     }
-
-    public String getSourceProject() {
-        return sourceProject;
-    }
-
-    public void setSourceProject(String sourceProject) {
-        this.sourceProject = sourceProject;
-    }
-
+    
     public String getDestinationProject() {
         return destinationProject;
     }

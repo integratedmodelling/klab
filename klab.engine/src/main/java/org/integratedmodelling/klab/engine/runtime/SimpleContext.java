@@ -426,4 +426,14 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 		this.semantics.put(artifactId, observable);
 	}
 
+    @Override
+    public IRuntimeContext createChild(IObservable indirectTarget) {
+        SimpleContext ret = new SimpleContext(this);
+        ret.observable = indirectTarget;
+        ret.targetName = indirectTarget.getLocalName();
+        ret.target = (IObservation) getArtifact(ret.targetName);
+        ret.setSemantics(ret.targetName, indirectTarget);
+        return ret;
+    }
+
 }

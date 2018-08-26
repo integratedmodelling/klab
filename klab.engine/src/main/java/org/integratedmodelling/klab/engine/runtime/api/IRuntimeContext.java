@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.engine.runtime.api;
 
 import java.util.Collection;
 
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -64,6 +65,16 @@ public interface IRuntimeContext extends IComputationContext {
 	 */
 	public IRuntimeContext createChild(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor);
 
+	/**
+	 * Create a child context for the passed observable within the current actuator. Called when
+	 * there is a computation involving a different observable than the actuator's target.
+	 * 
+	 * @param indirectTarget
+	 * @return
+	 */
+    IRuntimeContext createChild(IObservable indirectTarget);
+
+	
 	/**
 	 * Set the passed data object in the symbol table.
 	 * 
