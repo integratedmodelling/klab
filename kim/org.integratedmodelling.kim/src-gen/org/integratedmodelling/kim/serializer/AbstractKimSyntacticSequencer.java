@@ -477,6 +477,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     accordingTo=PropertyId (ambiguity) 'in' currency=Currency
 	 *     accordingTo=PropertyId (ambiguity) 'in' unit=Unit
 	 *     accordingTo=PropertyId (ambiguity) 'named' name=LOWERCASE_ID
+	 *     accordingTo=PropertyId (ambiguity) 'named' name=STRING
 	 *     accordingTo=PropertyId (ambiguity) 'per' unit=Unit
 	 *     accordingTo=PropertyId (ambiguity) (rule end)
 	 *     accordingTo=PropertyId (ambiguity) from=Number
@@ -488,6 +489,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     by=Concept (ambiguity) 'in' currency=Currency
 	 *     by=Concept (ambiguity) 'in' unit=Unit
 	 *     by=Concept (ambiguity) 'named' name=LOWERCASE_ID
+	 *     by=Concept (ambiguity) 'named' name=STRING
 	 *     by=Concept (ambiguity) 'per' unit=Unit
 	 *     by=Concept (ambiguity) (rule end)
 	 *     by=Concept (ambiguity) from=Number
@@ -499,6 +501,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     currency=Currency (ambiguity) 'in' currency=Currency
 	 *     currency=Currency (ambiguity) 'in' unit=Unit
 	 *     currency=Currency (ambiguity) 'named' name=LOWERCASE_ID
+	 *     currency=Currency (ambiguity) 'named' name=STRING
 	 *     currency=Currency (ambiguity) 'per' unit=Unit
 	 *     currency=Currency (ambiguity) (rule end)
 	 *     currency=Currency (ambiguity) from=Number
@@ -510,6 +513,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     declaration=ConceptDeclaration (ambiguity) 'in' currency=Currency
 	 *     declaration=ConceptDeclaration (ambiguity) 'in' unit=Unit
 	 *     declaration=ConceptDeclaration (ambiguity) 'named' name=LOWERCASE_ID
+	 *     declaration=ConceptDeclaration (ambiguity) 'named' name=STRING
 	 *     declaration=ConceptDeclaration (ambiguity) 'per' unit=Unit
 	 *     declaration=ConceptDeclaration (ambiguity) (rule end)
 	 *     declaration=ConceptDeclaration (ambiguity) from=Number
@@ -521,6 +525,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     downTo=Concept (ambiguity) 'in' currency=Currency
 	 *     downTo=Concept (ambiguity) 'in' unit=Unit
 	 *     downTo=Concept (ambiguity) 'named' name=LOWERCASE_ID
+	 *     downTo=Concept (ambiguity) 'named' name=STRING
 	 *     downTo=Concept (ambiguity) 'per' unit=Unit
 	 *     downTo=Concept (ambiguity) (rule end)
 	 *     downTo=Concept (ambiguity) from=Number
@@ -532,10 +537,23 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=LOWERCASE_ID (ambiguity) 'in' currency=Currency
 	 *     name=LOWERCASE_ID (ambiguity) 'in' unit=Unit
 	 *     name=LOWERCASE_ID (ambiguity) 'named' name=LOWERCASE_ID
+	 *     name=LOWERCASE_ID (ambiguity) 'named' name=STRING
 	 *     name=LOWERCASE_ID (ambiguity) 'per' unit=Unit
 	 *     name=LOWERCASE_ID (ambiguity) (rule end)
 	 *     name=LOWERCASE_ID (ambiguity) from=Number
 	 *     name=LOWERCASE_ID (ambiguity) optional?='optional'
+	 *     name=STRING (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     name=STRING (ambiguity) 'as' role=Concept
+	 *     name=STRING (ambiguity) 'by' by=Concept
+	 *     name=STRING (ambiguity) 'down' 'to' downTo=Concept
+	 *     name=STRING (ambiguity) 'in' currency=Currency
+	 *     name=STRING (ambiguity) 'in' unit=Unit
+	 *     name=STRING (ambiguity) 'named' name=LOWERCASE_ID
+	 *     name=STRING (ambiguity) 'named' name=STRING
+	 *     name=STRING (ambiguity) 'per' unit=Unit
+	 *     name=STRING (ambiguity) (rule end)
+	 *     name=STRING (ambiguity) from=Number
+	 *     name=STRING (ambiguity) optional?='optional'
 	 *     optional?='optional' (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     optional?='optional' (ambiguity) 'as' role=Concept
 	 *     optional?='optional' (ambiguity) 'by' by=Concept
@@ -543,6 +561,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     optional?='optional' (ambiguity) 'in' currency=Currency
 	 *     optional?='optional' (ambiguity) 'in' unit=Unit
 	 *     optional?='optional' (ambiguity) 'named' name=LOWERCASE_ID
+	 *     optional?='optional' (ambiguity) 'named' name=STRING
 	 *     optional?='optional' (ambiguity) 'per' unit=Unit
 	 *     optional?='optional' (ambiguity) (rule end)
 	 *     optional?='optional' (ambiguity) from=Number
@@ -554,6 +573,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     role=Concept (ambiguity) 'in' currency=Currency
 	 *     role=Concept (ambiguity) 'in' unit=Unit
 	 *     role=Concept (ambiguity) 'named' name=LOWERCASE_ID
+	 *     role=Concept (ambiguity) 'named' name=STRING
 	 *     role=Concept (ambiguity) 'per' unit=Unit
 	 *     role=Concept (ambiguity) (rule end)
 	 *     role=Concept (ambiguity) from=Number
@@ -565,6 +585,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     to=Number (ambiguity) 'in' currency=Currency
 	 *     to=Number (ambiguity) 'in' unit=Unit
 	 *     to=Number (ambiguity) 'named' name=LOWERCASE_ID
+	 *     to=Number (ambiguity) 'named' name=STRING
 	 *     to=Number (ambiguity) 'per' unit=Unit
 	 *     to=Number (ambiguity) (rule end)
 	 *     to=Number (ambiguity) from=Number
@@ -576,6 +597,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     unit=Unit (ambiguity) 'in' currency=Currency
 	 *     unit=Unit (ambiguity) 'in' unit=Unit
 	 *     unit=Unit (ambiguity) 'named' name=LOWERCASE_ID
+	 *     unit=Unit (ambiguity) 'named' name=STRING
 	 *     unit=Unit (ambiguity) 'per' unit=Unit
 	 *     unit=Unit (ambiguity) (rule end)
 	 *     unit=Unit (ambiguity) from=Number

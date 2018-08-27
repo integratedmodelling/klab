@@ -6419,20 +6419,37 @@ ruleObservableSemantics returns [EObject current=null]
 								}
 								(
 									(
-										lv_name_26_0=RULE_LOWERCASE_ID
-										{
-											newLeafNode(lv_name_26_0, grammarAccess.getObservableSemanticsAccess().getNameLOWERCASE_IDTerminalRuleCall_3_7_1_0());
-										}
-										{
-											if ($current==null) {
-												$current = createModelElement(grammarAccess.getObservableSemanticsRule());
+										(
+											lv_name_26_1=RULE_LOWERCASE_ID
+											{
+												newLeafNode(lv_name_26_1, grammarAccess.getObservableSemanticsAccess().getNameLOWERCASE_IDTerminalRuleCall_3_7_1_0_0());
 											}
-											setWithLastConsumed(
-												$current,
-												"name",
-												lv_name_26_0,
-												"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
-										}
+											{
+												if ($current==null) {
+													$current = createModelElement(grammarAccess.getObservableSemanticsRule());
+												}
+												setWithLastConsumed(
+													$current,
+													"name",
+													lv_name_26_1,
+													"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
+											}
+											    |
+											lv_name_26_2=RULE_STRING
+											{
+												newLeafNode(lv_name_26_2, grammarAccess.getObservableSemanticsAccess().getNameSTRINGTerminalRuleCall_3_7_1_0_1());
+											}
+											{
+												if ($current==null) {
+													$current = createModelElement(grammarAccess.getObservableSemanticsRule());
+												}
+												setWithLastConsumed(
+													$current,
+													"name",
+													lv_name_26_2,
+													"org.eclipse.xtext.common.Terminals.STRING");
+											}
+										)
 									)
 								)
 								))
@@ -14292,20 +14309,37 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 								}
 								(
 									(
-										lv_name_19_0=RULE_LOWERCASE_ID
-										{
-											newLeafNode(lv_name_19_0, grammarAccess.getSimpleObservableSemanticsAccess().getNameLOWERCASE_IDTerminalRuleCall_1_5_1_0());
-										}
-										{
-											if ($current==null) {
-												$current = createModelElement(grammarAccess.getSimpleObservableSemanticsRule());
+										(
+											lv_name_19_1=RULE_LOWERCASE_ID
+											{
+												newLeafNode(lv_name_19_1, grammarAccess.getSimpleObservableSemanticsAccess().getNameLOWERCASE_IDTerminalRuleCall_1_5_1_0_0());
 											}
-											setWithLastConsumed(
-												$current,
-												"name",
-												lv_name_19_0,
-												"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
-										}
+											{
+												if ($current==null) {
+													$current = createModelElement(grammarAccess.getSimpleObservableSemanticsRule());
+												}
+												setWithLastConsumed(
+													$current,
+													"name",
+													lv_name_19_1,
+													"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
+											}
+											    |
+											lv_name_19_2=RULE_STRING
+											{
+												newLeafNode(lv_name_19_2, grammarAccess.getSimpleObservableSemanticsAccess().getNameSTRINGTerminalRuleCall_1_5_1_0_1());
+											}
+											{
+												if ($current==null) {
+													$current = createModelElement(grammarAccess.getSimpleObservableSemanticsRule());
+												}
+												setWithLastConsumed(
+													$current,
+													"name",
+													lv_name_19_2,
+													"org.eclipse.xtext.common.Terminals.STRING");
+											}
+										)
 									)
 								)
 								))
@@ -14398,6 +14432,21 @@ ruleNamedObservableSemantics returns [EObject current=null]
 							lv_name_2_2,
 							"org.integratedmodelling.kim.Kim.LOWERCASE_DASHID");
 					}
+					    |
+					lv_name_2_3=RULE_STRING
+					{
+						newLeafNode(lv_name_2_3, grammarAccess.getNamedObservableSemanticsAccess().getNameSTRINGTerminalRuleCall_2_0_2());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getNamedObservableSemanticsRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"name",
+							lv_name_2_3,
+							"org.eclipse.xtext.common.Terminals.STRING");
+					}
 				)
 			)
 		)
@@ -14451,6 +14500,21 @@ ruleUnitElement returns [EObject current=null]
 							"id",
 							lv_id_0_2,
 							"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
+					}
+					    |
+					lv_id_0_3=RULE_UPPERCASE_ID
+					{
+						newLeafNode(lv_id_0_3, grammarAccess.getUnitElementAccess().getIdUPPERCASE_IDTerminalRuleCall_0_0_2());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getUnitElementRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"id",
+							lv_id_0_3,
+							"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
 					}
 				)
 			)

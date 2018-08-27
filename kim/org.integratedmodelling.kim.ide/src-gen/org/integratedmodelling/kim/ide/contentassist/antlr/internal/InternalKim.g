@@ -3716,6 +3716,27 @@ finally {
 	restoreStackSize(stackSize);
 }
 
+rule__ObservableSemantics__NameAlternatives_3_7_1_0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getObservableSemanticsAccess().getNameLOWERCASE_IDTerminalRuleCall_3_7_1_0_0()); }
+		RULE_LOWERCASE_ID
+		{ after(grammarAccess.getObservableSemanticsAccess().getNameLOWERCASE_IDTerminalRuleCall_3_7_1_0_0()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getObservableSemanticsAccess().getNameSTRINGTerminalRuleCall_3_7_1_0_1()); }
+		RULE_STRING
+		{ after(grammarAccess.getObservableSemanticsAccess().getNameSTRINGTerminalRuleCall_3_7_1_0_1()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
 rule__Dependency__Alternatives
 	@init {
 		int stackSize = keepStackSize();
@@ -5954,6 +5975,27 @@ finally {
 	restoreStackSize(stackSize);
 }
 
+rule__SimpleObservableSemantics__NameAlternatives_1_5_1_0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getSimpleObservableSemanticsAccess().getNameLOWERCASE_IDTerminalRuleCall_1_5_1_0_0()); }
+		RULE_LOWERCASE_ID
+		{ after(grammarAccess.getSimpleObservableSemanticsAccess().getNameLOWERCASE_IDTerminalRuleCall_1_5_1_0_0()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getSimpleObservableSemanticsAccess().getNameSTRINGTerminalRuleCall_1_5_1_0_1()); }
+		RULE_STRING
+		{ after(grammarAccess.getSimpleObservableSemanticsAccess().getNameSTRINGTerminalRuleCall_1_5_1_0_1()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
 rule__NamedObservableSemantics__NameAlternatives_2_0
 	@init {
 		int stackSize = keepStackSize();
@@ -5969,6 +6011,12 @@ rule__NamedObservableSemantics__NameAlternatives_2_0
 		{ before(grammarAccess.getNamedObservableSemanticsAccess().getNameLOWERCASE_DASHIDTerminalRuleCall_2_0_1()); }
 		RULE_LOWERCASE_DASHID
 		{ after(grammarAccess.getNamedObservableSemanticsAccess().getNameLOWERCASE_DASHIDTerminalRuleCall_2_0_1()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getNamedObservableSemanticsAccess().getNameSTRINGTerminalRuleCall_2_0_2()); }
+		RULE_STRING
+		{ after(grammarAccess.getNamedObservableSemanticsAccess().getNameSTRINGTerminalRuleCall_2_0_2()); }
 	)
 ;
 finally {
@@ -6017,6 +6065,12 @@ rule__UnitElement__IdAlternatives_0_0
 		{ before(grammarAccess.getUnitElementAccess().getIdLOWERCASE_IDTerminalRuleCall_0_0_1()); }
 		RULE_LOWERCASE_ID
 		{ after(grammarAccess.getUnitElementAccess().getIdLOWERCASE_IDTerminalRuleCall_0_0_1()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getUnitElementAccess().getIdUPPERCASE_IDTerminalRuleCall_0_0_2()); }
+		RULE_UPPERCASE_ID
+		{ after(grammarAccess.getUnitElementAccess().getIdUPPERCASE_IDTerminalRuleCall_0_0_2()); }
 	)
 ;
 finally {
@@ -34370,9 +34424,9 @@ rule__ObservableSemantics__NameAssignment_3_7_1
 	}
 :
 	(
-		{ before(grammarAccess.getObservableSemanticsAccess().getNameLOWERCASE_IDTerminalRuleCall_3_7_1_0()); }
-		RULE_LOWERCASE_ID
-		{ after(grammarAccess.getObservableSemanticsAccess().getNameLOWERCASE_IDTerminalRuleCall_3_7_1_0()); }
+		{ before(grammarAccess.getObservableSemanticsAccess().getNameAlternatives_3_7_1_0()); }
+		(rule__ObservableSemantics__NameAlternatives_3_7_1_0)
+		{ after(grammarAccess.getObservableSemanticsAccess().getNameAlternatives_3_7_1_0()); }
 	)
 ;
 finally {
@@ -38490,9 +38544,9 @@ rule__SimpleObservableSemantics__NameAssignment_1_5_1
 	}
 :
 	(
-		{ before(grammarAccess.getSimpleObservableSemanticsAccess().getNameLOWERCASE_IDTerminalRuleCall_1_5_1_0()); }
-		RULE_LOWERCASE_ID
-		{ after(grammarAccess.getSimpleObservableSemanticsAccess().getNameLOWERCASE_IDTerminalRuleCall_1_5_1_0()); }
+		{ before(grammarAccess.getSimpleObservableSemanticsAccess().getNameAlternatives_1_5_1_0()); }
+		(rule__SimpleObservableSemantics__NameAlternatives_1_5_1_0)
+		{ after(grammarAccess.getSimpleObservableSemanticsAccess().getNameAlternatives_1_5_1_0()); }
 	)
 ;
 finally {

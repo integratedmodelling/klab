@@ -70,6 +70,7 @@
 		<module>klab.hub</module>
 		<module>klab.node</module>
 		<module>products</module>
+		<module>components</module>
 	</modules>
 
 	<properties>

@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimBehavior;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimModel;
@@ -13,7 +14,7 @@ import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.Kim;
 
-public class EModel extends EKimObject implements IKimModel {
+public class EModel extends EKimObject implements IKimModel, EDocumentable {
 
     private static final long serialVersionUID = -5791991801230456655L;
 
@@ -132,4 +133,28 @@ public class EModel extends EKimObject implements IKimModel {
 	public boolean isSemantic() {
 		return delegate.isSemantic();
 	}
+	
+	@Override
+	public boolean isDocumented() {
+		
+		for (IKimAnnotation annotation : delegate_.getAnnotations()) {
+			// TODO parameterize the annotations recognized
+			if (annotation.getName().equals("documented")) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public String getDocId() {
+		for (IKimAnnotation annotation : delegate_.getAnnotations()) {
+			// TODO parameterize the annotations recognized
+			if (annotation.getName().equals("documented")) {
+				return annotation.getParameters().get(IKimAnnotation.DEFAULT_PARAMETER_NAME, String.class);
+			}
+		}
+		return null;
+	}
+
 }
