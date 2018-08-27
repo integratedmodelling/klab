@@ -1387,9 +1387,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getActionSpecification_Domain()
+  public EAttribute getActionSpecification_Over()
   {
-    return (EReference)actionSpecificationEClass.getEStructuralFeatures().get(1);
+    return (EAttribute)actionSpecificationEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -1397,7 +1397,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getActionSpecification_Actions()
+  public EReference getActionSpecification_Domain()
   {
     return (EReference)actionSpecificationEClass.getEStructuralFeatures().get(2);
   }
@@ -1407,9 +1407,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getActionSpecification_Trigger()
+  public EReference getActionSpecification_Actions()
   {
-    return (EAttribute)actionSpecificationEClass.getEStructuralFeatures().get(3);
+    return (EReference)actionSpecificationEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -1417,7 +1417,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getActionSpecification_Initialization()
+  public EAttribute getActionSpecification_Trigger()
   {
     return (EAttribute)actionSpecificationEClass.getEStructuralFeatures().get(4);
   }
@@ -1427,7 +1427,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getActionSpecification_Resolution()
+  public EAttribute getActionSpecification_Initialization()
   {
     return (EAttribute)actionSpecificationEClass.getEStructuralFeatures().get(5);
   }
@@ -1437,7 +1437,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getActionSpecification_Instantiation()
+  public EAttribute getActionSpecification_Resolution()
   {
     return (EAttribute)actionSpecificationEClass.getEStructuralFeatures().get(6);
   }
@@ -1447,7 +1447,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getActionSpecification_Termination()
+  public EAttribute getActionSpecification_Instantiation()
   {
     return (EAttribute)actionSpecificationEClass.getEStructuralFeatures().get(7);
   }
@@ -1457,7 +1457,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getActionSpecification_StateInitialization()
+  public EAttribute getActionSpecification_Termination()
   {
     return (EAttribute)actionSpecificationEClass.getEStructuralFeatures().get(8);
   }
@@ -1467,9 +1467,19 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getActionSpecification_StateInitialization()
+  {
+    return (EAttribute)actionSpecificationEClass.getEStructuralFeatures().get(9);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EReference getActionSpecification_Event()
   {
-    return (EReference)actionSpecificationEClass.getEStructuralFeatures().get(9);
+    return (EReference)actionSpecificationEClass.getEStructuralFeatures().get(10);
   }
 
   /**
@@ -1479,7 +1489,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getActionSpecification_AnyContextEvent()
   {
-    return (EAttribute)actionSpecificationEClass.getEStructuralFeatures().get(10);
+    return (EAttribute)actionSpecificationEClass.getEStructuralFeatures().get(11);
   }
 
   /**
@@ -1489,7 +1499,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getActionSpecification_RelatedEventContext()
   {
-    return (EAttribute)actionSpecificationEClass.getEStructuralFeatures().get(11);
+    return (EAttribute)actionSpecificationEClass.getEStructuralFeatures().get(12);
   }
 
   /**
@@ -1499,7 +1509,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getActionSpecification_EventContext()
   {
-    return (EReference)actionSpecificationEClass.getEStructuralFeatures().get(12);
+    return (EReference)actionSpecificationEClass.getEStructuralFeatures().get(13);
   }
 
   /**
@@ -1509,7 +1519,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getActionSpecification_Parameters()
   {
-    return (EReference)actionSpecificationEClass.getEStructuralFeatures().get(13);
+    return (EReference)actionSpecificationEClass.getEStructuralFeatures().get(14);
   }
 
   /**
@@ -4602,6 +4612,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
     actionSpecificationEClass = createEClass(ACTION_SPECIFICATION);
     createEAttribute(actionSpecificationEClass, ACTION_SPECIFICATION__INTEGRATED);
+    createEAttribute(actionSpecificationEClass, ACTION_SPECIFICATION__OVER);
     createEReference(actionSpecificationEClass, ACTION_SPECIFICATION__DOMAIN);
     createEReference(actionSpecificationEClass, ACTION_SPECIFICATION__ACTIONS);
     createEAttribute(actionSpecificationEClass, ACTION_SPECIFICATION__TRIGGER);
@@ -5085,6 +5096,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
     initEClass(actionSpecificationEClass, ActionSpecification.class, "ActionSpecification", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getActionSpecification_Integrated(), ecorePackage.getEBoolean(), "integrated", null, 0, 1, ActionSpecification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getActionSpecification_Over(), ecorePackage.getEBoolean(), "over", null, 0, 1, ActionSpecification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getActionSpecification_Domain(), this.getFunctionOrID(), null, "domain", null, 0, -1, ActionSpecification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getActionSpecification_Actions(), this.getAction(), null, "actions", null, 0, -1, ActionSpecification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getActionSpecification_Trigger(), ecorePackage.getEBoolean(), "trigger", null, 0, 1, ActionSpecification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

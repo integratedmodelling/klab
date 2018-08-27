@@ -136,19 +136,24 @@ TableClassifier returns ClassifierRHS:
 	anything?='#';
 
 ActionSpecification:
-	(integrated?='aggregated')? 'over' 
-		(domain+=FunctionOrID) (=> ',' (domain+=FunctionOrID))* 
-		(actions+=Action (=> ',' actions+=Action)*)? | 
-	(trigger?='on' (
-		initialization?='definition' | 
-		resolution?='resolution' | 
-		instantiation ?= 'instantiation' | 
-		termination ?='termination' | 
-		stateInitialization ?= 'initialization'| 
-		event=ConceptDeclaration ('in' (anyContextEvent?='context' | (relatedEventContext?='related' eventContext=ConceptDeclaration)))?
-	)
-		(parameters = List)? 
-		(actions+=Action (=> ',' actions+=Action)*)?);
+
+	(integrated?='aggregated')? over?='over' 
+		domain+=FunctionOrID (=> ',' (domain+=FunctionOrID))* 
+		(actions+=Action (=> ',' actions+=Action)*)?
+			
+	  | 
+		(trigger?='on' (
+				initialization?='definition' | 
+				resolution?='resolution' | 
+				instantiation ?= 'instantiation' | 
+				termination ?='termination' | 
+				stateInitialization ?= 'initialization'| 
+				event=ConceptDeclaration ('in' (anyContextEvent?='context' | (relatedEventContext?='related')) eventContext=ConceptDeclaration)?
+		    ) 
+		    (parameters = List)?
+		)?
+		actions+=Action (=> ',' actions+=Action)*
+;
 
 FunctionOrID:
 	function=Function | functionId=(LOWERCASE_ID|NamespaceId);

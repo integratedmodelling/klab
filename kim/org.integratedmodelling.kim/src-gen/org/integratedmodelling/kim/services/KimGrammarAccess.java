@@ -1659,7 +1659,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
 		private final Assignment cIntegratedAssignment_0_0 = (Assignment)cGroup_0.eContents().get(0);
 		private final Keyword cIntegratedAggregatedKeyword_0_0_0 = (Keyword)cIntegratedAssignment_0_0.eContents().get(0);
-		private final Keyword cOverKeyword_0_1 = (Keyword)cGroup_0.eContents().get(1);
+		private final Assignment cOverAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
+		private final Keyword cOverOverKeyword_0_1_0 = (Keyword)cOverAssignment_0_1.eContents().get(0);
 		private final Assignment cDomainAssignment_0_2 = (Assignment)cGroup_0.eContents().get(2);
 		private final RuleCall cDomainFunctionOrIDParserRuleCall_0_2_0 = (RuleCall)cDomainAssignment_0_2.eContents().get(0);
 		private final Group cGroup_0_3 = (Group)cGroup_0.eContents().get(3);
@@ -1674,59 +1675,58 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cActionsAssignment_0_4_1_1 = (Assignment)cGroup_0_4_1.eContents().get(1);
 		private final RuleCall cActionsActionParserRuleCall_0_4_1_1_0 = (RuleCall)cActionsAssignment_0_4_1_1.eContents().get(0);
 		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
-		private final Assignment cTriggerAssignment_1_0 = (Assignment)cGroup_1.eContents().get(0);
-		private final Keyword cTriggerOnKeyword_1_0_0 = (Keyword)cTriggerAssignment_1_0.eContents().get(0);
-		private final Alternatives cAlternatives_1_1 = (Alternatives)cGroup_1.eContents().get(1);
-		private final Assignment cInitializationAssignment_1_1_0 = (Assignment)cAlternatives_1_1.eContents().get(0);
-		private final Keyword cInitializationDefinitionKeyword_1_1_0_0 = (Keyword)cInitializationAssignment_1_1_0.eContents().get(0);
-		private final Assignment cResolutionAssignment_1_1_1 = (Assignment)cAlternatives_1_1.eContents().get(1);
-		private final Keyword cResolutionResolutionKeyword_1_1_1_0 = (Keyword)cResolutionAssignment_1_1_1.eContents().get(0);
-		private final Assignment cInstantiationAssignment_1_1_2 = (Assignment)cAlternatives_1_1.eContents().get(2);
-		private final Keyword cInstantiationInstantiationKeyword_1_1_2_0 = (Keyword)cInstantiationAssignment_1_1_2.eContents().get(0);
-		private final Assignment cTerminationAssignment_1_1_3 = (Assignment)cAlternatives_1_1.eContents().get(3);
-		private final Keyword cTerminationTerminationKeyword_1_1_3_0 = (Keyword)cTerminationAssignment_1_1_3.eContents().get(0);
-		private final Assignment cStateInitializationAssignment_1_1_4 = (Assignment)cAlternatives_1_1.eContents().get(4);
-		private final Keyword cStateInitializationInitializationKeyword_1_1_4_0 = (Keyword)cStateInitializationAssignment_1_1_4.eContents().get(0);
-		private final Group cGroup_1_1_5 = (Group)cAlternatives_1_1.eContents().get(5);
-		private final Assignment cEventAssignment_1_1_5_0 = (Assignment)cGroup_1_1_5.eContents().get(0);
-		private final RuleCall cEventConceptDeclarationParserRuleCall_1_1_5_0_0 = (RuleCall)cEventAssignment_1_1_5_0.eContents().get(0);
-		private final Group cGroup_1_1_5_1 = (Group)cGroup_1_1_5.eContents().get(1);
-		private final Keyword cInKeyword_1_1_5_1_0 = (Keyword)cGroup_1_1_5_1.eContents().get(0);
-		private final Alternatives cAlternatives_1_1_5_1_1 = (Alternatives)cGroup_1_1_5_1.eContents().get(1);
-		private final Assignment cAnyContextEventAssignment_1_1_5_1_1_0 = (Assignment)cAlternatives_1_1_5_1_1.eContents().get(0);
-		private final Keyword cAnyContextEventContextKeyword_1_1_5_1_1_0_0 = (Keyword)cAnyContextEventAssignment_1_1_5_1_1_0.eContents().get(0);
-		private final Group cGroup_1_1_5_1_1_1 = (Group)cAlternatives_1_1_5_1_1.eContents().get(1);
-		private final Assignment cRelatedEventContextAssignment_1_1_5_1_1_1_0 = (Assignment)cGroup_1_1_5_1_1_1.eContents().get(0);
-		private final Keyword cRelatedEventContextRelatedKeyword_1_1_5_1_1_1_0_0 = (Keyword)cRelatedEventContextAssignment_1_1_5_1_1_1_0.eContents().get(0);
-		private final Assignment cEventContextAssignment_1_1_5_1_1_1_1 = (Assignment)cGroup_1_1_5_1_1_1.eContents().get(1);
-		private final RuleCall cEventContextConceptDeclarationParserRuleCall_1_1_5_1_1_1_1_0 = (RuleCall)cEventContextAssignment_1_1_5_1_1_1_1.eContents().get(0);
-		private final Assignment cParametersAssignment_1_2 = (Assignment)cGroup_1.eContents().get(2);
-		private final RuleCall cParametersListParserRuleCall_1_2_0 = (RuleCall)cParametersAssignment_1_2.eContents().get(0);
-		private final Group cGroup_1_3 = (Group)cGroup_1.eContents().get(3);
-		private final Assignment cActionsAssignment_1_3_0 = (Assignment)cGroup_1_3.eContents().get(0);
-		private final RuleCall cActionsActionParserRuleCall_1_3_0_0 = (RuleCall)cActionsAssignment_1_3_0.eContents().get(0);
-		private final Group cGroup_1_3_1 = (Group)cGroup_1_3.eContents().get(1);
-		private final Keyword cCommaKeyword_1_3_1_0 = (Keyword)cGroup_1_3_1.eContents().get(0);
-		private final Assignment cActionsAssignment_1_3_1_1 = (Assignment)cGroup_1_3_1.eContents().get(1);
-		private final RuleCall cActionsActionParserRuleCall_1_3_1_1_0 = (RuleCall)cActionsAssignment_1_3_1_1.eContents().get(0);
+		private final Group cGroup_1_0 = (Group)cGroup_1.eContents().get(0);
+		private final Assignment cTriggerAssignment_1_0_0 = (Assignment)cGroup_1_0.eContents().get(0);
+		private final Keyword cTriggerOnKeyword_1_0_0_0 = (Keyword)cTriggerAssignment_1_0_0.eContents().get(0);
+		private final Alternatives cAlternatives_1_0_1 = (Alternatives)cGroup_1_0.eContents().get(1);
+		private final Assignment cInitializationAssignment_1_0_1_0 = (Assignment)cAlternatives_1_0_1.eContents().get(0);
+		private final Keyword cInitializationDefinitionKeyword_1_0_1_0_0 = (Keyword)cInitializationAssignment_1_0_1_0.eContents().get(0);
+		private final Assignment cResolutionAssignment_1_0_1_1 = (Assignment)cAlternatives_1_0_1.eContents().get(1);
+		private final Keyword cResolutionResolutionKeyword_1_0_1_1_0 = (Keyword)cResolutionAssignment_1_0_1_1.eContents().get(0);
+		private final Assignment cInstantiationAssignment_1_0_1_2 = (Assignment)cAlternatives_1_0_1.eContents().get(2);
+		private final Keyword cInstantiationInstantiationKeyword_1_0_1_2_0 = (Keyword)cInstantiationAssignment_1_0_1_2.eContents().get(0);
+		private final Assignment cTerminationAssignment_1_0_1_3 = (Assignment)cAlternatives_1_0_1.eContents().get(3);
+		private final Keyword cTerminationTerminationKeyword_1_0_1_3_0 = (Keyword)cTerminationAssignment_1_0_1_3.eContents().get(0);
+		private final Assignment cStateInitializationAssignment_1_0_1_4 = (Assignment)cAlternatives_1_0_1.eContents().get(4);
+		private final Keyword cStateInitializationInitializationKeyword_1_0_1_4_0 = (Keyword)cStateInitializationAssignment_1_0_1_4.eContents().get(0);
+		private final Group cGroup_1_0_1_5 = (Group)cAlternatives_1_0_1.eContents().get(5);
+		private final Assignment cEventAssignment_1_0_1_5_0 = (Assignment)cGroup_1_0_1_5.eContents().get(0);
+		private final RuleCall cEventConceptDeclarationParserRuleCall_1_0_1_5_0_0 = (RuleCall)cEventAssignment_1_0_1_5_0.eContents().get(0);
+		private final Group cGroup_1_0_1_5_1 = (Group)cGroup_1_0_1_5.eContents().get(1);
+		private final Keyword cInKeyword_1_0_1_5_1_0 = (Keyword)cGroup_1_0_1_5_1.eContents().get(0);
+		private final Alternatives cAlternatives_1_0_1_5_1_1 = (Alternatives)cGroup_1_0_1_5_1.eContents().get(1);
+		private final Assignment cAnyContextEventAssignment_1_0_1_5_1_1_0 = (Assignment)cAlternatives_1_0_1_5_1_1.eContents().get(0);
+		private final Keyword cAnyContextEventContextKeyword_1_0_1_5_1_1_0_0 = (Keyword)cAnyContextEventAssignment_1_0_1_5_1_1_0.eContents().get(0);
+		private final Assignment cRelatedEventContextAssignment_1_0_1_5_1_1_1 = (Assignment)cAlternatives_1_0_1_5_1_1.eContents().get(1);
+		private final Keyword cRelatedEventContextRelatedKeyword_1_0_1_5_1_1_1_0 = (Keyword)cRelatedEventContextAssignment_1_0_1_5_1_1_1.eContents().get(0);
+		private final Assignment cEventContextAssignment_1_0_1_5_1_2 = (Assignment)cGroup_1_0_1_5_1.eContents().get(2);
+		private final RuleCall cEventContextConceptDeclarationParserRuleCall_1_0_1_5_1_2_0 = (RuleCall)cEventContextAssignment_1_0_1_5_1_2.eContents().get(0);
+		private final Assignment cParametersAssignment_1_0_2 = (Assignment)cGroup_1_0.eContents().get(2);
+		private final RuleCall cParametersListParserRuleCall_1_0_2_0 = (RuleCall)cParametersAssignment_1_0_2.eContents().get(0);
+		private final Assignment cActionsAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cActionsActionParserRuleCall_1_1_0 = (RuleCall)cActionsAssignment_1_1.eContents().get(0);
+		private final Group cGroup_1_2 = (Group)cGroup_1.eContents().get(2);
+		private final Keyword cCommaKeyword_1_2_0 = (Keyword)cGroup_1_2.eContents().get(0);
+		private final Assignment cActionsAssignment_1_2_1 = (Assignment)cGroup_1_2.eContents().get(1);
+		private final RuleCall cActionsActionParserRuleCall_1_2_1_0 = (RuleCall)cActionsAssignment_1_2_1.eContents().get(0);
 		
 		//ActionSpecification:
-		//	integrated?='aggregated'? 'over'
-		//	domain+=FunctionOrID (=> ',' domain+=FunctionOrID)* (actions+=Action (=> ',' actions+=Action)*)? | trigger?='on'
-		//	(initialization?='definition' | resolution?='resolution' | instantiation?='instantiation' |
+		//	integrated?='aggregated'? over?='over'
+		//	domain+=FunctionOrID (=> ',' domain+=FunctionOrID)* (actions+=Action (=> ',' actions+=Action)*)?
+		//	| (trigger?='on' (initialization?='definition' | resolution?='resolution' | instantiation?='instantiation' |
 		//	termination?='termination' | stateInitialization?='initialization' | event=ConceptDeclaration ('in'
-		//	(anyContextEvent?='context' | relatedEventContext?='related' eventContext=ConceptDeclaration))?) parameters=List?
-		//	(actions+=Action (=> ',' actions+=Action)*)?;
+		//	(anyContextEvent?='context' | relatedEventContext?='related') eventContext=ConceptDeclaration)?) parameters=List?)?
+		//	actions+=Action (=> ',' actions+=Action)*;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//integrated?='aggregated'? 'over' domain+=FunctionOrID (=> ',' domain+=FunctionOrID)* (actions+=Action (=> ','
-		//actions+=Action)*)? | trigger?='on' (initialization?='definition' | resolution?='resolution' |
+		//integrated?='aggregated'? over?='over' domain+=FunctionOrID (=> ',' domain+=FunctionOrID)* (actions+=Action (=> ','
+		//actions+=Action)*)? | (trigger?='on' (initialization?='definition' | resolution?='resolution' |
 		//instantiation?='instantiation' | termination?='termination' | stateInitialization?='initialization' |
-		//event=ConceptDeclaration ('in' (anyContextEvent?='context' | relatedEventContext?='related'
-		//eventContext=ConceptDeclaration))?) parameters=List? (actions+=Action (=> ',' actions+=Action)*)?
+		//event=ConceptDeclaration ('in' (anyContextEvent?='context' | relatedEventContext?='related')
+		//eventContext=ConceptDeclaration)?) parameters=List?)? actions+=Action (=> ',' actions+=Action)*
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//integrated?='aggregated'? 'over' domain+=FunctionOrID (=> ',' domain+=FunctionOrID)* (actions+=Action (=> ','
+		//integrated?='aggregated'? over?='over' domain+=FunctionOrID (=> ',' domain+=FunctionOrID)* (actions+=Action (=> ','
 		//actions+=Action)*)?
 		public Group getGroup_0() { return cGroup_0; }
 		
@@ -1736,8 +1736,11 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'aggregated'
 		public Keyword getIntegratedAggregatedKeyword_0_0_0() { return cIntegratedAggregatedKeyword_0_0_0; }
 		
+		//over?='over'
+		public Assignment getOverAssignment_0_1() { return cOverAssignment_0_1; }
+		
 		//'over'
-		public Keyword getOverKeyword_0_1() { return cOverKeyword_0_1; }
+		public Keyword getOverOverKeyword_0_1_0() { return cOverOverKeyword_0_1_0; }
 		
 		//domain+=FunctionOrID
 		public Assignment getDomainAssignment_0_2() { return cDomainAssignment_0_2; }
@@ -1778,119 +1781,118 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//Action
 		public RuleCall getActionsActionParserRuleCall_0_4_1_1_0() { return cActionsActionParserRuleCall_0_4_1_1_0; }
 		
-		//trigger?='on' (initialization?='definition' | resolution?='resolution' | instantiation?='instantiation' |
+		//(trigger?='on' (initialization?='definition' | resolution?='resolution' | instantiation?='instantiation' |
 		//termination?='termination' | stateInitialization?='initialization' | event=ConceptDeclaration ('in'
-		//(anyContextEvent?='context' | relatedEventContext?='related' eventContext=ConceptDeclaration))?) parameters=List?
-		//(actions+=Action (=> ',' actions+=Action)*)?
+		//(anyContextEvent?='context' | relatedEventContext?='related') eventContext=ConceptDeclaration)?) parameters=List?)?
+		//actions+=Action (=> ',' actions+=Action)*
 		public Group getGroup_1() { return cGroup_1; }
 		
+		//(trigger?='on' (initialization?='definition' | resolution?='resolution' | instantiation?='instantiation' |
+		//termination?='termination' | stateInitialization?='initialization' | event=ConceptDeclaration ('in'
+		//(anyContextEvent?='context' | relatedEventContext?='related') eventContext=ConceptDeclaration)?) parameters=List?)?
+		public Group getGroup_1_0() { return cGroup_1_0; }
+		
 		//trigger?='on'
-		public Assignment getTriggerAssignment_1_0() { return cTriggerAssignment_1_0; }
+		public Assignment getTriggerAssignment_1_0_0() { return cTriggerAssignment_1_0_0; }
 		
 		//'on'
-		public Keyword getTriggerOnKeyword_1_0_0() { return cTriggerOnKeyword_1_0_0; }
+		public Keyword getTriggerOnKeyword_1_0_0_0() { return cTriggerOnKeyword_1_0_0_0; }
 		
 		//initialization?='definition' | resolution?='resolution' | instantiation?='instantiation' | termination?='termination' |
 		//stateInitialization?='initialization' | event=ConceptDeclaration ('in' (anyContextEvent?='context' |
-		//relatedEventContext?='related' eventContext=ConceptDeclaration))?
-		public Alternatives getAlternatives_1_1() { return cAlternatives_1_1; }
+		//relatedEventContext?='related') eventContext=ConceptDeclaration)?
+		public Alternatives getAlternatives_1_0_1() { return cAlternatives_1_0_1; }
 		
 		//initialization?='definition'
-		public Assignment getInitializationAssignment_1_1_0() { return cInitializationAssignment_1_1_0; }
+		public Assignment getInitializationAssignment_1_0_1_0() { return cInitializationAssignment_1_0_1_0; }
 		
 		//'definition'
-		public Keyword getInitializationDefinitionKeyword_1_1_0_0() { return cInitializationDefinitionKeyword_1_1_0_0; }
+		public Keyword getInitializationDefinitionKeyword_1_0_1_0_0() { return cInitializationDefinitionKeyword_1_0_1_0_0; }
 		
 		//resolution?='resolution'
-		public Assignment getResolutionAssignment_1_1_1() { return cResolutionAssignment_1_1_1; }
+		public Assignment getResolutionAssignment_1_0_1_1() { return cResolutionAssignment_1_0_1_1; }
 		
 		//'resolution'
-		public Keyword getResolutionResolutionKeyword_1_1_1_0() { return cResolutionResolutionKeyword_1_1_1_0; }
+		public Keyword getResolutionResolutionKeyword_1_0_1_1_0() { return cResolutionResolutionKeyword_1_0_1_1_0; }
 		
 		//instantiation?='instantiation'
-		public Assignment getInstantiationAssignment_1_1_2() { return cInstantiationAssignment_1_1_2; }
+		public Assignment getInstantiationAssignment_1_0_1_2() { return cInstantiationAssignment_1_0_1_2; }
 		
 		//'instantiation'
-		public Keyword getInstantiationInstantiationKeyword_1_1_2_0() { return cInstantiationInstantiationKeyword_1_1_2_0; }
+		public Keyword getInstantiationInstantiationKeyword_1_0_1_2_0() { return cInstantiationInstantiationKeyword_1_0_1_2_0; }
 		
 		//termination?='termination'
-		public Assignment getTerminationAssignment_1_1_3() { return cTerminationAssignment_1_1_3; }
+		public Assignment getTerminationAssignment_1_0_1_3() { return cTerminationAssignment_1_0_1_3; }
 		
 		//'termination'
-		public Keyword getTerminationTerminationKeyword_1_1_3_0() { return cTerminationTerminationKeyword_1_1_3_0; }
+		public Keyword getTerminationTerminationKeyword_1_0_1_3_0() { return cTerminationTerminationKeyword_1_0_1_3_0; }
 		
 		//stateInitialization?='initialization'
-		public Assignment getStateInitializationAssignment_1_1_4() { return cStateInitializationAssignment_1_1_4; }
+		public Assignment getStateInitializationAssignment_1_0_1_4() { return cStateInitializationAssignment_1_0_1_4; }
 		
 		//'initialization'
-		public Keyword getStateInitializationInitializationKeyword_1_1_4_0() { return cStateInitializationInitializationKeyword_1_1_4_0; }
+		public Keyword getStateInitializationInitializationKeyword_1_0_1_4_0() { return cStateInitializationInitializationKeyword_1_0_1_4_0; }
 		
-		//event=ConceptDeclaration ('in' (anyContextEvent?='context' | relatedEventContext?='related'
-		//eventContext=ConceptDeclaration))?
-		public Group getGroup_1_1_5() { return cGroup_1_1_5; }
+		//event=ConceptDeclaration ('in' (anyContextEvent?='context' | relatedEventContext?='related')
+		//eventContext=ConceptDeclaration)?
+		public Group getGroup_1_0_1_5() { return cGroup_1_0_1_5; }
 		
 		//event=ConceptDeclaration
-		public Assignment getEventAssignment_1_1_5_0() { return cEventAssignment_1_1_5_0; }
+		public Assignment getEventAssignment_1_0_1_5_0() { return cEventAssignment_1_0_1_5_0; }
 		
 		//ConceptDeclaration
-		public RuleCall getEventConceptDeclarationParserRuleCall_1_1_5_0_0() { return cEventConceptDeclarationParserRuleCall_1_1_5_0_0; }
+		public RuleCall getEventConceptDeclarationParserRuleCall_1_0_1_5_0_0() { return cEventConceptDeclarationParserRuleCall_1_0_1_5_0_0; }
 		
-		//('in' (anyContextEvent?='context' | relatedEventContext?='related' eventContext=ConceptDeclaration))?
-		public Group getGroup_1_1_5_1() { return cGroup_1_1_5_1; }
+		//('in' (anyContextEvent?='context' | relatedEventContext?='related') eventContext=ConceptDeclaration)?
+		public Group getGroup_1_0_1_5_1() { return cGroup_1_0_1_5_1; }
 		
 		//'in'
-		public Keyword getInKeyword_1_1_5_1_0() { return cInKeyword_1_1_5_1_0; }
+		public Keyword getInKeyword_1_0_1_5_1_0() { return cInKeyword_1_0_1_5_1_0; }
 		
-		//anyContextEvent?='context' | relatedEventContext?='related' eventContext=ConceptDeclaration
-		public Alternatives getAlternatives_1_1_5_1_1() { return cAlternatives_1_1_5_1_1; }
+		//anyContextEvent?='context' | relatedEventContext?='related'
+		public Alternatives getAlternatives_1_0_1_5_1_1() { return cAlternatives_1_0_1_5_1_1; }
 		
 		//anyContextEvent?='context'
-		public Assignment getAnyContextEventAssignment_1_1_5_1_1_0() { return cAnyContextEventAssignment_1_1_5_1_1_0; }
+		public Assignment getAnyContextEventAssignment_1_0_1_5_1_1_0() { return cAnyContextEventAssignment_1_0_1_5_1_1_0; }
 		
 		//'context'
-		public Keyword getAnyContextEventContextKeyword_1_1_5_1_1_0_0() { return cAnyContextEventContextKeyword_1_1_5_1_1_0_0; }
-		
-		//relatedEventContext?='related' eventContext=ConceptDeclaration
-		public Group getGroup_1_1_5_1_1_1() { return cGroup_1_1_5_1_1_1; }
+		public Keyword getAnyContextEventContextKeyword_1_0_1_5_1_1_0_0() { return cAnyContextEventContextKeyword_1_0_1_5_1_1_0_0; }
 		
 		//relatedEventContext?='related'
-		public Assignment getRelatedEventContextAssignment_1_1_5_1_1_1_0() { return cRelatedEventContextAssignment_1_1_5_1_1_1_0; }
+		public Assignment getRelatedEventContextAssignment_1_0_1_5_1_1_1() { return cRelatedEventContextAssignment_1_0_1_5_1_1_1; }
 		
 		//'related'
-		public Keyword getRelatedEventContextRelatedKeyword_1_1_5_1_1_1_0_0() { return cRelatedEventContextRelatedKeyword_1_1_5_1_1_1_0_0; }
+		public Keyword getRelatedEventContextRelatedKeyword_1_0_1_5_1_1_1_0() { return cRelatedEventContextRelatedKeyword_1_0_1_5_1_1_1_0; }
 		
 		//eventContext=ConceptDeclaration
-		public Assignment getEventContextAssignment_1_1_5_1_1_1_1() { return cEventContextAssignment_1_1_5_1_1_1_1; }
+		public Assignment getEventContextAssignment_1_0_1_5_1_2() { return cEventContextAssignment_1_0_1_5_1_2; }
 		
 		//ConceptDeclaration
-		public RuleCall getEventContextConceptDeclarationParserRuleCall_1_1_5_1_1_1_1_0() { return cEventContextConceptDeclarationParserRuleCall_1_1_5_1_1_1_1_0; }
+		public RuleCall getEventContextConceptDeclarationParserRuleCall_1_0_1_5_1_2_0() { return cEventContextConceptDeclarationParserRuleCall_1_0_1_5_1_2_0; }
 		
 		//parameters=List?
-		public Assignment getParametersAssignment_1_2() { return cParametersAssignment_1_2; }
+		public Assignment getParametersAssignment_1_0_2() { return cParametersAssignment_1_0_2; }
 		
 		//List
-		public RuleCall getParametersListParserRuleCall_1_2_0() { return cParametersListParserRuleCall_1_2_0; }
-		
-		//(actions+=Action (=> ',' actions+=Action)*)?
-		public Group getGroup_1_3() { return cGroup_1_3; }
+		public RuleCall getParametersListParserRuleCall_1_0_2_0() { return cParametersListParserRuleCall_1_0_2_0; }
 		
 		//actions+=Action
-		public Assignment getActionsAssignment_1_3_0() { return cActionsAssignment_1_3_0; }
+		public Assignment getActionsAssignment_1_1() { return cActionsAssignment_1_1; }
 		
 		//Action
-		public RuleCall getActionsActionParserRuleCall_1_3_0_0() { return cActionsActionParserRuleCall_1_3_0_0; }
+		public RuleCall getActionsActionParserRuleCall_1_1_0() { return cActionsActionParserRuleCall_1_1_0; }
 		
 		//(=> ',' actions+=Action)*
-		public Group getGroup_1_3_1() { return cGroup_1_3_1; }
+		public Group getGroup_1_2() { return cGroup_1_2; }
 		
 		//=> ','
-		public Keyword getCommaKeyword_1_3_1_0() { return cCommaKeyword_1_3_1_0; }
+		public Keyword getCommaKeyword_1_2_0() { return cCommaKeyword_1_2_0; }
 		
 		//actions+=Action
-		public Assignment getActionsAssignment_1_3_1_1() { return cActionsAssignment_1_3_1_1; }
+		public Assignment getActionsAssignment_1_2_1() { return cActionsAssignment_1_2_1; }
 		
 		//Action
-		public RuleCall getActionsActionParserRuleCall_1_3_1_1_0() { return cActionsActionParserRuleCall_1_3_1_1_0; }
+		public RuleCall getActionsActionParserRuleCall_1_2_1_0() { return cActionsActionParserRuleCall_1_2_1_0; }
 	}
 	public class FunctionOrIDElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.FunctionOrID");
@@ -9509,12 +9511,12 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//ActionSpecification:
-	//	integrated?='aggregated'? 'over'
-	//	domain+=FunctionOrID (=> ',' domain+=FunctionOrID)* (actions+=Action (=> ',' actions+=Action)*)? | trigger?='on'
-	//	(initialization?='definition' | resolution?='resolution' | instantiation?='instantiation' |
+	//	integrated?='aggregated'? over?='over'
+	//	domain+=FunctionOrID (=> ',' domain+=FunctionOrID)* (actions+=Action (=> ',' actions+=Action)*)?
+	//	| (trigger?='on' (initialization?='definition' | resolution?='resolution' | instantiation?='instantiation' |
 	//	termination?='termination' | stateInitialization?='initialization' | event=ConceptDeclaration ('in'
-	//	(anyContextEvent?='context' | relatedEventContext?='related' eventContext=ConceptDeclaration))?) parameters=List?
-	//	(actions+=Action (=> ',' actions+=Action)*)?;
+	//	(anyContextEvent?='context' | relatedEventContext?='related') eventContext=ConceptDeclaration)?) parameters=List?)?
+	//	actions+=Action (=> ',' actions+=Action)*;
 	public ActionSpecificationElements getActionSpecificationAccess() {
 		return pActionSpecification;
 	}

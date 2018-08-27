@@ -341,19 +341,22 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *
 	 * Constraint:
 	 *     (
-	 *         (integrated?='aggregated'? domain+=FunctionOrID domain+=FunctionOrID* (actions+=Action actions+=Action*)?) | 
+	 *         (integrated?='aggregated'? over?='over' domain+=FunctionOrID domain+=FunctionOrID* (actions+=Action actions+=Action*)?) | 
 	 *         (
-	 *             trigger?='on' 
 	 *             (
-	 *                 initialization?='definition' | 
-	 *                 resolution?='resolution' | 
-	 *                 instantiation?='instantiation' | 
-	 *                 termination?='termination' | 
-	 *                 stateInitialization?='initialization' | 
-	 *                 (event=ConceptDeclaration (anyContextEvent?='context' | (relatedEventContext?='related' eventContext=ConceptDeclaration))?)
-	 *             ) 
-	 *             parameters=List? 
-	 *             (actions+=Action actions+=Action*)?
+	 *                 trigger?='on' 
+	 *                 (
+	 *                     initialization?='definition' | 
+	 *                     resolution?='resolution' | 
+	 *                     instantiation?='instantiation' | 
+	 *                     termination?='termination' | 
+	 *                     stateInitialization?='initialization' | 
+	 *                     (event=ConceptDeclaration ((anyContextEvent?='context' | relatedEventContext?='related') eventContext=ConceptDeclaration)?)
+	 *                 ) 
+	 *                 parameters=List?
+	 *             )? 
+	 *             actions+=Action 
+	 *             actions+=Action*
 	 *         )
 	 *     )
 	 */
@@ -445,13 +448,13 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         restrictions+=RestrictionStatement | 
 	 *                         metadata=Metadata
 	 *                     )? 
+	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
+	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
+	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
+	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
+	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
 	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
 	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
-	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
-	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
-	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
-	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
-	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
 	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
 	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
