@@ -21,6 +21,8 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
 import org.integratedmodelling.klab.ide.navigator.model.EDocumentable;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.layout.RowData;
 
 public class DocumentationEditor extends ViewPart {
 
@@ -107,6 +109,20 @@ public class DocumentationEditor extends ViewPart {
 		
 		text = new Text(grpCrossreferences, SWT.BORDER);
 		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		Composite composite_1 = new Composite(grpCrossreferences, SWT.NONE);
+		composite_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
+		RowLayout rl_composite_1 = new RowLayout(SWT.HORIZONTAL);
+		rl_composite_1.wrap = false;
+		composite_1.setLayout(rl_composite_1);
+		
+		Button button_1 = new Button(composite_1, SWT.NONE);
+		button_1.setLayoutData(new RowData(90, -1));
+		button_1.setText("Save");
+		
+		Button button_2 = new Button(composite_1, SWT.NONE);
+		button_2.setLayoutData(new RowData(90, -1));
+		button_2.setText("Cancel");
 
 		createActions();
 		initializeToolBar();
