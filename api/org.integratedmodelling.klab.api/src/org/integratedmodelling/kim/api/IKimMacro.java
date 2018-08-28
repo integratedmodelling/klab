@@ -22,7 +22,8 @@ public interface IKimMacro extends IKimConceptStatement {
 		COMPRESENT("compresent"),
 		GOAL("goal"),
 		CAUSANT("causant"),
-		CAUSED("caused");
+		CAUSED("caused"),
+		COOCCURRENT("cooccurrent");
 
 		String declaredName;
 		

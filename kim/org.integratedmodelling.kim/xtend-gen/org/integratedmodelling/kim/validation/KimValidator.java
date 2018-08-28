@@ -1139,6 +1139,18 @@ public class KimValidator extends AbstractKimValidator {
                           error = true;
                         }
                         break;
+                      case COOCCURRENT:
+                        if (((!mtype.isOptional()) && (declaration.getDuring() == null))) {
+                          String _name_9 = mmacro.getName();
+                          String _plus_23 = ("Macro " + _name_9);
+                          String _plus_24 = (_plus_23 + 
+                            " requires a co-occurrent (\'during ...\') concept of type ");
+                          String _plus_25 = (_plus_24 + description);
+                          this.error(_plus_25, main, 
+                            null, KimPackage.CONCEPT_DECLARATION__MAIN);
+                          error = true;
+                        }
+                        break;
                       default:
                         break;
                     }
@@ -1389,21 +1401,59 @@ public class KimValidator extends AbstractKimValidator {
       }
       this.copyInheritableFlags(flags, type);
     }
-    boolean _isEmpty_7 = type.isEmpty();
-    boolean _not_15 = (!_isEmpty_7);
-    if (_not_15) {
+    ConceptDeclaration _during = declaration.getDuring();
+    boolean _tripleNotEquals_6 = (_during != null);
+    if (_tripleNotEquals_6) {
+      flags = this.checkDeclaration(declaration.getDuring());
+      boolean _isEmpty_7 = flags.isEmpty();
+      if (_isEmpty_7) {
+        type.clear();
+      } else {
+        boolean _contains_9 = flags.contains(IKimConcept.Type.MACRO);
+        boolean _not_15 = (!_contains_9);
+        if (_not_15) {
+          if (((macro != null) && macro.getFields().contains(IKimMacro.Field.COOCCURRENT))) {
+            IKimMacro.FieldType rtype_6 = macro.getType(IKimMacro.Field.COOCCURRENT);
+            EnumSet<IKimConcept.Type> ctype_6 = Kim.intersection(rtype_6.getType(), flags);
+            boolean _containsAll_6 = ctype_6.containsAll(rtype_6.getType());
+            boolean _not_16 = (!_containsAll_6);
+            if (_not_16) {
+              String _name_6 = macro.getName();
+              String _plus_12 = ("The co-occurrent type (for) does not match the type requested by the " + _name_6);
+              String _plus_13 = (_plus_12 + " macro");
+              this.error(_plus_13, 
+                declaration.getMotivation(), null, KimPackage.CONCEPT_DECLARATION__MOTIVATION);
+              error = true;
+            } else {
+              macro.setField(IKimMacro.Field.COOCCURRENT, declaration.getMotivation());
+            }
+          } else {
+            boolean _contains_10 = flags.contains(IKimConcept.Type.EVENT);
+            boolean _not_17 = (!_contains_10);
+            if (_not_17) {
+              this.error("The co-occurrent type (during) must be an event", 
+                declaration.getContext(), null, KimPackage.CONCEPT_DECLARATION__CONTEXT);
+            }
+          }
+        }
+      }
+      this.copyInheritableFlags(flags, type);
+    }
+    boolean _isEmpty_8 = type.isEmpty();
+    boolean _not_18 = (!_isEmpty_8);
+    if (_not_18) {
       int i = 0;
       EList<ConceptDeclaration> _operands = declaration.getOperands();
       for (final ConceptDeclaration operand : _operands) {
         {
           EnumSet<IKimConcept.Type> otype = this.checkDeclaration(operand);
           boolean _isCompatible = Kim.isCompatible(type, otype);
-          boolean _not_16 = (!_isCompatible);
-          if (_not_16) {
+          boolean _not_19 = (!_isCompatible);
+          if (_not_19) {
             String _get = declaration.getOperators().get(i);
-            String _plus_12 = ("Operands in the \'" + _get);
-            String _plus_13 = (_plus_12 + "\' expression are of incompatible types");
-            this.error(_plus_13, operand, KimPackage.Literals.CONCEPT_DECLARATION__OPERANDS, i);
+            String _plus_14 = ("Operands in the \'" + _get);
+            String _plus_15 = (_plus_14 + "\' expression are of incompatible types");
+            this.error(_plus_15, operand, KimPackage.Literals.CONCEPT_DECLARATION__OPERANDS, i);
             error = true;
           }
           i++;

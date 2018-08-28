@@ -900,7 +900,15 @@ class KimValidator extends AbstractKimValidator {
 										error = true
 									}
 								}
-							}
+								case COOCCURRENT: {
+									if (!mtype.isOptional && declaration.during === null) {
+										error(
+											"Macro " + mmacro.name +
+												" requires a co-occurrent ('during ...') concept of type " + description, main,
+											null, KimPackage.CONCEPT_DECLARATION__MAIN)
+										error = true
+									}
+								}							}
 						}
 					}
 				}
@@ -1096,7 +1104,32 @@ class KimValidator extends AbstractKimValidator {
 			}
 			copyInheritableFlags(flags, type);
 		}
-
+		
+		if (declaration.during !== null) {
+			flags = checkDeclaration(declaration.during)
+			if (flags.isEmpty) {
+				type.clear
+			} else if (!flags.contains(Type.MACRO)) {
+				if (macro !== null && macro.fields.contains(Field.COOCCURRENT)) {
+					// check against required field type
+					var rtype = macro.getType(Field.COOCCURRENT);
+					var ctype = Kim.intersection(rtype.type, flags)
+					if (!ctype.containsAll(rtype.type)) {
+						error("The co-occurrent type (for) does not match the type requested by the " + macro.name + " macro",
+							declaration.motivation, null, KimPackage.CONCEPT_DECLARATION__MOTIVATION)
+						error = true
+					} else {
+						macro.setField(Field.COOCCURRENT, declaration.motivation)
+					}
+				} else {
+					if (!flags.contains(Type.EVENT)) {
+						error("The co-occurrent type (during) must be an event",
+							declaration.context, null, KimPackage.CONCEPT_DECLARATION__CONTEXT)
+					}
+				}
+			}
+			copyInheritableFlags(flags, type);
+		}
 		if (!type.isEmpty) {
 			var i = 0
 			for (operand : declaration.operands) {

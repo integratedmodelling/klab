@@ -786,6 +786,7 @@ public enum Kim {
 		// remove any direct observable flags, add the one specified and quality
 		EnumSet<Type> ret = EnumSet.copyOf(original);
 		ret.removeAll(IKimConcept.DIRECT_OBSERVABLE_TYPES);
+		ret.removeAll(IKimConcept.ALL_TRAIT_TYPES);
 		for (Type t : quality) {
 			ret.add(t);
 			if (t == Type.DISTANCE) {
@@ -798,6 +799,7 @@ public enum Kim {
 		}
 		ret.add(Type.QUALITY);
 		ret.add(Type.OBSERVABLE);
+		ret.add(Type.QUANTIFIABLE);
 		return ret;
 	}
 
