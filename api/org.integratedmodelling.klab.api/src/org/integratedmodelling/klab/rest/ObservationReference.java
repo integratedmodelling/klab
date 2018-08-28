@@ -99,6 +99,7 @@ public class ObservationReference implements IObservationReference {
 	private Map<String, String> metadata = new HashMap<>();
 	private String taskId;
 	private boolean empty;
+	private Style style;
 
 	/**
 	 * The observation may have more sibling than are found in the sibling list.
@@ -583,6 +584,14 @@ public class ObservationReference implements IObservationReference {
 
 	public void setEmpty(boolean empty) {
 		this.empty = empty;
+	}
+
+	public Style getStyle() {
+		return style;
+	}
+
+	public void setStyle(Style style) {
+		this.style = style;
 	}
 
 }
