@@ -75,6 +75,7 @@ Bundle-ClassPath: .,
  lib/spring-webmvc-5.0.4.RELEASE.jar
 Bundle-Vendor: http://www.integratedmodelling.org
 Export-Package: org.integratedmodelling.klab.client,
+ org.integratedmodelling.klab.client.documentation,
  org.integratedmodelling.klab.client.http;
   uses:="org.springframework.http.client,
    org.springframework.web.client,
