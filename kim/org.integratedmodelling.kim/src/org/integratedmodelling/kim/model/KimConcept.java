@@ -18,7 +18,7 @@ import org.integratedmodelling.kim.validation.KimValidator;
 
 /**
  * Normalized translation of a concept declaration, with a stable ordering of
- * concepts an full parenthesization so that same meaning guarantees same text
+ * concepts and full parenthesization, so that same meaning guarantees same text
  * representation.
  * 
  * The descriptor returned by {@link KimConcept#getDescriptor()} contains all
@@ -229,7 +229,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 
 		}
 		if (declaration.getMotivation() != null) {
-			ret.motivation = normalize(declaration.getContext(), parent);
+			ret.motivation = normalize(declaration.getMotivation(), parent);
 			if (ret.motivation == null) {
 				return null;
 			}
@@ -244,7 +244,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 
 		}
 		if (declaration.getCausant() != null) {
-			ret.causant = normalize(declaration.getContext(), parent);
+			ret.causant = normalize(declaration.getCausant(), parent);
 			if (ret.causant == null) {
 				return null;
 			}
@@ -259,7 +259,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 
 		}
 		if (declaration.getCaused() != null) {
-			ret.caused = normalize(declaration.getContext(), parent);
+			ret.caused = normalize(declaration.getCaused(), parent);
 			if (ret.caused == null) {
 				return null;
 			}
@@ -273,7 +273,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			}
 		}
 		if (declaration.getCompresent() != null) {
-			ret.compresent = normalize(declaration.getContext(), parent);
+			ret.compresent = normalize(declaration.getCompresent(), parent);
 			if (ret.compresent == null) {
 				return null;
 			}
@@ -287,7 +287,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			}
 		}
 		if (declaration.getDuring() != null) {
-			ret.cooccurrent = normalize(declaration.getContext(), parent);
+			ret.cooccurrent = normalize(declaration.getDuring(), parent);
 			if (ret.cooccurrent == null) {
 				return null;
 			}
@@ -301,7 +301,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			}
 		}
 		if (declaration.getAdjacent() != null) {
-			ret.adjacent = normalize(declaration.getContext(), parent);
+			ret.adjacent = normalize(declaration.getAdjacent(), parent);
 			if (ret.adjacent == null) {
 				return null;
 			}
