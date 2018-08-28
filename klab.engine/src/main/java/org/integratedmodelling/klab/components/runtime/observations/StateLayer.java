@@ -17,6 +17,15 @@ public class StateLayer extends State implements IState {
 
 	State delegate;
 
+	/**
+	 * Same ID as the original, just in case this is used as a proxy to retrieve
+	 * the original content.
+	 */
+	@Override
+	public String getId() {
+		return delegate.getId();
+	}
+	
 	public StateLayer(State state, IDataArtifact layer) {
 		super(state.getObservable(), state.getScale(), (RuntimeContext) state.getRuntimeContext(), layer);
 		this.delegate = state;

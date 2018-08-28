@@ -51,8 +51,19 @@ public class MediatingState extends Observation implements IState {
 
 	// Remaining functionality is delegated to original state
 
+	
+	
 	public boolean isConstant() {
 		return delegate.isConstant();
+	}
+
+	/**
+	 * Must return the delegate's ID so that any request by ID will fetch the original
+	 * content.
+	 */
+	@Override
+	public String getId() {
+		return delegate.getId();
 	}
 
 	@Override
