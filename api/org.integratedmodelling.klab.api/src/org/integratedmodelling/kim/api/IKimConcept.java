@@ -464,4 +464,18 @@ public interface IKimConcept extends IKimStatement {
      */
     Type getFundamentalType();
 
+    /**
+     * Get the 'co-occurrent' (during) event type if any.
+     * 
+     * @return
+     */
+	IKimConcept getCooccurrent();
+	
+	/**
+	 * Get the concept that this is stated to be adjacent to if any.
+	 * 
+	 * @return
+	 */
+	IKimConcept getAdjacent();
+
 }

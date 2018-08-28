@@ -361,7 +361,7 @@ ConceptReference:
 			name='purpose'     (type=CONCEPT_TYPE | 'extends' extends=Concept) |
 			name='causant'     (type=CONCEPT_TYPE | 'extends' extends=Concept) |
 			name='caused'      (type=CONCEPT_TYPE | 'extends' extends=Concept) |
-			name='concomitant' (type=CONCEPT_TYPE | 'extends' extends=Concept) 
+			name='cooccurrent' (type=CONCEPT_TYPE | 'extends' extends=Concept) 
 		) template?='}'
 ;
 
@@ -374,7 +374,8 @@ OPERATOR_TARGET:
 	'contained'  |
 	'purpose'    |
 	'causant'    |
-	'caused'
+	'caused'     |
+	'cooccurrent'
 ;
 
 Concept:
