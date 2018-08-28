@@ -33,11 +33,29 @@ abstract class ActionBase extends Script {
              * enable <n>.<unit> notation to return a number with units.
              */
             ExpandoMetaClass.enableGlobally();
-            Number.metaClass.getProperty = { String symbol ->
-                Amount.valueOf(delegate, Unit.valueOf(symbol))
-            }
+//            Number.metaClass.getProperty = { String symbol ->
+//                Amount.valueOf(delegate, Unit.valueOf(symbol))
+//            }
+			
+			// allows null-proof multiplications and division
+			NullObject.metaClass.multiply = { Number n -> Double.NaN }
+			NullObject.metaClass.div = { Number n -> Double.NaN }
+			NullObject.metaClass.plus = { Number n -> Double.NaN }
+			NullObject.metaClass.minus = { Number n -> Double.NaN }
+			Number.metaClass.multiply = { NullObject n -> Double.NaN }
+			Number.metaClass.div = { NullObject n -> Double.NaN }
+			Number.metaClass.plus = { NullObject n -> Double.NaN }
+			Number.metaClass.minus = { NullObject n -> Double.NaN }
+			BigDecimal.metaClass.multiply = { NullObject n -> Double.NaN }
+			BigDecimal.metaClass.div = { NullObject n -> Double.NaN }
+			BigDecimal.metaClass.plus = { NullObject n -> Double.NaN }
+			BigDecimal.metaClass.minus = { NullObject n -> Double.NaN }
+			NullObject.metaClass.multiply = { BigDecimal n -> Double.NaN }
+			NullObject.metaClass.div = { BigDecimal n -> Double.NaN }
+			NullObject.metaClass.plus = { BigDecimal n -> Double.NaN }
+			NullObject.metaClass.minus = { BigDecimal n -> Double.NaN }
 
-            /*
+			            /*
              * enable arithmetics and comparisons with units:
              *         println( 18.4.kg * 2 )
              *         println( 1800000.kg / 3 )
@@ -48,19 +66,15 @@ abstract class ActionBase extends Script {
              *         println( -3.h )
              *         println( 3.h < 4.h )
              */
-            Amount.metaClass.multiply = { Number factor -> delegate.times(factor) }
-            Number.metaClass.multiply = { Amount amount -> amount.times(delegate) }
-            Number.metaClass.div = { Amount amount -> amount.inverse().times(delegate) }
-            Amount.metaClass.div = { Number factor -> delegate.divide(factor) }
-            Amount.metaClass.div = { Amount factor -> delegate.divide(factor) }
-            Amount.metaClass.power = { Number factor -> delegate.pow(factor) }
-            Amount.metaClass.negative = { -> delegate.opposite() }
+//            Amount.metaClass.multiply = { Number factor -> delegate.times(factor) }
+//            Number.metaClass.multiply = { Amount amount -> amount.times(delegate) }
+//            Number.metaClass.div = { Amount amount -> amount.inverse().times(delegate) }
+//            Amount.metaClass.div = { Number factor -> delegate.divide(factor) }
+//            Amount.metaClass.div = { Amount factor -> delegate.divide(factor) }
+//            Amount.metaClass.power = { Number factor -> delegate.pow(factor) }
+//            Amount.metaClass.negative = { -> delegate.opposite() }
 
-            // allows null-proof multiplications and division
-            NullObject.metaClass.multiply = { Number n -> null }
-            NullObject.metaClass.div = { Number n -> null }
-            NullObject.metaClass.plus = { Number n -> null }
-            NullObject.metaClass.minus = { Number n -> null }
+
         }
     }
 

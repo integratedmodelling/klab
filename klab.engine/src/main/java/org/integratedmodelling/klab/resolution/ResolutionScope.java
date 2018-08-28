@@ -142,10 +142,8 @@ public class ResolutionScope implements IResolutionScope {
 	int mergedObservables = 0;
 
 	/*
-	 * this controls whether indirect resolution can happen at all. Set to true and
-	 * not modified; may want to configure it at some point.
+	 * the coverage for this scope.
 	 */
-	private boolean resolveIndirectly = true;
 	private Coverage coverage;
 
 	/*

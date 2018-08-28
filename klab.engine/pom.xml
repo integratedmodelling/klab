@@ -11,14 +11,9 @@
 
 	<!-- wanted by jgrasstools and osm4j. Would be lovely to avoid these. -->
 	<repositories>
-		<!-- <repository>
-			<id>simulation</id>
-			<url>http://www.simulation.tudelft.nl/maven</url>
-		</repository>
-		<repository>
-			<id>sk-3</id>
-			<url>http://simulation.tudelft.nl/maven</url>
-		</repository>  -->
+		<!-- <repository> <id>simulation</id> <url>http://www.simulation.tudelft.nl/maven</url> 
+			</repository> <repository> <id>sk-3</id> <url>http://simulation.tudelft.nl/maven</url> 
+			</repository> -->
 		<repository>
 			<id>topobyte</id>
 			<url>http://mvn.topobyte.de</url>
@@ -116,28 +111,20 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!--  <dependency>
-			<groupId>de.topobyte</groupId>
-			<artifactId>jts2awt</artifactId>
-			<version>0.0.1</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+		<!-- <dependency> <groupId>de.topobyte</groupId> <artifactId>jts2awt</artifactId> 
+			<version>0.0.1</version> <exclusions> <exclusion> <groupId>org.slf4j</groupId> 
+			<artifactId>slf4j-log4j12</artifactId> </exclusion> </exclusions> </dependency> 
+			<dependency> <groupId>de.topobyte</groupId> <artifactId>mercator-image</artifactId> 
+			<version>0.0.2</version> <exclusions> <exclusion> <groupId>org.slf4j</groupId> 
+			<artifactId>slf4j-log4j12</artifactId> </exclusion> </exclusions> </dependency> -->
+
+		<!-- Elk core for dataflow diagramming -->
 		<dependency>
-			<groupId>de.topobyte</groupId>
-			<artifactId>mercator-image</artifactId>
-			<version>0.0.2</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>  -->
+			<groupId>org.eclipse.elk</groupId>
+			<artifactId>org.eclipse.elk.core</artifactId>
+			<version>0.4.1</version>
+		</dependency>
+
 
 		<!-- zip resources for publishing -->
 		<dependency>
@@ -309,7 +296,7 @@
 			<artifactId>joda-time</artifactId>
 			<version>${joda-time-version}</version>
 		</dependency>
-		
+
 		<!-- ijblob - feature extractor for spatial rasters -->
 		<dependency>
 			<groupId>de.biomedical-imaging.ij</groupId>
