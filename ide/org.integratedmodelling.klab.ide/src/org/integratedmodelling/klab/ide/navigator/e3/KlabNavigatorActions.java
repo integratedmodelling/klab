@@ -5,12 +5,15 @@ import java.util.Collection;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.integratedmodelling.kim.api.IKimNamespace.Role;
 import org.integratedmodelling.klab.api.data.CRUDOperation;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
-import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
+import org.integratedmodelling.klab.ide.navigator.model.EDocumentable;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
 import org.integratedmodelling.klab.ide.navigator.model.EResource;
@@ -24,6 +27,7 @@ import org.integratedmodelling.klab.ide.ui.wizards.NewNamespaceWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.NewProjectWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.NewScriptWizard;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.ide.views.DocumentationEditor;
 import org.integratedmodelling.klab.rest.ProjectModificationNotification;
 import org.integratedmodelling.klab.rest.ProjectModificationRequest;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
@@ -156,8 +160,16 @@ public class KlabNavigatorActions {
                 : IMessage.Type.CopyResource), request);
     }
 
-    public static void editDocumentation(EKimObject model) {
-        // TODO Auto-generated method stub
+    public static void editDocumentation(EDocumentable model) {
+		try {
+			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+					.showView(DocumentationEditor.ID);
+			if (view != null) {
+				((DocumentationEditor) view).setTarget(model.getDocId(), model);;
+			}
+		} catch (PartInitException e) {
+			Eclipse.INSTANCE.handleException(e);
+		}
     }
 
 }

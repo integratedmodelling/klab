@@ -341,19 +341,22 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *
 	 * Constraint:
 	 *     (
-	 *         (integrated?='aggregated'? domain+=FunctionOrID domain+=FunctionOrID* (actions+=Action actions+=Action*)?) | 
+	 *         (integrated?='aggregated'? over?='over' domain+=FunctionOrID domain+=FunctionOrID* (actions+=Action actions+=Action*)?) | 
 	 *         (
-	 *             trigger?='on' 
 	 *             (
-	 *                 initialization?='definition' | 
-	 *                 resolution?='resolution' | 
-	 *                 instantiation?='instantiation' | 
-	 *                 termination?='termination' | 
-	 *                 stateInitialization?='initialization' | 
-	 *                 (event=ConceptDeclaration (anyContextEvent?='context' | (relatedEventContext?='related' eventContext=ConceptDeclaration))?)
-	 *             ) 
-	 *             parameters=List? 
-	 *             (actions+=Action actions+=Action*)?
+	 *                 trigger?='on' 
+	 *                 (
+	 *                     initialization?='definition' | 
+	 *                     resolution?='resolution' | 
+	 *                     instantiation?='instantiation' | 
+	 *                     termination?='termination' | 
+	 *                     stateInitialization?='initialization' | 
+	 *                     (event=ConceptDeclaration ((anyContextEvent?='context' | relatedEventContext?='related') eventContext=ConceptDeclaration)?)
+	 *                 ) 
+	 *                 parameters=List?
+	 *             )? 
+	 *             actions+=Action 
+	 *             actions+=Action*
 	 *         )
 	 *     )
 	 */
@@ -445,12 +448,12 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         restrictions+=RestrictionStatement | 
 	 *                         metadata=Metadata
 	 *                     )? 
-	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
 	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
-	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
 	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
 	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
+	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
 	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
+	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
 	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
 	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
@@ -1109,7 +1112,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *     NamedObservableSemantics returns ObservableSemantics
 	 *
 	 * Constraint:
-	 *     (declaration=ConceptDeclaration (name=LOWERCASE_ID | name=LOWERCASE_DASHID))
+	 *     (declaration=ConceptDeclaration (name=LOWERCASE_ID | name=LOWERCASE_DASHID | name=STRING))
 	 */
 	protected void sequence_NamedObservableSemantics(ISerializationContext context, ObservableSemantics semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1182,7 +1185,8 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 currency=Currency | 
 	 *                 unit=Unit | 
 	 *                 optional?='optional' | 
-	 *                 name=LOWERCASE_ID
+	 *                 name=LOWERCASE_ID | 
+	 *                 name=STRING
 	 *             )? 
 	 *             (from=Number to=Number)?
 	 *         )+
@@ -1350,7 +1354,8 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 unit=Unit | 
 	 *                 currency=Currency | 
 	 *                 unit=Unit | 
-	 *                 name=LOWERCASE_ID
+	 *                 name=LOWERCASE_ID | 
+	 *                 name=STRING
 	 *             )? 
 	 *             (from=Number to=Number)?
 	 *         )+
@@ -1433,7 +1438,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *     UnitElement returns UnitElement
 	 *
 	 * Constraint:
-	 *     (id=CAMELCASE_ID | id=LOWERCASE_ID | num=Number | unit=Unit)
+	 *     (id=CAMELCASE_ID | id=LOWERCASE_ID | id=UPPERCASE_ID | num=Number | unit=Unit)
 	 */
 	protected void sequence_UnitElement(ISerializationContext context, UnitElement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

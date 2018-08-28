@@ -136,19 +136,24 @@ TableClassifier returns ClassifierRHS:
 	anything?='#';
 
 ActionSpecification:
-	(integrated?='aggregated')? 'over' 
-		(domain+=FunctionOrID) (=> ',' (domain+=FunctionOrID))* 
-		(actions+=Action (=> ',' actions+=Action)*)? | 
-	(trigger?='on' (
-		initialization?='definition' | 
-		resolution?='resolution' | 
-		instantiation ?= 'instantiation' | 
-		termination ?='termination' | 
-		stateInitialization ?= 'initialization'| 
-		event=ConceptDeclaration ('in' (anyContextEvent?='context' | (relatedEventContext?='related' eventContext=ConceptDeclaration)))?
-	)
-		(parameters = List)? 
-		(actions+=Action (=> ',' actions+=Action)*)?);
+
+	(integrated?='aggregated')? over?='over' 
+		domain+=FunctionOrID (=> ',' (domain+=FunctionOrID))* 
+		(actions+=Action (=> ',' actions+=Action)*)?
+			
+	  | 
+		(trigger?='on' (
+				initialization?='definition' | 
+				resolution?='resolution' | 
+				instantiation ?= 'instantiation' | 
+				termination ?='termination' | 
+				stateInitialization ?= 'initialization'| 
+				event=ConceptDeclaration ('in' (anyContextEvent?='context' | (relatedEventContext?='related')) eventContext=ConceptDeclaration)?
+		    ) 
+		    (parameters = List)?
+		)?
+		actions+=Action (=> ',' actions+=Action)*
+;
 
 FunctionOrID:
 	function=Function | functionId=(LOWERCASE_ID|NamespaceId);
@@ -306,7 +311,7 @@ ObservableSemantics:
 		)? &
 		(optional?='optional' | 'required')? &
 		(from=Number 'to' to=Number)? &
-		('named' name=LOWERCASE_ID)?
+		('named' name=(LOWERCASE_ID|STRING))?
 	);
 
 Dependency:
@@ -807,7 +812,7 @@ SimpleObservableSemantics returns ObservableSemantics:
 			('per' unit=Unit)
 		)? &
 		(from=Number 'to' to=Number)? &
-		('named' name=LOWERCASE_ID)?
+		('named' name=(LOWERCASE_ID|STRING))?
 	);
 
 /*
@@ -815,16 +820,15 @@ SimpleObservableSemantics returns ObservableSemantics:
  * dashes in name.
  */
 NamedObservableSemantics returns ObservableSemantics:
-	declaration=ConceptDeclaration 'named' name=(LOWERCASE_ID|LOWERCASE_DASHID);
+	declaration=ConceptDeclaration 'named' name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING);
 
 /**
  * ---------------------------------------
  * Unit of measurement re: jsr-108, parseable by Java
- * TODO implement expression syntax and provide validator
  * ---------------------------------------
  */
 UnitElement:
-	id=(CAMELCASE_ID|LOWERCASE_ID) |
+	id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID) |
 	num=Number |
 	'(' unit=Unit ')';
 

@@ -36,6 +36,7 @@ import org.integratedmodelling.kim.kim.List;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ActionSpecificationImpl#isIntegrated <em>Integrated</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ActionSpecificationImpl#isOver <em>Over</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ActionSpecificationImpl#getDomain <em>Domain</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ActionSpecificationImpl#getActions <em>Actions</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ActionSpecificationImpl#isTrigger <em>Trigger</em>}</li>
@@ -74,6 +75,26 @@ public class ActionSpecificationImpl extends MinimalEObjectImpl.Container implem
    * @ordered
    */
   protected boolean integrated = INTEGRATED_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isOver() <em>Over</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isOver()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean OVER_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isOver() <em>Over</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isOver()
+   * @generated
+   * @ordered
+   */
+  protected boolean over = OVER_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getDomain() <em>Domain</em>}' containment reference list.
@@ -327,6 +348,29 @@ public class ActionSpecificationImpl extends MinimalEObjectImpl.Container implem
     integrated = newIntegrated;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.ACTION_SPECIFICATION__INTEGRATED, oldIntegrated, integrated));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public boolean isOver()
+  {
+    return over;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setOver(boolean newOver)
+  {
+    boolean oldOver = over;
+    over = newOver;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.ACTION_SPECIFICATION__OVER, oldOver, over));
   }
 
   /**
@@ -721,6 +765,8 @@ public class ActionSpecificationImpl extends MinimalEObjectImpl.Container implem
     {
       case KimPackage.ACTION_SPECIFICATION__INTEGRATED:
         return isIntegrated();
+      case KimPackage.ACTION_SPECIFICATION__OVER:
+        return isOver();
       case KimPackage.ACTION_SPECIFICATION__DOMAIN:
         return getDomain();
       case KimPackage.ACTION_SPECIFICATION__ACTIONS:
@@ -764,6 +810,9 @@ public class ActionSpecificationImpl extends MinimalEObjectImpl.Container implem
     {
       case KimPackage.ACTION_SPECIFICATION__INTEGRATED:
         setIntegrated((Boolean)newValue);
+        return;
+      case KimPackage.ACTION_SPECIFICATION__OVER:
+        setOver((Boolean)newValue);
         return;
       case KimPackage.ACTION_SPECIFICATION__DOMAIN:
         getDomain().clear();
@@ -823,6 +872,9 @@ public class ActionSpecificationImpl extends MinimalEObjectImpl.Container implem
       case KimPackage.ACTION_SPECIFICATION__INTEGRATED:
         setIntegrated(INTEGRATED_EDEFAULT);
         return;
+      case KimPackage.ACTION_SPECIFICATION__OVER:
+        setOver(OVER_EDEFAULT);
+        return;
       case KimPackage.ACTION_SPECIFICATION__DOMAIN:
         getDomain().clear();
         return;
@@ -878,6 +930,8 @@ public class ActionSpecificationImpl extends MinimalEObjectImpl.Container implem
     {
       case KimPackage.ACTION_SPECIFICATION__INTEGRATED:
         return integrated != INTEGRATED_EDEFAULT;
+      case KimPackage.ACTION_SPECIFICATION__OVER:
+        return over != OVER_EDEFAULT;
       case KimPackage.ACTION_SPECIFICATION__DOMAIN:
         return domain != null && !domain.isEmpty();
       case KimPackage.ACTION_SPECIFICATION__ACTIONS:
@@ -921,6 +975,8 @@ public class ActionSpecificationImpl extends MinimalEObjectImpl.Container implem
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (integrated: ");
     result.append(integrated);
+    result.append(", over: ");
+    result.append(over);
     result.append(", trigger: ");
     result.append(trigger);
     result.append(", initialization: ");

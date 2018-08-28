@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.ActionSpecification#isIntegrated <em>Integrated</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ActionSpecification#isOver <em>Over</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ActionSpecification#getDomain <em>Domain</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ActionSpecification#getActions <em>Actions</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ActionSpecification#isTrigger <em>Trigger</em>}</li>
@@ -64,6 +65,32 @@ public interface ActionSpecification extends EObject
    * @generated
    */
   void setIntegrated(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Over</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Over</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Over</em>' attribute.
+   * @see #setOver(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getActionSpecification_Over()
+   * @model
+   * @generated
+   */
+  boolean isOver();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ActionSpecification#isOver <em>Over</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Over</em>' attribute.
+   * @see #isOver()
+   * @generated
+   */
+  void setOver(boolean value);
 
   /**
    * Returns the value of the '<em><b>Domain</b></em>' containment reference list.

@@ -21,6 +21,10 @@ import org.integratedmodelling.klab.rest.ResourceReference;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.swt.widgets.Combo;
 
 public class ResourceEditor extends ViewPart {
 
@@ -35,6 +39,7 @@ public class ResourceEditor extends ViewPart {
 	private WorldWidget worldWidget;
 	private Text unpublishableReason;
 	private Label labelWhy;
+	private Table table;
 	
 //	private final FormToolkit toolkit = new FormToolkit(Display.getCurrent());
 
@@ -132,6 +137,7 @@ public class ResourceEditor extends ViewPart {
 			this.worldWidget = new WorldWidget(mapHolder, SWT.NONE);
 
 			Composite composite_1 = new Composite(grpGeometry, SWT.NONE);
+			composite_1.setToolTipText("Help for operations appear here");
 			composite_1.setLayout(new GridLayout(3, false));
 			composite_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 			
@@ -149,11 +155,48 @@ public class ResourceEditor extends ViewPart {
 			labelWhy = new Label(composite_1, SWT.NONE);
 			labelWhy.setEnabled(false);
 			labelWhy.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-			labelWhy.setText("Why:");
+			labelWhy.setText("Why not:");
 			
 			unpublishableReason = new Text(composite_1, SWT.BORDER);
 			unpublishableReason.setEnabled(false);
 			unpublishableReason.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			
+			Group grpTime = new Group(composite_1, SWT.NONE);
+			grpTime.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 2, 1));
+			grpTime.setText("Time");
+			
+			Group grpAttributes = new Group(composite_1, SWT.NONE);
+			grpAttributes.setLayout(new GridLayout(1, false));
+			grpAttributes.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+			grpAttributes.setText("Attributes");
+			
+			Composite composite = new Composite(grpAttributes, SWT.NONE);
+			composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+			composite.setLayout(new TableColumnLayout());
+			
+			TableViewer tableViewer = new TableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);
+			table = tableViewer.getTable();
+			table.setLinesVisible(true);
+			
+			Composite composite_3 = new Composite(grpAttributes, SWT.NONE);
+			composite_3.setLayout(new GridLayout(4, false));
+			composite_3.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			
+			Label lblOperations = new Label(composite_3, SWT.NONE);
+			lblOperations.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+			lblOperations.setText("Operations:");
+			
+			Combo combo = new Combo(composite_3, SWT.READ_ONLY);
+			combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			
+			Button btnNewButton_3 = new Button(composite_3, SWT.NONE);
+			btnNewButton_3.setText("Execute");
+			
+			Label lblNewLabel_4 = new Label(composite_3, SWT.NONE);
+			lblNewLabel_4.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
+			new Label(composite_1, SWT.NONE);
+			new Label(composite_1, SWT.NONE);
+			new Label(composite_1, SWT.NONE);
 			{
 			    geometryDefinition = new Label(grpGeometry, SWT.NONE);
 			    geometryDefinition.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));
@@ -164,7 +207,7 @@ public class ResourceEditor extends ViewPart {
 		
 		grpAdapterData = new Group(container, SWT.NONE);
 		grpAdapterData.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		grpAdapterData.setText("Adapter data");
+		grpAdapterData.setText("Adapter parameters");
 		
 		TabItem tbtmProvenanceData = new TabItem(tabFolder, SWT.NONE);
 		tbtmProvenanceData.setText("Documentation");

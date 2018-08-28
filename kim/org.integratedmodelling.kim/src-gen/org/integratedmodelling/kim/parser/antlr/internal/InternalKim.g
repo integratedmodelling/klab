@@ -2869,10 +2869,20 @@ ruleActionSpecification returns [EObject current=null]
 					}
 				)
 			)?
-			otherlv_1='over'
-			{
-				newLeafNode(otherlv_1, grammarAccess.getActionSpecificationAccess().getOverKeyword_0_1());
-			}
+			(
+				(
+					lv_over_1_0='over'
+					{
+						newLeafNode(lv_over_1_0, grammarAccess.getActionSpecificationAccess().getOverOverKeyword_0_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getActionSpecificationRule());
+						}
+						setWithLastConsumed($current, "over", true, "over");
+					}
+				)
+			)
 			(
 				(
 					{
@@ -2974,141 +2984,141 @@ ruleActionSpecification returns [EObject current=null]
 		(
 			(
 				(
-					lv_trigger_8_0='on'
-					{
-						newLeafNode(lv_trigger_8_0, grammarAccess.getActionSpecificationAccess().getTriggerOnKeyword_1_0_0());
-					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getActionSpecificationRule());
-						}
-						setWithLastConsumed($current, "trigger", true, "on");
-					}
-				)
-			)
-			(
-				(
 					(
-						lv_initialization_9_0='definition'
+						lv_trigger_8_0='on'
 						{
-							newLeafNode(lv_initialization_9_0, grammarAccess.getActionSpecificationAccess().getInitializationDefinitionKeyword_1_1_0_0());
+							newLeafNode(lv_trigger_8_0, grammarAccess.getActionSpecificationAccess().getTriggerOnKeyword_1_0_0_0());
 						}
 						{
 							if ($current==null) {
 								$current = createModelElement(grammarAccess.getActionSpecificationRule());
 							}
-							setWithLastConsumed($current, "initialization", true, "definition");
+							setWithLastConsumed($current, "trigger", true, "on");
 						}
 					)
 				)
-				    |
-				(
-					(
-						lv_resolution_10_0='resolution'
-						{
-							newLeafNode(lv_resolution_10_0, grammarAccess.getActionSpecificationAccess().getResolutionResolutionKeyword_1_1_1_0());
-						}
-						{
-							if ($current==null) {
-								$current = createModelElement(grammarAccess.getActionSpecificationRule());
-							}
-							setWithLastConsumed($current, "resolution", true, "resolution");
-						}
-					)
-				)
-				    |
-				(
-					(
-						lv_instantiation_11_0='instantiation'
-						{
-							newLeafNode(lv_instantiation_11_0, grammarAccess.getActionSpecificationAccess().getInstantiationInstantiationKeyword_1_1_2_0());
-						}
-						{
-							if ($current==null) {
-								$current = createModelElement(grammarAccess.getActionSpecificationRule());
-							}
-							setWithLastConsumed($current, "instantiation", true, "instantiation");
-						}
-					)
-				)
-				    |
-				(
-					(
-						lv_termination_12_0='termination'
-						{
-							newLeafNode(lv_termination_12_0, grammarAccess.getActionSpecificationAccess().getTerminationTerminationKeyword_1_1_3_0());
-						}
-						{
-							if ($current==null) {
-								$current = createModelElement(grammarAccess.getActionSpecificationRule());
-							}
-							setWithLastConsumed($current, "termination", true, "termination");
-						}
-					)
-				)
-				    |
-				(
-					(
-						lv_stateInitialization_13_0='initialization'
-						{
-							newLeafNode(lv_stateInitialization_13_0, grammarAccess.getActionSpecificationAccess().getStateInitializationInitializationKeyword_1_1_4_0());
-						}
-						{
-							if ($current==null) {
-								$current = createModelElement(grammarAccess.getActionSpecificationRule());
-							}
-							setWithLastConsumed($current, "stateInitialization", true, "initialization");
-						}
-					)
-				)
-				    |
 				(
 					(
 						(
+							lv_initialization_9_0='definition'
 							{
-								newCompositeNode(grammarAccess.getActionSpecificationAccess().getEventConceptDeclarationParserRuleCall_1_1_5_0_0());
+								newLeafNode(lv_initialization_9_0, grammarAccess.getActionSpecificationAccess().getInitializationDefinitionKeyword_1_0_1_0_0());
 							}
-							lv_event_14_0=ruleConceptDeclaration
 							{
 								if ($current==null) {
-									$current = createModelElementForParent(grammarAccess.getActionSpecificationRule());
+									$current = createModelElement(grammarAccess.getActionSpecificationRule());
 								}
-								set(
-									$current,
-									"event",
-									lv_event_14_0,
-									"org.integratedmodelling.kim.Kim.ConceptDeclaration");
-								afterParserOrEnumRuleCall();
+								setWithLastConsumed($current, "initialization", true, "definition");
 							}
 						)
 					)
+					    |
 					(
-						otherlv_15='in'
-						{
-							newLeafNode(otherlv_15, grammarAccess.getActionSpecificationAccess().getInKeyword_1_1_5_1_0());
-						}
+						(
+							lv_resolution_10_0='resolution'
+							{
+								newLeafNode(lv_resolution_10_0, grammarAccess.getActionSpecificationAccess().getResolutionResolutionKeyword_1_0_1_1_0());
+							}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getActionSpecificationRule());
+								}
+								setWithLastConsumed($current, "resolution", true, "resolution");
+							}
+						)
+					)
+					    |
+					(
+						(
+							lv_instantiation_11_0='instantiation'
+							{
+								newLeafNode(lv_instantiation_11_0, grammarAccess.getActionSpecificationAccess().getInstantiationInstantiationKeyword_1_0_1_2_0());
+							}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getActionSpecificationRule());
+								}
+								setWithLastConsumed($current, "instantiation", true, "instantiation");
+							}
+						)
+					)
+					    |
+					(
+						(
+							lv_termination_12_0='termination'
+							{
+								newLeafNode(lv_termination_12_0, grammarAccess.getActionSpecificationAccess().getTerminationTerminationKeyword_1_0_1_3_0());
+							}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getActionSpecificationRule());
+								}
+								setWithLastConsumed($current, "termination", true, "termination");
+							}
+						)
+					)
+					    |
+					(
+						(
+							lv_stateInitialization_13_0='initialization'
+							{
+								newLeafNode(lv_stateInitialization_13_0, grammarAccess.getActionSpecificationAccess().getStateInitializationInitializationKeyword_1_0_1_4_0());
+							}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getActionSpecificationRule());
+								}
+								setWithLastConsumed($current, "stateInitialization", true, "initialization");
+							}
+						)
+					)
+					    |
+					(
 						(
 							(
-								(
-									lv_anyContextEvent_16_0='context'
-									{
-										newLeafNode(lv_anyContextEvent_16_0, grammarAccess.getActionSpecificationAccess().getAnyContextEventContextKeyword_1_1_5_1_1_0_0());
+								{
+									newCompositeNode(grammarAccess.getActionSpecificationAccess().getEventConceptDeclarationParserRuleCall_1_0_1_5_0_0());
+								}
+								lv_event_14_0=ruleConceptDeclaration
+								{
+									if ($current==null) {
+										$current = createModelElementForParent(grammarAccess.getActionSpecificationRule());
 									}
-									{
-										if ($current==null) {
-											$current = createModelElement(grammarAccess.getActionSpecificationRule());
-										}
-										setWithLastConsumed($current, "anyContextEvent", true, "context");
-									}
-								)
+									set(
+										$current,
+										"event",
+										lv_event_14_0,
+										"org.integratedmodelling.kim.Kim.ConceptDeclaration");
+									afterParserOrEnumRuleCall();
+								}
 							)
-							    |
+						)
+						(
+							otherlv_15='in'
+							{
+								newLeafNode(otherlv_15, grammarAccess.getActionSpecificationAccess().getInKeyword_1_0_1_5_1_0());
+							}
 							(
+								(
+									(
+										lv_anyContextEvent_16_0='context'
+										{
+											newLeafNode(lv_anyContextEvent_16_0, grammarAccess.getActionSpecificationAccess().getAnyContextEventContextKeyword_1_0_1_5_1_1_0_0());
+										}
+										{
+											if ($current==null) {
+												$current = createModelElement(grammarAccess.getActionSpecificationRule());
+											}
+											setWithLastConsumed($current, "anyContextEvent", true, "context");
+										}
+									)
+								)
+								    |
 								(
 									(
 										lv_relatedEventContext_17_0='related'
 										{
-											newLeafNode(lv_relatedEventContext_17_0, grammarAccess.getActionSpecificationAccess().getRelatedEventContextRelatedKeyword_1_1_5_1_1_1_0_0());
+											newLeafNode(lv_relatedEventContext_17_0, grammarAccess.getActionSpecificationAccess().getRelatedEventContextRelatedKeyword_1_0_1_5_1_1_1_0());
 										}
 										{
 											if ($current==null) {
@@ -3118,56 +3128,82 @@ ruleActionSpecification returns [EObject current=null]
 										}
 									)
 								)
+							)
+							(
 								(
-									(
-										{
-											newCompositeNode(grammarAccess.getActionSpecificationAccess().getEventContextConceptDeclarationParserRuleCall_1_1_5_1_1_1_1_0());
+									{
+										newCompositeNode(grammarAccess.getActionSpecificationAccess().getEventContextConceptDeclarationParserRuleCall_1_0_1_5_1_2_0());
+									}
+									lv_eventContext_18_0=ruleConceptDeclaration
+									{
+										if ($current==null) {
+											$current = createModelElementForParent(grammarAccess.getActionSpecificationRule());
 										}
-										lv_eventContext_18_0=ruleConceptDeclaration
-										{
-											if ($current==null) {
-												$current = createModelElementForParent(grammarAccess.getActionSpecificationRule());
-											}
-											set(
-												$current,
-												"eventContext",
-												lv_eventContext_18_0,
-												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
-											afterParserOrEnumRuleCall();
-										}
-									)
+										set(
+											$current,
+											"eventContext",
+											lv_eventContext_18_0,
+											"org.integratedmodelling.kim.Kim.ConceptDeclaration");
+										afterParserOrEnumRuleCall();
+									}
 								)
 							)
-						)
-					)?
+						)?
+					)
 				)
-			)
+				(
+					(
+						{
+							newCompositeNode(grammarAccess.getActionSpecificationAccess().getParametersListParserRuleCall_1_0_2_0());
+						}
+						lv_parameters_19_0=ruleList
+						{
+							if ($current==null) {
+								$current = createModelElementForParent(grammarAccess.getActionSpecificationRule());
+							}
+							set(
+								$current,
+								"parameters",
+								lv_parameters_19_0,
+								"org.integratedmodelling.kim.Kim.List");
+							afterParserOrEnumRuleCall();
+						}
+					)
+				)?
+			)?
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getActionSpecificationAccess().getParametersListParserRuleCall_1_2_0());
+						newCompositeNode(grammarAccess.getActionSpecificationAccess().getActionsActionParserRuleCall_1_1_0());
 					}
-					lv_parameters_19_0=ruleList
+					lv_actions_20_0=ruleAction
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getActionSpecificationRule());
 						}
-						set(
+						add(
 							$current,
-							"parameters",
-							lv_parameters_19_0,
-							"org.integratedmodelling.kim.Kim.List");
+							"actions",
+							lv_actions_20_0,
+							"org.integratedmodelling.kim.Kim.Action");
 						afterParserOrEnumRuleCall();
 					}
 				)
-			)?
+			)
 			(
+				(
+					(',')=>
+					otherlv_21=','
+					{
+						newLeafNode(otherlv_21, grammarAccess.getActionSpecificationAccess().getCommaKeyword_1_2_0());
+					}
+				)
 				(
 					(
 						{
-							newCompositeNode(grammarAccess.getActionSpecificationAccess().getActionsActionParserRuleCall_1_3_0_0());
+							newCompositeNode(grammarAccess.getActionSpecificationAccess().getActionsActionParserRuleCall_1_2_1_0());
 						}
-						lv_actions_20_0=ruleAction
+						lv_actions_22_0=ruleAction
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getActionSpecificationRule());
@@ -3175,41 +3211,13 @@ ruleActionSpecification returns [EObject current=null]
 							add(
 								$current,
 								"actions",
-								lv_actions_20_0,
+								lv_actions_22_0,
 								"org.integratedmodelling.kim.Kim.Action");
 							afterParserOrEnumRuleCall();
 						}
 					)
 				)
-				(
-					(
-						(',')=>
-						otherlv_21=','
-						{
-							newLeafNode(otherlv_21, grammarAccess.getActionSpecificationAccess().getCommaKeyword_1_3_1_0());
-						}
-					)
-					(
-						(
-							{
-								newCompositeNode(grammarAccess.getActionSpecificationAccess().getActionsActionParserRuleCall_1_3_1_1_0());
-							}
-							lv_actions_22_0=ruleAction
-							{
-								if ($current==null) {
-									$current = createModelElementForParent(grammarAccess.getActionSpecificationRule());
-								}
-								add(
-									$current,
-									"actions",
-									lv_actions_22_0,
-									"org.integratedmodelling.kim.Kim.Action");
-								afterParserOrEnumRuleCall();
-							}
-						)
-					)
-				)*
-			)?
+			)*
 		)
 	)
 ;
@@ -6419,20 +6427,37 @@ ruleObservableSemantics returns [EObject current=null]
 								}
 								(
 									(
-										lv_name_26_0=RULE_LOWERCASE_ID
-										{
-											newLeafNode(lv_name_26_0, grammarAccess.getObservableSemanticsAccess().getNameLOWERCASE_IDTerminalRuleCall_3_7_1_0());
-										}
-										{
-											if ($current==null) {
-												$current = createModelElement(grammarAccess.getObservableSemanticsRule());
+										(
+											lv_name_26_1=RULE_LOWERCASE_ID
+											{
+												newLeafNode(lv_name_26_1, grammarAccess.getObservableSemanticsAccess().getNameLOWERCASE_IDTerminalRuleCall_3_7_1_0_0());
 											}
-											setWithLastConsumed(
-												$current,
-												"name",
-												lv_name_26_0,
-												"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
-										}
+											{
+												if ($current==null) {
+													$current = createModelElement(grammarAccess.getObservableSemanticsRule());
+												}
+												setWithLastConsumed(
+													$current,
+													"name",
+													lv_name_26_1,
+													"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
+											}
+											    |
+											lv_name_26_2=RULE_STRING
+											{
+												newLeafNode(lv_name_26_2, grammarAccess.getObservableSemanticsAccess().getNameSTRINGTerminalRuleCall_3_7_1_0_1());
+											}
+											{
+												if ($current==null) {
+													$current = createModelElement(grammarAccess.getObservableSemanticsRule());
+												}
+												setWithLastConsumed(
+													$current,
+													"name",
+													lv_name_26_2,
+													"org.eclipse.xtext.common.Terminals.STRING");
+											}
+										)
 									)
 								)
 								))
@@ -14292,20 +14317,37 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 								}
 								(
 									(
-										lv_name_19_0=RULE_LOWERCASE_ID
-										{
-											newLeafNode(lv_name_19_0, grammarAccess.getSimpleObservableSemanticsAccess().getNameLOWERCASE_IDTerminalRuleCall_1_5_1_0());
-										}
-										{
-											if ($current==null) {
-												$current = createModelElement(grammarAccess.getSimpleObservableSemanticsRule());
+										(
+											lv_name_19_1=RULE_LOWERCASE_ID
+											{
+												newLeafNode(lv_name_19_1, grammarAccess.getSimpleObservableSemanticsAccess().getNameLOWERCASE_IDTerminalRuleCall_1_5_1_0_0());
 											}
-											setWithLastConsumed(
-												$current,
-												"name",
-												lv_name_19_0,
-												"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
-										}
+											{
+												if ($current==null) {
+													$current = createModelElement(grammarAccess.getSimpleObservableSemanticsRule());
+												}
+												setWithLastConsumed(
+													$current,
+													"name",
+													lv_name_19_1,
+													"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
+											}
+											    |
+											lv_name_19_2=RULE_STRING
+											{
+												newLeafNode(lv_name_19_2, grammarAccess.getSimpleObservableSemanticsAccess().getNameSTRINGTerminalRuleCall_1_5_1_0_1());
+											}
+											{
+												if ($current==null) {
+													$current = createModelElement(grammarAccess.getSimpleObservableSemanticsRule());
+												}
+												setWithLastConsumed(
+													$current,
+													"name",
+													lv_name_19_2,
+													"org.eclipse.xtext.common.Terminals.STRING");
+											}
+										)
 									)
 								)
 								))
@@ -14398,6 +14440,21 @@ ruleNamedObservableSemantics returns [EObject current=null]
 							lv_name_2_2,
 							"org.integratedmodelling.kim.Kim.LOWERCASE_DASHID");
 					}
+					    |
+					lv_name_2_3=RULE_STRING
+					{
+						newLeafNode(lv_name_2_3, grammarAccess.getNamedObservableSemanticsAccess().getNameSTRINGTerminalRuleCall_2_0_2());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getNamedObservableSemanticsRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"name",
+							lv_name_2_3,
+							"org.eclipse.xtext.common.Terminals.STRING");
+					}
 				)
 			)
 		)
@@ -14451,6 +14508,21 @@ ruleUnitElement returns [EObject current=null]
 							"id",
 							lv_id_0_2,
 							"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
+					}
+					    |
+					lv_id_0_3=RULE_UPPERCASE_ID
+					{
+						newLeafNode(lv_id_0_3, grammarAccess.getUnitElementAccess().getIdUPPERCASE_IDTerminalRuleCall_0_0_2());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getUnitElementRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"id",
+							lv_id_0_3,
+							"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
 					}
 				)
 			)

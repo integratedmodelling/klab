@@ -155,7 +155,13 @@ public class KimBehavior extends KimStatement implements IKimBehavior {
         boolean ok = true;
         boolean hasTemporalActions = false;
 
-        if (action.isTrigger()) {
+        // default trigger if none is defined but we don't have the 'over' part
+        if (!action.isOver()) {
+        	// will be overwritten later if necessary
+        	act.setTrigger(Trigger.DEFINITION);
+        }
+        
+        if (action.isTrigger() || !action.isOver()) {
 
             if (action.isInitialization()) {
                 act.setTrigger(Trigger.DEFINITION);

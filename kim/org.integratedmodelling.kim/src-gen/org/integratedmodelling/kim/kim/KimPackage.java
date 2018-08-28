@@ -976,13 +976,22 @@ public interface KimPackage extends EPackage
   int ACTION_SPECIFICATION__INTEGRATED = 0;
 
   /**
+   * The feature id for the '<em><b>Over</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTION_SPECIFICATION__OVER = 1;
+
+  /**
    * The feature id for the '<em><b>Domain</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ACTION_SPECIFICATION__DOMAIN = 1;
+  int ACTION_SPECIFICATION__DOMAIN = 2;
 
   /**
    * The feature id for the '<em><b>Actions</b></em>' containment reference list.
@@ -991,7 +1000,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION_SPECIFICATION__ACTIONS = 2;
+  int ACTION_SPECIFICATION__ACTIONS = 3;
 
   /**
    * The feature id for the '<em><b>Trigger</b></em>' attribute.
@@ -1000,7 +1009,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION_SPECIFICATION__TRIGGER = 3;
+  int ACTION_SPECIFICATION__TRIGGER = 4;
 
   /**
    * The feature id for the '<em><b>Initialization</b></em>' attribute.
@@ -1009,7 +1018,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION_SPECIFICATION__INITIALIZATION = 4;
+  int ACTION_SPECIFICATION__INITIALIZATION = 5;
 
   /**
    * The feature id for the '<em><b>Resolution</b></em>' attribute.
@@ -1018,7 +1027,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION_SPECIFICATION__RESOLUTION = 5;
+  int ACTION_SPECIFICATION__RESOLUTION = 6;
 
   /**
    * The feature id for the '<em><b>Instantiation</b></em>' attribute.
@@ -1027,7 +1036,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION_SPECIFICATION__INSTANTIATION = 6;
+  int ACTION_SPECIFICATION__INSTANTIATION = 7;
 
   /**
    * The feature id for the '<em><b>Termination</b></em>' attribute.
@@ -1036,7 +1045,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION_SPECIFICATION__TERMINATION = 7;
+  int ACTION_SPECIFICATION__TERMINATION = 8;
 
   /**
    * The feature id for the '<em><b>State Initialization</b></em>' attribute.
@@ -1045,7 +1054,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION_SPECIFICATION__STATE_INITIALIZATION = 8;
+  int ACTION_SPECIFICATION__STATE_INITIALIZATION = 9;
 
   /**
    * The feature id for the '<em><b>Event</b></em>' containment reference.
@@ -1054,7 +1063,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION_SPECIFICATION__EVENT = 9;
+  int ACTION_SPECIFICATION__EVENT = 10;
 
   /**
    * The feature id for the '<em><b>Any Context Event</b></em>' attribute.
@@ -1063,7 +1072,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION_SPECIFICATION__ANY_CONTEXT_EVENT = 10;
+  int ACTION_SPECIFICATION__ANY_CONTEXT_EVENT = 11;
 
   /**
    * The feature id for the '<em><b>Related Event Context</b></em>' attribute.
@@ -1072,7 +1081,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION_SPECIFICATION__RELATED_EVENT_CONTEXT = 11;
+  int ACTION_SPECIFICATION__RELATED_EVENT_CONTEXT = 12;
 
   /**
    * The feature id for the '<em><b>Event Context</b></em>' containment reference.
@@ -1081,7 +1090,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION_SPECIFICATION__EVENT_CONTEXT = 12;
+  int ACTION_SPECIFICATION__EVENT_CONTEXT = 13;
 
   /**
    * The feature id for the '<em><b>Parameters</b></em>' containment reference.
@@ -1090,7 +1099,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION_SPECIFICATION__PARAMETERS = 13;
+  int ACTION_SPECIFICATION__PARAMETERS = 14;
 
   /**
    * The number of structural features of the '<em>Action Specification</em>' class.
@@ -1099,7 +1108,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION_SPECIFICATION_FEATURE_COUNT = 14;
+  int ACTION_SPECIFICATION_FEATURE_COUNT = 15;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.FunctionOrIDImpl <em>Function Or ID</em>}' class.
@@ -5066,6 +5075,17 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EAttribute getActionSpecification_Integrated();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ActionSpecification#isOver <em>Over</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Over</em>'.
+   * @see org.integratedmodelling.kim.kim.ActionSpecification#isOver()
+   * @see #getActionSpecification()
+   * @generated
+   */
+  EAttribute getActionSpecification_Over();
 
   /**
    * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ActionSpecification#getDomain <em>Domain</em>}'.
@@ -9160,6 +9180,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute ACTION_SPECIFICATION__INTEGRATED = eINSTANCE.getActionSpecification_Integrated();
+
+    /**
+     * The meta object literal for the '<em><b>Over</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ACTION_SPECIFICATION__OVER = eINSTANCE.getActionSpecification_Over();
 
     /**
      * The meta object literal for the '<em><b>Domain</b></em>' containment reference list feature.
