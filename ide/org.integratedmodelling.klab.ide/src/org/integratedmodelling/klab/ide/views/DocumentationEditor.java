@@ -47,6 +47,7 @@ public class DocumentationEditor extends ViewPart {
 	private EProject project;
 	protected String currentEvent = "Definition";
 	protected String currentSection = "Methods";
+	private StyledText editor;
 
 	public DocumentationEditor() {
 	}
@@ -72,7 +73,7 @@ public class DocumentationEditor extends ViewPart {
 		Display.getDefault().asyncExec(() -> {
 			itemIdLabel.setText(docId);
 			ModelDocumentation template = documentation.get(getCurrentKey());
-			text.setText(template == null ? "" : template.getTemplate());
+			editor.setText(template == null ? "" : template.getTemplate());
 		});
 	}
 
@@ -156,8 +157,8 @@ public class DocumentationEditor extends ViewPart {
 		lblNewLabel.setToolTipText("Add a custom section");
 		lblNewLabel.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/add.png"));
 
-		StyledText styledText_1 = new StyledText(parent, SWT.BORDER | SWT.WRAP | /* SWT.H_SCROLL | */SWT.V_SCROLL);
-		styledText_1.addKeyListener(new KeyAdapter() {
+		editor = new StyledText(parent, SWT.BORDER | SWT.WRAP | /* SWT.H_SCROLL | */SWT.V_SCROLL);
+		editor.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if ((e.keyCode == 'S' || e.keyCode == 's') && (e.stateMask & SWT.CTRL) != 0) {
@@ -170,8 +171,8 @@ public class DocumentationEditor extends ViewPart {
 				}
 			}
 		});
-		styledText_1.setAlwaysShowScrollBars(false);
-		styledText_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		editor.setAlwaysShowScrollBars(false);
+		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 		Group grpCrossreferences = new Group(parent, SWT.NONE);
 		grpCrossreferences.setLayout(new GridLayout(1, false));
@@ -193,6 +194,12 @@ public class DocumentationEditor extends ViewPart {
 		composite_1.setLayout(rl_composite_1);
 
 		Button button_1 = new Button(composite_1, SWT.NONE);
+		button_1.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				save();
+			}
+		});
 		button_1.setLayoutData(new RowData(90, -1));
 		button_1.setText("Save");
 
@@ -216,7 +223,7 @@ public class DocumentationEditor extends ViewPart {
 			template.setTrigger(currentEvent);
 			documentation.put(getCurrentKey(), template);
 		}
-		template.setTemplate(text.getText());
+		template.setTemplate(editor.getText());
 		documentation.write();
 		dirty = false;
 		if (getTitle().startsWith("*")) {

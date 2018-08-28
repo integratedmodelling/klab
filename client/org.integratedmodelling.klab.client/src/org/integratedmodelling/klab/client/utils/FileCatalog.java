@@ -109,6 +109,14 @@ public class FileCatalog<T> extends HashMap<String, T> {
 	 */
 	public FileCatalog(File file, Class<? extends T> type, Class<? extends T> cls) {
 
+		if (!file.exists()) {
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				throw new KlabIOException(e);
+			}
+		}
+		
 		this.file = file;
 		this.cls = cls;
 		try (InputStream input = new FileInputStream(file)) {
@@ -173,7 +181,7 @@ public class FileCatalog<T> extends HashMap<String, T> {
 		if (this.file != null && this.file.exists()) {
 
 			ObjectMapper objectMapper = new ObjectMapper();
-			Map<String, Object> data = new HashMap<>();
+			Map<String, T> data = new HashMap<>();
 			data.putAll(this);
 			try {
 				objectMapper.writer().writeValue(this.file, data);

@@ -124,6 +124,14 @@ public class FileCatalog<T> extends HashMap<String, T> {
 	 */
 	public FileCatalog(File file, Class<? extends T> type, Class<? extends T> cls) {
 
+		if (!file.exists()) {
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				throw new KlabIOException(e);
+			}
+		}
+		
 		this.file = file;
 		this.cls = cls;
 		try (InputStream input = new FileInputStream(file)) {
