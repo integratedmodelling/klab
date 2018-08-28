@@ -38,22 +38,23 @@ abstract class ActionBase extends Script {
 //            }
 			
 			// allows null-proof multiplications and division
-			NullObject.metaClass.multiply = { Number n -> Double.NaN }
-			NullObject.metaClass.div = { Number n -> Double.NaN }
-			NullObject.metaClass.plus = { Number n -> Double.NaN }
-			NullObject.metaClass.minus = { Number n -> Double.NaN }
-			Number.metaClass.multiply = { NullObject n -> Double.NaN }
-			Number.metaClass.div = { NullObject n -> Double.NaN }
-			Number.metaClass.plus = { NullObject n -> Double.NaN }
-			Number.metaClass.minus = { NullObject n -> Double.NaN }
-			BigDecimal.metaClass.multiply = { NullObject n -> Double.NaN }
-			BigDecimal.metaClass.div = { NullObject n -> Double.NaN }
-			BigDecimal.metaClass.plus = { NullObject n -> Double.NaN }
-			BigDecimal.metaClass.minus = { NullObject n -> Double.NaN }
-			NullObject.metaClass.multiply = { BigDecimal n -> Double.NaN }
-			NullObject.metaClass.div = { BigDecimal n -> Double.NaN }
-			NullObject.metaClass.plus = { BigDecimal n -> Double.NaN }
-			NullObject.metaClass.minus = { BigDecimal n -> Double.NaN }
+            // Not really. Just ensure all nulls in numeric artifacts are NaN.
+//			NullObject.metaClass.multiply = { Number n -> Double.NaN }
+//			NullObject.metaClass.div = { Number n -> Double.NaN }
+//			NullObject.metaClass.plus = { Number n -> Double.NaN }
+//			NullObject.metaClass.minus = { Number n -> Double.NaN }
+//			Number.metaClass.multiply = { NullObject n -> Double.NaN }
+//			Number.metaClass.div = { NullObject n -> Double.NaN }
+//			Number.metaClass.plus = { NullObject n -> Double.NaN }
+//			Number.metaClass.minus = { NullObject n -> Double.NaN }
+//			BigDecimal.metaClass.multiply = { NullObject n -> Double.NaN }
+//			BigDecimal.metaClass.div = { NullObject n -> Double.NaN }
+//			BigDecimal.metaClass.plus = { NullObject n -> Double.NaN }
+//			BigDecimal.metaClass.minus = { NullObject n -> Double.NaN }
+//			NullObject.metaClass.multiply = { BigDecimal n -> Double.NaN }
+//			NullObject.metaClass.div = { BigDecimal n -> Double.NaN }
+//			NullObject.metaClass.plus = { BigDecimal n -> Double.NaN }
+//			NullObject.metaClass.minus = { BigDecimal n -> Double.NaN }
 
 			            /*
              * enable arithmetics and comparisons with units:
