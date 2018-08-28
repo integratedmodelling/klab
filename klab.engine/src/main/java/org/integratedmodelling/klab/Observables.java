@@ -68,6 +68,7 @@ public enum Observables implements IObservableService {
 		try {
 			ObservableSemantics parsed = observableParser.parse(declaration).getObservable();
 			KimObservable interpreted = Kim.INSTANCE.declareObservable(parsed);
+			System.out.println(interpreted.getDefinition());
 			return KimKnowledgeProcessor.INSTANCE.declare(interpreted, monitor);
 		} catch (Exception e) {
 			monitor.error(e, declaration);
@@ -116,6 +117,20 @@ public enum Observables implements IObservableService {
 		return cls.isEmpty() ? null : cls.iterator().next();
 	}
 
+	@Override
+	public @Nullable IConcept getAdjacentType(IConcept concept) {
+		Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
+				Concepts.p(NS.IS_ADJACENT_TO_PROPERTY));
+		return cls.isEmpty() ? null : cls.iterator().next();
+	}
+	
+	@Override
+	public @Nullable IConcept getCooccurrentType(IConcept concept) {
+		Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
+				Concepts.p(NS.OCCURS_DURING_PROPERTY));
+		return cls.isEmpty() ? null : cls.iterator().next();
+	}
+	
 	/**
 	 * Get the context ('within') for the passed quality or trait. If the passed
 	 * concept is an attribute, configuration, class or realm, the context is the

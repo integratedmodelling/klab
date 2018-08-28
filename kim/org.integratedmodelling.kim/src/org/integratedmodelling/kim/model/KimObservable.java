@@ -160,6 +160,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		return toString().hashCode();
 	}
 
+	@Override
 	public String getDefinition() {
 
 		if (nonSemanticType != null) {

@@ -215,8 +215,8 @@ public enum KimKnowledgeProcessor {
 
 		Observable ret = new Observable(observable);
 
-		String declaration = observable.getType().getDefinition();
-
+		String declaration = concept.getDefinition();
+		
 		if (concept.getUnit() != null) {
 			ret.setUnit(Units.INSTANCE.getUnit(concept.getUnit()));
 			declaration += " in " + ret.getUnit();
@@ -266,8 +266,11 @@ public enum KimKnowledgeProcessor {
 			Concept by = declareInternal(concept.getBy(), monitor);
 			Concept downTo = null;
 
+			declaration += " by " + by;
+			
 			if (concept.getDownTo() != null) {
 				downTo = declareInternal(concept.getDownTo(), monitor);
+				declaration += " down to " + by;
 			}
 
 			IConcept classifiedType = Types.INSTANCE.getTypeByTrait(ret, by, downTo,
@@ -345,6 +348,18 @@ public enum KimKnowledgeProcessor {
 			IConcept c = declareInternal(concept.getMotivation(), monitor);
 			if (c != null) {
 				builder.withGoal(c);
+			}
+		}
+		if (concept.getCooccurrent() != null) {
+			IConcept c = declareInternal(concept.getCooccurrent(), monitor);
+			if (c != null) {
+				builder.withCooccurrent(c);
+			}
+		}
+		if (concept.getAdjacent() != null) {
+			IConcept c = declareInternal(concept.getAdjacent(), monitor);
+			if (c != null) {
+				builder.withAdjacent(c);
 			}
 		}
 

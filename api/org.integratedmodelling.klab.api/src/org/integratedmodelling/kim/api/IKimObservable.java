@@ -97,4 +97,11 @@ public interface IKimObservable extends IKimStatement {
 	 */
 	IArtifact.Type getNonSemanticType();
 
+	/**
+	 * The canonical definition 
+	 * 
+	 * @return
+	 */
+	String getDefinition();
+
 }

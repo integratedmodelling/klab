@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.documentation;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.klab.rest.AttributeReference;
 
@@ -12,6 +14,8 @@ public class ModelDocumentation {
 	private String documentedId;
 	private String extended;
 	private String template;
+	private Set<String> documentedUrns = new HashSet<>();
+	
 	private Map<String, AttributeReference> variables = new HashMap<>();
 
 	public String getExtended() {
@@ -60,6 +64,14 @@ public class ModelDocumentation {
 
 	public void setDocumentedId(String documentedId) {
 		this.documentedId = documentedId;
+	}
+
+	public Set<String> getDocumentedUrns() {
+		return documentedUrns;
+	}
+
+	public void setDocumentedUrns(Set<String> documentedUrns) {
+		this.documentedUrns = documentedUrns;
 	}
 
 }

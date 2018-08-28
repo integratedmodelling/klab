@@ -223,6 +223,7 @@ public class DocumentationEditor extends ViewPart {
 			template.setTrigger(currentEvent);
 			documentation.put(getCurrentKey(), template);
 		}
+		template.getDocumentedUrns().add(((ENavigatorItem)item).getId());
 		template.setTemplate(editor.getText());
 		documentation.write();
 		dirty = false;

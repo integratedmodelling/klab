@@ -109,6 +109,8 @@ public class CoreOntology extends AbstractWorkspace {
         public static final String HAS_CAUSANT_PROPERTY                    = "observation:hasCausant";
         public static final String HAS_CAUSED_PROPERTY                     = "observation:hasCaused";
         public static final String HAS_PURPOSE_PROPERTY                    = "observation:hasPurpose";
+        public static final String OCCURS_DURING_PROPERTY                  = "observation:occursDuring";
+        public static final String IS_ADJACENT_TO_PROPERTY                 = "observation:isAdjacentTo";
         public static final String HAS_SUBJECTIVE_TRAIT_PROPERTY           = "observation:hasSubjectiveTrait";
         public static final String IS_SUBJECTIVE                           = "observation:isSubjectiveTrait";
         public static final String IS_INHERENT_TO_PROPERTY                 = "observation:isInherentTo";

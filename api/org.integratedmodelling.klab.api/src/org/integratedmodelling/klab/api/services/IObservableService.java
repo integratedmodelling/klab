@@ -255,22 +255,7 @@ public interface IObservableService {
 		 * @return the same builder this was called on, for chaining calls
 		 */
 		Builder as(IConcept role);
-
-//		/**
-//		 * 
-//		 * @param limit
-//		 * @return the same builder this was called on, for chaining calls
-//		 */
-//		Builder downTo(IConcept limit);
-//
-//		/**
-//		 * Classify of the concept built so far 'by' the passed one.
-//		 * 
-//		 * @param trait
-//		 * @return the same builder this was called on, for chaining calls
-//		 */
-//		Builder by(IConcept trait);
-
+		
 		/**
 		 * Contextualize the concept built so far to the passed context one. Will choose
 		 * the semantics appropriately for the specific context and observables
@@ -395,6 +380,10 @@ public interface IObservableService {
 		 * @return the same builder this was called on, for chaining calls
 		 */
 		Builder withDeclaration(IKimConcept declaration, IMonitor monitor);
+
+		Builder withCooccurrent(IConcept cooccurrent);
+
+		Builder withAdjacent(IConcept adjacent);
 
 	}
 
@@ -632,4 +621,20 @@ public interface IObservableService {
 	 * @return the targets. May be empty in abstract relationships.
 	 */
 	Collection<IConcept> getRelationshipTargets(IConcept relationship);
+
+	/**
+	 * Return the adjacent type, if any.
+	 * 
+	 * @param concept
+	 * @return
+	 */
+	IConcept getAdjacentType(IConcept concept);
+
+	/**
+	 * Return the co-occurrent type ('during'), if any.
+	 * 
+	 * @param concept
+	 * @return
+	 */
+	IConcept getCooccurrentType(IConcept concept);
 }

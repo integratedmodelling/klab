@@ -336,6 +336,14 @@ Main author</dc:contributor>
     
 
 
+    <!-- http://integratedmodelling.org/ks/observation.owl#isAdjacentTo -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#isAdjacentTo">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#relatesTo"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://integratedmodelling.org/ks/observation.owl#isConstituentOf -->
 
     <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#isConstituentOf">
@@ -390,6 +398,14 @@ Main author</dc:contributor>
     <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#observes">
         <rdfs:domain rdf:resource="http://integratedmodelling.org/ks/observation.owl#ObservationProcess"/>
         <rdfs:range rdf:resource="http://integratedmodelling.org/ks/observation.owl#Observable"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#occursDuring -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#occursDuring">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#relatesTo"/>
     </owl:ObjectProperty>
     
 

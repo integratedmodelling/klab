@@ -52,4 +52,10 @@ void reload
 	class org.integratedmodelling.klab.clitool.console.commands.reason.Reload
 }
 
+void info
+	"Print information about a concept."
+{
+	class org.integratedmodelling.klab.clitool.console.commands.reason.ShowInfo
+}
+
 

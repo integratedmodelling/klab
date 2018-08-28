@@ -88,7 +88,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 	private KimConcept compresent = null;
 	private KimConcept adjacent = null;
 	private KimConcept cooccurrent = null;
-	
+
 	private KimConcept validParent = null;
 
 	/**
@@ -546,12 +546,42 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			complex = true;
 		}
 
+		if (causant != null) {
+			ret += " caused by " + causant;
+			complex = true;
+		}
+
+		if (caused != null) {
+			ret += " causing " + caused;
+			complex = true;
+		}
+		
+		if (compresent != null) {
+			ret += " with " + compresent;
+			complex = true;
+		}
+		
+		if (cooccurrent != null) {
+			ret += " during " + cooccurrent;
+			complex = true;
+		}
+		
+		if (adjacent != null) {
+			ret += " adjacent to " + adjacent;
+			complex = true;
+		}
+		
+		if (motivation != null) {
+			ret += " for " + motivation;
+			complex = true;
+		}
+
 		for (IKimConcept operand : operands) {
 			ret += " " + (expressionType == Expression.INTERSECTION ? "and" : "or") + " " + operand;
 			complex = true;
 		}
 
-		return complex ? ("(" + ret + ")") : ret;
+		return ccomplex || complex ? ("(" + ret + ")") : ret;
 	}
 
 	private String stringify(String term) {
