@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.engine.runtime;
 
+import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -43,7 +44,7 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 		this.taskDescription = parent.taskDescription;
 		this.descriptor = parent.descriptor;
 	}
-	
+
 	public ObserveInContextTask(Subject context, String urn, Collection<String> scenarios) {
 
 		this.context = context;
@@ -72,7 +73,7 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 					 * register the task so it can be interrupted and inquired about
 					 */
 					session.registerTask(ObserveInContextTask.this);
-					
+
 					session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 							IMessage.Type.TaskStarted, ObserveInContextTask.this.descriptor));
 
@@ -83,9 +84,9 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 					IResolvable resolvable = Resources.INSTANCE.getResolvableResource(urn);
 
 					if (resolvable instanceof IModel) {
-						resolvable = Observable.promote((IModel)resolvable);
+						resolvable = Observable.promote((IModel) resolvable);
 					}
-					
+
 					if (resolvable == null) {
 						throw new IllegalArgumentException("URN " + urn + " does not represent a resolvable entity");
 					}
@@ -96,23 +97,30 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 					ResolutionScope scope = Resolver.INSTANCE.resolve(resolvable,
 							ResolutionScope.create(context, monitor, scenarios));
 					if (scope.getCoverage().isRelevant()) {
-						
+
 						Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + token,
 								scope);
-						
+
 						System.out.println(dataflow.getKdlCode());
-						
+
 						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 								IMessage.Type.DataflowCompiled, new DataflowReference(token, dataflow.getKdlCode())));
 
 						// make a copy of the coverage so that we ensure it's a scale, behaving properly
 						// at merge.
 						ret = (IObservation) dataflow.run(scope.getCoverage().copy(), monitor);
+
+						monitor.info("observation completed with "
+										+ NumberFormat.getPercentInstance().format(scope.getCoverage().getCoverage())
+										+ " context coverage");
+
+					} else {
+						monitor.warn("could not build dataflow: observation unsuccessful");
 					}
 
 					session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 							IMessage.Type.TaskFinished, ObserveInContextTask.this.descriptor));
-					
+
 					/*
 					 * Unregister the task
 					 */
@@ -187,11 +195,10 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 			throws InterruptedException, ExecutionException, TimeoutException {
 		return delegate.get(timeout, unit);
 	}
-	
+
 	@Override
 	public ITaskTree<IObservation> createChild() {
 		return new ObserveInContextTask(this);
 	}
-
 
 }
