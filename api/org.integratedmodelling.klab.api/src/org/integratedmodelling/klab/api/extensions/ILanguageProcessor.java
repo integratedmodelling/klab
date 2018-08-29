@@ -56,6 +56,17 @@ public interface ILanguageProcessor {
         boolean isScalar(String identifier);
 
         /**
+         * Return true if the expression contains non-scalar usage for the
+         * passed identifiers within a transition (i.e. used as an object, with 
+         * methods called on it). 
+         * 
+         * @param identifier identifiers representing states
+         * 
+         * @return true if the identifier is used in a scalar context.
+         */
+        boolean isNonscalar(String identifier);
+        
+        /**
          * Return true if the expression contains scalar usage for any of the
          * passed identifiers within a transition (i.e. used alone or with locator semantics for
          * space or other non-temporal domain). 
@@ -65,6 +76,17 @@ public interface ILanguageProcessor {
          * @return true if any of the identifiers is used in a scalar context.
          */
         boolean isScalar(Collection<String> stateIdentifiers);
+        
+        /**
+         * Return true if the expression contains non-scalar usage for any of the
+         * passed identifiers within a transition (i.e. used as an object, with 
+         * methods called on it). 
+         * 
+         * @param stateIdentifiers identifiers representing states
+         * 
+         * @return true if any of the identifiers is used in a scalar context.
+         */
+        boolean isNonscalar(Collection<String> stateIdentifiers);
 
         /**
          * In order to avoid duplicated action, the descriptor alone must be enough to
@@ -76,6 +98,18 @@ public interface ILanguageProcessor {
          * @throws IllegalArgumentException if the descriptor has errors
          */
         IExpression compile();
+
+        /**
+         * 
+         * @return
+         */
+		Collection<String> getIdentifiersInScalarScope();
+
+		/**
+		 * 
+		 * @return
+		 */
+		Collection<String> getIdentifiersInNonscalarScope();
     }
 
     /**

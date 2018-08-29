@@ -2,7 +2,9 @@ package org.integratedmodelling.klab;
 
 import java.text.NumberFormat;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.integratedmodelling.klab.api.data.Aggregation;
@@ -56,6 +58,8 @@ public enum Observations implements IObservationService {
 
 	INSTANCE;
 
+	Map<ILocator, Map<String, StateSummary>> summaryCache = new HashMap<>();
+	
 	@Override
 	public IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios) throws KlabException {
 		return Resolver.INSTANCE.resolve(urn, session, scenarios);
@@ -86,7 +90,8 @@ public enum Observations implements IObservationService {
 	/**
 	 * Return the summary for the data in a state, computing it if necessary.
 	 * 
-	 * TODO CACHE! This is expensive and can be called multiple times.
+	 * FIXME caching strategy currently just fills up forever - must lose caches as
+	 *       transitions advance.
 	 * 
 	 * @param state
 	 *            a state
@@ -96,7 +101,19 @@ public enum Observations implements IObservationService {
 	 * @return the state summary
 	 */
 	public StateSummary getStateSummary(IState state, ILocator locator) {
-		StateSummary ret = computeStateSummary(state, locator);
+
+		StateSummary ret = null;
+		Map<String, StateSummary> cached = summaryCache.get(locator);
+		if (cached == null || !cached.containsKey(state.getId())) {
+			ret = computeStateSummary(state, locator);
+			if (cached == null) {
+				cached = new HashMap<>();
+				summaryCache.put(locator, cached);
+			}
+			cached.put(state.getId(), ret);
+		} else {
+			ret = cached.get(state.getId());
+		}
 		return ret;
 	}
 

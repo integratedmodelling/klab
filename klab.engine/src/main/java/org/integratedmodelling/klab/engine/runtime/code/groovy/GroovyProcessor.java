@@ -78,18 +78,44 @@ public enum GroovyProcessor implements ILanguageProcessor {
         }
 
         @Override
+        public Collection<String> getIdentifiersInScalarScope() {
+        	return this.scalarIds;
+        }
+
+        @Override
+        public Collection<String> getIdentifiersInNonscalarScope() {
+        	return this.objectIds;
+        }
+
+        @Override
         public IExpression compile() {
             String ret = "";
             for (TokenDescriptor token : tokens) {
                 ret += token.translate(context);
             }
-            return new GroovyExpression(ret, true);
+            return new GroovyExpression(ret, true, this);
         }
 
         @Override
         public boolean isScalar(String identifier) {
             return scalarIds.contains(identifier);
         }
+
+		@Override
+		public boolean isNonscalar(String identifier) {
+			return objectIds.contains(identifier);
+		}
+
+		@Override
+		public boolean isNonscalar(Collection<String> stateIdentifiers) {
+            for (String id : stateIdentifiers) {
+                if (this.objectIds.contains(id)) {
+                    return true;
+                }
+            }
+            return false;
+
+		}
     }
 
     @Override

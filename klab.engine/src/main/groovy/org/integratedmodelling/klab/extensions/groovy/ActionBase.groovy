@@ -1,8 +1,7 @@
 package org.integratedmodelling.klab.extensions.groovy
 
 import org.apache.commons.math3.special.Erf
-import org.codehaus.groovy.runtime.NullObject
-import org.integratedmodelling.klab.utils.NumberUtils
+import org.integratedmodelling.klab.api.knowledge.IConcept
 import org.integratedmodelling.klab.api.observations.IDirectObservation
 import org.integratedmodelling.klab.api.observations.IEvent
 import org.integratedmodelling.klab.api.observations.IObservation
@@ -10,11 +9,15 @@ import org.integratedmodelling.klab.api.observations.IProcess
 import org.integratedmodelling.klab.api.observations.IRelationship
 import org.integratedmodelling.klab.api.observations.IState
 import org.integratedmodelling.klab.api.observations.ISubject
+import org.integratedmodelling.klab.api.provenance.IArtifact
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor
-import org.integratedmodelling.klab.common.mediation.Unit
 import org.integratedmodelling.klab.exceptions.KlabException
+import org.integratedmodelling.klab.extensions.groovy.model.Concept
+import org.integratedmodelling.klab.extensions.groovy.model.DirectObservation
+import org.integratedmodelling.klab.extensions.groovy.model.Relationship
+import org.integratedmodelling.klab.extensions.groovy.model.State
+import org.integratedmodelling.klab.utils.NumberUtils
 import org.integratedmodelling.klab.utils.Pair
-import org.jscience.physics.amount.Amount
 
 /**
  * The base class for any k.LAB action or script.
@@ -88,22 +91,24 @@ abstract class ActionBase extends Script {
         // do this or we get a concurrent modification exception
         Map<?,?> vars = new HashMap<Object,Object>(binding.getVariables());
         for (vname in vars.keySet()) {
-//            if (vname.equals("_context")) {
-//                binding.setVariable("context", wrapObject(binding.getVariable("_context"), true));
-//            } else if (vname.equals("_self")) {
-//                binding.setVariable("self", wrapObject(binding.getVariable("_self"), false));
-//            } else if (vname.equals("_transition") && binding.getVariable("_transition") != null) {
-//                binding.setVariable("now", new Transition(((ITransition)binding.getVariable('_transition'))));
-//            } else if (vname.equals("_p")) {
-//                Map<?,?> parms = binding.getVariable(vname);
-//                for (o in parms.keySet()) {
-//                    if (parms.get(o) instanceof IConcept) {
-//                        parms.put(o, new Concept(parms.get(o), binding));
-//                    }
-//                }
-//            } else if (vars.get(vname) instanceof IConcept) {
-//                binding.setVariable(vname, new Concept(vars.get(vname), binding));
-//            }
+            if (vname.equals("_context")) {
+                binding.setVariable("context", wrapObject(binding.getVariable("_context"), true));
+            } else if (vname.equals("_self")) {
+                binding.setVariable("self", wrapObject(binding.getVariable("_self"), false));
+            } /*else if (vname.equals("_transition") && binding.getVariable("_transition") != null) {
+                binding.setVariable("now", new Transition(((ITransition)binding.getVariable('_transition'))));
+            } */else if (vname.equals("_p")) {
+                Map<?,?> parms = binding.getVariable(vname);
+                for (o in parms.keySet()) {
+                    if (parms.get(o) instanceof IConcept) {
+                        parms.put(o, new Concept(parms.get(o), binding));
+                    } else if (parms.get(o) instanceof IObservation) {
+						parms.put(o, wrapObject(parms.get(o), false));
+					}
+                }
+            } else if (vars.get(vname) instanceof IConcept) {
+                binding.setVariable(vname, new Concept(vars.get(vname), binding));
+            }
         }
     }
 
@@ -185,11 +190,11 @@ abstract class ActionBase extends Script {
         def ret = null;
 
         if (observation instanceof IRelationship) {
-//            ret = new Relationship(observation, binding);
+            ret = new Relationship(observation, binding);
         } else if (observation instanceof IDirectObservation) {
-//            ret = new DirectObservation(observation, binding);
+            ret = new DirectObservation(observation, binding);
         } else if (observation instanceof IState) {
-//            ret = new State(observation, binding);
+            ret = new State(observation, binding);
         }
 
         if (!isContext) {
@@ -253,6 +258,15 @@ abstract class ActionBase extends Script {
         throw new KlabException(text);
     }
 
+	static def getArtifact(Binding binding) {
+		Object o = binding.getVariable("_provenance");
+		if (o instanceof IArtifact) {
+			return o;
+		}
+		// TODO return empty provenance - if that is at all possible - so that users can do stuff anyway.
+		return null;
+	}
+	
     /*
      * window into the knowledge manager
      * TODO use a wrapper that caches is() operations - also when

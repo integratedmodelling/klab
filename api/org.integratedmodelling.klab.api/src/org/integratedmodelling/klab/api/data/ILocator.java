@@ -1,7 +1,5 @@
 package org.integratedmodelling.klab.api.data;
 
-import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
-
 /**
  * Any geometry or subset of it can be used as a locator. Scales and extents are also locators and
  * can produce their component locators as appropriate. They can also "relocate" by producing lazy
