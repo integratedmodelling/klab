@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -86,7 +87,7 @@ public class Coverage extends Scale implements ICoverage {
 	public static Coverage empty(IScale original) {
 		return new Coverage((Scale) original, 0.0);
 	}
-	
+
 	/**
 	 * Use this when we need the IScale semantics on our same extents.
 	 * 
@@ -163,6 +164,13 @@ public class Coverage extends Scale implements ICoverage {
 
 		if (!(other instanceof Scale)) {
 			throw new IllegalArgumentException("a coverage can only merge another scale");
+		}
+
+		// no need for suffering if either is 0 and we're intersecting
+		if (how == LogicalConnector.INTERSECTION
+				&& ((other instanceof Coverage && NumberUtils.equal(((Coverage) other).getCoverage(), 0))
+						|| NumberUtils.equal(this.getCoverage(), 0))) {
+			return empty(this.asScale());
 		}
 
 		Scale coverage = (Scale) other;

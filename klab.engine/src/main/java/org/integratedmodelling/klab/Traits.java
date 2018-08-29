@@ -36,6 +36,18 @@ public enum Traits implements ITraitService {
                 .getRestrictedClasses((IConcept) concept, Concepts.p(NS.HAS_ATTRIBUTE_PROPERTY)));
         return ret;
     }
+    
+    @Override
+    public Collection<IConcept> getDirectTraits(IConcept concept) {
+        Set<IConcept> ret = new HashSet<>();
+        ret.addAll(OWL.INSTANCE.getDirectRestrictedClasses((IConcept) concept, Concepts.p(NS.HAS_REALM_PROPERTY)));
+        ret.addAll(OWL.INSTANCE
+                .getDirectRestrictedClasses((IConcept) concept, Concepts.p(NS.HAS_IDENTITY_PROPERTY)));
+        ret.addAll(OWL.INSTANCE
+                .getDirectRestrictedClasses((IConcept) concept, Concepts.p(NS.HAS_ATTRIBUTE_PROPERTY)));
+        return ret;
+    }
+
 
     @Override
     public Collection<IConcept> getIdentities(IConcept concept) {
@@ -180,59 +192,59 @@ public enum Traits implements ITraitService {
         }
     }
 
-    /**
-     * Find traits (optionally of a specified type) at the first level of specification in the passed concept and
-     * return the concept without those traits, plus the list of all traits found.
-     * <p>
-     * TODO Removal happens lexically by string substitution for now, no time for pattern matching on the
-     * kimConcept structure as it should be.
-     * 
-     * @param original
-     * @param traitType
-     * @return
-     */
-    public Pair<IObservable, List<IConcept>> removeTraits(IObservable original, @Nullable IConcept traitType) {
-
-        List<IConcept> traits = new ArrayList<>();
-        IObservable concept = original;
-
-        for (IConcept trait : getTraits(original)) {
-            if (traitType == null || trait.is(traitType)) {
-                traits.add(trait);
-            }
-        }
-
-        if (traits.size() > 0) {
-
-            String definition = original.getDefinition().trim();
-            if (definition.startsWith("(")) {
-                definition = definition.substring(1, definition.length() - 1);
-            }
-            String first = definition;
-            String last = "";
-            String middle = "";
-            int firstp = definition.indexOf('(');
-            int lastp = definition.lastIndexOf(')');
-            if (firstp >= 0) {
-                first = definition.substring(0, firstp);
-            }
-            if (lastp > 0) {
-                last = definition.substring(lastp + 1);
-            }
-            if (firstp >= 0 && lastp > 0) {
-                middle = definition.substring(firstp, lastp+1);
-            }
-
-            for (IConcept trait : traits) {
-                first = first.replace(trait.toString(), "");
-                last = last.replace(trait.toString(), "");
-            }
-
-            definition = first + middle + last;
-            concept = Observables.INSTANCE.declare(definition);
-        }
-
-        return new Pair<>(concept, traits);
-    }
+//    /**
+//     * Find traits (optionally of a specified type) at the first level of specification in the passed concept and
+//     * return the concept without those traits, plus the list of all traits found.
+//     * <p>
+//     * TODO Removal happens lexically by string substitution for now, no time for pattern matching on the
+//     * kimConcept structure as it should be.
+//     * 
+//     * @param original
+//     * @param traitType
+//     * @return
+//     */
+//    public Pair<IObservable, List<IConcept>> removeTraits(IObservable original, @Nullable IConcept traitType) {
+//
+//        List<IConcept> traits = new ArrayList<>();
+//        IObservable concept = original;
+//
+//        for (IConcept trait : getTraits(original)) {
+//            if (traitType == null || trait.is(traitType)) {
+//                traits.add(trait);
+//            }
+//        }
+//
+//        if (traits.size() > 0) {
+//
+//            String definition = original.getDefinition().trim();
+//            if (definition.startsWith("(")) {
+//                definition = definition.substring(1, definition.length() - 1);
+//            }
+//            String first = definition;
+//            String last = "";
+//            String middle = "";
+//            int firstp = definition.indexOf('(');
+//            int lastp = definition.lastIndexOf(')');
+//            if (firstp >= 0) {
+//                first = definition.substring(0, firstp);
+//            }
+//            if (lastp > 0) {
+//                last = definition.substring(lastp + 1);
+//            }
+//            if (firstp >= 0 && lastp > 0) {
+//                middle = definition.substring(firstp, lastp+1);
+//            }
+//
+//            for (IConcept trait : traits) {
+//                first = first.replace(trait.toString(), "");
+//                last = last.replace(trait.toString(), "");
+//            }
+//
+//            definition = first + middle + last;
+//            concept = Observables.INSTANCE.declare(definition);
+//        }
+//
+//        return new Pair<>(concept, traits);
+//    }
 
 }

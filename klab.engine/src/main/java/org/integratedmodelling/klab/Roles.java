@@ -24,6 +24,11 @@ public enum Roles implements IRoleService {
 	}
 
 	@Override
+	public Collection<IConcept> getDirectRoles(IConcept concept) {
+		return OWL.INSTANCE.getDirectRestrictedClasses(concept, Concepts.p(NS.HAS_ROLE_PROPERTY));
+	}
+	
+	@Override
 	public boolean hasRole(IConcept type, IConcept role) {
 		for (IConcept c : getRoles(type)) {
 			if (c.is(role)) {

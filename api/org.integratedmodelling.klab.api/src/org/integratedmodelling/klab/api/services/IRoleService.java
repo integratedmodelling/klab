@@ -54,4 +54,12 @@ public interface IRoleService {
      */
     boolean hasParentRole(IConcept type, IConcept role);
 
+    /**
+     * Like {@link #getRoles(IConcept)} but only returns directly attributed roles.
+     * 
+     * @param concept
+     * @return
+     */
+	Collection<IConcept> getDirectRoles(IConcept concept);
+
 }

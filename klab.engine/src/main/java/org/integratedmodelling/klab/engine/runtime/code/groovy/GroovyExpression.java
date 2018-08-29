@@ -240,7 +240,7 @@ public class GroovyExpression extends Expression {
 			} catch (MissingPropertyException e) {
 				String property = e.getProperty();
 				context.getMonitor().warn("variable " + property
-						+ " undefined: check naming. Defining as no-data for future evaluations.");
+						+ " undefined. Defining as numeric no-data (NaN) for subsequent evaluations.");
 				defineIfAbsent.add(property);
 			} catch (Throwable t) {
 				throw new KlabException(t);
@@ -260,7 +260,7 @@ public class GroovyExpression extends Expression {
 		}
 		for (String v : defineIfAbsent) {
 			if (!binding.hasVariable(v)) {
-				binding.setVariable(v, null);
+				binding.setVariable(v, Double.NaN);
 			}
 		}
 

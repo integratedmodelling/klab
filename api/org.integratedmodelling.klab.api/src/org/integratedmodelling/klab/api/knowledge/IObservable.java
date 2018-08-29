@@ -15,196 +15,440 @@
  */
 package org.integratedmodelling.klab.api.knowledge;
 
+import java.util.Collection;
+
+import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Range;
 
 /**
- * An observable is a declared concept with additional observation semantics, including classifying
- * concepts for discretizations, units, currencies or ranges. The declaration of non-quality
- * concepts will always be the same as their type.
+ * An observable is a declared concept with additional observation semantics,
+ * including classifying concepts for discretizations, units, currencies or
+ * ranges. The declaration of non-quality concepts will always be the same as
+ * their type.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
 public interface IObservable extends IConcept, IResolvable {
 
-  /**
-   * A classification of the observation activity that can produce an observation of this
-   * observable.
-   * 
-   * @author ferdinando.villa
-   *
-   */
-  public enum ObservationType {
-    /**
-     * The observation that produces a countable object
-     */
-    INSTANTIATION,
-    /**
-     * The observation that produces a configuration
-     */
-    DETECTION,
-    /**
-     * The observation that produces a dynamic account
-     */
-    SIMULATION,
-    /**
-     * The observation that produces a numeric quality
-     */
-    QUANTIFICATION,
-    /**
-     * The observation that produces a categorical quality
-     */
-    CLASSIFICATION,
-    /**
-     * The observation that produces a boolean quality (presence/absence)
-     */
-    VERIFICATION
-  }
+	/**
+	 * A classification of the observation activity that can produce an observation
+	 * of this observable.
+	 * 
+	 * @author ferdinando.villa
+	 *
+	 */
+	public enum ObservationType {
+		/**
+		 * The observation that produces a countable object
+		 */
+		INSTANTIATION,
+		/**
+		 * The observation that produces a configuration
+		 */
+		DETECTION,
+		/**
+		 * The observation that produces a dynamic account
+		 */
+		SIMULATION,
+		/**
+		 * The observation that produces a numeric quality
+		 */
+		QUANTIFICATION,
+		/**
+		 * The observation that produces a categorical quality
+		 */
+		CLASSIFICATION,
+		/**
+		 * The observation that produces a boolean quality (presence/absence)
+		 */
+		VERIFICATION
+	}
 
-  /**
-   * Each observable must be able to quickly assess the type of the observation that will produce an
-   * IObservation of it. This is also used to instantiate the storage for states.
-   *
-   * @return the necessary observation type
-   */
-  ObservationType getObservationType();
-  
-  /**
-   * Return the type of the artifact correspondent to an observation of this observable.
-   * 
-   * @return the artifact type.
-   */
-  IArtifact.Type getArtifactType();
+	/**
+	 * The observable builder provides a uniform interface to create and declare
+	 * concepts that incarnate all the possible features for an observable. The
+	 * builder is smart and fast when concepts that already exist due to previous
+	 * declarations are requested.
+	 * 
+	 * @author ferdinando.villa
+	 *
+	 */
+	interface Builder {
 
-  /**
-   * Observables always have a name, which is unique in the context of a model where they are used,
-   * and can be used within a model to refer to the observation made of it. The name can be
-   * explicitly set using the 'named' k.IM clause, and is always a simple lowercase identifier.
-   *
-   * @return the formal name of this observable
-   */
-  String getLocalName();
+		/**
+		 * Add an inherent type to the concept built so far.
+		 * 
+		 * @param inherent
+		 * @return the same builder this was called on, for chaining calls
+		 */
+		Builder of(IConcept inherent);
 
-  /**
-   * Return the untransformed concept, which will be identical to the type returned by
-   * {@link #getType()} unless a "by" (and possibly a "down to") predicate was specified.
-   *
-   * @return the declared concept before any reclassification
-   */
-  IConcept getMain();
+		/**
+		 * 
+		 * @param compresent
+		 * @return the same builder this was called on, for chaining calls
+		 */
+		Builder with(IConcept compresent);
 
-  /**
-   * <p>getDownTo.</p>
-   *
-   * @return the normalized 'down to' limiter concept if any was specified.
-   */
-  IConcept getDownTo();
+		/**
+		 * 
+		 * @param context
+		 * @return the same builder this was called on, for chaining calls
+		 */
+		Builder within(IConcept context);
 
-  /**
-   * <p>getBy.</p>
-   *
-   * @return the 'by' classifier concept, if any was specified.
-   */
-  IConcept getBy();
+		/**
+		 * 
+		 * @param goal
+		 * @return the same builder this was called on, for chaining calls
+		 */
+		Builder withGoal(IConcept goal);
 
-  /**
-   * <p>getRange.</p>
-   *
-   * @return the numeric range, if any was specified.
-   */
-  Range getRange();
+		/**
+		 * 
+		 * @param causant
+		 * @return the same builder this was called on, for chaining calls
+		 */
+		Builder from(IConcept causant);
 
-  /**
-   * <p>getUnit.</p>
-   *
-   * @return the unit, if any was specified.
-   */
-  IUnit getUnit();
+		/**
+		 * 
+		 * @param caused
+		 * @return the same builder this was called on, for chaining calls
+		 */
+		Builder to(IConcept caused);
 
-  /**
-   * <p>getCurrency.</p>
-   *
-   * @return the currency, if any was specified.
-   */
-  ICurrency getCurrency();
-  
-  /**
-   * The context type.
-   * @return the context type
-   */
-  IConcept getContext();
-  
-  /**
-   * The inherent type.
-   * @return the inherent type
-   */
-  IConcept getInherentType();
+		/**
+		 * 
+		 * @param role
+		 * @return the same builder this was called on, for chaining calls
+		 */
+		Builder as(IConcept role);
 
-  /**
-   * The caused ('causing') type.
-   * @return the caused type
-   */
-  IConcept getCaused();
-  
-  /**
-   * The causant ('caused by') type
-   * @return the caused type
-   */
-  IConcept getCausant();
+		/**
+		 * Contextualize the concept built so far to the passed context one. Will choose
+		 * the semantics appropriately for the specific context and observables
+		 * requested - e.g. a quality contextual to a region will restrict the context,
+		 * a quality inherent to an agent in a region will use inherency etc.
+		 * 
+		 * @param context
+		 * @return the same builder this was called on, for chaining calls
+		 */
+		Builder contextualizedTo(IConcept context);
 
-  /**
-   * The compresent ('with') type
-   * @return the compresent type
-   */
-  IConcept getCompresent();
+		/**
+		 * Transform the original concept into its equivalent filtered by the passed
+		 * semantic operator. For example, transform an original event into its
+		 * probability by passing SemanticOperator.PROBABILITY. If the operator implies
+		 * additional operands (for example a ratio) these should be passed after the
+		 * semantic type.
+		 * 
+		 * This one transforms the concept in the builder right away, leaving nothing to
+		 * do for build() but return the transformed concept, unless more build actions
+		 * are called after it.
+		 * 
+		 * If the original concept cannot be transformed into the specified one, build()
+		 * will return an informative exception, but no error will be reported when the
+		 * method is called. The getErrors() call will report the exceptions accumulated
+		 * if necessary.
+		 * 
+		 * @param type
+		 * @param participants
+		 * @return the same builder this was called on, for chaining calls
+		 * @throws KlabValidationException
+		 */
+		Builder as(UnarySemanticOperator type, IConcept... participants) throws KlabValidationException;
 
-  /**
-   * The purpose ('for') type
-   * @return the purpose type
-   */
-  IConcept getPurpose();
-  
-  
-  /**
-   * If the observable was defined with an inline value (e.g. '10 as Concept'), report the POD value
-   * here.
-   *
-   * @return the inline value (a POD; a distribution, {@link org.integratedmodelling.klab.utils.Range} or {@link java.util.List} are also
-   *         possible, but so far there are no situations in which this happens.)
-   */
-  Object getValue();
+		/**
+		 * Add traits to the concept being built.
+		 * 
+		 * Pair with (@link {@link #withTrait(Collection)} as Java is
+		 * WriteEverythingTwice, not DontRepeatYourself.
+		 *
+		 * @param concepts
+		 * @return the same builder this was called on, for chaining calls
+		 */
+		Builder withTrait(IConcept... concepts);
 
-  /**
-   * If true, observer produces an extensive value over the passed extent, one that varies with the
-   * extents of computation. A true return value will cause different aggregation than the default
-   * averaging when mediating to different scales.
-   *
-   * @param c the extent concept selecting a particular extent
-   * @return true if the value of the quality this represents is extensive in the extent concept
-   *         passed
-   */
-  boolean isExtensive(IConcept c);
+		/**
+		 * Add traits to the concept being built.
+		 * 
+		 * Pair with (@link {@link #withTrait(IConcept...)} as Java is
+		 * WriteEverythingTwice, not DontRepeatYourself.
+		 * 
+		 * @param concepts
+		 * @return the same builder this was called on, for chaining calls
+		 */
+		Builder withTrait(Collection<IConcept> concepts);
 
-  /**
-   * A generic observable expects to be resolved extensively - i.e., all the subtypes, leaving the
-   * base type last if the subtypes don't provide full coverage. This subsumes the abstract nature
-   * of the observable concept, but may also be true in dependency observables, which may explicitly
-   * ask to be generic even if not abstract ('any' modifier).
-   *
-   * @return true if generic
-   */
-  boolean isGeneric();
-  
-  /**
-   * True if the observable was declared optional. This can only happen in model dependencies and
-   * for the observables of acknowledged subjects.
-   *
-   * @return optional status
-   */
-  boolean isOptional();
+		/**
+		 * Remove traits or roles from the concept being built. Do nothing if the
+		 * concept so far does not have those traits or roles.
+		 * 
+		 * Pair with (@link {@link #without(IConcept...)} as Java is
+		 * WriteEverythingTwice, not DontRepeatYourself.
+		 * 
+		 * @param concepts
+		 * @return the same builder this was called on, for chaining calls
+		 */
+		Builder without(Collection<IConcept> concepts);
+
+		/**
+		 * Remove traits or roles from the concept being built. Do nothing if the
+		 * concept so far does not have those traits or roles.
+		 * 
+		 * Pair with (@link {@link #without(Collection)} as Java is
+		 * WriteEverythingTwice, not DontRepeatYourself.
+		 *
+		 * @param concepts
+		 * @return the same builder this was called on, for chaining calls
+		 */
+		Builder without(IConcept... concepts);
+
+		/**
+		 * Build the concept (if necessary) as specified in the configured ontology. If
+		 * the concept as specified already exists, just return it.
+		 * 
+		 * @return the built concept
+		 * @throws KlabValidationException
+		 */
+		IConcept build() throws KlabValidationException;
+
+		/**
+		 * Return any exceptions accumulated through the building process before build()
+		 * is called. If build() is called when getErrors() returns a non-empty
+		 * collection, it will throw an exception collecting the messages from all
+		 * exception in the list.
+		 * 
+		 * @return any errors accumulated
+		 */
+		Collection<KlabValidationException> getErrors();
+
+		/**
+		 * Negate the concept (make it into its negation). Acts immediately on the
+		 * concept in the builder.
+		 * 
+		 * @return the same builder this was called on, for chaining calls
+		 */
+		Builder negated();
+
+		/**
+		 * Make the observable optional (used in dependencies)
+		 * 
+		 * @return the same builder this was called on, for chaining calls
+		 */
+		Builder optional();
+
+		/**
+		 * Use this to pass a declaration being parsed and set up a monitor so that
+		 * logically inconsistent declarations can be reported.
+		 * 
+		 * @param declaration
+		 *            (may be null)
+		 * @param monitor
+		 * @return the same builder this was called on, for chaining calls
+		 */
+		Builder withDeclaration(IKimConcept declaration, IMonitor monitor);
+
+		Builder withCooccurrent(IConcept cooccurrent);
+
+		Builder withAdjacent(IConcept adjacent);
+
+		Builder withoutAny(Collection<IConcept> concepts);
+
+		Builder withoutAny(IConcept... concepts);
+
+		/**
+		 * After any of the "without" functions get called, this can be checked on the
+		 * resulting builder to see what exactly was removed.
+		 * 
+		 * @return
+		 */
+		Collection<IConcept> getRemoved();
+		
+	}
+	
+	/**
+	 * Get a builder that will rebuild this observable. Use to build alternative
+	 * observables with added or removed components.
+	 * 
+	 * @return
+	 */
+	Builder getBuilder();
+	
+
+	/**
+	 * Each observable must be able to quickly assess the type of the observation
+	 * that will produce an IObservation of it. This is also used to instantiate the
+	 * storage for states.
+	 *
+	 * @return the necessary observation type
+	 */
+	ObservationType getObservationType();
+
+	/**
+	 * Return the type of the artifact correspondent to an observation of this
+	 * observable.
+	 * 
+	 * @return the artifact type.
+	 */
+	IArtifact.Type getArtifactType();
+
+	/**
+	 * Observables always have a name, which is unique in the context of a model
+	 * where they are used, and can be used within a model to refer to the
+	 * observation made of it. The name can be explicitly set using the 'named' k.IM
+	 * clause, and is always a simple lowercase identifier.
+	 *
+	 * @return the formal name of this observable
+	 */
+	String getLocalName();
+
+	/**
+	 * Return the untransformed concept, which will be identical to the type
+	 * returned by {@link #getType()} unless a "by" (and possibly a "down to")
+	 * predicate was specified.
+	 *
+	 * @return the declared concept before any reclassification
+	 */
+	IConcept getMain();
+
+	/**
+	 * <p>
+	 * getDownTo.
+	 * </p>
+	 *
+	 * @return the normalized 'down to' limiter concept if any was specified.
+	 */
+	IConcept getDownTo();
+
+	/**
+	 * <p>
+	 * getBy.
+	 * </p>
+	 *
+	 * @return the 'by' classifier concept, if any was specified.
+	 */
+	IConcept getBy();
+
+	/**
+	 * <p>
+	 * getRange.
+	 * </p>
+	 *
+	 * @return the numeric range, if any was specified.
+	 */
+	Range getRange();
+
+	/**
+	 * <p>
+	 * getUnit.
+	 * </p>
+	 *
+	 * @return the unit, if any was specified.
+	 */
+	IUnit getUnit();
+
+	/**
+	 * <p>
+	 * getCurrency.
+	 * </p>
+	 *
+	 * @return the currency, if any was specified.
+	 */
+	ICurrency getCurrency();
+
+	/**
+	 * The context type.
+	 * 
+	 * @return the context type
+	 */
+	IConcept getContext();
+
+	/**
+	 * The inherent type.
+	 * 
+	 * @return the inherent type
+	 */
+	IConcept getInherentType();
+
+	/**
+	 * The caused ('causing') type.
+	 * 
+	 * @return the caused type
+	 */
+	IConcept getCaused();
+
+	/**
+	 * The causant ('caused by') type
+	 * 
+	 * @return the caused type
+	 */
+	IConcept getCausant();
+
+	/**
+	 * The compresent ('with') type
+	 * 
+	 * @return the compresent type
+	 */
+	IConcept getCompresent();
+
+	/**
+	 * The purpose ('for') type
+	 * 
+	 * @return the purpose type
+	 */
+	IConcept getPurpose();
+
+	/**
+	 * If the observable was defined with an inline value (e.g. '10 as Concept'),
+	 * report the POD value here.
+	 *
+	 * @return the inline value (a POD; a distribution,
+	 *         {@link org.integratedmodelling.klab.utils.Range} or
+	 *         {@link java.util.List} are also possible, but so far there are no
+	 *         situations in which this happens.)
+	 */
+	Object getValue();
+
+	/**
+	 * If true, observer produces an extensive value over the passed extent, one
+	 * that varies with the extents of computation. A true return value will cause
+	 * different aggregation than the default averaging when mediating to different
+	 * scales.
+	 *
+	 * @param c
+	 *            the extent concept selecting a particular extent
+	 * @return true if the value of the quality this represents is extensive in the
+	 *         extent concept passed
+	 */
+	boolean isExtensive(IConcept c);
+
+	/**
+	 * A generic observable expects to be resolved extensively - i.e., all the
+	 * subtypes, leaving the base type last if the subtypes don't provide full
+	 * coverage. This subsumes the abstract nature of the observable concept, but
+	 * may also be true in dependency observables, which may explicitly ask to be
+	 * generic even if not abstract ('any' modifier).
+	 *
+	 * @return true if generic
+	 */
+	boolean isGeneric();
+
+	/**
+	 * True if the observable was declared optional. This can only happen in model
+	 * dependencies and for the observables of acknowledged subjects.
+	 *
+	 * @return optional status
+	 */
+	boolean isOptional();
 
 }

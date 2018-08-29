@@ -195,197 +195,7 @@ public interface IObservableService {
 	 */
 	IConcept getCoreObservable(IConcept c);
 
-	/**
-	 * The observable builder provides a uniform interface to create and declare
-	 * concepts that incarnate all the possible features for an observable. The
-	 * builder is smart and fast when concepts that already exist due to previous
-	 * declarations are requested.
-	 * 
-	 * @author ferdinando.villa
-	 *
-	 */
-	interface Builder {
-
-		/**
-		 * Add an inherent type to the concept built so far.
-		 * 
-		 * @param inherent
-		 * @return the same builder this was called on, for chaining calls
-		 */
-		Builder of(IConcept inherent);
-
-		/**
-		 * 
-		 * @param compresent
-		 * @return the same builder this was called on, for chaining calls
-		 */
-		Builder with(IConcept compresent);
-
-		/**
-		 * 
-		 * @param context
-		 * @return the same builder this was called on, for chaining calls
-		 */
-		Builder within(IConcept context);
-
-		/**
-		 * 
-		 * @param goal
-		 * @return the same builder this was called on, for chaining calls
-		 */
-		Builder withGoal(IConcept goal);
-
-		/**
-		 * 
-		 * @param causant
-		 * @return the same builder this was called on, for chaining calls
-		 */
-		Builder from(IConcept causant);
-
-		/**
-		 * 
-		 * @param caused
-		 * @return the same builder this was called on, for chaining calls
-		 */
-		Builder to(IConcept caused);
-
-		/**
-		 * 
-		 * @param role
-		 * @return the same builder this was called on, for chaining calls
-		 */
-		Builder as(IConcept role);
-		
-		/**
-		 * Contextualize the concept built so far to the passed context one. Will choose
-		 * the semantics appropriately for the specific context and observables
-		 * requested - e.g. a quality contextual to a region will restrict the context,
-		 * a quality inherent to an agent in a region will use inherency etc.
-		 * 
-		 * @param context
-		 * @return the same builder this was called on, for chaining calls
-		 */
-		Builder contextualizedTo(IConcept context);
-
-		/**
-		 * Transform the original concept into its equivalent filtered by the passed
-		 * semantic operator. For example, transform an original event into its
-		 * probability by passing SemanticOperator.PROBABILITY. If the operator implies
-		 * additional operands (for example a ratio) these should be passed after the
-		 * semantic type.
-		 * 
-		 * This one transforms the concept in the builder right away, leaving nothing to
-		 * do for build() but return the transformed concept, unless more build actions
-		 * are called after it.
-		 * 
-		 * If the original concept cannot be transformed into the specified one, build()
-		 * will return an informative exception, but no error will be reported when the
-		 * method is called. The getErrors() call will report the exceptions accumulated
-		 * if necessary.
-		 * 
-		 * @param type
-		 * @param participants
-		 * @return the same builder this was called on, for chaining calls
-		 * @throws KlabValidationException
-		 */
-		Builder as(UnarySemanticOperator type, IConcept... participants) throws KlabValidationException;
-
-		/**
-		 * Add traits to the concept being built.
-		 * 
-		 * Pair with (@link {@link #withTrait(Collection)} as Java is
-		 * WriteEverythingTwice, not DontRepeatYourself.
-		 *
-		 * @param concepts
-		 * @return the same builder this was called on, for chaining calls
-		 */
-		Builder withTrait(IConcept... concepts);
-
-		/**
-		 * Add traits to the concept being built.
-		 * 
-		 * Pair with (@link {@link #withTrait(IConcept...)} as Java is
-		 * WriteEverythingTwice, not DontRepeatYourself.
-		 * 
-		 * @param concepts
-		 * @return the same builder this was called on, for chaining calls
-		 */
-		Builder withTrait(Collection<IConcept> concepts);
-
-		/**
-		 * Remove traits or roles from the concept being built. Do nothing if the
-		 * concept so far does not have those traits or roles.
-		 * 
-		 * Pair with (@link {@link #without(IConcept...)} as Java is
-		 * WriteEverythingTwice, not DontRepeatYourself.
-		 * 
-		 * @param concepts
-		 * @return the same builder this was called on, for chaining calls
-		 */
-		Builder without(Collection<IConcept> concepts);
-
-		/**
-		 * Remove traits or roles from the concept being built. Do nothing if the
-		 * concept so far does not have those traits or roles.
-		 * 
-		 * Pair with (@link {@link #without(Collection)} as Java is
-		 * WriteEverythingTwice, not DontRepeatYourself.
-		 *
-		 * @param concepts
-		 * @return the same builder this was called on, for chaining calls
-		 */
-		Builder without(IConcept... concepts);
-
-		/**
-		 * Build the concept (if necessary) as specified in the configured ontology. If
-		 * the concept as specified already exists, just return it.
-		 * 
-		 * @return the built concept
-		 * @throws KlabValidationException
-		 */
-		IConcept build() throws KlabValidationException;
-
-		/**
-		 * Return any exceptions accumulated through the building process before build()
-		 * is called. If build() is called when getErrors() returns a non-empty
-		 * collection, it will throw an exception collecting the messages from all
-		 * exception in the list.
-		 * 
-		 * @return any errors accumulated
-		 */
-		Collection<KlabValidationException> getErrors();
-
-		/**
-		 * Negate the concept (make it into its negation). Acts immediately on the
-		 * concept in the builder.
-		 * 
-		 * @return the same builder this was called on, for chaining calls
-		 */
-		Builder negated();
-
-		/**
-		 * Make the observable optional (used in dependencies)
-		 * 
-		 * @return the same builder this was called on, for chaining calls
-		 */
-		Builder optional();
-
-		/**
-		 * Use this to pass a declaration being parsed and set up a monitor so that
-		 * logically inconsistent declarations can be reported.
-		 * 
-		 * @param declaration
-		 *            (may be null)
-		 * @param monitor
-		 * @return the same builder this was called on, for chaining calls
-		 */
-		Builder withDeclaration(IKimConcept declaration, IMonitor monitor);
-
-		Builder withCooccurrent(IConcept cooccurrent);
-
-		Builder withAdjacent(IConcept adjacent);
-
-	}
+	
 
 	// /**
 	// * Get a builder for a declaration of named observable, which will allow
@@ -637,4 +447,20 @@ public interface IObservableService {
 	 * @return
 	 */
 	IConcept getCooccurrentType(IConcept concept);
+
+	IConcept getDirectInherentType(IConcept concept);
+
+	IConcept getDirectCompresentType(IConcept concept);
+
+	IConcept getDirectCausantType(IConcept concept);
+
+	IConcept getDirectCausedType(IConcept concept);
+
+	IConcept getDirectGoalType(IConcept concept);
+
+	IConcept getDirectAdjacentType(IConcept concept);
+
+	IConcept getDirectCooccurrentType(IConcept concept);
+
+	IConcept getDirectContextType(IConcept concept);
 }

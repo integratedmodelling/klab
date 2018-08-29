@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
+import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.api.services.IObservableService;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.runtime.code.Transformation;
@@ -80,6 +81,22 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 			this.observable = original;
 			this.mode = mode;
 			this.computation = computables;
+		}
+
+		/**
+		 * Inform all the computables that this model is the one that provides the
+		 * observable to transform, so that the IDs referenced for the observable can be
+		 * established.
+		 * 
+		 * @param model
+		 */
+		public void accept(IRankedModel model) {
+			// TODO this is ugly - revise
+			if (this.computation != null) {
+				for (IComputableResource computable : computation) {
+					Klab.INSTANCE.getRuntimeProvider().setComputationTargetId(computable, model.getObservables().get(0).getLocalName());
+				}
+			}
 		}
 
 	}
@@ -199,17 +216,18 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 		 * First strip any data reduction traits that we know how to handle and save
 		 * them.
 		 */
-		Pair<IObservable, List<IConcept>> untransformed = Traits.INSTANCE.removeTraits(observable,
-				Concepts.c(NS.CORE_OBSERVATION_TRANSFORMATION));
+		IObservable.Builder builder = observable.getBuilder()
+				.withoutAny(Concepts.c(NS.CORE_OBSERVATION_TRANSFORMATION));
 
-		if (untransformed.getSecond().size() > 0) {
+		if (builder.getRemoved().size() > 0) {
 			boolean ok = true;
-			// TODO Simple strategy assuming that transformations are not contextual. Should
-			// become
-			// smarter to include other attributes, and be called lazily (currently it's
-			// not).
+			/*
+			 * TODO Simple strategy assuming that transformations are not contextual. Should
+			 * become smarter to include other attributes, and be called lazily (currently
+			 * it's not).
+			 */
 			List<IModel> transformers = new ArrayList<>();
-			for (IConcept trait : untransformed.getSecond()) {
+			for (IConcept trait : builder.getRemoved()) {
 				IModel transformer = Models.INSTANCE.resolve(trait, this.scope);
 				if (transformer == null) {
 					ok = false;
@@ -220,22 +238,22 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 
 			if (ok) {
 				List<IComputableResource> transformations = new ArrayList<>();
+				Observable newobs = Observable.promote(builder.build());
 				for (IModel model : transformers) {
 					for (IComputableResource computation : model.getComputation(ITime.INITIALIZATION)) {
-						transformations.add(new Transformation(computation, untransformed.getFirst()));
+						transformations.add(new Transformation(computation, newobs));
 					}
 				}
-				Observable newobs = new Observable((Observable) untransformed.getFirst());
-				newobs.setName(observable.getLocalName());
+				// newobs.setName(observable.getLocalName());
 				ret.add(new CandidateObservable(newobs, Mode.RESOLUTION, transformations));
 			}
 
 		}
 
 		if (observable.is(Type.PRESENCE)) {
-			
+
 			IConcept inherent = Observables.INSTANCE.getInherentType(observable.getType());
-			
+
 			if (inherent != null && !scope.isBeingResolved(inherent, Mode.INSTANTIATION)) {
 				List<IComputableResource> dereificator = Klab.INSTANCE.getRuntimeProvider()
 						.getComputation(Observable.promote(inherent), Mode.RESOLUTION, observable);
@@ -243,12 +261,12 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 					ret.add(new CandidateObservable(Observable.promote(inherent), Mode.INSTANTIATION, dereificator));
 				}
 			}
-			
+
 		} else if (scope.getCoverage().getSpace() != null && scope.getCoverage().getSpace().getDimensionality() >= 2
 				&& observable.is(Type.DISTANCE) || observable.is(Type.NUMEROSITY)) {
 
 			IConcept inherent = Observables.INSTANCE.getInherentType(observable.getType());
-			
+
 			if (inherent != null && !scope.isBeingResolved(inherent, Mode.INSTANTIATION)) {
 				List<IComputableResource> dereificator = Klab.INSTANCE.getRuntimeProvider()
 						.getComputation(Observable.promote(inherent), Mode.RESOLUTION, observable);
@@ -256,7 +274,7 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 					ret.add(new CandidateObservable(Observable.promote(inherent), Mode.INSTANTIATION, dereificator));
 				}
 			}
-			
+
 		} else if (observable.is(Type.RATIO)) {
 			// TODO
 		}

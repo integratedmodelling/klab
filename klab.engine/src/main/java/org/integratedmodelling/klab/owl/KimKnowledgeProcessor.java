@@ -27,7 +27,7 @@ import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.api.services.IObservableService.Builder;
+import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;

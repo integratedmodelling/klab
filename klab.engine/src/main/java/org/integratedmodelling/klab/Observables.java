@@ -123,14 +123,54 @@ public enum Observables implements IObservableService {
 				Concepts.p(NS.IS_ADJACENT_TO_PROPERTY));
 		return cls.isEmpty() ? null : cls.iterator().next();
 	}
-	
+
 	@Override
 	public @Nullable IConcept getCooccurrentType(IConcept concept) {
 		Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
 				Concepts.p(NS.OCCURS_DURING_PROPERTY));
 		return cls.isEmpty() ? null : cls.iterator().next();
 	}
-	
+
+	@Override
+	public @Nullable IConcept getDirectInherentType(IConcept concept) {
+		return OWL.INSTANCE.getDirectRestrictedClass((IConcept) concept, Concepts.p(NS.IS_INHERENT_TO_PROPERTY));
+	}
+
+	@Override
+	public @Nullable IConcept getDirectCompresentType(IConcept concept) {
+		return OWL.INSTANCE.getDirectRestrictedClass((IConcept) concept, Concepts.p(NS.HAS_COMPRESENT_PROPERTY));
+	}
+
+	@Override
+	public @Nullable IConcept getDirectCausantType(IConcept concept) {
+		return OWL.INSTANCE.getDirectRestrictedClass((IConcept) concept, Concepts.p(NS.HAS_CAUSANT_PROPERTY));
+	}
+
+	@Override
+	public @Nullable IConcept getDirectCausedType(IConcept concept) {
+		return OWL.INSTANCE.getDirectRestrictedClass((IConcept) concept, Concepts.p(NS.HAS_CAUSED_PROPERTY));
+	}
+
+	@Override
+	public @Nullable IConcept getDirectGoalType(IConcept concept) {
+		return OWL.INSTANCE.getDirectRestrictedClass((IConcept) concept, Concepts.p(NS.HAS_PURPOSE_PROPERTY));
+	}
+
+	@Override
+	public @Nullable IConcept getDirectAdjacentType(IConcept concept) {
+		return OWL.INSTANCE.getDirectRestrictedClass((IConcept) concept, Concepts.p(NS.IS_ADJACENT_TO_PROPERTY));
+	}
+
+	@Override
+	public @Nullable IConcept getDirectCooccurrentType(IConcept concept) {
+		return OWL.INSTANCE.getDirectRestrictedClass((IConcept) concept, Concepts.p(NS.OCCURS_DURING_PROPERTY));
+	}
+
+	@Override
+	public @Nullable IConcept getDirectContextType(IConcept concept) {
+		return OWL.INSTANCE.getDirectRestrictedClass((IConcept) concept, Concepts.p(NS.HAS_CONTEXT_PROPERTY));
+	}
+
 	/**
 	 * Get the context ('within') for the passed quality or trait. If the passed
 	 * concept is an attribute, configuration, class or realm, the context is the
@@ -305,6 +345,21 @@ public enum Observables implements IObservableService {
 		return true;
 	}
 
+	/**
+	 * Get the first base observable without direct traits or roles
+	 * 
+	 * @param c
+	 * @return
+	 */
+	public IConcept getBaseObservable(IConcept c) {
+		Collection<IConcept> traits = Traits.INSTANCE.getDirectTraits(c);
+		Collection<IConcept> roles = Roles.INSTANCE.getDirectRoles(c);
+		if (traits.size() == 0 && roles.size() == 0) {
+			return c;
+		}
+		return getBaseObservable(c.getParent());
+	}
+	
 	@Override
 	public IConcept getCoreObservable(IConcept c) {
 		String def = c.getMetadata().get(NS.CORE_OBSERVABLE_PROPERTY, String.class);
@@ -391,7 +446,7 @@ public enum Observables implements IObservableService {
 		}
 		return type.iterator().next();
 	}
-	
+
 	@Override
 	public IConcept getRelationshipSource(IConcept relationship) {
 		Collection<IConcept> ret = getRelationshipSources(relationship);

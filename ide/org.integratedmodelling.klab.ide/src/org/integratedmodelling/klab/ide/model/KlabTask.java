@@ -22,7 +22,6 @@ public class KlabTask extends KlabPeer {
 
     @MessageHandler
     public void handleObservation(ObservationReference observation) {
-        System.out.println("INKIULONTASK");
-        Activator.session().recordObservation(observation);
+    	Activator.session().recordObservation(observation);
     }
 }

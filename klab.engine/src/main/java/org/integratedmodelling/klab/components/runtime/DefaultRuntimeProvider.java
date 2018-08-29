@@ -382,6 +382,13 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
         return null;
     }
+    
+    @Override
+    public void setComputationTargetId(IComputableResource resource, String targetId) {
+    	if (resource.getServiceCall() != null && resource.getServiceCall().getParameters().containsKey("artifact")) {
+    		resource.getServiceCall().getParameters().put("artifact", targetId);
+    	}
+    }
 
     @Override
     public IState createState(IObservable observable, IArtifact.Type type, IScale scale, IComputationContext context) {

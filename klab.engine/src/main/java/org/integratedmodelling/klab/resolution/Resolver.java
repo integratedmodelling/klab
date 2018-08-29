@@ -251,6 +251,12 @@ public enum Resolver {
 								ret.getChildScope(candidate.observable, candidate.mode))) {
 							ResolutionScope mscope = resolve((RankedModel) model, ret);
 							if (mscope.getCoverage().isRelevant() && ret.or(mscope)) {
+								/*
+								 * FIXME this is to reset the target ID in the computations after we have a 
+								 * model that produce the untransformed one. It sucks and requires specialized
+								 * logics in the runtime provider that shouldn't be needed.
+								 */
+								candidate.accept(model);
 								ret.link(mscope, candidate.computation);
 							}
 							if (ret.getCoverage().isComplete()) {
@@ -298,6 +304,7 @@ public enum Resolver {
 		for (CandidateObservable observable : reasoner.getObservables()) {
 			ret.and(resolve(observable.observable, ret, observable.mode));
 			if (ret.getCoverage().isEmpty()) {
+				parentScope.getMonitor().error("unsatisfied dependency for " + model.getId() + ": " + observable.observable);
 				break;
 			}
 		}

@@ -66,6 +66,7 @@ import org.semanticweb.owlapi.model.OWLOntologyAlreadyExistsException;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLProperty;
+import org.semanticweb.owlapi.model.OWLQuantifiedRestriction;
 import org.semanticweb.owlapi.util.AutoIRIMapper;
 
 /**
@@ -654,6 +655,55 @@ public enum OWL {
 			}
 		} else if (cls instanceof OWLClass) {
 			ret.add(getExistingOrCreate(cls.asOWLClass()));
+		}
+		return ret;
+	}
+
+	/**
+	 * Get the restricted classes only if the target concept of the restriction is
+	 * the one passed. This simply returns one class - TODO improve API.
+	 * 
+	 * @param target
+	 * @param restricted
+	 * @return
+	 */
+	public IConcept getDirectRestrictedClass(IConcept target, IProperty restricted) {
+		OWLClass owl = ((Concept) target)._owl;
+		synchronized (owl) {
+			for (OWLClassExpression s : owl.getSuperClasses(OWL.INSTANCE.manager.getOntologies())) {
+				if (s instanceof OWLQuantifiedRestriction) {
+					if (getPropertyFor((OWLProperty<?, ?>) ((OWLQuantifiedRestriction<?, ?, ?>) s).getProperty())
+							.is(restricted) && ((OWLQuantifiedRestriction<?, ?, ?>) s).getFiller() instanceof OWLClassExpression) {
+						Collection<IConcept> concepts = unwrap((OWLClassExpression) ((OWLQuantifiedRestriction<?, ?, ?>) s).getFiller());
+						if (concepts != null) {
+							return concepts.iterator().next();
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Return all the concepts directly restricted by this property. 
+	 * 
+	 * @param target
+	 * @param restricted
+	 * @return
+	 */
+	public Collection<IConcept> getDirectRestrictedClasses(IConcept target, IProperty restricted) {
+		Set<IConcept> ret = new HashSet<>();
+		OWLClass owl = ((Concept) target)._owl;
+		synchronized (owl) {
+			for (OWLClassExpression s : owl.getSuperClasses(OWL.INSTANCE.manager.getOntologies())) {
+				if (s instanceof OWLQuantifiedRestriction) {
+					if (getPropertyFor((OWLProperty<?, ?>) ((OWLQuantifiedRestriction<?, ?, ?>) s).getProperty())
+							.is(restricted) && ((OWLQuantifiedRestriction<?, ?, ?>) s).getFiller() instanceof OWLClassExpression) {
+						ret.addAll(unwrap((OWLClassExpression) ((OWLQuantifiedRestriction<?, ?, ?>) s).getFiller()));
+					}
+				}
+			}
 		}
 		return ret;
 	}

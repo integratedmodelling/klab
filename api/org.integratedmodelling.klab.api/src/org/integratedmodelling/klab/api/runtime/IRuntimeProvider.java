@@ -197,5 +197,13 @@ public interface IRuntimeProvider {
 	 * @return a resolver or null
 	 */
 	IComputableResource getCastingResolver(IArtifact.Type sourceType, IArtifact.Type targetType);
+	
+    /*
+     * Called on a computation returned by getComputation() to change the target ID after creation.
+     * FIXME this is ugly and unstable - needs a different logic and removal
+     * @param resource
+     * @param targetId
+     */
+	void setComputationTargetId(IComputableResource resource, String targetId);
 
 }

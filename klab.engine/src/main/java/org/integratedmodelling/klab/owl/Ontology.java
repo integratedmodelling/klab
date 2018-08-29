@@ -915,7 +915,7 @@ public class Ontology implements IOntology {
    * @return the new ID
    */
   public String createIdForDefinition(String definition) {
-    String id = getName().toUpperCase() + "_" + String.format("%09d", idCounter.incrementAndGet());
+    String id = getName().replaceAll("\\.", "_").toUpperCase() + "_" + String.format("%09d", idCounter.incrementAndGet());
     this.definitionIds.put(definition, id);
     return id;
   }

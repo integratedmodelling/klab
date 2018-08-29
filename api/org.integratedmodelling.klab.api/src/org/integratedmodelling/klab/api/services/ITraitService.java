@@ -86,4 +86,14 @@ public interface ITraitService {
     boolean hasParentTrait(IConcept type, IConcept trait);
 
 
+    /**
+     * Like {@link #getTraits(IConcept)} but only returns the traits directly attributed to
+     * this concept.
+     * 
+     * @param concept
+     * @return
+     */
+	Collection<IConcept> getDirectTraits(IConcept concept);
+
+
 }

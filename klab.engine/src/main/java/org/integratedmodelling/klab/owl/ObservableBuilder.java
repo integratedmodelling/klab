@@ -7,7 +7,9 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import javax.annotation.Nullable;
+
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
@@ -21,15 +23,17 @@ import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.api.services.IObservableService.Builder;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.SemanticType;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.Pair;
 
-public class ObservableBuilder implements Builder {
+public class ObservableBuilder implements IObservable.Builder {
 
 	private IMonitor monitor;
 
@@ -55,6 +59,7 @@ public class ObservableBuilder implements Builder {
 
 	private List<IConcept> traits = new ArrayList<>();
 	private List<IConcept> roles = new ArrayList<>();
+	private List<IConcept> removed = new ArrayList<>();
 	private List<KlabValidationException> errors = new ArrayList<>();
 
 	private boolean isTrivial = true;
@@ -80,6 +85,50 @@ public class ObservableBuilder implements Builder {
 		this.ontology = ontology;
 		this.parent = Resources.INSTANCE.getUpperOntology().getCoreType(parent);
 		this.type = parent;
+	}
+
+	/**
+	 * Copies all info from the first level of specification of the passed
+	 * observable. Will retain the original semantics, so it won't separate prefix
+	 * operators from the original observables: at the moment it will simply collect
+	 * the traits, roles, and operands of infix operators.
+	 * 
+	 * @param observable
+	 */
+	public ObservableBuilder(Observable observable) {
+
+		this.main = (Concept) Observables.INSTANCE.getBaseObservable(observable.getMain());
+		this.ontology = observable.getOntology();
+		this.context = Observables.INSTANCE.getDirectContextType(observable.getType());
+		this.adjacent = Observables.INSTANCE.getDirectAdjacentType(observable.getType());
+		this.inherent = Observables.INSTANCE.getDirectInherentType(observable.getType());
+		this.causant = Observables.INSTANCE.getDirectCausantType(observable.getType());
+		this.caused = Observables.INSTANCE.getDirectCausedType(observable.getType());
+		this.cooccurrent = Observables.INSTANCE.getDirectCooccurrentType(observable.getType());
+		this.goal = Observables.INSTANCE.getDirectGoalType(observable.getType());
+		this.compresent = Observables.INSTANCE.getDirectCompresentType(observable.getType());
+
+		for (IConcept role : Roles.INSTANCE.getDirectRoles(observable.getType())) {
+			this.roles.add(role);
+		}
+		for (IConcept trait : Traits.INSTANCE.getDirectTraits(observable.getType())) {
+			this.traits.add(trait);
+		}
+	}
+
+	public ObservableBuilder(ObservableBuilder other) {
+		this.main = other.main;
+		this.adjacent = other.adjacent;
+		this.causant = other.causant;
+		this.caused = other.caused;
+		this.comparison = other.comparison;
+		this.compresent = other.compresent;
+		this.context = other.context;
+		this.inherent = other.inherent;
+		this.cooccurrent = other.cooccurrent;
+		this.goal = other.goal;
+		this.traits.addAll(other.traits);
+		this.roles.addAll(other.roles);
 	}
 
 	@Override
@@ -146,7 +195,7 @@ public class ObservableBuilder implements Builder {
 		isTrivial = false;
 		return this;
 	}
-	
+
 	@Override
 	public Builder withCooccurrent(IConcept cooccurrent) {
 		this.cooccurrent = cooccurrent;
@@ -160,7 +209,7 @@ public class ObservableBuilder implements Builder {
 		isTrivial = false;
 		return this;
 	}
-	
+
 	@Override
 	public Builder contextualizedTo(IConcept context) {
 		// TODO Auto-generated method stub
@@ -248,11 +297,89 @@ public class ObservableBuilder implements Builder {
 	}
 
 	@Override
+	public Builder withoutAny(Collection<IConcept> concepts) {
+		return withoutAny(concepts.toArray(new IConcept[concepts.size()]));
+	}
+
+	@Override
 	public Builder without(IConcept... concepts) {
-		if (resolveMain()) {
-			// TODO perform the extraction right here
+		ObservableBuilder ret = new ObservableBuilder(this);
+		for (IConcept concept : concepts) {
+			Pair<Collection<IConcept>, Collection<IConcept>> tdelta = Concepts.INSTANCE.copyWithout(this.traits,
+					concept);
+			ret.traits.addAll(tdelta.getFirst());
+			ret.removed.addAll(tdelta.getSecond());
+			Pair<Collection<IConcept>, Collection<IConcept>> rdelta = Concepts.INSTANCE.copyWithout(this.roles,
+					concept);
+			ret.roles.addAll(rdelta.getFirst());
+			ret.removed.addAll(rdelta.getSecond());
+			if (ret.context != null && ret.context.equals(concept)) {
+				ret.context = null;
+			}
+			if (ret.inherent != null && ret.inherent.equals(concept)) {
+				ret.inherent = null;
+			}
+			if (ret.adjacent != null && ret.adjacent.equals(concept)) {
+				ret.adjacent = null;
+			}
+			if (ret.caused != null && ret.caused.equals(concept)) {
+				ret.caused = null;
+			}
+			if (ret.causant != null && ret.causant.equals(concept)) {
+				ret.causant = null;
+			}
+			if (ret.compresent != null && ret.compresent.equals(concept)) {
+				ret.compresent = null;
+			}
+			if (ret.goal != null && ret.goal.equals(concept)) {
+				ret.goal = null;
+			}
+			if (ret.cooccurrent != null && ret.cooccurrent.equals(concept)) {
+				ret.cooccurrent = null;
+			}
 		}
-		return this;
+		return ret;
+	}
+
+	@Override
+	public Builder withoutAny(IConcept... concepts) {
+		ObservableBuilder ret = new ObservableBuilder(this);
+		for (IConcept concept : concepts) {
+			Pair<Collection<IConcept>, Collection<IConcept>> tdelta = Concepts.INSTANCE.copyWithoutAny(this.traits,
+					concept);
+			ret.traits.addAll(tdelta.getFirst());
+			ret.removed.addAll(tdelta.getSecond());
+			Pair<Collection<IConcept>, Collection<IConcept>> rdelta = Concepts.INSTANCE.copyWithoutAny(this.roles,
+					concept);
+			ret.roles.addAll(rdelta.getFirst());
+			ret.removed.addAll(rdelta.getSecond());
+			if (ret.context != null && ret.context.is(concept)) {
+				ret.context = null;
+			}
+			if (ret.inherent != null && ret.inherent.is(concept)) {
+				ret.inherent = null;
+			}
+			if (ret.adjacent != null && ret.adjacent.is(concept)) {
+				ret.adjacent = null;
+			}
+			if (ret.caused != null && ret.caused.is(concept)) {
+				ret.caused = null;
+			}
+			if (ret.causant != null && ret.causant.is(concept)) {
+				ret.causant = null;
+			}
+			if (ret.compresent != null && ret.compresent.is(concept)) {
+				ret.compresent = null;
+			}
+			if (ret.goal != null && ret.goal.is(concept)) {
+				ret.goal = null;
+			}
+			if (ret.cooccurrent != null && ret.cooccurrent.is(concept)) {
+				ret.cooccurrent = null;
+			}
+		}
+		return ret;
+
 	}
 
 	@Override
@@ -1323,5 +1450,10 @@ public class ObservableBuilder implements Builder {
 
 	public Concept getMainConcept() {
 		return main;
+	}
+
+	@Override
+	public Collection<IConcept> getRemoved() {
+		return removed;
 	}
 }

@@ -562,4 +562,9 @@ public class Observable extends Concept implements IObservable {
 		return IArtifact.Type.VOID;
 	}
 
+	@Override
+	public Builder getBuilder() {
+		return new ObservableBuilder(this);
+	}
+
 }
