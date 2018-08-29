@@ -38,7 +38,7 @@ import org.integratedmodelling.klab.scale.Scale;
  * associate {@link IResolutionScope}.
  * <p>
  * At the moment this does not correspond to any official API, although it is a
- * fundamental component. We should expose methods that returns dataflows
+ * fundamental component. We should expose methods that return dataflows
  * directly, instead of coverages and scopes that are independently compiled
  * into dataflows. At that point this should become a IResolutionService.
  * 
@@ -253,7 +253,7 @@ public enum Resolver {
 							if (mscope.getCoverage().isRelevant() && ret.or(mscope)) {
 								/*
 								 * FIXME this is to reset the target ID in the computations after we have a 
-								 * model that produce the untransformed one. It sucks and requires specialized
+								 * model that produces the untransformed one. It sucks and requires specialized
 								 * logics in the runtime provider that shouldn't be needed.
 								 */
 								candidate.accept(model);

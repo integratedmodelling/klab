@@ -97,7 +97,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	 */
 	public ObservableBuilder(Observable observable) {
 
-		this.main = (Concept) Observables.INSTANCE.getBaseObservable(observable.getMain());
+		this.main = (Concept) Observables.INSTANCE.getCoreObservable(observable.getMain());
 		this.ontology = observable.getOntology();
 		this.context = Observables.INSTANCE.getDirectContextType(observable.getType());
 		this.adjacent = Observables.INSTANCE.getDirectAdjacentType(observable.getType());
