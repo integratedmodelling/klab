@@ -75,7 +75,7 @@ public class KimNotifier implements Kim.Notifier {
 				if (o instanceof IKimStatement) {
 					statement = (IKimStatement) o;
 				} else if (o instanceof Throwable) {
-					message = NotificationUtils.getMessage(o);
+					message = NotificationUtils.getMessage(o).getFirst();
 					savedArgs.add(o);
 				} else if (o instanceof String) {
 					message = (String) o;

@@ -19,7 +19,6 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
-import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Annotations;
@@ -47,6 +46,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.auth.AnonymousEngineCertificate;
 import org.integratedmodelling.klab.auth.EngineUser;
@@ -64,6 +64,7 @@ import org.integratedmodelling.klab.kim.KimValidator;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.NotificationUtils;
+import org.integratedmodelling.klab.utils.Pair;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import org.springframework.security.core.GrantedAuthority;
@@ -123,30 +124,30 @@ public class Engine extends Server implements IEngine, UserDetails {
 
         @Override
         public void info(Object... info) {
-            String message = NotificationUtils.getMessage(info);
+            Pair<String, INotification.Type> message = NotificationUtils.getMessage(info);
             Consumer<String> infoWriter = Logging.INSTANCE.getInfoWriter();
             if (infoWriter != null) {
-                infoWriter.accept(message);
+                infoWriter.accept(message.getFirst());
             }
             send(new KimNotification(message, Level.INFO));
         }
 
         @Override
         public void warn(Object... o) {
-            String message = NotificationUtils.getMessage(o);
+            Pair<String, INotification.Type> message = NotificationUtils.getMessage(o);
             Consumer<String> warningWriter = Logging.INSTANCE.getWarningWriter();
             if (warningWriter != null) {
-                warningWriter.accept(message);
+                warningWriter.accept(message.getFirst());
             }
             send(new KimNotification(message, Level.WARNING));
         }
 
         @Override
         public void error(Object... o) {
-            String message = NotificationUtils.getMessage(o);
+            Pair<String, INotification.Type> message = NotificationUtils.getMessage(o);
             Consumer<String> errorWriter = Logging.INSTANCE.getErrorWriter();
             if (errorWriter != null) {
-                errorWriter.accept(message);
+                errorWriter.accept(message.getFirst());
             }
             send(new KimNotification(message, Level.SEVERE));
             errorCount++;
@@ -154,10 +155,10 @@ public class Engine extends Server implements IEngine, UserDetails {
 
         @Override
         public void debug(Object... o) {
-            String message = NotificationUtils.getMessage(o);
+            Pair<String, INotification.Type> message = NotificationUtils.getMessage(o);
             Consumer<String> debugWriter = Logging.INSTANCE.getDebugWriter();
             if (debugWriter != null) {
-                debugWriter.accept(message);
+                debugWriter.accept(message.getFirst());
             }
             send(new KimNotification(message, Level.FINE));
         }

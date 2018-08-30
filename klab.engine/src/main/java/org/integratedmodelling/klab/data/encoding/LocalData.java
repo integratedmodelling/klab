@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.runtime.rest.INotification;
 
 public class LocalData implements IKlabData {
 
@@ -25,7 +25,7 @@ public class LocalData implements IKlabData {
 			this.object = builder.observation;
 		}
 		for (INotification notification : builder.notifications) {
-			if (notification.getLevel().equals(Level.SEVERE)) {
+			if (notification.getLevel().equals(Level.SEVERE.getName())) {
 				error = true;
 			}
 			notifications.add(notification);

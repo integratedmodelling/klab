@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Version;
@@ -32,6 +31,7 @@ import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
+import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.rest.AttributeReference;
 import org.integratedmodelling.klab.rest.ResourceReference;

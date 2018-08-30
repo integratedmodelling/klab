@@ -18,8 +18,8 @@ package org.integratedmodelling.klab.monitoring;
 import java.io.Serializable;
 import java.util.logging.Level;
 
-import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.Utils;
@@ -42,6 +42,7 @@ public class Message implements IMessage, Serializable {
 	private Object payload;
 	private String id = NameGenerator.shortUUID();
 	private String inResponseTo;
+	private INotification.Type notificationType;
 	private long timestamp = System.currentTimeMillis();
 
 	/**
@@ -58,12 +59,15 @@ public class Message implements IMessage, Serializable {
 	public static Message create(String identity, Object... o) {
 		Message ret = new Message();
 		ret.identity = identity;
+		INotification.Type notype = null;
 		for (Object ob : o) {
 			if (ob instanceof Type) {
 				ret.type = (Type) ob;
 			} else if (ob instanceof MessageClass) {
 				ret.messageClass = (MessageClass) ob;
-			} else {
+			} else if (ob instanceof INotification.Type) {
+				notype = (INotification.Type)ob;
+			} else if (ob != null) {
 				if (ret.payload == null) {
 					ret.payload = ob;
 					ret.payloadClass = Path.getLast(ob.getClass().getCanonicalName(), '.');
@@ -80,6 +84,7 @@ public class Message implements IMessage, Serializable {
 				ret.type = Type.Info;
 			}
 		}
+		ret.setNotificationType(notype);
 
 		return ret;
 	}
@@ -99,22 +104,22 @@ public class Message implements IMessage, Serializable {
 		ret.payload = notification.getMessage();
 		ret.payloadClass = "String";
 
-		if (notification.getLevel() == Level.FINE) {
+		if (notification.getLevel().equals(Level.FINE.getName())) {
 			ret.type = Type.Debug;
-		} else if (notification.getLevel() == Level.INFO) {
+		} else if (notification.getLevel().equals(Level.INFO.getName())) {
 			ret.type = Type.Info;
-		} else if (notification.getLevel() == Level.WARNING) {
+		} else if (notification.getLevel().equals(Level.WARNING.getName())) {
 			ret.type = Type.Warning;
-		} else if (notification.getLevel() == Level.SEVERE) {
+		} else if (notification.getLevel().equals(Level.SEVERE.getName())) {
 			ret.type = Type.Error;
 		}
 
 		return ret;
 	}
-	
+
 	@Override
 	public String toString() {
-	    return "{" + identity + ": " + messageClass + "/" + type + ": " + payload + "}";
+		return "{" + identity + ": " + messageClass + "/" + type + ": " + payload + "}";
 	}
 
 	public Message inResponseTo(IMessage message) {
@@ -233,10 +238,18 @@ public class Message implements IMessage, Serializable {
 
 	@Override
 	public <T> T getPayload(Class<? extends T> cls) {
-		
+
 		if (payload == null) {
 			return null;
 		}
 		return Utils.asType(payload, cls);
+	}
+
+	public INotification.Type getNotificationType() {
+		return notificationType;
+	}
+
+	public void setNotificationType(INotification.Type notificationType) {
+		this.notificationType = notificationType;
 	}
 }

@@ -2,11 +2,14 @@ package org.integratedmodelling.kim.validation;
 
 import java.io.Serializable;
 import java.util.logging.Level;
-import org.integratedmodelling.kim.api.INotification;
+
+import org.integratedmodelling.klab.api.runtime.rest.INotification;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * Trivial bean for notifications, so these can be sent outside of the validator
- * and processed in it.
+ * and processed in it. The constructors are messy and nasty but cleaning this
+ * is low priority.
  * 
  * @author ferdinando.villa
  *
@@ -17,10 +20,17 @@ public class KimNotification implements INotification, Serializable {
 
 	String message;
 	Level level;
+	Type type = Type.None;
 	long timestamp = System.currentTimeMillis();
 
 	public KimNotification(String message, Level level) {
 		this.message = message;
+		this.level = level;
+	}
+	
+	public KimNotification(Pair<String, Type> message, Level level) {
+		this.message = message.getFirst();
+		this.type = message.getSecond();
 		this.level = level;
 	}
 
@@ -29,6 +39,12 @@ public class KimNotification implements INotification, Serializable {
 		this.timestamp = timestamp2;
 	}
 
+	public KimNotification(Pair<String, Type> message2, Level level2, long timestamp2) {
+		this(message2.getFirst(), level2);
+		this.timestamp = timestamp2;
+		this.type = message2.getSecond();
+	}
+	
 	public String getMessage() {
 		return message;
 	}
@@ -37,8 +53,8 @@ public class KimNotification implements INotification, Serializable {
 		this.message = message;
 	}
 
-	public Level getLevel() {
-		return level;
+	public String getLevel() {
+		return level.getName();
 	}
 
 	public void setLevel(Level level) {
@@ -52,7 +68,7 @@ public class KimNotification implements INotification, Serializable {
 
 	@Override
 	public Type getType() {
-		return null;
+		return type;
 	}
 
 }

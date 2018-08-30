@@ -7,6 +7,7 @@ public class Notification implements INotification {
 	private String level;
 	private long timestamp;
 	private String message;
+	private Type type = Type.None;
 	
 	public Notification() {}
 	
@@ -45,6 +46,15 @@ public class Notification implements INotification {
 	}
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	@Override
+	public Type getType() {
+		return type;
+	}
+
+	public void setType(Type type) {
+		this.type = type;
 	}
 	
 }

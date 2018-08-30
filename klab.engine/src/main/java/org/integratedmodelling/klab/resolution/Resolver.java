@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -31,6 +32,7 @@ import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.ObservableReasoner.CandidateObservable;
 import org.integratedmodelling.klab.rest.ModelReference;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * The resolver provides methods to find the observation strategy for any
@@ -228,7 +230,21 @@ public enum Resolver {
 
 		ResolutionScope ret = parentScope.getChildScope(observable, mode);
 
-		if (observable.getReferencedModel() != null) {
+		/**
+		 * If we're running in a context that contains an observation of the observable,
+		 * get that artifact as is and return it accepted for the dataflow to compile an
+		 * input actuator.
+		 */
+		Pair<String, IArtifact> previousArtifact = null;
+		if (ret.getContext() != null) {
+			previousArtifact = ((Subject) ret.getContext()).getRuntimeContext().findArtifact(observable);
+		}
+
+		if (previousArtifact != null) {
+
+			ret.acceptArtifact(observable, (IObservation) previousArtifact.getSecond(), previousArtifact.getFirst());
+
+		} else if (observable.getReferencedModel() != null) {
 
 			// observable comes complete with model, semantic or not
 			ResolutionScope mscope = resolve((Model) observable.getReferencedModel(), ret);
@@ -246,10 +262,16 @@ public enum Resolver {
 				for (Iterator<CandidateObservable> it = reasoner.iterator(); !done && it.hasNext();) {
 					CandidateObservable candidate = it.next();
 					try {
-						// TODO if candidate switches to object, must switch to instantiation
+						// candidate may switch resolution mode
 						for (IRankedModel model : Models.INSTANCE.resolve(candidate.observable,
 								ret.getChildScope(candidate.observable, candidate.mode))) {
-							ResolutionScope mscope = resolve((RankedModel) model, ret);
+
+							previousArtifact = ((Subject) ret.getContext()).getRuntimeContext()
+									.findArtifact(candidate.observable);
+							ResolutionScope mscope = previousArtifact == null ? resolve((RankedModel) model, ret)
+									: ret.getChildScope(candidate.observable, candidate.mode,
+											(IObservation) previousArtifact.getSecond(), previousArtifact.getFirst());
+
 							if (mscope.getCoverage().isRelevant() && ret.or(mscope)) {
 								/*
 								 * FIXME this is to reset the target ID in the computations after we have a

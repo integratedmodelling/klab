@@ -204,13 +204,18 @@ public class DataflowCompiler {
 		Scale scale;
 		boolean definesScale;
 		String alias;
+		ResolvedArtifact resolvedArtifact;
+		public List<IComputableResource> artifactAdapters;
 
-		public Node(IResolvable observable) {
-			if (observable instanceof Observable) {
-				this.observable = (Observable) observable;
-			} else if (observable instanceof Observer) {
-				this.observer = (Observer) observable;
+		public Node(IResolvable resolvable) {
+			if (resolvable instanceof Observable) {
+				this.observable = (Observable) resolvable;
+			} else if (resolvable instanceof Observer) {
+				this.observer = (Observer) resolvable;
 				this.observable = this.observer.getObservable();
+			} else if (resolvable instanceof ResolvedArtifact) {
+				this.resolvedArtifact = (ResolvedArtifact) resolvable;
+				this.observable = resolvedArtifact.getObservable();
 			}
 		}
 
@@ -250,6 +255,9 @@ public class DataflowCompiler {
 			if (observer != null) {
 				ret.setNamespace(observer.getNamespace());
 				ret.setName(observer.getId());
+			} else if (resolvedArtifact != null) {
+				ret.setName(resolvedArtifact.getArtifactId());
+				ret.setInput(true);
 			} else {
 				ret.setName(observable.getLocalName());
 			}
@@ -290,16 +298,31 @@ public class DataflowCompiler {
 
 					ret.getActuators().add(partial);
 				}
+			} else if (resolvedArtifact != null) {
+				defineActuator(ret, resolvedArtifact, artifactAdapters);
 			}
 
 			return ret;
+		}
+
+		private void defineActuator(Actuator ret, ResolvedArtifact resolved,
+				List<IComputableResource> indirectAdapters) {
+
+			if (indirectAdapters != null) {
+				for (IComputableResource adapter : indirectAdapters) {
+					// TODO set the target diocan
+					ret.addComputation(adapter);
+				}
+			}
+			ret.getAnnotations().addAll(Annotations.INSTANCE.collectAnnotations(observable, resolved.getArtifact()));
+
 		}
 
 		private void defineActuator(Actuator ret, String name, Model model, List<IComputableResource> indirectAdapters,
 				Set<Model> generated) {
 
 			ret.setName(name);
-			
+
 			if (!generated.contains(model)) {
 				generated.add(model);
 				for (IComputableResource resource : getModelComputation(model, ret.getType(), ITime.INITIALIZATION)) {
@@ -427,39 +450,56 @@ public class DataflowCompiler {
 		boolean hasPartials = graph.incomingEdgesOf(resolvable).size() > 1;
 		for (ResolutionEdge d : graph.incomingEdgesOf(resolvable)) {
 
-			Model model = (Model) graph.getEdgeSource(d);
+			IResolvable source = graph.getEdgeSource(d);
 
-			Observable compatibleOutput = model.getCompatibleOutput(ret.observable);
-			if (compatibleOutput == null) {
-				// only happens when the observable is resolved indirectly
-				compatibleOutput = ret.observable;
-			}
-			observableCatalog.put(compatibleOutput.getLocalName(), compatibleOutput);
+			if (source instanceof ResolvedArtifact) {
 
-			ModelD md = compileModel(model);
-			for (ResolutionEdge o : graph.incomingEdgesOf(model)) {
-				ret.children.add(compileActuator(graph.getEdgeSource(o), graph, o.coverage == null ? scale : o.coverage,
-						monitor));
-			}
+				ret.resolvedArtifact = (ResolvedArtifact) source;
+				observableCatalog.put(ret.resolvedArtifact.getArtifactId(),
+						(Observable) ret.resolvedArtifact.getArtifact().getObservable());
+				ret.artifactAdapters = d.indirectAdapters;
 
-			md.indirectAdapters = d.indirectAdapters;
-
-			if (hasPartials) {
-				try {
-					md.coverage = Coverage.full(Scale.create(model.getBehavior().getExtents(monitor)));
-				} catch (KlabException e) {
-					monitor.error("error computing model coverage: " + e.getMessage());
+				for (ResolutionEdge o : graph.incomingEdgesOf(source)) {
+					ret.children.add(compileActuator(graph.getEdgeSource(o), graph,
+							o.coverage == null ? scale : o.coverage, monitor));
 				}
-			}
 
-			ret.models.add(md);
+			} else if (source instanceof Model) {
+
+				Model model = (Model) source;
+
+				Observable compatibleOutput = model.getCompatibleOutput(ret.observable);
+				if (compatibleOutput == null) {
+					// only happens when the observable is resolved indirectly
+					compatibleOutput = ret.observable;
+				}
+				observableCatalog.put(compatibleOutput.getLocalName(), compatibleOutput);
+
+				ModelD md = compileModel(model);
+				for (ResolutionEdge o : graph.incomingEdgesOf(model)) {
+					ret.children.add(compileActuator(graph.getEdgeSource(o), graph,
+							o.coverage == null ? scale : o.coverage, monitor));
+				}
+
+				md.indirectAdapters = d.indirectAdapters;
+
+				if (hasPartials) {
+					try {
+						md.coverage = Coverage.full(Scale.create(model.getBehavior().getExtents(monitor)));
+					} catch (KlabException e) {
+						monitor.error("error computing model coverage: " + e.getMessage());
+					}
+				}
+
+				ret.models.add(md);
+			}
 		}
 
 		return ret;
 	}
 
 	/**
-	 * Return all the stated computations for the passed model, inserting any 
+	 * Return all the stated computations for the passed model, inserting any
 	 * necessary cast transformer in case the types need to be converted.
 	 * 
 	 * @param model
@@ -472,18 +512,19 @@ public class DataflowCompiler {
 		IArtifact.Type lastDirectType = null;
 		int i = 0;
 		for (IComputableResource resource : ret) {
-			if (((ComputableResource)resource).getTarget() == null) {
+			if (((ComputableResource) resource).getTarget() == null) {
 				Type resType = getResourceType(resource);
 				if (resType != null && resType != Type.VOID) {
 					lastDirectPosition = i;
 					lastDirectType = resType;
 				}
 			}
-			i ++;
+			i++;
 		}
-		
+
 		if (lastDirectType != null && lastDirectType != targetType) {
-			IComputableResource cast = Klab.INSTANCE.getRuntimeProvider().getCastingResolver(lastDirectType, targetType);
+			IComputableResource cast = Klab.INSTANCE.getRuntimeProvider().getCastingResolver(lastDirectType,
+					targetType);
 			if (cast != null) {
 				ret.add(lastDirectPosition + 1, cast);
 			}
@@ -492,7 +533,7 @@ public class DataflowCompiler {
 	}
 
 	private Type getResourceType(IComputableResource resource) {
-		
+
 		if (resource.getClassification() != null || resource.getAccordingTo() != null) {
 			return Type.CONCEPT;
 		}

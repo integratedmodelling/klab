@@ -436,4 +436,22 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
         return ret;
     }
 
+	@Override
+	public Pair<String, IArtifact> findArtifact(IObservable observable) {
+		for (String key : artifacts.keySet()) {
+			IArtifact artifact = artifacts.get(key);
+			if (artifact != null && artifact instanceof IObservation
+					&& ((Observable) ((IObservation) artifact).getObservable()).canResolve((Observable)observable)) {
+				return new Pair<>(key, artifact);
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public IRuntimeContext createContext(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

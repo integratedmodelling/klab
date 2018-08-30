@@ -17,9 +17,9 @@ package org.integratedmodelling.klab.api.data.adapters;
 
 import java.util.List;
 
-import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.runtime.rest.INotification;
 
 /**
  * Encoded k.LAB data resulting from decoding a resource URN in a specified

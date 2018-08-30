@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.model.Annotation;
+import org.integratedmodelling.klab.provenance.Artifact;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -138,6 +139,12 @@ public enum Annotations implements IAnnotationService {
 				collectAnnotations((IKimObject) object, ret);
 			} else if (object instanceof ISemantic) {
 				collectAnnotations((ISemantic) object, ret);
+			} else if (object instanceof Artifact) {
+				for (IAnnotation annotation : ((Artifact)object).getAnnotations()) {
+					if (!ret.containsKey(annotation.getName())) {
+						ret.put(annotation.getName(), annotation);
+					}
+				}
 			}
 		}
 		return ret.values();

@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.provenance.Provenance;
+import org.integratedmodelling.klab.utils.Pair;
 import org.jgrapht.Graph;
 
 /**
@@ -49,10 +50,26 @@ public interface IRuntimeContext extends IComputationContext {
 	IObservation getObservation(String observationId);
 
 	/**
+	 * Called to create the root context for a new dataflow computed within an
+	 * existing context. Should inherit root subject, root scope, structure,
+	 * provenance etc. from this, but contain an empty artifact catalog.
+	 * 
+	 * @param scale
+	 * @param target
+	 * @param scope
+	 * @param monitor
+	 * @return
+	 */
+	public IRuntimeContext createContext(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor);
+
+	/**
+	 * Called to create the computation context for any actuator contained in a root
+	 * actuator at any level.
+	 * 
 	 * Create a child context for the passed actuator, containing a new target
 	 * observation implementation for the artifact type and geometry specified in
-	 * the actuator. The observation is created with the same scale of the current
-	 * target and the current target is set as its parent.
+	 * the actuator. The observation is created with the current target set as its
+	 * parent.
 	 * 
 	 * @param scale
 	 * @param target
@@ -66,15 +83,15 @@ public interface IRuntimeContext extends IComputationContext {
 	public IRuntimeContext createChild(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor);
 
 	/**
-	 * Create a child context for the passed observable within the current actuator. Called when
-	 * there is a computation involving a different observable than the actuator's target.
+	 * Create a child context for the passed observable within the current actuator.
+	 * Called when there is a computation involving a different observable than the
+	 * actuator's target.
 	 * 
 	 * @param indirectTarget
 	 * @return
 	 */
-    IRuntimeContext createChild(IObservable indirectTarget);
+	IRuntimeContext createChild(IObservable indirectTarget);
 
-	
 	/**
 	 * Set the passed data object in the symbol table.
 	 * 
@@ -189,11 +206,20 @@ public interface IRuntimeContext extends IComputationContext {
 	/**
 	 * Set the passed artifact as the current target, ensuring it is properly
 	 * pointed to by the target name. Only called on copies to ensure the proper
-	 * layer for a state is pointed to, so it's authorized to make a copy of the catalog to
-	 * avoid affecting all other contexts in the chain.
+	 * layer for a state is pointed to, so it's authorized to make a copy of the
+	 * catalog to avoid affecting all other contexts in the chain.
 	 * 
 	 * @param self
 	 */
 	void replaceTarget(IArtifact self);
+
+	/**
+	 * If our catalog contains the artifact we're trying to resolve, return it along
+	 * with the name we have for it.
+	 * 
+	 * @param observable
+	 * @return
+	 */
+	Pair<String, IArtifact> findArtifact(IObservable observable);
 
 }

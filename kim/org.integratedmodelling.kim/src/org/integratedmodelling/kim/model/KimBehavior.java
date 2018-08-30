@@ -197,7 +197,7 @@ public class KimBehavior extends KimStatement implements IKimBehavior {
                 for (IServiceCall extent : extents) {
                     for (KimNotification note : Kim.INSTANCE.validateFunctionCall(extent,
                             Sets.immutableEnumSet(IArtifact.Type.SPATIALEXTENT, IArtifact.Type.TEMPORALEXTENT))) {
-                        if (note.getLevel() == Level.SEVERE) {
+                        if (note.getLevel().equals(Level.SEVERE.getName())) {
                             ok = false;
                         }
                         ret.add(note);
@@ -229,7 +229,7 @@ public class KimBehavior extends KimStatement implements IKimBehavior {
             }
 
             for (KimNotification not : targetAction.validate(context)) {
-                if (not.getLevel() == Level.SEVERE) {
+                if (not.getLevel().equals(Level.SEVERE.getName())) {
                     ok = false;
                 }
                 ret.add(not);

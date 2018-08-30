@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -101,6 +102,13 @@ public class ResolutionScope implements IResolutionScope {
 	private Observable observable;
 	private Model model;
 	private Observer observer;
+
+	/*
+	 * When an artifact is here, it's from the context and will be turned into an
+	 * 'input' actuator in the dataflow. Scopes resolved with an artifact have a
+	 * coverage of 1.
+	 */
+	private ResolvedArtifact resolvedArtifact;
 
 	/*
 	 * When resolving relationships, we carry around their source and target
@@ -428,9 +436,23 @@ public class ResolutionScope implements IResolutionScope {
 		return observable;
 	}
 
+	public ResolvedArtifact getResolvedArtifact() {
+		return resolvedArtifact;
+	}
+
 	// for the dataflow compiler
 	public IResolvable getResolvable() {
-		return observable != null ? observable : (model != null ? model : (observer != null ? observer : null));
+		
+		// lovin'it
+		return resolvedArtifact != null 
+				? resolvedArtifact
+				: (observable != null 
+					? observable 
+					: (model != null 
+						? model 
+						: (observer != null 
+							? observer 
+							: null)));
 	}
 
 	@Override
@@ -748,6 +770,11 @@ public class ResolutionScope implements IResolutionScope {
 		this.resolvedObservables.clear();
 	}
 
+	public void acceptArtifact(Observable observable, IObservation artifact, String artifactId) {
+		this.resolvedArtifact = new ResolvedArtifact(observable, artifact, artifactId);
+		this.coverage.setCoverage(1.0);
+	}
+
 	@Override
 	public Coverage getCoverage() {
 		return this.coverage;
@@ -851,6 +878,12 @@ public class ResolutionScope implements IResolutionScope {
 			return true;
 		}
 		return parent == null ? false : parent.isBeingResolved(observable, mode);
+	}
+
+	public ResolutionScope getChildScope(Observable observable, Mode mode, IObservation artifact, String artifactId) {
+		ResolutionScope ret = getChildScope(observable, mode);
+		ret.acceptArtifact(observable, artifact, artifactId);
+		return ret;
 	}
 
 }

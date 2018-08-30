@@ -79,6 +79,14 @@ public interface IActuator {
     String getAlias();
 
     /**
+     * If true, this actuator represents a named input that will need to be connected 
+     * to an artifact from the computation context.
+     * 
+     * @return
+     */
+    boolean isInput();
+    
+    /**
      * True if this actuator computes anything. Used when building dependencies (a computed actuator depends on
      * its children, which can otherwise be executed in parallel).
      *

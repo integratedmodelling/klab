@@ -2,10 +2,8 @@ package org.integratedmodelling.klab.provenance;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -15,6 +13,8 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.provenance.IAgent;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
+
+import com.google.common.collect.Lists;
 
 /**
  * All the provenance-related functions of IArtifact. Can be used as delegate
@@ -31,23 +31,21 @@ public abstract class Artifact implements IArtifact {
 
 	List<IAnnotation> annotations = new ArrayList<>();
 
-
 	/*
 	 * all observation data in a group share the same list; the pre-build object is
 	 * thrown away at chain(). Saving the constructor call is not worth the
 	 * additional logics.
 	 */
-	List<IArtifact> group = new ArrayList<>();
+//	List<IArtifact> group = new ArrayList<>();
 	boolean empty;
 	long timestamp = System.currentTimeMillis();
 
-	protected Artifact() {
-		group.add(this);
-	}
-
+//	protected Artifact() {
+//		group.add(this);
+//	}
+//
 	public void chain(IArtifact data) {
-		group.add(data);
-		((Artifact) data).group = group;
+		throw new IllegalStateException("chain() should only be called on a group");
 	}
 
 	@Override
@@ -153,12 +151,12 @@ public abstract class Artifact implements IArtifact {
 		// }
 		// }
 
-		return group.iterator();
+		return Lists.newArrayList(this).iterator();
 	}
 
 	@Override
 	public int groupSize() {
-		return empty ? 0 : group.size();
+		return empty ? 0 : 1;
 	}
 
 	protected void setEmpty(boolean b) {

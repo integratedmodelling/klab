@@ -39,6 +39,10 @@ public abstract class DirectObservation extends Observation implements IDirectOb
     	return IArtifact.Type.OBJECT;
     }
     
+    public void setName(String name) {
+    	this.name = name;
+    }
+    
     public IDirectObservation at(ILocator locator) {
 //    	Logging.INSTANCE.warn("RELOCATION OF DIRECT OBSERVATION IS UNIMPLEMENTED!");
     	return this;

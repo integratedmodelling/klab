@@ -18,13 +18,15 @@ package org.integratedmodelling.klab;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
 import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
-import org.integratedmodelling.klab.monitoring.Message;
-import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.api.services.ILoggingService;
+import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.utils.NotificationUtils;
+import org.integratedmodelling.klab.utils.Pair;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Logger;
@@ -53,44 +55,46 @@ public enum Logging implements ILoggingService {
 	}
 
 	/** {@inheritDoc} */
-    @Override
-    public void info(Object... o) {
+	@Override
+	public void info(Object... o) {
 
-        String payload = NotificationUtils.getMessage(o);
+		Pair<String, INotification.Type> payload = NotificationUtils.getMessage(o);
 
-        if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.INFO.intValue()) {
-            messageBus.post(Message.create(rootIdentity.getId(), MessageClass.Notification, Type.Info, payload));
-        }
+		if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.INFO.intValue()) {
+			messageBus.post(Message.create(rootIdentity.getId(), MessageClass.Notification, Type.Info,
+					payload.getFirst(), payload.getSecond()));
+		}
 
-        if (Configuration.INSTANCE.getLoggingLevel().intValue() >= Level.INFO.intValue()) {
-            if (infoWriter != null) {
-            	infoWriter.accept(payload);
-            }
-            if (logger != null) {
-                logger.info(payload);
-            } 
-        }
+		if (Configuration.INSTANCE.getLoggingLevel().intValue() >= Level.INFO.intValue()) {
+			if (infoWriter != null) {
+				infoWriter.accept(payload.getFirst());
+			}
+			if (logger != null) {
+				logger.info(payload.getFirst());
+			}
+		}
 
-    }
+	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void warn(Object... o) {
 
-		String payload = NotificationUtils.getMessage(o);
+		Pair<String, INotification.Type> payload = NotificationUtils.getMessage(o);
 
 		if (messageBus != null
 				&& Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.WARNING.intValue()) {
-			messageBus.post(Message.create(rootIdentity.getId(), MessageClass.Notification, Type.Warning, payload));
+			messageBus.post(Message.create(rootIdentity.getId(), MessageClass.Notification, Type.Warning,
+					payload.getFirst(), payload.getSecond()));
 		}
 
 		if (Configuration.INSTANCE.getLoggingLevel().intValue() >= Level.WARNING.intValue()) {
 			if (warningWriter != null) {
-            	warningWriter.accept(payload);
-            }
+				warningWriter.accept(payload.getFirst());
+			}
 			if (logger != null) {
-				logger.warn(payload);
-            } 
+				logger.warn(payload.getFirst());
+			}
 		}
 	}
 
@@ -98,19 +102,20 @@ public enum Logging implements ILoggingService {
 	@Override
 	public void error(Object... o) {
 
-		String payload = NotificationUtils.getMessage(o);
+		Pair<String, INotification.Type> payload = NotificationUtils.getMessage(o);
 
 		if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() <= Level.SEVERE.intValue()) {
-			messageBus.post(Message.create(rootIdentity.getId(), MessageClass.Notification, Type.Error, payload));
+			messageBus.post(Message.create(rootIdentity.getId(), MessageClass.Notification, Type.Error,
+					payload.getFirst(), payload.getSecond()));
 		}
 
 		if (Configuration.INSTANCE.getNotificationLevel().intValue() <= Level.SEVERE.intValue()) {
 			if (errorWriter != null) {
-            	errorWriter.accept(payload);
-            }
+				errorWriter.accept(payload.getFirst());
+			}
 			if (logger != null) {
-				logger.error(payload);
-            } 
+				logger.error(payload.getFirst());
+			}
 		}
 	}
 
@@ -118,19 +123,20 @@ public enum Logging implements ILoggingService {
 	@Override
 	public void debug(Object... o) {
 
-		String payload = NotificationUtils.getMessage(o);
+		Pair<String, INotification.Type> payload = NotificationUtils.getMessage(o);
 
 		if (messageBus != null && Configuration.INSTANCE.getNotificationLevel().intValue() >= Level.FINE.intValue()) {
-			messageBus.post(Message.create(rootIdentity.getId(), MessageClass.Notification, Type.Debug, payload));
+			messageBus.post(Message.create(rootIdentity.getId(), MessageClass.Notification, Type.Debug,
+					payload.getFirst(), payload.getSecond()));
 		}
 
 		if (Configuration.INSTANCE.getNotificationLevel().intValue() <= Level.FINE.intValue()) {
 			if (debugWriter != null) {
-            	debugWriter.accept(payload);
-            }
+				debugWriter.accept(payload.getFirst());
+			}
 			if (logger != null) {
-				logger.debug(payload);
-            } 
+				logger.debug(payload.getFirst());
+			}
 		}
 	}
 
@@ -173,5 +179,5 @@ public enum Logging implements ILoggingService {
 	public void setDebugWriter(Consumer<String> debugWriter) {
 		this.debugWriter = debugWriter;
 	}
-	
+
 }

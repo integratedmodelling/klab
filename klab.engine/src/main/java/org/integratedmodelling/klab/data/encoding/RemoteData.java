@@ -2,9 +2,9 @@ package org.integratedmodelling.klab.data.encoding;
 
 import java.util.List;
 
-import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 

@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab.utils;
 
 import org.integratedmodelling.kim.api.IKimScope;
+import org.integratedmodelling.klab.api.runtime.rest.INotification;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -32,10 +33,11 @@ public class NotificationUtils {
      * @param objects the objects
      * @return the message
      */
-    public static String getMessage(Object ...objects) {
+    public static Pair<String, INotification.Type> getMessage(Object ...objects) {
 
         StringBuffer ret = new StringBuffer(256);
-
+        INotification.Type ntype = null;
+        
         for (Object o : objects) {
             if (o instanceof String) {
                 ret.append((ret.length() == 0 ? "" : " ") + o);
@@ -43,11 +45,13 @@ public class NotificationUtils {
                 ret.append((ret.length() == 0 ? "" : " ") + ((Throwable)o).getLocalizedMessage());
             } else if (o instanceof IKimScope) {
                 ret.insert(0, ((IKimScope)o).getLocationDescriptor() + ": ");
+            } else if (o instanceof INotification.Type) {
+            	ntype = (INotification.Type)o;
             }
             // TODO continue
         }
         
-        return ret.toString();
+        return new Pair<>(ret.toString(), ntype);
     }
 
 }

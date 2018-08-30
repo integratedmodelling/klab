@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.integratedmodelling.kim.api.INotification;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Version;
@@ -30,6 +29,7 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
+import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.api.services.IResourceService;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.data.Metadata;
@@ -87,7 +87,7 @@ public class Resource implements IResource {
 	File uploadFolder = null;
 
 	public Resource(ResourceReference reference) {
-		
+
 		this.urn = reference.getUrn();
 		this.version = Version.create(reference.getVersion());
 		this.adapterType = reference.getAdapterType();
@@ -100,7 +100,7 @@ public class Resource implements IResource {
 		this.localName = reference.getLocalName();
 		this.spatialExtent = reference.getSpatialExtent();
 		this.attributes.addAll(reference.getAttributes());
-		
+
 		for (ResourceReference ref : reference.getHistory()) {
 			this.history.add(ref);
 		}
@@ -131,7 +131,7 @@ public class Resource implements IResource {
 		ret.setLocalName(getLocalName());
 		ret.setType(this.type);
 		ret.setSpatialExtent(spatialExtent);
-		
+
 		for (ResourceReference h : this.history) {
 			ret.getHistory().add(h);
 		}
@@ -146,14 +146,14 @@ public class Resource implements IResource {
 			}
 		}
 		for (INotification notification : this.notifications) {
-			ret.getNotifications().add(new Notification(notification.getMessage(), notification.getLevel().getName(),
-					notification.getTimestamp()));
+			ret.getNotifications().add(
+					new Notification(notification.getMessage(), notification.getLevel(), notification.getTimestamp()));
 		}
-		
+
 		for (Attribute attribute : attributes) {
-		    ret.getAttributes().add((AttributeReference)attribute);
+			ret.getAttributes().add((AttributeReference) attribute);
 		}
-		
+
 		return ret;
 	}
 
@@ -245,7 +245,7 @@ public class Resource implements IResource {
 	public boolean hasErrors() {
 		if (notifications != null) {
 			for (INotification notification : notifications) {
-				if (notification.getLevel() == Level.SEVERE) {
+				if (notification.getLevel().equals(Level.SEVERE.getName())) {
 					return true;
 				}
 			}
@@ -335,9 +335,9 @@ public class Resource implements IResource {
 		this.localPath = string;
 	}
 
-    @Override
-    public Collection<Attribute> getAttributes() {
-        return attributes;
-    }
+	@Override
+	public Collection<Attribute> getAttributes() {
+		return attributes;
+	}
 
 }
