@@ -164,7 +164,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 
 	@Override
 	public int groupSize() {
-		return group == null ? 0 : group.groupSize();
+		return group == null ? 1 : group.groupSize();
 	}
 	
 	
