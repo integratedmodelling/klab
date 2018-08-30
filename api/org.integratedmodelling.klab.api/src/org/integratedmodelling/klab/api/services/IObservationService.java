@@ -15,12 +15,13 @@
  */
 package org.integratedmodelling.klab.api.services;
 
-import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
@@ -28,12 +29,14 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
- * The {@code IObservationService} handles the main task in k.LAB, resolving user-specified semantic
- * assets to computations that build the corresponding observational artifacts in a context of
- * choice. The context is itself an observational artifact, built by user acknowledgement.
+ * The {@code IObservationService} handles the main task in k.LAB, resolving
+ * user-specified semantic assets to computations that build the corresponding
+ * observational artifacts in a context of choice. The context is itself an
+ * observational artifact, built by user acknowledgement.
  * <p>
- * This service also manages observations stored locally (as IObserver specifications) and provides
- * an API to query and retrieve those stored on the k.LAB network.
+ * This service also manages observations stored locally (as IObserver
+ * specifications) and provides an API to query and retrieve those stored on the
+ * k.LAB network.
  * <p>
  *
  * @author ferdinando.villa
@@ -42,82 +45,105 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  */
 public interface IObservationService {
 
-  /**
-   * Resolve the URN for a top-level resolvable to the computation that will produce the
-   * corresponding observation when run. Unsuccessful resolution is indicated by a dataflow with
-   * empty coverage, which will produce an empty observation when run.
-   * <p>
-   * The {@link org.integratedmodelling.klab.api.runtime.ISession#observe(String, String...)} method calls this function and runs the
-   * dataflow in a {@link org.integratedmodelling.klab.api.runtime.ITask}.
-   * <p>
-   * The dataflow can be run right away to produce a {@link org.integratedmodelling.klab.api.observations.IObservation} artifact or serialized
-   * using {@link org.integratedmodelling.klab.api.runtime.dataflow.IDataflow#getKdlCode()} to be loaded and run another time. It will include a
-   * specification of its total context of applicability if any exists.
-   * <p>
-   *
-   * @param urn the identifier for a top-level observation (describing a IObserver or a remote
-   *        context).
-   * @param session a valid engine session
-   * @param scenarios zero or more scenario IDs to affect the resolution
-   * @return the computation to observe the URN. Never null, possibly empty.
-   * @throws org.integratedmodelling.klab.exceptions.KlabException
-   */
-  IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios)
-      throws KlabException;
+	/**
+	 * Resolve the URN for a top-level resolvable to the computation that will
+	 * produce the corresponding observation when run. Unsuccessful resolution is
+	 * indicated by a dataflow with empty coverage, which will produce an empty
+	 * observation when run.
+	 * <p>
+	 * The
+	 * {@link org.integratedmodelling.klab.api.runtime.ISession#observe(String, String...)}
+	 * method calls this function and runs the dataflow in a
+	 * {@link org.integratedmodelling.klab.api.runtime.ITask}.
+	 * <p>
+	 * The dataflow can be run right away to produce a
+	 * {@link org.integratedmodelling.klab.api.observations.IObservation} artifact
+	 * or serialized using
+	 * {@link org.integratedmodelling.klab.api.runtime.dataflow.IDataflow#getKdlCode()}
+	 * to be loaded and run another time. It will include a specification of its
+	 * total context of applicability if any exists.
+	 * <p>
+	 *
+	 * @param urn
+	 *            the identifier for a top-level observation (describing a IObserver
+	 *            or a remote context).
+	 * @param session
+	 *            a valid engine session
+	 * @param scenarios
+	 *            zero or more scenario IDs to affect the resolution
+	 * @return the computation to observe the URN. Never null, possibly empty.
+	 * @throws org.integratedmodelling.klab.exceptions.KlabException
+	 */
+	IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios) throws KlabException;
 
-  /**
-   * Resolve the passed URN to to the computation that will produce the corresponding observation in
-   * the context of the passed {@link ISubject subject}. Unsuccessful resolution is indicated by a
-   * dataflow with empty coverage, which will produce an empty observation when run.
-   * <p>
-   * The resolution is done in the {@link org.integratedmodelling.klab.api.runtime.ISession} that owns the passed observation.
-   * <p>
-   * The {@link org.integratedmodelling.klab.api.observations.ISubject#observe(String, String...)} method calls this function and runs the
-   * dataflow in a {@link org.integratedmodelling.klab.api.runtime.ITask}.
-   * <p>
-   * The dataflow can be run right away to produce a {@link org.integratedmodelling.klab.api.observations.IObservation} artifact or serialized
-   * using {@link org.integratedmodelling.klab.api.runtime.dataflow.IDataflow#getKdlCode()} to be loaded and run another time. It will include a
-   * specification of its total context of applicability if any exists.
-   * <p>
-   *
-   * @param urn a {@link java.lang.String} object.
-   * @param context a {@link org.integratedmodelling.klab.api.observations.ISubject} object.
-   * @param scenarios zero or more scenario IDs to affect the resolution
-   * @return the computation to observe the URN in the passed context. Never null, possibly empty.
-   * @throws org.integratedmodelling.klab.exceptions.KlabException
-   */
-  IDataflow<IArtifact> resolve(String urn, ISubject context, String[] scenarios)
-      throws KlabException;
+	/**
+	 * Resolve the passed URN to to the computation that will produce the
+	 * corresponding observation in the context of the passed {@link ISubject
+	 * subject}. Unsuccessful resolution is indicated by a dataflow with empty
+	 * coverage, which will produce an empty observation when run.
+	 * <p>
+	 * The resolution is done in the
+	 * {@link org.integratedmodelling.klab.api.runtime.ISession} that owns the
+	 * passed observation.
+	 * <p>
+	 * The
+	 * {@link org.integratedmodelling.klab.api.observations.ISubject#observe(String, String...)}
+	 * method calls this function and runs the dataflow in a
+	 * {@link org.integratedmodelling.klab.api.runtime.ITask}.
+	 * <p>
+	 * The dataflow can be run right away to produce a
+	 * {@link org.integratedmodelling.klab.api.observations.IObservation} artifact
+	 * or serialized using
+	 * {@link org.integratedmodelling.klab.api.runtime.dataflow.IDataflow#getKdlCode()}
+	 * to be loaded and run another time. It will include a specification of its
+	 * total context of applicability if any exists.
+	 * <p>
+	 *
+	 * @param urn
+	 *            a {@link java.lang.String} object.
+	 * @param context
+	 *            a {@link org.integratedmodelling.klab.api.observations.ISubject}
+	 *            object.
+	 * @param scenarios
+	 *            zero or more scenario IDs to affect the resolution
+	 * @return the computation to observe the URN in the passed context. Never null,
+	 *         possibly empty.
+	 * @throws org.integratedmodelling.klab.exceptions.KlabException
+	 */
+	IDataflow<IArtifact> resolve(String urn, ISubject context, String[] scenarios) throws KlabException;
 
-//  /**
-//   * Release all information pertaining to named namespace, both in live and persistent storage.
-//   *
-//   * @param namespace a {@link org.integratedmodelling.klab.api.model.INamespace} object.
-//   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
-//   * @throws org.integratedmodelling.klab.exceptions.KlabException
-//   */
-//  void releaseNamespace(INamespace namespace, IMonitor monitor) throws KlabException;
+	/**
+	 * Index passed observation definition for retrieval.
+	 *
+	 * @param observer
+	 *            a {@link org.integratedmodelling.klab.api.model.IObserver} object.
+	 * @param monitor
+	 *            a
+	 *            {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor}
+	 *            object.
+	 * @throws org.integratedmodelling.klab.exceptions.KlabException
+	 */
+	void index(IObserver observer, IMonitor monitor) throws KlabException;
 
-  /**
-   * Index passed observation definition for retrieval.
-   *
-   * @param observer a {@link org.integratedmodelling.klab.api.model.IObserver} object.
-   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
-   * @throws org.integratedmodelling.klab.exceptions.KlabException
-   */
-  void index(IObserver observer, IMonitor monitor) throws KlabException;
+	/**
+	 * Get a state that represents a view of another state seen through a different
+	 * scale. The resulting state is read/write, i.e. any setting of values will
+	 * propagate to the underlying storage according to what the scale mapping
+	 * requires.
+	 * 
+	 * @param state
+	 * @param scale
+	 * @param context
+	 * @return the state view
+	 */
+	IState getStateView(IState state, IScale scale, IComputationContext context);
 
-  /**
-   * Get a state that represents a view of another state seen through a different scale. The 
-   * resulting state is read/write, i.e. any setting of values will propagate to the underlying
-   * storage according to what the scale mapping requires.
-   * 
-   * @param state
-   * @param scale
-   * @param context
-   * @return the state view
-   */
-  IState getStateView(IState state, IScale scale, IComputationContext context);
-
+	/**
+	 * Get the artifact type correspondent to the passed concept when observed.
+	 * 
+	 * @param c
+	 * @return
+	 */
+	Type getArtifactType(IConcept c);
 
 }

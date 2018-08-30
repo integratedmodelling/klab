@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService;
@@ -270,7 +271,7 @@ public enum Observables implements IObservableService {
 
 		return ret;
 	}
-
+	
 	@Override
 	public boolean isCompatible(IConcept o1, IConcept o2) {
 		return isCompatible(o1, o2, 0);

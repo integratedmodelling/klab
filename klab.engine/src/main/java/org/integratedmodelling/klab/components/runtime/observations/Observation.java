@@ -1,7 +1,10 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Optional;
 
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -31,49 +34,15 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 
 	private Observable observable;
 	private Subject observer;
+	private ObservationGroup group = null;
 
 	public String getUrn() {
 		return "local:observation:" + getParentIdentity(Session.class).getId() + ":" + getId();
 	}
-	
-	public static Observation empty() {
-		return new Observation() {
-			@Override
-			public IObservation at(ILocator locator) {
-				return this;
-			}
-
-			@Override
-			public IArtifact.Type getType() {
-				return IArtifact.Type.VOID;
-			}
-
-			@Override
-			public boolean isEmpty() {
-				return true;
-			}
-		};
-	}
 
 	public static IObservation empty(IObservable observable, IComputationContext context) {
-		Observation ret = new Observation((Observable) observable, (Scale) context.getScale(), (IRuntimeContext) context) {
-
-			@Override
-			public IArtifact.Type getType() {
-				return IArtifact.Type.VOID;
-			}
-
-			@Override
-			public IObservation at(ILocator locator) {
-				return this;
-			}
-			
-		};
-		ret.setEmpty(true);
-		return ret;
-	}
-	
-	private Observation() {
+		return new ObservationGroup((Observable) observable, (Scale) context.getScale(), (IRuntimeContext) context,
+				Observations.INSTANCE.getArtifactType(observable.getType()));
 	}
 
 	protected Observation(Observable observable, Scale scale, IRuntimeContext context) {
@@ -173,5 +142,31 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 				+ "}";
 	}
 
+	void setGroup(ObservationGroup group) {
+		this.group = group;
+	}
+
+	@Override
+	public IArtifact.Type getType() {
+		return Observations.INSTANCE.getArtifactType(observable.getType());
+	}
+
+	@Override
+	public IObservation at(ILocator locator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Iterator<IArtifact> iterator() {
+		return group == null ? new ArrayList<IArtifact>().iterator() : group.iterator();
+	}
+
+	@Override
+	public int groupSize() {
+		return group == null ? 0 : group.groupSize();
+	}
+	
+	
 
 }

@@ -92,7 +92,7 @@ public class DataflowCompiler {
 		Dataflow ret = new Dataflow();
 		ret.setName(this.name);
 		ret.setContext(this.context);
-		ret.setResolutionScope(scope);
+		ret.setResolutionScope((ResolutionScope) scope);
 
 		for (IResolvable root : getRootResolvables(resolutionGraph)) {
 

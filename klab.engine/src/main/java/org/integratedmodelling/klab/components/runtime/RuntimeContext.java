@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
+import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.components.time.extents.Scheduler;
 import org.integratedmodelling.klab.dataflow.Actuator;
@@ -45,6 +46,7 @@ import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Provenance;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.jgrapht.Graph;
@@ -571,30 +573,33 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	public IArtifact createTarget(Actuator actuator, IScale scale, IResolutionScope scope,
 			IDirectObservation rootSubject) {
 
-		Map<String, Observable> targetObservables = new HashMap<>();
+		Map<String, Pair<Observable, Mode>> targetObservables = new HashMap<>();
 
 		if (this.catalog.get(actuator.getName()) == null && !actuator.computesRescaledState()) {
-			targetObservables.put(actuator.getName(), actuator.getObservable());
+			targetObservables.put(actuator.getName(), new Pair<>(actuator.getObservable(), scope.getMode()));
 		}
 
 		/*
 		 * add any target of indirect computations
 		 */
 		for (IComputableResource computation : actuator.getComputation()) {
-			if (computation.getTarget() != null && !computation.getTarget().is(Type.COUNTABLE)
-					&& this.catalog.get(computation.getTarget().getLocalName()) == null) {
-				targetObservables.put(computation.getTarget().getLocalName(), (Observable) computation.getTarget());
+			if (computation.getTarget() != null && this.catalog.get(computation.getTarget().getLocalName()) == null) {
+				targetObservables.put(computation.getTarget().getLocalName(),
+						new Pair<>((Observable) computation.getTarget(), computation.getComputationMode()));
 			}
 		}
 
 		for (String name : targetObservables.keySet()) {
 
-			Observable observable = targetObservables.get(name);
+			Pair<Observable, Mode> op = targetObservables.get(name);
+			Observable observable = op.getFirst();
+			Mode mode = op.getSecond();
+
 			IObservation observation = null;
 
-			if (actuator.getObservable().is(Type.COUNTABLE) && scope.getMode() == Mode.INSTANTIATION) {
-				// TODO create empty group 
-			} else if (actuator.getObservable().is(Type.RELATIONSHIP)) {
+			if (observable.is(Type.COUNTABLE) && mode == Mode.INSTANTIATION) {
+				observation = new ObservationGroup(observable, (Scale) scale, this, IArtifact.Type.OBJECT);
+			} else if (observable.is(Type.RELATIONSHIP)) {
 				observation = DefaultRuntimeProvider.createRelationship(observable, scale,
 						scope.getRelationshipSource(), scope.getRelationshipTarget(), this);
 			} else {

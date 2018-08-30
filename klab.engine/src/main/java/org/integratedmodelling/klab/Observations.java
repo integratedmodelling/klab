@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -59,7 +60,7 @@ public enum Observations implements IObservationService {
 	INSTANCE;
 
 	Map<ILocator, Map<String, StateSummary>> summaryCache = new HashMap<>();
-	
+
 	@Override
 	public IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios) throws KlabException {
 		return Resolver.INSTANCE.resolve(urn, session, scenarios);
@@ -91,7 +92,7 @@ public enum Observations implements IObservationService {
 	 * Return the summary for the data in a state, computing it if necessary.
 	 * 
 	 * FIXME caching strategy currently just fills up forever - must lose caches as
-	 *       transitions advance.
+	 * transitions advance.
 	 * 
 	 * @param state
 	 *            a state
@@ -256,17 +257,17 @@ public enum Observations implements IObservationService {
 
 		if (observation instanceof IState) {
 
-		    StateSummary summary = getStateSummary((IState)observation, locator);
-		    
+			StateSummary summary = getStateSummary((IState) observation, locator);
+
 			ret.setValueCount(observation.getScale().size());
 			if (observation.getScale().size() == 1) {
 				ret.setLiteralValue(formatValue(observation.getObservable(),
 						((IState) observation).get(observation.getScale().getLocator(0))));
 			}
-			
+
 			ret.setNodataPercentage(summary.getNodataPercentage());
 			ret.setMinValue(summary.getRange().get(0));
-            ret.setMaxValue(summary.getRange().get(1));
+			ret.setMaxValue(summary.getRange().get(1));
 
 			// FIXME REMOVE this is just for testing
 			ret.getActions().add(new ActionReference("Export as GeoTiff", "ExportGeotiff"));
@@ -276,6 +277,20 @@ public enum Observations implements IObservationService {
 		ret.getActions().add(new ActionReference("Show metadata", "ShowMetadata"));
 
 		return ret;
+	}
+
+	@Override
+	public IArtifact.Type getArtifactType(IConcept c) {
+		if (c.is(Type.COUNTABLE)) {
+			return IArtifact.Type.OBJECT;
+		} else if (c.is(Type.PRESENCE)) {
+			return IArtifact.Type.BOOLEAN;
+		} else if (c.is(Type.TRAIT) || c.is(Type.CLASS)) {
+			return IArtifact.Type.CONCEPT;
+		} else if (c.is(Type.PROCESS)) {
+			return IArtifact.Type.PROCESS;
+		}
+		return IArtifact.Type.VOID;
 	}
 
 	public String formatValue(IObservable observable, Object object) {

@@ -34,7 +34,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.common.LogicalConnector;
-import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
+import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
@@ -43,6 +43,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
@@ -264,13 +265,15 @@ public class Actuator implements IActuator {
 			 * ensure they're not sent if not probed.
 			 */
 			if (!input) {
+				IObservation notifiable = (IObservation) (ret instanceof ObservationGroup ? ret.iterator().next()
+						: ret);
 				ISession session = ctx.getMonitor().getIdentity().getParentIdentity(ISession.class);
 				session.getMonitor()
 						.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 								IMessage.Type.NewObservation,
 								Observations.INSTANCE
-										.createArtifactDescriptor((IObservation) ret,
-												ctx.getContextObservation().equals(ret) ? null
+										.createArtifactDescriptor(notifiable,
+												ctx.getContextObservation().equals(notifiable) ? null
 														: ctx.getContextObservation(),
 												ITime.INITIALIZATION, -1)
 										.withTaskId(ctx.getMonitor().getIdentity().getId())));
@@ -326,17 +329,7 @@ public class Actuator implements IActuator {
 		} else if (contextualizer instanceof IInstantiator) {
 			for (IObjectArtifact object : ((IInstantiator) contextualizer).instantiate(observable,
 					addParameters(ctx, self, resource))) {
-				if (ret == null) {
-					ret = object;
-				} else {
-					((ObservedArtifact) ret).chain(object);
-				}
-			}
-			if (ret == null) {
-				// return an empty observation for this observable, so we know we made the
-				// observation.
-				ret = Klab.INSTANCE.getRuntimeProvider().createEmptyObservation(observable, ctx);
-				ret.getAnnotations().addAll(annotations);
+				((Artifact) ret).chain(object);
 			}
 		}
 

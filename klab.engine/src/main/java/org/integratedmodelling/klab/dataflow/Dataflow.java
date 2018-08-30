@@ -10,7 +10,6 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
-import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -19,6 +18,7 @@ import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
 
 /**
@@ -40,12 +40,15 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	String description;
 	private DirectObservation context;
-	IResolutionScope scope;
+	ResolutionScope scope;
 
 	@Override
 	public IArtifact run(IScale scale, IMonitor monitor) throws KlabException {
 
 		if (actuators.size() == 0) {
+			if (scope.getResolvedArtifact() != null) {
+				return scope.getResolvedArtifact().getArtifact();
+			}
 			return Observation.empty();
 		}
 
@@ -144,7 +147,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		this.context = context;
 	}
 
-	public void setResolutionScope(IResolutionScope scope) {
+	public void setResolutionScope(ResolutionScope scope) {
 		this.scope = scope;
 	}
 

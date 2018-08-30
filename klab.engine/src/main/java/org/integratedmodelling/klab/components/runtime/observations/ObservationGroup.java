@@ -23,7 +23,7 @@ public class ObservationGroup extends Observation {
 	private IArtifact.Type atype;
 	private List<IArtifact> artifacts = new ArrayList<>();
 
-	protected ObservationGroup(Observable observable, Scale scale, IRuntimeContext context, IArtifact.Type type) {
+	public ObservationGroup(Observable observable, Scale scale, IRuntimeContext context, IArtifact.Type type) {
 		super(observable, scale, context);
 		this.atype = type;
 	}
@@ -52,4 +52,12 @@ public class ObservationGroup extends Observation {
 	public int groupSize() {
 		return artifacts.size();
 	}
+
+	@Override
+	public void chain(IArtifact data) {
+		artifacts.add(data);
+		((Observation)data).setGroup(this);
+	}
+	
+	
 }
