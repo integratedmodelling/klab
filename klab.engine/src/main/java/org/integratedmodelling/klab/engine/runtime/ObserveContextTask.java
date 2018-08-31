@@ -7,9 +7,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.integratedmodelling.klab.Dataflows;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.dataflow.Dataflow;
@@ -97,6 +99,17 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 							 * and/or persisted by the session itself.
 							 */
 							session.registerObservationContext(((Observation)ret).getRuntimeContext());
+							
+							/*
+							 * The actuator has sent this already, but we send the final artifact a second
+							 * time to bring it to the foreground for the listeners
+							 */
+							session.getMonitor()
+									.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+											IMessage.Type.NewObservation,
+											Observations.INSTANCE
+													.createArtifactDescriptor(ret, null, ITime.INITIALIZATION, -1)
+													.withTaskId(token)));
 							
 							/*
 							 * Unregister the task

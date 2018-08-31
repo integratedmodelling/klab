@@ -8,13 +8,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.integratedmodelling.klab.Dataflows;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
@@ -110,9 +113,23 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 						// at merge.
 						ret = (IObservation) dataflow.run(scope.getCoverage().copy(), monitor);
 
+						/*
+						 * The actuator has sent this already, but we send the final artifact a second
+						 * time to bring it to the foreground for the listeners
+						 */
+						IObservation notifiable = (IObservation) (ret instanceof ObservationGroup
+								? ret.iterator().next()
+								: ret);
+						session.getMonitor()
+								.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+										IMessage.Type.NewObservation,
+										Observations.INSTANCE
+												.createArtifactDescriptor(notifiable, context, ITime.INITIALIZATION, -1)
+												.withTaskId(token)));
+
 						monitor.info("observation completed with "
-										+ NumberFormat.getPercentInstance().format(scope.getCoverage().getCoverage())
-										+ " context coverage");
+								+ NumberFormat.getPercentInstance().format(scope.getCoverage().getCoverage())
+								+ " context coverage");
 
 					} else {
 						monitor.warn("could not build dataflow: observation unsuccessful");
