@@ -279,20 +279,6 @@ public enum Observations implements IObservationService {
 		return ret;
 	}
 
-	@Override
-	public IArtifact.Type getArtifactType(IConcept c) {
-		if (c.is(Type.COUNTABLE)) {
-			return IArtifact.Type.OBJECT;
-		} else if (c.is(Type.PRESENCE)) {
-			return IArtifact.Type.BOOLEAN;
-		} else if (c.is(Type.TRAIT) || c.is(Type.CLASS)) {
-			return IArtifact.Type.CONCEPT;
-		} else if (c.is(Type.PROCESS)) {
-			return IArtifact.Type.PROCESS;
-		}
-		return IArtifact.Type.VOID;
-	}
-
 	public String formatValue(IObservable observable, Object object) {
 
 		if (object instanceof IConcept) {

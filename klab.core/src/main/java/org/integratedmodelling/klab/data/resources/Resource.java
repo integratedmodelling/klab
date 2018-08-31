@@ -108,7 +108,7 @@ public class Resource implements IResource {
 			this.parameters.put(key, Utils.asPOD(reference.getParameters().get(key)));
 		}
 		for (String key : reference.getMetadata().keySet()) {
-			this.metadata.put(key, Utils.asPOD(reference.getParameters().get(key)));
+			this.metadata.put(key, Utils.asPOD(reference.getMetadata().get(key)));
 		}
 		for (org.integratedmodelling.klab.api.runtime.rest.INotification notification : reference.getNotifications()) {
 			this.notifications.add(new KimNotification(notification.getMessage(), Level.parse(notification.getLevel()),
@@ -142,7 +142,7 @@ public class Resource implements IResource {
 		}
 		for (String key : this.metadata.keySet()) {
 			if (Utils.isPOD(this.metadata.get(key))) {
-				ret.getParameters().put(key, this.metadata.get(key).toString());
+				ret.getMetadata().put(key, this.metadata.get(key).toString());
 			}
 		}
 		for (INotification notification : this.notifications) {

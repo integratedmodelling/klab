@@ -255,7 +255,12 @@ public class DataflowCompiler {
 			if (observer != null) {
 				ret.setNamespace(observer.getNamespace());
 				ret.setName(observer.getId());
-			} else if (resolvedArtifact != null) {
+			} else if (resolvedArtifact != null && artifactAdapters == null) {
+				/*
+				 * Different situations if we ARE the artifact or we USE it for something. If we
+				 * have artifact adapters, we must compile an import as a child and use our own
+				 * observable, done below.
+				 */
 				ret.setName(resolvedArtifact.getArtifactId());
 				ret.setInput(true);
 			} else {
@@ -298,24 +303,29 @@ public class DataflowCompiler {
 
 					ret.getActuators().add(partial);
 				}
-			} else if (resolvedArtifact != null) {
-				defineActuator(ret, resolvedArtifact, artifactAdapters);
+			} else if (resolvedArtifact != null && artifactAdapters != null) {
+
+				/*
+				 * we are adapting the resolved artifact, so we compile in the import and add
+				 * the adapters to our own computation
+				 */
+				Actuator resolved = Actuator.create();
+				resolved.setObservable(resolvedArtifact.getObservable());
+				resolved.setInput(true);
+				resolved.setAlias(resolvedArtifact.getArtifactId());
+				resolved.setName(resolvedArtifact.getArtifactId());
+				resolved.setType(resolvedArtifact.getObservable().getArtifactType());
+				for (IComputableResource adapter : artifactAdapters) {
+					IComputableResource resource = ((ComputableResource) adapter).copy();
+//					((ComputableResource) resource).setTarget(resolved.getObservable());
+					ret.addComputation(resource);
+				}
+				resolved.getAnnotations()
+						.addAll(Annotations.INSTANCE.collectAnnotations(observable, resolvedArtifact.getArtifact()));
+				ret.getActuators().add(resolved);
 			}
 
 			return ret;
-		}
-
-		private void defineActuator(Actuator ret, ResolvedArtifact resolved,
-				List<IComputableResource> indirectAdapters) {
-
-			if (indirectAdapters != null) {
-				for (IComputableResource adapter : indirectAdapters) {
-					// TODO set the target diocan
-					ret.addComputation(adapter);
-				}
-			}
-			ret.getAnnotations().addAll(Annotations.INSTANCE.collectAnnotations(observable, resolved.getArtifact()));
-
 		}
 
 		private void defineActuator(Actuator ret, String name, Model model, List<IComputableResource> indirectAdapters,

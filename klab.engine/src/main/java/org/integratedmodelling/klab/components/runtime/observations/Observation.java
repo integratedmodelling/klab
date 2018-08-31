@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Optional;
 
-import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -42,7 +40,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 
 	public static IObservation empty(IObservable observable, IComputationContext context) {
 		return new ObservationGroup((Observable) observable, (Scale) context.getScale(), (IRuntimeContext) context,
-				Observations.INSTANCE.getArtifactType(observable.getType()));
+				observable.getArtifactType());
 	}
 
 	protected Observation(Observable observable, Scale scale, IRuntimeContext context) {
@@ -148,13 +146,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 
 	@Override
 	public IArtifact.Type getType() {
-		return Observations.INSTANCE.getArtifactType(observable.getType());
-	}
-
-	@Override
-	public IObservation at(ILocator locator) {
-		// TODO Auto-generated method stub
-		return null;
+		return observable.getArtifactType();
 	}
 
 	@Override

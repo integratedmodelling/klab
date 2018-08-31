@@ -138,12 +138,4 @@ public interface IObservationService {
 	 */
 	IState getStateView(IState state, IScale scale, IComputationContext context);
 
-	/**
-	 * Get the artifact type correspondent to the passed concept when observed.
-	 * 
-	 * @param c
-	 * @return
-	 */
-	Type getArtifactType(IConcept c);
-
 }

@@ -85,8 +85,6 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 		if (offset == 0) {
 			ret += "@klab " + Version.CURRENT + "\n";
-			// UNCOMMENT IF SEMANTICS MUST BE OUTPUT BY ACTUATOR
-			// ret += "@worldview " + Workspaces.INSTANCE.getWorldview().getName() + "\n";
 			ret += "@dataflow " + getName() + "\n";
 			ret += "@author 'k.LAB resolver " + creationTime + "'" + "\n";
 			if (getContext() != null) {

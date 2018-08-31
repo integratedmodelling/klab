@@ -41,6 +41,7 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator.Operation;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
@@ -50,6 +51,7 @@ import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.ogc.VectorAdapter;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.StringUtils;
 import org.integratedmodelling.klab.utils.Utils;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -105,7 +107,7 @@ public class VectorValidator implements IResourceValidator {
 
 	protected void validateCollection(FeatureSource<SimpleFeatureType, SimpleFeature> source, Builder ret,
 			IParameters<String> userData, boolean swapLatlonAxes, IMonitor monitor) throws IOException {
-
+		
 		Filter filter = Filter.INCLUDE;
 		FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures(filter);
 		String geomName = source.getSchema().getGeometryDescriptor().getName().toString();
@@ -119,6 +121,19 @@ public class VectorValidator implements IResourceValidator {
 			envelope = collection.getBounds();
 		}
 
+		/**
+		 * Description and other info go in metadata
+		 */
+		if (source.getInfo().getTitle() != null && !source.getInfo().getTitle().trim().isEmpty()) {
+			ret.withMetadata(IMetadata.DC_TITLE, source.getInfo().getTitle());
+		}
+		if (source.getInfo().getDescription() != null && !source.getInfo().getDescription().trim().isEmpty()) {
+			ret.withMetadata(IMetadata.DC_COMMENT, source.getInfo().getDescription());
+		}
+		if (source.getInfo().getKeywords() != null && !source.getInfo().getKeywords().isEmpty()) {
+			ret.withMetadata(IMetadata.IM_KEYWORDS, StringUtils.join(source.getInfo().getKeywords(), ","));
+		}
+		
 		ret.withSpatialExtent(Envelope.create(envelope, swapLatlonAxes).asShape().getExtentDescriptor());
 
 		Map<String, Class<?>> attributeTypes = new HashMap<>();
@@ -141,8 +156,8 @@ public class VectorValidator implements IResourceValidator {
 				}
 			} else {
 				// store attribute ID and type
-				attributeTypes.put(ad.getLocalName(), ad.getType().getBinding());
-				ret.withAttribute(ad.getLocalName(), Utils.getArtifactType(ad.getType().getBinding()), false, true);
+				attributeTypes.put(ad.getName().toString(), ad.getType().getBinding());
+				ret.withAttribute(ad.getName().toString(), Utils.getArtifactType(ad.getType().getBinding()), false, true);
 			}
 		}
 

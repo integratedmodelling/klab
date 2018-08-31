@@ -239,6 +239,11 @@ public class ResourceBuilder implements IResource.Builder {
 	@Override
 	public Builder withAttribute(String name, IArtifact.Type type, boolean key, boolean optional) {
 	    AttributeReference attribute = new AttributeReference();
+	    attribute.setName(name);
+	    attribute.setType(type);
+	    attribute.setKey(key);
+	    attribute.setOptional(optional);
+	    // TODO example
 	    this.attributes.add(attribute);
 	    return this;
 	}

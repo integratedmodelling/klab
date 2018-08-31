@@ -26,215 +26,221 @@ import org.integratedmodelling.kim.api.IParameters;
  */
 public interface IMetadata extends IParameters<String> {
 
-    /** The dc name. */
-    public static String       DC_NAME                        = "dc:name";
-    
-    /** The dc label. */
-    public static String       DC_LABEL                       = "dc:label";
-    
-    /** The dc comment. */
-    public static String       DC_COMMENT                     = "dc:comment";
-    
-    /** The dc definition. */
-    public static String       DC_DEFINITION                  = "dc:definition";
-    
-    /** The dc seealso. */
-    public static String       DC_SEEALSO                     = "dc:name";
+	/** The dc name. */
+	public static String DC_NAME = "dc:name";
 
-    /**
-     * DCMI point http://dublincore.org/documents/dcmi-point/ ISO 3166
-     * http://www.din.de/gremien/nas/nabd/iso3166ma/codlstp1/index.html DCMI box
-     * http://dublincore.org/documents/dcmi-box/ TGN http://shiva.pub.getty.edu/tgn_browser/
-     */
-    public static String       DC_COVERAGE_SPATIAL            = "dc:coverage-spatial";
+	/** The dc label. */
+	public static String DC_LABEL = "dc:label";
 
-    /**
-     * DCMI period http://dublincore.org/documents/dcmi-period/ W3C-DTF http://www.w3.org/TR/NOTE-datetime
-     */
-    public static String       DC_COVERAGE_TEMPORAL           = "dc:coverage-temporal";
+	/** The dc comment. */
+	public static String DC_COMMENT = "dc:comment";
 
-    /** free text. */
-    public static String       DC_DESCRIPTION                 = "dc:description";
+	/** The dc definition. */
+	public static String DC_DEFINITION = "dc:definition";
 
-    /** free text. */
-    public static String       DC_DESCRIPTION_TABLEOFCONTENTS = "dc:tableofcontents";
+	/** The dc seealso. */
+	public static String DC_SEEALSO = "dc:name";
 
-    /** free text. */
-    public static String       DC_DESCRIPTION_ABSTRACT        = "dc:abstract";
+	/**
+	 * DCMI point http://dublincore.org/documents/dcmi-point/ ISO 3166
+	 * http://www.din.de/gremien/nas/nabd/iso3166ma/codlstp1/index.html DCMI box
+	 * http://dublincore.org/documents/dcmi-box/ TGN
+	 * http://shiva.pub.getty.edu/tgn_browser/
+	 */
+	public static String DC_COVERAGE_SPATIAL = "dc:coverage-spatial";
 
-    /**
-     * DCMI type vocabulary http://dublincore.org/documents/dcmi-type-vocabulary/
-     */
-    public static String       DC_TYPE                        = "dc:type";
+	/**
+	 * DCMI period http://dublincore.org/documents/dcmi-period/ W3C-DTF
+	 * http://www.w3.org/TR/NOTE-datetime
+	 */
+	public static String DC_COVERAGE_TEMPORAL = "dc:coverage-temporal";
 
-    /**
-     * The dc relation.
-     *
-     * @deprecated use subclasses
-     */
-    @Deprecated
-    public static String       DC_RELATION                    = "dc:relation";
+	/** free text. */
+	public static String DC_DESCRIPTION = "dc:description";
 
-    /**
-     * URI http://www.ietf.org/rfc/rfc2396.txt
-     */
-    public static String       DC_RELATION_ISVERSIONOF        = "dc:isversionof";
+	/** free text. */
+	public static String DC_DESCRIPTION_TABLEOFCONTENTS = "dc:tableofcontents";
 
-    /** URI. */
-    public static String       DC_RELATION_HASVERSION         = "dc:hasversion";
+	/** free text. */
+	public static String DC_DESCRIPTION_ABSTRACT = "dc:abstract";
 
-    /** URI. */
-    public static String       DC_RELATION_ISREPLACEDBY       = "dc:isreplacedby";
+	/**
+	 * DCMI type vocabulary http://dublincore.org/documents/dcmi-type-vocabulary/
+	 */
+	public static String DC_TYPE = "dc:type";
 
-    /** URI. */
-    public static String       DC_RELATION_REPLACES           = "dc:replaces";
+	/**
+	 * The dc relation.
+	 *
+	 * @deprecated use subclasses
+	 */
+	@Deprecated
+	public static String DC_RELATION = "dc:relation";
 
-    /** URI. */
-    public static String       DC_RELATION_ISREQUIREDBY       = "dc:isrequiredby";
+	/**
+	 * URI http://www.ietf.org/rfc/rfc2396.txt
+	 */
+	public static String DC_RELATION_ISVERSIONOF = "dc:isversionof";
 
-    /** URI. */
-    public static String       DC_RELATION_REQUIRES           = "dc:requires";
+	/** URI. */
+	public static String DC_RELATION_HASVERSION = "dc:hasversion";
 
-    /** URI. */
-    public static String       DC_RELATION_ISPARTOF           = "dc:ispartof";
+	/** URI. */
+	public static String DC_RELATION_ISREPLACEDBY = "dc:isreplacedby";
 
-    /** URI. */
-    public static String       DC_RELATION_HASPART            = "dc:haspart";
+	/** URI. */
+	public static String DC_RELATION_REPLACES = "dc:replaces";
 
-    /** URI. */
-    public static String       DC_RELATION_ISREFERENCEDBY     = "dc:isreferencedby";
+	/** URI. */
+	public static String DC_RELATION_ISREQUIREDBY = "dc:isrequiredby";
 
-    /** URI. */
-    public static String       DC_RELATION_REFERENCES         = "dc:references";
+	/** URI. */
+	public static String DC_RELATION_REQUIRES = "dc:requires";
 
-    /** URI. */
-    public static String       DC_RELATION_ISFORMATOF         = "dc:isformatof";
+	/** URI. */
+	public static String DC_RELATION_ISPARTOF = "dc:ispartof";
 
-    /** URI. */
-    public static String       DC_RELATION_HASFORMAT          = "dc:hasformat";
+	/** URI. */
+	public static String DC_RELATION_HASPART = "dc:haspart";
 
-    /** URI. */
-    public static String       DC_SOURCE                      = "dc:source";
+	/** URI. */
+	public static String DC_RELATION_ISREFERENCEDBY = "dc:isreferencedby";
 
-    /**
-     * Vocabularies:
-     * 
-     * LCSH Library of Congress Subject Headings MeSH http://www.nlm.nih.gov/mesh/meshhome.html DDC
-     * http://www.oclc.org/dewey/index.htm LCC http://lcweb.loc.gov/catdir/cpso/lcco/lcco.html UDC
-     * http://www.udcc.org/
-     */
-    public static String       DC_SUBJECT                     = "dc:subject";
-    
-    /** The dc title. */
-    public static String       DC_TITLE                       = "dc:title";
-    
-    /** The dc title alternative. */
-    public static String       DC_TITLE_ALTERNATIVE           = "dc:title-alternative";
+	/** URI. */
+	public static String DC_RELATION_REFERENCES = "dc:references";
 
-    /** The dc contributor. */
-    public static String       DC_CONTRIBUTOR                 = "dc:contributor";
-    
-    /** The dc url. */
-    // TODO is this in DC?
-    public static String       DC_URL                         = "dc:url";
-    
-    /** The dc originator. */
-    // TODO is this in DC?
-    public static String       DC_ORIGINATOR                  = "dc:originator";
-    
-    /** The dc creator. */
-    public static String       DC_CREATOR                     = "dc:creator";
-    
-    /** The dc publisher. */
-    public static String       DC_PUBLISHER                   = "dc:publisher";
-    
-    /** The dc rights. */
-    public static String       DC_RIGHTS                      = "dc:rights";
+	/** URI. */
+	public static String DC_RELATION_ISFORMATOF = "dc:isformatof";
 
-    /**
-     * DCMI period http://dublincore.org/documents/dcmi-period/ W3C-DTF http://www.w3.org/TR/NOTE-datetime
-     */
-    public static String       DC_DATE_CREATED                = "dc:date-created";
-    
-    /** DCMI period W3C-DTF. */
-    public static String       DC_DATE_VALID                  = "dc:date-valid";
-    
-    /** DCMI period W3C-DTF. */
-    public static String       DC_DATE_AVAILABLE              = "dc:date-available";
-    
-    /** DCMI period W3C-DTF. */
-    public static String       DC_DATE_ISSUED                 = "dc:date-issued";
-    
-    /** DCMI period W3C-DTF. */
-    public static String       DC_MODIFIED                    = "dc:modified";
+	/** URI. */
+	public static String DC_RELATION_HASFORMAT = "dc:hasformat";
 
-    /** The dc format extent. */
-    public static String       DC_FORMAT_EXTENT               = "dc:format-extent";
+	/** URI. */
+	public static String DC_SOURCE = "dc:source";
 
-    /**
-     * http://www.isi.edu/in-notes/iana/assignments/media-types/media-types
-     */
-    public static String       DC_FORMAT_MEDIUM               = "dc:format-medium";
+	/**
+	 * Vocabularies:
+	 * 
+	 * LCSH Library of Congress Subject Headings MeSH
+	 * http://www.nlm.nih.gov/mesh/meshhome.html DDC
+	 * http://www.oclc.org/dewey/index.htm LCC
+	 * http://lcweb.loc.gov/catdir/cpso/lcco/lcco.html UDC http://www.udcc.org/
+	 */
+	public static String DC_SUBJECT = "dc:subject";
 
-    /** The dc identifier. */
-    public static String       DC_IDENTIFIER                  = "dc:identifier";
+	/** The dc title. */
+	public static String DC_TITLE = "dc:title";
 
-    /**
-     * ISO639-2 http://www.w3.org/TR/NOTE-datetime RFC1766 http://www.ietf.org/rfc/rfc1766.txt
-     */
-    public static final String DC_LANGUAGE                    = "dc:language";
+	/** The dc title alternative. */
+	public static String DC_TITLE_ALTERNATIVE = "dc:title-alternative";
 
-    /** The Constant IM_NAME. */
-    public static final String IM_NAME                        = "im:name";
-    
-    /** The Constant IM_MIN_SPATIAL_SCALE. */
-    public static final String IM_MIN_SPATIAL_SCALE           = "im:min-spatial-scale";
-    
-    /** The Constant IM_MAX_SPATIAL_SCALE. */
-    public static final String IM_MAX_SPATIAL_SCALE           = "im:max-spatial-scale";
-    
-    /** The Constant IM_MIN_TEMPORAL_SCALE. */
-    public static final String IM_MIN_TEMPORAL_SCALE          = "im:min-temporal-scale";
-    
-    /** The Constant IM_MAX_TEMPORAL_SCALE. */
-    public static final String IM_MAX_TEMPORAL_SCALE          = "im:max-temporal-scale";
+	/** The dc contributor. */
+	public static String DC_CONTRIBUTOR = "dc:contributor";
 
-    /** Bounding box - expected to point to a PolygonValue. */
-    public static final String GEOSPACE_BOUNDING_BOX          = "geospace:hasBoundingBox";
+	/** The dc url. */
+	// TODO is this in DC?
+	public static String DC_URL = "dc:url";
 
-    /** The Constant STATE_HISTOGRAM. */
-    /*
-     * fields for state. These end up in metadata at the server side, and are serialized
-     * for transfer to clients.
-     */
-    public static final String STATE_HISTOGRAM                = "state:histogram";
-    
-    /** The Constant STATE_BOUNDARIES. */
-    public static final String STATE_BOUNDARIES               = "state:boundaries";
-    
-    /** The Constant STATE_COLORMAP. */
-    public static final String STATE_COLORMAP                 = "state:colormap";
-    
-    /** The Constant STATE_DISPLAY_DATA. */
-    public static final String STATE_DISPLAY_DATA             = "state:display-data";
-    
-    /** The Constant STATE_CLASS. */
-    public static final String STATE_CLASS                    = "state:class";
-    
-    /** The Constant STATE_STATED_BOUNDARIES. */
-    public static final String STATE_STATED_BOUNDARIES        = "state:stated-boundaries";
+	/** The dc originator. */
+	// TODO is this in DC?
+	public static String DC_ORIGINATOR = "dc:originator";
 
-    /** The Constant KLAB_LINE_COLOR. */
-    /*
-     * KLAB-specific, for visualization and display
-     */
-    public static final String KLAB_LINE_COLOR                = "klab:linecolor";
-    
-    /** The Constant KLAB_FILL_COLOR. */
-    public static final String KLAB_FILL_COLOR                = "klab:fillcolor";
-    
-    /** The Constant KLAB_OPACITY. */
-    public static final String KLAB_OPACITY                   = "klab:opacity";
+	/** The dc creator. */
+	public static String DC_CREATOR = "dc:creator";
 
+	/** The dc publisher. */
+	public static String DC_PUBLISHER = "dc:publisher";
+
+	/** The dc rights. */
+	public static String DC_RIGHTS = "dc:rights";
+
+	/**
+	 * DCMI period http://dublincore.org/documents/dcmi-period/ W3C-DTF
+	 * http://www.w3.org/TR/NOTE-datetime
+	 */
+	public static String DC_DATE_CREATED = "dc:date-created";
+
+	/** DCMI period W3C-DTF. */
+	public static String DC_DATE_VALID = "dc:date-valid";
+
+	/** DCMI period W3C-DTF. */
+	public static String DC_DATE_AVAILABLE = "dc:date-available";
+
+	/** DCMI period W3C-DTF. */
+	public static String DC_DATE_ISSUED = "dc:date-issued";
+
+	/** DCMI period W3C-DTF. */
+	public static String DC_MODIFIED = "dc:modified";
+
+	/** The dc format extent. */
+	public static String DC_FORMAT_EXTENT = "dc:format-extent";
+
+	/**
+	 * http://www.isi.edu/in-notes/iana/assignments/media-types/media-types
+	 */
+	public static String DC_FORMAT_MEDIUM = "dc:format-medium";
+
+	/** The dc identifier. */
+	public static String DC_IDENTIFIER = "dc:identifier";
+
+	public static String IM_KEYWORDS = "im:keywords";
+
+	/**
+	 * ISO639-2 http://www.w3.org/TR/NOTE-datetime RFC1766
+	 * http://www.ietf.org/rfc/rfc1766.txt
+	 */
+	public static final String DC_LANGUAGE = "dc:language";
+
+	/** The Constant IM_NAME. */
+	public static final String IM_NAME = "im:name";
+
+	/** The Constant IM_MIN_SPATIAL_SCALE. */
+	public static final String IM_MIN_SPATIAL_SCALE = "im:min-spatial-scale";
+
+	/** The Constant IM_MAX_SPATIAL_SCALE. */
+	public static final String IM_MAX_SPATIAL_SCALE = "im:max-spatial-scale";
+
+	/** The Constant IM_MIN_TEMPORAL_SCALE. */
+	public static final String IM_MIN_TEMPORAL_SCALE = "im:min-temporal-scale";
+
+	/** The Constant IM_MAX_TEMPORAL_SCALE. */
+	public static final String IM_MAX_TEMPORAL_SCALE = "im:max-temporal-scale";
+
+	/** Bounding box - expected to point to a PolygonValue. */
+	public static final String GEOSPACE_BOUNDING_BOX = "geospace:hasBoundingBox";
+
+	/** The Constant STATE_HISTOGRAM. */
+	/*
+	 * fields for state. These end up in metadata at the server side, and are
+	 * serialized for transfer to clients.
+	 */
+	public static final String STATE_HISTOGRAM = "state:histogram";
+
+	/** The Constant STATE_BOUNDARIES. */
+	public static final String STATE_BOUNDARIES = "state:boundaries";
+
+	/** The Constant STATE_COLORMAP. */
+	public static final String STATE_COLORMAP = "state:colormap";
+
+	/** The Constant STATE_DISPLAY_DATA. */
+	public static final String STATE_DISPLAY_DATA = "state:display-data";
+
+	/** The Constant STATE_CLASS. */
+	public static final String STATE_CLASS = "state:class";
+
+	/** The Constant STATE_STATED_BOUNDARIES. */
+	public static final String STATE_STATED_BOUNDARIES = "state:stated-boundaries";
+
+	/** The Constant KLAB_LINE_COLOR. */
+	/*
+	 * KLAB-specific, for visualization and display
+	 */
+	public static final String KLAB_LINE_COLOR = "klab:linecolor";
+
+	/** The Constant KLAB_FILL_COLOR. */
+	public static final String KLAB_FILL_COLOR = "klab:fillcolor";
+
+	/** The Constant KLAB_OPACITY. */
+	public static final String KLAB_OPACITY = "klab:opacity";
 
 }
