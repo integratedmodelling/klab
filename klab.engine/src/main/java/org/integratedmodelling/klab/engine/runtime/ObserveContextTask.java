@@ -42,9 +42,9 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 		this.taskDescription = parent.taskDescription;
 		this.descriptor = parent.descriptor;
 	}
-	
+
 	public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios) {
-		
+
 		Engine engine = session.getParentIdentity(Engine.class);
 		try {
 
@@ -88,34 +88,34 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 											IMessage.Type.DataflowCompiled,
 											new DataflowReference(token, dataflow.getKdlCode())));
 
-							/* make a copy of the coverage so that we ensure it's a scale, behaving properly
+							/*
+							 * make a copy of the coverage so that we ensure it's a scale, behaving properly
 							 * at merge.
 							 */
 							ret = (ISubject) dataflow.run(scope.getCoverage().copy(), monitor);
-//							ObserveContextTask.this.descriptor.setContextId(ret.getId());
 
 							/*
-							 * Register the observation context with the session. It will be disposed of 
+							 * Register the observation context with the session. It will be disposed of
 							 * and/or persisted by the session itself.
 							 */
-							session.registerObservationContext(((Observation)ret).getRuntimeContext());
-							
+							session.registerObservationContext(((Observation) ret).getRuntimeContext());
+
 							/*
 							 * The actuator has sent this already, but we send the final artifact a second
 							 * time to bring it to the foreground for the listeners
 							 */
-							session.getMonitor()
-									.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
-											IMessage.Type.NewObservation,
-											Observations.INSTANCE
-													.createArtifactDescriptor(ret, null, ITime.INITIALIZATION, -1)
-													.withTaskId(token)));
-							
+							if (dataflow.isPrimary()) {
+								session.getMonitor().send(Message.create(session.getId(),
+										IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation,
+										Observations.INSTANCE
+												.createArtifactDescriptor(ret, null, ITime.INITIALIZATION, -1)
+												.withTaskId(token)));
+							}
 							/*
 							 * Unregister the task
 							 */
 							session.unregisterTask(ObserveContextTask.this);
-							
+
 						}
 						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 								IMessage.Type.TaskFinished, ObserveContextTask.this.descriptor));
@@ -199,5 +199,5 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 	public ITaskTree<ISubject> createChild() {
 		return new ObserveContextTask(this);
 	}
-	
+
 }

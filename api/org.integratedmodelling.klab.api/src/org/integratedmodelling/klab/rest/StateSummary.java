@@ -13,6 +13,12 @@ public class StateSummary {
 	public enum DisplayType {
 		VALUES, IMAGE
 	}
+	
+	/**
+	 * Timestamp of last modification for the observation this refers to. Checked
+	 * to see if the summary needs to be recomputed.
+	 */
+	private long stateTimestamp;
 
 	/**
 	 * A relative URL that will return the detailed state data, either as an image
@@ -148,5 +154,13 @@ public class StateSummary {
 
 	public void setVariance(double variance) {
 		this.variance = variance;
+	}
+
+	public Long getStateTimestamp() {
+		return stateTimestamp;
+	}
+
+	public void setStateTimestamp(long stateTimestamp) {
+		this.stateTimestamp = stateTimestamp;
 	}
 }

@@ -108,7 +108,9 @@ abstract class ActionBase extends Script {
                 }
             } else if (vars.get(vname) instanceof IConcept) {
                 binding.setVariable(vname, new Concept(vars.get(vname), binding));
-            }
+            } else if (vars.get(vname) instanceof IObservation) {
+				binding.setVariable(vname, wrapObject(vars.get(vname), false));
+			}
         }
     }
 

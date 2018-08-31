@@ -109,6 +109,7 @@ public enum Dataflows implements IDataflowService {
       if (transition.equals(ITime.INITIALIZATION)) {
         ret.add(Trigger.DEFINITION);
         ret.add(Trigger.RESOLUTION);
+        ret.add(Trigger.INSTANTIATION);
       } else {
         ret.add(Trigger.TRANSITION);
         // FIXME add back

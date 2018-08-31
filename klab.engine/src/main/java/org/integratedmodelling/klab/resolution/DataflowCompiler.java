@@ -316,9 +316,7 @@ public class DataflowCompiler {
 				resolved.setName(resolvedArtifact.getArtifactId());
 				resolved.setType(resolvedArtifact.getObservable().getArtifactType());
 				for (IComputableResource adapter : artifactAdapters) {
-					IComputableResource resource = ((ComputableResource) adapter).copy();
-//					((ComputableResource) resource).setTarget(resolved.getObservable());
-					ret.addComputation(resource);
+					ret.addComputation(adapter);
 				}
 				resolved.getAnnotations()
 						.addAll(Annotations.INSTANCE.collectAnnotations(observable, resolvedArtifact.getArtifact()));

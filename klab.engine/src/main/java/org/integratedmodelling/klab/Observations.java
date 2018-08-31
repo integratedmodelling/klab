@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -34,6 +33,7 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservationService;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
@@ -106,15 +106,16 @@ public enum Observations implements IObservationService {
 
 		StateSummary ret = null;
 		Map<String, StateSummary> cached = summaryCache.get(locator);
-		if (cached == null || !cached.containsKey(state.getId())) {
+		if (cached != null && cached.containsKey(state.getId())
+				&& cached.get(state.getId()).getStateTimestamp() == ((Observation) state).getTimestamp()) {
+			ret = cached.get(state.getId());
+		} else {
 			ret = computeStateSummary(state, locator);
 			if (cached == null) {
 				cached = new HashMap<>();
 				summaryCache.put(locator, cached);
 			}
 			cached.put(state.getId(), ret);
-		} else {
-			ret = cached.get(state.getId());
 		}
 		return ret;
 	}
@@ -125,6 +126,8 @@ public enum Observations implements IObservationService {
 
 		int ndata = 0;
 		int nndat = 0;
+
+		ret.setStateTimestamp(((Observation) state).getTimestamp());
 
 		SummaryStatistics statistics = new SummaryStatistics();
 

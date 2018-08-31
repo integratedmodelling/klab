@@ -33,6 +33,8 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	private Observable observable;
 	private Subject observer;
 	private ObservationGroup group = null;
+	// last modification. Must be correct for any cache to work.
+	private long timestamp = System.currentTimeMillis();
 
 	public String getUrn() {
 		return "local:observation:" + getParentIdentity(Session.class).getId() + ":" + getId();
@@ -51,6 +53,14 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	@Override
 	public Optional<ISubject> getObserver() {
 		return observer == null ? Optional.empty() : Optional.of(observer);
+	}
+
+	protected void touch() {
+		this.timestamp = System.currentTimeMillis();
+	}
+	
+	public long getTimestamp() {
+		return timestamp;
 	}
 
 	@Override

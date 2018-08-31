@@ -67,6 +67,7 @@ public class State extends Observation implements IState, IKeyHolder {
 	}
 
 	public long set(ILocator index, Object value) {
+		touch();
 		return storage.set(index, value);
 	}
 
