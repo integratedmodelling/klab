@@ -704,7 +704,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		 * it's observed. This should probably go in observe().
 		 */
 
-		if (request.getSearchContextId() != null && !request.getSearchContextId().isEmpty()) {
+		if (request.getSearchContextId() != null) {
 			searchContexts.remove(request.getSearchContextId());
 		}
 

@@ -307,6 +307,12 @@ public class SWTResourceManager {
 	 * Maps fonts to their bold versions.
 	 */
 	private static Map<Font, Font> m_fontToBoldFontMap = new HashMap<Font, Font>();
+
+	/**
+	 * Maps fonts to their bold versions.
+	 */
+	private static Map<Font, Font> m_fontToItalicFontMap = new HashMap<Font, Font>();
+
 	/**
 	 * Returns a {@link Font} based on its name, height and style.
 	 * 
@@ -363,6 +369,7 @@ public class SWTResourceManager {
 		}
 		return font;
 	}
+	
 	/**
 	 * Returns a bold version of the given {@link Font}.
 	 * 
@@ -380,6 +387,25 @@ public class SWTResourceManager {
 		}
 		return font;
 	}
+	
+	/**
+	 * Returns a bold version of the given {@link Font}.
+	 * 
+	 * @param baseFont
+	 *            the {@link Font} for which a bold version is desired
+	 * @return the bold version of the given {@link Font}
+	 */
+	public static Font getItalicFont(Font baseFont) {
+		Font font = m_fontToItalicFontMap.get(baseFont);
+		if (font == null) {
+			FontData fontDatas[] = baseFont.getFontData();
+			FontData data = fontDatas[0];
+			font = new Font(Display.getCurrent(), data.getName(), data.getHeight(), SWT.ITALIC);
+			m_fontToItalicFontMap.put(baseFont, font);
+		}
+		return font;
+	}
+	
 	/**
 	 * Dispose all of the cached {@link Font}'s.
 	 */
@@ -394,6 +420,10 @@ public class SWTResourceManager {
 			font.dispose();
 		}
 		m_fontToBoldFontMap.clear();
+		for (Font font : m_fontToItalicFontMap.values()) {
+			font.dispose();
+		}
+		m_fontToItalicFontMap.clear();
 	}
 	////////////////////////////////////////////////////////////////////////////
 	//

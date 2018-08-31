@@ -263,14 +263,29 @@ public class RuntimeView extends ViewPart {
 
 		@Override
 		public Font getFont(Object element) {
-			// TODO Auto-generated method stub
+			if (element instanceof EObservationReference && ((EObservationReference) element).isFocal()) {
+				return SWTResourceManager.getBoldFont(taskTree.getFont());
+			} else if (element instanceof ETaskReference
+					&& ((ETaskReference) element).getStatus() == Type.TaskStarted) {
+				return SWTResourceManager.getItalicFont(taskTree.getFont());
+			}
 			return null;
 		}
 
 		@Override
 		public Color getForeground(Object element) {
-			if (element instanceof ETaskReference && ((ETaskReference) element).getStatus() == Type.TaskStarted) {
-				return ResourceManager.getColor(SWT.COLOR_GRAY);
+			
+			if (element instanceof ETaskReference) {
+				switch (((ETaskReference) element).getStatus()) {
+				case TaskStarted:
+					return ResourceManager.getColor(SWT.COLOR_DARK_GRAY);
+				case TaskFinished:
+					return ResourceManager.getColor(SWT.COLOR_DARK_GREEN);
+				case TaskAborted:
+					return ResourceManager.getColor(SWT.COLOR_RED);
+				default:
+					break;
+				}
 			} else if (element instanceof ENotification) {
 				if (((ENotification) element).getLevel().equals(Level.INFO.getName())) {
 					return ResourceManager.getColor(SWT.COLOR_DARK_BLUE);

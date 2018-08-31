@@ -3200,6 +3200,33 @@ finally {
 	restoreStackSize(stackSize);
 }
 
+rule__Action__DoAlternatives_2_0_0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getActionAccess().getDoDoKeyword_2_0_0_0()); }
+		'do'
+		{ after(grammarAccess.getActionAccess().getDoDoKeyword_2_0_0_0()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getActionAccess().getDoThenKeyword_2_0_0_1()); }
+		'then'
+		{ after(grammarAccess.getActionAccess().getDoThenKeyword_2_0_0_1()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getActionAccess().getDoFinallyKeyword_2_0_0_2()); }
+		'finally'
+		{ after(grammarAccess.getActionAccess().getDoFinallyKeyword_2_0_0_2()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
 rule__Action__Alternatives_2_3_0_0
 	@init {
 		int stackSize = keepStackSize();
@@ -4163,6 +4190,12 @@ rule__OPERATOR_TARGET__Alternatives
 		{ before(grammarAccess.getOPERATOR_TARGETAccess().getCausedKeyword_8()); }
 		'caused'
 		{ after(grammarAccess.getOPERATOR_TARGETAccess().getCausedKeyword_8()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getOPERATOR_TARGETAccess().getCooccurrentKeyword_9()); }
+		'cooccurrent'
+		{ after(grammarAccess.getOPERATOR_TARGETAccess().getCooccurrentKeyword_9()); }
 	)
 ;
 finally {
@@ -33119,13 +33152,9 @@ rule__Action__DoAssignment_2_0
 	}
 :
 	(
-		{ before(grammarAccess.getActionAccess().getDoDoKeyword_2_0_0()); }
-		(
-			{ before(grammarAccess.getActionAccess().getDoDoKeyword_2_0_0()); }
-			'do'
-			{ after(grammarAccess.getActionAccess().getDoDoKeyword_2_0_0()); }
-		)
-		{ after(grammarAccess.getActionAccess().getDoDoKeyword_2_0_0()); }
+		{ before(grammarAccess.getActionAccess().getDoAlternatives_2_0_0()); }
+		(rule__Action__DoAlternatives_2_0_0)
+		{ after(grammarAccess.getActionAccess().getDoAlternatives_2_0_0()); }
 	)
 ;
 finally {
@@ -35112,13 +35141,13 @@ rule__ConceptReference__NameAssignment_2_1_9_0
 	}
 :
 	(
-		{ before(grammarAccess.getConceptReferenceAccess().getNameConcomitantKeyword_2_1_9_0_0()); }
+		{ before(grammarAccess.getConceptReferenceAccess().getNameCooccurrentKeyword_2_1_9_0_0()); }
 		(
-			{ before(grammarAccess.getConceptReferenceAccess().getNameConcomitantKeyword_2_1_9_0_0()); }
-			'concomitant'
-			{ after(grammarAccess.getConceptReferenceAccess().getNameConcomitantKeyword_2_1_9_0_0()); }
+			{ before(grammarAccess.getConceptReferenceAccess().getNameCooccurrentKeyword_2_1_9_0_0()); }
+			'cooccurrent'
+			{ after(grammarAccess.getConceptReferenceAccess().getNameCooccurrentKeyword_2_1_9_0_0()); }
 		)
-		{ after(grammarAccess.getConceptReferenceAccess().getNameConcomitantKeyword_2_1_9_0_0()); }
+		{ after(grammarAccess.getConceptReferenceAccess().getNameCooccurrentKeyword_2_1_9_0_0()); }
 	)
 ;
 finally {

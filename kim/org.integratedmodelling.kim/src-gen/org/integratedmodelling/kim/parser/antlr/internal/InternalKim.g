@@ -3563,16 +3563,40 @@ ruleAction returns [EObject current=null]
 		(
 			(
 				(
-					lv_do_15_0='do'
-					{
-						newLeafNode(lv_do_15_0, grammarAccess.getActionAccess().getDoDoKeyword_2_0_0());
-					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getActionRule());
+					(
+						lv_do_15_1='do'
+						{
+							newLeafNode(lv_do_15_1, grammarAccess.getActionAccess().getDoDoKeyword_2_0_0_0());
 						}
-						setWithLastConsumed($current, "do", true, "do");
-					}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getActionRule());
+							}
+							setWithLastConsumed($current, "do", true, null);
+						}
+						    |
+						lv_do_15_2='then'
+						{
+							newLeafNode(lv_do_15_2, grammarAccess.getActionAccess().getDoThenKeyword_2_0_0_1());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getActionRule());
+							}
+							setWithLastConsumed($current, "do", true, null);
+						}
+						    |
+						lv_do_15_3='finally'
+						{
+							newLeafNode(lv_do_15_3, grammarAccess.getActionAccess().getDoFinallyKeyword_2_0_0_2());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getActionRule());
+							}
+							setWithLastConsumed($current, "do", true, null);
+						}
+					)
 				)
 			)
 			(
@@ -7634,15 +7658,15 @@ ruleConceptReference returns [EObject current=null]
 				(
 					(
 						(
-							lv_name_39_0='concomitant'
+							lv_name_39_0='cooccurrent'
 							{
-								newLeafNode(lv_name_39_0, grammarAccess.getConceptReferenceAccess().getNameConcomitantKeyword_2_1_9_0_0());
+								newLeafNode(lv_name_39_0, grammarAccess.getConceptReferenceAccess().getNameCooccurrentKeyword_2_1_9_0_0());
 							}
 							{
 								if ($current==null) {
 									$current = createModelElement(grammarAccess.getConceptReferenceRule());
 								}
-								setWithLastConsumed($current, "name", lv_name_39_0, "concomitant");
+								setWithLastConsumed($current, "name", lv_name_39_0, "cooccurrent");
 							}
 						)
 					)
@@ -7781,6 +7805,12 @@ ruleOPERATOR_TARGET returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRul
 		{
 			$current.merge(kw);
 			newLeafNode(kw, grammarAccess.getOPERATOR_TARGETAccess().getCausedKeyword_8());
+		}
+		    |
+		kw='cooccurrent'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getOPERATOR_TARGETAccess().getCooccurrentKeyword_9());
 		}
 	)
 ;

@@ -382,6 +382,8 @@ public abstract class AbstractKimProposalProvider extends TerminalsProposalProvi
 	}
 	public void completeAction_Do(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		// subclasses may override
+		// subclasses may override
+		// subclasses may override
 	}
 	public void completeAction_Executed(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		completeRuleCall(((RuleCall)assignment.getTerminal()), context, acceptor);

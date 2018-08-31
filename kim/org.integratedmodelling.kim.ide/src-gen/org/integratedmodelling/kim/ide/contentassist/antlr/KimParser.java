@@ -71,6 +71,7 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getActionAccess().getAlternatives_0_0(), "rule__Action__Alternatives_0_0");
 					put(grammarAccess.getActionAccess().getAlternatives_0_3_0_0(), "rule__Action__Alternatives_0_3_0_0");
 					put(grammarAccess.getActionAccess().getAlternatives_1_3_0_0(), "rule__Action__Alternatives_1_3_0_0");
+					put(grammarAccess.getActionAccess().getDoAlternatives_2_0_0(), "rule__Action__DoAlternatives_2_0_0");
 					put(grammarAccess.getActionAccess().getAlternatives_2_3_0_0(), "rule__Action__Alternatives_2_3_0_0");
 					put(grammarAccess.getActionAccess().getAlternatives_3_1(), "rule__Action__Alternatives_3_1");
 					put(grammarAccess.getComputableValueAccess().getAlternatives(), "rule__ComputableValue__Alternatives");

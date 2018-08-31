@@ -1971,7 +1971,10 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cConditionValueParserRuleCall_1_3_1_0 = (RuleCall)cConditionAssignment_1_3_1.eContents().get(0);
 		private final Group cGroup_2 = (Group)cAlternatives.eContents().get(2);
 		private final Assignment cDoAssignment_2_0 = (Assignment)cGroup_2.eContents().get(0);
-		private final Keyword cDoDoKeyword_2_0_0 = (Keyword)cDoAssignment_2_0.eContents().get(0);
+		private final Alternatives cDoAlternatives_2_0_0 = (Alternatives)cDoAssignment_2_0.eContents().get(0);
+		private final Keyword cDoDoKeyword_2_0_0_0 = (Keyword)cDoAlternatives_2_0_0.eContents().get(0);
+		private final Keyword cDoThenKeyword_2_0_0_1 = (Keyword)cDoAlternatives_2_0_0.eContents().get(1);
+		private final Keyword cDoFinallyKeyword_2_0_0_2 = (Keyword)cDoAlternatives_2_0_0.eContents().get(2);
 		private final Assignment cExecutedAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
 		private final RuleCall cExecutedValueExecutionParserRuleCall_2_1_0 = (RuleCall)cExecutedAssignment_2_1.eContents().get(0);
 		private final Group cGroup_2_2 = (Group)cGroup_2.eContents().get(2);
@@ -2001,16 +2004,16 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	(change?='change' | set?='set') assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' |
 		//	conditionNegative?='unless') condition=Value)? | integrate?='integrate'
 		//	assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' | conditionNegative?='unless')
-		//	condition=Value)? | do?='do'
-		//	executed+=ValueExecution (',' executed+=ValueExecution)* (=> ('if' | conditionNegative?='unless') condition=Value)? |
-		//	move?='move' (where=Value | away?='away') => condition=Value?;
+		//	condition=Value)? | do?=('do' | 'then' | 'finally') executed+=ValueExecution (',' executed+=ValueExecution)* (=>
+		//	('if' | conditionNegative?='unless') condition=Value)? | move?='move' (where=Value | away?='away') =>
+		//	condition=Value?;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(change?='change' | set?='set') assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' |
 		//conditionNegative?='unless') condition=Value)? | integrate?='integrate' assignments+=ValueAssignment (','
-		//assignments+=ValueAssignment)* (=> ('if' | conditionNegative?='unless') condition=Value)? | do?='do'
-		//executed+=ValueExecution (',' executed+=ValueExecution)* (=> ('if' | conditionNegative?='unless') condition=Value)? |
-		//move?='move' (where=Value | away?='away') => condition=Value?
+		//assignments+=ValueAssignment)* (=> ('if' | conditionNegative?='unless') condition=Value)? | do?=('do' | 'then' |
+		//'finally') executed+=ValueExecution (',' executed+=ValueExecution)* (=> ('if' | conditionNegative?='unless')
+		//condition=Value)? | move?='move' (where=Value | away?='away') => condition=Value?
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//(change?='change' | set?='set') assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' |
@@ -2126,15 +2129,24 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//Value
 		public RuleCall getConditionValueParserRuleCall_1_3_1_0() { return cConditionValueParserRuleCall_1_3_1_0; }
 		
-		//do?='do' executed+=ValueExecution (',' executed+=ValueExecution)* (=> ('if' | conditionNegative?='unless')
-		//condition=Value)?
+		//do?=('do' | 'then' | 'finally') executed+=ValueExecution (',' executed+=ValueExecution)* (=> ('if' |
+		//conditionNegative?='unless') condition=Value)?
 		public Group getGroup_2() { return cGroup_2; }
 		
-		//do?='do'
+		//do?=('do' | 'then' | 'finally')
 		public Assignment getDoAssignment_2_0() { return cDoAssignment_2_0; }
 		
+		//('do' | 'then' | 'finally')
+		public Alternatives getDoAlternatives_2_0_0() { return cDoAlternatives_2_0_0; }
+		
 		//'do'
-		public Keyword getDoDoKeyword_2_0_0() { return cDoDoKeyword_2_0_0; }
+		public Keyword getDoDoKeyword_2_0_0_0() { return cDoDoKeyword_2_0_0_0; }
+		
+		//'then'
+		public Keyword getDoThenKeyword_2_0_0_1() { return cDoThenKeyword_2_0_0_1; }
+		
+		//'finally'
+		public Keyword getDoFinallyKeyword_2_0_0_2() { return cDoFinallyKeyword_2_0_0_2; }
 		
 		//executed+=ValueExecution
 		public Assignment getExecutedAssignment_2_1() { return cExecutedAssignment_2_1; }
@@ -4111,7 +4123,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cExtendsConceptParserRuleCall_2_1_8_1_1_1_0 = (RuleCall)cExtendsAssignment_2_1_8_1_1_1.eContents().get(0);
 		private final Group cGroup_2_1_9 = (Group)cAlternatives_2_1.eContents().get(9);
 		private final Assignment cNameAssignment_2_1_9_0 = (Assignment)cGroup_2_1_9.eContents().get(0);
-		private final Keyword cNameConcomitantKeyword_2_1_9_0_0 = (Keyword)cNameAssignment_2_1_9_0.eContents().get(0);
+		private final Keyword cNameCooccurrentKeyword_2_1_9_0_0 = (Keyword)cNameAssignment_2_1_9_0.eContents().get(0);
 		private final Alternatives cAlternatives_2_1_9_1 = (Alternatives)cGroup_2_1_9.eContents().get(1);
 		private final Assignment cTypeAssignment_2_1_9_1_0 = (Assignment)cAlternatives_2_1_9_1.eContents().get(0);
 		private final RuleCall cTypeCONCEPT_TYPEParserRuleCall_2_1_9_1_0_0 = (RuleCall)cTypeAssignment_2_1_9_1_0.eContents().get(0);
@@ -4128,7 +4140,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	(type=CONCEPT_TYPE | 'extends' extends=Concept) | name='adjacent' (type=CONCEPT_TYPE | 'extends' extends=Concept) |
 		//	name='container' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='contained' (type=CONCEPT_TYPE | 'extends'
 		//	extends=Concept) | name='purpose' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='causant' (type=CONCEPT_TYPE
-		//	| 'extends' extends=Concept) | name='caused' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='concomitant'
+		//	| 'extends' extends=Concept) | name='caused' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='cooccurrent'
 		//	(type=CONCEPT_TYPE | 'extends' extends=Concept)) template?='}';
 		@Override public ParserRule getRule() { return rule; }
 		
@@ -4137,7 +4149,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//(type=CONCEPT_TYPE | 'extends' extends=Concept) | name='adjacent' (type=CONCEPT_TYPE | 'extends' extends=Concept) |
 		//name='container' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='contained' (type=CONCEPT_TYPE | 'extends'
 		//extends=Concept) | name='purpose' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='causant' (type=CONCEPT_TYPE
-		//| 'extends' extends=Concept) | name='caused' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='concomitant'
+		//| 'extends' extends=Concept) | name='caused' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='cooccurrent'
 		//(type=CONCEPT_TYPE | 'extends' extends=Concept)) template?='}'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
@@ -4158,7 +4170,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//name='adjacent' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='container' (type=CONCEPT_TYPE | 'extends'
 		//extends=Concept) | name='contained' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='purpose'
 		//(type=CONCEPT_TYPE | 'extends' extends=Concept) | name='causant' (type=CONCEPT_TYPE | 'extends' extends=Concept) |
-		//name='caused' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='concomitant' (type=CONCEPT_TYPE | 'extends'
+		//name='caused' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='cooccurrent' (type=CONCEPT_TYPE | 'extends'
 		//extends=Concept)) template?='}'
 		public Group getGroup_2() { return cGroup_2; }
 		
@@ -4179,7 +4191,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//(type=CONCEPT_TYPE | 'extends' extends=Concept) | name='container' (type=CONCEPT_TYPE | 'extends' extends=Concept) |
 		//name='contained' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='purpose' (type=CONCEPT_TYPE | 'extends'
 		//extends=Concept) | name='causant' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='caused' (type=CONCEPT_TYPE |
-		//'extends' extends=Concept) | name='concomitant' (type=CONCEPT_TYPE | 'extends' extends=Concept)
+		//'extends' extends=Concept) | name='cooccurrent' (type=CONCEPT_TYPE | 'extends' extends=Concept)
 		public Alternatives getAlternatives_2_1() { return cAlternatives_2_1; }
 		
 		//// identifiers for target of semantic ops; also used to connect to UO with 'model' statements
@@ -4454,14 +4466,14 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//Concept
 		public RuleCall getExtendsConceptParserRuleCall_2_1_8_1_1_1_0() { return cExtendsConceptParserRuleCall_2_1_8_1_1_1_0; }
 		
-		//name='concomitant' (type=CONCEPT_TYPE | 'extends' extends=Concept)
+		//name='cooccurrent' (type=CONCEPT_TYPE | 'extends' extends=Concept)
 		public Group getGroup_2_1_9() { return cGroup_2_1_9; }
 		
-		//name='concomitant'
+		//name='cooccurrent'
 		public Assignment getNameAssignment_2_1_9_0() { return cNameAssignment_2_1_9_0; }
 		
-		//'concomitant'
-		public Keyword getNameConcomitantKeyword_2_1_9_0_0() { return cNameConcomitantKeyword_2_1_9_0_0; }
+		//'cooccurrent'
+		public Keyword getNameCooccurrentKeyword_2_1_9_0_0() { return cNameCooccurrentKeyword_2_1_9_0_0; }
 		
 		//type=CONCEPT_TYPE | 'extends' extends=Concept
 		public Alternatives getAlternatives_2_1_9_1() { return cAlternatives_2_1_9_1; }
@@ -4502,6 +4514,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cPurposeKeyword_6 = (Keyword)cAlternatives.eContents().get(6);
 		private final Keyword cCausantKeyword_7 = (Keyword)cAlternatives.eContents().get(7);
 		private final Keyword cCausedKeyword_8 = (Keyword)cAlternatives.eContents().get(8);
+		private final Keyword cCooccurrentKeyword_9 = (Keyword)cAlternatives.eContents().get(9);
 		
 		//OPERATOR_TARGET:
 		//	'context' |
@@ -4512,10 +4525,12 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	'contained' |
 		//	'purpose' |
 		//	'causant' |
-		//	'caused';
+		//	'caused' |
+		//	'cooccurrent';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'context' | 'inherent' | 'compresent' | 'adjacent' | 'container' | 'contained' | 'purpose' | 'causant' | 'caused'
+		//'context' | 'inherent' | 'compresent' | 'adjacent' | 'container' | 'contained' | 'purpose' | 'causant' | 'caused' |
+		//'cooccurrent'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//'context'
@@ -4544,6 +4559,9 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//'caused'
 		public Keyword getCausedKeyword_8() { return cCausedKeyword_8; }
+		
+		//'cooccurrent'
+		public Keyword getCooccurrentKeyword_9() { return cCooccurrentKeyword_9; }
 	}
 	public class ConceptElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.Concept");
@@ -9539,9 +9557,9 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	(change?='change' | set?='set') assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' |
 	//	conditionNegative?='unless') condition=Value)? | integrate?='integrate'
 	//	assignments+=ValueAssignment (',' assignments+=ValueAssignment)* (=> ('if' | conditionNegative?='unless')
-	//	condition=Value)? | do?='do'
-	//	executed+=ValueExecution (',' executed+=ValueExecution)* (=> ('if' | conditionNegative?='unless') condition=Value)? |
-	//	move?='move' (where=Value | away?='away') => condition=Value?;
+	//	condition=Value)? | do?=('do' | 'then' | 'finally') executed+=ValueExecution (',' executed+=ValueExecution)* (=>
+	//	('if' | conditionNegative?='unless') condition=Value)? | move?='move' (where=Value | away?='away') =>
+	//	condition=Value?;
 	public ActionElements getActionAccess() {
 		return pAction;
 	}
@@ -9765,7 +9783,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	(type=CONCEPT_TYPE | 'extends' extends=Concept) | name='adjacent' (type=CONCEPT_TYPE | 'extends' extends=Concept) |
 	//	name='container' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='contained' (type=CONCEPT_TYPE | 'extends'
 	//	extends=Concept) | name='purpose' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='causant' (type=CONCEPT_TYPE
-	//	| 'extends' extends=Concept) | name='caused' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='concomitant'
+	//	| 'extends' extends=Concept) | name='caused' (type=CONCEPT_TYPE | 'extends' extends=Concept) | name='cooccurrent'
 	//	(type=CONCEPT_TYPE | 'extends' extends=Concept)) template?='}';
 	public ConceptReferenceElements getConceptReferenceAccess() {
 		return pConceptReference;
@@ -9784,7 +9802,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	'contained' |
 	//	'purpose' |
 	//	'causant' |
-	//	'caused';
+	//	'caused' |
+	//	'cooccurrent';
 	public OPERATOR_TARGETElements getOPERATOR_TARGETAccess() {
 		return pOPERATOR_TARGET;
 	}

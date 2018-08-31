@@ -23,6 +23,10 @@ public class EObservationReference implements IObservationReference, ERuntimeObj
     private String                parentTaskId;
     private String                parentArtifactId;
     private List<String>          childObservations = new ArrayList<>();
+    // if true, the observation was sent a second time, i.e. it's the main target of its task
+	private boolean focal = false;
+	private String mainArtifactId; // set = I depend on mainArtifact
+	boolean main; // true = I am mainArtifact
 
     public EObservationReference(ObservationReference observationReference) {
         this.delegate = observationReference;
@@ -37,7 +41,10 @@ public class EObservationReference implements IObservationReference, ERuntimeObj
 
     @Override
     public ERuntimeObject getEParent(DisplayPriority priority) {
-        return priority == DisplayPriority.ARTIFACTS_FIRST
+    	if (mainArtifactId != null) {
+    		return Activator.session().getObservation(mainArtifactId);
+    	}
+    	return priority == DisplayPriority.ARTIFACTS_FIRST
                 ? Activator.session().getObservation(parentArtifactId)
                 : Activator.session().getTask(parentTaskId);
     }
@@ -45,7 +52,7 @@ public class EObservationReference implements IObservationReference, ERuntimeObj
     @Override
     public ERuntimeObject[] getEChildren(DisplayPriority displayPriority, Level level) {
         List<ERuntimeObject> ret = new ArrayList<>();
-        if (displayPriority == DisplayPriority.ARTIFACTS_FIRST) {
+        if (displayPriority == DisplayPriority.ARTIFACTS_FIRST || main) {
             for (String child : childObservations) {
                 ret.add(Activator.session().getObservation(child));
             }
@@ -195,6 +202,10 @@ public class EObservationReference implements IObservationReference, ERuntimeObj
         return delegate.isEmpty();
     }
 
+    public boolean isFocal() {
+    	return this.focal;
+    }
+    
     @Override
     public String toString() {
         return "[OBSERVATION " + getObservationType() + " " + getLabel() + "]";
@@ -213,5 +224,23 @@ public class EObservationReference implements IObservationReference, ERuntimeObj
     public void setCreatorTaskId(String id) {
         this.parentTaskId = id;
     }
+
+	public void setFocal(boolean b) {
+		this.focal  = true;
+	}
+
+	/**
+	 * State that this observation is dependent on another, and set the parent ID so that
+	 * we can show it under it.
+	 * 
+	 * @param obs
+	 */
+	public void setDependentTo(EObservationReference obs) {
+		this.mainArtifactId = obs.getId();
+		obs.childObservations.add(this.getId());
+		obs.main = true;
+		ETaskReference task = Activator.session().getTask(obs.getTaskId());
+		task.removeObservation(this.getId());
+	}
 
 }

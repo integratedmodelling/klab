@@ -165,7 +165,7 @@ Action:
 	integrate?='integrate'  
 		assignments+=ValueAssignment (',' assignments+=ValueAssignment)*
 		(=> ('if' | conditionNegative?='unless') condition=Value)? |
-	do?='do'
+	do?=('do'|'then'|'finally')
 		executed+=ValueExecution (',' executed+=ValueExecution)*
 		(=> ('if' | conditionNegative?='unless') condition=Value)? |
 	/*
@@ -189,7 +189,6 @@ ComputableValue:
 	list=List |
 	null?='unknown';
 	
-
 ValueExecution returns ValueAssignment:
 	execValue=ExecutableValue ('as' target=LOWERCASE_ID)?
 ;
