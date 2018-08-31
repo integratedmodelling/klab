@@ -182,25 +182,6 @@ public interface IComputationContext extends IParameters<String> {
 	public IScale getScale();
 
 	/**
-	 * Get the names of all inputs for this computation. The correspondent semantics
-	 * can be accessed using {@link #getSemantics(String)}; the corresponding
-	 * artifact can be accessed using {@link #getArtifact(String)}.
-	 *
-	 * @return the names of all inputs in this context
-	 */
-	public Collection<String> getInputs();
-
-	/**
-	 * Get the names of all outputs expected from this computation. The
-	 * correspondent semantics can be accessed using {@link #getSemantics(String)};
-	 * the corresponding artifact can be accessed using
-	 * {@link #getArtifact(String)}.
-	 *
-	 * @return the names of all outputs in this context
-	 */
-	public Collection<String> getOutputs();
-
-	/**
 	 * Get the semantics for the passed identifier, which must be one of those
 	 * returned by either {@link #getInputs()} or {@link #getOutputs()}.
 	 *

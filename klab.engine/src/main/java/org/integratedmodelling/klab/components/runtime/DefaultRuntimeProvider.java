@@ -97,339 +97,335 @@ import edu.uci.ics.jung.graph.util.EdgeType;
 @Component(id = "runtime", version = Version.CURRENT)
 public class DefaultRuntimeProvider implements IRuntimeProvider {
 
-	private ActorSystem rootActorSystem = null;
-	private ExecutorService executor = Executors.newFixedThreadPool(Configuration.INSTANCE.getDataflowThreadCount());
+    private ActorSystem     rootActorSystem = null;
+    private ExecutorService executor        = Executors
+            .newFixedThreadPool(Configuration.INSTANCE.getDataflowThreadCount());
 
-	@Override
-	public Future<IArtifact> compute(IActuator actuator, IScale scale, IResolutionScope scope,
-			IDirectObservation context, IMonitor monitor) throws KlabException {
+    @Override
+    public Future<IArtifact> compute(IActuator actuator, IScale scale, IResolutionScope scope, IDirectObservation context, IMonitor monitor)
+            throws KlabException {
 
-		return executor.submit(new Callable<IArtifact>() {
+        return executor.submit(new Callable<IArtifact>() {
 
-			@Override
-			public IArtifact call() throws Exception {
+            @Override
+            public IArtifact call() throws Exception {
 
-				boolean switchContext = ((Actuator) actuator).getObservable().getType().is(Type.COUNTABLE)
-						&& scope.getMode() == Mode.RESOLUTION;
+                boolean switchContext = ((Actuator) actuator).getObservable().getType().is(Type.COUNTABLE)
+                        && scope.getMode() == Mode.RESOLUTION;
 
-				IRuntimeContext runtimeContext = null;
-				if (context == null) {
-					// new context
-					runtimeContext = createRuntimeContext(actuator, scope, scale, monitor);
-				} else if (switchContext) {
-					// new catalog, new scale
-					runtimeContext = ((Subject) context).getRuntimeContext().createContext(scale, actuator, scope,
-							monitor);
-				} else {
-					// instantiating or resolving states: stay in context
-					runtimeContext = ((Subject) context).getRuntimeContext().createChild(scale, actuator, scope,
-							monitor);
-				}
+                IRuntimeContext runtimeContext = null;
+                if (context == null) {
+                    // new context
+                    runtimeContext = createRuntimeContext(actuator, scope, scale, monitor);
+                } else if (switchContext) {
+                    // new catalog, new scale
+                    runtimeContext = ((Subject) context).getRuntimeContext()
+                            .createContext(scale, actuator, scope, monitor);
+                } else {
+                    // instantiating or resolving states: stay in context
+                    runtimeContext = ((Subject) context).getRuntimeContext()
+                            .createChild(scale, actuator, scope, monitor);
+                }
 
-				Graph<IActuator, DefaultEdge> graph = createDependencyGraph(actuator);
+                Graph<IActuator, DefaultEdge> graph = createDependencyGraph(actuator);
 
-				/*
-				 * use a tie-breaking comparator to ensure that topologically equivalent
-				 * partitions are executed in reverse priority order (the highest priority last,
-				 * so that when extents overlap the highest-ranking actuator has the final say).
-				 */
-				TopologicalOrderIterator<IActuator, DefaultEdge> sorter = new TopologicalOrderIterator<>(graph,
-						new Comparator<IActuator>() {
-							@Override
-							public int compare(IActuator o1, IActuator o2) {
-								return Integer.compare(((Actuator) o2).getPriority(), ((Actuator) o1).getPriority());
-							}
-						});
+                /*
+                 * use a tie-breaking comparator to ensure that topologically equivalent
+                 * partitions are executed in reverse priority order (the highest priority last,
+                 * so that when extents overlap the highest-ranking actuator has the final say).
+                 */
+                TopologicalOrderIterator<IActuator, DefaultEdge> sorter = new TopologicalOrderIterator<>(graph, new Comparator<IActuator>() {
+                    @Override
+                    public int compare(IActuator o1, IActuator o2) {
+                        return Integer.compare(((Actuator) o2).getPriority(), ((Actuator) o1).getPriority());
+                    }
+                });
 
-				while (sorter.hasNext()) {
+                while (sorter.hasNext()) {
 
-					Actuator active = (Actuator) sorter.next();
-					// create children for all actuators that are not the same object as the root
-					IRuntimeContext ctx = runtimeContext;
-					if (active != actuator) {
-						ctx = runtimeContext.createChild(scale, active, scope, monitor);
-					}
-					active.compute(ctx.getTargetArtifact(), ctx);
-				}
+                    Actuator active = (Actuator) sorter.next();
+                    // create children for all actuators that are not the same object as the root
+                    IRuntimeContext ctx = runtimeContext;
+                    if (active != actuator) {
+                        ctx = runtimeContext.createChild(scale, active, scope, monitor);
+                    }
+                    active.compute(ctx.getTargetArtifact(), ctx);
+                }
 
-				return runtimeContext.getTargetArtifact();
-			}
-		});
-	}
+                return runtimeContext.getTargetArtifact();
+            }
+        });
+    }
 
-	public ActorSystem getActorSystem() {
-		if (rootActorSystem == null) {
-			Logging.INSTANCE.info("Creating root actor system...");
-			rootActorSystem = ActorSystem
-					.create(Authentication.INSTANCE.getAuthenticatedIdentity(IEngine.class).getId());
-		}
-		return rootActorSystem;
-	}
+    public ActorSystem getActorSystem() {
+        if (rootActorSystem == null) {
+            Logging.INSTANCE.info("Creating root actor system...");
+            rootActorSystem = ActorSystem
+                    .create(Authentication.INSTANCE.getAuthenticatedIdentity(IEngine.class).getId());
+        }
+        return rootActorSystem;
+    }
 
-	private Graph<IActuator, DefaultEdge> createDependencyGraph(IActuator actuator) {
-		DefaultDirectedGraph<IActuator, DefaultEdge> ret = new DefaultDirectedGraph<>(DefaultEdge.class);
-		insertActuator(actuator, ret, new HashMap<>());
-		if (!System.getProperty("visualize", "false").equals("false") && ret.vertexSet().size() > 1) {
-			Graphs.show(ret, "Actuator dependencies");
-		}
-		return ret;
-	}
+    private Graph<IActuator, DefaultEdge> createDependencyGraph(IActuator actuator) {
+        DefaultDirectedGraph<IActuator, DefaultEdge> ret = new DefaultDirectedGraph<>(DefaultEdge.class);
+        insertActuator(actuator, ret, new HashMap<>());
+        if (!System.getProperty("visualize", "false").equals("false") && ret.vertexSet().size() > 1) {
+            Graphs.show(ret, "Actuator dependencies");
+        }
+        return ret;
+    }
 
-	private void insertActuator(IActuator actuator, DefaultDirectedGraph<IActuator, DefaultEdge> graph,
-			Map<String, IActuator> catalog) {
+    private void insertActuator(IActuator actuator, DefaultDirectedGraph<IActuator, DefaultEdge> graph, Map<String, IActuator> catalog) {
 
-		graph.addVertex(actuator);
-		catalog.put(actuator.getName(), actuator);
+        graph.addVertex(actuator);
+        catalog.put(actuator.getName(), actuator);
 
-		for (IActuator a : actuator.getActuators()) {
-			if (((Actuator) a).isReference()) {
-				IActuator ref = catalog.get(a.getName());
-				if (ref == null) {
-					throw new KlabIllegalStatusException("referenced actuator not found");
-				}
-				graph.addEdge(ref, actuator);
-			} else {
-				/*
-				 * containment is a dependency only if there is a computation or mediation;
-				 * otherwise children are computable in parallel - which this implementation
-				 * does not support.
-				 */
-				if (a.isComputed()) {
-					graph.addVertex(a);
-					graph.addEdge(a, actuator);
-				}
-				insertActuator(a, graph, catalog);
-			}
-		}
-	}
+        for (IActuator a : actuator.getActuators()) {
+            if (((Actuator) a).isReference()) {
+                IActuator ref = catalog.get(a.getName());
+                if (ref == null) {
+                    throw new KlabIllegalStatusException("referenced actuator not found");
+                }
+                graph.addEdge(ref, actuator);
+            } else {
+                /*
+                 * containment is a dependency only if there is a computation or mediation;
+                 * otherwise children are computable in parallel - which this implementation
+                 * does not support.
+                 */
+                if (a.isComputed()) {
+                    graph.addVertex(a);
+                    graph.addEdge(a, actuator);
+                }
+                insertActuator(a, graph, catalog);
+            }
+        }
+    }
 
-	@Override
-	public RuntimeContext createRuntimeContext(IActuator actuator, IResolutionScope scope, IScale scale,
-			IMonitor monitor) {
-		RuntimeContext ret = new RuntimeContext((Actuator) actuator, scope, scale, monitor);
-		IArtifact target = ret.createTarget((Actuator) actuator, scale, scope, null);
-		if (target instanceof IDirectObservation) {
-			((ResolutionScope) scope).setContext((IDirectObservation) target);
-		}
-		return ret;
-	}
+    @Override
+    public RuntimeContext createRuntimeContext(IActuator actuator, IResolutionScope scope, IScale scale, IMonitor monitor) {
+        RuntimeContext ret = new RuntimeContext((Actuator) actuator, scope, scale, monitor);
+        IArtifact target = ret.createTarget((Actuator) actuator, scale, scope, null);
+        if (target instanceof IDirectObservation) {
+            ((ResolutionScope) scope).setContext((IDirectObservation) target);
+        }
+        return ret;
+    }
 
-	@Override
-	public IServiceCall getServiceCall(IComputableResource resource, IActuator target) {
-		if (resource.getServiceCall() != null) {
-			return resource.getServiceCall();
-		} else if (resource.getUrn() != null) {
-			return (resource.getComputationMode() == Mode.INSTANTIATION
-					? UrnInstantiator.getServiceCall(resource.getUrn())
-					: UrnResolver.getServiceCall(resource.getUrn()));
-		} else if (resource.getExpression() != null) {
-			return ExpressionResolver.getServiceCall(resource);
-		} else if (resource.getLiteral() != null) {
-			return LiteralStateResolver.getServiceCall(resource.getLiteral());
-		} else if (resource.getConversion() != null) {
-			try {
-				return ConversionResolver.getServiceCall(resource.getConversion());
-			} catch (KlabValidationException e) {
-				throw new IllegalArgumentException(e);
-			}
-		} else if (resource.getClassification() != null) {
-			return ClassifyingStateResolver
-					.getServiceCall(((ComputableResource) resource).getValidatedResource(IClassification.class));
-		} else if (resource.getAccordingTo() != null) {
-			IClassification classification = Types.INSTANCE.createClassificationFromMetadata(
-					((Actuator) target).getObservable().getType(), resource.getAccordingTo());
-			return ClassifyingStateResolver.getServiceCall(classification);
-		} else if (resource.getLookupTable() != null) {
-			return LookupStateResolver
-					.getServiceCall(((ComputableResource) resource).getValidatedResource(ILookupTable.class));
-		}
+    @Override
+    public IServiceCall getServiceCall(IComputableResource resource, IActuator target) {
+        if (resource.getServiceCall() != null) {
+            return resource.getServiceCall();
+        } else if (resource.getUrn() != null) {
+            return (resource.getComputationMode() == Mode.INSTANTIATION
+                    ? UrnInstantiator.getServiceCall(resource.getUrn())
+                    : UrnResolver.getServiceCall(resource.getUrn()));
+        } else if (resource.getExpression() != null) {
+            return ExpressionResolver.getServiceCall(resource);
+        } else if (resource.getLiteral() != null) {
+            return LiteralStateResolver.getServiceCall(resource.getLiteral());
+        } else if (resource.getConversion() != null) {
+            try {
+                return ConversionResolver.getServiceCall(resource.getConversion());
+            } catch (KlabValidationException e) {
+                throw new IllegalArgumentException(e);
+            }
+        } else if (resource.getClassification() != null) {
+            return ClassifyingStateResolver
+                    .getServiceCall(((ComputableResource) resource)
+                            .getValidatedResource(IClassification.class));
+        } else if (resource.getAccordingTo() != null) {
+            IClassification classification = Types.INSTANCE
+                    .createClassificationFromMetadata(((Actuator) target).getObservable().getType(), resource
+                            .getAccordingTo());
+            return ClassifyingStateResolver.getServiceCall(classification);
+        } else if (resource.getLookupTable() != null) {
+            return LookupStateResolver
+                    .getServiceCall(((ComputableResource) resource).getValidatedResource(ILookupTable.class));
+        }
 
-		// temp
-		throw new IllegalArgumentException("unsupported computable passed to getServiceCall()");
-	}
+        // temp
+        throw new IllegalArgumentException("unsupported computable passed to getServiceCall()");
+    }
 
-	@Override
-	public IDataArtifact distributeComputation(IStateResolver resolver, IState data, IComputationContext context,
-			IScale scale) throws KlabException {
+    @Override
+    public IDataArtifact distributeComputation(IStateResolver resolver, IState data, IComputationContext context, IScale scale)
+            throws KlabException {
 
-		// TODO use a distributed loop unless the resolver implements some tag interface
-		// to notify
-		// non-reentrant behavior
-		// TODO if this is done, the next one must be local to each thread
-		IArtifact self = context.get("self", IArtifact.class);
-		RuntimeContext ctx = new RuntimeContext((RuntimeContext) context);
-		Collection<Pair<String, IDataArtifact>> variables = ctx.getArtifacts(IDataArtifact.class);
-		for (IScale state : scale) {
-			data.set(state, resolver.resolve(data.getObservable(),
-					variables.isEmpty() ? ctx : localizeContext(ctx, state, self, variables)));
-		}
-		return data;
-	}
+        // TODO use a distributed loop unless the resolver implements some tag interface
+        // to notify
+        // non-reentrant behavior
+        // TODO if this is done, the next one must be local to each thread
+        IArtifact self = context.get("self", IArtifact.class);
+        RuntimeContext ctx = new RuntimeContext((RuntimeContext) context);
+        Collection<Pair<String, IDataArtifact>> variables = ctx.getArtifacts(IDataArtifact.class);
+        for (IScale state : scale) {
+            data.set(state, resolver.resolve(data.getObservable(), variables.isEmpty() ? ctx
+                    : localizeContext(ctx, state, self, variables)));
+        }
+        return data;
+    }
 
-	private IComputationContext localizeContext(RuntimeContext context, IScale state, IArtifact self,
-			Collection<Pair<String, IDataArtifact>> variables) {
+    private IComputationContext localizeContext(RuntimeContext context, IScale state, IArtifact self, Collection<Pair<String, IDataArtifact>> variables) {
 
-		/*
-		 * this may not be the same layer we're producing but reflects the current value
-		 * for the computation.
-		 */
-		IArtifact targetArtifact = self == null ? context.getTargetArtifact() : self;
-		if (targetArtifact instanceof IDataArtifact) {
-			// this ensures that Groovy expressions are computable
-			Object value = ((IDataArtifact) targetArtifact).get(state);
-			if (value == null && targetArtifact.getType() == IArtifact.Type.NUMBER) {
-				value = Double.NaN;
-			}
-			context.set("self", value);
-		}
+        /*
+         * this may not be the same layer we're producing but reflects the current value
+         * for the computation.
+         */
+        IArtifact targetArtifact = self == null ? context.getTargetArtifact() : self;
+        if (targetArtifact instanceof IDataArtifact) {
+            // this ensures that Groovy expressions are computable
+            Object value = ((IDataArtifact) targetArtifact).get(state);
+            if (value == null && targetArtifact.getType() == IArtifact.Type.NUMBER) {
+                value = Double.NaN;
+            }
+            context.set("self", value);
+        }
 
-		for (String var : context.getInputs()) {
-			IArtifact artifact = context.getArtifact(var);
-			if (artifact instanceof IDataArtifact) {
-				// this ensures that Groovy expressions are computable
-				Object value = ((IDataArtifact) artifact).get(state);
-				if (value == null && targetArtifact.getType() == IArtifact.Type.NUMBER) {
-					value = Double.NaN;
-				}
-				context.set(var, value);
-			}
-		}
-		context.setScale(state);
-		return context;
-	}
+        for (Pair<String, IDataArtifact> variable : variables) {
+            // this ensures that Groovy expressions are computable
+            Object value = variable.getSecond().get(state);
+            if (value == null && targetArtifact.getType() == IArtifact.Type.NUMBER) {
+                value = Double.NaN;
+            }
+            context.set(variable.getFirst(), value);
+        }
 
-	static IObservation createObservation(IObservable observable, IScale scale, RuntimeContext context) {
-		return createObservation(observable, scale, context, false);
-	}
+        context.setScale(state);
+        return context;
+    }
 
-	@Override
-	public IObservation createEmptyObservation(IObservable observable, IComputationContext context) {
-		return Observation.empty(observable, context);
-	}
+    static IObservation createObservation(IObservable observable, IScale scale, RuntimeContext context) {
+        return createObservation(observable, scale, context, false);
+    }
 
-	private static IObservation createObservation(IObservable observable, IScale scale, RuntimeContext context,
-			boolean scalarStorage) {
+    @Override
+    public IObservation createEmptyObservation(IObservable observable, IComputationContext context) {
+        return Observation.empty(observable, context);
+    }
 
-		boolean createActors = scale.getTime() != null;
+    private static IObservation createObservation(IObservable observable, IScale scale, RuntimeContext context, boolean scalarStorage) {
 
-		Observation ret = null;
-		if (observable.is(Type.SUBJECT)) {
-			ret = new Subject(observable.getLocalName(), (Observable) observable, (Scale) scale, context);
-		} else if (observable.is(Type.EVENT)) {
-			ret = new Event(observable.getLocalName(), (Observable) observable, (Scale) scale, context);
-		} else if (observable.is(Type.PROCESS)) {
-			ret = new Process(observable.getLocalName(), (Observable) observable, (Scale) scale, context);
-		} else if (observable.is(Type.RELATIONSHIP)) {
-			throw new IllegalArgumentException(
-					"createObservation() does not create relationships: use createRelationship()");
-		} else if (observable.is(Type.QUALITY)) {
+        boolean createActors = scale.getTime() != null;
 
-			IDataArtifact storage = null;
+        Observation ret = null;
+        if (observable.is(Type.SUBJECT)) {
+            ret = new Subject(observable.getLocalName(), (Observable) observable, (Scale) scale, context);
+        } else if (observable.is(Type.EVENT)) {
+            ret = new Event(observable.getLocalName(), (Observable) observable, (Scale) scale, context);
+        } else if (observable.is(Type.PROCESS)) {
+            ret = new Process(observable.getLocalName(), (Observable) observable, (Scale) scale, context);
+        } else if (observable.is(Type.RELATIONSHIP)) {
+            throw new IllegalArgumentException("createObservation() does not create relationships: use createRelationship()");
+        } else if (observable.is(Type.QUALITY)) {
 
-			if (scalarStorage) {
-				switch (observable.getArtifactType()) {
-				case CONCEPT:
-					storage = new ConceptSingletonStorage(observable, (Scale) scale);
-					break;
-				case NUMBER:
-					storage = new DoubleSingletonStorage(observable, (Scale) scale);
-					break;
-				case BOOLEAN:
-					storage = new BooleanSingletonStorage(observable, (Scale) scale);
-					break;
-				default:
-					throw new IllegalArgumentException("illegal observable for singleton storage: " + observable);
-				}
-			} else {
-				storage = Klab.INSTANCE.getStorageProvider().createStorage(observable.getArtifactType(), scale,
-						context);
-			}
+            IDataArtifact storage = null;
 
-			ret = new State((Observable) observable, (Scale) scale, context, storage);
+            if (scalarStorage) {
+                switch (observable.getArtifactType()) {
+                case CONCEPT:
+                    storage = new ConceptSingletonStorage(observable, (Scale) scale);
+                    break;
+                case NUMBER:
+                    storage = new DoubleSingletonStorage(observable, (Scale) scale);
+                    break;
+                case BOOLEAN:
+                    storage = new BooleanSingletonStorage(observable, (Scale) scale);
+                    break;
+                default:
+                    throw new IllegalArgumentException("illegal observable for singleton storage: "
+                            + observable);
+                }
+            } else {
+                storage = Klab.INSTANCE.getStorageProvider()
+                        .createStorage(observable.getArtifactType(), scale, context);
+            }
 
-		} else if (observable.is(Type.CONFIGURATION)) {
+            ret = new State((Observable) observable, (Scale) scale, context, storage);
 
-			ret = new org.integratedmodelling.klab.components.runtime.observations.Configuration(
-					observable.getLocalName(), (Observable) observable, (Scale) scale, context);
-		}
+        } else if (observable.is(Type.CONFIGURATION)) {
 
-		// TODO if actors must be created (i.e. there are temporal transitions etc) wrap
-		// into an Akka
-		// actor and register with the actor
+            ret = new org.integratedmodelling.klab.components.runtime.observations.Configuration(observable
+                    .getLocalName(), (Observable) observable, (Scale) scale, context);
+        }
 
-		return ret;
-	}
+        // TODO if actors must be created (i.e. there are temporal transitions etc) wrap
+        // into an Akka
+        // actor and register with the actor
 
-	static IRelationship createRelationship(Observable observable, IScale scale, ISubject relationshipSource,
-			ISubject relationshipTarget, RuntimeContext runtimeContext) {
+        return ret;
+    }
 
-		IRelationship ret = new Relationship(observable.getLocalName(), (Observable) observable, (Scale) scale,
-				runtimeContext);
+    static IRelationship createRelationship(Observable observable, IScale scale, ISubject relationshipSource, ISubject relationshipTarget, RuntimeContext runtimeContext) {
 
-		// TODO semantic of the relationship may define whether we want a directed or
-		// undirected edge.
-		runtimeContext.network.addEdge(ret,
-				new edu.uci.ics.jung.graph.util.Pair<ISubject>(relationshipSource, relationshipTarget),
-				observable.is(Type.BIDIRECTIONAL) ? EdgeType.UNDIRECTED : EdgeType.DIRECTED);
+        IRelationship ret = new Relationship(observable
+                .getLocalName(), (Observable) observable, (Scale) scale, runtimeContext);
 
-		// TODO if actors must be created (i.e. there are temporal transitions etc) wrap
-		// into an Akka
-		// actor and register with the actor
+        // TODO semantic of the relationship may define whether we want a directed or
+        // undirected edge.
+        runtimeContext.network
+                .addEdge(ret, new edu.uci.ics.jung.graph.util.Pair<ISubject>(relationshipSource, relationshipTarget), observable
+                        .is(Type.BIDIRECTIONAL) ? EdgeType.UNDIRECTED : EdgeType.DIRECTED);
 
-		return ret;
-	}
+        // TODO if actors must be created (i.e. there are temporal transitions etc) wrap
+        // into an Akka
+        // actor and register with the actor
 
-	@Override
-	public List<IComputableResource> getComputation(IObservable availableType, Mode resolutionMode,
-			IObservable desiredObservation) {
+        return ret;
+    }
 
-		if (availableType.is(Type.COUNTABLE)) {
-			if (desiredObservation.is(Type.DISTANCE)) {
-				return Collections.singletonList(new ComputableResource(
-						DistanceResolver.getServiceCall(availableType, desiredObservation), resolutionMode));
-			} else if (desiredObservation.is(Type.PRESENCE)) {
-				return Collections.singletonList(new ComputableResource(
-						PresenceResolver.getServiceCall(availableType, desiredObservation), resolutionMode));
-			} else if (desiredObservation.is(Type.NUMEROSITY)) {
-				return Collections.singletonList(new ComputableResource(
-						DensityResolver.getServiceCall(availableType, desiredObservation), resolutionMode));
-			}
-		}
+    @Override
+    public List<IComputableResource> getComputation(IObservable availableType, Mode resolutionMode, IObservable desiredObservation) {
 
-		return null;
-	}
+        if (availableType.is(Type.COUNTABLE)) {
+            if (desiredObservation.is(Type.DISTANCE)) {
+                return Collections.singletonList(new ComputableResource(DistanceResolver
+                        .getServiceCall(availableType, desiredObservation), resolutionMode));
+            } else if (desiredObservation.is(Type.PRESENCE)) {
+                return Collections.singletonList(new ComputableResource(PresenceResolver
+                        .getServiceCall(availableType, desiredObservation), resolutionMode));
+            } else if (desiredObservation.is(Type.NUMEROSITY)) {
+                return Collections.singletonList(new ComputableResource(DensityResolver
+                        .getServiceCall(availableType, desiredObservation), resolutionMode));
+            }
+        }
 
-	@Override
-	public void setComputationTargetId(IComputableResource resource, String targetId) {
-		if (resource.getServiceCall() != null && resource.getServiceCall().getParameters().containsKey("artifact")) {
-			resource.getServiceCall().getParameters().put("artifact", targetId);
-		}
-	}
+        return null;
+    }
 
-	@Override
-	public IState createState(IObservable observable, IArtifact.Type type, IScale scale, IComputationContext context) {
-		IDataArtifact storage = Klab.INSTANCE.getStorageProvider().createStorage(type, scale, context);
-		return new State((Observable) observable, (Scale) scale, (RuntimeContext) context, storage);
-	}
+    @Override
+    public void setComputationTargetId(IComputableResource resource, String targetId) {
+        if (resource.getServiceCall() != null
+                && resource.getServiceCall().getParameters().containsKey("artifact")) {
+            resource.getServiceCall().getParameters().put("artifact", targetId);
+        }
+    }
 
-	@Override
-	public void shutdown() {
-		if (rootActorSystem != null) {
-			rootActorSystem.terminate();
-		}
-	}
+    @Override
+    public IState createState(IObservable observable, IArtifact.Type type, IScale scale, IComputationContext context) {
+        IDataArtifact storage = Klab.INSTANCE.getStorageProvider().createStorage(type, scale, context);
+        return new State((Observable) observable, (Scale) scale, (RuntimeContext) context, storage);
+    }
 
-	@Override
-	public IComputableResource getCastingResolver(IArtifact.Type sourceType, IArtifact.Type targetType) {
-		/*
-		 * At the moment the only admissible cast is NUMBER -> BOOLEAN, although we may
-		 * want some level of text -> X (number, boolean, concept) at some point, maybe
-		 * with a warning. Also if eventually we want to explicitly support all number
-		 * types this will have to expand.
-		 */
-		if (sourceType == IArtifact.Type.NUMBER && targetType == IArtifact.Type.BOOLEAN) {
-			return new ComputableResource(CastingStateResolver.getServiceCall(sourceType, targetType), Mode.RESOLUTION);
-		}
-		return null;
-	}
+    @Override
+    public void shutdown() {
+        if (rootActorSystem != null) {
+            rootActorSystem.terminate();
+        }
+    }
+
+    @Override
+    public IComputableResource getCastingResolver(IArtifact.Type sourceType, IArtifact.Type targetType) {
+        /*
+         * At the moment the only admissible cast is NUMBER -> BOOLEAN, although we may
+         * want some level of text -> X (number, boolean, concept) at some point, maybe
+         * with a warning. Also if eventually we want to explicitly support all number
+         * types this will have to expand.
+         */
+        if (sourceType == IArtifact.Type.NUMBER && targetType == IArtifact.Type.BOOLEAN) {
+            return new ComputableResource(CastingStateResolver
+                    .getServiceCall(sourceType, targetType), Mode.RESOLUTION);
+        }
+        return null;
+    }
 }

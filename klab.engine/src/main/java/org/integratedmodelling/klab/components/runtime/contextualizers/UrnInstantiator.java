@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class UrnInstantiator implements IExpression, IInstantiator {
 	@Override
 	public List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context) throws KlabException {
 		IKlabData data = Resources.INSTANCE.getResourceData(resource, urnParameters, context.getScale(), context);
-		return Collections.singletonList((IObjectArtifact)data.getArtifact());
+		return (IObjectArtifact)data.getArtifact() == null ? new ArrayList<>() : Collections.singletonList((IObjectArtifact)data.getArtifact());
 	}
 
 	@Override

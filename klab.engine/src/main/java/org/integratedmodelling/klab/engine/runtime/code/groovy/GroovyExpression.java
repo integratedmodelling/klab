@@ -255,6 +255,10 @@ public class GroovyExpression extends Expression {
 
 	private void setBindings(Binding binding, IComputationContext context, IParameters<String> parameters) {
 
+	    if (code.contains("natural_attractiveness")) {
+	        System.out.println("SSIUDXPODOIF");
+	    }
+	    
 		for (String key : parameters.keySet()) {
 			binding.setVariable(key, parameters.get(key));
 		}

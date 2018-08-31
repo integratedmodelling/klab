@@ -175,17 +175,17 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 		return scale;
 	}
 
-	@Override
-	public Collection<String> getInputs() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Collection<String> getOutputs() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	@Override
+//	public Collection<String> getInputs() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//
+//	@Override
+//	public Collection<String> getOutputs() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
 	@Override
 	public IObservable getSemantics(String identifier) {

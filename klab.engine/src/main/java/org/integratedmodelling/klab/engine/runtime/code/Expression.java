@@ -103,15 +103,15 @@ public abstract class Expression implements IExpression {
       return null;
     }
 
-    @Override
-    public Collection<String> getInputs() {
-      return new HashSet<>();
-    }
-
-    @Override
-    public Collection<String> getOutputs() {
-      return new HashSet<>();
-    }
+//    @Override
+//    public Collection<String> getInputs() {
+//      return new HashSet<>();
+//    }
+//
+//    @Override
+//    public Collection<String> getOutputs() {
+//      return new HashSet<>();
+//    }
 
     @Override
     public IObservable getSemantics(String identifier) {
