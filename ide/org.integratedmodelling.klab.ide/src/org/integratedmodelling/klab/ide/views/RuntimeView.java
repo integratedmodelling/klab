@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.ide.views;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
@@ -803,6 +804,7 @@ public class RuntimeView extends ViewPart {
 			break;
 		case EngineDown:
 			Display.getDefault().asyncExec(() -> {
+				taskViewer.setInput(history = new ArrayList<>());
 				engineStatusIcon.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/grey24.png"));
 				networkStatusIcon
 						.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/worldgrey24.png"));

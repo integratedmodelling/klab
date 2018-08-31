@@ -37,11 +37,12 @@ import org.integratedmodelling.klab.scale.Scale;
  *
  */
 public class Dataflow extends Actuator implements IDataflow<IArtifact> {
-
-	String description;
+	
+	private String description;
 	private DirectObservation context;
-	ResolutionScope scope;
-
+	private ResolutionScope scope;
+	private boolean primary = true;
+	
 	@Override
 	public IArtifact run(IScale scale, IMonitor monitor) throws KlabException {
 
@@ -156,6 +157,25 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	@Override
 	public boolean isEmpty() {
 		return actuators.size() == 0;
+	}
+
+	/**
+	 * True if the dataflow is handling an API observation request. False if the request
+	 * is to resolve an object instantiated by another dataflow.
+	 * 
+	 * @return
+	 */
+	public boolean isPrimary() {
+		return primary;
+	}
+	
+	public Dataflow setPrimary(boolean b) {
+		this.primary = b;
+		return this;
+	}
+
+	public String getDescription() {
+		return description;
 	}
 
 }

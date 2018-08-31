@@ -117,19 +117,20 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 						 * The actuator has sent this already, but we send the final artifact a second
 						 * time to bring it to the foreground for the listeners
 						 */
-						IObservation notifiable = (IObservation) (ret instanceof ObservationGroup && ret.groupSize() > 0
-								? ret.iterator().next()
-								: ret);
-						session.getMonitor()
-								.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
-										IMessage.Type.NewObservation,
-										Observations.INSTANCE
-												.createArtifactDescriptor(notifiable, context, ITime.INITIALIZATION, -1)
-												.withTaskId(token)));
+						if (dataflow.isPrimary()) {
+							
+							IObservation notifiable = (IObservation) (ret instanceof ObservationGroup
+									&& ret.groupSize() > 0 ? ret.iterator().next() : ret);
+							session.getMonitor().send(Message.create(session.getId(),
+									IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation,
+									Observations.INSTANCE
+											.createArtifactDescriptor(notifiable, context, ITime.INITIALIZATION, -1)
+											.withTaskId(token)));
 
-						monitor.info("observation completed with "
-								+ NumberFormat.getPercentInstance().format(scope.getCoverage().getCoverage())
-								+ " context coverage");
+							monitor.info("observation completed with "
+									+ NumberFormat.getPercentInstance().format(scope.getCoverage().getCoverage())
+									+ " context coverage");
+						}
 
 					} else {
 						monitor.warn("could not build dataflow: observation unsuccessful");

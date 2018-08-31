@@ -324,8 +324,8 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
 
 			Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(),
-					scope);
-
+					scope).setPrimary(false);
+			
 			ret = (ICountableObservation) dataflow.run(scale, ((Monitor) monitor).get(subtask));
 			if (ret != null) {
 				((DirectObservation) ret).setName(name);
@@ -362,7 +362,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
 
 			Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(),
-					scope);
+					scope).setPrimary(false);;
 
 			ret = (IRelationship) dataflow.run(scale, ((Monitor) monitor).get(subtask));
 		}
