@@ -30,7 +30,8 @@ public class ObservationGroup extends Observation {
 
 	@Override
 	public IObservation at(ILocator locator) {
-		throw new IllegalStateException("chain() should only be called on a group");
+		// TODO may need to at() all in the group? So far this only gets called if the group is empty.
+		return this;
 	}
 
 	@Override

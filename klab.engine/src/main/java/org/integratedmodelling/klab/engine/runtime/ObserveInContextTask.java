@@ -117,7 +117,7 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 						 * The actuator has sent this already, but we send the final artifact a second
 						 * time to bring it to the foreground for the listeners
 						 */
-						IObservation notifiable = (IObservation) (ret instanceof ObservationGroup
+						IObservation notifiable = (IObservation) (ret instanceof ObservationGroup && ret.groupSize() > 0
 								? ret.iterator().next()
 								: ret);
 						session.getMonitor()

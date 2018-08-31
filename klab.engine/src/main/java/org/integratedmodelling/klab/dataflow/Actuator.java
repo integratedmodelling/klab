@@ -265,7 +265,8 @@ public class Actuator implements IActuator {
 			 * ensure they're not sent if not probed.
 			 */
 			if (!input) {
-				IObservation notifiable = (IObservation) (ret instanceof ObservationGroup ? ret.iterator().next()
+				IObservation notifiable = (IObservation) (ret instanceof ObservationGroup && ret.groupSize() > 0
+						? ret.iterator().next()
 						: ret);
 				ISession session = ctx.getMonitor().getIdentity().getParentIdentity(ISession.class);
 				session.getMonitor()

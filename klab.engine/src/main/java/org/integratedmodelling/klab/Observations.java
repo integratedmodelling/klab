@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.Aggregation;
@@ -208,6 +209,7 @@ public enum Observations implements IObservationService {
 		ret.setParentId(parent == null ? null : parent.getId());
 		ret.setLabel(observation instanceof IDirectObservation ? ((IDirectObservation) observation).getName()
 				: observation.getObservable().getLocalName());
+		ret.setLabel(StringUtils.capitalize(ret.getLabel().replaceAll("_", " ")));
 		ret.setObservable(observation.getObservable().getDefinition());
 		ret.setSiblingCount(observation.groupSize());
 		ret.getSemantics().addAll(((Concept) observation.getObservable().getType()).getTypeSet());
