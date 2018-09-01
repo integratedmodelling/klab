@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
@@ -13,7 +13,7 @@ import org.integratedmodelling.klab.api.runtime.rest.INotification;
 public class LocalData implements IKlabData {
 
 	IState state;
-	IDirectObservation object;
+	IObservation object;
 	List<INotification> notifications = new ArrayList<>();
 	boolean error = false;
 	

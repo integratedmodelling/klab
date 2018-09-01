@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.components.runtime.observations;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
@@ -161,7 +162,12 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 
 	@Override
 	public Iterator<IArtifact> iterator() {
-		return group == null ? new ArrayList<IArtifact>().iterator() : group.iterator();
+		if (group == null) {
+		    List<IArtifact> list = new ArrayList<>();
+		    list.add(this);
+		    return list.iterator();
+		}
+		return group.iterator();
 	}
 
 	@Override
