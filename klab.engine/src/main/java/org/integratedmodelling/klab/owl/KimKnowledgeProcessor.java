@@ -133,10 +133,10 @@ public enum KimKnowledgeProcessor {
 				IConcept expr = null;
 				switch (parent.getConnector()) {
 				case INTERSECTION:
-					expr = OWL.INSTANCE.getIntersection(concepts, namespace.getOntology());
+					expr = OWL.INSTANCE.getIntersection(concepts, namespace.getOntology(), ((Concept)concepts.get(0)).getTypeSet());
 					break;
 				case UNION:
-					expr = OWL.INSTANCE.getUnion(concepts, namespace.getOntology());
+					expr = OWL.INSTANCE.getUnion(concepts, namespace.getOntology(), ((Concept)concepts.get(0)).getTypeSet());
 					break;
 				case FOLLOWS:
 					expr = OWL.INSTANCE.getConsequentialityEvent(concepts, namespace.getOntology());
@@ -410,8 +410,8 @@ public enum KimKnowledgeProcessor {
 					concepts.add(declareInternal(op, monitor));
 				}
 				ret = concept.getExpressionType() == Expression.INTERSECTION
-						? OWL.INSTANCE.getIntersection(concepts, ret.getOntology())
-						: OWL.INSTANCE.getUnion(concepts, ret.getOntology());
+						? OWL.INSTANCE.getIntersection(concepts, ret.getOntology(), concept.getOperands().get(0).getType())
+						: OWL.INSTANCE.getUnion(concepts, ret.getOntology(), concept.getOperands().get(0).getType());
 			}
 
 			// set the k.IM definition in the concept FIXME this must only happen if the

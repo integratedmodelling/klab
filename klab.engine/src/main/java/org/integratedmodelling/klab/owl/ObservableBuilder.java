@@ -1094,7 +1094,6 @@ public class ObservableBuilder implements IObservable.Builder {
 
 		Concept ret = main;
 		ArrayList<String> tids = new ArrayList<>();
-		// ArrayList<IConcept> keep = new ArrayList<IConcept>();
 
 		/*
 		 * preload any base traits we already have. If any of them is abstract, take
@@ -1115,23 +1114,6 @@ public class ObservableBuilder implements IObservable.Builder {
 		 */
 		String cId = "";
 		String cDs = "";
-
-		// /*
-		// * we also add a non-by, non-down-to concept (untrasformed) if absent, so that
-		// we can
-		// * reconstruct an observable without transformations but with all traits and
-		// roles if required.
-		// * This is returned by getUntransformedObservable().
-		// *
-		// * TODO this is related to the observable not being the same as the declared -
-		// see what's the
-		// * best way to handle this. Better to build the concept using only the
-		// declaration, then create
-		// * the other using the same axioms + by/downto if needed. No need for a
-		// special uId - just do it
-		// * after.
-		// */
-		// String uId = "";
 
 		if (traits != null && traits.size() > 0) {
 
@@ -1241,7 +1223,6 @@ public class ObservableBuilder implements IObservable.Builder {
 			cleanId = getCleanId(compresent);
 			cId += "With" + cleanId;
 			cDs += "With" + cleanId;
-			// uId += "With" + cleanId;
 		}
 
 		if (goal != null) {
@@ -1255,7 +1236,6 @@ public class ObservableBuilder implements IObservable.Builder {
 			cleanId = getCleanId(goal);
 			cId += "For" + cleanId;
 			cDs += "For" + cleanId;
-			// uId += "For" + cleanId;
 		}
 
 		if (caused != null) {
@@ -1268,7 +1248,6 @@ public class ObservableBuilder implements IObservable.Builder {
 			cleanId = getCleanId(caused);
 			cId += "To" + cleanId;
 			cDs += "To" + cleanId;
-			// uId += "To" + cleanId;
 		}
 
 		if (causant != null) {
@@ -1282,7 +1261,6 @@ public class ObservableBuilder implements IObservable.Builder {
 			cleanId = getCleanId(causant);
 			cId += "From" + cleanId;
 			cDs += "From" + cleanId;
-			// uId += "From" + cleanId;
 		}
 
 		if (adjacent != null) {
@@ -1296,7 +1274,6 @@ public class ObservableBuilder implements IObservable.Builder {
 			cleanId = getCleanId(adjacent);
 			cId += "AdjacentTo" + cleanId;
 			cDs += "AdjacentTo" + cleanId;
-			// uId += "From" + cleanId;
 		}
 
 		if (cooccurrent != null) {
@@ -1311,7 +1288,6 @@ public class ObservableBuilder implements IObservable.Builder {
 			cleanId = getCleanId(cooccurrent);
 			cId += "During" + cleanId;
 			cDs += "During" + cleanId;
-			// uId += "From" + cleanId;
 		}
 
 		String roleIds = "";

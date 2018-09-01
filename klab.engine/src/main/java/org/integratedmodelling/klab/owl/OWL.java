@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -921,14 +922,68 @@ public enum OWL {
 		return ret;
 	}
 
-	public Concept getIntersection(Collection<IConcept> concepts, IOntology destination) {
-		// TODO
-		return null;
+	public Concept getIntersection(Collection<IConcept> concepts, IOntology destination, Set<Type> stype) {
+	    
+        EnumSet<Type> type = EnumSet.copyOf(stype);
+        type.add(Type.INTERSECTION);
+        
+        List<String> ids = new ArrayList<>();
+        Set<OWLClassExpression> classes = new HashSet<>();
+        for (IConcept c : concepts) {
+            classes.add(((Concept) c)._owl);
+            ids.add(c.toString().replace(':', '_'));
+        }
+        
+        Collections.sort(ids);
+        String id = "";
+        for (String iid : ids) {
+            id += (id.isEmpty() ? "" : "__and__") + iid;
+        }
+        
+        Concept ret = ((Ontology)destination).getConcept(id);
+        if (ret != null) {
+            return ret;
+        }
+        
+        OWLDataFactory factory = manager.getOWLDataFactory();
+        OWLClassExpression union = factory.getOWLObjectIntersectionOf(classes);
+        ret = (Concept) ((Ontology)destination).createConcept(id, type);
+        manager.addAxiom(((Ontology) destination).ontology,
+                factory.getOWLSubClassOfAxiom(((Concept) ret)._owl, union));
+        
+        return ret;
 	}
 
-	public Concept getUnion(Collection<IConcept> concepts, IOntology destination) {
-		// TODO
-		return null;
+	public Concept getUnion(Collection<IConcept> concepts, IOntology destination, Set<Type> stype) {
+
+	    EnumSet<Type> type = EnumSet.copyOf(stype);
+	    type.add(Type.UNION);
+	    
+	    List<String> ids = new ArrayList<>();
+        Set<OWLClassExpression> classes = new HashSet<>();
+        for (IConcept c : concepts) {
+            classes.add(((Concept) c)._owl);
+            ids.add(c.toString().replace(':', '_'));
+        }
+        
+        Collections.sort(ids);
+        String id = "";
+        for (String iid : ids) {
+            id += (id.isEmpty() ? "" : "__or__") + iid;
+        }
+        
+        Concept ret = ((Ontology)destination).getConcept(id);
+        if (ret != null) {
+            return ret;
+        }
+        
+        OWLDataFactory factory = manager.getOWLDataFactory();
+        OWLClassExpression union = factory.getOWLObjectUnionOf(classes);
+        ret = (Concept) ((Ontology)destination).createConcept(id, type);
+        manager.addAxiom(((Ontology) destination).ontology,
+                factory.getOWLSubClassOfAxiom(((Concept) ret)._owl, union));
+        
+		return ret;
 	}
 
 	public Concept getConsequentialityEvent(Collection<IConcept> concepts, IOntology destination) {

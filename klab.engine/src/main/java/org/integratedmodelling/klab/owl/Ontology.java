@@ -831,11 +831,6 @@ public class Ontology implements IOntology {
 
     IConcept ret = getConcept(newName);
     if (ret == null) {
-
-      if (newName.equals("Attribute")) {
-        System.out.println("HOLLALALL");
-      }
-
       ArrayList<IAxiom> ax = new ArrayList<>();
       ax.add(Axiom.ClassAssertion(newName, type));
       define(ax);

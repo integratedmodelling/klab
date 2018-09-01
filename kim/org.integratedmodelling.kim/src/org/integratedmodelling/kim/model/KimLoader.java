@@ -432,6 +432,12 @@ public class KimLoader implements IKimLoader {
         IResourceValidator validator = getValidator();
 
         for (Resource resource : sortedResources) {
+        
+            if (resource == null) {
+                System.err.println("k.IM loader: null resource in load list: skipping");
+                continue;
+            }
+            
             try {
 
                 Kim.INSTANCE.removeNamespace(((Model) resource.getContents().get(0)).getNamespace());

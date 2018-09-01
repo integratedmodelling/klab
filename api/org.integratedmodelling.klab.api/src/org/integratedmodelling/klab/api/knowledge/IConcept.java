@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab.api.knowledge;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -174,5 +175,13 @@ public interface IConcept extends IKnowledge {
      * @return the concept definition
      */
     String getDefinition();
+    
+    /**
+     * If the concept is {@link Type#UNION} or {@link Type#INTERSECTION}, this will return the
+     * list of operands. Otherwise it will return a list containing only the concept itself.
+     *  
+     * @return the list of operands
+     */
+    List<IConcept> getOperands();
 
 }

@@ -306,7 +306,16 @@ public interface IKimConcept extends IKimStatement {
         /**
          * A quality that can be quantified numerically
          */
-        QUANTIFIABLE
+        QUANTIFIABLE,
+        /**
+         * Reserved for unions built from declarations
+         */
+        UNION,
+        /**
+         * Reserved for intersections built from declarations
+         */
+        INTERSECTION
+        
     }
 
     /**
