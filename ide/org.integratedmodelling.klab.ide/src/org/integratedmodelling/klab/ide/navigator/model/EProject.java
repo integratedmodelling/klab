@@ -81,4 +81,8 @@ public class EProject extends ENavigatorItem {
 		return delegate.getDefinedWorldview() != null;
 	}
 
+    public EResourceFolder getResourceFolder() {
+        return new EResourceFolder(this);
+    }
+
 }

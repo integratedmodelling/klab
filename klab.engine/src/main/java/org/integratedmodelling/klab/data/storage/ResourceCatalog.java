@@ -299,7 +299,7 @@ public class ResourceCatalog implements IResourceCatalog {
             }
             
         }
-        return null;
+        return get(resource.getUrn());
     }
 
     @Override

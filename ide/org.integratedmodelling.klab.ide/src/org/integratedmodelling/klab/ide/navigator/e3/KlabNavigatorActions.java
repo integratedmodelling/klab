@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.ide.navigator.model.EScriptFolder;
 import org.integratedmodelling.klab.ide.navigator.model.ETestCase;
 import org.integratedmodelling.klab.ide.navigator.model.ETestFolder;
 import org.integratedmodelling.klab.ide.ui.wizards.BulkImportResourceWizard;
+import org.integratedmodelling.klab.ide.ui.wizards.MoveResourceWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.NewNamespaceWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.NewProjectWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.NewScriptWizard;
@@ -126,6 +127,12 @@ public class KlabNavigatorActions {
         request.setOperation(CRUDOperation.DELETE);
         request.getResourceUrns().add(resource.getResource().getUrn());
         Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.DeleteLocalResource, request);
+    }
+    
+    public static void moveResource(EResource resource) {
+        WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new MoveResourceWizard(resource));
+        dialog.create();
+        dialog.open();
     }
 
     public static void runScript(EScript script) {

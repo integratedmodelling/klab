@@ -124,6 +124,11 @@ public class ResolutionScope implements IResolutionScope {
 	Set<Link> links = new HashSet<>();
 	Set<ResolutionScope> resolvedObservables = new HashSet<>();
 
+	/**
+	 * If not null, this is a scope for a logical combination of resolutions.
+	 */
+	LogicalConnector connector;
+	
 	/*
 	 * These change during resolution and influence the choice of models
 	 */
@@ -308,6 +313,13 @@ public class ResolutionScope implements IResolutionScope {
 		}
 
 		return ret;
+	}
+	
+	public ResolutionScope getChildScope(LogicalConnector connector) {
+	    ResolutionScope ret = new ResolutionScope(this);
+	    ret.connector = connector;
+	    ret.coverage = connector == LogicalConnector.UNION ? Coverage.full(ret.coverage) : Coverage.empty(ret.coverage);
+	    return ret;
 	}
 
 	public ResolutionScope getChildScope(Observable observable, Mode mode, Scale scale) {

@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Range;
@@ -566,5 +567,10 @@ public class Observable extends Concept implements IObservable {
 	public Builder getBuilder() {
 		return new ObservableBuilder(this);
 	}
+
+    public static Observable promote(IConcept operand, Observable observable2) {
+        // TODO promote, then copy units and other observation semantics from the passed observable
+        throw new KlabUnimplementedException("copy semantics from other observable");
+    }
 
 }

@@ -18,6 +18,8 @@ import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
+import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigatorActions;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.EObserver;
 import org.integratedmodelling.klab.ide.navigator.model.beans.DisplayPriority;
@@ -204,13 +206,6 @@ public class KlabSession extends KlabPeer {
 			systemNotifications.add(enote);
 			send(IMessage.MessageClass.UserInterface, IMessage.Type.Notification, enote);
 		}
-
-		// System.out.println("RECEIVED NOTIFICATION [" + identity + "]: " +
-		// notification + ":");
-		// System.out.println("--------------------------------------");
-		// dumpHistory(DisplayPriority.TASK_FIRST);
-		// System.out.println("======================================\n");
-
 	}
 
 	private void recordTask(TaskReference task, Type event) {
@@ -241,12 +236,6 @@ public class KlabSession extends KlabPeer {
 
 		etask.setStatus(event);
 		send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, etask);
-
-		// System.out.println("RECEIVED TASK [" + event + "] " + etask + ":");
-		// System.out.println("--------------------------------------");
-		// dumpHistory(DisplayPriority.TASK_FIRST);
-		// System.out.println("======================================\n");
-
 	}
 
 	public void recordObservation(ObservationReference observation) {
@@ -369,10 +358,12 @@ public class KlabSession extends KlabPeer {
 		case ResourceImported:
 			Activator.klab().notifyResourceImport(resource);
 			break;
+        case ResourceDeleted:
+            Activator.klab().notifyResourceDeleted(resource);
+            break;
 		default:
 			break;
 		}
-		System.out.println("GOT RESOURCE " + type + ": " + resource);
 	}
 
 	@MessageHandler(messageClass = IMessage.MessageClass.Notification)
