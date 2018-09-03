@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.components.runtime.contextualizers;
 
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
@@ -39,7 +40,8 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
         this.urnParameters = call.getSecond();
 	}
 
-	public static IServiceCall getServiceCall(String urn) {
+	public static IServiceCall getServiceCall(String urn, IComputableResource condition, boolean conditionNegated) {
+		// TODO handle condition
 		return KimServiceCall.create(FUNCTION_ID, "urn", urn);
 	}
 

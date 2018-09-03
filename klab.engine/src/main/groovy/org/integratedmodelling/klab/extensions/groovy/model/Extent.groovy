@@ -35,5 +35,8 @@ class Extent {
         return extent.iterator();
     }
     
+	def getScale() {
+		return extent.getScaleRank();
+	}
     
 }

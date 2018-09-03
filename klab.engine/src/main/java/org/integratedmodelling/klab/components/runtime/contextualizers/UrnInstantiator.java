@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
@@ -42,7 +43,7 @@ public class UrnInstantiator implements IExpression, IInstantiator {
 		this.urnParameters = call.getSecond();
 	}
 
-	public static IServiceCall getServiceCall(String urn) {
+	public static IServiceCall getServiceCall(String urn, IComputableResource condition, boolean conditionNegated) {
 		return KimServiceCall.create(FUNCTION_ID, "urn", urn);
 	}
 

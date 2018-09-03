@@ -148,7 +148,6 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	}
 
 	public ComputableResource(ValueAssignment statement, Mode resolutionMode, IKimStatement parent) {
-
 		super(statement, parent);
 		setFrom(statement, resolutionMode);
 	}
@@ -191,7 +190,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		if (value.getFunction() != null) {
 			this.serviceCall = new KimServiceCall(value.getFunction(), parent);
 		} else if (value.getExpr() != null) {
-			this.expression = value.getExpr();
+			this.expression = removeDelimiters(value.getExpr());
 		} else if (value.getLiteral() != null) {
 			this.literal = Kim.INSTANCE.parseLiteral(value.getLiteral(), Kim.INSTANCE.getNamespace(value, false));
 		}
@@ -243,6 +242,11 @@ public class ComputableResource extends KimStatement implements IComputableResou
 
 	private void setFromValue(ComputableValue value) {
 
+		if (value.getCondition() != null) {
+			this.condition = new ComputableResource(value.getCondition(), this);
+			this.negated = value.isConditionNegated();
+		}
+		
 		if (value.getUrn() != null) {
 			this.urn = value.getUrn();
 		} else if (value.getFunction() != null) {
@@ -337,8 +341,8 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	}
 
 	@Override
-	public Optional<IComputableResource> getCondition() {
-		return condition == null ? Optional.empty() : Optional.of(condition);
+	public IComputableResource getCondition() {
+		return condition;
 	}
 
 	public void setCondition(ComputableResource condition) {

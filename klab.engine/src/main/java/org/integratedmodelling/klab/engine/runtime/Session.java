@@ -76,6 +76,7 @@ import org.integratedmodelling.klab.rest.ProjectModificationRequest;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceImportRequest;
 import org.integratedmodelling.klab.rest.RunScriptRequest;
+import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SearchMatch;
 import org.integratedmodelling.klab.rest.SearchMatchAction;
 import org.integratedmodelling.klab.rest.SearchRequest;
@@ -478,7 +479,21 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	private void setRegionOfInterest(SpatialExtent extent) {
 		Envelope envelope = Envelope.create(extent.getEast(), extent.getWest(), extent.getSouth(), extent.getNorth(),
 				Projection.getLatLon());
-		Pair<Integer, String> resolution = envelope.getResolutionForZoomLevel(50);
+		ScaleReference scale = new ScaleReference();
+		Pair<Integer, String> resolution = envelope.getResolutionForZoomLevel();
+		int scaleRank = envelope.getScaleRank();
+		scale.setEast(envelope.getMaxX());
+		scale.setWest(envelope.getMinX());
+		scale.setNorth(envelope.getMaxY());
+		scale.setSouth(envelope.getMinY());
+		scale.setResolution(resolution.getFirst());
+		scale.setResolutionDescription(resolution.getSecond());
+		scale.setSpaceScale(scaleRank);
+		
+		// TODO REMOVE
+		System.out.println("ZOOM LEVEL IS " + scaleRank);
+		
+		monitor.send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined, scale);
 		this.regionOfInterest = extent;
 	}
 

@@ -2,7 +2,6 @@ package org.integratedmodelling.kim.api;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
 
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -151,7 +150,7 @@ public interface IComputableResource extends IKimStatement {
 	 * 
 	 * @return the condition or an empty container.
 	 */
-	Optional<IComputableResource> getCondition();
+	IComputableResource getCondition();
 
 	/**
 	 * The computation may consist in a mediation of a quantity represented by the

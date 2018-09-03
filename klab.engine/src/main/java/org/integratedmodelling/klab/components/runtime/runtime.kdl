@@ -144,3 +144,13 @@ contextualizer density
 				
 	class org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.DensityResolver
 }
+
+contextualizer conditional
+	"Wrap a function call that produces a contextualizer, created only if the passed condition evaluates to true."
+{
+	
+	text condition
+		"The condition for the contextualizer to be returned."
+				
+	class org.integratedmodelling.klab.components.runtime.contextualizers.wrappers.ConditionalContextualizer
+}

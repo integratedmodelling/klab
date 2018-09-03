@@ -15,7 +15,10 @@ import org.integratedmodelling.klab.exceptions.KlabException
 import org.integratedmodelling.klab.extensions.groovy.model.Concept
 import org.integratedmodelling.klab.extensions.groovy.model.DirectObservation
 import org.integratedmodelling.klab.extensions.groovy.model.Relationship
+import org.integratedmodelling.klab.extensions.groovy.model.Scale
+import org.integratedmodelling.klab.extensions.groovy.model.Space
 import org.integratedmodelling.klab.extensions.groovy.model.State
+import org.integratedmodelling.klab.extensions.groovy.model.Time
 import org.integratedmodelling.klab.utils.NumberUtils
 import org.integratedmodelling.klab.utils.Pair
 
@@ -92,9 +95,9 @@ abstract class ActionBase extends Script {
         Map<?,?> vars = new HashMap<Object,Object>(binding.getVariables());
         for (vname in vars.keySet()) {
             if (vname.equals("_context")) {
-                binding.setVariable("context", wrapObject(binding.getVariable("_context"), true));
+                binding.setVariable("context", wrapObject(binding.getVariable("_context"), false));
             } else if (vname.equals("_self")) {
-                binding.setVariable("self", wrapObject(binding.getVariable("_self"), false));
+                binding.setVariable("self", wrapObject(binding.getVariable("_self"), true));
             } /*else if (vname.equals("_transition") && binding.getVariable("_transition") != null) {
                 binding.setVariable("now", new Transition(((ITransition)binding.getVariable('_transition'))));
             } */else if (vname.equals("_p")) {
@@ -199,10 +202,14 @@ abstract class ActionBase extends Script {
             ret = new State(observation, binding);
         }
 
-        if (!isContext) {
-//            binding.setVariable('scale', new Scale(observation.getScale(), binding));
-//            binding.setVariable('space', new Space(observation.getScale().getSpace(), binding));
-//            binding.setVariable('time', new Time(observation.getScale().getTime(), binding));
+        if (isContext) {
+            binding.setVariable('scale', new Scale(observation.getScale(), binding));
+			if (observation.getScale().getSpace() != null) {
+				binding.setVariable('space', new Space(observation.getScale().getSpace(), binding));
+			}
+			if (observation.getScale().getTime() != null) {
+				binding.setVariable('time', new Time(observation.getScale().getTime(), binding));
+			}
         }
 
         return ret;

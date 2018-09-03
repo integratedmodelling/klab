@@ -18,6 +18,7 @@ import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.List;
 import org.integratedmodelling.kim.kim.Literal;
+import org.integratedmodelling.kim.kim.Value;
 
 /**
  * <!-- begin-user-doc -->
@@ -35,6 +36,8 @@ import org.integratedmodelling.kim.kim.Literal;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ComputableValueImpl#getList <em>List</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ComputableValueImpl#isNull <em>Null</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ComputableValueImpl#getUrn <em>Urn</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ComputableValueImpl#isConditionNegated <em>Condition Negated</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ComputableValueImpl#getCondition <em>Condition</em>}</li>
  * </ul>
  *
  * @generated
@@ -170,6 +173,36 @@ public class ComputableValueImpl extends MinimalEObjectImpl.Container implements
    * @ordered
    */
   protected String urn = URN_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isConditionNegated() <em>Condition Negated</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isConditionNegated()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean CONDITION_NEGATED_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isConditionNegated() <em>Condition Negated</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isConditionNegated()
+   * @generated
+   * @ordered
+   */
+  protected boolean conditionNegated = CONDITION_NEGATED_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getCondition() <em>Condition</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getCondition()
+   * @generated
+   * @ordered
+   */
+  protected Value condition;
 
   /**
    * <!-- begin-user-doc -->
@@ -456,6 +489,77 @@ public class ComputableValueImpl extends MinimalEObjectImpl.Container implements
    * <!-- end-user-doc -->
    * @generated
    */
+  public boolean isConditionNegated()
+  {
+    return conditionNegated;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setConditionNegated(boolean newConditionNegated)
+  {
+    boolean oldConditionNegated = conditionNegated;
+    conditionNegated = newConditionNegated;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.COMPUTABLE_VALUE__CONDITION_NEGATED, oldConditionNegated, conditionNegated));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Value getCondition()
+  {
+    return condition;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetCondition(Value newCondition, NotificationChain msgs)
+  {
+    Value oldCondition = condition;
+    condition = newCondition;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.COMPUTABLE_VALUE__CONDITION, oldCondition, newCondition);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setCondition(Value newCondition)
+  {
+    if (newCondition != condition)
+    {
+      NotificationChain msgs = null;
+      if (condition != null)
+        msgs = ((InternalEObject)condition).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.COMPUTABLE_VALUE__CONDITION, null, msgs);
+      if (newCondition != null)
+        msgs = ((InternalEObject)newCondition).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.COMPUTABLE_VALUE__CONDITION, null, msgs);
+      msgs = basicSetCondition(newCondition, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.COMPUTABLE_VALUE__CONDITION, newCondition, newCondition));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
@@ -467,6 +571,8 @@ public class ComputableValueImpl extends MinimalEObjectImpl.Container implements
         return basicSetFunction(null, msgs);
       case KimPackage.COMPUTABLE_VALUE__LIST:
         return basicSetList(null, msgs);
+      case KimPackage.COMPUTABLE_VALUE__CONDITION:
+        return basicSetCondition(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -497,6 +603,10 @@ public class ComputableValueImpl extends MinimalEObjectImpl.Container implements
         return isNull();
       case KimPackage.COMPUTABLE_VALUE__URN:
         return getUrn();
+      case KimPackage.COMPUTABLE_VALUE__CONDITION_NEGATED:
+        return isConditionNegated();
+      case KimPackage.COMPUTABLE_VALUE__CONDITION:
+        return getCondition();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -534,6 +644,12 @@ public class ComputableValueImpl extends MinimalEObjectImpl.Container implements
         return;
       case KimPackage.COMPUTABLE_VALUE__URN:
         setUrn((String)newValue);
+        return;
+      case KimPackage.COMPUTABLE_VALUE__CONDITION_NEGATED:
+        setConditionNegated((Boolean)newValue);
+        return;
+      case KimPackage.COMPUTABLE_VALUE__CONDITION:
+        setCondition((Value)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -573,6 +689,12 @@ public class ComputableValueImpl extends MinimalEObjectImpl.Container implements
       case KimPackage.COMPUTABLE_VALUE__URN:
         setUrn(URN_EDEFAULT);
         return;
+      case KimPackage.COMPUTABLE_VALUE__CONDITION_NEGATED:
+        setConditionNegated(CONDITION_NEGATED_EDEFAULT);
+        return;
+      case KimPackage.COMPUTABLE_VALUE__CONDITION:
+        setCondition((Value)null);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -603,6 +725,10 @@ public class ComputableValueImpl extends MinimalEObjectImpl.Container implements
         return null_ != NULL_EDEFAULT;
       case KimPackage.COMPUTABLE_VALUE__URN:
         return URN_EDEFAULT == null ? urn != null : !URN_EDEFAULT.equals(urn);
+      case KimPackage.COMPUTABLE_VALUE__CONDITION_NEGATED:
+        return conditionNegated != CONDITION_NEGATED_EDEFAULT;
+      case KimPackage.COMPUTABLE_VALUE__CONDITION:
+        return condition != null;
     }
     return super.eIsSet(featureID);
   }
@@ -628,6 +754,8 @@ public class ComputableValueImpl extends MinimalEObjectImpl.Container implements
     result.append(null_);
     result.append(", urn: ");
     result.append(urn);
+    result.append(", conditionNegated: ");
+    result.append(conditionNegated);
     result.append(')');
     return result.toString();
   }

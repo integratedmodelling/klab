@@ -449,11 +449,11 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         metadata=Metadata
 	 *                     )? 
 	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
+	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
+	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
 	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
 	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
 	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
-	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
-	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
 	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
 	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
@@ -854,7 +854,10 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *     ExecutableValue returns ComputableValue
 	 *
 	 * Constraint:
-	 *     (function=Function | (expr=EXPR (language=LOWERCASE_ID | language=UPPERCASE_ID | language=CAMELCASE_ID)?) | urn=UrnId)
+	 *     (
+	 *         (function=Function | (expr=EXPR (language=LOWERCASE_ID | language=UPPERCASE_ID | language=CAMELCASE_ID)?) | urn=UrnId) 
+	 *         (conditionNegated?='unless'? condition=Value)?
+	 *     )
 	 */
 	protected void sequence_ExecutableValue(ISerializationContext context, ComputableValue semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

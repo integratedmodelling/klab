@@ -23,6 +23,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ComputableValue#getList <em>List</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ComputableValue#isNull <em>Null</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ComputableValue#getUrn <em>Urn</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ComputableValue#isConditionNegated <em>Condition Negated</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ComputableValue#getCondition <em>Condition</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kim.kim.KimPackage#getComputableValue()
@@ -238,5 +240,57 @@ public interface ComputableValue extends EObject
    * @generated
    */
   void setUrn(String value);
+
+  /**
+   * Returns the value of the '<em><b>Condition Negated</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Condition Negated</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Condition Negated</em>' attribute.
+   * @see #setConditionNegated(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getComputableValue_ConditionNegated()
+   * @model
+   * @generated
+   */
+  boolean isConditionNegated();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ComputableValue#isConditionNegated <em>Condition Negated</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Condition Negated</em>' attribute.
+   * @see #isConditionNegated()
+   * @generated
+   */
+  void setConditionNegated(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Condition</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Condition</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Condition</em>' containment reference.
+   * @see #setCondition(Value)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getComputableValue_Condition()
+   * @model containment="true"
+   * @generated
+   */
+  Value getCondition();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ComputableValue#getCondition <em>Condition</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Condition</em>' containment reference.
+   * @see #getCondition()
+   * @generated
+   */
+  void setCondition(Value value);
 
 } // ComputableValue

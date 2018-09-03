@@ -4140,120 +4140,164 @@ ruleExecutableValue returns [EObject current=null]
 	(
 		(
 			(
-				{
-					newCompositeNode(grammarAccess.getExecutableValueAccess().getFunctionFunctionParserRuleCall_0_0());
-				}
-				lv_function_0_0=ruleFunction
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getExecutableValueRule());
-					}
-					set(
-						$current,
-						"function",
-						lv_function_0_0,
-						"org.integratedmodelling.kim.Kim.Function");
-					afterParserOrEnumRuleCall();
-				}
-			)
-		)
-		    |
-		(
-			(
 				(
-					lv_expr_1_0=RULE_EXPR
 					{
-						newLeafNode(lv_expr_1_0, grammarAccess.getExecutableValueAccess().getExprEXPRTerminalRuleCall_1_0_0());
+						newCompositeNode(grammarAccess.getExecutableValueAccess().getFunctionFunctionParserRuleCall_0_0_0());
 					}
+					lv_function_0_0=ruleFunction
 					{
 						if ($current==null) {
-							$current = createModelElement(grammarAccess.getExecutableValueRule());
+							$current = createModelElementForParent(grammarAccess.getExecutableValueRule());
 						}
-						setWithLastConsumed(
+						set(
 							$current,
-							"expr",
-							lv_expr_1_0,
-							"org.integratedmodelling.kim.Kim.EXPR");
+							"function",
+							lv_function_0_0,
+							"org.integratedmodelling.kim.Kim.Function");
+						afterParserOrEnumRuleCall();
 					}
 				)
 			)
+			    |
 			(
-				otherlv_2='in'
-				{
-					newLeafNode(otherlv_2, grammarAccess.getExecutableValueAccess().getInKeyword_1_1_0());
-				}
 				(
 					(
-						(
-							lv_language_3_1=RULE_LOWERCASE_ID
-							{
-								newLeafNode(lv_language_3_1, grammarAccess.getExecutableValueAccess().getLanguageLOWERCASE_IDTerminalRuleCall_1_1_1_0_0());
+						lv_expr_1_0=RULE_EXPR
+						{
+							newLeafNode(lv_expr_1_0, grammarAccess.getExecutableValueAccess().getExprEXPRTerminalRuleCall_0_1_0_0());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getExecutableValueRule());
 							}
-							{
-								if ($current==null) {
-									$current = createModelElement(grammarAccess.getExecutableValueRule());
-								}
-								setWithLastConsumed(
-									$current,
-									"language",
-									lv_language_3_1,
-									"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
-							}
-							    |
-							lv_language_3_2=RULE_UPPERCASE_ID
-							{
-								newLeafNode(lv_language_3_2, grammarAccess.getExecutableValueAccess().getLanguageUPPERCASE_IDTerminalRuleCall_1_1_1_0_1());
-							}
-							{
-								if ($current==null) {
-									$current = createModelElement(grammarAccess.getExecutableValueRule());
-								}
-								setWithLastConsumed(
-									$current,
-									"language",
-									lv_language_3_2,
-									"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
-							}
-							    |
-							lv_language_3_3=RULE_CAMELCASE_ID
-							{
-								newLeafNode(lv_language_3_3, grammarAccess.getExecutableValueAccess().getLanguageCAMELCASE_IDTerminalRuleCall_1_1_1_0_2());
-							}
-							{
-								if ($current==null) {
-									$current = createModelElement(grammarAccess.getExecutableValueRule());
-								}
-								setWithLastConsumed(
-									$current,
-									"language",
-									lv_language_3_3,
-									"org.integratedmodelling.kim.Kim.CAMELCASE_ID");
-							}
-						)
+							setWithLastConsumed(
+								$current,
+								"expr",
+								lv_expr_1_0,
+								"org.integratedmodelling.kim.Kim.EXPR");
+						}
 					)
 				)
-			)?
-		)
-		    |
-		(
-			(
-				{
-					newCompositeNode(grammarAccess.getExecutableValueAccess().getUrnUrnIdParserRuleCall_2_0());
-				}
-				lv_urn_4_0=ruleUrnId
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getExecutableValueRule());
+				(
+					otherlv_2='in'
+					{
+						newLeafNode(otherlv_2, grammarAccess.getExecutableValueAccess().getInKeyword_0_1_1_0());
 					}
-					set(
-						$current,
-						"urn",
-						lv_urn_4_0,
-						"org.integratedmodelling.kim.Kim.UrnId");
-					afterParserOrEnumRuleCall();
-				}
+					(
+						(
+							(
+								lv_language_3_1=RULE_LOWERCASE_ID
+								{
+									newLeafNode(lv_language_3_1, grammarAccess.getExecutableValueAccess().getLanguageLOWERCASE_IDTerminalRuleCall_0_1_1_1_0_0());
+								}
+								{
+									if ($current==null) {
+										$current = createModelElement(grammarAccess.getExecutableValueRule());
+									}
+									setWithLastConsumed(
+										$current,
+										"language",
+										lv_language_3_1,
+										"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
+								}
+								    |
+								lv_language_3_2=RULE_UPPERCASE_ID
+								{
+									newLeafNode(lv_language_3_2, grammarAccess.getExecutableValueAccess().getLanguageUPPERCASE_IDTerminalRuleCall_0_1_1_1_0_1());
+								}
+								{
+									if ($current==null) {
+										$current = createModelElement(grammarAccess.getExecutableValueRule());
+									}
+									setWithLastConsumed(
+										$current,
+										"language",
+										lv_language_3_2,
+										"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
+								}
+								    |
+								lv_language_3_3=RULE_CAMELCASE_ID
+								{
+									newLeafNode(lv_language_3_3, grammarAccess.getExecutableValueAccess().getLanguageCAMELCASE_IDTerminalRuleCall_0_1_1_1_0_2());
+								}
+								{
+									if ($current==null) {
+										$current = createModelElement(grammarAccess.getExecutableValueRule());
+									}
+									setWithLastConsumed(
+										$current,
+										"language",
+										lv_language_3_3,
+										"org.integratedmodelling.kim.Kim.CAMELCASE_ID");
+								}
+							)
+						)
+					)
+				)?
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getExecutableValueAccess().getUrnUrnIdParserRuleCall_0_2_0());
+					}
+					lv_urn_4_0=ruleUrnId
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getExecutableValueRule());
+						}
+						set(
+							$current,
+							"urn",
+							lv_urn_4_0,
+							"org.integratedmodelling.kim.Kim.UrnId");
+						afterParserOrEnumRuleCall();
+					}
+				)
 			)
 		)
+		(
+			(
+				otherlv_5='if'
+				{
+					newLeafNode(otherlv_5, grammarAccess.getExecutableValueAccess().getIfKeyword_1_0_0());
+				}
+				    |
+				(
+					(
+						lv_conditionNegated_6_0='unless'
+						{
+							newLeafNode(lv_conditionNegated_6_0, grammarAccess.getExecutableValueAccess().getConditionNegatedUnlessKeyword_1_0_1_0());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getExecutableValueRule());
+							}
+							setWithLastConsumed($current, "conditionNegated", true, "unless");
+						}
+					)
+				)
+			)
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getExecutableValueAccess().getConditionValueParserRuleCall_1_1_0());
+					}
+					lv_condition_7_0=ruleValue
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getExecutableValueRule());
+						}
+						set(
+							$current,
+							"condition",
+							lv_condition_7_0,
+							"org.integratedmodelling.kim.Kim.Value");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)?
 	)
 ;
 

@@ -55,9 +55,9 @@ public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression
 
 		IServiceCall ret = KimServiceCall.create(FUNCTION_ID);
 		ret.getParameters().put("code", resource.getExpression());
-		if (resource.getCondition().isPresent()) {
+		if (resource.getCondition() != null) {
 			ret.getParameters().put(resource.isNegated() ? "unlesscondition" : "ifcondition",
-					resource.getCondition().get());
+					resource.getCondition());
 		}
 		return ret;
 	}

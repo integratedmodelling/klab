@@ -139,6 +139,10 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 			// TODO table literal
 			// TODO must also pass argument list to the same function...
 			return "{{" + ret + "}}";
+		} else if (val instanceof KimServiceCall) {
+			return ((KimServiceCall)val).getSourceCode();
+		} else if (val instanceof ComputableResource) {
+			return ((ComputableResource)val).getSourceCode();
 		}
 		return val.toString();
 	}

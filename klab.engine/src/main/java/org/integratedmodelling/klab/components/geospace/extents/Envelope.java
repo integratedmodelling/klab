@@ -11,6 +11,13 @@ import org.opengis.referencing.operation.TransformException;
 
 public class Envelope implements IEnvelope {
 
+	/**
+	 * Default minimum resolution in meters when a ROI is created from a 
+	 * user interacting with a map.
+	 */
+	public static final int DEFAULT_MIN_RESOLUTION = 5;
+	
+	
 	ReferencedEnvelope envelope;
 	IProjection projection;
 	Integer scaleRank = null;
@@ -111,6 +118,19 @@ public class Envelope implements IEnvelope {
 		}
 		ret.projection = projection;
 		return ret;
+	}
+
+	/**
+	 * Same as {@link #getResolutionForZoomLevel(int, double) using a default of 5
+	 * meters and the default multiplier of 4.
+	 * 
+	 * @param roundTo
+	 *            meters to round to. Also the minimum resolution if we can't get
+	 *            enough screen pixels.
+	 * @return resolution and the correspondent unit string.
+	 */
+	public Pair<Integer, String> getResolutionForZoomLevel() {
+		return getResolutionForZoomLevel(DEFAULT_MIN_RESOLUTION, 4.0);
 	}
 
 	/**
@@ -236,7 +256,7 @@ public class Envelope implements IEnvelope {
 	}
 
 	public ISpaceLocator asLocator() {
-		return new SpaceLocator(getMinX() + (getMaxX() - getMinX())/2, getMinY() + (getMaxY() - getMinY())/2);
+		return new SpaceLocator(getMinX() + (getMaxX() - getMinX()) / 2, getMinY() + (getMaxY() - getMinY()) / 2);
 	}
 
 }

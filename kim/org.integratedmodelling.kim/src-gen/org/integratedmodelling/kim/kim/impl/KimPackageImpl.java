@@ -1807,6 +1807,26 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getComputableValue_ConditionNegated()
+  {
+    return (EAttribute)computableValueEClass.getEStructuralFeatures().get(8);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getComputableValue_Condition()
+  {
+    return (EReference)computableValueEClass.getEStructuralFeatures().get(9);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getNamespace()
   {
     return namespaceEClass;
@@ -4658,6 +4678,8 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(computableValueEClass, COMPUTABLE_VALUE__LIST);
     createEAttribute(computableValueEClass, COMPUTABLE_VALUE__NULL);
     createEAttribute(computableValueEClass, COMPUTABLE_VALUE__URN);
+    createEAttribute(computableValueEClass, COMPUTABLE_VALUE__CONDITION_NEGATED);
+    createEReference(computableValueEClass, COMPUTABLE_VALUE__CONDITION);
 
     namespaceEClass = createEClass(NAMESPACE);
     createEReference(namespaceEClass, NAMESPACE__ANNOTATIONS);
@@ -5142,6 +5164,8 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getComputableValue_List(), this.getList(), null, "list", null, 0, 1, ComputableValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getComputableValue_Null(), ecorePackage.getEBoolean(), "null", null, 0, 1, ComputableValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getComputableValue_Urn(), ecorePackage.getEString(), "urn", null, 0, 1, ComputableValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getComputableValue_ConditionNegated(), ecorePackage.getEBoolean(), "conditionNegated", null, 0, 1, ComputableValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getComputableValue_Condition(), this.getValue(), null, "condition", null, 0, 1, ComputableValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(namespaceEClass, Namespace.class, "Namespace", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getNamespace_Annotations(), this.getAnnotation(), null, "annotations", null, 0, -1, Namespace.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

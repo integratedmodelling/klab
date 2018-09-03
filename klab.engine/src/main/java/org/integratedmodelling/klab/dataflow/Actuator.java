@@ -177,8 +177,14 @@ public class Actuator implements IActuator {
 		IRuntimeContext ctx = setupContext(target, runtimeContext, ITime.INITIALIZATION);
 
 		for (Pair<IServiceCall, IComputableResource> service : computationStrategy) {
+
 			Object contextualizer = Extensions.INSTANCE.callFunction(service.getFirst(), ctx);
+			if (contextualizer == null) {
+				// this happens when a condition isn't met, so it's legal.
+				continue;
+			}
 			if (!(contextualizer instanceof IContextualizer)) {
+				// this isn't
 				throw new KlabValidationException(
 						"function " + service.getFirst().getName() + " does not produce a contextualizer");
 			}

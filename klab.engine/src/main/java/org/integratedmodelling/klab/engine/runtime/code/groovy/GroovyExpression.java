@@ -255,10 +255,11 @@ public class GroovyExpression extends Expression {
 
 	private void setBindings(Binding binding, IComputationContext context, IParameters<String> parameters) {
 
-	    if (code.contains("natural_attractiveness")) {
-	        System.out.println("SSIUDXPODOIF");
-	    }
-	    
+		// predefine this if we have a target artifact and we haven't set it from the outside
+ 		if (!parameters.containsKey("self") && context.getTargetArtifact() != null) {
+ 			binding.setVariable("_self", context.getTargetArtifact());
+ 		}
+ 		
 		for (String key : parameters.keySet()) {
 			binding.setVariable(key, parameters.get(key));
 		}

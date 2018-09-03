@@ -1394,13 +1394,31 @@ public interface KimPackage extends EPackage
   int COMPUTABLE_VALUE__URN = 7;
 
   /**
+   * The feature id for the '<em><b>Condition Negated</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COMPUTABLE_VALUE__CONDITION_NEGATED = 8;
+
+  /**
+   * The feature id for the '<em><b>Condition</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COMPUTABLE_VALUE__CONDITION = 9;
+
+  /**
    * The number of structural features of the '<em>Computable Value</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int COMPUTABLE_VALUE_FEATURE_COUNT = 8;
+  int COMPUTABLE_VALUE_FEATURE_COUNT = 10;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.NamespaceImpl <em>Namespace</em>}' class.
@@ -5535,6 +5553,28 @@ public interface KimPackage extends EPackage
   EAttribute getComputableValue_Urn();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ComputableValue#isConditionNegated <em>Condition Negated</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Condition Negated</em>'.
+   * @see org.integratedmodelling.kim.kim.ComputableValue#isConditionNegated()
+   * @see #getComputableValue()
+   * @generated
+   */
+  EAttribute getComputableValue_ConditionNegated();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ComputableValue#getCondition <em>Condition</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Condition</em>'.
+   * @see org.integratedmodelling.kim.kim.ComputableValue#getCondition()
+   * @see #getComputableValue()
+   * @generated
+   */
+  EReference getComputableValue_Condition();
+
+  /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.Namespace <em>Namespace</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -9524,6 +9564,22 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute COMPUTABLE_VALUE__URN = eINSTANCE.getComputableValue_Urn();
+
+    /**
+     * The meta object literal for the '<em><b>Condition Negated</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute COMPUTABLE_VALUE__CONDITION_NEGATED = eINSTANCE.getComputableValue_ConditionNegated();
+
+    /**
+     * The meta object literal for the '<em><b>Condition</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference COMPUTABLE_VALUE__CONDITION = eINSTANCE.getComputableValue_Condition();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.NamespaceImpl <em>Namespace</em>}' class.

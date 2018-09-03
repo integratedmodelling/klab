@@ -194,9 +194,11 @@ ValueExecution returns ValueAssignment:
 ;
 	
 ExecutableValue returns ComputableValue:
-	function=Function |
-	expr=EXPR ('in' language=(LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID))? |
-	urn=UrnId
+	(
+		function=Function |
+		expr=EXPR ('in' language=(LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID))? |
+		urn=UrnId
+	) (('if'|conditionNegated?='unless') condition=Value)?
 ;
 
 MODEL_TYPE:
@@ -209,7 +211,7 @@ MODEL_TYPE:
 ;
 
 /*
- * Namespace - entry point of all files. Only interactive session may start without this statement.
+ * Namespace - entry point of all files. Only interactive sessions may start without this statement.
  * A namespace may be a scenario - if so, nothing changes except its models will never be used from
  * the DB unless the scenario is being computed (should be 'observe ... in scenario ....).
  */

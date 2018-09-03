@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
+import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
@@ -28,8 +29,9 @@ public class LookupStateResolver implements IStateResolver, IExpression {
 		this.lookupTable = classification;
 	}
 
-	public static IServiceCall getServiceCall(ILookupTable classification)
+	public static IServiceCall getServiceCall(ILookupTable classification, IComputableResource condition, boolean conditionNegated)
 			throws KlabValidationException {
+		// TODO handle condition
 		return KimServiceCall.create(FUNCTION_ID, "table", classification);
 	}
 

@@ -2404,70 +2404,104 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	public class ExecutableValueElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.ExecutableValue");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Assignment cFunctionAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
-		private final RuleCall cFunctionFunctionParserRuleCall_0_0 = (RuleCall)cFunctionAssignment_0.eContents().get(0);
-		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
-		private final Assignment cExprAssignment_1_0 = (Assignment)cGroup_1.eContents().get(0);
-		private final RuleCall cExprEXPRTerminalRuleCall_1_0_0 = (RuleCall)cExprAssignment_1_0.eContents().get(0);
-		private final Group cGroup_1_1 = (Group)cGroup_1.eContents().get(1);
-		private final Keyword cInKeyword_1_1_0 = (Keyword)cGroup_1_1.eContents().get(0);
-		private final Assignment cLanguageAssignment_1_1_1 = (Assignment)cGroup_1_1.eContents().get(1);
-		private final Alternatives cLanguageAlternatives_1_1_1_0 = (Alternatives)cLanguageAssignment_1_1_1.eContents().get(0);
-		private final RuleCall cLanguageLOWERCASE_IDTerminalRuleCall_1_1_1_0_0 = (RuleCall)cLanguageAlternatives_1_1_1_0.eContents().get(0);
-		private final RuleCall cLanguageUPPERCASE_IDTerminalRuleCall_1_1_1_0_1 = (RuleCall)cLanguageAlternatives_1_1_1_0.eContents().get(1);
-		private final RuleCall cLanguageCAMELCASE_IDTerminalRuleCall_1_1_1_0_2 = (RuleCall)cLanguageAlternatives_1_1_1_0.eContents().get(2);
-		private final Assignment cUrnAssignment_2 = (Assignment)cAlternatives.eContents().get(2);
-		private final RuleCall cUrnUrnIdParserRuleCall_2_0 = (RuleCall)cUrnAssignment_2.eContents().get(0);
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Alternatives cAlternatives_0 = (Alternatives)cGroup.eContents().get(0);
+		private final Assignment cFunctionAssignment_0_0 = (Assignment)cAlternatives_0.eContents().get(0);
+		private final RuleCall cFunctionFunctionParserRuleCall_0_0_0 = (RuleCall)cFunctionAssignment_0_0.eContents().get(0);
+		private final Group cGroup_0_1 = (Group)cAlternatives_0.eContents().get(1);
+		private final Assignment cExprAssignment_0_1_0 = (Assignment)cGroup_0_1.eContents().get(0);
+		private final RuleCall cExprEXPRTerminalRuleCall_0_1_0_0 = (RuleCall)cExprAssignment_0_1_0.eContents().get(0);
+		private final Group cGroup_0_1_1 = (Group)cGroup_0_1.eContents().get(1);
+		private final Keyword cInKeyword_0_1_1_0 = (Keyword)cGroup_0_1_1.eContents().get(0);
+		private final Assignment cLanguageAssignment_0_1_1_1 = (Assignment)cGroup_0_1_1.eContents().get(1);
+		private final Alternatives cLanguageAlternatives_0_1_1_1_0 = (Alternatives)cLanguageAssignment_0_1_1_1.eContents().get(0);
+		private final RuleCall cLanguageLOWERCASE_IDTerminalRuleCall_0_1_1_1_0_0 = (RuleCall)cLanguageAlternatives_0_1_1_1_0.eContents().get(0);
+		private final RuleCall cLanguageUPPERCASE_IDTerminalRuleCall_0_1_1_1_0_1 = (RuleCall)cLanguageAlternatives_0_1_1_1_0.eContents().get(1);
+		private final RuleCall cLanguageCAMELCASE_IDTerminalRuleCall_0_1_1_1_0_2 = (RuleCall)cLanguageAlternatives_0_1_1_1_0.eContents().get(2);
+		private final Assignment cUrnAssignment_0_2 = (Assignment)cAlternatives_0.eContents().get(2);
+		private final RuleCall cUrnUrnIdParserRuleCall_0_2_0 = (RuleCall)cUrnAssignment_0_2.eContents().get(0);
+		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
+		private final Alternatives cAlternatives_1_0 = (Alternatives)cGroup_1.eContents().get(0);
+		private final Keyword cIfKeyword_1_0_0 = (Keyword)cAlternatives_1_0.eContents().get(0);
+		private final Assignment cConditionNegatedAssignment_1_0_1 = (Assignment)cAlternatives_1_0.eContents().get(1);
+		private final Keyword cConditionNegatedUnlessKeyword_1_0_1_0 = (Keyword)cConditionNegatedAssignment_1_0_1.eContents().get(0);
+		private final Assignment cConditionAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cConditionValueParserRuleCall_1_1_0 = (RuleCall)cConditionAssignment_1_1.eContents().get(0);
 		
 		//ExecutableValue ComputableValue:
-		//	function=Function | expr=EXPR ('in' language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID))? | urn=UrnId;
+		//	(function=Function | expr=EXPR ('in' language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID))? | urn=UrnId) (('if' |
+		//	conditionNegated?='unless') condition=Value)?;
 		@Override public ParserRule getRule() { return rule; }
 		
+		//(function=Function | expr=EXPR ('in' language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID))? | urn=UrnId) (('if' |
+		//conditionNegated?='unless') condition=Value)?
+		public Group getGroup() { return cGroup; }
+		
 		//function=Function | expr=EXPR ('in' language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID))? | urn=UrnId
-		public Alternatives getAlternatives() { return cAlternatives; }
+		public Alternatives getAlternatives_0() { return cAlternatives_0; }
 		
 		//function=Function
-		public Assignment getFunctionAssignment_0() { return cFunctionAssignment_0; }
+		public Assignment getFunctionAssignment_0_0() { return cFunctionAssignment_0_0; }
 		
 		//Function
-		public RuleCall getFunctionFunctionParserRuleCall_0_0() { return cFunctionFunctionParserRuleCall_0_0; }
+		public RuleCall getFunctionFunctionParserRuleCall_0_0_0() { return cFunctionFunctionParserRuleCall_0_0_0; }
 		
 		//expr=EXPR ('in' language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID))?
-		public Group getGroup_1() { return cGroup_1; }
+		public Group getGroup_0_1() { return cGroup_0_1; }
 		
 		//expr=EXPR
-		public Assignment getExprAssignment_1_0() { return cExprAssignment_1_0; }
+		public Assignment getExprAssignment_0_1_0() { return cExprAssignment_0_1_0; }
 		
 		//EXPR
-		public RuleCall getExprEXPRTerminalRuleCall_1_0_0() { return cExprEXPRTerminalRuleCall_1_0_0; }
+		public RuleCall getExprEXPRTerminalRuleCall_0_1_0_0() { return cExprEXPRTerminalRuleCall_0_1_0_0; }
 		
 		//('in' language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID))?
-		public Group getGroup_1_1() { return cGroup_1_1; }
+		public Group getGroup_0_1_1() { return cGroup_0_1_1; }
 		
 		//'in'
-		public Keyword getInKeyword_1_1_0() { return cInKeyword_1_1_0; }
+		public Keyword getInKeyword_0_1_1_0() { return cInKeyword_0_1_1_0; }
 		
 		//language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID)
-		public Assignment getLanguageAssignment_1_1_1() { return cLanguageAssignment_1_1_1; }
+		public Assignment getLanguageAssignment_0_1_1_1() { return cLanguageAssignment_0_1_1_1; }
 		
 		//(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID)
-		public Alternatives getLanguageAlternatives_1_1_1_0() { return cLanguageAlternatives_1_1_1_0; }
+		public Alternatives getLanguageAlternatives_0_1_1_1_0() { return cLanguageAlternatives_0_1_1_1_0; }
 		
 		//LOWERCASE_ID
-		public RuleCall getLanguageLOWERCASE_IDTerminalRuleCall_1_1_1_0_0() { return cLanguageLOWERCASE_IDTerminalRuleCall_1_1_1_0_0; }
+		public RuleCall getLanguageLOWERCASE_IDTerminalRuleCall_0_1_1_1_0_0() { return cLanguageLOWERCASE_IDTerminalRuleCall_0_1_1_1_0_0; }
 		
 		//UPPERCASE_ID
-		public RuleCall getLanguageUPPERCASE_IDTerminalRuleCall_1_1_1_0_1() { return cLanguageUPPERCASE_IDTerminalRuleCall_1_1_1_0_1; }
+		public RuleCall getLanguageUPPERCASE_IDTerminalRuleCall_0_1_1_1_0_1() { return cLanguageUPPERCASE_IDTerminalRuleCall_0_1_1_1_0_1; }
 		
 		//CAMELCASE_ID
-		public RuleCall getLanguageCAMELCASE_IDTerminalRuleCall_1_1_1_0_2() { return cLanguageCAMELCASE_IDTerminalRuleCall_1_1_1_0_2; }
+		public RuleCall getLanguageCAMELCASE_IDTerminalRuleCall_0_1_1_1_0_2() { return cLanguageCAMELCASE_IDTerminalRuleCall_0_1_1_1_0_2; }
 		
 		//urn=UrnId
-		public Assignment getUrnAssignment_2() { return cUrnAssignment_2; }
+		public Assignment getUrnAssignment_0_2() { return cUrnAssignment_0_2; }
 		
 		//UrnId
-		public RuleCall getUrnUrnIdParserRuleCall_2_0() { return cUrnUrnIdParserRuleCall_2_0; }
+		public RuleCall getUrnUrnIdParserRuleCall_0_2_0() { return cUrnUrnIdParserRuleCall_0_2_0; }
+		
+		//(('if' | conditionNegated?='unless') condition=Value)?
+		public Group getGroup_1() { return cGroup_1; }
+		
+		//'if' | conditionNegated?='unless'
+		public Alternatives getAlternatives_1_0() { return cAlternatives_1_0; }
+		
+		//'if'
+		public Keyword getIfKeyword_1_0_0() { return cIfKeyword_1_0_0; }
+		
+		//conditionNegated?='unless'
+		public Assignment getConditionNegatedAssignment_1_0_1() { return cConditionNegatedAssignment_1_0_1; }
+		
+		//'unless'
+		public Keyword getConditionNegatedUnlessKeyword_1_0_1_0() { return cConditionNegatedUnlessKeyword_1_0_1_0; }
+		
+		//condition=Value
+		public Assignment getConditionAssignment_1_1() { return cConditionAssignment_1_1; }
+		
+		//Value
+		public RuleCall getConditionValueParserRuleCall_1_1_0() { return cConditionValueParserRuleCall_1_1_0; }
 	}
 	public class MODEL_TYPEElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.MODEL_TYPE");
@@ -2609,7 +2643,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cSemicolonKeyword_9 = (Keyword)cGroup.eContents().get(9);
 		
 		///*
-		// * Namespace - entry point of all files. Only interactive session may start without this statement.
+		// * Namespace - entry point of all files. Only interactive sessions may start without this statement.
 		// * A namespace may be a scenario - if so, nothing changes except its models will never be used from
 		// * the DB unless the scenario is being computed (should be 'observe ... in scenario ....).
 		// */ Namespace:
@@ -9603,7 +9637,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//ExecutableValue ComputableValue:
-	//	function=Function | expr=EXPR ('in' language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID))? | urn=UrnId;
+	//	(function=Function | expr=EXPR ('in' language=(LOWERCASE_ID | UPPERCASE_ID | CAMELCASE_ID))? | urn=UrnId) (('if' |
+	//	conditionNegated?='unless') condition=Value)?;
 	public ExecutableValueElements getExecutableValueAccess() {
 		return pExecutableValue;
 	}
@@ -9628,7 +9663,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	///*
-	// * Namespace - entry point of all files. Only interactive session may start without this statement.
+	// * Namespace - entry point of all files. Only interactive sessions may start without this statement.
 	// * A namespace may be a scenario - if so, nothing changes except its models will never be used from
 	// * the DB unless the scenario is being computed (should be 'observe ... in scenario ....).
 	// */ Namespace:

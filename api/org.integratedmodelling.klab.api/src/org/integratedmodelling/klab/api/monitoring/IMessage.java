@@ -29,9 +29,16 @@ public interface IMessage {
 		UserInterface,
 		
 		/**
-		 * 
+		 * F->B when user selects context 
 		 */
-		UserContextChange,
+		UserContextChange, 
+		
+		/**
+		 * B->F after UserContextChange was received, containing the remaining
+		 * definition set by the engine
+		 */
+		UserContextDefinition,
+
 		/**
 		 * 
 		 */
@@ -109,6 +116,12 @@ public interface IMessage {
 		 * F->B
 		 */
 		PeriodOfInterest,
+
+		/**
+		 * B->F sent whenever a user message affecting the context is processed
+		 */
+		ScaleDefined,
+		
 		/**
 		 * F<->B
 		 */
