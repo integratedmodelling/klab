@@ -185,7 +185,7 @@ public enum Observations implements IObservationService {
         return ret;
     }
 
-    public ObservationReference createArtifactDescriptor(IObservation observation, IObservation parent, ILocator locator, int childLevel) {
+    public ObservationReference createArtifactDescriptor(IObservation observation, IObservation parent, ILocator locator, int childLevel, boolean isMain) {
 
         ObservationReference ret = new ObservationReference();
 
@@ -204,6 +204,8 @@ public enum Observations implements IObservationService {
         } else if (observation instanceof IRelationship) {
             ret.setObservationType(ObservationReference.ObservationType.RELATIONSHIP);
         }
+        	
+        ret.setMain(isMain);
 
         if (locator != null) {
             observation = observation.at(locator);
@@ -256,11 +258,12 @@ public enum Observations implements IObservationService {
         }
 
         if (observation instanceof IDirectObservation && (childLevel < 0 || childLevel > 0)) {
+        	// children. No child is ever main.
             for (IObservation child : ((IDirectObservation) observation).getChildren(IObservation.class)) {
                 ret.getChildren()
                         .add(createArtifactDescriptor(child, observation, locator, childLevel > 0
                                 ? childLevel--
-                                : childLevel));
+                                : childLevel, false));
             }
         }
 

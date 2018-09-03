@@ -96,7 +96,7 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
 						session.getMonitor().send(Message.create(session.getId(),
 								IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation,
 								Observations.INSTANCE
-										.createArtifactDescriptor((IObservation) ret, null, ITime.INITIALIZATION, -1)
+										.createArtifactDescriptor((IObservation) ret, null, ITime.INITIALIZATION, -1, false)
 										.withTaskId(token)));
 						
 						/*
@@ -115,7 +115,7 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
 										IMessage.Type.NewObservation,
 										Observations.INSTANCE
 												.createArtifactDescriptor((IObservation) data.getArtifact(), ret,
-														ITime.INITIALIZATION, -1)
+														ITime.INITIALIZATION, -1, true)
 												.withTaskId(token)));
 
 						/*

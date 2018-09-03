@@ -100,6 +100,7 @@ public class ObservationReference implements IObservationReference {
 	private String taskId;
 	private boolean empty;
 	private Style style;
+	private boolean main;
 
 	/**
 	 * The observation may have more sibling than are found in the sibling list.
@@ -592,6 +593,19 @@ public class ObservationReference implements IObservationReference {
 
 	public void setStyle(Style style) {
 		this.style = style;
+	}
+
+	/**
+	 * Observations tagged main should be brought to the user's attention preferentially.
+	 * 
+	 * @return
+	 */
+	public boolean isMain() {
+		return main;
+	}
+
+	public void setMain(boolean main) {
+		this.main = main;
 	}
 
 }

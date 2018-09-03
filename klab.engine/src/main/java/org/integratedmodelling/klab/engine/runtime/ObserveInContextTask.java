@@ -124,7 +124,7 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 							session.getMonitor().send(Message.create(session.getId(),
 									IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation,
 									Observations.INSTANCE
-											.createArtifactDescriptor(notifiable, context, ITime.INITIALIZATION, -1)
+											.createArtifactDescriptor(notifiable, context, ITime.INITIALIZATION, -1, true)
 											.withTaskId(token)));
 
 							monitor.info("observation completed with "

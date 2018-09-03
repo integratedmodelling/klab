@@ -64,7 +64,7 @@ public class EngineViewController {
 		ILocator loc = ITime.INITIALIZATION; // TODO parse the locator
 
 		return Observations.INSTANCE.createArtifactDescriptor(obs, obs.getContext(), loc,
-				childLevel == null ? -1 : childLevel);
+				childLevel == null ? -1 : childLevel, false);
 	}
 
 	/**
@@ -121,7 +121,7 @@ public class EngineViewController {
 				IArtifact artifact = it.next();
 				if (i >= offset) {
 					ObservationReference ref = Observations.INSTANCE.createArtifactDescriptor((IObservation) artifact,
-							obs.getContext(), loc, childLevel == null ? 0 : childLevel);
+							obs.getContext(), loc, childLevel == null ? 0 : childLevel, false);
 					if (ret == null) {
 						ret = ref;
 					} else {

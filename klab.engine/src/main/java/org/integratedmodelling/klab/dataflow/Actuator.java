@@ -265,6 +265,15 @@ public class Actuator implements IActuator {
 			 * ensure they're not sent if not probed.
 			 */
 			if (!input) {
+				
+				boolean isMain = false;
+				for (IAnnotation annotation : annotations) {
+					if (annotation.getName().equals("main")) {
+						isMain = true;
+						break;
+					}
+				}
+				
 				IObservation notifiable = (IObservation) (ret instanceof ObservationGroup && ret.groupSize() > 0
 						? ret.iterator().next()
 						: ret);
@@ -276,7 +285,7 @@ public class Actuator implements IActuator {
 										.createArtifactDescriptor(notifiable,
 												ctx.getContextObservation().equals(notifiable) ? null
 														: ctx.getContextObservation(),
-												ITime.INITIALIZATION, -1)
+												ITime.INITIALIZATION, -1, isMain)
 										.withTaskId(ctx.getMonitor().getIdentity().getId())));
 			}
 		}
