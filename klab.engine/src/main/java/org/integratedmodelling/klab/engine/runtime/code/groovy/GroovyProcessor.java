@@ -40,6 +40,7 @@ public enum GroovyProcessor implements ILanguageProcessor {
             Set<String> knownIdentifiers = context == null ? new HashSet<>()
                     : context.getArtifacts(IState.class).stream().map(data -> data.getFirst())
                             .collect(Collectors.toSet());
+            knownIdentifiers.add("self");
             IScale scale = context == null ? null : context.getScale();
 
             GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace, knownIdentifiers,

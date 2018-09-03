@@ -85,6 +85,7 @@ public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression
 		boolean scalar = false;
 		if (context.getArtifactType() == Type.QUALITY) {
 			Collection<String> distributedStateIds = getDistributedStateIds(context);
+			distributedStateIds.add("self");
 			scalar = descriptor.isScalar(distributedStateIds);
 			if (!scalar && condition != null) {
 				scalar = condition.isScalar(distributedStateIds);
@@ -101,7 +102,7 @@ public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression
 		return new ExpressionResolver(descriptor, condition, parameters, context);
 	}
 
-	private Collection<String> getDistributedStateIds(IComputationContext context) {
+	private Set<String> getDistributedStateIds(IComputationContext context) {
 		Set<String> ret = new HashSet<>();
 		for (Pair<String, IState> state : context.getArtifacts(IState.class)) {
 			if (!state.getSecond().isConstant()) {
