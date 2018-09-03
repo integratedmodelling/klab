@@ -171,7 +171,7 @@ public interface Logo {
 	public static final int[] COLOR_TRAIT_RGB = new int[] { 0, 102, 204 };
 	public static final int[] COLOR_EVENT_RGB = new int[] { 153, 153, 0 };
 	public static final int[] COLOR_RELATIONSHIP_RGB = new int[] { 210, 170, 0 };
-	public static final int[] COLOR_PROCESS_RGB = new int[] { 0, 204, 0 };
+	public static final int[] COLOR_PROCESS_RGB = new int[] { 204, 0, 0 };
 	public static final int[] COLOR_ROLE_RGB = new int[] { 0, 86, 163 };
 	public static final int[] COLOR_CONFIGURATION_RGB = new int[] { 98, 98, 98 };
 	public static final int[] COLOR_DOMAIN_RGB = new int[] { 240, 240, 240 };
