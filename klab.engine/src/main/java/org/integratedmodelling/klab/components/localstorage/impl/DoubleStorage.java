@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
+import java.util.Arrays;
+
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
@@ -22,6 +24,7 @@ public class DoubleStorage extends Storage implements IDataArtifact {
 	public DoubleStorage(IGeometry scale) {
 		super(scale);
 		this.data = new double[(int) scale.size()]; // LArrayJ.newLFloatArray(scale.size());
+		Arrays.fill(this.data, Double.NaN);
 	}
 
 	@Override

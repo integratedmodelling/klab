@@ -40,6 +40,7 @@ import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
@@ -255,11 +256,12 @@ public class GroovyExpression extends Expression {
 
 	private void setBindings(Binding binding, IComputationContext context, IParameters<String> parameters) {
 
-		// predefine this if we have a target artifact and we haven't set it from the outside
- 		if (!parameters.containsKey("self") && context.getTargetArtifact() != null) {
- 			binding.setVariable("_self", context.getTargetArtifact());
- 		}
- 		
+		// predefine this if we have a target artifact and we haven't set it from the
+		// outside
+		if (!parameters.containsKey("self") && context.getTargetArtifact() != null) {
+			binding.setVariable("_self", context.getTargetArtifact());
+		}
+
 		for (String key : parameters.keySet()) {
 			binding.setVariable(key, parameters.get(key));
 		}
@@ -282,6 +284,10 @@ public class GroovyExpression extends Expression {
 					nonscalar.put(identifier, artifact);
 				}
 			}
+		}
+		if (parameters.containsKey("self") && parameters.get("self") instanceof IObservation
+				&& !nonscalar.containsKey("self")) {
+			nonscalar.put("self", parameters.get("self"));
 		}
 
 		binding.setVariable("_p", nonscalar);
