@@ -1215,20 +1215,16 @@ ruleModelBodyStatement returns [EObject current=null]
 			)
 		)*
 		(
-			otherlv_39='with'
+			otherlv_39='metadata'
 			{
-				newLeafNode(otherlv_39, grammarAccess.getModelBodyStatementAccess().getWithKeyword_9_0());
-			}
-			otherlv_40='metadata'
-			{
-				newLeafNode(otherlv_40, grammarAccess.getModelBodyStatementAccess().getMetadataKeyword_9_1());
+				newLeafNode(otherlv_39, grammarAccess.getModelBodyStatementAccess().getMetadataKeyword_9_0());
 			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getModelBodyStatementAccess().getMetadataMetadataParserRuleCall_9_2_0());
+						newCompositeNode(grammarAccess.getModelBodyStatementAccess().getMetadataMetadataParserRuleCall_9_1_0());
 					}
-					lv_metadata_41_0=ruleMetadata
+					lv_metadata_40_0=ruleMetadata
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getModelBodyStatementRule());
@@ -1236,37 +1232,8 @@ ruleModelBodyStatement returns [EObject current=null]
 						set(
 							$current,
 							"metadata",
-							lv_metadata_41_0,
+							lv_metadata_40_0,
 							"org.integratedmodelling.kim.Kim.Metadata");
-						afterParserOrEnumRuleCall();
-					}
-				)
-			)
-		)?
-		(
-			otherlv_42='with'
-			{
-				newLeafNode(otherlv_42, grammarAccess.getModelBodyStatementAccess().getWithKeyword_10_0());
-			}
-			otherlv_43='documentation'
-			{
-				newLeafNode(otherlv_43, grammarAccess.getModelBodyStatementAccess().getDocumentationKeyword_10_1());
-			}
-			(
-				(
-					{
-						newCompositeNode(grammarAccess.getModelBodyStatementAccess().getDocumentationDocumentationParserRuleCall_10_2_0());
-					}
-					lv_documentation_44_0=ruleDocumentation
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getModelBodyStatementRule());
-						}
-						set(
-							$current,
-							"documentation",
-							lv_documentation_44_0,
-							"org.integratedmodelling.kim.Kim.Documentation");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -5034,20 +5001,16 @@ ruleNamespace returns [EObject current=null]
 				}
 		)
 		(
-			otherlv_42='with'
+			otherlv_42='parameters'
 			{
-				newLeafNode(otherlv_42, grammarAccess.getNamespaceAccess().getWithKeyword_6_0());
-			}
-			otherlv_43='parameters'
-			{
-				newLeafNode(otherlv_43, grammarAccess.getNamespaceAccess().getParametersKeyword_6_1());
+				newLeafNode(otherlv_42, grammarAccess.getNamespaceAccess().getParametersKeyword_6_0());
 			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getNamespaceAccess().getParametersMetadataParserRuleCall_6_2_0());
+						newCompositeNode(grammarAccess.getNamespaceAccess().getParametersMetadataParserRuleCall_6_1_0());
 					}
-					lv_parameters_44_0=ruleMetadata
+					lv_parameters_43_0=ruleMetadata
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getNamespaceRule());
@@ -5055,7 +5018,7 @@ ruleNamespace returns [EObject current=null]
 						set(
 							$current,
 							"parameters",
-							lv_parameters_44_0,
+							lv_parameters_43_0,
 							"org.integratedmodelling.kim.Kim.Metadata");
 						afterParserOrEnumRuleCall();
 					}
@@ -5063,20 +5026,16 @@ ruleNamespace returns [EObject current=null]
 			)
 		)?
 		(
-			otherlv_45='with'
+			otherlv_44='metadata'
 			{
-				newLeafNode(otherlv_45, grammarAccess.getNamespaceAccess().getWithKeyword_7_0());
-			}
-			otherlv_46='metadata'
-			{
-				newLeafNode(otherlv_46, grammarAccess.getNamespaceAccess().getMetadataKeyword_7_1());
+				newLeafNode(otherlv_44, grammarAccess.getNamespaceAccess().getMetadataKeyword_7_0());
 			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getNamespaceAccess().getMetadataMetadataParserRuleCall_7_2_0());
+						newCompositeNode(grammarAccess.getNamespaceAccess().getMetadataMetadataParserRuleCall_7_1_0());
 					}
-					lv_metadata_47_0=ruleMetadata
+					lv_metadata_45_0=ruleMetadata
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getNamespaceRule());
@@ -5084,45 +5043,16 @@ ruleNamespace returns [EObject current=null]
 						set(
 							$current,
 							"metadata",
-							lv_metadata_47_0,
+							lv_metadata_45_0,
 							"org.integratedmodelling.kim.Kim.Metadata");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
 		)?
-		(
-			otherlv_48='with'
-			{
-				newLeafNode(otherlv_48, grammarAccess.getNamespaceAccess().getWithKeyword_8_0());
-			}
-			otherlv_49='documentation'
-			{
-				newLeafNode(otherlv_49, grammarAccess.getNamespaceAccess().getDocumentationKeyword_8_1());
-			}
-			(
-				(
-					{
-						newCompositeNode(grammarAccess.getNamespaceAccess().getDocumentationMetadataParserRuleCall_8_2_0());
-					}
-					lv_documentation_50_0=ruleMetadata
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getNamespaceRule());
-						}
-						set(
-							$current,
-							"documentation",
-							lv_documentation_50_0,
-							"org.integratedmodelling.kim.Kim.Metadata");
-						afterParserOrEnumRuleCall();
-					}
-				)
-			)
-		)?
-		otherlv_51=';'
+		otherlv_46=';'
 		{
-			newLeafNode(otherlv_51, grammarAccess.getNamespaceAccess().getSemicolonKeyword_9());
+			newLeafNode(otherlv_46, grammarAccess.getNamespaceAccess().getSemicolonKeyword_8());
 		}
 	)
 ;
@@ -5902,84 +5832,16 @@ ruleObserveStatementBody returns [EObject current=null]
 								)*
 							)?
 							(
-								otherlv_14='with'
+								otherlv_14='using'
 								{
-									newLeafNode(otherlv_14, grammarAccess.getObserveStatementBodyAccess().getWithKeyword_0_6_0());
-								}
-								(
-									otherlv_15='('
-									{
-										newLeafNode(otherlv_15, grammarAccess.getObserveStatementBodyAccess().getLeftParenthesisKeyword_0_6_1_0());
-									}
-									(
-										(
-											{
-												newCompositeNode(grammarAccess.getObserveStatementBodyAccess().getObservationsObserveStatementBodyParserRuleCall_0_6_1_1_0());
-											}
-											lv_observations_16_0=ruleObserveStatementBody
-											{
-												if ($current==null) {
-													$current = createModelElementForParent(grammarAccess.getObserveStatementBodyRule());
-												}
-												add(
-													$current,
-													"observations",
-													lv_observations_16_0,
-													"org.integratedmodelling.kim.Kim.ObserveStatementBody");
-												afterParserOrEnumRuleCall();
-											}
-										)
-									)
-									otherlv_17=')'
-									{
-										newLeafNode(otherlv_17, grammarAccess.getObserveStatementBodyAccess().getRightParenthesisKeyword_0_6_1_2());
-									}
-								)
-								(
-									otherlv_18=','
-									{
-										newLeafNode(otherlv_18, grammarAccess.getObserveStatementBodyAccess().getCommaKeyword_0_6_2_0());
-									}
-									otherlv_19='('
-									{
-										newLeafNode(otherlv_19, grammarAccess.getObserveStatementBodyAccess().getLeftParenthesisKeyword_0_6_2_1());
-									}
-									(
-										(
-											{
-												newCompositeNode(grammarAccess.getObserveStatementBodyAccess().getObservationsObserveStatementBodyParserRuleCall_0_6_2_2_0());
-											}
-											lv_observations_20_0=ruleObserveStatementBody
-											{
-												if ($current==null) {
-													$current = createModelElementForParent(grammarAccess.getObserveStatementBodyRule());
-												}
-												add(
-													$current,
-													"observations",
-													lv_observations_20_0,
-													"org.integratedmodelling.kim.Kim.ObserveStatementBody");
-												afterParserOrEnumRuleCall();
-											}
-										)
-									)
-									otherlv_21=')'
-									{
-										newLeafNode(otherlv_21, grammarAccess.getObserveStatementBodyAccess().getRightParenthesisKeyword_0_6_2_3());
-									}
-								)*
-							)?
-							(
-								otherlv_22='using'
-								{
-									newLeafNode(otherlv_22, grammarAccess.getObserveStatementBodyAccess().getUsingKeyword_0_7_0());
+									newLeafNode(otherlv_14, grammarAccess.getObserveStatementBodyAccess().getUsingKeyword_0_6_0());
 								}
 								(
 									(
 										{
-											newCompositeNode(grammarAccess.getObserveStatementBodyAccess().getAccessorFunctionParserRuleCall_0_7_1_0());
+											newCompositeNode(grammarAccess.getObserveStatementBodyAccess().getAccessorFunctionParserRuleCall_0_6_1_0());
 										}
-										lv_accessor_23_0=ruleFunction
+										lv_accessor_15_0=ruleFunction
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getObserveStatementBodyRule());
@@ -5987,7 +5849,7 @@ ruleObserveStatementBody returns [EObject current=null]
 											set(
 												$current,
 												"accessor",
-												lv_accessor_23_0,
+												lv_accessor_15_0,
 												"org.integratedmodelling.kim.Kim.Function");
 											afterParserOrEnumRuleCall();
 										}
@@ -6005,64 +5867,29 @@ ruleObserveStatementBody returns [EObject current=null]
 				{
 					getUnorderedGroupHelper().select(grammarAccess.getObserveStatementBodyAccess().getUnorderedGroup(), 1);
 				}
-							({true}?=>((
-								otherlv_24='with'
-								{
-									newLeafNode(otherlv_24, grammarAccess.getObserveStatementBodyAccess().getWithKeyword_1_0_0());
-								}
-								otherlv_25='metadata'
-								{
-									newLeafNode(otherlv_25, grammarAccess.getObserveStatementBodyAccess().getMetadataKeyword_1_0_1());
-								}
-								(
-									(
-										{
-											newCompositeNode(grammarAccess.getObserveStatementBodyAccess().getMetadataMetadataParserRuleCall_1_0_2_0());
-										}
-										lv_metadata_26_0=ruleMetadata
-										{
-											if ($current==null) {
-												$current = createModelElementForParent(grammarAccess.getObserveStatementBodyRule());
-											}
-											set(
-												$current,
-												"metadata",
-												lv_metadata_26_0,
-												"org.integratedmodelling.kim.Kim.Metadata");
-											afterParserOrEnumRuleCall();
-										}
-									)
-								)
-							)?
+							({true}?=>(otherlv_16='metadata'
+							{
+								newLeafNode(otherlv_16, grammarAccess.getObserveStatementBodyAccess().getMetadataKeyword_1_0());
+							}
 							(
-								otherlv_27='with'
-								{
-									newLeafNode(otherlv_27, grammarAccess.getObserveStatementBodyAccess().getWithKeyword_1_1_0());
-								}
-								otherlv_28='documentation'
-								{
-									newLeafNode(otherlv_28, grammarAccess.getObserveStatementBodyAccess().getDocumentationKeyword_1_1_1());
-								}
 								(
-									(
-										{
-											newCompositeNode(grammarAccess.getObserveStatementBodyAccess().getDocumentationMetadataParserRuleCall_1_1_2_0());
+									{
+										newCompositeNode(grammarAccess.getObserveStatementBodyAccess().getMetadataMetadataParserRuleCall_1_1_0());
+									}
+									lv_metadata_17_0=ruleMetadata
+									{
+										if ($current==null) {
+											$current = createModelElementForParent(grammarAccess.getObserveStatementBodyRule());
 										}
-										lv_documentation_29_0=ruleMetadata
-										{
-											if ($current==null) {
-												$current = createModelElementForParent(grammarAccess.getObserveStatementBodyRule());
-											}
-											set(
-												$current,
-												"documentation",
-												lv_documentation_29_0,
-												"org.integratedmodelling.kim.Kim.Metadata");
-											afterParserOrEnumRuleCall();
-										}
-									)
+										set(
+											$current,
+											"metadata",
+											lv_metadata_17_0,
+											"org.integratedmodelling.kim.Kim.Metadata");
+										afterParserOrEnumRuleCall();
+									}
 								)
-							)?
+							)
 							))
 				{ 
 					getUnorderedGroupHelper().returnFromSelection(grammarAccess.getObserveStatementBodyAccess().getUnorderedGroup());
@@ -11111,20 +10938,16 @@ ruleConceptStatementBody returns [EObject current=null]
 					{
 						getUnorderedGroupHelper().select(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 22);
 					}
-								({true}?=>(otherlv_110='with'
+								({true}?=>(otherlv_110='metadata'
 								{
-									newLeafNode(otherlv_110, grammarAccess.getConceptStatementBodyAccess().getWithKeyword_3_22_0());
-								}
-								otherlv_111='metadata'
-								{
-									newLeafNode(otherlv_111, grammarAccess.getConceptStatementBodyAccess().getMetadataKeyword_3_22_1());
+									newLeafNode(otherlv_110, grammarAccess.getConceptStatementBodyAccess().getMetadataKeyword_3_22_0());
 								}
 								(
 									(
 										{
-											newCompositeNode(grammarAccess.getConceptStatementBodyAccess().getMetadataMetadataParserRuleCall_3_22_2_0());
+											newCompositeNode(grammarAccess.getConceptStatementBodyAccess().getMetadataMetadataParserRuleCall_3_22_1_0());
 										}
-										lv_metadata_112_0=ruleMetadata
+										lv_metadata_111_0=ruleMetadata
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getConceptStatementBodyRule());
@@ -11132,7 +10955,7 @@ ruleConceptStatementBody returns [EObject current=null]
 											set(
 												$current,
 												"metadata",
-												lv_metadata_112_0,
+												lv_metadata_111_0,
 												"org.integratedmodelling.kim.Kim.Metadata");
 											afterParserOrEnumRuleCall();
 										}
@@ -12635,83 +12458,6 @@ ruleMetadata returns [EObject current=null]
 		otherlv_4='}'
 		{
 			newLeafNode(otherlv_4, grammarAccess.getMetadataAccess().getRightCurlyBracketKeyword_3());
-		}
-	)
-;
-
-// Entry rule entryRuleDocumentation
-entryRuleDocumentation returns [EObject current=null]:
-	{ newCompositeNode(grammarAccess.getDocumentationRule()); }
-	iv_ruleDocumentation=ruleDocumentation
-	{ $current=$iv_ruleDocumentation.current; }
-	EOF;
-
-// Rule Documentation
-ruleDocumentation returns [EObject current=null]
-@init {
-	enterRule();
-}
-@after {
-	leaveRule();
-}:
-	(
-		(
-			{
-				/* */
-			}
-			{
-				$current = forceCreateModelElement(
-					grammarAccess.getDocumentationAccess().getMetadataAction_0(),
-					$current);
-			}
-		)
-		otherlv_1='{'
-		{
-			newLeafNode(otherlv_1, grammarAccess.getDocumentationAccess().getLeftCurlyBracketKeyword_1());
-		}
-		(
-			(
-				(
-					{
-						newCompositeNode(grammarAccess.getDocumentationAccess().getSelectorsDocSelectorParserRuleCall_2_0_0());
-					}
-					lv_selectors_2_0=ruleDocSelector
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getDocumentationRule());
-						}
-						add(
-							$current,
-							"selectors",
-							lv_selectors_2_0,
-							"org.integratedmodelling.kim.Kim.DocSelector");
-						afterParserOrEnumRuleCall();
-					}
-				)
-			)
-			(
-				(
-					{
-						newCompositeNode(grammarAccess.getDocumentationAccess().getValuesLiteralOrIDParserRuleCall_2_1_0());
-					}
-					lv_values_3_0=ruleLiteralOrID
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getDocumentationRule());
-						}
-						add(
-							$current,
-							"values",
-							lv_values_3_0,
-							"org.integratedmodelling.kim.Kim.LiteralOrID");
-						afterParserOrEnumRuleCall();
-					}
-				)
-			)
-		)*
-		otherlv_4='}'
-		{
-			newLeafNode(otherlv_4, grammarAccess.getDocumentationAccess().getRightCurlyBracketKeyword_3());
 		}
 	)
 ;

@@ -43,10 +43,8 @@ import org.integratedmodelling.kim.kim.Urn;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObserveStatementBodyImpl#getParents <em>Parents</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObserveStatementBodyImpl#getActions <em>Actions</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObserveStatementBodyImpl#getStates <em>States</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ObserveStatementBodyImpl#getObservations <em>Observations</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObserveStatementBodyImpl#getAccessor <em>Accessor</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObserveStatementBodyImpl#getMetadata <em>Metadata</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ObserveStatementBodyImpl#getDocumentation <em>Documentation</em>}</li>
  * </ul>
  *
  * @generated
@@ -124,16 +122,6 @@ public class ObserveStatementBodyImpl extends MinimalEObjectImpl.Container imple
   protected EList<ObservableSemantics> states;
 
   /**
-   * The cached value of the '{@link #getObservations() <em>Observations</em>}' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getObservations()
-   * @generated
-   * @ordered
-   */
-  protected EList<ObserveStatementBody> observations;
-
-  /**
    * The cached value of the '{@link #getAccessor() <em>Accessor</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -152,16 +140,6 @@ public class ObserveStatementBodyImpl extends MinimalEObjectImpl.Container imple
    * @ordered
    */
   protected Metadata metadata;
-
-  /**
-   * The cached value of the '{@link #getDocumentation() <em>Documentation</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getDocumentation()
-   * @generated
-   * @ordered
-   */
-  protected Metadata documentation;
 
   /**
    * <!-- begin-user-doc -->
@@ -350,20 +328,6 @@ public class ObserveStatementBodyImpl extends MinimalEObjectImpl.Container imple
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<ObserveStatementBody> getObservations()
-  {
-    if (observations == null)
-    {
-      observations = new EObjectContainmentEList<ObserveStatementBody>(ObserveStatementBody.class, this, KimPackage.OBSERVE_STATEMENT_BODY__OBSERVATIONS);
-    }
-    return observations;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public Function getAccessor()
   {
     return accessor;
@@ -460,54 +424,6 @@ public class ObserveStatementBodyImpl extends MinimalEObjectImpl.Container imple
    * <!-- end-user-doc -->
    * @generated
    */
-  public Metadata getDocumentation()
-  {
-    return documentation;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetDocumentation(Metadata newDocumentation, NotificationChain msgs)
-  {
-    Metadata oldDocumentation = documentation;
-    documentation = newDocumentation;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVE_STATEMENT_BODY__DOCUMENTATION, oldDocumentation, newDocumentation);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setDocumentation(Metadata newDocumentation)
-  {
-    if (newDocumentation != documentation)
-    {
-      NotificationChain msgs = null;
-      if (documentation != null)
-        msgs = ((InternalEObject)documentation).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.OBSERVE_STATEMENT_BODY__DOCUMENTATION, null, msgs);
-      if (newDocumentation != null)
-        msgs = ((InternalEObject)newDocumentation).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.OBSERVE_STATEMENT_BODY__DOCUMENTATION, null, msgs);
-      msgs = basicSetDocumentation(newDocumentation, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVE_STATEMENT_BODY__DOCUMENTATION, newDocumentation, newDocumentation));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
@@ -521,14 +437,10 @@ public class ObserveStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return ((InternalEList<?>)getActions()).basicRemove(otherEnd, msgs);
       case KimPackage.OBSERVE_STATEMENT_BODY__STATES:
         return ((InternalEList<?>)getStates()).basicRemove(otherEnd, msgs);
-      case KimPackage.OBSERVE_STATEMENT_BODY__OBSERVATIONS:
-        return ((InternalEList<?>)getObservations()).basicRemove(otherEnd, msgs);
       case KimPackage.OBSERVE_STATEMENT_BODY__ACCESSOR:
         return basicSetAccessor(null, msgs);
       case KimPackage.OBSERVE_STATEMENT_BODY__METADATA:
         return basicSetMetadata(null, msgs);
-      case KimPackage.OBSERVE_STATEMENT_BODY__DOCUMENTATION:
-        return basicSetDocumentation(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -555,14 +467,10 @@ public class ObserveStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return getActions();
       case KimPackage.OBSERVE_STATEMENT_BODY__STATES:
         return getStates();
-      case KimPackage.OBSERVE_STATEMENT_BODY__OBSERVATIONS:
-        return getObservations();
       case KimPackage.OBSERVE_STATEMENT_BODY__ACCESSOR:
         return getAccessor();
       case KimPackage.OBSERVE_STATEMENT_BODY__METADATA:
         return getMetadata();
-      case KimPackage.OBSERVE_STATEMENT_BODY__DOCUMENTATION:
-        return getDocumentation();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -599,18 +507,11 @@ public class ObserveStatementBodyImpl extends MinimalEObjectImpl.Container imple
         getStates().clear();
         getStates().addAll((Collection<? extends ObservableSemantics>)newValue);
         return;
-      case KimPackage.OBSERVE_STATEMENT_BODY__OBSERVATIONS:
-        getObservations().clear();
-        getObservations().addAll((Collection<? extends ObserveStatementBody>)newValue);
-        return;
       case KimPackage.OBSERVE_STATEMENT_BODY__ACCESSOR:
         setAccessor((Function)newValue);
         return;
       case KimPackage.OBSERVE_STATEMENT_BODY__METADATA:
         setMetadata((Metadata)newValue);
-        return;
-      case KimPackage.OBSERVE_STATEMENT_BODY__DOCUMENTATION:
-        setDocumentation((Metadata)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -644,17 +545,11 @@ public class ObserveStatementBodyImpl extends MinimalEObjectImpl.Container imple
       case KimPackage.OBSERVE_STATEMENT_BODY__STATES:
         getStates().clear();
         return;
-      case KimPackage.OBSERVE_STATEMENT_BODY__OBSERVATIONS:
-        getObservations().clear();
-        return;
       case KimPackage.OBSERVE_STATEMENT_BODY__ACCESSOR:
         setAccessor((Function)null);
         return;
       case KimPackage.OBSERVE_STATEMENT_BODY__METADATA:
         setMetadata((Metadata)null);
-        return;
-      case KimPackage.OBSERVE_STATEMENT_BODY__DOCUMENTATION:
-        setDocumentation((Metadata)null);
         return;
     }
     super.eUnset(featureID);
@@ -682,14 +577,10 @@ public class ObserveStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return actions != null && !actions.isEmpty();
       case KimPackage.OBSERVE_STATEMENT_BODY__STATES:
         return states != null && !states.isEmpty();
-      case KimPackage.OBSERVE_STATEMENT_BODY__OBSERVATIONS:
-        return observations != null && !observations.isEmpty();
       case KimPackage.OBSERVE_STATEMENT_BODY__ACCESSOR:
         return accessor != null;
       case KimPackage.OBSERVE_STATEMENT_BODY__METADATA:
         return metadata != null;
-      case KimPackage.OBSERVE_STATEMENT_BODY__DOCUMENTATION:
-        return documentation != null;
     }
     return super.eIsSet(featureID);
   }

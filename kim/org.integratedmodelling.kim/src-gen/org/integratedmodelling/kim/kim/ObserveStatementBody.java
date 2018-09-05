@@ -23,10 +23,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ObserveStatementBody#getParents <em>Parents</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObserveStatementBody#getActions <em>Actions</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObserveStatementBody#getStates <em>States</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ObserveStatementBody#getObservations <em>Observations</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObserveStatementBody#getAccessor <em>Accessor</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObserveStatementBody#getMetadata <em>Metadata</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ObserveStatementBody#getDocumentation <em>Documentation</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kim.kim.KimPackage#getObserveStatementBody()
@@ -162,22 +160,6 @@ public interface ObserveStatementBody extends EObject
   EList<ObservableSemantics> getStates();
 
   /**
-   * Returns the value of the '<em><b>Observations</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kim.kim.ObserveStatementBody}.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Observations</em>' containment reference list isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Observations</em>' containment reference list.
-   * @see org.integratedmodelling.kim.kim.KimPackage#getObserveStatementBody_Observations()
-   * @model containment="true"
-   * @generated
-   */
-  EList<ObserveStatementBody> getObservations();
-
-  /**
    * Returns the value of the '<em><b>Accessor</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <p>
@@ -228,31 +210,5 @@ public interface ObserveStatementBody extends EObject
    * @generated
    */
   void setMetadata(Metadata value);
-
-  /**
-   * Returns the value of the '<em><b>Documentation</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Documentation</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Documentation</em>' containment reference.
-   * @see #setDocumentation(Metadata)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getObserveStatementBody_Documentation()
-   * @model containment="true"
-   * @generated
-   */
-  Metadata getDocumentation();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObserveStatementBody#getDocumentation <em>Documentation</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Documentation</em>' containment reference.
-   * @see #getDocumentation()
-   * @generated
-   */
-  void setDocumentation(Metadata value);
 
 } // ObserveStatementBody

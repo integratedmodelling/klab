@@ -54,9 +54,9 @@ public enum Logging implements ILoggingService {
 		try {
 			logger = (Logger) LoggerFactory.getLogger(this.getClass());
 		} catch (Throwable e) {
-			System.err.println("--------------------------------------------------------------");
-			System.err.println("Error initializing logger: check dependencies, destroy your day");
-			System.err.println("--------------------------------------------------------------");
+			System.err.println("--------------------------------------------------------------------------------------------------");
+			System.err.println("Error initializing logger: please spend your entire life checking dependencies and excluding jars");
+			System.err.println("--------------------------------------------------------------------------------------------------");
 		}
 	}
 

@@ -38,7 +38,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	protected AbstractElementAlias match_Number_PlusSignKeyword_0_0_q;
 	protected AbstractElementAlias match_Number_PlusSignKeyword_3_0_1_0_q;
 	protected AbstractElementAlias match_ObservableSemantics_RequiredKeyword_3_5_1_a;
-	protected AbstractElementAlias match_ObserveStatementBody_UsingKeyword_0_7_0_q;
+	protected AbstractElementAlias match_ObserveStatementBody_UsingKeyword_0_6_0_q;
 	protected AbstractElementAlias match_TableClassifier_ExclusiveKeyword_1_1_1_q;
 	protected AbstractElementAlias match_TableClassifier_ExclusiveKeyword_1_4_1_q;
 	protected AbstractElementAlias match_ValueAssignment_ToKeyword_0_1_q;
@@ -61,7 +61,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 		match_Number_PlusSignKeyword_0_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_0_0());
 		match_Number_PlusSignKeyword_3_0_1_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_3_0_1_0());
 		match_ObservableSemantics_RequiredKeyword_3_5_1_a = new TokenAlias(true, true, grammarAccess.getObservableSemanticsAccess().getRequiredKeyword_3_5_1());
-		match_ObserveStatementBody_UsingKeyword_0_7_0_q = new TokenAlias(false, true, grammarAccess.getObserveStatementBodyAccess().getUsingKeyword_0_7_0());
+		match_ObserveStatementBody_UsingKeyword_0_6_0_q = new TokenAlias(false, true, grammarAccess.getObserveStatementBodyAccess().getUsingKeyword_0_6_0());
 		match_TableClassifier_ExclusiveKeyword_1_1_1_q = new TokenAlias(false, true, grammarAccess.getTableClassifierAccess().getExclusiveKeyword_1_1_1());
 		match_TableClassifier_ExclusiveKeyword_1_4_1_q = new TokenAlias(false, true, grammarAccess.getTableClassifierAccess().getExclusiveKeyword_1_4_1());
 		match_ValueAssignment_ToKeyword_0_1_q = new TokenAlias(false, true, grammarAccess.getValueAssignmentAccess().getToKeyword_0_1());
@@ -121,8 +121,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 				emit_Number_PlusSignKeyword_3_0_1_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_ObservableSemantics_RequiredKeyword_3_5_1_a.equals(syntax))
 				emit_ObservableSemantics_RequiredKeyword_3_5_1_a(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_ObserveStatementBody_UsingKeyword_0_7_0_q.equals(syntax))
-				emit_ObserveStatementBody_UsingKeyword_0_7_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_ObserveStatementBody_UsingKeyword_0_6_0_q.equals(syntax))
+				emit_ObserveStatementBody_UsingKeyword_0_6_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_TableClassifier_ExclusiveKeyword_1_1_1_q.equals(syntax))
 				emit_TableClassifier_ExclusiveKeyword_1_1_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_TableClassifier_ExclusiveKeyword_1_4_1_q.equals(syntax))
@@ -254,156 +254,143 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     blacklistNamespace+=PathName (ambiguity) 'imports' owlImports+=OwlImport
 	 *     blacklistNamespace+=PathName (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     blacklistNamespace+=PathName (ambiguity) 'in' 'domain' rootDomain?='root'
+	 *     blacklistNamespace+=PathName (ambiguity) 'metadata' metadata=Metadata
+	 *     blacklistNamespace+=PathName (ambiguity) 'parameters' parameters=Metadata
 	 *     blacklistNamespace+=PathName (ambiguity) 'using' imported+=Import
 	 *     blacklistNamespace+=PathName (ambiguity) 'using' weights=Metadata
 	 *     blacklistNamespace+=PathName (ambiguity) 'version' version=VersionNumber
-	 *     blacklistNamespace+=PathName (ambiguity) 'with' 'documentation' documentation=Metadata
-	 *     blacklistNamespace+=PathName (ambiguity) 'with' 'metadata' metadata=Metadata
-	 *     blacklistNamespace+=PathName (ambiguity) 'with' 'parameters' parameters=Metadata
 	 *     coverage+=Function (ambiguity) ';' (rule end)
 	 *     coverage+=Function (ambiguity) 'covering' coverage+=Function
 	 *     coverage+=Function (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
 	 *     coverage+=Function (ambiguity) 'imports' owlImports+=OwlImport
 	 *     coverage+=Function (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     coverage+=Function (ambiguity) 'in' 'domain' rootDomain?='root'
+	 *     coverage+=Function (ambiguity) 'metadata' metadata=Metadata
+	 *     coverage+=Function (ambiguity) 'parameters' parameters=Metadata
 	 *     coverage+=Function (ambiguity) 'using' imported+=Import
 	 *     coverage+=Function (ambiguity) 'using' weights=Metadata
 	 *     coverage+=Function (ambiguity) 'version' version=VersionNumber
-	 *     coverage+=Function (ambiguity) 'with' 'documentation' documentation=Metadata
-	 *     coverage+=Function (ambiguity) 'with' 'metadata' metadata=Metadata
-	 *     coverage+=Function (ambiguity) 'with' 'parameters' parameters=Metadata
 	 *     disjointNamespaces+=PathName ',' (ambiguity) ';' (rule end)
 	 *     disjointNamespaces+=PathName ',' (ambiguity) 'covering' coverage+=Function
 	 *     disjointNamespaces+=PathName ',' (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
 	 *     disjointNamespaces+=PathName ',' (ambiguity) 'imports' owlImports+=OwlImport
 	 *     disjointNamespaces+=PathName ',' (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     disjointNamespaces+=PathName ',' (ambiguity) 'in' 'domain' rootDomain?='root'
+	 *     disjointNamespaces+=PathName ',' (ambiguity) 'metadata' metadata=Metadata
+	 *     disjointNamespaces+=PathName ',' (ambiguity) 'parameters' parameters=Metadata
 	 *     disjointNamespaces+=PathName ',' (ambiguity) 'using' imported+=Import
 	 *     disjointNamespaces+=PathName ',' (ambiguity) 'using' weights=Metadata
 	 *     disjointNamespaces+=PathName ',' (ambiguity) 'version' version=VersionNumber
-	 *     disjointNamespaces+=PathName ',' (ambiguity) 'with' 'documentation' documentation=Metadata
-	 *     disjointNamespaces+=PathName ',' (ambiguity) 'with' 'metadata' metadata=Metadata
-	 *     disjointNamespaces+=PathName ',' (ambiguity) 'with' 'parameters' parameters=Metadata
 	 *     disjointNamespaces+=PathName (ambiguity) ';' (rule end)
 	 *     disjointNamespaces+=PathName (ambiguity) 'covering' coverage+=Function
 	 *     disjointNamespaces+=PathName (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
 	 *     disjointNamespaces+=PathName (ambiguity) 'imports' owlImports+=OwlImport
 	 *     disjointNamespaces+=PathName (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     disjointNamespaces+=PathName (ambiguity) 'in' 'domain' rootDomain?='root'
+	 *     disjointNamespaces+=PathName (ambiguity) 'metadata' metadata=Metadata
+	 *     disjointNamespaces+=PathName (ambiguity) 'parameters' parameters=Metadata
 	 *     disjointNamespaces+=PathName (ambiguity) 'using' imported+=Import
 	 *     disjointNamespaces+=PathName (ambiguity) 'using' weights=Metadata
 	 *     disjointNamespaces+=PathName (ambiguity) 'version' version=VersionNumber
-	 *     disjointNamespaces+=PathName (ambiguity) 'with' 'documentation' documentation=Metadata
-	 *     disjointNamespaces+=PathName (ambiguity) 'with' 'metadata' metadata=Metadata
-	 *     disjointNamespaces+=PathName (ambiguity) 'with' 'parameters' parameters=Metadata
 	 *     docstring=STRING (ambiguity) ';' (rule end)
 	 *     docstring=STRING (ambiguity) 'covering' coverage+=Function
 	 *     docstring=STRING (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
 	 *     docstring=STRING (ambiguity) 'imports' owlImports+=OwlImport
 	 *     docstring=STRING (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     docstring=STRING (ambiguity) 'in' 'domain' rootDomain?='root'
+	 *     docstring=STRING (ambiguity) 'metadata' metadata=Metadata
+	 *     docstring=STRING (ambiguity) 'parameters' parameters=Metadata
 	 *     docstring=STRING (ambiguity) 'using' imported+=Import
 	 *     docstring=STRING (ambiguity) 'using' weights=Metadata
 	 *     docstring=STRING (ambiguity) 'version' version=VersionNumber
-	 *     docstring=STRING (ambiguity) 'with' 'documentation' documentation=Metadata
-	 *     docstring=STRING (ambiguity) 'with' 'metadata' metadata=Metadata
-	 *     docstring=STRING (ambiguity) 'with' 'parameters' parameters=Metadata
 	 *     domainConcept=Concept (ambiguity) ';' (rule end)
 	 *     domainConcept=Concept (ambiguity) 'covering' coverage+=Function
 	 *     domainConcept=Concept (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
 	 *     domainConcept=Concept (ambiguity) 'imports' owlImports+=OwlImport
 	 *     domainConcept=Concept (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     domainConcept=Concept (ambiguity) 'in' 'domain' rootDomain?='root'
+	 *     domainConcept=Concept (ambiguity) 'metadata' metadata=Metadata
+	 *     domainConcept=Concept (ambiguity) 'parameters' parameters=Metadata
 	 *     domainConcept=Concept (ambiguity) 'using' imported+=Import
 	 *     domainConcept=Concept (ambiguity) 'using' weights=Metadata
 	 *     domainConcept=Concept (ambiguity) 'version' version=VersionNumber
-	 *     domainConcept=Concept (ambiguity) 'with' 'documentation' documentation=Metadata
-	 *     domainConcept=Concept (ambiguity) 'with' 'metadata' metadata=Metadata
-	 *     domainConcept=Concept (ambiguity) 'with' 'parameters' parameters=Metadata
 	 *     imported+=Import (ambiguity) ';' (rule end)
 	 *     imported+=Import (ambiguity) 'covering' coverage+=Function
 	 *     imported+=Import (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
 	 *     imported+=Import (ambiguity) 'imports' owlImports+=OwlImport
 	 *     imported+=Import (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     imported+=Import (ambiguity) 'in' 'domain' rootDomain?='root'
+	 *     imported+=Import (ambiguity) 'metadata' metadata=Metadata
+	 *     imported+=Import (ambiguity) 'parameters' parameters=Metadata
 	 *     imported+=Import (ambiguity) 'using' imported+=Import
 	 *     imported+=Import (ambiguity) 'using' weights=Metadata
 	 *     imported+=Import (ambiguity) 'version' version=VersionNumber
-	 *     imported+=Import (ambiguity) 'with' 'documentation' documentation=Metadata
-	 *     imported+=Import (ambiguity) 'with' 'metadata' metadata=Metadata
-	 *     imported+=Import (ambiguity) 'with' 'parameters' parameters=Metadata
 	 *     lookupNamespace+=PathName (ambiguity) ';' (rule end)
 	 *     lookupNamespace+=PathName (ambiguity) 'covering' coverage+=Function
 	 *     lookupNamespace+=PathName (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
 	 *     lookupNamespace+=PathName (ambiguity) 'imports' owlImports+=OwlImport
 	 *     lookupNamespace+=PathName (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     lookupNamespace+=PathName (ambiguity) 'in' 'domain' rootDomain?='root'
+	 *     lookupNamespace+=PathName (ambiguity) 'metadata' metadata=Metadata
+	 *     lookupNamespace+=PathName (ambiguity) 'parameters' parameters=Metadata
 	 *     lookupNamespace+=PathName (ambiguity) 'using' imported+=Import
 	 *     lookupNamespace+=PathName (ambiguity) 'using' weights=Metadata
 	 *     lookupNamespace+=PathName (ambiguity) 'version' version=VersionNumber
-	 *     lookupNamespace+=PathName (ambiguity) 'with' 'documentation' documentation=Metadata
-	 *     lookupNamespace+=PathName (ambiguity) 'with' 'metadata' metadata=Metadata
-	 *     lookupNamespace+=PathName (ambiguity) 'with' 'parameters' parameters=Metadata
 	 *     name=PathName (ambiguity) ';' (rule end)
 	 *     name=PathName (ambiguity) 'covering' coverage+=Function
 	 *     name=PathName (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
 	 *     name=PathName (ambiguity) 'imports' owlImports+=OwlImport
 	 *     name=PathName (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     name=PathName (ambiguity) 'in' 'domain' rootDomain?='root'
+	 *     name=PathName (ambiguity) 'metadata' metadata=Metadata
+	 *     name=PathName (ambiguity) 'parameters' parameters=Metadata
 	 *     name=PathName (ambiguity) 'using' imported+=Import
 	 *     name=PathName (ambiguity) 'using' weights=Metadata
 	 *     name=PathName (ambiguity) 'version' version=VersionNumber
-	 *     name=PathName (ambiguity) 'with' 'documentation' documentation=Metadata
-	 *     name=PathName (ambiguity) 'with' 'metadata' metadata=Metadata
-	 *     name=PathName (ambiguity) 'with' 'parameters' parameters=Metadata
 	 *     owlImports+=OwlImport (ambiguity) ';' (rule end)
 	 *     owlImports+=OwlImport (ambiguity) 'covering' coverage+=Function
 	 *     owlImports+=OwlImport (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
 	 *     owlImports+=OwlImport (ambiguity) 'imports' owlImports+=OwlImport
 	 *     owlImports+=OwlImport (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     owlImports+=OwlImport (ambiguity) 'in' 'domain' rootDomain?='root'
+	 *     owlImports+=OwlImport (ambiguity) 'metadata' metadata=Metadata
+	 *     owlImports+=OwlImport (ambiguity) 'parameters' parameters=Metadata
 	 *     owlImports+=OwlImport (ambiguity) 'using' imported+=Import
 	 *     owlImports+=OwlImport (ambiguity) 'using' weights=Metadata
 	 *     owlImports+=OwlImport (ambiguity) 'version' version=VersionNumber
-	 *     owlImports+=OwlImport (ambiguity) 'with' 'documentation' documentation=Metadata
-	 *     owlImports+=OwlImport (ambiguity) 'with' 'metadata' metadata=Metadata
-	 *     owlImports+=OwlImport (ambiguity) 'with' 'parameters' parameters=Metadata
 	 *     rootDomain?='root' (ambiguity) ';' (rule end)
 	 *     rootDomain?='root' (ambiguity) 'covering' coverage+=Function
 	 *     rootDomain?='root' (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
 	 *     rootDomain?='root' (ambiguity) 'imports' owlImports+=OwlImport
 	 *     rootDomain?='root' (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     rootDomain?='root' (ambiguity) 'in' 'domain' rootDomain?='root'
+	 *     rootDomain?='root' (ambiguity) 'metadata' metadata=Metadata
+	 *     rootDomain?='root' (ambiguity) 'parameters' parameters=Metadata
 	 *     rootDomain?='root' (ambiguity) 'using' imported+=Import
 	 *     rootDomain?='root' (ambiguity) 'using' weights=Metadata
 	 *     rootDomain?='root' (ambiguity) 'version' version=VersionNumber
-	 *     rootDomain?='root' (ambiguity) 'with' 'documentation' documentation=Metadata
-	 *     rootDomain?='root' (ambiguity) 'with' 'metadata' metadata=Metadata
-	 *     rootDomain?='root' (ambiguity) 'with' 'parameters' parameters=Metadata
 	 *     version=VersionNumber (ambiguity) ';' (rule end)
 	 *     version=VersionNumber (ambiguity) 'covering' coverage+=Function
 	 *     version=VersionNumber (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
 	 *     version=VersionNumber (ambiguity) 'imports' owlImports+=OwlImport
 	 *     version=VersionNumber (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     version=VersionNumber (ambiguity) 'in' 'domain' rootDomain?='root'
+	 *     version=VersionNumber (ambiguity) 'metadata' metadata=Metadata
+	 *     version=VersionNumber (ambiguity) 'parameters' parameters=Metadata
 	 *     version=VersionNumber (ambiguity) 'using' imported+=Import
 	 *     version=VersionNumber (ambiguity) 'using' weights=Metadata
 	 *     version=VersionNumber (ambiguity) 'version' version=VersionNumber
-	 *     version=VersionNumber (ambiguity) 'with' 'documentation' documentation=Metadata
-	 *     version=VersionNumber (ambiguity) 'with' 'metadata' metadata=Metadata
-	 *     version=VersionNumber (ambiguity) 'with' 'parameters' parameters=Metadata
 	 *     weights=Metadata (ambiguity) ';' (rule end)
 	 *     weights=Metadata (ambiguity) 'covering' coverage+=Function
 	 *     weights=Metadata (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
 	 *     weights=Metadata (ambiguity) 'imports' owlImports+=OwlImport
 	 *     weights=Metadata (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     weights=Metadata (ambiguity) 'in' 'domain' rootDomain?='root'
+	 *     weights=Metadata (ambiguity) 'metadata' metadata=Metadata
+	 *     weights=Metadata (ambiguity) 'parameters' parameters=Metadata
 	 *     weights=Metadata (ambiguity) 'using' imported+=Import
 	 *     weights=Metadata (ambiguity) 'using' weights=Metadata
 	 *     weights=Metadata (ambiguity) 'version' version=VersionNumber
-	 *     weights=Metadata (ambiguity) 'with' 'documentation' documentation=Metadata
-	 *     weights=Metadata (ambiguity) 'with' 'metadata' metadata=Metadata
-	 *     weights=Metadata (ambiguity) 'with' 'parameters' parameters=Metadata
 	 */
 	protected void emit_Namespace___OutsideKeyword_5_6_1_0_q___ResolveKeyword_5_6_0_0_FromKeyword_5_6_0_1_0_q__q__p(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
@@ -612,38 +599,28 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     'using'?
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     actions+=ActionSpecification (ambiguity) 'with' 'documentation' documentation=Metadata
-	 *     actions+=ActionSpecification (ambiguity) 'with' 'metadata' metadata=Metadata
+	 *     actions+=ActionSpecification (ambiguity) 'metadata' metadata=Metadata
 	 *     actions+=ActionSpecification (ambiguity) (rule end)
 	 *     actions+=ActionSpecification (ambiguity) concept=NamedObservableSemantics
 	 *     actions+=ActionSpecification (ambiguity) urn=Urn
-	 *     concept=NamedObservableSemantics (ambiguity) 'with' 'documentation' documentation=Metadata
-	 *     concept=NamedObservableSemantics (ambiguity) 'with' 'metadata' metadata=Metadata
+	 *     concept=NamedObservableSemantics (ambiguity) 'metadata' metadata=Metadata
 	 *     concept=NamedObservableSemantics (ambiguity) (rule end)
 	 *     concept=NamedObservableSemantics (ambiguity) concept=NamedObservableSemantics
 	 *     concept=NamedObservableSemantics (ambiguity) urn=Urn
-	 *     docstring=STRING (ambiguity) 'with' 'documentation' documentation=Metadata
-	 *     docstring=STRING (ambiguity) 'with' 'metadata' metadata=Metadata
+	 *     docstring=STRING (ambiguity) 'metadata' metadata=Metadata
 	 *     docstring=STRING (ambiguity) (rule end)
 	 *     docstring=STRING (ambiguity) concept=NamedObservableSemantics
 	 *     docstring=STRING (ambiguity) urn=Urn
-	 *     observations+=ObserveStatementBody ')' (ambiguity) 'with' 'documentation' documentation=Metadata
-	 *     observations+=ObserveStatementBody ')' (ambiguity) 'with' 'metadata' metadata=Metadata
-	 *     observations+=ObserveStatementBody ')' (ambiguity) (rule end)
-	 *     observations+=ObserveStatementBody ')' (ambiguity) concept=NamedObservableSemantics
-	 *     observations+=ObserveStatementBody ')' (ambiguity) urn=Urn
-	 *     parents+=PathName (ambiguity) 'with' 'documentation' documentation=Metadata
-	 *     parents+=PathName (ambiguity) 'with' 'metadata' metadata=Metadata
+	 *     parents+=PathName (ambiguity) 'metadata' metadata=Metadata
 	 *     parents+=PathName (ambiguity) (rule end)
 	 *     parents+=PathName (ambiguity) concept=NamedObservableSemantics
 	 *     parents+=PathName (ambiguity) urn=Urn
-	 *     states+=ObservableSemantics (ambiguity) 'with' 'documentation' documentation=Metadata
-	 *     states+=ObservableSemantics (ambiguity) 'with' 'metadata' metadata=Metadata
+	 *     states+=ObservableSemantics (ambiguity) 'metadata' metadata=Metadata
 	 *     states+=ObservableSemantics (ambiguity) (rule end)
 	 *     states+=ObservableSemantics (ambiguity) concept=NamedObservableSemantics
 	 *     states+=ObservableSemantics (ambiguity) urn=Urn
 	 */
-	protected void emit_ObserveStatementBody_UsingKeyword_0_7_0_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+	protected void emit_ObserveStatementBody_UsingKeyword_0_6_0_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

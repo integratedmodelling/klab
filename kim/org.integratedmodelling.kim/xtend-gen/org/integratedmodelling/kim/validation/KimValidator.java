@@ -44,7 +44,6 @@ import org.integratedmodelling.kim.kim.ConceptStatementBody;
 import org.integratedmodelling.kim.kim.Currency;
 import org.integratedmodelling.kim.kim.DefineStatement;
 import org.integratedmodelling.kim.kim.Dependency;
-import org.integratedmodelling.kim.kim.Documentation;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.HeaderRow;
 import org.integratedmodelling.kim.kim.IdentityRequirement;
@@ -768,10 +767,6 @@ public class KimValidator extends AbstractKimValidator {
           KimMetadata _kimMetadata = new KimMetadata(_metadata_1, descriptor);
           descriptor.setMetadata(_kimMetadata);
         }
-        Documentation _documentation = model.getDocumentation();
-        boolean _tripleNotEquals_14 = (_documentation != null);
-        if (_tripleNotEquals_14) {
-        }
         int n = 0;
         java.util.List<IKimScope> _children = ns_1.getChildren();
         for (final IKimScope object : _children) {
@@ -868,17 +863,6 @@ public class KimValidator extends AbstractKimValidator {
       }
     } else {
       ok = false;
-    }
-    EList<ObserveStatementBody> _observations = observation.getObservations();
-    for (final ObserveStatementBody obs : _observations) {
-      {
-        KimObserver child = this.checkObservation(obs, ret);
-        if ((ret != null)) {
-          ret.addChild(child);
-        } else {
-          ok = false;
-        }
-      }
     }
     int i = 0;
     EList<ObservableSemantics> _states = observation.getStates();

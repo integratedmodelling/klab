@@ -166,8 +166,8 @@ public class Classifier implements IClassifier {
 				return negated ? !intervalMatch.contains(d) : intervalMatch.contains(d);
 
 		} else if (conceptMatch != null) {
-
-			return negated ? !is(asConcept(o), conceptMatch) : is(asConcept(o), conceptMatch);
+			IConcept c = asConcept(o);
+			return negated ? !is(c, conceptMatch) : is(c, conceptMatch);
 
 		} else if (stringMatch != null) {
 
@@ -217,6 +217,10 @@ public class Classifier implements IClassifier {
 	 */
 	private boolean is(IConcept c1, IConcept c2) {
 
+		if (c1 == null || c2 == null) {
+			return false;
+		}
+		
 		String key = c1 + "#" + c2;
 		Boolean ret = null;
 		if (_reasonCache != null)

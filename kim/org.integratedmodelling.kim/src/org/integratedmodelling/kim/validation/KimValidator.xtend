@@ -574,9 +574,9 @@ class KimValidator extends AbstractKimValidator {
 				if (model.metadata !== null) {
 					descriptor.metadata = new KimMetadata(model.metadata, descriptor);
 				}
-				if (model.documentation !== null) {
-//					descriptor.documentation = new KimMetadata(model.documentation);
-				}
+//				if (model.documentation !== null) {
+////					descriptor.documentation = new KimMetadata(model.documentation);
+//				}
 
 				/*
 				 * Check all other models in namespace and if name is duplicated, add number starting from 1
@@ -665,14 +665,14 @@ class KimValidator extends AbstractKimValidator {
 			ok = false
 		}
 
-		for (obs : observation.observations) {
-			var child = checkObservation(obs, ret)
-			if (ret !== null) {
-				ret.addChild(child)
-			} else {
-				ok = false
-			}
-		}
+//		for (obs : observation.observations) {
+//			var child = checkObservation(obs, ret)
+//			if (ret !== null) {
+//				ret.addChild(child)
+//			} else {
+//				ok = false
+//			}
+//		}
 
 		var i = 0;
 		for (state : observation.states) {

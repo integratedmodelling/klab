@@ -50,7 +50,7 @@ public class DataflowCompiler {
 	private IResolutionScope scope;
 
 	Graph<IResolvable, ResolutionEdge> resolutionGraph = new DefaultDirectedGraph<>(ResolutionEdge.class);
-	Map<Model, ModelD> modelCatalog = new HashMap<>();
+	Map<Model, List<ModelD>> modelCatalog = new HashMap<>();
 	// maps the original name on each non-reference actuator to the original
 	// observable coming out of the model. Used to set up mediators in models that
 	// depend on them.
@@ -60,8 +60,11 @@ public class DataflowCompiler {
 
 		Coverage coverage;
 
-		// if not null, the computation will adapt the source to the target and they may
-		// be of incompatible types.
+		/*
+		 * if not null, the computation will adapt the source to the target and they may
+		 * be of incompatible types. FIXME: there is only one Model per model, and it
+		 * may be used more than once with different transformations.
+		 */
 		List<IComputableResource> indirectAdapters;
 
 		ResolutionEdge(Coverage coverage, List<IComputableResource> indirectAdapters) {
@@ -177,7 +180,17 @@ public class DataflowCompiler {
 
 		@Override
 		public boolean equals(Object obj) {
-			return obj instanceof ModelD && model.equals(((ModelD) obj).model);
+			return obj instanceof ModelD && model.equals(((ModelD) obj).model) && hasSameAdapters(((ModelD)obj).indirectAdapters);
+		}
+
+		public boolean hasSameAdapters(List<IComputableResource> adapters) {
+			if (adapters == null) {
+				return this.indirectAdapters == null;
+			}
+			if (this.indirectAdapters != null) {
+				return this.indirectAdapters.equals(adapters);
+			}
+			return false;
 		}
 
 	}
@@ -222,7 +235,7 @@ public class DataflowCompiler {
 		/*
 		 * get the actuator in the node, ignoring the children
 		 */
-		Actuator createActuator(IMonitor monitor, Set<Model> generated) {
+		Actuator createActuator(IMonitor monitor, Set<ModelD> generated) {
 
 			/*
 			 * create the original actuator
@@ -270,8 +283,7 @@ public class DataflowCompiler {
 			if (models.size() == 1) {
 
 				ModelD theModel = models.iterator().next();
-				defineActuator(ret, theModel.model.getLocalNameFor(observable), theModel.model,
-						theModel.indirectAdapters, generated);
+				defineActuator(ret, theModel.model.getLocalNameFor(observable), theModel, generated);
 
 			} else if (models.size() > 1) {
 
@@ -296,7 +308,7 @@ public class DataflowCompiler {
 					partial.setType(ret.getType());
 					partial.setObservable(observable);
 					partial.setDefinesScale(true);
-					defineActuator(partial, name, modelDesc.model, modelDesc.indirectAdapters, generated);
+					defineActuator(partial, name, modelDesc, generated);
 					partial.setCoverage(modelDesc.coverage);
 
 					modelIds.add(name);
@@ -326,13 +338,14 @@ public class DataflowCompiler {
 			return ret;
 		}
 
-		private void defineActuator(Actuator ret, String name, Model model, List<IComputableResource> indirectAdapters,
-				Set<Model> generated) {
+		private void defineActuator(Actuator ret, String name, ModelD theModel, Set<ModelD> generated) {
 
+			Model model = theModel.model;
+			List<IComputableResource> indirectAdapters = theModel.indirectAdapters;
 			ret.setName(name);
 
-			if (!generated.contains(model)) {
-				generated.add(model);
+			if (!generated.contains(theModel)) {
+				generated.add(theModel);
 				for (IComputableResource resource : getModelComputation(model, ret.getType(), ITime.INITIALIZATION)) {
 					ret.addComputation(resource);
 					if (indirectAdapters != null && resource.getTarget() == null) {
@@ -358,7 +371,7 @@ public class DataflowCompiler {
 		 * get the finished actuator with all the children and the mediation strategy
 		 * TODO must add any last mediation for the root observable if needed
 		 */
-		Actuator getActuatorTree(IMonitor monitor, Set<Model> generated) {
+		Actuator getActuatorTree(IMonitor monitor, Set<ModelD> generated) {
 
 			Actuator ret = createActuator(monitor, generated);
 			for (Node child : sortChildren()) {
@@ -483,7 +496,7 @@ public class DataflowCompiler {
 				}
 				observableCatalog.put(compatibleOutput.getLocalName(), compatibleOutput);
 
-				ModelD md = compileModel(model);
+				ModelD md = compileModel(model, d.indirectAdapters);
 				for (ResolutionEdge o : graph.incomingEdgesOf(model)) {
 					ret.children.add(compileActuator(graph.getEdgeSource(o), graph,
 							o.coverage == null ? scale : o.coverage, monitor));
@@ -563,11 +576,31 @@ public class DataflowCompiler {
 		return null;
 	}
 
-	ModelD compileModel(Model model) {
-		ModelD ret = modelCatalog.get(model);
-		if (ret == null) {
+	/**
+	 * Must create different descriptor for different indirect usages
+	 * @param model
+	 * @param indirectAdapters
+	 * @return
+	 */
+	ModelD compileModel(Model model, List<IComputableResource> indirectAdapters) {
+		ModelD ret = null;
+		List<ModelD> list = modelCatalog.get(model);
+		if (list == null) {
+			list = new ArrayList<>();
 			ret = new ModelD(model);
-			modelCatalog.put(model, ret);
+			list.add(ret);
+			modelCatalog.put(model, list);
+		} else {
+			for (ModelD md : modelCatalog.get(model)) {
+				if (md.hasSameAdapters(indirectAdapters)) {
+					ret = md;
+					break;
+				}
+			}
+			if (ret == null) {
+				ret = new ModelD(model);
+				list.add(ret);
+			}
 		}
 		ret.useCount++;
 		return ret;

@@ -24,7 +24,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
 import org.integratedmodelling.kim.kim.ActionSpecification;
 import org.integratedmodelling.kim.kim.Classification;
 import org.integratedmodelling.kim.kim.Dependency;
-import org.integratedmodelling.kim.kim.Documentation;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.Metadata;
@@ -61,7 +60,6 @@ import org.integratedmodelling.kim.kim.ValueAssignment;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getLookupTableId <em>Lookup Table Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getActions <em>Actions</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getMetadata <em>Metadata</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getDocumentation <em>Documentation</em>}</li>
  * </ul>
  *
  * @generated
@@ -327,16 +325,6 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * @ordered
    */
   protected Metadata metadata;
-
-  /**
-   * The cached value of the '{@link #getDocumentation() <em>Documentation</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getDocumentation()
-   * @generated
-   * @ordered
-   */
-  protected Documentation documentation;
 
   /**
    * <!-- begin-user-doc -->
@@ -897,54 +885,6 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
-  public Documentation getDocumentation()
-  {
-    return documentation;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetDocumentation(Documentation newDocumentation, NotificationChain msgs)
-  {
-    Documentation oldDocumentation = documentation;
-    documentation = newDocumentation;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_BODY_STATEMENT__DOCUMENTATION, oldDocumentation, newDocumentation);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setDocumentation(Documentation newDocumentation)
-  {
-    if (newDocumentation != documentation)
-    {
-      NotificationChain msgs = null;
-      if (documentation != null)
-        msgs = ((InternalEObject)documentation).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.MODEL_BODY_STATEMENT__DOCUMENTATION, null, msgs);
-      if (newDocumentation != null)
-        msgs = ((InternalEObject)newDocumentation).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.MODEL_BODY_STATEMENT__DOCUMENTATION, null, msgs);
-      msgs = basicSetDocumentation(newDocumentation, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_BODY_STATEMENT__DOCUMENTATION, newDocumentation, newDocumentation));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
@@ -972,8 +912,6 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return ((InternalEList<?>)getActions()).basicRemove(otherEnd, msgs);
       case KimPackage.MODEL_BODY_STATEMENT__METADATA:
         return basicSetMetadata(null, msgs);
-      case KimPackage.MODEL_BODY_STATEMENT__DOCUMENTATION:
-        return basicSetDocumentation(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -1026,8 +964,6 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return getActions();
       case KimPackage.MODEL_BODY_STATEMENT__METADATA:
         return getMetadata();
-      case KimPackage.MODEL_BODY_STATEMENT__DOCUMENTATION:
-        return getDocumentation();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -1106,9 +1042,6 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
       case KimPackage.MODEL_BODY_STATEMENT__METADATA:
         setMetadata((Metadata)newValue);
         return;
-      case KimPackage.MODEL_BODY_STATEMENT__DOCUMENTATION:
-        setDocumentation((Documentation)newValue);
-        return;
     }
     super.eSet(featureID, newValue);
   }
@@ -1180,9 +1113,6 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
       case KimPackage.MODEL_BODY_STATEMENT__METADATA:
         setMetadata((Metadata)null);
         return;
-      case KimPackage.MODEL_BODY_STATEMENT__DOCUMENTATION:
-        setDocumentation((Documentation)null);
-        return;
     }
     super.eUnset(featureID);
   }
@@ -1235,8 +1165,6 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return actions != null && !actions.isEmpty();
       case KimPackage.MODEL_BODY_STATEMENT__METADATA:
         return metadata != null;
-      case KimPackage.MODEL_BODY_STATEMENT__DOCUMENTATION:
-        return documentation != null;
     }
     return super.eIsSet(featureID);
   }

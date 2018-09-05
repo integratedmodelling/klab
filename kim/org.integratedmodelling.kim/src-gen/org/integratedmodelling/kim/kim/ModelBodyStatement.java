@@ -36,7 +36,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getLookupTableId <em>Lookup Table Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getActions <em>Actions</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getMetadata <em>Metadata</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getDocumentation <em>Documentation</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kim.kim.KimPackage#getModelBodyStatement()
@@ -478,31 +477,5 @@ public interface ModelBodyStatement extends EObject
    * @generated
    */
   void setMetadata(Metadata value);
-
-  /**
-   * Returns the value of the '<em><b>Documentation</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Documentation</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Documentation</em>' containment reference.
-   * @see #setDocumentation(Documentation)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getModelBodyStatement_Documentation()
-   * @model containment="true"
-   * @generated
-   */
-  Documentation getDocumentation();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getDocumentation <em>Documentation</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Documentation</em>' containment reference.
-   * @see #getDocumentation()
-   * @generated
-   */
-  void setDocumentation(Documentation value);
 
 } // ModelBodyStatement

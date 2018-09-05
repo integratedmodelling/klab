@@ -448,16 +448,16 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         restrictions+=RestrictionStatement | 
 	 *                         metadata=Metadata
 	 *                     )? 
-	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
-	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
-	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
-	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
-	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
 	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
 	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
+	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
+	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
+	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
+	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
+	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
-	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
 	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
+	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
 	 *                     ((constituent?='constituent' | constitutes?='consists')? partOf?='of' whole=ConceptDeclaration)? 
 	 *                     (
 	 *                         roles+=ConceptDeclaration 
@@ -1077,8 +1077,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *             (lookupTable=Table | lookupTableId=UPPERCASE_ID)
 	 *         )? 
 	 *         actions+=ActionSpecification* 
-	 *         metadata=Metadata? 
-	 *         documentation=Documentation?
+	 *         metadata=Metadata?
 	 *     )
 	 */
 	protected void sequence_ModelBodyStatement(ISerializationContext context, ModelBodyStatement semanticObject) {
@@ -1148,8 +1147,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *             (disjointNamespaces+=PathName disjointNamespaces+=PathName*)?
 	 *         )+ 
 	 *         parameters=Metadata? 
-	 *         metadata=Metadata? 
-	 *         documentation=Metadata?
+	 *         metadata=Metadata?
 	 *     )
 	 */
 	protected void sequence_Namespace(ISerializationContext context, Namespace semanticObject) {
@@ -1213,11 +1211,9 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *             (parents+=PathName parents+=PathName*)? 
 	 *             actions+=ActionSpecification* 
 	 *             (states+=ObservableSemantics states+=ObservableSemantics*)? 
-	 *             (observations+=ObserveStatementBody observations+=ObserveStatementBody*)? 
 	 *             accessor=Function?
 	 *         ) | 
-	 *         metadata=Metadata | 
-	 *         documentation=Metadata
+	 *         metadata=Metadata
 	 *     )+
 	 */
 	protected void sequence_ObserveStatementBody(ISerializationContext context, ObserveStatementBody semanticObject) {

@@ -61,8 +61,8 @@ ModelBodyStatement:
 		 		(lookupTable=Table | lookupTableId=UPPERCASE_ID)
 		 )?
 		 actions+=ActionSpecification*
-		 ('with' 'metadata' metadata=Metadata)? 
-		 ('with' 'documentation' documentation=Documentation)? 
+		 ('metadata' metadata=Metadata)? 
+//		 ('with' 'documentation' documentation=Documentation)? 
 ;
 
 AttributeIdentifier:
@@ -231,9 +231,9 @@ Namespace:
 		('version' version=VersionNumber)? & 
 		('resolve' ('from' lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Metadata)?)?
 	)
-	('with' 'parameters' parameters=Metadata)? 
-	('with' 'metadata' metadata=Metadata)? 
-	('with' 'documentation' documentation=Metadata)? 
+	('parameters' parameters=Metadata)? 
+	('metadata' metadata=Metadata)? 
+//	('documentation' documentation=Metadata)? 
 	';';	
 
 OwlImport:
@@ -281,14 +281,14 @@ ObserveStatementBody:
 				// validator will ensure that the semantics has an associated value
 				( states+=ObservableSemantics) (',' states+=ObservableSemantics)*
 		)?
-		(
-			'with' 
-				// validator will ensure that the semantics has an associated value
-				( '(' observations+=ObserveStatementBody ')') (',' '(' observations+=ObserveStatementBody ')')*
-		)? 
+//		(
+//			'with' 
+//				// validator will ensure that the semantics has an associated value
+//				( '(' observations+=ObserveStatementBody ')') (',' '(' observations+=ObserveStatementBody ')')*
+//		)? 
 		('using' (accessor=Function)?)? &
-		('with' 'metadata' metadata=Metadata)? 
-		('with' 'documentation' documentation=Metadata)? 
+		('metadata' metadata=Metadata)? 
+//		('documentation' documentation=Metadata)? 
 ;
 
 
@@ -329,7 +329,7 @@ ConceptDeclaration:
 			('of'   inherency=SimpleConceptDeclaration)? &
 			// purpose (achievement event created from target)
 			('for' motivation=SimpleConceptDeclaration)? &
-			// compresence (subject, process, event)
+			// compresence (subject, process, event, presence or partitioned quality)
 			('with' compresent=SimpleConceptDeclaration)? &
 			// cause towards self - causant can be anything (?)
 			('caused' 'by' causant=SimpleConceptDeclaration)? &
@@ -592,7 +592,7 @@ ConceptStatementBody:
 
 		(restrictions+=RestrictionStatement*) &
 	
-		('with' 'metadata' metadata=Metadata)?
+		('metadata' metadata=Metadata)?
 	)
 ;
 

@@ -417,4 +417,106 @@ public class ComputableResource extends KimStatement implements IComputableResou
         return resolutionMode;
     }
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((accordingTo == null) ? 0 : accordingTo.hashCode());
+		result = prime * result + ((classification == null) ? 0 : classification.hashCode());
+		result = prime * result + ((condition == null) ? 0 : condition.hashCode());
+		result = prime * result + ((conversion == null) ? 0 : conversion.hashCode());
+		result = prime * result + ((expression == null) ? 0 : expression.hashCode());
+		result = prime * result + ((language == null) ? 0 : language.hashCode());
+		result = prime * result + ((literal == null) ? 0 : literal.hashCode());
+		result = prime * result + ((lookupTable == null) ? 0 : lookupTable.hashCode());
+		result = prime * result + (mediation ? 1231 : 1237);
+		result = prime * result + (negated ? 1231 : 1237);
+		result = prime * result + ((resolutionMode == null) ? 0 : resolutionMode.hashCode());
+		result = prime * result + ((serviceCall == null) ? 0 : serviceCall.hashCode());
+		result = prime * result + ((target == null) ? 0 : target.hashCode());
+		result = prime * result + ((targetId == null) ? 0 : targetId.hashCode());
+		result = prime * result + ((urn == null) ? 0 : urn.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ComputableResource other = (ComputableResource) obj;
+		if (accordingTo == null) {
+			if (other.accordingTo != null)
+				return false;
+		} else if (!accordingTo.equals(other.accordingTo))
+			return false;
+		if (classification == null) {
+			if (other.classification != null)
+				return false;
+		} else if (!classification.equals(other.classification))
+			return false;
+		if (condition == null) {
+			if (other.condition != null)
+				return false;
+		} else if (!condition.equals(other.condition))
+			return false;
+		if (conversion == null) {
+			if (other.conversion != null)
+				return false;
+		} else if (!conversion.equals(other.conversion))
+			return false;
+		if (expression == null) {
+			if (other.expression != null)
+				return false;
+		} else if (!expression.equals(other.expression))
+			return false;
+		if (language == null) {
+			if (other.language != null)
+				return false;
+		} else if (!language.equals(other.language))
+			return false;
+		if (literal == null) {
+			if (other.literal != null)
+				return false;
+		} else if (!literal.equals(other.literal))
+			return false;
+		if (lookupTable == null) {
+			if (other.lookupTable != null)
+				return false;
+		} else if (!lookupTable.equals(other.lookupTable))
+			return false;
+		if (mediation != other.mediation)
+			return false;
+		if (negated != other.negated)
+			return false;
+		if (resolutionMode != other.resolutionMode)
+			return false;
+		if (serviceCall == null) {
+			if (other.serviceCall != null)
+				return false;
+		} else if (!serviceCall.equals(other.serviceCall))
+			return false;
+		if (target == null) {
+			if (other.target != null)
+				return false;
+		} else if (!target.equals(other.target))
+			return false;
+		if (targetId == null) {
+			if (other.targetId != null)
+				return false;
+		} else if (!targetId.equals(other.targetId))
+			return false;
+		if (urn == null) {
+			if (other.urn != null)
+				return false;
+		} else if (!urn.equals(other.urn))
+			return false;
+		return true;
+	}
+    
+    
+
 }
