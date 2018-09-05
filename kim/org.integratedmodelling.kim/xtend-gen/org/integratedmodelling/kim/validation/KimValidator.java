@@ -476,7 +476,7 @@ public class KimValidator extends AbstractKimValidator {
             ok = false;
           } else {
             if (((!definition.is(IKimConcept.Type.OBSERVABLE)) && (!definition.is(IKimConcept.Type.TRAIT)))) {
-              this.error("Models can only consume observables or traits", 
+              this.error("Models can only describe observables or traits", 
                 KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
               ok = false;
             } else {

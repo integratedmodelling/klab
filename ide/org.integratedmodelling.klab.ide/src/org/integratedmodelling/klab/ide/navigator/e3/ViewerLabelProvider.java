@@ -167,6 +167,9 @@ public class ViewerLabelProvider extends LabelProvider
                 /*
                  * TODO decoration
                  */
+                case NOTHING:
+                	// TODO SCREAM (at Javier)
+                    break;
                 case CONFIGURATION:
                     break;
                 case EVENT:
@@ -174,16 +177,14 @@ public class ViewerLabelProvider extends LabelProvider
                             .getPluginImage(Activator.PLUGIN_ID, ((EModel) element).isInstantiator()
                                     ? "icons/event_instantiator.png"
                                     : "icons/event_resolver.png");
-                case IDENTITY:
-                    break;
-                case NOTHING:
-                    break;
                 case PROCESS:
                     return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/process_resolver.png");
+                case ATTRIBUTE:
+                case TRAIT:
+                case IDENTITY:
+                case REALM:
                 case QUALITY:
                     return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/quality_resolver.png");
-                case REALM:
-                    break;
                 case RELATIONSHIP:
                     return ResourceManager
                             .getPluginImage(Activator.PLUGIN_ID, ((EModel) element).isInstantiator()

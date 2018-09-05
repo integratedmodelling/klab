@@ -388,11 +388,14 @@ public interface IObservableService {
 	 * @param observable
 	 *            a {@link org.integratedmodelling.klab.api.knowledge.IObservable}
 	 *            object.
+	 * @param acceptTraits
+	 * 			if true, will return a trait type (which can be the observable of a 
+	 * 	 		class model although it's not an observable per se).
 	 * @throws java.lang.IllegalArgumentException
 	 *             if not an observable
 	 * @return the enum type
 	 */
-	Type getObservableType(IObservable observable);
+	Type getObservableType(IObservable observable, boolean acceptTraits);
 
 	/**
 	 * Return the asserted source of the relationship, assuming it is unique. If it

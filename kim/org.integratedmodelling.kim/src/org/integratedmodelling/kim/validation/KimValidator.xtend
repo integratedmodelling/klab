@@ -355,7 +355,7 @@ class KimValidator extends AbstractKimValidator {
 						i, BAD_OBSERVABLE)
 					ok = false
 				} else if (!definition.is(Type.OBSERVABLE) && !definition.is(Type.TRAIT)) {
-					error('Models can only consume observables or traits',
+					error('Models can only describe observables or traits',
 						KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, BAD_OBSERVABLE)
 					ok = false
 				} else {

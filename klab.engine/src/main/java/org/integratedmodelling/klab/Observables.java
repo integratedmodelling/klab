@@ -438,8 +438,11 @@ public enum Observables implements IObservableService {
 	}
 
 	@Override
-	public Type getObservableType(IObservable observable) {
+	public Type getObservableType(IObservable observable, boolean acceptTraits) {
 		EnumSet<Type> type = EnumSet.copyOf(((Observable) observable).getTypeSet());
+		if (type.contains(Type.TRAIT) && acceptTraits) {
+			return Type.CLASS;
+		}
 		type.retainAll(IKimConcept.BASE_OBSERVABLE_TYPES);
 		if (type.size() != 1) {
 			throw new IllegalArgumentException(

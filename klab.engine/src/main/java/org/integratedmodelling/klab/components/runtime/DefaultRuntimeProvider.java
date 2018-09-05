@@ -330,7 +330,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		} else if (observable.is(Type.RELATIONSHIP)) {
 			throw new IllegalArgumentException(
 					"createObservation() does not create relationships: use createRelationship()");
-		} else if (observable.is(Type.QUALITY)) {
+		} else if (observable.is(Type.QUALITY) || observable.is(Type.TRAIT)) {
 
 			IDataArtifact storage = null;
 

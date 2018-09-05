@@ -84,7 +84,6 @@ public enum CliRuntime {
 			}
 			this.engine.stop();
 		}
-
 	}
 
 }

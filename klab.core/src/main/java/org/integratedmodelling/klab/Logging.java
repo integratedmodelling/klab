@@ -51,7 +51,13 @@ public enum Logging implements ILoggingService {
 	Consumer<String> debugWriter = (message) -> System.err.println("DEBUG: " + message);
 
 	private Logging() {
-		logger = (Logger) LoggerFactory.getLogger(this.getClass());
+		try {
+			logger = (Logger) LoggerFactory.getLogger(this.getClass());
+		} catch (Throwable e) {
+			System.err.println("--------------------------------------------------------------");
+			System.err.println("Error initializing logger: check dependencies, destroy your day");
+			System.err.println("--------------------------------------------------------------");
+		}
 	}
 
 	/** {@inheritDoc} */

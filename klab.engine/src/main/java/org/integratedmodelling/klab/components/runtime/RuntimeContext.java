@@ -101,7 +101,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
         this.targetName = actuator.isPartition() ? actuator.getPartitionedTarget() : actuator.getName();
 
         this.targetSemantics = actuator.getObservable();
-        this.artifactType = Observables.INSTANCE.getObservableType(actuator.getObservable());
+        this.artifactType = Observables.INSTANCE.getObservableType(actuator.getObservable(), true);
 
         // store and set up for further resolutions
         this.resolutionScope = (ResolutionScope) scope;
@@ -149,7 +149,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
         ret.parent = this;
         ret.targetName = indirectTarget.getLocalName();
-        ret.artifactType = Observables.INSTANCE.getObservableType(indirectTarget);
+        ret.artifactType = Observables.INSTANCE.getObservableType(indirectTarget, true);
         ret.semantics = new HashMap<>();
         ret.targetSemantics = indirectTarget;
         ret.monitor = monitor;
@@ -355,7 +355,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
         ret.targetName = ((Actuator) actuator).isPartition() ? ((Actuator) actuator).getPartitionedTarget()
                 : actuator.getName();
         ret.resolutionScope = (ResolutionScope) scope;
-        ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable());
+        ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable(), true);
         ret.scale = scale;
         ret.semantics = new HashMap<>();
         ret.targetSemantics = ((Actuator) actuator).getObservable();
@@ -377,7 +377,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
         ret.target = ret.createTarget((Actuator) actuator, scale, scope, rootSubject);
         if (ret.target != null && this.target != null) {
             ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());
-            ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable());
+            ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable(), true);
         }
 
         return ret;
@@ -392,7 +392,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
         ret.targetName = ((Actuator) actuator).isPartition() ? ((Actuator) actuator).getPartitionedTarget()
                 : actuator.getName();
         ret.resolutionScope = (ResolutionScope) scope;
-        ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable());
+        ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable(), true);
         ret.scale = scale;
         ret.semantics = new HashMap<>();
         ret.catalog = new HashMap<>();
@@ -415,7 +415,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
         ret.target = ret.createTarget((Actuator) actuator, scale, scope, rootSubject);
         if (ret.target != null && this.target != null) {
             ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());
-            ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable());
+            ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable(), true);
         }
 
         return ret;

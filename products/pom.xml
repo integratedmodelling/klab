@@ -10,5 +10,6 @@
   <description>Parent module for all deliverable k.LAB stack products, both production and testing.</description>
   <modules>
   	<module>test.network</module>
+  	<module>klab.explorer</module>
   </modules>
 </project>
