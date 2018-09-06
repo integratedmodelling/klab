@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.api.observations.IState
 import org.integratedmodelling.klab.api.observations.ISubject
 import org.integratedmodelling.klab.api.provenance.IArtifact
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext
 import org.integratedmodelling.klab.exceptions.KlabException
 import org.integratedmodelling.klab.extensions.groovy.model.Concept
 import org.integratedmodelling.klab.extensions.groovy.model.DirectObservation
@@ -95,9 +96,9 @@ abstract class ActionBase extends Script {
         Map<?,?> vars = new HashMap<Object,Object>(binding.getVariables());
         for (vname in vars.keySet()) {
             if (vname.equals("_context")) {
-                binding.setVariable("context", wrapObject(binding.getVariable("_context"), false));
+                binding.setVariable("context", wrapObject(binding.getVariable("_context")));
             } else if (vname.equals("_self")) {
-                binding.setVariable("self", wrapObject(binding.getVariable("_self"), true));
+                binding.setVariable("self", wrapObject(binding.getVariable("_self")));
             } /*else if (vname.equals("_transition") && binding.getVariable("_transition") != null) {
                 binding.setVariable("now", new Transition(((ITransition)binding.getVariable('_transition'))));
             } */else if (vname.equals("_p")) {
@@ -106,13 +107,23 @@ abstract class ActionBase extends Script {
                     if (parms.get(o) instanceof IConcept) {
                         parms.put(o, new Concept(parms.get(o), binding));
                     } else if (parms.get(o) instanceof IObservation) {
-						parms.put(o, wrapObject(parms.get(o), false));
+						parms.put(o, wrapObject(parms.get(o)));
 					}
                 }
             } else if (vars.get(vname) instanceof IConcept) {
                 binding.setVariable(vname, new Concept(vars.get(vname), binding));
             } else if (vars.get(vname) instanceof IObservation) {
-				binding.setVariable(vname, wrapObject(vars.get(vname), false));
+				binding.setVariable(vname, wrapObject(vars.get(vname)));
+			} else if (vname.equals("_c")) {
+				// runtime context. Get the scale and everything else we need
+				IRuntimeContext ctx = (IRuntimeContext)vars.get(vname);
+				binding.setVariable('scale', new Scale(ctx.getScale(), binding));
+				if (ctx.getScale().getSpace() != null) {
+					binding.setVariable('space', new Space(ctx.getScale().getSpace(), binding));
+				}
+				if (ctx.getScale().getTime() != null) {
+					binding.setVariable('time', new Time(ctx.getScale().getTime(), binding));
+				}
 			}
         }
     }
@@ -190,7 +201,7 @@ abstract class ActionBase extends Script {
         Erf.erfcInv(d);
     }
 
-    def wrapObject(IObservation observation, boolean isContext) {
+    def wrapObject(IObservation observation) {
 
         def ret = null;
 
@@ -200,16 +211,6 @@ abstract class ActionBase extends Script {
             ret = new DirectObservation(observation, binding);
         } else if (observation instanceof IState) {
             ret = new State(observation, binding);
-        }
-
-        if (isContext) {
-            binding.setVariable('scale', new Scale(observation.getScale(), binding));
-			if (observation.getScale().getSpace() != null) {
-				binding.setVariable('space', new Space(observation.getScale().getSpace(), binding));
-			}
-			if (observation.getScale().getTime() != null) {
-				binding.setVariable('time', new Time(observation.getScale().getTime(), binding));
-			}
         }
 
         return ret;

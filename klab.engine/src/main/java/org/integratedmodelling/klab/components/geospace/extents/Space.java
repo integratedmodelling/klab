@@ -683,4 +683,34 @@ public class Space extends Extent implements ISpace {
 		}
 		return null;
 	}
+
+	@Override
+	public double getStandardizedVolume() {
+		return getShape().getStandardizedVolume();
+	}
+
+	@Override
+	public double getStandardizedArea() {
+		return getShape().getStandardizedArea();
+	}
+
+	@Override
+	public double getStandardizedWidth() {
+		return getShape().getStandardizedWidth();
+	}
+
+	@Override
+	public double getStandardizedHeight() {
+		return getShape().getStandardizedHeight();
+	}
+
+	@Override
+	public double getStandardizedDepth() {
+		return getShape().getStandardizedDepth();
+	}
+
+	@Override
+	public double getStandardizedLength() {
+		return getShape().getStandardizedLength();
+	}
 }

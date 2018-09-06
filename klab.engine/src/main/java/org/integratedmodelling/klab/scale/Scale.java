@@ -192,9 +192,15 @@ public class Scale implements IScale {
 
         long[] pos = scale.cursor.getElementIndexes(offset);
         for (int i = 0; i < scale.extents.size(); i++) {
-            this.extents.add(scale.extents.get(i) instanceof Extent
+        	IExtent ext = scale.extents.get(i) instanceof Extent
                     ? ((Extent) scale.extents.get(i)).getExtent(pos[i])
-                    : scale.extents.get(i));
+                    : scale.extents.get(i);
+            this.extents.add(ext);
+            if (ext instanceof ISpace) {
+            	this.space = (ISpace) ext;
+            } else if (ext instanceof ITime) {
+            	this.time = (ITime) ext;
+            }
         }
         this.multiplicity = 1;
     }

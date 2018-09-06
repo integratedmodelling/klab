@@ -240,9 +240,11 @@ public class GroovyExpression extends Expression {
 				return script.run();
 			} catch (MissingPropertyException e) {
 				String property = e.getProperty();
-				context.getMonitor().warn("variable " + property
-						+ " undefined. Defining as numeric no-data (NaN) for subsequent evaluations.");
-				defineIfAbsent.add(property);
+				if (!defineIfAbsent.contains(property)) {
+					context.getMonitor().warn("variable " + property
+							+ " undefined. Defining as numeric no-data (NaN) for subsequent evaluations.");
+					defineIfAbsent.add(property);
+				}
 			} catch (Throwable t) {
 				throw new KlabException(t);
 			}

@@ -27,48 +27,92 @@ import org.integratedmodelling.klab.rest.SpatialExtent;
  */
 public interface ISpace extends IExtent {
 
-    /** Constant <code>MIN_SCALE_RANK=0</code> */
-    int MIN_SCALE_RANK = 0;
-    /** Constant <code>MAX_SCALE_RANK=21</code> */
-    int MAX_SCALE_RANK = 21;
+	/** Constant <code>MIN_SCALE_RANK=0</code> */
+	int MIN_SCALE_RANK = 0;
+	/** Constant <code>MAX_SCALE_RANK=21</code> */
+	int MAX_SCALE_RANK = 21;
 
-    /**
-     * Get the envelope, providing boundaries.
-     *
-     * @return the referenced envelope
-     */
-    IEnvelope getEnvelope();
+	/**
+	 * Get the envelope, providing boundaries.
+	 *
+	 * @return the referenced envelope
+	 */
+	IEnvelope getEnvelope();
 
-    /**
-     * Projection. Just repeats same in envelope and shape. It's not legal to have different projections in
-     * different elements of a spatial extent.
-     *
-     * @return coordinate reference system
-     */
-    IProjection getProjection();
-    /**
-     * Get the shape of this extent - usually it's the same as getExtent but with the additional
-     * type constraint.
-     *
-     * @return full shape
-     */
-    IShape getShape();
-    
-    /**
-     * {@inheritDoc}
-     *
-     * The space implementation of {@link ILocator#at(ILocator)} always return a time and
-     * can only use another space as locator.
-     */
-    @Override
-    ISpace at(ILocator locator);
+	/**
+	 * Projection. Just repeats same in envelope and shape. It's not legal to have
+	 * different projections in different elements of a spatial extent.
+	 *
+	 * @return coordinate reference system
+	 */
+	IProjection getProjection();
 
-    /**
-     * Build a lat/lon descriptor for the extent we represent. This shouldn't really be
-     * API.
-     * 
-     * @return
-     */
+	/**
+	 * Get the shape of this extent - usually it's the same as getExtent but with
+	 * the additional type constraint.
+	 *
+	 * @return full shape
+	 */
+	IShape getShape();
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * The space implementation of {@link ILocator#at(ILocator)} always return a
+	 * time and can only use another space as locator.
+	 */
+	@Override
+	ISpace at(ILocator locator);
+
+	/**
+	 * Build a lat/lon descriptor for the extent we represent. This shouldn't really
+	 * be API.
+	 * 
+	 * @return
+	 */
 	SpatialExtent getExtentDescriptor();
+
+	/**
+	 * Volume in standard SI units (square meters), NaN if < 3D.
+	 * 
+	 * @return
+	 */
+	double getStandardizedVolume();
+
+	/**
+	 * Area in standard SI units (square meters), NaN if < 2D.
+	 * 
+	 * @return
+	 */
+	double getStandardizedArea();
+
+	/**
+	 * Width in standard SI units (meters), NaN if < 2D.
+	 * 
+	 * @return
+	 */
+	double getStandardizedWidth();
+
+	/**
+	 * Height in standard SI units (meters), NaN if 1D.
+	 * 
+	 * @return
+	 */
+	double getStandardizedHeight();
+
+	/**
+	 * Depth in standard SI units (meters), NaN if 2D.
+	 * 
+	 * @return
+	 */
+	double getStandardizedDepth();
+
+	/**
+	 * Length in standard SI units (meters), NaN if 0D. Same as
+	 * {@link #getStandardizedWidth()} in 2D shapes.
+	 * 
+	 * @return
+	 */
+	double getStandardizedLength();
 
 }

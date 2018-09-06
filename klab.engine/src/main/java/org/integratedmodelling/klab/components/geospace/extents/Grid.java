@@ -7,7 +7,6 @@ import java.util.Iterator;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
@@ -203,7 +202,7 @@ public class Grid extends Area implements IGrid {
 		this.setResolution(x, y);
 		mask = createMask(shape);
 	}
-
+	
 	private Grid(double x1, // lonLowerBound
 			double y1, // latLowerBound
 			double x2, // lonUpperBound
@@ -622,6 +621,36 @@ public class Grid extends Area implements IGrid {
 			}
 			return null;
 		}
+
+		@Override
+		public double getStandardizedVolume() {
+			return getFirstCell().getStandardizedVolume();
+		}
+
+		@Override
+		public double getStandardizedArea() {
+			return getFirstCell().getStandardizedArea();
+		}
+
+		@Override
+		public double getStandardizedWidth() {
+			return getFirstCell().getStandardizedWidth();
+		}
+
+		@Override
+		public double getStandardizedHeight() {
+			return getFirstCell().getStandardizedHeight();
+		}
+
+		@Override
+		public double getStandardizedDepth() {
+			return getFirstCell().getStandardizedDepth();
+		}
+
+		@Override
+		public double getStandardizedLength() {
+			return getFirstCell().getStandardizedLength();
+		}
 	}
 
 	Shape shape;
@@ -638,12 +667,21 @@ public class Grid extends Area implements IGrid {
 	 */
 	long[] offsetInSupergrid = null;
 	String superGridId = null;
-	private Double cellAreaM;
-
+	
+	// computed once on demand and used to efficiently return shape data in meters
+	private IShape firstCell;
+	
 	public Grid() {
 		// TODO Auto-generated constructor stub
 	}
 
+	private IShape getFirstCell() {
+		if (firstCell == null) {
+			firstCell = getCell(0).getShape();
+		}
+		return firstCell;
+	}
+	
 	@Override
 	public Iterator<Cell> iterator() {
 
@@ -702,21 +740,6 @@ public class Grid extends Area implements IGrid {
 	}
 
 	@Override
-	public double getCellArea(IUnit unit) {
-		if (cellAreaM == null) {
-			double xm = getCellWidth();
-			double ym = getCellHeight();
-			if (projection.isMeters()) {
-				cellAreaM = Units.INSTANCE.SQUARE_METERS.convert(xm * ym, unit).doubleValue();
-			} else {
-				// TODO!
-
-			}
-		}
-		return cellAreaM;
-	}
-
-	@Override
 	public boolean isActive(long x, long y) {
 		return isCovered(getOffset(x, y));
 	}
@@ -758,10 +781,6 @@ public class Grid extends Area implements IGrid {
 		long[] xy = getXYOffsets(index);
 		return getWorldCoordinatesAt(xy[0], xy[1]);
 	}
-
-	// public Locator getLocator(long x, long y) {
-	// return new SpaceLocator(x, yCells - y - 1);
-	// }
 
 	@Override
 	public double getCellWidth() {

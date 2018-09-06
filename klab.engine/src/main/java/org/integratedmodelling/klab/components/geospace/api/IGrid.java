@@ -222,16 +222,6 @@ public interface IGrid extends Iterable<Cell> {
 	long getCellCount();
 
 	/**
-	 * Return the cell area in a SI unit for area (compatible with square meters).
-	 * 
-	 * @param unit
-	 *            area unit.
-	 *
-	 * @return the cell area
-	 */
-	double getCellArea(IUnit unit);
-
-	/**
 	 * Convert to linear index.
 	 * 
 	 * @param x

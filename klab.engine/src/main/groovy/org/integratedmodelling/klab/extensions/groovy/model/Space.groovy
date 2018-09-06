@@ -9,33 +9,50 @@ class Space extends Extent {
         super(space, binding);
 	}
     
-    def getGrid() {
-        return new Grid(((Space)extent).getGrid(), binding);
-    }
-	
-    def plus(other) {
-        return new Space(((Space)extent).joinBoundaries(coerceToExtent(other)), binding);
-    }
+//    def plus(other) {
+//        return new Space(((org.integratedmodelling.klab.components.geospace.extents.Space)extent).joinBoundaries(coerceToExtent(other)), binding);
+//    }
+//    
+//    def multiply(other) {
+//        // TODO mask
+//        return this;
+//    }
     
-    def multiply(other) {
-        // TODO mask
-        return this;
-    }
-    
-    def distance(Object o) {
-        return ((Space)extent).distanceTo(coerceToExtent(o));
-    }
+//    def distance(Object o) {
+//        return ((org.integratedmodelling.klab.components.geospace.extents.Space)extent).distanceTo(coerceToExtent(o));
+//    }
 
-	def getArea() {
-		return ((Space)extent).getArea();
+	def getWidth() {
+		return ((ISpace)extent).getStandardizedWidth();
 	}
 	
+	def getHeight() {
+		return ((ISpace)extent).getStandardizedHeight();	
+	}
+
+	def getDepth() {
+		return ((ISpace)extent).getStandardizedDepth();
+	}
+
+	def getArea() {
+		return ((ISpace)extent).getStandardizedArea();
+	}
+
+	def getVolume() {
+		return ((ISpace)extent).getStandardizedVolume();
+	}
+	
+	def getLength() {
+		return ((ISpace)extent).getStandardizedVolume();
+	}
+	
+		
 	def getShape() {
-		return ((Space)extent).getShape();
+		return ((org.integratedmodelling.klab.components.geospace.extents.Space)extent).getShape();
 	}
 	    
     ISpace coerceToExtent(Object o) {
-        if (o instanceof Space) {
+        if (o instanceof org.integratedmodelling.klab.components.geospace.extents.Space) {
             return ((Space)o).extent;
         }
         if (o instanceof Observation) {

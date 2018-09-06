@@ -246,11 +246,6 @@ public class Subgrid extends Grid {
 	}
 
 	@Override
-	public double getCellArea(IUnit unit) {
-		return grid.getCellArea(unit);
-	}
-
-	@Override
 	public double[] getWorldCoordinatesAt(long x, long y) {
 		return grid.getWorldCoordinatesAt(x, y);
 	}
