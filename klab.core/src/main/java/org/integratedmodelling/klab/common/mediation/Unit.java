@@ -149,6 +149,10 @@ public class Unit implements IUnit {
   public javax.measure.unit.Unit<?> getUnit() {
     return _unit;
   }
+  
+  public String toUTFString() {
+	  return _unit.toString();
+  }
 
   /** {@inheritDoc} */
   @Override
