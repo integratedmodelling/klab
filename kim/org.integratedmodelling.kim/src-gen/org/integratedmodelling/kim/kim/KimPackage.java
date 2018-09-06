@@ -2358,13 +2358,22 @@ public interface KimPackage extends EPackage
   int CONCEPT__OTHER = 16;
 
   /**
+   * The feature id for the '<em><b>Percentage</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__PERCENTAGE = 17;
+
+  /**
    * The feature id for the '<em><b>Ratio</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONCEPT__RATIO = 17;
+  int CONCEPT__RATIO = 18;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -2373,7 +2382,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__VALUE = 18;
+  int CONCEPT__VALUE = 19;
 
   /**
    * The feature id for the '<em><b>Occurrence</b></em>' attribute.
@@ -2382,7 +2391,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__OCCURRENCE = 19;
+  int CONCEPT__OCCURRENCE = 20;
 
   /**
    * The feature id for the '<em><b>Declaration</b></em>' containment reference.
@@ -2391,7 +2400,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__DECLARATION = 20;
+  int CONCEPT__DECLARATION = 21;
 
   /**
    * The number of structural features of the '<em>Concept</em>' class.
@@ -2400,7 +2409,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_FEATURE_COUNT = 21;
+  int CONCEPT_FEATURE_COUNT = 22;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.UpperOntologyDefinitionImpl <em>Upper Ontology Definition</em>}' class.
@@ -6563,6 +6572,17 @@ public interface KimPackage extends EPackage
   EReference getConcept_Other();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Concept#isPercentage <em>Percentage</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Percentage</em>'.
+   * @see org.integratedmodelling.kim.kim.Concept#isPercentage()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Percentage();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Concept#isRatio <em>Ratio</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -10272,6 +10292,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EReference CONCEPT__OTHER = eINSTANCE.getConcept_Other();
+
+    /**
+     * The meta object literal for the '<em><b>Percentage</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__PERCENTAGE = eINSTANCE.getConcept_Percentage();
 
     /**
      * The meta object literal for the '<em><b>Ratio</b></em>' attribute feature.

@@ -452,6 +452,9 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		} else if (declaration.isProportion()) {
 			observationType = UnarySemanticOperator.PROPORTION;
 			operator = Type.PROPORTION;
+		}  else if (declaration.isPercentage()) {
+			observationType = UnarySemanticOperator.PERCENTAGE;
+			operator = Type.PERCENTAGE;
 		} else if (declaration.isRatio()) {
 			observationType = UnarySemanticOperator.RATIO;
 			operator = Type.RATIO;

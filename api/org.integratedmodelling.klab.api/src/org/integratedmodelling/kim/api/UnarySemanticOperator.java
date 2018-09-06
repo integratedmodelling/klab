@@ -17,6 +17,7 @@ public enum UnarySemanticOperator {
     PRESENCE(new Type[] { Type.COUNTABLE }, "presence of"),
     // FIXME does not account for the different operands
     PROPORTION(new Type[] { Type.TRAIT, Type.QUANTIFIABLE }, "proportion of", "in"),
+    PERCENTAGE(new Type[] { Type.TRAIT, Type.QUANTIFIABLE }, "percentage of", "in"),
     RATIO(new Type[] {Type.QUANTIFIABLE}, "ratio of", "to"),
     // also must be geolocated
     DISTANCE(new Type[] { Type.COUNTABLE }, "distance to"),

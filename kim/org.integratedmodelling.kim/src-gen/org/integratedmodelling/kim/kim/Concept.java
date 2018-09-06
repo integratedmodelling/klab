@@ -32,6 +32,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isObservability <em>Observability</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isProportion <em>Proportion</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#getOther <em>Other</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Concept#isPercentage <em>Percentage</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isRatio <em>Ratio</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isValue <em>Value</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isOccurrence <em>Occurrence</em>}</li>
@@ -485,6 +486,32 @@ public interface Concept extends EObject
    * @generated
    */
   void setOther(ConceptDeclaration value);
+
+  /**
+   * Returns the value of the '<em><b>Percentage</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Percentage</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Percentage</em>' attribute.
+   * @see #setPercentage(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConcept_Percentage()
+   * @model
+   * @generated
+   */
+  boolean isPercentage();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Concept#isPercentage <em>Percentage</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Percentage</em>' attribute.
+   * @see #isPercentage()
+   * @generated
+   */
+  void setPercentage(boolean value);
 
   /**
    * Returns the value of the '<em><b>Ratio</b></em>' attribute.

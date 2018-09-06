@@ -857,6 +857,8 @@ public enum Kim {
 			return EnumSet.of(Type.PRESENCE, Type.QUALITY, Type.OBSERVABLE);
 		case "proportion":
 			return EnumSet.of(Type.PROPORTION, Type.QUALITY, Type.OBSERVABLE, Type.QUANTIFIABLE);
+		case "percentage":
+			return EnumSet.of(Type.PERCENTAGE, Type.QUALITY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "uncertainty":
 			return EnumSet.of(Type.UNCERTAINTY, Type.QUALITY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "acceleration":

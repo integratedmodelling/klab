@@ -43,6 +43,7 @@ import org.integratedmodelling.kim.kim.KimPackage;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isObservability <em>Observability</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isProportion <em>Proportion</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#getOther <em>Other</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isPercentage <em>Percentage</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isRatio <em>Ratio</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isValue <em>Value</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isOccurrence <em>Occurrence</em>}</li>
@@ -362,6 +363,26 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
    * @ordered
    */
   protected ConceptDeclaration other;
+
+  /**
+   * The default value of the '{@link #isPercentage() <em>Percentage</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isPercentage()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean PERCENTAGE_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isPercentage() <em>Percentage</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isPercentage()
+   * @generated
+   * @ordered
+   */
+  protected boolean percentage = PERCENTAGE_EDEFAULT;
 
   /**
    * The default value of the '{@link #isRatio() <em>Ratio</em>}' attribute.
@@ -925,6 +946,29 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
    * <!-- end-user-doc -->
    * @generated
    */
+  public boolean isPercentage()
+  {
+    return percentage;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setPercentage(boolean newPercentage)
+  {
+    boolean oldPercentage = percentage;
+    percentage = newPercentage;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT__PERCENTAGE, oldPercentage, percentage));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public boolean isRatio()
   {
     return ratio;
@@ -1103,6 +1147,8 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return isProportion();
       case KimPackage.CONCEPT__OTHER:
         return getOther();
+      case KimPackage.CONCEPT__PERCENTAGE:
+        return isPercentage();
       case KimPackage.CONCEPT__RATIO:
         return isRatio();
       case KimPackage.CONCEPT__VALUE:
@@ -1175,6 +1221,9 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return;
       case KimPackage.CONCEPT__OTHER:
         setOther((ConceptDeclaration)newValue);
+        return;
+      case KimPackage.CONCEPT__PERCENTAGE:
+        setPercentage((Boolean)newValue);
         return;
       case KimPackage.CONCEPT__RATIO:
         setRatio((Boolean)newValue);
@@ -1253,6 +1302,9 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
       case KimPackage.CONCEPT__OTHER:
         setOther((ConceptDeclaration)null);
         return;
+      case KimPackage.CONCEPT__PERCENTAGE:
+        setPercentage(PERCENTAGE_EDEFAULT);
+        return;
       case KimPackage.CONCEPT__RATIO:
         setRatio(RATIO_EDEFAULT);
         return;
@@ -1313,6 +1365,8 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return proportion != PROPORTION_EDEFAULT;
       case KimPackage.CONCEPT__OTHER:
         return other != null;
+      case KimPackage.CONCEPT__PERCENTAGE:
+        return percentage != PERCENTAGE_EDEFAULT;
       case KimPackage.CONCEPT__RATIO:
         return ratio != RATIO_EDEFAULT;
       case KimPackage.CONCEPT__VALUE:
@@ -1364,6 +1418,8 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
     result.append(observability);
     result.append(", proportion: ");
     result.append(proportion);
+    result.append(", percentage: ");
+    result.append(percentage);
     result.append(", ratio: ");
     result.append(ratio);
     result.append(", value: ");

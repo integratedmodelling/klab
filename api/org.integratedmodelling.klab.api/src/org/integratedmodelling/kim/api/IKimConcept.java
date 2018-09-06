@@ -254,6 +254,10 @@ public interface IKimConcept extends IKimStatement {
         /**
          * 
          */
+        PERCENTAGE,
+        /**
+         * 
+         */
         NUMEROSITY,
         /**
          * 

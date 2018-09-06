@@ -85,7 +85,7 @@ public class ETaskReference implements ITaskReference, ERuntimeObject {
 	}
 
 	@Override
-	public ERuntimeObject[] getEChildren(DisplayPriority priority, Level level) {
+	public synchronized ERuntimeObject[] getEChildren(DisplayPriority priority, Level level) {
 
 		List<ERuntimeObject> ret = new ArrayList<>();
 		if (dataflow != null) {

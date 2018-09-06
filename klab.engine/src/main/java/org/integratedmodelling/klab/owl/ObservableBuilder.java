@@ -249,7 +249,10 @@ public class ObservableBuilder implements IObservable.Builder {
 				reset(makeProbability(build(), false));
 				break;
 			case PROPORTION:
-				reset(makeProportion(build(), this.comparison, false));
+				reset(makeProportion(build(), this.comparison, false, false));
+				break;
+			case PERCENTAGE:
+				reset(makeProportion(build(), this.comparison, false, true));
 				break;
 			case RATIO:
 				reset(makeRatio(build(), this.comparison, false));
@@ -841,18 +844,22 @@ public class ObservableBuilder implements IObservable.Builder {
 		return ontology.getConcept(conceptId);
 	}
 
-	public static Concept makeProportion(IConcept concept, @Nullable IConcept comparison, boolean addDefinition) {
+	public static Concept makeProportion(IConcept concept, @Nullable IConcept comparison, boolean addDefinition,
+			boolean isPercentage) {
 
 		if (!(concept.is(Type.QUALITY) || concept.is(Type.TRAIT))
 				&& (comparison != null && !comparison.is(Type.QUALITY))) {
 			throw new KlabValidationException("proportion must be of qualities or traits to qualities");
 		}
 
-		String cName = getCleanId(concept) + "ProportionIn" + (comparison == null ? "" : getCleanId(comparison));
+		String cName = getCleanId(concept) + (isPercentage ? "PercentageOf" : "ProportionOf")
+				+ (comparison == null ? "" : getCleanId(comparison));
 
-		String definition = UnarySemanticOperator.PROPORTION.declaration[0] + " (" + concept.getDefinition() + ")"
+		String definition = (isPercentage ? UnarySemanticOperator.PERCENTAGE.declaration[0]
+				: UnarySemanticOperator.PROPORTION.declaration[0]) + " (" + concept.getDefinition() + ")"
 				+ (comparison == null ? ""
-						: (UnarySemanticOperator.PROPORTION.declaration[1] + " (" + comparison.getDefinition() + ")"));
+						: ((isPercentage ? UnarySemanticOperator.PERCENTAGE.declaration[1]
+								: UnarySemanticOperator.PROPORTION.declaration[1]) + " (" + comparison.getDefinition() + ")"));
 
 		Ontology ontology = (Ontology) concept.getOntology();
 		String conceptId = ontology.getIdForDefinition(definition);
@@ -861,7 +868,8 @@ public class ObservableBuilder implements IObservable.Builder {
 
 			conceptId = ontology.createIdForDefinition(definition);
 
-			EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.PROPORTION.name());
+			EnumSet<Type> newType = Kim.INSTANCE.getType(
+					isPercentage ? UnarySemanticOperator.PERCENTAGE.name() : UnarySemanticOperator.PROPORTION.name());
 
 			ArrayList<IAxiom> ax = new ArrayList<>();
 			ax.add(Axiom.ClassAssertion(conceptId, newType));

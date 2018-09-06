@@ -448,16 +448,16 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         restrictions+=RestrictionStatement | 
 	 *                         metadata=Metadata
 	 *                     )? 
-	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
-	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
-	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
 	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
-	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
-	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
 	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
+	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
+	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
+	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
+	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
+	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
-	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
 	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
+	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
 	 *                     ((constituent?='constituent' | constitutes?='consists')? partOf?='of' whole=ConceptDeclaration)? 
 	 *                     (
 	 *                         roles+=ConceptDeclaration 
@@ -757,6 +757,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *         (type?='type' concept=SimpleConceptDeclaration) | 
 	 *         (observability?='observability' concept=SimpleConceptDeclaration) | 
 	 *         (proportion?='proportion' concept=SimpleConceptDeclaration other=SimpleConceptDeclaration?) | 
+	 *         (percentage?='percentage' concept=SimpleConceptDeclaration other=SimpleConceptDeclaration?) | 
 	 *         (ratio?='ratio' concept=SimpleConceptDeclaration other=SimpleConceptDeclaration) | 
 	 *         (value?='value' concept=SimpleConceptDeclaration other=SimpleConceptDeclaration?) | 
 	 *         (occurrence?='occurrence' concept=SimpleConceptDeclaration) | 
