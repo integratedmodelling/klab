@@ -43,6 +43,14 @@ void ls
 	class org.integratedmodelling.klab.clitool.console.commands.Dir
 }
 
+void dependencies
+	"Show the namespace dependency graph"
+{
+	class org.integratedmodelling.klab.clitool.console.commands.visualization.ShowDependencies
+}
+
+
+
 void network
 	"Turn REST network services on and off"
 {

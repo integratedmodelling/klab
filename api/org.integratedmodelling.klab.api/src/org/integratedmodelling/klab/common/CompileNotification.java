@@ -69,6 +69,7 @@ public class CompileNotification implements ICompileNotification {
         ret.setEndOffset(statement.getLastCharOffset());
         ret.setMessage(message);
         ret.setLevel(level.intValue());
+        ret.setNamespaceId(namespaceId);
         return ret;
     }
 

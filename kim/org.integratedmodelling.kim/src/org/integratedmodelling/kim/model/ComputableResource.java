@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Utils;
 
 public class ComputableResource extends KimStatement implements IComputableResource {
 
@@ -52,7 +53,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	 * twice. Shouldn't be serialized.
 	 */
 	private transient Object validatedResource;
-	private transient Type type;
+//	private transient Type type;
 
 	// all that follows can only be set on a copy as they are runtime-dependent.
 	private String targetId;
@@ -85,7 +86,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		ret.target = this.target;
 		ret.targetId = this.targetId;
 		ret.copy = true;
-		ret.type = this.type;
+//		ret.type = this.type;
 		ret.resolutionMode = this.resolutionMode;
 		return ret;
 	}
@@ -114,18 +115,22 @@ public class ComputableResource extends KimStatement implements IComputableResou
 
 	public void setServiceCall(KimServiceCall serviceCall) {
 		this.serviceCall = serviceCall;
+//		this.type = serviceCall.getType();
 	}
 
 	public void setLookupTable(KimLookupTable lookupTable) {
 		this.lookupTable = lookupTable;
+//		this.type = lookupTable.getLookupType();
 	}
 
 	public void setExpression(String expression) {
 		this.expression = expression;
+//		this.type = IArtifact.Type.VALUE;
 	}
 
 	public void setClassification(KimClassification classification) {
 		this.classification = classification;
+//		this.type = IArtifact.Type.CONCEPT;
 	}
 
 	public void setUrn(String urn) {
@@ -249,12 +254,16 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		
 		if (value.getUrn() != null) {
 			this.urn = value.getUrn();
+			// TODO find a way to establish type
 		} else if (value.getFunction() != null) {
 			this.serviceCall = new KimServiceCall(value.getFunction(), getParent());
+//			this.type = this.serviceCall.getType();
 		} else if (value.getExpr() != null) {
 			this.expression = removeDelimiters(value.getExpr());
+//			this.type = IArtifact.Type.VALUE;
 		} else if (value.getLiteral() != null) {
 			this.literal = Kim.INSTANCE.parseLiteral(value.getLiteral(), Kim.INSTANCE.getNamespace(value, false));
+//			this.type = Utils.getArtifactType(this.literal.getClass());
 		}
 
 		this.language = value.getLanguage();

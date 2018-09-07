@@ -19,9 +19,11 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.commons.lang3.concurrent.ConcurrentUtils;
+import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.kim.model.KimLoader;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Indexing;
@@ -87,6 +89,7 @@ import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.graph.Graphs;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -221,7 +224,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		if (!(object instanceof Observer)) {
 
 			if (regionOfInterest != null && (object instanceof KimObject || object instanceof IObservable)) {
-				
+
 				INamespace namespace = object instanceof KimObject ? ((KimObject) object).getNamespace()
 						: Namespaces.INSTANCE.getNamespace(((IObservable) object).getNamespace());
 				Observer observer = Observations.INSTANCE.makeROIObserver(regionOfInterest, (Namespace) namespace,
@@ -399,54 +402,54 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 	@MessageHandler
 	private void handleResourceCRUDRequest(final ResourceCRUDRequest request, IMessage.Type type) {
-	    
-        for (String urn : request.getResourceUrns()) {
-            
-            IResource resource = Resources.INSTANCE.resolveResource(urn);
-            if (resource == null) {
-                monitor.warn("requested resource not found: " + urn);
-                continue;
-            }
 
-            IKimProject sourceProject = Kim.INSTANCE.getProject(resource.getLocalProjectName());
-            
-            if (sourceProject == null) {
-                monitor.error("resource comes from an unknown project: canceling operation");
-                return;
-            }
-            
-            if (request.getOperation() == CRUDOperation.MOVE) {
+		for (String urn : request.getResourceUrns()) {
 
-                IProject destinationProject = Resources.INSTANCE.getProject(request.getDestinationProject());
-                if (destinationProject == null) {
-                    monitor.error("resource target is an unknown project: canceling operation");
-                    return;
-                }
-                monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceDeleted,
-                        ((Resource) resource).getReference());
-                resource = Resources.INSTANCE.getLocalResourceCatalog().move(resource, destinationProject);
-                monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
-                        ((Resource) resource).getReference());
-            } else if (request.getOperation() == CRUDOperation.COPY) {
-                
-                IProject destinationProject = Resources.INSTANCE.getProject(request.getDestinationProject());
-                if (destinationProject == null) {
-                    monitor.error("resource target is an unknown project: canceling operation");
-                    return;
-                }
-                
-                resource = Resources.INSTANCE.getLocalResourceCatalog().copy(resource, destinationProject);
-                monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
-                        ((Resource) resource).getReference());
-            } else if (request.getOperation() == CRUDOperation.DELETE) {
-                resource = Resources.INSTANCE.getLocalResourceCatalog().remove(urn);
-                monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceDeleted,
-                        ((Resource) resource).getReference());
-            }
+			IResource resource = Resources.INSTANCE.resolveResource(urn);
+			if (resource == null) {
+				monitor.warn("requested resource not found: " + urn);
+				continue;
+			}
 
-        }
+			IKimProject sourceProject = Kim.INSTANCE.getProject(resource.getLocalProjectName());
+
+			if (sourceProject == null) {
+				monitor.error("resource comes from an unknown project: canceling operation");
+				return;
+			}
+
+			if (request.getOperation() == CRUDOperation.MOVE) {
+
+				IProject destinationProject = Resources.INSTANCE.getProject(request.getDestinationProject());
+				if (destinationProject == null) {
+					monitor.error("resource target is an unknown project: canceling operation");
+					return;
+				}
+				monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceDeleted,
+						((Resource) resource).getReference());
+				resource = Resources.INSTANCE.getLocalResourceCatalog().move(resource, destinationProject);
+				monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
+						((Resource) resource).getReference());
+			} else if (request.getOperation() == CRUDOperation.COPY) {
+
+				IProject destinationProject = Resources.INSTANCE.getProject(request.getDestinationProject());
+				if (destinationProject == null) {
+					monitor.error("resource target is an unknown project: canceling operation");
+					return;
+				}
+
+				resource = Resources.INSTANCE.getLocalResourceCatalog().copy(resource, destinationProject);
+				monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
+						((Resource) resource).getReference());
+			} else if (request.getOperation() == CRUDOperation.DELETE) {
+				resource = Resources.INSTANCE.getLocalResourceCatalog().remove(urn);
+				monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceDeleted,
+						((Resource) resource).getReference());
+			}
+
+		}
 	}
-	
+
 	@MessageHandler
 	private void importResource(final ResourceImportRequest request) {
 		IProject project = Resources.INSTANCE.getProject(request.getProjectName());
@@ -489,10 +492,10 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		scale.setResolution(resolution.getFirst());
 		scale.setResolutionDescription(resolution.getSecond());
 		scale.setSpaceScale(scaleRank);
-		
+
 		// TODO REMOVE
 		System.out.println("ZOOM LEVEL IS " + scaleRank);
-		
+
 		monitor.send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined, scale);
 		this.regionOfInterest = extent;
 	}
@@ -679,12 +682,12 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		}
 	}
 
-	@MessageHandler(type=IMessage.Type.ResetContext)
+	@MessageHandler(type = IMessage.Type.ResetContext)
 	private void handleResetContextRequest(String dummy) {
-	    this.regionOfInterest = null;
-	    monitor.send(IMessage.Type.ResetContext, IMessage.MessageClass.UserContextChange, "");
+		this.regionOfInterest = null;
+		monitor.send(IMessage.Type.ResetContext, IMessage.MessageClass.UserContextChange, "");
 	}
-	
+
 	/**
 	 * This is all we need to react to UI events modifying the workspace or any of
 	 * its imports.

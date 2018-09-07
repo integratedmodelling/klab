@@ -1,5 +1,6 @@
 package org.integratedmodelling.kim.api;
 
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.utils.Parameters;
 
 /**

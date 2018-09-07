@@ -33,7 +33,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 	private String name;
 	private IKimProject project;
 	private long timestamp = System.currentTimeMillis();
-	private List<IKimNamespace> imported = new ArrayList<>();
+	private List<String> imported = new ArrayList<>();
 	private boolean isPrivate = false;
 	private boolean inactive = false;
 	private boolean scenario = false;
@@ -48,7 +48,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 	private Set<String> importsScanned = null;
 	private IKimLoader loader;
 	private List<IServiceCall> extents = new ArrayList<>();
-	
+
 	public KimNamespace(Namespace namespace, KimProject project) {
 		super(namespace, null);
 		this.name = Kim.getNamespaceId(namespace);
@@ -79,24 +79,25 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 	}
 
 	@Override
-    public Set<String> getImportedNamespaceIds(boolean scanUsages) {
-    	Set<String> ret = new HashSet<>();
-    	for (IKimNamespace imported : getImported()) {
-    		ret.add(imported.getName());
-    	}
-    	if (scanUsages) {
-    		if (importsScanned == null) {
-    			scanImports();
-    		}
-    		ret.addAll(importsScanned);
-    	}
-    	return ret;
-    }
+	public Set<String> getImportedNamespaceIds(boolean scanUsages) {
+		
+		Set<String> ret = new HashSet<>();
+		for (IKimNamespace imported : getImported()) {
+			ret.add(imported.getName());
+		}
+		if (scanUsages) {
+			if (importsScanned == null) {
+				scanImports();
+			}
+			ret.addAll(importsScanned);
+		}
+		return ret;
+	}
 
 	private void scanImports() {
-		
+
 		importsScanned = new HashSet<>();
-		
+
 		visit(new DefaultVisitor() {
 
 			@Override
@@ -148,10 +149,6 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 		}
 	}
 
-	void addImport(IKimNamespace importedNamespace) {
-		imported.add(importedNamespace);
-	}
-
 	@Override
 	protected String getStringRepresentation(int offset) {
 		String ret = offset(offset) + "[namespace " + name + "]";
@@ -191,11 +188,14 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 
 	@Override
 	public List<IKimNamespace> getImported() {
-		return imported;
-	}
-
-	public void setImported(List<IKimNamespace> imported) {
-		this.imported = imported;
+		List<IKimNamespace> ret = new ArrayList<>();
+		for (String s : imported) {
+			IKimNamespace ns = Kim.INSTANCE.getNamespace(s);
+			if (ns != null) {
+				ret.add(ns);
+			}
+		}
+		return ret;
 	}
 
 	@Override
@@ -263,15 +263,13 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 		return testCaseId;
 	}
 
+	public void visit(Visitor visitor) {
+		visitor.visitNamespace(this);
+		for (IKimScope scope : getChildren()) {
+			scope.visit(visitor);
+		}
+	}
 
-    public void visit(Visitor visitor) {
-    	visitor.visitNamespace(this);
-    	for (IKimScope scope : getChildren()) {
-    		scope.visit(visitor);
-    	}
-    }
-    
-	
 	private void scanAnnotations() {
 		annotationsScanned = true;
 		for (IKimScope child : getChildren()) {
@@ -303,17 +301,21 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 		this.file = file;
 	}
 
-    @Override
-    public IKimLoader getLoader() {
-        return loader;
-    }
-    
-    public void setLoader(IKimLoader loader) {
-        this.loader = loader;
-    }
+	@Override
+	public IKimLoader getLoader() {
+		return loader;
+	}
+
+	public void setLoader(IKimLoader loader) {
+		this.loader = loader;
+	}
 
 	@Override
 	public List<IServiceCall> getExtents() {
 		return extents;
+	}
+
+	public void addImport(String string) {
+		imported.add(string);
 	}
 }

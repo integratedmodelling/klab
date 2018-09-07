@@ -543,7 +543,7 @@ public class DataflowCompiler {
 			i++;
 		}
 
-		if (lastDirectType != null && lastDirectType != targetType) {
+		if (lastDirectType != null && lastDirectType != targetType && lastDirectType != IArtifact.Type.VALUE) {
 			IComputableResource cast = Klab.INSTANCE.getRuntimeProvider().getCastingResolver(lastDirectType,
 					targetType);
 			if (cast != null) {
@@ -572,6 +572,9 @@ public class DataflowCompiler {
 			if (prototype != null) {
 				return prototype.getType();
 			}
+		}
+		if (resource.getExpression() != null) {
+			return Type.VALUE;
 		}
 		return null;
 	}

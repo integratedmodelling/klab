@@ -155,6 +155,7 @@ public class KimValidator extends AbstractKimValidator {
               KimPackage.Literals.NAMESPACE__IMPORTED, i, KimValidator.BAD_NAMESPACE_ID);
             ns.setErrors(true);
           }
+          ns.addImport(import_.getName());
           List _imports = import_.getImports();
           boolean _tripleNotEquals = (_imports != null);
           if (_tripleNotEquals) {
