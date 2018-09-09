@@ -213,6 +213,7 @@ public class Documentation implements IDocumentation {
             String ret = body;
             if (type == Type.REPORT_CALL) {
 
+                // TODO use outside if needed, otherwise reduce to code
                 ret = "REPORT.get(self).append(REPORT.get(self)." + method + "(" + body + "));";
 
             } else if (type == Type.ACTION_CODE) {
@@ -222,7 +223,7 @@ public class Documentation implements IDocumentation {
 
                 ret = "def " + vid + " = { " + body + "};\n";
                 ret += "def " + res + " = " + vid + ".call();\n";
-                ret += "if (" + res + " != null) { REPORT.get(self).append(" + res + ".toString()); }";
+                ret += "if (" + res + " != null) { _section.append(" + res + ".toString()); }";
 
             } else if (type == Type.TEMPLATE_STRING) {
                 if (body.isEmpty()) {
@@ -234,7 +235,7 @@ public class Documentation implements IDocumentation {
                 } else {
                     ret = "def " + vid + " = \"\"\"" + body + "\"\"\"\n;\n";
                 }
-                ret += "REPORT.get(self).append(" + vid + ");";
+                ret += "_section.append(" + vid + ");";
             }
             return ret;
         }

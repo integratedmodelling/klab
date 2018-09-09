@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.StringUtils;
@@ -55,6 +56,24 @@ import com.vladsch.flexmark.util.options.MutableDataSet;
  */
 public class Report implements IReport {
 
+    @Override
+    public List<ISection> getSections() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ISection getSection(String id) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String render(IComputationContext context) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
     public static final String SEPARATOR = "\n\n----\n\n";
 
     IRuntimeContext            context   = null;
@@ -150,7 +169,7 @@ public class Report implements IReport {
         sections.add(new Section("Data"));
     }
 
-    @Override
+//    @Override
     public void write(String markdown) {
         if (currentSection != null) {
             currentSection.text.append(markdown);
@@ -159,7 +178,7 @@ public class Report implements IReport {
         }
     }
 
-    @Override
+//    @Override
     public void writeln(String markdown) {
         if (currentSection != null) {
             currentSection.text.append(markdown + "\n");
@@ -168,7 +187,7 @@ public class Report implements IReport {
         }
     }
 
-    @Override
+//    @Override
     public String asHTML() {
 
         MutableDataSet options = new MutableDataSet();
@@ -200,7 +219,7 @@ public class Report implements IReport {
         return ret;
     }
 
-    @Override
+//    @Override
     public String asText() {
         return flatten(text).toString();
     }
@@ -263,7 +282,7 @@ public class Report implements IReport {
         }
     }
 
-    @Override
+//    @Override
     public void setSection(String section) {
         /*
          * create sections and any in between; record declaration order
@@ -303,31 +322,31 @@ public class Report implements IReport {
         return asText();
     }
 
-    @Override
+//    @Override
     public void setTitle(String title) {
         // TODO Auto-generated method stub
 
     }
 
-    @Override
+//    @Override
     public String getTitle() {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
+//    @Override
     public String addAttachment(Object o) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
+//    @Override
     public void writeLink(String markdown, String anchorOrUrl) {
         // TODO Auto-generated method stub
 
     }
 
-    @Override
+//    @Override
     public void loadDocumentation(IDocumentation documentation) {
         for (String tag : documentation.getTags()) {
             if (tag.startsWith("ref:")) {
@@ -348,7 +367,7 @@ public class Report implements IReport {
         }
     }
 
-    @Override
+//    @Override
     public void reference(String... refs) {
 
         String ret = "";
@@ -370,14 +389,14 @@ public class Report implements IReport {
 
     }
 
-    @Override
+//    @Override
     public String getReference() {
         String ret = "A" + NameGenerator.shortUUID();
         write("<a name=\"" + ret + "\"></a>");
         return ret;
     }
 
-    @Override
+//    @Override
     public void describe(Object o) {
 
         if (o instanceof IConcept) {
@@ -683,5 +702,6 @@ public class Report implements IReport {
             "    margin: 0 0 10px 0;\n" +
             "    width: 100%;\n" +
             "}";
+
 
 }

@@ -19,6 +19,7 @@ public enum Documentation implements IDocumentationService {
     
     private Map<String, org.integratedmodelling.klab.documentation.Documentation> catalog = Collections.synchronizedMap(new HashMap<>());
 
+    @Override
     public IDocumentation getDocumentation(String docId, IParameters<?> parameters, IProject project) {
 
         org.integratedmodelling.klab.documentation.Documentation ret = catalog.get(docId);
