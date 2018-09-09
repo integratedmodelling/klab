@@ -2,14 +2,13 @@ package org.integratedmodelling.klab.resolution;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.ILocator;
-import org.integratedmodelling.klab.api.knowledge.IDocumentation;
+import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -139,7 +138,7 @@ public class RankedModel extends Model implements IRankedModel {
 		return getDelegate().isAvailable();
 	}
 
-	public Optional<IDocumentation> getDocumentation() {
+	public IDocumentation getDocumentation() {
 		return getDelegate().getDocumentation();
 	}
 
@@ -161,10 +160,6 @@ public class RankedModel extends Model implements IRankedModel {
 
 	public void setDependencies(List<IObservable> dependencies) {
 		getDelegate().setDependencies(dependencies);
-	}
-
-	public void setDocumentation(Optional<IDocumentation> documentation) {
-		getDelegate().setDocumentation(documentation);
 	}
 
 	public void setObservables(List<IObservable> observables) {

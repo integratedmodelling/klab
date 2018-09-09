@@ -5616,7 +5616,8 @@ ruleObserveStatement returns [EObject current=null]
 // Entry rule entryRuleObserveStatementBody
 entryRuleObserveStatementBody returns [EObject current=null]@init {
 	UnorderedGroupState myUnorderedGroupState = getUnorderedGroupHelper().snapShot(
-	grammarAccess.getObserveStatementBodyAccess().getUnorderedGroup()
+	grammarAccess.getObserveStatementBodyAccess().getUnorderedGroup(), 
+	grammarAccess.getObserveStatementBodyAccess().getUnorderedGroup_0_4()
 	);
 }:
 	{ newCompositeNode(grammarAccess.getObserveStatementBodyRule()); }
@@ -5632,7 +5633,8 @@ ruleObserveStatementBody returns [EObject current=null]
 @init {
 	enterRule();
 	UnorderedGroupState myUnorderedGroupState = getUnorderedGroupHelper().snapShot(
-	grammarAccess.getObserveStatementBodyAccess().getUnorderedGroup()
+	grammarAccess.getObserveStatementBodyAccess().getUnorderedGroup(), 
+	grammarAccess.getObserveStatementBodyAccess().getUnorderedGroup_0_4()
 	);
 }
 @after {
@@ -5764,10 +5766,160 @@ ruleObserveStatementBody returns [EObject current=null]
 							)?
 							(
 								(
-									{
-										newCompositeNode(grammarAccess.getObserveStatementBodyAccess().getActionsActionSpecificationParserRuleCall_0_4_0());
+									{ 
+									  getUnorderedGroupHelper().enter(grammarAccess.getObserveStatementBodyAccess().getUnorderedGroup_0_4());
 									}
-									lv_actions_9_0=ruleActionSpecification
+									(
+										(
+								(
+									{getUnorderedGroupHelper().canSelect(grammarAccess.getObserveStatementBodyAccess().getUnorderedGroup_0_4(), 0)}?=>(
+										{
+											getUnorderedGroupHelper().select(grammarAccess.getObserveStatementBodyAccess().getUnorderedGroup_0_4(), 0);
+										}
+													({true}?=>(otherlv_10='observing'
+													{
+														newLeafNode(otherlv_10, grammarAccess.getObserveStatementBodyAccess().getObservingKeyword_0_4_0_0());
+													}
+													(
+														(
+															{
+																newCompositeNode(grammarAccess.getObserveStatementBodyAccess().getStatesObservableSemanticsParserRuleCall_0_4_0_1_0());
+															}
+															lv_states_11_0=ruleObservableSemantics
+															{
+																if ($current==null) {
+																	$current = createModelElementForParent(grammarAccess.getObserveStatementBodyRule());
+																}
+																add(
+																	$current,
+																	"states",
+																	lv_states_11_0,
+																	"org.integratedmodelling.kim.Kim.ObservableSemantics");
+																afterParserOrEnumRuleCall();
+															}
+														)
+													)
+													(
+														otherlv_12=','
+														{
+															newLeafNode(otherlv_12, grammarAccess.getObserveStatementBodyAccess().getCommaKeyword_0_4_0_2_0());
+														}
+														(
+															(
+																{
+																	newCompositeNode(grammarAccess.getObserveStatementBodyAccess().getStatesObservableSemanticsParserRuleCall_0_4_0_2_1_0());
+																}
+																lv_states_13_0=ruleObservableSemantics
+																{
+																	if ($current==null) {
+																		$current = createModelElementForParent(grammarAccess.getObserveStatementBodyRule());
+																	}
+																	add(
+																		$current,
+																		"states",
+																		lv_states_13_0,
+																		"org.integratedmodelling.kim.Kim.ObservableSemantics");
+																	afterParserOrEnumRuleCall();
+																}
+															)
+														)
+													)*
+													))
+										{ 
+											getUnorderedGroupHelper().returnFromSelection(grammarAccess.getObserveStatementBodyAccess().getUnorderedGroup_0_4());
+										}
+									)
+								)|
+								(
+									{getUnorderedGroupHelper().canSelect(grammarAccess.getObserveStatementBodyAccess().getUnorderedGroup_0_4(), 1)}?=>(
+										{
+											getUnorderedGroupHelper().select(grammarAccess.getObserveStatementBodyAccess().getUnorderedGroup_0_4(), 1);
+										}
+													({true}?=>(otherlv_14='with'
+													{
+														newLeafNode(otherlv_14, grammarAccess.getObserveStatementBodyAccess().getWithKeyword_0_4_1_0());
+													}
+													(
+														otherlv_15='('
+														{
+															newLeafNode(otherlv_15, grammarAccess.getObserveStatementBodyAccess().getLeftParenthesisKeyword_0_4_1_1_0());
+														}
+														(
+															(
+																{
+																	newCompositeNode(grammarAccess.getObserveStatementBodyAccess().getObservationsObserveStatementBodyParserRuleCall_0_4_1_1_1_0());
+																}
+																lv_observations_16_0=ruleObserveStatementBody
+																{
+																	if ($current==null) {
+																		$current = createModelElementForParent(grammarAccess.getObserveStatementBodyRule());
+																	}
+																	add(
+																		$current,
+																		"observations",
+																		lv_observations_16_0,
+																		"org.integratedmodelling.kim.Kim.ObserveStatementBody");
+																	afterParserOrEnumRuleCall();
+																}
+															)
+														)
+														otherlv_17=')'
+														{
+															newLeafNode(otherlv_17, grammarAccess.getObserveStatementBodyAccess().getRightParenthesisKeyword_0_4_1_1_2());
+														}
+													)
+													(
+														otherlv_18=','
+														{
+															newLeafNode(otherlv_18, grammarAccess.getObserveStatementBodyAccess().getCommaKeyword_0_4_1_2_0());
+														}
+														otherlv_19='('
+														{
+															newLeafNode(otherlv_19, grammarAccess.getObserveStatementBodyAccess().getLeftParenthesisKeyword_0_4_1_2_1());
+														}
+														(
+															(
+																{
+																	newCompositeNode(grammarAccess.getObserveStatementBodyAccess().getObservationsObserveStatementBodyParserRuleCall_0_4_1_2_2_0());
+																}
+																lv_observations_20_0=ruleObserveStatementBody
+																{
+																	if ($current==null) {
+																		$current = createModelElementForParent(grammarAccess.getObserveStatementBodyRule());
+																	}
+																	add(
+																		$current,
+																		"observations",
+																		lv_observations_20_0,
+																		"org.integratedmodelling.kim.Kim.ObserveStatementBody");
+																	afterParserOrEnumRuleCall();
+																}
+															)
+														)
+														otherlv_21=')'
+														{
+															newLeafNode(otherlv_21, grammarAccess.getObserveStatementBodyAccess().getRightParenthesisKeyword_0_4_1_2_3());
+														}
+													)*
+													))
+										{ 
+											getUnorderedGroupHelper().returnFromSelection(grammarAccess.getObserveStatementBodyAccess().getUnorderedGroup_0_4());
+										}
+									)
+								)
+										)*
+									)
+								)
+									{ 
+									  getUnorderedGroupHelper().leave(grammarAccess.getObserveStatementBodyAccess().getUnorderedGroup_0_4());
+									}
+							)
+							(
+								(
+									{
+										newCompositeNode(grammarAccess.getObserveStatementBodyAccess().getActionsActionSpecificationParserRuleCall_0_5_0());
+									}
+									lv_actions_22_0=ruleActionSpecification
 									{
 										if ($current==null) {
 											$current = createModelElementForParent(grammarAccess.getObserveStatementBodyRule());
@@ -5775,87 +5927,12 @@ ruleObserveStatementBody returns [EObject current=null]
 										add(
 											$current,
 											"actions",
-											lv_actions_9_0,
+											lv_actions_22_0,
 											"org.integratedmodelling.kim.Kim.ActionSpecification");
 										afterParserOrEnumRuleCall();
 									}
 								)
 							)*
-							(
-								otherlv_10='observing'
-								{
-									newLeafNode(otherlv_10, grammarAccess.getObserveStatementBodyAccess().getObservingKeyword_0_5_0());
-								}
-								(
-									(
-										{
-											newCompositeNode(grammarAccess.getObserveStatementBodyAccess().getStatesObservableSemanticsParserRuleCall_0_5_1_0());
-										}
-										lv_states_11_0=ruleObservableSemantics
-										{
-											if ($current==null) {
-												$current = createModelElementForParent(grammarAccess.getObserveStatementBodyRule());
-											}
-											add(
-												$current,
-												"states",
-												lv_states_11_0,
-												"org.integratedmodelling.kim.Kim.ObservableSemantics");
-											afterParserOrEnumRuleCall();
-										}
-									)
-								)
-								(
-									otherlv_12=','
-									{
-										newLeafNode(otherlv_12, grammarAccess.getObserveStatementBodyAccess().getCommaKeyword_0_5_2_0());
-									}
-									(
-										(
-											{
-												newCompositeNode(grammarAccess.getObserveStatementBodyAccess().getStatesObservableSemanticsParserRuleCall_0_5_2_1_0());
-											}
-											lv_states_13_0=ruleObservableSemantics
-											{
-												if ($current==null) {
-													$current = createModelElementForParent(grammarAccess.getObserveStatementBodyRule());
-												}
-												add(
-													$current,
-													"states",
-													lv_states_13_0,
-													"org.integratedmodelling.kim.Kim.ObservableSemantics");
-												afterParserOrEnumRuleCall();
-											}
-										)
-									)
-								)*
-							)?
-							(
-								otherlv_14='using'
-								{
-									newLeafNode(otherlv_14, grammarAccess.getObserveStatementBodyAccess().getUsingKeyword_0_6_0());
-								}
-								(
-									(
-										{
-											newCompositeNode(grammarAccess.getObserveStatementBodyAccess().getAccessorFunctionParserRuleCall_0_6_1_0());
-										}
-										lv_accessor_15_0=ruleFunction
-										{
-											if ($current==null) {
-												$current = createModelElementForParent(grammarAccess.getObserveStatementBodyRule());
-											}
-											set(
-												$current,
-												"accessor",
-												lv_accessor_15_0,
-												"org.integratedmodelling.kim.Kim.Function");
-											afterParserOrEnumRuleCall();
-										}
-									)
-								)?
-							)?
 							))
 				{ 
 					getUnorderedGroupHelper().returnFromSelection(grammarAccess.getObserveStatementBodyAccess().getUnorderedGroup());
@@ -5867,16 +5944,50 @@ ruleObserveStatementBody returns [EObject current=null]
 				{
 					getUnorderedGroupHelper().select(grammarAccess.getObserveStatementBodyAccess().getUnorderedGroup(), 1);
 				}
-							({true}?=>(otherlv_16='metadata'
+							({true}?=>(otherlv_23='using'
 							{
-								newLeafNode(otherlv_16, grammarAccess.getObserveStatementBodyAccess().getMetadataKeyword_1_0());
+								newLeafNode(otherlv_23, grammarAccess.getObserveStatementBodyAccess().getUsingKeyword_1_0());
 							}
 							(
 								(
 									{
-										newCompositeNode(grammarAccess.getObserveStatementBodyAccess().getMetadataMetadataParserRuleCall_1_1_0());
+										newCompositeNode(grammarAccess.getObserveStatementBodyAccess().getAccessorFunctionParserRuleCall_1_1_0());
 									}
-									lv_metadata_17_0=ruleMetadata
+									lv_accessor_24_0=ruleFunction
+									{
+										if ($current==null) {
+											$current = createModelElementForParent(grammarAccess.getObserveStatementBodyRule());
+										}
+										set(
+											$current,
+											"accessor",
+											lv_accessor_24_0,
+											"org.integratedmodelling.kim.Kim.Function");
+										afterParserOrEnumRuleCall();
+									}
+								)
+							)?
+							))
+				{ 
+					getUnorderedGroupHelper().returnFromSelection(grammarAccess.getObserveStatementBodyAccess().getUnorderedGroup());
+				}
+			)
+		)|
+		(
+			{getUnorderedGroupHelper().canSelect(grammarAccess.getObserveStatementBodyAccess().getUnorderedGroup(), 2)}?=>(
+				{
+					getUnorderedGroupHelper().select(grammarAccess.getObserveStatementBodyAccess().getUnorderedGroup(), 2);
+				}
+							({true}?=>(otherlv_25='metadata'
+							{
+								newLeafNode(otherlv_25, grammarAccess.getObserveStatementBodyAccess().getMetadataKeyword_2_0());
+							}
+							(
+								(
+									{
+										newCompositeNode(grammarAccess.getObserveStatementBodyAccess().getMetadataMetadataParserRuleCall_2_1_0());
+									}
+									lv_metadata_26_0=ruleMetadata
 									{
 										if ($current==null) {
 											$current = createModelElementForParent(grammarAccess.getObserveStatementBodyRule());
@@ -5884,7 +5995,7 @@ ruleObserveStatementBody returns [EObject current=null]
 										set(
 											$current,
 											"metadata",
-											lv_metadata_17_0,
+											lv_metadata_26_0,
 											"org.integratedmodelling.kim.Kim.Metadata");
 										afterParserOrEnumRuleCall();
 									}

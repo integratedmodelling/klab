@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IKimNamespace;
+import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.knowledge.IProject;
@@ -244,7 +244,7 @@ public interface INamespace extends IKimObject {
 	 * Documentation in namespaces is merged with that of models in it. It's good to
 	 * store references or links that apply to more than one model.
 	 *
-	 * @return a {@link org.integratedmodelling.klab.api.knowledge.IDocumentation}
+	 * @return a {@link org.integratedmodelling.klab.api.documentation.IDocumentation}
 	 *         object.
 	 */
 	IDocumentation getDocumentation();

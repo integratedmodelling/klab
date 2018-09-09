@@ -19,7 +19,7 @@ public interface KimTemplates {
             + "     <nature>org.eclipse.xtext.ui.shared.xtextNature</nature>\r\n" + "   </natures>\r\n"
             + "</projectDescription>";
 
-    public static String resourceTemplate = "{\n}";
+    public static String emptyJSONTemplate = "{\n}";
     public static String propertiesTemplate = "klab.version = 0.0.1\n";
     public static String knowledgeTemplate = "namespace __PROJECT__;\n\n";
     

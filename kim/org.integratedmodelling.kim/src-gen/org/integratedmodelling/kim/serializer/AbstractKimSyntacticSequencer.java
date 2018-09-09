@@ -38,7 +38,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	protected AbstractElementAlias match_Number_PlusSignKeyword_0_0_q;
 	protected AbstractElementAlias match_Number_PlusSignKeyword_3_0_1_0_q;
 	protected AbstractElementAlias match_ObservableSemantics_RequiredKeyword_3_5_1_a;
-	protected AbstractElementAlias match_ObserveStatementBody_UsingKeyword_0_6_0_q;
+	protected AbstractElementAlias match_ObserveStatementBody_UsingKeyword_1_0_a;
+	protected AbstractElementAlias match_ObserveStatementBody_UsingKeyword_1_0_p;
 	protected AbstractElementAlias match_TableClassifier_ExclusiveKeyword_1_1_1_q;
 	protected AbstractElementAlias match_TableClassifier_ExclusiveKeyword_1_4_1_q;
 	protected AbstractElementAlias match_ValueAssignment_ToKeyword_0_1_q;
@@ -61,7 +62,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 		match_Number_PlusSignKeyword_0_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_0_0());
 		match_Number_PlusSignKeyword_3_0_1_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_3_0_1_0());
 		match_ObservableSemantics_RequiredKeyword_3_5_1_a = new TokenAlias(true, true, grammarAccess.getObservableSemanticsAccess().getRequiredKeyword_3_5_1());
-		match_ObserveStatementBody_UsingKeyword_0_6_0_q = new TokenAlias(false, true, grammarAccess.getObserveStatementBodyAccess().getUsingKeyword_0_6_0());
+		match_ObserveStatementBody_UsingKeyword_1_0_a = new TokenAlias(true, true, grammarAccess.getObserveStatementBodyAccess().getUsingKeyword_1_0());
+		match_ObserveStatementBody_UsingKeyword_1_0_p = new TokenAlias(true, false, grammarAccess.getObserveStatementBodyAccess().getUsingKeyword_1_0());
 		match_TableClassifier_ExclusiveKeyword_1_1_1_q = new TokenAlias(false, true, grammarAccess.getTableClassifierAccess().getExclusiveKeyword_1_1_1());
 		match_TableClassifier_ExclusiveKeyword_1_4_1_q = new TokenAlias(false, true, grammarAccess.getTableClassifierAccess().getExclusiveKeyword_1_4_1());
 		match_ValueAssignment_ToKeyword_0_1_q = new TokenAlias(false, true, grammarAccess.getValueAssignmentAccess().getToKeyword_0_1());
@@ -121,8 +123,10 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 				emit_Number_PlusSignKeyword_3_0_1_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_ObservableSemantics_RequiredKeyword_3_5_1_a.equals(syntax))
 				emit_ObservableSemantics_RequiredKeyword_3_5_1_a(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_ObserveStatementBody_UsingKeyword_0_6_0_q.equals(syntax))
-				emit_ObserveStatementBody_UsingKeyword_0_6_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_ObserveStatementBody_UsingKeyword_1_0_a.equals(syntax))
+				emit_ObserveStatementBody_UsingKeyword_1_0_a(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_ObserveStatementBody_UsingKeyword_1_0_p.equals(syntax))
+				emit_ObserveStatementBody_UsingKeyword_1_0_p(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_TableClassifier_ExclusiveKeyword_1_1_1_q.equals(syntax))
 				emit_TableClassifier_ExclusiveKeyword_1_1_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_TableClassifier_ExclusiveKeyword_1_4_1_q.equals(syntax))
@@ -596,9 +600,17 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	
 	/**
 	 * Ambiguous syntax:
-	 *     'using'?
+	 *     'using'*
 	 *
 	 * This ambiguous syntax occurs at:
+	 *     (rule start) (ambiguity) 'metadata' metadata=Metadata
+	 *     (rule start) (ambiguity) (rule start)
+	 *     (rule start) (ambiguity) concept=NamedObservableSemantics
+	 *     (rule start) (ambiguity) urn=Urn
+	 *     accessor=Function (ambiguity) 'metadata' metadata=Metadata
+	 *     accessor=Function (ambiguity) (rule end)
+	 *     accessor=Function (ambiguity) concept=NamedObservableSemantics
+	 *     accessor=Function (ambiguity) urn=Urn
 	 *     actions+=ActionSpecification (ambiguity) 'metadata' metadata=Metadata
 	 *     actions+=ActionSpecification (ambiguity) (rule end)
 	 *     actions+=ActionSpecification (ambiguity) concept=NamedObservableSemantics
@@ -611,6 +623,14 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     docstring=STRING (ambiguity) (rule end)
 	 *     docstring=STRING (ambiguity) concept=NamedObservableSemantics
 	 *     docstring=STRING (ambiguity) urn=Urn
+	 *     metadata=Metadata (ambiguity) 'metadata' metadata=Metadata
+	 *     metadata=Metadata (ambiguity) (rule end)
+	 *     metadata=Metadata (ambiguity) concept=NamedObservableSemantics
+	 *     metadata=Metadata (ambiguity) urn=Urn
+	 *     observations+=ObserveStatementBody ')' (ambiguity) 'metadata' metadata=Metadata
+	 *     observations+=ObserveStatementBody ')' (ambiguity) (rule end)
+	 *     observations+=ObserveStatementBody ')' (ambiguity) concept=NamedObservableSemantics
+	 *     observations+=ObserveStatementBody ')' (ambiguity) urn=Urn
 	 *     parents+=PathName (ambiguity) 'metadata' metadata=Metadata
 	 *     parents+=PathName (ambiguity) (rule end)
 	 *     parents+=PathName (ambiguity) concept=NamedObservableSemantics
@@ -620,7 +640,27 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     states+=ObservableSemantics (ambiguity) concept=NamedObservableSemantics
 	 *     states+=ObservableSemantics (ambiguity) urn=Urn
 	 */
-	protected void emit_ObserveStatementBody_UsingKeyword_0_6_0_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+	protected void emit_ObserveStatementBody_UsingKeyword_1_0_a(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * Ambiguous syntax:
+	 *     'using'+
+	 *
+	 * This ambiguous syntax occurs at:
+	 *     (rule start) (ambiguity) (rule start)
+	 *     (rule start) (ambiguity) accessor=Function
+	 *     accessor=Function (ambiguity) accessor=Function
+	 *     actions+=ActionSpecification (ambiguity) accessor=Function
+	 *     concept=NamedObservableSemantics (ambiguity) accessor=Function
+	 *     docstring=STRING (ambiguity) accessor=Function
+	 *     metadata=Metadata (ambiguity) accessor=Function
+	 *     observations+=ObserveStatementBody ')' (ambiguity) accessor=Function
+	 *     parents+=PathName (ambiguity) accessor=Function
+	 *     states+=ObservableSemantics (ambiguity) accessor=Function
+	 */
+	protected void emit_ObserveStatementBody_UsingKeyword_1_0_p(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

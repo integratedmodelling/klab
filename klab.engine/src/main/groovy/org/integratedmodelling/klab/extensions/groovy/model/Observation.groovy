@@ -98,4 +98,13 @@ abstract class Observation {
         return ret == null ? null : DefaultAction._wrapIfNecessary(ret, binding);
     }
     
+    /**
+     * Used to force non-scalar usage when we need the object as is and
+     * we have scalar usage in the same expression.
+     * 
+     * @return
+     */
+    def getSelf() {
+        return this;
+    }
 }

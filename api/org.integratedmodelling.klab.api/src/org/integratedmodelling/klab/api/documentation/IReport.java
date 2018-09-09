@@ -1,0 +1,136 @@
+/*******************************************************************************
+ * Copyright (C) 2007, 2015:
+ * 
+ * - Ferdinando Villa <ferdinando.villa@bc3research.org> - integratedmodelling.org - any
+ * other authors listed in @author annotations
+ *
+ * All rights reserved. This file is part of the k.LAB software suite, meant to enable
+ * modular, collaborative, integrated development of interoperable data and model
+ * components. For details, see http://integratedmodelling.org.
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms
+ * of the Affero General Public License Version 3 or any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but without any
+ * warranty; without even the implied warranty of merchantability or fitness for a
+ * particular purpose. See the Affero General Public License for more details.
+ * 
+ * You should have received a copy of the Affero General Public License along with this
+ * program; if not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite
+ * 330, Boston, MA 02111-1307, USA. The license is also available at:
+ * https://www.gnu.org/licenses/agpl.html
+ *******************************************************************************/
+package org.integratedmodelling.klab.api.documentation;
+
+/**
+ * Simple interface to incrementally build a report in Markdown and compile it to HTML or
+ * text. Used during model contextualization; models can write to it using the monitor.
+ * There is a report per IContext, retrievable through REST in json, html or other
+ * formats.
+ * 
+ * @author Ferd
+ *
+ */
+public interface IReport {
+
+    /**
+     * Set the report title.
+     * 
+     * @param title
+     */
+    void setTitle(String title);
+
+    /**
+     * 
+     * @return
+     */
+    String getTitle();
+
+    /**
+     * Load references and any other relevant field from the passed documentation.
+     * 
+     * @param documentation
+     */
+    void loadDocumentation(IDocumentation documentation);
+
+    /**
+     * Write string directly to report.
+     * 
+     * @param markdown
+     */
+    void write(String markdown);
+
+    /**
+     * Add a link - either to an anchor created by {@link #getAnchor()} or
+     * {@link IReport#addAttachment(Object)} or to a passed URL.
+     * 
+     * @param markdown
+     */
+    void writeLink(String markdown, String anchorOrUrl);
+
+    /**
+     * Write string followed by newline.
+     * 
+     * @param markdown
+     */
+    void writeln(String markdown);
+    
+    /**
+     * Reference the passed refs.
+     * 
+     * @param ref
+     */
+    void reference(String... ref);
+
+
+    /**
+     * Insert a section if necessary, possibly along with its parents, and set it to the
+     * current one. Any writing will be done on it until the next section() is called. Use
+     * slash separators to specify sub-sections. Once one section has been added, no more
+     * writing can happen on the main body. Sections can be rearranged (when implemented)
+     * but not deleted.
+     * 
+     * @param section
+     * @param path
+     */
+    void setSection(String path);
+
+    /**
+     * Return the html correspondent to the report so far.
+     * 
+     * @return
+     */
+    String asHTML();
+
+    /**
+     * Turn the report into ASCII text and return it.
+     * 
+     * @return
+     */
+    String asText();
+
+    /**
+     * Attach object to report. Return the anchor to insert in the text if wanted.
+     * 
+     */
+    String addAttachment(Object o);
+
+    /**
+     * Insert an anchor to this point in the text and return it for
+     * future references.
+     * 
+     * @return
+     */
+    String getReference();
+
+    /**
+     * Insert predefined description of passed object, or nothing if we don't
+     * know what to do with it. Implementations should provide a way to configure
+     * description templates. In general this should know what to do with all
+     * types of knowledge - both concepts and observations.
+     * 
+     * @param o
+     */
+    void describe(Object o);
+    
+}

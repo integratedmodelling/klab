@@ -17,10 +17,9 @@ package org.integratedmodelling.klab.api.model;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.integratedmodelling.kim.api.IComputableResource;
-import org.integratedmodelling.klab.api.knowledge.IDocumentation;
+import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.resolution.IComputable;
@@ -165,7 +164,7 @@ public interface IModel
 	 * @return the declared documentation, or null if none exists. In state models,
 	 *         documentation may be created or filled in from metadata.
 	 */
-	Optional<IDocumentation> getDocumentation();
+	IDocumentation getDocumentation();
 
 	/**
 	 * Metadata can be associated to models in k.IM.

@@ -225,8 +225,7 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 
 	@Override
 	public IObservable getTargetSemantics() {
-		// TODO Auto-generated method stub
-		return null;
+		return semantics.get(getTargetName());
 	}
 
 	@Override

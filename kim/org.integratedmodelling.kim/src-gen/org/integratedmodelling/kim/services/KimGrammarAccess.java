@@ -3286,24 +3286,38 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cCommaKeyword_0_3_2_0 = (Keyword)cGroup_0_3_2.eContents().get(0);
 		private final Assignment cParentsAssignment_0_3_2_1 = (Assignment)cGroup_0_3_2.eContents().get(1);
 		private final RuleCall cParentsPathNameParserRuleCall_0_3_2_1_0 = (RuleCall)cParentsAssignment_0_3_2_1.eContents().get(0);
-		private final Assignment cActionsAssignment_0_4 = (Assignment)cGroup_0.eContents().get(4);
-		private final RuleCall cActionsActionSpecificationParserRuleCall_0_4_0 = (RuleCall)cActionsAssignment_0_4.eContents().get(0);
-		private final Group cGroup_0_5 = (Group)cGroup_0.eContents().get(5);
-		private final Keyword cObservingKeyword_0_5_0 = (Keyword)cGroup_0_5.eContents().get(0);
-		private final Assignment cStatesAssignment_0_5_1 = (Assignment)cGroup_0_5.eContents().get(1);
-		private final RuleCall cStatesObservableSemanticsParserRuleCall_0_5_1_0 = (RuleCall)cStatesAssignment_0_5_1.eContents().get(0);
-		private final Group cGroup_0_5_2 = (Group)cGroup_0_5.eContents().get(2);
-		private final Keyword cCommaKeyword_0_5_2_0 = (Keyword)cGroup_0_5_2.eContents().get(0);
-		private final Assignment cStatesAssignment_0_5_2_1 = (Assignment)cGroup_0_5_2.eContents().get(1);
-		private final RuleCall cStatesObservableSemanticsParserRuleCall_0_5_2_1_0 = (RuleCall)cStatesAssignment_0_5_2_1.eContents().get(0);
-		private final Group cGroup_0_6 = (Group)cGroup_0.eContents().get(6);
-		private final Keyword cUsingKeyword_0_6_0 = (Keyword)cGroup_0_6.eContents().get(0);
-		private final Assignment cAccessorAssignment_0_6_1 = (Assignment)cGroup_0_6.eContents().get(1);
-		private final RuleCall cAccessorFunctionParserRuleCall_0_6_1_0 = (RuleCall)cAccessorAssignment_0_6_1.eContents().get(0);
+		private final UnorderedGroup cUnorderedGroup_0_4 = (UnorderedGroup)cGroup_0.eContents().get(4);
+		private final Group cGroup_0_4_0 = (Group)cUnorderedGroup_0_4.eContents().get(0);
+		private final Keyword cObservingKeyword_0_4_0_0 = (Keyword)cGroup_0_4_0.eContents().get(0);
+		private final Assignment cStatesAssignment_0_4_0_1 = (Assignment)cGroup_0_4_0.eContents().get(1);
+		private final RuleCall cStatesObservableSemanticsParserRuleCall_0_4_0_1_0 = (RuleCall)cStatesAssignment_0_4_0_1.eContents().get(0);
+		private final Group cGroup_0_4_0_2 = (Group)cGroup_0_4_0.eContents().get(2);
+		private final Keyword cCommaKeyword_0_4_0_2_0 = (Keyword)cGroup_0_4_0_2.eContents().get(0);
+		private final Assignment cStatesAssignment_0_4_0_2_1 = (Assignment)cGroup_0_4_0_2.eContents().get(1);
+		private final RuleCall cStatesObservableSemanticsParserRuleCall_0_4_0_2_1_0 = (RuleCall)cStatesAssignment_0_4_0_2_1.eContents().get(0);
+		private final Group cGroup_0_4_1 = (Group)cUnorderedGroup_0_4.eContents().get(1);
+		private final Keyword cWithKeyword_0_4_1_0 = (Keyword)cGroup_0_4_1.eContents().get(0);
+		private final Group cGroup_0_4_1_1 = (Group)cGroup_0_4_1.eContents().get(1);
+		private final Keyword cLeftParenthesisKeyword_0_4_1_1_0 = (Keyword)cGroup_0_4_1_1.eContents().get(0);
+		private final Assignment cObservationsAssignment_0_4_1_1_1 = (Assignment)cGroup_0_4_1_1.eContents().get(1);
+		private final RuleCall cObservationsObserveStatementBodyParserRuleCall_0_4_1_1_1_0 = (RuleCall)cObservationsAssignment_0_4_1_1_1.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_0_4_1_1_2 = (Keyword)cGroup_0_4_1_1.eContents().get(2);
+		private final Group cGroup_0_4_1_2 = (Group)cGroup_0_4_1.eContents().get(2);
+		private final Keyword cCommaKeyword_0_4_1_2_0 = (Keyword)cGroup_0_4_1_2.eContents().get(0);
+		private final Keyword cLeftParenthesisKeyword_0_4_1_2_1 = (Keyword)cGroup_0_4_1_2.eContents().get(1);
+		private final Assignment cObservationsAssignment_0_4_1_2_2 = (Assignment)cGroup_0_4_1_2.eContents().get(2);
+		private final RuleCall cObservationsObserveStatementBodyParserRuleCall_0_4_1_2_2_0 = (RuleCall)cObservationsAssignment_0_4_1_2_2.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_0_4_1_2_3 = (Keyword)cGroup_0_4_1_2.eContents().get(3);
+		private final Assignment cActionsAssignment_0_5 = (Assignment)cGroup_0.eContents().get(5);
+		private final RuleCall cActionsActionSpecificationParserRuleCall_0_5_0 = (RuleCall)cActionsAssignment_0_5.eContents().get(0);
 		private final Group cGroup_1 = (Group)cUnorderedGroup.eContents().get(1);
-		private final Keyword cMetadataKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
-		private final Assignment cMetadataAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
-		private final RuleCall cMetadataMetadataParserRuleCall_1_1_0 = (RuleCall)cMetadataAssignment_1_1.eContents().get(0);
+		private final Keyword cUsingKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
+		private final Assignment cAccessorAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cAccessorFunctionParserRuleCall_1_1_0 = (RuleCall)cAccessorAssignment_1_1.eContents().get(0);
+		private final Group cGroup_2 = (Group)cUnorderedGroup.eContents().get(2);
+		private final Keyword cMetadataKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
+		private final Assignment cMetadataAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
+		private final RuleCall cMetadataMetadataParserRuleCall_2_1_0 = (RuleCall)cMetadataAssignment_2_1.eContents().get(0);
 		
 		///**
 		// * FIXME the child observation in parenthesis conflicts with a standard declaration and cannot be
@@ -3311,24 +3325,26 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		// */ ObserveStatementBody:
 		//	(urn=Urn 'as')?
 		//	concept=NamedObservableSemantics
-		//	docstring=STRING? ('extends' parents+=PathName (',' parents+=PathName)*)?
-		//	actions+=ActionSpecification* ('observing'
+		//	docstring=STRING? ('extends' parents+=PathName (',' parents+=PathName)*)? (('observing'
 		//	// validator will ensure that the semantics has an associated value
-		//	states+=ObservableSemantics (',' states+=ObservableSemantics)*)? ('using' accessor=Function?)? & ('metadata'
-		//	metadata=Metadata)?
+		//	states+=ObservableSemantics (',' states+=ObservableSemantics)*)? & ('with' ('(' observations+=ObserveStatementBody ')')
+		//	(',' '(' observations+=ObserveStatementBody ')')*)?) actions+=ActionSpecification* & ('using' accessor=Function?)? &
+		//	('metadata' metadata=Metadata)?
 		//	//		('documentation' documentation=Metadata)? 
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(urn=Urn 'as')? concept=NamedObservableSemantics docstring=STRING? ('extends' parents+=PathName (','
-		//parents+=PathName)*)? actions+=ActionSpecification* ('observing' // validator will ensure that the semantics has an associated value
-		//states+=ObservableSemantics (',' states+=ObservableSemantics)*)? ('using' accessor=Function?)? & ('metadata'
-		//metadata=Metadata)?
+		//parents+=PathName)*)? (('observing' // validator will ensure that the semantics has an associated value
+		//states+=ObservableSemantics (',' states+=ObservableSemantics)*)? & ('with' ('(' observations+=ObserveStatementBody ')')
+		//(',' '(' observations+=ObserveStatementBody ')')*)?) actions+=ActionSpecification* & ('using' accessor=Function?)? &
+		//('metadata' metadata=Metadata)?
 		public UnorderedGroup getUnorderedGroup() { return cUnorderedGroup; }
 		
 		//(urn=Urn 'as')? concept=NamedObservableSemantics docstring=STRING? ('extends' parents+=PathName (','
-		//parents+=PathName)*)? actions+=ActionSpecification* ('observing' // validator will ensure that the semantics has an associated value
-		//states+=ObservableSemantics (',' states+=ObservableSemantics)*)? ('using' accessor=Function?)?
+		//parents+=PathName)*)? (('observing' // validator will ensure that the semantics has an associated value
+		//states+=ObservableSemantics (',' states+=ObservableSemantics)*)? & ('with' ('(' observations+=ObserveStatementBody ')')
+		//(',' '(' observations+=ObserveStatementBody ')')*)?) actions+=ActionSpecification*
 		public Group getGroup_0() { return cGroup_0; }
 		
 		//(urn=Urn 'as')?
@@ -3379,61 +3395,106 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//PathName
 		public RuleCall getParentsPathNameParserRuleCall_0_3_2_1_0() { return cParentsPathNameParserRuleCall_0_3_2_1_0; }
 		
-		//actions+=ActionSpecification*
-		public Assignment getActionsAssignment_0_4() { return cActionsAssignment_0_4; }
-		
-		//ActionSpecification
-		public RuleCall getActionsActionSpecificationParserRuleCall_0_4_0() { return cActionsActionSpecificationParserRuleCall_0_4_0; }
+		//('observing' // validator will ensure that the semantics has an associated value
+		//states+=ObservableSemantics (',' states+=ObservableSemantics)*)? & ('with' ('(' observations+=ObserveStatementBody ')')
+		//(',' '(' observations+=ObserveStatementBody ')')*)?
+		public UnorderedGroup getUnorderedGroup_0_4() { return cUnorderedGroup_0_4; }
 		
 		//('observing' // validator will ensure that the semantics has an associated value
 		//states+=ObservableSemantics (',' states+=ObservableSemantics)*)?
-		public Group getGroup_0_5() { return cGroup_0_5; }
+		public Group getGroup_0_4_0() { return cGroup_0_4_0; }
 		
 		//'observing'
-		public Keyword getObservingKeyword_0_5_0() { return cObservingKeyword_0_5_0; }
+		public Keyword getObservingKeyword_0_4_0_0() { return cObservingKeyword_0_4_0_0; }
 		
 		//// validator will ensure that the semantics has an associated value
 		//states+=ObservableSemantics
-		public Assignment getStatesAssignment_0_5_1() { return cStatesAssignment_0_5_1; }
+		public Assignment getStatesAssignment_0_4_0_1() { return cStatesAssignment_0_4_0_1; }
 		
 		//ObservableSemantics
-		public RuleCall getStatesObservableSemanticsParserRuleCall_0_5_1_0() { return cStatesObservableSemanticsParserRuleCall_0_5_1_0; }
+		public RuleCall getStatesObservableSemanticsParserRuleCall_0_4_0_1_0() { return cStatesObservableSemanticsParserRuleCall_0_4_0_1_0; }
 		
 		//(',' states+=ObservableSemantics)*
-		public Group getGroup_0_5_2() { return cGroup_0_5_2; }
+		public Group getGroup_0_4_0_2() { return cGroup_0_4_0_2; }
 		
 		//','
-		public Keyword getCommaKeyword_0_5_2_0() { return cCommaKeyword_0_5_2_0; }
+		public Keyword getCommaKeyword_0_4_0_2_0() { return cCommaKeyword_0_4_0_2_0; }
 		
 		//states+=ObservableSemantics
-		public Assignment getStatesAssignment_0_5_2_1() { return cStatesAssignment_0_5_2_1; }
+		public Assignment getStatesAssignment_0_4_0_2_1() { return cStatesAssignment_0_4_0_2_1; }
 		
 		//ObservableSemantics
-		public RuleCall getStatesObservableSemanticsParserRuleCall_0_5_2_1_0() { return cStatesObservableSemanticsParserRuleCall_0_5_2_1_0; }
+		public RuleCall getStatesObservableSemanticsParserRuleCall_0_4_0_2_1_0() { return cStatesObservableSemanticsParserRuleCall_0_4_0_2_1_0; }
+		
+		//('with' ('(' observations+=ObserveStatementBody ')') (',' '(' observations+=ObserveStatementBody ')')*)?
+		public Group getGroup_0_4_1() { return cGroup_0_4_1; }
+		
+		//'with'
+		public Keyword getWithKeyword_0_4_1_0() { return cWithKeyword_0_4_1_0; }
+		
+		//// validator will ensure that the semantics has an associated value
+		//'(' observations+=ObserveStatementBody ')'
+		public Group getGroup_0_4_1_1() { return cGroup_0_4_1_1; }
+		
+		//'('
+		public Keyword getLeftParenthesisKeyword_0_4_1_1_0() { return cLeftParenthesisKeyword_0_4_1_1_0; }
+		
+		//observations+=ObserveStatementBody
+		public Assignment getObservationsAssignment_0_4_1_1_1() { return cObservationsAssignment_0_4_1_1_1; }
+		
+		//ObserveStatementBody
+		public RuleCall getObservationsObserveStatementBodyParserRuleCall_0_4_1_1_1_0() { return cObservationsObserveStatementBodyParserRuleCall_0_4_1_1_1_0; }
+		
+		//')'
+		public Keyword getRightParenthesisKeyword_0_4_1_1_2() { return cRightParenthesisKeyword_0_4_1_1_2; }
+		
+		//(',' '(' observations+=ObserveStatementBody ')')*
+		public Group getGroup_0_4_1_2() { return cGroup_0_4_1_2; }
+		
+		//','
+		public Keyword getCommaKeyword_0_4_1_2_0() { return cCommaKeyword_0_4_1_2_0; }
+		
+		//'('
+		public Keyword getLeftParenthesisKeyword_0_4_1_2_1() { return cLeftParenthesisKeyword_0_4_1_2_1; }
+		
+		//observations+=ObserveStatementBody
+		public Assignment getObservationsAssignment_0_4_1_2_2() { return cObservationsAssignment_0_4_1_2_2; }
+		
+		//ObserveStatementBody
+		public RuleCall getObservationsObserveStatementBodyParserRuleCall_0_4_1_2_2_0() { return cObservationsObserveStatementBodyParserRuleCall_0_4_1_2_2_0; }
+		
+		//')'
+		public Keyword getRightParenthesisKeyword_0_4_1_2_3() { return cRightParenthesisKeyword_0_4_1_2_3; }
+		
+		//actions+=ActionSpecification*
+		public Assignment getActionsAssignment_0_5() { return cActionsAssignment_0_5; }
+		
+		//ActionSpecification
+		public RuleCall getActionsActionSpecificationParserRuleCall_0_5_0() { return cActionsActionSpecificationParserRuleCall_0_5_0; }
 		
 		//('using' accessor=Function?)?
-		public Group getGroup_0_6() { return cGroup_0_6; }
-		
-		//'using'
-		public Keyword getUsingKeyword_0_6_0() { return cUsingKeyword_0_6_0; }
-		
-		//accessor=Function?
-		public Assignment getAccessorAssignment_0_6_1() { return cAccessorAssignment_0_6_1; }
-		
-		//Function
-		public RuleCall getAccessorFunctionParserRuleCall_0_6_1_0() { return cAccessorFunctionParserRuleCall_0_6_1_0; }
-		
-		//('metadata' metadata=Metadata)?
 		public Group getGroup_1() { return cGroup_1; }
 		
+		//'using'
+		public Keyword getUsingKeyword_1_0() { return cUsingKeyword_1_0; }
+		
+		//accessor=Function?
+		public Assignment getAccessorAssignment_1_1() { return cAccessorAssignment_1_1; }
+		
+		//Function
+		public RuleCall getAccessorFunctionParserRuleCall_1_1_0() { return cAccessorFunctionParserRuleCall_1_1_0; }
+		
+		//('metadata' metadata=Metadata)?
+		public Group getGroup_2() { return cGroup_2; }
+		
 		//'metadata'
-		public Keyword getMetadataKeyword_1_0() { return cMetadataKeyword_1_0; }
+		public Keyword getMetadataKeyword_2_0() { return cMetadataKeyword_2_0; }
 		
 		//metadata=Metadata
-		public Assignment getMetadataAssignment_1_1() { return cMetadataAssignment_1_1; }
+		public Assignment getMetadataAssignment_2_1() { return cMetadataAssignment_2_1; }
 		
 		//Metadata
-		public RuleCall getMetadataMetadataParserRuleCall_1_1_0() { return cMetadataMetadataParserRuleCall_1_1_0; }
+		public RuleCall getMetadataMetadataParserRuleCall_2_1_0() { return cMetadataMetadataParserRuleCall_2_1_0; }
 	}
 	public class ObservableSemanticsElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.ObservableSemantics");
@@ -9666,11 +9727,11 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	// */ ObserveStatementBody:
 	//	(urn=Urn 'as')?
 	//	concept=NamedObservableSemantics
-	//	docstring=STRING? ('extends' parents+=PathName (',' parents+=PathName)*)?
-	//	actions+=ActionSpecification* ('observing'
+	//	docstring=STRING? ('extends' parents+=PathName (',' parents+=PathName)*)? (('observing'
 	//	// validator will ensure that the semantics has an associated value
-	//	states+=ObservableSemantics (',' states+=ObservableSemantics)*)? ('using' accessor=Function?)? & ('metadata'
-	//	metadata=Metadata)?
+	//	states+=ObservableSemantics (',' states+=ObservableSemantics)*)? & ('with' ('(' observations+=ObserveStatementBody ')')
+	//	(',' '(' observations+=ObserveStatementBody ')')*)?) actions+=ActionSpecification* & ('using' accessor=Function?)? &
+	//	('metadata' metadata=Metadata)?
 	//	//		('documentation' documentation=Metadata)? 
 	//;
 	public ObserveStatementBodyElements getObserveStatementBodyAccess() {

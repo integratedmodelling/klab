@@ -153,7 +153,7 @@ public interface IMessage {
 		 * F->B: notification when files are explicitly changed, added or deleted;
 		 * notify projects to load and respond to project lifecycle requests
 		 */
-		ProjectFileAdded, ProjectFileModified, ProjectFileDeleted, NotifyProjects,
+		ProjectFileAdded, ProjectFileModified, ProjectFileDeleted, NotifyProjects, DocumentationModified,
 
 		/*
 		 * --- Notification-class types ---

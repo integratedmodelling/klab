@@ -191,5 +191,9 @@ public class FileCatalog<T> extends HashMap<String, T> {
 			this.timestamp = this.file.lastModified();
 		}
 	}
+	
+	public File getFile() {
+	    return file;
+	}
 
 }
