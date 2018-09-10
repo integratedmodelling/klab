@@ -7,6 +7,7 @@ import java.util.HashSet;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
@@ -174,6 +175,12 @@ public abstract class Expression implements IExpression {
 
 	@Override
 	public IScheduler getScheduler() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IReport getReport() {
 		// TODO Auto-generated method stub
 		return null;
 	}

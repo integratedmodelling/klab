@@ -23,22 +23,18 @@
 package org.integratedmodelling.klab.documentation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.documentation.IReport;
+import org.integratedmodelling.klab.api.documentation.IReport.ISection;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.utils.NameGenerator;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.jgraph.graph.DefaultEdge;
+import org.jgrapht.graph.DefaultDirectedGraph;
 
 import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.html.HtmlRenderer;
@@ -46,17 +42,16 @@ import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.options.MutableDataSet;
 
 /**
- * Simple in-memory report. One of these is available in each context and is written to by
- * the documentation and templating engine.
- * 
- * For now uses internal, hard-coded CSS file (also included in resources, unused). TODO
- * customize when we have to.
+ * A report is a graph of sections generated from templates. Each section has a role and
+ * may represent a reference to another.
  * 
  * @author Ferd
  */
-public class Report implements IReport {
+public class Report  extends DefaultDirectedGraph<ISection, DefaultEdge> implements IReport {
 
-    @Override
+	private static final long serialVersionUID = 3765708785874587978L;
+
+	@Override
     public List<ISection> getSections() {
         // TODO Auto-generated method stub
         return null;
@@ -77,15 +72,16 @@ public class Report implements IReport {
     public static final String SEPARATOR = "\n\n----\n\n";
 
     IRuntimeContext            context   = null;
-    Set<IObservation>          described = new HashSet<>();
-    List<Reference>            citations = new ArrayList<>();
+//    Set<IObservation>          described = new HashSet<>();
+//    List<Reference>            citations = new ArrayList<>();
 
     class Section {
-        StringBuffer  text     = new StringBuffer();
+    	
+    	StringBuffer  text     = new StringBuffer();
         String        title;
         // String parent;
         List<Section> children = new ArrayList<>();
-        String        anchor   = NameGenerator.shortUUID();
+        String        id   = NameGenerator.shortUUID();
 
         public Section(String id) {
             this.title = id;
@@ -146,46 +142,47 @@ public class Report implements IReport {
 
     }
 
-    Map<String, Reference> references     = new HashMap<>();
+//    Map<String, Reference> references     = new HashMap<>();
+//
+//    StringBuffer           text           = new StringBuffer();
+//    List<IReport>          pages          = new ArrayList<>();
+//    List<Section>          sections       = new ArrayList<>();
+//    Section                currentSection = null;
 
-    StringBuffer           text           = new StringBuffer();
-    List<IReport>          pages          = new ArrayList<>();
-    List<Section>          sections       = new ArrayList<>();
-    Section                currentSection = null;
-
-    String                 title          = "";
-    String                 subtitle       = "";
-    String                 name           = "";
-    String                 id             = "R" + NameGenerator.shortUUID();
+//    String                 title          = "";
+//    String                 subtitle       = "";
+//    String                 name           = "";
+//    String                 id             = "rep" + NameGenerator.shortUUID();
 
     public Report() {
-        // no context
+    	super(DefaultEdge.class);
     }
 
     public Report(IRuntimeContext context) {
+    	super(DefaultEdge.class);
         this.context = context;
-        // if we start with a context, add a Data section so it's at the
-        // beginning. It will only be shown when written to.
-        sections.add(new Section("Data"));
+//        // if we start with a context, add a Data section so it's at the
+//        // beginning. It will only be shown when written to.
+//        sections.add(new Section("Data"));
     }
 
-//    @Override
-    public void write(String markdown) {
-        if (currentSection != null) {
-            currentSection.text.append(markdown);
-        } else {
-            text.append(markdown);
-        }
-    }
+////    @Override
+//    public void write(String markdown) {
+////        if (currentSection != null) {
+////            currentSection.text.append(markdown);
+////        } else {
+////            text.append(markdown);
+////        }
+//    }
 
 //    @Override
-    public void writeln(String markdown) {
-        if (currentSection != null) {
-            currentSection.text.append(markdown + "\n");
-        } else {
-            text.append(markdown + "\n");
-        }
-    }
+//    public void writeln(String markdown) {
+//        if (currentSection != null) {
+//            currentSection.text.append(markdown + "\n");
+//        } else {
+//            text.append(markdown + "\n");
+//        }
+//    }
 
 //    @Override
     public String asHTML() {
@@ -200,19 +197,24 @@ public class Report implements IReport {
 
         Parser parser = Parser.builder(options).build();
         HtmlRenderer renderer = HtmlRenderer.builder(options).build();
-        Node document = parser.parse(flatten(text).toString());
+        Node document = parser.parse(compileMarkdown());
         return getHeader() + "<body>\n" + renderer.render(document) + "\n</body>\n";
     }
 
-    /**
+    private String compileMarkdown() {
+		// TODO Auto-generated method stub
+		return "";
+	}
+
+	/**
      * Generate HTML header.
      * 
      * @return
      */
     private String getHeader() {
         String ret = "<head>\n";
-        if (title != null) {
-            ret += "   <title>" + title + "</title>\n";
+        if (getTitle() != null) {
+            ret += "   <title>" + getTitle() + "</title>\n";
         }
         ret += "<style>\n" + css + "\n</style>";
         ret += "\n</head>\n";
@@ -220,113 +222,113 @@ public class Report implements IReport {
     }
 
 //    @Override
-    public String asText() {
-        return flatten(text).toString();
-    }
+//    public String asText() {
+//        return flatten(text).toString();
+//    }
 
-    private StringBuffer flatten(StringBuffer text) {
+//    private StringBuffer flatten(StringBuffer text) {
+//
+//        if (context != null) {
+//            describeData();
+//        }
+//
+//        StringBuffer ret = new StringBuffer(title);
+//        ret.append(text);
+//        for (Section section : sections) {
+//            appendSection(section, 1, ret);
+//        }
+//        appendReferences(ret);
+//
+//        return ret;
+//    }
 
-        if (context != null) {
-            describeData();
-        }
+//    private void describeData() {
+//
+//        Section save = currentSection;
+//        setSection("Data");
+//
+//        for (IArtifact artifact : context.getProvenance().getArtifacts()) {
+//            // if (artifact.getObservation() instanceof IState
+//            // && !described.contains(artifact.getObservation())) {
+//            // if (artifact.getObservation().getContextObservation().equals(context.getSubject())) {
+//            // // TODO reintegrate - only 'true' data should be shown
+//            // if (artifact.getModel() != null && artifact.getModel().isResolved()) {
+//            // describe(artifact.getObservation());
+//            // }
+//            // }
+//            // }
+//        }
+//
+//        currentSection = save;
+//    }
 
-        StringBuffer ret = new StringBuffer(title);
-        ret.append(text);
-        for (Section section : sections) {
-            appendSection(section, 1, ret);
-        }
-        appendReferences(ret);
-
-        return ret;
-    }
-
-    private void describeData() {
-
-        Section save = currentSection;
-        setSection("Data");
-
-        for (IArtifact artifact : context.getProvenance().getArtifacts()) {
-            // if (artifact.getObservation() instanceof IState
-            // && !described.contains(artifact.getObservation())) {
-            // if (artifact.getObservation().getContextObservation().equals(context.getSubject())) {
-            // // TODO reintegrate - only 'true' data should be shown
-            // if (artifact.getModel() != null && artifact.getModel().isResolved()) {
-            // describe(artifact.getObservation());
-            // }
-            // }
-            // }
-        }
-
-        currentSection = save;
-    }
-
-    private void appendReferences(StringBuffer ret) {
-        ret.append("\n# References\n\n");
-        for (int i = 0; i < citations.size(); i++) {
-            ret.append((i + 1) + ". " + citations.get(i).linkIfAny() + "\n");
-        }
-    }
-
-    private void appendSection(Section section, int level, StringBuffer ret) {
-
-        if (!(section.text.toString().isEmpty() && section.children.isEmpty())) {
-
-            ret.append("\n" + StringUtils.repeat('#', level) + " " + section.title + "\n\n");
-
-            ret.append(section.text + "\n");
-
-            for (Section child : section.children) {
-                appendSection(child, level + 1, ret);
-            }
-
-        }
-    }
-
-//    @Override
-    public void setSection(String section) {
-        /*
-         * create sections and any in between; record declaration order
-         */
-        String[] path = section.split("/");
-        Section sec = null;
-        for (int i = 0; i < path.length; i++) {
-            if (i == 0) {
-                sec = findSection(path[i], true);
-            } else {
-                sec = sec.getChild(path[i], true);
-            }
-        }
-
-        /*
-         * set it to the current section
-         */
-        currentSection = sec;
-    }
-
-    private Section findSection(String string, boolean create) {
-        for (Section s : sections) {
-            if (s.title.equals(string)) {
-                return s;
-            }
-        }
-        Section ret = null;
-        if (create) {
-            ret = new Section(string);
-            sections.add(ret);
-        }
-        return ret;
-    }
-
-    @Override
-    public String toString() {
-        return asText();
-    }
+//    private void appendReferences(StringBuffer ret) {
+//        ret.append("\n# References\n\n");
+//        for (int i = 0; i < citations.size(); i++) {
+//            ret.append((i + 1) + ". " + citations.get(i).linkIfAny() + "\n");
+//        }
+//    }
+//
+//    private void appendSection(Section section, int level, StringBuffer ret) {
+//
+//        if (!(section.text.toString().isEmpty() && section.children.isEmpty())) {
+//
+//            ret.append("\n" + StringUtils.repeat('#', level) + " " + section.title + "\n\n");
+//
+//            ret.append(section.text + "\n");
+//
+//            for (Section child : section.children) {
+//                appendSection(child, level + 1, ret);
+//            }
+//
+//        }
+//    }
 
 //    @Override
-    public void setTitle(String title) {
-        // TODO Auto-generated method stub
+//    public void setSection(String section) {
+//        /*
+//         * create sections and any in between; record declaration order
+//         */
+//        String[] path = section.split("/");
+//        Section sec = null;
+//        for (int i = 0; i < path.length; i++) {
+//            if (i == 0) {
+//                sec = findSection(path[i], true);
+//            } else {
+//                sec = sec.getChild(path[i], true);
+//            }
+//        }
+//
+//        /*
+//         * set it to the current section
+//         */
+//        currentSection = sec;
+//    }
 
-    }
+//    private Section findSection(String string, boolean create) {
+//        for (Section s : sections) {
+//            if (s.title.equals(string)) {
+//                return s;
+//            }
+//        }
+//        Section ret = null;
+//        if (create) {
+//            ret = new Section(string);
+//            sections.add(ret);
+//        }
+//        return ret;
+//    }
+
+//    @Override
+//    public String toString() {
+//        return asText();
+//    }
+
+//    @Override
+//    public void setTitle(String title) {
+//        // TODO Auto-generated method stub
+//
+//    }
 
 //    @Override
     public String getTitle() {
@@ -335,66 +337,66 @@ public class Report implements IReport {
     }
 
 //    @Override
-    public String addAttachment(Object o) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+//    public String addAttachment(Object o) {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
 
 //    @Override
-    public void writeLink(String markdown, String anchorOrUrl) {
-        // TODO Auto-generated method stub
-
-    }
-
-//    @Override
-    public void loadDocumentation(IDocumentation documentation) {
-        for (String tag : documentation.getTags()) {
-            if (tag.startsWith("ref:")) {
-                Reference ref = new Reference();
-                ref.id = tag.substring(4);
-                ref.body = documentation.get(tag).getActionCode();
-                references.put(ref.id, ref);
-            }
-        }
-        for (String tag : documentation.getTags()) {
-            if (tag.startsWith("link:")) {
-                String id = tag.substring(5);
-                Reference ref = references.get(id);
-                if (ref != null) {
-                    ref.link = documentation.get(tag).getActionCode();
-                }
-            }
-        }
-    }
+//    public void writeLink(String markdown, String anchorOrUrl) {
+//        // TODO Auto-generated method stub
+//
+//    }
 
 //    @Override
-    public void reference(String... refs) {
-
-        String ret = "";
-        for (String ref : refs) {
-            Reference reference = references.get(ref);
-            if (reference != null) {
-                int n = citations.indexOf(reference);
-                if (n < 0) {
-                    citations.add(reference);
-                    n = citations.size() - 1;
-                }
-                if (ret.length() > 0) {
-                    ret += ",";
-                }
-                ret += "[" + (n + 1) + "](#" + reference.id + ")";
-            }
-        }
-        write("[" + ret + "]");
-
-    }
+//    public void loadDocumentation(IDocumentation documentation) {
+//        for (String tag : documentation.getTags()) {
+//            if (tag.startsWith("ref:")) {
+//                Reference ref = new Reference();
+//                ref.id = tag.substring(4);
+//                ref.body = documentation.get(tag).getActionCode();
+//                references.put(ref.id, ref);
+//            }
+//        }
+//        for (String tag : documentation.getTags()) {
+//            if (tag.startsWith("link:")) {
+//                String id = tag.substring(5);
+//                Reference ref = references.get(id);
+//                if (ref != null) {
+//                    ref.link = documentation.get(tag).getActionCode();
+//                }
+//            }
+//        }
+//    }
 
 //    @Override
-    public String getReference() {
-        String ret = "A" + NameGenerator.shortUUID();
-        write("<a name=\"" + ret + "\"></a>");
-        return ret;
-    }
+//    public void reference(String... refs) {
+//
+//        String ret = "";
+//        for (String ref : refs) {
+//            Reference reference = references.get(ref);
+//            if (reference != null) {
+//                int n = citations.indexOf(reference);
+//                if (n < 0) {
+//                    citations.add(reference);
+//                    n = citations.size() - 1;
+//                }
+//                if (ret.length() > 0) {
+//                    ret += ",";
+//                }
+//                ret += "[" + (n + 1) + "](#" + reference.id + ")";
+//            }
+//        }
+//        write("[" + ret + "]");
+//
+//    }
+//
+////    @Override
+//    public String getReference() {
+//        String ret = "A" + NameGenerator.shortUUID();
+//        write("<a name=\"" + ret + "\"></a>");
+//        return ret;
+//    }
 
 //    @Override
     public void describe(Object o) {
@@ -438,9 +440,9 @@ public class Report implements IReport {
 
         } else if (o instanceof IObservation) {
             describe(((IObservation) o).getObservable().getType());
-            write(SEPARATOR);
+//            write(SEPARATOR);
             linkImage((IObservation) o);
-            write(SEPARATOR);
+//            write(SEPARATOR);
             IMetadata metadata = ((IObservation) o).getMetadata();
             // if (((Observation)o).getActuator() != null) {
             // if (((Observation)o).getActuator().getModel() != null) {
@@ -453,7 +455,7 @@ public class Report implements IReport {
             // : (((Observation) o).getActuator().getModel() == null
             // ? ((IObservation) o).getMetadata()
             // : ((Observation) o).getActuator().getModel().getMetadata()));
-            described.add((IObservation) o);
+//            described.add((IObservation) o);
         }
     }
 
@@ -471,7 +473,7 @@ public class Report implements IReport {
             ret += "\n**Distribution:** " + metadata.get("im:distribution", String.class) + " <br/> ";
         }
         if (!ret.isEmpty()) {
-            writeln("<small> " + ret + " </small>\n");
+//            writeln("<small> " + ret + " </small>\n");
         }
     }
 

@@ -25,6 +25,8 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
+import org.integratedmodelling.klab.api.documentation.IDocumentation.Template.Section.Type;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.client.documentation.ProjectDocumentation;
 import org.integratedmodelling.klab.client.documentation.ProjectReferences;
@@ -231,10 +233,13 @@ public class DocumentationEditor extends ViewPart {
         ModelDocumentation template = documentation.get(getCurrentKey());
 
         if (template == null) {
-            template = new ModelDocumentation();
+            
+        	template = new ModelDocumentation();
             template.setDocumentedId(docId);
             template.setSection(currentSection);
-            template.setTrigger(currentEvent);
+            template.setTrigger(Trigger.valueOf(currentEvent.toUpperCase()));
+            template.setSectionType(Type.valueOf(currentSection.toUpperCase()));
+            
             documentation.put(getCurrentKey(), template);
         }
         template.getDocumentedUrns().add(((ENavigatorItem) item).getId());

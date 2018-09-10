@@ -281,7 +281,7 @@ ObserveStatementBody:
 				( states+=ObservableSemantics) (',' states+=ObservableSemantics)*
 		)? &
 		(
-			'with' 
+			'children' 
 				// validator will ensure that the semantics has an associated value
 				( '(' observations+=ObserveStatementBody ')') (',' '(' observations+=ObserveStatementBody ')')*
 		)?) 

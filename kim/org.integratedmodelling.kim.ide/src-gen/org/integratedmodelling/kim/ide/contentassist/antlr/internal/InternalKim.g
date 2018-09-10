@@ -15127,9 +15127,9 @@ rule__ObserveStatementBody__Group_0_4_1__0__Impl
 	}
 :
 (
-	{ before(grammarAccess.getObserveStatementBodyAccess().getWithKeyword_0_4_1_0()); }
-	'with'
-	{ after(grammarAccess.getObserveStatementBodyAccess().getWithKeyword_0_4_1_0()); }
+	{ before(grammarAccess.getObserveStatementBodyAccess().getChildrenKeyword_0_4_1_0()); }
+	'children'
+	{ after(grammarAccess.getObserveStatementBodyAccess().getChildrenKeyword_0_4_1_0()); }
 )
 ;
 finally {

@@ -3296,7 +3296,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cStatesAssignment_0_4_0_2_1 = (Assignment)cGroup_0_4_0_2.eContents().get(1);
 		private final RuleCall cStatesObservableSemanticsParserRuleCall_0_4_0_2_1_0 = (RuleCall)cStatesAssignment_0_4_0_2_1.eContents().get(0);
 		private final Group cGroup_0_4_1 = (Group)cUnorderedGroup_0_4.eContents().get(1);
-		private final Keyword cWithKeyword_0_4_1_0 = (Keyword)cGroup_0_4_1.eContents().get(0);
+		private final Keyword cChildrenKeyword_0_4_1_0 = (Keyword)cGroup_0_4_1.eContents().get(0);
 		private final Group cGroup_0_4_1_1 = (Group)cGroup_0_4_1.eContents().get(1);
 		private final Keyword cLeftParenthesisKeyword_0_4_1_1_0 = (Keyword)cGroup_0_4_1_1.eContents().get(0);
 		private final Assignment cObservationsAssignment_0_4_1_1_1 = (Assignment)cGroup_0_4_1_1.eContents().get(1);
@@ -3327,24 +3327,24 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	concept=NamedObservableSemantics
 		//	docstring=STRING? ('extends' parents+=PathName (',' parents+=PathName)*)? (('observing'
 		//	// validator will ensure that the semantics has an associated value
-		//	states+=ObservableSemantics (',' states+=ObservableSemantics)*)? & ('with' ('(' observations+=ObserveStatementBody ')')
-		//	(',' '(' observations+=ObserveStatementBody ')')*)?) actions+=ActionSpecification* & ('using' accessor=Function?)? &
-		//	('metadata' metadata=Metadata)?
+		//	states+=ObservableSemantics (',' states+=ObservableSemantics)*)? & ('children' ('(' observations+=ObserveStatementBody
+		//	')') (',' '(' observations+=ObserveStatementBody ')')*)?) actions+=ActionSpecification* & ('using'
+		//	accessor=Function?)? & ('metadata' metadata=Metadata)?
 		//	//		('documentation' documentation=Metadata)? 
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(urn=Urn 'as')? concept=NamedObservableSemantics docstring=STRING? ('extends' parents+=PathName (','
 		//parents+=PathName)*)? (('observing' // validator will ensure that the semantics has an associated value
-		//states+=ObservableSemantics (',' states+=ObservableSemantics)*)? & ('with' ('(' observations+=ObserveStatementBody ')')
-		//(',' '(' observations+=ObserveStatementBody ')')*)?) actions+=ActionSpecification* & ('using' accessor=Function?)? &
-		//('metadata' metadata=Metadata)?
+		//states+=ObservableSemantics (',' states+=ObservableSemantics)*)? & ('children' ('(' observations+=ObserveStatementBody
+		//')') (',' '(' observations+=ObserveStatementBody ')')*)?) actions+=ActionSpecification* & ('using'
+		//accessor=Function?)? & ('metadata' metadata=Metadata)?
 		public UnorderedGroup getUnorderedGroup() { return cUnorderedGroup; }
 		
 		//(urn=Urn 'as')? concept=NamedObservableSemantics docstring=STRING? ('extends' parents+=PathName (','
 		//parents+=PathName)*)? (('observing' // validator will ensure that the semantics has an associated value
-		//states+=ObservableSemantics (',' states+=ObservableSemantics)*)? & ('with' ('(' observations+=ObserveStatementBody ')')
-		//(',' '(' observations+=ObserveStatementBody ')')*)?) actions+=ActionSpecification*
+		//states+=ObservableSemantics (',' states+=ObservableSemantics)*)? & ('children' ('(' observations+=ObserveStatementBody
+		//')') (',' '(' observations+=ObserveStatementBody ')')*)?) actions+=ActionSpecification*
 		public Group getGroup_0() { return cGroup_0; }
 		
 		//(urn=Urn 'as')?
@@ -3396,8 +3396,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getParentsPathNameParserRuleCall_0_3_2_1_0() { return cParentsPathNameParserRuleCall_0_3_2_1_0; }
 		
 		//('observing' // validator will ensure that the semantics has an associated value
-		//states+=ObservableSemantics (',' states+=ObservableSemantics)*)? & ('with' ('(' observations+=ObserveStatementBody ')')
-		//(',' '(' observations+=ObserveStatementBody ')')*)?
+		//states+=ObservableSemantics (',' states+=ObservableSemantics)*)? & ('children' ('(' observations+=ObserveStatementBody
+		//')') (',' '(' observations+=ObserveStatementBody ')')*)?
 		public UnorderedGroup getUnorderedGroup_0_4() { return cUnorderedGroup_0_4; }
 		
 		//('observing' // validator will ensure that the semantics has an associated value
@@ -3426,11 +3426,11 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//ObservableSemantics
 		public RuleCall getStatesObservableSemanticsParserRuleCall_0_4_0_2_1_0() { return cStatesObservableSemanticsParserRuleCall_0_4_0_2_1_0; }
 		
-		//('with' ('(' observations+=ObserveStatementBody ')') (',' '(' observations+=ObserveStatementBody ')')*)?
+		//('children' ('(' observations+=ObserveStatementBody ')') (',' '(' observations+=ObserveStatementBody ')')*)?
 		public Group getGroup_0_4_1() { return cGroup_0_4_1; }
 		
-		//'with'
-		public Keyword getWithKeyword_0_4_1_0() { return cWithKeyword_0_4_1_0; }
+		//'children'
+		public Keyword getChildrenKeyword_0_4_1_0() { return cChildrenKeyword_0_4_1_0; }
 		
 		//// validator will ensure that the semantics has an associated value
 		//'(' observations+=ObserveStatementBody ')'
@@ -9729,9 +9729,9 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	concept=NamedObservableSemantics
 	//	docstring=STRING? ('extends' parents+=PathName (',' parents+=PathName)*)? (('observing'
 	//	// validator will ensure that the semantics has an associated value
-	//	states+=ObservableSemantics (',' states+=ObservableSemantics)*)? & ('with' ('(' observations+=ObserveStatementBody ')')
-	//	(',' '(' observations+=ObserveStatementBody ')')*)?) actions+=ActionSpecification* & ('using' accessor=Function?)? &
-	//	('metadata' metadata=Metadata)?
+	//	states+=ObservableSemantics (',' states+=ObservableSemantics)*)? & ('children' ('(' observations+=ObserveStatementBody
+	//	')') (',' '(' observations+=ObserveStatementBody ')')*)?) actions+=ActionSpecification* & ('using'
+	//	accessor=Function?)? & ('metadata' metadata=Metadata)?
 	//	//		('documentation' documentation=Metadata)? 
 	//;
 	public ObserveStatementBodyElements getObserveStatementBodyAccess() {

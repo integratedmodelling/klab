@@ -53,7 +53,9 @@ public interface IReport {
             FOOTNOTE,
             FIGURE,
             TABLE,
-            REFERENCE
+            REFERENCE,
+            LINK,
+            CUSTOM
         }
 
         /**

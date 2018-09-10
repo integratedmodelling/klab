@@ -123,6 +123,24 @@ public interface IDocumentation {
          */
         String getActionCode();
 
+        /**
+         * 
+         * @return
+         */
+		String getSectionId();
+
+		/**
+		 * 
+		 * @return
+		 */
+		IReport.ISection.Type getSectionType();
+
+		/**
+		 * 
+		 * @return
+		 */
+		Trigger getTrigger();
+
     }
 
     /**
@@ -133,21 +151,21 @@ public interface IDocumentation {
      */
     Template get(Trigger actionType);
 
-    /**
-     * Get the template corresponding to the passed tag, if any.
-     * 
-     * @param tag
-     * @return
-     */
-    Template get(String tag);
+//    /**
+//     * Get the template corresponding to the passed tag, if any.
+//     * 
+//     * @param tag
+//     * @return
+//     */
+//    Template get(String tag);
 
-    /**
-     * Return all non-action tags defined. For those, the corresponding
-     * templates will most likely contain simply text.
-     * 
-     * @return
-     */
-    Collection<String> getTags();
+//    /**
+//     * Return all non-action tags defined. For those, the corresponding
+//     * templates will most likely contain simply text.
+//     * 
+//     * @return
+//     */
+//    Collection<String> getTags();
 
     /**
      * Return all the action triggers defined.

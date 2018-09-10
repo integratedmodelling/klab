@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.resolution;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -29,8 +30,6 @@ import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.StringUtils;
 
 public class RankedModel extends Model implements IRankedModel {
-
-	private static final long serialVersionUID = -442006167719783123L;
 
 	String modelUrn;
 	Model delegate;
@@ -138,7 +137,7 @@ public class RankedModel extends Model implements IRankedModel {
 		return getDelegate().isAvailable();
 	}
 
-	public IDocumentation getDocumentation() {
+	public Collection<IDocumentation> getDocumentation() {
 		return getDelegate().getDocumentation();
 	}
 

@@ -3,14 +3,16 @@ package org.integratedmodelling.klab.documentation;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.documentation.IDocumentation.Template.Section.Type;
+import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.Triple;
 
 /**
  * @author ferdinando.villa
@@ -18,10 +20,11 @@ import org.integratedmodelling.klab.utils.StringUtils;
  */
 public class Documentation implements IDocumentation {
 
-    Map<Trigger, Template> byAction     = new HashMap<>();
-    Map<String, Template>  byTag        = new HashMap<>();
-    List<TemplateImpl>     allTemplates = new ArrayList<>();
-    // managed externally 
+//    Map<Trigger, Template> byAction     = new HashMap<>();
+//    Map<String, Template>  byTag        = new HashMap<>();
+	List<TemplateImpl> templates = new ArrayList<>();
+    
+    // managed externally, needed to communicate changes 
     private File docfile;
 
     /**
@@ -42,14 +45,23 @@ public class Documentation implements IDocumentation {
      * @return
      */
     public static Documentation create(ProjectDocumentation documentation, String docId) {
-        // TODO Auto-generated method stub
-        return null;
+    	Documentation ret = new Documentation();
+    	for (String key : documentation.keySet()) {
+    		if (key.startsWith(docId+"#")) {
+    			ModelDocumentation doc = documentation.get(key);
+    			TemplateImpl template = TemplateParser.parse(doc.getTemplate());
+    			template.setSectionId(doc.getSection());
+    			template.setTrigger(doc.getTrigger());
+    			ret.templates.add(template);
+    		}
+    	}
+        return ret;
     }
 
     @Override
     public List<String> getErrors() {
         List<String> ret = new ArrayList<>();
-        for (TemplateImpl t : allTemplates) {
+        for (TemplateImpl t : templates) {
             ret.addAll(t.errors);
         }
         return ret;
@@ -60,26 +72,13 @@ public class Documentation implements IDocumentation {
      * 
      * @param other
      */
-    public void merge(IDocumentation other) {
-        for (String s : ((Documentation) other).byTag.keySet()) {
-            Template t = other.get(s);
-            byTag.put(s, t);
-            allTemplates.add((TemplateImpl) t);
-        }
-    }
-
-    // private void parseMetadata(IMetadata metadata) {
-    // for (String s : metadata.getKeys()) {
-    // IKimAction.Trigger atype = parseActionType(s);
-    // TemplateImpl template = parseTemplate(metadata.get(s).toString(), atype != null);
-    // if (atype == null) {
-    // byTag.put(s, template);
-    // } else {
-    // byAction.put(atype, template);
-    // }
-    // allTemplates.add(template);
-    // }
-    // }
+//    public void merge(IDocumentation other) {
+//        for (String s : ((Documentation) other).byTag.keySet()) {
+//            Template t = other.get(s);
+//            byTag.put(s, t);
+//            allTemplates.add((TemplateImpl) t);
+//        }
+//    }
 
     public TemplateImpl parseTemplate(String string, boolean isAction) {
         if (!isAction) {
@@ -90,52 +89,70 @@ public class Documentation implements IDocumentation {
         return (TemplateImpl) TemplateParser.parse(string);
     }
 
-//    private IKimAction.Trigger parseActionType(String s) {
-//
-//        if (s.startsWith("on:")) {
-//            String[] ss = s.split(":");
-//            if (ss.length == 2) {
-//                switch (ss[1]) {
-//                case "definition":
-//                    return;
-//                case "time":
-//                    return IKimAction.Trigger.TRANSITION;
-//                case "termination":
-//                    return IKimAction.Trigger.TERMINATION;
-//                case "instantiation":
-//                    return IKimAction.Trigger.INSTANTIATION;
-//                case "resolution":
-//                    return IKimAction.Trigger.RESOLUTION;
-//                case "initialization":
-//                    return IKimAction.Trigger.STATE_INITIALIZATION;
-//                }
-//            } else if (ss.length == 3) {
-//                /*
-//                 * TODO event: not sure if we should implement documentation on events.
-//                 * Even instantiation, termination and resolution are sketchy.
-//                 */
-//            }
-//        }
-//        return null;
-//    }
-
     @Override
     public IDocumentation.Template get(Trigger actionType) {
-        return byAction.get(actionType);
+    	for (Template t : templates) {
+    		if (t.getTrigger() == actionType) {
+    			return t;
+    		}
+    	}
+    	return null;
     }
 
-    @Override
-    public IDocumentation.Template get(String tag) {
-        return byTag.get(tag);
-    }
+//    @Override
+//    public IDocumentation.Template get(String tag) {
+//        return byTag.get(tag);
+//    }
 
+    public static Triple<String, Trigger, String> parseTemplateId(String templateId) {
+    	
+    	String docId;
+    	Trigger trigger;
+    	String sectionId;
+    	
+    	String[] tid = templateId.split("#");
+    	
+    	if (tid.length == 3) {
+    		docId = tid[0];
+    		trigger = Trigger.valueOf(tid[1].toUpperCase());
+    		sectionId = tid[2];
+    		
+    		return new Triple<>(docId, trigger, sectionId);
+    	}
+    	
+    	return null;
+    }
+    
     static class TemplateImpl implements IDocumentation.Template {
 
-        String        bodyAsIs = null;
-        List<Section> sections = new ArrayList<>();
-        List<String>  errors   = new ArrayList<>();
+        private String        bodyAsIs = null;
+        private List<Section> sections = new ArrayList<>();
+        private List<String>  errors   = new ArrayList<>();
+        private Trigger trigger;
+        private String sectionId;
+        private IReport.ISection.Type sectionType;
 
-        @Override
+        public String getBodyAsIs() {
+			return bodyAsIs;
+		}
+
+		public void setBodyAsIs(String bodyAsIs) {
+			this.bodyAsIs = bodyAsIs;
+		}
+
+		public List<String> getErrors() {
+			return errors;
+		}
+
+		public void setErrors(List<String> errors) {
+			this.errors = errors;
+		}
+
+		public void setSections(List<Section> sections) {
+			this.sections = sections;
+		}
+
+		@Override
         public List<Section> getSections() {
             return sections;
         }
@@ -181,6 +198,33 @@ public class Documentation implements IDocumentation {
         public void addError(String message) {
             errors.add(message);
         }
+
+        @Override
+        public Trigger getTrigger() {
+			return trigger;
+		}
+
+		public void setTrigger(Trigger trigger) {
+			this.trigger = trigger;
+		}
+		
+		@Override
+		public IReport.ISection.Type getSectionType() {
+			return sectionType;
+		}
+
+		public void setSectionType(IReport.ISection.Type sectionType) {
+			this.sectionType = sectionType;
+		}
+
+		@Override
+		public String getSectionId() {
+			return sectionId;
+		}
+
+		public void setSectionId(String sectionId) {
+			this.sectionId = sectionId;
+		}
     }
 
     static class SectionImpl implements IDocumentation.Template.Section {
@@ -242,14 +286,18 @@ public class Documentation implements IDocumentation {
 
     }
 
-    @Override
-    public Collection<String> getTags() {
-        return byTag.keySet();
-    }
+//    @Override
+//    public Collection<String> getTags() {
+//        return byTag.keySet();
+//    }
 
     @Override
     public Collection<Trigger> getTriggers() {
-        return byAction.keySet();
+    	Set<Trigger> ret = new HashSet<>();
+    	for (Template t : templates) {
+    		ret.add(t.getTrigger());
+    	}
+    	return ret;
     }
 
     public File getDocfile() {

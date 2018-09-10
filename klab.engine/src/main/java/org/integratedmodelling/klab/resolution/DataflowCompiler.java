@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -361,6 +362,9 @@ public class DataflowCompiler {
 					}
 				}
 				ret.getAnnotations().addAll(Annotations.INSTANCE.collectAnnotations(observable, model));
+				for (IDocumentation documentation : model.getDocumentation()) {
+					ret.addDocumentation(documentation);
+				}
 			} else {
 				ret.setReference(true);
 			}

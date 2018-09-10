@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.model.ComputableResource;
+import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Documentation;
@@ -305,7 +307,16 @@ public class Model extends KimObject implements IModel {
     }
 
     @Override
-    public IDocumentation getDocumentation() {
+    public Collection<IDocumentation> getDocumentation() {
+    	
+    	List<IDocumentation> ret = new ArrayList<>();
+    	
+    	/*
+    	 * TODO collect docs from tables and the like. Use scan annotations on the syntactic
+    	 * peers.
+    	 * Annotations.INSTANCE.collectAnnotations(model)
+    	 */
+    	
         for (IAnnotation annotation : getAnnotations()) {
             if (annotation.getName().equals(IDocumentationService.DOCUMENTED_ANNOTATION_ID)) {
                 String docId = annotation.get("value", String.class);
@@ -314,11 +325,11 @@ public class Model extends KimObject implements IModel {
                 }
                 
                 if (docId != null && this.getNamespace().getProject() != null) {
-                    return Documentation.INSTANCE.getDocumentation(docId, annotation, this.getNamespace().getProject());
+                    ret.add(Documentation.INSTANCE.getDocumentation(docId, annotation, this.getNamespace().getProject()));
                 }
             }
         }
-        return null;
+        return ret;
     }
 
     @Override

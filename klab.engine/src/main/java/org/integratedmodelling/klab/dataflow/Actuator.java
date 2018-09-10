@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
+import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -89,6 +90,10 @@ public class Actuator implements IActuator {
 		IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource, target);
 		mediationStrategy.add(new Pair<>(serviceCall, resource));
 	}
+	
+	public void addDocumentation(IDocumentation documentation) {
+		this.documentation.add(documentation);
+	}
 
 	/**
 	 * the specs from which the contextualizers are built: first the computation,
@@ -101,6 +106,12 @@ public class Actuator implements IActuator {
 	 */
 	private List<Pair<IServiceCall, IComputableResource>> computationStrategy = new ArrayList<>();
 	private List<Pair<IServiceCall, IComputableResource>> mediationStrategy = new ArrayList<>();
+
+	/**
+	 * Documentation extracted from the models and other objects used and compiled
+	 * at end of computation
+	 */
+	private List<IDocumentation> documentation = new ArrayList<>();
 
 	private boolean definesScale;
 
@@ -271,7 +282,7 @@ public class Actuator implements IActuator {
 			 * ensure they're not sent if not probed.
 			 */
 			if (!input) {
-				
+
 				boolean isMain = false;
 				for (IAnnotation annotation : annotations) {
 					if (annotation.getName().equals("main")) {
@@ -279,7 +290,7 @@ public class Actuator implements IActuator {
 						break;
 					}
 				}
-				
+
 				IObservation notifiable = (IObservation) (ret instanceof ObservationGroup && ret.groupSize() > 0
 						? ret.iterator().next()
 						: ret);
@@ -589,20 +600,6 @@ public class Actuator implements IActuator {
 
 	public void setDefinesScale(boolean definesScale) {
 		this.definesScale = definesScale;
-	}
-
-	public boolean isStorageScalar(IScale scale) {
-		// TODO inspect the indirectAdapters and check if we have any local
-		// modifications
-		return scale.size() == 1;
-	}
-
-	public boolean isStorageDynamic(IScale scale) {
-		// TODO inspect the indirectAdapters and the observable semantics; check if we
-		// have
-		// any temporal
-		// modifications
-		return scale.isTemporallyDistributed();
 	}
 
 	public boolean computesRescaledState() {

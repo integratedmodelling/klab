@@ -5835,9 +5835,9 @@ ruleObserveStatementBody returns [EObject current=null]
 										{
 											getUnorderedGroupHelper().select(grammarAccess.getObserveStatementBodyAccess().getUnorderedGroup_0_4(), 1);
 										}
-													({true}?=>(otherlv_14='with'
+													({true}?=>(otherlv_14='children'
 													{
-														newLeafNode(otherlv_14, grammarAccess.getObserveStatementBodyAccess().getWithKeyword_0_4_1_0());
+														newLeafNode(otherlv_14, grammarAccess.getObserveStatementBodyAccess().getChildrenKeyword_0_4_1_0());
 													}
 													(
 														otherlv_15='('
