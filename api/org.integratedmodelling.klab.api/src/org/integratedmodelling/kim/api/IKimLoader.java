@@ -85,7 +85,7 @@ public interface IKimLoader {
     IKimNamespace getNamespace(Object namespaceProxy);
 
     /**
-     * An iterator of all the namespaces in topological dependency order.
+     * An iterator of all the namespaces.
      * 
      * @return
      */

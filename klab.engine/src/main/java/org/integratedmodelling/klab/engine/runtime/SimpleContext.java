@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
+import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -175,18 +176,6 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 		return scale;
 	}
 
-//	@Override
-//	public Collection<String> getInputs() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-//
-//	@Override
-//	public Collection<String> getOutputs() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-
 	@Override
 	public IObservable getSemantics(String identifier) {
 		return semantics.get(identifier);
@@ -225,8 +214,7 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 
 	@Override
 	public IObservable getTargetSemantics() {
-		// TODO Auto-generated method stub
-		return null;
+		return semantics.get(getTargetName());
 	}
 
 	@Override
@@ -450,6 +438,12 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 
 	@Override
 	public IRuntimeContext createContext(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IReport getReport() {
 		// TODO Auto-generated method stub
 		return null;
 	}

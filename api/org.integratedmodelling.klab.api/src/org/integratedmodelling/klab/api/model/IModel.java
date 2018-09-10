@@ -15,12 +15,12 @@
  */
 package org.integratedmodelling.klab.api.model;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.integratedmodelling.kim.api.IComputableResource;
-import org.integratedmodelling.klab.api.knowledge.IDocumentation;
+import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.resolution.IComputable;
@@ -160,12 +160,13 @@ public interface IModel
 	/**
 	 * Models may have special documentation templates tied to contextualization
 	 * events. If so, they are exposed as metadata, where the key for each template
-	 * defines the event tied to the reporting.
+	 * defines the event tied to the reporting. Each model can only have one
+	 * template, but it can also collect templates from other objects it uses, such
+	 * as lookup tables or observables.
 	 *
-	 * @return the declared documentation, or null if none exists. In state models,
-	 *         documentation may be created or filled in from metadata.
+	 * @return the declared documentation, or an empty collection if none exists.
 	 */
-	Optional<IDocumentation> getDocumentation();
+	Collection<IDocumentation> getDocumentation();
 
 	/**
 	 * Metadata can be associated to models in k.IM.
@@ -193,7 +194,8 @@ public interface IModel
 	boolean isInactive();
 
 	/**
-	 * True if model has concepts associated. Only false for the private non-semantic models.
+	 * True if model has concepts associated. Only false for the private
+	 * non-semantic models.
 	 * 
 	 * @return true if semantic
 	 */

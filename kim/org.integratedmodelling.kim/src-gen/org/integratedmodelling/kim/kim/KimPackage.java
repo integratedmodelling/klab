@@ -1768,22 +1768,31 @@ public interface KimPackage extends EPackage
   int OBSERVE_STATEMENT_BODY__PARENTS = 3;
 
   /**
-   * The feature id for the '<em><b>Actions</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int OBSERVE_STATEMENT_BODY__ACTIONS = 4;
-
-  /**
    * The feature id for the '<em><b>States</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int OBSERVE_STATEMENT_BODY__STATES = 5;
+  int OBSERVE_STATEMENT_BODY__STATES = 4;
+
+  /**
+   * The feature id for the '<em><b>Observations</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OBSERVE_STATEMENT_BODY__OBSERVATIONS = 5;
+
+  /**
+   * The feature id for the '<em><b>Actions</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OBSERVE_STATEMENT_BODY__ACTIONS = 6;
 
   /**
    * The feature id for the '<em><b>Accessor</b></em>' containment reference.
@@ -1792,7 +1801,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVE_STATEMENT_BODY__ACCESSOR = 6;
+  int OBSERVE_STATEMENT_BODY__ACCESSOR = 7;
 
   /**
    * The feature id for the '<em><b>Metadata</b></em>' containment reference.
@@ -1801,7 +1810,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVE_STATEMENT_BODY__METADATA = 7;
+  int OBSERVE_STATEMENT_BODY__METADATA = 8;
 
   /**
    * The number of structural features of the '<em>Observe Statement Body</em>' class.
@@ -1810,7 +1819,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVE_STATEMENT_BODY_FEATURE_COUNT = 8;
+  int OBSERVE_STATEMENT_BODY_FEATURE_COUNT = 9;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl <em>Observable Semantics</em>}' class.
@@ -5917,17 +5926,6 @@ public interface KimPackage extends EPackage
   EAttribute getObserveStatementBody_Parents();
 
   /**
-   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ObserveStatementBody#getActions <em>Actions</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Actions</em>'.
-   * @see org.integratedmodelling.kim.kim.ObserveStatementBody#getActions()
-   * @see #getObserveStatementBody()
-   * @generated
-   */
-  EReference getObserveStatementBody_Actions();
-
-  /**
    * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ObserveStatementBody#getStates <em>States</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -5937,6 +5935,28 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EReference getObserveStatementBody_States();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ObserveStatementBody#getObservations <em>Observations</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Observations</em>'.
+   * @see org.integratedmodelling.kim.kim.ObserveStatementBody#getObservations()
+   * @see #getObserveStatementBody()
+   * @generated
+   */
+  EReference getObserveStatementBody_Observations();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ObserveStatementBody#getActions <em>Actions</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Actions</em>'.
+   * @see org.integratedmodelling.kim.kim.ObserveStatementBody#getActions()
+   * @see #getObserveStatementBody()
+   * @generated
+   */
+  EReference getObserveStatementBody_Actions();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ObserveStatementBody#getAccessor <em>Accessor</em>}'.
@@ -9804,20 +9824,28 @@ public interface KimPackage extends EPackage
     EAttribute OBSERVE_STATEMENT_BODY__PARENTS = eINSTANCE.getObserveStatementBody_Parents();
 
     /**
-     * The meta object literal for the '<em><b>Actions</b></em>' containment reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference OBSERVE_STATEMENT_BODY__ACTIONS = eINSTANCE.getObserveStatementBody_Actions();
-
-    /**
      * The meta object literal for the '<em><b>States</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     EReference OBSERVE_STATEMENT_BODY__STATES = eINSTANCE.getObserveStatementBody_States();
+
+    /**
+     * The meta object literal for the '<em><b>Observations</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference OBSERVE_STATEMENT_BODY__OBSERVATIONS = eINSTANCE.getObserveStatementBody_Observations();
+
+    /**
+     * The meta object literal for the '<em><b>Actions</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference OBSERVE_STATEMENT_BODY__ACTIONS = eINSTANCE.getObserveStatementBody_Actions();
 
     /**
      * The meta object literal for the '<em><b>Accessor</b></em>' containment reference feature.

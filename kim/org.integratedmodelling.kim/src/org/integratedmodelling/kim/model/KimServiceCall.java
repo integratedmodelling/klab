@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;

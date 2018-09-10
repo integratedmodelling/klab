@@ -275,17 +275,17 @@ ObserveStatementBody:
 	concept=NamedObservableSemantics
 		(docstring = STRING)?
 		('extends' parents+=PathName (',' parents+=PathName)*)?
-		(actions+=ActionSpecification*)
-		(
+		((
 			'observing' 
 				// validator will ensure that the semantics has an associated value
 				( states+=ObservableSemantics) (',' states+=ObservableSemantics)*
-		)?
-//		(
-//			'with' 
-//				// validator will ensure that the semantics has an associated value
-//				( '(' observations+=ObserveStatementBody ')') (',' '(' observations+=ObserveStatementBody ')')*
-//		)? 
+		)? &
+		(
+			'children' 
+				// validator will ensure that the semantics has an associated value
+				( '(' observations+=ObserveStatementBody ')') (',' '(' observations+=ObserveStatementBody ')')*
+		)?) 
+		(actions+=ActionSpecification*) &
 		('using' (accessor=Function)?)? &
 		('metadata' metadata=Metadata)? 
 //		('documentation' documentation=Metadata)? 

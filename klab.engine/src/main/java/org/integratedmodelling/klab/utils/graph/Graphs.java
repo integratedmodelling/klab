@@ -7,9 +7,13 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
+import org.integratedmodelling.kim.model.KimLoader;
+import org.integratedmodelling.klab.Resources;
 import org.jgraph.JGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.ext.JGraphModelAdapter;
+import org.jgrapht.graph.DefaultDirectedGraph;
 
 import com.jgraph.layout.JGraphFacade;
 import com.jgraph.layout.JGraphLayout;
@@ -22,6 +26,16 @@ public class Graphs {
 
 	public enum Layout {
 		HIERARCHICAL, RADIALTREE, SIMPLE, SPRING
+	}
+
+	public static <E> void show(org.integratedmodelling.contrib.jgrapht.Graph<?, E> graph, String title,
+			Class<? extends E> edgeClass) {
+		show(adaptContribGraph(graph, edgeClass), title, Layout.SPRING);
+	}
+
+	public static <E> void show(org.integratedmodelling.contrib.jgrapht.Graph<?, E> graph, String title, Layout layout,
+			Class<? extends E> edgeClass) {
+		show(adaptContribGraph(graph, edgeClass), title, layout);
 	}
 
 	public static void show(Graph<?, ?> graph, String title) {
@@ -62,6 +76,7 @@ public class Graphs {
 				jgraph.setAutoscrolls(true);
 				jgraph.setEditable(false);
 				jgraph.setAutoResizeGraph(true);
+				jgraph.setBendable(true);
 				
 				JFrame frame = new JFrame();
 				frame.setTitle(title);
@@ -73,6 +88,27 @@ public class Graphs {
 			}
 
 		});
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <E> Graph<?, ?> adaptContribGraph(org.integratedmodelling.contrib.jgrapht.Graph<?, E> graph,
+			Class<? extends E> edgeClass) {
+
+		DefaultDirectedGraph<Object, E> ret = new DefaultDirectedGraph<Object, E>(edgeClass);
+		for (Object o : graph.vertexSet()) {
+			ret.addVertex(o);
+		}
+		for (Object e : graph.edgeSet()) {
+			ret.addEdge(graph.getEdgeSource((E) e), graph.getEdgeTarget((E) e), (E) e);
+		}
+		return ret;
+	}
+
+	/**
+	 * Show the dependency graph in the loader.
+	 */
+	public static void showDependencies() {
+		show(((KimLoader) Resources.INSTANCE.getLoader()).getDependencyGraph(), "Dependencies", DefaultEdge.class);
 	}
 
 }

@@ -341,7 +341,7 @@ public class KimLoader implements IKimLoader {
     @Override
     public Iterable<IKimNamespace> getNamespaces() {
         List<IKimNamespace> ret = new ArrayList<>();
-        for (String name : sortedNames) {
+        for (String name : namespaceFiles.keySet()) {
             ret.add(getNamespaceInfo(namespaceFiles.get(name)).namespace);
         }
         return ret;
@@ -550,12 +550,57 @@ public class KimLoader implements IKimLoader {
                         if (!f.equals(namespace.getFile())) {
                             // we just trust that no file in catalog means the dependency is on a core ontology.
                             this.dependencyGraph.addVertex(f);
-                            this.dependencyGraph.addEdge(f, namespace.getFile());
+                            this.dependencyGraph.addEdge(f, namespace.getFile(), new DefaultEdge() {
+
+								private static final long serialVersionUID = 1L;
+
+								@Override
+								public String toString() {
+									return "";
+								} 
+                            	
+                            });
                         }
                     }
                 }
             }
         }
     }
+
+    /**
+     * Build a new dependency graph for display purposes.
+     * @return
+     */
+	public Graph<String, DefaultEdge> getDependencyGraph() {
+		
+        DefaultDirectedGraph<String, DefaultEdge> ret = new DefaultDirectedGraph<>(DefaultEdge.class);
+
+        for (IKimNamespace namespace : getNamespaces()) {
+        	
+            if (namespace != null && namespace.getFile() != null) {
+                ret.addVertex(namespace.getName());
+                for (String s : namespace.getImportedNamespaceIds(true)) {
+                    if (namespaceFiles.containsKey(s)) {
+                        File f = namespaceFiles.get(s);
+                        if (!f.equals(namespace.getFile())) {
+                            // we just trust that no file in catalog means the dependency is on a core ontology.
+                            ret.addVertex(s);
+                            ret.addEdge(s, namespace.getName(), new DefaultEdge() {
+
+								private static final long serialVersionUID = 1L;
+
+								@Override
+								public String toString() {
+									return "";
+								} 
+                            	
+                            });
+                        }
+                    }
+                }
+            }
+        }	
+        return ret;
+	}
 
 }

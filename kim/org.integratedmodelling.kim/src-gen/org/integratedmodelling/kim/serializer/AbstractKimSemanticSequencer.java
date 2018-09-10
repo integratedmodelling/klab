@@ -448,13 +448,13 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         restrictions+=RestrictionStatement | 
 	 *                         metadata=Metadata
 	 *                     )? 
-	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
-	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
-	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
-	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
-	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
-	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
 	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
+	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
+	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
+	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
+	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
+	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
+	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
 	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
 	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
@@ -1205,16 +1205,15 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *
 	 * Constraint:
 	 *     (
+	 *         (accessor=Function | metadata=Metadata)? 
 	 *         (
 	 *             urn=Urn? 
 	 *             concept=NamedObservableSemantics 
 	 *             docstring=STRING? 
 	 *             (parents+=PathName parents+=PathName*)? 
-	 *             actions+=ActionSpecification* 
-	 *             (states+=ObservableSemantics states+=ObservableSemantics*)? 
-	 *             accessor=Function?
-	 *         ) | 
-	 *         metadata=Metadata
+	 *             ((states+=ObservableSemantics states+=ObservableSemantics*) | (observations+=ObserveStatementBody observations+=ObserveStatementBody*))* 
+	 *             actions+=ActionSpecification*
+	 *         )?
 	 *     )+
 	 */
 	protected void sequence_ObserveStatementBody(ISerializationContext context, ObserveStatementBody semanticObject) {

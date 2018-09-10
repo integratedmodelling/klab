@@ -41,8 +41,9 @@ import org.integratedmodelling.kim.kim.Urn;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObserveStatementBodyImpl#getConcept <em>Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObserveStatementBodyImpl#getDocstring <em>Docstring</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObserveStatementBodyImpl#getParents <em>Parents</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ObserveStatementBodyImpl#getActions <em>Actions</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObserveStatementBodyImpl#getStates <em>States</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ObserveStatementBodyImpl#getObservations <em>Observations</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ObserveStatementBodyImpl#getActions <em>Actions</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObserveStatementBodyImpl#getAccessor <em>Accessor</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObserveStatementBodyImpl#getMetadata <em>Metadata</em>}</li>
  * </ul>
@@ -102,16 +103,6 @@ public class ObserveStatementBodyImpl extends MinimalEObjectImpl.Container imple
   protected EList<String> parents;
 
   /**
-   * The cached value of the '{@link #getActions() <em>Actions</em>}' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getActions()
-   * @generated
-   * @ordered
-   */
-  protected EList<ActionSpecification> actions;
-
-  /**
    * The cached value of the '{@link #getStates() <em>States</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -120,6 +111,26 @@ public class ObserveStatementBodyImpl extends MinimalEObjectImpl.Container imple
    * @ordered
    */
   protected EList<ObservableSemantics> states;
+
+  /**
+   * The cached value of the '{@link #getObservations() <em>Observations</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getObservations()
+   * @generated
+   * @ordered
+   */
+  protected EList<ObserveStatementBody> observations;
+
+  /**
+   * The cached value of the '{@link #getActions() <em>Actions</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getActions()
+   * @generated
+   * @ordered
+   */
+  protected EList<ActionSpecification> actions;
 
   /**
    * The cached value of the '{@link #getAccessor() <em>Accessor</em>}' containment reference.
@@ -300,20 +311,6 @@ public class ObserveStatementBodyImpl extends MinimalEObjectImpl.Container imple
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<ActionSpecification> getActions()
-  {
-    if (actions == null)
-    {
-      actions = new EObjectContainmentEList<ActionSpecification>(ActionSpecification.class, this, KimPackage.OBSERVE_STATEMENT_BODY__ACTIONS);
-    }
-    return actions;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EList<ObservableSemantics> getStates()
   {
     if (states == null)
@@ -321,6 +318,34 @@ public class ObserveStatementBodyImpl extends MinimalEObjectImpl.Container imple
       states = new EObjectContainmentEList<ObservableSemantics>(ObservableSemantics.class, this, KimPackage.OBSERVE_STATEMENT_BODY__STATES);
     }
     return states;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EList<ObserveStatementBody> getObservations()
+  {
+    if (observations == null)
+    {
+      observations = new EObjectContainmentEList<ObserveStatementBody>(ObserveStatementBody.class, this, KimPackage.OBSERVE_STATEMENT_BODY__OBSERVATIONS);
+    }
+    return observations;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EList<ActionSpecification> getActions()
+  {
+    if (actions == null)
+    {
+      actions = new EObjectContainmentEList<ActionSpecification>(ActionSpecification.class, this, KimPackage.OBSERVE_STATEMENT_BODY__ACTIONS);
+    }
+    return actions;
   }
 
   /**
@@ -433,10 +458,12 @@ public class ObserveStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return basicSetUrn(null, msgs);
       case KimPackage.OBSERVE_STATEMENT_BODY__CONCEPT:
         return basicSetConcept(null, msgs);
-      case KimPackage.OBSERVE_STATEMENT_BODY__ACTIONS:
-        return ((InternalEList<?>)getActions()).basicRemove(otherEnd, msgs);
       case KimPackage.OBSERVE_STATEMENT_BODY__STATES:
         return ((InternalEList<?>)getStates()).basicRemove(otherEnd, msgs);
+      case KimPackage.OBSERVE_STATEMENT_BODY__OBSERVATIONS:
+        return ((InternalEList<?>)getObservations()).basicRemove(otherEnd, msgs);
+      case KimPackage.OBSERVE_STATEMENT_BODY__ACTIONS:
+        return ((InternalEList<?>)getActions()).basicRemove(otherEnd, msgs);
       case KimPackage.OBSERVE_STATEMENT_BODY__ACCESSOR:
         return basicSetAccessor(null, msgs);
       case KimPackage.OBSERVE_STATEMENT_BODY__METADATA:
@@ -463,10 +490,12 @@ public class ObserveStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return getDocstring();
       case KimPackage.OBSERVE_STATEMENT_BODY__PARENTS:
         return getParents();
-      case KimPackage.OBSERVE_STATEMENT_BODY__ACTIONS:
-        return getActions();
       case KimPackage.OBSERVE_STATEMENT_BODY__STATES:
         return getStates();
+      case KimPackage.OBSERVE_STATEMENT_BODY__OBSERVATIONS:
+        return getObservations();
+      case KimPackage.OBSERVE_STATEMENT_BODY__ACTIONS:
+        return getActions();
       case KimPackage.OBSERVE_STATEMENT_BODY__ACCESSOR:
         return getAccessor();
       case KimPackage.OBSERVE_STATEMENT_BODY__METADATA:
@@ -499,13 +528,17 @@ public class ObserveStatementBodyImpl extends MinimalEObjectImpl.Container imple
         getParents().clear();
         getParents().addAll((Collection<? extends String>)newValue);
         return;
-      case KimPackage.OBSERVE_STATEMENT_BODY__ACTIONS:
-        getActions().clear();
-        getActions().addAll((Collection<? extends ActionSpecification>)newValue);
-        return;
       case KimPackage.OBSERVE_STATEMENT_BODY__STATES:
         getStates().clear();
         getStates().addAll((Collection<? extends ObservableSemantics>)newValue);
+        return;
+      case KimPackage.OBSERVE_STATEMENT_BODY__OBSERVATIONS:
+        getObservations().clear();
+        getObservations().addAll((Collection<? extends ObserveStatementBody>)newValue);
+        return;
+      case KimPackage.OBSERVE_STATEMENT_BODY__ACTIONS:
+        getActions().clear();
+        getActions().addAll((Collection<? extends ActionSpecification>)newValue);
         return;
       case KimPackage.OBSERVE_STATEMENT_BODY__ACCESSOR:
         setAccessor((Function)newValue);
@@ -539,11 +572,14 @@ public class ObserveStatementBodyImpl extends MinimalEObjectImpl.Container imple
       case KimPackage.OBSERVE_STATEMENT_BODY__PARENTS:
         getParents().clear();
         return;
-      case KimPackage.OBSERVE_STATEMENT_BODY__ACTIONS:
-        getActions().clear();
-        return;
       case KimPackage.OBSERVE_STATEMENT_BODY__STATES:
         getStates().clear();
+        return;
+      case KimPackage.OBSERVE_STATEMENT_BODY__OBSERVATIONS:
+        getObservations().clear();
+        return;
+      case KimPackage.OBSERVE_STATEMENT_BODY__ACTIONS:
+        getActions().clear();
         return;
       case KimPackage.OBSERVE_STATEMENT_BODY__ACCESSOR:
         setAccessor((Function)null);
@@ -573,10 +609,12 @@ public class ObserveStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return DOCSTRING_EDEFAULT == null ? docstring != null : !DOCSTRING_EDEFAULT.equals(docstring);
       case KimPackage.OBSERVE_STATEMENT_BODY__PARENTS:
         return parents != null && !parents.isEmpty();
-      case KimPackage.OBSERVE_STATEMENT_BODY__ACTIONS:
-        return actions != null && !actions.isEmpty();
       case KimPackage.OBSERVE_STATEMENT_BODY__STATES:
         return states != null && !states.isEmpty();
+      case KimPackage.OBSERVE_STATEMENT_BODY__OBSERVATIONS:
+        return observations != null && !observations.isEmpty();
+      case KimPackage.OBSERVE_STATEMENT_BODY__ACTIONS:
+        return actions != null && !actions.isEmpty();
       case KimPackage.OBSERVE_STATEMENT_BODY__ACCESSOR:
         return accessor != null;
       case KimPackage.OBSERVE_STATEMENT_BODY__METADATA:

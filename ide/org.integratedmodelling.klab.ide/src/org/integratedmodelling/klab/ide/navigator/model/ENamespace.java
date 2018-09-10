@@ -19,6 +19,7 @@ import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IKimSymbolDefinition;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -72,6 +73,16 @@ public class ENamespace extends EKimObject implements IKimNamespace {
 	@Override
 	public boolean isWorldviewBound() {
 		return delegate.isWorldviewBound();
+	}
+
+	@Override
+	public boolean isErrors() {
+		return delegate.isErrors() || Activator.klab().getErrors(getName()).size() > 0;
+	}
+	
+	@Override
+	public boolean isWarnings() {
+		return delegate.isWarnings() || Activator.klab().getWarnings(getName()).size() > 0;
 	}
 
 	@Override

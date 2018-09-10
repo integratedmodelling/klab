@@ -20,6 +20,7 @@ import java.util.Collection;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
+import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
@@ -84,9 +85,19 @@ public interface IComputationContext extends IParameters<String> {
 	 * Return the scheduler for the context, creating it if necessary.
 	 * 
 	 * @return a scheduler.
-	 * @throws IllegalStateException if the context is not temporal.
+	 * @throws IllegalStateException
+	 *             if the context is not temporal.
 	 */
 	IScheduler getScheduler();
+
+	/**
+	 * There is one report per root context. Actuators will add sections to it as
+	 * models are computed, based on the documentation templates associated with
+	 * models and their parts. The report can be compiled and rendered at any time.
+	 * 
+	 * @return
+	 */
+	IReport getReport();
 
 	/**
 	 * Inspect the network graph of the current context, returning all relationships

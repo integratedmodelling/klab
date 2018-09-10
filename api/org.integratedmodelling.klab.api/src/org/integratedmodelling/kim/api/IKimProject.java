@@ -10,6 +10,7 @@ public interface IKimProject {
 	static final String KLAB_CONFIGURATION_WORLDVIEW_ID = "klab.worldview";
 
 	static public final String SOURCE_FOLDER = "src";
+    static public final String DOCUMENTATION_FOLDER = "docs";
 	static public final String SCRIPT_FOLDER = "apps";
 	static public final String TESTS_FOLDER = "tests";
 	static public final String RESOURCE_FOLDER = "resources";

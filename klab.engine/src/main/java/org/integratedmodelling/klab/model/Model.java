@@ -5,35 +5,36 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.model.ComputableResource;
+import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Dataflows;
+import org.integratedmodelling.klab.Documentation;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
-import org.integratedmodelling.klab.api.knowledge.IDocumentation;
+import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
-import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.services.IDocumentationService;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.data.table.LookupTable;
-import org.integratedmodelling.klab.documentation.Documentation;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.CompatibleObservable;
@@ -42,7 +43,6 @@ import org.integratedmodelling.klab.scale.Scale;
 public class Model extends KimObject implements IModel {
 
     private String                    id;
-    private Optional<IDocumentation>  documentation        = Optional.empty();
     private List<IObservable>         observables          = new ArrayList<>();
     private List<IObservable>         dependencies         = new ArrayList<>();
     private Map<String, IObservable>  attributeObservables = new HashMap<>();
@@ -144,18 +144,16 @@ public class Model extends KimObject implements IModel {
 
         /*
          * TODO validate final output of typechain vs. observable and mode
+         * 
+         * Update: casts are now inserted, although any illegal type chain
+         * should be a compile error, or at least a warning if the cast is
+         * unlikely.
          */
-
+        
         if (model.getMetadata() != null) {
             setMetadata(new Metadata(model.getMetadata()));
         }
 
-        /*
-         * documentation
-         */
-        if (model.getDocumentationMetadata() != null) {
-            this.documentation = Optional.of(new Documentation(model.getDocumentationMetadata()));
-        }
     }
 
     /**
@@ -309,8 +307,29 @@ public class Model extends KimObject implements IModel {
     }
 
     @Override
-    public Optional<IDocumentation> getDocumentation() {
-        return documentation;
+    public Collection<IDocumentation> getDocumentation() {
+    	
+    	List<IDocumentation> ret = new ArrayList<>();
+    	
+    	/*
+    	 * TODO collect docs from tables and the like. Use scan annotations on the syntactic
+    	 * peers.
+    	 * Annotations.INSTANCE.collectAnnotations(model)
+    	 */
+    	
+        for (IAnnotation annotation : getAnnotations()) {
+            if (annotation.getName().equals(IDocumentationService.DOCUMENTED_ANNOTATION_ID)) {
+                String docId = annotation.get("value", String.class);
+                if (docId == null) {
+                    docId = annotation.get("id", String.class);
+                }
+                
+                if (docId != null && this.getNamespace().getProject() != null) {
+                    ret.add(Documentation.INSTANCE.getDocumentation(docId, annotation, this.getNamespace().getProject()));
+                }
+            }
+        }
+        return ret;
     }
 
     @Override
@@ -336,11 +355,7 @@ public class Model extends KimObject implements IModel {
     public void setDependencies(List<IObservable> dependencies) {
         this.dependencies = dependencies;
     }
-
-    public void setDocumentation(Optional<IDocumentation> documentation) {
-        this.documentation = documentation;
-    }
-
+    
     public void setObservables(List<IObservable> observables) {
         this.observables = observables;
     }

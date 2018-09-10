@@ -21,8 +21,9 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ObserveStatementBody#getConcept <em>Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObserveStatementBody#getDocstring <em>Docstring</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObserveStatementBody#getParents <em>Parents</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ObserveStatementBody#getActions <em>Actions</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObserveStatementBody#getStates <em>States</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ObserveStatementBody#getObservations <em>Observations</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ObserveStatementBody#getActions <em>Actions</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObserveStatementBody#getAccessor <em>Accessor</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObserveStatementBody#getMetadata <em>Metadata</em>}</li>
  * </ul>
@@ -128,22 +129,6 @@ public interface ObserveStatementBody extends EObject
   EList<String> getParents();
 
   /**
-   * Returns the value of the '<em><b>Actions</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kim.kim.ActionSpecification}.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Actions</em>' containment reference list isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Actions</em>' containment reference list.
-   * @see org.integratedmodelling.kim.kim.KimPackage#getObserveStatementBody_Actions()
-   * @model containment="true"
-   * @generated
-   */
-  EList<ActionSpecification> getActions();
-
-  /**
    * Returns the value of the '<em><b>States</b></em>' containment reference list.
    * The list contents are of type {@link org.integratedmodelling.kim.kim.ObservableSemantics}.
    * <!-- begin-user-doc -->
@@ -158,6 +143,38 @@ public interface ObserveStatementBody extends EObject
    * @generated
    */
   EList<ObservableSemantics> getStates();
+
+  /**
+   * Returns the value of the '<em><b>Observations</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.ObserveStatementBody}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Observations</em>' containment reference list isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Observations</em>' containment reference list.
+   * @see org.integratedmodelling.kim.kim.KimPackage#getObserveStatementBody_Observations()
+   * @model containment="true"
+   * @generated
+   */
+  EList<ObserveStatementBody> getObservations();
+
+  /**
+   * Returns the value of the '<em><b>Actions</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.ActionSpecification}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Actions</em>' containment reference list isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Actions</em>' containment reference list.
+   * @see org.integratedmodelling.kim.kim.KimPackage#getObserveStatementBody_Actions()
+   * @model containment="true"
+   * @generated
+   */
+  EList<ActionSpecification> getActions();
 
   /**
    * Returns the value of the '<em><b>Accessor</b></em>' containment reference.

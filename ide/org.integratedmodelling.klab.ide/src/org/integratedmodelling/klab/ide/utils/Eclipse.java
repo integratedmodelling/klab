@@ -464,9 +464,10 @@ public enum Eclipse {
 
     private void addMarker(IFile file, String message, int lineNumber, int severity) {
 
-        if (!file.exists())
+        if (!file.exists()) {
             return;
-
+        }
+        
         try {
             IMarker marker = file.createMarker(XTEXT_MARKER_TYPE);
             marker.setAttribute(IMarker.MESSAGE, message);
@@ -507,10 +508,17 @@ public enum Eclipse {
                     file.deleteMarkers(XTEXT_MARKER_TYPE, true, IResource.DEPTH_ZERO);
                 }
 
+                int i = 0;
                 for (CompileNotificationReference inot : notifications) {
 
+                	if (i == 0) {
+                		Activator.klab().resetCompileNotifications(inot.getNamespaceId());
+                	}
+                	
                     System.out.println("UPDATING MARKERS " + file + ": " + inot);
 
+                    Activator.klab().recordCompileNotification(inot);
+                    
                     if (inot.getLevel() == Level.SEVERE.intValue()) {
                         addMarker(file, inot.getMessage(), inot.getFirstLine(), IMarker.SEVERITY_ERROR);
                     } else if (inot.getLevel() == Level.WARNING.intValue()) {
@@ -518,6 +526,8 @@ public enum Eclipse {
                     } else if (inot.getLevel() == Level.INFO.intValue()) {
                         addMarker(file, inot.getMessage(), inot.getFirstLine(), IMarker.SEVERITY_INFO);
                     }
+                    
+                    i ++;
                 }
                 return Status.OK_STATUS;
             }

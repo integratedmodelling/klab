@@ -8,6 +8,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
+import org.integratedmodelling.klab.ide.Activator;
 
 public class EProject extends ENavigatorItem {
 
@@ -66,11 +67,21 @@ public class EProject extends ENavigatorItem {
     }
 
 	public boolean isErrors() {
-		return delegate.isErrors();
+		for (IKimNamespace child : delegate.getNamespaces()) {
+			if (Activator.klab().getErrors(child.getName()).size() > 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean isWarnings() {
-		return delegate.isWarnings();
+		for (IKimNamespace child : delegate.getNamespaces()) {
+			if (Activator.klab().getWarnings(child.getName()).size() > 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public IKimProject getProject() {

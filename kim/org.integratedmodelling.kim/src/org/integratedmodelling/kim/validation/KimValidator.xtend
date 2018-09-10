@@ -118,6 +118,7 @@ class KimValidator extends AbstractKimValidator {
 						KimPackage.Literals.NAMESPACE__IMPORTED, i, BAD_NAMESPACE_ID)
 					ns.errors = true
 				}
+				ns.addImport(import.name)
 				if (import.imports !== null) {
 					var importedVs = Kim.INSTANCE.parseList(import.imports, ns)
 					var j = 0

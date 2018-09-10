@@ -5,17 +5,19 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.rest.AttributeReference;
 
 public class ModelDocumentation {
 
-	private String trigger;
+	private IDocumentation.Trigger trigger;
+	private IDocumentation.Template.Section.Type sectionType;
 	private String section;
 	private String documentedId;
 	private String extended;
 	private String template;
 	private Set<String> documentedUrns = new HashSet<>();
-	
+
 	private Map<String, AttributeReference> variables = new HashMap<>();
 
 	public String getExtended() {
@@ -42,11 +44,11 @@ public class ModelDocumentation {
 		this.variables = variables;
 	}
 
-	public String getTrigger() {
+	public IDocumentation.Trigger getTrigger() {
 		return trigger;
 	}
 
-	public void setTrigger(String trigger) {
+	public void setTrigger(IDocumentation.Trigger trigger) {
 		this.trigger = trigger;
 	}
 
@@ -72,6 +74,14 @@ public class ModelDocumentation {
 
 	public void setDocumentedUrns(Set<String> documentedUrns) {
 		this.documentedUrns = documentedUrns;
+	}
+
+	public IDocumentation.Template.Section.Type getSectionType() {
+		return sectionType;
+	}
+
+	public void setSectionType(IDocumentation.Template.Section.Type sectionType) {
+		this.sectionType = sectionType;
 	}
 
 }
