@@ -3,16 +3,14 @@ package org.integratedmodelling.klab.documentation;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
-import org.integratedmodelling.klab.api.documentation.IDocumentation.Template.Section.Type;
 import org.integratedmodelling.klab.api.documentation.IReport;
+import org.integratedmodelling.klab.api.documentation.IReport.SectionRole;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.StringUtils;
-import org.integratedmodelling.klab.utils.Triple;
 
 /**
  * @author ferdinando.villa
@@ -20,8 +18,6 @@ import org.integratedmodelling.klab.utils.Triple;
  */
 public class Documentation implements IDocumentation {
 
-//    Map<Trigger, Template> byAction     = new HashMap<>();
-//    Map<String, Template>  byTag        = new HashMap<>();
 	List<TemplateImpl> templates = new ArrayList<>();
     
     // managed externally, needed to communicate changes 
@@ -52,13 +48,13 @@ public class Documentation implements IDocumentation {
     			TemplateImpl template = TemplateParser.parse(doc.getTemplate());
     			template.setSectionId(doc.getSection());
     			template.setTrigger(doc.getTrigger());
+    			template.setRole(SectionRole.valueOf(doc.getSection().toUpperCase()));
     			ret.templates.add(template);
     		}
     	}
         return ret;
     }
 
-    @Override
     public List<String> getErrors() {
         List<String> ret = new ArrayList<>();
         for (TemplateImpl t : templates) {
@@ -66,19 +62,6 @@ public class Documentation implements IDocumentation {
         }
         return ret;
     }
-
-    /**
-     * Merge in ONLY the tag templates, not actions. Action templates are model-specific.
-     * 
-     * @param other
-     */
-//    public void merge(IDocumentation other) {
-//        for (String s : ((Documentation) other).byTag.keySet()) {
-//            Template t = other.get(s);
-//            byTag.put(s, t);
-//            allTemplates.add((TemplateImpl) t);
-//        }
-//    }
 
     public TemplateImpl parseTemplate(String string, boolean isAction) {
         if (!isAction) {
@@ -90,53 +73,31 @@ public class Documentation implements IDocumentation {
     }
 
     @Override
-    public IDocumentation.Template get(Trigger actionType) {
+    public Collection<IDocumentation.Template> get(Trigger actionType) {
+    	List<IDocumentation.Template> ret = new ArrayList<>();
     	for (Template t : templates) {
     		if (t.getTrigger() == actionType) {
-    			return t;
+    			ret.add(t);
     		}
     	}
-    	return null;
+    	return ret;
     }
 
-//    @Override
-//    public IDocumentation.Template get(String tag) {
-//        return byTag.get(tag);
-//    }
-
-    public static Triple<String, Trigger, String> parseTemplateId(String templateId) {
-    	
-    	String docId;
-    	Trigger trigger;
-    	String sectionId;
-    	
-    	String[] tid = templateId.split("#");
-    	
-    	if (tid.length == 3) {
-    		docId = tid[0];
-    		trigger = Trigger.valueOf(tid[1].toUpperCase());
-    		sectionId = tid[2];
-    		
-    		return new Triple<>(docId, trigger, sectionId);
-    	}
-    	
-    	return null;
-    }
-    
     static class TemplateImpl implements IDocumentation.Template {
-
+    	
         private String        bodyAsIs = null;
-        private List<Section> sections = new ArrayList<>();
+        private List<SectionImpl> sections = new ArrayList<>();
         private List<String>  errors   = new ArrayList<>();
         private Trigger trigger;
         private String sectionId;
-        private IReport.ISection.Type sectionType;
+        private IReport.Section.Type sectionType;
+		private SectionRole role;
 
         public String getBodyAsIs() {
 			return bodyAsIs;
 		}
 
-		public void setBodyAsIs(String bodyAsIs) {
+        public void setBodyAsIs(String bodyAsIs) {
 			this.bodyAsIs = bodyAsIs;
 		}
 
@@ -148,33 +109,27 @@ public class Documentation implements IDocumentation {
 			this.errors = errors;
 		}
 
-		public void setSections(List<Section> sections) {
-			this.sections = sections;
-		}
-
-		@Override
-        public List<Section> getSections() {
+        public List<SectionImpl> getSections() {
             return sections;
         }
 
-        @Override
-        public String getActionCode() {
-            if (bodyAsIs != null) {
-                return bodyAsIs;
-            }
-            String ret = "";
-            for (Section s : sections) {
-                ret += s.getCode() + "\n";
-            }
-            return ret;
-        }
+//        public String getActionCode() {
+//            if (bodyAsIs != null) {
+//                return bodyAsIs;
+//            }
+//            String ret = "";
+//            for (SectionImpl s : sections) {
+//                ret += s.getCode() + "\n";
+//            }
+//            return ret;
+//        }
 
         public void addCall(String method, String parameters) {
             sections.add(new SectionImpl(method, parameters));
         }
 
         public void addCode(String code) {
-            sections.add(new SectionImpl(Type.ACTION_CODE, code));
+            sections.add(new SectionImpl(SectionImpl.Type.ACTION_CODE, code));
         }
 
         public void addText(String text) {
@@ -192,7 +147,7 @@ public class Documentation implements IDocumentation {
                     + StringUtils.pack(text)
                     + (tnlns > 1 ? StringUtils.repeat('\n', tnlns) : (tail.length() > 0 ? " " : ""));
 
-            sections.add(new SectionImpl(Type.TEMPLATE_STRING, text));
+            sections.add(new SectionImpl(SectionImpl.Type.TEMPLATE_STRING, text));
         }
 
         public void addError(String message) {
@@ -208,16 +163,14 @@ public class Documentation implements IDocumentation {
 			this.trigger = trigger;
 		}
 		
-		@Override
-		public IReport.ISection.Type getSectionType() {
+		public IReport.Section.Type getSectionType() {
 			return sectionType;
 		}
 
-		public void setSectionType(IReport.ISection.Type sectionType) {
+		public void setSectionType(IReport.Section.Type sectionType) {
 			this.sectionType = sectionType;
 		}
 
-		@Override
 		public String getSectionId() {
 			return sectionId;
 		}
@@ -225,10 +178,72 @@ public class Documentation implements IDocumentation {
 		public void setSectionId(String sectionId) {
 			this.sectionId = sectionId;
 		}
+
+		@Override
+		public IReport.Section compile(IComputationContext context) {
+			
+			ReportSection ret = new ReportSection(this.role);
+			ReportSection current = ret;
+			
+			for (SectionImpl section : sections) {
+				
+				if (section.getType() == SectionImpl.Type.REPORT_CALL) {
+					switch (section.method) {
+					case "section":
+						current = ret.getChild(ret, section.body);
+						break;
+					case "refdescription":
+						break;
+					case "reference":
+						break;
+					case "table":
+						break;
+					case "cite":
+						break;
+					case "footnote":
+						break;
+					case "describe":
+						break;
+					}
+				}
+			}
+			
+			return ret;
+		}
+
+		public SectionRole getRole() {
+			return role;
+		}
+
+		public void setRole(SectionRole role) {
+			this.role = role;
+		}
     }
 
-    static class SectionImpl implements IDocumentation.Template.Section {
+    static class SectionImpl {
 
+        public static enum Type {
+
+            /**
+             * string reported as-is, inheriting any templating facilities from the
+             * host action language.
+             */
+            TEMPLATE_STRING,
+
+            /**
+             * Action code, referenced in brackets in the documentation text, and inserted
+             * as-is in action code after documentation-specific preprocessing and before
+             * action preprocessing.
+             */
+            ACTION_CODE,
+
+            /**
+             * Call to the reporting system, referenced using annotation language (@) and
+             * translated into the correspondent call in the action implementation.
+             */
+            REPORT_CALL
+        }
+    	
         Type   type;
         String method;
         String body;
@@ -246,12 +261,10 @@ public class Documentation implements IDocumentation {
             this.body = body;
         }
 
-        @Override
         public Type getType() {
             return type;
         }
 
-        @Override
         public String getCode() {
 
             String ret = body;
@@ -283,21 +296,6 @@ public class Documentation implements IDocumentation {
             }
             return ret;
         }
-
-    }
-
-//    @Override
-//    public Collection<String> getTags() {
-//        return byTag.keySet();
-//    }
-
-    @Override
-    public Collection<Trigger> getTriggers() {
-    	Set<Trigger> ret = new HashSet<>();
-    	for (Template t : templates) {
-    		ret.add(t.getTrigger());
-    	}
-    	return ret;
     }
 
     public File getDocfile() {

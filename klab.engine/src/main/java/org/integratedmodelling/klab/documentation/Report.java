@@ -23,20 +23,26 @@
 package org.integratedmodelling.klab.documentation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.klab.api.documentation.IReport;
-import org.integratedmodelling.klab.api.documentation.IReport.ISection;
+import org.integratedmodelling.klab.api.documentation.IReport.Section;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
-import org.integratedmodelling.klab.utils.NameGenerator;
 import org.jgraph.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
 import com.vladsch.flexmark.ast.Node;
+import com.vladsch.flexmark.ext.attributes.AttributesExtension;
+import com.vladsch.flexmark.ext.definition.DefinitionExtension;
+import com.vladsch.flexmark.ext.enumerated.reference.EnumeratedReferenceExtension;
+import com.vladsch.flexmark.ext.footnotes.FootnoteExtension;
+import com.vladsch.flexmark.ext.media.tags.MediaTagsExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.options.MutableDataSet;
@@ -47,112 +53,45 @@ import com.vladsch.flexmark.util.options.MutableDataSet;
  * 
  * @author Ferd
  */
-public class Report  extends DefaultDirectedGraph<ISection, DefaultEdge> implements IReport {
+public class Report extends DefaultDirectedGraph<Section, DefaultEdge> implements IReport {
 
+	private Map<SectionRole, Section> mainSections = new HashMap<>();
+	
 	private static final long serialVersionUID = 3765708785874587978L;
+	
+	public void addSection(Section section) {
+		Section main = getMainSection(section.getRole());
+		addVertex(section);
+		addEdge(section, main);
+	}
+
+	/*
+	 * get or create the main section for a section.
+	 */
+	private Section getMainSection(SectionRole role) {
+		Section ret = mainSections.get(role);
+		if (ret == null) {
+			ret = new ReportSection(role);
+			mainSections.put(role, ret);
+			addVertex(ret);
+		}
+		return ret;
+	}
 
 	@Override
-    public List<ISection> getSections() {
-        // TODO Auto-generated method stub
-        return null;
+    public List<Section> getSections() {
+		List<Section> ret = new ArrayList<>();
+		for (SectionRole role : SectionRole.values()) {
+			if (mainSections.containsKey(role)) {
+				ret.add(mainSections.get(role));
+			}
+		}
+        return ret;
     }
-
-    @Override
-    public ISection getSection(String id) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String render(IComputationContext context) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
+	
     public static final String SEPARATOR = "\n\n----\n\n";
 
     IRuntimeContext            context   = null;
-//    Set<IObservation>          described = new HashSet<>();
-//    List<Reference>            citations = new ArrayList<>();
-
-    class Section {
-    	
-    	StringBuffer  text     = new StringBuffer();
-        String        title;
-        // String parent;
-        List<Section> children = new ArrayList<>();
-        String        id   = NameGenerator.shortUUID();
-
-        public Section(String id) {
-            this.title = id;
-        }
-
-        Section getChild(String id, boolean create) {
-            for (Section s : children) {
-                if (s.title.equals(id)) {
-                    return s;
-                }
-            }
-            Section ret = null;
-            if (create) {
-                ret = new Section(id);
-                // ret.parent = this;
-                children.add(ret);
-            }
-            return ret;
-        }
-    }
-
-    static class Reference {
-        String id;
-        String body; // ref with no body is an anchor
-        String link;
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((id == null) ? 0 : id.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            Reference other = (Reference) obj;
-            if (id == null) {
-                if (other.id != null)
-                    return false;
-            } else if (!id.equals(other.id))
-                return false;
-            return true;
-        }
-
-        public String linkIfAny() {
-            if (link != null) {
-                return "<a name=\"" + id + "\"></a>[" + body + "](" + link + ")";
-            }
-            return "<a name=\"" + id + "\"></a>" + body;
-        }
-
-    }
-
-//    Map<String, Reference> references     = new HashMap<>();
-//
-//    StringBuffer           text           = new StringBuffer();
-//    List<IReport>          pages          = new ArrayList<>();
-//    List<Section>          sections       = new ArrayList<>();
-//    Section                currentSection = null;
-
-//    String                 title          = "";
-//    String                 subtitle       = "";
-//    String                 name           = "";
-//    String                 id             = "rep" + NameGenerator.shortUUID();
 
     public Report() {
     	super(DefaultEdge.class);
@@ -161,65 +100,45 @@ public class Report  extends DefaultDirectedGraph<ISection, DefaultEdge> impleme
     public Report(IRuntimeContext context) {
     	super(DefaultEdge.class);
         this.context = context;
-//        // if we start with a context, add a Data section so it's at the
-//        // beginning. It will only be shown when written to.
-//        sections.add(new Section("Data"));
     }
 
-////    @Override
-//    public void write(String markdown) {
-////        if (currentSection != null) {
-////            currentSection.text.append(markdown);
-////        } else {
-////            text.append(markdown);
-////        }
-//    }
-
-//    @Override
-//    public void writeln(String markdown) {
-//        if (currentSection != null) {
-//            currentSection.text.append(markdown + "\n");
-//        } else {
-//            text.append(markdown + "\n");
-//        }
-//    }
 
 //    @Override
     public String asHTML() {
 
-        MutableDataSet options = new MutableDataSet();
+        MutableDataSet options = new MutableDataSet()
+        		.set(Parser.EXTENSIONS, Arrays.asList(
+        	FootnoteExtension.create(),
+        	AttributesExtension.create(),
+        	EnumeratedReferenceExtension.create(),
+        	MediaTagsExtension.create(),
+        	DefinitionExtension.create()
+        ));
 
-        // uncomment to set optional extensions
-        // options.set(Parser.EXTENSIONS, Arrays.asList(TablesExtension.create(),
-        // StrikethroughExtension.create()));
         // uncomment to convert soft-breaks to hard breaks
         // options.set(HtmlRenderer.SOFT_BREAK, "<br />\n");
 
         Parser parser = Parser.builder(options).build();
         HtmlRenderer renderer = HtmlRenderer.builder(options).build();
-        Node document = parser.parse(compileMarkdown());
-        return getHeader() + "<body>\n" + renderer.render(document) + "\n</body>\n";
+        Node document = parser.parse(render());
+//        return getHeader() + "<body>\n" + renderer.render(document) + "\n</body>\n";
+        return renderer.render(document);
     }
-
-    private String compileMarkdown() {
-		// TODO Auto-generated method stub
-		return "";
-	}
 
 	/**
      * Generate HTML header.
      * 
      * @return
      */
-    private String getHeader() {
-        String ret = "<head>\n";
-        if (getTitle() != null) {
-            ret += "   <title>" + getTitle() + "</title>\n";
-        }
-        ret += "<style>\n" + css + "\n</style>";
-        ret += "\n</head>\n";
-        return ret;
-    }
+//    private String getHeader() {
+//        String ret = "<head>\n";
+//        if (getTitle() != null) {
+//            ret += "   <title>" + getTitle() + "</title>\n";
+//        }
+//        ret += "<style>\n" + css + "\n</style>";
+//        ret += "\n</head>\n";
+//        return ret;
+//    }
 
 //    @Override
 //    public String asText() {
@@ -331,10 +250,10 @@ public class Report  extends DefaultDirectedGraph<ISection, DefaultEdge> impleme
 //    }
 
 //    @Override
-    public String getTitle() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+//    public String getTitle() {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
 
 //    @Override
 //    public String addAttachment(Object o) {
@@ -704,6 +623,16 @@ public class Report  extends DefaultDirectedGraph<ISection, DefaultEdge> impleme
             "    margin: 0 0 10px 0;\n" +
             "    width: 100%;\n" +
             "}";
+
+
+	@Override
+	public String render() {
+		StringBuffer ret = new StringBuffer(16*1024);
+		for (Section s : getSections()) {
+//			ret.append(s.)
+		}
+		return ret.toString();
+	}
 
 
 }

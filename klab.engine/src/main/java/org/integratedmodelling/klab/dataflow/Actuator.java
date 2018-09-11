@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
+import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -90,7 +91,7 @@ public class Actuator implements IActuator {
 		IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource, target);
 		mediationStrategy.add(new Pair<>(serviceCall, resource));
 	}
-	
+
 	public void addDocumentation(IDocumentation documentation) {
 		this.documentation.add(documentation);
 	}
@@ -313,6 +314,16 @@ public class Actuator implements IActuator {
 		 */
 		for (IAnnotation annotation : annotations) {
 			ctx.processAnnotation(annotation);
+		}
+
+		/*
+		 * when all is computed, reuse the context to render the documentation
+		 * templates.
+		 */
+		for (IDocumentation doc : documentation) {
+			for (IDocumentation.Template template : doc.get(Trigger.DEFINITION)) {
+				runtimeContext.getReport().addSection(template.compile(ctx));
+			}
 		}
 
 		return ret;

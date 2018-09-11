@@ -54,7 +54,7 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
 
 			this.monitor = (session.getMonitor()).get(this);
 			this.session = session;
-			this.taskDescription = "<task " + token + ": previewing data in resource " + resource.getUrn() + ">";
+			this.taskDescription = "Previewing resource " + resource.getUrn() + ">";
 
 			this.descriptor = new TaskReference();
 			this.descriptor.setId(token);

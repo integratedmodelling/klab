@@ -6,16 +6,19 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
+import org.integratedmodelling.klab.api.documentation.IReport;
+import org.integratedmodelling.klab.api.documentation.IReport.SectionRole;
 import org.integratedmodelling.klab.rest.AttributeReference;
 
 public class ModelDocumentation {
 
 	private IDocumentation.Trigger trigger;
-	private IDocumentation.Template.Section.Type sectionType;
+	private SectionRole sectionRole;
 	private String section;
 	private String documentedId;
 	private String extended;
 	private String template;
+	private IReport.Section.Type sectionType;
 	private Set<String> documentedUrns = new HashSet<>();
 
 	private Map<String, AttributeReference> variables = new HashMap<>();
@@ -76,11 +79,19 @@ public class ModelDocumentation {
 		this.documentedUrns = documentedUrns;
 	}
 
-	public IDocumentation.Template.Section.Type getSectionType() {
+	public SectionRole getSectionRole() {
+		return sectionRole;
+	}
+
+	public void setSectionRole(SectionRole sectionType) {
+		this.sectionRole = sectionType;
+	}
+
+	public IReport.Section.Type getSectionType() {
 		return sectionType;
 	}
 
-	public void setSectionType(IDocumentation.Template.Section.Type sectionType) {
+	public void setSectionType(IReport.Section.Type sectionType) {
 		this.sectionType = sectionType;
 	}
 

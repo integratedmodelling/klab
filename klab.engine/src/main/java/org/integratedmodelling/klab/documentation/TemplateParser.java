@@ -200,6 +200,6 @@ public class TemplateParser {
 				+ "                  The model description should come after that of its inputs. Each independent\n"
 				+ "                  piece of text is automatically wrapped in a paragraph.\n" + "                ");
 
-		System.out.println(((TemplateImpl) template).getActionCode());
+//		System.out.println(((TemplateImpl) template).getActionCode());
 	}
 }

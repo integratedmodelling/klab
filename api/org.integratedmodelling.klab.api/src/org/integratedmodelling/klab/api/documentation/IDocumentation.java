@@ -2,10 +2,10 @@ package org.integratedmodelling.klab.api.documentation;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimAction;
 import org.integratedmodelling.kim.api.IKimProject;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 
 /**
  * A documentation object corresponds to one tag in the \@documented k.IM annotation, associated
@@ -61,126 +61,31 @@ public interface IDocumentation {
      */
     public static interface Template {
 
-        /**
-         * Each section is a template element of a single type.
-         * 
-         * @author ferdinando.villa
-         *
-         */
-        public static interface Section {
-
-            public static enum Type {
-
-                /**
-                 * string reported as-is, inheriting any templating facilities from the
-                 * host action language.
-                 */
-                TEMPLATE_STRING,
-
-                /**
-                 * Action code, referenced in brackets in the documentation text, and inserted
-                 * as-is in action code after documentation-specific preprocessing and before
-                 * action preprocessing.
-                 */
-                ACTION_CODE,
-
-                /**
-                 * Call to the reporting system, referenced using annotation language (@) and
-                 * translated into the correspondent call in the action implementation.
-                 */
-                REPORT_CALL
-            }
-
-            /**
-             * Type of the section, determining the type of translation made.
-             * 
-             * @return
-             */
-            Type getType();
-
-            /**
-             * Body of the section, ready for inclusion in action language.
-             * 
-             * @return
-             */
-            String getCode();
-
-        }
-
-        /**
-         * Return all the sections in declaration order.
-         * 
-         * @return
-         */
-        List<Section> getSections();
-
-        /**
-         * Translate the list of section into actionable instructions in the supported
-         * action language.
-         * 
-         * @param actionLanguage
-         * @return
-         */
-        String getActionCode();
-
-        /**
-         * 
-         * @return
-         */
-		String getSectionId();
-
-		/**
-		 * 
-		 * @return
-		 */
-		IReport.ISection.Type getSectionType();
-
+  
+        
 		/**
 		 * 
 		 * @return
 		 */
 		Trigger getTrigger();
-
+        
+        /**
+         * Compile into a report section
+         * 
+         * @param context
+         * @return
+         */
+        IReport.Section compile(IComputationContext context);
     }
 
     /**
-     * Get the template corresponding to the passed action type, if any.
+     * Get all templates corresponding to the passed action type, if any.
      * 
      * @param actionType
      * @return
      */
-    Template get(Trigger actionType);
-
-//    /**
-//     * Get the template corresponding to the passed tag, if any.
-//     * 
-//     * @param tag
-//     * @return
-//     */
-//    Template get(String tag);
-
-//    /**
-//     * Return all non-action tags defined. For those, the corresponding
-//     * templates will most likely contain simply text.
-//     * 
-//     * @return
-//     */
-//    Collection<String> getTags();
-
-    /**
-     * Return all the action triggers defined.
-     * 
-     * @return
-     */
-    Collection<Trigger> getTriggers();
-
-    /**
-     * Check that this returns an empty list before using; if not, report
-     * errors.
-     * 
-     * @return
-     */
-    List<String> getErrors();
+    Collection<Template> get(Trigger actionType);
+    
 
     /**
      * Return the file path of the documentation catalog for the passed documentation ID. They
