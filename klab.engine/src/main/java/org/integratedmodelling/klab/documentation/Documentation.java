@@ -19,88 +19,70 @@ import org.integratedmodelling.klab.utils.StringUtils;
 public class Documentation implements IDocumentation {
 
 	List<TemplateImpl> templates = new ArrayList<>();
-    
-    // managed externally, needed to communicate changes 
-    private File docfile;
 
-    /**
-     * Empty documentation, used when a project has a docId but nothing
-     * was specified.
-     * 
-     * @return
-     */
-    public static Documentation empty() {
-        return new Documentation();
-    }
-    
-    /**
-     * Read and compile all the templates corresponding to the passed docId.
-     *  
-     * @param documentation
-     * @param docId
-     * @return
-     */
-    public static Documentation create(ProjectDocumentation documentation, String docId) {
-    	Documentation ret = new Documentation();
-    	for (String key : documentation.keySet()) {
-    		if (key.startsWith(docId+"#")) {
-    			ModelDocumentation doc = documentation.get(key);
-    			TemplateImpl template = TemplateParser.parse(doc.getTemplate());
-    			template.setSectionId(doc.getSection());
-    			template.setTrigger(doc.getTrigger());
-    			template.setRole(SectionRole.valueOf(doc.getSection().toUpperCase()));
-    			ret.templates.add(template);
-    		}
-    	}
-        return ret;
-    }
+	// managed externally, needed to communicate changes
+	private File docfile;
 
-    public List<String> getErrors() {
-        List<String> ret = new ArrayList<>();
-        for (TemplateImpl t : templates) {
-            ret.addAll(t.errors);
-        }
-        return ret;
-    }
+	/**
+	 * Empty documentation, used when a project has a docId but nothing was
+	 * specified.
+	 * 
+	 * @return
+	 */
+	public static Documentation empty() {
+		return new Documentation();
+	}
 
-    public TemplateImpl parseTemplate(String string, boolean isAction) {
-        if (!isAction) {
-            TemplateImpl ret = new TemplateImpl();
-            ret.bodyAsIs = string;
-            return ret;
-        }
-        return (TemplateImpl) TemplateParser.parse(string);
-    }
+	/**
+	 * Read and compile all the templates corresponding to the passed docId.
+	 * 
+	 * @param documentation
+	 * @param docId
+	 * @return
+	 */
+	public static Documentation create(ProjectDocumentation documentation, String docId) {
+		Documentation ret = new Documentation();
+		for (String key : documentation.keySet()) {
+			if (key.startsWith(docId + "#")) {
+				ModelDocumentation doc = documentation.get(key);
+				TemplateImpl template = TemplateParser.parse(doc.getTemplate());
+				template.setSectionId(doc.getSection());
+				template.setTrigger(doc.getTrigger());
+				template.setRole(SectionRole.valueOf(doc.getSection().toUpperCase()));
+				ret.templates.add(template);
+			}
+		}
+		return ret;
+	}
 
-    @Override
-    public Collection<IDocumentation.Template> get(Trigger actionType) {
-    	List<IDocumentation.Template> ret = new ArrayList<>();
-    	for (Template t : templates) {
-    		if (t.getTrigger() == actionType) {
-    			ret.add(t);
-    		}
-    	}
-    	return ret;
-    }
+	public List<String> getErrors() {
+		List<String> ret = new ArrayList<>();
+		for (TemplateImpl t : templates) {
+			ret.addAll(t.errors);
+		}
+		return ret;
+	}
 
-    static class TemplateImpl implements IDocumentation.Template {
-    	
-        private String        bodyAsIs = null;
-        private List<SectionImpl> sections = new ArrayList<>();
-        private List<String>  errors   = new ArrayList<>();
-        private Trigger trigger;
-        private String sectionId;
-        private IReport.Section.Type sectionType;
+	@Override
+	public Collection<IDocumentation.Template> get(Trigger actionType) {
+		List<IDocumentation.Template> ret = new ArrayList<>();
+		for (Template t : templates) {
+			if (t.getTrigger() == actionType) {
+				ret.add(t);
+			}
+		}
+		return ret;
+	}
+
+	static class TemplateImpl implements IDocumentation.Template {
+
+		private List<SectionImpl> sections = new ArrayList<>();
+		private List<String> errors = new ArrayList<>();
+		private Trigger trigger;
+		private String sectionId;
+		private IReport.Section.Type sectionType;
 		private SectionRole role;
-
-        public String getBodyAsIs() {
-			return bodyAsIs;
-		}
-
-        public void setBodyAsIs(String bodyAsIs) {
-			this.bodyAsIs = bodyAsIs;
-		}
-
+		
 		public List<String> getErrors() {
 			return errors;
 		}
@@ -109,60 +91,50 @@ public class Documentation implements IDocumentation {
 			this.errors = errors;
 		}
 
-        public List<SectionImpl> getSections() {
-            return sections;
-        }
+		public List<SectionImpl> getSections() {
+			return sections;
+		}
 
-//        public String getActionCode() {
-//            if (bodyAsIs != null) {
-//                return bodyAsIs;
-//            }
-//            String ret = "";
-//            for (SectionImpl s : sections) {
-//                ret += s.getCode() + "\n";
-//            }
-//            return ret;
-//        }
+		public void addCall(String method, String parameters) {
+			sections.add(new SectionImpl(method, parameters));
+		}
 
-        public void addCall(String method, String parameters) {
-            sections.add(new SectionImpl(method, parameters));
-        }
+		public void addCode(String code) {
+			sections.add(new SectionImpl(SectionImpl.Type.ACTION_CODE, code));
+		}
 
-        public void addCode(String code) {
-            sections.add(new SectionImpl(SectionImpl.Type.ACTION_CODE, code));
-        }
+		public void addText(String text) {
 
-        public void addText(String text) {
-            /**
-             * Keep only newlines in leading/trailing whitespace and only if there are 2
-             * or more. Otherwise add a space if there was any whitespace at all. This is
-             * pretty complex but the alternative is to write docs in horrible formatting
-             * throughout the k.IM code.
-             */
-            String lead = StringUtils.getLeadingWhitespace(text);
-            int lnlns = StringUtils.countMatches(lead, "\n");
-            String tail = StringUtils.getTrailingWhitespace(text);
-            int tnlns = StringUtils.countMatches(tail, "\n");
-            text = (lnlns > 1 ? StringUtils.repeat('\n', lnlns) : (lead.length() > 0 ? " " : ""))
-                    + StringUtils.pack(text)
-                    + (tnlns > 1 ? StringUtils.repeat('\n', tnlns) : (tail.length() > 0 ? " " : ""));
+			/**
+			 * Keep only newlines in leading/trailing whitespace and only if there are 2 or
+			 * more. Otherwise add a space if there was any whitespace at all. This is
+			 * pretty complex but the alternative is to write docs in horrible formatting
+			 * throughout the k.IM code.
+			 */
+			String lead = StringUtils.getLeadingWhitespace(text);
+			int lnlns = StringUtils.countMatches(lead, "\n");
+			String tail = StringUtils.getTrailingWhitespace(text);
+			int tnlns = StringUtils.countMatches(tail, "\n");
+			text = (lnlns > 1 ? StringUtils.repeat('\n', lnlns) : (lead.length() > 0 ? " " : ""))
+					+ StringUtils.pack(text)
+					+ (tnlns > 1 ? StringUtils.repeat('\n', tnlns) : (tail.length() > 0 ? " " : ""));
 
-            sections.add(new SectionImpl(SectionImpl.Type.TEMPLATE_STRING, text));
-        }
+			sections.add(new SectionImpl(SectionImpl.Type.TEMPLATE_STRING, text));
+		}
 
-        public void addError(String message) {
-            errors.add(message);
-        }
+		public void addError(String message) {
+			errors.add(message);
+		}
 
-        @Override
-        public Trigger getTrigger() {
+		@Override
+		public Trigger getTrigger() {
 			return trigger;
 		}
 
 		public void setTrigger(Trigger trigger) {
 			this.trigger = trigger;
 		}
-		
+
 		public IReport.Section.Type getSectionType() {
 			return sectionType;
 		}
@@ -181,18 +153,18 @@ public class Documentation implements IDocumentation {
 
 		@Override
 		public IReport.Section compile(IComputationContext context) {
-			
+
 			ReportSection ret = new ReportSection(this.role);
 			ReportSection current = ret;
-			
+
 			for (SectionImpl section : sections) {
-				
+
 				if (section.getType() == SectionImpl.Type.REPORT_CALL) {
 					switch (section.method) {
 					case "section":
 						current = ret.getChild(ret, section.body);
 						break;
-					case "refdescription":
+					case "tag":
 						break;
 					case "reference":
 						break;
@@ -202,12 +174,24 @@ public class Documentation implements IDocumentation {
 						break;
 					case "footnote":
 						break;
-					case "describe":
+					case "figure":
+						break;
+					case "insert":
 						break;
 					}
+					
+				} else if (section.getType() == SectionImpl.Type.TEMPLATE_STRING) {
+
+					// exec code as template, add to current
+					System.out.println("EXEC-STRING " + section.getCode());
+
+				} else if (section.getType() == SectionImpl.Type.ACTION_CODE) {
+
+					// exec code and add result to current
+					System.out.println("EXEC-ACTION " + section.getCode());
 				}
 			}
-			
+
 			return ret;
 		}
 
@@ -218,93 +202,92 @@ public class Documentation implements IDocumentation {
 		public void setRole(SectionRole role) {
 			this.role = role;
 		}
-    }
+	}
 
-    static class SectionImpl {
+	static class SectionImpl {
 
-        public static enum Type {
+		public static enum Type {
 
-            /**
-             * string reported as-is, inheriting any templating facilities from the
-             * host action language.
-             */
-            TEMPLATE_STRING,
+			/**
+			 * string reported as-is, inheriting any templating facilities from the host
+			 * action language.
+			 */
+			TEMPLATE_STRING,
 
-            /**
-             * Action code, referenced in brackets in the documentation text, and inserted
-             * as-is in action code after documentation-specific preprocessing and before
-             * action preprocessing.
-             */
-            ACTION_CODE,
+			/**
+			 * Action code, referenced in brackets in the documentation text, and inserted
+			 * as-is in action code after documentation-specific preprocessing and before
+			 * action preprocessing.
+			 */
+			ACTION_CODE,
 
-            /**
-             * Call to the reporting system, referenced using annotation language (@) and
-             * translated into the correspondent call in the action implementation.
-             */
-            REPORT_CALL
-        }
-    	
-        Type   type;
-        String method;
-        String body;
+			/**
+			 * Call to the reporting system, referenced using annotation language (@) and
+			 * translated into the correspondent call in the action implementation.
+			 */
+			REPORT_CALL
+		}
 
-        // creates an expression or text section
-        public SectionImpl(Type type, String body) {
-            this.type = type;
-            this.body = body;
-        }
+		Type type;
+		String method;
+		String body;
 
-        // creates a call section
-        public SectionImpl(String method, String body) {
-            this.type = Type.REPORT_CALL;
-            this.method = method.startsWith("@") ? method.substring(1) : method;
-            this.body = body;
-        }
+		// creates an expression or text section
+		public SectionImpl(Type type, String body) {
+			this.type = type;
+			this.body = body;
+		}
 
-        public Type getType() {
-            return type;
-        }
+		// creates a call section
+		public SectionImpl(String method, String body) {
+			this.type = Type.REPORT_CALL;
+			this.method = method.startsWith("@") ? method.substring(1) : method;
+			this.body = body;
+		}
 
-        public String getCode() {
+		public Type getType() {
+			return type;
+		}
 
-            String ret = body;
-            if (type == Type.REPORT_CALL) {
+		public String getCode() {
 
-                // TODO use outside if needed, otherwise reduce to code
-                ret = "REPORT.get(self).append(REPORT.get(self)." + method + "(" + body + "));";
+			String ret = body;
+			if (type == Type.REPORT_CALL) {
 
-            } else if (type == Type.ACTION_CODE) {
+				// TODO use outside if needed, otherwise reduce to code
+				ret = "REPORT.get(self).append(REPORT.get(self)." + method + "(" + body + "));";
 
-                String vid = "_" + NameGenerator.shortUUID();
-                String res = "_" + NameGenerator.shortUUID();
+			} else if (type == Type.ACTION_CODE) {
 
-                ret = "def " + vid + " = { " + body + "};\n";
-                ret += "def " + res + " = " + vid + ".call();\n";
-                ret += "if (" + res + " != null) { _section.append(" + res + ".toString()); }";
+				String vid = "_" + NameGenerator.shortUUID();
+				String res = "_" + NameGenerator.shortUUID();
 
-            } else if (type == Type.TEMPLATE_STRING) {
-                if (body.isEmpty()) {
-                    return "";
-                }
-                String vid = "_" + NameGenerator.shortUUID();
-                if (!body.contains("\n")) {
-                    ret = "def " + vid + " = \"" + body + "\";\n";
-                } else {
-                    ret = "def " + vid + " = \"\"\"" + body + "\"\"\"\n;\n";
-                }
-                ret += "_section.append(" + vid + ");";
-            }
-            return ret;
-        }
-    }
+				ret = "def " + vid + " = { " + body + "};\n";
+				ret += "def " + res + " = " + vid + ".call();\n";
+				ret += "if (" + res + " != null) { _section.append(" + res + ".toString()); }";
 
-    public File getDocfile() {
-        return docfile;
-    }
+			} else if (type == Type.TEMPLATE_STRING) {
+				if (body.isEmpty()) {
+					return "";
+				}
+				String vid = "_" + NameGenerator.shortUUID();
+				if (!body.contains("\n")) {
+					ret = "def " + vid + " = \"" + body + "\";\n";
+				} else {
+					ret = "def " + vid + " = \"\"\"" + body + "\"\"\"\n;\n";
+				}
+				ret += "_section.append(" + vid + ");";
+			}
+			return ret;
+		}
+	}
 
-    public void setDocfile(File docfile) {
-        this.docfile = docfile;
-    }
+	public File getDocfile() {
+		return docfile;
+	}
 
+	public void setDocfile(File docfile) {
+		this.docfile = docfile;
+	}
 
 }

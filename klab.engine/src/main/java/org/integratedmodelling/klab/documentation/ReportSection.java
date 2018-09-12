@@ -15,7 +15,8 @@ public class ReportSection extends Parameters<String> implements Section {
 	IReport.SectionRole role;
 	String id = "rsec" + NameGenerator.shortUUID();
 	String name = null;
-	List<Section> children = new ArrayList<>();
+	List<ReportSection> children = new ArrayList<>();
+	String body = "";
 	
 	ReportSection(SectionRole role) {
 		this.role = role;
@@ -64,9 +65,27 @@ public class ReportSection extends Parameters<String> implements Section {
 		return true;
 	}
 
-	public ReportSection getChild(ReportSection ret, String titlePath) {
-		// TODO Auto-generated method stub
-		return null;
+	public ReportSection getChild(ReportSection parent, String titlePath) {
+		ReportSection ret = parent;
+		while (titlePath.startsWith("/")) {
+			titlePath = titlePath.substring(1);
+		}
+		String[] path = titlePath.split("\\/");
+		for (int i = 0; i < path.length; i++) {
+			ret = ret.getOrCreateChildNamed(path[i]);
+		}
+		return ret;
+	}
+
+	private ReportSection getOrCreateChildNamed(String string) {
+		for (ReportSection child : children) {
+			if (child.name.equals(string)) {
+				return child;
+			}
+		}
+		ReportSection ret = new ReportSection(this);
+		ret.name = string;
+		return ret;
 	}
 
 	

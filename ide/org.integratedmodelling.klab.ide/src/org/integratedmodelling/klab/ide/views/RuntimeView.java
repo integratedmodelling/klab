@@ -61,6 +61,7 @@ import org.integratedmodelling.klab.rest.Capabilities;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class RuntimeView extends ViewPart {
+	
 	private static class ContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object inputElement) {
 			return new Object[0];

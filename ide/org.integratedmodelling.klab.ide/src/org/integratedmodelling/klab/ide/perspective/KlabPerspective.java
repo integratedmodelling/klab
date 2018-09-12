@@ -5,6 +5,7 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout;
 import org.integratedmodelling.klab.ide.views.DocumentationEditor;
+import org.integratedmodelling.klab.ide.views.ReferencesEditor;
 import org.integratedmodelling.klab.ide.views.ResourceEditor;
 
 public class KlabPerspective implements IPerspectiveFactory {
@@ -14,10 +15,11 @@ public class KlabPerspective implements IPerspectiveFactory {
 	 */
 	public void createInitialLayout(IPageLayout layout) {
 		
-		// ugly trick to stack specific views in editor area. 
+		// ugly trick to stack specific views in editor area. Apparently the only way to do so.
 		if (layout instanceof ModeledPageLayout) {
 			ModeledPageLayout layout4 = (ModeledPageLayout) layout;
 			layout4.stackView(DocumentationEditor.ID, layout.getEditorArea(), false);
+			layout4.stackView(ReferencesEditor.ID, layout.getEditorArea(), false);
 			layout4.stackView(ResourceEditor.ID, layout.getEditorArea(), false);
 		}
 

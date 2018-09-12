@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.ide.ui.wizards.NewProjectWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.NewScriptWizard;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.ide.views.DocumentationEditor;
+import org.integratedmodelling.klab.ide.views.ReferencesEditor;
 import org.integratedmodelling.klab.rest.ProjectModificationNotification;
 import org.integratedmodelling.klab.rest.ProjectModificationRequest;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
@@ -173,6 +174,18 @@ public class KlabNavigatorActions {
 					.showView(DocumentationEditor.ID);
 			if (view != null) {
 				((DocumentationEditor) view).setTarget(model.getDocId(), model);;
+			}
+		} catch (PartInitException e) {
+			Eclipse.INSTANCE.handleException(e);
+		}
+    }
+    
+    public static void editReferences(EProject project) {
+		try {
+			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+					.showView(ReferencesEditor.ID);
+			if (view != null) {
+				((ReferencesEditor) view).setTarget(project);;
 			}
 		} catch (PartInitException e) {
 			Eclipse.INSTANCE.handleException(e);
