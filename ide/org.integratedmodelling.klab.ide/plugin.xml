@@ -190,6 +190,11 @@
             id="org.integratedmodelling.klab.ide.views.SpatialReferenceView"
             name="Geolocation">
       </view>
+      <view
+            class="org.integratedmodelling.klab.ide.views.ReferencesEditor"
+            id="org.integratedmodelling.klab.ide.views.ReferencesEditor"
+            name="References editor">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

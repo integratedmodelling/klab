@@ -2,6 +2,8 @@ package org.integratedmodelling.klab.ide.views;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -21,56 +23,41 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
-import org.integratedmodelling.klab.api.documentation.IReport;
-import org.integratedmodelling.klab.api.documentation.IReport.SectionRole;
-import org.integratedmodelling.klab.api.monitoring.IMessage;
-import org.integratedmodelling.klab.client.documentation.ProjectDocumentation;
 import org.integratedmodelling.klab.client.documentation.ProjectReferences;
 import org.integratedmodelling.klab.documentation.BibTexFields;
-import org.integratedmodelling.klab.documentation.ModelDocumentation;
 import org.integratedmodelling.klab.documentation.Reference;
-import org.integratedmodelling.klab.ide.Activator;
-import org.integratedmodelling.klab.ide.navigator.model.EDocumentable;
-import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
-import org.integratedmodelling.klab.rest.DocumentationReference;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 
-public class DocumentationEditor extends ViewPart {
+public class ReferencesEditor extends ViewPart {
 
-	public static final String ID = "org.integratedmodelling.klab.ide.views.DocumentationEditor";
-	private EDocumentable item;
-	private String docId;
+	public static final String ID = "org.integratedmodelling.klab.ide.views.ReferencesEditor"; //$NON-NLS-1$
+	private String referenceId;
 	private Table table;
 	private Text text;
 	private Label itemIdLabel;
 
-	ProjectDocumentation documentation;
 	ProjectReferences references;
 	protected boolean dirty;
 	private EProject project;
-	protected String currentEvent = "Definition";
-	protected String currentSection = "Methods";
 	private StyledText editor;
+	private Text tag;
 	private TableViewer tableViewer;
 
-	public DocumentationEditor() {
+	public ReferencesEditor() {
 	}
 
 	class ReferencesContentProvider implements IStructuredContentProvider {
@@ -101,32 +88,24 @@ public class DocumentationEditor extends ViewPart {
 		}
 
 	}
-	
-	public void setTarget(String docId, EDocumentable item) {
-		this.item = item;
-		this.docId = docId;
-		this.project = ((ENavigatorItem) item).getEParent(EProject.class);
-		// load docs for this project
-		this.documentation = new ProjectDocumentation(docId, this.project.getProject());
-		this.references = new ProjectReferences(this.project.getProject());
-		loadReferences();
-		loadItem();
-	}
 
-	private void loadReferences() {
-		tableViewer.setInput(references);
+	public void setTarget(EProject project) {
+		this.project = project;
+		this.references = new ProjectReferences(project.getProject());
+		this.itemIdLabel.setText(project.getName());
+		refreshReferences();
 	}
 
 	private void loadItem() {
 		Display.getDefault().asyncExec(() -> {
-			itemIdLabel.setText(docId);
-			ModelDocumentation template = documentation.get(getCurrentKey());
-			editor.setText(template == null ? "" : template.getTemplate());
+			itemIdLabel.setText(referenceId);
+			Reference template = references.get(getCurrentKey());
+			// editor.setText(template == null ? "" : template.getTemplate());
 		});
 	}
 
 	private String getCurrentKey() {
-		return docId + "#" + currentEvent + "#" + currentSection;
+		return referenceId;
 	}
 
 	/**
@@ -146,64 +125,54 @@ public class DocumentationEditor extends ViewPart {
 		Label lblNewLabel_1 = new Label(titleArea, SWT.NONE);
 		lblNewLabel_1.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
 		lblNewLabel_1.setBounds(0, 0, 55, 15);
-		lblNewLabel_1.setText("Documentation editor:");
+		lblNewLabel_1.setText("Project references: ");
 
 		itemIdLabel = new Label(titleArea, SWT.NONE);
 		itemIdLabel.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
 		itemIdLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-
-		ExpandableComposite expandBar = new ExpandableComposite(parent, SWT.NONE);
-		expandBar.setBackground(SWTResourceManager.getColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
-		expandBar.setText("View source code");
-		expandBar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-
-		StyledText styledText = new StyledText(expandBar, SWT.BORDER);
-		styledText.setEditable(false);
 		GridData gd_styledText = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_styledText.heightHint = 140;
-		styledText.setLayoutData(gd_styledText);
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		composite.setLayout(new GridLayout(5, false));
+		GridLayout gl_composite = new GridLayout(4, false);
+		gl_composite.marginWidth = 0;
+		gl_composite.marginHeight = 0;
+		composite.setLayout(gl_composite);
 
 		Label lblEvent = new Label(composite, SWT.NONE);
 		lblEvent.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblEvent.setText("Event:");
+		lblEvent.setText("Tag (must be unique):");
 
-		Combo combo = new Combo(composite, SWT.READ_ONLY);
-		combo.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// SAVE any changes before switching
-				currentEvent = combo.getText();
-			}
-		});
-		combo.setItems(new String[] { "Initialization", "Definition", "Termination", "Instantiation", "Transition",
-				"Event type..." });
-		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		combo.select(1);
-
-		Label lblSection = new Label(composite, SWT.NONE);
-		lblSection.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblSection.setText("Section:");
-
-		Combo combo_1 = new Combo(composite, SWT.READ_ONLY);
-		combo_1.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// SAVE any changes before switching
-				currentSection = combo_1.getText();
-			}
-		});
-		combo_1.setItems(
-				new String[] { "Introduction", "Methods", "Results", "Discussion", "Conclusions", "Appendix" });
-		combo_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		combo_1.select(1);
+		tag = new Text(composite, SWT.BORDER);
+		tag.setEditable(true);
+		tag.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		Button lblNewLabel = new Button(composite, SWT.NONE);
-		lblNewLabel.setToolTipText("Add a custom section");
+		lblNewLabel.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent e) {
+				addCurrent();
+			}
+		});
+		lblNewLabel.setToolTipText("Add the current reference");
 		lblNewLabel.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/add.png"));
+
+		Button lblNewLabel2 = new Button(composite, SWT.NONE);
+		lblNewLabel2.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent e) {
+				editor.setText("");
+				tag.setText("");
+				dirty = false;
+				if (getTitle().startsWith("*")) {
+					setPartName(getTitle());
+				}
+			}
+		});
+		lblNewLabel2.setToolTipText("Clear fields");
+		lblNewLabel2.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/Player Record.png"));
+
 
 		editor = new StyledText(parent, SWT.BORDER | SWT.WRAP | /* SWT.H_SCROLL | */SWT.V_SCROLL);
 		editor.addKeyListener(new KeyAdapter() {
@@ -220,37 +189,56 @@ public class DocumentationEditor extends ViewPart {
 			}
 		});
 		editor.setAlwaysShowScrollBars(false);
-		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1));
 
 		Group grpCrossreferences = new Group(parent, SWT.NONE);
 		grpCrossreferences.setLayout(new GridLayout(1, false));
-		grpCrossreferences.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-		grpCrossreferences.setText("Cross-references");
+		grpCrossreferences.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		grpCrossreferences.setText("Existing references (double click to edit)");
 
 		tableViewer = new TableViewer(grpCrossreferences, SWT.BORDER | SWT.FULL_SELECTION);
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				Object o = ((StructuredSelection) (event.getSelection())).getFirstElement();
 				if (o instanceof Reference) {
-					String key = ((Reference) o).get(BibTexFields.KEY);
-					editor.insert("@cite(" + key + ")");
+					tag.setText(((Reference) o).get(BibTexFields.KEY));
+					editor.setText(((Reference) o).get(BibTexFields.EXAMPLE_CITATION));
 				}
 			}
 		});
 		table = tableViewer.getTable();
+		table.setHeaderVisible(true);
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		table.setLinesVisible(true);
-		
-		TableColumn tblclmnNewColumn = new TableColumn(table, SWT.NONE);
-		tblclmnNewColumn.setWidth(160);
-		tblclmnNewColumn.setText("New Column");
-		
-		TableColumn tblclmnNewColumn_1 = new TableColumn(table, SWT.NONE);
-		tblclmnNewColumn_1.setWidth(720);
-		tblclmnNewColumn_1.setText("Citation");
-		
 		tableViewer.setContentProvider(new ReferencesContentProvider());
 		tableViewer.setLabelProvider(new ReferencesLabelProvider());
+
+		TableColumn tblclmnNewColumn = new TableColumn(table, SWT.NONE);
+		tblclmnNewColumn.setWidth(100);
+		tblclmnNewColumn.setText("Tag");
+
+		TableColumn tblclmnReference = new TableColumn(table, SWT.NONE);
+		tblclmnReference.setWidth(740);
+		tblclmnReference.setText("Citation");
+
+		Menu menu = new Menu(table);
+		table.setMenu(menu);
+
+		MenuItem mntmDeleteReference = new MenuItem(menu, SWT.NONE);
+		mntmDeleteReference.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Object o = ((StructuredSelection) (tableViewer.getSelection())).getFirstElement();
+				if (o instanceof Reference) {
+					if (Eclipse.INSTANCE.confirm("Confirm deletion of " + ((Reference) o).get(BibTexFields.KEY) + "?")) {
+						references.remove(((Reference) o).get(BibTexFields.KEY).toString());
+						references.write();
+						refreshReferences();
+					}
+				}
+			}
+		});
+		mntmDeleteReference.setText("Delete reference");
 
 		text = new Text(grpCrossreferences, SWT.BORDER);
 		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -281,7 +269,7 @@ public class DocumentationEditor extends ViewPart {
 				}
 				if (ok) {
 					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-							.hideView(DocumentationEditor.this);
+							.hideView(ReferencesEditor.this);
 				}
 			}
 		});
@@ -291,35 +279,39 @@ public class DocumentationEditor extends ViewPart {
 		createActions();
 		initializeToolBar();
 		initializeMenu();
-		
+	}
+
+	protected void addCurrent() {
+
+		String tag = this.tag.getText();
+		String txt = this.editor.getText();
+
+		if (tag.trim().isEmpty() || txt.trim().isEmpty()) {
+			Eclipse.INSTANCE.beep();
+		} else {
+			referenceId = tag;
+			Reference reference = new Reference();
+			reference.put(BibTexFields.EXAMPLE_CITATION, txt.trim());
+			reference.put(BibTexFields.KEY, tag.trim());
+			this.references.put(referenceId, reference);
+			this.references.write();
+			dirty = false;
+			dirty = false;
+			if (getTitle().startsWith("*")) {
+				setPartName(getTitle().substring(2));
+			}
+			editor.setText("");
+			ReferencesEditor.this.tag.setText("");
+			refreshReferences();
+		}
+	}
+
+	private void refreshReferences() {
+		Display.getDefault().asyncExec(() -> tableViewer.setInput(this.references));
 	}
 
 	private synchronized void save() {
-
-		ModelDocumentation template = documentation.get(getCurrentKey());
-
-		if (template == null) {
-
-			template = new ModelDocumentation();
-			template.setDocumentedId(docId);
-			template.setSection(currentSection);
-			template.setTrigger(Trigger.valueOf(currentEvent.toUpperCase()));
-			template.setSectionType(IReport.Section.Type.BODY);
-			template.setSectionRole(SectionRole.valueOf(currentSection.toUpperCase()));
-
-			documentation.put(getCurrentKey(), template);
-		}
-		template.getDocumentedUrns().add(((ENavigatorItem) item).getId());
-		template.setTemplate(editor.getText());
-		documentation.write();
-		dirty = false;
-		if (getTitle().startsWith("*")) {
-			setPartName(getTitle().substring(2));
-		}
-		if (Activator.engineMonitor().isRunning()) {
-			Activator.session().send(IMessage.MessageClass.ProjectLifecycle, IMessage.Type.DocumentationModified,
-					new DocumentationReference(docId, project.getName()));
-		}
+		addCurrent();
 	}
 
 	public void dispose() {

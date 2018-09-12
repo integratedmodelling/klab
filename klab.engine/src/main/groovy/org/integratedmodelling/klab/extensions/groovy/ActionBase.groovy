@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.api.observations.IState
 import org.integratedmodelling.klab.api.observations.ISubject
 import org.integratedmodelling.klab.api.provenance.IArtifact
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor
+import org.integratedmodelling.klab.contrib.math.ExponentialIntegrals
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext
 import org.integratedmodelling.klab.exceptions.KlabException
 import org.integratedmodelling.klab.extensions.groovy.model.Concept
@@ -178,6 +179,15 @@ abstract class ActionBase extends Script {
     def erf(double d1, double d2) {
         Erf.erf(d1, d2);
     }
+	
+	/**
+	 * Exponential integral
+	 * @param d
+	 * @return
+	 */
+	def exponentialIntegral(double d) {
+		ExponentialIntegrals.exponentialIntegralEi(d);
+	}
 
     /**
      * Missing math functions, using Apache math

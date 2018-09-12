@@ -49,6 +49,8 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 				(project) -> KlabNavigatorActions.deleteProject(project));
 		action("New namespace...", "Create a new namespace", "namespace-checked.png", EProject.class,
 				(project) -> KlabNavigatorActions.addNamespace(project));
+		action("Edit references", "Edit the bibliographic references and sections linked to the project", "documentation.gif", 
+				EProject.class, (project) -> KlabNavigatorActions.editReferences(project)).activate();
 		action("Delete namespace", "Delete the selected namespace", "namespace-checked.png", ENamespace.class,
 				(namespace) -> KlabNavigatorActions.deleteNamespace(namespace, wSite.getPage()));
 		action("New script...", "Create a new script file", "script.gif", EScriptFolder.class,
@@ -80,10 +82,10 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
                 (resource) -> KlabNavigatorActions.moveResource(resource));
         action("Delete resource", "Delete the selected resource", "resource.gif", EResource.class,
 				(resource) -> KlabNavigatorActions.deleteResource(resource));
-		action("Edit documentation", "Edit the documentation for this model", "resource.gif", EModel.class,
+		action("Edit documentation", "Edit the documentation for this model", "documentation.gif", EModel.class,
 				(model) -> KlabNavigatorActions.editDocumentation(model))
 			.activate((model) -> model.isDocumented());
-		action("Edit documentation", "Edit the documentation for this item", "resource.gif", EDefinition.class,
+		action("Edit documentation", "Edit the documentation for this item", "documentation.gif", EDefinition.class,
 				(model) -> KlabNavigatorActions.editDocumentation(model))
 			.activate((model) -> model.isDocumented());
 	}

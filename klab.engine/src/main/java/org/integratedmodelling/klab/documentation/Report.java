@@ -63,6 +63,10 @@ public class Report extends DefaultDirectedGraph<Section, DefaultEdge> implement
 		Section main = getMainSection(section.getRole());
 		addVertex(section);
 		addEdge(section, main);
+		for (Section child : ((ReportSection)section).children) {
+			addVertex(child);
+			addEdge(child, section);
+		}
 	}
 
 	/*
