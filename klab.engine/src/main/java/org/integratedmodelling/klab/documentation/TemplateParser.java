@@ -31,18 +31,6 @@ import org.integratedmodelling.klab.documentation.Documentation.TemplateImpl;
 public class TemplateParser {
 
 	static TokenizerProperties props;
-	// static Set<String> sectionAnnotations = new HashSet<>();
-
-	static {
-		// sectionAnnotations.add("title");
-		// sectionAnnotations.add("quote");
-		// sectionAnnotations.add("author");
-		// sectionAnnotations.add("description");
-		// sectionAnnotations.add("methods");
-		// sectionAnnotations.add("results");
-		// sectionAnnotations.add("reference");
-		// sectionAnnotations.add("anchor");
-	}
 
 	/*
 	 * Token identifiers
@@ -59,16 +47,10 @@ public class TemplateParser {
 			props.setParseFlags(Flags.F_RETURN_WHITESPACES);
 			props.setSeparators(null);
 			props.addPattern("@[A-Za-z][A-Za-z]*", ANNOTATION);
-			// props.addPattern("##*", HEADER_MARKER);
-			// props.addBlockComment("/*", "*/");
-			// props.addLineComment("//");
 			props.addSpecialSequence("(", OPEN_PARENTHESIS);
 			props.addSpecialSequence(")", CLOSED_PARENTHESIS);
 			props.addSpecialSequence("[", OPEN_BRACKET);
 			props.addSpecialSequence("]", CLOSED_BRACKET);
-			// props.addSpecialSequence("=", EQUAL_SIGN);
-			// props.addSpecialSequence(",", COMMA);
-			// props.addString("\"", "\"", "\\");
 		}
 	}
 

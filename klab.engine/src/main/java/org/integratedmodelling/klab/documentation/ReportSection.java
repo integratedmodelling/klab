@@ -205,7 +205,7 @@ public class ReportSection extends Parameters<String> implements Section {
 		return render(0);
 	}
 	
-	public String render(int level) {
+	private String render(int level) {
 
 		String ret = "";
 		
