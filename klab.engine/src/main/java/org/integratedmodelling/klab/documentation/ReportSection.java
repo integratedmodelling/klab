@@ -6,6 +6,7 @@ import java.util.List;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.documentation.IReport.Section;
 import org.integratedmodelling.klab.api.documentation.IReport.SectionRole;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.StringUtils;
@@ -16,16 +17,16 @@ public class ReportSection extends Parameters<String> implements Section {
 	String id = "rsec" + NameGenerator.shortUUID();
 	String name = null;
 	List<ReportSection> children = new ArrayList<>();
-	String body = "";
-	
+	StringBuffer body = new StringBuffer(512);
+
 	ReportSection(SectionRole role) {
 		this.role = role;
 	}
-	
+
 	ReportSection(ReportSection parent) {
 		parent.children.add(this);
 	}
-	
+
 	public String getName() {
 		return name == null ? StringUtils.capitalize(role.name()) : name;
 	}
@@ -88,6 +89,137 @@ public class ReportSection extends Parameters<String> implements Section {
 		return ret;
 	}
 
+	/*
+	 * ----------------------------------------------------------------------------
+	 * API callable from Groovy code
+	 */
+	public void write(Object... objects) {
+		for (Object o : objects) {
+			body.append(o == null ? "" : o.toString());
+		}
+	}
+
+	public void separator() {
+		body.append("\n---\n");
+	}
+
+	public void paragraph(Object... objects) {
+		body.append("\n---\n");
+		write(objects);
+		body.append("\n---\n");
+	}
+
+	/*
+	 * ----------------------------------------------------------------------------
+	 * API receiving the report calls through template instructions
+	 */
+
+	/**
+	 * Create the {#reference:tag} attribute to refer back to the containing span.
+	 * 
+	 * @param args
+	 *            tag
+	 * @param context
+	 */
+	public void tag(Object[] args, IComputationContext context) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * Create a [@type:tag] link to the passed tag, resolving the type
+	 * appropriately, optionally around the passed text.
+	 * 
+	 * @param processArguments
+	 *            tag, text
+	 * @param context
+	 */
+	public void link(Object[] processArguments, IComputationContext context) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * Produce a table from the first argument, which must identify a k.IM table in
+	 * the context, and format it with an optional tag and caption.
+	 * 
+	 * @param processArguments
+	 * @param context
+	 */
+	public void table(Object[] processArguments, IComputationContext context) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * Produce a citation for the passed bibliographic tag and insert the
+	 * correspondent section in the bibliography.
+	 * 
+	 * @param processArguments
+	 * @param context
+	 */
+	public void cite(Object[] processArguments, IComputationContext context) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * Add a footnote to the document using flexmark's extension; assign and insert
+	 * the tag.
+	 * 
+	 * @param processArguments
+	 * @param context
+	 */
+	public void footnote(Object[] processArguments, IComputationContext context) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * Produce a figure appropriate to the first argument: figure if raster map or
+	 * shape, inline code if model, etc.; format it with an optional tag and
+	 * caption.
+	 * 
+	 * @param processArguments
+	 * @param context
+	 */
+	public void figure(Object[] processArguments, IComputationContext context) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * Insert the contents of a passed tag into the section at the current insertion
+	 * point.
+	 * 
+	 * @param processArguments
+	 * @param context
+	 */
+	public void insert(Object[] processArguments, IComputationContext context) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public String render() {
+		return render(0);
+	}
 	
-	
+	public String render(int level) {
+
+		String ret = "";
+		
+		if (name != null) {
+			ret += "\n" + StringUtils.repeat('#', level + 1) + " " + name + "\n";
+		}
+		
+		ret += body.toString();
+
+		for (ReportSection child : children) {
+			ret += child.render(level + 1);
+		}
+		
+		return ret;
+	}
+
 }

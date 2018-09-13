@@ -5,11 +5,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.documentation.IReport;
+import org.integratedmodelling.klab.api.documentation.IReport.Section;
 import org.integratedmodelling.klab.api.documentation.IReport.SectionRole;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.utils.NameGenerator;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.StringUtils;
 
 /**
@@ -82,7 +86,7 @@ public class Documentation implements IDocumentation {
 		private String sectionId;
 		private IReport.Section.Type sectionType;
 		private SectionRole role;
-		
+
 		public List<String> getErrors() {
 			return errors;
 		}
@@ -165,30 +169,37 @@ public class Documentation implements IDocumentation {
 						current = ret.getChild(ret, section.body);
 						break;
 					case "tag":
+						current.tag(processArguments(section.body, 0), context);
 						break;
-					case "reference":
+					case "link":
+						current.link(processArguments(section.body, 0), context);
 						break;
 					case "table":
-						break;
+						current.table(processArguments(section.body, 0), context);
+					break;
 					case "cite":
+						current.cite(processArguments(section.body, 0), context);
 						break;
 					case "footnote":
+						current.footnote(processArguments(section.body, 0), context);
 						break;
 					case "figure":
+						current.figure(processArguments(section.body, 0), context);
 						break;
 					case "insert":
+						current.insert(processArguments(section.body, 0), context);
+						break;
+					default:
+						// if it's not one of those, just eval for the side effects
+						section.evaluate(context, current);
 						break;
 					}
-					
-				} else if (section.getType() == SectionImpl.Type.TEMPLATE_STRING) {
 
-					// exec code as template, add to current
-					System.out.println("EXEC-STRING " + section.getCode());
+				} else if (section.getType() == SectionImpl.Type.TEMPLATE_STRING
+						|| section.getType() == SectionImpl.Type.ACTION_CODE) {
 
-				} else if (section.getType() == SectionImpl.Type.ACTION_CODE) {
+					current.body.append(section.evaluate(context, current));
 
-					// exec code and add result to current
-					System.out.println("EXEC-ACTION " + section.getCode());
 				}
 			}
 
@@ -201,6 +212,20 @@ public class Documentation implements IDocumentation {
 
 		public void setRole(SectionRole role) {
 			this.role = role;
+		}
+		
+
+		/**
+		 * Split an argument string into a max of argCount comma-separated arguments,
+		 * plus anything following the last as a last string argument
+		 * 
+		 * @param body
+		 * @param argCount
+		 * @return
+		 */
+		public Object[] processArguments(String body, int argCount) {
+			// TODO Auto-generated method stub
+			return null;
 		}
 	}
 
@@ -249,13 +274,25 @@ public class Documentation implements IDocumentation {
 			return type;
 		}
 
+		public String evaluate(IComputationContext context, Section section) {
+			Object ret = "";
+			Parameters<String> parameters = new Parameters<>();
+			parameters.putAll(context);
+			parameters.put("_section", section);
+			IExpression compiled = Extensions.INSTANCE.compileExpression(getCode(), context,
+					Extensions.DEFAULT_EXPRESSION_LANGUAGE);
+			if (compiled != null) {
+				ret = compiled.eval(parameters, context);
+			}
+			return ret == null ? "" : ret.toString();
+		}
+
 		public String getCode() {
 
 			String ret = body;
 			if (type == Type.REPORT_CALL) {
 
-				// TODO use outside if needed, otherwise reduce to code
-				ret = "REPORT.get(self).append(REPORT.get(self)." + method + "(" + body + "));";
+				ret = "_section." + method + "(" + body + ");";
 
 			} else if (type == Type.ACTION_CODE) {
 
@@ -264,9 +301,10 @@ public class Documentation implements IDocumentation {
 
 				ret = "def " + vid + " = { " + body + "};\n";
 				ret += "def " + res + " = " + vid + ".call();\n";
-				ret += "if (" + res + " != null) { _section.append(" + res + ".toString()); }";
+				ret += "if (" + res + " != null) { return " + res + ".toString(); }";
 
 			} else if (type == Type.TEMPLATE_STRING) {
+
 				if (body.isEmpty()) {
 					return "";
 				}
@@ -276,7 +314,7 @@ public class Documentation implements IDocumentation {
 				} else {
 					ret = "def " + vid + " = \"\"\"" + body + "\"\"\"\n;\n";
 				}
-				ret += "_section.append(" + vid + ");";
+				ret += "return " + vid + ";";
 			}
 			return ret;
 		}

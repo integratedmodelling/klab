@@ -423,6 +423,11 @@ public interface API {
 			public static final String RUN_CONTEXT = "/engine/session/observation/run/" + P_CONTEXT;
 
 			/**
+			 * Format contextualization report as per request and return it.
+			 */
+			public static final String REPORT_CONTEXT = "/engine/session/observation/report/" + P_CONTEXT;
+			
+			/**
 			 * Endpoints to access tasks.
 			 * 
 			 * @author ferdinando.villa

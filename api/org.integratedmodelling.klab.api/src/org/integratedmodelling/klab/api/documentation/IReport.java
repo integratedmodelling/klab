@@ -35,6 +35,13 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
  */
 public interface IReport {
 
+	public enum Encoding {
+		MARKDOWN,
+		HTML,
+		PDF,
+		LATEX
+	}
+	
 	/**
 	 * Roles and titles of main sections, also providing the ordering for the
 	 * default report template.
@@ -89,6 +96,14 @@ public interface IReport {
 		 */
 		SectionRole getRole();
 
+		/**
+		 * Render and return the final string representation in the 
+		 * encoding language. 
+		 * 
+		 * @return
+		 */
+		String render();
+
 	}
 
 	/**
@@ -113,6 +128,6 @@ public interface IReport {
 	 * 
 	 * @return
 	 */
-	String render();
+	String render(Encoding encoding);
 
 }

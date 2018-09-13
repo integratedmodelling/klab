@@ -11,6 +11,7 @@ import org.integratedmodelling.contrib.jtopas.Tokenizer;
 import org.integratedmodelling.contrib.jtopas.TokenizerException;
 import org.integratedmodelling.contrib.jtopas.TokenizerProperties;
 import org.integratedmodelling.klab.api.documentation.IDocumentation.Template;
+import org.integratedmodelling.klab.documentation.Documentation.SectionImpl;
 import org.integratedmodelling.klab.documentation.Documentation.TemplateImpl;
 
 /**
@@ -101,7 +102,7 @@ public class TemplateParser {
 					}
 				} else if (token.getCompanion().equals(ANNOTATION)) {
 					// just substitute report call in expressions
-					ret += "REPORT.get(self)." + value.substring(1);
+					ret += "_section." + value.substring(1);
 				} else {
 					ret += value;
 				}
@@ -200,6 +201,11 @@ public class TemplateParser {
 				+ "                  The model description should come after that of its inputs. Each independent\n"
 				+ "                  piece of text is automatically wrapped in a paragraph.\n" + "                ");
 
-//		System.out.println(((TemplateImpl) template).getActionCode());
+		for (SectionImpl section : ((TemplateImpl) template).getSections()) {
+			System.out.println(section.getType() 
+					+ "\n--------------------------------------\n"
+					+ section.getCode()
+					+ "\n--------------------------------------");
+		}
 	}
 }
