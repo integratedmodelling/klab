@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  */
 @RestController
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin(origins = "*")
 @Secured(Roles.PUBLIC)
 public class KlabController {
 
