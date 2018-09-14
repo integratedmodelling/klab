@@ -25,6 +25,10 @@ import org.integratedmodelling.klab.utils.Pair;
 /**
  * A ITask that creates a root subject within a Session.
  * 
+ * FIXME this should be a secondary task following a context observation; if the URN is observer
+ * without a set context, the ROI becomes the scale of the resource. That's it - just copy the logics
+ * in regular observations.
+ * 
  * @author ferdinando.villa
  *
  */
@@ -76,18 +80,19 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
                         Pair<IArtifact, IArtifact> data = Resources.INSTANCE
                                 .resolveResourceToArtifact(urn, monitor);
 
+                        ret = (ISubject) data.getFirst();
+
                         /*
                          * notify context
                          */
                         session.getMonitor()
                                 .send(Message.create(session
                                         .getId(), IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation, Observations.INSTANCE
-                                                .createArtifactDescriptor((IObservation) data
-                                                        .getFirst(), null, ITime.INITIALIZATION, -1, true)
+                                                .createArtifactDescriptor(ret, null, ITime.INITIALIZATION, -1, true)
                                                 .withTaskId(token)));
 
-                        ret = (ISubject) data.getFirst();
-
+                        // TODO must finish this task and start another, otherwise no context gets registered.
+                        
                         /*
                          * notify result
                          */
