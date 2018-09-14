@@ -126,7 +126,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
                 parent.observation = new ObservationGroup((Observable) context
                         .getTargetSemantics(), (Scale) context
                                 .getScale(), context, context.getTargetSemantics().getArtifactType());
-                ((ObservationGroup)parent.observation).chain(obs);
+                ((ObservationGroup) parent.observation).chain(obs);
             }
             ((Artifact) parent.observation).chain(this.observation);
         }

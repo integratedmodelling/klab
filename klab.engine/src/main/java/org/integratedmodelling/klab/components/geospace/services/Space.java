@@ -1,9 +1,13 @@
 package org.integratedmodelling.klab.components.geospace.services;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -13,53 +17,68 @@ import org.integratedmodelling.klab.utils.Pair;
 
 public class Space implements IExpression {
 
-  @Override
-  public Object eval(IParameters<String> parameters, IComputationContext context)
-      throws KlabException {
+    @Override
+    public Object eval(IParameters<String> parameters, IComputationContext context)
+            throws KlabException {
 
-    Shape shape = null;
-    Double resolution = null;
-    org.integratedmodelling.klab.components.geospace.extents.Space ret = null;
+        Shape shape = null;
+        Double resolution = null;
+        String urn = null;
 
-    if (parameters.containsKey("shape")) {
-      shape = Shape.create(parameters.get("shape").toString());
+        org.integratedmodelling.klab.components.geospace.extents.Space ret = null;
+
+        if (parameters.containsKey("shape")) {
+            shape = Shape.create(parameters.get("shape", String.class));
+        }
+        if (parameters.containsKey("grid")) {
+            resolution = parseResolution(parameters.get("grid", String.class));
+        }
+        if (parameters.containsKey("urn")) {
+            urn = parameters.get("urn", String.class);
+        }
+
+        if (shape != null) {
+            if (resolution != null) {
+                ret = org.integratedmodelling.klab.components.geospace.extents.Space
+                        .create(shape, resolution);
+            } else {
+                ret = org.integratedmodelling.klab.components.geospace.extents.Space.create(shape);
+            }
+        } else if (urn != null) {
+
+            Pair<IArtifact, IArtifact> artifact = Resources.INSTANCE.resolveResourceToArtifact(urn, context.getMonitor());
+            if (artifact == null || artifact.getSecond().groupSize() < 1
+                    || artifact.getSecond().getGeometry().getDimension(Type.SPACE) == null) {
+                throw new IllegalArgumentException("urn " + urn + " does not resolve to a spatial object");
+            }
+
+            return ((IScale) artifact.getSecond().iterator().next().getGeometry()).getSpace();
+
+        }
+
+        // TODO Auto-generated method stub
+
+        return ret;
     }
-    if (parameters.containsKey("grid")) {
-      resolution = parseResolution(parameters.get("grid").toString());
+
+    /**
+     * Parse a string like "1 km" and return the meters in it. Throw an exception if this cannot be
+     * parsed.
+     * 
+     * @param string
+     * @return the resolution in meters
+     * @throws KlabValidationException
+     */
+    public static double parseResolution(String string) throws KlabValidationException {
+
+        Pair<Double, String> pd = MiscUtilities.splitNumberFromString(string);
+
+        if (pd.getFirst() == null || pd.getSecond() == null)
+            throw new KlabValidationException("wrong resolution specification: " + string);
+
+        IUnit uu = Units.INSTANCE.getUnit(pd.getSecond());
+        IUnit mm = Units.INSTANCE.getUnit("m");
+        return mm.convert(pd.getFirst().doubleValue(), uu).doubleValue();
     }
-
-    if (shape != null) {
-      if (resolution != null) {
-        ret = org.integratedmodelling.klab.components.geospace.extents.Space.create(shape,
-            resolution);
-      } else {
-        ret = org.integratedmodelling.klab.components.geospace.extents.Space.create(shape);
-      }
-    }
-
-    // TODO Auto-generated method stub
-    
-    return ret;
-  }
-
-  /**
-   * Parse a string like "1 km" and return the meters in it. Throw an exception if this cannot be
-   * parsed.
-   * 
-   * @param string
-   * @return the resolution in meters
-   * @throws KlabValidationException
-   */
-  public static double parseResolution(String string) throws KlabValidationException {
-
-    Pair<Double, String> pd = MiscUtilities.splitNumberFromString(string);
-
-    if (pd.getFirst() == null || pd.getSecond() == null)
-      throw new KlabValidationException("wrong resolution specification: " + string);
-
-    IUnit uu = Units.INSTANCE.getUnit(pd.getSecond());
-    IUnit mm = Units.INSTANCE.getUnit("m");
-    return mm.convert(pd.getFirst().doubleValue(), uu).doubleValue();
-  }
 
 }

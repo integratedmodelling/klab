@@ -221,7 +221,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
             // check for URN and launch a viewer task if so.
             IResource resource = Resources.INSTANCE.resolveResource(urn);
             if (resource != null) {
-                return new UrnContextualizationTask(this, resource);
+                return new UrnContextualizationTask(this, urn);
             } else {
                 throw new KlabContextualizationException("cannot resolve URN " + urn);
             }

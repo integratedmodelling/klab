@@ -30,11 +30,13 @@ import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * The <code>IResourceService</code> service provides access to all
@@ -46,223 +48,233 @@ import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
  */
 public interface IResourceService {
 
-	/**
-	 * An importer for programmatic import of local artifact.
-	 * 
-	 * @author ferdinando.villa
-	 *
-	 */
-	public interface Importer {
+    /**
+     * An importer for programmatic import of local artifact.
+     * 
+     * @author ferdinando.villa
+     *
+     */
+    public interface Importer {
 
-		/**
-		 * Specify the adapter. Optional.
-		 * 
-		 * @param adapter
-		 * @return the importer itself
-		 */
-		Importer withAdapter(String adapter);
-		
-		/**
-		 * Specify a parameter and its value. Optional.
-		 * 
-		 * @param adapter
-		 * @return the importer itself
-		 */
-		Importer with(String parameter, Object value);
+        /**
+         * Specify the adapter. Optional.
+         * 
+         * @param adapter
+         * @return the importer itself
+         */
+        Importer withAdapter(String adapter);
 
-		/**
-		 * Specify an ID for the resource. Optional.
-		 * 
-		 * @param adapter
-		 * @return the importer itself
-		 */
+        /**
+         * Specify a parameter and its value. Optional.
+         * 
+         * @param adapter
+         * @return the importer itself
+         */
+        Importer with(String parameter, Object value);
 
-		Importer withId(String id);
+        /**
+         * Specify an ID for the resource. Optional.
+         * 
+         * @param adapter
+         * @return the importer itself
+         */
 
-		/**
-		 * Call the validation and import service and return the finished resource.
-		 * 
-		 * @return
-		 */
-		IResource finish();
-	}
-	
-	/**
-	 * The local resource catalog is for resources created from local files or
-	 * specifications. These resources are created by the {@link IResourceValidator
-	 * validator} of an {@link IResourceAdapter adapter}, and must be published
-	 * before they can be shared. A project containing local URNs cannot be
-	 * published on a k.LAB node.
-	 *
-	 * @return the local resource catalog
-	 */
-	IResourceCatalog getLocalResourceCatalog();
+        Importer withId(String id);
 
-	/**
-	 * The public resource catalog contains resources after they have been published
-	 * by the {@link IResourcePublisher publisher} of the adapter that created the
-	 * resource. These resources can be shared with others and projects using their
-	 * URNs can be shared on k.LAB nodes.
-	 *
-	 * @return the public resource catalog
-	 */
-	IResourceCatalog getPublicResourceCatalog();
+        /**
+         * Call the validation and import service and return the finished resource.
+         * 
+         * @return
+         */
+        IResource finish();
+    }
 
-	/**
-	 * Resolve the passed URN to a resource.
-	 *
-	 * @param urn
-	 *            the
-	 * @return a resource
-	 * @throws org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException
-	 * @throws org.integratedmodelling.klab.exceptions.KlabAuthorizationException
-	 */
-	IResource resolveResource(String urn) throws KlabResourceNotFoundException, KlabAuthorizationException;
+    /**
+     * The local resource catalog is for resources created from local files or
+     * specifications. These resources are created by the {@link IResourceValidator
+     * validator} of an {@link IResourceAdapter adapter}, and must be published
+     * before they can be shared. A project containing local URNs cannot be
+     * published on a k.LAB node.
+     *
+     * @return the local resource catalog
+     */
+    IResourceCatalog getLocalResourceCatalog();
 
-	/**
-	 * Resolve a resource to data in a passed geometry. This involves retrieval of
-	 * the adapter, decoding of the resource (remotely or locally according to the
-	 * resource itself) and building of the data object. If no exceptions are
-	 * thrown, the result is guaranteed consistent with the geometry and free of
-	 * errors.
-	 * 
-	 * @param resource
-	 * @param urnParameters
-	 * @param geometry
-	 * @param context
-	 * @return KlabException if anything goes wrong
-	 */
-	IKlabData getResourceData(IResource resource, Map<String,String> urnParameters, IGeometry geometry, IComputationContext context);
+    /**
+     * The public resource catalog contains resources after they have been published
+     * by the {@link IResourcePublisher publisher} of the adapter that created the
+     * resource. These resources can be shared with others and projects using their
+     * URNs can be shared on k.LAB nodes.
+     *
+     * @return the public resource catalog
+     */
+    IResourceCatalog getPublicResourceCatalog();
 
-	/**
-	 * Create or update a locally available resource from a specification or/and by
-	 * examining a local file. This is the beginning of a resource's life cycle.
-	 * When a resource is successfully created, its data will be stored in the
-	 * project under the resources folder, and synchronized with the local resource
-	 * catalog. If the file has been seen already, the resource is updated in the
-	 * local catalog with full history records.
-	 * <p>
-	 * The local resource will have a
-	 * {@code [urn:klab:]local:user:project:resourceid.version} URN which is visible
-	 * only within the project. All files and needed info are copied within the
-	 * resources project area.
-	 * <p>
-	 * The resource ID is created from the file name if an id field is not present
-	 * in the parameters. It is an error to pass a null file and no id.
-	 * <p>
-	 * The update parameter controls whether revisions are possible with files that
-	 * don't have a newer timestamp than the resource. It will normally be set to
-	 * true only when the resource creation is created explicitly. This function is
-	 * also used when reading or updating a resource for a file named in a k.IM
-	 * model.
-	 * <p>
-	 * Local resource versions are in the form 0.0.build with the build starting at
-	 * 1 and increasing at each update. Publishing them modifies the minor version,
-	 * starting at 0.1.build. Only their owners' explicit action, or peer review in
-	 * a reviewed repository, modifies the major version to make them 1.x.b or
-	 * anything higher than the initial version.
-	 * 
-	 * @param resourceId
-	 *            the ID for the resource, which will be part of the URN and must be
-	 *            unique within a project.
-	 * @param file
-	 *            a {@link java.io.File} object. May be null if userData contain all
-	 *            relevant info. The local path of the file (starting at the project
-	 *            folder, inclusive) is stored in metadata and checked in case of
-	 *            redefinition, so that the URN is versioned rather than recreated.
-	 * @param userData
-	 *            user data. May be empty (if all that's needed is the file). Must
-	 *            contain a suitable id if the file is null. These are used to
-	 *            define URN parameters at the discretion of the adapter.
-	 * @param project
-	 *            the project for the resource. Can't be null. All local resources
-	 *            are project-local; only public resources are visible globally.
-	 * @param adapterType
-	 *            pass null to interrogate all adapters and choose the first fitting
-	 *            adapter. Must be passed if file is null.
-	 * @param update
-	 *            if true, allow updating of the resource every time this is called.
-	 *            Otherwise just create if absent or update when the timestamp on
-	 *            the resource is older than that of the file.
-	 * @param asynchronous
-	 *            if true, spawn a validator thread and return a proxy for the
-	 *            resource without blocking.
-	 * @param monitor
-	 *            a
-	 *            {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor}
-	 *            object.
-	 * @return a {@link org.integratedmodelling.klab.api.data.IResource} object.
-	 *         with a local URN if successful.
-	 */
-	IResource createLocalResource(String resourceId, File file, IParameters<String> userData, IProject project,
-			String adapterType, boolean update, boolean asynchronous, IMonitor monitor);
+    /**
+     * Resolve the passed URN to a resource.
+     *
+     * @param urn
+     *            the
+     * @return a resource
+     * @throws org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException
+     * @throws org.integratedmodelling.klab.exceptions.KlabAuthorizationException
+     */
+    IResource resolveResource(String urn) throws KlabResourceNotFoundException, KlabAuthorizationException;
 
-	/**
-	 * The workspace with all local projects. The only workspace that is not read
-	 * only and is monitored for changes, with automatic reload of any updated
-	 * knowledge. Never null, possibly empty.
-	 *
-	 * @return a {@link org.integratedmodelling.klab.api.knowledge.IWorkspace}
-	 *         object.
-	 */
-	IWorkspace getLocalWorkspace();
+    /**
+     * Resolve a resource to data in a passed geometry. This involves retrieval of
+     * the adapter, decoding of the resource (remotely or locally according to the
+     * resource itself) and building of the data object. If no exceptions are
+     * thrown, the result is guaranteed consistent with the geometry and free of
+     * errors.
+     * 
+     * @param resource
+     * @param urnParameters
+     * @param geometry
+     * @param context
+     * @return KlabException if anything goes wrong
+     */
+    IKlabData getResourceData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, IComputationContext context);
 
-	/**
-	 * The upper ontology workspace, automatically synchronized and read only.
-	 *
-	 * @return a {@link org.integratedmodelling.klab.api.knowledge.IWorkspace}
-	 *         object.
-	 */
-	IWorkspace getUpperOntology();
+    /**
+     * Create or update a locally available resource from a specification or/and by
+     * examining a local file. This is the beginning of a resource's life cycle.
+     * When a resource is successfully created, its data will be stored in the
+     * project under the resources folder, and synchronized with the local resource
+     * catalog. If the file has been seen already, the resource is updated in the
+     * local catalog with full history records.
+     * <p>
+     * The local resource will have a
+     * {@code [urn:klab:]local:user:project:resourceid.version} URN which is visible
+     * only within the project. All files and needed info are copied within the
+     * resources project area.
+     * <p>
+     * The resource ID is created from the file name if an id field is not present
+     * in the parameters. It is an error to pass a null file and no id.
+     * <p>
+     * The update parameter controls whether revisions are possible with files that
+     * don't have a newer timestamp than the resource. It will normally be set to
+     * true only when the resource creation is created explicitly. This function is
+     * also used when reading or updating a resource for a file named in a k.IM
+     * model.
+     * <p>
+     * Local resource versions are in the form 0.0.build with the build starting at
+     * 1 and increasing at each update. Publishing them modifies the minor version,
+     * starting at 0.1.build. Only their owners' explicit action, or peer review in
+     * a reviewed repository, modifies the major version to make them 1.x.b or
+     * anything higher than the initial version.
+     * 
+     * @param resourceId
+     *            the ID for the resource, which will be part of the URN and must be
+     *            unique within a project.
+     * @param file
+     *            a {@link java.io.File} object. May be null if userData contain all
+     *            relevant info. The local path of the file (starting at the project
+     *            folder, inclusive) is stored in metadata and checked in case of
+     *            redefinition, so that the URN is versioned rather than recreated.
+     * @param userData
+     *            user data. May be empty (if all that's needed is the file). Must
+     *            contain a suitable id if the file is null. These are used to
+     *            define URN parameters at the discretion of the adapter.
+     * @param project
+     *            the project for the resource. Can't be null. All local resources
+     *            are project-local; only public resources are visible globally.
+     * @param adapterType
+     *            pass null to interrogate all adapters and choose the first fitting
+     *            adapter. Must be passed if file is null.
+     * @param update
+     *            if true, allow updating of the resource every time this is called.
+     *            Otherwise just create if absent or update when the timestamp on
+     *            the resource is older than that of the file.
+     * @param asynchronous
+     *            if true, spawn a validator thread and return a proxy for the
+     *            resource without blocking.
+     * @param monitor
+     *            a
+     *            {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor}
+     *            object.
+     * @return a {@link org.integratedmodelling.klab.api.data.IResource} object.
+     *         with a local URN if successful.
+     */
+    IResource createLocalResource(String resourceId, File file, IParameters<String> userData, IProject project, String adapterType, boolean update, boolean asynchronous, IMonitor monitor);
 
-	/**
-	 * All the projects composing the worldview, automatically synchronized and read
-	 * only, but overridden by any of the same projects in the local workspace.
-	 *
-	 * @return a {@link org.integratedmodelling.klab.api.knowledge.IWorldview}
-	 *         object.
-	 */
-	IWorldview getWorldview();
+    /**
+     * The workspace with all local projects. The only workspace that is not read
+     * only and is monitored for changes, with automatic reload of any updated
+     * knowledge. Never null, possibly empty.
+     *
+     * @return a {@link org.integratedmodelling.klab.api.knowledge.IWorkspace}
+     *         object.
+     */
+    IWorkspace getLocalWorkspace();
 
-	/**
-	 * The components workspace, including projects (with or without binary assets)
-	 * that are managed by the engine as new components are requested during
-	 * resolution. Read only. In development configuration also contains any locally
-	 * available components.
-	 *
-	 * @return a {@link org.integratedmodelling.klab.api.knowledge.IWorkspace}
-	 *         object.
-	 */
-	IWorkspace getComponentsWorkspace();
+    /**
+     * The upper ontology workspace, automatically synchronized and read only.
+     *
+     * @return a {@link org.integratedmodelling.klab.api.knowledge.IWorkspace}
+     *         object.
+     */
+    IWorkspace getUpperOntology();
 
-	/**
-	 * Retrieve a model object identified through a URN - either an observer or a
-	 * model, local or remote, in the latter case triggering any necessary
-	 * synchronization with the network.
-	 *
-	 * @param urn
-	 *            a {@link java.lang.String} object.
-	 * @return the model object corresponding to the urn, or null if not found.
-	 */
-	IKimObject getModelObject(String urn);
+    /**
+     * All the projects composing the worldview, automatically synchronized and read
+     * only, but overridden by any of the same projects in the local workspace.
+     *
+     * @return a {@link org.integratedmodelling.klab.api.knowledge.IWorldview}
+     *         object.
+     */
+    IWorldview getWorldview();
 
-	/**
-	 * Retrieve a resolvable object identified by a URN, promoting any resource that
-	 * is not directly resolvable to the correspondent resolvable when possible.
-	 *
-	 * @param urn
-	 *            either a formal URN or one of the abbreviated forms recognized in
-	 *            k.IM (such as a concept identifier)
-	 * @return a resolvable resource, or null if nothing can be found.
-	 */
-	IResolvable getResolvableResource(String urn);
+    /**
+     * The components workspace, including projects (with or without binary assets)
+     * that are managed by the engine as new components are requested during
+     * resolution. Read only. In development configuration also contains any locally
+     * available components.
+     *
+     * @return a {@link org.integratedmodelling.klab.api.knowledge.IWorkspace}
+     *         object.
+     */
+    IWorkspace getComponentsWorkspace();
 
-	/**
-	 * Return the project with the passed name as a k.LAB wrapper.
-	 * 
-	 * @param name
-	 * @return
-	 */
-	IProject getProject(String name);
+    /**
+     * Retrieve a model object identified through a URN - either an observer or a
+     * model, local or remote, in the latter case triggering any necessary
+     * synchronization with the network.
+     *
+     * @param urn
+     *            a {@link java.lang.String} object.
+     * @return the model object corresponding to the urn, or null if not found.
+     */
+    IKimObject getModelObject(String urn);
+
+    /**
+     * Retrieve a resolvable object identified by a URN, promoting any resource that
+     * is not directly resolvable to the correspondent resolvable when possible.
+     *
+     * @param urn
+     *            either a formal URN or one of the abbreviated forms recognized in
+     *            k.IM (such as a concept identifier)
+     * @return a resolvable resource, or null if nothing can be found.
+     */
+    IResolvable getResolvableResource(String urn);
+
+    /**
+     * Return the project with the passed name as a k.LAB wrapper.
+     * 
+     * @param name
+     * @return
+     */
+    IProject getProject(String name);
+
+    /**
+     * Resolve a URN to data using default builder and context, using the full geometry of the resource and a suitable
+     * scale (i.e. downscaling if the resulting artifact is too big to handle). Return the resulting
+     * artifact, or null if things go wrong.
+     * 
+     * @param urn
+     * @param monitor
+     * @return a pair containing the context artifact and the artifact built by the resource (iterable if objects)
+     */
+    Pair<IArtifact, IArtifact> resolveResourceToArtifact(String urn, IMonitor monitor);
 
 }

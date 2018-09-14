@@ -102,6 +102,7 @@ public class VectorEncoder implements IResourceEncoder {
     // TODO use URN parameters
     private void encodeFromFeatures(FeatureSource<SimpleFeatureType, SimpleFeature> source, IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder, IComputationContext context) {
 
+
         Filter filter = null;
 
         /*
@@ -119,6 +120,15 @@ public class VectorEncoder implements IResourceEncoder {
         for (AttributeDescriptor ad : source.getSchema().getAttributeDescriptors()) {
             if (!ad.getLocalName().equals(geomName)) {
                 attributes.put(ad.getLocalName(), ad.getType().getBinding());
+                if (idRequested == null && urnParameters.containsKey(ad.getLocalName().toLowerCase())) {
+                    try {
+                        // FIXME this only matches strings - must use syntax dependent on attribute type
+                        filter = ECQL.toFilter(ad.getLocalName() + " = '" + urnParameters.get(ad.getLocalName().toLowerCase()) + "'");
+                    } catch (CQLException e) {
+                        // shouldn't happen as filter was validated previously
+                        throw new KlabValidationException(e);
+                    }
+                }
             }
         }
 

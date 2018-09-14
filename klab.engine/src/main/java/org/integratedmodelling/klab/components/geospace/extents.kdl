@@ -17,5 +17,10 @@ spatialextent space
 		 units. Example: '1 km'."
 		default ""
 		
+	optional input urn
+		"A URN (or a string specifying one) that will return at least one spatial object, whose
+		 spatial context will be used as a return value."
+		default ""
+		
 	class org.integratedmodelling.klab.components.geospace.services.Space
 }
