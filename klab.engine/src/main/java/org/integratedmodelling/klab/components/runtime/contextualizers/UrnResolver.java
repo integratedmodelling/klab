@@ -22,59 +22,53 @@ import org.integratedmodelling.klab.utils.Pair;
 
 public class UrnResolver implements IExpression, IResolver<IArtifact> {
 
-	public final static String FUNCTION_ID = "klab.runtime.resolve";
+    public final static String  FUNCTION_ID = "klab.runtime.resolve";
 
-	private IResource resource;
-	private Map<String, String> urnParameters;
+    private IResource           resource;
+    private IArtifact.Type      outputType;
+    private Map<String, String> urnParameters;
 
-	// don't remove - only used as expression
-	public UrnResolver() {
-	}
+    // don't remove - only used as expression
+    public UrnResolver() {
+    }
 
-	public UrnResolver(String urn) {
-		Pair<String, Map<String, String>> call = Urns.INSTANCE.resolveParameters(urn);
-		this.resource = Resources.INSTANCE.resolveResource(call.getFirst());
-		if (this.resource == null || !Resources.INSTANCE.isResourceOnline(this.resource)) {
-			throw new KlabResourceNotFoundException("resource with URN " + urn + " is unavailable or unknown");
-		}
-		this.urnParameters = call.getSecond();
-	}
+    public UrnResolver(String urn) {
+        Pair<String, Map<String, String>> call = Urns.INSTANCE.resolveParameters(urn);
+        this.resource = Resources.INSTANCE.resolveResource(call.getFirst());
+        if (this.resource == null || !Resources.INSTANCE.isResourceOnline(this.resource)) {
+            throw new KlabResourceNotFoundException("resource with URN " + urn
+                    + " is unavailable or unknown");
+        }
+        this.urnParameters = call.getSecond();
+    }
 
-	public static IServiceCall getServiceCall(String urn, IComputableResource condition, boolean conditionNegated,
-			boolean isQuality) {
-		// TODO handle condition
-		if (isQuality) {
-			// preload the resource and check if dereification is required
-			IResource resource = Resources.INSTANCE.resolveResource(urn);
-			if (resource.getType() == Type.OBJECT) {
-				return KimServiceCall.create(FUNCTION_ID, "urn", urn, "dereify", Boolean.TRUE);
-			}
-		}
-		return KimServiceCall.create(FUNCTION_ID, "urn", urn);
-	}
+    public static IServiceCall getServiceCall(String urn, IComputableResource condition, boolean conditionNegated, IArtifact.Type requestedType) {
+        return KimServiceCall.create(FUNCTION_ID, "urn", urn, "type", requestedType.name());
+    }
 
-	@Override
-	public IArtifact resolve(IArtifact observation, IComputationContext context) {
-		IKlabData data = Resources.INSTANCE.getResourceData(resource, urnParameters, context.getScale(), context);
-		return data.getArtifact();
-	}
+    @Override
+    public IArtifact resolve(IArtifact observation, IComputationContext context) {
+        IKlabData data = Resources.INSTANCE
+                .getResourceData(resource, urnParameters, context.getScale(), context);
+        return data.getArtifact();
+    }
 
-	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
-		// TODO resolve URN, generate the appropriate contextualizer for type and
-		// geometry
-		// TODO support multiple URNs
-		return new UrnResolver(parameters.get("urn", String.class));
-	}
+    @Override
+    public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+        // TODO resolve URN, generate the appropriate contextualizer for type and
+        // geometry
+        // TODO support multiple URNs
+        return new UrnResolver(parameters.get("urn", String.class));
+    }
 
-	@Override
-	public IGeometry getGeometry() {
-		return resource.getGeometry();
-	}
+    @Override
+    public IGeometry getGeometry() {
+        return resource.getGeometry();
+    }
 
-	@Override
-	public Type getType() {
-		return resource.getType();
-	}
+    @Override
+    public Type getType() {
+        return resource.getType();
+    }
 
 }
