@@ -223,11 +223,12 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			}
 			return resource.getServiceCall();
 		} else if (resource.getUrn() != null) {
-			return (resource.getComputationMode() == Mode.INSTANTIATION
-					? UrnInstantiator.getServiceCall(resource.getUrn(), resource.getCondition(),
-							resource.isNegated())
-					: UrnResolver.getServiceCall(resource.getUrn(), resource.getCondition(),
-							resource.isNegated()));
+			if (resource.getComputationMode() == Mode.INSTANTIATION) {
+				return UrnInstantiator.getServiceCall(resource.getUrn(), resource.getCondition(), resource.isNegated());
+			} else {
+				boolean requestDereification = (((Actuator)target).getObservable().is(Type.QUALITY) || ((Actuator)target).getObservable().is(Type.TRAIT));
+				return UrnResolver.getServiceCall(resource.getUrn(), resource.getCondition(), resource.isNegated(), requestDereification);
+			}
 		} else if (resource.getExpression() != null) {
 			return ExpressionResolver.getServiceCall(resource);
 		} else if (resource.getLiteral() != null) {
@@ -250,8 +251,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 					resource.isNegated());
 		} else if (resource.getLookupTable() != null) {
 			return LookupStateResolver.getServiceCall(
-					((ComputableResource) resource).getValidatedResource(ILookupTable.class),
-					resource.getCondition(), resource.isNegated());
+					((ComputableResource) resource).getValidatedResource(ILookupTable.class), resource.getCondition(),
+					resource.isNegated());
 		}
 
 		// temp

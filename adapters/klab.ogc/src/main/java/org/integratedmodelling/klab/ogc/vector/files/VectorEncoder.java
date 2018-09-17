@@ -151,8 +151,6 @@ public class VectorEncoder implements IResourceEncoder {
             }
         }
 
-//        Scale scale = Scale.create(resource.getGeometry());
-
         FeatureCollection<SimpleFeatureType, SimpleFeature> fc;
         try {
             fc = source.getFeatures();

@@ -75,6 +75,7 @@ public class Subject extends CountableObservation implements ISubject {
 
   @Override
   public ITask<IObservation> observe(String urn, String... scenarios) {
+	  // TODO this may get a resource URN
     return new ObserveInContextTask(this, urn, CollectionUtils.arrayToList(scenarios));
   }
 

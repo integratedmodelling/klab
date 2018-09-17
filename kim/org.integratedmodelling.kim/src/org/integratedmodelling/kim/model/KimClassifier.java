@@ -11,7 +11,6 @@ import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.kim.Classifier;
 import org.integratedmodelling.kim.kim.ClassifierRHS;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.utils.Range;
@@ -122,8 +121,8 @@ public class KimClassifier extends KimStatement implements IKimClassifier {
                     addClassifier(createNumberMatcher((Number) o));
                 } else if (o instanceof String) {
                     addClassifier(createStringMatcher((String) o));
-                } else if (o instanceof IConcept) {
-                    addClassifier(createConceptMatcher((IConcept) o));
+                } else if (o instanceof IKimConcept) {
+                    addClassifier(createConceptMatcher((IKimConcept) o));
                 } else if (o == null) {
                     addClassifier(createNullMatcher());
                 } else if (o instanceof List<?>) {
@@ -179,23 +178,27 @@ public class KimClassifier extends KimStatement implements IKimClassifier {
 	}
 
 	private KimClassifier createNullMatcher() {
-		// TODO Auto-generated method stub
-		return null;
+		KimClassifier ret = new KimClassifier(null, this);
+		ret.nullMatch = true;
+		return ret;
 	}
 
-	private KimClassifier createConceptMatcher(IConcept o) {
-		// TODO Auto-generated method stub
-		return null;
+	private KimClassifier createConceptMatcher(IKimConcept o) {
+		KimClassifier ret = new KimClassifier(null, this);
+		ret.conceptMatch = o;
+		return ret;
 	}
 
 	private KimClassifier createStringMatcher(String o) {
-		// TODO Auto-generated method stub
-		return null;
+		KimClassifier ret = new KimClassifier(null, this);
+		ret.stringMatch = o;
+		return ret;
 	}
 
 	private KimClassifier createNumberMatcher(Number o) {
-		// TODO Auto-generated method stub
-		return null;
+		KimClassifier ret = new KimClassifier(null, this);
+		ret.numberMatch = o.doubleValue();
+		return ret;
 	}
 	
 	@Override

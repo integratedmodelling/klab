@@ -323,7 +323,7 @@ public class KlabSession extends KlabPeer {
 
 	public void previewResource(ResourceReference resource) {
 		Activator.post(IMessage.MessageClass.ObservationLifecycle, IMessage.Type.RequestObservation,
-				new ObservationRequest(resource.getUrn(), null, null));
+				new ObservationRequest(resource.getUrn(), currentRootContextId, null));
 	}
 
 	public long startQuery(String query) {

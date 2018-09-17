@@ -25,23 +25,31 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
 	public final static String FUNCTION_ID = "klab.runtime.resolve";
 
 	private IResource resource;
-	private Map<String,String> urnParameters;
+	private Map<String, String> urnParameters;
 
 	// don't remove - only used as expression
 	public UrnResolver() {
 	}
 
 	public UrnResolver(String urn) {
-        Pair<String, Map<String, String>> call = Urns.INSTANCE.resolveParameters(urn);
-        this.resource = Resources.INSTANCE.resolveResource(call.getFirst());
-        if (this.resource == null || !Resources.INSTANCE.isResourceOnline(this.resource)) {
-            throw new KlabResourceNotFoundException("resource with URN " + urn + " is unavailable or unknown");
-        }
-        this.urnParameters = call.getSecond();
+		Pair<String, Map<String, String>> call = Urns.INSTANCE.resolveParameters(urn);
+		this.resource = Resources.INSTANCE.resolveResource(call.getFirst());
+		if (this.resource == null || !Resources.INSTANCE.isResourceOnline(this.resource)) {
+			throw new KlabResourceNotFoundException("resource with URN " + urn + " is unavailable or unknown");
+		}
+		this.urnParameters = call.getSecond();
 	}
 
-	public static IServiceCall getServiceCall(String urn, IComputableResource condition, boolean conditionNegated) {
+	public static IServiceCall getServiceCall(String urn, IComputableResource condition, boolean conditionNegated,
+			boolean isQuality) {
 		// TODO handle condition
+		if (isQuality) {
+			// preload the resource and check if dereification is required
+			IResource resource = Resources.INSTANCE.resolveResource(urn);
+			if (resource.getType() == Type.OBJECT) {
+				return KimServiceCall.create(FUNCTION_ID, "urn", urn, "dereify", Boolean.TRUE);
+			}
+		}
 		return KimServiceCall.create(FUNCTION_ID, "urn", urn);
 	}
 
