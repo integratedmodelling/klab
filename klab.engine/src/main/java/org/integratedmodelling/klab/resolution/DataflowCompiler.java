@@ -317,15 +317,14 @@ public class DataflowCompiler {
 
 					ret.getActuators().add(partial);
 				}
-			} else if (resolvedArtifact != null /* && artifactAdapters != null */) {
+			} else if (resolvedArtifact != null && artifactAdapters != null) {
 
-				/*
-				 * check if any mediation is needed
-				 */
-				List<IComputableResource> mediators = Observables.INSTANCE.computeMediators(
-						resolvedArtifact.getArtifact().getObservable(), resolvedArtifact.getObservable());
-
-				if (artifactAdapters != null || mediators.size() > 0) {
+				// /*
+				// * check if any mediation is needed
+				// */
+				// List<IComputableResource> mediators = Observables.INSTANCE.computeMediators(
+				// resolvedArtifact.getArtifact().getObservable(),
+				// resolvedArtifact.getObservable());
 
 					/*
 					 * we are adapting the resolved artifact, so we compile in the import and add
@@ -346,15 +345,14 @@ public class DataflowCompiler {
 					/*
 					 * add any mediation needed
 					 */
-					for (IComputableResource mediator : mediators) {
-						ret.addMediation(mediator, ret);
-					}
+//					for (IComputableResource mediator : mediators) {
+//						ret.addMediation(mediator, ret);
+//					}
 
 					resolved.getAnnotations().addAll(
 							Annotations.INSTANCE.collectAnnotations(observable, resolvedArtifact.getArtifact()));
 
 					ret.getActuators().add(resolved);
-				}
 			}
 
 			return ret;
@@ -400,6 +398,10 @@ public class DataflowCompiler {
 
 			Actuator ret = createActuator(monitor, generated);
 			for (Node child : sortChildren()) {
+				/*
+				 * ACHTUNG the pre-resolved observable (from the original artifact) is not in the
+				 * catalog, so mediators for external inputs do not get generated.
+				 */
 				// this may be a new actuator or a reference to an existing one
 				Actuator achild = child.getActuatorTree(monitor, generated);
 				ret.getActuators().add(achild);
