@@ -137,7 +137,7 @@ public enum Observations implements IObservationService {
 		SummaryStatistics statistics = new SummaryStatistics();
 
 		for (Iterator<Double> it = state.iterator(locator, Double.class); it.hasNext();) {
-			tdata ++;
+			tdata++;
 			Double d = it.next();
 			if (d != null) {
 				ndata++;
@@ -218,19 +218,19 @@ public enum Observations implements IObservationService {
 		ret.setId(observation.getId());
 		ret.setUrn(observation.getUrn());
 		ret.setParentId(parent == null ? null : parent.getId());
-		
+
 		ret.setLabel(observation instanceof IDirectObservation ? ((IDirectObservation) observation).getName()
 				: observation.getObservable().getLocalName());
 		ret.setLabel(StringUtils.capitalize(ret.getLabel().replaceAll("_", " ")));
 		if (observation.getObservable().getUnit() != null) {
-			ret.setLabel(ret.getLabel() + " [" + ((Unit)observation.getObservable().getUnit()).toUTFString() + "]");
+			ret.setLabel(ret.getLabel() + " [" + ((Unit) observation.getObservable().getUnit()).toUTFString() + "]");
 		} else if (observation.getObservable().getCurrency() != null) {
 			ret.setLabel(ret.getLabel() + " [" + observation.getObservable().getCurrency() + "]");
 		} else if (observation.getObservable().getRange() != null) {
 			ret.setLabel(ret.getLabel() + " [" + observation.getObservable().getRange().getLowerBound() + " to "
 					+ observation.getObservable().getRange().getUpperBound() + "]");
 		}
-		
+
 		ret.setObservable(observation.getObservable().getDefinition());
 		ret.setSiblingCount(observation.groupSize());
 		ret.getSemantics().addAll(((Concept) observation.getObservable().getType()).getTypeSet());
@@ -292,17 +292,19 @@ public enum Observations implements IObservationService {
 			}
 
 			DataSummary ds = new DataSummary();
-			
+
 			ds.setNodataProportion(summary.getNodataPercentage());
 			ds.setMinValue(summary.getRange().get(0));
 			ds.setMaxValue(summary.getRange().get(1));
-			ds.getHistogram().addAll(ds.getHistogram());
-			double step = (summary.getRange().get(1) - summary.getRange().get(0))/(double)ds.getHistogram().size();
-			
+			for (int bin : summary.getHistogram().getBins()) {
+				ds.getHistogram().add(bin);
+			}
+			double step = (summary.getRange().get(1) - summary.getRange().get(0)) / (double) ds.getHistogram().size();
+
 			for (int i = 0; i < ds.getHistogram().size(); i++) {
 				// TODO use labels for categories
 				String lower = NumberFormat.getInstance().format(summary.getRange().get(0) + (step * i));
-				String upper = NumberFormat.getInstance().format(summary.getRange().get(0) + (step * (i+1)));
+				String upper = NumberFormat.getInstance().format(summary.getRange().get(0) + (step * (i + 1)));
 				ds.getCategories().add(lower + " to " + upper);
 			}
 			for (Color color : Renderer.INSTANCE.rainbow()) {
