@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.rest.ActionReference;
 import org.integratedmodelling.klab.rest.Connection;
+import org.integratedmodelling.klab.rest.DataSummary;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.rest.ObservationReference.ObservationType;
@@ -69,9 +70,9 @@ public class EObservationReference implements IObservationReference, ERuntimeObj
         List<Pair<String, String>> ret = new ArrayList<>();
         ret.add(new Pair<>("Observable", delegate.getObservable()));
         if (delegate.getGeometryTypes().contains(GeometryType.RASTER)) {
-            ret.add(new Pair<>("Minimum value", "" + delegate.getMinValue()));
-            ret.add(new Pair<>("Maximum value", "" + delegate.getMaxValue()));
-            ret.add(new Pair<>("% no-data values", "" + delegate.getNodataPercentage()));
+            ret.add(new Pair<>("Minimum value", "" + delegate.getDataSummary().getMinValue()));
+            ret.add(new Pair<>("Maximum value", "" + delegate.getDataSummary().getMaxValue()));
+            ret.add(new Pair<>("% no-data values", "" + delegate.getDataSummary().getNodataProportion()));
         }
         return ret;
     }
@@ -103,15 +104,15 @@ public class EObservationReference implements IObservationReference, ERuntimeObj
     }
 
     public double getNodataPercentage() {
-        return delegate.getNodataPercentage();
+        return delegate.getDataSummary().getNodataProportion();
     }
 
     public double getMinValue() {
-        return delegate.getMinValue();
+        return delegate.getDataSummary().getMinValue();
     }
 
     public double getMaxValue() {
-        return delegate.getMaxValue();
+        return delegate.getDataSummary().getMaxValue();
     }
 
     public long getContextTime() {
@@ -241,6 +242,11 @@ public class EObservationReference implements IObservationReference, ERuntimeObj
 		obs.main = true;
 		ETaskReference task = Activator.session().getTask(obs.getTaskId());
 		task.removeObservation(this.getId());
+	}
+
+	@Override
+	public DataSummary getDataSummary() {
+		return delegate.getDataSummary();
 	}
 
 }

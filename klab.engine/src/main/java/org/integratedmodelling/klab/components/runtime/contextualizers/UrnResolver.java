@@ -32,7 +32,8 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
     public UrnResolver() {
     }
 
-    public UrnResolver(String urn) {
+    public UrnResolver(String urn, IArtifact.Type type) {
+    	this.outputType = type;
         Pair<String, Map<String, String>> call = Urns.INSTANCE.resolveParameters(urn);
         this.resource = Resources.INSTANCE.resolveResource(call.getFirst());
         if (this.resource == null || !Resources.INSTANCE.isResourceOnline(this.resource)) {
@@ -55,10 +56,9 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
 
     @Override
     public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
-        // TODO resolve URN, generate the appropriate contextualizer for type and
-        // geometry
         // TODO support multiple URNs
-        return new UrnResolver(parameters.get("urn", String.class));
+    	IArtifact.Type type = parameters.containsKey("type") ? IArtifact.Type.valueOf(parameters.get("type", String.class)) : null;
+        return new UrnResolver(parameters.get("urn", String.class), type);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
 
     @Override
     public Type getType() {
-        return resource.getType();
+        return /* outputType == null ? */ resource.getType() /*: outputType*/;
     }
 
 }

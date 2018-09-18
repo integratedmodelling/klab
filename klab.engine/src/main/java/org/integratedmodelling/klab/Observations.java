@@ -48,6 +48,7 @@ import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.rest.ActionReference;
+import org.integratedmodelling.klab.rest.DataSummary;
 import org.integratedmodelling.klab.rest.Histogram;
 import org.integratedmodelling.klab.rest.Histogram.Builder;
 import org.integratedmodelling.klab.rest.ObservationReference;
@@ -286,9 +287,13 @@ public enum Observations implements IObservationService {
 				ret.getActions().add(new ActionReference("Export as GeoTiff", "ExportGeotiff"));
 			}
 
-			ret.setNodataPercentage(summary.getNodataPercentage());
-			ret.setMinValue(summary.getRange().get(0));
-			ret.setMaxValue(summary.getRange().get(1));
+			DataSummary ds = new DataSummary();
+			
+			ds.setNodataProportion(summary.getNodataPercentage());
+			ds.setMinValue(summary.getRange().get(0));
+			ds.setMaxValue(summary.getRange().get(1));
+			
+			ret.setDataSummary(ds);
 
 			// FIXME REMOVE this is just for testing
 		}

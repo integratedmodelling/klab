@@ -5,10 +5,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.rest.ActionReference;
 import org.integratedmodelling.klab.rest.Connection;
+import org.integratedmodelling.klab.rest.DataSummary;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.rest.ObservationReference.ObservationType;
@@ -27,12 +27,6 @@ public interface IObservationReference {
 	List<Connection> getStructure();
 
 	ValueType getValueType();
-
-	double getNodataPercentage();
-
-	double getMinValue();
-
-	double getMaxValue();
 
 	long getContextTime();
 
@@ -83,5 +77,7 @@ public interface IObservationReference {
 	List<ActionReference> getActions();
 
 	boolean isEmpty();
+	
+	DataSummary getDataSummary();
 
 }

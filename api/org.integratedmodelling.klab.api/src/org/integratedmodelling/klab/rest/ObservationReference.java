@@ -101,6 +101,11 @@ public class ObservationReference implements IObservationReference {
 	private boolean empty;
 	private Style style;
 	private boolean main;
+	private DataSummary dataSummary;
+	
+	public void setDataSummary(DataSummary dataSummary) {
+		this.dataSummary = dataSummary;
+	}
 
 	/**
 	 * The observation may have more sibling than are found in the sibling list.
@@ -162,24 +167,6 @@ public class ObservationReference implements IObservationReference {
 	 * configuration.
 	 */
 	private List<Connection> structure = new ArrayList<>();
-
-	/**
-	 * When the observation has multiple values, this is set to the percentage of
-	 * those that are no-data.
-	 */
-	private double nodataPercentage;
-
-	/**
-	 * When the observation has multiple numeric values, this is set to the minimum
-	 * value of their range.
-	 */
-	private double minValue = Double.NaN;
-
-	/**
-	 * When the observation has multiple numeric values, this is set to the maximum
-	 * value of their range.
-	 */
-	private double maxValue = Double.NaN;
 
 	/**
 	 * The time last seen by this observation; -1 in non-temporal contexts,
@@ -267,42 +254,6 @@ public class ObservationReference implements IObservationReference {
 
 	public void setValueType(ValueType valueType) {
 		this.valueType = valueType;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.integratedmodelling.klab.rest.IObservationReference#getNodataPercentage()
-	 */
-	@Override
-	public double getNodataPercentage() {
-		return nodataPercentage;
-	}
-
-	public void setNodataPercentage(double nodataPercentage) {
-		this.nodataPercentage = nodataPercentage;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.integratedmodelling.klab.rest.IObservationReference#getMinValue()
-	 */
-	@Override
-	public double getMinValue() {
-		return minValue;
-	}
-
-	public void setMinValue(double minValue) {
-		this.minValue = minValue;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.integratedmodelling.klab.rest.IObservationReference#getMaxValue()
-	 */
-	@Override
-	public double getMaxValue() {
-		return maxValue;
-	}
-
-	public void setMaxValue(double maxValue) {
-		this.maxValue = maxValue;
 	}
 
 	/* (non-Javadoc)
@@ -606,6 +557,11 @@ public class ObservationReference implements IObservationReference {
 
 	public void setMain(boolean main) {
 		this.main = main;
+	}
+
+	@Override
+	public DataSummary getDataSummary() {
+		return dataSummary;
 	}
 
 }
