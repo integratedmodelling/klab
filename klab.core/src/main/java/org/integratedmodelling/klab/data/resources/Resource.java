@@ -25,6 +25,7 @@ import java.util.logging.Level;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.validation.KimNotification;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -354,6 +355,10 @@ public class Resource implements IResource {
 		if (attribute != null) {
 			IArtifact.Type type = null;
 			for (Attribute attr : attributes) {
+			    if (attr.getName() == null) {
+			        Logging.INSTANCE.warn("Corrupted resource " + urn + ": null attributes");
+			        continue;
+			    }
 				if (attr.getName().equalsIgnoreCase(attribute)) {
 					type = attr.getType();
 					break;
