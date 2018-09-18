@@ -176,7 +176,7 @@ public class Documentation implements IDocumentation {
 						break;
 					case "table":
 						current.table(processArguments(section.body, 0), context);
-					break;
+						break;
 					case "cite":
 						current.cite(processArguments(section.body, 0), context);
 						break;
@@ -213,7 +213,6 @@ public class Documentation implements IDocumentation {
 		public void setRole(SectionRole role) {
 			this.role = role;
 		}
-		
 
 		/**
 		 * Split an argument string into a max of argCount comma-separated arguments,

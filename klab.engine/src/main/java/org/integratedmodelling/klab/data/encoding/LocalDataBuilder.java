@@ -81,6 +81,16 @@ public class LocalDataBuilder implements IKlabData.Builder {
             throw new IllegalStateException("data builder: cannot add items: no state set");
         }
     }
+    
+    @Override
+    public void add(Object value, long offset) {
+        if (state != null) {
+            state.set(state.getGeometry().getLocator(offset), value);
+        } else {
+            throw new IllegalStateException("data builder: cannot add items: no state set");
+        }
+    }
+
 
     @Override
     public Builder finishState() {

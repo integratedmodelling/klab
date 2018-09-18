@@ -53,13 +53,13 @@ public class PresenceResolver implements IResolver<IDataArtifact>, IExpression {
 		ISpace space = ((Scale) ret.getGeometry()).getSpace();
 		Geometry geometry =  ((Scale) ret.getGeometry()).asGeometry();
 
-		if (!(space instanceof Space) || !((Space) space).getGrid().isPresent()) {
+		if (!(space instanceof Space) || ((Space) space).getGrid() == null) {
 			// TODO only return an appropriate state for existence of artifact in context if
 			// artifact is non-empty and either space is there and intersecting, or space
 			// isn't there at all.
 			throw new KlabUnsupportedFeatureException("cannot yet compute indirect presence over a non-grid extent");
 		}
-		Rasterizer<Boolean> rasterizer = new Rasterizer<>(((Space) space).getGrid().get());
+		Rasterizer<Boolean> rasterizer = new Rasterizer<>(((Space) space).getGrid());
 		for (IArtifact a : context.getArtifact(this.artifactId)) {
 			if (a instanceof IDirectObservation && ((IDirectObservation) a).getSpace() != null) {
 				rasterizer.add(((IDirectObservation) a).getSpace().getShape(), (shape) -> true);

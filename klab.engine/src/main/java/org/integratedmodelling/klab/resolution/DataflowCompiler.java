@@ -483,7 +483,7 @@ public class DataflowCompiler {
 				observableCatalog.put(ret.resolvedArtifact.getArtifactId(),
 						(Observable) ret.resolvedArtifact.getArtifact().getObservable());
 				ret.artifactAdapters = d.indirectAdapters;
-
+				
 				for (ResolutionEdge o : graph.incomingEdgesOf(source)) {
 					ret.children.add(compileActuator(graph.getEdgeSource(o), graph,
 							o.coverage == null ? scale : o.coverage, monitor));

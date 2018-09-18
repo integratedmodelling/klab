@@ -19,9 +19,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -338,6 +340,31 @@ public class Resource implements IResource {
 	@Override
 	public Collection<Attribute> getAttributes() {
 		return attributes;
+	}
+
+	/**
+	 * If the passed parameters determine a type modification, copy
+	 * the resource and return a new one with the modified type.
+	 * @param second
+	 * @return this or a new resource if different
+	 */
+	public IResource applyParameters(Map<String, String> parameters) {
+		Resource ret = this;
+		String attribute = parameters.get(IServiceCall.DEFAULT_PARAMETER_NAME);
+		if (attribute != null) {
+			IArtifact.Type type = null;
+			for (Attribute attr : attributes) {
+				if (attr.getName().equalsIgnoreCase(attribute)) {
+					type = attr.getType();
+					break;
+				}
+			}
+			if (type != null) {
+				ret = new Resource(getReference());
+				ret.type = type;
+			}
+		}
+		return ret;
 	}
 
 }

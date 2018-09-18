@@ -41,6 +41,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
@@ -103,12 +104,12 @@ public enum Renderer {
 	public BufferedImage render(IState state, ILocator locator, int[] viewport) {
 
 		if (state.getSpace() == null
-				|| !(state.getSpace() instanceof Space && ((Space) state.getSpace()).getGrid().isPresent())) {
+				|| !(state.getSpace() instanceof Space && ((Space) state.getSpace()).getGrid() != null)) {
 			throw new IllegalArgumentException("cannot render a state as a map unless its space is gridded");
 		}
 
 		ISpace space = state.getSpace();
-		IGrid grid = ((Space) state.getSpace()).getGrid().get();
+		IGrid grid = ((Space) state.getSpace()).getGrid();
 
 		// https://github.com/geotools/geotools/blob/master/modules/library/render/src/test/java/org/geotools/renderer/lite/GridCoverageRendererTest.java
 		try {
@@ -169,6 +170,8 @@ public enum Renderer {
 			double value = summary.getRange().get(0);
 			if (state.getDataKey() != null) {
 				label = state.getDataKey().getLabels().get((int) value);
+			} else if (state.getType() == Type.BOOLEAN) {
+				label = value == 0 ? "Not present" : "Present"; 
 			} else {
 				label = NumberFormat.getNumberInstance().format(value);
 			}

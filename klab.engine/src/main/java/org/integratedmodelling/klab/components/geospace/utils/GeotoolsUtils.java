@@ -47,10 +47,10 @@ public enum GeotoolsUtils {
     public GridCoverage2D stateToCoverage(IState state) {
 
         Space space = (Space) state.getScale().getSpace();
-        if (space == null || !space.getGrid().isPresent()) {
+        if (space == null || space.getGrid() == null) {
             throw new IllegalArgumentException("cannot make a raster coverage from a non-gridded state");
         }
-        Grid grid = (Grid) space.getGrid().get();
+        Grid grid = (Grid) space.getGrid();
 
         /*
          * build a coverage.
@@ -96,10 +96,10 @@ public enum GeotoolsUtils {
         Range ret = new Range();
 
         Space space = (Space) state.getScale().getSpace();
-        if (space == null || !space.getGrid().isPresent()) {
+        if (space == null || space.getGrid() != null) {
             throw new IllegalArgumentException("cannot make a raster coverage from a non-gridded state");
         }
-        Grid grid = (Grid) space.getGrid().get();
+        Grid grid = (Grid) space.getGrid();
 
         /*
          * TODO raster should be pre-filled with a chosen nodata value TODO use

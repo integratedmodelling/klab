@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.utils;
 import java.io.File;
 import java.util.Arrays;
 
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 
 public class Utils {
@@ -174,4 +175,18 @@ public class Utils {
 		return ret;
 	}
 
+	public static Class<?> getClassForType(IArtifact.Type type) {
+		switch (type) {
+		case BOOLEAN:
+			return Boolean.class;
+		case NUMBER:
+			return Double.class;
+		case TEXT:
+			return String.class;
+		default:
+			break;
+		}
+		throw new IllegalArgumentException("type " + type + " has no POD class equivalent");
+	}
+	
 }

@@ -42,6 +42,11 @@ public class KimClassifier extends KimStatement implements IKimClassifier {
     	this.catchAll = true;
     }
     
+    // this produce a sub-classifier without a statement of its own, to be completed
+    public KimClassifier(IKimStatement parent) {
+    	super(null, parent);
+    }
+    
     // this produces anything else
     public KimClassifier(ClassifierRHS statement, boolean negate, IKimConcept matchedConcept, IKimStatement parent) {
 
@@ -178,26 +183,30 @@ public class KimClassifier extends KimStatement implements IKimClassifier {
 	}
 
 	private KimClassifier createNullMatcher() {
-		KimClassifier ret = new KimClassifier(null, this);
+		KimClassifier ret = new KimClassifier(this);
 		ret.nullMatch = true;
+		ret.sourceCode = "#";
 		return ret;
 	}
 
 	private KimClassifier createConceptMatcher(IKimConcept o) {
-		KimClassifier ret = new KimClassifier(null, this);
+		KimClassifier ret = new KimClassifier(this);
 		ret.conceptMatch = o;
+		ret.sourceCode = o.getDefinition();
 		return ret;
 	}
 
 	private KimClassifier createStringMatcher(String o) {
-		KimClassifier ret = new KimClassifier(null, this);
+		KimClassifier ret = new KimClassifier(this);
 		ret.stringMatch = o;
+		ret.sourceCode = "'" + o + "'";
 		return ret;
 	}
 
 	private KimClassifier createNumberMatcher(Number o) {
-		KimClassifier ret = new KimClassifier(null, this);
+		KimClassifier ret = new KimClassifier(this);
 		ret.numberMatch = o.doubleValue();
+		ret.sourceCode = o.toString();
 		return ret;
 	}
 	

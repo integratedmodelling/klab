@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -455,15 +454,13 @@ public class Space extends Extent implements ISpace {
 	}
 
 	// @Override
-	public Optional<IGrid> getGrid() {
-		// TODO Auto-generated method stub
-		return grid == null ? Optional.empty() : Optional.of(grid);
+	public IGrid getGrid() {
+		return grid;
 	}
 
 	// @Override
-	public Optional<ITessellation> getTessellation() {
-		// TODO Auto-generated method stub
-		return features == null ? Optional.empty() : Optional.of(features);
+	public ITessellation getTessellation() {
+		return features;
 	}
 
 	@Override
@@ -562,11 +559,13 @@ public class Space extends Extent implements ISpace {
 		if (this.grid != null) {
 			if (index instanceof Cell) {
 				return this.grid.getOffset((Cell) index);
-			} else if (index instanceof IndexLocator && ((IndexLocator)index).getCoordinates().length == 2) {
-				return this.grid.getOffset(((IndexLocator)index).getCoordinates()[0], ((IndexLocator)index).getCoordinates()[1]);
+			} else if (index instanceof IndexLocator && ((IndexLocator) index).getCoordinates().length == 2) {
+				return this.grid.getOffset(((IndexLocator) index).getCoordinates()[0],
+						((IndexLocator) index).getCoordinates()[1]);
 			} // TODO latlon and world coordinates
 		} else if (this.features != null) {
-			// TODO support direct indexing with IndexLocator and point indexing with latlon and point coordinates
+			// TODO support direct indexing with IndexLocator and point indexing with latlon
+			// and point coordinates
 		}
 		throw new IllegalArgumentException("cannot use " + index + " as a space locator");
 	}
@@ -592,7 +591,8 @@ public class Space extends Extent implements ISpace {
 			return "S2(" + grid.getXCells() + "," + grid.getYCells() + "){" + grid.getEnvelope().encode() + ",shape="
 					+ getShape().getWKB() + ",proj=" + getProjection().getSimpleSRS() + "}";
 		} else if (features != null) {
-			return "s1(" + features.size() + "){proj=" + getProjection().getSimpleSRS() + "," + getEnvelope().encode() + "}";
+			return "s1(" + features.size() + "){proj=" + getProjection().getSimpleSRS() + "," + getEnvelope().encode()
+					+ "}";
 		}
 		return getShape().encode();
 	}
@@ -679,7 +679,7 @@ public class Space extends Extent implements ISpace {
 	@Override
 	public <T extends ILocator> T as(Class<T> cls) {
 		if (ISpaceLocator.class.isAssignableFrom(cls)) {
-			return (T)envelope.asLocator();
+			return (T) envelope.asLocator();
 		}
 		return null;
 	}

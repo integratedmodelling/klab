@@ -226,8 +226,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			if (resource.getComputationMode() == Mode.INSTANTIATION) {
 				return UrnInstantiator.getServiceCall(resource.getUrn(), resource.getCondition(), resource.isNegated());
 			} else {
-				IArtifact.Type requestType = ((Actuator)target).getObservable().getArtifactType();
-				return UrnResolver.getServiceCall(resource.getUrn(), resource.getCondition(), resource.isNegated(), requestType);
+				return UrnResolver.getServiceCall(resource.getUrn(), resource.getCondition(), resource.isNegated());
 			}
 		} else if (resource.getExpression() != null) {
 			return ExpressionResolver.getServiceCall(resource);

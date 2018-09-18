@@ -43,6 +43,7 @@ import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.processing.GeometrySanitizer;
 import org.integratedmodelling.klab.components.geospace.processing.Rasterizer;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -51,6 +52,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.ogc.VectorAdapter;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.Utils;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -62,49 +64,52 @@ import org.opengis.filter.FilterFactory2;
  */
 public class VectorEncoder implements IResourceEncoder {
 
-    @Override
-    public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder, IComputationContext context) {
-        FeatureSource<SimpleFeatureType, SimpleFeature> features = getFeatureSource(resource, geometry);
-        encodeFromFeatures(features, resource, urnParameters, geometry, builder, context);
-    }
+	@Override
+	public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
+			Builder builder, IComputationContext context) {
+		FeatureSource<SimpleFeatureType, SimpleFeature> features = getFeatureSource(resource, geometry);
+		encodeFromFeatures(features, resource, urnParameters, geometry, builder, context);
+	}
 
-    protected FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(IResource resource, IGeometry geometry) {
+	protected FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(IResource resource, IGeometry geometry) {
 
-        File mainFile = null;
+		File mainFile = null;
 
-        for (String path : resource.getLocalPaths()) {
-            if (VectorAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(path))) {
-                mainFile = new File(Resources.INSTANCE.getLocalWorkspace().getRoot() + File.separator + path);
-                if (mainFile.exists() && mainFile.canRead()) {
-                    break;
-                }
-            }
-        }
+		for (String path : resource.getLocalPaths()) {
+			if (VectorAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(path))) {
+				mainFile = new File(Resources.INSTANCE.getLocalWorkspace().getRoot() + File.separator + path);
+				if (mainFile.exists() && mainFile.canRead()) {
+					break;
+				}
+			}
+		}
 
-        if (mainFile == null) {
-            throw new KlabResourceNotFoundException("raster resource " + resource.getUrn()
-                    + " cannot be accessed");
-        }
+		if (mainFile == null) {
+			throw new KlabResourceNotFoundException("raster resource " + resource.getUrn() + " cannot be accessed");
+		}
 
-        Map<String, Object> map = new HashMap<>();
-        try {
-            map.put("url", mainFile.toURI().toURL().toString());
-            DataStore dataStore = DataStoreFinder.getDataStore(map);
-            String typeName = dataStore.getTypeNames()[0];
-            return dataStore.getFeatureSource(typeName);
+		Map<String, Object> map = new HashMap<>();
+		try {
+			map.put("url", mainFile.toURI().toURL().toString());
+			DataStore dataStore = DataStoreFinder.getDataStore(map);
+			String typeName = dataStore.getTypeNames()[0];
+			return dataStore.getFeatureSource(typeName);
 
-        } catch (Exception e) {
-            throw new KlabIOException(e);
-        }
+		} catch (Exception e) {
+			throw new KlabIOException(e);
+		}
 
-    }
+	}
 
-    // TODO use URN parameters
-    private void encodeFromFeatures(FeatureSource<SimpleFeatureType, SimpleFeature> source, IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder, IComputationContext context) {
+	// TODO use URN parameters
+	private void encodeFromFeatures(FeatureSource<SimpleFeatureType, SimpleFeature> source, IResource resource, 
+			Map<String, String> urnParameters, IGeometry geometry, Builder builder, IComputationContext context) {
 
 
         Filter filter = null;
-
+        FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(GeoTools.getDefaultHints());
+        Scale requestScale = geometry instanceof Scale ? (Scale)geometry : Scale.create(geometry);
+        
         /*
          * TODO
          * merge urn params with resource params: if attr=x, use filter, if just value=x and we have a 
@@ -140,11 +145,13 @@ public class VectorEncoder implements IResourceEncoder {
          * the actuator, which may depend on context.
          */
         boolean rasterize = context.getTargetSemantics() != null
-                && context.getTargetSemantics().is(Type.QUALITY);
+                && (context.getTargetSemantics().is(Type.QUALITY) || context.getTargetSemantics().is(Type.TRAIT))
+                && requestScale.getSpace() instanceof Space && ((Space)requestScale.getSpace()).getGrid() != null;
 
         if (resource.getParameters().contains("filter")) {
             try {
-                filter = ECQL.toFilter(resource.getParameters().get("filter", String.class));
+                Filter pfilter = ECQL.toFilter(resource.getParameters().get("filter", String.class));
+                filter = filter == null ? pfilter : ff.and(filter, pfilter);
             } catch (CQLException e) {
                 // shouldn't happen as filter was validated previously
                 throw new KlabValidationException(e);
@@ -158,13 +165,9 @@ public class VectorEncoder implements IResourceEncoder {
             throw new KlabIOException(e);
         }
 
-        Scale requestScale = geometry instanceof Scale ? (Scale)geometry : Scale.create(geometry);
-        
         Projection originalProjection = Projection.create(fc.getSchema().getCoordinateReferenceSystem());
         IEnvelope envelopeInOriginalProjection = requestScale.getSpace().getEnvelope()
                 .transform(originalProjection, true);
-
-        FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(GeoTools.getDefaultHints());
 
         Filter bbfilter = ff
                 .bbox(ff.property(geomName), ((Envelope) envelopeInOriginalProjection).getJTSEnvelope());
@@ -175,7 +178,7 @@ public class VectorEncoder implements IResourceEncoder {
         Rasterizer<Object> rasterizer = null;
         if (rasterize) {
             builder = builder.startState(context.getTargetName());
-            // TODO instantiate rasterizer with target artifact
+            rasterizer = new Rasterizer<Object>(((Space)requestScale.getSpace()).getGrid());
         }
 
         String nameAttribute = resource.getParameters().get("nameAttribute", String.class);
@@ -185,7 +188,6 @@ public class VectorEncoder implements IResourceEncoder {
 
         int n = 1;
         FeatureIterator<SimpleFeature> it = fc.subCollection(bbfilter).features();
-
         while (it.hasNext()) {
 
             SimpleFeature feature = it.next();
@@ -196,15 +198,31 @@ public class VectorEncoder implements IResourceEncoder {
                     shape = GeometrySanitizer.sanitize((com.vividsolutions.jts.geom.Geometry) shape);
                 }
 
-                if (rasterize) {
-                    // TODO compute value for shape
-                    // TODO rasterizer.add (shape, function to pass value)
-                } else {
+                IShape objectShape = Shape
+                        .create((com.vividsolutions.jts.geom.Geometry) shape, originalProjection)
+                        .transform(requestScale.getSpace().getProjection())
+                        .intersection(requestScale.getSpace().getShape());
 
-                    IShape objectShape = Shape
-                            .create((com.vividsolutions.jts.geom.Geometry) shape, originalProjection)
-                            .transform(requestScale.getSpace().getProjection())
-                            .intersection(requestScale.getSpace().getShape());
+                if (rasterize) {
+
+                	Object value = Boolean.TRUE;
+                	
+                	if (idRequested != null) {
+                		value = feature.getAttribute(idRequested);
+                		 if (value == null) {
+                			 value = feature.getAttribute(idRequested.toUpperCase());
+                         }
+                         if (value == null) {
+                        	 value = feature.getAttribute(idRequested.toLowerCase());
+                         }
+                	}
+                	
+                	value = Utils.asType(value, Utils.getClassForType(resource.getType()));
+                	
+                	final Object vval = value;
+                	rasterizer.add(objectShape, (s) -> vval);
+                	
+                } else {
 
                     IScale objectScale = Scale.createLike(context.getScale(), objectShape);
                     String objectName = null;
@@ -241,34 +259,37 @@ public class VectorEncoder implements IResourceEncoder {
         it.close();
 
         if (rasterize) {
-            // TODO rasterizer.finish(call builder)
+        	final Builder stateBuilder = builder;
+            rasterizer.finish((b, xy) -> {
+                    stateBuilder.add(b, ((Space)requestScale.getSpace()).getGrid().getOffset(xy[0], xy[1]));
+            });
             builder = builder.finishState();
         }
 
     }
 
-    @Override
-    public boolean isOnline(IResource resource) {
+	@Override
+	public boolean isOnline(IResource resource) {
 
-        File base = null;
-        if (Urns.INSTANCE.isLocal(resource.getUrn())) {
-            base = Resources.INSTANCE.getLocalWorkspace().getRoot();
-        } else {
-            // TODO
-        }
+		File base = null;
+		if (Urns.INSTANCE.isLocal(resource.getUrn())) {
+			base = Resources.INSTANCE.getLocalWorkspace().getRoot();
+		} else {
+			// TODO
+		}
 
-        if (base == null) {
-            return false;
-        }
+		if (base == null) {
+			return false;
+		}
 
-        for (String s : resource.getLocalPaths()) {
-            File rfile = new File(base + File.separator + s);
-            if (!rfile.exists() || !rfile.canRead()) {
-                return false;
-            }
-        }
+		for (String s : resource.getLocalPaths()) {
+			File rfile = new File(base + File.separator + s);
+			if (!rfile.exists() || !rfile.canRead()) {
+				return false;
+			}
+		}
 
-        return true;
-    }
+		return true;
+	}
 
 }

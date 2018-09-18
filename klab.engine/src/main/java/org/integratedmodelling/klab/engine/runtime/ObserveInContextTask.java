@@ -84,7 +84,7 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 					 * obtain the resolvable object corresponding to the URN - either a concept or a
 					 * model
 					 */
-					IResolvable resolvable = Resources.INSTANCE.getResolvableResource(urn);
+					IResolvable resolvable = Resources.INSTANCE.getResolvableResource(urn, context.getScale());
 
 					if (resolvable instanceof IModel) {
 						resolvable = Observable.promote((IModel) resolvable);

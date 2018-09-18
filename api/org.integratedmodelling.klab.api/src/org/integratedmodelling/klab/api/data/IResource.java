@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Version;
@@ -453,4 +454,5 @@ public interface IResource extends Serializable {
      * @return project name
      */
     String getLocalProjectName();
+
 }

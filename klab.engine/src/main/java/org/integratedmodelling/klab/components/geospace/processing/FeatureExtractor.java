@@ -86,7 +86,7 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 					"feature extraction only works on regular distributed spatial extents (grids)");
 		}
 
-		this.grid = ((Space) scale.getSpace()).getGrid().get();
+		this.grid = ((Space) scale.getSpace()).getGrid();
 		this.boundingBox = (Shape) scale.getSpace().getShape();
 
 		// TODO these are obviously still unfeasible dimensions for an in-memory image.

@@ -131,4 +131,10 @@ public class VisitingDataBuilder implements IKlabData.Builder {
 		return null;
 	}
 
+	@Override
+	public void add(Object value, long offset) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

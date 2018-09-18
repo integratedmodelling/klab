@@ -91,7 +91,7 @@ public enum Resolver {
 	public IDataflow<IArtifact> resolve(String urn, ISubject context, String[] scenarios) throws KlabException {
 
 		IMonitor monitor = context.getMonitor();
-		IResolvable resolvable = Resources.INSTANCE.getResolvableResource(urn);
+		IResolvable resolvable = Resources.INSTANCE.getResolvableResource(urn, context.getScale());
 		String taskId = "local:task:" + context.getId() + ":" + ""; // TODO encode resolvable in URN
 		if (resolvable == null) {
 			return Dataflow.empty();

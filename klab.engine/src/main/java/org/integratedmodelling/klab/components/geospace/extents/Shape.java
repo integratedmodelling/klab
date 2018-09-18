@@ -530,10 +530,10 @@ public class Shape extends AbstractExtent implements IShape {
 	@Override
 	public IScaleMediator getMediator(IExtent extent) {
 		ISpace other = (ISpace) extent;
-		if (other instanceof Space && ((Space) other).getGrid().isPresent()) {
-			return new ShapeToGrid(this, (Grid) ((Space) other).getGrid().get());
-		} else if (other instanceof Space && ((Space) other).getTessellation().isPresent()) {
-			return new ShapeToFeatures(this, ((Space) other).getTessellation().get());
+		if (other instanceof Space && ((Space) other).getGrid() != null) {
+			return new ShapeToGrid(this, (Grid) ((Space) other).getGrid());
+		} else if (other instanceof Space && ((Space) other).getTessellation() != null) {
+			return new ShapeToFeatures(this, ((Space) other).getTessellation());
 		} else {
 			return new ShapeToShape(this, (Shape) other.getShape());
 		}

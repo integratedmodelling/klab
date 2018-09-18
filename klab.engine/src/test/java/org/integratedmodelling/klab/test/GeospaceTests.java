@@ -80,7 +80,7 @@ public class GeospaceTests {
 		Shape tzShapeUp = Shape.create(tzShapeTop);
 		Shape tzShapeDown = Shape.create(tzShapeBottom);
 
-		Grid grid = (Grid) ((Space) tzScale.getSpace()).getGrid().get();
+		Grid grid = (Grid) ((Space) tzScale.getSpace()).getGrid();
 		IGrid gridUp = Subgrid.create(grid, tzShapeUp);
 		IGrid gridDown = Subgrid.create(grid, tzShapeDown);
 
@@ -88,7 +88,7 @@ public class GeospaceTests {
 
 			SpatialDisplay display = new SpatialDisplay(tzScale.getSpace());
 
-			display.add(((Space) tzScale.getSpace()).getGrid().get(), "original");
+			display.add(((Space) tzScale.getSpace()).getGrid(), "original");
 			display.add(gridUp, "up");
 			display.add(gridDown, "down");
 
@@ -113,7 +113,7 @@ public class GeospaceTests {
 		Scale tzScale = Scale.create((IExtent) Extensions.INSTANCE.callFunction(
 				KimServiceCall.create("space", "grid", "1 km", "shape", tzShape), Klab.INSTANCE.getRootMonitor()));
 
-		Grid grid = (Grid) ((Space) tzScale.getSpace()).getGrid().get();
+		Grid grid = (Grid) ((Space) tzScale.getSpace()).getGrid();
 
 		// Just visual check for now
 		for (String shape : subshapes) {

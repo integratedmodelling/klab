@@ -30,6 +30,7 @@ import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
@@ -254,9 +255,12 @@ public interface IResourceService {
      * @param urn
      *            either a formal URN or one of the abbreviated forms recognized in
      *            k.IM (such as a concept identifier)
+     * @param scale
+     * 			scale of resolution, used to attribute proper default units to 
+     * 			extensive observables when they are created from concepts.
      * @return a resolvable resource, or null if nothing can be found.
      */
-    IResolvable getResolvableResource(String urn);
+    IResolvable getResolvableResource(String urn, IScale scale);
 
     /**
      * Return the project with the passed name as a k.LAB wrapper.

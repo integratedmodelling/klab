@@ -206,8 +206,8 @@ public class SpatialDisplay {
 		/*
 		 * if (space instanceof Space && ((Space)space).getGrid().isPresent()) {
 		 * add(((Space)space).getGrid().get(), layer); } else
-		 */ if (space instanceof Space && ((Space) space).getTessellation().isPresent()) {
-			for (IExtent shape : ((Space) space).getTessellation().get()) {
+		 */ if (space instanceof Space && ((Space) space).getTessellation() != null) {
+			for (IExtent shape : ((Space) space).getTessellation()) {
 				add((IShape) shape, layer);
 			}
 		} else {

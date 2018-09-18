@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.components.localstorage.impl.BooleanStorage;
 import org.integratedmodelling.klab.components.localstorage.impl.ConceptStorage;
 import org.integratedmodelling.klab.components.localstorage.impl.DoubleStorage;
+import org.integratedmodelling.klab.components.localstorage.impl.TextStorage;
 
 @Component(id = "local.storage", version = Version.CURRENT)
 public class LocalStorageComponent implements IStorageProvider {
@@ -28,6 +29,8 @@ public class LocalStorageComponent implements IStorageProvider {
 			return new DoubleStorage(scale);
 		case BOOLEAN:
 			return new BooleanStorage(scale);
+		case TEXT:
+			return new TextStorage(scale);
 		default:
 			throw new IllegalArgumentException("illegal type for state storage: " + type);
 		}

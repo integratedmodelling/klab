@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 import org.integratedmodelling.kim.api.IKimClassifier;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -338,27 +337,19 @@ public class Classifier implements IClassifier {
 	}
 
 	public static Classifier NumberMatcher(Number n) {
-		Classifier ret = new Classifier();
-		ret.numberMatch = n.doubleValue();
-		return ret;
+		return new Classifier(n);
 	}
 
 	public static Classifier BooleanMatcher(boolean n) {
-		Classifier ret = new Classifier();
-		ret.booleanMatch = n ? 1 : 0;
-		return ret;
+		return new Classifier(n);
 	}
 
 	public static Classifier RangeMatcher(Range interval) {
-		Classifier ret = new Classifier();
-		ret.intervalMatch = interval;
-		return ret;
+		return new Classifier(interval);
 	}
 
 	public static Classifier ConceptMatcher(IConcept concept) {
-		Classifier ret = new Classifier();
-		ret.conceptMatch = concept;
-		return ret;
+		return new Classifier(concept);
 	}
 
 	public static Classifier Multiple(Classifier... classifiers) {
@@ -369,9 +360,7 @@ public class Classifier implements IClassifier {
 	}
 
 	public static Classifier StringMatcher(String string) {
-		Classifier ret = new Classifier();
-		ret.stringMatch = string;
-		return ret;
+		return new Classifier(string);
 	}
 
 	public static Classifier Universal() {

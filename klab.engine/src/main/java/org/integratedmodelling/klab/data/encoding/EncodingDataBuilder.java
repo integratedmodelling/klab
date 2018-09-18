@@ -75,4 +75,10 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 		// TODO Auto-generated method stub
 
 	}
+
+	@Override
+	public void add(Object value, long offset) {
+		// TODO Auto-generated method stub
+		
+	}
 }

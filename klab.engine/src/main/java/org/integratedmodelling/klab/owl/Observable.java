@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.owl;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -18,6 +19,8 @@ import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Unit;
@@ -64,8 +67,40 @@ public class Observable extends Concept implements IObservable {
 		this.observable = this.main = concept;
 	}
 
-	public static Observable promote(IConceptDefinition concept) {
-		return promote(concept.getConcept());
+	public static Observable promote(IConceptDefinition concept, IScale scale) {
+
+		Observable ret = promote(concept.getConcept());
+		return ret.contextualizeUnits(scale);
+	}
+
+	/**
+	 * Ensure the unit is appropriate for the scale if the observable is
+	 * an extensive property. Modifies the unit - call on a copy.
+	 * 
+	 * @param scale
+	 * @return this observable (not a copy)
+	 */
+	public Observable contextualizeUnits(IScale scale) {
+		
+		if (this.is(Type.EXTENSIVE_PROPERTY)) {
+			IUnit unit = this.getUnit();
+			if (unit != null) {
+				Set<ExtentDimension> toAdd = new HashSet<>();
+				if (scale.isSpatiallyDistributed() && !Units.INSTANCE.isSpatialDensity(unit, scale.getSpace())) {
+					toAdd.add(Units.INSTANCE.getExtentDimension(scale.getSpace()));
+				}
+				if (scale.isTemporallyDistributed() && !Units.INSTANCE.isRate(unit)) {
+					toAdd.add(ExtentDimension.TEMPORAL);
+				}
+				if (toAdd != null) {
+					unit = Units.INSTANCE.addExtents(unit, toAdd);
+					this.unit = (Unit) unit;
+					this.declaration += " in " + this.unit;
+				}
+			}
+		}
+		return this;
+
 	}
 
 	public static Observable promote(IModel model) {
@@ -568,9 +603,10 @@ public class Observable extends Concept implements IObservable {
 		return new ObservableBuilder(this);
 	}
 
-    public static Observable promote(IConcept operand, Observable observable2) {
-        // TODO promote, then copy units and other observation semantics from the passed observable
-        throw new KlabUnimplementedException("copy semantics from other observable");
-    }
+	public static Observable promote(IConcept operand, Observable observable2) {
+		// TODO promote, then copy units and other observation semantics from the passed
+		// observable
+		throw new KlabUnimplementedException("copy semantics from other observable");
+	}
 
 }

@@ -73,6 +73,17 @@ public interface IKlabData {
 		 *             if {@link #startState(String)} has not been called.
 		 */
 		void add(Object value);
+		
+		/**
+		 * Add a value to the state being defined by this builder at the passed offset.
+		 * 
+		 * @param value
+		 * @param value
+		 * @param maxOffset
+		 * @throws IllegalStateException
+		 *             if {@link #startState(String)} has not been called.
+		 */
+		void add(Object value, long offset);
 
 		/**
 		 * Finish building a state artifact and return the original builder on which
