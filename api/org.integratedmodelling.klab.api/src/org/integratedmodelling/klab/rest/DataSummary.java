@@ -10,7 +10,7 @@ public class DataSummary {
 	private double maxValue = Double.NaN;
 	private List<Integer> histogram = new ArrayList<>();
 	private List<String> colormap = new ArrayList<>();
-	private List<String> categories = null;
+	private List<String> categories = new ArrayList<>();
 
 	/**
 	 * Proportion of no-data values (0-1).
