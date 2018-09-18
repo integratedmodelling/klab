@@ -181,7 +181,8 @@ public class DataflowCompiler {
 
 		@Override
 		public boolean equals(Object obj) {
-			return obj instanceof ModelD && model.equals(((ModelD) obj).model) && hasSameAdapters(((ModelD)obj).indirectAdapters);
+			return obj instanceof ModelD && model.equals(((ModelD) obj).model)
+					&& hasSameAdapters(((ModelD) obj).indirectAdapters);
 		}
 
 		public boolean hasSameAdapters(List<IComputableResource> adapters) {
@@ -229,7 +230,7 @@ public class DataflowCompiler {
 				this.observable = this.observer.getObservable();
 			} else if (resolvable instanceof ResolvedArtifact) {
 				this.resolvedArtifact = (ResolvedArtifact) resolvable;
-				this.observable = resolvedArtifact.getObservable();
+				this.observable = (Observable) resolvedArtifact.getObservable();
 			}
 		}
 
@@ -316,24 +317,44 @@ public class DataflowCompiler {
 
 					ret.getActuators().add(partial);
 				}
-			} else if (resolvedArtifact != null && artifactAdapters != null) {
+			} else if (resolvedArtifact != null /* && artifactAdapters != null */) {
 
 				/*
-				 * we are adapting the resolved artifact, so we compile in the import and add
-				 * the adapters to our own computation
+				 * check if any mediation is needed
 				 */
-				Actuator resolved = Actuator.create();
-				resolved.setObservable(resolvedArtifact.getObservable());
-				resolved.setInput(true);
-				resolved.setAlias(resolvedArtifact.getArtifactId());
-				resolved.setName(resolvedArtifact.getArtifactId());
-				resolved.setType(resolvedArtifact.getObservable().getArtifactType());
-				for (IComputableResource adapter : artifactAdapters) {
-					ret.addComputation(adapter);
+				List<IComputableResource> mediators = Observables.INSTANCE.computeMediators(
+						resolvedArtifact.getArtifact().getObservable(), resolvedArtifact.getObservable());
+
+				if (artifactAdapters != null || mediators.size() > 0) {
+
+					/*
+					 * we are adapting the resolved artifact, so we compile in the import and add
+					 * the adapters to our own computation
+					 */
+					Actuator resolved = Actuator.create();
+					resolved.setObservable(resolvedArtifact.getObservable());
+					resolved.setInput(true);
+					resolved.setAlias(resolvedArtifact.getArtifactId());
+					resolved.setName(resolvedArtifact.getArtifactId());
+					resolved.setType(resolvedArtifact.getObservable().getArtifactType());
+					if (artifactAdapters != null) {
+						for (IComputableResource adapter : artifactAdapters) {
+							ret.addComputation(adapter);
+						}
+					}
+
+					/*
+					 * add any mediation needed
+					 */
+					for (IComputableResource mediator : mediators) {
+						ret.addMediation(mediator, ret);
+					}
+
+					resolved.getAnnotations().addAll(
+							Annotations.INSTANCE.collectAnnotations(observable, resolvedArtifact.getArtifact()));
+
+					ret.getActuators().add(resolved);
 				}
-				resolved.getAnnotations()
-						.addAll(Annotations.INSTANCE.collectAnnotations(observable, resolvedArtifact.getArtifact()));
-				ret.getActuators().add(resolved);
 			}
 
 			return ret;
@@ -483,7 +504,7 @@ public class DataflowCompiler {
 				observableCatalog.put(ret.resolvedArtifact.getArtifactId(),
 						(Observable) ret.resolvedArtifact.getArtifact().getObservable());
 				ret.artifactAdapters = d.indirectAdapters;
-				
+
 				for (ResolutionEdge o : graph.incomingEdgesOf(source)) {
 					ret.children.add(compileActuator(graph.getEdgeSource(o), graph,
 							o.coverage == null ? scale : o.coverage, monitor));
@@ -585,6 +606,7 @@ public class DataflowCompiler {
 
 	/**
 	 * Must create different descriptor for different indirect usages
+	 * 
 	 * @param model
 	 * @param indirectAdapters
 	 * @return

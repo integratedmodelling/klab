@@ -41,6 +41,7 @@ import org.integratedmodelling.klab.ogc.RasterAdapter;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.URLUtils;
+import org.opengis.coverage.SampleDimension;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -110,14 +111,20 @@ public class RasterValidator implements IResourceValidator {
 								+ userData.get("band", Integer.class) + " is requested");
 					}
 				}
-
+				
+				int band = userData.get("band", 0);
+				
 				/*
-				 * TODO we could (maybe on demand) compute the shape of the covered region
+				 * Nodata value for band. TODO make it a list, which requires moving to
+				 * top level or JSON will complain.
 				 */
+				SampleDimension sdim = coverage.getSampleDimension(band);
+				if (sdim.getNoDataValues() != null) {
+					for (double d : sdim.getNoDataValues()) {
+						ret.withParameter("nodata", d);
+					}
+				}
 
-				/*
-				 * If userdata do not contain nodata values, add them
-				 */
 			}
 
 			if (!ret.hasErrors()) {

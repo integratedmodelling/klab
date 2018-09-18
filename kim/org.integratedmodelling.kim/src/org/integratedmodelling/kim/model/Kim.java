@@ -834,11 +834,11 @@ public enum Kim {
 		case "domain":
 			return EnumSet.of(Type.DOMAIN);
 		case "energy":
-			return EnumSet.of(Type.ENERGY, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
+			return EnumSet.of(Type.ENERGY, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "entropy":
-			return EnumSet.of(Type.ENTROPY, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
+			return EnumSet.of(Type.ENTROPY, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "length":
-			return EnumSet.of(Type.LENGTH, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
+			return EnumSet.of(Type.LENGTH, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "mass":
 			return EnumSet.of(Type.MASS, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "volume":
@@ -850,9 +850,9 @@ public enum Kim {
 		case "money":
 			return EnumSet.of(Type.MONEY, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "duration":
-			return EnumSet.of(Type.DURATION, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
+			return EnumSet.of(Type.DURATION, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "area":
-			return EnumSet.of(Type.AREA, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
+			return EnumSet.of(Type.AREA, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "presence":
 			return EnumSet.of(Type.PRESENCE, Type.QUALITY, Type.OBSERVABLE);
 		case "proportion":

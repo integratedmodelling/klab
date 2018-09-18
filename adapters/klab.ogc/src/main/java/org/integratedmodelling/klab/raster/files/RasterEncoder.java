@@ -148,12 +148,6 @@ public class RasterEncoder implements IResourceEncoder {
 
 	private Set<Double> getNodata(IResource resource, GridCoverage coverage, int band) {
 		Set<Double> ret = new HashSet<>();
-//		SampleDimension sdim = coverage.getSampleDimension(band);
-//		if (sdim.getNoDataValues() != null) {
-//			for (double d : sdim.getNoDataValues()) {
-//				ret.add(d);
-//			}
-//		}
 		if (resource.getParameters().contains("nodata")) {
 			ret.add(resource.getParameters().get("nodata", Double.class));
 		}

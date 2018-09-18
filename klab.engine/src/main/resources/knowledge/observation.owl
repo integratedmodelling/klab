@@ -523,7 +523,7 @@ Main author</dc:contributor>
     <!-- http://integratedmodelling.org/ks/observation.owl#Area -->
 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Area">
-        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ExtensivePhysicalProperty"/>
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
         <unit>m^2</unit>
     </owl:Class>
@@ -897,7 +897,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
     <!-- http://integratedmodelling.org/ks/observation.owl#Length -->
 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Length">
-        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ExtensivePhysicalProperty"/>
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
         <unit>m</unit>
     </owl:Class>

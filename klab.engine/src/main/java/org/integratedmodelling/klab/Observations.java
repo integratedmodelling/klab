@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab;
 
+import java.awt.Color;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,6 +35,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservationService;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
@@ -126,14 +128,16 @@ public enum Observations implements IObservationService {
 
 		StateSummary ret = new StateSummary();
 
-		int ndata = 0;
-		int nndat = 0;
+		long ndata = 0;
+		long nndat = 0;
+		long tdata = 0;
 
 		ret.setStateTimestamp(((Observation) state).getTimestamp());
 
 		SummaryStatistics statistics = new SummaryStatistics();
 
 		for (Iterator<Double> it = state.iterator(locator, Double.class); it.hasNext();) {
+			tdata ++;
 			Double d = it.next();
 			if (d != null) {
 				ndata++;
@@ -144,14 +148,14 @@ public enum Observations implements IObservationService {
 		}
 
 		ret.setDegenerate(ndata == 0 || !Double.isFinite(statistics.getMax()) || !Double.isFinite(statistics.getMax()));
-		ret.setNodataPercentage((double) nndat / (double) ndata);
+		ret.setNodataPercentage((double) nndat / (double) tdata);
 		ret.setRange(Arrays.asList(statistics.getMin(), statistics.getMax()));
 		ret.setValueCount(ndata + nndat);
 		ret.setMean(statistics.getMean());
 		ret.setVariance(statistics.getVariance());
 		ret.setStandardDeviation(statistics.getStandardDeviation());
 
-		if (ret.getNodataPercentage() > 0) {
+		if (ret.getNodataPercentage() < 1) {
 			Builder histogram = Histogram.builder(statistics.getMin(), statistics.getMax(),
 					state.getDataKey() == null ? 10 : state.getDataKey().size());
 			for (Iterator<Double> it = state.iterator(locator, Double.class); it.hasNext();) {
@@ -292,7 +296,19 @@ public enum Observations implements IObservationService {
 			ds.setNodataProportion(summary.getNodataPercentage());
 			ds.setMinValue(summary.getRange().get(0));
 			ds.setMaxValue(summary.getRange().get(1));
+			ds.getHistogram().addAll(ds.getHistogram());
+			double step = (summary.getRange().get(1) - summary.getRange().get(0))/(double)ds.getHistogram().size();
 			
+			for (int i = 0; i < ds.getHistogram().size(); i++) {
+				// TODO use labels for categories
+				String lower = NumberFormat.getInstance().format(summary.getRange().get(0) + (step * i));
+				String upper = NumberFormat.getInstance().format(summary.getRange().get(0) + (step * (i+1)));
+				ds.getCategories().add(lower + " to " + upper);
+			}
+			for (Color color : Renderer.INSTANCE.rainbow()) {
+				ds.getColormap().add("#" + Integer.toHexString(color.getRGB()).substring(2));
+			}
+
 			ret.setDataSummary(ds);
 
 			// FIXME REMOVE this is just for testing
