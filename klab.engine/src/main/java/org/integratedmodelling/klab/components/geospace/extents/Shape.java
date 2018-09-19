@@ -13,6 +13,7 @@ import org.geotools.referencing.CRS;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
@@ -173,8 +174,7 @@ public class Shape extends AbstractExtent implements IShape {
 
 	@Override
 	public double getArea(IUnit unit) {
-		// TODO Auto-generated method stub
-		return 0;
+		return unit.convert(getMeteredShape().getArea(), Units.INSTANCE.SQUARE_METERS).doubleValue();
 	}
 
 	public Shape getCentroid() {

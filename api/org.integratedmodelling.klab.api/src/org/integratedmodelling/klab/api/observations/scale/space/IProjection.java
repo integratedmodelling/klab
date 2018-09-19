@@ -52,4 +52,10 @@ public interface IProjection {
 	 * @return
 	 */
 	String getSimpleSRS();
+
+	/**
+	 * Units 
+	 * @return
+	 */
+	String getUnits();
 }

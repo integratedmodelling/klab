@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab;
 
-import java.awt.Color;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,8 +33,9 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservationService;
 import org.integratedmodelling.klab.common.mediation.Unit;
+import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
-import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
@@ -241,6 +241,10 @@ public enum Observations implements IObservationService {
 		// fill in spatio/temporal info and mode of visualization
 		if (space != null) {
 
+			ret.getMetadata().put("Total area",
+					NumberFormat.getInstance().format(space.getShape().getArea(Units.INSTANCE.SQUARE_KILOMETERS))
+							+ " km2");
+
 			/*
 			 * shapes can be huge and only make sense for direct observations, as states get
 			 * the same geometry as their parents.
@@ -254,7 +258,16 @@ public enum Observations implements IObservationService {
 
 			GeometryType gtype = GeometryType.SHAPE;
 			if (observation instanceof IState && space.isRegular() && space.size() > 1) {
+
 				gtype = GeometryType.RASTER;
+
+				IGrid grid = ((Space) space).getGrid();
+
+				ret.getMetadata().put("Grid size",  grid.getCellCount() + " (" + grid.getXCells() + " x " + grid.getYCells() + ") cells");
+				ret.getMetadata().put("Cell size",
+						NumberFormat.getInstance().format(grid.getCellWidth()) + " x "
+								+ NumberFormat.getInstance().format(grid.getCellHeight()) + " "
+								+ grid.getProjection().getUnits());
 			}
 
 			ret.getGeometryTypes().add(gtype);
@@ -296,8 +309,10 @@ public enum Observations implements IObservationService {
 			ds.setNodataProportion(summary.getNodataPercentage());
 			ds.setMinValue(summary.getRange().get(0));
 			ds.setMaxValue(summary.getRange().get(1));
-			for (int bin : summary.getHistogram().getBins()) {
-				ds.getHistogram().add(bin);
+			if (summary.getHistogram() != null) {
+				for (int bin : summary.getHistogram().getBins()) {
+					ds.getHistogram().add(bin);
+				}
 			}
 			double step = (summary.getRange().get(1) - summary.getRange().get(0)) / (double) ds.getHistogram().size();
 
@@ -306,9 +321,6 @@ public enum Observations implements IObservationService {
 				String lower = NumberFormat.getInstance().format(summary.getRange().get(0) + (step * i));
 				String upper = NumberFormat.getInstance().format(summary.getRange().get(0) + (step * (i + 1)));
 				ds.getCategories().add(lower + " to " + upper);
-			}
-			for (Color color : Renderer.INSTANCE.rainbow()) {
-				ds.getColormap().add("#" + Integer.toHexString(color.getRGB()).substring(2));
 			}
 
 			ret.setDataSummary(ds);

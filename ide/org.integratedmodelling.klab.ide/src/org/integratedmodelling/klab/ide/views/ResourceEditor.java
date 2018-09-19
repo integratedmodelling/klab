@@ -1,33 +1,55 @@
 package org.integratedmodelling.klab.ide.views;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.viewers.ColumnPixelData;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.integratedmodelling.klab.api.data.IResource.Attribute;
+import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.ui.ResourceEditingSupport;
 import org.integratedmodelling.klab.ide.ui.WorldWidget;
+import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.integratedmodelling.klab.rest.ResourceReference;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.layout.TableColumnLayout;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
+import org.integratedmodelling.klab.rest.ServicePrototype.Argument;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class ResourceEditor extends ViewPart {
 
@@ -43,18 +65,131 @@ public class ResourceEditor extends ViewPart {
 	private Text unpublishableReason;
 	private Label labelWhy;
 	private Table table;
+	private Table table_1;
+	
+	private Pair<String, String> parameterEdit = null;
+	
+	private ResourceReference resource;
+	private ResourceAdapterReference adapter;
+	private TableViewer attributeViewer;
+	private TableViewer adapterPropertyViewer;
+	private TableViewerColumn tableViewerColumn_3;
+	private TableViewerColumn propertyNameColumn;
+	private TableViewerColumn propertyValueColumn;
 
-	// private final FormToolkit toolkit = new FormToolkit(Display.getCurrent());
+	class AttributeContentProvider implements IStructuredContentProvider {
 
+		@Override
+		public Object[] getElements(Object inputElement) {
+			if (inputElement instanceof Collection) {
+				return ((Collection<?>) inputElement).toArray();
+			}
+			return new Object[] {};
+		}
+	}
+
+	class AttributeLabelProvider extends LabelProvider implements ITableLabelProvider {
+
+		@Override
+		public Image getColumnImage(Object element, int columnIndex) {
+			if (element instanceof Attribute) {
+			return columnIndex == 0
+					? ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/property.gif")
+					: null;
+			}
+			return null;
+		}
+
+		@Override
+		public String getColumnText(Object element, int columnIndex) {
+			if (element instanceof Attribute) {
+				switch(columnIndex) {
+				case 0:
+					return ((Attribute)element).getName();
+				case 1:
+					return ((Attribute)element).getType() == null ? "NULL!" : ((Attribute)element).getType().name();
+				case 2:
+					// TODO
+					return "";
+				}
+			}
+			return null;
+		}
+	}
+
+	class PropertyContentProvider implements IStructuredContentProvider {
+
+		@Override
+		public Object[] getElements(Object inputElement) {
+			if (inputElement instanceof Map) {
+				List<Pair<String, String>> ret = new ArrayList<>();
+				for (Entry<?,?> entry : ((Map<?,?>)inputElement).entrySet()) {
+					ret.add(new Pair<>(entry.getKey().toString(), entry.getValue().toString()));
+				}
+				if (parameterEdit != null) {
+					ret.add(parameterEdit);
+				}
+				return ret.toArray();
+			}
+			return new Object[] {};
+		}
+
+	}
+
+	class PropertyLabelProvider extends LabelProvider implements ITableLabelProvider {
+
+		@Override
+		public Image getColumnImage(Object element, int columnIndex) {
+			return columnIndex == 0
+					? ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/property.gif")
+					: null;
+		}
+
+		@Override
+		public String getColumnText(Object element, int columnIndex) {
+			if (element instanceof Pair) {
+				switch(columnIndex) {
+				case 0:
+					return (String)((Pair<?,?>)element).getFirst();
+				case 1:
+					// TODO type
+					return "TYPE";
+				case 2:
+					return (String)((Pair<?,?>)element).getSecond();
+				}
+			}
+			return null;
+		}
+	}
+	
+	
 	public ResourceEditor() {
 	}
 
 	public void loadResource(ResourceReference resource) {
-		urnLabel.setText(resource.getUrn());
-		geometryDefinition.setText(resource.getGeometry());
-		localName.setText(resource.getLocalName());
-		grpAdapterData.setText(resource.getAdapterType().toUpperCase() + " adapter data");
-		worldWidget.setExtent(resource.getSpatialExtent());
+		
+		this.resource = resource;
+		this.adapter = Activator.klab().getResourceAdapter(resource.getAdapterType());
+		this.parameterEdit = null;
+		this.urnLabel.setText(resource.getUrn());
+		this.geometryDefinition.setText(resource.getGeometry());
+		this.localName.setText(resource.getLocalName());
+		this.grpAdapterData.setText(resource.getAdapterType().toUpperCase() + " adapter data");
+		this.worldWidget.setExtent(resource.getSpatialExtent());
+		this.adapterPropertyViewer.setInput(resource.getParameters());
+		this.attributeViewer.setInput(resource.getAttributes());
+		propertyNameColumn.setEditingSupport(new ResourceEditingSupport.PropertySupport(adapterPropertyViewer, getAdapterProperties()));
+
+	}
+
+	private String[] getAdapterProperties() {
+		List<String> ret = new ArrayList<>();
+		if (this.adapter != null) {
+			for (Argument argument : adapter.getParameters().getArguments()) {
+				ret.add(argument.getName());
+			}
+		}
+		return ret.toArray(new String[ret.size()]);
 	}
 
 	/**
@@ -177,11 +312,29 @@ public class ResourceEditor extends ViewPart {
 
 			Composite composite = new Composite(grpAttributes, SWT.NONE);
 			composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-			composite.setLayout(new TableColumnLayout());
+			TableColumnLayout tcl_composite = new TableColumnLayout();
+			composite.setLayout(tcl_composite);
 
-			TableViewer tableViewer = new TableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);
-			table = tableViewer.getTable();
+			attributeViewer = new TableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);
+			table = attributeViewer.getTable();
 			table.setLinesVisible(true);
+			
+			tableViewerColumn_3 = new TableViewerColumn(attributeViewer, SWT.NONE);
+			TableColumn attributeName = tableViewerColumn_3.getColumn();
+			tcl_composite.setColumnData(attributeName, new ColumnPixelData(150, true, true));
+			attributeName.setText("New Column");
+			
+			TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(attributeViewer, SWT.NONE);
+			TableColumn attributeType = tableViewerColumn_1.getColumn();
+			tcl_composite.setColumnData(attributeType, new ColumnPixelData(150, true, true));
+			attributeType.setText("New Column");
+			
+			TableViewerColumn tableViewerColumn_2 = new TableViewerColumn(attributeViewer, SWT.NONE);
+			TableColumn attributeExample = tableViewerColumn_2.getColumn();
+			tcl_composite.setColumnData(attributeExample, new ColumnPixelData(150, true, true));
+			attributeExample.setText("New Column");
+			attributeViewer.setLabelProvider(new AttributeLabelProvider());
+			attributeViewer.setContentProvider(new AttributeContentProvider());
 
 			Composite composite_3 = new Composite(grpAttributes, SWT.NONE);
 			composite_3.setLayout(new GridLayout(4, false));
@@ -212,8 +365,56 @@ public class ResourceEditor extends ViewPart {
 		}
 
 		grpAdapterData = new Group(container, SWT.NONE);
+		grpAdapterData.setLayout(new FillLayout(SWT.HORIZONTAL));
 		grpAdapterData.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		grpAdapterData.setText("Adapter parameters");
+		
+		adapterPropertyViewer = new TableViewer(grpAdapterData, SWT.BORDER | SWT.FULL_SELECTION);
+		table_1 = adapterPropertyViewer.getTable();
+		table_1.setLinesVisible(true);
+		table_1.setHeaderVisible(true);
+		
+		propertyNameColumn = new TableViewerColumn(adapterPropertyViewer, SWT.NONE);
+		TableColumn propertyColumn = propertyNameColumn.getColumn();
+		propertyColumn.setWidth(180);
+		propertyColumn.setText("Adapter property");	
+		propertyNameColumn.setEditingSupport(new ResourceEditingSupport.PropertySupport(adapterPropertyViewer, new String[] {}));
+		
+		TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(adapterPropertyViewer, SWT.NONE);
+		TableColumn typeColumn = tableViewerColumn_1.getColumn();
+		typeColumn.setWidth(100);
+		typeColumn.setText("Type");
+		
+		propertyValueColumn = new TableViewerColumn(adapterPropertyViewer, SWT.NONE);
+		TableColumn valueColumn = propertyValueColumn.getColumn();
+		valueColumn.setWidth(400);
+		valueColumn.setText("Value");
+		propertyValueColumn.setEditingSupport(new ResourceEditingSupport.ValueSupport(adapterPropertyViewer));
+		
+		Menu menu = new Menu(table_1);
+		table_1.setMenu(menu);
+		
+		MenuItem addProperty = new MenuItem(menu, SWT.NONE);
+		addProperty.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// TODO add parameter for editing
+				parameterEdit = new Pair<>("", "");
+				adapterPropertyViewer.setInput(resource.getParameters());
+			}
+		});
+		addProperty.setText("Add new parameter");
+		
+		MenuItem deleteProperty = new MenuItem(menu, SWT.NONE);
+		deleteProperty.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// TODO delete current selection
+			}
+		});
+		deleteProperty.setText("Delete parameter");
+		adapterPropertyViewer.setLabelProvider(new PropertyLabelProvider());
+		adapterPropertyViewer.setContentProvider(new PropertyContentProvider());
 
 		TabItem tbtmProvenanceData = new TabItem(tabFolder, SWT.NONE);
 		tbtmProvenanceData.setText("Documentation");

@@ -231,6 +231,7 @@ public class DataflowCompiler {
 			} else if (resolvable instanceof ResolvedArtifact) {
 				this.resolvedArtifact = (ResolvedArtifact) resolvable;
 				this.observable = (Observable) resolvedArtifact.getObservable();
+				observableCatalog.put(this.resolvedArtifact.getArtifactId(), (Observable) this.resolvedArtifact.getArtifact().getObservable());
 			}
 		}
 
@@ -268,8 +269,10 @@ public class DataflowCompiler {
 			}
 
 			if (observer != null) {
+				
 				ret.setNamespace(observer.getNamespace());
 				ret.setName(observer.getId());
+			
 			} else if (resolvedArtifact != null && artifactAdapters == null) {
 				/*
 				 * Different situations if we ARE the artifact or we USE it for something. If we
@@ -278,6 +281,7 @@ public class DataflowCompiler {
 				 */
 				ret.setName(resolvedArtifact.getArtifactId());
 				ret.setInput(true);
+				
 			} else {
 				ret.setName(observable.getLocalName());
 			}
@@ -387,7 +391,6 @@ public class DataflowCompiler {
 			} else {
 				ret.setReference(true);
 			}
-
 		}
 
 		/*
