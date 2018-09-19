@@ -192,9 +192,14 @@ public interface IMessage {
 		ExecuteObservationAction,
 		
 		/*
-		 * --- Task lifecycle ---
+		 * --- Task lifecycle --- B -> F
 		 */
 		ScriptStarted, TaskStarted, TaskFinished, TaskAborted, DataflowCompiled,
+		
+		/*
+		 * Task lifecycle F -> B
+		 */
+		TaskInterrupted,
 
 		/*
 		 * --- Search-class types ---
