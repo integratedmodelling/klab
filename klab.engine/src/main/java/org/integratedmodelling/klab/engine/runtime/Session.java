@@ -749,6 +749,11 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			observe(request.getUrn(), request.getScenarios().toArray(new String[request.getScenarios().size()]));
 		}
 	}
+	
+	@MessageHandler(type = IMessage.Type.TaskInterrupted)
+	private void handleTaskInterruptRequest(String taskId) {
+		System.out.println("INTERRUPT TASK " + taskId);
+	}
 
 	@MessageHandler
 	private void handleProjectLoadRequest(final ProjectLoadRequest request, IMessage message) {
