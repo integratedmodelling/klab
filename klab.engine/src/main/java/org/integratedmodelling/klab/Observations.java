@@ -262,7 +262,7 @@ public enum Observations implements IObservationService {
 				ret.getMetadata().put("Grid size", grid.getXCells() + " x " + grid.getYCells() + " cells");
 				ret.getMetadata().put("Cell size", NumberFormat.getInstance().format(grid.getCellWidth()) + " x "
 						+ NumberFormat.getInstance().format(grid.getYCells()) + " " + grid.getProjection().getUnits());
-				ret.getMetadata().put("Total area", space.getShape().getArea(Units.INSTANCE.SQUARE_KILOMETERS) + "km2");
+				ret.getMetadata().put("Total area", space.getShape().getArea(Units.INSTANCE.SQUARE_KILOMETERS) + " km2");
 
 			}
 
