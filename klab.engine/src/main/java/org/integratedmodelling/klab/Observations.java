@@ -296,8 +296,10 @@ public enum Observations implements IObservationService {
 			ds.setNodataProportion(summary.getNodataPercentage());
 			ds.setMinValue(summary.getRange().get(0));
 			ds.setMaxValue(summary.getRange().get(1));
-			for (int bin : summary.getHistogram().getBins()) {
-				ds.getHistogram().add(bin);
+			if (summary.getHistogram() != null) {
+				for (int bin : summary.getHistogram().getBins()) {
+					ds.getHistogram().add(bin);
+				}
 			}
 			double step = (summary.getRange().get(1) - summary.getRange().get(0)) / (double) ds.getHistogram().size();
 
