@@ -241,6 +241,10 @@ public enum Observations implements IObservationService {
 		// fill in spatio/temporal info and mode of visualization
 		if (space != null) {
 
+			ret.getMetadata().put("Total area",
+					NumberFormat.getInstance().format(space.getShape().getArea(Units.INSTANCE.SQUARE_KILOMETERS))
+							+ " km2");
+
 			/*
 			 * shapes can be huge and only make sense for direct observations, as states get
 			 * the same geometry as their parents.
@@ -259,11 +263,11 @@ public enum Observations implements IObservationService {
 
 				IGrid grid = ((Space) space).getGrid();
 
-				ret.getMetadata().put("Grid size", grid.getXCells() + " x " + grid.getYCells() + " cells");
-				ret.getMetadata().put("Cell size", NumberFormat.getInstance().format(grid.getCellWidth()) + " x "
-						+ NumberFormat.getInstance().format(grid.getYCells()) + " " + grid.getProjection().getUnits());
-				ret.getMetadata().put("Total area", space.getShape().getArea(Units.INSTANCE.SQUARE_KILOMETERS) + " km2");
-
+				ret.getMetadata().put("Grid size",  grid.getCellCount() + " (" + grid.getXCells() + " x " + grid.getYCells() + ") cells");
+				ret.getMetadata().put("Cell size",
+						NumberFormat.getInstance().format(grid.getCellWidth()) + " x "
+								+ NumberFormat.getInstance().format(grid.getCellHeight()) + " "
+								+ grid.getProjection().getUnits());
 			}
 
 			ret.getGeometryTypes().add(gtype);

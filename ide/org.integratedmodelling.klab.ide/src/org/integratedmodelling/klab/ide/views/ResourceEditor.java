@@ -170,7 +170,7 @@ public class ResourceEditor extends ViewPart {
 		
 		this.resource = resource;
 		this.adapter = Activator.klab().getResourceAdapter(resource.getAdapterType());
-
+		this.parameterEdit = null;
 		this.urnLabel.setText(resource.getUrn());
 		this.geometryDefinition.setText(resource.getGeometry());
 		this.localName.setText(resource.getLocalName());
