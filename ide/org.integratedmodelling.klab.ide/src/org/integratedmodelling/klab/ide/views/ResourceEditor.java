@@ -2,32 +2,37 @@ package org.integratedmodelling.klab.ide.views;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.viewers.ColumnPixelData;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.integratedmodelling.klab.ide.ui.ResourceEditingSupport;
 import org.integratedmodelling.klab.ide.ui.WorldWidget;
 import org.integratedmodelling.klab.rest.ResourceReference;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.layout.TableColumnLayout;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 
 public class ResourceEditor extends ViewPart {
 
@@ -43,6 +48,7 @@ public class ResourceEditor extends ViewPart {
 	private Text unpublishableReason;
 	private Label labelWhy;
 	private Table table;
+	private Table table_1;
 
 	// private final FormToolkit toolkit = new FormToolkit(Display.getCurrent());
 
@@ -177,11 +183,27 @@ public class ResourceEditor extends ViewPart {
 
 			Composite composite = new Composite(grpAttributes, SWT.NONE);
 			composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-			composite.setLayout(new TableColumnLayout());
+			TableColumnLayout tcl_composite = new TableColumnLayout();
+			composite.setLayout(tcl_composite);
 
 			TableViewer tableViewer = new TableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);
 			table = tableViewer.getTable();
 			table.setLinesVisible(true);
+			
+			TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+			TableColumn attributeName = tableViewerColumn.getColumn();
+			tcl_composite.setColumnData(attributeName, new ColumnPixelData(150, true, true));
+			attributeName.setText("New Column");
+			
+			TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(tableViewer, SWT.NONE);
+			TableColumn attributeType = tableViewerColumn_1.getColumn();
+			tcl_composite.setColumnData(attributeType, new ColumnPixelData(150, true, true));
+			attributeType.setText("New Column");
+			
+			TableViewerColumn tableViewerColumn_2 = new TableViewerColumn(tableViewer, SWT.NONE);
+			TableColumn attributeExample = tableViewerColumn_2.getColumn();
+			tcl_composite.setColumnData(attributeExample, new ColumnPixelData(150, true, true));
+			attributeExample.setText("New Column");
 
 			Composite composite_3 = new Composite(grpAttributes, SWT.NONE);
 			composite_3.setLayout(new GridLayout(4, false));
@@ -212,8 +234,31 @@ public class ResourceEditor extends ViewPart {
 		}
 
 		grpAdapterData = new Group(container, SWT.NONE);
+		grpAdapterData.setLayout(new FillLayout(SWT.HORIZONTAL));
 		grpAdapterData.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		grpAdapterData.setText("Adapter parameters");
+		
+		TableViewer tableViewer = new TableViewer(grpAdapterData, SWT.BORDER | SWT.FULL_SELECTION);
+		table_1 = tableViewer.getTable();
+		table_1.setLinesVisible(true);
+		table_1.setHeaderVisible(true);
+		
+		TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
+		TableColumn propertyColumn = tableViewerColumn.getColumn();
+		propertyColumn.setWidth(180);
+		propertyColumn.setText("Adapter property");	
+		tableViewerColumn.setEditingSupport(new ResourceEditingSupport.PropertySupport(tableViewer, /* TODO */new String[] {"dio", "bisonte"}));
+		
+		TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(tableViewer, SWT.NONE);
+		TableColumn typeColumn = tableViewerColumn_1.getColumn();
+		typeColumn.setWidth(100);
+		typeColumn.setText("Type");
+		
+		TableViewerColumn tableViewerColumn_2 = new TableViewerColumn(tableViewer, SWT.NONE);
+		TableColumn valueColumn = tableViewerColumn_2.getColumn();
+		valueColumn.setWidth(400);
+		valueColumn.setText("Value");
+		tableViewerColumn_2.setEditingSupport(new ResourceEditingSupport.ValueSupport(tableViewer));
 
 		TabItem tbtmProvenanceData = new TabItem(tabFolder, SWT.NONE);
 		tbtmProvenanceData.setText("Documentation");

@@ -751,8 +751,8 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	}
 	
 	@MessageHandler(type = IMessage.Type.TaskInterrupted)
-	private void handleTaskInterruptRequest(String taskId) {
-		System.out.println("INTERRUPT TASK " + taskId);
+	private void handleTaskInterruptRequest(InterruptTask request) {
+		System.out.println("INTERRUPT TASK " + request.getTaskId());
 	}
 
 	@MessageHandler
@@ -770,7 +770,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 				monitor.send(Message.create(token, IMessage.MessageClass.ProjectLifecycle,
 						IMessage.Type.UserProjectOpened, response).inResponseTo(message));
 			}
-
+			
 		}.start();
 	}
 
