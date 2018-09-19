@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab;
 
-import java.awt.Color;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,8 +33,9 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservationService;
 import org.integratedmodelling.klab.common.mediation.Unit;
+import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
-import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
@@ -254,7 +254,16 @@ public enum Observations implements IObservationService {
 
 			GeometryType gtype = GeometryType.SHAPE;
 			if (observation instanceof IState && space.isRegular() && space.size() > 1) {
+
 				gtype = GeometryType.RASTER;
+
+				IGrid grid = ((Space) space).getGrid();
+
+				ret.getMetadata().put("Grid size", grid.getXCells() + " x " + grid.getYCells() + " cells");
+				ret.getMetadata().put("Cell size", NumberFormat.getInstance().format(grid.getCellWidth()) + " x "
+						+ NumberFormat.getInstance().format(grid.getYCells()) + " " + grid.getProjection().getUnits());
+				ret.getMetadata().put("Total area", space.getShape().getArea(Units.INSTANCE.SQUARE_KILOMETERS) + "km2");
+
 			}
 
 			ret.getGeometryTypes().add(gtype);

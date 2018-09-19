@@ -1,10 +1,14 @@
 package org.integratedmodelling.klab.ide.ui;
 
+import java.util.Map.Entry;
+
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
+import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class ResourceEditingSupport {
 
@@ -27,14 +31,18 @@ public class ResourceEditingSupport {
 
 		@Override
 		protected boolean canEdit(Object element) {
-			// TODO edit only if cell is empty
-			return true;
+			// TODO also check if field is final
+			return Activator.engineMonitor().isRunning();
 		}
 
 		@Override
 		protected Object getValue(Object element) {
-			// TODO Auto-generated method stub
-			return null;
+			if (element instanceof Pair) {
+				String key = (String)((Pair<?,?>)element).getFirst();
+				// TODO match to adapter field choice
+				return 0;
+			}
+			return "";
 		}
 
 		@Override
@@ -63,13 +71,17 @@ public class ResourceEditingSupport {
 
 		@Override
 		protected boolean canEdit(Object element) {
-			return true;
+			// TODO also check if field is final
+			return Activator.engineMonitor().isRunning();
 		}
 
 		@Override
 		protected Object getValue(Object element) {
-			// TODO Auto-generated method stub
-			return null;
+			if (element instanceof Pair) {
+				return ((Pair<?,?>)element).getSecond();
+			}
+			return "";
+
 		}
 
 		@Override

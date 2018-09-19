@@ -20,6 +20,7 @@ public enum Units implements IUnitService {
 
 	public IUnit METERS = getUnit("m");
 	public IUnit SQUARE_METERS = getUnit("m^2");
+	public IUnit SQUARE_KILOMETERS = getUnit("km^2");
 	public IUnit CUBIC_METERS = getUnit("m^3");
 
 	@Override

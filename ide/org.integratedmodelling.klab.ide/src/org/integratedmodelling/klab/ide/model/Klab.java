@@ -144,6 +144,15 @@ public class Klab {
 		return resourceAdapters;
 	}
 
+	public ResourceAdapterReference getResourceAdapter(String adapterId) {
+		for (ResourceAdapterReference adapter : resourceAdapters) {
+			if (adapter.getName().equals(adapterId)) {
+				return adapter;
+			}
+		}
+		return null;
+	}
+	
 	/*
 	 * called by the session peer, the true receiver for the message
 	 */

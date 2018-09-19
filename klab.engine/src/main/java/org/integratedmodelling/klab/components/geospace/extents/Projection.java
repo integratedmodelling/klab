@@ -220,4 +220,10 @@ public class Projection implements IProjection {
 		return !CRS.getAxisOrder(this.crs).equals(AxisOrder.EAST_NORTH);
 	}
 
+	@Override
+	public String getUnits() {
+		// TODO!
+		return "degrees";
+	}
+
 }
