@@ -175,7 +175,7 @@ public enum Renderer {
 			} else {
 				label = NumberFormat.getNumberInstance().format(value);
 			}
-			return new Pair<>(null, "All values = " + label);
+			return new Pair<>(null, label);
 		}
 
 		float opacity = 1f;

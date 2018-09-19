@@ -9,7 +9,6 @@ public class DataSummary {
 	private double minValue = Double.NaN;
 	private double maxValue = Double.NaN;
 	private List<Integer> histogram = new ArrayList<>();
-	private List<String> colormap = new ArrayList<>();
 	private List<String> categories = new ArrayList<>();
 
 	/**
@@ -66,21 +65,6 @@ public class DataSummary {
 
 	public void setHistogram(List<Integer> histogram) {
 		this.histogram = histogram;
-	}
-
-	/**
-	 * Colormap used for display, or null if not applicable. Color values are in hex
-	 * notation. Maximum number of values is 256 for interpolated continuous
-	 * colormaps.
-	 * 
-	 * @return
-	 */
-	public List<String> getColormap() {
-		return colormap;
-	}
-
-	public void setColormap(List<String> colormap) {
-		this.colormap = colormap;
 	}
 
 	/**

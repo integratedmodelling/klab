@@ -307,9 +307,6 @@ public enum Observations implements IObservationService {
 				String upper = NumberFormat.getInstance().format(summary.getRange().get(0) + (step * (i + 1)));
 				ds.getCategories().add(lower + " to " + upper);
 			}
-			for (Color color : Renderer.INSTANCE.rainbow()) {
-				ds.getColormap().add("#" + Integer.toHexString(color.getRGB()).substring(2));
-			}
 
 			ret.setDataSummary(ds);
 
