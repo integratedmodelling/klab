@@ -84,7 +84,7 @@ public class EngineViewController {
 			throw new IllegalArgumentException("cannot summarize an observation that is not a state");
 		}
 
-		return Observations.INSTANCE.getStateSummary((IState)obs, loc);
+		return Observations.INSTANCE.getStateSummary((IState) obs, loc);
 	}
 
 	/**
@@ -166,6 +166,12 @@ public class EngineViewController {
 				InputStream in = new ByteArrayInputStream(os.toByteArray());
 				response.setContentType(MediaType.IMAGE_PNG_VALUE);
 				IOUtils.copy(in, response.getOutputStream());
+			} else if (format == GeometryType.COLORMAP) {
+				// TODO get (and cache, or use cached) colormap for state values and produce an image in the
+				// requested size
+			} else if (format == GeometryType.SCALAR) {
+				// TODO if distributed, use locator to get single value; otherwise ensure it's
+				// actually scalar
 			}
 		}
 

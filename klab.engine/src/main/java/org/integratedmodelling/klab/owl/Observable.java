@@ -46,7 +46,8 @@ public class Observable extends Concept implements IObservable {
 	private Range range;
 	private Unit unit;
 	private Currency currency;
-	private Concept by;
+	private Concept classifier;
+	private Concept aggregator;
 	private Concept downTo;
 	private Object value;
 	private ObservationType observationType;
@@ -133,7 +134,7 @@ public class Observable extends Concept implements IObservable {
 		this.range = observable.range;
 		this.unit = observable.unit;
 		this.currency = observable.currency;
-		this.by = observable.by;
+		this.classifier = observable.classifier;
 		this.downTo = observable.downTo;
 		this.value = observable.value;
 		this.observationType = observable.observationType;
@@ -165,8 +166,13 @@ public class Observable extends Concept implements IObservable {
 	}
 
 	@Override
-	public IConcept getBy() {
-		return by;
+	public IConcept getClassifier() {
+		return classifier;
+	}
+	
+	@Override
+	public IConcept getAggregator() {
+		return aggregator;
 	}
 
 	@Override
@@ -225,8 +231,8 @@ public class Observable extends Concept implements IObservable {
 		this.currency = currency;
 	}
 
-	public void setBy(Concept by) {
-		this.by = by;
+	public void setClassifier(Concept by) {
+		this.classifier = by;
 	}
 
 	public void setDownTo(Concept downTo) {
@@ -369,7 +375,7 @@ public class Observable extends Concept implements IObservable {
 	@Override
 	public ObservationType getObservationType() {
 		if (observationType == null && observable != null) {
-			if (by != null || observable.is(Type.CLASS) || observable.is(Type.TRAIT)) {
+			if (classifier != null || observable.is(Type.CLASS) || observable.is(Type.TRAIT)) {
 				observationType = ObservationType.CLASSIFICATION;
 			} else if (observable.is(Type.PRESENCE)) {
 				observationType = ObservationType.VERIFICATION;
@@ -420,7 +426,7 @@ public class Observable extends Concept implements IObservable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((by == null) ? 0 : by.hashCode());
+		result = prime * result + ((classifier == null) ? 0 : classifier.hashCode());
 		result = prime * result + ((currency == null) ? 0 : currency.hashCode());
 		result = prime * result + ((downTo == null) ? 0 : downTo.hashCode());
 		result = prime * result + ((main == null) ? 0 : main.hashCode());
@@ -445,11 +451,11 @@ public class Observable extends Concept implements IObservable {
 			return false;
 		}
 		Observable other = (Observable) obj;
-		if (by == null) {
-			if (other.by != null) {
+		if (classifier == null) {
+			if (other.classifier != null) {
 				return false;
 			}
-		} else if (!by.equals(other.by)) {
+		} else if (!classifier.equals(other.classifier)) {
 			return false;
 		}
 		if (currency == null) {
@@ -520,10 +526,10 @@ public class Observable extends Concept implements IObservable {
 				// this takes care of this.by == obj.by
 				return true;
 			}
-			if (obj.by != null && this.by == null) {
+			if (obj.classifier != null && this.classifier == null) {
 				return true;
 			}
-			if (this.by != null && obj.by != null && obj.by.equals(this.by)) {
+			if (this.classifier != null && obj.classifier != null && obj.classifier.equals(this.classifier)) {
 				return ((this.downTo == null && obj.downTo == null) || ((this.downTo != null && obj.downTo != null
 						&& Concepts.INSTANCE.compareSpecificity(this.downTo, obj.downTo, true) >= 0)));
 			}
@@ -581,7 +587,7 @@ public class Observable extends Concept implements IObservable {
 	public IArtifact.Type getArtifactType() {
 
 		if (observable != null) {
-			if (by != null || observable.is(Type.CLASS) || observable.is(Type.TRAIT)) {
+			if (classifier != null || observable.is(Type.CLASS) || observable.is(Type.TRAIT)) {
 				return IArtifact.Type.CONCEPT;
 			} else if (observable.is(Type.PRESENCE)) {
 				return IArtifact.Type.BOOLEAN;

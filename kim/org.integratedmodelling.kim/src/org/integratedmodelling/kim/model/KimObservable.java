@@ -38,8 +38,9 @@ public class KimObservable extends KimStatement implements IKimObservable {
 	private boolean abstractObservable;
 	private boolean hasAttribute;
 	private boolean optional;
-	private IKimConcept by = null;
+	private IKimConcept classifier = null;
 	private IKimConcept downTo = null;
+	private IKimConcept aggregator = null;
 	private String modelReference;
 	private IArtifact.Type nonSemanticType = null;
 
@@ -58,12 +59,12 @@ public class KimObservable extends KimStatement implements IKimObservable {
 	}
 
 	@Override
-	public IKimConcept getBy() {
-		return by;
+	public IKimConcept getClassifier() {
+		return classifier;
 	}
 
-	public void setBy(IKimConcept by) {
-		this.by = by;
+	public void setClassifier(IKimConcept by) {
+		this.classifier = by;
 	}
 
 	@Override
@@ -132,7 +133,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		}
 
 		if (declaration.getBy() != null) {
-			ret.by = KimConcept.normalize(declaration.getBy(), parent);
+			ret.classifier = KimConcept.normalize(declaration.getBy(), parent);
 		}
 		if (declaration.getDownTo() != null) {
 			ret.downTo = KimConcept.normalize(declaration.getDownTo(), parent);
@@ -267,11 +268,20 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		if (main != null) {
 			main.visit(visitor);
 		}
-		if (by != null) {
-			by.visit(visitor);
+		if (classifier != null) {
+			classifier.visit(visitor);
 		}
 		if (downTo != null) {
 			downTo.visit(visitor);
 		}
+	}
+
+	@Override
+	public IKimConcept getAggregator() {
+		return aggregator;
+	}
+
+	public void setAggregator(IKimConcept aggregator) {
+		this.aggregator = aggregator;
 	}
 }

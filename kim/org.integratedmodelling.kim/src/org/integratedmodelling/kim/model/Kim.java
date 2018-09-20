@@ -791,7 +791,7 @@ public enum Kim {
 			ret.add(t);
 			if (t == Type.DISTANCE) {
 				// this does not go in by itself
-				ret.add(Type.EXTENSIVE_PROPERTY);
+				ret.add(Type.INTENSIVE_PROPERTY);
 			} else if (t == Type.MAGNITUDE) {
 				// this neither
 				ret.add(Type.SUBJECTIVE);
@@ -896,7 +896,7 @@ public enum Kim {
 		case "viscosity":
 			return EnumSet.of(Type.VISCOSITY, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "distance":
-			return EnumSet.of(Type.DISTANCE, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
+			return EnumSet.of(Type.DISTANCE, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "process":
 			return EnumSet.of(Type.PROCESS, Type.DIRECT_OBSERVABLE, Type.OBSERVABLE);
 		case "assessment":

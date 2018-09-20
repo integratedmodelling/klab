@@ -116,6 +116,14 @@ public interface IKdlActuator extends IKdlStatement {
    * @return true if optional
    */
   boolean isOptional();
+  
+  /**
+   * If true, this contextualizer is declared final - which affects its possible use from
+   * specifications.
+   * 
+   * @return true if optional
+   */
+  boolean isFinal();
 
   /**
    * If both {@link #isParameter()} and {@link #isOptional()} return true, this should return the

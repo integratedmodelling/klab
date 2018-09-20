@@ -16,6 +16,7 @@ import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -156,7 +157,18 @@ public enum Extensions implements IExtensionService {
 	 */
 	public ServicePrototype describePrototype(IPrototype prototype) {
 		ServicePrototype ret = new ServicePrototype();
-		// TODO
+		ret.setName(prototype.getName());
+		ret.setDescription(prototype.getDescription());
+		for (Argument argument : prototype.listArguments()) {
+			ServicePrototype.Argument arg = new ServicePrototype.Argument();
+			arg.setDefaultValue(argument.getDefaultValue() == null ? null : argument.getDefaultValue().toString());
+			arg.setDescription(argument.getDescription());
+			arg.setName(argument.getName());
+			arg.setType(argument.getType());
+			arg.setRequired(!argument.isOptional());
+			arg.setFinal(argument.isFinal());
+			ret.getArguments().add(arg);
+		}
 		return ret;
 	}
 

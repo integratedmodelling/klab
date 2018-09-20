@@ -39,6 +39,7 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
           arg.getDescription() == null ? "" : StringUtils.pack(arg.getDescription()).trim();
       a.type = arg.getType() == null ? null : Type.valueOf(arg.getType().name());
       a.optional = arg.isOptional();
+      a.isFinal = arg.isFinal();
       a.enumValues.addAll(arg.getEnumValues());
       a.defaultValue = arg.getDefaultValue();
 

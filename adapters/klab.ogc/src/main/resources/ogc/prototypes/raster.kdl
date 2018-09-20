@@ -2,20 +2,16 @@
  * Parameters accepted in a raster resource
  */
  annotation raster 
-	
 	"" 	
- 
  {
- 	
- 	
  	text 'fileUrl'
  		""
  		
  	optional input band
  		""
  		default 0
- 
- 	optional input 'computeBoundary'
- 		""
- 		default false
+ 		
+ 	optional input nodata
+		""
+		default 0.0
  }

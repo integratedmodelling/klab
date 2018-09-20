@@ -9,13 +9,19 @@ import java.util.Map.Entry;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnPixelData;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -44,7 +50,6 @@ import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.ide.Activator;
-import org.integratedmodelling.klab.ide.ui.ResourceEditingSupport;
 import org.integratedmodelling.klab.ide.ui.WorldWidget;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.integratedmodelling.klab.rest.ResourceReference;
@@ -76,7 +81,90 @@ public class ResourceEditor extends ViewPart {
 	private TableViewerColumn tableViewerColumn_3;
 	private TableViewerColumn propertyNameColumn;
 	private TableViewerColumn propertyValueColumn;
+	private Text text;
+	private Text text_1;
 
+	public class PropertySupport extends EditingSupport {
+
+		private final TableViewer viewer;
+		private final CellEditor editor;
+
+		public PropertySupport(TableViewer viewer, String[] properties) {
+			super(viewer);
+			this.viewer = viewer;
+			this.editor = new ComboBoxCellEditor(viewer.getTable(), properties);
+		}
+
+		@Override
+		protected CellEditor getCellEditor(Object element) {
+			// TODO Auto-generated method stub
+			return editor;
+		}
+
+		@Override
+		protected boolean canEdit(Object element) {
+			// TODO also check if field is final
+			return Activator.engineMonitor().isRunning();
+		}
+
+		@Override
+		protected Object getValue(Object element) {
+			if (element instanceof Pair) {
+				String key = (String)((Pair<?,?>)element).getFirst();
+				// TODO match to adapter field choice
+				return 0;
+			}
+			return "";
+		}
+
+		@Override
+		protected void setValue(Object element, Object value) {
+			// TODO Auto-generated method stub
+	        viewer.update(element, null);
+		}
+
+	}
+
+	public class ValueSupport extends EditingSupport {
+
+		private final TableViewer viewer;
+		private final CellEditor editor;
+
+		public ValueSupport(TableViewer viewer) {
+			super(viewer);
+			this.viewer = viewer;
+			this.editor = new TextCellEditor(viewer.getTable())	;
+		}
+
+		@Override
+		protected CellEditor getCellEditor(Object element) {
+			return editor;
+		}
+
+		@Override
+		protected boolean canEdit(Object element) {
+			// TODO also check if field is final
+			return Activator.engineMonitor().isRunning();
+		}
+
+		@Override
+		protected Object getValue(Object element) {
+			if (element instanceof Pair) {
+				return ((Pair<?,?>)element).getSecond();
+			}
+			return "";
+
+		}
+
+		@Override
+		protected void setValue(Object element, Object value) {
+			// TODO Auto-generated method stub
+	        viewer.update(element, null);
+		}
+
+	}
+
+	
 	class AttributeContentProvider implements IStructuredContentProvider {
 
 		@Override
@@ -178,7 +266,7 @@ public class ResourceEditor extends ViewPart {
 		this.worldWidget.setExtent(resource.getSpatialExtent());
 		this.adapterPropertyViewer.setInput(resource.getParameters());
 		this.attributeViewer.setInput(resource.getAttributes());
-		propertyNameColumn.setEditingSupport(new ResourceEditingSupport.PropertySupport(adapterPropertyViewer, getAdapterProperties()));
+		propertyNameColumn.setEditingSupport(new PropertySupport(adapterPropertyViewer, getAdapterProperties()));
 
 	}
 
@@ -378,7 +466,7 @@ public class ResourceEditor extends ViewPart {
 		TableColumn propertyColumn = propertyNameColumn.getColumn();
 		propertyColumn.setWidth(180);
 		propertyColumn.setText("Adapter property");	
-		propertyNameColumn.setEditingSupport(new ResourceEditingSupport.PropertySupport(adapterPropertyViewer, new String[] {}));
+		propertyNameColumn.setEditingSupport(new PropertySupport(adapterPropertyViewer, new String[] {}));
 		
 		TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(adapterPropertyViewer, SWT.NONE);
 		TableColumn typeColumn = tableViewerColumn_1.getColumn();
@@ -389,7 +477,7 @@ public class ResourceEditor extends ViewPart {
 		TableColumn valueColumn = propertyValueColumn.getColumn();
 		valueColumn.setWidth(400);
 		valueColumn.setText("Value");
-		propertyValueColumn.setEditingSupport(new ResourceEditingSupport.ValueSupport(adapterPropertyViewer));
+		propertyValueColumn.setEditingSupport(new ValueSupport(adapterPropertyViewer));
 		
 		Menu menu = new Menu(table_1);
 		table_1.setMenu(menu);
@@ -418,9 +506,48 @@ public class ResourceEditor extends ViewPart {
 
 		TabItem tbtmProvenanceData = new TabItem(tabFolder, SWT.NONE);
 		tbtmProvenanceData.setText("Documentation");
-
-		Composite composite_1 = new Composite(tabFolder, SWT.NONE);
-		tbtmProvenanceData.setControl(composite_1);
+		
+		ScrolledComposite scrolledComposite = new ScrolledComposite(tabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		tbtmProvenanceData.setControl(scrolledComposite);
+		scrolledComposite.setExpandHorizontal(true);
+		scrolledComposite.setExpandVertical(true);
+		
+		Composite composite_1 = new Composite(scrolledComposite, SWT.NONE);
+		composite_1.setLayout(new GridLayout(1, false));
+		
+		Label lblTitle = new Label(composite_1, SWT.NONE);
+		lblTitle.setBounds(0, 0, 55, 15);
+		lblTitle.setText("Title");
+		
+		text = new Text(composite_1, SWT.BORDER);
+		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		text.setBounds(0, 0, 76, 21);
+		
+		Label lblDescriptionmarkdownAccepted = new Label(composite_1, SWT.NONE);
+		lblDescriptionmarkdownAccepted.setText("Description (Markdown accepted)");
+		
+		StyledText styledText = new StyledText(composite_1, SWT.BORDER);
+		GridData gd_styledText = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
+		gd_styledText.heightHint = 120;
+		styledText.setLayoutData(gd_styledText);
+		
+		Label lblOriginators = new Label(composite_1, SWT.NONE);
+		lblOriginators.setText("Originators");
+		
+		StyledText styledText_1 = new StyledText(composite_1, SWT.BORDER);
+		GridData gd_styledText_1 = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
+		gd_styledText_1.heightHint = 80;
+		styledText_1.setLayoutData(gd_styledText_1);
+		
+		Label lblUrl = new Label(composite_1, SWT.NONE);
+		lblUrl.setText("URL");
+		
+		text_1 = new Text(composite_1, SWT.BORDER);
+		text_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		scrolledComposite.setContent(composite_1);
+		scrolledComposite.setMinSize(composite_1.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		GridData gd_styledText1 = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
+		gd_styledText1.heightHint = 140;
 
 		TabItem tbtmPermissions = new TabItem(tabFolder, SWT.NONE);
 		tbtmPermissions.setText("Permissions");

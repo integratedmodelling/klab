@@ -261,9 +261,9 @@ public enum KimKnowledgeProcessor {
 
 		ret.setDeclaration(declaration);
 
-		if (concept.getBy() != null) {
+		if (concept.getClassifier() != null) {
 
-			Concept by = declareInternal(concept.getBy(), monitor);
+			Concept by = declareInternal(concept.getClassifier(), monitor);
 			Concept downTo = null;
 
 			declaration += " by " + by;
@@ -277,7 +277,7 @@ public enum KimKnowledgeProcessor {
 					(Ontology) (Configuration.INSTANCE.useCommonOntology() ? Reasoner.INSTANCE.getOntology() : null));
 
 			ret.setObservable((Concept)classifiedType);
-			ret.setBy(by);
+			ret.setClassifier(by);
 			// force re-creation of name
 			ret.setName(null);
 			ret.setDownTo(downTo);

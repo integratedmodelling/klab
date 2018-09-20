@@ -25,6 +25,7 @@ public class Prototype implements IPrototype {
         public String      description  = "";
         public boolean     option;
         public boolean     optional;
+        public boolean     isFinal;
         public Type        type;
         public Object      defaultValue = null;
         public Set<String> enumValues   = new HashSet<>();
@@ -111,6 +112,11 @@ public class Prototype implements IPrototype {
         public void setEnumValues(Set<String> enumValues) {
             this.enumValues = enumValues;
         }
+
+		@Override
+		public boolean isFinal() {
+			return isFinal;
+		}
     }
 
     protected String                    name;

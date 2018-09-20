@@ -25,7 +25,7 @@ public class CompatibleObservable extends Observable {
   public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((getBy() == null) ? 0 : getBy().hashCode());
+		result = prime * result + ((getClassifier() == null) ? 0 : getClassifier().hashCode());
 		result = prime * result + ((getDownTo() == null) ? 0 : getDownTo().hashCode());
 		result = prime * result + ((getMain() == null) ? 0 : getMain().hashCode());
 		result = prime * result + ((getObservable() == null) ? 0 : getObservable().hashCode());
@@ -44,11 +44,11 @@ public class CompatibleObservable extends Observable {
 			return false;
 		}
 		Observable other = (Observable) obj;
-		if (getBy() == null) {
-			if (other.getBy() != null) {
+		if (getClassifier() == null) {
+			if (other.getClassifier() != null) {
 				return false;
 			}
-		} else if (!getBy().equals(other.getBy())) {
+		} else if (!getClassifier().equals(other.getClassifier())) {
 			return false;
 		}
 		if (getDownTo() == null) {

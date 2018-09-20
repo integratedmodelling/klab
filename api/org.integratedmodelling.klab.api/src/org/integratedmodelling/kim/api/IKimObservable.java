@@ -19,9 +19,15 @@ public interface IKimObservable extends IKimStatement {
 
 	/**
 	 * 
-	 * @return the 'by' concept
+	 * @return the 'by' classifier trait
 	 */
-	IKimConcept getBy();
+	IKimConcept getClassifier();
+	
+	/**
+	 * 
+	 * @return the 'by' aggregator object
+	 */
+	IKimConcept getAggregator();
 
 	/**
 	 * 

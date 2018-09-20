@@ -2,9 +2,7 @@
  * Parameters accepted in a raster resource
  */
  annotation vector	
-
-	"" 	
- 
+	"" 	 
  {
 
  	text 'fileUrl'

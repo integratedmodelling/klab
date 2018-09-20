@@ -52,8 +52,8 @@ public class ObservableBuilder implements IObservable.Builder {
 	private IConcept goal;
 	private IConcept cooccurrent;
 	private IConcept adjacent;
-	private IConcept classifier;
-	private IConcept downTo;
+//	private IConcept classifier;
+//	private IConcept downTo;
 	private IConcept comparison;
 	private boolean optional;
 
@@ -285,7 +285,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.type = main.type;
 		traits.clear();
 		roles.clear();
-		comparison = context = inherent = classifier = downTo = caused = compresent = inherent = parent = null;
+		comparison = context = inherent =  /* classifier = downTo = */ caused = compresent = inherent = parent = null;
 		isTrivial = true;
 	}
 
@@ -1426,11 +1426,11 @@ public class ObservableBuilder implements IObservable.Builder {
 		return isTrivial;
 	}
 
-	@Override
-	public Builder optional() {
-		this.optional = true;
-		return this;
-	}
+//	@Override
+//	public Builder optional() {
+//		this.optional = true;
+//		return this;
+//	}
 
 	public Concept getMainConcept() {
 		return main;

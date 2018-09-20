@@ -241,13 +241,6 @@ public interface IObservable extends IConcept, IResolvable {
 		Builder negated();
 
 		/**
-		 * Make the observable optional (used in dependencies)
-		 * 
-		 * @return the same builder this was called on, for chaining calls
-		 */
-		Builder optional();
-
-		/**
 		 * Use this to pass a declaration being parsed and set up a monitor so that
 		 * logically inconsistent declarations can be reported.
 		 * 
@@ -331,14 +324,15 @@ public interface IObservable extends IConcept, IResolvable {
 	IConcept getDownTo();
 
 	/**
-	 * <p>
-	 * getBy.
-	 * </p>
-	 *
 	 * @return the 'by' classifier concept, if any was specified.
 	 */
-	IConcept getBy();
+	IConcept getClassifier();
 
+	/**
+	 * @return the 'by' aggregator concept, if any was specified.
+	 */
+	IConcept getAggregator();
+	
 	/**
 	 * <p>
 	 * getRange.

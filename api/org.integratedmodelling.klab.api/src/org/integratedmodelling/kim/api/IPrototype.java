@@ -87,6 +87,13 @@ public interface IPrototype {
 		 * @return the type
 		 */
 		Type getType();
+
+		/**
+		 * Final arguments are set only once and mandatorily.
+		 * 
+		 * @return
+		 */
+		boolean isFinal();
 	}
 
 	/**

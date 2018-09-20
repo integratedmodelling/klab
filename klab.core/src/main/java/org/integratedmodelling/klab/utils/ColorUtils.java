@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.utils;
 
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -177,4 +178,14 @@ public class ColorUtils {
 	public static int[] getRGB(String colorName) {
 		return rgb.get(colorName.toLowerCase());
 	}
+	
+	/**
+	 * Encode the passed color as a hex string for a browser.
+	 * @param color
+	 * @return
+	 */
+	public static String encodeRGB(Color color) {
+		return "#" + Integer.toHexString(color.getRGB()).substring(2);
+	}
+	
 }

@@ -19,8 +19,9 @@
  	optional input band
  		""
  		default 0
- 
- 	optional input 'computeBoundary'
- 		""
- 		default false
+
+	optional input nodata
+		""
+		default 0.0
+
  }

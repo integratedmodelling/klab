@@ -211,7 +211,7 @@ public enum Annotations implements IAnnotationService {
 			/*
 			 * if we are classifying 'by', we use the classifier, not the main type
 			 */
-			IConcept mainType = ((IObservable) object).getBy() != null ? ((IObservable) object).getBy()
+			IConcept mainType = ((IObservable) object).getClassifier() != null ? ((IObservable) object).getClassifier()
 					: ((IObservable) object).getMain();
 			
 			collectAnnotations(mainType, collection);

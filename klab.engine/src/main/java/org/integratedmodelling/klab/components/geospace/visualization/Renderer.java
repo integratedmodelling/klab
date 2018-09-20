@@ -126,11 +126,6 @@ public enum Renderer {
 					((Projection) projection).getCoordinateReferenceSystem(), ((Envelope) envelope).getJTSEnvelope(),
 					screenSize, w2s);
 			Pair<RasterSymbolizer, String> rasterSymbolizer = getRasterSymbolizer(state, locator);
-			// TODO the previous should return null, and if so, the image returned should be
-			// one from the
-			// resources
-			// describing a full nodata coverage
-			System.out.println("Creating image " + imagesize[0] + " x " + imagesize[1] + " in viewport " + viewport);
 			Rectangle imageBounds = new Rectangle(imagesize[0], imagesize[1]);
 			BufferedImage image = new BufferedImage(imagesize[0], imagesize[1], BufferedImage.TYPE_INT_ARGB);
 			Graphics2D gr = image.createGraphics();
@@ -171,7 +166,7 @@ public enum Renderer {
 			if (state.getDataKey() != null) {
 				label = state.getDataKey().getLabels().get((int) value);
 			} else if (state.getType() == Type.BOOLEAN) {
-				label = value == 0 ? "Not present" : "Present"; 
+				label = value == 0 ? "Not present" : "Present";
 			} else {
 				label = NumberFormat.getNumberInstance().format(value);
 			}
@@ -487,35 +482,6 @@ public enum Renderer {
 		}
 		return null;
 	}
-
-	// /**
-	// * Get a style with fixed values from a known resource or pre-loaded ID.
-	// *
-	// * @param id
-	// * @return
-	// */
-	// public Style getStyle(String id) {
-	//
-	// Style ret = styles.get(id);
-	// if (ret == null) {
-	// // ID may be classpath file, predefined ID, URL, local file
-	// }
-	// return null;
-	// }
-
-	// /**
-	// * Get a style from a colorbrewer template, customized to the values in the
-	// * passed state.
-	// *
-	// * @param id
-	// * @param state
-	// * @return
-	// */
-	// public Style getStyle(String id, IState state, IParameters<String>
-	// parameters) {
-	//
-	// return null;
-	// }
 
 	/*
 	 * -----------------------------------------------------------------------------
