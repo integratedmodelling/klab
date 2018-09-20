@@ -133,7 +133,12 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		}
 
 		if (declaration.getBy() != null) {
-			ret.classifier = KimConcept.normalize(declaration.getBy(), parent);
+			KimConcept by = KimConcept.normalize(declaration.getBy(), parent);
+			if (by.is(Type.ORDERING)) {
+				ret.classifier = by;
+			} else {
+				ret.aggregator = by;
+			}
 		}
 		if (declaration.getDownTo() != null) {
 			ret.downTo = KimConcept.normalize(declaration.getDownTo(), parent);

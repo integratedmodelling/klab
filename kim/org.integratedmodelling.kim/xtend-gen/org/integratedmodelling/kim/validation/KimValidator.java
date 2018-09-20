@@ -977,9 +977,25 @@ public class KimValidator extends AbstractKimValidator {
             KimPackage.OBSERVABLE_SEMANTICS__CURRENCY);
         }
       }
-      org.integratedmodelling.kim.kim.Number _from = semantics.getFrom();
-      boolean _tripleNotEquals_3 = (_from != null);
+      Concept _by = semantics.getBy();
+      boolean _tripleNotEquals_3 = (_by != null);
       if (_tripleNotEquals_3) {
+        boolean _is_1 = declaration.is(IKimConcept.Type.QUALITY);
+        boolean _not_2 = (!_is_1);
+        if (_not_2) {
+          this.error("Classifiers and aggregators can only be specified for qualities", semantics.getFrom(), null, 
+            KimPackage.OBSERVABLE_SEMANTICS__BY);
+        }
+        KimConcept by = KimConcept.normalize(semantics.getBy(), declaration);
+        if ((((!by.is(IKimConcept.Type.TRAIT)) && (!by.is(IKimConcept.Type.CLASS))) && (!by.is(IKimConcept.Type.COUNTABLE)))) {
+          this.error(
+            "Concepts after \'by\' can only be orderings (discretization), traits (partial aggregation) or countables (object aggregation)", 
+            semantics.getFrom(), null, KimPackage.OBSERVABLE_SEMANTICS__BY);
+        }
+      }
+      org.integratedmodelling.kim.kim.Number _from = semantics.getFrom();
+      boolean _tripleNotEquals_4 = (_from != null);
+      if (_tripleNotEquals_4) {
         if ((((declaration.is(IKimConcept.Type.PROPORTION) || declaration.is(IKimConcept.Type.PROBABILITY)) || declaration.is(IKimConcept.Type.ANGLE)) || 
           declaration.is(IKimConcept.Type.OCCURRENCE))) {
           this.error("Numeric range can not be specified for proportions, percentages, probabilities and angles", 
@@ -1131,8 +1147,7 @@ public class KimValidator extends AbstractKimValidator {
                           String _plus_24 = (_plus_23 + 
                             " requires a co-occurrent (\'during ...\') concept of type ");
                           String _plus_25 = (_plus_24 + description);
-                          this.error(_plus_25, main, 
-                            null, KimPackage.CONCEPT_DECLARATION__MAIN);
+                          this.error(_plus_25, main, null, KimPackage.CONCEPT_DECLARATION__MAIN);
                           error = true;
                         }
                         break;
@@ -1187,9 +1202,9 @@ public class KimValidator extends AbstractKimValidator {
             if (_not_2) {
               String _name = macro.getName();
               String _plus = ("The inherent type (of) does not match the type requested by the " + _name);
-              String _plus_1 = (_plus + " macro");
-              this.error(_plus_1, 
-                declaration.getInherency(), null, KimPackage.CONCEPT_DECLARATION__INHERENCY);
+              String _plus_1 = (_plus + 
+                " macro");
+              this.error(_plus_1, declaration.getInherency(), null, KimPackage.CONCEPT_DECLARATION__INHERENCY);
               error = true;
             } else {
               macro.setField(IKimMacro.Field.INHERENT, declaration.getInherency());
@@ -1341,9 +1356,9 @@ public class KimValidator extends AbstractKimValidator {
             if (_not_12) {
               String _name_4 = macro.getName();
               String _plus_8 = ("The caused type (to) does not match the type requested by the " + _name_4);
-              String _plus_9 = (_plus_8 + " macro");
-              this.error(_plus_9, 
-                declaration.getCaused(), null, KimPackage.CONCEPT_DECLARATION__CAUSED);
+              String _plus_9 = (_plus_8 + 
+                " macro");
+              this.error(_plus_9, declaration.getCaused(), null, KimPackage.CONCEPT_DECLARATION__CAUSED);
               error = true;
             } else {
               macro.setField(IKimMacro.Field.CAUSED, declaration.getCaused());
@@ -1373,9 +1388,9 @@ public class KimValidator extends AbstractKimValidator {
             if (_not_14) {
               String _name_5 = macro.getName();
               String _plus_10 = ("The goal type (for) does not match the type requested by the " + _name_5);
-              String _plus_11 = (_plus_10 + " macro");
-              this.error(_plus_11, 
-                declaration.getMotivation(), null, KimPackage.CONCEPT_DECLARATION__MOTIVATION);
+              String _plus_11 = (_plus_10 + 
+                " macro");
+              this.error(_plus_11, declaration.getMotivation(), null, KimPackage.CONCEPT_DECLARATION__MOTIVATION);
               error = true;
             } else {
               macro.setField(IKimMacro.Field.GOAL, declaration.getMotivation());
@@ -1405,9 +1420,9 @@ public class KimValidator extends AbstractKimValidator {
             if (_not_16) {
               String _name_6 = macro.getName();
               String _plus_12 = ("The co-occurrent type (for) does not match the type requested by the " + _name_6);
-              String _plus_13 = (_plus_12 + " macro");
-              this.error(_plus_13, 
-                declaration.getMotivation(), null, KimPackage.CONCEPT_DECLARATION__MOTIVATION);
+              String _plus_13 = (_plus_12 + 
+                " macro");
+              this.error(_plus_13, declaration.getMotivation(), null, KimPackage.CONCEPT_DECLARATION__MOTIVATION);
               error = true;
             } else {
               macro.setField(IKimMacro.Field.COOCCURRENT, declaration.getMotivation());
@@ -1416,8 +1431,8 @@ public class KimValidator extends AbstractKimValidator {
             boolean _contains_10 = flags.contains(IKimConcept.Type.EVENT);
             boolean _not_17 = (!_contains_10);
             if (_not_17) {
-              this.error("The co-occurrent type (during) must be an event", 
-                declaration.getContext(), null, KimPackage.CONCEPT_DECLARATION__CONTEXT);
+              this.error("The co-occurrent type (during) must be an event", declaration.getContext(), null, 
+                KimPackage.CONCEPT_DECLARATION__CONTEXT);
             }
           }
         }
@@ -1437,8 +1452,10 @@ public class KimValidator extends AbstractKimValidator {
           if (_not_19) {
             String _get = declaration.getOperators().get(i);
             String _plus_14 = ("Operands in the \'" + _get);
-            String _plus_15 = (_plus_14 + "\' expression are of incompatible types");
-            this.error(_plus_15, operand, KimPackage.Literals.CONCEPT_DECLARATION__OPERANDS, i);
+            String _plus_15 = (_plus_14 + 
+              "\' expression are of incompatible types");
+            this.error(_plus_15, operand, 
+              KimPackage.Literals.CONCEPT_DECLARATION__OPERANDS, i);
             error = true;
           }
           i++;
@@ -1520,7 +1537,8 @@ public class KimValidator extends AbstractKimValidator {
             } else {
               _xifexpression = Kim.getNamespaceId(namespace);
             }
-            String _plus = (_xifexpression + ":");
+            String _plus = (_xifexpression + 
+              ":");
             String _name_2 = concept.getName().getName();
             String _plus_1 = (_plus + _name_2);
             _name_1.setName(_plus_1);
@@ -1557,7 +1575,8 @@ public class KimValidator extends AbstractKimValidator {
               boolean _not_2 = (!_contains_1);
               if (_not_2) {
                 String _name_4 = concept.getConcept().getName();
-                String _plus_4 = (_name_4 + " is not a countable observable (subject, event or relationship)");
+                String _plus_4 = (_name_4 + 
+                  " is not a countable observable (subject, event or relationship)");
                 this.error(_plus_4, 
                   concept.getConcept(), null, KimPackage.CONCEPT__CONCEPT);
               }
@@ -1685,7 +1704,8 @@ public class KimValidator extends AbstractKimValidator {
     boolean ok = true;
     Namespace ns = KimValidator.getNamespace(statement);
     if (((ns != null) && ns.isWorldviewBound())) {
-      this.error("Concept definitions are not admitted in sidecar files", KimPackage.Literals.CONCEPT_STATEMENT__BODY);
+      this.error("Concept definitions are not admitted in sidecar files", 
+        KimPackage.Literals.CONCEPT_STATEMENT__BODY);
       ok = false;
     }
     EnumSet<IKimConcept.Type> type = Kim.INSTANCE.getType(statement.getConcept());
@@ -1885,7 +1905,8 @@ public class KimValidator extends AbstractKimValidator {
         }
       } else {
         if ((parent != null)) {
-          this.error("Cannot attribute parents to a non-top level child concept. Use \"inherits\" to add traits.", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__PARENTS);
+          this.error(
+            "Cannot attribute parents to a non-top level child concept. Use \"inherits\" to add traits.", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__PARENTS);
           ok = false;
         }
         int i = 0;
@@ -1953,10 +1974,12 @@ public class KimValidator extends AbstractKimValidator {
                         BinarySemanticOperator connector = _xifexpression_1;
                         if ((Objects.equal(connector, BinarySemanticOperator.FOLLOWS) && 
                           (!declaration.getType().contains(IKimConcept.Type.EVENT)))) {
-                          this.error("The consequentiality (\'follows\') operator is only allowed between events", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__PARENTS, i);
+                          this.error(
+                            "The consequentiality (\'follows\') operator is only allowed between events", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__PARENTS, i);
                           error = true;
                         }
-                        if (((group_1.getConnector() != BinarySemanticOperator.NONE) && (!Objects.equal(group_1.getConnector(), connector)))) {
+                        if (((group_1.getConnector() != BinarySemanticOperator.NONE) && 
+                          (!Objects.equal(group_1.getConnector(), connector)))) {
                           this.error(
                             "Cannot mix union (\'or\'), intersection (\'and\') and consequentiality (\'follows\') operators", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__PARENTS, i);
                           error = true;
@@ -2060,7 +2083,8 @@ public class KimValidator extends AbstractKimValidator {
       boolean _contains = type.contains(IKimConcept.Type.CLASS);
       boolean _not_1 = (!_contains);
       if (_not_1) {
-        this.error("Only a class can expose traits", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__CHILDREN);
+        this.error("Only a class can expose traits", concept, 
+          KimPackage.Literals.CONCEPT_STATEMENT_BODY__CHILDREN);
         ok = false;
       } else {
         int i_2 = 0;
@@ -2176,7 +2200,8 @@ public class KimValidator extends AbstractKimValidator {
         ok = false;
       } else {
         ret.getObservablesDescribed().add(
-          Pair.<IKimConcept, IKimConceptStatement.DescriptionType>create(Kim.INSTANCE.declareConcept(concept.getClassifiesQuality()), IKimConceptStatement.DescriptionType.CLASSIFIES));
+          Pair.<IKimConcept, IKimConceptStatement.DescriptionType>create(Kim.INSTANCE.declareConcept(concept.getClassifiesQuality()), 
+            IKimConceptStatement.DescriptionType.CLASSIFIES));
       }
     }
     ConceptDeclaration _discretizesQuality = concept.getDiscretizesQuality();
@@ -2185,7 +2210,8 @@ public class KimValidator extends AbstractKimValidator {
       boolean _contains_3 = type.contains(IKimConcept.Type.ORDERING);
       boolean _not_4 = (!_contains_3);
       if (_not_4) {
-        this.error("The \'discretizes\' clause can only be stated by attributes. Use \'classifies\' for attributes.", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__DISCRETIZES_QUALITY);
+        this.error(
+          "The \'discretizes\' clause can only be stated by attributes. Use \'classifies\' for attributes.", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__DISCRETIZES_QUALITY);
         ok = false;
       }
       EnumSet<IKimConcept.Type> ttype_4 = this.checkDeclaration(concept.getDiscretizesQuality());
@@ -2197,7 +2223,8 @@ public class KimValidator extends AbstractKimValidator {
         ok = false;
       } else {
         ret.getObservablesDescribed().add(
-          Pair.<IKimConcept, IKimConceptStatement.DescriptionType>create(Kim.INSTANCE.declareConcept(concept.getDiscretizesQuality()), IKimConceptStatement.DescriptionType.DISCRETIZES));
+          Pair.<IKimConcept, IKimConceptStatement.DescriptionType>create(Kim.INSTANCE.declareConcept(concept.getDiscretizesQuality()), 
+            IKimConceptStatement.DescriptionType.DISCRETIZES));
       }
     }
     ConceptDeclaration _describedNonzeroQuality = concept.getDescribedNonzeroQuality();
@@ -2219,7 +2246,8 @@ public class KimValidator extends AbstractKimValidator {
         ok = false;
       } else {
         ret.getObservablesDescribed().add(
-          Pair.<IKimConcept, IKimConceptStatement.DescriptionType>create(Kim.INSTANCE.declareConcept(concept.getDescribedNonzeroQuality()), IKimConceptStatement.DescriptionType.MARKS));
+          Pair.<IKimConcept, IKimConceptStatement.DescriptionType>create(Kim.INSTANCE.declareConcept(concept.getDescribedNonzeroQuality()), 
+            IKimConceptStatement.DescriptionType.MARKS));
       }
     }
     int _size_8 = concept.getRoles().size();
@@ -2228,7 +2256,8 @@ public class KimValidator extends AbstractKimValidator {
       boolean _contains_5 = type.contains(IKimConcept.Type.OBSERVABLE);
       boolean _not_6 = (!_contains_5);
       if (_not_6) {
-        this.error("only observables can have roles.", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__ROLES);
+        this.error("only observables can have roles.", concept, 
+          KimPackage.Literals.CONCEPT_STATEMENT_BODY__ROLES);
         ok = false;
       } else {
         int i_3 = 0;
@@ -2240,8 +2269,7 @@ public class KimValidator extends AbstractKimValidator {
             boolean _is = target.is(IKimConcept.Type.COUNTABLE);
             boolean _not_7 = (!_is);
             if (_not_7) {
-              this.error("Role targets must be countable concepts (subject, event or relationship)", concept, 
-                KimPackage.Literals.CONCEPT_STATEMENT_BODY__TARGET_OBSERVABLES, i_3);
+              this.error("Role targets must be countable concepts (subject, event or relationship)", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__TARGET_OBSERVABLES, i_3);
               ok = false;
             } else {
               targets.add(target);
@@ -2262,7 +2290,8 @@ public class KimValidator extends AbstractKimValidator {
             boolean _is = robs.is(IKimConcept.Type.COUNTABLE);
             boolean _not_7 = (!_is);
             if (_not_7) {
-              this.error("Role target scenarios can only be countable concepts (subject, event or relationship)", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__RESTRICTED_OBSERVABLES, i_3);
+              this.error(
+                "Role target scenarios can only be countable concepts (subject, event or relationship)", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__RESTRICTED_OBSERVABLES, i_3);
               ok = false;
             } else {
               restricteds.add(robs);
@@ -2333,7 +2362,8 @@ public class KimValidator extends AbstractKimValidator {
         ok = false;
       } else {
         KimConcept countable = Kim.INSTANCE.declareConcept(concept.getWhole());
-        if ((((!type.contains(IKimConcept.Type.CONFIGURATION)) && (!countable.is(IKimConcept.Type.SUBJECT))) && (!countable.is(IKimConcept.Type.AGENT)))) {
+        if ((((!type.contains(IKimConcept.Type.CONFIGURATION)) && (!countable.is(IKimConcept.Type.SUBJECT))) && 
+          (!countable.is(IKimConcept.Type.AGENT)))) {
           this.error("only subjects can be parts of other subjects", concept, 
             KimPackage.Literals.CONCEPT_STATEMENT_BODY__WHOLE);
         } else {
@@ -2487,8 +2517,7 @@ public class KimValidator extends AbstractKimValidator {
       ret.getType().addAll(type);
       if ((parent == null)) {
         if ((((type.contains(IKimConcept.Type.QUALITY) && (!concept.isCoreConcept())) && 
-          (!type.contains(IKimConcept.Type.NOTHING))) && Kim.intersection(ret.getType(), 
-          IKimConcept.QUALITY_TYPES).isEmpty())) {
+          (!type.contains(IKimConcept.Type.NOTHING))) && Kim.intersection(ret.getType(), IKimConcept.QUALITY_TYPES).isEmpty())) {
           this.error("Cannot declare a raw quality without inheriting from a more specific type", concept, 
             KimPackage.Literals.CONCEPT_STATEMENT_BODY__NAME);
         } else {

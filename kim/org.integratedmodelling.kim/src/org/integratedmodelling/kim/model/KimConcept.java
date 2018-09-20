@@ -368,7 +368,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		return ret;
 	}
 
-	static KimConcept normalize(Concept concept, IKimStatement parent) {
+	public static KimConcept normalize(Concept concept, IKimStatement parent) {
 
 		if (concept.getDeclaration() != null) {
 			return normalize(concept.getDeclaration(), parent);

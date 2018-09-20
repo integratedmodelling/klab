@@ -133,10 +133,12 @@ public enum KimKnowledgeProcessor {
 				IConcept expr = null;
 				switch (parent.getConnector()) {
 				case INTERSECTION:
-					expr = OWL.INSTANCE.getIntersection(concepts, namespace.getOntology(), ((Concept)concepts.get(0)).getTypeSet());
+					expr = OWL.INSTANCE.getIntersection(concepts, namespace.getOntology(),
+							((Concept) concepts.get(0)).getTypeSet());
 					break;
 				case UNION:
-					expr = OWL.INSTANCE.getUnion(concepts, namespace.getOntology(), ((Concept)concepts.get(0)).getTypeSet());
+					expr = OWL.INSTANCE.getUnion(concepts, namespace.getOntology(),
+							((Concept) concepts.get(0)).getTypeSet());
 					break;
 				case FOLLOWS:
 					expr = OWL.INSTANCE.getConsequentialityEvent(concepts, namespace.getOntology());
@@ -216,7 +218,7 @@ public enum KimKnowledgeProcessor {
 		Observable ret = new Observable(observable);
 
 		String declaration = concept.getDefinition();
-		
+
 		if (concept.getUnit() != null) {
 			ret.setUnit(Units.INSTANCE.getUnit(concept.getUnit()));
 			declaration += " in " + ret.getUnit();
@@ -261,28 +263,35 @@ public enum KimKnowledgeProcessor {
 
 		ret.setDeclaration(declaration);
 
-		if (concept.getClassifier() != null) {
+		if (concept.getClassifier() != null || concept.getAggregator() != null) {
 
-			Concept by = declareInternal(concept.getClassifier(), monitor);
-			Concept downTo = null;
+			IKimConcept modifier = concept.getAggregator() == null ? concept.getClassifier() : concept.getAggregator();
 
+			Concept by = declareInternal(modifier, monitor);
 			declaration += " by " + by;
-			
-			if (concept.getDownTo() != null) {
-				downTo = declareInternal(concept.getDownTo(), monitor);
-				declaration += " down to " + by;
+
+			if (concept.getAggregator() != null) {
+				ret.setAggregator(by);
+			} else {
+
+				Concept downTo = null;
+
+				if (concept.getDownTo() != null) {
+					downTo = declareInternal(concept.getDownTo(), monitor);
+					declaration += " down to " + by;
+				}
+
+				IConcept classifiedType = Types.INSTANCE.getTypeByTrait(ret, by, downTo,
+						(Ontology) (Configuration.INSTANCE.useCommonOntology() ? Reasoner.INSTANCE.getOntology()
+								: null));
+
+				ret.setObservable((Concept) classifiedType);
+				ret.setClassifier(by);
+				// force re-creation of name
+				ret.setName(null);
+				ret.setDownTo(downTo);
+				ret.setDeclaration(classifiedType.getDefinition());
 			}
-
-			IConcept classifiedType = Types.INSTANCE.getTypeByTrait(ret, by, downTo,
-					(Ontology) (Configuration.INSTANCE.useCommonOntology() ? Reasoner.INSTANCE.getOntology() : null));
-
-			ret.setObservable((Concept)classifiedType);
-			ret.setClassifier(by);
-			// force re-creation of name
-			ret.setName(null);
-			ret.setDownTo(downTo);
-			ret.setDeclaration(classifiedType.getDefinition());
-			
 		}
 
 		return ret;
@@ -410,13 +419,14 @@ public enum KimKnowledgeProcessor {
 					concepts.add(declareInternal(op, monitor));
 				}
 				ret = concept.getExpressionType() == Expression.INTERSECTION
-						? OWL.INSTANCE.getIntersection(concepts, ret.getOntology(), concept.getOperands().get(0).getType())
+						? OWL.INSTANCE.getIntersection(concepts, ret.getOntology(),
+								concept.getOperands().get(0).getType())
 						: OWL.INSTANCE.getUnion(concepts, ret.getOntology(), concept.getOperands().get(0).getType());
 			}
 
 			// set the k.IM definition in the concept FIXME this must only happen if the
 			// concept wasn't there - within build() and repeat if mods are made
- 			ret.getOntology().define(Collections.singletonList(
+			ret.getOntology().define(Collections.singletonList(
 					Axiom.AnnotationAssertion(ret.getName(), NS.CONCEPT_DEFINITION_PROPERTY, concept.getDefinition())));
 
 			// consistency check

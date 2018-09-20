@@ -83,6 +83,7 @@ public class ResourceEditor extends ViewPart {
 	private TableViewerColumn propertyValueColumn;
 	private Text text;
 	private Text text_1;
+	private Text text_2;
 
 	public class PropertySupport extends EditingSupport {
 
@@ -528,22 +529,68 @@ public class ResourceEditor extends ViewPart {
 		
 		StyledText styledText = new StyledText(composite_1, SWT.BORDER);
 		GridData gd_styledText = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
-		gd_styledText.heightHint = 120;
+		gd_styledText.heightHint = 80;
 		styledText.setLayoutData(gd_styledText);
 		
 		Label lblOriginators = new Label(composite_1, SWT.NONE);
-		lblOriginators.setText("Originators");
+		lblOriginators.setText("Originating institution");
 		
 		StyledText styledText_1 = new StyledText(composite_1, SWT.BORDER);
 		GridData gd_styledText_1 = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
-		gd_styledText_1.heightHint = 80;
+		gd_styledText_1.heightHint = 40;
 		styledText_1.setLayoutData(gd_styledText_1);
 		
 		Label lblUrl = new Label(composite_1, SWT.NONE);
-		lblUrl.setText("URL");
+		lblUrl.setText("URL/DOI");
 		
 		text_1 = new Text(composite_1, SWT.BORDER);
 		text_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		Label lblAuthors = new Label(composite_1, SWT.NONE);
+		lblAuthors.setText("Authors (one per line)");
+		
+		StyledText styledText_2 = new StyledText(composite_1, SWT.BORDER);
+		GridData gd_styledText_2 = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
+		gd_styledText_2.heightHint = 40;
+		styledText_2.setLayoutData(gd_styledText_2);
+		
+		Group grpThematicLocators = new Group(composite_1, SWT.NONE);
+		grpThematicLocators.setLayout(new GridLayout(4, false));
+		grpThematicLocators.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		grpThematicLocators.setText("Thematic locators");
+		
+		Label lblTheme = new Label(grpThematicLocators, SWT.NONE);
+		lblTheme.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblTheme.setText("Theme");
+		
+		Combo combo = new Combo(grpThematicLocators, SWT.READ_ONLY);
+		combo.setItems(new String[] {"Agriculture", "Behavior and social", "Biology", "Chemistry", "Conservation", "Demography", "Earth", "Ecology", "Economics", "Engineering", "Geography", "Geology", "Hydrology", "Infrastructure", "Landcover", "Physical and climatic", "Policy", "Socio-ecological", "Soil"});
+		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		combo.select(0);
+		
+		Label lblGeographicRegion = new Label(grpThematicLocators, SWT.NONE);
+		lblGeographicRegion.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblGeographicRegion.setText("Geographic region");
+		
+		Combo combo_1 = new Combo(grpThematicLocators, SWT.READ_ONLY);
+		combo_1.setItems(new String[] {"Non-spatial", "Global"});
+		combo_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		combo_1.select(0);
+		
+		Label lblKeywords = new Label(composite_1, SWT.NONE);
+		lblKeywords.setText("Keywords");
+		
+		text_2 = new Text(composite_1, SWT.BORDER);
+		text_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		new Label(composite_1, SWT.NONE);
+		
+		Label lblReferences = new Label(composite_1, SWT.NONE);
+		lblReferences.setText("References");
+		
+		StyledText styledText_3 = new StyledText(composite_1, SWT.BORDER);
+		GridData gd_styledText_3 = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
+		gd_styledText_3.heightHint = 40;
+		styledText_3.setLayoutData(gd_styledText_3);
 		scrolledComposite.setContent(composite_1);
 		scrolledComposite.setMinSize(composite_1.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		GridData gd_styledText1 = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);

@@ -615,4 +615,8 @@ public class Observable extends Concept implements IObservable {
 		throw new KlabUnimplementedException("copy semantics from other observable");
 	}
 
+	public void setAggregator(Concept by) {
+		this.aggregator = by;
+	}
+
 }
