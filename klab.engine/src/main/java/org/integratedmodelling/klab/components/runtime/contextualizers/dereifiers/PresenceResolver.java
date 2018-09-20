@@ -62,8 +62,15 @@ public class PresenceResolver implements IResolver<IDataArtifact>, IExpression {
 		Rasterizer<Boolean> rasterizer = new Rasterizer<>(((Space) space).getGrid());
 		for (IArtifact a : context.getArtifact(this.artifactId)) {
 			if (a instanceof IDirectObservation && ((IDirectObservation) a).getSpace() != null) {
+				if (context.getMonitor().isInterrupted()) {
+					break;
+				}
 				rasterizer.add(((IDirectObservation) a).getSpace().getShape(), (shape) -> true);
 			}
+		}
+		
+		if (context.getMonitor().isInterrupted()) {
+			return ret;
 		}
 		rasterizer.finish((present, xy) -> {
 			// TODO this must locate only on the spatial dimension and leave the others as they are. Needs

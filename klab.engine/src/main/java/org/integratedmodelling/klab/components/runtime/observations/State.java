@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
+import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -35,6 +36,7 @@ public class State extends Observation implements IState, IKeyHolder {
 	IDataArtifact storage;
 	IDataKey dataKey;
 	Map<IArtifact.Type, IDataArtifact> layers = new HashMap<>();
+	ITable<Number> table;
 
 	public State(Observable observable, Scale scale, IRuntimeContext context, IDataArtifact data) {
 		super(observable, scale, context);
@@ -122,4 +124,13 @@ public class State extends Observation implements IState, IKeyHolder {
 		return MediatingState.getMediator(this, mediator);
 	}
 
+	@Override
+	public ITable<Number> getTable() {
+		return table;
+	}
+
+	public void setTable(ITable<Number> table) {
+		this.table = table;
+	}
+	
 }

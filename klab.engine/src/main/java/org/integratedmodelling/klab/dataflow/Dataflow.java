@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.dataflow;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -20,6 +22,9 @@ import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
+
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 
 /**
  * The semantically aware implementation of {@link IDataflow}, built by the
@@ -42,6 +47,11 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	private DirectObservation context;
 	private ResolutionScope scope;
 	private boolean primary = true;
+	
+	/*
+	 * TODO this should be removed and an actual layout should be created
+	 */
+	private static String demoLayout = null;
 	
 	@Override
 	public IArtifact run(IScale scale, IMonitor monitor) throws KlabException {
@@ -177,5 +187,19 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	public String getDescription() {
 		return description;
 	}
+
+	public String getElkJsonLayout() {
+		if (demoLayout == null) {
+			URL url = Resources.getResource("stubs/dataflow_sample.json");
+			try {
+				demoLayout = Resources.toString(url, Charsets.UTF_8);
+			} catch (IOException e) {
+				// hostia!
+			}
+		}
+		return demoLayout;
+	}
+	
+	
 
 }

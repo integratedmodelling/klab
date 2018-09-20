@@ -752,7 +752,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	
 	@MessageHandler(type = IMessage.Type.TaskInterrupted)
 	private void handleTaskInterruptRequest(InterruptTask request) {
-		System.out.println("INTERRUPT TASK " + request.getTaskId());
+		interruptTask(request.getTaskId(), true);
 	}
 
 	@MessageHandler

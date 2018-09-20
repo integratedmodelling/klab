@@ -40,7 +40,7 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 	FutureTask<IObservation> delegate;
 	String taskDescription = "<uninitialized contextual observation task " + token + ">";
 	private TaskReference descriptor;
-
+	
 	public ObserveInContextTask(ObserveInContextTask parent) {
 		super(parent);
 		this.delegate = parent.delegate;
@@ -107,7 +107,7 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 						System.out.println(dataflow.getKdlCode());
 
 						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
-								IMessage.Type.DataflowCompiled, new DataflowReference(token, dataflow.getKdlCode())));
+								IMessage.Type.DataflowCompiled, new DataflowReference(token, dataflow.getKdlCode(), dataflow.getElkJsonLayout())));
 
 						// make a copy of the coverage so that we ensure it's a scale, behaving properly
 						// at merge.
@@ -196,6 +196,7 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 
 	@Override
 	public boolean cancel(boolean mayInterruptIfRunning) {
+		monitor.interrupt();
 		return delegate.cancel(mayInterruptIfRunning);
 	}
 

@@ -270,6 +270,11 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		RuntimeContext ctx = new RuntimeContext((RuntimeContext) context);
 		Collection<Pair<String, IDataArtifact>> variables = ctx.getArtifacts(IDataArtifact.class);
 		for (IScale state : scale) {
+
+			if (context.getMonitor().isInterrupted()) {
+				break;
+			}
+
 			data.set(state, resolver.resolve(data.getObservable(),
 					variables.isEmpty() ? ctx : localizeContext(ctx, state, self, variables)));
 		}

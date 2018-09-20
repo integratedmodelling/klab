@@ -9,6 +9,7 @@ import java.util.Map;
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
+import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
@@ -362,6 +363,12 @@ public class RescalingState extends Observation implements IState {
 	@Override
 	public IState in(IValueMediator mediator) {
 		return MediatingState.getMediator(this, mediator);
+	}
+
+	@Override
+	public ITable<Number> getTable() {
+		// FIXME this should be recomputed from the values
+		return null;
 	}
 
 

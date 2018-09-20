@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.indexing.DistanceCalculator;
 import org.integratedmodelling.klab.components.geospace.indexing.SpatialIndex;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
@@ -81,6 +82,9 @@ public class DistanceResolver implements IResolver<IDataArtifact>, IExpression {
 		context.getMonitor().info("computing distances over a " + ret.getGeometry().size() + "-pixel grid...");
 
 		for (ILocator locator : (IScale) ret.getGeometry()) {
+			if (context.getMonitor().isInterrupted()) {
+				break;
+			}
 			ret.set(locator, index.distanceToNearestObjectFrom(locator, this.unit));
 		}
 

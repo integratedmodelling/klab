@@ -166,6 +166,7 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
 
     @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
+		monitor.interrupt();
         return delegate.cancel(mayInterruptIfRunning);
     }
 

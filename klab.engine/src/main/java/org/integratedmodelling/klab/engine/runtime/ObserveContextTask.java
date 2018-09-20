@@ -86,7 +86,7 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 							session.getMonitor()
 									.send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 											IMessage.Type.DataflowCompiled,
-											new DataflowReference(token, dataflow.getKdlCode())));
+											new DataflowReference(token, dataflow.getKdlCode(), null)));
 
 							/*
 							 * make a copy of the coverage so that we ensure it's a scale, behaving properly
@@ -172,6 +172,7 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 
 	@Override
 	public boolean cancel(boolean mayInterruptIfRunning) {
+		monitor.interrupt();
 		return delegate.cancel(mayInterruptIfRunning);
 	}
 

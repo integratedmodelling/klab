@@ -88,7 +88,6 @@ public interface ITable<T> {
 	 */
 	T[] getRow(int rowIndex);
 	
-	
 	/**
 	 * Get the content of the passed column. Should be used after checking that
 	 * the column size is acceptable.
@@ -97,7 +96,6 @@ public interface ITable<T> {
 	 * @return column data
 	 */
 	T[] getColumn(int columnIndex);
-
 	
 	/**
 	 * This may return a list of header names or a list of variables like "$1" if
@@ -105,8 +103,14 @@ public interface ITable<T> {
 	 * 
 	 * @return headers. Never null.
 	 */
-	List<String> getHeaders();
+	List<String> getColumnHeaders();
 
-
+	/**
+	 * This may return a list of header names or a list of variables like "row1" if
+	 * headers were not defined.
+	 * 
+	 * @return headers. Never null.
+	 */
+	List<String> getRowHeaders();
 
 }

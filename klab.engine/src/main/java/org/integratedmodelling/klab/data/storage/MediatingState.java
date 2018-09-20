@@ -5,6 +5,7 @@ import java.util.Iterator;
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
+import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.RuntimeContext;
@@ -124,6 +125,12 @@ public class MediatingState extends Observation implements IState {
 		return from.equals(to)
 				? state
 				: new MediatingState(state, (RuntimeContext) ((Observation) state).getRuntimeContext(), from, to);
+	}
+
+	@Override
+	public ITable<Number> getTable() {
+		// FIXME SHOULD MEDIATE THE DELEGATE NUMBERS
+		return delegate.getTable();
 	}
 
 }

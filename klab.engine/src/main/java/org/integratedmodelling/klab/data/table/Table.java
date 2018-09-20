@@ -13,7 +13,8 @@ import org.integratedmodelling.klab.data.classification.Classifier;
 public class Table<T> implements ITable<T> {
 
 	private List<T[]> rows;
-	private List<String> headers = new ArrayList<>();
+	private List<String> columnHeaders = new ArrayList<>();
+	private List<String> rowHeaders = null;
 	private String name;
 	
 	public static Table<IClassifier> create(IKimTable table) {
@@ -36,18 +37,31 @@ public class Table<T> implements ITable<T> {
 	
 	public Table(List<T[]> rows, List<String> headers) {
 		this.rows = rows;
-		if (this.headers == null) {
+		if (this.columnHeaders == null) {
 			for (int i = 0; i < (rows.size() == 0 ? 0 : rows.get(i).length); i++) {
-				this.headers.add("$" + (i+1));
+				this.columnHeaders.add("$" + (i+1));
 			}
 		} else {
-			this.headers.addAll(headers);
+			this.columnHeaders.addAll(headers);
 		}
 	}
 	
+	/**
+	 * Set a value. Based on the locators passed and whether they are already in the
+	 * table or not, expand the table and set the headers if necessary.
+	 * 
+	 * @param rowLocator
+	 * @param columnLocator
+	 * @param value
+	 */
+	public void set(Object rowLocator, Object columnLocator, T value) {
+		// TODO
+	}
+	
+	
 	@Override
-	public List<String> getHeaders() {
-		return this.headers;
+	public List<String> getColumnHeaders() {
+		return this.columnHeaders;
 	}
 
 	@Override
@@ -90,5 +104,16 @@ public class Table<T> implements ITable<T> {
 	public T[] getColumn(int columnIndex) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public List<String> getRowHeaders() {
+		if (rowHeaders == null) {
+			rowHeaders = new ArrayList<>();
+			for (int i = 0; i < getRowCount(); i++) {
+				rowHeaders.add("row"+(i+1));
+			}
+		}
+		return rowHeaders;
 	}
 }

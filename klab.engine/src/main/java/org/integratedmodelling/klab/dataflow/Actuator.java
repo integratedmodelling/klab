@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
@@ -190,6 +191,10 @@ public class Actuator implements IActuator {
 
 		for (Pair<IServiceCall, IComputableResource> service : computationStrategy) {
 
+			if (runtimeContext.getMonitor().isInterrupted()) {
+				return Observation.empty(getObservable(), runtimeContext);
+			}
+			
 			Object contextualizer = Extensions.INSTANCE.callFunction(service.getFirst(), ctx);
 			if (contextualizer == null) {
 				// this happens when a condition isn't met, so it's legal.
@@ -332,6 +337,10 @@ public class Actuator implements IActuator {
 	@SuppressWarnings("unchecked")
 	private IArtifact runContextualizer(IContextualizer contextualizer, IObservable observable,
 			IComputableResource resource, IArtifact ret, IRuntimeContext ctx, IScale scale) throws KlabException {
+
+		if (ctx.getMonitor().isInterrupted()) {
+			return Observation.empty(getObservable(), ctx);
+		}
 
 		/*
 		 * This is what we get as the original content of self, which may be null or an
