@@ -263,11 +263,15 @@ public class Actuator implements IActuator {
 			 */
 			if (indirectTarget == null) {
 				ret = artifactTable.get(targetId);
-			} else {
+			} else if (!runtimeContext.getMonitor().isInterrupted()) {
 				context.setData(indirectTarget.getLocalName(), artifactTable.get(targetId));
 			}
 		}
 
+		if (runtimeContext.getMonitor().isInterrupted()) {
+			return ret;
+		}
+		
 		// FIXME the original context does not get the indirect artifacts
 		if (runtimeContext.getTargetArtifact() == null) {
 			((IRuntimeContext) runtimeContext).setTarget(ret);
