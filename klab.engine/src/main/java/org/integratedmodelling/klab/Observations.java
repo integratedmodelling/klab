@@ -263,7 +263,8 @@ public enum Observations implements IObservationService {
 
 				IGrid grid = ((Space) space).getGrid();
 
-				ret.getMetadata().put("Grid size",  grid.getCellCount() + " (" + grid.getXCells() + " x " + grid.getYCells() + ") cells");
+				ret.getMetadata().put("Grid size",
+						grid.getCellCount() + " (" + grid.getXCells() + " x " + grid.getYCells() + ") cells");
 				ret.getMetadata().put("Cell size",
 						NumberFormat.getInstance().format(grid.getCellWidth()) + " x "
 								+ NumberFormat.getInstance().format(grid.getCellHeight()) + " "
@@ -294,6 +295,10 @@ public enum Observations implements IObservationService {
 
 		if (observation instanceof IState) {
 
+			if (((IState) observation).getTable() != null) {
+				ret.getGeometryTypes().add(GeometryType.TABLE);
+			}
+
 			StateSummary summary = getStateSummary((IState) observation, locator);
 
 			ret.setValueCount(observation.getScale().size());
@@ -301,6 +306,10 @@ public enum Observations implements IObservationService {
 				ret.setLiteralValue(formatValue(observation.getObservable(),
 						((IState) observation).get(observation.getScale().getLocator(0))));
 			} else if (observation.getScale().getSpace().size() > 1 && observation.getScale().getSpace().isRegular()) {
+
+				if (!summary.isDegenerate()) {
+					ret.getGeometryTypes().add(GeometryType.COLORMAP);
+				}
 				ret.getActions().add(new ActionReference("Export as GeoTiff", "ExportGeotiff"));
 			}
 

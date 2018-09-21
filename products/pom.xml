@@ -11,5 +11,6 @@
   <modules>
   	<module>test.network</module>
   	<module>klab.explorer</module>
+  	<module>k</module>
   </modules>
 </project>

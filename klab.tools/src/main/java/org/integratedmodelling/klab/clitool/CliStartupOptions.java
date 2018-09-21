@@ -22,6 +22,10 @@ public class CliStartupOptions extends EngineStartupOptions {
 		return outputFile;
 	}
 
+	public void setNetwork(boolean b) {
+		this.network = b;
+	}
+	
 	public boolean isNetwork() {
 	    return network;
 	}

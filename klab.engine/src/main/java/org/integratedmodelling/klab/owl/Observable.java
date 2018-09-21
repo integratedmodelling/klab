@@ -135,6 +135,7 @@ public class Observable extends Concept implements IObservable {
 		this.unit = observable.unit;
 		this.currency = observable.currency;
 		this.classifier = observable.classifier;
+		this.aggregator = observable.aggregator;
 		this.downTo = observable.downTo;
 		this.value = observable.value;
 		this.observationType = observable.observationType;
