@@ -7,6 +7,7 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
@@ -52,8 +53,15 @@ public class Space implements IExpression {
                 throw new IllegalArgumentException("urn " + urn + " does not resolve to a spatial object");
             }
 
-            return ((IScale) artifact.getSecond().iterator().next().getGeometry()).getSpace();
+            ISpace space = ((IScale) artifact.getSecond().iterator().next().getGeometry()).getSpace();
 
+            if (resolution == null) {
+                return space;
+            }
+            
+            ret = org.integratedmodelling.klab.components.geospace.extents.Space
+                    .create((Shape)space.getShape(), resolution);
+            
         }
 
         // TODO Auto-generated method stub
