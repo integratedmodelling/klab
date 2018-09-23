@@ -107,11 +107,9 @@ public class TemplateParser {
 	 * @param line
 	 * @return
 	 */
-	public static TemplateImpl parse(String line) {
+	public static TemplateImpl parse(TemplateImpl ret, String line) {
 
 		initialize();
-
-		TemplateImpl ret = new TemplateImpl();
 
 		String currentAnnotation = null;
 		String currentText = "";
@@ -172,22 +170,22 @@ public class TemplateParser {
 
 	public static void main(String[] args) {
 
-		Template template = parse("@section('Methods/Socio-environmental exchange') \n" + "\n"
-				+ "                  The default model for a social-environmental exchange was used. In this model, all \n"
-				+ "                  ecosystem service flows are gathered in the context and aggregated to provide \n"
-				+ "                  figures. The model is not specific of any ES: flows are recognized based on the\n"
-				+ "                  roles they play, and their throughput extracted independent of the specific ES\n"
-				+ "                  being modeled.\n" + "\n"
-				+ "                  [for (i in 1..10) { @separator(); @paragraph('ahaha'); }]\n" + "\n"
-				+ "                  @separator(bold: true)\n" + "\n"
-				+ "                  The model description should come after that of its inputs. Each independent\n"
-				+ "                  piece of text is automatically wrapped in a paragraph.\n" + "                ");
-
-		for (SectionImpl section : ((TemplateImpl) template).getSections()) {
-			System.out.println(section.getType() 
-					+ "\n--------------------------------------\n"
-					+ section.getCode()
-					+ "\n--------------------------------------");
-		}
+//		Template template = parse("@section('Methods/Socio-environmental exchange') \n" + "\n"
+//				+ "                  The default model for a social-environmental exchange was used. In this model, all \n"
+//				+ "                  ecosystem service flows are gathered in the context and aggregated to provide \n"
+//				+ "                  figures. The model is not specific of any ES: flows are recognized based on the\n"
+//				+ "                  roles they play, and their throughput extracted independent of the specific ES\n"
+//				+ "                  being modeled.\n" + "\n"
+//				+ "                  [for (i in 1..10) { @separator(); @paragraph('ahaha'); }]\n" + "\n"
+//				+ "                  @separator(bold: true)\n" + "\n"
+//				+ "                  The model description should come after that of its inputs. Each independent\n"
+//				+ "                  piece of text is automatically wrapped in a paragraph.\n" + "                ");
+//
+//		for (SectionImpl section : ((TemplateImpl) template).getSections()) {
+//			System.out.println(section.getType() 
+//					+ "\n--------------------------------------\n"
+//					+ section.getCode()
+//					+ "\n--------------------------------------");
+//		}
 	}
 }

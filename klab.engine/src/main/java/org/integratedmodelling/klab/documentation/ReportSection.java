@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.documentation;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.documentation.IReport.Section;
 import org.integratedmodelling.klab.api.documentation.IReport.SectionRole;
@@ -19,6 +20,7 @@ public class ReportSection extends Parameters<String> implements Section {
     List<ReportSection> children = new ArrayList<>();
     StringBuffer        body     = new StringBuffer(512);
     Report              report;
+    
 
     ReportSection(Report report, SectionRole role) {
         this.role = role;
@@ -28,6 +30,15 @@ public class ReportSection extends Parameters<String> implements Section {
     ReportSection(ReportSection parent) {
         parent.children.add(this);
         this.report = parent.report;
+    }
+
+    public ReportSection(Report report, Reference reference, String tag) {
+        this.report = report;
+        this.body.append(reference.get(BibTexFields.EXAMPLE_CITATION));
+        this.body.append(" {#ref:" + tag + "}");
+        this.body.append("\n\n");
+        ReportSection parent = report.getMainSection(SectionRole.REFERENCES);
+        parent.children.add(this);
     }
 
     public String getName() {
@@ -126,7 +137,7 @@ public class ReportSection extends Parameters<String> implements Section {
      *            tag
      * @param context
      */
-    public void describe(Object[] args, IComputationContext context) {
+    public void describe(Object[] args, IDocumentation documentation, IComputationContext context) {
         // TODO Auto-generated method stub
         System.out.println("FOC");
     }
@@ -138,7 +149,7 @@ public class ReportSection extends Parameters<String> implements Section {
      *            tag
      * @param context
      */
-    public void tag(Object[] args, IComputationContext context) {
+    public void tag(Object[] args, IDocumentation documentation, IComputationContext context) {
         // TODO Auto-generated method stub
         System.out.println("FOC");
     }
@@ -151,7 +162,7 @@ public class ReportSection extends Parameters<String> implements Section {
      *            tag, text
      * @param context
      */
-    public void link(Object[] processArguments, IComputationContext context) {
+    public void link(Object[] processArguments, IDocumentation documentation, IComputationContext context) {
         // TODO Auto-generated method stub
         System.out.println("FOC");
     }
@@ -163,7 +174,7 @@ public class ReportSection extends Parameters<String> implements Section {
      * @param processArguments
      * @param context
      */
-    public void table(Object[] processArguments, IComputationContext context) {
+    public void table(Object[] processArguments, IDocumentation documentation, IComputationContext context) {
         // TODO Auto-generated method stub
         System.out.println("FOC");
     }
@@ -175,9 +186,14 @@ public class ReportSection extends Parameters<String> implements Section {
      * @param processArguments
      * @param context
      */
-    public void cite(Object[] processArguments, IComputationContext context) {
-        // TODO Auto-generated method stub
-        System.out.println("FOC");
+    public void cite(Object[] args, IDocumentation documentation, IComputationContext context) {
+        if (!report.referencesCited.containsKey(args[0])) {
+            Reference reference = ((Documentation)documentation).getReference(args[0].toString());
+            if (reference != null) {
+                report.referencesCited.put(args[0].toString(), new ReportSection(this.report, reference, args[0].toString()));
+            }
+        }
+        body.append(" [CITE " + args[0] + "!] ");
     }
 
     /**
@@ -187,7 +203,7 @@ public class ReportSection extends Parameters<String> implements Section {
      * @param processArguments
      * @param context
      */
-    public void footnote(Object[] processArguments, IComputationContext context) {
+    public void footnote(Object[] processArguments, IDocumentation documentation, IComputationContext context) {
         // TODO Auto-generated method stub
         System.out.println("FOC");
     }
@@ -200,7 +216,7 @@ public class ReportSection extends Parameters<String> implements Section {
      * @param processArguments
      * @param context
      */
-    public void figure(Object[] processArguments, IComputationContext context) {
+    public void figure(Object[] processArguments, IDocumentation documentation, IComputationContext context) {
         // TODO Auto-generated method stub
         System.out.println("FOC");
     }
@@ -212,7 +228,7 @@ public class ReportSection extends Parameters<String> implements Section {
      * @param processArguments
      * @param context
      */
-    public void insert(Object[] processArguments, IComputationContext context) {
+    public void insert(Object[] processArguments, IDocumentation documentation, IComputationContext context) {
         // TODO Auto-generated method stub
         System.out.println("FOC");
     }

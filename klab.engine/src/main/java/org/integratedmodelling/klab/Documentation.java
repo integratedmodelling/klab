@@ -32,7 +32,7 @@ public enum Documentation implements IDocumentationService {
         }
         // read on the spot and forget
         ProjectDocumentation documentation = new ProjectDocumentation(docFile);
-        ret = org.integratedmodelling.klab.documentation.Documentation.create(documentation, docId);
+        ret = new org.integratedmodelling.klab.documentation.Documentation(documentation, docId, project);
         ((org.integratedmodelling.klab.documentation.Documentation)ret).setDocfile(docFile);
         catalog.put(docId, ret);
         return ret;

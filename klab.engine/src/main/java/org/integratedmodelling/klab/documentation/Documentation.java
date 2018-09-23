@@ -11,7 +11,9 @@ import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.documentation.IReport.Section;
 import org.integratedmodelling.klab.api.documentation.IReport.SectionRole;
+import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.engine.resources.Project;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -25,6 +27,7 @@ import org.integratedmodelling.klab.utils.Utils;
 public class Documentation implements IDocumentation {
 
 	List<TemplateImpl> templates = new ArrayList<>();
+	List<ProjectReferences> referencesAvailable = new ArrayList<>();
 
 	// managed externally, needed to communicate changes
 	private File docfile;
@@ -39,6 +42,8 @@ public class Documentation implements IDocumentation {
 		return new Documentation();
 	}
 
+	private Documentation() {}
+	
 	/**
 	 * Read and compile all the templates corresponding to the passed docId.
 	 * 
@@ -46,19 +51,18 @@ public class Documentation implements IDocumentation {
 	 * @param docId
 	 * @return
 	 */
-	public static Documentation create(ProjectDocumentation documentation, String docId) {
-		Documentation ret = new Documentation();
+	public Documentation(ProjectDocumentation documentation, String docId, IProject project) {
 		for (String key : documentation.keySet()) {
 			if (key.startsWith(docId + "#")) {
 				ModelDocumentation doc = documentation.get(key);
-				TemplateImpl template = TemplateParser.parse(doc.getTemplate());
+				TemplateImpl template = TemplateParser.parse(new TemplateImpl(), doc.getTemplate());
 				template.setSectionId(doc.getSection());
 				template.setTrigger(doc.getTrigger());
 				template.setRole(SectionRole.valueOf(doc.getSection().toUpperCase()));
-				ret.templates.add(template);
+				this.templates.add(template);
 			}
 		}
-		return ret;
+		this.referencesAvailable.addAll(((Project)project).collectReferences());
 	}
 
 	public List<String> getErrors() {
@@ -80,7 +84,7 @@ public class Documentation implements IDocumentation {
 		return ret;
 	}
 
-	static class TemplateImpl implements IDocumentation.Template {
+	class TemplateImpl implements IDocumentation.Template {
 
 		private List<SectionImpl> sections = new ArrayList<>();
 		private List<String> errors = new ArrayList<>();
@@ -174,32 +178,32 @@ public class Documentation implements IDocumentation {
 						current = ((ReportSection)sect).getChild(current, section.body);
 						break;
 					case "tag":
-						current.tag(processArguments(section.body, 1), context);
+						current.tag(processArguments(section.body, 1), Documentation.this, context);
 						break;
                     case "describe":
-                        current.describe(processArguments(section.body, 1), context);
+                        current.describe(processArguments(section.body, 1), Documentation.this, context);
                         break;
 					case "link":
                     case "reference":
-						current.link(processArguments(section.body, 1), context);
+						current.link(processArguments(section.body, 1), Documentation.this, context);
 						break;
 					case "table":
-						current.table(processArguments(section.body, 2), context);
+						current.table(processArguments(section.body, 2), Documentation.this, context);
 						break;
 					case "cite":
-						current.cite(processArguments(section.body, 1), context);
+						current.cite(processArguments(section.body, 1), Documentation.this, context);
 						break;
 					case "footnote":
-						current.footnote(processArguments(section.body, 2), context);
+						current.footnote(processArguments(section.body, 2), Documentation.this, context);
 						break;
 					case "figure":
-						current.figure(processArguments(section.body, 2), context);
+						current.figure(processArguments(section.body, 2), Documentation.this, context);
 						break;
 					case "insert":
-						current.insert(processArguments(section.body, 1), context);
+						current.insert(processArguments(section.body, 1), Documentation.this, context);
 						break;
                     case "require":
-                        current.getReport().require(processArguments(section.body, 2), context);
+                        current.getReport().require(processArguments(section.body, 2), Documentation.this, context);
                         break;	
                      default:
                          throw new KlabValidationException("unknown documentation directive @" + section.method);
@@ -358,5 +362,15 @@ public class Documentation implements IDocumentation {
     public void setDocfile(File docfile) {
 		this.docfile = docfile;
 	}
+
+    public Reference getReference(String id) {
+        for (ProjectReferences refs : this.referencesAvailable) {
+            Reference ref = refs.get(id);
+            if (ref != null) {
+                return ref;
+            }
+        }
+        return null;
+    }
 
 }

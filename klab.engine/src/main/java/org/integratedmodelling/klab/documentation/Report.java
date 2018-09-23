@@ -74,6 +74,13 @@ public class Report implements IReport {
     private List<IDataflow>                 dataflows    = new ArrayList<>();
     private Set<IObservation>               observations = new HashSet<>();
 
+    // filled as we go with the actual section including its reference
+    Map<String, ReportSection> referencesCited = new HashMap<>();
+    Map<String, ReportSection> tablesCited = new HashMap<>();
+    Map<String, ReportSection> modelsCited = new HashMap<>();
+    Map<String, ReportSection> observationsCited = new HashMap<>();
+    Map<String, ReportSection> dataflowsCited = new HashMap<>();
+    
     @Override
     public void include(IDocumentation.Template template, IComputationContext context) {
         ReportSection section = getMainSection(((TemplateImpl) template).getRole());
@@ -123,7 +130,7 @@ public class Report implements IReport {
      * @param processArguments
      * @param context
      */
-    public void require(Object[] processArguments, IComputationContext context) {
+    public void require(Object[] processArguments, IDocumentation documentation, IComputationContext context) {
         // TODO Auto-generated method stub
         System.out.println("FOCOK");
     }
@@ -131,7 +138,7 @@ public class Report implements IReport {
     /*
      * get or create the main section for a section.
      */
-    private ReportSection getMainSection(SectionRole role) {
+    ReportSection getMainSection(SectionRole role) {
         ReportSection ret = mainSections.get(role);
         if (ret == null) {
             ret = new ReportSection(this, role);

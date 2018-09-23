@@ -151,4 +151,17 @@ public interface IDocumentation {
         return new File(base + File.separator + "documentation.json");
     }
 
+    /**
+     * Return the file path of the (single) references file for the passed project.
+     * 
+     * @param docId
+     * @param projectRoot
+     * @return
+     */
+    public static File getReferencesFile(File projectRoot) {
+        File base = new File(projectRoot + File.separator + IKimProject.DOCUMENTATION_FOLDER);
+        return new File(base + File.separator + "references.json");
+    }
+
+    
 }
