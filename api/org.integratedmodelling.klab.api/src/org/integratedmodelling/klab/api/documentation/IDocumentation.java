@@ -28,99 +28,127 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
  */
 public interface IDocumentation {
 
-	/**
-	 * Specifies when a particular template is triggered. Linked to
-	 * contextualization triggers but separate for ease of extension and
-	 * flexibility.
-	 * 
-	 * @author Ferd
-	 *
-	 */
-	enum Trigger {
+    /**
+     * Specifies when a particular template is triggered. Linked to
+     * contextualization triggers but separate for ease of extension and
+     * flexibility.
+     * 
+     * @author Ferd
+     *
+     */
+    enum Trigger {
 
-		INITIALIZATION("Initialization", IKimAction.Trigger.STATE_INITIALIZATION), DEFINITION("Definition",
-				IKimAction.Trigger.DEFINITION), INSTANTIATION("Instantiation",
-						IKimAction.Trigger.INSTANTIATION), TRANSITION("Transition",
-								IKimAction.Trigger.TRANSITION), TERMINATION("Termination",
-										IKimAction.Trigger.TERMINATION);
+        INITIALIZATION("Initialization", IKimAction.Trigger.STATE_INITIALIZATION),
+        DEFINITION(
+                "Definition",
+                IKimAction.Trigger.DEFINITION),
+        INSTANTIATION(
+                "Instantiation",
+                IKimAction.Trigger.INSTANTIATION),
+        TRANSITION(
+                "Transition",
+                IKimAction.Trigger.TRANSITION),
+        TERMINATION(
+                "Termination",
+                IKimAction.Trigger.TERMINATION);
 
-		String key;
-		IKimAction.Trigger trigger;
+        String             key;
+        IKimAction.Trigger trigger;
 
-		Trigger(String key, IKimAction.Trigger trigger) {
-			this.key = key;
-			this.trigger = trigger;
-		}
-	}
+        Trigger(String key, IKimAction.Trigger trigger) {
+            this.key = key;
+            this.trigger = trigger;
+        }
+    }
 
-	/**
-	 * Each template is a list of sections, each of which gets ultimately translated
-	 * in calls to the reporting system. Such calls can be direct (using &#64;call()
-	 * format), indirect (using the GString template system) or be [] expressions in
-	 * the template language, preprocessed for &#64; calls and inserted in the
-	 * action code as they are.
-	 * 
-	 * Recognized tags:
-	 * 
-	 * <pre>
-	 * &#64;tag(id)                -> create tag pointing to ID of enclosing section
-	 * &#64;section(path)          -> define relative subsection path for content after the tag until the next
-	 * &#64;link(refId, text..)    -> insert text with link to tagged content; ignored if tag does not resolve
-	 * &#64;table(tableobject, id) -> inserts the table and assigns id for referencing to it
-	 * &#64;cite(ref)              -> resolve to citation of reference, insert reference in bibliography
-	 * &#64;footnote(id, text..)   -> creates footnote and assigns id for future reference
-	 * &#64;figure(variable, id)   -> formats object as figure, assigns id for referencing to it
-	 * &#64;insert(refId)          -> literally inserts content of named refId or tagged section, no effect
-	 *                                if tag does not resolve
-	 * </pre>
-	 * 
-	 * @author ferdinando.villa
-	 *
-	 */
-	public static interface Template {
+    /**
+     * Each template is a list of sections, each of which gets ultimately translated
+     * in calls to the reporting system. Such calls can be direct (using &#64;call()
+     * format), indirect (using the GString template system) or be [] expressions in
+     * the template language, preprocessed for &#64; calls and inserted in the
+     * action code as they are.
+     * 
+     * Recognized tags:
+     * 
+     * <pre>
+     * &#64;tag(id)                     -> create tag pointing to ID of enclosing section
+     * &#64;section(path)               -> define relative subsection path for content after the tag until the next
+     * &#64;link(refId, text..)         -> insert text with link to tagged content; ignored if tag does not resolve
+     * &#64;table(tableobject, id, ...) -> inserts the table and assigns id for referencing to it
+     * &#64;cite(ref)                   -> resolve to citation of reference, insert reference in bibliography
+     * &#64;footnote(id, text..)        -> creates footnote and assigns id for future reference
+     * &#64;figure(variable, id, ...)   -> formats object as figure, assigns id for referencing to it
+     * &#64;insert(refId)               -> literally inserts content of named refId or tagged section, no effect
+     *                                     if tag does not resolve
+     * &#64;require(refId, sectionpath) -> ensure content of named refId is in named section, no effect
+     *                                     if tag does not resolve but only include once if not there.
+     * </pre>
+     * 
+     * @author ferdinando.villa
+     *
+     */
+    public static interface Template {
 
-		/**
-		 * 
-		 * @return
-		 */
-		Trigger getTrigger();
+        /**
+         * All of the available directives in the template language.
+         * 
+         * @author Ferd
+         *
+         */
+        public enum Directive {
+            Section,
+            Tag,
+            Link,
+            Table,
+            Cite,
+            Footnote,
+            Figure,
+            Insert,
+            Require
+        }
 
-		/**
-		 * Compile into a report section
-		 * 
-		 * @param context
-		 * @return
-		 */
-		IReport.Section compile(IComputationContext context);
-	}
+        /**
+         * 
+         * @return
+         */
+        Trigger getTrigger();
 
-	/**
-	 * Get all templates corresponding to the passed action type, if any.
-	 * 
-	 * @param actionType
-	 * @return
-	 */
-	Collection<Template> get(Trigger actionType);
+        /**
+         * Compile into a report section
+         * 
+         * @param context
+         * @return
+         */
+        void compile(IReport.Section section, IComputationContext context);
+    }
 
-	/**
-	 * Return the file path of the documentation catalog for the passed
-	 * documentation ID. They are structured in different, hierarchically organized
-	 * files by ID path to minimize conflicts in Git workflows.
-	 * 
-	 * @param docId
-	 * @param projectRoot
-	 * @return
-	 */
-	public static File getDocumentationFile(String docId, File projectRoot) {
+    /**
+     * Get all templates corresponding to the passed action type, if any.
+     * 
+     * @param actionType
+     * @return
+     */
+    Collection<Template> get(Trigger actionType);
 
-		File base = new File(projectRoot + File.separator + IKimProject.DOCUMENTATION_FOLDER);
-		base.mkdir();
-		String[] path = docId.split("\\.");
-		for (int i = 0; i < path.length - 1; i++) {
-			base = new File(base + File.separator + path[i]);
-			base.mkdir();
-		}
-		return new File(base + File.separator + "documentation.json");
-	}
+    /**
+     * Return the file path of the documentation catalog for the passed
+     * documentation ID. They are structured in different, hierarchically organized
+     * files by ID path to minimize conflicts in Git workflows.
+     * 
+     * @param docId
+     * @param projectRoot
+     * @return
+     */
+    public static File getDocumentationFile(String docId, File projectRoot) {
+
+        File base = new File(projectRoot + File.separator + IKimProject.DOCUMENTATION_FOLDER);
+        base.mkdir();
+        String[] path = docId.split("\\.");
+        for (int i = 0; i < path.length - 1; i++) {
+            base = new File(base + File.separator + path[i]);
+            base.mkdir();
+        }
+        return new File(base + File.separator + "documentation.json");
+    }
 
 }

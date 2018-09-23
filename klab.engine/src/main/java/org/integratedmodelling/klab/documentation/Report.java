@@ -25,11 +25,26 @@ package org.integratedmodelling.klab.documentation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IKimTable;
+import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.documentation.IReport;
+import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
+import org.integratedmodelling.klab.documentation.Documentation.TemplateImpl;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.kim.Prototype;
 import org.springframework.util.StringUtils;
 
 import com.vladsch.flexmark.ast.Node;
@@ -50,83 +65,140 @@ import com.vladsch.flexmark.util.options.MutableDataSet;
  */
 public class Report implements IReport {
 
-	private Map<SectionRole, ReportSection> mainSections = new HashMap<>();
+    private Map<SectionRole, ReportSection> mainSections = new HashMap<>();
 
-	public void addSection(Section section) {
-		ReportSection main = getMainSection(section.getRole());
-		main.children.add((ReportSection) section);
-	}
+    private List<IResource>                 resources    = new ArrayList<>();
+    private List<IKimTable>                 tables       = new ArrayList<>();
+    private List<IModel>                    models       = new ArrayList<>();
+    private List<IPrototype>                services     = new ArrayList<>();
+    private List<IDataflow>                 dataflows    = new ArrayList<>();
+    private Set<IObservation>               observations = new HashSet<>();
 
-	/*
-	 * get or create the main section for a section.
-	 */
-	private ReportSection getMainSection(SectionRole role) {
-		ReportSection ret = mainSections.get(role);
-		if (ret == null) {
-			ret = new ReportSection(role);
-			mainSections.put(role, ret);
-			ret.name = StringUtils.capitalize(role.name().toLowerCase());
-		}
-		return ret;
-	}
+    @Override
+    public void include(IDocumentation.Template template, IComputationContext context) {
+        ReportSection section = getMainSection(((TemplateImpl) template).getRole());
+        template.compile(section, context);
+    }
 
-	@Override
-	public List<Section> getSections() {
-		List<Section> ret = new ArrayList<>();
-		for (SectionRole role : SectionRole.values()) {
-			if (mainSections.containsKey(role)) {
-				ret.add(mainSections.get(role));
-			}
-		}
-		return ret;
-	}
+    @Override
+    public void include(IComputableResource resource) {
+        System.out.println("HA");
+        if (resource.getUrn() != null) {
+            resources.add(Resources.INSTANCE.resolveResource(resource.getUrn()));
+        } else if (resource.getLookupTable() != null) {
+            tables.add(resource.getLookupTable().getTable());
+        } else if (resource.getClassification() != null) {
+            // classification
+        } else if (resource.getServiceCall() != null) {
+            Prototype prototype = Extensions.INSTANCE.getPrototype(resource.getServiceCall().getName());
+            if (prototype != null) {
+                services.add(prototype);
+            }
+        }
+    }
 
-	public static final String SEPARATOR = "\n\n----\n\n";
+    @Override
+    public void include(IModel model) {
+        models.add(model);
+    }
 
-	IRuntimeContext context = null;
+    @Override
+    public void include(IDataflow<?> dataflow) {
+        dataflows.add(dataflow);
+    }
 
-	public Report() {
-	}
+    @Override
+    public void include(IObservation output) {
+        observations.add(output);
+    }
 
-	public Report(IRuntimeContext context) {
-		this.context = context;
-	}
+    public void addSection(Section section) {
+        ReportSection main = getMainSection(section.getRole());
+        main.children.add((ReportSection) section);
+    }
 
-	public String asHTML(String markdown) {
+    /**
+     * Require the contents of a passed project-level template into the section named in the second argument.
+     * 
+     * @param processArguments
+     * @param context
+     */
+    public void require(Object[] processArguments, IComputationContext context) {
+        // TODO Auto-generated method stub
+        System.out.println("FOCOK");
+    }
 
-		MutableDataSet options = new MutableDataSet().set(Parser.EXTENSIONS,
-				Arrays.asList(
-						FootnoteExtension.create(), 
-						AttributesExtension.create(),
-						EnumeratedReferenceExtension.create(), 
-						MediaTagsExtension.create(),
-						DefinitionExtension.create()));
+    /*
+     * get or create the main section for a section.
+     */
+    private ReportSection getMainSection(SectionRole role) {
+        ReportSection ret = mainSections.get(role);
+        if (ret == null) {
+            ret = new ReportSection(this, role);
+            mainSections.put(role, ret);
+            ret.name = StringUtils.capitalize(role.name().toLowerCase());
+        }
+        return ret;
+    }
 
-		Parser parser = Parser.builder(options).build();
-		HtmlRenderer renderer = HtmlRenderer.builder(options).build();
-		Node document = parser.parse(markdown);
-		return renderer.render(document);
-	}
+    @Override
+    public List<Section> getSections() {
+        List<Section> ret = new ArrayList<>();
+        for (SectionRole role : SectionRole.values()) {
+            if (mainSections.containsKey(role)) {
+                ret.add(mainSections.get(role));
+            }
+        }
+        return ret;
+    }
 
-	@Override
-	public String render(Encoding encoding) {
+    public static final String SEPARATOR = "\n\n----\n\n";
 
-		StringBuffer ret = new StringBuffer(16 * 1024);
-		for (Section s : getSections()) {
-			ret.append(s.render());
-		}
+    IRuntimeContext            context   = null;
 
-		switch (encoding) {
-		case HTML:
-			return asHTML(ret.toString());
-		case MARKDOWN:
-			return ret.toString();
-		case LATEX:
-		case PDF:
-			break;
-		}
+    public Report() {
+    }
 
-		return "<html><body><p>Unsupported encoding " + encoding + " </p></body></html>";
-	}
+    public Report(IRuntimeContext context) {
+        this.context = context;
+    }
+
+    public String asHTML(String markdown) {
+
+        MutableDataSet options = new MutableDataSet().set(Parser.EXTENSIONS, Arrays
+                .asList(FootnoteExtension.create(), AttributesExtension.create(), EnumeratedReferenceExtension
+                        .create(), MediaTagsExtension.create(), DefinitionExtension.create()));
+
+        Parser parser = Parser.builder(options).build();
+        HtmlRenderer renderer = HtmlRenderer.builder(options).build();
+        Node document = parser.parse(markdown);
+        return renderer.render(document);
+    }
+
+    @Override
+    public String render(Encoding encoding) {
+
+        StringBuffer ret = new StringBuffer(16 * 1024);
+
+        /*
+         * TODO add anything not explicitly described; make appendices and references
+         */
+
+        for (Section s : getSections()) {
+            ret.append(s.render());
+        }
+
+        switch (encoding) {
+        case HTML:
+            return asHTML(ret.toString());
+        case MARKDOWN:
+            return ret.toString();
+        case LATEX:
+        case PDF:
+            break;
+        }
+
+        return "<html><body><p>Unsupported encoding " + encoding + " </p></body></html>";
+    }
 
 }

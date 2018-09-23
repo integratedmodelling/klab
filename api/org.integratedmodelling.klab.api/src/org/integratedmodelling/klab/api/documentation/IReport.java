@@ -24,8 +24,13 @@ package org.integratedmodelling.klab.api.documentation;
 
 import java.util.List;
 
+import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.api.documentation.IDocumentation.Template;
+import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 
 /**
  * A report contains a DAG of sections.
@@ -35,99 +40,150 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
  */
 public interface IReport {
 
-	public enum Encoding {
-		MARKDOWN,
-		HTML,
-		PDF,
-		LATEX
-	}
-	
-	/**
-	 * Roles and titles of main sections, also providing the ordering for the
-	 * default report template.
-	 * 
-	 * @author ferdinando.villa
-	 *
-	 */
-	public enum SectionRole {
-		INTRODUCTION, METHODS, RESULTS, DISCUSSION, CONCLUSIONS, NOTES, REFERENCES, APPENDIX
-	};
+    public enum Encoding {
+        MARKDOWN,
+        HTML,
+        PDF,
+        LATEX
+    }
 
-	/**
-	 * Sections represent any element of the report, including title, footnotes,
-	 * figures, tables and references. Each may have structured content (accessible
-	 * through the {@link IParameters} API) and/or type-specific content, not
-	 * exposed in the API. Sections can have children and references to other
-	 * sections.
-	 * 
-	 * @author Ferd
-	 *
-	 */
-	interface Section extends IParameters<String> {
+    /**
+     * Roles and titles of main sections, also providing the ordering for the
+     * default report template.
+     * 
+     * @author ferdinando.villa
+     *
+     */
+    public enum SectionRole {
+        INTRODUCTION,
+        METHODS,
+        RESULTS,
+        DISCUSSION,
+        CONCLUSIONS,
+        NOTES,
+        REFERENCES,
+        APPENDIX
+    };
 
-		/**
-		 * 
-		 * @author ferdinando.villa
-		 *
-		 */
-		public enum Type {
-			TITLE, BODY, HEADER, FOOTER, FOOTNOTE, CODE, INFO, WARNING, ERROR, FIGURE, TABLE, REFERENCE, LINK, CUSTOM
-		}
+    /**
+     * Sections represent any element of the report, including title, footnotes,
+     * figures, tables and references. Each may have structured content (accessible
+     * through the {@link IParameters} API) and/or type-specific content, not
+     * exposed in the API. Sections can have children and references to other
+     * sections.
+     * 
+     * @author Ferd
+     *
+     */
+    interface Section extends IParameters<String> {
 
-		/**
-		 * ID of the section, unique and not for user consumption.
-		 * 
-		 * @return
-		 */
-		String getId();
+        /**
+         * 
+         * @author ferdinando.villa
+         *
+         */
+        public enum Type {
+            TITLE,
+            BODY,
+            HEADER,
+            FOOTER,
+            FOOTNOTE,
+            CODE,
+            INFO,
+            WARNING,
+            ERROR,
+            FIGURE,
+            TABLE,
+            REFERENCE,
+            LINK,
+            CUSTOM
+        }
 
-		/**
-		 * Displayable name.
-		 * 
-		 * @return
-		 */
-		String getName();
-				
-		/**
-		 * One of the report section roles or null. Root-level sections 
-		 * originating from documentation must have this set.
-		 * 
-		 * @return
-		 */
-		SectionRole getRole();
+        /**
+         * ID of the section, unique and not for user consumption.
+         * 
+         * @return
+         */
+        String getId();
 
-		/**
-		 * Render and return the final string representation in the 
-		 * encoding language. 
-		 * 
-		 * @return
-		 */
-		String render();
+        /**
+         * Displayable name.
+         * 
+         * @return
+         */
+        String getName();
 
-	}
+        /**
+         * One of the report section roles or null. Root-level sections 
+         * originating from documentation must have this set.
+         * 
+         * @return
+         */
+        SectionRole getRole();
 
-	/**
-	 * Add a section, to be arranged as necessary. Sections come from 
-	 * compiling documentation templates.
-	 * 
-	 * @param section
-	 */
-	void addSection(Section section);
-	
-	/**
-	 * Return all root sections in the order established by the current report
-	 * template.
-	 * 
-	 * @return
-	 */
-	List<Section> getSections();
+        /**
+         * Render and return the final string representation in the 
+         * encoding language. 
+         * 
+         * @return
+         */
+        String render();
 
-	/**
-	 * Render the report sections to the target language for display or further
-	 * processing.
-	 * 
-	 * @return
-	 */
-	String render(Encoding encoding);
+    }
+
+    /**
+     * Return all root sections in the order established by the current report
+     * template.
+     * 
+     * @return
+     */
+    List<Section> getSections();
+
+    /**
+     * Render the report sections to the target language for display or further
+     * processing.
+     * 
+     * @return
+     */
+    String render(Encoding encoding);
+
+    /**
+     * Include the passed template after compiling it in the passed context.
+     * 
+     * @param resource
+     */
+    void include(Template template, IComputationContext context);
+
+    /**
+     * Notify a resource for possible inclusion, according to options. By default a standard description may
+     * be included in a verbose report if it has not been explicitly described using a template tag.
+     * 
+     * @param resource
+     */
+    void include(IComputableResource resource);
+
+    /**
+     * Notify a model for possible inclusion, according to options. By default a standard description may
+     * be included in a verbose report if it has not been explicitly described using a template tag.
+     * 
+     * @param resource
+     */
+    void include(IModel model);
+
+    /**
+     * Notify a dataflow for possible inclusion, according to options. By default a standard description may
+     * be included in a verbose report if it has not been explicitly described using a template tag.
+     * 
+     * @param resource
+     */
+    void include(IDataflow<?> dataflow);
+
+    /**
+     * Notify an output observation for possible inclusion, according to options. By default a standard description may
+     * be included in a verbose report if it has not been explicitly described using a template tag.
+     * 
+     * @param resource
+     */
+    void include(IObservation output);
 
 }

@@ -259,7 +259,6 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
                         transformations.add(new Transformation(computation, newobs));
                     }
                 }
-                // newobs.setName(observable.getLocalName());
                 ret.add(new CandidateObservable(newobs, Mode.RESOLUTION, transformations));
             }
 
@@ -296,6 +295,10 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
         } else if (observable.is(Type.RATIO)) {
             // TODO
         }
+        
+        if (observable.getAggregator() != null) {
+            // we also need the aggregator observation and a distributing operator
+        }
 
         return ret;
     }
@@ -310,6 +313,10 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 
         List<CandidateObservable> ret = selectApplicableDependencies(model.getDependencies(), scope);
 
+        if (observable.getAggregator() != null) {
+            // we need the aggregator observation + the adapter after the state is computed
+        }
+        
         //
         // /**
         // * original minus those that apply to a scale we don't have.
@@ -367,6 +374,8 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 
     private void getInferredDependencies(Model model) {
 
+
+        
         // // TODO Auto-generated method stub
         // List<Pair<IConcept, Boolean>> ret = new ArrayList<>();
         //

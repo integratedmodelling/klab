@@ -249,7 +249,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
 
   /**
    * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
-   *
+   * 
    * <p>This method is used to initialize {@link KdlPackage#eINSTANCE} when that field is accessed.
    * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
    * <!-- begin-user-doc -->
@@ -264,8 +264,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     if (isInited) return (KdlPackage)EPackage.Registry.INSTANCE.getEPackage(KdlPackage.eNS_URI);
 
     // Obtain or create and register package
-    Object registeredKdlPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-    KdlPackageImpl theKdlPackage = registeredKdlPackage instanceof KdlPackageImpl ? (KdlPackageImpl)registeredKdlPackage : new KdlPackageImpl();
+    KdlPackageImpl theKdlPackage = (KdlPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof KdlPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new KdlPackageImpl());
 
     isInited = true;
 
@@ -278,6 +277,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     // Mark meta-data to indicate it can't be changed
     theKdlPackage.freeze();
 
+  
     // Update the registry and return the package
     EPackage.Registry.INSTANCE.put(KdlPackage.eNS_URI, theKdlPackage);
     return theKdlPackage;

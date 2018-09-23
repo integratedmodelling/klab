@@ -64,4 +64,5 @@ public interface IResourceCatalog extends Map<String, IResource> {
      * @return
      */
     IResource rename(IResource resource, String newUrn);
+
 }

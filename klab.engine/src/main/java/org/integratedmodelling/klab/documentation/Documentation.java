@@ -12,9 +12,11 @@ import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.documentation.IReport.Section;
 import org.integratedmodelling.klab.api.documentation.IReport.SectionRole;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Parameters;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.Utils;
 
 /**
  * @author ferdinando.villa
@@ -114,14 +116,17 @@ public class Documentation implements IDocumentation {
 			 * more. Otherwise add a space if there was any whitespace at all. This is
 			 * pretty complex but the alternative is to write docs in horrible formatting
 			 * throughout the k.IM code.
+			 * 
+			 * CHECK should be unnecessary now that docs are edited separately, but keep this
+			 * for some time just in case.
 			 */
-			String lead = StringUtils.getLeadingWhitespace(text);
-			int lnlns = StringUtils.countMatches(lead, "\n");
-			String tail = StringUtils.getTrailingWhitespace(text);
-			int tnlns = StringUtils.countMatches(tail, "\n");
-			text = (lnlns > 1 ? StringUtils.repeat('\n', lnlns) : (lead.length() > 0 ? " " : ""))
-					+ StringUtils.pack(text)
-					+ (tnlns > 1 ? StringUtils.repeat('\n', tnlns) : (tail.length() > 0 ? " " : ""));
+//			String lead = StringUtils.getLeadingWhitespace(text);
+//			int lnlns = StringUtils.countMatches(lead, "\n");
+//			String tail = StringUtils.getTrailingWhitespace(text);
+//			int tnlns = StringUtils.countMatches(tail, "\n");
+//			text = (lnlns > 1 ? StringUtils.repeat('\n', lnlns) : (lead.length() > 0 ? " " : ""))
+//					+ StringUtils.pack(text)
+//					+ (tnlns > 1 ? StringUtils.repeat('\n', tnlns) : (tail.length() > 0 ? " " : ""));
 
 			sections.add(new SectionImpl(SectionImpl.Type.TEMPLATE_STRING, text));
 		}
@@ -156,43 +161,48 @@ public class Documentation implements IDocumentation {
 		}
 
 		@Override
-		public IReport.Section compile(IComputationContext context) {
+		public void compile(IReport.Section sect, IComputationContext context) {
 
-			ReportSection ret = new ReportSection(this.role);
-			ReportSection current = ret;
+			ReportSection current = (ReportSection)sect;
 
 			for (SectionImpl section : sections) {
 
+			    // TODO switch to matching the enum
 				if (section.getType() == SectionImpl.Type.REPORT_CALL) {
 					switch (section.method) {
 					case "section":
-						current = ret.getChild(ret, section.body);
+						current = ((ReportSection)sect).getChild(current, section.body);
 						break;
 					case "tag":
-						current.tag(processArguments(section.body, 0), context);
+						current.tag(processArguments(section.body, 1), context);
 						break;
+                    case "describe":
+                        current.describe(processArguments(section.body, 1), context);
+                        break;
 					case "link":
-						current.link(processArguments(section.body, 0), context);
+                    case "reference":
+						current.link(processArguments(section.body, 1), context);
 						break;
 					case "table":
-						current.table(processArguments(section.body, 0), context);
+						current.table(processArguments(section.body, 2), context);
 						break;
 					case "cite":
-						current.cite(processArguments(section.body, 0), context);
+						current.cite(processArguments(section.body, 1), context);
 						break;
 					case "footnote":
-						current.footnote(processArguments(section.body, 0), context);
+						current.footnote(processArguments(section.body, 2), context);
 						break;
 					case "figure":
-						current.figure(processArguments(section.body, 0), context);
+						current.figure(processArguments(section.body, 2), context);
 						break;
 					case "insert":
-						current.insert(processArguments(section.body, 0), context);
+						current.insert(processArguments(section.body, 1), context);
 						break;
-					default:
-						// if it's not one of those, just eval for the side effects
-						section.evaluate(context, current);
-						break;
+                    case "require":
+                        current.getReport().require(processArguments(section.body, 2), context);
+                        break;	
+                     default:
+                         throw new KlabValidationException("unknown documentation directive @" + section.method);
 					}
 
 				} else if (section.getType() == SectionImpl.Type.TEMPLATE_STRING
@@ -203,7 +213,6 @@ public class Documentation implements IDocumentation {
 				}
 			}
 
-			return ret;
 		}
 
 		public SectionRole getRole() {
@@ -223,8 +232,24 @@ public class Documentation implements IDocumentation {
 		 * @return
 		 */
 		public Object[] processArguments(String body, int argCount) {
-			// TODO Auto-generated method stub
-			return null;
+		    
+		    List<Object> arguments = new ArrayList<>();
+		    int offset = 0;
+		    while (arguments.size() < argCount) {
+		        int nextComma = body.indexOf(',', offset + 1);
+		        if (nextComma < 0) {
+		            break;
+		        }
+		        String arg = body.substring(offset, nextComma);
+		        arguments.add(Utils.asPOD(arg.trim()));
+		        offset = nextComma + 1;
+		    }
+		    
+		    if (offset < body.length()) {
+		        arguments.add(body.substring(offset).trim());
+		    }
+		    
+			return arguments.toArray();
 		}
 	}
 
@@ -291,7 +316,7 @@ public class Documentation implements IDocumentation {
 			String ret = body;
 			if (type == Type.REPORT_CALL) {
 
-				ret = "_section." + method + "(" + body + ");";
+				ret = "_section." + method + "(" + stringify(body) + ");";
 
 			} else if (type == Type.ACTION_CODE) {
 
@@ -323,7 +348,14 @@ public class Documentation implements IDocumentation {
 		return docfile;
 	}
 
-	public void setDocfile(File docfile) {
+    public static String stringify(String body) {
+        if ((body.startsWith("\"") && body.endsWith("\"")) || ((body.startsWith("'") && body.endsWith("'")))) {
+            return body;
+        }
+        return "\"" + Escape.forDoubleQuotedString(body, false) + "\"";
+    }
+
+    public void setDocfile(File docfile) {
 		this.docfile = docfile;
 	}
 

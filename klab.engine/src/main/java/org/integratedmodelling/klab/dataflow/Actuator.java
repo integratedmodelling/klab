@@ -39,6 +39,7 @@ import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.data.table.LookupTable;
+import org.integratedmodelling.klab.documentation.Report;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
@@ -266,6 +267,11 @@ public class Actuator implements IActuator {
 			} else if (!runtimeContext.getMonitor().isInterrupted()) {
 				context.setData(indirectTarget.getLocalName(), artifactTable.get(targetId));
 			}
+			
+			/*
+			 * include the computed resource in the report
+			 */
+			((Report)context.getReport()).include(contextualizer.getSecond());
 		}
 
 		if (runtimeContext.getMonitor().isInterrupted()) {
@@ -331,7 +337,7 @@ public class Actuator implements IActuator {
 		 */
 		for (IDocumentation doc : documentation) {
 			for (IDocumentation.Template template : doc.get(Trigger.DEFINITION)) {
-				runtimeContext.getReport().addSection(template.compile(ctx));
+				runtimeContext.getReport().include(template, ctx);
 			}
 		}
 

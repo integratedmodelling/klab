@@ -157,8 +157,10 @@ public class ResourceCatalog implements IResourceCatalog {
         File resourcePath = getResourcePath(value);
         if (resourcePath != null) {
             try {
-                FileUtils.writeStringToFile(new File(resourcePath + File.separator
-                        + "resource.json"), JsonUtils.printAsJson(ref));
+                File resFile = new File(resourcePath + File.separator + "resource.json");
+                if (!resFile.exists() || resFile.lastModified() < ref.getResourceTimestamp()) {
+                    FileUtils.writeStringToFile(resFile, JsonUtils.printAsJson(ref)/*, TODO REINTEGRATE - somehow can't find the method  StandardCharsets.UTF_8*/);
+                }
             } catch (IOException e) {
                 throw new KlabIOException(e);
             }
@@ -281,15 +283,17 @@ public class ResourceCatalog implements IResourceCatalog {
 
     @Override
     public IResource move(IResource resource, IProject destinationProject) {
-        
+
         File previousDir = getResourcePath(resource);
-        Pair<File, ResourceReference> newData = getResourcePath(resource, Kim.INSTANCE.getProject(destinationProject.getName()));
-        
+        Pair<File, ResourceReference> newData = getResourcePath(resource, Kim.INSTANCE
+                .getProject(destinationProject.getName()));
+
         if (previousDir != null && newData != null) {
             try {
                 FileUtils.copyDirectory(previousDir, newData.getFirst());
                 FileUtils.writeStringToFile(new File(newData.getFirst() + File.separator
-                        + "resource.json"), JsonUtils.printAsJson(newData.getSecond()));
+                        + "resource.json"), JsonUtils
+                                .printAsJson(newData.getSecond())/* TODO REINTEGRATE - somehow can't find the method , StandardCharsets.UTF_8*/);
                 FileUtils.deleteDirectory(previousDir);
                 resources.remove(eq("urn", resource.getUrn()));
                 resources.insert(newData.getSecond());
@@ -297,7 +301,7 @@ public class ResourceCatalog implements IResourceCatalog {
             } catch (IOException e) {
                 throw new KlabIOException(e);
             }
-            
+
         }
         return get(resource.getUrn());
     }
@@ -316,5 +320,12 @@ public class ResourceCatalog implements IResourceCatalog {
         // TODO
         return null;
     }
+    
+    public IResource update(ResourceReference reference) {
+        // TODO
+        // ENSURE THE RESOURCE TIMESTAMP IS NEW
+        return null;
+    }
+
 
 }
