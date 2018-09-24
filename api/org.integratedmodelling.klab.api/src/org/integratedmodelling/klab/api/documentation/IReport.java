@@ -147,43 +147,43 @@ public interface IReport {
      */
     String render(Encoding encoding);
 
-    /**
-     * Include the passed template after compiling it in the passed context.
-     * 
-     * @param resource
-     */
-    void include(Template template, IComputationContext context);
-
-    /**
-     * Notify a resource for possible inclusion, according to options. By default a standard description may
-     * be included in a verbose report if it has not been explicitly described using a template tag.
-     * 
-     * @param resource
-     */
-    void include(IComputableResource resource);
-
-    /**
-     * Notify a model for possible inclusion, according to options. By default a standard description may
-     * be included in a verbose report if it has not been explicitly described using a template tag.
-     * 
-     * @param resource
-     */
-    void include(IModel model);
-
-    /**
-     * Notify a dataflow for possible inclusion, according to options. By default a standard description may
-     * be included in a verbose report if it has not been explicitly described using a template tag.
-     * 
-     * @param resource
-     */
-    void include(IDataflow<?> dataflow);
-
-    /**
-     * Notify an output observation for possible inclusion, according to options. By default a standard description may
-     * be included in a verbose report if it has not been explicitly described using a template tag.
-     * 
-     * @param resource
-     */
-    void include(IObservation output);
+//    /**
+//     * Include the passed template after compiling it in the passed context.
+//     * 
+//     * @param resource
+//     */
+//    void include(Template template, IComputationContext context);
+//
+//    /**
+//     * Notify a resource for possible inclusion, according to options. By default a standard description may
+//     * be included in a verbose report if it has not been explicitly described using a template tag.
+//     * 
+//     * @param resource
+//     */
+//    void include(IComputableResource resource);
+//
+//    /**
+//     * Notify a model for possible inclusion, according to options. By default a standard description may
+//     * be included in a verbose report if it has not been explicitly described using a template tag.
+//     * 
+//     * @param resource
+//     */
+//    void include(IModel model);
+//
+//    /**
+//     * Notify a dataflow for possible inclusion, according to options. By default a standard description may
+//     * be included in a verbose report if it has not been explicitly described using a template tag.
+//     * 
+//     * @param resource
+//     */
+//    void include(IDataflow<?> dataflow);
+//
+//    /**
+//     * Notify an output observation for possible inclusion, according to options. By default a standard description may
+//     * be included in a verbose report if it has not been explicitly described using a template tag.
+//     * 
+//     * @param resource
+//     */
+//    void include(IObservation output);
 
 }

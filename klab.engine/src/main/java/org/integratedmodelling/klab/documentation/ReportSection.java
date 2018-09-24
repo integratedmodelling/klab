@@ -7,7 +7,11 @@ import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.documentation.IReport.Section;
 import org.integratedmodelling.klab.api.documentation.IReport.SectionRole;
+import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
+import org.integratedmodelling.klab.documentation.Report.RefType;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.StringUtils;
@@ -20,7 +24,6 @@ public class ReportSection extends Parameters<String> implements Section {
     List<ReportSection> children = new ArrayList<>();
     StringBuffer        body     = new StringBuffer(512);
     Report              report;
-    
 
     ReportSection(Report report, SectionRole role) {
         this.role = role;
@@ -34,8 +37,9 @@ public class ReportSection extends Parameters<String> implements Section {
 
     public ReportSection(Report report, Reference reference, String tag) {
         this.report = report;
+        this.body.append("[#" + Report.RefType.REF.name().toLowerCase() + ":" + tag + "]. ");
         this.body.append(reference.get(BibTexFields.EXAMPLE_CITATION));
-        this.body.append(" {#ref:" + tag + "}");
+        this.body.append(" {#" + Report.RefType.REF.name().toLowerCase() + ":" + tag + "}");
         this.body.append("\n\n");
         ReportSection parent = report.getMainSection(SectionRole.REFERENCES);
         parent.children.add(this);
@@ -130,8 +134,8 @@ public class ReportSection extends Parameters<String> implements Section {
      */
 
     /**
-     * Insert a span for the description of the passed argument, optionally with
-     * tag and caption.
+     * Insert a descriptive span for the description of the passed argument, optionally with
+     * tag and caption. For not do nothing and just use figure and text.
      * 
      * @param args
      *            tag
@@ -141,7 +145,7 @@ public class ReportSection extends Parameters<String> implements Section {
         // TODO Auto-generated method stub
         System.out.println("FOC");
     }
-    
+
     /**
      * Create the {#reference:tag} attribute to refer back to the containing span.
      * 
@@ -162,9 +166,11 @@ public class ReportSection extends Parameters<String> implements Section {
      *            tag, text
      * @param context
      */
-    public void link(Object[] processArguments, IDocumentation documentation, IComputationContext context) {
-        // TODO Auto-generated method stub
-        System.out.println("FOC");
+    public void link(Object[] args, IDocumentation documentation, IComputationContext context) {
+        RefType type = report.getReferenceType(args[0].toString());
+        if (type != null) {
+            body.append("[@" + type.name().toLowerCase() + ":" + args[0] + "]");
+        }
     }
 
     /**
@@ -187,13 +193,16 @@ public class ReportSection extends Parameters<String> implements Section {
      * @param context
      */
     public void cite(Object[] args, IDocumentation documentation, IComputationContext context) {
+
         if (!report.referencesCited.containsKey(args[0])) {
-            Reference reference = ((Documentation)documentation).getReference(args[0].toString());
+            Reference reference = ((Documentation) documentation).getReference(args[0].toString());
             if (reference != null) {
-                report.referencesCited.put(args[0].toString(), new ReportSection(this.report, reference, args[0].toString()));
+                report.referencesCited.put(args[0]
+                        .toString(), new ReportSection(this.report, reference, args[0].toString()));
             }
         }
-        body.append(" [CITE " + args[0] + "!] ");
+        body.append((args.length > 1 ? args[1] : "") + "[@" + Report.RefType.REF.name().toLowerCase() + ":"
+                + args[0] + "]");
     }
 
     /**
@@ -213,12 +222,22 @@ public class ReportSection extends Parameters<String> implements Section {
      * shape, inline code if model, etc.; format it with an optional tag and
      * caption.
      * 
+     * Format will be ![Caption](http://link){#fig:TAG}
+     * 
      * @param processArguments
      * @param context
      */
-    public void figure(Object[] processArguments, IDocumentation documentation, IComputationContext context) {
-        // TODO Auto-generated method stub
-        System.out.println("FOC");
+    public void figure(Object[] args, IDocumentation documentation, IComputationContext context) {
+
+        IArtifact artifact = "self".equals(args[0]) ? context.getTargetArtifact() : context.getArtifact(args[0].toString());
+        if (artifact instanceof IObservation) {
+            IObservationReference ref = report.getObservation(((IObservation) artifact).getId());
+            if (ref != null) {
+                report.setReferenceType(args[1].toString(), RefType.FIG);
+                body.append("\n\n![" + ref.getLabel() + "](http://localhost:8283/modeler/engine/session/view/displaydata/" 
+                + report.getSessionId() + "/" + ref.getId() + "?format=RASTER&viewport=800){#" + RefType.FIG.name().toLowerCase() + ":" + args[1] + "}\n\n");
+            }
+        }
     }
 
     /**

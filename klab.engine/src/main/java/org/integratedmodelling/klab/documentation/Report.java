@@ -39,9 +39,10 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.model.IModel;
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
+import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.documentation.Documentation.TemplateImpl;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.kim.Prototype;
@@ -65,31 +66,59 @@ import com.vladsch.flexmark.util.options.MutableDataSet;
  */
 public class Report implements IReport {
 
-    private Map<SectionRole, ReportSection> mainSections = new HashMap<>();
+    enum RefType {
+        REF,
+        FIG,
+        TABLE,
+        FOOTNOTE,
+        DATAFLOW
+    }
 
-    private List<IResource>                 resources    = new ArrayList<>();
-    private List<IKimTable>                 tables       = new ArrayList<>();
-    private List<IModel>                    models       = new ArrayList<>();
-    private List<IPrototype>                services     = new ArrayList<>();
-    private List<IDataflow>                 dataflows    = new ArrayList<>();
-    private Set<IObservation>               observations = new HashSet<>();
+    private Map<SectionRole, ReportSection>    mainSections      = new HashMap<>();
 
-    // filled as we go with the actual section including its reference
-    Map<String, ReportSection> referencesCited = new HashMap<>();
-    Map<String, ReportSection> tablesCited = new HashMap<>();
-    Map<String, ReportSection> modelsCited = new HashMap<>();
-    Map<String, ReportSection> observationsCited = new HashMap<>();
-    Map<String, ReportSection> dataflowsCited = new HashMap<>();
+    private List<IResource>                    resources         = new ArrayList<>();
+    private List<IKimTable>                    tables            = new ArrayList<>();
+    private List<IModel>                       models            = new ArrayList<>();
+    private List<IPrototype>                   services          = new ArrayList<>();
+    private List<IDataflow>                    dataflows         = new ArrayList<>();
+    private Map<String, IObservationReference> observations      = new HashMap<>();
+    Map<String, ReportSection>                 referencesCited   = new HashMap<>();
+    Map<String, ReportSection>                 tablesCited       = new HashMap<>();
+    Map<String, ReportSection>                 modelsCited       = new HashMap<>();
+    Map<String, ReportSection>                 observationsCited = new HashMap<>();
+    Map<String, ReportSection>                 dataflowsCited    = new HashMap<>();
+
+    Map<RefType, Set<String>>                  refTypes          = new HashMap<>();
+    Set<String> observationDescribed = new HashSet<>();
     
-    @Override
+    public RefType getReferenceType(String reference) {
+        RefType ret = null;
+        for (RefType type : RefType.values()) {
+            if (refTypes.containsKey(type) && refTypes.get(type).contains(reference)) {
+                return type;
+            }
+        }
+        return ret;
+    }
+
+    public void setReferenceType(String reference, RefType type) {
+        Set<String> set = refTypes.get(type);
+        if (set == null) {
+            set = new HashSet<>();
+            refTypes.put(type, set);
+        }
+        set.add(reference);
+    }
+
+    // @Override
     public void include(IDocumentation.Template template, IComputationContext context) {
         ReportSection section = getMainSection(((TemplateImpl) template).getRole());
         template.compile(section, context);
     }
 
-    @Override
+    // @Override
     public void include(IComputableResource resource) {
-        System.out.println("HA");
+
         if (resource.getUrn() != null) {
             resources.add(Resources.INSTANCE.resolveResource(resource.getUrn()));
         } else if (resource.getLookupTable() != null) {
@@ -104,24 +133,31 @@ public class Report implements IReport {
         }
     }
 
-    @Override
+    public IObservationReference getObservation(String id) {
+        return observations.get(id);
+    }
+
+    // @Override
     public void include(IModel model) {
         models.add(model);
     }
 
-    @Override
+    // @Override
     public void include(IDataflow<?> dataflow) {
         dataflows.add(dataflow);
     }
 
-    @Override
-    public void include(IObservation output) {
-        observations.add(output);
+    public void include(IObservationReference output) {
+        observations.put(output.getId(), output);
     }
 
     public void addSection(Section section) {
         ReportSection main = getMainSection(section.getRole());
         main.children.add((ReportSection) section);
+    }
+
+    public void include(ITask<?> task) {
+        // notify task start, finish, abort
     }
 
     /**
@@ -162,12 +198,14 @@ public class Report implements IReport {
     public static final String SEPARATOR = "\n\n----\n\n";
 
     IRuntimeContext            context   = null;
+    private String             sessionId;
 
     public Report() {
     }
 
-    public Report(IRuntimeContext context) {
+    public Report(IRuntimeContext context, String sessionId) {
         this.context = context;
+        this.sessionId = sessionId;
     }
 
     public String asHTML(String markdown) {
@@ -195,6 +233,15 @@ public class Report implements IReport {
             ret.append(s.render());
         }
 
+        ret.append("\n\n"
+                + "[@ref]: Reference [#]\n"
+                + "[@fig]: Figure [#]\n"
+                + "[@tab]: Table [#]\n"
+                + "[@footnote]: Footnote [#]\n"
+                + "[@dataflow]: Reference [#]\n");
+
+        System.out.println(ret.toString());
+
         switch (encoding) {
         case HTML:
             return asHTML(ret.toString());
@@ -206,6 +253,10 @@ public class Report implements IReport {
         }
 
         return "<html><body><p>Unsupported encoding " + encoding + " </p></body></html>";
+    }
+
+    public String getSessionId() {
+        return sessionId;
     }
 
 }
