@@ -951,4 +951,16 @@ public enum Resources implements IResourceService {
 		}
 		return ret;
 	}
+
+	/**
+	 * Return an object from a namespace's symbol table.
+	 * 
+	 * @param id
+	 * @return
+	 */
+    public Object getSymbol(String id) {
+        String nsId = Path.getLeading(id, '.');
+        INamespace ns = Namespaces.INSTANCE.getNamespace(nsId);
+        return ns == null ? null : ns.getSymbolTable().get(Path.getLast(id, '.'));
+    }
 }

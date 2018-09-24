@@ -53,6 +53,7 @@ import com.vladsch.flexmark.ext.attributes.AttributesExtension;
 import com.vladsch.flexmark.ext.definition.DefinitionExtension;
 import com.vladsch.flexmark.ext.enumerated.reference.EnumeratedReferenceExtension;
 import com.vladsch.flexmark.ext.footnotes.FootnoteExtension;
+import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.ext.media.tags.MediaTagsExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
@@ -212,7 +213,7 @@ public class Report implements IReport {
 
         MutableDataSet options = new MutableDataSet().set(Parser.EXTENSIONS, Arrays
                 .asList(FootnoteExtension.create(), AttributesExtension.create(), EnumeratedReferenceExtension
-                        .create(), MediaTagsExtension.create(), DefinitionExtension.create()));
+                        .create(), MediaTagsExtension.create(), DefinitionExtension.create(), TablesExtension.create()));
 
         Parser parser = Parser.builder(options).build();
         HtmlRenderer renderer = HtmlRenderer.builder(options).build();
@@ -233,12 +234,14 @@ public class Report implements IReport {
             ret.append(s.render());
         }
 
+        // TODO these should be configurable
         ret.append("\n\n"
                 + "[@ref]: Reference [#]\n"
                 + "[@fig]: Figure [#]\n"
                 + "[@tab]: Table [#]\n"
                 + "[@footnote]: Footnote [#]\n"
-                + "[@dataflow]: Reference [#]\n");
+                + "[@user]: [#]\n"
+                + "[@dataflow]: Dataflow [#]\n");
 
         System.out.println(ret.toString());
 

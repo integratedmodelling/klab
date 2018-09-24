@@ -3,6 +3,8 @@ package org.integratedmodelling.klab.documentation;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.documentation.IReport.Section;
@@ -11,6 +13,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
+import org.integratedmodelling.klab.data.classification.Classifier;
 import org.integratedmodelling.klab.documentation.Report.RefType;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -154,8 +157,7 @@ public class ReportSection extends Parameters<String> implements Section {
      * @param context
      */
     public void tag(Object[] args, IDocumentation documentation, IComputationContext context) {
-        // TODO Auto-generated method stub
-        System.out.println("FOC");
+        body.append("{#user:" + args[0] + "}");
     }
 
     /**
@@ -170,6 +172,8 @@ public class ReportSection extends Parameters<String> implements Section {
         RefType type = report.getReferenceType(args[0].toString());
         if (type != null) {
             body.append("[@" + type.name().toLowerCase() + ":" + args[0] + "]");
+        } else {
+            body.append("[@user:" + args[0] + "]");
         }
     }
 
@@ -180,9 +184,53 @@ public class ReportSection extends Parameters<String> implements Section {
      * @param processArguments
      * @param context
      */
-    public void table(Object[] processArguments, IDocumentation documentation, IComputationContext context) {
+    public void table(Object[] args, IDocumentation documentation, IComputationContext context) {
+
+        ITable<?> table = getTable(args[0].toString());
+        if (table != null) {
+            report.setReferenceType(args[1].toString(), RefType.TABLE);
+            body.append("\n\n");
+            if (!table.getColumnHeaders().get(0).startsWith("$")) {
+                String separator = "";
+                for (String h : table.getColumnHeaders()) {
+                    body.append((separator.isEmpty() ? "" : "|") + h);
+                    separator += ((separator.isEmpty() ? "" : "|") + ":---");
+                }
+                body.append("\n");
+                body.append(separator + "\n");
+            }
+            for (int i = 0; i < table.getRowCount(); i++) {
+                Object[] row = table.getRow(i);
+                boolean first = true;
+                for (Object item : row) {
+                    body.append((first ? "" : "|") + formatTableElement(item));
+                    first = false;
+                }
+                body.append("\n");
+            }
+            body.append("[[#" + RefType.TABLE.name().toLowerCase() + ":" + args[1] + "] "
+                    + (args.length > 2 ? (" " + args[2].toString()) : "") + "]\n");
+            body.append("{#" + RefType.TABLE.name().toLowerCase() + ":" + args[1] + "}\n\n");
+        }
+    }
+
+    private String formatTableElement(Object item) {
+
         // TODO Auto-generated method stub
-        System.out.println("FOC");
+        if (item instanceof Classifier) {
+            return ((Classifier)item).getSourceCode();
+        }
+        return item.toString();
+        
+        
+    }
+
+    private ITable<?> getTable(String id) {
+        Object object = Resources.INSTANCE.getSymbol(id);
+        if (object instanceof ITable) {
+            return (ITable<?>) object;
+        }
+        return null;
     }
 
     /**
@@ -229,13 +277,18 @@ public class ReportSection extends Parameters<String> implements Section {
      */
     public void figure(Object[] args, IDocumentation documentation, IComputationContext context) {
 
-        IArtifact artifact = "self".equals(args[0]) ? context.getTargetArtifact() : context.getArtifact(args[0].toString());
+        IArtifact artifact = "self".equals(args[0]) ? context.getTargetArtifact()
+                : context.getArtifact(args[0].toString());
         if (artifact instanceof IObservation) {
             IObservationReference ref = report.getObservation(((IObservation) artifact).getId());
             if (ref != null) {
                 report.setReferenceType(args[1].toString(), RefType.FIG);
-                body.append("\n\n![" + ref.getLabel() + "](http://localhost:8283/modeler/engine/session/view/displaydata/" 
-                + report.getSessionId() + "/" + ref.getId() + "?format=RASTER&viewport=800){#" + RefType.FIG.name().toLowerCase() + ":" + args[1] + "}\n\n");
+                body.append("\n\n![" + ref.getLabel()
+                        + "](http://localhost:8283/modeler/engine/session/view/displaydata/"
+                        + report.getSessionId() + "/" + ref.getId() + "?format=RASTER&viewport=800)\n\n");
+                body.append("{#" + RefType.FIG.name().toLowerCase() + ":" + args[1] + "}\n");
+                body.append("[[#" + RefType.FIG.name().toLowerCase() + ":" + args[1] + "] "
+                        + (args.length > 2 ? (" " + args[2].toString()) : "") + "]\n\n");
             }
         }
     }
