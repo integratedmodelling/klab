@@ -209,8 +209,8 @@ public class ReportSection extends Parameters<String> implements Section {
                 body.append("\n");
             }
             body.append("[[#" + RefType.TABLE.name().toLowerCase() + ":" + args[1] + "] "
-                    + (args.length > 2 ? (" " + args[2].toString()) : "") + "]\n");
-            body.append("{#" + RefType.TABLE.name().toLowerCase() + ":" + args[1] + "}\n\n");
+                    + (args.length > 2 ? (" " + args[2].toString()) : "") + "]");
+            body.append("{#" + RefType.TABLE.name().toLowerCase() + ":" + args[1] + " text-align: center}\n\n");
         }
     }
 
@@ -285,10 +285,10 @@ public class ReportSection extends Parameters<String> implements Section {
                 report.setReferenceType(args[1].toString(), RefType.FIG);
                 body.append("\n\n![" + ref.getLabel()
                         + "](http://localhost:8283/modeler/engine/session/view/displaydata/"
-                        + report.getSessionId() + "/" + ref.getId() + "?format=RASTER&viewport=800)\n\n");
-                body.append("{#" + RefType.FIG.name().toLowerCase() + ":" + args[1] + "}\n");
+                        + report.getSessionId() + "/" + ref.getId() + "?format=RASTER&viewport=800)");
                 body.append("[[#" + RefType.FIG.name().toLowerCase() + ":" + args[1] + "] "
-                        + (args.length > 2 ? (" " + args[2].toString()) : "") + "]\n\n");
+                        + (args.length > 2 ? (" " + args[2].toString()) : "") + "]");
+                body.append("{#" + RefType.FIG.name().toLowerCase() + ":" + args[1] + " text-align: center}\n\n");
             }
         }
     }

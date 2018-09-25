@@ -205,7 +205,41 @@ public class Documentation implements IDocumentation {
                     case "require":
                         current.getReport().require(processArguments(section.body, 2), Documentation.this, context);
                         break;	
-                     default:
+                    // next for later, allow unsupported use. Need scopes for these to work.
+                    case "if":
+                    	// open conditional scope, set active to result of expression
+                        break;
+                    case "elseif":
+                        break;
+                    case "endif":
+                    	// close conditional scope
+                        break;
+                    case "else":
+                        break;
+                    case "for":
+                    	// open iterator scope
+                        break;
+                    case "while":
+                    	// open iterator scope
+                        break;
+                    case "endfor":
+                    	// exit innermost iterator scope
+                        break;
+                    case "endwhile":
+                    	// exit innermost iterator scope
+                        break;
+                    case "break":
+                    	// exit innermost iterator scope
+                    	break;
+                    case "define":
+                        break;
+                    case "undefine":
+                        break;
+                    case "ifdef":
+                        break;
+                    case "ifndef":
+                        break;
+                    default:
                          throw new KlabValidationException("unknown documentation directive @" + section.method);
 					}
 

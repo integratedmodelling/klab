@@ -183,6 +183,9 @@ public class OSMSubjectInstantiator implements IInstantiator, IExpression {
         }
 
         String url = OVERPASS_URL + "?data=" + Escape.forURL(query);
+        
+        context.getMonitor().debug("Opening Overpass query " + url);
+        
         try (InputStream input = new URL(url).openStream()) {
 
             OsmIterator iterator = new OsmXmlIterator(input, true);

@@ -24,6 +24,7 @@ package org.integratedmodelling.klab.documentation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -46,6 +47,7 @@ import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.documentation.Documentation.TemplateImpl;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.kim.Prototype;
+import org.integratedmodelling.klab.utils.Path;
 import org.springframework.util.StringUtils;
 
 import com.vladsch.flexmark.ast.Node;
@@ -53,8 +55,8 @@ import com.vladsch.flexmark.ext.attributes.AttributesExtension;
 import com.vladsch.flexmark.ext.definition.DefinitionExtension;
 import com.vladsch.flexmark.ext.enumerated.reference.EnumeratedReferenceExtension;
 import com.vladsch.flexmark.ext.footnotes.FootnoteExtension;
-import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.ext.media.tags.MediaTagsExtension;
+import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.options.MutableDataSet;
@@ -67,199 +69,220 @@ import com.vladsch.flexmark.util.options.MutableDataSet;
  */
 public class Report implements IReport {
 
-    enum RefType {
-        REF,
-        FIG,
-        TABLE,
-        FOOTNOTE,
-        DATAFLOW
-    }
+	enum RefType {
+		REF, FIG, TABLE, FOOTNOTE, DATAFLOW
+	}
 
-    private Map<SectionRole, ReportSection>    mainSections      = new HashMap<>();
+	private Map<SectionRole, ReportSection> mainSections = new HashMap<>();
 
-    private List<IResource>                    resources         = new ArrayList<>();
-    private List<IKimTable>                    tables            = new ArrayList<>();
-    private List<IModel>                       models            = new ArrayList<>();
-    private List<IPrototype>                   services          = new ArrayList<>();
-    private List<IDataflow>                    dataflows         = new ArrayList<>();
-    private Map<String, IObservationReference> observations      = new HashMap<>();
-    Map<String, ReportSection>                 referencesCited   = new HashMap<>();
-    Map<String, ReportSection>                 tablesCited       = new HashMap<>();
-    Map<String, ReportSection>                 modelsCited       = new HashMap<>();
-    Map<String, ReportSection>                 observationsCited = new HashMap<>();
-    Map<String, ReportSection>                 dataflowsCited    = new HashMap<>();
+	private List<IResource> resources = new ArrayList<>();
+	private List<IKimTable> tables = new ArrayList<>();
+	private List<IModel> models = new ArrayList<>();
+	private List<IPrototype> services = new ArrayList<>();
+	private List<IDataflow<?>> dataflows = new ArrayList<>();
+	private Map<String, IObservationReference> observations = new HashMap<>();
+	Map<String, ReportSection> referencesCited = new HashMap<>();
+	Map<String, ReportSection> tablesCited = new HashMap<>();
+	Map<String, ReportSection> modelsCited = new HashMap<>();
+	Map<String, ReportSection> observationsCited = new HashMap<>();
+	Map<String, ReportSection> dataflowsCited = new HashMap<>();
 
-    Map<RefType, Set<String>>                  refTypes          = new HashMap<>();
-    Set<String> observationDescribed = new HashSet<>();
-    
-    public RefType getReferenceType(String reference) {
-        RefType ret = null;
-        for (RefType type : RefType.values()) {
-            if (refTypes.containsKey(type) && refTypes.get(type).contains(reference)) {
-                return type;
-            }
-        }
-        return ret;
-    }
+	Map<RefType, Set<String>> refTypes = new HashMap<>();
+	Set<String> observationDescribed = new HashSet<>();
+	Set<String> inserted = new HashSet<>();
+	
+	public RefType getReferenceType(String reference) {
+		RefType ret = null;
+		for (RefType type : RefType.values()) {
+			if (refTypes.containsKey(type) && refTypes.get(type).contains(reference)) {
+				return type;
+			}
+		}
+		return ret;
+	}
 
-    public void setReferenceType(String reference, RefType type) {
-        Set<String> set = refTypes.get(type);
-        if (set == null) {
-            set = new HashSet<>();
-            refTypes.put(type, set);
-        }
-        set.add(reference);
-    }
+	public void setReferenceType(String reference, RefType type) {
+		Set<String> set = refTypes.get(type);
+		if (set == null) {
+			set = new HashSet<>();
+			refTypes.put(type, set);
+		}
+		set.add(reference);
+	}
 
-    // @Override
-    public void include(IDocumentation.Template template, IComputationContext context) {
-        ReportSection section = getMainSection(((TemplateImpl) template).getRole());
-        template.compile(section, context);
-    }
+	// @Override
+	public void include(IDocumentation.Template template, IComputationContext context) {
+		ReportSection section = getMainSection(((TemplateImpl) template).getRole());
+		template.compile(section, context);
+	}
 
-    // @Override
-    public void include(IComputableResource resource) {
+	// @Override
+	public void include(IComputableResource resource) {
 
-        if (resource.getUrn() != null) {
-            resources.add(Resources.INSTANCE.resolveResource(resource.getUrn()));
-        } else if (resource.getLookupTable() != null) {
-            tables.add(resource.getLookupTable().getTable());
-        } else if (resource.getClassification() != null) {
-            // classification
-        } else if (resource.getServiceCall() != null) {
-            Prototype prototype = Extensions.INSTANCE.getPrototype(resource.getServiceCall().getName());
-            if (prototype != null) {
-                services.add(prototype);
-            }
-        }
-    }
+		if (resource.getUrn() != null) {
+			resources.add(Resources.INSTANCE.resolveResource(resource.getUrn()));
+		} else if (resource.getLookupTable() != null) {
+			tables.add(resource.getLookupTable().getTable());
+		} else if (resource.getClassification() != null) {
+			// classification
+		} else if (resource.getServiceCall() != null) {
+			Prototype prototype = Extensions.INSTANCE.getPrototype(resource.getServiceCall().getName());
+			if (prototype != null) {
+				services.add(prototype);
+			}
+		}
+	}
 
-    public IObservationReference getObservation(String id) {
-        return observations.get(id);
-    }
+	public IObservationReference getObservation(String id) {
+		return observations.get(id);
+	}
 
-    // @Override
-    public void include(IModel model) {
-        models.add(model);
-    }
+	// @Override
+	public void include(IModel model) {
+		models.add(model);
+	}
 
-    // @Override
-    public void include(IDataflow<?> dataflow) {
-        dataflows.add(dataflow);
-    }
+	// @Override
+	public void include(IDataflow<?> dataflow) {
+		dataflows.add(dataflow);
+	}
 
-    public void include(IObservationReference output) {
-        observations.put(output.getId(), output);
-    }
+	public void include(IObservationReference output) {
+		observations.put(output.getId(), output);
+	}
 
-    public void addSection(Section section) {
-        ReportSection main = getMainSection(section.getRole());
-        main.children.add((ReportSection) section);
-    }
+	public void addSection(Section section) {
+		ReportSection main = getMainSection(section.getRole());
+		main.children.add((ReportSection) section);
+	}
 
-    public void include(ITask<?> task) {
-        // notify task start, finish, abort
-    }
+	public void include(ITask<?> task) {
+		// notify task start, finish, abort
+	}
 
-    /**
-     * Require the contents of a passed project-level template into the section named in the second argument.
-     * 
-     * @param processArguments
-     * @param context
-     */
-    public void require(Object[] processArguments, IDocumentation documentation, IComputationContext context) {
-        // TODO Auto-generated method stub
-        System.out.println("FOCOK");
-    }
+	/**
+	 * Require the contents of a passed project-level template into the section
+	 * named in the second argument.
+	 * 
+	 * @param processArguments
+	 * @param context
+	 */
+	public void require(Object[] args, IDocumentation documentation, IComputationContext context) {
+		
+		if (inserted.contains(args[0] + "|" + args[1])) {
+			return;
+		}
+		
+		Reference template = ((Documentation)documentation).getReference(args[0].toString());
+		if (template != null) {
+			String srole = Path.getFirst(args[1].toString(), "/");
+			SectionRole role = SectionRole.valueOf(srole.toUpperCase());
+			if (role != null) {
+				ReportSection main = getMainSection(role);
+				if (args[1].toString().contains("/")) {
+					// TODO!
+//					main = main.getChild(parent, titlePath)
+				}
+				main.body.append(template.get(BibTexFields.EXAMPLE_CITATION));
+			}
+		}
+	}
 
-    /*
-     * get or create the main section for a section.
-     */
-    ReportSection getMainSection(SectionRole role) {
-        ReportSection ret = mainSections.get(role);
-        if (ret == null) {
-            ret = new ReportSection(this, role);
-            mainSections.put(role, ret);
-            ret.name = StringUtils.capitalize(role.name().toLowerCase());
-        }
-        return ret;
-    }
+	/*
+	 * get or create the main section for a section.
+	 */
+	ReportSection getMainSection(SectionRole role) {
+		ReportSection ret = mainSections.get(role);
+		if (ret == null) {
+			ret = new ReportSection(this, role);
+			mainSections.put(role, ret);
+			ret.name = StringUtils.capitalize(role.name().toLowerCase());
+		}
+		return ret;
+	}
 
-    @Override
-    public List<Section> getSections() {
-        List<Section> ret = new ArrayList<>();
-        for (SectionRole role : SectionRole.values()) {
-            if (mainSections.containsKey(role)) {
-                ret.add(mainSections.get(role));
-            }
-        }
-        return ret;
-    }
+	@Override
+	public List<Section> getSections() {
+		List<Section> ret = new ArrayList<>();
+		for (SectionRole role : SectionRole.values()) {
+			if (mainSections.containsKey(role)) {
+				ret.add(mainSections.get(role));
+			}
+		}
+		return ret;
+	}
 
-    public static final String SEPARATOR = "\n\n----\n\n";
+	public static final String SEPARATOR = "\n\n----\n\n";
 
-    IRuntimeContext            context   = null;
-    private String             sessionId;
+	IRuntimeContext context = null;
+	private String sessionId;
 
-    public Report() {
-    }
+	public Report() {
+	}
 
-    public Report(IRuntimeContext context, String sessionId) {
-        this.context = context;
-        this.sessionId = sessionId;
-    }
+	public Report(IRuntimeContext context, String sessionId) {
+		this.context = context;
+		this.sessionId = sessionId;
+	}
 
-    public String asHTML(String markdown) {
+	public String asHTML(String markdown) {
 
-        MutableDataSet options = new MutableDataSet().set(Parser.EXTENSIONS, Arrays
-                .asList(FootnoteExtension.create(), AttributesExtension.create(), EnumeratedReferenceExtension
-                        .create(), MediaTagsExtension.create(), DefinitionExtension.create(), TablesExtension.create()));
+		MutableDataSet options = new MutableDataSet().set(Parser.EXTENSIONS,
+				Arrays.asList(FootnoteExtension.create(), AttributesExtension.create(),
+						EnumeratedReferenceExtension.create(), MediaTagsExtension.create(),
+						DefinitionExtension.create(), TablesExtension.create()));
 
-        Parser parser = Parser.builder(options).build();
-        HtmlRenderer renderer = HtmlRenderer.builder(options).build();
-        Node document = parser.parse(markdown);
-        return renderer.render(document);
-    }
+		Parser parser = Parser.builder(options).build();
+		HtmlRenderer renderer = HtmlRenderer.builder(options).build();
+		Node document = parser.parse(markdown);
+		return renderer.render(document);
+	}
 
-    @Override
-    public String render(Encoding encoding) {
+	@Override
+	public String render(Encoding encoding) {
 
-        StringBuffer ret = new StringBuffer(16 * 1024);
+		StringBuffer ret = new StringBuffer(16 * 1024);
 
-        /*
-         * TODO add anything not explicitly described; make appendices and references
-         */
+		ret.append(getTitleSection());
 
-        for (Section s : getSections()) {
-            ret.append(s.render());
-        }
+		/*
+		 * TODO add anything not explicitly described according to settings; make
+		 * appendices and references
+		 */
 
-        // TODO these should be configurable
-        ret.append("\n\n"
-                + "[@ref]: Reference [#]\n"
-                + "[@fig]: Figure [#]\n"
-                + "[@tab]: Table [#]\n"
-                + "[@footnote]: Footnote [#]\n"
-                + "[@user]: [#]\n"
-                + "[@dataflow]: Dataflow [#]\n");
+		for (Section s : getSections()) {
+			ret.append(s.render());
+		}
 
-        System.out.println(ret.toString());
+		// TODO these should be configurable
+		ret.append("\n\n" + "[@ref]: Reference [#]\n" + "[@fig]: Figure [#]\n" + "[@table]: Table [#]\n"
+				+ "[@footnote]: Footnote [#]\n" + "[@user]: [#]\n" + "[@dataflow]: Dataflow [#]\n");
 
-        switch (encoding) {
-        case HTML:
-            return asHTML(ret.toString());
-        case MARKDOWN:
-            return ret.toString();
-        case LATEX:
-        case PDF:
-            break;
-        }
+		System.out.println(ret.toString());
 
-        return "<html><body><p>Unsupported encoding " + encoding + " </p></body></html>";
-    }
+		switch (encoding) {
+		case HTML:
+			return asHTML(ret.toString());
+		case MARKDOWN:
+			return ret.toString();
+		case LATEX:
+		case PDF:
+			break;
+		}
 
-    public String getSessionId() {
-        return sessionId;
-    }
+		return "<html><body><p>Unsupported encoding " + encoding + " </p></body></html>";
+	}
+
+	private String getTitleSection() {
+		String ret = "# ![Integrated Modelling Partnership](../logos/im64.png){float=left} k.LAB Contextualization report\n\n";
+		ret += "---\n";
+		ret += "Computed at " + new Date();
+		ret += "\n\n";
+		return ret;
+	}
+
+	public String getSessionId() {
+		return sessionId;
+	}
 
 }
