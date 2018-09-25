@@ -32,6 +32,7 @@ public class SearchRequest {
 	private String contextId;
 	private long requestId;
 	private boolean cancelSearch;
+	private boolean defaultResults;
 	private int maxResults = 9;
 	private Set<IKimConcept.Type> semanticTypes = EnumSet.noneOf(IKimConcept.Type.class);
 	private Set<IIndexingService.Match.Type> matchTypes = EnumSet.noneOf(IIndexingService.Match.Type.class);
@@ -97,6 +98,20 @@ public class SearchRequest {
 		return "SearchRequest [queryString=" + queryString + ", contextId=" + contextId + ", requestId=" + requestId
 				+ ", cancelSearch=" + cancelSearch + ", maxResults=" + maxResults + ", semanticTypes=" + semanticTypes
 				+ ", matchTypes=" + matchTypes + "]";
+	}
+
+	/**
+	 * A search with this body corresponds to an empty search string and retrieves the
+	 * user's most likely matches of interest, based on group and search history.
+	 * 
+	 * @return
+	 */
+	public boolean isDefaultResults() {
+		return defaultResults;
+	}
+
+	public void setDefaultResults(boolean defaultResults) {
+		this.defaultResults = defaultResults;
 	}
 
 }
