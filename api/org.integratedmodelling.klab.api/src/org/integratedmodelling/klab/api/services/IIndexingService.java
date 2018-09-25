@@ -78,9 +78,9 @@ public interface IIndexingService {
             INFIX_OPERATOR,
             OBSERVATION,
             MODEL,
-            MODIFIER/*,
+            MODIFIER,
             PRESET_OBSERVABLE,
-            SEPARATOR*/
+            SEPARATOR
         }
 
         /**
