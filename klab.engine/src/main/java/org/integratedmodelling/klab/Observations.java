@@ -154,7 +154,8 @@ public enum Observations implements IObservationService {
 		ret.setMean(statistics.getMean());
 		ret.setVariance(statistics.getVariance());
 		ret.setStandardDeviation(statistics.getStandardDeviation());
-
+		ret.setSingleValued(statistics.getMax() == statistics.getMin());
+		
 		if (ret.getNodataPercentage() < 1) {
 			Builder histogram = Histogram.builder(statistics.getMin(), statistics.getMax(),
 					state.getDataKey() == null ? 10 : state.getDataKey().size());
@@ -318,7 +319,7 @@ public enum Observations implements IObservationService {
 			ds.setNodataProportion(summary.getNodataPercentage());
 			ds.setMinValue(summary.getRange().get(0));
 			ds.setMaxValue(summary.getRange().get(1));
-			if (summary.getHistogram() != null) {
+			if (summary.getHistogram() != null && !summary.isSingleValued()) {
 				for (int bin : summary.getHistogram().getBins()) {
 					ds.getHistogram().add(bin);
 				}

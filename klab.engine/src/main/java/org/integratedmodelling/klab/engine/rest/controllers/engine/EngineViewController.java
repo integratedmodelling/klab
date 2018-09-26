@@ -187,12 +187,13 @@ public class EngineViewController {
 				
 			} else if (format == GeometryType.SCALAR) {
 
-				Object value = ((IState)obs).get(loc);
-				String descr = value instanceof Number 
-						? NumberFormat.getInstance().format(((Number)value).doubleValue()) 
-						: (value instanceof IConcept 
-								? Concepts.INSTANCE.getDisplayName(((IConcept)value)) 
-								: (value instanceof Boolean ? ((Boolean)value ? "True" : "False") : "No data"));
+//				Object value = ((IState)obs).get(loc);
+//				String descr = value instanceof Number 
+//						? NumberFormat.getInstance().format(((Number)value).doubleValue()) 
+//						: (value instanceof IConcept 
+//								? Concepts.INSTANCE.getDisplayName(((IConcept)value)) 
+//								: (value instanceof Boolean ? ((Boolean)value ? "True" : "False") : "No data"));
+				String descr = "Ohilá!";
 				response.setContentType(MediaType.TEXT_PLAIN_VALUE);
 				response.getWriter().write(descr);
 				response.setStatus(HttpServletResponse.SC_OK);

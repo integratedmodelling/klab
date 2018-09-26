@@ -53,7 +53,8 @@ public class StateSummary {
 	private double mean;
 	private double standardDeviation;
 	private double variance;
-
+	private boolean singleValued;
+	
 	/**
 	 * The value count
 	 */
@@ -175,6 +176,14 @@ public class StateSummary {
 
 	public void setColormap(Colormap colormap) {
 		this.colormap = colormap;
+	}
+
+	public boolean isSingleValued() {
+		return singleValued;
+	}
+	
+	public void setSingleValued(boolean b) {
+		this.singleValued = b;
 	}
 
 }
