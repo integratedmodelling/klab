@@ -307,21 +307,26 @@ public class ReportSection extends Parameters<String> implements Section {
 
     @Override
     public String render() {
-        return render(0);
+        return render(0, null);
     }
 
-    private String render(int level) {
+    public String render(int level, String numbering) {
 
         String ret = "";
 
         if (name != null) {
-            ret += "\n" + StringUtils.repeat('#', level + 1) + " " + name + "\n";
+        	ret += "\n" + StringUtils.repeat('#', level + 1) + (numbering == null ? " " : (" " + numbering + " ")) + name + "\n";
         }
 
         ret += body.toString();
 
+        int n = 0;
         for (ReportSection child : children) {
-            ret += child.render(level + 1);
+        	String numb = null;
+        	if (child.name != null && numbering != null) {
+        		numb = numbering + "." + (++n);
+        	}
+        	ret += child.render(level + 1, numb);
         }
 
         return ret;

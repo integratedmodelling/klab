@@ -249,9 +249,10 @@ public class Report implements IReport {
 		 * TODO add anything not explicitly described according to settings; make
 		 * appendices and references
 		 */
-
+		
+		int n = 0;
 		for (Section s : getSections()) {
-			ret.append(s.render());
+			ret.append(((ReportSection)s).render(0, (++n) + ""));
 		}
 
 		// TODO these should be configurable

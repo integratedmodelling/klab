@@ -3,20 +3,14 @@ package org.integratedmodelling.klab.rest;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Session data. Does not include the ID as that's the authentication token for
- * info requests or is sent back along with these data after session
- * authorization.
- * 
- * @author Ferd
- *
- */
 public class SessionReference {
 
+	private String id;
 	private long timeEstablished;
 	private long timeLastJoined;
 	private long timeRetrieved;
 	private long timeLastActivity;
+	private IdentityReference owner;
 	Map<String, ObservationReference> rootObservations = new HashMap<>();
 
 	public long getTimeEstablished() {
@@ -57,6 +51,22 @@ public class SessionReference {
 
 	public void setTimeLastActivity(long timeLastActivity) {
 		this.timeLastActivity = timeLastActivity;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public IdentityReference getOwner() {
+		return owner;
+	}
+
+	public void setOwner(IdentityReference owner) {
+		this.owner = owner;
 	}
 
 }

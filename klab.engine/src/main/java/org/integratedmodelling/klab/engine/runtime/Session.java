@@ -798,6 +798,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 		SessionReference ret = new SessionReference();
 
+		ret.setId(token);
 		ret.setTimeEstablished(creation);
 		ret.setTimeLastJoined(lastJoin);
 		ret.setTimeRetrieved(System.currentTimeMillis());

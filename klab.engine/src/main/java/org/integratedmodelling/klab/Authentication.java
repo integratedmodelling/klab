@@ -2,6 +2,7 @@ package org.integratedmodelling.klab;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -310,7 +311,6 @@ public enum Authentication implements IAuthenticationService {
 		}
 
 		return ret;
-
 	}
 
 	public List<ObservableReference> getDefaultObservables(IIdentity identity) {
@@ -319,6 +319,17 @@ public enum Authentication implements IAuthenticationService {
 		if (defaultGroups != null) {
 			for (String groupId : defaultGroups.keySet()) {
 				ret.addAll(defaultGroups.get(groupId).getObservables());
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public Collection<ISession> getSessions() {
+		List<ISession> ret = new ArrayList<>();
+		for (IIdentity identity : identities.values()) {
+			if (identity instanceof ISession) {
+				ret.add((ISession)identity);
 			}
 		}
 		return ret;

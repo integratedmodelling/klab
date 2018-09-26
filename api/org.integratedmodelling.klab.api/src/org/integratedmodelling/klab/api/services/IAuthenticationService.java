@@ -15,8 +15,11 @@
  */
 package org.integratedmodelling.klab.api.services;
 
+import java.util.Collection;
+
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 
 /**
@@ -60,5 +63,12 @@ public interface IAuthenticationService {
 	 *             if authorization is unsuccessful
 	 */
 	IIdentity authenticate(ICertificate certificate) throws KlabAuthorizationException;
+
+	/**
+	 * Return all sessions that are currently active.
+	 * 
+	 * @return all active sessions
+	 */
+	Collection<ISession> getSessions();
 
 }

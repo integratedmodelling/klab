@@ -24,12 +24,12 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.engine.Engine;
-import org.integratedmodelling.klab.engine.rest.controllers.engine.EngineSessionController;
-import org.integratedmodelling.klab.engine.rest.controllers.engine.EngineViewController;
+import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.rest.Capabilities;
+import org.integratedmodelling.klab.rest.EngineStatus;
 import org.integratedmodelling.klab.rest.ObservationReference;
-import org.integratedmodelling.klab.rest.PingResponse;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
+import org.integratedmodelling.klab.rest.PingResponse;
 import org.integratedmodelling.klab.utils.IPUtils;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.springframework.http.MediaType;
@@ -68,6 +68,20 @@ public class KlabController {
         }
         return ret;
     }
+    
+	@RequestMapping(value = API.ENGINE.STATUS, method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public EngineStatus engineStatus(Principal user, HttpServletRequest request) {
+		boolean isAdmin = false; // TODO implement
+		EngineStatus ret = new EngineStatus();
+        if (IPUtils.isLocal(request.getRemoteAddr()) || isAdmin) {
+        	for (ISession session : Authentication.INSTANCE.getSessions()) {
+        		// TODO filter the nonlocal ones if not admin
+        		ret.getSessions().add(((Session)session).getSessionReference());
+        	}
+        }
+		return ret;
+	}
 
     @RequestMapping(value = API.SCHEMA, method = RequestMethod.GET, produces = "application/json")
     @ResponseBody

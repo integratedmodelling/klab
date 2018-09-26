@@ -40,5 +40,4 @@ public class EngineSessionController {
 				"request was not authenticated using a session token or did not use preauthentication");
 	}
 
-
 }

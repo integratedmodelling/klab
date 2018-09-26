@@ -175,11 +175,11 @@ public interface API {
 			 * GET
 			 */
 			public static final String RESOLVE_URN = "/resource/resolve/" + P_URN;
-			
+
 			/**
 			 * List all resources available to the requesting engine. Parameterize for
 			 * verbose or short return.
-			 *  
+			 * 
 			 * GET
 			 */
 			public static final String LIST = "/resource/list";
@@ -363,6 +363,16 @@ public interface API {
 		public static final String AUTHENTICATE = "/engine/authenticate";
 
 		/**
+		 * Retrieve the full status of the engine, including full data of each session
+		 * that is currently accessible to the asking host. This will only return the
+		 * sessions owned by the local engine user, or unless the request comes from an
+		 * authorized administrator.
+		 *
+		 * GET
+		 */
+		public static final String STATUS = "/engine/status";
+
+		/**
 		 * The Interface SESSION.
 		 */
 		public interface SESSION {
@@ -426,7 +436,7 @@ public interface API {
 			 * Format contextualization report as per request and return it.
 			 */
 			public static final String REPORT_CONTEXT = "/engine/session/observation/report/" + P_CONTEXT;
-			
+
 			/**
 			 * Endpoints to access tasks.
 			 * 
