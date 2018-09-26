@@ -13,10 +13,18 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-repository-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<createArtifactRepository>true</createArtifactRepository>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>1.8</version>
-				<executions>
+				<!-- <executions>
 					<execution>
 						<id>scp-to-remote</id>
 						<phase>deploy</phase>
@@ -25,14 +33,15 @@
 						</goals>
 						<configuration>
 							<target>
-								<scp todir="bc3@150.241.131.4:/var/www/updates/kdl/${klab.version}"
+								<scp
+									todir="bc3@150.241.131.4:/var/www/updates/kdl/${klab.version}"
 									verbose="true" password="${haizea.password}">
-									<fileset dir="${project.basedir}/target/repository/"/>
+									<fileset dir="${project.basedir}/target/repository/" />
 								</scp>
 							</target>
 						</configuration>
 					</execution>
-				</executions>
+				</executions>  -->
 				<!-- libraries for scp impl -->
 				<!-- antrun doesn't use os's scp -->
 				<dependencies>

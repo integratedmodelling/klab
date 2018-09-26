@@ -71,6 +71,7 @@ import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.DocumentationReference;
 import org.integratedmodelling.klab.rest.InterruptTask;
+import org.integratedmodelling.klab.rest.ObservableReference;
 import org.integratedmodelling.klab.rest.ObservationRequest;
 import org.integratedmodelling.klab.rest.ProjectLoadRequest;
 import org.integratedmodelling.klab.rest.ProjectLoadResponse;
@@ -551,19 +552,35 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 					response.setLast(true);
 
 					final Pair<Context, List<Match>> context = searchContexts.get(contextId);
-					List<Match> matches = Indexing.INSTANCE.query(request.getQueryString(), context.getFirst());
 
-					for (Match match : matches) {
-						SearchMatch m = new SearchMatch();
-						m.getSemanticType().addAll(match.getConceptType());
-						m.setMainSemanticType(Kim.INSTANCE.getFundamentalType(match.getConceptType()));
-						m.setMatchType(match.getMatchType());
-						m.setName(match.getName());
-						m.setId(match.getId());
-						m.setDescription(match.getDescription());
-						response.getMatches().add(m);
+					if (request.isDefaultResults()) {
+
+						/*
+						 * These come from the user's groups. They should eventually be linked to session history and
+						 * preferences.
+						 */
+						for (ObservableReference observable : Authentication.INSTANCE
+								.getDefaultObservables(Session.this)) {
+							response.getMatches().add(new SearchMatch(observable.getObservable(), observable.getLabel(),
+									observable.getDescription(), observable.getSemantics()));
+						}
+
+					} else {
+
+						List<Match> matches = Indexing.INSTANCE.query(request.getQueryString(), context.getFirst());
+
+						for (Match match : matches) {
+							SearchMatch m = new SearchMatch();
+							m.getSemanticType().addAll(match.getConceptType());
+							m.setMainSemanticType(Kim.INSTANCE.getFundamentalType(match.getConceptType()));
+							m.setMatchType(match.getMatchType());
+							m.setName(match.getName());
+							m.setId(match.getId());
+							m.setDescription(match.getDescription());
+							response.getMatches().add(m);
+						}
+						searchContexts.put(contextId, new Pair<Context, List<Match>>(context.getFirst(), matches));
 					}
-					searchContexts.put(contextId, new Pair<Context, List<Match>>(context.getFirst(), matches));
 					monitor.send(Message.create(token, IMessage.MessageClass.Query, IMessage.Type.QueryResult,
 							response.signalEndTime()).inResponseTo(message));
 				}
@@ -749,7 +766,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			observe(request.getUrn(), request.getScenarios().toArray(new String[request.getScenarios().size()]));
 		}
 	}
-	
+
 	@MessageHandler(type = IMessage.Type.TaskInterrupted)
 	private void handleTaskInterruptRequest(InterruptTask request) {
 		interruptTask(request.getTaskId(), true);
@@ -770,7 +787,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 				monitor.send(Message.create(token, IMessage.MessageClass.ProjectLifecycle,
 						IMessage.Type.UserProjectOpened, response).inResponseTo(message));
 			}
-			
+
 		}.start();
 	}
 

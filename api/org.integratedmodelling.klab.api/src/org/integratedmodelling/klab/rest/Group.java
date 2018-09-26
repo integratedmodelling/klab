@@ -1,10 +1,15 @@
 package org.integratedmodelling.klab.rest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Group {
 
 	private String id;
 	private String description;
 	private String sshKey;
+	private List<String> projectUrls = new ArrayList<>();
+	private List<ObservableReference> observables = new ArrayList<>();
 
 	// TODO add owner and possibly more authentication
 
@@ -73,6 +78,36 @@ public class Group {
 
 	public void setSshKey(String sshKey) {
 		this.sshKey = sshKey;
+	}
+
+	/**
+	 * These are the Git URLs of any projects that the group requires in the
+	 * workspace for its members. Others may become available through searches when
+	 * needed.
+	 * 
+	 * @return
+	 */
+	public List<String> getProjectUrls() {
+		return projectUrls;
+	}
+
+	public void setProjectUrls(List<String> projectUrls) {
+		this.projectUrls = projectUrls;
+	}
+
+	/**
+	 * Observable queries that we deem of interest for members of this group. These
+	 * provide a default for a new member, stored with the user profile and changing
+	 * according to user preferences and history.
+	 * 
+	 * @return
+	 */
+	public List<ObservableReference> getObservables() {
+		return observables;
+	}
+
+	public void setObservables(List<ObservableReference> observables) {
+		this.observables = observables;
 	}
 
 }

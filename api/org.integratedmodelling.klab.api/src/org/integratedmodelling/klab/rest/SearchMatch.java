@@ -5,100 +5,123 @@ import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.api.services.IIndexingService;
+import org.integratedmodelling.klab.api.services.IIndexingService.Match.Type;
 
 /**
- * ACHTUNG need equals to work in order to work inside the IDE. For now using simple object equality which is OK for
- * the purposes. If equals() is overridden, ensure it's flawless and fast.
+ * ACHTUNG need equals to work in order to work inside the IDE. For now using
+ * simple object equality which is OK for the purposes. If equals() is
+ * overridden, ensure it's flawless and fast.
  * 
  * @author Ferd
  *
  */
 public class SearchMatch {
 
-    private String                      name;
-    private String                      id;
-    private String                      description;
-    private IKimConcept.Type            mainSemanticType;
-    private Set<IKimConcept.Type>       semanticType = EnumSet.noneOf(IKimConcept.Type.class);
-    private IIndexingService.Match.Type matchType;
-    
-    // these correspond to beginning and end of concept definition in parenthesis.
-    private boolean openGroup;
-    private boolean closeGroup;
+	private String name;
+	private String id;
+	private String description;
+	private IKimConcept.Type mainSemanticType;
+	private Set<IKimConcept.Type> semanticType = EnumSet.noneOf(IKimConcept.Type.class);
+	private IIndexingService.Match.Type matchType;
 
-    /**
-     * Name to show users
-     * 
-     * @return
-     */
-    public String getName() {
-        return name;
-    }
+	// these correspond to beginning and end of concept definition in parenthesis.
+	private boolean openGroup;
+	private boolean closeGroup;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public SearchMatch() {
+	}
 
-    /**
-     * Official fully qualified ID for the URN
-     * 
-     * @return
-     */
-    public String getId() {
-        return id;
-    }
+	/**
+	 * Add a pre-defined match, which is set in groups and modified only by user history and
+	 * preferences.
+	 * 
+	 * @param matchName
+	 * @param matchDescription
+	 * @param semanticType
+	 * @param matchType
+	 */
+	public SearchMatch(String matchId, String matchName, String matchDescription, IKimConcept.Type semanticType) {
+		this.mainSemanticType = semanticType;
+		this.semanticType.add(semanticType);
+		this.matchType = Type.PRESET_OBSERVABLE;
+		this.id = matchId;
+		this.name = matchName;
+		this.description = matchDescription;
+	}
 
-    public void setId(String id) {
-        this.id = id;
-    }
+	/**
+	 * Name to show users
+	 * 
+	 * @return
+	 */
+	public String getName() {
+		return name;
+	}
 
-    /**
-     * Description, one to several lines in length
-     * 
-     * @return
-     */
-    public String getDescription() {
-        return description;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	/**
+	 * Official fully qualified ID for the URN
+	 * 
+	 * @return
+	 */
+	public String getId() {
+		return id;
+	}
 
-    /**
-     * Semantic type of match (one of the fundamental observable types). Can only be
-     * null in non-semantic URN matches, not the common user case.
-     * 
-     * @param semanticType
-     */
-    public Set<IKimConcept.Type> getSemanticType() {
-        return semanticType;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public void setSemanticType(Set<IKimConcept.Type> semanticType) {
-        this.semanticType = semanticType;
-    }
+	/**
+	 * Description, one to several lines in length
+	 * 
+	 * @return
+	 */
+	public String getDescription() {
+		return description;
+	}
 
-    /**
-     * Type of match.
-     * 
-     * @return
-     */
-    public IIndexingService.Match.Type getMatchType() {
-        return matchType;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public void setMatchType(IIndexingService.Match.Type matchType) {
-        this.matchType = matchType;
-    }
+	/**
+	 * Semantic type of match (one of the fundamental observable types). Can only be
+	 * null in non-semantic URN matches, not the common user case.
+	 * 
+	 * @param semanticType
+	 */
+	public Set<IKimConcept.Type> getSemanticType() {
+		return semanticType;
+	}
 
-    public IKimConcept.Type getMainSemanticType() {
-        return mainSemanticType;
-    }
+	public void setSemanticType(Set<IKimConcept.Type> semanticType) {
+		this.semanticType = semanticType;
+	}
 
-    public void setMainSemanticType(IKimConcept.Type mainSemanticType) {
-        this.mainSemanticType = mainSemanticType;
-    }
+	/**
+	 * Type of match.
+	 * 
+	 * @return
+	 */
+	public IIndexingService.Match.Type getMatchType() {
+		return matchType;
+	}
+
+	public void setMatchType(IIndexingService.Match.Type matchType) {
+		this.matchType = matchType;
+	}
+
+	public IKimConcept.Type getMainSemanticType() {
+		return mainSemanticType;
+	}
+
+	public void setMainSemanticType(IKimConcept.Type mainSemanticType) {
+		this.mainSemanticType = mainSemanticType;
+	}
 
 	public boolean isOpenGroup() {
 		return openGroup;

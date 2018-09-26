@@ -1,8 +1,10 @@
 package org.integratedmodelling.klab;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.klab.api.auth.ICertificate;
@@ -26,8 +28,11 @@ import org.integratedmodelling.klab.engine.runtime.Session.Listener;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
+import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
+import org.integratedmodelling.klab.rest.ObservableReference;
+import org.integratedmodelling.klab.utils.FileCatalog;
 import org.joda.time.DateTime;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
@@ -50,6 +55,10 @@ public enum Authentication implements IAuthenticationService {
 	 * conflicts with the user holding it.
 	 */
 	Map<String, IIdentity> identities = Collections.synchronizedMap(new HashMap<>());
+
+	// FIXME TEMPORARY - USED FOR DEFAULTING THE SEARCH MATCHES UNTIL GROUPS ARE ALL
+	// IN PLACE.
+	FileCatalog<Group> defaultGroups;
 
 	/**
 	 * Status of a user wrt. the network. Starts at UNKNOWN.
@@ -82,6 +91,13 @@ public enum Authentication implements IAuthenticationService {
 	public static final String LOCAL_USER_ID = "local";
 
 	private Client client = Client.create();
+
+	private Authentication() {
+		if (getClass().getClassLoader().getResource("defaults/groups.json") != null) {
+			defaultGroups = FileCatalog.create(getClass().getClassLoader().getResource("defaults/groups.json"),
+					Group.class);
+		}
+	}
 
 	/**
 	 * If the partner mentioned in the response bean is already known, return it,
@@ -162,13 +178,13 @@ public enum Authentication implements IAuthenticationService {
 	 */
 	public ISession getDefaultSession() {
 		for (IIdentity id : identities.values()) {
-			if (id instanceof Session && ((Session)id).isDefault()) {
-				return (ISession)id;
+			if (id instanceof Session && ((Session) id).isDefault()) {
+				return (ISession) id;
 			}
 		}
 		return null;
 	}
-	
+
 	@Override
 	public IIdentity authenticate(ICertificate certificate) throws KlabAuthorizationException {
 
@@ -267,13 +283,13 @@ public enum Authentication implements IAuthenticationService {
 
 				Logging.INSTANCE.info("User " + ((IUserIdentity) ret).getUsername() + " logged in through hub "
 						+ hubNode.getId() + " owned by " + hubNode.getPartner().getId());
-				
+
 				Logging.INSTANCE.info("The following nodes are available:");
 				for (INodeIdentity n : Network.INSTANCE.getNodes()) {
-				    IPartnerIdentity partner = n.getParentIdentity();
+					IPartnerIdentity partner = n.getParentIdentity();
 					Logging.INSTANCE.info("   " + n.getName() + " online since " + n.getBootTime());
-                    Logging.INSTANCE.info("      " + partner.getName() + " (" + partner.getEmailAddress() + ")");
-                    Logging.INSTANCE.info("      " + "online since " + n.getBootTime());
+					Logging.INSTANCE.info("      " + partner.getName() + " (" + partner.getEmailAddress() + ")");
+					Logging.INSTANCE.info("      " + "online since " + n.getBootTime());
 				}
 
 			} else {
@@ -282,7 +298,7 @@ public enum Authentication implements IAuthenticationService {
 				Node node = new Node(certificate.getProperty(KlabCertificate.KEY_NODENAME), null);
 				((Node) node).setOnline(false);
 				ret = new KlabUser(certificate.getProperty(KlabCertificate.KEY_USERNAME), node);
-				
+
 				Logging.INSTANCE.info("User " + ((IUserIdentity) ret).getUsername() + " activated in offline mode");
 			}
 
@@ -295,6 +311,17 @@ public enum Authentication implements IAuthenticationService {
 
 		return ret;
 
+	}
+
+	public List<ObservableReference> getDefaultObservables(IIdentity identity) {
+		List<ObservableReference> ret = new ArrayList<>();
+		// TODO extract from user's groups, not defaults!
+		if (defaultGroups != null) {
+			for (String groupId : defaultGroups.keySet()) {
+				ret.addAll(defaultGroups.get(groupId).getObservables());
+			}
+		}
+		return ret;
 	}
 
 }
