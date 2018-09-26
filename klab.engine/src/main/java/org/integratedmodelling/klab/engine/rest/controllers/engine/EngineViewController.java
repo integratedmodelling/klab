@@ -161,7 +161,7 @@ public class EngineViewController {
 
 		ILocator loc = ITime.INITIALIZATION;
 		if (locator != null) {
-			loc = Geometry.create(locator);
+//			loc = Geometry.create(locator);
 		}
 
 		if (obs instanceof IState) {

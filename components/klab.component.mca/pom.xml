@@ -11,6 +11,14 @@
 	<name>klab.component.mca</name>
 	<description>Multiple Criteria Analysis component for k.LAB</description>
 	<dependencies>
+	
+		<!-- eigenvector calculations for AHP -->
+		<dependency>
+			<groupId>colt</groupId>
+			<artifactId>colt</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.engine</artifactId>
