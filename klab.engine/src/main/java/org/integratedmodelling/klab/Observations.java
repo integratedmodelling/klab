@@ -96,7 +96,7 @@ public enum Observations implements IObservationService {
 	/**
 	 * Return the summary for the data in a state, computing it if necessary.
 	 * 
-	 * FIXME caching strategy currently just fills up forever - must lose caches as
+	 * FIXME caching strategy currently just fills up forever - must shed caches as
 	 * transitions advance.
 	 * 
 	 * @param state

@@ -13,10 +13,10 @@ public class StateSummary {
 	public enum DisplayType {
 		VALUES, IMAGE
 	}
-	
+
 	/**
-	 * Timestamp of last modification for the observation this refers to. Checked
-	 * to see if the summary needs to be recomputed.
+	 * Timestamp of last modification for the observation this refers to. Checked to
+	 * see if the summary needs to be recomputed.
 	 */
 	private long stateTimestamp;
 
@@ -44,22 +44,21 @@ public class StateSummary {
 	 */
 	private Histogram histogram;
 
+	private Colormap colormap;
+	
 	/**
 	 * The data range
 	 */
 	private List<Double> range;
-
 	private double mean;
-	
 	private double standardDeviation;
-
 	private double variance;
-	
+
 	/**
 	 * The value count
 	 */
 	private long valueCount;
-	
+
 	// if false, we have proper intervals and some nodata values
 	private boolean degenerate;
 
@@ -163,4 +162,19 @@ public class StateSummary {
 	public void setStateTimestamp(long stateTimestamp) {
 		this.stateTimestamp = stateTimestamp;
 	}
+
+	/**
+	 * Color map if computed, or null. Put in place by the renderer, so it will be
+	 * null until after an image has been created and a colormap is computed. If
+	 * present, the colormap will be a list of strings encoding colors in hex RGB
+	 * notation (e.g. #ffff).
+	 */
+	public Colormap getColormap() {
+		return colormap;
+	}
+
+	public void setColormap(Colormap colormap) {
+		this.colormap = colormap;
+	}
+
 }

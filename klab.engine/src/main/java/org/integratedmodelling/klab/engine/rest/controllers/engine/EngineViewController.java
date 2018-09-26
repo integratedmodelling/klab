@@ -5,26 +5,32 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.security.Principal;
+import java.text.NumberFormat;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
+import org.integratedmodelling.klab.rest.Colormap;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.rest.StateSummary;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
@@ -153,25 +159,43 @@ public class EngineViewController {
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
 
-		// TODO link to locator parameter
-		ILocator timeLocator = ITime.INITIALIZATION;
+		ILocator loc = ITime.INITIALIZATION;
+		if (locator != null) {
+			loc = Geometry.create(locator);
+		}
 
 		if (obs instanceof IState) {
 
 			if (format == GeometryType.RASTER) {
-				BufferedImage image = Renderer.INSTANCE.render((IState) obs, timeLocator,
+				
+				BufferedImage image = Renderer.INSTANCE.render((IState) obs, loc,
 						NumberUtils.intArrayFromString(viewport == null ? "800,800" : viewport));
 				ByteArrayOutputStream os = new ByteArrayOutputStream();
 				ImageIO.write(image, "png", os);
 				InputStream in = new ByteArrayInputStream(os.toByteArray());
 				response.setContentType(MediaType.IMAGE_PNG_VALUE);
 				IOUtils.copy(in, response.getOutputStream());
+				
 			} else if (format == GeometryType.COLORMAP) {
-				// TODO get (and cache, or use cached) colormap for state values and produce an image in the
-				// requested size
+				
+				StateSummary summary = Observations.INSTANCE.getStateSummary((IState)obs, loc);
+				if (summary.getColormap() != null) {
+					response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+					response.getWriter().write(JsonUtils.printAsJson(summary.getColormap()));
+					response.setStatus(HttpServletResponse.SC_OK);
+				}
+				
 			} else if (format == GeometryType.SCALAR) {
-				// TODO if distributed, use locator to get single value; otherwise ensure it's
-				// actually scalar
+
+				Object value = ((IState)obs).get(loc);
+				String descr = value instanceof Number 
+						? NumberFormat.getInstance().format(((Number)value).doubleValue()) 
+						: (value instanceof IConcept 
+								? Concepts.INSTANCE.getDisplayName(((IConcept)value)) 
+								: (value instanceof Boolean ? ((Boolean)value ? "True" : "False") : "No data"));
+				response.setContentType(MediaType.TEXT_PLAIN_VALUE);
+				response.getWriter().write(descr);
+				response.setStatus(HttpServletResponse.SC_OK);
 			}
 		}
 

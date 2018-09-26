@@ -25,13 +25,12 @@ import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.renderer.lite.RendererUtilities;
 import org.geotools.renderer.lite.gridcoverage2d.GridCoverageRenderer;
 import org.geotools.styling.ColorMap;
+import org.geotools.styling.ColorMapEntry;
 import org.geotools.styling.ContrastEnhancement;
 import org.geotools.styling.RasterSymbolizer;
 import org.geotools.styling.ShadedRelief;
-import org.geotools.styling.Style;
 import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.StyleFactory;
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -48,6 +47,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.rest.Colormap;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.utils.ColorUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
@@ -395,7 +395,6 @@ public enum Renderer {
 		}
 
 		ColorMap colorMap = styleBuilder.createColorMap(labels, values, colors, colormapType);
-
 		RasterSymbolizer ret = styleBuilder.createRasterSymbolizer(colorMap, opacity);
 
 		if (contrastEnhancement != null || gamma != 1.0) {
@@ -430,7 +429,34 @@ public enum Renderer {
 			srl.setBrightnessOnly(shadedReliefBrightnessOnly);
 			ret.setShadedRelief(srl);
 		}
+		
+		/*
+		 * notify key and colors to state summary for further inquiries
+		 */
+		Colormap colormap = new Colormap();
+		colormap.setColors(new ArrayList<>());;
+		for (Color color : colors) {
+			colormap.getColors().add(ColorUtils.encodeRGB(color));
+		}
+		
+		colormap.setLabels(Arrays.asList(labels));
 
+		switch (colormapType) {
+		case ColorMap.TYPE_INTERVALS:
+			colormap.setType(Colormap.Type.INTERVALS);
+			break;
+		case ColorMap.TYPE_VALUES:
+			colormap.setType(Colormap.Type.VALUES);
+			break;
+		case ColorMap.TYPE_RAMP:
+			colormap.setType(Colormap.Type.RAMP);
+			break;
+		default:
+			break;
+		}
+		
+		summary.setColormap(colormap);
+		
 		return new Pair<>(ret, null);
 	}
 
