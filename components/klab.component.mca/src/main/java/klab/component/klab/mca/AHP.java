@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import cern.colt.matrix.linalg.EigenvalueDecomposition;
+import klab.component.klab.mca.evamix.Evamix;
 
 /**
  * Helper class to define and obtain absolute quantitative criteria weights from a matrix of

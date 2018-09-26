@@ -466,4 +466,6 @@ public interface IObservableService {
 	IConcept getDirectCooccurrentType(IConcept concept);
 
 	IConcept getDirectContextType(IConcept concept);
+
+	IConcept getComparisonType(IConcept concept);
 }

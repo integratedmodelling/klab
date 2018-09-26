@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.integratedmodelling.klab.api.data.Aggregation;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -370,5 +371,18 @@ public enum Observations implements IObservationService {
 		observable.setOptional(true);
 		return new Observer(regionOfInterest, observable, (Namespace) namespace);
 	}
+	
+    /**
+     * True if scale has multiple values in each state of the passed extent type.
+     * 
+     * @param extentType
+     */
+    public boolean isDistributedOutside(IObservation state, IGeometry.Dimension.Type dimension) {
+
+        long mul = state.getScale().size();
+        IGeometry.Dimension ext = state.getScale().getDimension(dimension);
+        long nex = ext == null ? 1 : ext.size();
+        return (mul / nex) > 1;
+    }
 
 }

@@ -33,6 +33,8 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
+import klab.component.klab.mca.evamix.Evamix;
+
 /**
  * Driver class to run a whole MCA analysis from definition to results. It makes
  * using Evamix and PairwiseComparator very simple, but it is not required to

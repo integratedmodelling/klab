@@ -344,6 +344,15 @@ Main author</dc:contributor>
     
 
 
+    <!-- http://integratedmodelling.org/ks/observation.owl#isComparedTo -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#isComparedTo">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#relatesTo"/>
+        <rdfs:comment>An observable may be defined by comparing an observable to another. For example, this may affect a valued observable or a ratio observable. In such cases, this property points to the comparison observable, while the inherent observable is the one being compared to it.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://integratedmodelling.org/ks/observation.owl#isConstituentOf -->
 
     <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#isConstituentOf">

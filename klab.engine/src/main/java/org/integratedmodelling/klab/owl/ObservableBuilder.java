@@ -886,6 +886,9 @@ public class ObservableBuilder implements IObservable.Builder {
 			 * proportion is inherent to the thing that's present.
 			 */
 			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), (IConcept) concept);
+			if (comparison != null) {
+				OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_COMPARED_TO_PROPERTY), comparison);
+			}
 		}
 
 		return ontology.getConcept(conceptId);
@@ -893,6 +896,8 @@ public class ObservableBuilder implements IObservable.Builder {
 
 	public static Concept makeRatio(IConcept concept, IConcept comparison, boolean addDefinition) {
 
+		IConcept ret = null;
+		
 		/*
 		 * accept only two qualities of the same physical nature (TODO)
 		 */
@@ -935,15 +940,25 @@ public class ObservableBuilder implements IObservable.Builder {
 					ax.add(Axiom.AnnotationAssertion(conceptId, NS.SI_UNIT_PROPERTY, unit));
 				}
 			}
+			
 			ontology.define(ax);
+			
+			ret = ontology.getConcept(conceptId);
+			
+			/*
+			 * ratio is inherent to the thing that's present.
+			 */
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), concept);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_COMPARED_TO_PROPERTY), comparison);
+
 		}
 
-		return ontology.getConcept(conceptId);
+		return (Concept)ret;
 	}
 
 	public static Concept makeValue(IConcept concept, IConcept comparison, boolean addDefinition) {
 
-		String cName = "ValueOf" + getCleanId(concept) + (comparison == null ? "" : ("Over" + getCleanId(comparison)));
+		String cName = "ValueOf" + getCleanId(concept) + (comparison == null ? "" : ("Vs" + getCleanId(comparison)));
 
 		String definition = UnarySemanticOperator.VALUE.declaration[0] + " (" + concept.getDefinition() + ")"
 				+ (comparison == null ? ""
@@ -971,9 +986,12 @@ public class ObservableBuilder implements IObservable.Builder {
 			IConcept ret = ontology.getConcept(conceptId);
 
 			/*
-			 * uncertainty is inherent to the thing that's present.
+			 * value is inherent to the thing that's present.
 			 */
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), (IConcept) concept);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), concept);
+			if (comparison != null) {
+				OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_COMPARED_TO_PROPERTY), comparison);
+			}
 		}
 
 		return ontology.getConcept(conceptId);

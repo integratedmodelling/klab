@@ -114,6 +114,7 @@ public class CoreOntology extends AbstractWorkspace {
         public static final String HAS_SUBJECTIVE_TRAIT_PROPERTY           = "observation:hasSubjectiveTrait";
         public static final String IS_SUBJECTIVE                           = "observation:isSubjectiveTrait";
         public static final String IS_INHERENT_TO_PROPERTY                 = "observation:isInherentTo";
+        public static final String IS_COMPARED_TO_PROPERTY                 = "observation:isComparedTo";
         public static final String HAS_ROLE_PROPERTY                       = "observation:hasRole";
         public static final String EXPOSES_TRAIT_PROPERTY                  = "observation:exposesTrait";
         public static final String DENIABILITY_PROPERTY                    = "observation:isDeniable";

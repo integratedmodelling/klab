@@ -20,7 +20,7 @@
  * 330, Boston, MA 02111-1307, USA. The license is also available at:
  * https://www.gnu.org/licenses/agpl.html
  *******************************************************************************/
-package klab.component.klab.mca;
+package klab.component.klab.mca.evamix;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,6 +31,8 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
 
+import klab.component.klab.mca.MCA;
+import klab.component.klab.mca.Results;
 import klab.component.klab.mca.MCA.CriterionDataType;
 
 /**
