@@ -34,12 +34,15 @@ import org.codehaus.groovy.antlr.parser.GroovyLexer;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
@@ -137,6 +140,7 @@ public class GroovyExpressionPreprocessor {
 	private Set<String> objectIds = new HashSet<>();
 	private Set<String> scalarIds = new HashSet<>();
 	List<TokenDescriptor> tokens = new ArrayList<>();
+	IRuntimeContext context;
 
 	static final int KNOWLEDGE = 1;
 	static final int DEFINE = 2;
@@ -148,10 +152,12 @@ public class GroovyExpressionPreprocessor {
 	static final int KNOWN_MODEL_OBJECT = 8;
 	static final int NEWLINE = 9;
 
-	public GroovyExpressionPreprocessor(INamespace currentNamespace, Set<String> knownIdentifiers, IGeometry geometry) {
+	public GroovyExpressionPreprocessor(INamespace currentNamespace, Set<String> knownIdentifiers, IGeometry geometry,
+			IRuntimeContext context) {
 		this.domains = geometry;
 		this.namespace = currentNamespace;
 		this.knownIdentifiers = knownIdentifiers;
+		this.context = context;
 	}
 
 	public Geometry getInferredGeometry() {
@@ -192,7 +198,7 @@ public class GroovyExpressionPreprocessor {
 		}
 
 		public String translate() {
-			return translate(null);
+			return translate(context);
 		}
 
 		public String toString() {
@@ -211,7 +217,8 @@ public class GroovyExpressionPreprocessor {
 			case KNOWN_ID:
 				// if we are translating for a quality context and the var is used with scalar
 				// semantics, we just output the var name
-				if (!(context != null && context.getArtifactType() == IKimConcept.Type.QUALITY && !methodCall)) {
+				IKimConcept.Type type = getIdentifierType(ret, context);
+				if (!(context != null && (type == IKimConcept.Type.QUALITY || type == IKimConcept.Type.TRAIT) && !methodCall)) {
 					ret = translateParameter(ret);
 				}
 				break;
@@ -328,6 +335,17 @@ public class GroovyExpressionPreprocessor {
 		analyze(tokens);
 
 		return reconstruct(tokens);
+	}
+
+	public IKimConcept.Type getIdentifierType(String ret, IRuntimeContext context) {
+		if (ret.equals("self")) {
+			return context.getArtifactType();
+		}
+		IArtifact artifact = context.getArtifact(ret);
+		if (artifact instanceof IObservation) {
+			return Observables.INSTANCE.getObservableType(((IObservation)artifact).getObservable(), true);
+		}
+		return IKimConcept.Type.OBSERVABLE;
 	}
 
 	private String reconstruct(List<TokenDescriptor> tokens) {

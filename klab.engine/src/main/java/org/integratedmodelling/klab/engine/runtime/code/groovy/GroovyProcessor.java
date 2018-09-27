@@ -44,7 +44,7 @@ public enum GroovyProcessor implements ILanguageProcessor {
             IScale scale = context == null ? null : context.getScale();
 
             GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace, knownIdentifiers,
-                    scale);
+                    scale, context);
 
             this.processedCode = processor.process(expression);
             this.identifiers = processor.getIdentifiers();

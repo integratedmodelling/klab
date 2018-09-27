@@ -43,6 +43,7 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Path;
@@ -74,7 +75,7 @@ public class GroovyExpression extends Expression {
 	private CompilerConfiguration compiler = new CompilerConfiguration();
 	private GroovyShell shell;
 	private String preprocessed = null;
-
+	private IRuntimeContext runtimeContext;
 	private Descriptor descriptor;
 
 	/*
@@ -311,7 +312,7 @@ public class GroovyExpression extends Expression {
 		if (outputs != null) {
 			knownKeys.addAll(outputs.keySet());
 		}
-		GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace, knownKeys, domain);
+		GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace, knownKeys, domain, runtimeContext);
 		this.preprocessed = processor.process(code);
 		this.errors.addAll(processor.getErrors());
 
