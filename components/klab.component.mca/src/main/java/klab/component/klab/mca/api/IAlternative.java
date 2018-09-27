@@ -1,5 +1,6 @@
 package klab.component.klab.mca.api;
 
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 
@@ -7,7 +8,7 @@ public interface IAlternative {
 
     boolean isDistributed();
 
-    double getValueOf(IConcept k, int offset, IDirectObservation offsetContext);
+    double getValueOf(IConcept k, ILocator offset, IDirectObservation offsetContext);
 
     boolean hasCriterion(IConcept observable);
 

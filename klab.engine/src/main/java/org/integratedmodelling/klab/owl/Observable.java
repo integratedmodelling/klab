@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
@@ -19,11 +20,14 @@ import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Unit;
+import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -53,6 +57,8 @@ public class Observable extends Concept implements IObservable {
 	private ObservationType observationType;
 	private boolean optional;
 	private boolean generic;
+	private String observerId;
+	private ISubject observer;
 
 	/**
 	 * This and the next support situations in which the observable contains a
@@ -62,6 +68,8 @@ public class Observable extends Concept implements IObservable {
 	 */
 	transient IModel resolvedModel;
 	private String modelReference;
+	// only used to resolve the subject observable if it has to be marshalled across network boundaries
+	transient String sessionId;
 
 	Observable(Concept concept) {
 		super(concept);
@@ -563,6 +571,11 @@ public class Observable extends Concept implements IObservable {
 	public IConcept getInherentType() {
 		return Observables.INSTANCE.getInherentType(getType());
 	}
+	
+	@Override
+	public IConcept getComparisonType() {
+		return Observables.INSTANCE.getComparisonType(getType());
+	}
 
 	@Override
 	public IConcept getCaused() {
@@ -618,6 +631,31 @@ public class Observable extends Concept implements IObservable {
 
 	public void setAggregator(Concept by) {
 		this.aggregator = by;
+	}
+
+	@Override
+	public ISubject getObserver() {
+		if (observer == null && observerId != null && sessionId != null) {
+			Session session = Authentication.INSTANCE.getIdentity(sessionId, Session.class);
+			if (session != null) {
+				observer = (ISubject)session.getObservation(observerId);
+			}
+		}
+		return observer;
+	}
+	
+	public void setObserver(ISubject observer) {
+		this.observer = observer;
+	}
+
+
+	public String getObserverId() {
+		return observerId;
+	}
+
+	public void setObserverId(String observerId, ISession session) {
+		this.observerId = observerId;
+		this.sessionId = session.getId();
 	}
 
 }

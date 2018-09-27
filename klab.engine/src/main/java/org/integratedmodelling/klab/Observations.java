@@ -1,9 +1,11 @@
 package org.integratedmodelling.klab;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -11,6 +13,8 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.classification.IClassification;
+import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
@@ -38,6 +42,8 @@ import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
+import org.integratedmodelling.klab.data.classification.Classification;
+import org.integratedmodelling.klab.data.classification.Classifier;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
@@ -45,6 +51,7 @@ import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Concept;
@@ -59,6 +66,8 @@ import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.Utils;
 
 public enum Observations implements IObservationService {
@@ -156,7 +165,7 @@ public enum Observations implements IObservationService {
 		ret.setVariance(statistics.getVariance());
 		ret.setStandardDeviation(statistics.getStandardDeviation());
 		ret.setSingleValued(statistics.getMax() == statistics.getMin());
-		
+
 		if (ret.getNodataPercentage() < 1) {
 			Builder histogram = Histogram.builder(statistics.getMin(), statistics.getMax(),
 					state.getDataKey() == null ? 10 : state.getDataKey().size());
@@ -371,18 +380,74 @@ public enum Observations implements IObservationService {
 		observable.setOptional(true);
 		return new Observer(regionOfInterest, observable, (Namespace) namespace);
 	}
-	
-    /**
-     * True if scale has multiple values in each state of the passed extent type.
-     * 
-     * @param extentType
-     */
-    public boolean isDistributedOutside(IObservation state, IGeometry.Dimension.Type dimension) {
 
-        long mul = state.getScale().size();
-        IGeometry.Dimension ext = state.getScale().getDimension(dimension);
-        long nex = ext == null ? 1 : ext.size();
-        return (mul / nex) > 1;
-    }
+	/**
+	 * True if scale has multiple values in each state of the passed extent type.
+	 * 
+	 * @param extentType
+	 */
+	public boolean isDistributedOutside(IObservation state, IGeometry.Dimension.Type dimension) {
+
+		long mul = state.getScale().size();
+		IGeometry.Dimension ext = state.getScale().getDimension(dimension);
+		long nex = ext == null ? 1 : ext.size();
+		return (mul / nex) > 1;
+	}
+
+//	/**
+//	 * Produce a classification that discretizes the range of the passed numeric
+//	 * state. If the state is all no-data, return null without error.
+//	 * 
+//	 * @param s
+//	 * @param maxBins
+//	 * @param locators
+//	 * @return discretization of range
+//	 */
+//	public IClassification discretize(IState s, int maxBins) {
+//
+//		/*
+//		 * establish boundaries
+//		 */
+//		double min = Double.NaN;
+//		double max = Double.NaN;
+//		for (ILocator offset : s.getScale()) {
+//
+//			double val = s.get(offset, Double.class);
+//			if (!Double.isNaN(val)) {
+//				if (Double.isNaN(min) || min > val) {
+//					min = val;
+//				}
+//				if (Double.isNaN(max) || max < val) {
+//					max = val;
+//				}
+//			}
+//		}
+//
+//		if (Double.isNaN(min) || Double.isNaN(max)) {
+//			return null;
+//		}
+//
+//		/*
+//		 * create ranges.
+//		 */
+//		List<IConcept> levels = NS.getLevels(maxBins);
+//		List<Pair<IClassifier, IConcept>> classifiers = new ArrayList<>();
+//
+//		double ist = min;
+//		double istep = (max - min) / maxBins;
+//		for (int i = 0; i < maxBins; i++) {
+//
+//			double ien = ist + istep;
+//			boolean closeEnd = i == (maxBins - 1);
+//			if (closeEnd && ien < max) {
+//				ien = max;
+//			}
+//			classifiers.add(new Pair<IClassifier, IConcept>(
+//					Classifier.RangeMatcher(new Range(ist, ien, false, !closeEnd)), levels.get(i)));
+//
+//			ist += istep;
+//		}
+//		return new Classification(NS.getUserOrdering(), classifiers);
+//	}
 
 }

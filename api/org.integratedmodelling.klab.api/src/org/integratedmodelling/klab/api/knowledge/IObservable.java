@@ -21,6 +21,7 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -373,7 +374,15 @@ public interface IObservable extends IConcept, IResolvable {
 	 * @return the inherent type
 	 */
 	IConcept getInherentType();
-
+	
+	/**
+	 * The comparison type, if any, for observables that admit it - values, proportions and ratios. This is only
+	 * certainly not null for ratios.
+	 * 
+	 * @return the inherent type
+	 */
+	IConcept getComparisonType();
+	
 	/**
 	 * The caused ('causing') type.
 	 * 
@@ -444,5 +453,14 @@ public interface IObservable extends IConcept, IResolvable {
 	 * @return optional status
 	 */
 	boolean isOptional();
+	
+	/**
+	 * If this observable is the subjective point of view of a subject, return that
+	 * subject. A null return value implies the observer is the owner of the session,
+	 * i.e. what we can most legitimately call the "objective" observer for the
+	 * observable.
+	 * @return
+	 */
+	ISubject getObserver();
 
 }

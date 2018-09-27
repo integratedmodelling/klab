@@ -10,11 +10,10 @@
 //
 //import org.integratedmodelling.kim.api.IKimConcept;
 //import org.integratedmodelling.kim.api.IKimConcept.Type;
-//import org.integratedmodelling.kim.kim.ObservableSemantics;
 //import org.integratedmodelling.klab.Observables;
 //import org.integratedmodelling.klab.Observations;
-//import org.integratedmodelling.klab.api.data.ILocator;
 //import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
+//import org.integratedmodelling.klab.api.data.ILocator;
 //import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 //import org.integratedmodelling.klab.api.knowledge.IConcept;
 //import org.integratedmodelling.klab.api.knowledge.IKnowledge;
@@ -27,10 +26,14 @@
 //import org.integratedmodelling.klab.api.provenance.IArtifact;
 //import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 //import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-//import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
+//import org.integratedmodelling.klab.components.geospace.processing.MapClassifier;
+//import org.integratedmodelling.klab.components.geospace.processing.MapClassifier.MapClass;
+//import org.integratedmodelling.klab.components.runtime.observations.Subject;
 //import org.integratedmodelling.klab.exceptions.KlabException;
 //import org.integratedmodelling.klab.exceptions.KlabValidationException;
 //import org.integratedmodelling.klab.owl.Observable;
+//
+//import com.sun.xml.bind.marshaller.Messages;
 //
 //import klab.component.klab.mca.AHP;
 //import klab.component.klab.mca.MCA;
@@ -49,7 +52,7 @@
 //	// private IActiveProcess process;
 //	private IScale scale;
 //	private IMonitor monitor;
-//	private IResolutionScope resolutionContext;
+////	private IResolutionScope resolutionContext;
 //	private boolean isError;
 //	private MCA.Method method = MCA.Method.EVAMIX;
 //	private boolean isGlobal;
@@ -69,7 +72,7 @@
 //	 */
 //	public class Stakeholder implements IStakeholder {
 //
-//		IDirectObservation subject;
+//		ISubject subject;
 //		List<IObservable> values = new ArrayList<>();
 //		ICurrency currency;
 //		List<IConcept> neededKnowledge;
@@ -101,7 +104,7 @@
 //		boolean isNeutral = true;
 //		boolean hasDistributedValues = false;
 //
-//		Stakeholder(IDirectObservation obs) {
+//		Stakeholder(ISubject obs) {
 //
 //			this.subject = obs;
 //
@@ -134,7 +137,7 @@
 //			int nPair = 0;
 //			int nStraight = 0;
 //			for (IObservable vo : values) {
-//				if (vo.isPairwise()) {
+//				if (vo.getComparisonType() != null /* pairwise */) {
 //					nPair++;
 //				} else {
 //					nStraight++;
@@ -282,7 +285,7 @@
 //			return neededKnowledge;
 //		}
 //
-//		public Map<IConcept, Double> getWeights(int offset) {
+//		public Map<IConcept, Double> getWeights(ILocator locator) {
 //
 //			if (weights == null || hasDistributedValues) {
 //
@@ -298,7 +301,7 @@
 //					AHP ahp = new AHP(criteria.size());
 //					for (int i = 0; i < criteria.size(); i++) {
 //						for (int j = 0; j < criteria.size(); j++) {
-//							ahp.rankPair(i, j, getValueFor(criteria.get(i), criteria.get(j), offset));
+//							ahp.rankPair(i, j, getValueFor(criteria.get(i), criteria.get(j), locator));
 //						}
 //					}
 //					wv = ahp.getRankings();
@@ -307,7 +310,7 @@
 //
 //					Arrays.fill(wv, 1.0);
 //					for (int i = 0; i < criteria.size(); i++) {
-//						wv[i] = getValueFor(criteria.get(i), offset);
+//						wv[i] = getValueFor(criteria.get(i), locator);
 //					}
 //				}
 //
@@ -337,27 +340,27 @@
 //			return 0;
 //		}
 //
-//		private double getValueFor(IConcept criterion, int offset) {
+//		private double getValueFor(IConcept criterion, ILocator locator) {
 //			double ret = Double.NaN;
 //			for (IObservable ob : values) {
 //				if (criterion.is(Observables.INSTANCE.getInherentType(ob.getType()))) {
-//					ret = ob.getCurrency().convert(States.getDouble(vstates.get(ob), offset), currency).doubleValue();
+//					ret = ob.getCurrency().convert(vstates.get(ob).get(locator, Double.class), currency).doubleValue();
 //				}
 //			}
 //			return ret;
 //		}
 //
-//		private double getValueFor(IConcept a1, IConcept a2, int offset) {
+//		private double getValueFor(IConcept a1, IConcept a2, ILocator locator) {
 //
 //			double ret = Double.NaN;
 //			for (IObservable ob : values) {
 //				if (a1.is(Observables.INSTANCE.getInherentType(ob.getType()))
 //						&& a2.is(Observables.INSTANCE.getComparisonType(ob.getType()))) {
-//					ret = ob.getCurrency().convert(States.getDouble(vstates.get(ob), offset), currency).doubleValue();
+//					ret = ob.getCurrency().convert(vstates.get(ob).get(locator, Double.class), currency).doubleValue();
 //					break;
 //				} else if (a1.is(Observables.INSTANCE.getComparisonType(ob.getType()))
 //						&& a2.is(Observables.INSTANCE.getInherentType(ob.getType()))) {
-//					ret = 1.0 / ob.getCurrency().convert(States.getDouble(vstates.get(ob), offset), currency)
+//					ret = 1.0 / ob.getCurrency().convert(vstates.get(ob).get(locator, Double.class), currency)
 //							.doubleValue();
 //					break;
 //				}
@@ -415,26 +418,25 @@
 //		IDirectObservation subject;
 //		Map<IConcept, Criterion> criteria = new HashMap<>();
 //		List<IConcept> critOrder = new ArrayList<>();
-//		boolean isDynamic;
 //		MapClassifier classifier = null;
 //		List<IAlternative> distributedAlternatives = null;
 //		Map<String, DistributedAlternative> altCatalog;
 //
 //		IState output = null;
 //
-//		/**
-//		 * Used to create the state.
-//		 * 
-//		 * @return true if dynamic
-//		 */
-//		public boolean isDynamic() {
-//			for (Criterion c : criteria.values()) {
-//				if (c.state.getStorage().isDynamic()) {
-//					return true;
-//				}
-//			}
-//			return false;
-//		}
+////		/**
+////		 * Used to create the state.
+////		 * 
+////		 * @return true if dynamic
+////		 */
+////		public boolean isDynamic() {
+////			for (Criterion c : criteria.values()) {
+////				if (c.state.getStorage().isDynamic()) {
+////					return true;
+////				}
+////			}
+////			return false;
+////		}
 //
 //		/*
 //		 * an alternative generates an array of these when it's distributed. These rank
@@ -492,12 +494,12 @@
 //				}
 //				classifier.distributeResults(getState(observable), cvals);
 //			} else {
-//				subject.getState(observable, res.get(getId()));
+//				((Subject)subject).createState(observable, res.get(getId()));
 //			}
 //		}
 //
 //		private IState getState(IObservable observable) throws KlabException {
-//			return isDynamic() ? subject.getState(observable) : subject.getStaticState(observable);
+//			return subject.createState(observable);
 //		}
 //
 //		public List<IAlternative> computeDistribution(ILocator transition) {
@@ -514,9 +516,9 @@
 //					states.add(criteria.get(c).state);
 //				}
 //				classifier = new MapClassifier(states, maxBinsPerState, monitor, transition);
-//				monitor.info("computing distribution of states for " + subject.getName(), MCAComponent.INFO_CLASS);
+//				monitor.info("computing distribution of states for " + subject.getName());
 //				int nclasses = classifier.classify();
-//				monitor.info("total number of spatial alternatives is " + nclasses, Messages.INFOCLASS_MODEL);
+//				monitor.info("total number of spatial alternatives is " + nclasses);
 //				for (MapClass mc : classifier.getClasses()) {
 //					DistributedAlternative da = new DistributedAlternative(mc);
 //					distributedAlternatives.add(da);
@@ -556,7 +558,7 @@
 //		 * org.integratedmodelling.api.modelling.IDirectObservation)
 //		 */
 //		@Override
-//		public double getValueOf(IConcept k, int offset, IDirectObservation offsetContext) {
+//		public double getValueOf(IConcept k, ILocator offset, IDirectObservation offsetContext) {
 //
 //			Criterion cr = criteria.get(k);
 //			if (cr == null) {
@@ -564,7 +566,7 @@
 //			}
 //
 //			if (offsetContext.getName().equals(cr.context.getName())) {
-//				return States.getDouble(cr.state, offset);
+//				return cr.state.get(offset, Double.class);
 //			} else {
 //				/*
 //				 * TODO
@@ -602,15 +604,11 @@
 //					if (process.getRolesFor(s).contains(MCAComponent.NS.COST_CRITERION_ROLE)) {
 //						criteria.put(s.getObservable().getType(), new Criterion(s, false, context));
 //						critOrder.add(s.getObservable().getType());
-//						if (s.getStorage().isDynamic()) {
 //							this.isDynamic = true;
-//						}
 //					} else if (process.getRolesFor(s).contains(MCAComponent.NS.BENEFIT_CRITERION_ROLE)) {
 //						criteria.put(s.getObservable().getType(), new Criterion(s, true, context));
 //						critOrder.add(s.getObservable().getType());
-//						if (s.getStorage().isDynamic()) {
-//							this.isDynamic = true;
-//						}
+//
 //					}
 //				}
 //			}

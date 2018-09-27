@@ -895,8 +895,6 @@ public class ObservableBuilder implements IObservable.Builder {
 	}
 
 	public static Concept makeRatio(IConcept concept, IConcept comparison, boolean addDefinition) {
-
-		IConcept ret = null;
 		
 		/*
 		 * accept only two qualities of the same physical nature (TODO)
@@ -943,7 +941,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			
 			ontology.define(ax);
 			
-			ret = ontology.getConcept(conceptId);
+			Concept ret = ontology.getConcept(conceptId);
 			
 			/*
 			 * ratio is inherent to the thing that's present.
@@ -953,7 +951,7 @@ public class ObservableBuilder implements IObservable.Builder {
 
 		}
 
-		return (Concept)ret;
+		return ontology.getConcept(conceptId);
 	}
 
 	public static Concept makeValue(IConcept concept, IConcept comparison, boolean addDefinition) {

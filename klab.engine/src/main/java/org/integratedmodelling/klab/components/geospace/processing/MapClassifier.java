@@ -6,20 +6,17 @@
 //import java.util.List;
 //import java.util.Map;
 //
-//import org.integratedmodelling.api.modelling.IClassifyingObserver;
-//import org.integratedmodelling.api.modelling.INumericObserver;
-//import org.integratedmodelling.api.modelling.IPresenceObserver;
-//import org.integratedmodelling.api.modelling.IRankingObserver;
-//import org.integratedmodelling.common.states.States;
+//import org.integratedmodelling.klab.Observations;
+//import org.integratedmodelling.klab.api.data.ILocator;
 //import org.integratedmodelling.klab.api.data.classification.IClassification;
 //import org.integratedmodelling.klab.api.knowledge.IConcept;
 //import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 //import org.integratedmodelling.klab.api.observations.IState;
 //import org.integratedmodelling.klab.api.observations.scale.IScale;
-//import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+//import org.integratedmodelling.klab.api.provenance.IArtifact;
+//import org.integratedmodelling.klab.api.runtime.IComputationContext;
 //import org.integratedmodelling.klab.data.classification.Classification;
 //import org.integratedmodelling.klab.utils.StringUtils;
-//import org.xml.sax.Locator;
 //
 ///**
 // * Classifies a set of states into one map of classes corresponding to different
@@ -30,212 +27,203 @@
 // */
 //public class MapClassifier {
 //
-//    public class MapClass {
-//        /*
-//         * classifier N per descriptor
-//         */
-//        List<Integer> classifiers;
-//        int           index;
-//        String        name;
+//	public class MapClass {
+//		/*
+//		 * classifier N per descriptor
+//		 */
+//		List<Integer> classifiers;
+//		int index;
+//		String name;
 //
-//        public int getIndex() {
-//            return index;
-//        }
+//		public int getIndex() {
+//			return index;
+//		}
 //
-//        @Override
+//		@Override
+//		public String toString() {
+//			return index + ":" + classifiers;
+//		}
+//
+//		public double getValueOf(IConcept k) {
+//			MapDescriptor mds = stateIndex.get(k);
+//			if (mds == null) {
+//				return 0;
+//			}
+//			return ((Classification) mds.discretization).getNumericCode(classifiers.get(mds.index));
+//		}
+//	}
+//
+//	class MapDescriptor {
+//
+//		IState state;
+//		IClassification discretization = null;
+//		int index;
+//		boolean useRanks = false;
+//		Map<Integer, Integer> rankMap;
+//
+//		public MapDescriptor(IState s, ILocator locator) {
+//
+//			this.state = s;
+//
+//			if (s.getObservable().getArtifactType() == IArtifact.Type.NUMBER
+//					&& s.getObservable().getClassifier() == null) {
+//				this.discretization = Observations.INSTANCE.discretize(s, maxBinsPerState);
+//			} /*else if (s.getObservable().getArtifactType() == IArtifact.Type.NUMBER
+//					&& s.getObservable().getClassifier() != null) {
+//				this.discretization = ((INumericObserver) s.getObserver()).getDiscretization();
+//			} else if (s.getObserver() instanceof IClassifyingObserver) {
+//				this.discretization = ((IClassifyingObserver) s.getObserver()).getClassification();
+//			} else if (s.getObserver() instanceof IPresenceObserver) {
+//				this.discretization = Classification.createBinary();
+//			}*/
+//		}
+//
+//		@Override
 //        public String toString() {
-//            return index + ":" + classifiers;
+//            return "D/" + index + "/" + state.getObservable();
 //        }
 //
-//        public double getValueOf(IConcept k) {
-//            MapDescriptor mds = stateIndex.get(k);
-//            if (mds == null) {
-//                return 0;
-//            }
-//            return ((Classification) mds.discretization).getNumericCode(classifiers.get(mds.index));
-//        }
-//    }
+//		public int getClass(ILocator offset) {
 //
-//    class MapDescriptor {
+//			Object o = state.get(offset);
+//			if (o == null) {
+//				return -1;
+//			}
+//			if (useRanks) {
+//				Integer n = o instanceof Number ? ((Number) o).intValue() : null;
+//				if (n != null) {
+//					if (rankMap.containsKey(n)) {
+//						return rankMap.get(n);
+//					} else {
+//						int newv = rankMap.size();
+//						rankMap.put(n, newv);
+//						return newv;
+//					}
+//				} else {
+//					return -1;
+//				}
+//			}
+//			return this.discretization.classifyToIndex(o, context);
+//		}
+//	}
 //
-//        IState                state;
-//        IClassification       discretization = null;
-//        int                   index;
-//        boolean               useRanks       = false;
-//        Map<Integer, Integer> rankMap;
+//	IScale scale;
+//	private List<MapDescriptor> states = new ArrayList<>();
+//	private int maxBinsPerState;
+//	int[] index;
+////	private ILocator locator;
+//	Map<String, MapClass> classCatalog = new HashMap<>();
+//	List<MapClass> classes = new ArrayList<>();
+//	Map<IKnowledge, MapDescriptor> stateIndex = new HashMap<>();
+//	private IComputationContext context;
 //
-//        public MapDescriptor(IState s, Locator... locators) {
+//	/**
+//	 * Build the necessary discretizations. Check getStatesCount() before calling
+//	 * classify() to ensure we have at least the desired number of states.
+//	 * 
+//	 * @param states
+//	 * @param maxBinsPerState
+//	 * @param monitor
+//	 * @param locators
+//	 */
+//	public MapClassifier(Collection<IState> states, int maxBinsPerState, IComputationContext context, ILocator locator) {
 //
-//            this.state = s;
+////		this.locator = locator;
+//		this.maxBinsPerState = maxBinsPerState;
+//		this.context = context;
 //
-//            if (s.getObserver() instanceof INumericObserver
-//                    && ((INumericObserver) s.getObserver()).getDiscretization() == null) {
-//                if (s.getObserver() instanceof IRankingObserver
-//                        && ((IRankingObserver) s.getObserver()).isInteger()) {
-//                    useRanks = true;
-//                    rankMap = new HashMap<>();
-//                } else {
-//                    this.discretization = States.discretize(s, maxBinsPerState);
-//                }
-//            } else if (s.getObserver() instanceof INumericObserver
-//                    && ((INumericObserver) s.getObserver()).getDiscretization() != null) {
-//                this.discretization = ((INumericObserver) s.getObserver()).getDiscretization();
-//            } else if (s.getObserver() instanceof IClassifyingObserver) {
-//                this.discretization = ((IClassifyingObserver) s.getObserver()).getClassification();
-//            } else if (s.getObserver() instanceof IPresenceObserver) {
-//                this.discretization = Classification.createBinary();
-//            }
-//        }
+//		int i = 0;
+//		for (IState s : states) {
+//			MapDescriptor md = new MapDescriptor(s, locator);
+//			if (md.discretization != null || md.useRanks) {
+//				this.states.add(md);
+//				stateIndex.put(s.getObservable().getType(), md);
+//				md.index = i++;
+//			} else {
+//				context.getMonitor().warn("discretizer: state " + s.getObservable().getType() + " could not be discretized");
+//			}
+//		}
 //
-//        @Override
-//        public String toString() {
-//            return "D/" + index + "/" + state.getObservable());
-//        }
+//		if (states.size() > 0) {
+//			this.scale = states.iterator().next().getScale();
+//		}
+//	}
 //
-//        public int getClass(int offset) {
+//	public int getStatesCount() {
+//		return this.states.size();
+//	}
 //
-//            Object o = States.get(state, offset);
-//            if (o == null) {
-//                return -1;
-//            }
-//            if (useRanks) {
-//                Integer n = o instanceof Number ? ((Number) o).intValue() : null;
-//                if (n != null) {
-//                    if (rankMap.containsKey(n)) {
-//                        return rankMap.get(n);
-//                    } else {
-//                        int newv = rankMap.size();
-//                        rankMap.put(n, newv);
-//                        return newv;
-//                    }
-//                } else {
-//                    return -1;
-//                }
-//            }
-//            return this.discretization.classifyToIndex(o);
-//        }
-//    }
+//	public int getClass(int offset) {
+//		return index[offset];
+//	}
 //
-//    IScale                         scale;
-//    private List<MapDescriptor>    states       = new ArrayList<>();
-//    private int                    maxBinsPerState;
-//    int[]                          index;
-//    private Locator[]              locators;
-//    Map<String, MapClass>          classCatalog = new HashMap<>();
-//    List<MapClass>                 classes      = new ArrayList<>();
-//    Map<IKnowledge, MapDescriptor> stateIndex   = new HashMap<>();
+//	public int classify() {
 //
-//    /**
-//     * Build the necessary discretizations. Check getStatesCount() before calling
-//     * classify() to ensure we have at least the desired number of states.
-//     * 
-//     * @param states
-//     * @param maxBinsPerState
-//     * @param monitor
-//     * @param locators
-//     */
-//    public MapClassifier(Collection<IState> states, int maxBinsPerState, IMonitor monitor,
-//            Locator... locators) {
+//		// IScale.Index index = scale.getIndex(locators);
+//		// this.index = new int[index.size()];
 //
-//        this.locators = locators;
-//        this.maxBinsPerState = maxBinsPerState;
+//		// prepare the fastest int array we can use as key
+//		List<Integer> mc = new ArrayList<>();
+//		for (int i = 0; i < states.size(); i++) {
+//			mc.add(-1);
+//		}
 //
-//        int i = 0;
-//        for (IState s : states) {
-//            MapDescriptor md = new MapDescriptor(s);
-//            if (md.discretization != null || md.useRanks) {
-//                this.states.add(md);
-//                stateIndex.put(s.getObservable().getType(), md);
-//                md.index = i++;
-//            } else {
-//                monitor.warn("discretizer: state " + s.getObservable().getType()
-//                        + " could not be discretized");
-//            }
-//        }
+//		int idx = 0;
+//		for (ILocator offset : scale) {
 //
-//        if (states.size() > 0) {
-//            this.scale = states.iterator().next().getScale();
-//        }
-//    }
+//			int i = 0;
+//			boolean nodata = false;
+//			for (MapDescriptor md : states) {
+//				int n = md.getClass(offset);
+//				if (n < 0) {
+//					nodata = true;
+//					break;
+//				}
+//				mc.set(i++, n);
+//			}
 //
-//    public int getStatesCount() {
-//        return this.states.size();
-//    }
-//    
-//    
-//    public int getClass(int offset) {
-//    	return index[offset];
-//    }
+//			this.index[idx++] = nodata ? 0 : getMapClass(mc);
+//		}
 //
-//    public int classify() {
+//		return classes.size();
+//	}
 //
-//        IScale.Index index = scale.getIndex(locators);
-//        this.index = new int[index.size()];
+//	private int getMapClass(List<Integer> mc) {
 //
-//        // prepare the fastest int array we can use as key
-//        List<Integer> mc = new ArrayList<>();
-//        for (int i = 0; i < states.size(); i++) {
-//            mc.add(-1);
-//        }
+//		String nnc = StringUtils.join(mc, '|');
 //
-//        int idx = 0;
-//        for (int offset : index) {
+//		MapClass clas = classCatalog.get(nnc);
+//		if (clas == null) {
+//			clas = new MapClass();
+//			clas.classifiers = new ArrayList<>(mc);
+//			classes.add(clas);
 //
-//            int i = 0;
-//            boolean nodata = false;
-//            for (MapDescriptor md : states) {
-//                int n = md.getClass(offset);
-//                if (n < 0) {
-//                    nodata = true;
-//                    break;
-//                }
-//                mc.set(i++, n);
-//            }
+//			clas.index = classes.size() - 1;
+//			classCatalog.put(nnc, clas);
+//		}
 //
-//            this.index[idx++] = nodata ? 0 : getMapClass(mc);
-//        }
+//		return clas.index;
+//	}
 //
-//        return classes.size();
-//    }
+//	public Collection<MapClass> getClasses() {
+//		return classes;
+//	}
 //
-//    private int getMapClass(List<Integer> mc) {
+//	/**
+//	 * Redistribute values inside a passed state. Pass the values in the same order
+//	 * as the classes.
+//	 * 
+//	 * @param state
+//	 * @param values
+//	 * 
+//	 */
+//	public void distributeResults(IState state, double[] values) {
 //
-//        String nnc = StringUtils.join(mc, '|');
-//
-//        MapClass clas = classCatalog.get(nnc);
-//        if (clas == null) {
-//            clas = new MapClass();
-//            clas.classifiers = new ArrayList<>(mc);
-//            classes.add(clas);
-//
-//            clas.index = classes.size() - 1;
-//            classCatalog.put(nnc, clas);
-//        }
-//
-//        return clas.index;
-//    }
-//
-//    public Collection<MapClass> getClasses() {
-//        return classes;
-//    }
-//
-//    /**
-//     * Redistribute values inside a passed state. Pass the values in the same order as the
-//     * classes.
-//     * 
-//     * @param state
-//     * @param values
-//     * 
-//     */
-//    public void distributeResults(IState state, double[] values) {
-//
-//        int n = 0;
-//        for (int i : scale.getIndex(locators)) {
-//            if (scale.isCovered(i)) {
-//                States.set(state, values[classes.get(index[n]).index], i);
-//            }
-//            n++;
-//        }
-//    }
+//		int n = 0;
+//		for (ILocator i : scale) {
+//			state.set(i, values[classes.get(index[n]).index]);
+//			n++;
+//		}
+//	}
 //
 //}
