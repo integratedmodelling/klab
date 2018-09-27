@@ -262,14 +262,17 @@ public enum Resolver {
 				for (Iterator<CandidateObservable> it = reasoner.iterator(); !done && it.hasNext();) {
 					CandidateObservable candidate = it.next();
 					try {
+						
+						// TODO ACHTUNG EMBED IN AND LOOP OVER ALL OBSERVABLES IN CANDIDATE
+						
 						// candidate may switch resolution mode
-						for (IRankedModel model : Models.INSTANCE.resolve(candidate.observable,
-								ret.getChildScope(candidate.observable, candidate.mode))) {
+						for (IRankedModel model : Models.INSTANCE.resolve(candidate.observables.get(0),
+								ret.getChildScope(candidate.observables.get(0), candidate.mode))) {
 
 							previousArtifact = ((Subject) ret.getContext()).getRuntimeContext()
-									.findArtifact(candidate.observable);
+									.findArtifact(candidate.observables.get(0));
 							ResolutionScope mscope = previousArtifact == null ? resolve((RankedModel) model, ret)
-									: ret.getChildScope(candidate.observable, candidate.mode,
+									: ret.getChildScope(candidate.observables.get(0), candidate.mode,
 											(IObservation) previousArtifact.getSecond(), previousArtifact.getFirst());
 
 							if (mscope.getCoverage().isRelevant() && ret.or(mscope)) {
@@ -324,10 +327,11 @@ public enum Resolver {
 		// use the reasoner to infer any missing dependency from the semantics
 		ObservableReasoner reasoner = new ObservableReasoner(model, parentScope.getObservable(), ret);
 		for (CandidateObservable observable : reasoner.getObservables()) {
-			ret.and(resolve(observable.observable, ret, observable.mode));
+			// ACHTUNG TODO OBSERVABLE CAN BE MULTIPLE (probably not here though)
+			ret.and(resolve(observable.observables.get(0), ret, observable.mode));
 			if (ret.getCoverage().isEmpty()) {
 				parentScope.getMonitor().info("discarding best choice " + model.getId() + " due to missing dependency "
-						+ observable.observable.getLocalName());
+						+ observable.observables.get(0).getLocalName());
 				break;
 			}
 		}

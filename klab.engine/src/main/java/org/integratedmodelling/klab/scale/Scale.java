@@ -1013,11 +1013,28 @@ public class Scale implements IScale {
     @Override
     public long getOffset(ILocator index) {
 
+    	if (index instanceof Geometry) {
+    		index = Scale.create((IGeometry)index);
+    	}
+    	
         // CHECK not matching the original scale ID any more (too restrictive) - it's an
         // act of faith whether
         // the scale comes from the original or not at this point.
-        if (index instanceof Scale && ((Scale) index).originalScaleOffset >= 0) {
-            return ((Scale) index).originalScaleOffset;
+        if (index instanceof Scale) {
+        	
+        	if (((Scale) index).originalScaleOffset >= 0) {
+        		return ((Scale) index).originalScaleOffset;
+        	}
+        	
+        	// locate each extent
+        	long[] offsets = new long[extents.size()];
+        	int i = 0;
+        	for (IExtent extent : extents) {
+        		IExtent other = ((Scale)index).getDimension(extent.getType());
+        		offsets[i++] = other == null ? 0 : extent.getOffset(other);
+        	}
+        	
+        	return cursor.getElementOffset(offsets);
         }
 
         /*

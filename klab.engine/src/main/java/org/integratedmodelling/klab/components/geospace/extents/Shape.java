@@ -97,6 +97,15 @@ public class Shape extends AbstractExtent implements IShape {
 		ret.type = IShape.Type.POLYGON;
 		return ret;
 	}
+	
+	public static Shape create(double x1, double y1, Projection projection) {
+		Shape ret = new Shape();
+		ret.geometry = makePoint(x1, y1);
+		ret.projection = projection;
+		ret.envelope = Envelope.create(ret.geometry.getEnvelopeInternal(), ret.projection);
+		ret.type = IShape.Type.POINT;
+		return ret;
+	}
 
 	public static Shape create(Envelope envelope) {
 		return create(envelope.getMinX(), envelope.getMinY(), envelope.getMaxX(), envelope.getMaxY(),

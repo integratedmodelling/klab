@@ -20,7 +20,6 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -698,7 +697,8 @@ public class ResolutionScope implements IResolutionScope {
 		if (allowIndirectObservation) {
 			ObservableReasoner reasoner = new ObservableReasoner(observable, mode, this);
 			for (CandidateObservable indirect : reasoner.getAlternatives()) {
-				ResolutionScope alternative = getObservable(indirect.observable, indirect.mode, true);
+				// ACHTUNG observable(0)
+				ResolutionScope alternative = getObservable(indirect.observables.get(0), indirect.mode, true);
 				if (alternative != null) {
 					return alternative;
 				}

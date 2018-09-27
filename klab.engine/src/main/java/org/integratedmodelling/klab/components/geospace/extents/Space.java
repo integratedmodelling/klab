@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
+import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpaceLocator;
 import org.integratedmodelling.klab.common.Geometry;
@@ -66,16 +67,20 @@ public class Space extends Extent implements ISpace {
 	public static Space create(Dimension dimension) {
 
 		double[] bbox = dimension.getParameters().get(Geometry.PARAMETER_SPACE_BOUNDINGBOX, double[].class);
+		double[] llat = dimension.getParameters().get(Geometry.PARAMETER_SPACE_LONLAT, double[].class);
 		String gridres = dimension.getParameters().get(Geometry.PARAMETER_SPACE_GRIDRESOLUTION, String.class);
 		String projectionSpec = dimension.getParameters().get(Geometry.PARAMETER_SPACE_PROJECTION, String.class);
 		String shapeSpec = dimension.getParameters().get(Geometry.PARAMETER_SPACE_SHAPE, String.class);
 		long[] dims = dimension.shape();
+		
 
 		Projection projection = null;
 		Shape shape = null;
 
 		if (projectionSpec != null) {
 			projection = Projection.create(projectionSpec);
+		} else if (llat != null) {
+			projection = Projection.getLatLon();
 		} else {
 			throw new IllegalArgumentException(
 					"not enough information in spatial dimension to build a space extent: projection");
@@ -85,6 +90,8 @@ public class Space extends Extent implements ISpace {
 			shape = Shape.create(shapeSpec);
 		} else if (bbox != null) {
 			shape = Shape.create(bbox[0], bbox[2], bbox[1], bbox[3], projection);
+		} else if (llat != null) {
+			shape = Shape.create(llat[0], llat[1], Projection.getLatLon());
 		} else {
 			throw new IllegalArgumentException(
 					"not enough information in spatial dimension to build a space extent: shape or bounding box");
@@ -562,7 +569,10 @@ public class Space extends Extent implements ISpace {
 			} else if (index instanceof IndexLocator && ((IndexLocator) index).getCoordinates().length == 2) {
 				return this.grid.getOffset(((IndexLocator) index).getCoordinates()[0],
 						((IndexLocator) index).getCoordinates()[1]);
-			} // TODO latlon and world coordinates
+			} else if (index instanceof ISpace && ((ISpace) index).getShape().getGeometryType() == IShape.Type.POINT) {
+				Shape shape = (Shape)((ISpace)index).getShape().transform(getProjection());
+				return this.grid.getOffsetFromWorldCoordinates(shape.getJTSGeometry().getCoordinates()[0].x, shape.getJTSGeometry().getCoordinates()[0].y);
+			}
 		} else if (this.features != null) {
 			// TODO support direct indexing with IndexLocator and point indexing with latlon
 			// and point coordinates

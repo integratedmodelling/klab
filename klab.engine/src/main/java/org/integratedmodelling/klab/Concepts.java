@@ -36,7 +36,9 @@ import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Property;
+import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Pair;
+import org.springframework.util.StringUtils;
 
 /**
  * The Enum Concepts.
@@ -142,6 +144,22 @@ public enum Concepts implements IConceptService {
 		return ret;
 	}
 
+	/**
+	 * Get the best display name and turn any camel case into something more 
+	 * text-like if it does not contain spaces.
+	 *
+	 * @param t
+	 *            the t
+	 * @return a name for display
+	 */
+	public String getDisplayLabel(IConcept t) {
+		String ret = getDisplayName(t);
+		if (!ret.contains(" ")) {
+			ret = StringUtils.capitalize(CamelCase.toLowerCase(ret, ' '));
+		}
+		return ret;
+	}
+	
 	/**
 	 * Arrange a set of concepts into the collection of the most specific members of
 	 * each concept hierarchy therein. Return one concept or null.

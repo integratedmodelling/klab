@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.rest.Colormap;
 import org.integratedmodelling.klab.rest.ObservationReference;
@@ -161,13 +162,13 @@ public class EngineViewController {
 
 		ILocator loc = ITime.INITIALIZATION;
 		if (locator != null) {
-//			loc = Geometry.create(locator);
+			loc = Geometry.create(locator);
 		}
 
 		if (obs instanceof IState) {
 
 			if (format == GeometryType.RASTER) {
-				
+
 				BufferedImage image = Renderer.INSTANCE.render((IState) obs, loc,
 						NumberUtils.intArrayFromString(viewport == null ? "800,800" : viewport));
 				ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -175,25 +176,33 @@ public class EngineViewController {
 				InputStream in = new ByteArrayInputStream(os.toByteArray());
 				response.setContentType(MediaType.IMAGE_PNG_VALUE);
 				IOUtils.copy(in, response.getOutputStream());
-				
+
 			} else if (format == GeometryType.COLORMAP) {
-				
-				StateSummary summary = Observations.INSTANCE.getStateSummary((IState)obs, loc);
+
+				StateSummary summary = Observations.INSTANCE.getStateSummary((IState) obs, loc);
 				if (summary.getColormap() != null) {
 					response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 					response.getWriter().write(JsonUtils.printAsJson(summary.getColormap()));
 					response.setStatus(HttpServletResponse.SC_OK);
 				}
-				
+
 			} else if (format == GeometryType.SCALAR) {
 
-//				Object value = ((IState)obs).get(loc);
-//				String descr = value instanceof Number 
-//						? NumberFormat.getInstance().format(((Number)value).doubleValue()) 
-//						: (value instanceof IConcept 
-//								? Concepts.INSTANCE.getDisplayName(((IConcept)value)) 
-//								: (value instanceof Boolean ? ((Boolean)value ? "True" : "False") : "No data"));
-				String descr = "Ohilá!";
+				Object value = ((IState) obs).get(loc);
+				String descr = value instanceof Number
+						? NumberFormat.getInstance().format(((Number) value).doubleValue())
+						: (value instanceof IConcept ? Concepts.INSTANCE.getDisplayLabel(((IConcept) value))
+								: (value instanceof Boolean ? ((Boolean) value ? "Present" : "Not present") : "No data"));
+
+				if (obs.getObservable().getUnit() != null) {
+					descr += " " + ((Unit) obs.getObservable().getUnit()).toUTFString();
+				} else if (obs.getObservable().getCurrency() != null) {
+					descr += " " + obs.getObservable().getCurrency();
+				} else if (obs.getObservable().getRange() != null) {
+					descr += " [" + obs.getObservable().getRange().getLowerBound() + " to "
+							+ obs.getObservable().getRange().getUpperBound() + "]";
+				}
+
 				response.setContentType(MediaType.TEXT_PLAIN_VALUE);
 				response.getWriter().write(descr);
 				response.setStatus(HttpServletResponse.SC_OK);

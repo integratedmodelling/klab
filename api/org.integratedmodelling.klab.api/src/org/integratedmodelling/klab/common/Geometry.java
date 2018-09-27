@@ -23,6 +23,12 @@ public class Geometry implements IGeometry {
 	 * Bounding box as a double[]{minX, maxX, minY, maxY}
 	 */
 	public static final String PARAMETER_SPACE_BOUNDINGBOX = "bbox";
+
+	/**
+	 * Latitude,longitude as a double[]{lon, lat}
+	 */
+	public static final String PARAMETER_SPACE_LONLAT = "latlon";
+	
 	/**
 	 * Projection code
 	 */

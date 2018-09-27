@@ -143,7 +143,6 @@ public class HubStartupOptions implements IHubStartupOptions {
     public void setPort(int port) {
         this.port = port;
     }
-
     
     public void setHelp(boolean help) {
         this.help = help;
