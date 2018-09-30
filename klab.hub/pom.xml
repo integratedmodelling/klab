@@ -10,6 +10,26 @@
 	<artifactId>klab.hub</artifactId>
 	<name>k.LAB hub</name>
 	<description>k.LAB authentication and collaboration server hub</description>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring-boot-version}</version>
+				<configuration>
+					<fork>true</fork>
+					<mainClass>org.integratedmodelling.klab.hub.HubApplication</mainClass>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 	<dependencies>
 
 		<!-- key storage -->

@@ -1,10 +1,78 @@
 {
 	"IM": {
 		"id": "IM",
-		"description": "Caproni"
-		},
-	"DEVELOPERS": {
-		"id": "DEVELOPERS",
-		"description": "Pecoroni"
+		"description": "Integrated Modelling Partnership",
+		"sshKey": null,
+		"projectUrls": [
+			"https://bitbucket.org/ariesteam/im.git#feature/noobservers"
+		],
+		"observables": []
+	},
+	"ARIES": {
+		"id": "ARIES",
+		"description": "ARIES (ARtificial Intelligence for Ecosystem Services)",
+		"sshKey": null,
+		"projectUrls": [
+			"https://bitbucket.org/ariesteam/im.aries.git#feature/noobservers",
+			"https://bitbucket.org/ariesteam/im.data.global.git",
+			"https://bitbucket.org/ariesteam/im.data.operators.git",
+			"https://bitbucket.org/ariesteam/im.data.osm.git",
+			"https://bitbucket.org/ariesteam/im.aries.global.git"
+		],
+		"observables": [
+			{
+				"separator": true,
+				"description": "",
+				"label": "Carbon storage"
+			},
+			{
+				"separator": true,
+				"description": "",
+				"label": "Pollination"
+			},
+			{
+				"separator": true,
+				"description": "",
+				"label": "Flood regulation"
+			},
+			{
+				"separator": false,
+				"label": "probability of Flood",
+				"observable": "probability of earth:Flood",
+				"description": "",
+				"semantics": "QUALITY"
+			},
+			{
+				"separator": false,
+				"label": "Potential value of FloodRegulation",
+				"observable": "im:Potential value of es:FloodRegulation",
+				"description": "",
+				"semantics": "QUALITY"
+			},
+			{
+				"separator": false,
+				"label": "Demanded value of FloodRegulation",
+				"observable": "ses:Demanded value of es:FloodRegulation",
+				"description": "",
+				"semantics": "QUALITY"
+			},
+			{
+				"separator": false,
+				"label": "Net value of FloodRegulation",
+				"observable": "im:Net value of es:FloodRegulation",
+				"description": "",
+				"semantics": "QUALITY"
+			},
+			{
+				"separator": true,
+				"description": "",
+				"label": "Outdoor recreation"
+			},
+			{
+				"separator": true,
+				"description": "",
+				"label": "Sediment retention"
+			}
+		]
 	}
 }

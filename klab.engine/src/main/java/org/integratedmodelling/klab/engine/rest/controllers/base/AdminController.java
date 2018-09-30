@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.engine.rest.controllers.base;
 
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,8 @@ public class AdminController {
 	@RequestMapping(value = API.ADMIN.SHUTDOWN, method = RequestMethod.GET)
 	public int shutdown() {
 
+	    Logging.INSTANCE.info("Shutdown request received");
+	    
 		int seconds = 2;
 		new Thread() {
 

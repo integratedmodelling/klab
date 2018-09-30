@@ -15,6 +15,8 @@ import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
+import org.integratedmodelling.klab.rest.Group;
+import org.integratedmodelling.klab.utils.FileCatalog;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -32,7 +34,8 @@ public class Hub {
 	private String contextPath = "/klab";
 	private HubAuthenticationManager authManager;
 	private ICertificate certificate;
-
+    FileCatalog<Group> defaultGroups;
+    
 	public Hub(IHubStartupOptions options, ICertificate certificate) {
 		this.certificate = certificate;
 		// cert is prevalidated and we are the top consumers, so no further
@@ -92,6 +95,7 @@ public class Hub {
 			System.out.println("\n" + Logo.HUB_BANNER);
 			System.out.println(
 					"\nStartup successful: " + "k.LAB hub server" + " v" + Version.CURRENT + " on " + new Date());
+			
 		} catch (Throwable e) {
 			Logging.INSTANCE.error(e);
 			return false;
