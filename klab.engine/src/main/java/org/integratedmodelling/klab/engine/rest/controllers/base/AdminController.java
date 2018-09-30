@@ -28,6 +28,7 @@ public class AdminController {
 
 	public void shutDown(ExitCodeGenerator exitCodeGenerator) {
 		SpringApplication.exit(applicationContext, exitCodeGenerator);
+		System.exit(0);
 	}
 
 	@RequestMapping(value = API.ADMIN.SHUTDOWN, method = RequestMethod.GET)
