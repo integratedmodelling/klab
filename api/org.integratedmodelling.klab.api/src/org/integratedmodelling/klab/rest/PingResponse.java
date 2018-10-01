@@ -13,7 +13,13 @@ public class PingResponse {
 	private String localSessionId;
 	private boolean online;
 	private long uptime;
-
+	private long bootTime;
+	private String version;
+	private long freeMemory;
+	private long totalMemory;
+	private long processorCount;
+	private long requestTime;
+	
 	public String getLocalSessionId() {
 		return localSessionId;
 	}
@@ -44,6 +50,54 @@ public class PingResponse {
 
 	public String getEngineId() {
 		return engineId;
+	}
+
+	public long getBootTime() {
+		return bootTime;
+	}
+
+	public void setBootTime(long bootTime) {
+		this.bootTime = bootTime;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	public long getFreeMemory() {
+		return freeMemory;
+	}
+
+	public void setFreeMemory(long freeMemory) {
+		this.freeMemory = freeMemory;
+	}
+
+	public long getTotalMemory() {
+		return totalMemory;
+	}
+
+	public void setTotalMemory(long totalMemory) {
+		this.totalMemory = totalMemory;
+	}
+
+	public long getProcessorCount() {
+		return processorCount;
+	}
+
+	public void setProcessorCount(long processorCount) {
+		this.processorCount = processorCount;
+	}
+
+	public long getRequestTime() {
+		return requestTime;
+	}
+
+	public void setRequestTime(long requestTime) {
+		this.requestTime = requestTime;
 	}
 
 }

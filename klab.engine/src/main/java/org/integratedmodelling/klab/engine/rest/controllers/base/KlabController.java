@@ -14,6 +14,7 @@ import org.apache.commons.io.IOUtils;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -118,8 +119,15 @@ public class KlabController {
 
         PingResponse ret = new PingResponse();
         Engine engine = Authentication.INSTANCE.getAuthenticatedIdentity(Engine.class);
+        Runtime runtime = Runtime.getRuntime();
+        ret.setVersion(Version.CURRENT);
         ret.setOnline(engine != null);
         if (engine != null) {
+            ret.setTotalMemory(runtime.totalMemory() / 1048576);
+            ret.setFreeMemory(runtime.freeMemory() / 1048576);
+            ret.setProcessorCount(runtime.availableProcessors());
+            ret.setBootTime(engine.getBootTime().getTime());
+            ret.setRequestTime(System.currentTimeMillis());
             ret.setUptime(System.currentTimeMillis() - engine.getBootTime().getTime());
             ret.setEngineId(engine.getId());
             if (IPUtils.isLocal(request.getRemoteAddr())) {
