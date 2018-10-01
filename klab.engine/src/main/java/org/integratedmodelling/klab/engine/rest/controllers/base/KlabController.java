@@ -130,9 +130,7 @@ public class KlabController {
             ret.setRequestTime(System.currentTimeMillis());
             ret.setUptime(System.currentTimeMillis() - engine.getBootTime().getTime());
             ret.setEngineId(engine.getId());
-            System.out.println("REMOTE ADDR IS " + request.getRemoteAddr());
             if (IPUtils.isLocal(request.getRemoteAddr())) {
-                System.out.println("WAS LOCAL");
                 ISession session = Authentication.INSTANCE.getDefaultSession();
                 if (session != null) {
                     ret.setLocalSessionId(session.getId());
