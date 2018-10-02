@@ -394,39 +394,42 @@ public enum Observations implements IObservationService {
 		return (mul / nex) > 1;
 	}
 
-//	/**
-//	 * Produce a classification that discretizes the range of the passed numeric
-//	 * state. If the state is all no-data, return null without error.
-//	 * 
-//	 * @param s
-//	 * @param maxBins
-//	 * @param locators
-//	 * @return discretization of range
-//	 */
-//	public IClassification discretize(IState s, int maxBins) {
-//
-//		/*
-//		 * establish boundaries
-//		 */
-//		double min = Double.NaN;
-//		double max = Double.NaN;
-//		for (ILocator offset : s.getScale()) {
-//
-//			double val = s.get(offset, Double.class);
-//			if (!Double.isNaN(val)) {
-//				if (Double.isNaN(min) || min > val) {
-//					min = val;
-//				}
-//				if (Double.isNaN(max) || max < val) {
-//					max = val;
-//				}
-//			}
-//		}
-//
-//		if (Double.isNaN(min) || Double.isNaN(max)) {
-//			return null;
-//		}
-//
+	/**
+	 * Produce a classification that discretizes the range of the passed numeric
+	 * state. If the state is all no-data, return null without error.
+	 * 
+	 * @param s
+	 * @param maxBins
+	 * @param locators
+	 * @return discretization of range
+	 */
+	public IClassification discretize(IState s, int maxBins) {
+
+		/*
+		 * establish boundaries
+		 */
+		double min = Double.NaN;
+		double max = Double.NaN;
+		for (ILocator offset : s.getScale()) {
+
+			double val = s.get(offset, Double.class);
+			if (!Double.isNaN(val)) {
+				if (Double.isNaN(min) || min > val) {
+					min = val;
+				}
+				if (Double.isNaN(max) || max < val) {
+					max = val;
+				}
+			}
+		}
+
+		if (Double.isNaN(min) || Double.isNaN(max)) {
+			return null;
+		}
+		
+		// TODO
+		return null;
+
 //		/*
 //		 * create ranges.
 //		 */
@@ -448,6 +451,6 @@ public enum Observations implements IObservationService {
 //			ist += istep;
 //		}
 //		return new Classification(NS.getUserOrdering(), classifiers);
-//	}
+	}
 
 }

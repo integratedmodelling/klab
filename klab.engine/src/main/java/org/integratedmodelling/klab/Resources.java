@@ -52,6 +52,7 @@ import org.integratedmodelling.klab.data.resources.ResourceBuilder;
 import org.integratedmodelling.klab.data.storage.FutureResource;
 import org.integratedmodelling.klab.data.storage.ResourceCatalog;
 import org.integratedmodelling.klab.engine.Engine;
+import org.integratedmodelling.klab.engine.resources.ComponentsWorkspace;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.MonitorableFileWorkspace;
 import org.integratedmodelling.klab.engine.resources.Project;
@@ -65,6 +66,7 @@ import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.LocalResourceReference;
 import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
@@ -185,8 +187,17 @@ public enum Resources implements IResourceService {
 	 */
 	public boolean loadComponents(Collection<File> localComponentPaths, IMonitor monitor) {
 		try {
-			components = new MonitorableFileWorkspace(Configuration.INSTANCE.getDataPath("components"),
-					localComponentPaths.toArray(new File[localComponentPaths.size()]));
+			List<String> deployedComponents = new ArrayList<>();
+			IUserIdentity user = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class);
+			if (user != null) {
+				for (Group group : user.getGroups()) {
+					if (!group.isWorldview()) {
+						deployedComponents.addAll(group.getProjectUrls());
+					}
+				}
+			}
+			components = new ComponentsWorkspace("components", Configuration.INSTANCE.getDataPath("workspace/deploy"),
+					deployedComponents);
 			this.loader = components.load(this.loader, monitor);
 			workspaces.put(components.getName(), components);
 			return true;
@@ -205,7 +216,6 @@ public enum Resources implements IResourceService {
 			worldview = certificate.getWorldview();
 			this.loader = worldview.load(this.loader, monitor);
 			workspaces.put(worldview.getName(), worldview);
-
 			return true;
 		} catch (Throwable e) {
 			Logging.INSTANCE.error(e.getLocalizedMessage());
@@ -736,7 +746,7 @@ public enum Resources implements IResourceService {
 		if (urn.contains(" ") || urn.contains("(")) {
 			IObservable obs = Observables.INSTANCE.declare(urn);
 			if (obs != null) {
-				return ((Observable)obs).contextualizeUnits(scale);
+				return ((Observable) obs).contextualizeUnits(scale);
 			}
 		}
 		return null;
@@ -958,9 +968,9 @@ public enum Resources implements IResourceService {
 	 * @param id
 	 * @return
 	 */
-    public Object getSymbol(String id) {
-        String nsId = Path.getLeading(id, '.');
-        INamespace ns = Namespaces.INSTANCE.getNamespace(nsId);
-        return ns == null ? null : ns.getSymbolTable().get(Path.getLast(id, '.'));
-    }
+	public Object getSymbol(String id) {
+		String nsId = Path.getLeading(id, '.');
+		INamespace ns = Namespaces.INSTANCE.getNamespace(nsId);
+		return ns == null ? null : ns.getSymbolTable().get(Path.getLast(id, '.'));
+	}
 }

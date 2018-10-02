@@ -40,7 +40,6 @@ public interface IDataKey {
 	 */
 	List<String> getLabels();
 	
-	
 	/**
 	 * Get value/label pairs
 	 */

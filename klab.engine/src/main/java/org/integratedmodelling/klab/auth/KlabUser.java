@@ -23,6 +23,7 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 
     public KlabUser(AuthenticatedIdentity userData, NetworkSession networkSession) {
         super(userData.getIdentity());
+        this.groups.addAll(userData.getGroups());
         this.parent = networkSession;
     }
 

@@ -59,6 +59,7 @@ public class Observable extends Concept implements IObservable {
 	private boolean generic;
 	private String observerId;
 	private ISubject observer;
+	private Set<IConcept> assignedRoles = new HashSet<>();
 
 	/**
 	 * This and the next support situations in which the observable contains a
@@ -149,6 +150,7 @@ public class Observable extends Concept implements IObservable {
 		this.observationType = observable.observationType;
 		this.optional = observable.optional;
 		this.generic = observable.generic;
+		this.assignedRoles.addAll(observable.assignedRoles);
 	}
 
 	@Override
@@ -658,4 +660,8 @@ public class Observable extends Concept implements IObservable {
 		this.sessionId = session.getId();
 	}
 
+	@Override
+	public Set<IConcept> getAssignedRoles() {
+		return assignedRoles;
+	}
 }

@@ -1,5 +1,7 @@
 package org.integratedmodelling.kim.api;
 
+import java.util.Collection;
+
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.utils.Range;
 
@@ -22,7 +24,7 @@ public interface IKimObservable extends IKimStatement {
 	 * @return the 'by' classifier trait
 	 */
 	IKimConcept getClassifier();
-	
+
 	/**
 	 * 
 	 * @return the 'by' aggregator object
@@ -104,7 +106,15 @@ public interface IKimObservable extends IKimStatement {
 	IArtifact.Type getNonSemanticType();
 
 	/**
-	 * The canonical definition 
+	 * Assigned roles follow 'as' and do not concern the semantics of the concept we
+	 * observe - they simply assign roles that are local to this USE of it.
+	 * 
+	 * @return
+	 */
+	Collection<IKimConcept> getAssignedRoles();
+
+	/**
+	 * The canonical definition
 	 * 
 	 * @return
 	 */

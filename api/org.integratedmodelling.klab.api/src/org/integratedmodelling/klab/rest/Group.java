@@ -10,7 +10,8 @@ public class Group {
 	private String sshKey;
 	private List<String> projectUrls = new ArrayList<>();
 	private List<ObservableReference> observables = new ArrayList<>();
-
+	private boolean worldview;
+	
 	// TODO add owner and possibly more authentication
 
 	public Group() {
@@ -108,6 +109,19 @@ public class Group {
 
 	public void setObservables(List<ObservableReference> observables) {
 		this.observables = observables;
+	}
+
+	/**
+	 * If true, the projects from this group are worldview projects.
+	 * 
+	 * @return
+	 */
+	public boolean isWorldview() {
+		return worldview;
+	}
+
+	public void setWorldview(boolean worldview) {
+		this.worldview = worldview;
 	}
 
 }
