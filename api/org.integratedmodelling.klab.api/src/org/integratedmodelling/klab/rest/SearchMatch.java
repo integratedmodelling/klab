@@ -45,7 +45,7 @@ public class SearchMatch {
 		if (semanticType != null) {
 			this.semanticType.add(semanticType);
 		}
-		this.matchType = Type.PRESET_OBSERVABLE;
+		this.matchType = semanticType == null ? Type.SEPARATOR : Type.PRESET_OBSERVABLE;
 		this.id = matchId;
 		this.name = matchName;
 		this.description = matchDescription;
