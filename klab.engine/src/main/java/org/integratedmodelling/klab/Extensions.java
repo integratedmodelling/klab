@@ -86,8 +86,9 @@ public enum Extensions implements IExtensionService {
         int n = 0;
         ResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
         try {
-            for (Resource res : patternResolver
-                    .getResources(/*"/" + */"classpath*:" + cls.getPackage().getName().replaceAll("\\.", "/") + "/**/*.kdl")) {
+             for (Resource res : patternResolver
+                    .getResources(/*"/" + */"classpath*:" + cls.getPackage().getName().replaceAll("\\.", "/")
+                            + "/**/*.kdl")) {
                 try (InputStream input = res.getInputStream()) {
                     n += declareServices(ret, Dataflows.INSTANCE.declare(input));
                 }
@@ -98,19 +99,18 @@ public enum Extensions implements IExtensionService {
 
         Logging.INSTANCE.info(n + " services read from " + ret.getName());
 
-        
-        //        /*
-//         * ingest all .kdl files in the component's path
-//         */
-//        for (String kdl : new Reflections(cls.getPackage().getName(), new ResourcesScanner())
-//                .getResources(Pattern.compile(".*\\.kdl"))) {
-//            try (InputStream input = cls.getClassLoader().getResourceAsStream(kdl)) {
-//                declareServices(ret, Dataflows.INSTANCE.declare(input));
-//            } catch (Throwable e) {
-//                throw new KlabValidationException(e);
-//            }
-//        }
-//
+        // /*
+        // * ingest all .kdl files in the component's path
+        // */
+        // for (String kdl : new Reflections(cls.getPackage().getName(), new ResourcesScanner())
+        // .getResources(Pattern.compile(".*\\.kdl"))) {
+        // try (InputStream input = cls.getClassLoader().getResourceAsStream(kdl)) {
+        // declareServices(ret, Dataflows.INSTANCE.declare(input));
+        // } catch (Throwable e) {
+        // throw new KlabValidationException(e);
+        // }
+        // }
+        //
         this.components.put(annotation.id(), ret);
 
         return ret;
