@@ -580,10 +580,10 @@ public class Assessment {
 			this.subject = subject;
 
 			for (IState s : subject.getStates()) {
-//				if (process.getRolesFor(s).contains(MCAComponent.NS.COST_CRITERION_ROLE)) {
+//				if (s.getObservable().getAssignedRoles().contains(MCAComponent.NS.COST_CRITERION_ROLE)) {
 //					criteria.put(s.getObservable().getType(), new Criterion(s, false, subject));
 //					critOrder.add(s.getObservable().getType());
-//				} else if (process.getRolesFor(s).contains(MCAComponent.NS.BENEFIT_CRITERION_ROLE)) {
+//				} else if (s.getObservable().getAssignedRoles().contains(MCAComponent.NS.BENEFIT_CRITERION_ROLE)) {
 //					criteria.put(s.getObservable().getType(), new Criterion(s, true, subject));
 //					critOrder.add(s.getObservable().getType());
 //				}
@@ -596,7 +596,7 @@ public class Assessment {
 			if (!subject.getName().equals(context.getName())) {
 
 				for (IState s : context.getStates()) {
-//					if (process.getRolesFor(s).contains(MCAComponent.NS.COST_CRITERION_ROLE)) {
+//					if (s.getObservable().getAssignedRoles().contains(MCAComponent.NS.COST_CRITERION_ROLE)) {
 //						criteria.put(s.getObservable().getType(), new Criterion(s, false, context));
 //						critOrder.add(s.getObservable().getType());
 //					} else if (process.getRolesFor(s).contains(MCAComponent.NS.BENEFIT_CRITERION_ROLE)) {

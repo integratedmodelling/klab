@@ -36,136 +36,150 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
  */
 public class GitUtils {
 
-    /**
-     * Clone.
-     *
-     * @param gitUrl the git url
-     * @param directory the directory
-     * @param removeIfExisting the remove if existing
-     * @return the string
-     * @throws KlabException the klab exception
-     */
-    public static String clone(String gitUrl, File directory, boolean removeIfExisting) throws KlabException {
+	/**
+	 * Clone.
+	 *
+	 * @param gitUrl
+	 *            the git url
+	 * @param directory
+	 *            the directory
+	 * @param removeIfExisting
+	 *            the remove if existing
+	 * @return the string
+	 * @throws KlabException
+	 *             the klab exception
+	 */
+	public static String clone(String gitUrl, File directory, boolean removeIfExisting) throws KlabException {
 
-        String dirname = MiscUtilities.getURLBaseName(gitUrl);
+		String dirname = MiscUtilities.getURLBaseName(gitUrl);
 
-        File pdir = new File(directory + File.separator + dirname);
-        if (pdir.exists()) {
-            if (removeIfExisting) {
-                try {
-                    FileUtils.deleteDirectory(pdir);
-                } catch (Throwable e) {
-                    throw new KlabIOException(e);
-                }
-            } else {
-                throw new KlabIOException("git clone: directory " + pdir + " already exists");
-            }
-        }
+		File pdir = new File(directory + File.separator + dirname);
+		if (pdir.exists()) {
+			if (removeIfExisting) {
+				try {
+					FileUtils.deleteDirectory(pdir);
+				} catch (Throwable e) {
+					throw new KlabIOException(e);
+				}
+			} else {
+				throw new KlabIOException("git clone: directory " + pdir + " already exists");
+			}
+		}
 
-        String[] pdefs = gitUrl.split("#");
-        String branch = pdefs.length < 2 ? "master" : pdefs[1];
-        String url = pdefs[0];
+		String[] pdefs = gitUrl.split("#");
+		String branch = pdefs.length < 2 ? "master" : pdefs[1];
+		String url = pdefs[0];
 
-        Logging.INSTANCE.info("cloning Git repository " + url + " branch " + branch + " ...");
+		Logging.INSTANCE.info("cloning Git repository " + url + " branch " + branch + " ...");
 
-        try (Git result = Git.cloneRepository()
-                .setURI(url)
-                .setBranch(branch)
-                .setDirectory(pdir)
-                .call()) {
+		try (Git result = Git.cloneRepository().setURI(url).setBranch(branch).setDirectory(pdir).call()) {
 
-            Logging.INSTANCE.info("cloned Git repository: " + result.getRepository());
+			Logging.INSTANCE.info("cloned Git repository: " + result.getRepository());
 
-            if (!branch.equals("master")) {
-                result.checkout().setName(branch)
-                        .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK)
-                        .setStartPoint("origin/" + branch).call();
+			if (!branch.equals("master")) {
+				result.checkout().setName(branch).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK)
+						.setStartPoint("origin/" + branch).call();
 
-                Logging.INSTANCE.info("switched repository: " + result.getRepository() + " to branch " + branch);
-            }
+				Logging.INSTANCE.info("switched repository: " + result.getRepository() + " to branch " + branch);
+			}
 
-        } catch (Throwable e) {
-            throw new KlabIOException(e);
-        }
+		} catch (Throwable e) {
+			throw new KlabIOException(e);
+		}
 
-        return dirname;
-    }
+		return dirname;
+	}
 
-    /**
-     * Pull local repository in passed directory.
-     *
-     * @param localRepository main directory (containing .git/)
-     * @throws KlabException the klab exception
-     */
-    public static void pull(File localRepository) throws KlabException {
+	/**
+	 * Pull local repository in passed directory.
+	 *
+	 * @param localRepository
+	 *            main directory (containing .git/)
+	 * @throws KlabException
+	 *             the klab exception
+	 */
+	public static void pull(File localRepository) throws KlabException {
 
-        try (Repository localRepo = new FileRepository(localRepository + File.separator + ".git")) {
-            try (Git git = new Git(localRepo)) {
+		try (Repository localRepo = new FileRepository(localRepository + File.separator + ".git")) {
+			try (Git git = new Git(localRepo)) {
 
-              Logging.INSTANCE.info("fetch/merge changes in repository: " + git.getRepository());
+				Logging.INSTANCE.info("fetch/merge changes in repository: " + git.getRepository());
 
-                PullCommand pullCmd = git.pull();
-                pullCmd.call();
+				PullCommand pullCmd = git.pull();
+				pullCmd.call();
 
-            } catch (Throwable e) {
-                throw new KlabIOException("error pulling repository " + localRepository + ": " + e.getLocalizedMessage());
-            }
-        } catch (IOException e) {
-            throw new KlabIOException(e);
-        }
-    }
+			} catch (Throwable e) {
+				throw new KlabIOException(
+						"error pulling repository " + localRepository + ": " + e.getLocalizedMessage());
+			}
+		} catch (IOException e) {
+			throw new KlabIOException(e);
+		}
+	}
 
-    /**
-     * If a Git repository with the repository name corresponding to the URL exists in gitDirectory,
-     * pull it from origin; otherwise clone it from the passed Git URL.
-     * 
-     * TODO: Assumes branch is already set correctly if repo is pulled. Should check branch and
-     * checkout if necessary.
-     *
-     * @param gitUrl the git url
-     * @param gitDirectory the git directory
-     * @return the string
-     * @throws KlabException the klab exception
-     */
-    public static String requireUpdatedRepository(String gitUrl, File gitDirectory) throws KlabException {
+	/**
+	 * If a Git repository with the repository name corresponding to the URL exists
+	 * in gitDirectory, pull it from origin; otherwise clone it from the passed Git
+	 * URL.
+	 * 
+	 * TODO: Assumes branch is already set correctly if repo is pulled. Should check
+	 * branch and checkout if necessary.
+	 *
+	 * @param gitUrl
+	 *            the git url
+	 * @param gitDirectory
+	 *            the git directory
+	 * @return the string
+	 * @throws KlabException
+	 *             the klab exception
+	 */
+	public static String requireUpdatedRepository(String gitUrl, File gitDirectory) throws KlabException {
 
-        String repositoryName = MiscUtilities.getURLBaseName(gitUrl);
+		String repositoryName = MiscUtilities.getURLBaseName(gitUrl);
 
-        File repoDir = new File(gitDirectory + File.separator + repositoryName);
-        File gitDir = new File(repoDir + File.separator + ".git");
+		File repoDir = new File(gitDirectory + File.separator + repositoryName);
+		File gitDir = new File(repoDir + File.separator + ".git");
 
-        if (gitDir.exists() && gitDir.isDirectory() && gitDir.canRead()) {
-            pull(repoDir);
-            /*
-             * TODO check branch and switch/pull if necessary
-             */
-        } else {
-            clone(gitUrl, gitDirectory, true);
-        }
+		if (gitDir.exists() && gitDir.isDirectory() && gitDir.canRead() && repoDir.exists()) {
 
-        return repositoryName;
-    }
+			pull(repoDir);
+			/*
+			 * TODO check branch and switch/pull if necessary
+			 */
+		} else {
+			if (gitDir.exists()) {
+				FileUtils.deleteQuietly(gitDir);
+			}
+			clone(gitUrl, gitDirectory, true);
+		}
 
-    /**
-     * Checks if is remote git URL.
-     *
-     * @param string the string
-     * @return a boolean.
-     */
-    public static boolean isRemoteGitURL(String string) {
-        return string.startsWith("http:") || string.startsWith("git:") || string.startsWith("https:")
-                || string.startsWith("git@");
-    }
-    
-    /**
-     * The main method.
-     *
-     * @param args the arguments
-     * @throws Exception the exception
-     */
-    public static void main(String[] args) throws Exception {
-        String u = requireUpdatedRepository("git@bitbucket.org:ariesteam/im.data.git#bfo", new File(System.getProperty("user.home")));
-        System.out.println("Got repo " + u);
-    }
+		return repositoryName;
+	}
+
+	/**
+	 * Checks if is remote git URL.
+	 *
+	 * @param string
+	 *            the string
+	 * @return a boolean.
+	 */
+	public static boolean isRemoteGitURL(String string) {
+		return string.startsWith("http:") || string.startsWith("git:") || string.startsWith("https:")
+				|| string.startsWith("git@");
+	}
+
+	/**
+	 * The main method.
+	 *
+	 * @param args
+	 *            the arguments
+	 * @throws Exception
+	 *             the exception
+	 */
+	public static void main(String[] args) throws Exception {
+		String u = requireUpdatedRepository("git@bitbucket.org:ariesteam/im.data.git#bfo",
+				new File(System.getProperty("user.home")));
+		System.out.println("Got repo " + u);
+	}
 
 }
