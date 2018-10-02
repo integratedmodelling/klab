@@ -83,19 +83,23 @@ public enum Extensions implements IExtensionService {
         /*
          * TODO store knowledge for later processing
          */
+        int n = 0;
         ResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
         try {
             for (Resource res : patternResolver
                     .getResources("/" + cls.getPackage().getName().replaceAll("\\.", "/") + "/*.kdl")) {
                 try (InputStream input = res.getInputStream()) {
-                    declareServices(ret, Dataflows.INSTANCE.declare(input));
+                    n += declareServices(ret, Dataflows.INSTANCE.declare(input));
                 }
             }
         } catch (Throwable e) {
             throw new KlabValidationException(e);
         }
 
-//        /*
+        Logging.INSTANCE.info(n + " services read from " + ret.getName());
+
+        
+        //        /*
 //         * ingest all .kdl files in the component's path
 //         */
 //        for (String kdl : new Reflections(cls.getPackage().getName(), new ResourcesScanner())
@@ -152,14 +156,17 @@ public enum Extensions implements IExtensionService {
         return ret;
     }
 
-    private void declareServices(org.integratedmodelling.klab.engine.extensions.Component component, IKdlDataflow declaration) {
+    private int declareServices(org.integratedmodelling.klab.engine.extensions.Component component, IKdlDataflow declaration) {
 
         String namespace = declaration.getPackageName();
+        int n = 0;
         for (IKdlActuator actuator : declaration.getActuators()) {
             Prototype prototype = new Prototype(actuator, namespace);
             component.addService(prototype);
             prototypes.put(prototype.getName(), prototype);
+            n++;
         }
+        return n;
     }
 
     /**
