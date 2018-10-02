@@ -164,7 +164,6 @@ public enum Klab implements IRuntimeService {
 
 		Set<BeanDefinition> beans = provider.findCandidateComponents(packageId);
 		for (BeanDefinition bd : beans) {
-
 			for (Class<? extends Annotation> ah : annotationHandlers.keySet()) {
 				try {
 					Class<?> cls = Class.forName(bd.getBeanClassName());
