@@ -77,7 +77,7 @@ public interface ICertificate {
 		HUB
 	}
 
-	public static final String DEFAULT_ENGINE_CERTIFICATE_FILENAME = "engine.cert";
+	public static final String DEFAULT_ENGINE_CERTIFICATE_FILENAME = "klab.cert";
 	public static final String DEFAULT_NODE_CERTIFICATE_FILENAME = "node.cert";
 	public static final String DEFAULT_HUB_CERTIFICATE_FILENAME = "hub.cert";
 
@@ -90,7 +90,7 @@ public interface ICertificate {
 	public static final String KEY_HUBNAME = "klab.hubname";
 	public static final String KEY_URL = "klab.url";
 	public static final String KEY_SIGNATURE = "klab.signature";
-	public static final String KEY_SERVER = "klab.partner.hub";
+	public static final String KEY_PARTNER_HUB = "klab.partner.hub";
 	public static final String KEY_PARTNER_NAME = "klab.partner.name";
 	public static final String KEY_PARTNER_EMAIL = "klab.partner.email";
 	public static final String KEY_CERTIFICATE = "klab.certificate";

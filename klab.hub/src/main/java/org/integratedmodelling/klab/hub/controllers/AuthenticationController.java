@@ -1,13 +1,18 @@
 package org.integratedmodelling.klab.hub.controllers;
 
+import java.security.Principal;
 import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.auth.EngineUser;
+import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
 import org.integratedmodelling.klab.hub.authentication.GroupManager;
 import org.integratedmodelling.klab.hub.network.NetworkManager;
@@ -19,6 +24,8 @@ import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
 import org.integratedmodelling.klab.rest.NodeAuthenticationResponse;
+import org.integratedmodelling.klab.rest.PingResponse;
+import org.integratedmodelling.klab.utils.IPUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,7 +44,7 @@ public class AuthenticationController {
 
 	@Autowired
 	NetworkManager networkManager;
-	
+
 	@Autowired
 	GroupManager groupManager;
 
@@ -114,6 +121,21 @@ public class AuthenticationController {
 			return new ResponseEntity<NodeAuthenticationResponse>(response, HttpStatus.OK);
 		}
 		return new ResponseEntity<String>("Unauthorized", HttpStatus.UNAUTHORIZED);
+	}
+
+	@RequestMapping(value = API.PING, method = { RequestMethod.GET, RequestMethod.HEAD }, produces = "application/json")
+	@ResponseBody
+	public PingResponse ping(Principal user, HttpServletRequest request) {
+
+		PingResponse ret = new PingResponse();
+		Runtime runtime = Runtime.getRuntime();
+		ret.setVersion(Version.CURRENT);
+		ret.setTotalMemory(runtime.totalMemory() / 1048576);
+		ret.setFreeMemory(runtime.freeMemory() / 1048576);
+		ret.setProcessorCount(runtime.availableProcessors());
+		ret.setRequestTime(System.currentTimeMillis());
+
+		return ret;
 	}
 
 }
