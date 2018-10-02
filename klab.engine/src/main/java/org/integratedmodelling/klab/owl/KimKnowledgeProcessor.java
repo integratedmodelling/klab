@@ -236,7 +236,11 @@ public enum KimKnowledgeProcessor {
 		if (concept.getRange() != null) {
 			ret.setRange(concept.getRange());
 		}
-
+		
+		for (IKimConcept role : concept.getAssignedRoles()) {
+			ret.getAssignedRoles().add(declareInternal(role, monitor));
+		}
+		
 		ret.setOptional(concept.isOptional());
 		ret.setGeneric(concept.isAbstractObservable());
 
@@ -382,7 +386,7 @@ public enum KimKnowledgeProcessor {
 		for (IKimConcept c : concept.getRoles()) {
 			IConcept role = declareInternal(c, monitor);
 			if (role != null) {
-				builder.as(role);
+				builder.withRole(role);
 			}
 		}
 

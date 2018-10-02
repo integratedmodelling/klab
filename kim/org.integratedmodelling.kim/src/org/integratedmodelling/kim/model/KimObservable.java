@@ -1,5 +1,8 @@
 package org.integratedmodelling.kim.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -41,6 +44,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 	private IKimConcept aggregator = null;
 	private String modelReference;
 	private IArtifact.Type nonSemanticType = null;
+	private List<IKimConcept> assignedRoles = new ArrayList<>();
 
 	@Override
 	public IArtifact.Type getNonSemanticType() {
@@ -138,8 +142,13 @@ public class KimObservable extends KimStatement implements IKimObservable {
 				ret.aggregator = by;
 			}
 		}
+		
 		if (declaration.getDownTo() != null) {
 			ret.downTo = KimConcept.normalize(declaration.getDownTo(), parent);
+		}
+
+		if (declaration.getRole() != null) {
+			ret.assignedRoles.add(KimConcept.normalize(declaration.getRole(), parent));
 		}
 
 		return ret;
@@ -286,5 +295,10 @@ public class KimObservable extends KimStatement implements IKimObservable {
 
 	public void setAggregator(IKimConcept aggregator) {
 		this.aggregator = aggregator;
+	}
+
+	@Override
+	public List<IKimConcept> getAssignedRoles() {
+		return assignedRoles;
 	}
 }

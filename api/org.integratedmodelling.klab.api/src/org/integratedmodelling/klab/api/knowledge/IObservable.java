@@ -128,11 +128,13 @@ public interface IObservable extends IConcept, IResolvable {
 		Builder to(IConcept caused);
 
 		/**
+		 * Add roles that become part of the semantics of the observable (Role Trait ...
+		 * Observable)
 		 * 
 		 * @param role
 		 * @return the same builder this was called on, for chaining calls
 		 */
-		Builder as(IConcept role);
+		Builder withRole(IConcept role);
 
 		/**
 		 * Contextualize the concept built so far to the passed context one. Will choose
@@ -267,9 +269,9 @@ public interface IObservable extends IConcept, IResolvable {
 		 * @return
 		 */
 		Collection<IConcept> getRemoved();
-		
+
 	}
-	
+
 	/**
 	 * Get a builder that will rebuild this observable. Use to build alternative
 	 * observables with added or removed components.
@@ -277,7 +279,6 @@ public interface IObservable extends IConcept, IResolvable {
 	 * @return
 	 */
 	Builder getBuilder();
-	
 
 	/**
 	 * Each observable must be able to quickly assess the type of the observation
@@ -333,7 +334,7 @@ public interface IObservable extends IConcept, IResolvable {
 	 * @return the 'by' aggregator concept, if any was specified.
 	 */
 	IConcept getAggregator();
-	
+
 	/**
 	 * <p>
 	 * getRange.
@@ -374,15 +375,15 @@ public interface IObservable extends IConcept, IResolvable {
 	 * @return the inherent type
 	 */
 	IConcept getInherentType();
-	
+
 	/**
-	 * The comparison type, if any, for observables that admit it - values, proportions and ratios. This is only
-	 * certainly not null for ratios.
+	 * The comparison type, if any, for observables that admit it - values,
+	 * proportions and ratios. This is only certainly not null for ratios.
 	 * 
 	 * @return the inherent type
 	 */
 	IConcept getComparisonType();
-	
+
 	/**
 	 * The caused ('causing') type.
 	 * 
@@ -453,14 +454,25 @@ public interface IObservable extends IConcept, IResolvable {
 	 * @return optional status
 	 */
 	boolean isOptional();
-	
+
 	/**
 	 * If this observable is the subjective point of view of a subject, return that
-	 * subject. A null return value implies the observer is the owner of the session,
-	 * i.e. what we can most legitimately call the "objective" observer for the
-	 * observable.
+	 * subject. A null return value implies the observer is the owner of the
+	 * session, i.e. what we can most legitimately call the "objective" observer for
+	 * the observable.
+	 * 
 	 * @return
 	 */
 	ISubject getObserver();
+
+	/**
+	 * One or more roles can be 'assigned' to an observable (using the 'as' clause,
+	 * currently limited to one role). If these are specified, the semantics of the
+	 * observable remains unaffected, but the observable may be selected for
+	 * specific roles within a dependency or an observation.
+	 * 
+	 * @return
+	 */
+	Collection<IConcept> getAssignedRoles();
 
 }

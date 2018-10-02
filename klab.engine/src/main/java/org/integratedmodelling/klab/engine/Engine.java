@@ -41,7 +41,6 @@ import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
 import org.integratedmodelling.klab.api.extensions.KimToolkit;
-import org.integratedmodelling.klab.api.extensions.KlabBatchRunner;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.runtime.IScript;
@@ -584,31 +583,6 @@ public class Engine extends Server implements IEngine, UserDetails {
     private void scanClasspath() throws KlabException {
 
         registerCommonAnnotations();
-
-        // // TODO reinstate whatever must be kept plus any data services and subsystems
-        // Klab.INSTANCE.registerAnnotationHandler(SubjectType.class, new
-        // AnnotationHandler() {
-        // @SuppressWarnings("unchecked")
-        // @Override
-        // public void processAnnotatedClass(Annotation annotation, Class<?> cls) {
-        // String concept = ((SubjectType) annotation).value();
-        // if (ISubject.class.isAssignableFrom(cls)) {
-        // Observations.INSTANCE.registerSubjectClass(concept, (Class<? extends
-        // ISubject>) cls);
-        // }
-        // }
-        // });
-
-        Klab.INSTANCE.registerAnnotationHandler(KlabBatchRunner.class, new AnnotationHandler() {
-
-            @Override
-            public void processAnnotatedClass(Annotation annotation, Class<?> cls) {
-                // String id = ((KlabBatchRunner) annotation).id();
-                // if (IBatchRunner.class.isAssignableFrom(cls)) {
-                // KLAB.registerRunnerClass(id, (Class<? extends IBatchRunner>) cls);
-                // }
-            }
-        });
 
         Klab.INSTANCE.registerAnnotationHandler(KimToolkit.class, new AnnotationHandler() {
 
