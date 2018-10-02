@@ -42,7 +42,9 @@ public class SearchMatch {
 	 */
 	public SearchMatch(String matchId, String matchName, String matchDescription, IKimConcept.Type semanticType) {
 		this.mainSemanticType = semanticType;
-		this.semanticType.add(semanticType);
+		if (semanticType != null) {
+			this.semanticType.add(semanticType);
+		}
 		this.matchType = Type.PRESET_OBSERVABLE;
 		this.id = matchId;
 		this.name = matchName;

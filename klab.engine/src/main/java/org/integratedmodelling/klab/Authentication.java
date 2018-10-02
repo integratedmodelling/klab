@@ -318,7 +318,9 @@ public enum Authentication implements IAuthenticationService {
 		// TODO extract from user's groups, not defaults!
 		if (defaultGroups != null) {
 			for (String groupId : defaultGroups.keySet()) {
-				ret.addAll(defaultGroups.get(groupId).getObservables());
+				for (ObservableReference observable : defaultGroups.get(groupId).getObservables()) {
+					ret.add(observable);
+				}
 			}
 		}
 		return ret;
