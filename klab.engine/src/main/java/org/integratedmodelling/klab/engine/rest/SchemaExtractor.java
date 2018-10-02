@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.Path;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.type.filter.AssignableTypeFilter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -47,77 +51,80 @@ public class SchemaExtractor {
 
 		List<Class<?>> ret = new ArrayList<>();
 		Map<Class<?>, JsonNode> schema = extractResourceSchema(packageId);
-//		Graph<Class<?>, DefaultEdge> graph = new DefaultDirectedGraph<>(DefaultEdge.class);
-//		for (Class<?> cls : schema.keySet()) {
-//
-//			try {
-//				graph.addVertex(cls);
-//				for (Field field : cls.getDeclaredFields()) {
-//					Type type = field.getGenericType();
-//					Class<?> fclass = null;
-//					if (type instanceof ParameterizedType) {
-//						if (Map.class.isAssignableFrom(field.getType())) {
-//							Type dtype = ((ParameterizedType) type).getActualTypeArguments()[1];
-//							if (dtype instanceof WildcardType) {
-//								dtype = ((WildcardType) dtype).getUpperBounds()[0];
-//							}
-//							fclass = (Class<?>) dtype;
-//						} else {
-//							Type dtype = ((ParameterizedType) type).getActualTypeArguments()[0];
-//							if (dtype instanceof WildcardType) {
-//								dtype = ((WildcardType) dtype).getUpperBounds()[0];
-//							}
-//							fclass = (Class<?>) dtype;
-//						}
-//					} else {
-//						fclass = (Class<?>) type;
-//					}
-//					if (fclass.getCanonicalName().startsWith(packageId)) {
-//						graph.addVertex(fclass);
-//						graph.addEdge(fclass, cls);
-//					}
-//				}
-//			} catch (Exception e) {
-//				throw new KlabInternalErrorException(e);
-//			}
-//		}
-//
-//		CycleDetector<Class<?>, DefaultEdge> cycleDetector = new CycleDetector<>(graph);
-//
-//		if (cycleDetector.detectCycles()) {
-//			Iterator<Class<?>> iterator;
-//			Set<Class<?>> cycleVertices;
-//			Set<Class<?>> subCycle;
-//			Class<?> cycle;
-//
-//			// Get all vertices involved in cycles.
-//			cycleVertices = cycleDetector.findCycles();
-//
-//			// Loop through vertices trying to find disjoint cycles.
-//			while (!cycleVertices.isEmpty()) {
-////				System.out.println("Cycle:");
-//
-//				// Get a vertex involved in a cycle.
-//				iterator = cycleVertices.iterator();
-//				cycle = iterator.next();
-//
-//				// Get all vertices involved with this vertex.
-//				subCycle = cycleDetector.findCyclesContainingVertex(cycle);
-//				for (Class<?> sub : subCycle) {
-////					System.out.println("   " + sub);
-//					// Remove vertex so that this cycle is not encountered again
-//					cycleVertices.remove(sub);
-//				}
-//			}
-//		}
-//
-//		TopologicalOrderIterator<Class<?>, DefaultEdge> iterator = new TopologicalOrderIterator<>(graph);
-//		for (; iterator.hasNext();) {
-//			ret.add(iterator.next());
-//		}
+		// Graph<Class<?>, DefaultEdge> graph = new
+		// DefaultDirectedGraph<>(DefaultEdge.class);
+		// for (Class<?> cls : schema.keySet()) {
+		//
+		// try {
+		// graph.addVertex(cls);
+		// for (Field field : cls.getDeclaredFields()) {
+		// Type type = field.getGenericType();
+		// Class<?> fclass = null;
+		// if (type instanceof ParameterizedType) {
+		// if (Map.class.isAssignableFrom(field.getType())) {
+		// Type dtype = ((ParameterizedType) type).getActualTypeArguments()[1];
+		// if (dtype instanceof WildcardType) {
+		// dtype = ((WildcardType) dtype).getUpperBounds()[0];
+		// }
+		// fclass = (Class<?>) dtype;
+		// } else {
+		// Type dtype = ((ParameterizedType) type).getActualTypeArguments()[0];
+		// if (dtype instanceof WildcardType) {
+		// dtype = ((WildcardType) dtype).getUpperBounds()[0];
+		// }
+		// fclass = (Class<?>) dtype;
+		// }
+		// } else {
+		// fclass = (Class<?>) type;
+		// }
+		// if (fclass.getCanonicalName().startsWith(packageId)) {
+		// graph.addVertex(fclass);
+		// graph.addEdge(fclass, cls);
+		// }
+		// }
+		// } catch (Exception e) {
+		// throw new KlabInternalErrorException(e);
+		// }
+		// }
+		//
+		// CycleDetector<Class<?>, DefaultEdge> cycleDetector = new
+		// CycleDetector<>(graph);
+		//
+		// if (cycleDetector.detectCycles()) {
+		// Iterator<Class<?>> iterator;
+		// Set<Class<?>> cycleVertices;
+		// Set<Class<?>> subCycle;
+		// Class<?> cycle;
+		//
+		// // Get all vertices involved in cycles.
+		// cycleVertices = cycleDetector.findCycles();
+		//
+		// // Loop through vertices trying to find disjoint cycles.
+		// while (!cycleVertices.isEmpty()) {
+		//// System.out.println("Cycle:");
+		//
+		// // Get a vertex involved in a cycle.
+		// iterator = cycleVertices.iterator();
+		// cycle = iterator.next();
+		//
+		// // Get all vertices involved with this vertex.
+		// subCycle = cycleDetector.findCyclesContainingVertex(cycle);
+		// for (Class<?> sub : subCycle) {
+		//// System.out.println(" " + sub);
+		// // Remove vertex so that this cycle is not encountered again
+		// cycleVertices.remove(sub);
+		// }
+		// }
+		// }
+		//
+		// TopologicalOrderIterator<Class<?>, DefaultEdge> iterator = new
+		// TopologicalOrderIterator<>(graph);
+		// for (; iterator.hasNext();) {
+		// ret.add(iterator.next());
+		// }
 
 		ret.addAll(schema.keySet());
-		
+
 		return ret;
 	}
 
@@ -178,14 +185,27 @@ public class SchemaExtractor {
 	private static List<Class<?>> scanPackage(String packageId) {
 
 		List<Class<?>> ret = new ArrayList<>();
+		ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
+		provider.addIncludeFilter(new AssignableTypeFilter(Object.class));
+		Set<BeanDefinition> beans = provider.findCandidateComponents(packageId);
 		try {
-			for (ClassInfo cls : ClassPath.from(SchemaExtractor.class.getClassLoader())
-					.getTopLevelClassesRecursive(packageId)) {
-				ret.add(Class.forName(cls.getName()));
+			for (BeanDefinition bd : beans) {
+				ret.add(Class.forName(bd.getBeanClassName()));
 			}
 		} catch (Throwable e) {
 			throw new KlabInternalErrorException(e);
 		}
+		//
+		//
+		//
+		// try {
+		// for (ClassInfo cls : ClassPath.from(SchemaExtractor.class.getClassLoader())
+		// .getTopLevelClassesRecursive(packageId)) {
+		// ret.add(Class.forName(cls.getName()));
+		// }
+		// } catch (Throwable e) {
+		// throw new KlabInternalErrorException(e);
+		// }
 		return ret;
 	}
 
