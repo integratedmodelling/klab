@@ -42,7 +42,7 @@ public class AnonymousEngineCertificate implements ICertificate {
 	@Override
 	public String getProperty(String property) {
 		switch (property) {
-		case KEY_SERVER:
+		case KEY_PARTNER_HUB:
 			return "http://127.0.0.1:8284/klab";
 		case KEY_CERTIFICATE_LEVEL:
 			return ICertificate.Level.ANONYMOUS.name();

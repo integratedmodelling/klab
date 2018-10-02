@@ -251,7 +251,7 @@ public class HubAuthenticationManager {
 		this.partner = new Partner(partnerIdentity);
 		this.hubReference.setPartner(partnerIdentity);
 
-		if (certificate.getProperty(ICertificate.KEY_SERVER) != null) {
+		if (certificate.getProperty(ICertificate.KEY_PARTNER_HUB) != null) {
 			/*
 			 * TODO if we have a parent hub, handshake so it can serve our nodes.
 			 */

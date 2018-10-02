@@ -201,7 +201,7 @@ public enum Authentication implements IAuthenticationService {
 			return new KlabUser(Authentication.ANONYMOUS_USER_ID, null);
 		}
 
-		String authenticationServer = certificate.getProperty(KlabCertificate.KEY_SERVER);
+		String authenticationServer = certificate.getProperty(KlabCertificate.KEY_PARTNER_HUB);
 
 		if (authenticationServer == null) {
 			Logging.INSTANCE.warn("certificate has no hub address");
@@ -213,7 +213,7 @@ public enum Authentication implements IAuthenticationService {
 				Logging.INSTANCE.warn("local hub unavailable: continuing offline");
 			}
 		}
-
+		
 		if (authenticationServer != null) {
 
 			Logging.INSTANCE.info("authenticating " + certificate.getProperty(KlabCertificate.KEY_USERNAME)

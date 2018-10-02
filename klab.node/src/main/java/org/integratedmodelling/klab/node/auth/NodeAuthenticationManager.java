@@ -84,7 +84,7 @@ public enum NodeAuthenticationManager {
 
         String serverHub = authenticatingHub;
         if (serverHub == null) {
-            serverHub = certificate.getProperty(KlabCertificate.KEY_SERVER);
+            serverHub = certificate.getProperty(KlabCertificate.KEY_PARTNER_HUB);
         }
 
         if (serverHub == null) {

@@ -1,14 +1,8 @@
 package org.integratedmodelling.klab.hub;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.annotation.PreDestroy;
 
-import org.integratedmodelling.klab.engine.EngineStartupOptions;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
@@ -30,23 +24,26 @@ import org.springframework.stereotype.Component;
 public class HubApplication {
 
 	// defaults
-	private static int port = 8284;
-	private static String contextPath = "/klab";
-
+//	private static int port = 8284;
+//	private static String contextPath = "/klab";
+	private static Hub hub;
+	
 	public void run(String[] args) {
-		EngineStartupOptions options = new EngineStartupOptions();
+		HubStartupOptions options = new HubStartupOptions();
 		options.initialize(args);
-		Map<String, Object> props = new HashMap<>();
-		props.put("server.port", "" + port);
-		props.put("server.servlet.contextPath", contextPath);
-		SpringApplication app = new SpringApplication(HubApplication.class);
-		app.setDefaultProperties(props);
-		/*this.context = */app.run(options.getArguments());
+		hub = Hub.start(options);
+//		Map<String, Object> props = new HashMap<>();
+//		props.put("server.port", "" + port);
+//		props.put("server.servlet.contextPath", contextPath);
+//		SpringApplication app = new SpringApplication(HubApplication.class);
+//		app.setDefaultProperties(props);
+//		/*this.context = */app.run(options.getArguments());
 
 	}
 
 	@PreDestroy
 	public void shutdown() {
+		hub.stop();
 	}
 
 	public static void main(String args[]) {

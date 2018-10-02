@@ -125,6 +125,7 @@ public class Main implements ApplicationListener<ApplicationReadyEvent> {
 
 		engine = Engine.start(options);
 		session = engine.createSession().setDefault();
+		System.out.println("DEFAULT SESSION is " + session.getId());
 
 		SpringApplication app = new SpringApplication(Main.class);
 		app.setDefaultProperties(props);

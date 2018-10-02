@@ -210,9 +210,10 @@ public class KlabCertificate implements ICertificate {
 					this.properties.setProperty(KEY_CERTIFICATE_LEVEL, ICertificate.Level.LEGACY.name());
 
 					/*
-					 * TODO add KEY_SERVER to point to legacy handler hub. For now leave blank,
-					 * which will force it to try a local test hub before going offline.
+					 * Default hub address. TODO must be https. Blank or no response will try a
+					 * local test hub before going offline.
 					 */
+					this.properties.setProperty(KlabCertificate.KEY_PARTNER_HUB, "http://www.integratedmodelling.org/klab");
 
 					File out = new File(Configuration.INSTANCE.getDataPath() + File.separator
 							+ ICertificate.DEFAULT_ENGINE_CERTIFICATE_FILENAME);
