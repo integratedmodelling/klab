@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
+import org.integratedmodelling.klab.api.extensions.IServiceProvider;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
@@ -80,6 +81,10 @@ public enum Extensions implements IExtensionService {
 
         Logging.INSTANCE.info("Registering component " + ret.getName() + " version " + ret.getVersion());
 
+        if (IServiceProvider.class.isAssignableFrom(cls)) {
+            // TODO
+        }
+        
         /*
          * TODO store knowledge for later processing
          */
