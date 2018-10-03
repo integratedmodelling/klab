@@ -1,17 +1,18 @@
 package org.integratedmodelling.klab.components.geospace;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.geotools.factory.Hints;
-import org.geotools.referencing.ReferencingFactoryFinder;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.Component;
+import org.integratedmodelling.klab.api.extensions.IServiceProvider;
 import org.integratedmodelling.klab.api.extensions.component.Initialize;
-import org.opengis.referencing.crs.CRSAuthorityFactory;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 
 @Component(id = "geospace", version = Version.CURRENT)
-public class Geospace {
+public class Geospace implements IServiceProvider {
 
 	public static GeometryFactory gFactory = new GeometryFactory();
 
@@ -26,13 +27,19 @@ public class Geospace {
 		 */
 		System.setProperty("org.geotools.referencing.forceXY", "true");
 		Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
-		
+
 	}
 
 	@Initialize
 	public void initialize() {
 		// TODO create the desired geometry factory
 		// TODO set up defaults for projections etc.
+	}
+
+	@Override
+	public Collection<String> getServiceDefinitions() {
+		// TODO Auto-generated method stub
+		return Arrays.asList(new String[] { "extents.kdl", "features.kdl", "osm.kdl", "services.kdl" });
 	}
 
 	// void registerAdditionalCRS() throws KlabException {

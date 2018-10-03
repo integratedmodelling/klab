@@ -50,254 +50,250 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public enum Extensions implements IExtensionService {
 
-    /**
-     * The global instance singleton.
-     */
-    INSTANCE;
+	/**
+	 * The global instance singleton.
+	 */
+	INSTANCE;
 
-    public static final String DEFAULT_EXPRESSION_LANGUAGE = "groovy";
+	public static final String DEFAULT_EXPRESSION_LANGUAGE = "groovy";
 
-    Map<String, IComponent>    components                  = Collections.synchronizedMap(new HashMap<>());
-    Map<String, Prototype>     prototypes                  = Collections.synchronizedMap(new HashMap<>());
+	Map<String, IComponent> components = Collections.synchronizedMap(new HashMap<>());
+	Map<String, Prototype> prototypes = Collections.synchronizedMap(new HashMap<>());
 
-    @Override
-    public Collection<IComponent> getComponents() {
-        return components.values();
-    }
+	@Override
+	public Collection<IComponent> getComponents() {
+		return components.values();
+	}
 
-    @Override
-    public org.integratedmodelling.klab.engine.extensions.Component getComponent(String componentId) {
-        return (org.integratedmodelling.klab.engine.extensions.Component) components.get(componentId);
-    }
+	@Override
+	public org.integratedmodelling.klab.engine.extensions.Component getComponent(String componentId) {
+		return (org.integratedmodelling.klab.engine.extensions.Component) components.get(componentId);
+	}
 
-    @Override
-    public Prototype getPrototype(String service) {
-        return prototypes.get(service);
-    }
+	@Override
+	public Prototype getPrototype(String service) {
+		return prototypes.get(service);
+	}
 
-    public org.integratedmodelling.klab.engine.extensions.Component registerComponent(Component annotation, Class<?> cls) {
+	public org.integratedmodelling.klab.engine.extensions.Component registerComponent(Component annotation,
+			Class<?> cls) {
 
-        org.integratedmodelling.klab.engine.extensions.Component ret = new org.integratedmodelling.klab.engine.extensions.Component(annotation, cls);
+		org.integratedmodelling.klab.engine.extensions.Component ret = new org.integratedmodelling.klab.engine.extensions.Component(
+				annotation, cls);
 
-        Logging.INSTANCE.info("Registering component " + ret.getName() + " version " + ret.getVersion());
+		Logging.INSTANCE.info("Registering component " + ret.getName() + " version " + ret.getVersion());
 
-        if (IServiceProvider.class.isAssignableFrom(cls)) {
-            // TODO
-        }
-        
-        /*
-         * TODO store knowledge for later processing
-         */
-        int n = 0;
-        ResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
-        try {
-             for (Resource res : patternResolver
-                    .getResources(/*"/" + */"classpath:" + cls.getPackage().getName().replaceAll("\\.", "/")
-                            + "/**/*.kdl")) {
-                try (InputStream input = res.getInputStream()) {
-                    n += declareServices(ret, Dataflows.INSTANCE.declare(input));
-                }
-            }
-        } catch (Throwable e) {
-            throw new KlabValidationException(e);
-        }
+		ret.initialize(Klab.INSTANCE.getRootMonitor());
 
-        Logging.INSTANCE.info(n + " services read from " + ret.getName());
+		Logging.INSTANCE.info("Component " + ret.getName() + " initialized");
+	
+		/*
+		 * TODO store knowledge for later processing
+		 */
+		int n = 0;
+		ResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
+		try {
+			String pattern = /* "/" + */"classpath:" + cls.getPackage().getName().replaceAll("\\.", "/") + "/**/*.kdl";
+			for (Resource res : patternResolver.getResources(pattern)) {
+				try (InputStream input = res.getInputStream()) {
+					n += declareServices(ret, Dataflows.INSTANCE.declare(input));
+				}
+			}
+		} catch (Throwable e) {
+			throw new KlabValidationException(e);
+		}
 
-        // /*
-        // * ingest all .kdl files in the component's path
-        // */
-        // for (String kdl : new Reflections(cls.getPackage().getName(), new ResourcesScanner())
-        // .getResources(Pattern.compile(".*\\.kdl"))) {
-        // try (InputStream input = cls.getClassLoader().getResourceAsStream(kdl)) {
-        // declareServices(ret, Dataflows.INSTANCE.declare(input));
-        // } catch (Throwable e) {
-        // throw new KlabValidationException(e);
-        // }
-        // }
-        //
-        this.components.put(annotation.id(), ret);
+		Logging.INSTANCE.info(n + " services read from " + ret.getName());
 
-        return ret;
-    }
+		// /*
+		// * ingest all .kdl files in the component's path
+		// */
+		// for (String kdl : new Reflections(cls.getPackage().getName(), new
+		// ResourcesScanner())
+		// .getResources(Pattern.compile(".*\\.kdl"))) {
+		// try (InputStream input = cls.getClassLoader().getResourceAsStream(kdl)) {
+		// declareServices(ret, Dataflows.INSTANCE.declare(input));
+		// } catch (Throwable e) {
+		// throw new KlabValidationException(e);
+		// }
+		// }
+		//
+		this.components.put(annotation.id(), ret);
 
-    @Override
-    public Object callFunction(IServiceCall functionCall, IMonitor monitor) throws KlabException {
-        return callFunction(functionCall, Expression.emptyContext(monitor));
-    }
+		return ret;
+	}
 
-    public Object callFunction(IServiceCall functionCall, IComputationContext context) throws KlabException {
+	@Override
+	public Object callFunction(IServiceCall functionCall, IMonitor monitor) throws KlabException {
+		return callFunction(functionCall, Expression.emptyContext(monitor));
+	}
 
-        Object ret = null;
+	public Object callFunction(IServiceCall functionCall, IComputationContext context) throws KlabException {
 
-        Prototype prototype = getPrototype(functionCall.getName());
-        if (prototype == null) {
-            throw new KlabResourceNotFoundException("cannot find a function implementation for "
-                    + functionCall.getName());
-        }
+		Object ret = null;
 
-        Class<?> cls = prototype.getExecutorClass();
+		Prototype prototype = getPrototype(functionCall.getName());
+		if (prototype == null) {
+			throw new KlabResourceNotFoundException(
+					"cannot find a function implementation for " + functionCall.getName());
+		}
 
-        if (cls != null) {
-            if (IExpression.class.isAssignableFrom(cls)) {
-                try {
-                    IExpression expr = (IExpression) cls.getDeclaredConstructor().newInstance();
-                    ret = expr.eval(functionCall.getParameters(), context);
-                } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-                        | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-                    throw new KlabInternalErrorException(e);
-                }
-            } else if (IContextualizer.class.isAssignableFrom(cls)) {
-                try {
-                    ret = cls.getDeclaredConstructor().newInstance();
-                    // TODO initialize with the parameters and monitor
-                } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-                        | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-                    throw new KlabInternalErrorException(e);
-                }
-            }
-        }
+		Class<?> cls = prototype.getExecutorClass();
 
-        return ret;
-    }
+		if (cls != null) {
+			if (IExpression.class.isAssignableFrom(cls)) {
+				try {
+					IExpression expr = (IExpression) cls.getDeclaredConstructor().newInstance();
+					ret = expr.eval(functionCall.getParameters(), context);
+				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+						| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+					throw new KlabInternalErrorException(e);
+				}
+			} else if (IContextualizer.class.isAssignableFrom(cls)) {
+				try {
+					ret = cls.getDeclaredConstructor().newInstance();
+					// TODO initialize with the parameters and monitor
+				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+						| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+					throw new KlabInternalErrorException(e);
+				}
+			}
+		}
 
-    private int declareServices(org.integratedmodelling.klab.engine.extensions.Component component, IKdlDataflow declaration) {
+		return ret;
+	}
 
-        String namespace = declaration.getPackageName();
-        int n = 0;
-        for (IKdlActuator actuator : declaration.getActuators()) {
-            Prototype prototype = new Prototype(actuator, namespace);
-            component.addService(prototype);
-            prototypes.put(prototype.getName(), prototype);
-            n++;
-        }
-        return n;
-    }
+	private int declareServices(org.integratedmodelling.klab.engine.extensions.Component component,
+			IKdlDataflow declaration) {
 
-    /**
-     * Produce the javabean describing the passed service prototype.
-     * 
-     * @param prototype
-     * @return a new prototype descriptor
-     */
-    public ServicePrototype describePrototype(IPrototype prototype) {
-        ServicePrototype ret = new ServicePrototype();
-        ret.setName(prototype.getName());
-        ret.setDescription(prototype.getDescription());
-        for (Argument argument : prototype.listArguments()) {
-            ServicePrototype.Argument arg = new ServicePrototype.Argument();
-            arg.setDefaultValue(argument.getDefaultValue() == null ? null
-                    : argument.getDefaultValue().toString());
-            arg.setDescription(argument.getDescription());
-            arg.setName(argument.getName());
-            arg.setType(argument.getType());
-            arg.setRequired(!argument.isOptional());
-            arg.setFinal(argument.isFinal());
-            ret.getArguments().add(arg);
-        }
-        return ret;
-    }
+		String namespace = declaration.getPackageName();
+		int n = 0;
+		for (IKdlActuator actuator : declaration.getActuators()) {
+			Prototype prototype = new Prototype(actuator, namespace);
+			component.addService(prototype);
+			prototypes.put(prototype.getName(), prototype);
+			n++;
+		}
+		return n;
+	}
 
-    public void registerResourceAdapter(ResourceAdapter annotation, Class<?> cls) throws KlabException {
-        /*
-         * class must be a IResourceAdapter
-         */
-        if (IResourceAdapter.class.isAssignableFrom(cls)) {
-            try {
-                IResourceAdapter adapter = (IResourceAdapter) cls.getDeclaredConstructor().newInstance();
-                Resources.INSTANCE.registerResourceAdapter(annotation.type(), adapter);
-            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-                    | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-                throw new KlabInternalErrorException(e);
-            }
-            Logging.INSTANCE
-                    .info("Registered resource adapter " + cls.getCanonicalName() + " for '"
-                            + annotation.type() + "'");
-        } else {
-            throw new KlabValidationException(annotation.type()
-                    + ": resource adapter annotations must be used on IResourceAdapter classes");
-        }
-    }
+	/**
+	 * Produce the javabean describing the passed service prototype.
+	 * 
+	 * @param prototype
+	 * @return a new prototype descriptor
+	 */
+	public ServicePrototype describePrototype(IPrototype prototype) {
+		ServicePrototype ret = new ServicePrototype();
+		ret.setName(prototype.getName());
+		ret.setDescription(prototype.getDescription());
+		for (Argument argument : prototype.listArguments()) {
+			ServicePrototype.Argument arg = new ServicePrototype.Argument();
+			arg.setDefaultValue(argument.getDefaultValue() == null ? null : argument.getDefaultValue().toString());
+			arg.setDescription(argument.getDescription());
+			arg.setName(argument.getName());
+			arg.setType(argument.getType());
+			arg.setRequired(!argument.isOptional());
+			arg.setFinal(argument.isFinal());
+			ret.getArguments().add(arg);
+		}
+		return ret;
+	}
 
-    public void validateArguments(IPrototype prototype, Map<String, Object> arguments) {
-        // TODO
-    }
+	public void registerResourceAdapter(ResourceAdapter annotation, Class<?> cls) throws KlabException {
+		/*
+		 * class must be a IResourceAdapter
+		 */
+		if (IResourceAdapter.class.isAssignableFrom(cls)) {
+			try {
+				IResourceAdapter adapter = (IResourceAdapter) cls.getDeclaredConstructor().newInstance();
+				Resources.INSTANCE.registerResourceAdapter(annotation.type(), adapter);
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				throw new KlabInternalErrorException(e);
+			}
+			Logging.INSTANCE
+					.info("Registered resource adapter " + cls.getCanonicalName() + " for '" + annotation.type() + "'");
+		} else {
+			throw new KlabValidationException(
+					annotation.type() + ": resource adapter annotations must be used on IResourceAdapter classes");
+		}
+	}
 
-    public void exportPrototypes(File file) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            JavaType type = mapper.getTypeFactory()
-                    .constructMapLikeType(Map.class, String.class, Prototype.class);
-            mapper.writerFor(type).writeValue(file, this.prototypes);
-        } catch (IOException e) {
-            Logging.INSTANCE.error(e);
-        }
-    }
+	public void validateArguments(IPrototype prototype, Map<String, Object> arguments) {
+		// TODO
+	}
 
-    /**
-     * TODO! These are the Groovy/expr extension packages.
-     * 
-     * @return all the Kim imports
-     */
-    public Collection<Class<?>> getKimImports() {
-        List<Class<?>> ret = new ArrayList<>();
-        return ret;
-    }
+	public void exportPrototypes(File file) {
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			JavaType type = mapper.getTypeFactory().constructMapLikeType(Map.class, String.class, Prototype.class);
+			mapper.writerFor(type).writeValue(file, this.prototypes);
+		} catch (IOException e) {
+			Logging.INSTANCE.error(e);
+		}
+	}
 
-    public IExpression compileExpression(String expressionCode, String language)
-            throws KlabValidationException {
-        return getLanguageProcessor(language).compile(expressionCode, null);
-    }
+	/**
+	 * TODO! These are the Groovy/expr extension packages.
+	 * 
+	 * @return all the Kim imports
+	 */
+	public Collection<Class<?>> getKimImports() {
+		List<Class<?>> ret = new ArrayList<>();
+		return ret;
+	}
 
-    public IExpression compileExpression(String expressionCode, IComputationContext context, String language)
-            throws KlabValidationException {
-        return getLanguageProcessor(language).compile(expressionCode, context);
-    }
+	public IExpression compileExpression(String expressionCode, String language) throws KlabValidationException {
+		return getLanguageProcessor(language).compile(expressionCode, null);
+	}
 
-    public ILanguageProcessor getLanguageProcessor(String language) {
-        // TODO
-        return (language == null || language.equals(DEFAULT_EXPRESSION_LANGUAGE)) ? GroovyProcessor.INSTANCE
-                : null;
-    }
+	public IExpression compileExpression(String expressionCode, IComputationContext context, String language)
+			throws KlabValidationException {
+		return getLanguageProcessor(language).compile(expressionCode, context);
+	}
 
-    /**
-     * Check all possible values that may evaluate to true in a computable and
-     * return their logical result. Send an error through the monitor and return
-     * false if no such conversion is possible
-     * 
-     * @param condition
-     * @param context
-     * @return
-     */
-    public boolean callAsCondition(IComputableResource condition, IComputationContext context) {
-        if (condition.getLiteral() != null) {
-            if (condition.getLiteral() instanceof Boolean) {
-                return (Boolean) condition.getLiteral();
-            } else {
-                context.getMonitor()
-                        .error("cannot use value " + condition.getLiteral() + " as a logical value");
-            }
-        } else if (condition.getExpression() != null) {
-            IExpression expression = getLanguageProcessor(DEFAULT_EXPRESSION_LANGUAGE)
-                    .compile(condition.getExpression(), context);
-            Object o = expression.eval(context, context);
-            if (o instanceof Boolean) {
-                return (Boolean) o;
-            } else {
-                context.getMonitor()
-                        .error("cannot use expression result " + o + " from [" + condition.getExpression()
-                                + "] as a logical value");
-            }
-        } else if (condition.getServiceCall() != null) {
-            Object o = callFunction(condition.getServiceCall(), context);
-            if (o instanceof Boolean) {
-                return (Boolean) o;
-            } else {
-                context.getMonitor().error("cannot use result " + o + " from function call "
-                        + condition.getServiceCall().getName() + " as a logical value");
-            }
-        }
-        return false;
-    }
+	public ILanguageProcessor getLanguageProcessor(String language) {
+		// TODO
+		return (language == null || language.equals(DEFAULT_EXPRESSION_LANGUAGE)) ? GroovyProcessor.INSTANCE : null;
+	}
+
+	/**
+	 * Check all possible values that may evaluate to true in a computable and
+	 * return their logical result. Send an error through the monitor and return
+	 * false if no such conversion is possible
+	 * 
+	 * @param condition
+	 * @param context
+	 * @return
+	 */
+	public boolean callAsCondition(IComputableResource condition, IComputationContext context) {
+		if (condition.getLiteral() != null) {
+			if (condition.getLiteral() instanceof Boolean) {
+				return (Boolean) condition.getLiteral();
+			} else {
+				context.getMonitor().error("cannot use value " + condition.getLiteral() + " as a logical value");
+			}
+		} else if (condition.getExpression() != null) {
+			IExpression expression = getLanguageProcessor(DEFAULT_EXPRESSION_LANGUAGE)
+					.compile(condition.getExpression(), context);
+			Object o = expression.eval(context, context);
+			if (o instanceof Boolean) {
+				return (Boolean) o;
+			} else {
+				context.getMonitor().error("cannot use expression result " + o + " from [" + condition.getExpression()
+						+ "] as a logical value");
+			}
+		} else if (condition.getServiceCall() != null) {
+			Object o = callFunction(condition.getServiceCall(), context);
+			if (o instanceof Boolean) {
+				return (Boolean) o;
+			} else {
+				context.getMonitor().error("cannot use result " + o + " from function call "
+						+ condition.getServiceCall().getName() + " as a logical value");
+			}
+		}
+		return false;
+	}
 
 }
