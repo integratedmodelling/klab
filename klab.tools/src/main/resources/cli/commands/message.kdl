@@ -1,0 +1,32 @@
+/**
+ * This file defines the contract for all commands recognized in k.IM. Those with a
+ * 'class' specification also have handlers that perform specific tasks when the annotations
+ * are encountered.
+ */
+@klab 0.10.0
+@version 0.10.0
+@namespace send
+
+void info
+	"Send an info message through the session channel"
+{
+	class org.integratedmodelling.klab.clitool.console.commands.message.Logging
+}
+
+void warning
+	"Send a warning message through the session channel"
+{
+	class org.integratedmodelling.klab.clitool.console.commands.message.Logging
+}
+
+void error
+	"Send an error message through the session channel"
+{
+	class org.integratedmodelling.klab.clitool.console.commands.message.Logging
+}
+
+void debug
+	"Send a debug message through the session channel"
+{
+	class org.integratedmodelling.klab.clitool.console.commands.message.Logging
+}

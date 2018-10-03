@@ -1,0 +1,65 @@
+/**
+ * This file defines the contract for all commands recognized in k.IM. Those with a
+ * 'class' specification also have handlers that perform specific tasks when the annotations
+ * are encountered.
+ */
+@klab 0.10.0
+@version 0.10.0
+@namespace resource
+
+// create -adapter=XXX project file parameter=value*
+// publish urn
+// delete urn
+// list -owner (local|own|remote)
+
+void 'import'
+	"Import a resource from a file or by naming parameters."
+{
+	text project
+		"The project where to import the resource"
+
+	optional input adapter 
+		"The adapter to use for import. Leave unspecified to have k.LAB choose the most suitable."
+		default ""
+	
+	class org.integratedmodelling.klab.clitool.console.commands.resources.Import
+}
+
+void 'list'
+	"List the projects in the local workspace."
+{
+	
+	optional input verbose
+		"Verbose output: list resource details"
+		default false
+	
+	class org.integratedmodelling.klab.clitool.console.commands.resources.List
+}
+
+void clear
+	"Remove all resources in the local workspace."
+{
+	class org.integratedmodelling.klab.clitool.console.commands.resources.Clear
+}
+
+void info
+	"Print useful information and k.IM bindings for a resource."
+{
+	class org.integratedmodelling.klab.clitool.console.commands.resources.Info
+}
+
+void update
+	"Update resource parameters. Call with the URN as a first parameter, followed either
+	  by 'set', the value key and the value to be set (which may include spaces) or with 
+	  'key=value' pairs for setting multiple individual values."
+{
+	class org.integratedmodelling.klab.clitool.console.commands.resources.Update
+}
+
+void move
+	"Move resource(s) between projects. The last argument is a destination project name. If there is one
+	other argument and it's a project name, all resources from the first project are moved to the
+	second. Otherwise all arguments besides the last must be URNs and they are moved to the project."
+{
+	class org.integratedmodelling.klab.clitool.console.commands.resources.Move
+}

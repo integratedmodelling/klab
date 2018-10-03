@@ -1,0 +1,156 @@
+/**
+ * This file defines the contract for functions compiled by the runtime into dataflow calls. These
+ * are normally not seen by users.
+ */
+@klab 0.10.0
+@version 0.10.0
+@namespace klab.runtime
+
+contextualizer exec
+	"Return an appropriate contextualizer for an expression."
+{
+	
+	text code
+		"The code to be executed"
+		
+	optional input ifcondition 
+		"A condition to check before executing the code" 
+		default ""
+
+	optional input unlesscondition 
+		"A negative conditions to check before executing the code" 
+		default ""
+
+	optional input language 
+		"The language of the expression" 
+		default "groovy"
+		
+	class org.integratedmodelling.klab.components.runtime.contextualizers.ExpressionResolver
+
+}
+
+contextualizer literal
+	"Return a mediating resolver that wraps a state into another with compatible, but 
+	 different value semantics"
+{
+	
+	object val
+		"The value to be contextualized"
+				
+	class org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver
+
+}
+
+contextualizer convert
+	"Return a contextualizer for a literal value"
+{
+	
+	object 'from'
+		"The value mediator (unit, range, currency) describing the source values"
+
+	object 'to'
+		"The value mediator (unit, range, currency) describing the target values"
+				
+	class org.integratedmodelling.klab.components.runtime.contextualizers.ConversionResolver
+
+}
+
+contextualizer classify
+	"Return a state contextualizer that classifies its input into a concept"
+{
+	
+	object classification
+		"A classification stated in k.IM or built from a trait, class or metadata property"
+
+	class org.integratedmodelling.klab.components.runtime.contextualizers.ClassifyingStateResolver
+
+}
+
+contextualizer lookup
+	"Return a state contextualizer that classifies its inputs using a lookup table"
+{
+	
+	object table
+		"A table stated in k.IM"
+
+	list arguments 
+		"A set of arguments to match to the columns of the table"
+
+	class org.integratedmodelling.klab.components.runtime.contextualizers.LookupStateResolver
+
+}
+
+
+contextualizer resolve
+	"Return a resolver for a URN-specified resource"
+{
+	
+	text urn
+		"The URN pointing to the resource to be resolved and retrieved"
+				
+	class org.integratedmodelling.klab.components.runtime.contextualizers.UrnResolver
+}
+
+contextualizer instantiate
+	"Return an instantiator for a URN-specified resource"
+{
+	
+	text urn
+		"The URN pointing to the resource to be resolved and retrieved"
+				
+	class org.integratedmodelling.klab.components.runtime.contextualizers.UrnInstantiator
+
+}
+
+contextualizer distance
+	"Return a dereifying resolver turning a countable artifact into a spatial distance coverage"
+{
+	
+	text unit
+		"The length unit in which we want the distance"
+				
+	class org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.DistanceResolver
+
+}
+
+contextualizer presence
+	"Return a dereifying resolver turning a countable artifact into a presence coverage"
+{
+	class org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.PresenceResolver
+
+}
+
+contextualizer cast
+	"Return a state resolver that will convert a value from a type to another"
+{
+	
+	// TODO make this an enum
+	text source
+		"The source type of the value"
+
+	// TODO make this an enum
+	text destination
+		"The destination type of the value"
+				
+	class org.integratedmodelling.klab.components.runtime.contextualizers.CastingStateResolver
+}
+
+contextualizer density
+	"Return a dereifying resolver turning a countable artifact into a density coverage"
+{
+	
+	text unit
+		"The areal or volume unit on which we want the density distributed"
+				
+	class org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.DensityResolver
+}
+
+contextualizer conditional
+	"Wrap a function call that produces a contextualizer, created only if the passed condition evaluates to true."
+{
+	
+	text condition
+		"The condition for the contextualizer to be returned."
+				
+	class org.integratedmodelling.klab.components.runtime.contextualizers.wrappers.ConditionalContextualizer
+}

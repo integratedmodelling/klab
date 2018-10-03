@@ -1,0 +1,19 @@
+@klab 0.10.0
+@version 0.10.0
+@namespace klab.data
+
+contextualizer normalize {
+	
+	text artifact 
+		"Id of the artifact to normalize"
+		
+	class org.integratedmodelling.klab.data.transformations.NormalizingTransformation
+}
+
+contextualizer standardize {
+	
+	text artifact 
+		"Id of the artifact to standardize"
+		
+	class org.integratedmodelling.klab.data.transformations.StandardizingTransformation
+}

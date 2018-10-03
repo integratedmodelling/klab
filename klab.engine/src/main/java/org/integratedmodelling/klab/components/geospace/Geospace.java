@@ -6,13 +6,12 @@ import java.util.Collection;
 import org.geotools.factory.Hints;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.Component;
-import org.integratedmodelling.klab.api.extensions.IServiceProvider;
 import org.integratedmodelling.klab.api.extensions.component.Initialize;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 
 @Component(id = "geospace", version = Version.CURRENT)
-public class Geospace implements IServiceProvider {
+public class Geospace {
 
 	public static GeometryFactory gFactory = new GeometryFactory();
 
@@ -34,12 +33,6 @@ public class Geospace implements IServiceProvider {
 	public void initialize() {
 		// TODO create the desired geometry factory
 		// TODO set up defaults for projections etc.
-	}
-
-	@Override
-	public Collection<String> getServiceDefinitions() {
-		// TODO Auto-generated method stub
-		return Arrays.asList(new String[] { "extents.kdl", "features.kdl", "osm.kdl", "services.kdl" });
 	}
 
 	// void registerAdditionalCRS() throws KlabException {

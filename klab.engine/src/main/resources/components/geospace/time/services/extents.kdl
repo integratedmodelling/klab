@@ -1,0 +1,32 @@
+@klab 0.10.0
+@version 0.10.0
+
+temporalextent time
+	"Generates temporal extents to use in observations or to constrain models. Parameters
+	 enable the creation of single periods as well as regular and irregular time grids."
+{
+
+	optional input start 
+		"A string specifying the start of the temporal extent as a date in yyyy/mm/dd[:MM:SS] format."
+		default ""
+	
+	optional input end 
+		"A string specifying the end of the temporal extent as a date in yyyy/mm/dd[:MM:SS] format."
+		default ""
+
+	optional input step 
+		"A string specifying the linear resolution of the desired time grid as a number with duration
+		 units. Example: '1 day'."
+		default ""
+
+	optional input year
+		"A year is an integer number, interpreted as the period covering the entire year."
+		default 0
+		
+	optional input realtime
+		"If the realtime parameter is true, all time transition will be performed in real time from the 
+         start of contextualization."
+		default false
+		
+	class org.integratedmodelling.klab.components.time.services.Time
+}

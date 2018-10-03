@@ -2,7 +2,6 @@ package org.integratedmodelling.klab;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,10 +9,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
-import org.integratedmodelling.kdl.api.IKdlActuator;
-import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
@@ -22,7 +18,6 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
-import org.integratedmodelling.klab.api.extensions.IServiceProvider;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
@@ -37,13 +32,6 @@ import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.rest.ServicePrototype;
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -85,25 +73,12 @@ public enum Extensions implements IExtensionService {
 
 		ret.initialize(Klab.INSTANCE.getRootMonitor());
 
-		Logging.INSTANCE.info("Component " + ret.getName() + " initialized");
-	
-		/*
-		 * TODO store knowledge for later processing
-		 */
-		int n = 0;
-		ResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
-		try {
-			String pattern = /* "/" + */"classpath:" + cls.getPackage().getName().replaceAll("\\.", "/") + "/**/*.kdl";
-			for (Resource res : patternResolver.getResources(pattern)) {
-				try (InputStream input = res.getInputStream()) {
-					n += declareServices(ret, Dataflows.INSTANCE.declare(input));
-				}
-			}
-		} catch (Throwable e) {
-			throw new KlabValidationException(e);
+		for (IPrototype service : ret.getAPI()) {
+			prototypes.put(service.getName(), (Prototype)service);
 		}
-
-		Logging.INSTANCE.info(n + " services read from " + ret.getName());
+		
+		Logging.INSTANCE
+				.info("Component " + ret.getName() + " initialized: " + ret.getAPI().size() + " services provided");
 
 		// /*
 		// * ingest all .kdl files in the component's path
@@ -161,20 +136,6 @@ public enum Extensions implements IExtensionService {
 		}
 
 		return ret;
-	}
-
-	private int declareServices(org.integratedmodelling.klab.engine.extensions.Component component,
-			IKdlDataflow declaration) {
-
-		String namespace = declaration.getPackageName();
-		int n = 0;
-		for (IKdlActuator actuator : declaration.getActuators()) {
-			Prototype prototype = new Prototype(actuator, namespace);
-			component.addService(prototype);
-			prototypes.put(prototype.getName(), prototype);
-			n++;
-		}
-		return n;
 	}
 
 	/**

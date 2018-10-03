@@ -1,0 +1,9 @@
+@klab 0.10.0
+@version 0.10.0
+
+boolean assert 
+	"The assert function is used within @test annotations to specify basic conditions that the 
+	 test results must match. If any of the declared assertions fails, the test fails."
+{
+	class org.integratedmodelling.klab.components.testing.assertions.Assert
+}

@@ -1,18 +1,22 @@
 package org.integratedmodelling.klab.engine.extensions;
 
 import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.integratedmodelling.kdl.api.IKdlActuator;
+import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
-import org.integratedmodelling.klab.api.extensions.IServiceProvider;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
 import org.integratedmodelling.klab.api.extensions.component.Initialize;
 import org.integratedmodelling.klab.api.extensions.component.Setup;
@@ -22,7 +26,10 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.springframework.core.io.ClassPathResource;
+import org.integratedmodelling.klab.kim.Prototype;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 
 public class Component implements IComponent {
 
@@ -107,17 +114,26 @@ public class Component implements IComponent {
 					"component " + name + " cannot be initialized for lack of a suitable public constructor");
 		}
 
-		/*
-		 * Recover services
-		 */
-		if (executor instanceof IServiceProvider) {
-			for (String kdl : ((IServiceProvider)executor).getServiceDefinitions()) {
-				ClassPathResource resource = new ClassPathResource(kdl, implementingClass);
-				System.out.println(kdl + (resource.exists() ? " ESISTE " : " NON ESISTE DIOCAN"));
+		ResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
+		try {
+			for (Resource res : patternResolver.getResources("components/" + name + "/services/*.kdl")) {
+				try (InputStream input = res.getInputStream()) {
+					IKdlDataflow declaration = Dataflows.INSTANCE.declare(input);
+					String namespace = declaration.getPackageName();
+					for (IKdlActuator actuator : declaration.getActuators()) {
+						Prototype prototype = new Prototype(actuator, namespace);
+						services.put(prototype.getName(), prototype);
+					}
+				}
 			}
+		} catch (KlabException e) {
+			throw new KlabValidationException(e);
+		} catch (Throwable e) {
+			// ignore others - means resource path isn't there. These are inside the components so
+			// should be safe enough, although it would be nicer to have a simple way to test for the
+			// existence of the path without having to fail first.
 		}
-		
-		
+
 		if (initMethod == null) {
 			active = true;
 			initialized = true;
@@ -287,10 +303,6 @@ public class Component implements IComponent {
 	@Override
 	public boolean isActive() {
 		return active;
-	}
-
-	public void addService(IPrototype prototype) {
-		services.put(prototype.getName(), prototype);
 	}
 
 	@Override

@@ -1,0 +1,28 @@
+/**
+ * This file defines the contract for all runtime annotations recognized in k.IM. Those with a
+ * 'class' specification also have handlers that perform specific tasks when the annotations
+ * are encountered.
+ */
+@klab 0.10.0
+@version 0.10.0
+
+/**
+ * Probe definition for models: creates additional states for display of outputs, not
+ * usable as outputs and only visible to modelers through the IDE.
+ */
+ annotation probe for models 
+ 	"Create additional states to display specific views of outputs, optionally
+ 	 in modified scales. Models for these states may be created automatically (for
+ 	 example for counts or presences) from the context. The resulting states cannot
+ 	 be used as outputs, and are only visible to modelers using the IDE."
+{
+	optional input observable
+		"The declaration of the concept to be probed. For example 'count of demography:HumanIndividual'.
+		 If absent, probe the main observable (assuming it is not the target of the computation)."
+		default ""
+		
+	optional input collapse
+		"A list of the domain concepts corresponding to scale dimensions to collapse"
+		default ()
+		
+}
