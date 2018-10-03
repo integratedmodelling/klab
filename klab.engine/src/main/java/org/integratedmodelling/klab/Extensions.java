@@ -87,7 +87,7 @@ public enum Extensions implements IExtensionService {
         ResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
         try {
              for (Resource res : patternResolver
-                    .getResources(/*"/" + */"classpath*:" + cls.getPackage().getName().replaceAll("\\.", "/")
+                    .getResources(/*"/" + */"classpath:" + cls.getPackage().getName().replaceAll("\\.", "/")
                             + "/**/*.kdl")) {
                 try (InputStream input = res.getInputStream()) {
                     n += declareServices(ret, Dataflows.INSTANCE.declare(input));
