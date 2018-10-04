@@ -146,16 +146,18 @@ public class EngineViewController {
 	}
 
 	/**
-	 * Get the data for a state in directly usable form, as values or images TODO
-	 * use filters or HttpMessageConverter/content negotiation for various media
-	 * types - see
+	 * Get the data for a state in directly usable form, as values or images
+	 * 
+	 * TODO use filters or HttpMessageConverter/content negotiation for various
+	 * media types - see
 	 * https://stackoverflow.com/questions/3668185/how-to-define-message-converter-based-on-url-extension-in-spring-mvc
 	 * http://www.baeldung.com/spring-mvc-content-negotiation-json-xml
 	 */
 	@RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.GET_DATA_OBSERVATION, method = RequestMethod.GET)
 	public void getObservationData(Principal principal, @PathVariable String observation,
 			@RequestParam(required = false) String viewport, @RequestParam(required = false) String locator,
-			@RequestParam ObservationReference.GeometryType format, HttpServletResponse response) throws Exception {
+			@RequestParam ObservationReference.GeometryType format, @RequestParam(required = false) String outputFormat,
+			HttpServletResponse response) throws Exception {
 
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
@@ -192,7 +194,8 @@ public class EngineViewController {
 				String descr = value instanceof Number
 						? NumberFormat.getInstance().format(((Number) value).doubleValue())
 						: (value instanceof IConcept ? Concepts.INSTANCE.getDisplayLabel(((IConcept) value))
-								: (value instanceof Boolean ? ((Boolean) value ? "Present" : "Not present") : "No data"));
+								: (value instanceof Boolean ? ((Boolean) value ? "Present" : "Not present")
+										: "No data"));
 
 				if (obs.getObservable().getUnit() != null) {
 					descr += " " + ((Unit) obs.getObservable().getUnit()).toUTFString();

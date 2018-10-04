@@ -89,7 +89,12 @@ public class ObservationReference implements IObservationReference {
 		 * Used in requests to get the values in tabular form instead of another 
 		 * representation.
 		 */
-		TABLE
+		TABLE,
+		
+		/**
+		 * Used in request to get the "raw" export data paired with an output format.
+		 */
+		RAW
 	}
 
 	/**

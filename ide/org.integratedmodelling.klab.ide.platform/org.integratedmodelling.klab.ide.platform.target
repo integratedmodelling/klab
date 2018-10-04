@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="org.integratedmodelling.kim.target" sequenceNumber="9">
+<?pde version="3.8"?><target name="org.integratedmodelling.klab.ide.platform" sequenceNumber="19">
     <locations>
         <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
-            <unit id="org.eclipse.draw2d.feature.group" version="0.0.0"/>
+            <unit id="org.eclipse.emf.mwe2.launcher.feature.group" version="0.0.0"/>
+            <repository location="http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.9.1/"/>
+        </location>
+        <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
             <unit id="org.eclipse.emf.sdk.feature.group" version="0.0.0"/>
             <unit id="org.eclipse.jdt.feature.group" version="0.0.0"/>
             <unit id="org.eclipse.pde.feature.group" version="0.0.0"/>
@@ -13,25 +16,21 @@
             <repository location="http://download.eclipse.org/releases/oxygen/"/>
         </location>
         <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
-            <unit id="org.eclipse.emf.mwe2.launcher.feature.group" version="0.0.0"/>
-            <repository location="http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.9.1/"/>
-        </location>
-        <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
             <unit id="org.eclipse.xtext.sdk.feature.group" version="0.0.0"/>
             <repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.12.0/"/>
         </location>
         <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
-            <unit id="org.integratedmodelling.klab.feature.feature.group" version="0.10.0.201810041020"/>
-            <repository location="http://www.integratedmodelling.org/updates/klab/0.10.0"/>
-        </location>
-        <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
-            <unit id="org.integratedmodelling.kdl.feature.feature.group" version="0.10.0.201810041020"/>
-            <unit id="org.integratedmodelling.kdl.feature.source.feature.group" version="0.10.0.201810041020"/>
-            <repository location="http://www.integratedmodelling.org/updates/kdl/0.10.0"/>
-        </location>
-        <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
-            <unit id="org.integratedmodelling.kim.sdk.feature.group" version="0.10.0.201810041020"/>
-            <repository location="http://www.integratedmodelling.org/updates/kim/0.10.0"/>
+            <unit id="org.eclipse.egit.feature.group" version="5.1.1.201809181055-r"/>
+            <unit id="org.eclipse.egit.gitflow.feature.feature.group" version="5.1.1.201809181055-r"/>
+            <unit id="org.eclipse.egit.mylyn.feature.group" version="5.1.1.201809181055-r"/>
+            <unit id="org.eclipse.egit.source.feature.group" version="5.1.1.201809181055-r"/>
+            <unit id="org.eclipse.egit.ui.smartimport" version="5.1.1.201809181055-r"/>
+            <unit id="org.eclipse.jgit.feature.group" version="5.1.1.201809181055-r"/>
+            <unit id="org.eclipse.jgit.lfs.feature.group" version="5.1.1.201809181055-r"/>
+            <unit id="org.eclipse.jgit.pgm.feature.group" version="5.1.1.201809181055-r"/>
+            <unit id="org.eclipse.jgit.pgm.source.feature.group" version="5.1.1.201809181055-r"/>
+            <unit id="org.eclipse.jgit.source.feature.group" version="5.1.1.201809181055-r"/>
+            <repository location="http://download.eclipse.org/egit/updates/"/>
         </location>
     </locations>
 </target>

@@ -318,7 +318,80 @@
          </adapter>
       </factory>
    </extension>
-	<!-- <extension
+   <extension
+         id="kLAB"
+         name="k.LAB"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.eclipse.ui.ide.workbench"
+            name="kModeler">
+         <property
+               name="windowImages"
+               value="branding/k-lab-icon-16.gif,branding/k-lab-icon-32.gif,branding/k-lab-icon-48.gif,branding/k-lab-icon-64.gif,branding/k-lab-icon-128.gif,branding/k-lab-icon-256.gif">
+         </property>
+         <property
+               name="aboutText"
+               value="k.LAB is a modeler&apos;s IDE (Integrated Development Environment) for semantic modelling with the  k.IM language.">
+         </property>
+         <property
+               name="aboutImage"
+               value="branding/k-lab-icon-128.gif">
+         </property>
+         <property
+               name="startupForegroundColor"
+               value="808080">
+         </property>
+         <property
+               name="startupProgressRect"
+               value="24,246,494,14">
+         </property>
+         <property
+               name="startupMessageRect"
+               value="24,234,496,20">
+         </property>
+         <property
+               name="appName"
+               value="k.Modeler">
+         </property>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini">
+         </property>
+      </product>
+   </extension>
+   <extension
+         id="kModeler"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.eclipse.ui.ide.workbench"
+            name="k.Modeler">
+         <property
+               name="windowImages"
+               value="branding/k-lab-icon-16.gif,branding/k-lab-icon-32.gif,branding/k-lab-icon-48.gif,branding/k-lab-icon-64.gif,branding/k-lab-icon-128.gif,branding/k-lab-icon-256.gif">
+         </property>
+         <property
+               name="aboutText"
+               value="k.Modeler is an integrated development environment for semantic modelling with the  k.IM language and the k.LAB software stack. It acts as a client for a k.LAB engine, which must be running locally.">
+         </property>
+         <property
+               name="aboutImage"
+               value="branding/k-lab-icon-128.gif">
+         </property>
+         <property
+               name="startupForegroundColor"
+               value="808080">
+         </property>
+         <property
+               name="startupProgressRect"
+               value="24,246,494,14">
+         </property>
+         <property
+               name="startupMessageRect"
+               value="24,234,496,20">
+         </property>
+      </product>
+   </extension>
+   	<!-- <extension
   		point="org.eclipse.mylyn.commons.notifications.ui.notifications">
 	<event
     	categoryId="org.eclipse.mylyn.builds.ui.category.Builds"

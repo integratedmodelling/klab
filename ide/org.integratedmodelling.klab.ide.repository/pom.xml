@@ -21,10 +21,37 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-director-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<products>
+						<product>
+							<id>org.integratedmodelling.klab.modeler.product</id>
+							<rootFolder>kmodeler</rootFolder>
+       						</product>
+					</products>
+				</configuration>
+				<executions>
+					<execution>
+						<id>materialize-products</id>
+						<goals>
+							<goal>materialize-products</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>archive-products</id>
+						<goals>
+							<goal>archive-products</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>1.8</version>
-				 <executions>
+				<executions>
 					<execution>
 						<id>scp-to-remote</id>
 						<phase>deploy</phase>
@@ -34,7 +61,7 @@
 						<configuration>
 							<target>
 								<scp
-									todir="bc3@150.241.131.4:/var/www/updates/klab/${klab.version}"
+									todir="bc3@150.241.131.4:/var/www/updates/kmodeler/${klab.version}"
 									verbose="true" password="${haizea.password}">
 									<fileset dir="${project.basedir}/target/repository/" />
 								</scp>

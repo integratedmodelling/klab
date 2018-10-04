@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.integratedmodelling.klab.feature"
-      label="Klab Feature"
+      label="k.LAB Feature"
       version="0.10.0.qualifier"
       provider-name="www.integratedmodelling.org">
+
+   <url>
+      <update label="k.LAB update site" url="http://www.integratedmodelling.org/updates/klab/0.10.0"/>
+   </url>
 
    <plugin
          id="org.integratedmodelling.klab.api"
