@@ -17,12 +17,20 @@
       [Enter License Description here.]
    </license>
 
+   <url>
+      <update label="k.Modeler update site" url="http://www.integratedmodelling.org/updates/kmodeler/0.10.0"/>
+   </url>
+
    <includes
          id="org.integratedmodelling.kim.sdk"
          version="0.0.0"/>
 
    <includes
          id="org.integratedmodelling.kdl.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.integratedmodelling.klab.feature"
          version="0.0.0"/>
 
    <plugin

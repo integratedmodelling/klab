@@ -19,7 +19,10 @@
 	<modules>
 		<module>org.integratedmodelling.klab.feature</module>
 		<module>org.integratedmodelling.klab.repository</module>
+		<module>org.integratedmodelling.klab.ide.platform</module>
 		<module>org.integratedmodelling.klab.ide</module>
+		<module>org.integratedmodelling.klab.ide.feature</module>
+		<module>org.integratedmodelling.klab.ide.repository</module>
 	</modules>
 	<build>
 		<plugins>
@@ -42,7 +45,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
+			<!-- <plugin>
 				<groupId>org.eclipse.tycho.extras</groupId>
 				<artifactId>tycho-source-feature-plugin</artifactId>
 				<version>${tycho-version}</version>
@@ -56,7 +59,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
+ -->			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-p2-plugin</artifactId>
 				<version>${tycho-version}</version>
@@ -75,13 +78,13 @@
 				<artifactId>target-platform-configuration</artifactId>
 				<version>${tycho-version}</version>
 				<configuration>
-<!-- 					<target>
+ 					<target>
 						<artifact>
 							<groupId>org.integratedmodelling</groupId>
 							<artifactId>org.integratedmodelling.klab.ide.platform</artifactId>
 							<version>${klab.version}</version>
 						</artifact>
-					</target> -->
+					</target>
 					<environments>
 						<environment>
 							<os>macosx</os>

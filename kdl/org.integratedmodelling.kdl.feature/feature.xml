@@ -4,6 +4,10 @@
       label="Kdl Feature "
       version="0.10.0.qualifier">
 
+   <url>
+      <update label="k.DL update site" url="http://www.integratedmodelling.org/updates/kdl/0.10.0"/>
+   </url>
+
    <requires>
       <import plugin="org.integratedmodelling.klab.api"/>
    </requires>
