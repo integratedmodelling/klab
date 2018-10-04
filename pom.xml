@@ -45,6 +45,7 @@
 		<url>http://www.integratedmodelling.org</url>
 	</organization>
 
+	<!-- DO NOT DELETE - Maven central - needs credentials - reintegrate when ready.
 	<distributionManagement>
 		<snapshotRepository>
 			<id>ossrh</id>
@@ -54,7 +55,7 @@
 			<id>ossrh</id>
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
 		</repository>
-	</distributionManagement>
+	</distributionManagement>  -->
 
 	<modules>
 		<module>api</module>
