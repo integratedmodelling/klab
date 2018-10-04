@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab;
 
+import java.io.File;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -451,6 +452,11 @@ public enum Observations implements IObservationService {
 //			ist += istep;
 //		}
 //		return new Classification(NS.getUserOrdering(), classifiers);
+	}
+
+	public File exportToTempFile(IObservation obs, String outputFormat) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

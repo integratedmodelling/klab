@@ -3,6 +3,8 @@ package org.integratedmodelling.klab.engine.rest.controllers.engine;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.security.Principal;
 import java.text.NumberFormat;
@@ -208,6 +210,18 @@ public class EngineViewController {
 				response.setContentType(MediaType.TEXT_PLAIN_VALUE);
 				response.getWriter().write(descr);
 				response.setStatus(HttpServletResponse.SC_OK);
+
+			} else if (format == GeometryType.RAW) {
+
+				// should have a format field
+				File tempFile = Observations.INSTANCE.exportToTempFile(obs, outputFormat);
+				if (tempFile != null) {
+					response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+					try (InputStream in = new FileInputStream(tempFile)) {
+						IOUtils.copy(in, response.getOutputStream());
+					}
+				}
+				tempFile.deleteOnExit();
 			}
 		}
 
