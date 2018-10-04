@@ -251,6 +251,10 @@ You should also get your employer (if you work as a programmer) or school, if an
       <update label="k.IM language update site" url="http://www.integratedmodelling.org/klab/updates/kim/0.9.12"/>
    </url>
 
+   <requires>
+      <import plugin="org.integratedmodelling.klab.api"/>
+   </requires>
+
    <plugin
          id="org.integratedmodelling.kim"
          download-size="0"

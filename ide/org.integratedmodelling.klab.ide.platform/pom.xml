@@ -8,8 +8,6 @@
 	</parent>
 	<artifactId>org.integratedmodelling.klab.ide.platform</artifactId>
 	<packaging>eclipse-target-definition</packaging>
-
-
 	<dependencies>
 	</dependencies>
 </project>

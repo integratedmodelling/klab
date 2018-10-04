@@ -4,6 +4,10 @@
       label="Kdl Feature "
       version="0.10.0.qualifier">
 
+   <requires>
+      <import plugin="org.integratedmodelling.klab.api"/>
+   </requires>
+
    <plugin
          id="org.integratedmodelling.kdl"
          download-size="0"

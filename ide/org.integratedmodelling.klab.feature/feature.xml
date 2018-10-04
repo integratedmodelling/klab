@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.integratedmodelling.klab.feature"
+      label="Klab Feature"
+      version="0.10.0.qualifier"
+      provider-name="www.integratedmodelling.org">
+
+   <plugin
+         id="org.integratedmodelling.klab.api"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.integratedmodelling.klab.client"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
