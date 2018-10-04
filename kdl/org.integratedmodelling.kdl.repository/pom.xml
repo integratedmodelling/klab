@@ -24,7 +24,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>1.8</version>
-				<!-- <executions>
+				 <executions>
 					<execution>
 						<id>scp-to-remote</id>
 						<phase>deploy</phase>
@@ -41,7 +41,7 @@
 							</target>
 						</configuration>
 					</execution>
-				</executions>  -->
+				</executions>
 				<!-- libraries for scp impl -->
 				<!-- antrun doesn't use os's scp -->
 				<dependencies>

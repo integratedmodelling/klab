@@ -198,6 +198,7 @@
 							<skip>true</skip>
 						</configuration>
 					</plugin>
+					<!--  DO NOT DELETE - this is to deploy to Maven central. Reintegrate when ready.
 					<plugin>
 						<groupId>org.sonatype.plugins</groupId>
 						<artifactId>nexus-staging-maven-plugin</artifactId>
@@ -222,7 +223,7 @@
 								</goals>
 							</execution>
 						</executions>
-					</plugin>
+					</plugin>  -->
 				</plugins>
 			</build>
 		</profile>
