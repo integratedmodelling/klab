@@ -45,7 +45,6 @@
 		<url>http://www.integratedmodelling.org</url>
 	</organization>
 
-	<!-- DO NOT DELETE - Maven central - needs credentials - reintegrate when ready.
 	<distributionManagement>
 		<snapshotRepository>
 			<id>ossrh</id>
@@ -55,7 +54,7 @@
 			<id>ossrh</id>
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
 		</repository>
-	</distributionManagement>  -->
+	</distributionManagement>
 
 	<modules>
 		<module>api</module>
@@ -199,7 +198,6 @@
 							<skip>true</skip>
 						</configuration>
 					</plugin>
-					<!--  DO NOT DELETE - this is to deploy to Maven central. Reintegrate when ready.
 					<plugin>
 						<groupId>org.sonatype.plugins</groupId>
 						<artifactId>nexus-staging-maven-plugin</artifactId>
@@ -224,7 +222,7 @@
 								</goals>
 							</execution>
 						</executions>
-					</plugin>  -->
+					</plugin> 
 				</plugins>
 			</build>
 		</profile>
