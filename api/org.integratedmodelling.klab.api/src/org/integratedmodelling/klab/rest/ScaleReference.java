@@ -1,8 +1,13 @@
 package org.integratedmodelling.klab.rest;
 
 /**
- * Used to communicate spatial regions of interest. Values should be in decimal
- * latitude and longitude.
+ * Used to communicate spatio/temporal regions of interest. Space values should
+ * be in decimal latitude and longitude.
+ * 
+ * Sent from back-end to communicate new resolution when extent is changed on
+ * the front end. Sent by front-end when user wants to set resolution, which
+ * locks the scale to the user choice. A front-end message with just unlockSpace
+ * == true resets the behavior to automatic resolution definition.
  * 
  * @author ferdinando.villa
  *
@@ -13,16 +18,64 @@ public class ScaleReference {
 	private double west;
 	private double north;
 	private double south;
-	private long  start;
+	private long start;
 	private long end;
 	private long step;
 	private int spaceScale;
 	private int timeScale;
 	private double resolution;
 	private String resolutionDescription;
-	
+	private String spaceUnit;
+	private String timeUnit;
+	private boolean unlockSpace;
+	private boolean unlockTime;
+
 	public double getEast() {
 		return east;
+	}
+
+	public String getSpaceUnit() {
+		return spaceUnit;
+	}
+
+	public void setSpaceUnit(String spaceUnit) {
+		this.spaceUnit = spaceUnit;
+	}
+
+	public String getTimeUnit() {
+		return timeUnit;
+	}
+
+	public void setTimeUnit(String timeUnit) {
+		this.timeUnit = timeUnit;
+	}
+
+	/**
+	 * Sent from front end when user wants to go back to automatic spatial scale
+	 * resolution.
+	 * 
+	 * @return
+	 */
+	public boolean isUnlockSpace() {
+		return unlockSpace;
+	}
+
+	/**
+	 * Sent from front end when user wants to go back to automatic spatial scale
+	 * resolution.
+	 * 
+	 * @return
+	 */
+	public void setUnlockSpace(boolean unlockSpace) {
+		this.unlockSpace = unlockSpace;
+	}
+
+	public boolean isUnlockTime() {
+		return unlockTime;
+	}
+
+	public void setUnlockTime(boolean unlockTime) {
+		this.unlockTime = unlockTime;
 	}
 
 	public void setEast(double east) {

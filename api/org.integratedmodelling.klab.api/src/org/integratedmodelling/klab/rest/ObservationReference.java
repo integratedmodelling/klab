@@ -13,6 +13,34 @@ import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 
 public class ObservationReference implements IObservationReference {
 
+	/**
+	 * Export formats for each observation.
+	 * 
+	 * @author ferdinando.villa
+	 *
+	 */
+	public static class ExportFormat {
+
+		private String label;
+		private String value;
+
+		public String getValue() {
+			return value;
+		}
+
+		public void setValue(String value) {
+			this.value = value;
+		}
+
+		public String getLabel() {
+			return label;
+		}
+
+		public void setLabel(String label) {
+			this.label = label;
+		}
+	}
+
 	public enum ObservationType {
 		PROCESS, STATE, SUBJECT, CONFIGURATION, EVENT, RELATIONSHIP
 	}
@@ -86,11 +114,11 @@ public class ObservationReference implements IObservationReference {
 		COLORMAP,
 
 		/**
-		 * Used in requests to get the values in tabular form instead of another 
+		 * Used in requests to get the values in tabular form instead of another
 		 * representation.
 		 */
 		TABLE,
-		
+
 		/**
 		 * Used in request to get the "raw" export data paired with an output format.
 		 */
@@ -119,6 +147,7 @@ public class ObservationReference implements IObservationReference {
 	private Style style;
 	private boolean main;
 	private DataSummary dataSummary;
+	private List<ExportFormat> exportFormats = new ArrayList<>();
 
 	public void setDataSummary(DataSummary dataSummary) {
 		this.dataSummary = dataSummary;
@@ -644,6 +673,14 @@ public class ObservationReference implements IObservationReference {
 	@Override
 	public DataSummary getDataSummary() {
 		return dataSummary;
+	}
+
+	public List<ExportFormat> getExportFormats() {
+		return exportFormats;
+	}
+
+	public void setExportFormats(List<ExportFormat> exportFormats) {
+		this.exportFormats = exportFormats;
 	}
 
 }

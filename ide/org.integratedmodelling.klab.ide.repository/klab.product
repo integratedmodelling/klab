@@ -475,12 +475,6 @@ You should also get your employer (if you work as a programmer) or school, if an
       <plugin id="org.eclipse.equinox.simpleconfigurator"/>
       <plugin id="org.eclipse.equinox.simpleconfigurator.manipulator"/>
       <plugin id="org.eclipse.equinox.util"/>
-      <plugin id="org.eclipse.gef4.geometry"/>
-      <plugin id="org.eclipse.gef4.graph"/>
-      <plugin id="org.eclipse.gef4.graph.ui"/>
-      <plugin id="org.eclipse.gef4.layout"/>
-      <plugin id="org.eclipse.gef4.zest.core"/>
-      <plugin id="org.eclipse.gef4.zest.jface"/>
       <plugin id="org.eclipse.help"/>
       <plugin id="org.eclipse.help.base"/>
       <plugin id="org.eclipse.help.ui"/>
@@ -584,13 +578,6 @@ You should also get your employer (if you work as a programmer) or school, if an
       <plugin id="org.eclipse.xtext.xbase.lib"/>
       <plugin id="org.eclipse.xtext.xbase.ui"/>
       <plugin id="org.hamcrest.core"/>
-      <plugin id="org.integratedmodelling.thinkcap"/>
-      <plugin id="org.integratedmodelling.thinklab.api"/>
-      <plugin id="org.integratedmodelling.thinklab.client"/>
-      <plugin id="org.integratedmodelling.thinklab.common"/>
-      <plugin id="org.integratedmodelling.thinklab.resources"/>
-      <plugin id="org.integratedmodelling.thinkql"/>
-      <plugin id="org.integratedmodelling.thinkql.ui"/>
       <plugin id="org.junit"/>
       <plugin id="org.objectweb.asm"/>
       <plugin id="org.sat4j.core"/>
@@ -618,7 +605,7 @@ You should also get your employer (if you work as a programmer) or school, if an
       <feature id="org.eclipse.ecf.filetransfer.feature"/>
       <feature id="org.eclipse.ecf.core.ssl.feature"/>
       <feature id="org.eclipse.ecf.filetransfer.ssl.feature"/>
-      <!-- <feature id="org.eclipse.egit"/> -->
+      <feature id="org.eclipse.egit"/>
    </features>
 
    <configurations>
@@ -631,10 +618,6 @@ You should also get your employer (if you work as a programmer) or school, if an
    </configurations>
 
    <repositories>
-      <repository location="http://www.integratedmodelling.org/updates/klab/0.10.0" enabled="true" />
-      <repository location="http://www.integratedmodelling.org/updates/klab/0.10.0" enabled="true" />
-      <repository location="http://www.integratedmodelling.org/updates/klab/0.10.0" enabled="true" />
-      <repository location="http://www.integratedmodelling.org/updates/klab/0.10.0" enabled="true" />
       <repository location="http://www.integratedmodelling.org/updates/klab/0.10.0" enabled="true" />
    </repositories>
 
