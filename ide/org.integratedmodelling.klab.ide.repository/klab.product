@@ -603,6 +603,9 @@ You should also get your employer (if you work as a programmer) or school, if an
       <feature id="org.eclipse.ecf.core.ssl.feature"/>
       <feature id="org.eclipse.ecf.filetransfer.ssl.feature"/>
       <feature id="org.eclipse.egit"/>
+      <feature id="org.eclipse.jgit"/>
+      <feature id="org.eclipse.rcp"/>
+      <feature id="org.eclipse.jdt"/>
    </features>
 
    <configurations>
