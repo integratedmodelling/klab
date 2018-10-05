@@ -16,8 +16,6 @@
    <launcherArgs>
       <programArgs>-perspective org.integratedmodelling.klab.ide.perspective.KlabPerspective
       </programArgs>
-      <vmArgs>-Xms1024m
-      </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
    </launcherArgs>
@@ -43,7 +41,6 @@
             winExtraLargeHigh="branding/k-lab-icon-256_d.bmp"/>
       </win>
    </launcher>
-
 
    <vm>
       <linux include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JRE-1.1</linux>
