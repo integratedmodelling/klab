@@ -23,9 +23,11 @@ public class ScaleReference {
 	private long step;
 	private int spaceScale;
 	private int timeScale;
-	private double resolution;
-	private String resolutionDescription;
+	private double spaceResolution;
+	private String spaceResolutionDescription;
 	private String spaceUnit;
+	private double timeResolution;
+	private String timeResolutionDescription;
 	private String timeUnit;
 	private boolean unlockSpace;
 	private boolean unlockTime;
@@ -146,26 +148,42 @@ public class ScaleReference {
 		this.timeScale = timeScale;
 	}
 
-	public double getResolution() {
-		return resolution;
+	public double getSpaceResolution() {
+		return spaceResolution;
 	}
 
-	public void setResolution(double resolution) {
-		this.resolution = resolution;
+	public void setSpaceResolution(double resolution) {
+		this.spaceResolution = resolution;
 	}
 
-	public String getResolutionDescription() {
-		return resolutionDescription;
+	public String getSpaceResolutionDescription() {
+		return spaceResolutionDescription;
 	}
 
-	public void setResolutionDescription(String resolutionDescription) {
-		this.resolutionDescription = resolutionDescription;
+	public void setSpaceResolutionDescription(String resolutionDescription) {
+		this.spaceResolutionDescription = resolutionDescription;
 	}
 
 	@Override
 	public String toString() {
 		return "ScaleReference [east=" + east + ", west=" + west + ", north=" + north + ", south=" + south
-				+ ", spaceScale=" + spaceScale + ", resolutionDescription=" + resolutionDescription + "]";
+				+ ", spaceScale=" + spaceScale + ", resolutionDescription=" + spaceResolutionDescription + "]";
+	}
+
+	public double getTimeResolution() {
+		return timeResolution;
+	}
+
+	public void setTimeResolution(double timeResolution) {
+		this.timeResolution = timeResolution;
+	}
+
+	public String getTimeResolutionDescription() {
+		return timeResolutionDescription;
+	}
+
+	public void setTimeResolutionDescription(String timeResolutionDescription) {
+		this.timeResolutionDescription = timeResolutionDescription;
 	}
 
 }

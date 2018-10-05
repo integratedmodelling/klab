@@ -492,8 +492,8 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		scale.setNorth(envelope.getMaxY());
 		scale.setSouth(envelope.getMinY());
 		scale.setSpaceUnit(resolution.getSecond());
-		scale.setResolution(resolution.getFirst());
-		scale.setResolutionDescription(resolution.getFirst() + " " + resolution.getSecond());
+		scale.setSpaceResolution(resolution.getFirst());
+		scale.setSpaceResolutionDescription(resolution.getFirst() + " " + resolution.getSecond());
 		scale.setSpaceScale(scaleRank);
 
 		monitor.send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined, scale);
