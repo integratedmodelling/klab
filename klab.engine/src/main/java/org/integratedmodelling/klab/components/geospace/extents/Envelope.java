@@ -169,14 +169,14 @@ public class Envelope implements IEnvelope {
 		int metersPerPixel = 156412 / (int) (Math.pow(2., (double) zoomLevel) * multiplier);
 		int gridRounded = ((metersPerPixel + (roundTo / 2)) / roundTo) * roundTo;
 
-		String unit = gridRounded + " m";
+		String unit = "m";
 		if (gridRounded > 2000) {
 			gridRounded = (((gridRounded) + 500) / 1000);
-			unit = gridRounded + " km";
+			unit = "km";
 			gridRounded *= 1000;
 		} else if (gridRounded < roundTo) {
 			gridRounded = roundTo;
-			unit = roundTo + " m";
+			unit = "m";
 		}
 
 		return new Pair<>(gridRounded, unit);

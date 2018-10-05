@@ -491,12 +491,10 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		scale.setWest(envelope.getMinX());
 		scale.setNorth(envelope.getMaxY());
 		scale.setSouth(envelope.getMinY());
+		scale.setSpaceUnit(resolution.getSecond());
 		scale.setResolution(resolution.getFirst());
-		scale.setResolutionDescription(resolution.getSecond());
+		scale.setResolutionDescription(resolution.getFirst() + " " + resolution.getSecond());
 		scale.setSpaceScale(scaleRank);
-
-		// TODO REMOVE
-		System.out.println("ZOOM LEVEL IS " + scaleRank);
 
 		monitor.send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined, scale);
 		this.regionOfInterest = extent;
