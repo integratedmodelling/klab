@@ -2,11 +2,9 @@ package org.integratedmodelling.klab;
 
 import java.io.File;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -15,7 +13,6 @@ import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
-import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
@@ -43,8 +40,6 @@ import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
-import org.integratedmodelling.klab.data.classification.Classification;
-import org.integratedmodelling.klab.data.classification.Classifier;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
@@ -52,7 +47,6 @@ import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Concept;
@@ -63,12 +57,11 @@ import org.integratedmodelling.klab.rest.DataSummary;
 import org.integratedmodelling.klab.rest.Histogram;
 import org.integratedmodelling.klab.rest.Histogram.Builder;
 import org.integratedmodelling.klab.rest.ObservationReference;
+import org.integratedmodelling.klab.rest.ObservationReference.ExportFormat;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
-import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.Utils;
 
 public enum Observations implements IObservationService {
@@ -281,6 +274,12 @@ public enum Observations implements IObservationService {
 						NumberFormat.getInstance().format(grid.getCellWidth()) + " x "
 								+ NumberFormat.getInstance().format(grid.getCellHeight()) + " "
 								+ grid.getProjection().getUnits());
+				
+				ret.getExportFormats().add(new ExportFormat("PNG Image", "png"));
+				ret.getExportFormats().add(new ExportFormat("GeoTIFF Raster file", "geotiff"));
+				
+			} else if (observation.groupSize() > 0) {
+				ret.getExportFormats().add(new ExportFormat("Shapefile", "shp"));
 			}
 
 			ret.getGeometryTypes().add(gtype);
