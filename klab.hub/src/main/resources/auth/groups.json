@@ -151,7 +151,7 @@
 				"separator": true,
 				"description": "",
 				"label": "Sediment retention"
-			}
+			},
 			{
 				"separator": false,
 				"label": "Retained Soil Mass caused by Vegetation",
@@ -165,7 +165,7 @@
 				"observable": "im:Potential (im:Removed soil:Soil im:Mass) in t/ha",
 				"description": "The result of applying the Revised Universal Soil Loss equation, representing total sediment loss.",
 				"semantics": "QUALITY"
-			},
+			}
 		]
 	}
 }
