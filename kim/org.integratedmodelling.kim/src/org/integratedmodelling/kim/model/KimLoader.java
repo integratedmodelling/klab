@@ -232,6 +232,11 @@ public class KimLoader implements IKimLoader {
     }
 
     private void collectDependencies(File file, List<File> ret, Set<File> visited) {
+        
+        if (dependencyGraph == null) {
+            dependencyGraph = new DefaultDirectedGraph<>(DefaultEdge.class);
+        }
+        
         if (dependencyGraph.containsVertex(file)) {
             // proceed breadth-first to ensure proper reloading
             List<File> added = new ArrayList<>();
