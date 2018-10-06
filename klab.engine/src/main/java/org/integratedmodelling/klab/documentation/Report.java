@@ -183,9 +183,11 @@ public class Report implements IReport {
 					// TODO!
 //					main = main.getChild(parent, titlePath)
 				}
-				main.body.append(template.get(BibTexFields.EXAMPLE_CITATION));
+				main.body.append("\n\n" + template.get(BibTexFields.EXAMPLE_CITATION) + "\n\n");
 			}
 		}
+		
+		inserted.add(args[0] + "|" + args[1]);
 	}
 
 	/*

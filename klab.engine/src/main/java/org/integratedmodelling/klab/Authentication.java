@@ -57,9 +57,9 @@ public enum Authentication implements IAuthenticationService {
 	 */
 	Map<String, IIdentity> identities = Collections.synchronizedMap(new HashMap<>());
 
-	// FIXME TEMPORARY - USED FOR DEFAULTING THE SEARCH MATCHES UNTIL GROUPS ARE ALL
-	// IN PLACE.
-	FileCatalog<Group> defaultGroups;
+//	// FIXME TEMPORARY - USED FOR DEFAULTING THE SEARCH MATCHES UNTIL GROUPS ARE ALL
+//	// IN PLACE.
+//	FileCatalog<Group> defaultGroups;
 
 	/**
 	 * Status of a user wrt. the network. Starts at UNKNOWN.
@@ -94,10 +94,10 @@ public enum Authentication implements IAuthenticationService {
 	private Client client = Client.create();
 
 	private Authentication() {
-		if (getClass().getClassLoader().getResource("defaults/groups.json") != null) {
-			defaultGroups = FileCatalog.create(getClass().getClassLoader().getResource("defaults/groups.json"),
-					Group.class);
-		}
+//		if (getClass().getClassLoader().getResource("defaults/groups.json") != null) {
+//			defaultGroups = FileCatalog.create(getClass().getClassLoader().getResource("defaults/groups.json"),
+//					Group.class);
+//		}
 	}
 
 	/**
@@ -315,14 +315,20 @@ public enum Authentication implements IAuthenticationService {
 
 	public List<ObservableReference> getDefaultObservables(IIdentity identity) {
 		List<ObservableReference> ret = new ArrayList<>();
-		// TODO extract from user's groups, not defaults!
-		if (defaultGroups != null) {
-			for (String groupId : defaultGroups.keySet()) {
-				for (ObservableReference observable : defaultGroups.get(groupId).getObservables()) {
-					ret.add(observable);
-				}
-			}
+		IUserIdentity user = identity.getParentIdentity(IUserIdentity.class);
+		if (user != null) {
+		    for (Group group : user.getGroups()) {
+		        ret.addAll(group.getObservables());
+		    }
 		}
+        // TODO extract from user's groups, not defaults!
+//		if (defaultGroups != null) {
+//			for (String groupId : defaultGroups.keySet()) {
+//				for (ObservableReference observable : defaultGroups.get(groupId).getObservables()) {
+//					ret.add(observable);
+//				}
+//			}
+//		}
 		return ret;
 	}
 
