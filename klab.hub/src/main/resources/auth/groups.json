@@ -28,9 +28,51 @@
 				"label": "Carbon storage"
 			},
 			{
+				"separator": false,
+				"label": "Organic Carbon Mass",
+				"observable": "chemistry:Organic chemistry:Carbon im:Mass in t/ha",
+				"description": "The total amount of stored carbon originating from ecosystem processes. Includes organic matter in the soil, roots and aerial vegetation.",
+				"semantics": "QUALITY"
+			},
+			{
+				"separator": false,
+				"label": "Vegetation Carbon Mass",
+				"observable": "ecology:Vegetation chemistry:Carbon im:Mass in t/ha",
+				"description": "The total amount of stored carbon in vegetation, including roots and aerial parts.",
+				"semantics": "QUALITY"
+			},
+			{
 				"separator": true,
 				"description": "",
 				"label": "Pollination"
+			},
+			{
+				"separator": false,
+				"label": "Net value of Pollination",
+				"observable": "im:Net value of ecology:Pollination",
+				"description": "The net value of pollination, showing the balance between demand and actual provision in each point of the landscape.",
+				"semantics": "QUALITY"
+			},
+			{
+				"separator": false,
+				"label": "Occurrence of Pollinator Insects",
+				"observable": "occurrence of agriculture:Pollinator biology:Insect",
+				"description": "The likelihood of finding pollinator insects in each point, composed of a wheather and a landscape component.",
+				"semantics": "QUALITY"
+			},
+			{
+				"separator": false,
+				"label": "Weather suitability for Pollinator Insects",
+				"observable": "occurrence of agriculture:Pollinator biology:Insect caused by earth:Weather",
+				"description": "The weather-related component of the likelihood of finding pollinator insects in each point.",
+				"semantics": "QUALITY"
+			},
+			{
+				"separator": false,
+				"label": "Landscape suitability for Pollinator Insects",
+				"observable": "occurrence of agriculture:Pollinator biology:Insect caused by ecology:Landscape",
+				"description": "The landscape-related component of the likelihood of finding pollinator insects in each point.",
+				"semantics": "QUALITY"
 			},
 			{
 				"separator": true,
@@ -41,28 +83,28 @@
 				"separator": false,
 				"label": "probability of Flood",
 				"observable": "probability of earth:Flood",
-				"description": "",
+				"description": "The probability that a flood event occurs in each point.",
 				"semantics": "QUALITY"
 			},
 			{
 				"separator": false,
 				"label": "Potential value of FloodRegulation",
 				"observable": "im:Potential value of es:FloodRegulation",
-				"description": "",
+				"description": "The potential for flood regulation offered by the natural features in each point, considering their effect on areas downstream.",
 				"semantics": "QUALITY"
 			},
 			{
 				"separator": false,
 				"label": "Demanded value of FloodRegulation",
 				"observable": "ses:Demanded value of es:FloodRegulation",
-				"description": "",
+				"description": "The demand component for the flood regulation service, based on the presence of humans or infrastructural assets in flood-prone areas.",
 				"semantics": "QUALITY"
 			},
 			{
 				"separator": false,
 				"label": "Net value of FloodRegulation",
 				"observable": "im:Net value of es:FloodRegulation",
-				"description": "",
+				"description": "The net value of flood regulation in each point, considering the demand and the offer by natural ecosystems upstream.",
 				"semantics": "QUALITY"
 			},
 			{
