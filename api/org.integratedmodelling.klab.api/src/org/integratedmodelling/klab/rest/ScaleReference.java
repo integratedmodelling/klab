@@ -31,6 +31,8 @@ public class ScaleReference {
 	private String timeUnit;
 	private boolean unlockSpace;
 	private boolean unlockTime;
+	// FIXME REMOVE
+    private String resolutionDescription;
 
 	public double getEast() {
 		return east;
@@ -186,4 +188,11 @@ public class ScaleReference {
 		this.timeResolutionDescription = timeResolutionDescription;
 	}
 
+    public void setResolutionDescription(String string) {
+        this.resolutionDescription = string;
+    }
+
+    public String getResolutionDescription() {
+        return this.resolutionDescription;
+    }
 }
