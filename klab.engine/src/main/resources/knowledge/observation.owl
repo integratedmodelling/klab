@@ -372,6 +372,14 @@ Main author</dc:contributor>
     
 
 
+    <!-- http://integratedmodelling.org/ks/observation.owl#isNegationOf -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#isNegationOf">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#traitProperty"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://integratedmodelling.org/ks/observation.owl#isPartOf -->
 
     <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#isPartOf">

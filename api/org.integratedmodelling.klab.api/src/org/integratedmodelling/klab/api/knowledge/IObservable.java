@@ -236,14 +236,6 @@ public interface IObservable extends IConcept, IResolvable {
 		Collection<KlabValidationException> getErrors();
 
 		/**
-		 * Negate the concept (make it into its negation). Acts immediately on the
-		 * concept in the builder.
-		 * 
-		 * @return the same builder this was called on, for chaining calls
-		 */
-		Builder negated();
-
-		/**
 		 * Use this to pass a declaration being parsed and set up a monitor so that
 		 * logically inconsistent declarations can be reported.
 		 * 

@@ -3,24 +3,25 @@ package org.integratedmodelling.klab;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.services.ITraitService;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.owl.Axiom;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.OWL;
+import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.utils.Pair;
 
 public enum Traits implements ITraitService {
@@ -36,11 +37,12 @@ public enum Traits implements ITraitService {
                 .getRestrictedClasses((IConcept) concept, Concepts.p(NS.HAS_ATTRIBUTE_PROPERTY)));
         return ret;
     }
-    
+
     @Override
     public Collection<IConcept> getDirectTraits(IConcept concept) {
         Set<IConcept> ret = new HashSet<>();
-        ret.addAll(OWL.INSTANCE.getDirectRestrictedClasses((IConcept) concept, Concepts.p(NS.HAS_REALM_PROPERTY)));
+        ret.addAll(OWL.INSTANCE
+                .getDirectRestrictedClasses((IConcept) concept, Concepts.p(NS.HAS_REALM_PROPERTY)));
         ret.addAll(OWL.INSTANCE
                 .getDirectRestrictedClasses((IConcept) concept, Concepts.p(NS.HAS_IDENTITY_PROPERTY)));
         ret.addAll(OWL.INSTANCE
@@ -48,10 +50,16 @@ public enum Traits implements ITraitService {
         return ret;
     }
 
-
     @Override
     public Collection<IConcept> getIdentities(IConcept concept) {
         return OWL.INSTANCE.getRestrictedClasses((IConcept) concept, Concepts.p(NS.HAS_IDENTITY_PROPERTY));
+    }
+
+    @Override
+    public IConcept getNegated(IConcept concept) {
+        Collection<IConcept> ret = OWL.INSTANCE
+                .getRestrictedClasses((IConcept) concept, Concepts.p(NS.IS_NEGATION_OF));
+        return ret.size() > 0 ? ret.iterator().next() : null;
     }
 
     @Override
@@ -192,59 +200,100 @@ public enum Traits implements ITraitService {
         }
     }
 
-//    /**
-//     * Find traits (optionally of a specified type) at the first level of specification in the passed concept and
-//     * return the concept without those traits, plus the list of all traits found.
-//     * <p>
-//     * TODO Removal happens lexically by string substitution for now, no time for pattern matching on the
-//     * kimConcept structure as it should be.
-//     * 
-//     * @param original
-//     * @param traitType
-//     * @return
-//     */
-//    public Pair<IObservable, List<IConcept>> removeTraits(IObservable original, @Nullable IConcept traitType) {
-//
-//        List<IConcept> traits = new ArrayList<>();
-//        IObservable concept = original;
-//
-//        for (IConcept trait : getTraits(original)) {
-//            if (traitType == null || trait.is(traitType)) {
-//                traits.add(trait);
-//            }
-//        }
-//
-//        if (traits.size() > 0) {
-//
-//            String definition = original.getDefinition().trim();
-//            if (definition.startsWith("(")) {
-//                definition = definition.substring(1, definition.length() - 1);
-//            }
-//            String first = definition;
-//            String last = "";
-//            String middle = "";
-//            int firstp = definition.indexOf('(');
-//            int lastp = definition.lastIndexOf(')');
-//            if (firstp >= 0) {
-//                first = definition.substring(0, firstp);
-//            }
-//            if (lastp > 0) {
-//                last = definition.substring(lastp + 1);
-//            }
-//            if (firstp >= 0 && lastp > 0) {
-//                middle = definition.substring(firstp, lastp+1);
-//            }
-//
-//            for (IConcept trait : traits) {
-//                first = first.replace(trait.toString(), "");
-//                last = last.replace(trait.toString(), "");
-//            }
-//
-//            definition = first + middle + last;
-//            concept = Observables.INSTANCE.declare(definition);
-//        }
-//
-//        return new Pair<>(concept, traits);
-//    }
+    public IConcept makeNegation(Concept attribute) {
+
+        IConcept negation = getNegated(attribute);
+        if (negation != null) {
+            return negation;
+        }
+
+        String prop = attribute.getMetadata().get(NS.TRAIT_RESTRICTING_PROPERTY, String.class);
+        String conceptId = "Not" + ObservableBuilder.getCleanId(attribute);
+        Concept ret = attribute.getOntology().getConcept(conceptId);
+        IConcept parent = attribute.getParent();
+
+        if (ret == null) {
+
+            EnumSet<Type> newType = EnumSet.copyOf(attribute.getTypeSet());
+
+            ArrayList<IAxiom> ax = new ArrayList<>();
+            ax.add(Axiom.ClassAssertion(conceptId, newType));
+            ax.add(Axiom.SubClass(parent.toString(), conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", "Not"
+                    + ObservableBuilder.getCleanId(attribute)));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, "not  "
+                    + attribute.getDefinition()));
+
+            if (prop != null) {
+                ax.add(Axiom.AnnotationAssertion(conceptId, NS.TRAIT_RESTRICTING_PROPERTY, prop));
+            }
+
+            attribute.getOntology().define(ax);
+
+            ret = attribute.getOntology().getConcept(conceptId);
+
+            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_NEGATION_OF), attribute);
+        }
+
+        return ret;
+    }
+
+    // /**
+    // * Find traits (optionally of a specified type) at the first level of specification in the passed
+    // concept and
+    // * return the concept without those traits, plus the list of all traits found.
+    // * <p>
+    // * TODO Removal happens lexically by string substitution for now, no time for pattern matching on the
+    // * kimConcept structure as it should be.
+    // *
+    // * @param original
+    // * @param traitType
+    // * @return
+    // */
+    // public Pair<IObservable, List<IConcept>> removeTraits(IObservable original, @Nullable IConcept
+    // traitType) {
+    //
+    // List<IConcept> traits = new ArrayList<>();
+    // IObservable concept = original;
+    //
+    // for (IConcept trait : getTraits(original)) {
+    // if (traitType == null || trait.is(traitType)) {
+    // traits.add(trait);
+    // }
+    // }
+    //
+    // if (traits.size() > 0) {
+    //
+    // String definition = original.getDefinition().trim();
+    // if (definition.startsWith("(")) {
+    // definition = definition.substring(1, definition.length() - 1);
+    // }
+    // String first = definition;
+    // String last = "";
+    // String middle = "";
+    // int firstp = definition.indexOf('(');
+    // int lastp = definition.lastIndexOf(')');
+    // if (firstp >= 0) {
+    // first = definition.substring(0, firstp);
+    // }
+    // if (lastp > 0) {
+    // last = definition.substring(lastp + 1);
+    // }
+    // if (firstp >= 0 && lastp > 0) {
+    // middle = definition.substring(firstp, lastp+1);
+    // }
+    //
+    // for (IConcept trait : traits) {
+    // first = first.replace(trait.toString(), "");
+    // last = last.replace(trait.toString(), "");
+    // }
+    //
+    // definition = first + middle + last;
+    // concept = Observables.INSTANCE.declare(definition);
+    // }
+    //
+    // return new Pair<>(concept, traits);
+    // }
 
 }

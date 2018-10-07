@@ -133,6 +133,7 @@ public class CoreOntology extends AbstractWorkspace {
         public static final String LIMITED_BY_PROPERTY                     = "observation:limitedBy";
         public static final String REPRESENTED_BY_PROPERTY                 = "observation:representedBy";
         public static final String IS_TYPE_DELEGATE                        = "observation:isTypeDelegate";
+        public static final String IS_NEGATION_OF                          = "observation:isNegationOf";
 
         // core observation ontology
         public static final String OBSERVATION                             = "observation:Observation";

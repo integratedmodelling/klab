@@ -43,7 +43,6 @@ public class ObservableBuilder implements IObservable.Builder {
 	private Concept parent;
 	private String mainId;
 	private Set<Type> type;
-	private boolean negated;
 	private IConcept inherent;
 	private IConcept context;
 	private IConcept compresent;
@@ -164,12 +163,6 @@ public class ObservableBuilder implements IObservable.Builder {
 	public Builder from(IConcept concept) {
 		this.causant = concept;
 		isTrivial = false;
-		return this;
-	}
-
-	@Override
-	public Builder negated() {
-		negated = true;
 		return this;
 	}
 
@@ -853,7 +846,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			throw new KlabValidationException("proportion must be of qualities or traits to qualities");
 		}
 
-		String cName = getCleanId(concept) + (isPercentage ? "PercentageOf" : "ProportionOf")
+		String cName = getCleanId(concept) + (isPercentage ? "Percentage" : "Proportion")
 				+ (comparison == null ? "" : getCleanId(comparison));
 
 		String definition = (isPercentage ? UnarySemanticOperator.PERCENTAGE.declaration[0]
@@ -1350,7 +1343,7 @@ public class ObservableBuilder implements IObservable.Builder {
 				cDs = roleIds + Concepts.INSTANCE.getDisplayName(main);
 			}
 		}
-
+		
 		List<IAxiom> axioms = new ArrayList<>();
 		axioms.add(Axiom.ClassAssertion(conceptId, type));
 		axioms.add(Axiom.AnnotationAssertion(conceptId, NS.DISPLAY_LABEL_PROPERTY, cDs));
@@ -1415,11 +1408,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (monitor != null && !Reasoner.INSTANCE.isSatisfiable(ret)) {
 			monitor.error("this declaration has logical errors and is inconsistent", declaration);
 		}
-
-		if (negated) {
-			// TODO - add Not to the ids
-		}
-
+		
 		return ret;
 	}
 
