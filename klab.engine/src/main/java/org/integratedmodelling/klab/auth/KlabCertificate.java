@@ -179,7 +179,7 @@ public class KlabCertificate implements ICertificate {
 	 * @param file
 	 * @return true if
 	 */
-	private boolean upgradeCertificate(File file2) {
+	public boolean upgradeCertificate(File file2) {
 		try {
 			String fileContent = FileUtils.readFileToString(file2);
 			if (fileContent.startsWith("-----BEGIN PGP MESSAGE-----")) {

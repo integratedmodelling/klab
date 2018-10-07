@@ -2,6 +2,8 @@ package org.integratedmodelling.klab.components.geospace.utils;
 
 import java.awt.image.DataBuffer;
 import java.awt.image.WritableRaster;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,12 +11,14 @@ import javax.media.jai.RasterFactory;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
+import org.geotools.gce.geotiff.GeoTiffWriter;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.Range;
 
 public enum GeotoolsUtils {
@@ -121,5 +125,24 @@ public enum GeotoolsUtils {
         }
 
         return ret;
+    }
+
+    public File exportToTempFile(IState state, ILocator locator, String outputFormat) {
+
+        GridCoverage2D coverage = stateToCoverage(state, locator);
+        
+        if (outputFormat.equalsIgnoreCase("geotiff")) {
+            try {
+                File out = File.createTempFile("klab", ".tiff");
+                out.deleteOnExit();
+                GeoTiffWriter writer = new GeoTiffWriter(out);
+                writer.write(coverage, null);
+                return out;
+            } catch (IOException e) {
+                throw new KlabIOException(e);
+            }
+
+        }
+        return null;
     }
 }

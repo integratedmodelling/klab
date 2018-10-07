@@ -11,6 +11,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -39,6 +41,7 @@ import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
@@ -453,8 +456,13 @@ public enum Observations implements IObservationService {
 //		return new Classification(NS.getUserOrdering(), classifiers);
 	}
 
-	public File exportToTempFile(IObservation obs, String outputFormat) {
-		// TODO Auto-generated method stub
+	public File exportToTempFile(IObservation obs, ILocator locator, String outputFormat) {
+	    if (obs instanceof IState && obs.getGeometry().getDimension(Type.SPACE) != null) {
+	        Dimension space = obs.getGeometry().getDimension(Type.SPACE);
+	        if (space.isRegular() && space.size() > 1) {
+	            return GeotoolsUtils.INSTANCE.exportToTempFile((IState)obs, locator, outputFormat);
+	        }
+	    }
 		return null;
 	}
 

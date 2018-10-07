@@ -214,7 +214,7 @@ public class EngineViewController {
 			} else if (format == GeometryType.RAW) {
 
 				// should have a format field
-				File tempFile = Observations.INSTANCE.exportToTempFile(obs, outputFormat);
+				File tempFile = Observations.INSTANCE.exportToTempFile(obs, loc, outputFormat);
 				if (tempFile != null) {
 					response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
 					try (InputStream in = new FileInputStream(tempFile)) {
