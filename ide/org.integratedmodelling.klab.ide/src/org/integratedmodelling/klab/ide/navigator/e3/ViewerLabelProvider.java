@@ -82,6 +82,8 @@ public class ViewerLabelProvider extends LabelProvider
         } else if (element instanceof EProject) {
             errors = ((EProject) element).isErrors();
             warnings = ((EProject) element).isWarnings();
+        } else if (element instanceof EResource) {
+            errors = ((EResource)element).getResource().isError();
         }
 
         if (element instanceof EConcept && ((EConcept) element).isAbstract()) {
@@ -226,6 +228,9 @@ public class ViewerLabelProvider extends LabelProvider
                     .getPluginImage(Activator.PLUGIN_ID, "icons/scripts.gif"), getTestMarker(), SWTResourceManager.TOP_LEFT);
         }
         if (element instanceof EResource) {
+            if ( ((EResource) element).getResource().isError()) {
+                return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/resource.gif");
+            }
             return ResourceManager.getPluginImage(Activator.PLUGIN_ID, ((EResource) element).getResource()
                     .getGeometry().startsWith("#") ? "icons/resources.gif"
                             : "icons/resource.gif");

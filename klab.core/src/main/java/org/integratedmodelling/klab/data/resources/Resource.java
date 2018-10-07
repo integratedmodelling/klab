@@ -125,7 +125,7 @@ public class Resource implements IResource {
 
 		ret.setUrn(this.urn);
 		ret.setVersion(this.version.toString());
-		ret.setGeometry(this.getGeometry().encode());
+		ret.setGeometry(this.getGeometry() == null ? null : this.getGeometry().encode());
 		ret.setAdapterType(this.getAdapterType());
 		ret.setLocalPath(this.localPath);
 		ret.getLocalPaths().addAll(this.localPaths);

@@ -5,32 +5,35 @@ public class StringUtils {
     public static final int WHITESPACE = 0x0001;
     public static final int NONLETTERS = 0x0002;
     public static final int UPPERCASE  = 0x0004;
-	
+    public static final int SPACES     = 0x0008;
+
     public static String percent(double d) {
         return (int) (Math.round(d * 100.0)) + "%";
     }
-
 
     public static boolean containsAny(String nspc, int flags) {
 
         for (int i = 0; i < nspc.length(); i++) {
             char c = nspc.charAt(i);
-            if ((flags | NONLETTERS) != 0) {
+            if ((flags & NONLETTERS) != 0) {
                 if ((c < 'A' || c > 'z') && !(c == '.' || c == '_'))
                     return true;
             }
-            if ((flags | UPPERCASE) != 0) {
+            if ((flags & UPPERCASE) != 0) {
                 if (c >= 'A' && c <= 'Z')
                     return true;
             }
-            if ((flags | WHITESPACE) != 0) {
+            if ((flags & WHITESPACE) != 0) {
                 if (Character.isWhitespace(c))
+                    return true;
+            }
+            if ((flags & SPACES) != 0) {
+                if (c == ' ' || c == '\t' || c == '\n' || c == '\r')
                     return true;
             }
         }
         return false;
     }
-
 
     /**
      * Return the max line length and the number of lines in the passed paragraph.
@@ -39,8 +42,8 @@ public class StringUtils {
      * @return the paragraph size
      */
     public static int[] getParagraphSize(String text) {
-        int[] ret = new int[] {0,0};
-        
+        int[] ret = new int[] { 0, 0 };
+
         int llen = 0;
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
@@ -51,12 +54,12 @@ public class StringUtils {
                 llen = 0;
                 ret[1] = ret[1] + 1;
             }
-            llen ++;
+            llen++;
         }
-        
+
         return ret;
     }
-    
+
     /**
      * Spaces.
      *
@@ -154,24 +157,24 @@ public class StringUtils {
 
         return ret.toString();
     }
-    
+
     public static String getLeadingWhitespace(String s) {
         StringBuffer ret = new StringBuffer(20);
         for (int i = 0; i < s.length(); i++) {
             if (!Character.isWhitespace(s.charAt(i))) {
                 break;
-            } 
+            }
             ret.append(s.charAt(i));
         }
         return ret.toString();
     }
-    
+
     public static String getTrailingWhitespace(String s) {
         StringBuffer ret = new StringBuffer(20);
         for (int i = s.length() - 1; i >= 0; i--) {
             if (!Character.isWhitespace(s.charAt(i))) {
                 break;
-            } 
+            }
             ret.append(s.charAt(i));
         }
         return ret.toString();
@@ -190,6 +193,5 @@ public class StringUtils {
         }
         return getLeadingWhitespace(s) + pack(s) + getTrailingWhitespace(s);
     }
-
 
 }

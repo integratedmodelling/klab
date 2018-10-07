@@ -384,7 +384,7 @@ public class Geometry implements IGeometry {
 
 		Geometry ret = new Geometry();
 
-		if (geometry.equals("X")) {
+		if (geometry == null || geometry.equals("X")) {
 			return empty();
 		}
 

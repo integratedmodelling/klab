@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.ide.navigator.model.EProject;
 import org.integratedmodelling.klab.ide.navigator.model.EResource;
 import org.integratedmodelling.klab.ide.navigator.model.EResourceFolder;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.ide.utils.StringUtils;
 
 public class KlabDropAssistant extends ResourceDropAdapterAssistant {
 
@@ -86,18 +87,26 @@ public class KlabDropAssistant extends ResourceDropAdapterAssistant {
                     }
 
                 } else if (target instanceof EResourceFolder && eventItem instanceof String) {
-                    File file = new File(eventItem.toString());
-                    if (file.exists() && file.isFile()) {
-                        if (Activator.engineMonitor().isRunning()) {
-                            Activator.session().importFileResource(file, ((EResourceFolder) target)
-                                    .getEParent(EProject.class).getName());
-                        } else {
-                            Eclipse.INSTANCE.alert("You must be connected to an engine to import resources.");
-                        }
+
+                    if (StringUtils.containsAny(eventItem.toString(), StringUtils.WHITESPACE)) {
+                        Eclipse.INSTANCE.alert("Imported identifier " + eventItem
+                                + " contains whitespace: please correct names before trying importing again.");
                     } else {
-                        /*
-                         * Check for URL - either
-                         */
+
+                        File file = new File(eventItem.toString());
+                        if (file.exists() && file.isFile()) {
+                            if (Activator.engineMonitor().isRunning()) {
+                                Activator.session().importFileResource(file, ((EResourceFolder) target)
+                                        .getEParent(EProject.class).getName());
+                            } else {
+                                Eclipse.INSTANCE
+                                        .alert("You must be connected to an engine to import resources.");
+                            }
+                        } else {
+                            /*
+                             * Check for URL - either
+                             */
+                        }
                     }
                 }
             }

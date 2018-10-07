@@ -1,5 +1,9 @@
 package org.integratedmodelling.klab.ide.navigator.model.beans;
 
+
+import java.util.logging.Level;
+
+import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ResourceReference;
 
 /**
@@ -18,10 +22,15 @@ public class EResourceReference extends ResourceReference {
 
 	public EResourceReference(ResourceReference other) {
 		super(other);
+		for (Notification notification : other.getNotifications()) {
+		    if (notification.getLevel().equals(Level.SEVERE.getName())) {
+		        error = true;
+		    }
+		}
 	}
 	
 	public EResourceReference(ResourceReference other, boolean online) {
-		super(other);
+		this(other);
 		this.online = online;
 	}
 
