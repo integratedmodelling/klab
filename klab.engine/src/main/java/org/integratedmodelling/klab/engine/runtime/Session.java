@@ -771,6 +771,11 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		interruptTask(request.getTaskId(), true);
 	}
 
+	// @MessageHandler(type = IMessage.Type.TaskInterrupted)
+	private void handleScaleChangeRequest(ScaleReference scaleRef) {
+		
+	}
+
 	@MessageHandler
 	private void handleProjectLoadRequest(final ProjectLoadRequest request, IMessage message) {
 		new Thread() {
