@@ -220,8 +220,9 @@ public class EngineViewController {
 					try (InputStream in = new FileInputStream(tempFile)) {
 						IOUtils.copy(in, response.getOutputStream());
 					}
+					tempFile.deleteOnExit();
 				}
-				tempFile.deleteOnExit();
+				
 			}
 		}
 
