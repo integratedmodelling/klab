@@ -9,10 +9,23 @@ package org.integratedmodelling.klab.rest;
  */
 public class SpatialExtent {
 
-	double east;
-	double west;
-	double north;
-	double south;
+	private double east;
+	private double west;
+	private double north;
+	private double south;
+	private double gridResolution;
+	private String gridUnit;
+
+	public SpatialExtent() {
+	}
+
+	public SpatialExtent(SpatialExtent ext) {
+		this.east = ext.east;
+		this.west = ext.west;
+		this.north = ext.north;
+		this.south = ext.south;
+		// do not copy resolution
+	}
 
 	public double getEast() {
 		return east;
@@ -73,6 +86,22 @@ public class SpatialExtent {
 			ret.north = north;
 		}
 		return ret;
+	}
+
+	public String getGridUnit() {
+		return gridUnit;
+	}
+
+	public void setGridUnit(String gridUnit) {
+		this.gridUnit = gridUnit;
+	}
+
+	public double getGridResolution() {
+		return gridResolution;
+	}
+
+	public void setGridResolution(double gridResolution) {
+		this.gridResolution = gridResolution;
 	}
 
 }

@@ -116,7 +116,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	long creation = System.currentTimeMillis();
 	long lastJoin = System.currentTimeMillis();
 	boolean isDefault = false;
-
+	boolean lockResolution = false;
 	Set<String> relayIdentities = new HashSet<>();
 
 	SpatialExtent regionOfInterest = null;
@@ -145,6 +145,10 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	 */
 	private Map<String, Pair<IIndexingService.Context, List<Match>>> searchContexts = Collections
 			.synchronizedMap(new HashMap<>());
+
+	private double gridSize;
+
+	private String gridUnits;
 
 	public interface Listener {
 		void onClose(ISession session);
@@ -228,8 +232,12 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 				INamespace namespace = object instanceof KimObject ? ((KimObject) object).getNamespace()
 						: Namespaces.INSTANCE.getNamespace(((IObservable) object).getNamespace());
-				Observer observer = Observations.INSTANCE.makeROIObserver(regionOfInterest, (Namespace) namespace,
-						monitor);
+				SpatialExtent roi = new SpatialExtent(regionOfInterest);
+				if (lockResolution) {
+					roi.setGridResolution(this.gridSize);
+					roi.setGridUnit(this.gridUnits);
+				}
+				Observer observer = Observations.INSTANCE.makeROIObserver(roi, (Namespace) namespace, monitor);
 				try {
 					ISubject subject = new ObserveContextTask(this, observer, CollectionUtils.arrayToList(scenarios))
 							.get();
@@ -773,7 +781,14 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 	@MessageHandler(type = IMessage.Type.ScaleDefined)
 	private void handleScaleChangeRequest(ScaleReference scaleRef) {
-		System.out.println("CHOCHOH " + scaleRef);
+		if (scaleRef.isUnlockSpace()) {
+			this.lockResolution = false;
+		} else {
+			this.gridSize = scaleRef.getSpaceResolution();
+			this.gridUnits = scaleRef.getSpaceUnit();
+			this.lockResolution = true;
+			// TODO time - may not have space one day
+		}
 	}
 
 	@MessageHandler
