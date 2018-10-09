@@ -32,7 +32,9 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.ide.utils.StringUtils;
+import org.integratedmodelling.klab.rest.ProjectModificationNotification;
 import org.integratedmodelling.klab.rest.ProjectModificationRequest;
 
 public class NewProjectWizard extends Wizard implements INewWizard {
@@ -55,7 +57,9 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 		final String nspc = page.getNamespace().getText();
 
 		if (validate(name, nspc)) {
-			Activator.post(IMessage.MessageClass.ProjectLifecycle, IMessage.Type.CreateProject,
+			Activator.post((message)->{
+				Eclipse.INSTANCE.importExistingProject(((ProjectModificationNotification)message.getPayload()).getFile());
+			}, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.CreateProject,
 					new ProjectModificationRequest(name, nspc));
 			return true;
 		}

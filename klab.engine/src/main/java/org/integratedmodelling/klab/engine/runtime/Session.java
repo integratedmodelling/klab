@@ -658,7 +658,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 					new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION,
 							project.getRoot()))
 					.inResponseTo(message));
-			Resources.INSTANCE.getLoader().add(project.getStatement());
+//			Resources.INSTANCE.getLoader().add(project.getStatement());
 			break;
 
 		case CreateScenario:
