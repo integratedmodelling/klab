@@ -14,7 +14,7 @@ public class SpatialExtent {
 	private double north;
 	private double south;
 	private double gridResolution;
-	private String gridUnit;
+	private String gridUnit = null;
 
 	public SpatialExtent() {
 	}
