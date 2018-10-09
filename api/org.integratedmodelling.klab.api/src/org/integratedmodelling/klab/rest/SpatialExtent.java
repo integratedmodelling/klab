@@ -13,8 +13,8 @@ public class SpatialExtent {
 	private double west;
 	private double north;
 	private double south;
-	private double gridResolution;
-	private String gridUnit = "";
+	private Double gridResolution;
+	private String gridUnit;
 
 	public SpatialExtent() {
 	}
@@ -96,11 +96,11 @@ public class SpatialExtent {
 		this.gridUnit = gridUnit;
 	}
 
-	public double getGridResolution() {
+	public Double getGridResolution() {
 		return gridResolution;
 	}
 
-	public void setGridResolution(double gridResolution) {
+	public void setGridResolution(Double gridResolution) {
 		this.gridResolution = gridResolution;
 	}
 
