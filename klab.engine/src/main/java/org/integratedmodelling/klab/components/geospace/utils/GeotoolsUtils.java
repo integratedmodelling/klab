@@ -141,7 +141,6 @@ public enum GeotoolsUtils {
             } catch (IOException e) {
                 throw new KlabIOException(e);
             }
-
         }
         return null;
     }
