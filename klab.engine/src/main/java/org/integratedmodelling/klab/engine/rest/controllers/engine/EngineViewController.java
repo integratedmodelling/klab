@@ -170,7 +170,8 @@ public class EngineViewController {
 
 		if (obs instanceof IState) {
 
-			if (format == GeometryType.RASTER) {
+			if (format == GeometryType.RASTER
+					|| (format == GeometryType.RAW && outputFormat != null && outputFormat.equals("png"))) {
 
 				BufferedImage image = Renderer.INSTANCE.render((IState) obs, loc,
 						NumberUtils.intArrayFromString(viewport == null ? "800,800" : viewport));
@@ -222,7 +223,7 @@ public class EngineViewController {
 					}
 					tempFile.deleteOnExit();
 				}
-				
+
 			}
 		}
 

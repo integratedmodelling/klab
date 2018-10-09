@@ -494,7 +494,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		scale.setSpaceUnit(resolution.getSecond());
 		scale.setSpaceResolution(resolution.getFirst());
 		scale.setSpaceResolutionDescription(resolution.getFirst() + " " + resolution.getSecond());
-        scale.setResolutionDescription(resolution.getFirst() + " " + resolution.getSecond());
+		scale.setResolutionDescription(resolution.getFirst() + " " + resolution.getSecond());
 		scale.setSpaceScale(scaleRank);
 
 		monitor.send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined, scale);
@@ -555,8 +555,8 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 					if (request.isDefaultResults()) {
 
 						/*
-						 * These come from the user's groups. They should eventually be linked to session history and
-						 * preferences.
+						 * These come from the user's groups. They should eventually be linked to
+						 * session history and preferences.
 						 */
 						for (ObservableReference observable : Authentication.INSTANCE
 								.getDefaultObservables(Session.this)) {
@@ -658,7 +658,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 					new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION,
 							project.getRoot()))
 					.inResponseTo(message));
-//			Resources.INSTANCE.getLoader().add(project.getStatement());
+			// Resources.INSTANCE.getLoader().add(project.getStatement());
 			break;
 
 		case CreateScenario:
@@ -771,9 +771,9 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		interruptTask(request.getTaskId(), true);
 	}
 
-	// @MessageHandler(type = IMessage.Type.TaskInterrupted)
+	@MessageHandler(type = IMessage.Type.ScaleDefined)
 	private void handleScaleChangeRequest(ScaleReference scaleRef) {
-		
+		System.out.println("CHOCHOH " + scaleRef);
 	}
 
 	@MessageHandler

@@ -22,5 +22,10 @@ spatialextent space
 		 spatial context will be used as a return value."
 		default ""
 		
+	optional input projection
+		"A string that specify the EPSG code for a projection to use instead of the original
+		 one when shapes come from a URN."
+		default ""		
+		
 	class org.integratedmodelling.klab.components.geospace.services.Space
 }

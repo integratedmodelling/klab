@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -25,6 +26,7 @@ public class Space implements IExpression {
         Shape shape = null;
         Double resolution = null;
         String urn = null;
+        Projection projection = null;
 
         org.integratedmodelling.klab.components.geospace.extents.Space ret = null;
 
@@ -36,6 +38,9 @@ public class Space implements IExpression {
         }
         if (parameters.containsKey("urn")) {
             urn = parameters.get("urn", String.class);
+        }
+        if (parameters.containsKey("projection")) {
+            projection = Projection.create(parameters.get("projection", String.class));
         }
 
         if (shape != null) {
@@ -55,6 +60,10 @@ public class Space implements IExpression {
 
             ISpace space = ((IScale) artifact.getSecond().iterator().next().getGeometry()).getSpace();
 
+            if (projection != null) {
+            	space = space.getShape().transform(projection);
+            }
+            
             if (resolution == null) {
                 return space;
             }
