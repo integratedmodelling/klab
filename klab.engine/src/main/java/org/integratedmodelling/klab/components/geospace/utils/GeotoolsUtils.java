@@ -131,7 +131,7 @@ public enum GeotoolsUtils {
 
         GridCoverage2D coverage = stateToCoverage(state, locator);
         
-        if (outputFormat.equalsIgnoreCase("geotiff")) {
+        if (outputFormat.equalsIgnoreCase("tiff")) {
             try {
                 File out = File.createTempFile("klab", ".tiff");
                 out.deleteOnExit();
