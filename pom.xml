@@ -66,7 +66,7 @@
 		<module>klab.modeler</module>
 		<module>client</module>
 		<module>klab.tools</module>
-		<!-- <module>ide</module>  -->
+		<module>ide</module>
 		<module>klab.hub</module>
 		<module>klab.node</module>
 		<module>products</module>

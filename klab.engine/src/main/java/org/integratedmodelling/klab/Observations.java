@@ -279,7 +279,7 @@ public enum Observations implements IObservationService {
 								+ grid.getProjection().getUnits());
 				
 				ret.getExportFormats().add(new ExportFormat("PNG Image", "png"));
-				ret.getExportFormats().add(new ExportFormat("GeoTIFF Raster file", "geotiff"));
+				ret.getExportFormats().add(new ExportFormat("GeoTIFF Raster file", "tiff"));
 				
 			} else if (observation.groupSize() > 0) {
 				ret.getExportFormats().add(new ExportFormat("Shapefile", "shp"));
@@ -324,7 +324,6 @@ public enum Observations implements IObservationService {
 				if (!summary.isDegenerate()) {
 					ret.getGeometryTypes().add(GeometryType.COLORMAP);
 				}
-				ret.getActions().add(new ActionReference("Export as GeoTiff", "ExportGeotiff"));
 			}
 
 			DataSummary ds = new DataSummary();

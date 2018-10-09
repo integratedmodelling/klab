@@ -681,7 +681,6 @@ public class Assessment {
 	public Assessment(ISubject context, IObservable output, IRuntimeContext resolutionContext) {
 
 		this.context = context;
-		// this.process = process;
 		this.scale = context.getScale();
 		this.monitor = resolutionContext.getMonitor();
 		this.resolutionContext = resolutionContext;
