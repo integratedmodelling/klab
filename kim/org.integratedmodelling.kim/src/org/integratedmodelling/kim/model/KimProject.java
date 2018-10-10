@@ -101,7 +101,7 @@ public class KimProject implements IKimProject {
 
 	public List<File> getSourceFiles(File folder) {
 		List<File> result = new ArrayList<>();
-		File[] files = folder.listFiles();
+		File[] files = folder == null ? null : folder.listFiles();
 		if (files != null) {
 			for (File f : files) {
 				if (isModelFile(f)) {

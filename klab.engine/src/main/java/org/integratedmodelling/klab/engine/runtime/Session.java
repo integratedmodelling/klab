@@ -783,6 +783,9 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	private void handleScaleChangeRequest(ScaleReference scaleRef) {
 		if (scaleRef.isUnlockSpace()) {
 			this.lockResolution = false;
+			if (this.regionOfInterest != null) {
+				this.setRegionOfInterest(this.regionOfInterest);
+			}
 		} else {
 			this.gridSize = scaleRef.getSpaceResolution();
 			this.gridUnits = scaleRef.getSpaceUnit();
