@@ -4,6 +4,7 @@ import static org.dizitart.no2.objects.filters.ObjectFilters.eq;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -159,7 +160,7 @@ public class ResourceCatalog implements IResourceCatalog {
             try {
                 File resFile = new File(resourcePath + File.separator + "resource.json");
                 if (!resFile.exists() || resFile.lastModified() < ref.getResourceTimestamp()) {
-                    FileUtils.writeStringToFile(resFile, JsonUtils.printAsJson(ref)/*, TODO REINTEGRATE - somehow can't find the method  StandardCharsets.UTF_8*/);
+                    FileUtils.writeStringToFile(resFile, JsonUtils.printAsJson(ref), StandardCharsets.UTF_8);
                 }
             } catch (IOException e) {
                 throw new KlabIOException(e);
@@ -293,7 +294,7 @@ public class ResourceCatalog implements IResourceCatalog {
                 FileUtils.copyDirectory(previousDir, newData.getFirst());
                 FileUtils.writeStringToFile(new File(newData.getFirst() + File.separator
                         + "resource.json"), JsonUtils
-                                .printAsJson(newData.getSecond())/* TODO REINTEGRATE - somehow can't find the method , StandardCharsets.UTF_8*/);
+                                .printAsJson(newData.getSecond()), StandardCharsets.UTF_8);
                 FileUtils.deleteDirectory(previousDir);
                 resources.remove(eq("urn", resource.getUrn()));
                 resources.insert(newData.getSecond());
