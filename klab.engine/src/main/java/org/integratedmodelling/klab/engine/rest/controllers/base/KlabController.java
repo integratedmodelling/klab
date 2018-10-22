@@ -75,6 +75,14 @@ public class KlabController {
 	public EngineStatus engineStatus(Principal user, HttpServletRequest request) {
 		boolean isAdmin = false; // TODO implement
 		EngineStatus ret = new EngineStatus();
+        Engine engine = Authentication.INSTANCE.getAuthenticatedIdentity(Engine.class);
+        Runtime runtime = Runtime.getRuntime();
+        if (engine != null) {
+            ret.setTotalMemory(runtime.totalMemory() / 1048576);
+            ret.setFreeMemory(runtime.freeMemory() / 1048576);
+            ret.setBootTime(engine.getBootTime().getTime());
+        }
+
         if (IPUtils.isLocal(request.getRemoteAddr()) || isAdmin) {
         	for (ISession session : Authentication.INSTANCE.getSessions()) {
         		// TODO filter the nonlocal ones if not admin
