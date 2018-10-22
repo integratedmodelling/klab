@@ -13,9 +13,9 @@ package org.integratedmodelling.klab.rest;
  */
 public class SpatialLocation {
 
-	private double easting;
-	private double northing;
-	private String wktShape;
+	private double easting = Double.NaN;
+	private double northing = Double.NaN;
+	private String wktShape = null;
 
 	/**
 	 * Easting (longitude)
