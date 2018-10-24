@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EngineStatus {
@@ -8,7 +9,7 @@ public class EngineStatus {
 	private long freeMemory;
 	private long totalMemory;
 	private float loadFactor;
-	private List<SessionReference> sessions;
+	private List<SessionReference> sessions = new ArrayList<>();
 
 	public long getBootTime() {
 		return bootTime;

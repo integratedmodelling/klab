@@ -110,7 +110,7 @@ public interface IMessage {
 		/**
 		 * F->B.
 		 */
-		RegionOfInterest,
+		RegionOfInterest, FeatureAdded,
 
 		/**
 		 * F->B

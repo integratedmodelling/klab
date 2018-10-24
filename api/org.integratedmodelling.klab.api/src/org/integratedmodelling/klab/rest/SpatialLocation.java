@@ -4,14 +4,18 @@ package org.integratedmodelling.klab.rest;
  * Used to communicate spatial locations of interest. Values should be in
  * decimal latitude and longitude: assume Easting = the value on the HORIZONTAL
  * axis (longitude) and NORTHING for the one on the vertical axis (latitude).
+ * <p>
+ * Can also be used F->B to communicate features created by users through the
+ * wktShape field.
  * 
  * @author ferdinando.villa
  *
  */
 public class SpatialLocation {
 
-	double easting;
-	double northing;
+	private double easting = Double.NaN;
+	private double northing = Double.NaN;
+	private String wktShape = null;
 
 	/**
 	 * Easting (longitude)
@@ -35,6 +39,14 @@ public class SpatialLocation {
 
 	public void setNorthing(double northing) {
 		this.northing = northing;
+	}
+
+	public String getWktShape() {
+		return wktShape;
+	}
+
+	public void setWktShape(String wktShape) {
+		this.wktShape = wktShape;
 	}
 
 }
