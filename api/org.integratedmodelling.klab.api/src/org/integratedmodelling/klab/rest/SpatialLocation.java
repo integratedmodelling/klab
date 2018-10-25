@@ -16,6 +16,7 @@ public class SpatialLocation {
 	private double easting = Double.NaN;
 	private double northing = Double.NaN;
 	private String wktShape = null;
+	private String contextId = null;
 
 	/**
 	 * Easting (longitude)
@@ -47,6 +48,14 @@ public class SpatialLocation {
 
 	public void setWktShape(String wktShape) {
 		this.wktShape = wktShape;
+	}
+
+	public String getContextId() {
+		return contextId;
+	}
+
+	public void setContextId(String contextId) {
+		this.contextId = contextId;
 	}
 
 }

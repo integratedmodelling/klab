@@ -87,6 +87,7 @@ import org.integratedmodelling.klab.rest.SearchRequest;
 import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.SessionReference;
 import org.integratedmodelling.klab.rest.SpatialExtent;
+import org.integratedmodelling.klab.rest.SpatialLocation;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -410,6 +411,12 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	 * ------------------------------------------------------------------------
 	 */
 
+	@MessageHandler(type = IMessage.Type.FeatureAdded)
+	private void handleFeatureAdded(final SpatialLocation location) {
+		System.out.println("Got shape " + location.getWktShape());
+	}
+	
+	
 	@MessageHandler
 	private void handleResourceCRUDRequest(final ResourceCRUDRequest request, IMessage.Type type) {
 
