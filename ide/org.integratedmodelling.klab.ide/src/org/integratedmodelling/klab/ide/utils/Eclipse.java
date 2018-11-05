@@ -466,7 +466,10 @@ public enum Eclipse {
         }
         
         try {
-            IMarker marker = file.createMarker(XTEXT_MARKER_TYPE);
+        	
+        	System.out.println("Adding xtext marker: " + file + ":" + lineNumber + ":" + message);
+
+        	IMarker marker = file.createMarker(XTEXT_MARKER_TYPE);
             marker.setAttribute(IMarker.MESSAGE, message);
             marker.setAttribute(IMarker.SEVERITY, severity);
             if (lineNumber <= 0) {
@@ -502,7 +505,8 @@ public enum Eclipse {
                 }
 
                 if (file.exists()) {
-                    file.deleteMarkers(XTEXT_MARKER_TYPE, true, IResource.DEPTH_ZERO);
+                	System.out.println("DELETING MARKERS: " + file);
+                	file.deleteMarkers(XTEXT_MARKER_TYPE, true, IResource.DEPTH_ZERO);
                 }
 
                 int i = 0;

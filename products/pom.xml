@@ -9,12 +9,8 @@
   <packaging>pom</packaging>
   <description>Parent module for all deliverable k.LAB stack products, both production and testing.</description>
   <modules>
-  	
-  	
-  	
   	<module>explorer</module>
   	<module>engine</module>
   	<module>cli</module>
-  	<module>hub</module>
   </modules>
 </project>

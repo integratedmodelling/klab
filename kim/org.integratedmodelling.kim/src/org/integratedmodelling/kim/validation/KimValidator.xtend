@@ -114,7 +114,7 @@ class KimValidator extends AbstractKimValidator {
 			for (import : namespace.imported) {
 				var importedNs = Kim.INSTANCE.getNamespace(import.name)
 				if (importedNs === null) {
-					error("Imported namespace " + import.name + " could not be found", import,
+					error("Imported namespace " + import.name + " could not be found", namespace,
 						KimPackage.Literals.NAMESPACE__IMPORTED, i, BAD_NAMESPACE_ID)
 					ns.errors = true
 				}

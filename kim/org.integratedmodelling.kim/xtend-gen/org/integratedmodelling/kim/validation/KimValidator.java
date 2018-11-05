@@ -151,7 +151,7 @@ public class KimValidator extends AbstractKimValidator {
             String _name = import_.getName();
             String _plus = ("Imported namespace " + _name);
             String _plus_1 = (_plus + " could not be found");
-            this.error(_plus_1, import_, 
+            this.error(_plus_1, namespace, 
               KimPackage.Literals.NAMESPACE__IMPORTED, i, KimValidator.BAD_NAMESPACE_ID);
             ns.setErrors(true);
           }

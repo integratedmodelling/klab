@@ -737,7 +737,7 @@ public class ActionImpl extends MinimalEObjectImpl.Container implements Action
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuilder result = new StringBuilder(super.toString());
+    StringBuffer result = new StringBuffer(super.toString());
     result.append(" (change: ");
     result.append(change);
     result.append(", set: ");

@@ -41,6 +41,7 @@ public class KlabBuilder extends IncrementalProjectBuilder {
             IResource resource = delta.getResource();
             switch (delta.getKind()) {
             case IResourceDelta.ADDED:
+            	System.out.println("ADDED: " + delta);
                 //				if (resource instanceof IFile && isRelevant((IFile) resource)) {
                 //					Activator.loader().add(((IFile) resource).getLocation().toFile());
                 //					Activator.post(IMessage.MessageClass.ProjectLifecycle, IMessage.Type.ProjectFileModified,
@@ -49,9 +50,11 @@ public class KlabBuilder extends IncrementalProjectBuilder {
                 //				}
                 break;
             case IResourceDelta.REMOVED:
+            	System.out.println("REMOVED: " + delta);
                 // just close the editor; everything else is dealt with by the loader and callback
                 break;
             case IResourceDelta.CHANGED:
+            	System.out.println("CHANGED: " + delta);
                 if (resource instanceof IFile && isRelevant((IFile) resource)) {
                     int i = 0;
                     for (IKimNamespace ns : Activator.loader().touch(((IFile) resource).getLocation().toFile())) {
@@ -129,6 +132,7 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 
     private void addMarker(IFile file, String message, int lineNumber, int severity) {
         try {
+        	System.out.println("Adding custom marker: " + file + ":" + lineNumber + ":" + message);
             IMarker marker = file.createMarker(MARKER_TYPE);
             marker.setAttribute(IMarker.MESSAGE, message);
             marker.setAttribute(IMarker.SEVERITY, severity);
