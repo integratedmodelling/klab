@@ -51,6 +51,7 @@ import org.integratedmodelling.klab.rest.DocumentationReference;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.swt.custom.SashForm;
 
 public class DocumentationEditor extends ViewPart {
 
@@ -222,91 +223,91 @@ public class DocumentationEditor extends ViewPart {
         lblNewLabel.setToolTipText("Add a custom section");
         lblNewLabel.setImage(ResourceManager
                 .getPluginImage("org.integratedmodelling.klab.ide", "icons/add.png"));
-
-        editor = new StyledText(parent, SWT.BORDER | SWT.WRAP | /* SWT.H_SCROLL | */SWT.V_SCROLL);
-        editor.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if ((e.keyCode == 'S' || e.keyCode == 's') && (e.stateMask & SWT.CTRL) != 0) {
-                    save();
-                } else {
-                    dirty = true;
-                    if (!getTitle().startsWith("*")) {
-                        setPartName("* " + getTitle());
+        
+        SashForm sashForm = new SashForm(parent, SWT.VERTICAL);
+        sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        
+                editor = new StyledText(sashForm, SWT.BORDER | SWT.WRAP | /* SWT.H_SCROLL | */SWT.V_SCROLL);
+                editor.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyPressed(KeyEvent e) {
+                        if ((e.keyCode == 'S' || e.keyCode == 's') && (e.stateMask & SWT.CTRL) != 0) {
+                            save();
+                        } else {
+                            dirty = true;
+                            if (!getTitle().startsWith("*")) {
+                                setPartName("* " + getTitle());
+                            }
+                        }
                     }
-                }
-            }
-        });
-        editor.setAlwaysShowScrollBars(false);
-        GridData gd_editor = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
-        gd_editor.minimumHeight = 180;
-        editor.setLayoutData(gd_editor);
-
-        Group grpCrossreferences = new Group(parent, SWT.NONE);
-        grpCrossreferences.setLayout(new GridLayout(1, false));
-        grpCrossreferences.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-        grpCrossreferences.setText("Cross-references");
-
-        tableViewer = new TableViewer(grpCrossreferences, SWT.BORDER | SWT.FULL_SELECTION);
-        tableViewer.addDoubleClickListener(new IDoubleClickListener() {
-            public void doubleClick(DoubleClickEvent event) {
-                Object o = ((StructuredSelection) (event.getSelection())).getFirstElement();
-                if (o instanceof Reference) {
-                    String key = ((Reference) o).get(BibTexFields.KEY);
-                    editor.insert("@cite(" + key + ")");
-                }
-            }
-        });
-        table = tableViewer.getTable();
-        table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-        table.setLinesVisible(true);
-
-        TableColumn tblclmnNewColumn = new TableColumn(table, SWT.NONE);
-        tblclmnNewColumn.setWidth(160);
-        tblclmnNewColumn.setText("New Column");
-
-        TableColumn tblclmnNewColumn_1 = new TableColumn(table, SWT.NONE);
-        tblclmnNewColumn_1.setWidth(720);
-        tblclmnNewColumn_1.setText("Citation");
-
-        tableViewer.setContentProvider(new ReferencesContentProvider());
-        tableViewer.setLabelProvider(new ReferencesLabelProvider());
-
-        text = new Text(grpCrossreferences, SWT.BORDER);
-        text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-
-        Composite composite_1 = new Composite(grpCrossreferences, SWT.NONE);
-        composite_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
-        RowLayout rl_composite_1 = new RowLayout(SWT.HORIZONTAL);
-        rl_composite_1.wrap = false;
-        composite_1.setLayout(rl_composite_1);
-
-        Button button_1 = new Button(composite_1, SWT.NONE);
-        button_1.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                save();
-            }
-        });
-        button_1.setLayoutData(new RowData(90, -1));
-        button_1.setText("Save");
-
-        Button button_2 = new Button(composite_1, SWT.NONE);
-        button_2.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseDown(MouseEvent e) {
-                boolean ok = true;
-                if (dirty) {
-                    ok = Eclipse.INSTANCE.confirm("Abandon changes?");
-                }
-                if (ok) {
-                    PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-                            .hideView(DocumentationEditor.this);
-                }
-            }
-        });
-        button_2.setLayoutData(new RowData(90, -1));
-        button_2.setText("Cancel");
+                });
+                editor.setAlwaysShowScrollBars(false);
+                
+                        Group grpCrossreferences = new Group(sashForm, SWT.NONE);
+                        grpCrossreferences.setLayout(new GridLayout(1, false));
+                        grpCrossreferences.setText("Cross-references");
+                        
+                                tableViewer = new TableViewer(grpCrossreferences, SWT.BORDER | SWT.FULL_SELECTION);
+                                tableViewer.addDoubleClickListener(new IDoubleClickListener() {
+                                    public void doubleClick(DoubleClickEvent event) {
+                                        Object o = ((StructuredSelection) (event.getSelection())).getFirstElement();
+                                        if (o instanceof Reference) {
+                                            String key = ((Reference) o).get(BibTexFields.KEY);
+                                            editor.insert("@cite(" + key + ")");
+                                        }
+                                    }
+                                });
+                                table = tableViewer.getTable();
+                                table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+                                table.setLinesVisible(true);
+                                
+                                        TableColumn tblclmnNewColumn = new TableColumn(table, SWT.NONE);
+                                        tblclmnNewColumn.setWidth(160);
+                                        tblclmnNewColumn.setText("New Column");
+                                        
+                                                TableColumn tblclmnNewColumn_1 = new TableColumn(table, SWT.NONE);
+                                                tblclmnNewColumn_1.setWidth(720);
+                                                tblclmnNewColumn_1.setText("Citation");
+                                                
+                                                        tableViewer.setContentProvider(new ReferencesContentProvider());
+                                                        tableViewer.setLabelProvider(new ReferencesLabelProvider());
+                                                        
+                                                                text = new Text(grpCrossreferences, SWT.BORDER);
+                                                                text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+                                                                
+                                                                        Composite composite_1 = new Composite(grpCrossreferences, SWT.NONE);
+                                                                        composite_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
+                                                                        RowLayout rl_composite_1 = new RowLayout(SWT.HORIZONTAL);
+                                                                        rl_composite_1.wrap = false;
+                                                                        composite_1.setLayout(rl_composite_1);
+                                                                        
+                                                                                Button button_1 = new Button(composite_1, SWT.NONE);
+                                                                                button_1.addSelectionListener(new SelectionAdapter() {
+                                                                                    @Override
+                                                                                    public void widgetSelected(SelectionEvent e) {
+                                                                                        save();
+                                                                                    }
+                                                                                });
+                                                                                button_1.setLayoutData(new RowData(90, -1));
+                                                                                button_1.setText("Save");
+                                                                                
+                                                                                        Button button_2 = new Button(composite_1, SWT.NONE);
+                                                                                        button_2.addMouseListener(new MouseAdapter() {
+                                                                                            @Override
+                                                                                            public void mouseDown(MouseEvent e) {
+                                                                                                boolean ok = true;
+                                                                                                if (dirty) {
+                                                                                                    ok = Eclipse.INSTANCE.confirm("Abandon changes?");
+                                                                                                }
+                                                                                                if (ok) {
+                                                                                                    PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+                                                                                                            .hideView(DocumentationEditor.this);
+                                                                                                }
+                                                                                            }
+                                                                                        });
+                                                                                        button_2.setLayoutData(new RowData(90, -1));
+                                                                                        button_2.setText("Cancel");
+                                                                                        sashForm.setWeights(new int[] {1, 1});
 
         createActions();
         initializeToolBar();
