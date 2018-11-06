@@ -238,7 +238,9 @@ public class DocumentationEditor extends ViewPart {
             }
         });
         editor.setAlwaysShowScrollBars(false);
-        editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        GridData gd_editor = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+        gd_editor.minimumHeight = 180;
+        editor.setLayoutData(gd_editor);
 
         Group grpCrossreferences = new Group(parent, SWT.NONE);
         grpCrossreferences.setLayout(new GridLayout(1, false));
