@@ -413,9 +413,9 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 	@MessageHandler(type = IMessage.Type.FeatureAdded)
 	private void handleFeatureAdded(final SpatialLocation location) {
+		
 		System.out.println("Got shape " + location.getWktShape());
 	}
-	
 	
 	@MessageHandler
 	private void handleResourceCRUDRequest(final ResourceCRUDRequest request, IMessage.Type type) {
