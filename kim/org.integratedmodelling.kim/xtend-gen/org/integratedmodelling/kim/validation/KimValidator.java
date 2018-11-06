@@ -402,28 +402,32 @@ public class KimValidator extends AbstractKimValidator {
         }
         KimObservable observable = _xifexpression_3;
         Kim.ConceptDescriptor definition = observable.getDescriptor();
-        if ((definition.isUndefined() && ((obsIdx > 0) || (interpretedRole == null)))) {
-          this.error("Observable has undefined semantics", KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.BAD_OBSERVABLE);
-          ok = false;
-        } else {
-          if ((((!definition.is(IKimConcept.Type.OBSERVABLE)) && (!definition.is(IKimConcept.Type.TRAIT))) && 
-            (!definition.is(IKimConcept.Type.CONFIGURATION)))) {
-            this.error("Models can only describe observables, configurations or traits", 
-              KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.BAD_OBSERVABLE);
+        boolean _notEquals = (!Objects.equal(definition, null));
+        if (_notEquals) {
+          if ((definition.isUndefined() && ((obsIdx > 0) || (interpretedRole == null)))) {
+            this.error("Observable has undefined semantics", KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.BAD_OBSERVABLE);
             ok = false;
           } else {
-            if (((((obsIdx == 0) && (statement != null)) && model.isInstantiator()) && (!definition.is(IKimConcept.Type.COUNTABLE)))) {
-              this.error(
-                "The first observable in an instantiator model (\'model each\') must be countable: subject, event or relationship", 
+            if ((((!definition.is(IKimConcept.Type.OBSERVABLE)) && (!definition.is(IKimConcept.Type.TRAIT))) && 
+              (!definition.is(IKimConcept.Type.CONFIGURATION)))) {
+              this.error("Models can only describe observables, configurations or traits", 
                 KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.BAD_OBSERVABLE);
               ok = false;
             } else {
-              if ((((statement != null) && definition.is(IKimConcept.Type.SUBJECTIVE)) && (!isPrivate))) {
-                this.error("A model producing subjective observables must be private", 
+              if (((((obsIdx == 0) && (statement != null)) && model.isInstantiator()) && 
+                (!definition.is(IKimConcept.Type.COUNTABLE)))) {
+                this.error(
+                  "The first observable in an instantiator model (\'model each\') must be countable: subject, event or relationship", 
                   KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.BAD_OBSERVABLE);
                 ok = false;
               } else {
-                observables.add(observable);
+                if ((((statement != null) && definition.is(IKimConcept.Type.SUBJECTIVE)) && (!isPrivate))) {
+                  this.error("A model producing subjective observables must be private", 
+                    KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.BAD_OBSERVABLE);
+                  ok = false;
+                } else {
+                  observables.add(observable);
+                }
               }
             }
           }
