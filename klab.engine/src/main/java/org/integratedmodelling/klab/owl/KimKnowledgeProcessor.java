@@ -86,7 +86,7 @@ public enum KimKnowledgeProcessor {
             return ret;
 
         } catch (Throwable e) {
-            monitor.error(e);
+            monitor.error(e, concept);
         }
         return null;
     }
@@ -161,7 +161,7 @@ public enum KimKnowledgeProcessor {
                     namespace.define();
                     kimObject.getChildren().add(chobj);
                 } catch (Throwable e) {
-                    monitor.error(e);
+                    monitor.error(e, child);
                 }
             }
         }
@@ -405,7 +405,7 @@ public enum KimKnowledgeProcessor {
                 builder.as(concept.getObservationType(), other == null ? (IConcept[]) null
                         : new IConcept[] { other });
             } catch (KlabValidationException e) {
-                monitor.error(e);
+                monitor.error(e, concept);
             }
         }
 

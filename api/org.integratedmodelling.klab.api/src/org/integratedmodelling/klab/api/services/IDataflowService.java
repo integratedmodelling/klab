@@ -74,6 +74,14 @@ public interface IDataflowService {
    */
   <T extends IArtifact> IDataflow<T> compile(String name, IResolutionScope scope)
       throws KlabException;
+  
+  /**
+   * Compile a KDL specification into an executable dataflow. To be implemented.
+   * 
+   * @param specification
+   * @return
+   */
+  IDataflow<? extends IArtifact> compile(IKdlDataflow specification);
 
 
 }
