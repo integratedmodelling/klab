@@ -147,7 +147,11 @@ public class EngineViewController {
 	}
 
 	/**
-	 * Get the data for a state in directly usable form, as values or images
+	 * Get the data for an observation in directly usable form, as values or images
+	 * 
+	 * TODO if format == null (currently mandatory) it should return the Protobuf data for
+	 * the corresponding artifact and geometry. For completeness there should also be a 
+	 * GeometryType for this.
 	 * 
 	 * TODO use filters or HttpMessageConverter/content negotiation for various
 	 * media types - see

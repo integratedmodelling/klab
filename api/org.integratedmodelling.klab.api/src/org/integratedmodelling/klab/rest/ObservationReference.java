@@ -23,8 +23,9 @@ public class ObservationReference implements IObservationReference {
 
 		private String label;
 		private String value;
-		
-		public ExportFormat() {}
+
+		public ExportFormat() {
+		}
 
 		public ExportFormat(String label, String value) {
 			this.label = label;
@@ -64,8 +65,13 @@ public class ObservationReference implements IObservationReference {
 	}
 
 	/**
-	 * The value of this enum determines the way the observation should be
-	 * visualized.
+	 * The value of this enum represents both the "nature" of the data
+	 * representation and its natural geometry, specifying a way for an observation
+	 * to be encoded when any representation of it is requested.
+	 * 
+	 * TODO the name is really not right. At the moment it is part of observation
+	 * bean methods so changing it is a little complex. It should probably be called
+	 * DataEncoding or something like that.
 	 * 
 	 * @author ferdinando.villa
 	 *
