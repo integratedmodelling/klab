@@ -31,10 +31,12 @@ public class ObservationActor extends AbstractActor {
 		this.observation = observation;
 	}
 
+	// add all message classes as serializable public static final
+	
 	@Override
 	public Receive createReceive() {
 		// TODO Auto-generated method stub
-		return null; // receiveBuilder().match();
+		return null; // receiveBuilder().match(MessageClass.class, request -> { getSender().tell(new Response(....)); });
 	}
 
 }

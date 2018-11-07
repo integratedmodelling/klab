@@ -31,7 +31,7 @@ public class TerrainService implements IResolver<IDataArtifact>, IExpression {
 	@Override
 	public IDataArtifact resolve(IDataArtifact ret, IComputationContext context) {
 
-		Range range = context.get("range", new Range(0., 4000., false, true));
+		Range range = context.get("range", new Range(0., 4000., false, false));
 		long[] xy = context.getScale().shape(Dimension.Type.SPACE);
 		Terrain terrain = new Terrain(context.get("detail", 8), context.get("roughness", 0.55), range.getLowerBound(),
 				range.getUpperBound());
