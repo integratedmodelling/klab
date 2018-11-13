@@ -13,6 +13,7 @@ import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
 import org.integratedmodelling.kdl.kdl.ActorDefinition;
+import org.integratedmodelling.kdl.kdl.Annotation;
 import org.integratedmodelling.kdl.kdl.ClassifierRHS;
 import org.integratedmodelling.kdl.kdl.Computation;
 import org.integratedmodelling.kdl.kdl.Currency;
@@ -92,6 +93,7 @@ public class KdlFactoryImpl extends EFactoryImpl implements KdlFactory
     switch (eClass.getClassifierID())
     {
       case KdlPackage.MODEL: return createModel();
+      case KdlPackage.ANNOTATION: return createAnnotation();
       case KdlPackage.ACTOR_DEFINITION: return createActorDefinition();
       case KdlPackage.DATAFLOW_BODY: return createDataflowBody();
       case KdlPackage.COMPUTATION: return createComputation();
@@ -163,6 +165,17 @@ public class KdlFactoryImpl extends EFactoryImpl implements KdlFactory
   {
     ModelImpl model = new ModelImpl();
     return model;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Annotation createAnnotation()
+  {
+    AnnotationImpl annotation = new AnnotationImpl();
+    return annotation;
   }
 
   /**

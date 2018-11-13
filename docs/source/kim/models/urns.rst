@@ -1,12 +1,27 @@
-What's in a URN?
-================
+What's in a URN? The resource lifecycle
+========================================
 
-An *informational artifact* is, in k.LAB, any resource that can be used to produce an observation of an observable concept. In k.LAB this encompasses both "data" or computations (we will also say "models" for the latter in the following). Different types of resources can produce observation of different classes of observables. Some examples:
+A *resource* is, in k.LAB, any informational artifact that can be used to produce an observation of an observable concept. A resource contains or produces *raw* information, i.e. information with no semantics associated. In this category we include data files, tables, local or networked databases, web services, `OGC`_ data services or `R`_ scripts - indeed, most of the resources that scientists and managers deal with every day.  A k.LAB *model* is used to annotate the URN, which allows it to turn resource information into finished, semantically consistent *observations*. 
 
-    *. Zio
-    *. Pongo
+ Thus, the concept of resource in k.LAB encompasses both "data" and computations. Resources have a unique URN, which can be *resolved* to a data structure containing all information associated with them:
 
-Concept identifiers in k.IM (such as `infrastructure:Road`) are, themselves, informational resources - they specify "pure" knowledge, but a concrete concept can be seen as the result of observing its abstract (base) type. For example, .... In general, though, an informational artifact contains *raw* information, i.e. information with no semantics, which needs a k.LAB *model* to turn into observations of some observable. In this category we include data files, tables, local or networked databases, web services, `OGC`_ data services or `R`_ scripts - indeed, most of the resources that scientists and managers deal with every day. 
+- The name of the *adapter* handling the resource;
+- The native scale (extent or resolution) for the space and time represented in the resource, if any;
+- Any metadata, including provenance information, access restrictions and authorship information needed to make correct use of the resource;
+- The full history of modification of the resource or its associated data, including LINKversion numbers for each version
+- Information about what is needed in order to extract information from the resource
+
+
+
+The resource lifecycle
+----------------------
+
+In k.LAB, resources can be *local* or *public*. The former reside within a k.LAB project, which must be physically available in a workspace in order for the resource to be used. The latter reside on the network and are available to all users that are authorized to use it. Local resources have a URN that starts with "local:". 
+
+Other URNs
+----------
+
+Concept identifiers in k.IM (such as `infrastructure:Road`) are, themselves, informational resources - they specify "pure" knowledge, but a concrete concept can be seen as the result of observing its abstract (base) type. For example, .... 
 
 In k.LAB, the general way of pointing to an informational resource is through an identifier that follows the syntax of a Uniform Resource Name (URN):
 

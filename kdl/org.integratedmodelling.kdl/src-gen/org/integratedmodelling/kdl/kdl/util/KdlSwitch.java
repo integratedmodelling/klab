@@ -9,6 +9,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.Switch;
 
 import org.integratedmodelling.kdl.kdl.ActorDefinition;
+import org.integratedmodelling.kdl.kdl.Annotation;
 import org.integratedmodelling.kdl.kdl.ClassifierRHS;
 import org.integratedmodelling.kdl.kdl.Computation;
 import org.integratedmodelling.kdl.kdl.Currency;
@@ -100,6 +101,13 @@ public class KdlSwitch<T> extends Switch<T>
       {
         Model model = (Model)theEObject;
         T result = caseModel(model);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KdlPackage.ANNOTATION:
+      {
+        Annotation annotation = (Annotation)theEObject;
+        T result = caseAnnotation(annotation);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -280,6 +288,22 @@ public class KdlSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseModel(Model object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Annotation</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Annotation</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseAnnotation(Annotation object)
   {
     return null;
   }

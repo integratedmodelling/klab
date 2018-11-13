@@ -10,6 +10,7 @@ import org.eclipse.xtext.IGrammarAccess;
 import org.eclipse.xtext.RuleCall;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.serializer.analysis.GrammarAlias.AbstractElementAlias;
+import org.eclipse.xtext.serializer.analysis.GrammarAlias.GroupAlias;
 import org.eclipse.xtext.serializer.analysis.GrammarAlias.TokenAlias;
 import org.eclipse.xtext.serializer.analysis.ISyntacticSequencerPDAProvider.ISynNavigable;
 import org.eclipse.xtext.serializer.analysis.ISyntacticSequencerPDAProvider.ISynTransition;
@@ -20,6 +21,7 @@ import org.integratedmodelling.kdl.services.KdlGrammarAccess;
 public class KdlSyntacticSequencer extends AbstractSyntacticSequencer {
 
 	protected KdlGrammarAccess grammarAccess;
+	protected AbstractElementAlias match_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q;
 	protected AbstractElementAlias match_ClassifierRHS_ExclusiveKeyword_1_1_1_q;
 	protected AbstractElementAlias match_ClassifierRHS_ExclusiveKeyword_1_4_1_q;
 	protected AbstractElementAlias match_Number_PlusSignKeyword_0_0_q;
@@ -30,6 +32,7 @@ public class KdlSyntacticSequencer extends AbstractSyntacticSequencer {
 	@Inject
 	protected void init(IGrammarAccess access) {
 		grammarAccess = (KdlGrammarAccess) access;
+		match_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getAnnotationAccess().getLeftParenthesisKeyword_1_0()), new TokenAlias(false, false, grammarAccess.getAnnotationAccess().getRightParenthesisKeyword_1_2()));
 		match_ClassifierRHS_ExclusiveKeyword_1_1_1_q = new TokenAlias(false, true, grammarAccess.getClassifierRHSAccess().getExclusiveKeyword_1_1_1());
 		match_ClassifierRHS_ExclusiveKeyword_1_4_1_q = new TokenAlias(false, true, grammarAccess.getClassifierRHSAccess().getExclusiveKeyword_1_4_1());
 		match_Number_PlusSignKeyword_0_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_0_0());
@@ -50,7 +53,9 @@ public class KdlSyntacticSequencer extends AbstractSyntacticSequencer {
 		List<INode> transitionNodes = collectNodes(fromNode, toNode);
 		for (AbstractElementAlias syntax : transition.getAmbiguousSyntaxes()) {
 			List<INode> syntaxNodes = getNodesFor(transitionNodes, syntax);
-			if (match_ClassifierRHS_ExclusiveKeyword_1_1_1_q.equals(syntax))
+			if (match_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q.equals(syntax))
+				emit_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_ClassifierRHS_ExclusiveKeyword_1_1_1_q.equals(syntax))
 				emit_ClassifierRHS_ExclusiveKeyword_1_1_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_ClassifierRHS_ExclusiveKeyword_1_4_1_q.equals(syntax))
 				emit_ClassifierRHS_ExclusiveKeyword_1_4_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
@@ -66,6 +71,17 @@ public class KdlSyntacticSequencer extends AbstractSyntacticSequencer {
 		}
 	}
 
+	/**
+	 * Ambiguous syntax:
+	 *     ('(' ')')?
+	 *
+	 * This ambiguous syntax occurs at:
+	 *     name=ANNOTATION_ID (ambiguity) (rule end)
+	 */
+	protected void emit_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
 	/**
 	 * Ambiguous syntax:
 	 *     'exclusive'?

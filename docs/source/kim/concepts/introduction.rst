@@ -1,3 +1,4 @@
+========================================
 Modeling with knowledge: an introduction
 ========================================
 
@@ -20,11 +21,17 @@ Every observable, except subjects, can only be observed in a context. Rules to e
 - identities and processes can be contextualized to the type they [apply to] lacking an explicit context
 - any observable that does not have a within clause, the inherent type, if any, serves as the context;
 
-Universals
+Predicates
 ----------
+
 
 Configurations
 --------------
 
 * automated recognition
 * models can attach behaviors and scale to the recognition of the configuration
+
+Other knowledge
+###############
+
+

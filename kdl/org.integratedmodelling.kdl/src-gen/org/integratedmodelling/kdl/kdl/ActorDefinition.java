@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isFinal <em>Final</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isExported <em>Exported</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isOptional <em>Optional</em>}</li>
@@ -43,6 +44,22 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface ActorDefinition extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Annotations</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kdl.kdl.Annotation}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Annotations</em>' containment reference list isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Annotations</em>' containment reference list.
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Annotations()
+   * @model containment="true"
+   * @generated
+   */
+  EList<Annotation> getAnnotations();
+
   /**
    * Returns the value of the '<em><b>Final</b></em>' attribute.
    * <!-- begin-user-doc -->

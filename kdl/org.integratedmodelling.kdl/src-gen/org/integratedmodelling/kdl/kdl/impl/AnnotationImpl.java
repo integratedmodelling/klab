@@ -12,26 +12,25 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
+import org.integratedmodelling.kdl.kdl.Annotation;
 import org.integratedmodelling.kdl.kdl.KdlPackage;
-import org.integratedmodelling.kdl.kdl.Parameter;
-import org.integratedmodelling.kdl.kdl.Value;
+import org.integratedmodelling.kdl.kdl.ParameterList;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Parameter</b></em>'.
+ * An implementation of the model object '<em><b>Annotation</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ParameterImpl#getName <em>Name</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ParameterImpl#getValue <em>Value</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ParameterImpl#getDocstring <em>Docstring</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.AnnotationImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.AnnotationImpl#getParameters <em>Parameters</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class ParameterImpl extends MinimalEObjectImpl.Container implements Parameter
+public class AnnotationImpl extends MinimalEObjectImpl.Container implements Annotation
 {
   /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -54,41 +53,21 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
   protected String name = NAME_EDEFAULT;
 
   /**
-   * The cached value of the '{@link #getValue() <em>Value</em>}' containment reference.
+   * The cached value of the '{@link #getParameters() <em>Parameters</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getValue()
+   * @see #getParameters()
    * @generated
    * @ordered
    */
-  protected Value value;
-
-  /**
-   * The default value of the '{@link #getDocstring() <em>Docstring</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getDocstring()
-   * @generated
-   * @ordered
-   */
-  protected static final String DOCSTRING_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getDocstring() <em>Docstring</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getDocstring()
-   * @generated
-   * @ordered
-   */
-  protected String docstring = DOCSTRING_EDEFAULT;
+  protected ParameterList parameters;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected ParameterImpl()
+  protected AnnotationImpl()
   {
     super();
   }
@@ -101,7 +80,7 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
   @Override
   protected EClass eStaticClass()
   {
-    return KdlPackage.Literals.PARAMETER;
+    return KdlPackage.Literals.ANNOTATION;
   }
 
   /**
@@ -124,7 +103,7 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
     String oldName = name;
     name = newName;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.PARAMETER__NAME, oldName, name));
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ANNOTATION__NAME, oldName, name));
   }
 
   /**
@@ -132,9 +111,9 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
    * <!-- end-user-doc -->
    * @generated
    */
-  public Value getValue()
+  public ParameterList getParameters()
   {
-    return value;
+    return parameters;
   }
 
   /**
@@ -142,13 +121,13 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetValue(Value newValue, NotificationChain msgs)
+  public NotificationChain basicSetParameters(ParameterList newParameters, NotificationChain msgs)
   {
-    Value oldValue = value;
-    value = newValue;
+    ParameterList oldParameters = parameters;
+    parameters = newParameters;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KdlPackage.PARAMETER__VALUE, oldValue, newValue);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KdlPackage.ANNOTATION__PARAMETERS, oldParameters, newParameters);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -159,43 +138,20 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setValue(Value newValue)
+  public void setParameters(ParameterList newParameters)
   {
-    if (newValue != value)
+    if (newParameters != parameters)
     {
       NotificationChain msgs = null;
-      if (value != null)
-        msgs = ((InternalEObject)value).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KdlPackage.PARAMETER__VALUE, null, msgs);
-      if (newValue != null)
-        msgs = ((InternalEObject)newValue).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KdlPackage.PARAMETER__VALUE, null, msgs);
-      msgs = basicSetValue(newValue, msgs);
+      if (parameters != null)
+        msgs = ((InternalEObject)parameters).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KdlPackage.ANNOTATION__PARAMETERS, null, msgs);
+      if (newParameters != null)
+        msgs = ((InternalEObject)newParameters).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KdlPackage.ANNOTATION__PARAMETERS, null, msgs);
+      msgs = basicSetParameters(newParameters, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.PARAMETER__VALUE, newValue, newValue));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public String getDocstring()
-  {
-    return docstring;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setDocstring(String newDocstring)
-  {
-    String oldDocstring = docstring;
-    docstring = newDocstring;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.PARAMETER__DOCSTRING, oldDocstring, docstring));
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ANNOTATION__PARAMETERS, newParameters, newParameters));
   }
 
   /**
@@ -208,8 +164,8 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
   {
     switch (featureID)
     {
-      case KdlPackage.PARAMETER__VALUE:
-        return basicSetValue(null, msgs);
+      case KdlPackage.ANNOTATION__PARAMETERS:
+        return basicSetParameters(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -224,12 +180,10 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
   {
     switch (featureID)
     {
-      case KdlPackage.PARAMETER__NAME:
+      case KdlPackage.ANNOTATION__NAME:
         return getName();
-      case KdlPackage.PARAMETER__VALUE:
-        return getValue();
-      case KdlPackage.PARAMETER__DOCSTRING:
-        return getDocstring();
+      case KdlPackage.ANNOTATION__PARAMETERS:
+        return getParameters();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -244,14 +198,11 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
   {
     switch (featureID)
     {
-      case KdlPackage.PARAMETER__NAME:
+      case KdlPackage.ANNOTATION__NAME:
         setName((String)newValue);
         return;
-      case KdlPackage.PARAMETER__VALUE:
-        setValue((Value)newValue);
-        return;
-      case KdlPackage.PARAMETER__DOCSTRING:
-        setDocstring((String)newValue);
+      case KdlPackage.ANNOTATION__PARAMETERS:
+        setParameters((ParameterList)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -267,14 +218,11 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
   {
     switch (featureID)
     {
-      case KdlPackage.PARAMETER__NAME:
+      case KdlPackage.ANNOTATION__NAME:
         setName(NAME_EDEFAULT);
         return;
-      case KdlPackage.PARAMETER__VALUE:
-        setValue((Value)null);
-        return;
-      case KdlPackage.PARAMETER__DOCSTRING:
-        setDocstring(DOCSTRING_EDEFAULT);
+      case KdlPackage.ANNOTATION__PARAMETERS:
+        setParameters((ParameterList)null);
         return;
     }
     super.eUnset(featureID);
@@ -290,12 +238,10 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
   {
     switch (featureID)
     {
-      case KdlPackage.PARAMETER__NAME:
+      case KdlPackage.ANNOTATION__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-      case KdlPackage.PARAMETER__VALUE:
-        return value != null;
-      case KdlPackage.PARAMETER__DOCSTRING:
-        return DOCSTRING_EDEFAULT == null ? docstring != null : !DOCSTRING_EDEFAULT.equals(docstring);
+      case KdlPackage.ANNOTATION__PARAMETERS:
+        return parameters != null;
     }
     return super.eIsSet(featureID);
   }
@@ -313,10 +259,8 @@ public class ParameterImpl extends MinimalEObjectImpl.Container implements Param
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (name: ");
     result.append(name);
-    result.append(", docstring: ");
-    result.append(docstring);
     result.append(')');
     return result.toString();
   }
 
-} //ParameterImpl
+} //AnnotationImpl

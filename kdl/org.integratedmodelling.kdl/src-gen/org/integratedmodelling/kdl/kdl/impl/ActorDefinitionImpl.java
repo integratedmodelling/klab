@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.integratedmodelling.kdl.kdl.ActorDefinition;
+import org.integratedmodelling.kdl.kdl.Annotation;
 import org.integratedmodelling.kdl.kdl.DataflowBody;
 import org.integratedmodelling.kdl.kdl.Function;
 import org.integratedmodelling.kdl.kdl.KdlPackage;
@@ -34,6 +35,7 @@ import org.integratedmodelling.kdl.kdl.Value;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isFinal <em>Final</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isExported <em>Exported</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isOptional <em>Optional</em>}</li>
@@ -59,6 +61,16 @@ import org.integratedmodelling.kdl.kdl.Value;
  */
 public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements ActorDefinition
 {
+  /**
+   * The cached value of the '{@link #getAnnotations() <em>Annotations</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getAnnotations()
+   * @generated
+   * @ordered
+   */
+  protected EList<Annotation> annotations;
+
   /**
    * The default value of the '{@link #isFinal() <em>Final</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -388,6 +400,20 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   protected EClass eStaticClass()
   {
     return KdlPackage.Literals.ACTOR_DEFINITION;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EList<Annotation> getAnnotations()
+  {
+    if (annotations == null)
+    {
+      annotations = new EObjectContainmentEList<Annotation>(Annotation.class, this, KdlPackage.ACTOR_DEFINITION__ANNOTATIONS);
+    }
+    return annotations;
   }
 
   /**
@@ -910,6 +936,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
+      case KdlPackage.ACTOR_DEFINITION__ANNOTATIONS:
+        return ((InternalEList<?>)getAnnotations()).basicRemove(otherEnd, msgs);
       case KdlPackage.ACTOR_DEFINITION__BODY:
         return basicSetBody(null, msgs);
       case KdlPackage.ACTOR_DEFINITION__COVERAGE:
@@ -934,6 +962,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
+      case KdlPackage.ACTOR_DEFINITION__ANNOTATIONS:
+        return getAnnotations();
       case KdlPackage.ACTOR_DEFINITION__FINAL:
         return isFinal();
       case KdlPackage.ACTOR_DEFINITION__EXPORTED:
@@ -987,6 +1017,10 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
+      case KdlPackage.ACTOR_DEFINITION__ANNOTATIONS:
+        getAnnotations().clear();
+        getAnnotations().addAll((Collection<? extends Annotation>)newValue);
+        return;
       case KdlPackage.ACTOR_DEFINITION__FINAL:
         setFinal((Boolean)newValue);
         return;
@@ -1061,6 +1095,9 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
+      case KdlPackage.ACTOR_DEFINITION__ANNOTATIONS:
+        getAnnotations().clear();
+        return;
       case KdlPackage.ACTOR_DEFINITION__FINAL:
         setFinal(FINAL_EDEFAULT);
         return;
@@ -1132,6 +1169,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
+      case KdlPackage.ACTOR_DEFINITION__ANNOTATIONS:
+        return annotations != null && !annotations.isEmpty();
       case KdlPackage.ACTOR_DEFINITION__FINAL:
         return final_ != FINAL_EDEFAULT;
       case KdlPackage.ACTOR_DEFINITION__EXPORTED:
@@ -1184,7 +1223,7 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuilder result = new StringBuilder(super.toString());
+    StringBuffer result = new StringBuffer(super.toString());
     result.append(" (final: ");
     result.append(final_);
     result.append(", exported: ");

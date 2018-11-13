@@ -20,9 +20,14 @@ Model:
 	 ('@context' contextUrn=Urn)?) 
 	actors+=ActorDefinition*;
 
-	// 'as' must ONLY BE LEGAL FOR IMPORTS
-// if multiple, semantics must be given to recognize the observables
+terminal ANNOTATION_ID:
+	'@' LOWERCASE_ID;
+	
+Annotation:
+	name=ANNOTATION_ID ('(' parameters=ParameterList? ')')?;
+	
 ActorDefinition:
+	annotations += Annotation*
 	(final?='final')? ((exported?='export' |
 	((optional?='optional')? imported?='import') (multiple?='multiple' | arity=INT (minimum?='+')?)?))? 
 	// parameters denotes the ability of the implementation of accepting modified values during run

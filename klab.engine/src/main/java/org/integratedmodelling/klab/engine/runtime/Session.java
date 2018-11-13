@@ -837,6 +837,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			ret.getRootObservations().put(ctx.getRootSubject().getId(), Observations.INSTANCE
 					.createArtifactDescriptor(ctx.getRootSubject(), null, ITime.INITIALIZATION, 0, false));
 		}
+		
 		return ret;
 	}
 

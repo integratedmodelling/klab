@@ -15,6 +15,7 @@ import org.eclipse.xtext.serializer.acceptor.SequenceFeeder;
 import org.eclipse.xtext.serializer.sequencer.AbstractDelegatingSemanticSequencer;
 import org.eclipse.xtext.serializer.sequencer.ITransientValueService.ValueTransient;
 import org.integratedmodelling.kdl.kdl.ActorDefinition;
+import org.integratedmodelling.kdl.kdl.Annotation;
 import org.integratedmodelling.kdl.kdl.ClassifierRHS;
 import org.integratedmodelling.kdl.kdl.Computation;
 import org.integratedmodelling.kdl.kdl.Currency;
@@ -55,6 +56,9 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 			switch (semanticObject.eClass().getClassifierID()) {
 			case KdlPackage.ACTOR_DEFINITION:
 				sequence_ActorDefinition(context, (ActorDefinition) semanticObject); 
+				return; 
+			case KdlPackage.ANNOTATION:
+				sequence_Annotation(context, (Annotation) semanticObject); 
 				return; 
 			case KdlPackage.CLASSIFIER_RHS:
 				if (rule == grammarAccess.getClassifierRHSRule()) {
@@ -155,6 +159,7 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 * Constraint:
 	 *     (
 	 *         (
+	 *             annotations+=Annotation* 
 	 *             final?='final'? 
 	 *             (exported?='export' | (optional?='optional'? imported?='import' (multiple?='multiple' | (arity=INT minimum?='+'?))?))? 
 	 *             parameter?='parameter'? 
@@ -186,6 +191,18 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     )
 	 */
 	protected void sequence_ActorDefinition(ISerializationContext context, ActorDefinition semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Annotation returns Annotation
+	 *
+	 * Constraint:
+	 *     (name=ANNOTATION_ID parameters=ParameterList?)
+	 */
+	protected void sequence_Annotation(ISerializationContext context, Annotation semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

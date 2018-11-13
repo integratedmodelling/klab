@@ -1,11 +1,11 @@
-Composing worldview concepts
+Semantic expressions
 ============================
 
-In user projects, declarations are the way to specify semantics for resources and possibly the observations they depend on. This is normally done in :keyword:`model` statements. For example, the following statement
+In user projects, semantic expressions are used to specify semantics for resources and possibly the observations they depend on. This is normally done in :keyword:`model` statements. For example, the following statement
 
 ...
 
-contains X declarations. Another place where declarations can be used is to define aliases using the  :keyword:`equals` keyword:
+contains X semantic expressions. Another place where declarations can be used is to define aliases using the  :keyword:`equals` keyword:
 
 ...
 
