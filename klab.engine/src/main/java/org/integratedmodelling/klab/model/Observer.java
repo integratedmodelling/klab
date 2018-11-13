@@ -84,6 +84,33 @@ public class Observer extends KimObject implements IObserver {
 			}
 		};
 	}
+	
+	public Observer(Shape shape, Observable observable, Namespace namespace) {
+		super(null);
+
+		this.namespace = namespace;
+		this.observable = observable;
+		this.name = "Region of interest";
+		this.behavior = new Behavior(null, this) {
+
+			@Override
+			public Collection<IExtent> getExtents(IMonitor monitor) throws KlabException {
+
+				/*
+				 * if the observer is URN-based, resolve the URN here and get the scale and the
+				 * metadata from the resulting object.
+				 */
+				if (urn != null) {
+					VisitingDataBuilder builder = new VisitingDataBuilder(1);
+					Resources.INSTANCE.getResourceData(urn, builder, monitor);
+					return builder.getObjectCount() > 0 ? builder.getObjectScale(0).getExtents() : new ArrayList<>();
+				}
+
+				double resolution = shape.getEnvelope().getResolutionForZoomLevel().getFirst();
+				return Collections.singletonList(Space.create(shape, resolution));
+			}
+		};
+	}
 
 	public String toString() {
 		return "[" + getName() + "]";

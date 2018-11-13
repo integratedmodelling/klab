@@ -375,12 +375,26 @@ public enum Observations implements IObservationService {
 		return ret;
 	}
 
-	public Observer makeROIObserver(final SpatialExtent regionOfInterest, final Namespace namespace, IMonitor monitor) {
+	public Observer makeROIObserver(final SpatialExtent regionOfInterest, Namespace namespace, IMonitor monitor) {
 		// TODO use configured concept from worldview!
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
 		observable.setName("Region of interest");
 		observable.setOptional(true);
+		if (namespace == null) {
+			namespace = Namespaces.INSTANCE.getNamespace(observable.getNamespace());
+		}
 		return new Observer(regionOfInterest, observable, (Namespace) namespace);
+	}
+	
+	public Observer makeROIObserver(final Shape shape, Namespace namespace, IMonitor monitor) {
+		// TODO use configured concept from worldview!
+		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
+		observable.setName("Region of interest");
+		observable.setOptional(true);
+		if (namespace == null) {
+			namespace = Namespaces.INSTANCE.getNamespace(observable.getNamespace());
+		}
+		return new Observer(shape, observable, (Namespace) namespace);
 	}
 
 	/**

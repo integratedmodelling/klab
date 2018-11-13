@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Documentation;
 import org.integratedmodelling.klab.Indexing;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Observables;
@@ -57,6 +58,7 @@ import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
@@ -414,7 +416,17 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	@MessageHandler(type = IMessage.Type.FeatureAdded)
 	private void handleFeatureAdded(final SpatialLocation location) {
 		
-		System.out.println("Got shape " + location.getWktShape());
+		if (location.getContextId() == null) {
+			Shape shape = Shape.create("EPSG:4326 " + location.getWktShape());
+			Observer observer = Observations.INSTANCE.makeROIObserver(shape, null, monitor);
+			try {
+				new ObserveContextTask(this, observer, new ArrayList<>()).get();
+			} catch (InterruptedException | ExecutionException e) {
+				monitor.error(e);
+			}
+		} else {
+			// TODO do something with the shape - must involve user to define semantics
+		}
 	}
 	
 	@MessageHandler
