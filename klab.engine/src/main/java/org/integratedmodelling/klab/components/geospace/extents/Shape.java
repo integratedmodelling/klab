@@ -51,6 +51,7 @@ import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKBWriter;
 import com.vividsolutions.jts.io.WKTReader;
+import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 
 public class Shape extends AbstractExtent implements IShape {
 
@@ -635,6 +636,11 @@ public class Shape extends AbstractExtent implements IShape {
 	@Override
 	public double getStandardizedDepth() {
 		return Double.NaN;
+	}
+
+	public void simplify(double simplifyFactor) {
+		this.geometry = TopologyPreservingSimplifier.simplify(geometry, simplifyFactor);
+		this.envelope = Envelope.create(this.geometry.getEnvelopeInternal(), this.projection);
 	}
 
 }

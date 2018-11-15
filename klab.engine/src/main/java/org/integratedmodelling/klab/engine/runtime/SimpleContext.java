@@ -263,8 +263,7 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 
     @Override
     public IRuntimeContext createChild(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor) {
-        // TODO Auto-generated method stub
-        return null;
+    	throw new IllegalStateException("Context is meant for testing of individual resources and cannot support child observations");
     }
 
     @Override

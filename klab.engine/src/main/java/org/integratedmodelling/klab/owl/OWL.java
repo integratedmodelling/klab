@@ -42,6 +42,7 @@ import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
+import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -1049,6 +1050,15 @@ public enum OWL {
 		nonSemanticConcepts.define(Collections.singletonList(Axiom.ClassAssertion(conceptId, identity)));
 
 		return nonSemanticConcepts.getConcept(conceptId);
+	}
+
+	/**
+	 * True if the passed object has true semantics, i.e. is not a non-semantic object.
+	 * @param observable
+	 * @return
+	 */
+	public boolean isSemantic(ISemantic observable) {
+		return !observable.getType().getNamespace().equals(nonSemanticConcepts.getName());
 	}
 
 }

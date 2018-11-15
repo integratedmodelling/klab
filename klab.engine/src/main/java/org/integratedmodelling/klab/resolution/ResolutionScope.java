@@ -632,7 +632,7 @@ public class ResolutionScope implements IResolutionScope {
 		}
 
 		int ret = 0;
-		if (!this.resolutionNamespace.getId().equals(ns.getId())) {
+		if (resolutionNamespace != null && !this.resolutionNamespace.getId().equals(ns.getId())) {
 			ResolutionScope rc = parent;
 			while (rc != null) {
 				ret++;
@@ -648,7 +648,7 @@ public class ResolutionScope implements IResolutionScope {
 
 	public int getProjectDistance(IProject ns) {
 
-		if (ns == null) {
+		if (ns == null || this.resolutionNamespace == null) {
 			return -1;
 		}
 
