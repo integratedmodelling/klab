@@ -95,7 +95,7 @@ import edu.uci.ics.jung.graph.util.EdgeType;
  * @author Ferd
  *
  */
-@Component(id = "runtime", version = Version.CURRENT)
+@Component(id = "org.integratedmodelling.runtime", version = Version.CURRENT)
 public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 	private ActorSystem rootActorSystem = null;

@@ -1,8 +1,5 @@
 package org.integratedmodelling.klab.components.geospace;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.geotools.factory.Hints;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.Component;
@@ -10,7 +7,7 @@ import org.integratedmodelling.klab.api.extensions.component.Initialize;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 
-@Component(id = "geospace", version = Version.CURRENT)
+@Component(id = "org.integratedmodelling.geospace", version = Version.CURRENT)
 public class Geospace {
 
 	public static GeometryFactory gFactory = new GeometryFactory();
