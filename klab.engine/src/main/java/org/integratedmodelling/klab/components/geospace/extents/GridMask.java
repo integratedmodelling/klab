@@ -74,7 +74,20 @@ public class GridMask extends BitSet implements IGrid.Mask {
 
     @Override
     public long nextActiveOffset(long fromOffset) {
-        return useShape ? fromOffset + 1 : nextSetBit((int) fromOffset);
+//        return useShape ? fromOffset + 1 : nextSetBit((int) fromOffset);
+    	if (useShape) {
+    		if (fromOffset >= grid.getCellCount() - 1) {
+    			return -1;
+    		}
+    		while (!((Shape)shape).containsPoint(grid.getCoordinates(fromOffset)) && fromOffset < (grid.getCellCount() - 1)) {
+    			fromOffset ++;
+    		}
+    		if (fromOffset >= grid.getCellCount() - 1) {
+    			return -1;
+    		}
+    		return fromOffset;
+    	}
+        return nextSetBit((int) fromOffset);
     }
 
     @Override

@@ -476,17 +476,18 @@ public class Engine extends Server implements IEngine, UserDetails {
 			/*
 			 * TODO hop on the network
 			 */
-
-			/*
-			 * sync components and load binary assets
-			 */
-			Resources.INSTANCE.loadComponents(options.getComponentPaths(), this.monitor);
-
+			
 			/*
 			 * all binary content is now available: scan the classpath for recognized
 			 * extensions
 			 */
 			scanClasspath();
+			
+			/*
+			 * sync components and load binary assets
+			 */
+			Resources.INSTANCE.loadComponents(options.getComponentPaths(), this.monitor);
+
 
 			/*
 			 * load component knowledge after all binary content is registered.

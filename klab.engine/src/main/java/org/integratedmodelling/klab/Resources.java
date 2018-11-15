@@ -198,7 +198,6 @@ public enum Resources implements IResourceService {
 			}
 			components = new ComponentsWorkspace("components", Configuration.INSTANCE.getDataPath("workspace/deploy"),
 					deployedComponents);
-			this.loader = components.load(this.loader, monitor);
 			workspaces.put(components.getName(), components);
 			return true;
 		} catch (Throwable e) {
