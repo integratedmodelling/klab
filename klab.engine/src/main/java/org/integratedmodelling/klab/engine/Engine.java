@@ -606,7 +606,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 			}
 		});
 
-		Klab.INSTANCE.scanPackage("org.integratedmodelling.klab");
+		Klab.INSTANCE.scanPackage("org.integratedmodelling");
 	}
 
 	@Override

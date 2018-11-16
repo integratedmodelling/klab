@@ -1,0 +1,12 @@
+/**
+ * Interface contextualizers for the morphometry functionalities in JGrasstools / Horton machine.
+ */
+@klab 0.10.0
+@version 0.10.0
+@namespace im.hydrology
+
+contextualizer fillsinks
+	"Fills any hydrological sink in a DEM observation, producing a hydrologically corrected DEM."
+{
+	class org.integratedmodelling.hydrology.morphometry.PitFillingContextualizer
+}
