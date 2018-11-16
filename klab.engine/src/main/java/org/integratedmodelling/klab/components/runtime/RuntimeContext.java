@@ -159,7 +159,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
         ret.semantics.put(ret.targetName, ret.targetSemantics);
         /*
          * if appropriate, the target has been created by the upstream
-         * createChild(Actuator), so we just set it from the catalog.
+         * createChild(... Actuator ...), so we just set it from the catalog.
          */
         ret.target = catalog.get(ret.targetName);
 

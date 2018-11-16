@@ -51,6 +51,7 @@ import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKBWriter;
 import com.vividsolutions.jts.io.WKTReader;
+import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 
 public class Shape extends AbstractExtent implements IShape {
 
@@ -97,7 +98,7 @@ public class Shape extends AbstractExtent implements IShape {
 		ret.type = IShape.Type.POLYGON;
 		return ret;
 	}
-	
+
 	public static Shape create(double x1, double y1, Projection projection) {
 		Shape ret = new Shape();
 		ret.geometry = makePoint(x1, y1);
@@ -257,7 +258,6 @@ public class Shape extends AbstractExtent implements IShape {
 			try {
 				this.preparedShape = PreparedGeometryFactory.prepare(geometry);
 			} catch (Throwable t) {
-				//
 			}
 		}
 	}
@@ -635,6 +635,17 @@ public class Shape extends AbstractExtent implements IShape {
 	@Override
 	public double getStandardizedDepth() {
 		return Double.NaN;
+	}
+
+	public void simplify(double simplifyFactor) {
+		this.geometry = TopologyPreservingSimplifier.simplify(geometry, simplifyFactor);
+		this.envelope = Envelope.create(this.geometry.getEnvelopeInternal(), this.projection);
+	}
+
+	public boolean containsPoint(double[] coordinates) {
+		checkPreparedShape();
+		Point point = geometry.getFactory().createPoint(new Coordinate(coordinates[0], coordinates[1]));
+		return preparedShape != null ? preparedShape.contains(point) : geometry.contains(point);
 	}
 
 }

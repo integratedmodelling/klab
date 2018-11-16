@@ -498,7 +498,13 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
      * @returns chosen concordance metric normalized to 100
      */
     public double computeSubjectiveConcordance(ModelReference model, IResolutionScope context, List<String> subjectiveCriteria) {
-        ArrayList<Pair<Integer, Integer>> vals = new ArrayList<>();
+
+    	if (context.getResolutionNamespace() == null) {
+    		// happens in non-semantic queries where the context is a data resource
+    		return 0;
+    	}
+    	
+    	ArrayList<Pair<Integer, Integer>> vals = new ArrayList<>();
         IMetadata nm = context.getResolutionNamespace().getResolutionCriteria();
 
         for (String s : subjectiveCriteria) {

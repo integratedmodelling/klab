@@ -439,7 +439,7 @@ public class REL_OPERATORImpl extends MinimalEObjectImpl.Container implements RE
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuffer result = new StringBuffer(super.toString());
+    StringBuilder result = new StringBuilder(super.toString());
     result.append(" (gt: ");
     result.append(gt);
     result.append(", lt: ");
