@@ -15,7 +15,7 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
-public class PitFillingContextualizer implements IResolver<IState>, IExpression {
+public class HydrologicallyCorrectedElevationResolver implements IResolver<IState>, IExpression {
 
 	@Override
 	public IGeometry getGeometry() {
@@ -55,7 +55,7 @@ public class PitFillingContextualizer implements IResolver<IState>, IExpression 
 
 	@Override
 	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
-		return new PitFillingContextualizer();
+		return new HydrologicallyCorrectedElevationResolver();
 	}
 
 }

@@ -88,14 +88,14 @@ public enum Observables implements IObservableService {
 				Concepts.p(NS.IS_INHERENT_TO_PROPERTY));
 		return cls.isEmpty() ? null : cls.iterator().next();
 	}
-	
+
 	@Override
 	public @Nullable IConcept getComparisonType(IConcept concept) {
 		Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
 				Concepts.p(NS.IS_COMPARED_TO_PROPERTY));
 		return cls.isEmpty() ? null : cls.iterator().next();
 	}
-	
+
 	@Override
 	public @Nullable IConcept getCompresentType(IConcept concept) {
 		Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
@@ -277,7 +277,7 @@ public enum Observables implements IObservableService {
 
 		return ret;
 	}
-	
+
 	@Override
 	public boolean isCompatible(IConcept o1, IConcept o2) {
 		return isCompatible(o1, o2, 0);
@@ -366,7 +366,7 @@ public enum Observables implements IObservableService {
 		}
 		return getBaseObservable(c.getParent());
 	}
-	
+
 	@Override
 	public IConcept getCoreObservable(IConcept c) {
 		String def = c.getMetadata().get(NS.CORE_OBSERVABLE_PROPERTY, String.class);
@@ -411,10 +411,12 @@ public enum Observables implements IObservableService {
 	@Override
 	public List<IComputableResource> computeMediators(IObservable from, IObservable to) {
 
-		if (!((Observable) to).canResolve((Observable) from)) {
-			throw new IllegalArgumentException(
-					"cannot compute mediators from an observable to another that does not resolve it: " + from
-							+ " does not mediate to " + to);
+		if (OWL.INSTANCE.isSemantic(from)) {
+			if (!((Observable) to).canResolve((Observable) from)) {
+				throw new IllegalArgumentException(
+						"cannot compute mediators from an observable to another that does not resolve it: " + from
+								+ " does not mediate to " + to);
+			}
 		}
 
 		List<IComputableResource> ret = new ArrayList<>();

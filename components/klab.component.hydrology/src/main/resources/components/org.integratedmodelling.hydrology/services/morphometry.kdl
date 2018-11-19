@@ -8,5 +8,20 @@
 contextualizer fillsinks
 	"Fills any hydrological sink in a DEM observation, producing a hydrologically corrected DEM."
 {
-	class org.integratedmodelling.hydrology.morphometry.PitFillingContextualizer
+	// TODO import elevation
+
+	class org.integratedmodelling.hydrology.morphometry.HydrologicallyCorrectedElevationResolver
+}
+
+contextualizer flowdirections
+	"Import a hydrologically corrected DEM and produce flow directions using configurable methods. For now
+	 only D8 is supported."
+{
+	optional input angles
+		"If true, angles are computed as output instead of integer flow direction codes per D8 conventions."
+		default false
+
+	// TODO import hydrologically_corrected_elevation
+
+	class org.integratedmodelling.hydrology.morphometry.FlowDirectionsResolver
 }
