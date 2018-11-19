@@ -1,24 +1,29 @@
-package org.integratedmodelling.hydrology.morphometry;
+package org.integratedmodelling.geoprocessing.hydrology;
 
 import static org.hortonmachine.gears.libs.modules.HMConstants.floatNovalue;
 
-import org.hortonmachine.hmachine.modules.geomorphology.flow.OmsFlowDirections;
-import org.integratedmodelling.hydrology.TaskMonitor;
+import org.hortonmachine.hmachine.modules.geomorphology.tca.OmsTca;
+import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.components.geospace.extents.Grid;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Utils;
 
-public class FlowDirectionsResolver implements IResolver<IState>, IExpression {
+public class FlowAccumulationResolver implements IResolver<IState>, IExpression {
 
-	boolean computeAngles = false;
+	boolean cells = false;
 	
 	@Override
 	public IGeometry getGeometry() {
@@ -33,10 +38,21 @@ public class FlowDirectionsResolver implements IResolver<IState>, IExpression {
 	@Override
 	public IState resolve(IState target, IComputationContext context) throws KlabException {
 
-		IState dem = context.getArtifact("hydrologically_corrected_elevation", IState.class);
-
-		OmsFlowDirections algorithm = new OmsFlowDirections();
-		algorithm.inPit = GeotoolsUtils.INSTANCE.stateToCoverage(dem, floatNovalue);
+		IState dem = context.getArtifact("flow_directions_d8", IState.class);
+		IUnit tUnit = target.getObservable().getUnit();
+		Grid grid = Space.extractGrid(target);
+		
+		if (grid == null) {
+			throw new KlabValidationException("Flow accumulation must be computed on a grid extent");
+		}
+		
+		double cellArea = grid.getCell(0).getStandardizedArea();
+		if (tUnit.equals(Units.INSTANCE.SQUARE_METERS)) {
+			tUnit = null;
+		}
+		
+		OmsTca algorithm = new OmsTca();
+		algorithm.inFlow = GeotoolsUtils.INSTANCE.stateToCoverage(dem, floatNovalue);
 		algorithm.pm = new TaskMonitor(context.getMonitor());
 		algorithm.doProcess = true;
 		algorithm.doReset = false;
@@ -47,14 +63,15 @@ public class FlowDirectionsResolver implements IResolver<IState>, IExpression {
 			throw new KlabException(e);
 		}
 		if (!context.getMonitor().isInterrupted()) {
-			GeotoolsUtils.INSTANCE.coverageToState(algorithm.outFlow, target, (a) -> {
+			final IUnit unit = tUnit;
+			GeotoolsUtils.INSTANCE.coverageToState(algorithm.outTca, target, (a) -> {
 				if (a == (double) floatNovalue) {
 					return Double.NaN;
 				}
-				if (computeAngles) {
-					return toAngle(a);
+				if (cells) {
+					return a;
 				}
-				return a;
+				return unit == null ? (a*cellArea) : unit.convert(a*cellArea, Units.INSTANCE.SQUARE_METERS).doubleValue();
 			});
 		}
 		return target;
@@ -70,8 +87,8 @@ public class FlowDirectionsResolver implements IResolver<IState>, IExpression {
 	
 	@Override
 	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
-		FlowDirectionsResolver ret = new FlowDirectionsResolver();
-		ret.computeAngles = parameters.get("angles", Boolean.FALSE);
+		FlowAccumulationResolver ret = new FlowAccumulationResolver();
+		ret.cells = parameters.get("cells", Boolean.FALSE);
 		return ret;
 	}
 }

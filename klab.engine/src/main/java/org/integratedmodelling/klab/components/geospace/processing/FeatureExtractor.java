@@ -88,7 +88,8 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 
 		this.grid = ((Space) scale.getSpace()).getGrid();
 		this.boundingBox = (Shape) scale.getSpace().getShape();
-
+		this.ignoreHoles = !parameters.get("holes", Boolean.TRUE);
+		
 		// TODO these are obviously still unfeasible dimensions for an in-memory image.
 		if (this.grid == null || this.grid.getXCells() > Integer.MAX_VALUE
 				|| this.grid.getYCells() > Integer.MAX_VALUE) {

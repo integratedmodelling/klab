@@ -1,4 +1,4 @@
-package org.integratedmodelling.hydrology;
+package org.integratedmodelling.geoprocessing;
 
 import org.hortonmachine.gears.libs.monitor.IHMProgressMonitor;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;

@@ -10,7 +10,7 @@ contextualizer fillsinks
 {
 	// TODO import elevation
 
-	class org.integratedmodelling.hydrology.morphometry.HydrologicallyCorrectedElevationResolver
+	class org.integratedmodelling.geoprocessing.hydrology.HydrologicallyCorrectedElevationResolver
 }
 
 contextualizer flowdirections
@@ -23,5 +23,18 @@ contextualizer flowdirections
 
 	// TODO import hydrologically_corrected_elevation
 
-	class org.integratedmodelling.hydrology.morphometry.FlowDirectionsResolver
+	class org.integratedmodelling.geoprocessing.hydrology.FlowDirectionsResolver
+}
+
+contextualizer flowaccumulation
+	"Import a hydrologically corrected DEM and produce flow directions using configurable methods. For now
+	 only D8 is supported."
+{
+	optional input cells
+		"If true, number of contributing cells is output instead of actual contributing area."
+		default false
+
+	// TODO import flow_directions_d8
+
+	class org.integratedmodelling.geoprocessing.hydrology.FlowAccumulationResolver
 }

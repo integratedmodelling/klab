@@ -17,7 +17,6 @@
 			<artifactId>hm-hmachine</artifactId>
 			<version>${hortonmachine.version}</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.hortonmachine/hm-hmachine -->
 		<dependency>
 			<groupId>org.hortonmachine</groupId>
 			<artifactId>hm-lesto</artifactId>

@@ -1,9 +1,9 @@
-package org.integratedmodelling.hydrology.morphometry;
+package org.integratedmodelling.geoprocessing.morphology;
 
 import static org.hortonmachine.gears.libs.modules.HMConstants.floatNovalue;
 
-import org.hortonmachine.hmachine.modules.demmanipulation.pitfiller.OmsPitfiller;
-import org.integratedmodelling.hydrology.TaskMonitor;
+import org.hortonmachine.hmachine.modules.geomorphology.geomorphon.OmsGeomorphon;
+import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -15,7 +15,10 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
-public class HydrologicallyCorrectedElevationResolver implements IResolver<IState>, IExpression {
+public class GeomorphonResolver implements IResolver<IState>, IExpression {
+
+	double pRadius = Double.NaN;
+	double pThreshold = Double.NaN;
 
 	@Override
 	public IGeometry getGeometry() {
@@ -32,19 +35,25 @@ public class HydrologicallyCorrectedElevationResolver implements IResolver<IStat
 
 		IState dem = context.getArtifact("elevation", IState.class);
 
-		OmsPitfiller pitfiller = new OmsPitfiller();
-		pitfiller.inElev = GeotoolsUtils.INSTANCE.stateToCoverage(dem, floatNovalue);
-		pitfiller.pm = new TaskMonitor(context.getMonitor());
-		pitfiller.doProcess = true;
-		pitfiller.doReset = false;
-		context.getMonitor().info("filling hydrological sinks...");
+		OmsGeomorphon geomorphon = new OmsGeomorphon();
+		if (!Double.isNaN(pRadius)) {
+			geomorphon.pRadius = pRadius;
+		}
+		if (!Double.isNaN(pThreshold)) {
+			geomorphon.pThreshold = pThreshold;
+		}
+		geomorphon.inElev = GeotoolsUtils.INSTANCE.stateToCoverage(dem, floatNovalue);
+		geomorphon.pm = new TaskMonitor(context.getMonitor());
+		geomorphon.doProcess = true;
+		geomorphon.doReset = false;
+		context.getMonitor().info("Running geomorphon algorithm...");
 		try {
-			pitfiller.process();
+			geomorphon.process();
 		} catch (Exception e) {
 			throw new KlabException(e);
 		}
 		if (!context.getMonitor().isInterrupted()) {
-			GeotoolsUtils.INSTANCE.coverageToState(pitfiller.outPit, target, (a) -> {
+			GeotoolsUtils.INSTANCE.coverageToState(geomorphon.outRaster, target, (a) -> {
 				if (a == (double) floatNovalue)
 					return Double.NaN;
 				return a;
@@ -55,7 +64,10 @@ public class HydrologicallyCorrectedElevationResolver implements IResolver<IStat
 
 	@Override
 	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
-		return new HydrologicallyCorrectedElevationResolver();
+		GeomorphonResolver ret = new GeomorphonResolver();
+		ret.pRadius = parameters.get("radius", Double.NaN);
+		ret.pThreshold = parameters.get("threshold", Double.NaN);
+		return ret;
 	}
 
 }

@@ -1,0 +1,23 @@
+/**
+ * Interface contextualizers for the morphometry functionalities in JGrasstools / Horton machine.
+ */
+@klab 0.10.0
+@version 0.10.0
+@namespace im.geomorphology
+
+contextualizer classifier
+	"Classifies each cell into the numeric category of the containing geological form using 
+	 the Geomorphon algorithm."
+{
+	// TODO import elevation
+	optional input threshold 
+		"Flatness threshold in meters. Chosen based on radius if unspecified." 
+		default 0.0
+		
+	optional input radius
+		"Search radius in m. Represents the scaling of the point of view; large values can be used to
+		 mimic far points of view or for very flat areas."
+		default 0.0
+		
+	class org.integratedmodelling.geoprocessing.morphology.GeomorphonResolver
+}

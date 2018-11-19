@@ -825,6 +825,8 @@ public enum Kim {
 			return EnumSet.of(Type.ORDERING, Type.TRAIT, Type.ATTRIBUTE);
 		case "attribute":
 			return EnumSet.of(Type.ATTRIBUTE, Type.TRAIT);
+		case "type":
+			return EnumSet.of(Type.CLASS, Type.QUALITY, Type.OBSERVABLE);
 		case "identity":
 			return EnumSet.of(Type.IDENTITY, Type.TRAIT);
 		case "role":
