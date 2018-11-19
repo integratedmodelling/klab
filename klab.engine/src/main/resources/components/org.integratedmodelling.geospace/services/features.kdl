@@ -15,6 +15,10 @@ number extract
 		"If true, the polygons resulting from vectorization will be simplified before they are
 	     returned to k.LAB."
 		default false
+		
+	optional input holes
+		"If true, generated polygons may have holes in them."
+		default false
 	
 //	optional input detail 
 //		"The detail parameter controls the complexity of the surface. A value around 8 (default)

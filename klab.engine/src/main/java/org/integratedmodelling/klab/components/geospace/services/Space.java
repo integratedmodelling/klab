@@ -27,6 +27,7 @@ public class Space implements IExpression {
         Double resolution = null;
         String urn = null;
         Projection projection = null;
+        double simplifyFactor = Double.NaN;
 
         org.integratedmodelling.klab.components.geospace.extents.Space ret = null;
 
@@ -42,6 +43,9 @@ public class Space implements IExpression {
         if (parameters.containsKey("projection")) {
             projection = Projection.create(parameters.get("projection", String.class));
         }
+        if (parameters.containsKey("simplify")) {
+            simplifyFactor = parameters.get("simplify", Double.class);
+        }
 
         if (shape != null) {
             if (resolution != null) {
@@ -49,6 +53,9 @@ public class Space implements IExpression {
                         .create(shape, resolution);
             } else {
                 ret = org.integratedmodelling.klab.components.geospace.extents.Space.create(shape);
+            }
+            if (!Double.isNaN(simplifyFactor)) {
+            	ret.getShape().simplify(simplifyFactor);
             }
         } else if (urn != null) {
 
@@ -59,11 +66,15 @@ public class Space implements IExpression {
             }
 
             ISpace space = ((IScale) artifact.getSecond().iterator().next().getGeometry()).getSpace();
-
+            
             if (projection != null) {
             	space = space.getShape().transform(projection);
             }
             
+            if (!Double.isNaN(simplifyFactor)) {
+            	((Shape)space.getShape()).simplify(simplifyFactor);
+            }
+
             if (resolution == null) {
                 return space;
             }

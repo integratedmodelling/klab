@@ -424,12 +424,12 @@ public class Geometry implements IGeometry {
 
 				if (geometry.length() > (idx + 1) && geometry.charAt(idx + 1) == '(') {
 					idx += 2;
-					String shape = "";
+					StringBuffer shape = new StringBuffer(geometry.length());
 					while (geometry.charAt(idx) != ')') {
-						shape += geometry.charAt(idx);
+						shape.append(geometry.charAt(idx));
 						idx++;
 					}
-					String[] dims = shape.split(",");
+					String[] dims = shape.toString().split(",");
 					long[] sdimss = new long[dims.length];
 					for (int d = 0; d < dims.length; d++) {
 						sdimss[d] = Long.parseLong(dims[d].trim());
@@ -439,12 +439,12 @@ public class Geometry implements IGeometry {
 				}
 				if (geometry.length() > (idx + 1) && geometry.charAt(idx + 1) == '{') {
 					idx += 2;
-					String shape = "";
+					StringBuffer shape = new StringBuffer(geometry.length());
 					while (geometry.charAt(idx) != '}') {
-						shape += geometry.charAt(idx);
+						shape.append(geometry.charAt(idx));
 						idx++;
 					}
-					dimensionality.parameters.putAll(readParameters(shape));
+					dimensionality.parameters.putAll(readParameters(shape.toString()));
 				}
 
 				ret.dimensions.add(dimensionality);

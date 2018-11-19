@@ -11,6 +11,17 @@
 	<name>klab.component.hydrology</name>
 	<description>Hydrology component for k.LAB</description>
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.hortonmachine/hm-hmachine -->
+		<dependency>
+			<groupId>org.hortonmachine</groupId>
+			<artifactId>hm-hmachine</artifactId>
+			<version>${hortonmachine.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hortonmachine</groupId>
+			<artifactId>hm-lesto</artifactId>
+			<version>${hortonmachine.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.engine</artifactId>

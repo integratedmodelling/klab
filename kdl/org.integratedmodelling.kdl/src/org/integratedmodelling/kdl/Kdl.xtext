@@ -36,7 +36,9 @@ ActorDefinition:
 	type=ACTOR name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING) ('for' targets+=TARGET (',' targets+=TARGET)*)? (docstring=STRING)?
 	('{' body=DataflowBody '}')?
 	('as' localName=LOWERCASE_ID)?
-	('over' coverage+=Function (',' coverage+=Function)*)? |
+	('over' coverage+=Function (',' coverage+=Function)*)? 
+	
+	|
 
 	// parameter for services - takes type from value if optional; default mandatory if optional; docstring is mandatory
 	((optional?='optional') | type=('number' | 'boolean' | 'text' | 'list' | 'enum')) parameter?='input' name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING)

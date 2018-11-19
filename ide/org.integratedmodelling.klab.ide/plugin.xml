@@ -391,6 +391,19 @@
          </property>
       </product>
    </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="org.integratedmodelling.klab.ide.properties.KlabProjectProperties"
+            id="org.integratedmodelling.klab.ide.projectpropertypage"
+            name="k.LAB"
+            selectionFilter="single">
+        <enabledWhen>
+            <adapt type="org.eclipse.core.resources.IProject">
+            </adapt>
+        </enabledWhen>
+      </page>
+   </extension>
    	<!-- <extension
   		point="org.eclipse.mylyn.commons.notifications.ui.notifications">
 	<event

@@ -71,6 +71,7 @@ import org.integratedmodelling.klab.model.KimObject;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.rest.DocumentationReference;
 import org.integratedmodelling.klab.rest.InterruptTask;
 import org.integratedmodelling.klab.rest.ObservableReference;
@@ -782,10 +783,16 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		}
 
 		if (request.getContextId() != null) {
+			
 			IObservation subject = getObservation(request.getContextId());
 			if (!(subject instanceof ISubject)) {
 				throw new IllegalArgumentException("cannot use a state as the context for an observation");
 			}
+			
+			if (!OWL.INSTANCE.isSemantic(subject.getObservable())) {
+				throw new IllegalArgumentException("context has no semantics and cannot support further observations");
+			}
+			
 			((ISubject) subject).observe(request.getUrn(),
 					request.getScenarios().toArray(new String[request.getScenarios().size()]));
 		} else {

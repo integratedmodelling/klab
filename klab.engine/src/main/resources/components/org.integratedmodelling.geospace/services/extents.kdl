@@ -27,5 +27,10 @@ spatialextent space
 		 one when shapes come from a URN."
 		default ""		
 		
+	optional input simplify
+		"A distance in projection units that will force simplification of polygons and other shapes
+		 by assuming that points within that distance can be ignored."
+	   default 0.0
+		
 	class org.integratedmodelling.klab.components.geospace.services.Space
 }

@@ -993,16 +993,15 @@ public class ObservableBuilder implements IObservable.Builder {
 
 	// TODO USE FULL DEFINITION AND CODE WHEN CREATING ALL THE make() CONCEPTS!
 
-	public static Concept makeType(IConcept trait, boolean addDefinition) {
+	public static Concept makeType(IConcept classified, boolean addDefinition) {
 
-		if (!trait.is(Type.TRAIT)) {
-			throw new KlabValidationException("types can only be declared for traits");
+		if (classified.is(Type.TRAIT)) {
+			throw new KlabValidationException("Traits cannot be further classified");
 		}
 
-		String traitID = getCleanId(trait) + "Type";
-		String definition = UnarySemanticOperator.TYPE.declaration[0] + " " + trait.getDefinition();
-
-		Ontology ontology = (Ontology) trait.getOntology();
+		String traitID = getCleanId(classified) + "Type";
+		String definition = UnarySemanticOperator.TYPE.declaration[0] + " " + classified.getDefinition();
+		Ontology ontology = (Ontology) classified.getOntology();
 		String conceptId = ontology.getIdForDefinition(definition);
 
 		if (conceptId == null) {
@@ -1023,12 +1022,12 @@ public class ObservableBuilder implements IObservable.Builder {
 			ontology.define(axioms);
 			IConcept ret = ontology.getConcept(conceptId);
 
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.EXPOSES_TRAIT_PROPERTY), trait);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.EXPOSES_TRAIT_PROPERTY), classified);
 
 			/*
 			 * types inherit the context from their trait
 			 */
-			IConcept context = Observables.INSTANCE.getContextType(trait);
+			IConcept context = Observables.INSTANCE.getContextType(classified);
 			if (context != null) {
 				OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context);
 			}

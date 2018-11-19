@@ -232,7 +232,7 @@ public class IdentityRequirementImpl extends MinimalEObjectImpl.Container implem
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuffer result = new StringBuffer(super.toString());
+    StringBuilder result = new StringBuilder(super.toString());
     result.append(" (authority: ");
     result.append(authority);
     result.append(')');

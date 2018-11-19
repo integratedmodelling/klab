@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
@@ -722,5 +723,13 @@ public class Space extends Extent implements ISpace {
 	@Override
 	public double getStandardizedLength() {
 		return getShape().getStandardizedLength();
+	}
+	
+	public static Grid extractGrid(IObservation obs) {
+		ISpace ext = obs.getSpace();
+		if (!(ext instanceof Space && ((Space) ext).getGrid() != null)) {
+			return null;
+		}
+		return ((Space) ext).grid;
 	}
 }

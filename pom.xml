@@ -80,10 +80,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
-		<!-- Careful here: geotools must be right for jgrasstools to work; JTS 
+		<!-- Careful here: geotools must be right for hortonmachine to work; JTS 
 			should be the same one that geotools needs. -->
-		<geotools.version>19-SNAPSHOT</geotools.version>
-		<jgrasstools-version>0.8.1</jgrasstools-version>
+		<geotools.version>18.0</geotools.version>
+		<hortonmachine.version>0.9.1</hortonmachine.version>
 		<jts.version>1.13</jts.version>
 		<h2gis.version>1.2.4</h2gis.version>
 		<maven.compiler.source>1.8</maven.compiler.source>

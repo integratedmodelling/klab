@@ -12,7 +12,7 @@ import org.integratedmodelling.klab.components.localstorage.impl.ConceptStorage;
 import org.integratedmodelling.klab.components.localstorage.impl.DoubleStorage;
 import org.integratedmodelling.klab.components.localstorage.impl.TextStorage;
 
-@Component(id = "local.storage", version = Version.CURRENT)
+@Component(id = "org.integratedmodelling.storage.local", version = Version.CURRENT)
 public class LocalStorageComponent implements IStorageProvider {
 
 	public LocalStorageComponent() {

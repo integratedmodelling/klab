@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.dataflow;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -42,17 +43,22 @@ import com.google.common.io.Resources;
  *
  */
 public class Dataflow extends Actuator implements IDataflow<IArtifact> {
-	
+
 	private String description;
 	private DirectObservation context;
 	private ResolutionScope scope;
 	private boolean primary = true;
-	
+
+	// these are part of graphs so they should behave wrt. equality. Adding an ID
+	// for comparison just to ensure that future changes upstream do not affect the
+	// logics.
+	private String _dataflowId = UUID.randomUUID().toString();
+
 	/*
 	 * TODO this should be removed and an actual layout should be created
 	 */
 	private static String demoLayout = null;
-	
+
 	@Override
 	public IArtifact run(IScale scale, IMonitor monitor) throws KlabException {
 
@@ -168,17 +174,42 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	public boolean isEmpty() {
 		return actuators.size() == 0;
 	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((_dataflowId == null) ? 0 : _dataflowId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Dataflow other = (Dataflow) obj;
+		if (_dataflowId == null) {
+			if (other._dataflowId != null)
+				return false;
+		} else if (!_dataflowId.equals(other._dataflowId))
+			return false;
+		return true;
+	}
 
 	/**
-	 * True if the dataflow is handling an API observation request. False if the request
-	 * is to resolve an object instantiated by another dataflow.
+	 * True if the dataflow is handling an API observation request. False if the
+	 * request is to resolve an object instantiated by another dataflow.
 	 * 
 	 * @return
 	 */
 	public boolean isPrimary() {
 		return primary;
 	}
-	
+
 	public Dataflow setPrimary(boolean b) {
 		this.primary = b;
 		return this;
@@ -199,7 +230,5 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		}
 		return demoLayout;
 	}
-	
-	
 
 }

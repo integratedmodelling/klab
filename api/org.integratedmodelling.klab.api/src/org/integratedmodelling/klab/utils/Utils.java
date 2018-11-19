@@ -189,4 +189,24 @@ public class Utils {
 		throw new IllegalArgumentException("type " + type + " has no POD class equivalent");
 	}
 	
+	/**
+	 * Binary root of integer.
+	 * 
+	 * @param x
+	 * @return
+	 */
+	public static int log2int(int x) {
+		int y,v;
+		if (x <= 0) {
+			throw new IllegalArgumentException(""+x+" <= 0");
+		}
+		v = x;
+		y = -1;
+		while (v>0) {
+			v >>=1;
+			y++;
+		}
+		return y;
+	}
+	
 }

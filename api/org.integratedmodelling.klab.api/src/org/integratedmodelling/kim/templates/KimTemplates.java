@@ -1,5 +1,7 @@
 package org.integratedmodelling.kim.templates;
 
+import org.integratedmodelling.klab.Version;
+
 /**
  * String templates to initialize empty k.IM assets.
  * 
@@ -20,7 +22,7 @@ public interface KimTemplates {
             + "</projectDescription>";
 
     public static String emptyJSONTemplate = "{\n}";
-    public static String propertiesTemplate = "klab.version = 0.0.1\n";
+    public static String propertiesTemplate = "klab.version = " + Version.CURRENT + "\n";
     public static String knowledgeTemplate = "namespace __PROJECT__;\n\n";
     
     public static String testCaseTemplate = "worldview __WORLDVIEW__;\r\n" + 

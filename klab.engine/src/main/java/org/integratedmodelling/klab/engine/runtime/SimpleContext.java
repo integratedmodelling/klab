@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.components.runtime.observations.ObservationG
 import org.integratedmodelling.klab.components.runtime.observations.Process;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
+import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.owl.OWL;
@@ -263,8 +264,7 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 
     @Override
     public IRuntimeContext createChild(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor) {
-        // TODO Auto-generated method stub
-        return null;
+    	throw new IllegalStateException("Context is meant for testing of individual resources and cannot support child observations");
     }
 
     @Override
@@ -448,5 +448,11 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
         // TODO Auto-generated method stub
         return null;
     }
+
+	@Override
+	public ContextualizationStrategy getContextualizationStrategy() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

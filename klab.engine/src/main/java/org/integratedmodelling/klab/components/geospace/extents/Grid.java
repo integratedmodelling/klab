@@ -692,7 +692,7 @@ public class Grid extends Area implements IGrid {
 			@Override
 			public boolean hasNext() {
 				if (mask == null) {
-					return n < getCellCount();
+					return n < (getCellCount() - 1);
 				} 
 				return n >= 0;
 			}
