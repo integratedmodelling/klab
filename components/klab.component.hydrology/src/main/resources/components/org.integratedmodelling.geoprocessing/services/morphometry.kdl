@@ -38,3 +38,17 @@ contextualizer flowaccumulation
 
 	class org.integratedmodelling.geoprocessing.hydrology.FlowAccumulationResolver
 }
+
+contextualizer streamnetwork
+	"Extracts the stream network as a raster indicating presence of a stream, using a cutoff threshold
+	 on the percentage of drainage cells."
+{
+	optional input 'tca.threshold'
+		"The percent of the total basin drainage that makes a cell part of a stream. A default is chosen
+		 adaptively; defaults are unlikely to work in delta areas or any other difficult context."
+		default 0.0
+
+	// TODO import upstream_cell_count
+
+	class org.integratedmodelling.geoprocessing.hydrology.StreamNetworkResolver
+}

@@ -2,6 +2,8 @@ package org.integratedmodelling.geoprocessing.morphology;
 
 import static org.hortonmachine.gears.libs.modules.HMConstants.floatNovalue;
 
+import java.awt.image.DataBuffer;
+
 import org.hortonmachine.hmachine.modules.geomorphology.geomorphon.OmsGeomorphon;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IParameters;
@@ -59,7 +61,7 @@ public class GeomorphonResolver implements IResolver<IState>, IExpression {
 			geomorphon.pThreshold = pThreshold * cMeters;
 		}
 		
-		geomorphon.inElev = GeotoolsUtils.INSTANCE.stateToCoverage(dem, floatNovalue);
+		geomorphon.inElev = GeotoolsUtils.INSTANCE.stateToCoverage(dem, DataBuffer.TYPE_FLOAT, floatNovalue);
 		geomorphon.pm = new TaskMonitor(context.getMonitor());
 		geomorphon.doProcess = true;
 		geomorphon.doReset = false;

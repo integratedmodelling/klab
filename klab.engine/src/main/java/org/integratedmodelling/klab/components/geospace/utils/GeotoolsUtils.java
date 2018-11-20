@@ -47,22 +47,21 @@ public enum GeotoolsUtils {
 	 *             if the state is not suitable for a raster representation.
 	 */
 	public GridCoverage2D stateToCoverage(IState state, ILocator locator, float noDataValue) {
-		return stateToCoverage(state.at(locator), noDataValue);
+		return stateToCoverage(state.at(locator), DataBuffer.TYPE_FLOAT, noDataValue);
 	}
 
 	public GridCoverage2D stateToCoverage(IState state) {
-		return stateToCoverage(state, Float.NaN);
+		return stateToCoverage(state, DataBuffer.TYPE_FLOAT, Float.NaN);
 	}
 	/**
 	 * Turn a state into a grid coverage. Assumes the state is scaled so that all
 	 * the values will be spatial.
 	 * 
-	 * @param state
 	 * @return a Geotools grid coverage
 	 * @throws IllegalArgumentException
 	 *             if the state is not suitable for a raster representation.
 	 */
-	public GridCoverage2D stateToCoverage(IState state, Float noDataValue) {
+	public GridCoverage2D stateToCoverage(IState state, int type, Float noDataValue) {
 
 		Space space = (Space) state.getScale().getSpace();
 		if (space == null || space.getGrid() == null) {
@@ -76,7 +75,7 @@ public enum GeotoolsUtils {
 		 * TODO use a raster of the appropriate type - for now there is apparently a bug
 		 * in geotools that makes it work only with float.
 		 */
-		WritableRaster raster = RasterFactory.createBandedRaster(DataBuffer.TYPE_FLOAT, (int) grid.getXCells(),
+		WritableRaster raster = RasterFactory.createBandedRaster(type, (int) grid.getXCells(),
 				(int) grid.getYCells(), 1, null);
 
 		/*
@@ -113,7 +112,7 @@ public enum GeotoolsUtils {
 	 * Dump the data from a coverage into a pre-existing state.
 	 * 
 	 */
-	public void coverageToState(GridCoverage2D layer, IState state, Function<Double, Double> transformation) {
+	public void coverageToState(GridCoverage2D layer, IState state, Function<Double, Object> transformation) {
 
 		ISpace ext = state.getScale().getSpace();
 
