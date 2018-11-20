@@ -47,7 +47,7 @@ public class FlowAccumulationResolver implements IResolver<IState>, IExpression 
 		}
 		
 		double cellArea = grid.getCell(0).getStandardizedArea();
-		if (tUnit.equals(Units.INSTANCE.SQUARE_METERS)) {
+		if (tUnit != null && tUnit.equals(Units.INSTANCE.SQUARE_METERS)) {
 			tUnit = null;
 		}
 		
