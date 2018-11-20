@@ -19,7 +19,8 @@
 			"https://bitbucket.org/fvilla/im.data.global.git",
 			"https://bitbucket.org/fvilla/im.data.operators.git",
 			"https://bitbucket.org/fvilla/im.data.osm.git",
-			"https://bitbucket.org/fvilla/im.aries.global.git"
+			"https://bitbucket.org/fvilla/im.aries.global.git",
+			"https://bitbucket.org/fvilla/im.components.geoprocessing"
 		],
 		"observables": [
 			{
