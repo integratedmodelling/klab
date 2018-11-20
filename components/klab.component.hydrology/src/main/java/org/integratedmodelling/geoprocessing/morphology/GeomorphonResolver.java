@@ -9,11 +9,14 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public class GeomorphonResolver implements IResolver<IState>, IExpression {
 
@@ -34,14 +37,28 @@ public class GeomorphonResolver implements IResolver<IState>, IExpression {
 	public IState resolve(IState target, IComputationContext context) throws KlabException {
 
 		IState dem = context.getArtifact("elevation", IState.class);
+		ISpace space = target.getSpace();
 
+		if (!(target.isSpatiallyDistributed() && space.isRegular())) {
+			throw new KlabValidationException("Geomorphological classification must be computed on a grid extent");
+		}
+
+		// default radius is 1/100th of the diagonal of the context
+		if (Double.isNaN(pRadius) || pRadius == 0) {
+			pRadius = Math.sqrt(
+						Math.pow(space.getStandardizedWidth(), 2) + 
+						Math.pow(space.getStandardizedHeight(), 2))
+					/ 100.0;
+		}
+		
+		double cMeters = (space.getEnvelope().getMaxX() - space.getEnvelope().getMinX())/space.getStandardizedWidth();
+		
 		OmsGeomorphon geomorphon = new OmsGeomorphon();
-		if (!Double.isNaN(pRadius)) {
-			geomorphon.pRadius = pRadius;
+		geomorphon.pRadius = pRadius * cMeters;
+		if (!(Double.isNaN(pThreshold) || pThreshold == 0)) {
+			geomorphon.pThreshold = pThreshold * cMeters;
 		}
-		if (!Double.isNaN(pThreshold)) {
-			geomorphon.pThreshold = pThreshold;
-		}
+		
 		geomorphon.inElev = GeotoolsUtils.INSTANCE.stateToCoverage(dem, floatNovalue);
 		geomorphon.pm = new TaskMonitor(context.getMonitor());
 		geomorphon.doProcess = true;
