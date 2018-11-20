@@ -240,6 +240,9 @@ public enum Observations implements IObservationService {
 		}
 
 		ret.setObservable(observation.getObservable().getDefinition());
+		if (ret.getObservable() == null) {
+			ret.setObservable("Quantity has no semantics associated");
+		}
 		ret.setSiblingCount(observation.groupSize());
 		ret.getSemantics().addAll(((Concept) observation.getObservable().getType()).getTypeSet());
 
