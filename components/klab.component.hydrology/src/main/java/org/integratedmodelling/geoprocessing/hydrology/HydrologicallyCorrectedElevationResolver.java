@@ -2,6 +2,8 @@ package org.integratedmodelling.geoprocessing.hydrology;
 
 import static org.hortonmachine.gears.libs.modules.HMConstants.floatNovalue;
 
+import java.awt.image.DataBuffer;
+
 import org.hortonmachine.hmachine.modules.demmanipulation.pitfiller.OmsPitfiller;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IParameters;
@@ -33,7 +35,7 @@ public class HydrologicallyCorrectedElevationResolver implements IResolver<IStat
 		IState dem = context.getArtifact("elevation", IState.class);
 
 		OmsPitfiller pitfiller = new OmsPitfiller();
-		pitfiller.inElev = GeotoolsUtils.INSTANCE.stateToCoverage(dem, floatNovalue);
+		pitfiller.inElev = GeotoolsUtils.INSTANCE.stateToCoverage(dem, DataBuffer.TYPE_FLOAT, floatNovalue);
 		pitfiller.pm = new TaskMonitor(context.getMonitor());
 		pitfiller.doProcess = true;
 		pitfiller.doReset = false;

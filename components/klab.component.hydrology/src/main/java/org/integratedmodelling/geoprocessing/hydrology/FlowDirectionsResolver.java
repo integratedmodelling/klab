@@ -2,6 +2,8 @@ package org.integratedmodelling.geoprocessing.hydrology;
 
 import static org.hortonmachine.gears.libs.modules.HMConstants.floatNovalue;
 
+import java.awt.image.DataBuffer;
+
 import org.hortonmachine.hmachine.modules.geomorphology.flow.OmsFlowDirections;
 import org.hortonmachine.lesto.Lesto;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
@@ -37,7 +39,7 @@ public class FlowDirectionsResolver implements IResolver<IState>, IExpression {
 		IState dem = context.getArtifact("hydrologically_corrected_elevation", IState.class);
 
 		OmsFlowDirections algorithm = new OmsFlowDirections();
-		algorithm.inPit = GeotoolsUtils.INSTANCE.stateToCoverage(dem, floatNovalue);
+		algorithm.inPit = GeotoolsUtils.INSTANCE.stateToCoverage(dem, DataBuffer.TYPE_INT, floatNovalue);
 		algorithm.pm = new TaskMonitor(context.getMonitor());
 		algorithm.doProcess = true;
 		algorithm.doReset = false;

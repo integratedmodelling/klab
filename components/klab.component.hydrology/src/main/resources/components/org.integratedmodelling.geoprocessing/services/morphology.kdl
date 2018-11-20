@@ -11,12 +11,14 @@ contextualizer classifier
 {
 	// TODO import elevation
 	optional input threshold 
-		"Flatness threshold in meters. Chosen based on radius if unspecified." 
+		"Flatness threshold in meters. If unspecified it is chosen to match the radius in a square 
+		 context." 
 		default 0.0
 		
 	optional input radius
 		"Search radius in m. Represents the scaling of the point of view; large values can be used to
-		 mimic far points of view or for very flat areas."
+		 mimic far points of view or for very flat areas. If unspecified, it is set to 1/100th of the
+		 diagonal of the bounding box."
 		default 0.0
 		
 	class org.integratedmodelling.geoprocessing.morphology.GeomorphonResolver
