@@ -6,7 +6,7 @@
 @version 0.10.0
 @namespace klab.runtime
 
-contextualizer exec
+export value exec
 	"Return an appropriate contextualizer for an expression."
 {
 	
@@ -29,7 +29,7 @@ contextualizer exec
 
 }
 
-contextualizer literal
+export value literal
 	"Return a mediating resolver that wraps a state into another with compatible, but 
 	 different value semantics"
 {
@@ -41,7 +41,7 @@ contextualizer literal
 
 }
 
-contextualizer convert
+export number convert
 	"Return a contextualizer for a literal value"
 {
 	
@@ -55,7 +55,7 @@ contextualizer convert
 
 }
 
-contextualizer classify
+export concept classify
 	"Return a state contextualizer that classifies its input into a concept"
 {
 	
@@ -66,7 +66,7 @@ contextualizer classify
 
 }
 
-contextualizer lookup
+export value lookup
 	"Return a state contextualizer that classifies its inputs using a lookup table"
 {
 	
@@ -81,7 +81,7 @@ contextualizer lookup
 }
 
 
-contextualizer resolve
+export value resolve
 	"Return a resolver for a URN-specified resource"
 {
 	
@@ -91,7 +91,7 @@ contextualizer resolve
 	class org.integratedmodelling.klab.components.runtime.contextualizers.UrnResolver
 }
 
-contextualizer instantiate
+export object instantiate
 	"Return an instantiator for a URN-specified resource"
 {
 	
@@ -102,25 +102,7 @@ contextualizer instantiate
 
 }
 
-contextualizer distance
-	"Return a dereifying resolver turning a countable artifact into a spatial distance coverage"
-{
-	
-	text unit
-		"The length unit in which we want the distance"
-				
-	class org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.DistanceResolver
-
-}
-
-contextualizer presence
-	"Return a dereifying resolver turning a countable artifact into a presence coverage"
-{
-	class org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.PresenceResolver
-
-}
-
-contextualizer cast
+export value cast
 	"Return a state resolver that will convert a value from a type to another"
 {
 	
@@ -135,17 +117,7 @@ contextualizer cast
 	class org.integratedmodelling.klab.components.runtime.contextualizers.CastingStateResolver
 }
 
-contextualizer density
-	"Return a dereifying resolver turning a countable artifact into a density coverage"
-{
-	
-	text unit
-		"The areal or volume unit on which we want the density distributed"
-				
-	class org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.DensityResolver
-}
-
-contextualizer conditional
+export value conditional
 	"Wrap a function call that produces a contextualizer, created only if the passed condition evaluates to true."
 {
 	

@@ -6,12 +6,12 @@
 @version 0.10.0
 @namespace klab.runtime.dereifiers
 
-contextualizer 'distance'
+export number 'distance'
 	"Return a dereifying resolver turning a countable artifact into a spatial distance coverage"
 {
 	
-	text artifact
-		"The name of the artifact being dereified"
+	import object artifact
+		"The artifact being dereified"
 	
 	text 'unit'
 		"The length unit in which we want the distance"
@@ -20,21 +20,21 @@ contextualizer 'distance'
 
 }
 
-contextualizer 'presence'
+export number 'presence'
 	"Return a dereifying resolver turning a countable artifact into a presence coverage"
 {
-	text artifact
-		"The name of the artifact being dereified"
+	import object artifact
+		"The artifact being dereified"
 	
 	class org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.PresenceResolver
 
 }
 
-contextualizer density
+export number density
 	"Return a dereifying resolver turning a countable artifact into a density coverage"
 {
-	text artifact
-		"The name of the artifact being dereified"
+	import object artifact
+		"The artifact being dereified"
 	
 	text 'unit'
 		"The areal or volume unit on which we want the density distributed"

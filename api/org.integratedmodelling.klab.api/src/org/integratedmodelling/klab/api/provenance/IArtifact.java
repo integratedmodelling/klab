@@ -131,10 +131,10 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 		 * No value - used only for options in command prototypes
 		 */
 		VOID,
-		/**
-		 * Only for service prototypes returning contextualizers
-		 */
-		CONTEXTUALIZER,
+//		/**
+//		 * Only for service prototypes returning contextualizers
+//		 */
+//		CONTEXTUALIZER,
 
 		/**
 		 * Tables are supersets of maps so map literals are valid tables. A table is a

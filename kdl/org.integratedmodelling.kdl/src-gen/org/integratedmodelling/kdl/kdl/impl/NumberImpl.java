@@ -491,7 +491,7 @@ public class NumberImpl extends MinimalEObjectImpl.Container implements org.inte
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuilder result = new StringBuilder(super.toString());
+    StringBuffer result = new StringBuffer(super.toString());
     result.append(" (negative: ");
     result.append(negative);
     result.append(", real: ");

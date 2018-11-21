@@ -180,7 +180,7 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *                 type='list' | 
 	 *                 type='enum'
 	 *             ) 
-	 *             parameter?='input' 
+	 *             (parameter?='input' | imported?='import') 
 	 *             (name=LOWERCASE_ID | name=LOWERCASE_DASHID | name=STRING) 
 	 *             (enumValues+=UPPERCASE_ID enumValues+=UPPERCASE_ID*)? 
 	 *             docstring=STRING 

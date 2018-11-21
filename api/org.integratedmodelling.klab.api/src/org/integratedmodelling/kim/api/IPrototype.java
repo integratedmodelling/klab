@@ -94,6 +94,13 @@ public interface IPrototype {
 		 * @return
 		 */
 		boolean isFinal();
+		
+		/**
+		 * If true, the argument matches an imported artifact of the specified type.
+		 * 
+		 * @return
+		 */
+		boolean isArtifact();
 	}
 
 	/**
@@ -171,6 +178,13 @@ public interface IPrototype {
 	 * @return true if service can be used as a map/reduce operator
 	 */
 	boolean isDistributed();
+	
+	/**
+	 * True if the prototype specifies a service that produces an artifact (with
+	 * the 'export' option before the type).
+	 * @return
+	 */
+	boolean isContextualizer();
 
 	/**
 	 * If the service specifications include a geometry for the result, return it

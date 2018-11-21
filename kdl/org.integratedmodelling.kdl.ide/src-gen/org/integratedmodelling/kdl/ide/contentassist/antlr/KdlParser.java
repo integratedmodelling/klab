@@ -38,6 +38,7 @@ public class KdlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getActorDefinitionAccess().getNameAlternatives_0_5_0(), "rule__ActorDefinition__NameAlternatives_0_5_0");
 					put(grammarAccess.getActorDefinitionAccess().getAlternatives_1_0(), "rule__ActorDefinition__Alternatives_1_0");
 					put(grammarAccess.getActorDefinitionAccess().getTypeAlternatives_1_0_1_0(), "rule__ActorDefinition__TypeAlternatives_1_0_1_0");
+					put(grammarAccess.getActorDefinitionAccess().getAlternatives_1_1(), "rule__ActorDefinition__Alternatives_1_1");
 					put(grammarAccess.getActorDefinitionAccess().getNameAlternatives_1_2_0(), "rule__ActorDefinition__NameAlternatives_1_2_0");
 					put(grammarAccess.getActorDefinitionAccess().getAlternatives_1_7(), "rule__ActorDefinition__Alternatives_1_7");
 					put(grammarAccess.getGeometryAccess().getAlternatives(), "rule__Geometry__Alternatives");
@@ -224,7 +225,8 @@ public class KdlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getActorDefinitionAccess().getCoverageAssignment_0_10_2_1(), "rule__ActorDefinition__CoverageAssignment_0_10_2_1");
 					put(grammarAccess.getActorDefinitionAccess().getOptionalAssignment_1_0_0(), "rule__ActorDefinition__OptionalAssignment_1_0_0");
 					put(grammarAccess.getActorDefinitionAccess().getTypeAssignment_1_0_1(), "rule__ActorDefinition__TypeAssignment_1_0_1");
-					put(grammarAccess.getActorDefinitionAccess().getParameterAssignment_1_1(), "rule__ActorDefinition__ParameterAssignment_1_1");
+					put(grammarAccess.getActorDefinitionAccess().getParameterAssignment_1_1_0(), "rule__ActorDefinition__ParameterAssignment_1_1_0");
+					put(grammarAccess.getActorDefinitionAccess().getImportedAssignment_1_1_1(), "rule__ActorDefinition__ImportedAssignment_1_1_1");
 					put(grammarAccess.getActorDefinitionAccess().getNameAssignment_1_2(), "rule__ActorDefinition__NameAssignment_1_2");
 					put(grammarAccess.getActorDefinitionAccess().getEnumValuesAssignment_1_3_1(), "rule__ActorDefinition__EnumValuesAssignment_1_3_1");
 					put(grammarAccess.getActorDefinitionAccess().getEnumValuesAssignment_1_3_2_1(), "rule__ActorDefinition__EnumValuesAssignment_1_3_2_1");

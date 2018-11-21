@@ -554,7 +554,7 @@ public class FunctionImpl extends MinimalEObjectImpl.Container implements Functi
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuilder result = new StringBuilder(super.toString());
+    StringBuffer result = new StringBuffer(super.toString());
     result.append(" (mediated: ");
     result.append(mediated);
     result.append(", name: ");
