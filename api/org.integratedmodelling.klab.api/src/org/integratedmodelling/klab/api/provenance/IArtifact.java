@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -131,10 +132,6 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 		 * No value - used only for options in command prototypes
 		 */
 		VOID,
-//		/**
-//		 * Only for service prototypes returning contextualizers
-//		 */
-//		CONTEXTUALIZER,
 
 		/**
 		 * Tables are supersets of maps so map literals are valid tables. A table is a
@@ -161,6 +158,16 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 				return LIST;
 			}
 			return VALUE;
+		}
+
+		public static boolean isCompatible(Type required, Type supplied) {
+			if (required == supplied) {
+				return true;
+			} else if (required == Type.VALUE) {
+				return true;
+			}
+			// TODO probably needs improvement
+			return false;
 		}
 	}
 

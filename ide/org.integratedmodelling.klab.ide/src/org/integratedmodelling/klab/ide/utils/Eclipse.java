@@ -59,6 +59,7 @@ import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
+import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -85,14 +86,20 @@ public enum Eclipse {
 		conMan.addConsoles(new IConsole[] { myConsole });
 		return myConsole;
 	}
-	
-//	Creating a console and writing to it do not create or reveal the Console view. If you want to make that sure the Console view is visible, you need to reveal it using the usual workbench API. Even once the Console view is revealed, keep in mind that it may contain several pages, each representing a different IConsole provided by a plug-in. Additional API asks the Console view to display your console. This snippet reveals the Console view and asks it to display a particular console instance:
-//
-//		  IConsole myConsole = ...;// your console instance
-//		  IWorkbenchPage page = ...;// obtain the active page
-//		  String id = IConsoleConstants.ID_CONSOLE_VIEW;
-//		  IConsoleView view = (IConsoleView) page.showView(id);
-//		  view.display(myConsole);
+
+	// Creating a console and writing to it do not create or reveal the Console
+	// view. If you want to make that sure the Console view is visible, you need to
+	// reveal it using the usual workbench API. Even once the Console view is
+	// revealed, keep in mind that it may contain several pages, each representing a
+	// different IConsole provided by a plug-in. Additional API asks the Console
+	// view to display your console. This snippet reveals the Console view and asks
+	// it to display a particular console instance:
+	//
+	// IConsole myConsole = ...;// your console instance
+	// IWorkbenchPage page = ...;// obtain the active page
+	// String id = IConsoleConstants.ID_CONSOLE_VIEW;
+	// IConsoleView view = (IConsoleView) page.showView(id);
+	// view.display(myConsole);
 	public void writeToConsole(String string) {
 		MessageConsole myConsole = findConsole(KLAB_CONSOLE_ID);
 		MessageConsoleStream out = myConsole.newMessageStream();
@@ -237,6 +244,32 @@ public enum Eclipse {
 		} catch (Exception e) {
 			error(e);
 		}
+	}
+
+	public IFile getIFile(IKimNamespace namespace) {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IProject project = root.getProject(namespace.getProject().getName());
+		if (project == null) {
+			if (namespace.getFile() != null) {
+				return getIFile(namespace.getFile());
+			}
+			return null;
+		}
+		String rpath = null;
+		if (namespace.isWorldviewBound()) {
+			String kimPrefix = "/";
+			if (namespace.getScriptId() != null) {
+				kimPrefix = IKimProject.SCRIPT_FOLDER + "/";
+			} else if (namespace.getTestCaseId() != null) {
+				kimPrefix = IKimProject.TESTS_FOLDER + "/";
+			} else {
+				// oh fuck
+			}
+			rpath = kimPrefix + namespace.getResourceId().substring(namespace.getResourceId().lastIndexOf('/') + 1);
+		} else {
+			rpath = "src/" + namespace.getName().replace('.', '/') + ".kim";
+		}
+		return project.getFile(rpath);
 	}
 
 	public IFile getNamespaceIFile(EKimObject object) {

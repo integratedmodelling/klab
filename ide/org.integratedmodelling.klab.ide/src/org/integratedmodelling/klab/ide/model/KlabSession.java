@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.ide.navigator.model.beans.ETaskReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.ide.utils.StringUtils;
 import org.integratedmodelling.klab.rest.DataflowReference;
+import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationRequest;
 import org.integratedmodelling.klab.rest.ResourceImportRequest;
@@ -346,6 +347,7 @@ public class KlabSession extends KlabPeer {
 	 * ----- Back-end message handlers -----
 	 */
 
+	
 	/*
 	 * All resource-related responses
 	 */

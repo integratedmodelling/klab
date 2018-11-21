@@ -123,6 +123,16 @@ public class Prototype implements IPrototype {
 		public boolean isArtifact() {
 			return artifact;
 		}
+
+		public void setFinal(boolean isFinal) {
+			this.isFinal = isFinal;
+		}
+
+		public void setArtifact(boolean artifact) {
+			this.artifact = artifact;
+		}
+		
+		
 	}
 
 	protected String name;
@@ -133,6 +143,30 @@ public class Prototype implements IPrototype {
 	protected Geometry geometry;
 	protected boolean distributed;
 	protected boolean contextualizer;
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setArguments(Map<String, ArgumentImpl> arguments) {
+		this.arguments = arguments;
+	}
+
+	public void setType(Type type) {
+		this.type = type;
+	}
+
+	public void setGeometry(Geometry geometry) {
+		this.geometry = geometry;
+	}
+
+	public void setDistributed(boolean distributed) {
+		this.distributed = distributed;
+	}
+
+	public void setContextualizer(boolean contextualizer) {
+		this.contextualizer = contextualizer;
+	}
 
 	@Override
 	public String getName() {
@@ -321,4 +355,5 @@ public class Prototype implements IPrototype {
 	public boolean isContextualizer() {
 		return contextualizer;
 	}
+	
 }

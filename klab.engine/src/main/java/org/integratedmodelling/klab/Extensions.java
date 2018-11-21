@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.rest.ServicePrototype;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 public enum Extensions implements IExtensionService {
 
@@ -188,6 +189,7 @@ public enum Extensions implements IExtensionService {
 	public void exportPrototypes(File file) {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
+			mapper.enable(SerializationFeature.INDENT_OUTPUT); // pretty print
 			JavaType type = mapper.getTypeFactory().constructMapLikeType(Map.class, String.class, Prototype.class);
 			mapper.writerFor(type).writeValue(file, this.prototypes);
 		} catch (IOException e) {

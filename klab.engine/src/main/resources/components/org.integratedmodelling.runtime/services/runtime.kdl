@@ -73,13 +73,12 @@ export value lookup
 	object table
 		"A table stated in k.IM"
 
-	list arguments 
+	value arguments 
 		"A set of arguments to match to the columns of the table"
 
 	class org.integratedmodelling.klab.components.runtime.contextualizers.LookupStateResolver
 
 }
-
 
 export value resolve
 	"Return a resolver for a URN-specified resource"
