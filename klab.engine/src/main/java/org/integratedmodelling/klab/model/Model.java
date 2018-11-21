@@ -95,6 +95,8 @@ public class Model extends KimObject implements IModel {
 
 		setDeprecated(model.isDeprecated() || namespace.isDeprecated());
 
+		// TODO report observable errors (e.g. UNITS) that are currently ignored (they just suppress other errors)
+		
 		for (IKimObservable observable : model.getObservables()) {
 			if (observable.hasAttributeIdentifier()) {
 				attributeObservables.put(observable.getValue().toString(),
@@ -214,7 +216,7 @@ public class Model extends KimObject implements IModel {
 				for (Argument argument : prototype.listArguments()) {
 					if (argument.isArtifact()) {
 						IObservable dependency = findDependency(argument.getName());
-						if (dependency == null) {
+						if (dependency == null && !argument.isOptional()) {
 							monitor.error("contextualizer " + prototype.getName() + " requires a dependency named "
 									+ argument.getName(), resource.getServiceCall());
 						} else if (!IArtifact.Type.isCompatible(argument.getType(), dependency.getArtifactType())) {

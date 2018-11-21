@@ -1067,6 +1067,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	public Concept build() throws KlabValidationException {
 
 		if (errors.size() > 0) {
+			
+			// NO should build anyway but leave errors for notification
+			
 			String message = "";
 			for (KlabValidationException error : errors) {
 				message += (message.isEmpty() ? "" : "\n") + error.getLocalizedMessage();
