@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.eclipse.emf.ecore.EObject;
 import org.integratedmodelling.kim.api.IComputableResource;
@@ -25,6 +26,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Utils;
 
@@ -32,6 +34,8 @@ public class ComputableResource extends KimStatement implements IComputableResou
 
 	private static final long serialVersionUID = -5104679843126238555L;
 
+	private String _resourceId = UUID.randomUUID().toString();
+	
 	private String language;
 	private Object literal;
 	private KimServiceCall serviceCall;

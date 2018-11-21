@@ -3,79 +3,88 @@ package org.integratedmodelling.klab.dataflow;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.elk.graph.ElkGraphFactory;
+import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.json.ElkGraphJson;
+import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class DataflowGraph {
 
 	private ElkNode rootNode;
 	private ElkGraphFactory elk = ElkGraphFactory.eINSTANCE;
 
-	private Map<String, ElkNode> nodes = new HashMap<>();
-	
-	public DataflowGraph() {
-	}
+	private Map<String, ElkNode> nodes;
 
 	public ElkNode getRootNode() {
 		return rootNode;
 	}
 
-	public DataflowGraph(Dataflow dataflow) {
-		merge(dataflow);
+	public DataflowGraph(Dataflow dataflow, Map<String, ElkNode> nodes) {
+		this.nodes = nodes;
+		rootNode = compile(dataflow);
 	}
 
-	/**
-	 * Compile a dataflow into its graph and set or add to the main graph. Can be
-	 * called as many times as needed; inputs will be resolved from the existing
-	 * nodes.
-	 * 
-	 * @param dataflow
-	 */
-	public void merge(Dataflow dataflow) {
-		ElkNode node = compile(dataflow);
-		if (rootNode == null) {
-			rootNode = node;
-		}
-		// TODO the next node may be independent; in that case we should only add
-		// another root if there were no connections between the
-		// new and the previous.
-	}
+	public ElkNode compile(Actuator actuator) {
 
-	public ElkNode compile(IActuator actuator) {
-		
 		ElkNode root = elk.createElkNode();
+		root.setIdentifier(actuator.getId());
 
-		root.setIdentifier(actuator.getName());
-		
-		// input ports
-		for (IActuator input : actuator.getInputs()) {
-			
+		nodes.put(actuator.getName(), root);
+		root.getLabels().add(label(actuator));
+
+		// imports
+		for (IActuator child : actuator.getActuators()) {
+			if (child.isInput()) {
+				ElkPort port = elk.createElkPort();
+				port.getLabels().add(label(child.getAlias() == null ? child.getName() : child.getAlias(),
+						((Actuator) child).getId()));
+				root.getPorts().add(port);
+			} else {
+				ElkNode childNode = compile((Actuator) child);
+				root.getChildren().add(childNode);
+			}
 		}
 		
 		// mediators
-		
-		// computation
+		for (Pair<IServiceCall, IComputableResource> mediator : actuator.getComputationStrategy()) {
+			// compile in the actor with all its literal parameters; link artifacts from the
+			// environment
+		}
 
-		// output port(s) from the computation - >1 if there are additional observables in the associated model
-		
+		// computation
+		for (Pair<IServiceCall, IComputableResource> actor : actuator.getComputationStrategy()) {
+
+		}
+
+		// output port(s) from the computation - >1 if there are additional observables
+		// in the associated model
+
 		// properties
-		
-		
-		return rootNode;
+
+		return root;
 	}
-	
+
+	private ElkLabel label(Actuator actuator) {
+		return label(StringUtils.capitalize(actuator.getName().replaceAll("_", " ")), actuator.getId() + "l");
+	}
+
+	private ElkLabel label(String name, String id) {
+		ElkLabel ret = elk.createElkLabel();
+		ret.setText(name);
+		ret.setIdentifier(id);
+		return ret;
+	}
+
 	public String asJson() {
 		// TODO these options are copied from the docs without thinking
-		return ElkGraphJson.forGraph(rootNode)
-                .omitLayout(true)
-                .omitZeroDimension(true)
-                .omitZeroPositions(true)
-                .shortLayoutOptionKeys(false)
-                .prettyPrint(true)
-                .toJson();
+		return ElkGraphJson.forGraph(rootNode).omitLayout(true).omitZeroDimension(true).omitZeroPositions(true)
+				.shortLayoutOptionKeys(false).prettyPrint(true).toJson();
 	}
-	
 
 }

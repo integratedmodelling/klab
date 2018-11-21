@@ -5,50 +5,54 @@
 @version 0.10.0
 @namespace im.hydrology
 
-contextualizer fillsinks
+export number fillsinks
 	"Fills any hydrological sink in a DEM observation, producing a hydrologically corrected DEM."
 {
-	// TODO import elevation
+	import number elevation
+		"The DEM to correct"
 
 	class org.integratedmodelling.geoprocessing.hydrology.HydrologicallyCorrectedElevationResolver
 }
 
-contextualizer flowdirections
+export number flowdirections
 	"Import a hydrologically corrected DEM and produce flow directions using configurable methods. For now
 	 only D8 is supported."
 {
+	import number hydrologically_corrected_elevation
+		"A hydrologically corrected DEM with no areas where water can pool"
+		
 	optional input angles
 		"If true, angles are computed as output instead of integer flow direction codes per D8 conventions."
 		default false
 
-	// TODO import hydrologically_corrected_elevation
-
 	class org.integratedmodelling.geoprocessing.hydrology.FlowDirectionsResolver
 }
 
-contextualizer flowaccumulation
+export number flowaccumulation
 	"Import a hydrologically corrected DEM and produce flow directions using configurable methods. For now
 	 only D8 is supported."
 {
+	import number flow_directions_d8
+		"The D8 numeric code for flow direction"
+
 	optional input cells
 		"If true, number of contributing cells is output instead of actual contributing area."
 		default false
 
-	// TODO import flow_directions_d8
-
 	class org.integratedmodelling.geoprocessing.hydrology.FlowAccumulationResolver
 }
 
-contextualizer streamnetwork
+export number streamnetwork
 	"Extracts the stream network as a raster indicating presence of a stream, using a cutoff threshold
 	 on the percentage of drainage cells."
 {
+	import number upstream_cell_count
+		"An observation of the number of cells draining into each cell"
+
 	optional input 'tca.threshold'
 		"The percent of the total basin drainage that makes a cell part of a stream. A default is chosen
 		 adaptively; defaults are unlikely to work in delta areas or any other difficult context."
 		default 0.0
-
-	// TODO import upstream_cell_count
 
 	class org.integratedmodelling.geoprocessing.hydrology.StreamNetworkResolver
 }

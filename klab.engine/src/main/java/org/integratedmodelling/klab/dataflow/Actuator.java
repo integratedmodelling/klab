@@ -51,9 +51,15 @@ import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class Actuator implements IActuator {
+	
+	// these are part of graphs so they should behave wrt. equality. Adding an ID
+	// for comparison just to ensure that future changes upstream do not affect the
+	// logics.
+	private String _actuatorId =  NameGenerator.shortUUID();
 
     protected String                  name;
     private String                    alias;
@@ -510,6 +516,14 @@ public class Actuator implements IActuator {
         return this.partitionedTarget;
     }
 
+    public List<Pair<IServiceCall, IComputableResource>> getMediationStrategy() {
+    	return mediationStrategy;
+    }
+    
+    public List<Pair<IServiceCall, IComputableResource>> getComputationStrategy() {
+    	return computationStrategy;
+    }
+    
     protected String encodeBody(int offset, String ofs) {
 
         boolean hasBody = actuators.size() > 0 || computationStrategy.size() > 0
@@ -710,4 +724,34 @@ public class Actuator implements IActuator {
     public boolean isInput() {
         return input;
     }
+    
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((_actuatorId == null) ? 0 : _actuatorId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Actuator other = (Actuator) obj;
+		if (_actuatorId == null) {
+			if (other._actuatorId != null)
+				return false;
+		} else if (!_actuatorId.equals(other._actuatorId))
+			return false;
+		return true;
+	}
+
+	public String getId() {
+		return _actuatorId;
+	}
+	
 }

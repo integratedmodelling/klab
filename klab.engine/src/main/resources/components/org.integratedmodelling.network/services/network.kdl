@@ -6,7 +6,7 @@
 @version 0.10.0
 @namespace network
 
-contextualizer random
+export object random
 	"Instantiator for random networks.
 
 	## TODO Markdown docs."

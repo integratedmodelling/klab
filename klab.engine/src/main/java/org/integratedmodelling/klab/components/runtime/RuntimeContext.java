@@ -97,7 +97,6 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		this.report = new Report(this, monitor.getIdentity().getParentIdentity(ISession.class).getId());
 		this.observations = new HashMap<>();
 		this.network = new DirectedSparseMultigraph<>();
-		this.contextualizationStrategy = new ContextualizationStrategy();
 		this.structure = new DefaultDirectedGraph<>(DefaultEdge.class);
 		this.provenance = new Provenance();
 		this.monitor = monitor;
@@ -660,6 +659,11 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	@Override
 	public ContextualizationStrategy getContextualizationStrategy() {
 		return contextualizationStrategy;
+	}
+
+	@Override
+	public void setContextualizationStrategy(ContextualizationStrategy contextualizationStrategy) {
+		this.contextualizationStrategy = contextualizationStrategy;
 	}
 
 }

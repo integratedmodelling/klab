@@ -13,36 +13,31 @@ import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
 
 public class KlabEngine extends KlabPeer {
 
-    public KlabEngine(String identity) {
-        super(Sender.ENGINE, identity);
-    }
+	public KlabEngine(String identity) {
+		super(Sender.ENGINE, identity);
+	}
 
-    @MessageHandler(messageClass = IMessage.MessageClass.Notification)
-    public void handleNotification(IMessage message, String notification) {
-        if (message.getType() != IMessage.Type.Debug) {
-            send(message);
-        }
-        // the session keeps the logs
-        Activator.session().recordNotification(notification, message.getIdentity(), message.getType(), message.getId());
-    }
+	@MessageHandler(messageClass = IMessage.MessageClass.Notification)
+	public void handleNotification(IMessage message, String notification) {
+		if (message.getType() != IMessage.Type.Debug) {
+			send(message);
+		}
+		// the session keeps the logs
+		Activator.session().recordNotification(notification, message.getIdentity(), message.getType(), message.getId());
+	}
 
-    @MessageHandler
-    public void handleNotification(NamespaceCompilationResult report) {
+	@MessageHandler
+	public void handleNotification(NamespaceCompilationResult report) {
 
-        IKimNamespace namespace = Activator.loader().getNamespace(report.getNamespaceId());
-        Activator.klab().setNamespaceStatus(namespace.getName(), report);
-        if (namespace != null) {
-            File file = namespace.getFile();
-            if (file != null) {
-                IFile ifile = Eclipse.INSTANCE.getIFile(file);
-                if (ifile != null) {
-                    // null-safe operators, anyone?
-                    System.out.println("NOTIFYING COMPILATION RESULT: " + report);
-                    Eclipse.INSTANCE.updateMarkersForNamespace(report.getNotifications(), ifile);
-                    KlabNavigator.refresh();
-                }
-            }
-        }
-    }
+		IKimNamespace namespace = Activator.loader().getNamespace(report.getNamespaceId());
+		if (namespace != null) {
+			Activator.klab().setNamespaceStatus(namespace.getName(), report);
+			IFile ifile = Eclipse.INSTANCE.getIFile(namespace);
+			if (ifile != null) {
+				Eclipse.INSTANCE.updateMarkersForNamespace(report.getNotifications(), ifile);
+				KlabNavigator.refresh();
+			}
+		}
+	}
 
 }
