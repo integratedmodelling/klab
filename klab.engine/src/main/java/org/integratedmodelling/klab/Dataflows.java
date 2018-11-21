@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -20,7 +21,6 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.services.IDataflowService;
 import org.integratedmodelling.klab.dataflow.Dataflow;
-import org.integratedmodelling.klab.dataflow.DataflowGraph;
 import org.integratedmodelling.klab.dataflow.DataflowGraph;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -82,17 +82,6 @@ public enum Dataflows implements IDataflowService {
 	@Override
 	public Dataflow compile(IKdlDataflow specification) {
 		return null;
-	}
-
-	/**
-	 * Produce an ELK graph from a dataflow for subsequent display. For now we have
-	 * no backwards path (which would be needed for a workflow editor).
-	 * 
-	 * @param dataflow
-	 * @return
-	 */
-	public ElkNode extractGraph(Dataflow dataflow) {
-		return new DataflowGraph(dataflow).getRootNode();
 	}
 
 	@Override

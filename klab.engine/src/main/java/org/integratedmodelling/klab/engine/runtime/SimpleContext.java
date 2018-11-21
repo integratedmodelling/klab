@@ -455,4 +455,10 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 		return null;
 	}
 
+	@Override
+	public void setContextualizationStrategy(ContextualizationStrategy contextualizationStrategy) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

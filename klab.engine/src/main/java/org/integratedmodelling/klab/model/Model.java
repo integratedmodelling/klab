@@ -104,7 +104,7 @@ public class Model extends KimObject implements IModel {
         for (IKimObservable dependency : model.getDependencies()) {
             dependencies.add(Observables.INSTANCE.declare(dependency, monitor));
         }
-
+        
         /*
          * TODO establish typechain for progressive checking until final action
          */
