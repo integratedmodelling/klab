@@ -40,7 +40,7 @@ public class FlowAccumulationResolver implements IResolver<IState>, IExpression 
 	@Override
 	public IState resolve(IState target, IComputationContext context) throws KlabException {
 
-		IState dem = context.getArtifact("flow_directions_d8", IState.class);
+		IState flowDir = context.getArtifact("flow_directions_d8", IState.class);
 		IUnit tUnit = target.getObservable().getUnit();
 		Grid grid = Space.extractGrid(target);
 		
@@ -54,7 +54,7 @@ public class FlowAccumulationResolver implements IResolver<IState>, IExpression 
 		}
 		
 		OmsTca algorithm = new OmsTca();
-		algorithm.inFlow = GeotoolsUtils.INSTANCE.stateToCoverage(dem, DataBuffer.TYPE_FLOAT, floatNovalue);
+		algorithm.inFlow = GeotoolsUtils.INSTANCE.stateToCoverage(flowDir, DataBuffer.TYPE_FLOAT, floatNovalue);
 		algorithm.pm = new TaskMonitor(context.getMonitor());
 		algorithm.doProcess = true;
 		algorithm.doReset = false;

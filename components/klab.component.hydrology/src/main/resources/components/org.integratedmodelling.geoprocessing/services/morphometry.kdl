@@ -56,3 +56,48 @@ export number streamnetwork
 
 	class org.integratedmodelling.geoprocessing.hydrology.StreamNetworkResolver
 }
+
+export object extractoutlets
+	"Extracts one or more outlets from a DEM based on flow directions and total contributing area 
+	 in order of decreasing drainage area. Number of outlets and a threshold of minimum
+	 drainage coverage can be used to only extract the outlets of the major basin(s)."
+{
+	import number flow_directions_d8
+		"The D8 numeric code for flow direction"
+		
+	import number upstream_cell_count
+		"An observation of the number of cells draining into each cell"
+
+	optional input threshold
+		"The minimum percent of basin drainage reuired for an outlet to be created. Default is 0.05."
+		default 0.05
+
+	optional input extract
+		"Number of outlets to create. Outlets are created in order of decreasing drainage
+		 area down to the drainage threshold.  Default is -1, i.e. all outlets down to the
+		 minimum drainage threshold will be extracted."
+		default -1
+
+	class org.integratedmodelling.geoprocessing.hydrology.StreamOutletInstantiator
+}
+
+export object delineatewatersheds
+	"Extracts one or more watersheds based on stream outlet locations."
+{
+	import object stream_outlet
+		"Stream outlets. Only the location of the outlets will be used; if the outlet spatial
+		 extent is not a point, the centroid cell will be used."
+
+	import number flow_directions_d8
+		"The D8 numeric code for flow direction"
+		
+	import number upstream_cell_count
+		"An observation of the number of cells draining into each cell"
+
+	optional input whole
+		"If whole = true, only entire watersheds will be extracted, rejecting those whose basin
+		 crosses the context's outline. Default is false. A warning is emitted in any case."
+		default false
+
+	class org.integratedmodelling.geoprocessing.hydrology.WatershedInstantiator
+}

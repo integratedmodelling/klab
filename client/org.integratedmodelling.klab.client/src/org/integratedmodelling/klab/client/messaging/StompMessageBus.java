@@ -171,6 +171,7 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 						}.start();
 
 					} catch (Throwable e) {
+						System.out.println("ACHTUNG - COMM ERROR " + e);
 						throw new RuntimeException(e);
 					}
 				}

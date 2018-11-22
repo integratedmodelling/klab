@@ -1,7 +1,5 @@
 package org.integratedmodelling.klab.ide.model;
 
-import java.io.File;
-
 import org.eclipse.core.resources.IFile;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
@@ -29,15 +27,14 @@ public class KlabEngine extends KlabPeer {
 	@MessageHandler
 	public void handleNotification(NamespaceCompilationResult report) {
 
-		// TODO this must include all model objects with errors and serve as the source of truth
-		// for error bookkeeping of namespaces and projects too.
+		System.out.println("REPORT: " + report);
 		
 		IKimNamespace namespace = Activator.loader().getNamespace(report.getNamespaceId());
 		if (namespace != null) {
 			Activator.klab().setNamespaceStatus(namespace.getName(), report);
 			IFile ifile = Eclipse.INSTANCE.getIFile(namespace);
 			if (ifile != null) {
-				Eclipse.INSTANCE.updateMarkersForNamespace(report.getNotifications(), ifile);
+				Eclipse.INSTANCE.updateMarkersForNamespace(report, ifile);
 				KlabNavigator.refresh();
 			}
 		}

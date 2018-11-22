@@ -208,59 +208,59 @@ public enum Types implements ITypeService {
         return cls.isEmpty() ? null : cls.iterator().next();
     }
 	
-	/**
-	 * Return the appropriate classification type for a stated 'classify' observer,
-	 * with optional 'by' clause. Any error throw an exception.
-	 * 
-	 * @param original
-	 * @return the classification type
-	 * @throws KlabValidationException
-	 */
-	public IConcept getClassificationType(IConcept original) throws KlabValidationException {
+//	/**
+//	 * Return the appropriate classification type for a stated 'classify' observer,
+//	 * with optional 'by' clause. Any error throw an exception.
+//	 * 
+//	 * @param original
+//	 * @return the classification type
+//	 * @throws KlabValidationException
+//	 */
+//	public IConcept getClassificationType(IConcept original) throws KlabValidationException {
+//
+//		String problem = null;
+//		IConcept by = null; // TODO needs to be extracted from original
+//							// observable.
+//
+//		if (original.is(Type.CLASS)) {
+//			if (original.isAbstract() || Concepts.INSTANCE.isBaseDeclaration(original)) {
+//				return original;
+//			} else {
+//				problem = "classified type cannot be specific";
+//			}
+//		} else if (original.is(Type.TRAIT)) {
+//			if (by == null) {
+//				return ObservableBuilder.makeType(original, true);
+//			} else {
+//				throw new KlabUnimplementedException();
+//			}
+//		} else if (original.is(Type.DIRECT_OBSERVABLE)) {
+//			if (by == null) {
+//				return ObservableBuilder.makeType(ObservableBuilder.makeObservability(original, true), true);
+//			} else {
+//				throw new KlabUnimplementedException();
+//			}
+//
+//		} else if (original.is(Type.QUALITY)) {
+//			throw new KlabUnimplementedException();
+//		}
+//		throw new KlabValidationException(
+//				"concept " + original + " can not be classified" + (problem == null ? "" : (": " + problem)));
+//	}
 
-		String problem = null;
-		IConcept by = null; // TODO needs to be extracted from original
-							// observable.
-
-		if (original.is(Type.CLASS)) {
-			if (original.isAbstract() || Concepts.INSTANCE.isBaseDeclaration(original)) {
-				return original;
-			} else {
-				problem = "classified type cannot be specific";
-			}
-		} else if (original.is(Type.TRAIT)) {
-			if (by == null) {
-				return ObservableBuilder.makeType(original, true);
-			} else {
-				throw new KlabUnimplementedException();
-			}
-		} else if (original.is(Type.DIRECT_OBSERVABLE)) {
-			if (by == null) {
-				return ObservableBuilder.makeType(ObservableBuilder.makeObservability(original, true), true);
-			} else {
-				throw new KlabUnimplementedException();
-			}
-
-		} else if (original.is(Type.QUALITY)) {
-			throw new KlabUnimplementedException();
-		}
-		throw new KlabValidationException(
-				"concept " + original + " can not be classified" + (problem == null ? "" : (": " + problem)));
-	}
-
-	/**
-	 * Return the type we should use in a classifier that classifies the first one
-	 * (returned {@link #getClassificationType(IConcept)} into the stated classified
-	 * concept. If the type is not adequate for that throw a validation exception
-	 * explaining why.
-	 * 
-	 * @param classifier
-	 * @return the classified type
-	 * @throws KlabValidationException
-	 */
-	public IConcept getClassifiedType(IConcept classifier, IConcept classified) throws KlabValidationException {
-		return null;
-	}
+//	/**
+//	 * Return the type we should use in a classifier that classifies the first one
+//	 * (returned {@link #getClassificationType(IConcept)} into the stated classified
+//	 * concept. If the type is not adequate for that throw a validation exception
+//	 * explaining why.
+//	 * 
+//	 * @param classifier
+//	 * @return the classified type
+//	 * @throws KlabValidationException
+//	 */
+//	public IConcept getClassifiedType(IConcept classifier, IConcept classified) throws KlabValidationException {
+//		return null;
+//	}
 
 	private static int findLevel(IKimObject mo, String key, int level) {
 

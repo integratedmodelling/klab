@@ -8,6 +8,7 @@ public class TaskMonitor implements IHMProgressMonitor {
 
     IMonitor       monitor;
     private String name;
+    public int errors = 0;
 
     public TaskMonitor(IMonitor monitor) {
         this.monitor = monitor;
@@ -32,11 +33,13 @@ public class TaskMonitor implements IHMProgressMonitor {
 	@Override
 	public void errorMessage(String arg0) {
 		monitor.error(arg0);
+		errors ++;
 	}
 
 	@Override
 	public void exceptionThrown(String arg0) {
 		monitor.error(arg0);
+		errors ++;
 	}
 
 	@Override

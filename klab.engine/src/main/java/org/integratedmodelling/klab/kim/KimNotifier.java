@@ -50,21 +50,35 @@ public class KimNotifier implements Kim.Notifier {
 	private IMonitor monitor;
 
 	/*
-	 * wraps the normal monitor to collect all logical errors to be later sent to
-	 * any subscribing UI in one shot at the end of validation.
+	 * wraps the normal monitor to collect all logical errors, to be later sent to
+	 * any subscribing listener in one shot at the end of validation.
 	 */
-	private class ErrorNotifyingMonitor extends Engine.Monitor {
+	public class ErrorNotifyingMonitor extends Engine.Monitor {
 
 		INamespace namespace;
-		List<ICompileNotification> notifications = new ArrayList<>();
+		IKimScope mainScope;
+		List<ICompileNotification> notifications;
 
 		ErrorNotifyingMonitor(Monitor monitor, INamespace namespace) {
 			super(monitor);
 			this.namespace = namespace;
+			this.notifications = new ArrayList<>();
 			if (namespace.getStatement().getLoader() != null) {
 				// null in scripts that weren't loaded by the loader.
 				this.notifications.addAll(namespace.getStatement().getLoader().getIssues(namespace));
 			}
+		}
+
+		public ErrorNotifyingMonitor(ErrorNotifyingMonitor monitor) {
+			super(monitor);
+			this.namespace = monitor.namespace;
+			this.notifications = monitor.notifications;
+		}
+
+		public ErrorNotifyingMonitor contextualize(IKimScope statement) {
+			ErrorNotifyingMonitor ret = new ErrorNotifyingMonitor(this);
+			ret.mainScope = statement;
+			return ret;
 		}
 
 		private Object[] scanArguments(Level level, Object[] args) {
@@ -85,7 +99,10 @@ public class KimNotifier implements Kim.Notifier {
 				}
 
 				if (statement != null) {
-					notifications.add(CompileNotification.create(level, message, namespace.getName(), statement));
+					CompileNotification notification = CompileNotification.create(level, message, namespace.getName(),
+							statement);
+					notification.setMainScope(mainScope);
+					notifications.add(notification);
 				}
 
 			}
@@ -159,7 +176,7 @@ public class KimNotifier implements Kim.Notifier {
 				corePrefixTranslation.put(imp.getSecond(), prefix);
 			}
 		}
-		
+
 		/*
 		 * TODO resolve k.IM imports and add any external symbols to the symbol table
 		 */
@@ -179,24 +196,24 @@ public class KimNotifier implements Kim.Notifier {
 
 				Object value = ((IKimSymbolDefinition) statement).getValue();
 				String name = ((IKimSymbolDefinition) statement).getName();
-				
+
 				if (value instanceof IKimTable) {
-					value = Table.create((IKimTable)value);
+					value = Table.create((IKimTable) value);
 				}
-				
+
 				ns.getSymbolTable().put(name, value);
-				
+
 			} else if (statement instanceof IKimConceptStatement) {
 				object = new ConceptStatement((IKimConceptStatement) statement);
 				IConcept concept = KimKnowledgeProcessor.INSTANCE.build((IKimConceptStatement) statement, ns,
-						(ConceptStatement) object, monitor);
+						(ConceptStatement) object, monitor.contextualize(statement));
 				if (concept == null) {
 					object = null;
 				} else {
 					Concepts.INSTANCE.index((IKimConceptStatement) statement, namespace.getName(), monitor);
 				}
 			} else if (statement instanceof IKimModel) {
-				object = Model.create((IKimModel) statement, ns, monitor);
+				object = Model.create((IKimModel) statement, ns, monitor.contextualize(statement));
 				if (object instanceof IModel) {
 					try {
 						Models.INSTANCE.index((IModel) object, monitor);
@@ -206,7 +223,8 @@ public class KimNotifier implements Kim.Notifier {
 					}
 				}
 			} else if (statement instanceof IKimObserver) {
-				object = ObservationBuilder.INSTANCE.build((IKimObserver) statement, ns, (Monitor) monitor);
+				object = ObservationBuilder.INSTANCE.build((IKimObserver) statement, ns,
+						(Monitor) monitor.contextualize(statement));
 				if (object instanceof IObserver) {
 					try {
 						Observations.INSTANCE.index((IObserver) object, monitor);

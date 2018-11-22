@@ -67,6 +67,7 @@ import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.rest.CompileNotificationReference;
+import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
 
 public enum Eclipse {
 
@@ -557,7 +558,7 @@ public enum Eclipse {
 	 * @param file
 	 * @throws CoreException
 	 */
-	public void updateMarkersForNamespace(final List<CompileNotificationReference> notifications, final IFile file) {
+	public void updateMarkersForNamespace(final NamespaceCompilationResult report, final IFile file) {
 
 		WorkspaceJob job = new WorkspaceJob("") {
 
@@ -569,19 +570,15 @@ public enum Eclipse {
 				}
 
 				if (file.exists()) {
-					System.out.println("DELETING MARKERS: " + file);
 					file.deleteMarkers(XTEXT_MARKER_TYPE, true, IResource.DEPTH_ZERO);
 				}
 
-				int i = 0;
-				for (CompileNotificationReference inot : notifications) {
+				Activator.klab().resetCompileNotifications(report.getNamespaceId());
 
-					if (i == 0) {
-						Activator.klab().resetCompileNotifications(inot.getNamespaceId());
-					}
+				for (CompileNotificationReference inot : report.getNotifications()) {
 
-					System.out.println("UPDATING MARKERS " + file + ": " + inot);
-
+					System.out.println("COMPILE NOTIFICATION: " + inot);
+					
 					Activator.klab().recordCompileNotification(inot);
 
 					if (inot.getLevel() == Level.SEVERE.intValue()) {
@@ -592,7 +589,6 @@ public enum Eclipse {
 						addMarker(file, inot.getMessage(), inot.getFirstLine(), IMarker.SEVERITY_INFO);
 					}
 
-					i++;
 				}
 				return Status.OK_STATUS;
 			}

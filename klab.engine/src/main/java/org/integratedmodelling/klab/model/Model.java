@@ -111,7 +111,7 @@ public class Model extends KimObject implements IModel {
 		}
 
 		/*
-		 * TODO establish typechain for progressive checking until final action
+		 * add source(s) in main declaration as computables
 		 */
 		if (!model.getResourceUrns().isEmpty()) {
 			ComputableResource urnResource = validate(new ComputableResource(model.getResourceUrns().get(0),
@@ -129,11 +129,15 @@ public class Model extends KimObject implements IModel {
 		}
 
 		/*
-		 * resources
+		 * all resources after 'using' or further classification/lookup transformations
 		 */
 		for (IComputableResource resource : model.getContextualization()) {
 			this.resources.add(validate((ComputableResource) resource, monitor));
 		}
+		
+		/*
+		 * TODO validate typechain and final result vs. observable artifact type
+		 */
 
 		/*
 		 * actions
@@ -227,6 +231,8 @@ public class Model extends KimObject implements IModel {
 						}
 					}
 				}
+			} else {
+				monitor.error("unknown contextualizer function: " + resource.getServiceCall().getName(), resource.getServiceCall());
 			}
 		}
 
