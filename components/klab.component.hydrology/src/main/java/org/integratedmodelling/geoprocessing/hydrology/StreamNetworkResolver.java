@@ -17,9 +17,9 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 public class StreamNetworkResolver implements IResolver<IState>, IExpression {
 
 	private static final double DEFAULT_TCA_THRESHOLD = 0.001;
-	
+
 	double threshold = Double.NaN;
-	
+
 	@Override
 	public IGeometry getGeometry() {
 		return Geometry.create("S2");
@@ -35,25 +35,25 @@ public class StreamNetworkResolver implements IResolver<IState>, IExpression {
 
 		IState tca = context.getArtifact("upstream_cell_count", IState.class);
 		Grid grid = Space.extractGrid(target);
-		
+
 		if (grid == null) {
 			throw new KlabValidationException("Flow accumulation must be computed on a grid extent");
 		}
-		
+
 		if (Double.isNaN(threshold) || threshold == 0) {
 			threshold = DEFAULT_TCA_THRESHOLD;
 		}
-		
-        double ttreshold = (int)(grid.getCellCount() * threshold);
-        context.getMonitor().info("TCA threshold is " + ttreshold);
 
-        for (ILocator locator : target.getSpace()) {
-    		if (context.getMonitor().isInterrupted()) {
-    			break;
-    		}
-        	double tcav = tca.get(locator, Double.class).doubleValue();
-        	target.set(locator, Double.isNaN(tcav) ? null : tcav >= ttreshold);
-        }
+		double ttreshold = (int) (grid.getCellCount() * threshold);
+		context.getMonitor().info("TCA threshold is " + ttreshold);
+
+		for (ILocator locator : target.getSpace()) {
+			if (context.getMonitor().isInterrupted()) {
+				break;
+			}
+			double tcav = tca.get(locator, Double.class).doubleValue();
+			target.set(locator, Double.isNaN(tcav) ? null : tcav >= ttreshold);
+		}
 		return target;
 	}
 

@@ -42,7 +42,7 @@ export number flowaccumulation
 	class org.integratedmodelling.geoprocessing.hydrology.FlowAccumulationResolver
 }
 
-export number streamnetwork
+export boolean streamnetwork
 	"Extracts the stream network as a raster indicating presence of a stream, using a cutoff threshold
 	 on the percentage of drainage cells."
 {
