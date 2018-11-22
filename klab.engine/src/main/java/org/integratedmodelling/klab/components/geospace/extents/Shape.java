@@ -121,6 +121,20 @@ public class Shape extends AbstractExtent implements IShape {
 		return ret;
 	}
 
+	public static Shape create(Collection<Geometry> geometries, IProjection projection) {
+		
+		if (geometries.size() == 0) {
+			return null;
+		}
+		
+		if (geometries.size() == 1) {
+			return create(geometries.iterator().next(), projection);
+		}
+
+		return create(Geospace.gFactory.createGeometryCollection(geometries.toArray(new Geometry[geometries.size()])),
+				projection);
+	}
+
 	public static Geometry makeCell(double x1, double y1, double x2, double y2) {
 
 		Coordinate[] pts = { new Coordinate(x1, y1), new Coordinate(x2, y1), new Coordinate(x2, y2),

@@ -5,11 +5,13 @@
 @version 0.10.0
 @namespace im.geomorphology
 
-contextualizer classifier
+export concept classifier
 	"Classifies each cell into the numeric category of the containing geological form using 
 	 the Geomorphon algorithm."
 {
-	// TODO import elevation
+	import number elevation
+		"A DEM observation to classify"
+		
 	optional input threshold 
 		"Flatness threshold in meters. If unspecified it is chosen to match the radius in a square 
 		 context." 

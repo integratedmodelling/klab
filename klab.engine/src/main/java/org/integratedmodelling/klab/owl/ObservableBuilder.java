@@ -455,13 +455,13 @@ public class ObservableBuilder implements IObservable.Builder {
 	 *            true if used from outside the builder
 	 * @return the transformed concept
 	 */
-	public static Concept makeCount(IConcept concept, boolean addDefinition) {
+	public Concept makeCount(IConcept concept, boolean addDefinition) {
 
 		/*
 		 * first, ensure we're counting countable things.
 		 */
 		if (!concept.is(Type.COUNTABLE)) {
-			return null;
+			monitor.error("cannot count a non-countable observable", declaration);
 		}
 
 		String cName = getCleanId(concept) + "Count";
@@ -511,10 +511,10 @@ public class ObservableBuilder implements IObservable.Builder {
 	 *            true if used from outside the builder
 	 * @return the transformed concept
 	 */
-	public static Concept makeDistance(IConcept concept, boolean addDefinition) {
+	public Concept makeDistance(IConcept concept, boolean addDefinition) {
 
 		if (!concept.is(Type.COUNTABLE)) {
-			throw new KlabValidationException("cannot compute the distance to a non-countable observable");
+			monitor.error("cannot compute the distance to a non-countable observable", declaration);
 		}
 
 		String cName = "DistanceTo" + getCleanId(concept);
@@ -560,12 +560,12 @@ public class ObservableBuilder implements IObservable.Builder {
 	 *            true if used from outside the builder
 	 * @return the transformed concept
 	 */
-	public static Concept makePresence(IConcept concept, boolean addDefinition) {
+	public Concept makePresence(IConcept concept, boolean addDefinition) {
 
 		if (concept.is(Type.QUALITY) || concept.is(Type.CONFIGURATION) || concept.is(Type.TRAIT)
 				|| concept.is(Type.ROLE)) {
-			throw new KlabValidationException(
-					"presence can be observed only for subjects, events, processes and relationships");
+			monitor.error(
+					"presence can be observed only for subjects, events, processes and relationships", declaration);
 		}
 
 		String cName = getCleanId(concept) + "Presence";
@@ -610,11 +610,12 @@ public class ObservableBuilder implements IObservable.Builder {
 	 *            true if used from outside the builder
 	 * @return the transformed concept
 	 */
-	public static Concept makeOccurrence(IConcept concept, boolean addDefinition) {
+	public Concept makeOccurrence(IConcept concept, boolean addDefinition) {
 
 		if (!concept.is(Type.DIRECT_OBSERVABLE)) {
-			throw new KlabValidationException(
-					"occurrences (probability of presence) can be observed only for subjects, events, processes and relationships");
+			monitor.error(
+					"occurrences (probability of presence) can be observed only for subjects, events, processes and relationships",
+					declaration);
 		}
 
 		String cName = getCleanId(concept) + "Occurrence";
@@ -660,10 +661,10 @@ public class ObservableBuilder implements IObservable.Builder {
 	 *            true if used from outside the builder
 	 * @return the transformed concept
 	 */
-	public static Concept makeObservability(IConcept concept, boolean addDefinition) {
+	public Concept makeObservability(IConcept concept, boolean addDefinition) {
 
 		if (!concept.is(Type.OBSERVABLE)) {
-			throw new KlabValidationException("observabilities can only be defined for observables");
+			monitor.error("observabilities can only be defined for observables", declaration);
 		}
 
 		String cName = getCleanId(concept) + "Observability";
@@ -709,10 +710,10 @@ public class ObservableBuilder implements IObservable.Builder {
 	 *            true if used from outside the builder
 	 * @return the transformed concept
 	 */
-	public static Concept makeMagnitude(IConcept concept, boolean addDefinition) {
+	public Concept makeMagnitude(IConcept concept, boolean addDefinition) {
 
 		if (Kim.intersection(((Concept) concept).getTypeSet(), IKimConcept.CONTINUOUS_QUALITY_TYPES).size() == 0) {
-			throw new KlabValidationException("magnitudes can only be observed only for quantifiable qualities");
+			monitor.error("magnitudes can only be observed only for quantifiable qualities", declaration);
 		}
 
 		String cName = getCleanId(concept) + "Magnitude";
@@ -758,10 +759,10 @@ public class ObservableBuilder implements IObservable.Builder {
 	 *            true if used from outside the builder
 	 * @return the transformed concept
 	 */
-	public static Concept makeProbability(IConcept concept, boolean addDefinition) {
+	public Concept makeProbability(IConcept concept, boolean addDefinition) {
 
 		if (!concept.is(Type.EVENT)) {
-			throw new KlabValidationException("probabilities can only be observed only for events");
+			monitor.error("probabilities can only be observed only for events", declaration);
 		}
 
 		String cName = getCleanId(concept) + "Probability";
@@ -807,7 +808,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	 *            true if used from outside the builder
 	 * @return the transformed concept
 	 */
-	public static Concept makeUncertainty(IConcept concept, boolean addDefinition) {
+	public Concept makeUncertainty(IConcept concept, boolean addDefinition) {
 
 		String cName = getCleanId(concept) + "Uncertainty";
 		String definition = UnarySemanticOperator.UNCERTAINTY.declaration[0] + " " + concept.getDefinition();
@@ -838,12 +839,12 @@ public class ObservableBuilder implements IObservable.Builder {
 		return ontology.getConcept(conceptId);
 	}
 
-	public static Concept makeProportion(IConcept concept, @Nullable IConcept comparison, boolean addDefinition,
+	public Concept makeProportion(IConcept concept, @Nullable IConcept comparison, boolean addDefinition,
 			boolean isPercentage) {
 
 		if (!(concept.is(Type.QUALITY) || concept.is(Type.TRAIT))
 				&& (comparison != null && !comparison.is(Type.QUALITY))) {
-			throw new KlabValidationException("proportion must be of qualities or traits to qualities");
+			monitor.error("proportion must be of qualities or traits to qualities", declaration);
 		}
 
 		String cName = getCleanId(concept) + (isPercentage ? "Percentage" : "Proportion")
@@ -890,14 +891,13 @@ public class ObservableBuilder implements IObservable.Builder {
 		return ontology.getConcept(conceptId);
 	}
 
-	public static Concept makeRatio(IConcept concept, IConcept comparison, boolean addDefinition) {
+	public Concept makeRatio(IConcept concept, IConcept comparison, boolean addDefinition) {
 
 		/*
 		 * accept only two qualities of the same physical nature (TODO)
 		 */
 		if (!(concept.is(Type.QUALITY) || concept.is(Type.TRAIT)) || !comparison.is(Type.QUALITY)) {
-			throw new KlabValidationException(
-					"ratios must be between qualities of the same nature or traits to qualities");
+			monitor.error("ratios must be between qualities of the same nature or traits to qualities", declaration);
 		}
 
 		String cName = getCleanId(concept) + "To" + getCleanId(comparison) + "Ratio";
@@ -950,7 +950,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		return ontology.getConcept(conceptId);
 	}
 
-	public static Concept makeValue(IConcept concept, IConcept comparison, boolean addDefinition) {
+	public Concept makeValue(IConcept concept, IConcept comparison, boolean addDefinition) {
 
 		String cName = "ValueOf" + getCleanId(concept) + (comparison == null ? "" : ("Vs" + getCleanId(comparison)));
 
@@ -993,10 +993,10 @@ public class ObservableBuilder implements IObservable.Builder {
 
 	// TODO USE FULL DEFINITION AND CODE WHEN CREATING ALL THE make() CONCEPTS!
 
-	public static Concept makeType(IConcept classified, boolean addDefinition) {
+	public Concept makeType(IConcept classified, boolean addDefinition) {
 
 		if (classified.is(Type.TRAIT)) {
-			throw new KlabValidationException("Traits cannot be further classified");
+			monitor.error("Traits cannot be further classified", declaration);
 		}
 
 		String traitID = getCleanId(classified) + "Type";
@@ -1067,11 +1067,14 @@ public class ObservableBuilder implements IObservable.Builder {
 	public Concept build() throws KlabValidationException {
 
 		if (errors.size() > 0) {
+
+			// NO should build anyway but leave errors for notification
+
 			String message = "";
 			for (KlabValidationException error : errors) {
 				message += (message.isEmpty() ? "" : "\n") + error.getLocalizedMessage();
 			}
-			throw new KlabValidationException(message);
+			monitor.error(message, declaration);
 		}
 
 		if (!resolveMain()) {
@@ -1143,8 +1146,8 @@ public class ObservableBuilder implements IObservable.Builder {
 				}
 
 				if (Traits.INSTANCE.getTraits(main).contains(t)) {
-					throw new KlabValidationException("concept " + Concepts.INSTANCE.getDisplayName(main)
-							+ " already adopts trait " + Concepts.INSTANCE.getDisplayName(t));
+					monitor.error("concept " + Concepts.INSTANCE.getDisplayName(main) + " already adopts trait "
+							+ Concepts.INSTANCE.getDisplayName(t), declaration);
 				}
 
 				if (t.is(Type.IDENTITY)) {
@@ -1158,13 +1161,14 @@ public class ObservableBuilder implements IObservable.Builder {
 				IConcept base = Traits.INSTANCE.getBaseParentTrait(t);
 
 				if (base == null) {
-					throw new KlabValidationException("base declaration for trait " + t + " cannot be found");
+					monitor.error("base declaration for trait " + t + " cannot be found", declaration);
 				}
 
 				if (!baseTraits.add(base)) {
-					throw new KlabValidationException("cannot add trait " + Concepts.INSTANCE.getDisplayName(t)
-							+ " to concept " + main + " as it already adopts a trait of type "
-							+ Concepts.INSTANCE.getDisplayName(base));
+					monitor.error(
+							"cannot add trait " + Concepts.INSTANCE.getDisplayName(t) + " to concept " + main
+									+ " as it already adopts a trait of type " + Concepts.INSTANCE.getDisplayName(base),
+							declaration);
 				}
 
 				if (t.isAbstract()) {
@@ -1206,10 +1210,9 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (inherent != null) {
 			IConcept other = Observables.INSTANCE.getInherentType(main);
 			if (other != null && !Observables.INSTANCE.isCompatible(inherent, other)) {
-				throw new KlabValidationException("cannot add inherent type "
-						+ Concepts.INSTANCE.getDisplayName(inherent) + " to concept "
+				monitor.error("cannot add inherent type " + Concepts.INSTANCE.getDisplayName(inherent) + " to concept "
 						+ Concepts.INSTANCE.getDisplayName(main) + " as it already has an incompatible inherency: "
-						+ Concepts.INSTANCE.getDisplayName(other));
+						+ Concepts.INSTANCE.getDisplayName(other), declaration);
 			}
 			cleanId = getCleanId(inherent);
 			cId += "Of" + cleanId;
@@ -1220,9 +1223,9 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (context != null) {
 			IConcept other = Observables.INSTANCE.getContextType(main);
 			if (other != null && !Observables.INSTANCE.isCompatible(context, other)) {
-				throw new KlabValidationException("cannot add context " + Concepts.INSTANCE.getDisplayName(context)
-						+ " to concept " + Concepts.INSTANCE.getDisplayName(main)
-						+ " as it already has an incompatible context: " + Concepts.INSTANCE.getDisplayName(other));
+				monitor.error("cannot add context " + Concepts.INSTANCE.getDisplayName(context) + " to concept "
+						+ Concepts.INSTANCE.getDisplayName(main) + " as it already has an incompatible context: "
+						+ Concepts.INSTANCE.getDisplayName(other), declaration);
 			}
 			cleanId = getCleanId(context);
 			cId += "In" + cleanId;
@@ -1233,11 +1236,10 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (compresent != null) {
 			IConcept other = Observables.INSTANCE.getCompresentType(main);
 			if (other != null && !Observables.INSTANCE.isCompatible(compresent, other)) {
-				throw new KlabValidationException(
-						"cannot add compresent " + Concepts.INSTANCE.getDisplayName(compresent) + " to concept "
-								+ Concepts.INSTANCE.getDisplayName(main)
-								+ " as it already has an incompatible compresent type: "
-								+ Concepts.INSTANCE.getDisplayName(other));
+				monitor.error("cannot add compresent " + Concepts.INSTANCE.getDisplayName(compresent) + " to concept "
+						+ Concepts.INSTANCE.getDisplayName(main)
+						+ " as it already has an incompatible compresent type: "
+						+ Concepts.INSTANCE.getDisplayName(other), declaration);
 			}
 			cleanId = getCleanId(compresent);
 			cId += "With" + cleanId;
@@ -1248,9 +1250,9 @@ public class ObservableBuilder implements IObservable.Builder {
 			// TODO transform as necessary
 			IConcept other = Observables.INSTANCE.getGoalType(main);
 			if (other != null && !Observables.INSTANCE.isCompatible(goal, other)) {
-				throw new KlabValidationException("cannot add goal " + Concepts.INSTANCE.getDisplayName(goal)
-						+ " to concept " + Concepts.INSTANCE.getDisplayName(main)
-						+ " as it already has an incompatible goal type: " + Concepts.INSTANCE.getDisplayName(other));
+				monitor.error("cannot add goal " + Concepts.INSTANCE.getDisplayName(goal) + " to concept "
+						+ Concepts.INSTANCE.getDisplayName(main) + " as it already has an incompatible goal type: "
+						+ Concepts.INSTANCE.getDisplayName(other), declaration);
 			}
 			cleanId = getCleanId(goal);
 			cId += "For" + cleanId;
@@ -1260,9 +1262,9 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (caused != null) {
 			IConcept other = Observables.INSTANCE.getCausedType(main);
 			if (other != null && !Observables.INSTANCE.isCompatible(caused, other)) {
-				throw new KlabValidationException("cannot add caused " + Concepts.INSTANCE.getDisplayName(caused)
-						+ " to concept " + Concepts.INSTANCE.getDisplayName(main)
-						+ " as it already has an incompatible caused type: " + Concepts.INSTANCE.getDisplayName(other));
+				monitor.error("cannot add caused " + Concepts.INSTANCE.getDisplayName(caused) + " to concept "
+						+ Concepts.INSTANCE.getDisplayName(main) + " as it already has an incompatible caused type: "
+						+ Concepts.INSTANCE.getDisplayName(other), declaration);
 			}
 			cleanId = getCleanId(caused);
 			cId += "To" + cleanId;
@@ -1272,10 +1274,9 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (causant != null) {
 			IConcept other = Observables.INSTANCE.getCausantType(main);
 			if (other != null && !Observables.INSTANCE.isCompatible(causant, other)) {
-				throw new KlabValidationException("cannot add causant " + Concepts.INSTANCE.getDisplayName(causant)
-						+ " to concept " + Concepts.INSTANCE.getDisplayName(main)
-						+ " as it already has an incompatible causant type: "
-						+ Concepts.INSTANCE.getDisplayName(other));
+				monitor.error("cannot add causant " + Concepts.INSTANCE.getDisplayName(causant) + " to concept "
+						+ Concepts.INSTANCE.getDisplayName(main) + " as it already has an incompatible causant type: "
+						+ Concepts.INSTANCE.getDisplayName(other), declaration);
 			}
 			cleanId = getCleanId(causant);
 			cId += "From" + cleanId;
@@ -1285,10 +1286,9 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (adjacent != null) {
 			IConcept other = Observables.INSTANCE.getAdjacentType(main);
 			if (other != null && !Observables.INSTANCE.isCompatible(adjacent, other)) {
-				throw new KlabValidationException("cannot add adjacent " + Concepts.INSTANCE.getDisplayName(adjacent)
-						+ " to concept " + Concepts.INSTANCE.getDisplayName(main)
-						+ " as it already has an incompatible adjacent type: "
-						+ Concepts.INSTANCE.getDisplayName(other));
+				monitor.error("cannot add adjacent " + Concepts.INSTANCE.getDisplayName(adjacent) + " to concept "
+						+ Concepts.INSTANCE.getDisplayName(main) + " as it already has an incompatible adjacent type: "
+						+ Concepts.INSTANCE.getDisplayName(other), declaration);
 			}
 			cleanId = getCleanId(adjacent);
 			cId += "AdjacentTo" + cleanId;
@@ -1298,11 +1298,10 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (cooccurrent != null) {
 			IConcept other = Observables.INSTANCE.getCooccurrentType(cooccurrent);
 			if (other != null && !Observables.INSTANCE.isCompatible(cooccurrent, other)) {
-				throw new KlabValidationException(
-						"cannot add co-occurrent " + Concepts.INSTANCE.getDisplayName(cooccurrent) + " to concept "
-								+ Concepts.INSTANCE.getDisplayName(main)
-								+ " as it already has an incompatible co-occurrent type: "
-								+ Concepts.INSTANCE.getDisplayName(other));
+				monitor.error("cannot add co-occurrent " + Concepts.INSTANCE.getDisplayName(cooccurrent)
+						+ " to concept " + Concepts.INSTANCE.getDisplayName(main)
+						+ " as it already has an incompatible co-occurrent type: "
+						+ Concepts.INSTANCE.getDisplayName(other), declaration);
 			}
 			cleanId = getCleanId(cooccurrent);
 			cId += "During" + cleanId;
@@ -1316,8 +1315,8 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (roles != null && roles.size() > 0) {
 			for (IConcept role : roles) {
 				if (Roles.INSTANCE.getRoles(main).contains(role)) {
-					throw new KlabValidationException("concept " + Concepts.INSTANCE.getDisplayName(main)
-							+ " already has role " + Concepts.INSTANCE.getDisplayName(role));
+					monitor.error("concept " + Concepts.INSTANCE.getDisplayName(main) + " already has role "
+							+ Concepts.INSTANCE.getDisplayName(role), declaration);
 				}
 				rids.add(Concepts.INSTANCE.getDisplayName(role));
 				acceptedRoles.add(role);
@@ -1342,7 +1341,7 @@ public class ObservableBuilder implements IObservable.Builder {
 				cDs = roleIds + Concepts.INSTANCE.getDisplayName(main);
 			}
 		}
-		
+
 		List<IAxiom> axioms = new ArrayList<>();
 		axioms.add(Axiom.ClassAssertion(conceptId, type));
 		axioms.add(Axiom.AnnotationAssertion(conceptId, NS.DISPLAY_LABEL_PROPERTY, cDs));
@@ -1407,7 +1406,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (monitor != null && !Reasoner.INSTANCE.isSatisfiable(ret)) {
 			monitor.error("this declaration has logical errors and is inconsistent", declaration);
 		}
-		
+
 		return ret;
 	}
 

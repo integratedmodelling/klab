@@ -26,7 +26,8 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
 
     this.name = (namespace == null ? "" : (namespace + ".")) + actuator.getName();
     this.type = IArtifact.Type.valueOf(actuator.getType().name());
-
+    this.contextualizer = actuator.isExported();
+    
     if (actuator.getDescription() != null) {
       this.description = StringUtils.pack(actuator.getDescription());
     }
@@ -42,7 +43,7 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
       a.isFinal = arg.isFinal();
       a.enumValues.addAll(arg.getEnumValues());
       a.defaultValue = arg.getDefaultValue();
-
+      a.artifact = arg.isImported();
       arguments.put(a.name, a);
     }
 

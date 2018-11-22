@@ -1113,7 +1113,7 @@ public class Grid extends Area implements IGrid {
 	}
 
 	@Override
-	public IProjection getProjection() {
+	public Projection getProjection() {
 		return getShape().getProjection();
 	}
 

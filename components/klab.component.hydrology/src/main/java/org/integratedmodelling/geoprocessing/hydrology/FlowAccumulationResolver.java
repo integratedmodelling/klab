@@ -2,6 +2,8 @@ package org.integratedmodelling.geoprocessing.hydrology;
 
 import static org.hortonmachine.gears.libs.modules.HMConstants.floatNovalue;
 
+import java.awt.image.DataBuffer;
+
 import org.hortonmachine.hmachine.modules.geomorphology.tca.OmsTca;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IParameters;
@@ -24,7 +26,7 @@ import org.integratedmodelling.klab.utils.Utils;
 public class FlowAccumulationResolver implements IResolver<IState>, IExpression {
 
 	boolean cells = false;
-	
+
 	@Override
 	public IGeometry getGeometry() {
 		return Geometry.create("S2");
@@ -38,7 +40,7 @@ public class FlowAccumulationResolver implements IResolver<IState>, IExpression 
 	@Override
 	public IState resolve(IState target, IComputationContext context) throws KlabException {
 
-		IState dem = context.getArtifact("flow_directions_d8", IState.class);
+		IState flowDir = context.getArtifact("flow_directions_d8", IState.class);
 		IUnit tUnit = target.getObservable().getUnit();
 		Grid grid = Space.extractGrid(target);
 		
@@ -52,7 +54,7 @@ public class FlowAccumulationResolver implements IResolver<IState>, IExpression 
 		}
 		
 		OmsTca algorithm = new OmsTca();
-		algorithm.inFlow = GeotoolsUtils.INSTANCE.stateToCoverage(dem, floatNovalue);
+		algorithm.inFlow = GeotoolsUtils.INSTANCE.stateToCoverage(flowDir, DataBuffer.TYPE_FLOAT, floatNovalue);
 		algorithm.pm = new TaskMonitor(context.getMonitor());
 		algorithm.doProcess = true;
 		algorithm.doReset = false;
@@ -81,10 +83,10 @@ public class FlowAccumulationResolver implements IResolver<IState>, IExpression 
 		if (Double.isNaN(code)) {
 			return code;
 		}
-		int exp = Utils.log2int((int)code); 
+		int exp = Utils.log2int((int) code);
 		return 45.0 * (exp > 5 ? exp - 6 : exp + 2);
 	}
-	
+
 	@Override
 	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
 		FlowAccumulationResolver ret = new FlowAccumulationResolver();

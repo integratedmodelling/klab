@@ -2,7 +2,12 @@ package org.integratedmodelling.klab.common;
 
 import java.util.logging.Level;
 
+import org.integratedmodelling.kim.api.IKimConceptStatement;
+import org.integratedmodelling.kim.api.IKimModel;
+import org.integratedmodelling.kim.api.IKimObserver;
+import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.IKimSymbolDefinition;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.rest.CompileNotificationReference;
 
@@ -11,6 +16,8 @@ public class CompileNotification implements ICompileNotification {
     private Level level;
     private String namespaceId;
     private IKimStatement statement;
+    // scope at root level for error propagation
+    private IKimScope mainScope; 
     private String message;
     
     private CompileNotification() {}
@@ -70,6 +77,15 @@ public class CompileNotification implements ICompileNotification {
         ret.setMessage(message);
         ret.setLevel(level.intValue());
         ret.setNamespaceId(namespaceId);
+        if (mainScope instanceof IKimModel) {
+        	ret.setScopeName(((IKimModel)mainScope).getName());
+        } else if (mainScope instanceof IKimObserver) {
+        	ret.setScopeName(((IKimObserver)mainScope).getName());
+        } else if (mainScope instanceof IKimConceptStatement) {
+        	ret.setScopeName(((IKimConceptStatement)mainScope).getName());
+        } else if (mainScope instanceof IKimSymbolDefinition) {
+        	ret.setScopeName(((IKimSymbolDefinition)mainScope).getName());
+        }
         return ret;
     }
 
@@ -92,5 +108,13 @@ public class CompileNotification implements ICompileNotification {
     public String getMessage() {
         return message;
     }
+
+	public IKimScope getMainScope() {
+		return mainScope;
+	}
+
+	public void setMainScope(IKimScope mainScope) {
+		this.mainScope = mainScope;
+	}
     
 }

@@ -17,10 +17,12 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
@@ -40,7 +42,7 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 	FutureTask<IObservation> delegate;
 	String taskDescription = "<uninitialized contextual observation task " + token + ">";
 	private TaskReference descriptor;
-	
+
 	public ObserveInContextTask(ObserveInContextTask parent) {
 		super(parent);
 		this.delegate = parent.delegate;
@@ -106,8 +108,12 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 
 						System.out.println(dataflow.getKdlCode());
 
+						IRuntimeContext ctx = ((Observation) context).getRuntimeContext();
+						ctx.getContextualizationStrategy().add(dataflow);
+
 						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
-								IMessage.Type.DataflowCompiled, new DataflowReference(token, dataflow.getKdlCode(), dataflow.getElkJsonLayout())));
+								IMessage.Type.DataflowCompiled, new DataflowReference(token, dataflow.getKdlCode(),
+										ctx.getContextualizationStrategy().getElkGraph())));
 
 						// make a copy of the coverage so that we ensure it's a scale, behaving properly
 						// at merge.
@@ -121,7 +127,7 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 
 							IObservation notifiable = (IObservation) (ret instanceof ObservationGroup
 									&& ret.groupSize() > 0 ? ret.iterator().next() : ret);
-							
+
 							// null on task interruption
 							if (notifiable != null) {
 								session.getMonitor()

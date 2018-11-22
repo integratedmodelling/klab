@@ -2,7 +2,7 @@
 @version 0.10.0
 @namespace gis.osm
 
-object query
+export object query
 	"Executes Overpass queries to Open Street Maps and turns the resulting features into
      k.LAB subjects according to parameterization."
 {

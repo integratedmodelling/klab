@@ -2,7 +2,7 @@
 @klab 0.10.0
 @version 0.10.0
 
-number extract 
+export object extract 
 	"Extract polygonal features from a raster map based on clumping of its values."
 {
 	optional input select

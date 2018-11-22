@@ -31,7 +31,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  *            the observation type resolved
  */
 public abstract interface IResolver<T extends IArtifact> extends IContextualizer {
-
+	
 	/**
 	 * Called once per temporal transition for the scale and the geometry of the
 	 * observation being resolved.

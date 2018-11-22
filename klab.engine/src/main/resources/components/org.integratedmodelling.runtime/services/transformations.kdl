@@ -2,18 +2,18 @@
 @version 0.10.0
 @namespace klab.data
 
-contextualizer normalize {
+export number normalize {
 	
-	text artifact 
-		"Id of the artifact to normalize"
+	import number artifact 
+		"The artifact to normalize"
 		
 	class org.integratedmodelling.klab.data.transformations.NormalizingTransformation
 }
 
-contextualizer standardize {
+export number standardize {
 	
-	text artifact 
-		"Id of the artifact to standardize"
+	import number artifact 
+		"The artifact to standardize"
 		
 	class org.integratedmodelling.klab.data.transformations.StandardizingTransformation
 }

@@ -49,11 +49,6 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	private ResolutionScope scope;
 	private boolean primary = true;
 
-	// these are part of graphs so they should behave wrt. equality. Adding an ID
-	// for comparison just to ensure that future changes upstream do not affect the
-	// logics.
-	private String _dataflowId = UUID.randomUUID().toString();
-
 	/*
 	 * TODO this should be removed and an actual layout should be created
 	 */
@@ -173,31 +168,6 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	@Override
 	public boolean isEmpty() {
 		return actuators.size() == 0;
-	}
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((_dataflowId == null) ? 0 : _dataflowId.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Dataflow other = (Dataflow) obj;
-		if (_dataflowId == null) {
-			if (other._dataflowId != null)
-				return false;
-		} else if (!_dataflowId.equals(other._dataflowId))
-			return false;
-		return true;
 	}
 
 	/**

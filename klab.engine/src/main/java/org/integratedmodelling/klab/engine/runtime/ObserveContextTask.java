@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
+import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
@@ -83,16 +84,28 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 							Dataflow dataflow = Dataflows.INSTANCE
 									.compile("local:task:" + session.getId() + ":" + token, scope);
 
+							/*
+							 * Instantiate a preliminary contextualization strategy as there is no context
+							 * yet.
+							 */
+							ContextualizationStrategy contextualizationStrategy = new ContextualizationStrategy();
+							contextualizationStrategy.add(dataflow);
+
 							session.getMonitor()
 									.send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
-											IMessage.Type.DataflowCompiled,
-											new DataflowReference(token, dataflow.getKdlCode(), null)));
-
+											IMessage.Type.DataflowCompiled, new DataflowReference(token,
+													dataflow.getKdlCode(), contextualizationStrategy.getElkGraph())));
 							/*
 							 * make a copy of the coverage so that we ensure it's a scale, behaving properly
 							 * at merge.
 							 */
 							ret = (ISubject) dataflow.run(scope.getCoverage().copy(), monitor);
+
+							/*
+							 * save the initial contextualization strategy with the context
+							 */
+							((Observation) ret).getRuntimeContext()
+									.setContextualizationStrategy(contextualizationStrategy);
 
 							/*
 							 * Register the observation context with the session. It will be disposed of
