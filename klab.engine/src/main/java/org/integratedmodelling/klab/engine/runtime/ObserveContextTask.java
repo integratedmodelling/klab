@@ -51,7 +51,7 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 
 			this.monitor = (session.getMonitor()).get(this);
 			this.session = session;
-			this.taskDescription = "<task " + token + ": observation of " + observer + ">";
+			this.taskDescription = "Observation of " + observer.getId();
 
 			this.descriptor = new TaskReference();
 			this.descriptor.setId(token);
@@ -84,6 +84,8 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 							Dataflow dataflow = Dataflows.INSTANCE
 									.compile("local:task:" + session.getId() + ":" + token, scope);
 
+							dataflow.setDescription(taskDescription);
+							
 							/*
 							 * Instantiate a preliminary contextualization strategy as there is no context
 							 * yet.

@@ -50,7 +50,7 @@ public class DataflowGraph {
 				root.getChildren().add(childNode);
 			}
 		}
-		
+
 		// mediators
 		for (Pair<IServiceCall, IComputableResource> mediator : actuator.getComputationStrategy()) {
 			// compile in the actor with all its literal parameters; link artifacts from the
@@ -71,7 +71,9 @@ public class DataflowGraph {
 	}
 
 	private ElkLabel label(Actuator actuator) {
-		return label(StringUtils.capitalize(actuator.getName().replaceAll("_", " ")), actuator.getId() + "l");
+		String aname = actuator instanceof Dataflow ? ((Dataflow) actuator).getDescription()
+				: StringUtils.capitalize(actuator.getName().replaceAll("_", " "));
+		return label(aname, actuator.getId() + "l");
 	}
 
 	private ElkLabel label(String name, String id) {
