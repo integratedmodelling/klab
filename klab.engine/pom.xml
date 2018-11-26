@@ -144,7 +144,17 @@
 			<artifactId>org.eclipse.elk.graph.json</artifactId>
 			<version>0.4.1</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.eclipse.elk</groupId>
+			<artifactId>org.eclipse.elk.core.meta</artifactId>
+			<version>0.4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.elk</groupId>
+			<artifactId>org.eclipse.elk.alg.layered</artifactId>
+			<version>0.4.1</version>
+		</dependency>
+		
 		<!-- zip resources for publishing -->
 		<dependency>
 			<groupId>net.lingala.zip4j</groupId>

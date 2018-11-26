@@ -1,0 +1,1065 @@
+{
+  "id": "vf46g8yufioy",
+  "children": [
+    {
+      "id": "1iv3uhw2imzxi",
+      "labels": [
+        {
+          "text": "Observation of Region of interest",
+          "id": "1iv3uhw2imzxil",
+          "x": 0.0,
+          "y": 0.0,
+          "width": 0.0,
+          "height": 0.0
+        }
+      ],
+      "ports": [
+        {
+          "id": "1iv3uhw2imzxi_out1",
+          "layoutOptions": {
+            "org.eclipse.elk.port.side": "WEST"
+          },
+          "x": -0.0,
+          "y": 12.0,
+          "width": 0.0,
+          "height": 0.0
+        }
+      ],
+      "children": [
+        {
+          "id": "to520tt0qf5e",
+          "labels": [
+            {
+              "text": "Region of interest",
+              "id": "to520tt0qf5el",
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.0,
+              "height": 0.0
+            }
+          ],
+          "ports": [
+            {
+              "id": "to520tt0qf5e_out1",
+              "layoutOptions": {
+                "org.eclipse.elk.port.side": "WEST"
+              },
+              "x": -0.0,
+              "y": 0.0,
+              "width": 0.0,
+              "height": 0.0
+            }
+          ],
+          "layoutOptions": {
+            "org.eclipse.elk.nodeSize.constraints": "[]",
+            "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+            "org.eclipse.elk.hierarchyHandling": "INCLUDE_CHILDREN"
+          },
+          "x": 12.0,
+          "y": 12.0,
+          "width": 0.0,
+          "height": 0.0
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]",
+        "org.eclipse.elk.hierarchyHandling": "INCLUDE_CHILDREN"
+      },
+      "x": 46.0,
+      "y": 12.0,
+      "width": 24.0,
+      "height": 24.0
+    },
+    {
+      "id": "qhq2bx9iiotx",
+      "labels": [
+        {
+          "text": "Observation of ecology:Vegetation chemistry:Carbon im:Mass in t/ha in Region of interest",
+          "id": "qhq2bx9iiotxl",
+          "x": 0.0,
+          "y": 0.0,
+          "width": 0.0,
+          "height": 0.0
+        }
+      ],
+      "ports": [
+        {
+          "id": "qhq2bx9iiotx_out1",
+          "layoutOptions": {
+            "org.eclipse.elk.port.side": "WEST"
+          },
+          "x": -0.0,
+          "y": 134.0,
+          "width": 0.0,
+          "height": 0.0
+        }
+      ],
+      "children": [
+        {
+          "id": "qxtba0dcb90k",
+          "labels": [
+            {
+              "text": "C vegetation mass",
+              "id": "qxtba0dcb90kl",
+              "x": 0.0,
+              "y": 0.0,
+              "width": 0.0,
+              "height": 0.0
+            }
+          ],
+          "ports": [
+            {
+              "id": "qxtba0dcb90k_out1",
+              "layoutOptions": {
+                "org.eclipse.elk.port.side": "EAST"
+              },
+              "x": 68.0,
+              "y": 144.0,
+              "width": 0.0,
+              "height": 0.0
+            }
+          ],
+          "children": [
+            {
+              "id": "sl68krrdqzw6",
+              "labels": [
+                {
+                  "text": "Eco floristic region type",
+                  "id": "sl68krrdqzw6l",
+                  "x": 0.0,
+                  "y": 0.0,
+                  "width": 0.0,
+                  "height": 0.0
+                }
+              ],
+              "ports": [
+                {
+                  "id": "sl68krrdqzw6_out1",
+                  "layoutOptions": {
+                    "org.eclipse.elk.port.side": "EAST"
+                  },
+                  "x": 44.0,
+                  "y": 12.0,
+                  "width": 0.0,
+                  "height": 0.0
+                }
+              ],
+              "children": [
+                {
+                  "id": "sl68krrdqzw6_klab.runtime.resolve",
+                  "labels": [
+                    {
+                      "text": "klab.runtime.resolve",
+                      "id": "sl68krrdqzw6_klab.runtime.resolvel",
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    }
+                  ],
+                  "ports": [
+                    {
+                      "id": "sl68krrdqzw6_klab.runtime.resolve_out",
+                      "layoutOptions": {
+                        "org.eclipse.elk.port.side": "EAST"
+                      },
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    }
+                  ],
+                  "layoutOptions": {
+                    "org.eclipse.elk.nodeSize.constraints": "[]",
+                    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+                    "org.eclipse.elk.hierarchyHandling": "INCLUDE_CHILDREN"
+                  },
+                  "x": 12.0,
+                  "y": 12.0,
+                  "width": 0.0,
+                  "height": 0.0
+                },
+                {
+                  "id": "sl68krrdqzw6_klab.runtime.classify",
+                  "labels": [
+                    {
+                      "text": "klab.runtime.classify",
+                      "id": "sl68krrdqzw6_klab.runtime.classifyl",
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    }
+                  ],
+                  "ports": [
+                    {
+                      "id": "sl68krrdqzw6_klab.runtime.classify_out",
+                      "layoutOptions": {
+                        "org.eclipse.elk.port.side": "EAST"
+                      },
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    },
+                    {
+                      "id": "sl68krrdqzw6_klab.runtime.classify_in",
+                      "layoutOptions": {
+                        "org.eclipse.elk.port.side": "WEST"
+                      },
+                      "x": -0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    }
+                  ],
+                  "layoutOptions": {
+                    "org.eclipse.elk.nodeSize.constraints": "[]",
+                    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+                    "org.eclipse.elk.hierarchyHandling": "INCLUDE_CHILDREN"
+                  },
+                  "x": 32.0,
+                  "y": 12.0,
+                  "width": 0.0,
+                  "height": 0.0
+                }
+              ],
+              "layoutOptions": {
+                "org.eclipse.elk.nodeSize.constraints": "[]",
+                "org.eclipse.elk.nodeLabels.placement": "[]",
+                "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+                "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]",
+                "org.eclipse.elk.hierarchyHandling": "INCLUDE_CHILDREN"
+              },
+              "x": 12.0,
+              "y": 56.0,
+              "width": 44.0,
+              "height": 24.0,
+              "edges": [
+                {
+                  "id": "sl68krrdqzw6_klab.runtime.classify_feed",
+                  "sources": [
+                    "sl68krrdqzw6_klab.runtime.resolve_out"
+                  ],
+                  "targets": [
+                    "sl68krrdqzw6_klab.runtime.classify_in"
+                  ],
+                  "sections": [
+                    {
+                      "id": "s1",
+                      "startPoint": {
+                        "x": 12.0,
+                        "y": 12.0
+                      },
+                      "endPoint": {
+                        "x": 32.0,
+                        "y": 12.0
+                      }
+                    }
+                  ],
+                  "layoutOptions": {
+                    "org.eclipse.elk.junctionPoints": "()"
+                  }
+                },
+                {
+                  "id": "sl68krrdqzw6_klab.runtime.classify_outlink",
+                  "sources": [
+                    "sl68krrdqzw6_klab.runtime.classify_out"
+                  ],
+                  "targets": [
+                    "sl68krrdqzw6_out1"
+                  ],
+                  "sections": [
+                    {
+                      "id": "s2",
+                      "startPoint": {
+                        "x": 32.0,
+                        "y": 12.0
+                      },
+                      "endPoint": {
+                        "x": 44.0,
+                        "y": 12.0
+                      }
+                    }
+                  ],
+                  "layoutOptions": {
+                    "org.eclipse.elk.junctionPoints": "()"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "1iyn9pmus12ec",
+              "labels": [
+                {
+                  "text": "Cci 2010",
+                  "id": "1iyn9pmus12ecl",
+                  "x": 0.0,
+                  "y": 0.0,
+                  "width": 0.0,
+                  "height": 0.0
+                }
+              ],
+              "ports": [
+                {
+                  "id": "1iyn9pmus12ec_out1",
+                  "layoutOptions": {
+                    "org.eclipse.elk.port.side": "EAST"
+                  },
+                  "x": 44.0,
+                  "y": 12.0,
+                  "width": 0.0,
+                  "height": 0.0
+                }
+              ],
+              "children": [
+                {
+                  "id": "1iyn9pmus12ec_klab.runtime.resolve",
+                  "labels": [
+                    {
+                      "text": "klab.runtime.resolve",
+                      "id": "1iyn9pmus12ec_klab.runtime.resolvel",
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    }
+                  ],
+                  "ports": [
+                    {
+                      "id": "1iyn9pmus12ec_klab.runtime.resolve_out",
+                      "layoutOptions": {
+                        "org.eclipse.elk.port.side": "EAST"
+                      },
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    }
+                  ],
+                  "layoutOptions": {
+                    "org.eclipse.elk.nodeSize.constraints": "[]",
+                    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+                    "org.eclipse.elk.hierarchyHandling": "INCLUDE_CHILDREN"
+                  },
+                  "x": 12.0,
+                  "y": 12.0,
+                  "width": 0.0,
+                  "height": 0.0
+                },
+                {
+                  "id": "1iyn9pmus12ec_klab.runtime.classify",
+                  "labels": [
+                    {
+                      "text": "klab.runtime.classify",
+                      "id": "1iyn9pmus12ec_klab.runtime.classifyl",
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    }
+                  ],
+                  "ports": [
+                    {
+                      "id": "1iyn9pmus12ec_klab.runtime.classify_out",
+                      "layoutOptions": {
+                        "org.eclipse.elk.port.side": "EAST"
+                      },
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    },
+                    {
+                      "id": "1iyn9pmus12ec_klab.runtime.classify_in",
+                      "layoutOptions": {
+                        "org.eclipse.elk.port.side": "WEST"
+                      },
+                      "x": -0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    }
+                  ],
+                  "layoutOptions": {
+                    "org.eclipse.elk.nodeSize.constraints": "[]",
+                    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+                    "org.eclipse.elk.hierarchyHandling": "INCLUDE_CHILDREN"
+                  },
+                  "x": 32.0,
+                  "y": 12.0,
+                  "width": 0.0,
+                  "height": 0.0
+                }
+              ],
+              "layoutOptions": {
+                "org.eclipse.elk.nodeSize.constraints": "[]",
+                "org.eclipse.elk.nodeLabels.placement": "[]",
+                "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+                "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]",
+                "org.eclipse.elk.hierarchyHandling": "INCLUDE_CHILDREN"
+              },
+              "x": 12.0,
+              "y": 12.0,
+              "width": 44.0,
+              "height": 24.0,
+              "edges": [
+                {
+                  "id": "1iyn9pmus12ec_klab.runtime.classify_feed",
+                  "sources": [
+                    "1iyn9pmus12ec_klab.runtime.resolve_out"
+                  ],
+                  "targets": [
+                    "1iyn9pmus12ec_klab.runtime.classify_in"
+                  ],
+                  "sections": [
+                    {
+                      "id": "s3",
+                      "startPoint": {
+                        "x": 12.0,
+                        "y": 12.0
+                      },
+                      "endPoint": {
+                        "x": 32.0,
+                        "y": 12.0
+                      }
+                    }
+                  ],
+                  "layoutOptions": {
+                    "org.eclipse.elk.junctionPoints": "()"
+                  }
+                },
+                {
+                  "id": "1iyn9pmus12ec_klab.runtime.classify_outlink",
+                  "sources": [
+                    "1iyn9pmus12ec_klab.runtime.classify_out"
+                  ],
+                  "targets": [
+                    "1iyn9pmus12ec_out1"
+                  ],
+                  "sections": [
+                    {
+                      "id": "s4",
+                      "startPoint": {
+                        "x": 32.0,
+                        "y": 12.0
+                      },
+                      "endPoint": {
+                        "x": 44.0,
+                        "y": 12.0
+                      }
+                    }
+                  ],
+                  "layoutOptions": {
+                    "org.eclipse.elk.junctionPoints": "()"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "us3hed7v9ppi",
+              "labels": [
+                {
+                  "text": "Critical forest pristine region presence",
+                  "id": "us3hed7v9ppil",
+                  "x": 0.0,
+                  "y": 0.0,
+                  "width": 0.0,
+                  "height": 0.0
+                }
+              ],
+              "ports": [
+                {
+                  "id": "us3hed7v9ppi_out1",
+                  "layoutOptions": {
+                    "org.eclipse.elk.port.side": "EAST"
+                  },
+                  "x": 44.0,
+                  "y": 12.0,
+                  "width": 0.0,
+                  "height": 0.0
+                }
+              ],
+              "children": [
+                {
+                  "id": "us3hed7v9ppi_klab.runtime.resolve",
+                  "labels": [
+                    {
+                      "text": "klab.runtime.resolve",
+                      "id": "us3hed7v9ppi_klab.runtime.resolvel",
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    }
+                  ],
+                  "ports": [
+                    {
+                      "id": "us3hed7v9ppi_klab.runtime.resolve_out",
+                      "layoutOptions": {
+                        "org.eclipse.elk.port.side": "EAST"
+                      },
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    }
+                  ],
+                  "layoutOptions": {
+                    "org.eclipse.elk.nodeSize.constraints": "[]",
+                    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+                    "org.eclipse.elk.hierarchyHandling": "INCLUDE_CHILDREN"
+                  },
+                  "x": 12.0,
+                  "y": 12.0,
+                  "width": 0.0,
+                  "height": 0.0
+                },
+                {
+                  "id": "us3hed7v9ppi_klab.runtime.cast",
+                  "labels": [
+                    {
+                      "text": "klab.runtime.cast",
+                      "id": "us3hed7v9ppi_klab.runtime.castl",
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    }
+                  ],
+                  "ports": [
+                    {
+                      "id": "us3hed7v9ppi_klab.runtime.cast_out",
+                      "layoutOptions": {
+                        "org.eclipse.elk.port.side": "EAST"
+                      },
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    },
+                    {
+                      "id": "us3hed7v9ppi_klab.runtime.cast_in",
+                      "layoutOptions": {
+                        "org.eclipse.elk.port.side": "WEST"
+                      },
+                      "x": -0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    }
+                  ],
+                  "layoutOptions": {
+                    "org.eclipse.elk.nodeSize.constraints": "[]",
+                    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+                    "org.eclipse.elk.hierarchyHandling": "INCLUDE_CHILDREN"
+                  },
+                  "x": 32.0,
+                  "y": 12.0,
+                  "width": 0.0,
+                  "height": 0.0
+                }
+              ],
+              "layoutOptions": {
+                "org.eclipse.elk.nodeSize.constraints": "[]",
+                "org.eclipse.elk.nodeLabels.placement": "[]",
+                "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+                "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]",
+                "org.eclipse.elk.hierarchyHandling": "INCLUDE_CHILDREN"
+              },
+              "x": 12.0,
+              "y": 100.0,
+              "width": 44.0,
+              "height": 24.0,
+              "edges": [
+                {
+                  "id": "us3hed7v9ppi_klab.runtime.cast_feed",
+                  "sources": [
+                    "us3hed7v9ppi_klab.runtime.resolve_out"
+                  ],
+                  "targets": [
+                    "us3hed7v9ppi_klab.runtime.cast_in"
+                  ],
+                  "sections": [
+                    {
+                      "id": "s5",
+                      "startPoint": {
+                        "x": 12.0,
+                        "y": 12.0
+                      },
+                      "endPoint": {
+                        "x": 32.0,
+                        "y": 12.0
+                      }
+                    }
+                  ],
+                  "layoutOptions": {
+                    "org.eclipse.elk.junctionPoints": "()"
+                  }
+                },
+                {
+                  "id": "us3hed7v9ppi_klab.runtime.cast_outlink",
+                  "sources": [
+                    "us3hed7v9ppi_klab.runtime.cast_out"
+                  ],
+                  "targets": [
+                    "us3hed7v9ppi_out1"
+                  ],
+                  "sections": [
+                    {
+                      "id": "s6",
+                      "startPoint": {
+                        "x": 32.0,
+                        "y": 12.0
+                      },
+                      "endPoint": {
+                        "x": 44.0,
+                        "y": 12.0
+                      }
+                    }
+                  ],
+                  "layoutOptions": {
+                    "org.eclipse.elk.junctionPoints": "()"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "rhty7y4ryteq",
+              "labels": [
+                {
+                  "text": "Continental region",
+                  "id": "rhty7y4ryteql",
+                  "x": 0.0,
+                  "y": 0.0,
+                  "width": 0.0,
+                  "height": 0.0
+                }
+              ],
+              "ports": [
+                {
+                  "id": "rhty7y4ryteq_out1",
+                  "layoutOptions": {
+                    "org.eclipse.elk.port.side": "EAST"
+                  },
+                  "x": 44.0,
+                  "y": 12.0,
+                  "width": 0.0,
+                  "height": 0.0
+                }
+              ],
+              "children": [
+                {
+                  "id": "rhty7y4ryteq_klab.runtime.resolve",
+                  "labels": [
+                    {
+                      "text": "klab.runtime.resolve",
+                      "id": "rhty7y4ryteq_klab.runtime.resolvel",
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    }
+                  ],
+                  "ports": [
+                    {
+                      "id": "rhty7y4ryteq_klab.runtime.resolve_out",
+                      "layoutOptions": {
+                        "org.eclipse.elk.port.side": "EAST"
+                      },
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    }
+                  ],
+                  "layoutOptions": {
+                    "org.eclipse.elk.nodeSize.constraints": "[]",
+                    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+                    "org.eclipse.elk.hierarchyHandling": "INCLUDE_CHILDREN"
+                  },
+                  "x": 12.0,
+                  "y": 12.0,
+                  "width": 0.0,
+                  "height": 0.0
+                },
+                {
+                  "id": "rhty7y4ryteq_klab.runtime.classify",
+                  "labels": [
+                    {
+                      "text": "klab.runtime.classify",
+                      "id": "rhty7y4ryteq_klab.runtime.classifyl",
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    }
+                  ],
+                  "ports": [
+                    {
+                      "id": "rhty7y4ryteq_klab.runtime.classify_out",
+                      "layoutOptions": {
+                        "org.eclipse.elk.port.side": "EAST"
+                      },
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    },
+                    {
+                      "id": "rhty7y4ryteq_klab.runtime.classify_in",
+                      "layoutOptions": {
+                        "org.eclipse.elk.port.side": "WEST"
+                      },
+                      "x": -0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    }
+                  ],
+                  "layoutOptions": {
+                    "org.eclipse.elk.nodeSize.constraints": "[]",
+                    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+                    "org.eclipse.elk.hierarchyHandling": "INCLUDE_CHILDREN"
+                  },
+                  "x": 32.0,
+                  "y": 12.0,
+                  "width": 0.0,
+                  "height": 0.0
+                }
+              ],
+              "layoutOptions": {
+                "org.eclipse.elk.nodeSize.constraints": "[]",
+                "org.eclipse.elk.nodeLabels.placement": "[]",
+                "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+                "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]",
+                "org.eclipse.elk.hierarchyHandling": "INCLUDE_CHILDREN"
+              },
+              "x": 12.0,
+              "y": 164.0,
+              "width": 44.0,
+              "height": 24.0,
+              "edges": [
+                {
+                  "id": "rhty7y4ryteq_klab.runtime.classify_feed",
+                  "sources": [
+                    "rhty7y4ryteq_klab.runtime.resolve_out"
+                  ],
+                  "targets": [
+                    "rhty7y4ryteq_klab.runtime.classify_in"
+                  ],
+                  "sections": [
+                    {
+                      "id": "s7",
+                      "startPoint": {
+                        "x": 12.0,
+                        "y": 12.0
+                      },
+                      "endPoint": {
+                        "x": 32.0,
+                        "y": 12.0
+                      }
+                    }
+                  ],
+                  "layoutOptions": {
+                    "org.eclipse.elk.junctionPoints": "()"
+                  }
+                },
+                {
+                  "id": "rhty7y4ryteq_klab.runtime.classify_outlink",
+                  "sources": [
+                    "rhty7y4ryteq_klab.runtime.classify_out"
+                  ],
+                  "targets": [
+                    "rhty7y4ryteq_out1"
+                  ],
+                  "sections": [
+                    {
+                      "id": "s8",
+                      "startPoint": {
+                        "x": 32.0,
+                        "y": 12.0
+                      },
+                      "endPoint": {
+                        "x": 44.0,
+                        "y": 12.0
+                      }
+                    }
+                  ],
+                  "layoutOptions": {
+                    "org.eclipse.elk.junctionPoints": "()"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "1iesa7q6mcvnb",
+              "labels": [
+                {
+                  "text": "Burned region presence",
+                  "id": "1iesa7q6mcvnbl",
+                  "x": 0.0,
+                  "y": 0.0,
+                  "width": 0.0,
+                  "height": 0.0
+                }
+              ],
+              "ports": [
+                {
+                  "id": "1iesa7q6mcvnb_out1",
+                  "layoutOptions": {
+                    "org.eclipse.elk.port.side": "EAST"
+                  },
+                  "x": 44.0,
+                  "y": 12.0,
+                  "width": 0.0,
+                  "height": 0.0
+                }
+              ],
+              "children": [
+                {
+                  "id": "1iesa7q6mcvnb_klab.runtime.resolve",
+                  "labels": [
+                    {
+                      "text": "klab.runtime.resolve",
+                      "id": "1iesa7q6mcvnb_klab.runtime.resolvel",
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    }
+                  ],
+                  "ports": [
+                    {
+                      "id": "1iesa7q6mcvnb_klab.runtime.resolve_out",
+                      "layoutOptions": {
+                        "org.eclipse.elk.port.side": "EAST"
+                      },
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    }
+                  ],
+                  "layoutOptions": {
+                    "org.eclipse.elk.nodeSize.constraints": "[]",
+                    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+                    "org.eclipse.elk.hierarchyHandling": "INCLUDE_CHILDREN"
+                  },
+                  "x": 12.0,
+                  "y": 12.0,
+                  "width": 0.0,
+                  "height": 0.0
+                },
+                {
+                  "id": "1iesa7q6mcvnb_klab.runtime.cast",
+                  "labels": [
+                    {
+                      "text": "klab.runtime.cast",
+                      "id": "1iesa7q6mcvnb_klab.runtime.castl",
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    }
+                  ],
+                  "ports": [
+                    {
+                      "id": "1iesa7q6mcvnb_klab.runtime.cast_out",
+                      "layoutOptions": {
+                        "org.eclipse.elk.port.side": "EAST"
+                      },
+                      "x": 0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    },
+                    {
+                      "id": "1iesa7q6mcvnb_klab.runtime.cast_in",
+                      "layoutOptions": {
+                        "org.eclipse.elk.port.side": "WEST"
+                      },
+                      "x": -0.0,
+                      "y": 0.0,
+                      "width": 0.0,
+                      "height": 0.0
+                    }
+                  ],
+                  "layoutOptions": {
+                    "org.eclipse.elk.nodeSize.constraints": "[]",
+                    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+                    "org.eclipse.elk.hierarchyHandling": "INCLUDE_CHILDREN"
+                  },
+                  "x": 32.0,
+                  "y": 12.0,
+                  "width": 0.0,
+                  "height": 0.0
+                }
+              ],
+              "layoutOptions": {
+                "org.eclipse.elk.nodeSize.constraints": "[]",
+                "org.eclipse.elk.nodeLabels.placement": "[]",
+                "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+                "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]",
+                "org.eclipse.elk.hierarchyHandling": "INCLUDE_CHILDREN"
+              },
+              "x": 12.0,
+              "y": 208.0,
+              "width": 44.0,
+              "height": 24.0,
+              "edges": [
+                {
+                  "id": "1iesa7q6mcvnb_klab.runtime.cast_feed",
+                  "sources": [
+                    "1iesa7q6mcvnb_klab.runtime.resolve_out"
+                  ],
+                  "targets": [
+                    "1iesa7q6mcvnb_klab.runtime.cast_in"
+                  ],
+                  "sections": [
+                    {
+                      "id": "s9",
+                      "startPoint": {
+                        "x": 12.0,
+                        "y": 12.0
+                      },
+                      "endPoint": {
+                        "x": 32.0,
+                        "y": 12.0
+                      }
+                    }
+                  ],
+                  "layoutOptions": {
+                    "org.eclipse.elk.junctionPoints": "()"
+                  }
+                },
+                {
+                  "id": "1iesa7q6mcvnb_klab.runtime.cast_outlink",
+                  "sources": [
+                    "1iesa7q6mcvnb_klab.runtime.cast_out"
+                  ],
+                  "targets": [
+                    "1iesa7q6mcvnb_out1"
+                  ],
+                  "sections": [
+                    {
+                      "id": "s10",
+                      "startPoint": {
+                        "x": 32.0,
+                        "y": 12.0
+                      },
+                      "endPoint": {
+                        "x": 44.0,
+                        "y": 12.0
+                      }
+                    }
+                  ],
+                  "layoutOptions": {
+                    "org.eclipse.elk.junctionPoints": "()"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "qxtba0dcb90k_klab.runtime.lookup",
+              "labels": [
+                {
+                  "text": "klab.runtime.lookup",
+                  "id": "qxtba0dcb90k_klab.runtime.lookupl",
+                  "x": 0.0,
+                  "y": 0.0,
+                  "width": 0.0,
+                  "height": 0.0
+                }
+              ],
+              "ports": [
+                {
+                  "id": "qxtba0dcb90k_klab.runtime.lookup_out",
+                  "layoutOptions": {
+                    "org.eclipse.elk.port.side": "EAST"
+                  },
+                  "x": 0.0,
+                  "y": 0.0,
+                  "width": 0.0,
+                  "height": 0.0
+                }
+              ],
+              "layoutOptions": {
+                "org.eclipse.elk.nodeSize.constraints": "[]",
+                "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+                "org.eclipse.elk.hierarchyHandling": "INCLUDE_CHILDREN"
+              },
+              "x": 56.0,
+              "y": 144.0,
+              "width": 0.0,
+              "height": 0.0
+            }
+          ],
+          "layoutOptions": {
+            "org.eclipse.elk.nodeSize.constraints": "[]",
+            "org.eclipse.elk.nodeLabels.placement": "[]",
+            "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+            "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]",
+            "org.eclipse.elk.hierarchyHandling": "INCLUDE_CHILDREN"
+          },
+          "x": 12.0,
+          "y": 12.0,
+          "width": 68.0,
+          "height": 244.0,
+          "edges": [
+            {
+              "id": "qxtba0dcb90k_klab.runtime.lookup_outlink",
+              "sources": [
+                "qxtba0dcb90k_klab.runtime.lookup_out"
+              ],
+              "targets": [
+                "qxtba0dcb90k_out1"
+              ],
+              "sections": [
+                {
+                  "id": "s0",
+                  "startPoint": {
+                    "x": 56.0,
+                    "y": 144.0
+                  },
+                  "endPoint": {
+                    "x": 68.0,
+                    "y": 144.0
+                  }
+                }
+              ],
+              "layoutOptions": {
+                "org.eclipse.elk.junctionPoints": "()"
+              }
+            }
+          ]
+        }
+      ],
+      "layoutOptions": {
+        "org.eclipse.elk.nodeSize.constraints": "[]",
+        "org.eclipse.elk.nodeLabels.placement": "[]",
+        "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+        "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]",
+        "org.eclipse.elk.hierarchyHandling": "INCLUDE_CHILDREN"
+      },
+      "x": 12.0,
+      "y": 56.0,
+      "width": 92.0,
+      "height": 268.0
+    }
+  ],
+  "layoutOptions": {
+    "org.eclipse.elk.nodeSize.constraints": "[]",
+    "org.eclipse.elk.nodeLabels.placement": "[]",
+    "org.eclipse.elk.resolvedAlgorithm": "Layout Algorithm: org.eclipse.elk.layered",
+    "org.eclipse.elk.nodeSize.options": "[DEFAULT_MINIMUM_SIZE]",
+    "org.eclipse.elk.hierarchyHandling": "INCLUDE_CHILDREN"
+  },
+  "x": 0.0,
+  "y": 0.0,
+  "width": 116.0,
+  "height": 336.0
+}
