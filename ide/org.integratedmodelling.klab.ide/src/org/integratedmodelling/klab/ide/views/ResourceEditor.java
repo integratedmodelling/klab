@@ -87,6 +87,9 @@ public class ResourceEditor extends ViewPart {
 	private Text text_1;
 	private Text text_2;
 	private Button isPublishable;
+	private Text text_3;
+	private Text text_4;
+	private Text text_5;
 
 	public class PropertySupport extends EditingSupport {
 
@@ -407,8 +410,70 @@ public class ResourceEditor extends ViewPart {
 			unpublishableReason.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 			Group grpTime = new Group(composite_1, SWT.NONE);
+			grpTime.setLayout(new GridLayout(1, false));
 			grpTime.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 2, 1));
 			grpTime.setText("Time");
+			
+			Combo combo_2 = new Combo(grpTime, SWT.READ_ONLY);
+			combo_2.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+				}
+			});
+			combo_2.setItems(new String[] {"Specific", "Generic", "Grid"});
+			combo_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			combo_2.select(0);
+			
+			Combo combo_1 = new Combo(grpTime, SWT.READ_ONLY);
+			combo_1.setItems(new String[] {"None", "Year", "Month", "Week", "Day", "Hour", "Minute", "Second"});
+			combo_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			combo_1.select(0);
+			
+			Composite composite_4 = new Composite(grpTime, SWT.NONE);
+			composite_4.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			GridLayout gl_composite_4 = new GridLayout(2, false);
+			gl_composite_4.horizontalSpacing = 2;
+			gl_composite_4.marginWidth = 0;
+			gl_composite_4.marginHeight = 0;
+			composite_4.setLayout(gl_composite_4);
+			
+			text_3 = new Text(composite_4, SWT.BORDER);
+			text_3.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			
+			Button btnNewButton_4 = new Button(composite_4, SWT.NONE);
+			btnNewButton_4.setText("S");
+			
+			Composite composite_5 = new Composite(grpTime, SWT.NONE);
+			composite_5.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			GridLayout gl_composite_5 = new GridLayout(2, false);
+			gl_composite_5.marginWidth = 0;
+			gl_composite_5.marginHeight = 0;
+			gl_composite_5.horizontalSpacing = 2;
+			composite_5.setLayout(gl_composite_5);
+			
+			text_4 = new Text(composite_5, SWT.BORDER);
+			text_4.setEnabled(false);
+			text_4.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			
+			Button btnE = new Button(composite_5, SWT.NONE);
+			btnE.setEnabled(false);
+			btnE.setText("E");
+			
+			Composite composite_6 = new Composite(grpTime, SWT.NONE);
+			composite_6.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			GridLayout gl_composite_6 = new GridLayout(2, false);
+			gl_composite_6.marginWidth = 0;
+			gl_composite_6.marginHeight = 0;
+			gl_composite_6.horizontalSpacing = 2;
+			composite_6.setLayout(gl_composite_6);
+			
+			text_5 = new Text(composite_6, SWT.BORDER);
+			text_5.setEnabled(false);
+			text_5.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			
+			Button btnG = new Button(composite_6, SWT.NONE);
+			btnG.setEnabled(false);
+			btnG.setText("G");
 
 			Group grpAttributes = new Group(composite_1, SWT.NONE);
 			grpAttributes.setLayout(new GridLayout(1, false));

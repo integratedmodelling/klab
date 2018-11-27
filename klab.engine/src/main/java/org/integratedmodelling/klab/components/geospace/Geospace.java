@@ -23,7 +23,7 @@ public class Geospace {
 		 */
 		System.setProperty("org.geotools.referencing.forceXY", "true");
 		Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
-
+		javax.imageio.spi.IIORegistry.getDefaultInstance().registerApplicationClasspathSpis();
 	}
 
 	@Initialize
