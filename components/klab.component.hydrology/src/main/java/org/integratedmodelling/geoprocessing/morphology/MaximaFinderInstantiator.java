@@ -57,6 +57,9 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 		if (grid == null) {
 			throw new KlabValidationException("Local maxima must be computed on a grid extent");
 		}
+		
+		// should either provide a CHM ('chm') or an DEM; if the latter, this is differentiated by
+		// subtracting the minimum so that the algorithm can work.
 //
 //		OmsMarkoutlets algorithm = new OmsMarkoutlets();
 //		algorithm.inFlow = GeotoolsUtils.INSTANCE.stateToCoverage(flowDir, DataBuffer.TYPE_FLOAT, floatNovalue);
