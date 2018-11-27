@@ -6,12 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.elk.alg.layered.options.LayeredMetaDataProvider;
-import org.eclipse.elk.alg.layered.options.LayeredOptions;
-import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
-import org.eclipse.elk.core.options.CoreOptions;
-import org.eclipse.elk.core.options.HierarchyHandling;
-import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.graph.ElkGraphFactory;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.json.ElkGraphJson;

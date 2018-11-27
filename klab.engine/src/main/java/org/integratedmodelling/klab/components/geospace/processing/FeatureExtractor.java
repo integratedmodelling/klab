@@ -1,11 +1,17 @@
 package org.integratedmodelling.klab.components.geospace.processing;
 
 import java.awt.geom.Point2D;
+import java.awt.image.RenderedImage;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.media.jai.iterator.RandomIter;
+import javax.media.jai.iterator.RandomIterFactory;
+
+import org.geotools.coverage.grid.GridCoverage2D;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
@@ -22,13 +28,17 @@ import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
+import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.engine.runtime.code.groovy.GroovyExpression;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -68,6 +78,18 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 	public FeatureExtractor() {
 	}
 
+	/**
+	 * Use this to extract features through
+	 * {@link #extractShapes(IState, IExpression, IMonitor)} or
+	 * {@link #extractShapes(GridCoverage2D, IProjection, IExpression, IComputationContext)}
+	 * outside of a k.LAB contextualizer.
+	 * 
+	 * @param grid
+	 */
+	public FeatureExtractor(IGrid grid) {
+		this.grid = grid;
+	}
+
 	public FeatureExtractor(IParameters<String> parameters, IComputationContext context)
 			throws KlabValidationException {
 		if (parameters.containsKey("select")) {
@@ -89,7 +111,7 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 		this.grid = ((Space) scale.getSpace()).getGrid();
 		this.boundingBox = (Shape) scale.getSpace().getShape();
 		this.ignoreHoles = !parameters.get("holes", Boolean.TRUE);
-		
+
 		// TODO these are obviously still unfeasible dimensions for an in-memory image.
 		if (this.grid == null || this.grid.getXCells() > Integer.MAX_VALUE
 				|| this.grid.getYCells() > Integer.MAX_VALUE) {
@@ -366,6 +388,136 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 	@Override
 	public IArtifact.Type getType() {
 		return IArtifact.Type.OBJECT;
+	}
+
+	public Collection<IShape> extractShapes(GridCoverage2D state, IExpression selector, IComputationContext context) {
+
+		List<IShape> ret = new ArrayList<>();
+
+		RenderedImage raster = state.getRenderedImage();
+		ImagePlus image = IJ.createImage("blobs", "8-bit black", raster.getWidth(), raster.getHeight(), 1);
+		ImageProcessor imp = image.getProcessor();
+
+		RandomIter itera = RandomIterFactory.create(raster, null);
+
+		for (int x = 0; x < raster.getWidth(); x++) {
+			for (int y = 0; y < raster.getHeight(); y++) {
+				double value = itera.getSampleDouble(x, y, 0);
+				Object on = selector.eval(Parameters.create("value", value), context);
+					imp.set(x, y, on instanceof Boolean && ((Boolean) on) ? 0 : 255);
+			}
+		}
+
+		ManyBlobs blobs = new ManyBlobs(image);
+		blobs.findConnectedComponents();
+
+		for (Blob blob : blobs) {
+
+			Geometry polygon = null;
+			if (blob.getOuterContour().npoints < 4) {
+				if (createPointFeatures) {
+					polygon = getPoint(blob.getCenterOfGravity());
+				}
+			} else {
+				/*
+				 * create spatial context
+				 */
+				LinearRing shell = getLinearRing(blob.getOuterContour());
+				if (shell == null) {
+					continue;
+				}
+
+				/*
+				 * safest strategy - allows holes that overlap the perimeter
+				 */
+				polygon = new Polygon(shell, null, gfact);
+				polygon = polygon.buffer(0);
+				if (computeConvexHull) {
+					polygon = polygon.convexHull();
+				}
+
+				if (!ignoreHoles) {
+					for (LinearRing hole : getLinearRings(blob.getInnerContours())) {
+						Geometry h = new Polygon(hole, null, gfact);
+						h = h.buffer(0);
+						polygon = polygon.difference(h);
+					}
+				}
+
+				if (polygon == null || polygon.isEmpty()) {
+					continue;
+				}
+
+				ret.add(Shape.create(polygon, grid.getProjection()));
+
+			}
+		}
+
+		return ret;
+	}
+
+	public Collection<IShape> extractShapes(IState state, IExpression selector, IMonitor monitor) {
+
+		List<IShape> ret = new ArrayList<>();
+
+		grid = Space.extractGrid(state);
+		ImagePlus image = IJ.createImage("blobs", "8-bit black", (int) grid.getXCells(), (int) grid.getYCells(), 1);
+		ImageProcessor imp = image.getProcessor();
+
+		for (Cell cell : grid) {
+			Object value = state.get(cell);
+			Object on = selector.eval(Parameters.create("value", value), GroovyExpression.emptyContext(monitor));
+			if (on instanceof Boolean && ((Boolean) on)) {
+				imp.set((int) cell.getX(), (int) cell.getY(), 255);
+			}
+		}
+
+		ManyBlobs blobs = new ManyBlobs(image);
+		blobs.findConnectedComponents();
+
+		for (Blob blob : blobs) {
+
+			Geometry polygon = null;
+			if (blob.getOuterContour().npoints < 4) {
+				if (createPointFeatures) {
+					polygon = getPoint(blob.getCenterOfGravity());
+				}
+			} else {
+				/*
+				 * create spatial context
+				 */
+				LinearRing shell = getLinearRing(blob.getOuterContour());
+				if (shell == null) {
+					continue;
+				}
+
+				/*
+				 * safest strategy - allows holes that overlap the perimeter
+				 */
+				polygon = new Polygon(shell, null, gfact);
+				polygon = polygon.buffer(0);
+				if (computeConvexHull) {
+					polygon = polygon.convexHull();
+				}
+
+				if (!ignoreHoles) {
+					for (LinearRing hole : getLinearRings(blob.getInnerContours())) {
+						Geometry h = new Polygon(hole, null, gfact);
+						h = h.buffer(0);
+						polygon = polygon.difference(h);
+					}
+				}
+
+				if (polygon == null || polygon.isEmpty()) {
+					continue;
+				}
+
+				ret.add(Shape.create(polygon, grid.getProjection()));
+
+			}
+		}
+
+		return ret;
 	}
 
 }

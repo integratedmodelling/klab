@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.utils;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -23,6 +24,17 @@ public class Parameters<T> implements IParameters<T> {
 
 	public Parameters(Map<T, Object> delegate) {
 		this.delegate = delegate;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static <T> Parameters<T> create(Object... o) {
+		Map<T, Object> inp = new HashMap<T, Object>();
+		if (o != null) {
+			for (int i = 0; i < o.length; i++) {
+				inp.put((T)o[i], o[++i]);
+			}	
+		}
+		return new Parameters(inp);
 	}
 
 	/**
