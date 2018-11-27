@@ -10,6 +10,7 @@ import org.hortonmachine.gears.utils.features.FeatureUtilities;
 import org.hortonmachine.hmachine.modules.demmanipulation.wateroutlet.OmsExtractBasin;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -18,6 +19,7 @@ import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
@@ -27,6 +29,7 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.geospace.processing.FeatureExtractor;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -84,6 +87,7 @@ public class WatershedInstantiator implements IInstantiator, IExpression {
 		}
 
 		IState flowDir = context.getArtifact("flow_directions_d8", IState.class);
+		FeatureExtractor extractor = new FeatureExtractor(grid);
 
 		for (IArtifact artifact : context.getArtifact("stream_outlet")) {
 
@@ -103,7 +107,10 @@ public class WatershedInstantiator implements IInstantiator, IExpression {
 			ebasin.pNorth = point.getY();
 			ebasin.doProcess = true;
 			ebasin.doReset = false;
-			ebasin.doVector = true;
+
+			// again, will be great but a long-standing JAI bug makes it throw an NPE when
+			// inside a jar.
+			ebasin.doVector = false;
 
 			try {
 				ebasin.process();
@@ -126,14 +133,23 @@ public class WatershedInstantiator implements IInstantiator, IExpression {
 				}
 			}
 
-			if (ebasin.outVectorBasin != null && ebasin.outVectorBasin.size() > 0) {
-
-				List<com.vividsolutions.jts.geom.Geometry> geoms = FeatureUtilities
-						.featureCollectionToGeometriesList(ebasin.outVectorBasin, false, null);
-				Shape shape = Shape.create(geoms, context.getScale().getSpace().getProjection());
+			for (IShape shape : extractor.extractShapes(ebasin.outBasin, Extensions.INSTANCE
+					.compileExpression("value == 1.0", context, Extensions.DEFAULT_EXPRESSION_LANGUAGE), context)) {
 				ret.add(context.newObservation(semantics, "watershed_of_" + ((IDirectObservation) artifact).getName(),
 						Scale.substituteExtent(context.getScale(), shape)));
 			}
+
+			// adios - come back when JAI bug is addressed. Sad as the above is a lot slower.
+			// if (ebasin.outVectorBasin != null && ebasin.outVectorBasin.size() > 0) {
+			//
+			// List<com.vividsolutions.jts.geom.Geometry> geoms = FeatureUtilities
+			// .featureCollectionToGeometriesList(ebasin.outVectorBasin, false, null);
+			// Shape shape = Shape.create(geoms,
+			// context.getScale().getSpace().getProjection());
+			// ret.add(context.newObservation(semantics, "watershed_of_" +
+			// ((IDirectObservation) artifact).getName(),
+			// Scale.substituteExtent(context.getScale(), shape)));
+			// }
 
 		}
 

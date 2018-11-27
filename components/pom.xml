@@ -13,5 +13,6 @@
   	<module>klab.component.mca</module>
   	<module>klab.component.hydrology</module>
   	<module>klab.component.ml</module>
+  	<module>klab.component.geotrellis</module>
   </modules>
 </project>

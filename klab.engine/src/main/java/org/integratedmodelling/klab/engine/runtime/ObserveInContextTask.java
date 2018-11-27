@@ -55,7 +55,7 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 		this.context = context;
 		this.monitor = context.getMonitor().get(this);
 		this.session = context.getParentIdentity(Session.class);
-		this.taskDescription = "<task " + token + ": observation of " + urn + " within " + context + ">";
+		this.taskDescription = "Observation of " + urn + " in " + context.getName();
 
 		this.descriptor = new TaskReference();
 		this.descriptor.setId(token);
@@ -105,6 +105,8 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 
 						Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + token,
 								scope);
+						
+						dataflow.setDescription(taskDescription);
 
 						System.out.println(dataflow.getKdlCode());
 
