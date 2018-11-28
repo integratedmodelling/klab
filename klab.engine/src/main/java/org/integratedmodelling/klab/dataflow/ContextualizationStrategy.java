@@ -7,6 +7,10 @@ import java.util.Map;
 
 import org.eclipse.elk.alg.layered.options.LayeredMetaDataProvider;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.HierarchyHandling;
+import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.graph.ElkGraphFactory;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.json.ElkGraphJson;
@@ -69,8 +73,10 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 			
 			ElkNode root = elk.createElkNode();
 			root.setIdentifier(id);
-
+			root.setProperty(CoreOptions.ALGORITHM, "elk.layered");
+			// root.setProperty(CoreOptions.NODE_SIZE_MINIMUM, new KVector(50,50));
 			// root.setProperty(LayeredOptions.HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN);
+			
 
 			for (Dataflow df : rootNodes) {
 				DataflowGraph graph = new DataflowGraph(df, nodes);
@@ -81,12 +87,13 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 			
 			// This produces a layout, although I can't get it to visualize so I don't know if it sucks or not.
 			// Uncomment the next two to produce the layout.
-//			RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
-//			engine.layout(root, new BasicProgressMonitor());
+			RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
+			engine.layout(root, new BasicProgressMonitor());
 
 			// TODO these options are copied from the docs without thinking
-			json = ElkGraphJson.forGraph(root).omitLayout(false).omitZeroDimension(false).omitZeroPositions(false)
-					.shortLayoutOptionKeys(false).prettyPrint(true).omitUnknownLayoutOptions(true).toJson();
+			json = ElkGraphJson.forGraph(root).omitLayout(false).omitZeroDimension(true).omitZeroPositions(true)
+					.shortLayoutOptionKeys(false).prettyPrint(true).toJson();
+			
 			System.out.println(json);
 		}
 
