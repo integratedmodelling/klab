@@ -26,24 +26,23 @@ public class KExplorerDataflowGraph extends DataflowGraph {
 
 	// First attempt to calculate label text size
 	private static Graphics2D GRAPHICS;
-	private static String FONT_TYPE = "sans-serif";
+	private static String FONT_TYPE;
 	private static final int FONT_SIZE = 8;
 	
 	private static final double PORT_SIZE = 5;
 	
 	static {
 		// There seems to be a problem with SansSerif on Windows...
-		String fontType;
         if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) {
-        	fontType = "Arial";
+        	FONT_TYPE = "Arial";
         } else {
-        	fontType = "SansSerif";
+        	FONT_TYPE = "SansSerif";
         }
         
         BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         
         GRAPHICS = image.createGraphics();
-        GRAPHICS.setFont(new java.awt.Font(fontType, 0 /* SWT.NORMAL */, FONT_SIZE));
+        GRAPHICS.setFont(new java.awt.Font(FONT_TYPE, 0 /* SWT.NORMAL */, FONT_SIZE));
 	}
 	
 	public KExplorerDataflowGraph(Dataflow dataflow, Map<String, ElkNode> nodes) {
@@ -61,7 +60,7 @@ public class KExplorerDataflowGraph extends DataflowGraph {
 		node.setProperty(LayeredOptions.HIERARCHY_HANDLING, HierarchyHandling.SEPARATE_CHILDREN);
 		node.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS, SizeConstraint.PORTS, SizeConstraint.MINIMUM_SIZE));
 		node.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.outsideTopLeft());
-		node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.COMPUTE_PADDING));
+		// node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.COMPUTE_PADDING));
 		// node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.DEFAULT_MINIMUM_SIZE, SizeOptions.MINIMUM_SIZE_ACCOUNTS_FOR_PADDING, SizeOptions.COMPUTE_PADDING, SizeOptions.PORTS_OVERHANG));
 		return node;
 	}
@@ -76,8 +75,6 @@ public class KExplorerDataflowGraph extends DataflowGraph {
 	@Override
 	protected ElkLabel createLabel(String text, String identifier) {
 		ElkLabel label = super.createLabel(text, identifier);
-		// label.setProperty(CoreOptions.FONT_NAME, FONT_TYPE);
-		// label.setProperty(CoreOptions.FONT_SIZE, 10);
 		computeLabelSize(label);
 		return label;
 	}

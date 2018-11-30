@@ -81,7 +81,7 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 			root.setIdentifier(id);
 			// root.setProperty(CoreOptions.ALGORITHM, "elk.layered");
 			// root.setProperty(CoreOptions.NODE_SIZE_MINIMUM, new KVector(50,50));
-			// root.setProperty(LayeredOptions.HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN);
+			root.setProperty(LayeredOptions.HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN);
 			root.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS, SizeConstraint.PORT_LABELS, SizeConstraint.PORTS, SizeConstraint.MINIMUM_SIZE));
 			root.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.outsideTopLeft());
 			// root.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.OUTSIDE_NODE_LABELS_OVERHANG));

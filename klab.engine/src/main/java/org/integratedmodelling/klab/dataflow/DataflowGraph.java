@@ -22,7 +22,7 @@ import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * Create an Elk graph starting from a Dataflow
- * No dimensions are given. If is needed, extends this class and override create[ElkObject] methods
+ * No information about visualisation are given. If is needed, extends this class and override create[ElkObject] methods
  * @author Ferdinando Villa
  */
 public class DataflowGraph {
