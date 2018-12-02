@@ -11,7 +11,6 @@ import org.eclipse.elk.graph.ElkGraphFactory;
 import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
-import org.eclipse.elk.graph.json.ElkGraphJson;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IPrototype;
@@ -21,22 +20,27 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.utils.Pair;
 
+/**
+ * Create an Elk graph starting from a Dataflow
+ * No information about visualisation are given. If is needed, extends this class and override create[ElkObject] methods
+ * @author Ferdinando Villa
+ */
 public class DataflowGraph {
 
 	private ElkNode rootNode;
 	private ElkGraphFactory elk = ElkGraphFactory.eINSTANCE;
 
 	private Map<String, ElkNode> nodes;
-
-	public ElkNode getRootNode() {
-		return rootNode;
-	}
-
+	
 	public DataflowGraph(Dataflow dataflow, Map<String, ElkNode> nodes) {
 		this.nodes = nodes;
 		rootNode = compile(dataflow, null);
 	}
-
+	
+	public ElkNode getRootNode() {
+		return rootNode;
+	}
+	
 	public ElkNode compile(Actuator actuator, ElkNode parent) {
 
 		Map<String, ElkNode> localNodes = new HashMap<>();
@@ -44,10 +48,9 @@ public class DataflowGraph {
 		ElkNode root = nodes.get(actuator.getId());
 		if (root == null) {
 			
-			root = ElkGraphUtil.createNode(parent);
-			root.setIdentifier(actuator.getId());
+			root = createNode(actuator.getId(), parent);
 			nodes.put(actuator.getName(), root);
-			root.getLabels().add(label(actuator));
+			root.getLabels().add(createLabel(actuator));
 
 			// main output
 			ElkPort mainOut = ElkGraphUtil.createPort(root);
@@ -59,7 +62,7 @@ public class DataflowGraph {
 			for (IActuator child : actuator.getActuators()) {
 				if (child.isInput()) {
 					ElkPort port = ElkGraphUtil.createPort(root);
-					port.getLabels().add(label(child.getAlias() == null ? child.getName() : child.getAlias(),
+					port.getLabels().add(createLabel(child.getAlias() == null ? child.getName() : child.getAlias(),
 							((Actuator) child).getId()));
 					port.setProperty(CoreOptions.PORT_SIDE, PortSide.WEST);
 				} else {
@@ -83,16 +86,13 @@ public class DataflowGraph {
 				ElkPort previousOut = out;
 				
 				IPrototype prototype = Extensions.INSTANCE.getPrototype(actor.getFirst().getName());
-				call = ElkGraphUtil.createNode(root);
-				call.setIdentifier(actuator.getId() + "_" + prototype.getName());
-				call.getLabels().add(label(prototype.getName(), call.getIdentifier() + "l"));
+				call = createNode(actuator.getId() + "_" + prototype.getName(), root);
+				call.getLabels().add(createLabel(prototype.getName(), call.getIdentifier() + "l"));
 				for (Object kp : actor.getFirst().getParameters().entrySet()) {
 					
 				}
 				// all computations have a main output
-				out = ElkGraphUtil.createPort(call);
-				out.setIdentifier(call.getIdentifier() + "_out");
-				out.setProperty(CoreOptions.PORT_SIDE, PortSide.EAST);
+				out = createPort(call.getIdentifier() + "_out", call, PortSide.EAST);
 				
 				// find any other outputs, create port anyway
 				// output port(s) from the computation - >1 if there are additional observables
@@ -102,10 +102,7 @@ public class DataflowGraph {
 				}
 
 				if (previousCall != null) {
-					ElkPort input = ElkGraphUtil.createPort(call);
-					input.setIdentifier(call.getIdentifier() + "_in");
-					input.setProperty(CoreOptions.PORT_SIDE, PortSide.WEST);
-					
+					ElkPort input = createPort(call.getIdentifier() + "_in", call, PortSide.WEST);
 					ElkEdge feed = ElkGraphUtil.createSimpleEdge(previousOut, input);
 					feed.setIdentifier(call.getIdentifier() + "_feed");
 				}				
@@ -129,24 +126,56 @@ public class DataflowGraph {
 
 		return root;
 	}
+	
+	/**
+	 * Create ElkNode with default behavior, if necessary override this method
+	 * @param identifier the node identifier
+	 * @param parent the parent node
+	 * @return the newly created node
+	 */
+	protected ElkNode createNode(String identifier, ElkNode parent) {
+		ElkNode node = ElkGraphUtil.createNode(parent);
+		node.setIdentifier(identifier);
+		return node;
+	}
+	
+	/**
+	 * Create ElkPort with default behavior, if necessary override this method
+	 * @param identifier the port identifier
+	 * @param parent the parent of port
+	 * @param side the side of port. One of org.eclipse.elk.core.options.PortSide value
+	 * @return the newly created port 
+	 */
+	protected ElkPort createPort(String identifier, ElkNode parent, PortSide side) {
+		ElkPort port = ElkGraphUtil.createPort(parent);
+		port.setIdentifier(identifier);
+		port.setProperty(CoreOptions.PORT_SIDE, side);
+		return port;
+	}
 
-	private ElkLabel label(Actuator actuator) {
+	private ElkLabel createLabel(Actuator actuator) {
 		String aname = actuator instanceof Dataflow ? ((Dataflow) actuator).getDescription()
 				: StringUtils.capitalize(actuator.getName().replaceAll("_", " "));
-		return label(aname, actuator.getId() + "l");
+		return createLabel(aname, actuator.getId() + "l");
 	}
 
-	private ElkLabel label(String name, String id) {
-		ElkLabel ret = elk.createElkLabel();
-		ret.setText(name);
-		ret.setIdentifier(id);
-		return ret;
+	/**
+	 * Create ElkLabel with default behavior, if necessary override this method 
+	 * @param name
+	 * @param id
+	 * @return
+	 */
+	protected ElkLabel createLabel(String text, String identifier) {
+		ElkLabel label = elk.createElkLabel();
+		label.setText(text);
+		label.setIdentifier(identifier);
+		return label;
 	}
-
+	/*
 	public String asJson() {
 		// TODO these options are copied from the docs without thinking
-		return ElkGraphJson.forGraph(rootNode).omitLayout(true).omitZeroDimension(true).omitZeroPositions(true)
+		return ElkGraphJson.forGraph(rootNode).omitLayout(true).omitZeroDimension(false).omitZeroPositions(false)
 				.shortLayoutOptionKeys(false).prettyPrint(true).toJson();
 	}
-
+	*/
 }
