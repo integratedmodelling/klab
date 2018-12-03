@@ -195,12 +195,12 @@ public interface IMessage {
 		 * --- Task lifecycle --- 
 		 * B -> F
 		 */
-		ScriptStarted, TaskStarted, TaskFinished, TaskAborted, DataflowCompiled,
+		ScriptStarted, TaskStarted, TaskFinished, TaskAborted, DataflowCompiled, DataflowStateChanged,
 		
 		/**
 		 * Task lifecycle F -> B
 		 */
-		TaskInterrupted,
+		TaskInterrupted, DataflowNodeDetail,
 
 		/*
 		 * --- Search-class types ---

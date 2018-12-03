@@ -12,7 +12,6 @@ import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
-import org.eclipse.elk.core.options.SizeOptions;
 import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
@@ -82,8 +81,8 @@ public class KExplorerDataflowGraph extends DataflowGraph {
 	/**
      * Computes the size of a label if it doesn't already have one. The size is calculated by choosing a font and
      * calculating the space necessary to render the label's text with that font.
-     * Code getted by elk library: org.eclipse.elk.alg.test.framework.SomeBoxRunner
-	 * @param label the ElkLabel that need to be dimensioned
+     * Code obtained from elk library: org.eclipse.elk.alg.test.framework.SomeBoxRunner
+	 * @param label the ElkLabel that need to be sized
 	 */
     private static void computeLabelSize(final ElkLabel label) {
         // Check if we need to do anything

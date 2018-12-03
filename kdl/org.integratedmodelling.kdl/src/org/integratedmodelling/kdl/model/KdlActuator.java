@@ -13,7 +13,6 @@ import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlComputation;
 import org.integratedmodelling.kdl.api.IKdlContextualizer;
 import org.integratedmodelling.kdl.kdl.ActorDefinition;
-import org.integratedmodelling.kdl.kdl.Computation;
 import org.integratedmodelling.kdl.kdl.Function;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 
@@ -36,6 +35,7 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 	String semantics;
 	String units;
 	String javaClass;
+	String label;
 	Type type;
 
 	boolean exported = false;
@@ -68,6 +68,7 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 		this.optional = o.isOptional();
 		this.parameter = o.isParameter();
 		this.isFinal = o.isFinal();
+		this.label = o.getLabel();
 
 		for (String s : o.getEnumValues()) {
 			this.enumValues.add(s);
@@ -263,7 +264,7 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 	public void setFinal(boolean isFinal) {
 		this.isFinal = isFinal;
 	}
-	
+
 	public void setInputs(List<IKdlActuator> inputs) {
 		this.inputs = inputs;
 	}
@@ -408,6 +409,15 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 	@Override
 	public boolean isFinal() {
 		return isFinal;
+	}
+
+	@Override
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 }

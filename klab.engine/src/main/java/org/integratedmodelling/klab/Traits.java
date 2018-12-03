@@ -25,8 +25,13 @@ import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.utils.Pair;
 
 public enum Traits implements ITraitService {
-    INSTANCE;
+    
+	INSTANCE;
 
+	private Traits() {
+		Services.INSTANCE.registerService(this, ITraitService.class);
+	}
+	
     @Override
     public Collection<IConcept> getTraits(IConcept concept) {
         Set<IConcept> ret = new HashSet<>();

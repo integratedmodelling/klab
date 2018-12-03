@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab;
 
 import java.util.Set;
+
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.services.IReasonerService;
@@ -9,8 +10,12 @@ import org.integratedmodelling.klab.owl.KlabReasoner;
 public enum Reasoner implements IReasonerService {
     
     INSTANCE;
-
+	
     private KlabReasoner reasoner;
+
+    private Reasoner() {
+		Services.INSTANCE.registerService(this, IReasonerService.class);
+    }
     
     public void setReasoner(KlabReasoner klabReasoner) {
         this.reasoner = klabReasoner;

@@ -109,6 +109,13 @@ public interface IPrototype {
 	 * @return the name
 	 */
 	String getName();
+	
+	/**
+	 * Optional prototype label for display or provenance documentation.
+	 * 
+	 * @return the label
+	 */
+	String getLabel();
 
 	/**
 	 * Service description if provided; empty string otherwise.

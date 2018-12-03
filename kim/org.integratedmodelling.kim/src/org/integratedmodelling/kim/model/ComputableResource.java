@@ -20,22 +20,25 @@ import org.integratedmodelling.kim.kim.ComputableValue;
 import org.integratedmodelling.kim.kim.Table;
 import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.kim.ValueAssignment;
+import org.integratedmodelling.klab.Services;
+import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
+import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
+import org.integratedmodelling.klab.api.services.IExtensionService;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.utils.Utils;
 
 public class ComputableResource extends KimStatement implements IComputableResource {
 
 	private static final long serialVersionUID = -5104679843126238555L;
 
 	private String _resourceId = UUID.randomUUID().toString();
-	
+
 	private String language;
 	private Object literal;
 	private KimServiceCall serviceCall;
@@ -44,20 +47,21 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	private KimClassification classification;
 	private String urn;
 	private String accordingTo;
+	private String dataflowId = NameGenerator.shortUUID();
 	private boolean postProcessor;
 	private boolean negated;
 	private boolean mediation;
 	public IResolutionScope.Mode resolutionMode;
 	private ComputableResource condition;
 	private Pair<IValueMediator, IValueMediator> conversion;
-	private Collection<Pair<String, IArtifact.Type>> requiredResourceNames = new ArrayList<>();
-	
+	private Collection<Pair<String, IArtifact.Type>> requiredResourceNames = null;
+
 	/**
 	 * Slot to save a validated resource so that it won't need to be validated
 	 * twice. Shouldn't be serialized.
 	 */
 	private transient Object validatedResource;
-//	private transient Type type;
+	// private transient Type type;
 
 	// all that follows can only be set on a copy as they are runtime-dependent.
 	private String targetId;
@@ -90,7 +94,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		ret.target = this.target;
 		ret.targetId = this.targetId;
 		ret.copy = true;
-//		ret.type = this.type;
+		// ret.type = this.type;
 		ret.resolutionMode = this.resolutionMode;
 		return ret;
 	}
@@ -103,9 +107,10 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	}
 
 	public void setTargetId(String targetId) {
-//		if (!copy) {
-//			throw new KlabInternalErrorException("cannot set the target ID on an original computation from k.IM code!");
-//		}
+		// if (!copy) {
+		// throw new KlabInternalErrorException("cannot set the target ID on an original
+		// computation from k.IM code!");
+		// }
 		this.targetId = targetId;
 	}
 
@@ -119,22 +124,22 @@ public class ComputableResource extends KimStatement implements IComputableResou
 
 	public void setServiceCall(KimServiceCall serviceCall) {
 		this.serviceCall = serviceCall;
-//		this.type = serviceCall.getType();
+		// this.type = serviceCall.getType();
 	}
 
 	public void setLookupTable(KimLookupTable lookupTable) {
 		this.lookupTable = lookupTable;
-//		this.type = lookupTable.getLookupType();
+		// this.type = lookupTable.getLookupType();
 	}
 
 	public void setExpression(String expression) {
 		this.expression = expression;
-//		this.type = IArtifact.Type.VALUE;
+		// this.type = IArtifact.Type.VALUE;
 	}
 
 	public void setClassification(KimClassification classification) {
 		this.classification = classification;
-//		this.type = IArtifact.Type.CONCEPT;
+		// this.type = IArtifact.Type.CONCEPT;
 	}
 
 	public void setUrn(String urn) {
@@ -174,7 +179,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 
 		super(null, parent);
 		this.accordingTo = classificationProperty;
-        this.resolutionMode = Mode.RESOLUTION;
+		this.resolutionMode = Mode.RESOLUTION;
 		this.setPostProcessor(true);
 	}
 
@@ -182,7 +187,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 
 		super(lookupTable, parent);
 		setCode(lookupTable);
-        this.resolutionMode = Mode.RESOLUTION;
+		this.resolutionMode = Mode.RESOLUTION;
 		this.lookupTable = new KimLookupTable(new KimTable(lookupTable, parent), lookupTableArgs, parent);
 		this.setPostProcessor(true);
 	}
@@ -190,7 +195,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	public ComputableResource(KimLookupTable table, IKimStatement parent) {
 		super(((KimStatement) table).getEObject(), parent);
 		this.lookupTable = table;
-        this.resolutionMode = Mode.RESOLUTION;
+		this.resolutionMode = Mode.RESOLUTION;
 		this.setPostProcessor(true);
 	}
 
@@ -203,17 +208,18 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		} else if (value.getLiteral() != null) {
 			this.literal = Kim.INSTANCE.parseLiteral(value.getLiteral(), Kim.INSTANCE.getNamespace(value, false));
 		}
-        this.resolutionMode = Mode.RESOLUTION;
+		this.resolutionMode = Mode.RESOLUTION;
 	}
 
 	public ComputableResource(IValueMediator from, IValueMediator to) {
 		this.conversion = new Pair<>(from, to);
-        this.resolutionMode = Mode.RESOLUTION;
+		this.resolutionMode = Mode.RESOLUTION;
 	}
 
-	public ComputableResource(ValueAssignment statement, ComputableResource condition, Mode resolutionMode, IKimStatement parent) {
+	public ComputableResource(ValueAssignment statement, ComputableResource condition, Mode resolutionMode,
+			IKimStatement parent) {
 		super(statement, parent);
- 		setFrom(statement, resolutionMode);
+		setFrom(statement, resolutionMode);
 		this.condition = condition;
 	}
 
@@ -231,7 +237,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	// fuss.
 	public ComputableResource(Optional<Object> value) {
 		this.literal = value.get();
-        this.resolutionMode = Mode.RESOLUTION;
+		this.resolutionMode = Mode.RESOLUTION;
 	}
 
 	private ComputableResource(EObject eObject, IKimStatement parent) {
@@ -246,7 +252,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 			setFromValue(statement.getExecValue());
 		}
 		this.targetId = statement.getTarget();
-        this.resolutionMode = resolutionMode;
+		this.resolutionMode = resolutionMode;
 	}
 
 	private void setFromValue(ComputableValue value) {
@@ -255,19 +261,19 @@ public class ComputableResource extends KimStatement implements IComputableResou
 			this.condition = new ComputableResource(value.getCondition(), this);
 			this.negated = value.isConditionNegated();
 		}
-		
+
 		if (value.getUrn() != null) {
 			this.urn = value.getUrn();
 			// TODO find a way to establish type
 		} else if (value.getFunction() != null) {
 			this.serviceCall = new KimServiceCall(value.getFunction(), getParent());
-//			this.type = this.serviceCall.getType();
+			// this.type = this.serviceCall.getType();
 		} else if (value.getExpr() != null) {
 			this.expression = removeDelimiters(value.getExpr());
-//			this.type = IArtifact.Type.VALUE;
+			// this.type = IArtifact.Type.VALUE;
 		} else if (value.getLiteral() != null) {
 			this.literal = Kim.INSTANCE.parseLiteral(value.getLiteral(), Kim.INSTANCE.getNamespace(value, false));
-//			this.type = Utils.getArtifactType(this.literal.getClass());
+			// this.type = Utils.getArtifactType(this.literal.getClass());
 		}
 
 		this.language = value.getLanguage();
@@ -341,7 +347,28 @@ public class ComputableResource extends KimStatement implements IComputableResou
 
 	@Override
 	public Collection<Pair<String, Type>> getRequiredResourceNames() {
-		// TODO insert a collection step
+
+		if (requiredResourceNames == null) {
+
+			requiredResourceNames = new ArrayList<>();
+
+			if (getExpression() != null) {
+				IExtensionService ext = Services.INSTANCE.getService(IExtensionService.class);
+				if (ext != null) {
+					ILanguageProcessor processor = ext.getLanguageProcessor(
+							language == null ? IExtensionService.DEFAULT_EXPRESSION_LANGUAGE : language);
+					Descriptor descriptor = processor.describe(expression, null);
+					for (String var : descriptor.getIdentifiers()) {
+						requiredResourceNames.add(new Pair<>(var, Type.VALUE));
+					}
+					
+				}
+			} else if (getLookupTable() != null) {
+				for (String arg : lookupTable.getArguments()) {
+					requiredResourceNames.add(new Pair<>(arg, Type.VALUE));
+				}
+			}
+		}
 		return requiredResourceNames;
 	}
 
@@ -425,10 +452,10 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		}
 	}
 
-    @Override
-    public Mode getComputationMode() {
-        return resolutionMode;
-    }
+	@Override
+	public Mode getComputationMode() {
+		return resolutionMode;
+	}
 
 	@Override
 	public int hashCode() {
@@ -529,7 +556,13 @@ public class ComputableResource extends KimStatement implements IComputableResou
 			return false;
 		return true;
 	}
-    
-    
+
+	public String getDataflowId() {
+		return dataflowId;
+	}
+
+	public void setDataflowId(String dataflowId) {
+		this.dataflowId = dataflowId;
+	}
 
 }

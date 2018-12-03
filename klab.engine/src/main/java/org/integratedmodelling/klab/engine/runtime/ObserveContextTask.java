@@ -96,7 +96,7 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 							session.getMonitor()
 									.send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 											IMessage.Type.DataflowCompiled, new DataflowReference(token,
-													dataflow.getKdlCode(), /*contextualizationStrategy.getElkGraph()*/ dataflow.getElkJsonLayout())));
+													dataflow.getKdlCode(), contextualizationStrategy.getElkGraph())));
 							/*
 							 * make a copy of the coverage so that we ensure it's a scale, behaving properly
 							 * at merge.

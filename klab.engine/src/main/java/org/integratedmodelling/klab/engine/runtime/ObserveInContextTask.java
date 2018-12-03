@@ -105,7 +105,7 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 
 						Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + token,
 								scope);
-						
+
 						dataflow.setDescription(taskDescription);
 
 						System.out.println(dataflow.getKdlCode());
@@ -115,7 +115,7 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 
 						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 								IMessage.Type.DataflowCompiled, new DataflowReference(token, dataflow.getKdlCode(),
-										/*ctx.getContextualizationStrategy().getElkGraph()*/  dataflow.getElkJsonLayout())));
+										ctx.getContextualizationStrategy().getElkGraph())));
 
 						// make a copy of the coverage so that we ensure it's a scale, behaving properly
 						// at merge.

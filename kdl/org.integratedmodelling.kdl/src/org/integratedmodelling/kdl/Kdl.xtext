@@ -39,7 +39,7 @@ ActorDefinition:
 	// parameters denotes the ability of the implementation of accepting modified values during run
 	// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
 	(parameter?='parameter')?
-	type=ACTOR name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING) ('for' targets+=TARGET (',' targets+=TARGET)*)? (docstring=STRING)?
+	type=ACTOR name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING) ('for' targets+=TARGET (',' targets+=TARGET)*)? (docstring=STRING)? ('label' label=STRING)?
 	('{' body=DataflowBody '}')?
 	('as' localName=LOWERCASE_ID)?
 	('over' coverage+=Function (',' coverage+=Function)*)? 
@@ -56,7 +56,7 @@ ActorDefinition:
 	(parameter?='input'|imported?='import') name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING)
 	// enum values, only for enum type
 	('values' enumValues+=UPPERCASE_ID (',' enumValues+=UPPERCASE_ID)*)?
-	(docstring=STRING)
+	(docstring=STRING) ('label' label=STRING)?
 	('default' default=Value)?
 	('{' body=DataflowBody '}')?
 	(	

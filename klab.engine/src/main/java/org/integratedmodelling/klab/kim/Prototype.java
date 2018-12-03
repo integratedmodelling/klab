@@ -32,6 +32,8 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
       this.description = StringUtils.pack(actuator.getDescription());
     }
     
+    this.label = actuator.getLabel();
+    
     for (IKdlActuator arg : actuator.getActors()) {
 
       ArgumentImpl a = new ArgumentImpl();

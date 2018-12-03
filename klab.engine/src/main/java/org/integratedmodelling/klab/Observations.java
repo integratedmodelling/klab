@@ -73,6 +73,10 @@ public enum Observations implements IObservationService {
 
 	Map<ILocator, Map<String, StateSummary>> summaryCache = new HashMap<>();
 
+	private Observations() {
+		Services.INSTANCE.registerService(this, IObservationService.class);
+	}
+	
 	@Override
 	public IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios) throws KlabException {
 		return Resolver.INSTANCE.resolve(urn, session, scenarios);

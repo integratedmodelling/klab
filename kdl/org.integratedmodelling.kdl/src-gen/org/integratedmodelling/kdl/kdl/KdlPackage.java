@@ -359,13 +359,22 @@ public interface KdlPackage extends EPackage
   int ACTOR_DEFINITION__DOCSTRING = 12;
 
   /**
+   * The feature id for the '<em><b>Label</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTOR_DEFINITION__LABEL = 13;
+
+  /**
    * The feature id for the '<em><b>Body</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__BODY = 13;
+  int ACTOR_DEFINITION__BODY = 14;
 
   /**
    * The feature id for the '<em><b>Local Name</b></em>' attribute.
@@ -374,7 +383,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__LOCAL_NAME = 14;
+  int ACTOR_DEFINITION__LOCAL_NAME = 15;
 
   /**
    * The feature id for the '<em><b>Coverage</b></em>' containment reference list.
@@ -383,7 +392,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__COVERAGE = 15;
+  int ACTOR_DEFINITION__COVERAGE = 16;
 
   /**
    * The feature id for the '<em><b>Enum Values</b></em>' attribute list.
@@ -392,7 +401,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__ENUM_VALUES = 16;
+  int ACTOR_DEFINITION__ENUM_VALUES = 17;
 
   /**
    * The feature id for the '<em><b>Default</b></em>' containment reference.
@@ -401,7 +410,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__DEFAULT = 17;
+  int ACTOR_DEFINITION__DEFAULT = 18;
 
   /**
    * The feature id for the '<em><b>Range Min</b></em>' containment reference.
@@ -410,7 +419,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__RANGE_MIN = 18;
+  int ACTOR_DEFINITION__RANGE_MIN = 19;
 
   /**
    * The feature id for the '<em><b>Range Max</b></em>' containment reference.
@@ -419,7 +428,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__RANGE_MAX = 19;
+  int ACTOR_DEFINITION__RANGE_MAX = 20;
 
   /**
    * The number of structural features of the '<em>Actor Definition</em>' class.
@@ -428,7 +437,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION_FEATURE_COUNT = 20;
+  int ACTOR_DEFINITION_FEATURE_COUNT = 21;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.DataflowBodyImpl <em>Dataflow Body</em>}' class.
@@ -1963,6 +1972,17 @@ public interface KdlPackage extends EPackage
   EAttribute getActorDefinition_Docstring();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getLabel <em>Label</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Label</em>'.
+   * @see org.integratedmodelling.kdl.kdl.ActorDefinition#getLabel()
+   * @see #getActorDefinition()
+   * @generated
+   */
+  EAttribute getActorDefinition_Label();
+
+  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getBody <em>Body</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -3480,6 +3500,14 @@ public interface KdlPackage extends EPackage
      * @generated
      */
     EAttribute ACTOR_DEFINITION__DOCSTRING = eINSTANCE.getActorDefinition_Docstring();
+
+    /**
+     * The meta object literal for the '<em><b>Label</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ACTOR_DEFINITION__LABEL = eINSTANCE.getActorDefinition_Label();
 
     /**
      * The meta object literal for the '<em><b>Body</b></em>' containment reference feature.
