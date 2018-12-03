@@ -10,7 +10,9 @@ import org.eclipse.elk.alg.layered.options.LayeredMetaDataProvider;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.SizeConstraint;
@@ -37,15 +39,9 @@ import org.jgrapht.graph.DefaultEdge;
 public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, DefaultEdge> {
 
 	String id = NameGenerator.shortUUID();
-	private ElkGraphFactory elk = ElkGraphFactory.eINSTANCE;
+	private KlabElkGraphFactory kelk = KlabElkGraphFactory.keINSTANCE;
 	private Map<String, ElkNode> nodes = new HashMap<>();
 	String json = null;
-	static LayoutMetaDataService service;
-
-	static {
-		service = LayoutMetaDataService.getInstance();
-		service.registerLayoutMetaDataProviders(new LayeredMetaDataProvider());
-	}
 
 	public ContextualizationStrategy() {
 		super(DefaultEdge.class);
@@ -74,22 +70,13 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 	public String getElkGraph() {
 
 		if (json == null) {
-			ElkNode root = elk.createElkNode();
-			root.setIdentifier(id);
-			// root.setProperty(CoreOptions.ALGORITHM, "elk.layered");
-			// root.setProperty(CoreOptions.NODE_SIZE_MINIMUM, new KVector(50,50));
-			root.setProperty(LayeredOptions.HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN);
-			root.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS,
-					SizeConstraint.PORT_LABELS, SizeConstraint.PORTS, SizeConstraint.MINIMUM_SIZE));
-			root.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.outsideTopLeft());
-			// root.setProperty(CoreOptions.NODE_SIZE_OPTIONS,
-			// EnumSet.of(SizeOptions.OUTSIDE_NODE_LABELS_OVERHANG))
+			ElkNode root = kelk.createGraph(id);
 			
 			// new nodes
 			for (Dataflow df : rootNodes) {
-					DataflowGraph graph = new KExplorerDataflowGraph(df, nodes);
-					// TODO children - recurse
-					root.getChildren().add(graph.getRootNode());
+				DataflowGraph graph = new DataflowGraph(df, nodes, kelk);
+				// TODO children - recurse
+				root.getChildren().add(graph.getRootNode());
 			}
 
 			// This produces a layout, although I can't get it to visualize so I don't know
