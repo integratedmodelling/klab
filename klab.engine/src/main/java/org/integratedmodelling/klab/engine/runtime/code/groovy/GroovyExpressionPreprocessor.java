@@ -480,8 +480,26 @@ public class GroovyExpressionPreprocessor {
 				return new TokenDescriptor(KNOWN_MODEL_OBJECT, o.getName());
 			}
 		}
+		
+		if (context == null && isValidIdentifier(currentToken)) {
+			return new TokenDescriptor(KNOWN_ID, currentToken);
+		}
 
-		return new TokenDescriptor(context == null ? KNOWN_ID : UNKNOWN_ID, currentToken);
+		return new TokenDescriptor(UNKNOWN_ID, currentToken);
+	}
+
+	/*
+	 * Used only when context is null to discriminate identifiers without a
+	 * list of known ones. The definition is quite restrictive.
+	 */
+	private boolean isValidIdentifier(String token) {
+		for (int i = 0; i < token.length(); i++) {
+			char c = token.charAt(i);
+			if ((c < 'a' || c > 'z') && !(c == '_')) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private String translateModelObject(String o) {
