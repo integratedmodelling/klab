@@ -105,7 +105,7 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 
 						Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + token,
 								scope);
-						
+
 						dataflow.setDescription(taskDescription);
 
 						System.out.println(dataflow.getKdlCode());

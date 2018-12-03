@@ -80,6 +80,7 @@ public enum Klab implements IRuntimeService {
 	private Klab() {
 		rootMonitor = new RootMonitor();
 		setupExtensions();
+		Services.INSTANCE.registerService(this, IRuntimeService.class);
 	}
 
 	public void setNetworkServiceApplication(Runnable runnable) {

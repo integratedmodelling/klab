@@ -7,6 +7,7 @@
 
 export number fillsinks
 	"Fills any hydrological sink in a DEM observation, producing a hydrologically corrected DEM."
+	label 'Fill hydrological sinks'
 {
 	import number elevation
 		"The DEM to correct"
@@ -17,6 +18,7 @@ export number fillsinks
 export number flowdirections
 	"Import a hydrologically corrected DEM and produce flow directions using configurable methods. For now
 	 only D8 is supported."
+	 label 'Compute flow direction'
 {
 	import number hydrologically_corrected_elevation
 		"A hydrologically corrected DEM with no areas where water can pool"
@@ -31,6 +33,7 @@ export number flowdirections
 export number flowaccumulation
 	"Import a hydrologically corrected DEM and produce flow directions using configurable methods. For now
 	 only D8 is supported."
+	 label 'Accumulate upstream flow'
 {
 	import number flow_directions_d8
 		"The D8 numeric code for flow direction"
@@ -45,6 +48,7 @@ export number flowaccumulation
 export boolean streamnetwork
 	"Extracts the stream network as a raster indicating presence of a stream, using a cutoff threshold
 	 on the percentage of drainage cells."
+	 label 'Extract stream network'
 {
 	import number upstream_cell_count
 		"An observation of the number of cells draining into each cell"
@@ -61,6 +65,7 @@ export object extractoutlets
 	"Extracts one or more outlets from a DEM based on flow directions and total contributing area 
 	 in order of decreasing drainage area. Number of outlets and a threshold of minimum
 	 drainage coverage can be used to only extract the outlets of the major basin(s)."
+	 label 'Extract outlets'
 {
 	import number flow_directions_d8
 		"The D8 numeric code for flow direction"

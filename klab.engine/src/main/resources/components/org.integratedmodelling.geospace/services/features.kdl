@@ -4,6 +4,7 @@
 
 export object extract 
 	"Extract polygonal features from a raster map based on clumping of its values."
+	label 'Vectorize into features'
 {
 	optional input select
 		"Pass an expression that will return true or false per each point in the spatial context, 

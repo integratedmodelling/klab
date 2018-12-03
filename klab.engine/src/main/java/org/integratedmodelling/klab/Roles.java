@@ -18,6 +18,10 @@ public enum Roles implements IRoleService {
 
 	INSTANCE;
 
+	private Roles() {
+		Services.INSTANCE.registerService(this, IRoleService.class);
+	}
+	
 	@Override
 	public Collection<IConcept> getRoles(IConcept concept) {
 		return OWL.INSTANCE.getRestrictedClasses(concept, Concepts.p(NS.HAS_ROLE_PROPERTY));

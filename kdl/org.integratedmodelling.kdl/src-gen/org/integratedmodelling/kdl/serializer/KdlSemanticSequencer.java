@@ -167,6 +167,7 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *             (name=LOWERCASE_ID | name=LOWERCASE_DASHID | name=STRING) 
 	 *             (targets+=TARGET targets+=TARGET*)? 
 	 *             docstring=STRING? 
+	 *             label=STRING? 
 	 *             body=DataflowBody? 
 	 *             localName=LOWERCASE_ID? 
 	 *             (coverage+=Function coverage+=Function*)?
@@ -184,6 +185,7 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *             (name=LOWERCASE_ID | name=LOWERCASE_DASHID | name=STRING) 
 	 *             (enumValues+=UPPERCASE_ID enumValues+=UPPERCASE_ID*)? 
 	 *             docstring=STRING 
+	 *             label=STRING? 
 	 *             default=Value? 
 	 *             body=DataflowBody? 
 	 *             (rangeMin=Number | rangeMax=Number | (rangeMin=Number rangeMax=Number))?

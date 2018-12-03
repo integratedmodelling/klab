@@ -47,6 +47,10 @@ public enum Concepts implements IConceptService {
 
 	INSTANCE;
 
+	private Concepts() {
+		Services.INSTANCE.registerService(this, IConceptService.class);
+	}
+	
 	@Override
 	public IProperty getProperty(String propertyId) {
 		return OWL.INSTANCE.getProperty(propertyId);

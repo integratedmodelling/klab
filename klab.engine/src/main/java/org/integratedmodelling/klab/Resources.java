@@ -146,6 +146,10 @@ public enum Resources implements IResourceService {
 	 */
 	private IWorkspace common;
 
+	private Resources() {
+		Services.INSTANCE.registerService(this, IResourceService.class);
+	}
+	
 	@Override
 	public IWorkspace getLocalWorkspace() {
 		return local;

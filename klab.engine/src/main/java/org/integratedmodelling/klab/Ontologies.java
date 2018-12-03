@@ -8,6 +8,10 @@ import org.integratedmodelling.klab.owl.Ontology;
 public enum Ontologies implements IOntologyService {
     INSTANCE;
     
+	private Ontologies() {
+		Services.INSTANCE.registerService(this, IOntologyService.class);
+	}
+	
     @Override
     public Ontology require(String name) {
         return OWL.INSTANCE.requireOntology(name, OWL.INTERNAL_ONTOLOGY_PREFIX);    

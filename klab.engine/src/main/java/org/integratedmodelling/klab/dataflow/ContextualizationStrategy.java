@@ -10,13 +10,10 @@ import org.eclipse.elk.alg.layered.options.LayeredMetaDataProvider;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
-import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
-import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.SizeConstraint;
-import org.eclipse.elk.core.options.SizeOptions;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.graph.ElkGraphFactory;
 import org.eclipse.elk.graph.ElkNode;
@@ -82,33 +79,28 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 			// root.setProperty(CoreOptions.ALGORITHM, "elk.layered");
 			// root.setProperty(CoreOptions.NODE_SIZE_MINIMUM, new KVector(50,50));
 			root.setProperty(LayeredOptions.HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN);
-			root.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS, SizeConstraint.PORT_LABELS, SizeConstraint.PORTS, SizeConstraint.MINIMUM_SIZE));
+			root.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS,
+					SizeConstraint.PORT_LABELS, SizeConstraint.PORTS, SizeConstraint.MINIMUM_SIZE));
 			root.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.outsideTopLeft());
-			// root.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.OUTSIDE_NODE_LABELS_OVERHANG));
+			// root.setProperty(CoreOptions.NODE_SIZE_OPTIONS,
+			// EnumSet.of(SizeOptions.OUTSIDE_NODE_LABELS_OVERHANG))
 			
-			
-
+			// new nodes
 			for (Dataflow df : rootNodes) {
-				DataflowGraph graph = new KExplorerDataflowGraph(df, nodes);
-				// TODO children - recurse
-				root.getChildren().add(graph.getRootNode());
+					DataflowGraph graph = new KExplorerDataflowGraph(df, nodes);
+					// TODO children - recurse
+					root.getChildren().add(graph.getRootNode());
 			}
 
-			
-			// This produces a layout, although I can't get it to visualize so I don't know if it sucks or not.
+			// This produces a layout, although I can't get it to visualize so I don't know
+			// if it sucks or not.
 			// Uncomment the next two to produce the layout.
 			RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
 			engine.layout(root, new BasicProgressMonitor());
 
-			// TODO these options are copied from the docs without thinking
-			json = ElkGraphJson.forGraph(root)
-					.omitLayout(false)
-					.omitZeroDimension(true)
-					.omitZeroPositions(true)
-					.shortLayoutOptionKeys(true)
-					.prettyPrint(true)
-					.toJson();
-			
+			json = ElkGraphJson.forGraph(root).omitLayout(false).omitZeroDimension(true).omitZeroPositions(true)
+					.shortLayoutOptionKeys(true).prettyPrint(true).toJson();
+
 			System.out.println(json);
 		}
 

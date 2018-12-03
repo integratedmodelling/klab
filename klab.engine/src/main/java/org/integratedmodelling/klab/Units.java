@@ -2,8 +2,10 @@ package org.integratedmodelling.klab;
 
 import java.io.PrintStream;
 import java.util.Collection;
+
 import javax.measure.unit.Dimension;
 import javax.measure.unit.ProductUnit;
+
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
@@ -28,6 +30,10 @@ public enum Units implements IUnitService {
 		return Unit.create(string);
 	}
 
+	private Units() {
+		Services.INSTANCE.registerService(this, IUnitService.class);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

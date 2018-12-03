@@ -40,6 +40,10 @@ public enum Annotations implements IAnnotationService {
 	 * The global instance singleton.
 	 */
 	INSTANCE;
+	
+	private Annotations() {
+		Services.INSTANCE.registerService(this, IAnnotationService.class);
+	}
 
 	/**
 	 * To be implemented by the handlers of annotations mentioned in the

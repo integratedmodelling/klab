@@ -8,6 +8,7 @@
 
 export number 'distance'
 	"Return a dereifying resolver turning a countable artifact into a spatial distance coverage"
+	label 'Compute distance from features'
 {
 	
 	import object artifact
@@ -22,6 +23,7 @@ export number 'distance'
 
 export number 'presence'
 	"Return a dereifying resolver turning a countable artifact into a presence coverage"
+	label 'Compute presence of features'
 {
 	import object artifact
 		"The artifact being dereified"
@@ -32,6 +34,7 @@ export number 'presence'
 
 export number density
 	"Return a dereifying resolver turning a countable artifact into a density coverage"
+	label 'Compute density of features'
 {
 	import object artifact
 		"The artifact being dereified"

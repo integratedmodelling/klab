@@ -35,6 +35,10 @@ public enum Network implements INetworkService {
 
 	Client client = Client.create();
 
+	private Network() {
+		Services.INSTANCE.registerService(this, INetworkService.class);
+	}
+	
 	@Override
 	public Collection<INodeIdentity> getNodes() {
 		return new HashSet<>(onlineNodes.values());

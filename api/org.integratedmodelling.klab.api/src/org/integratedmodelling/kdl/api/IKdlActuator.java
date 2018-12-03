@@ -35,6 +35,12 @@ public interface IKdlActuator extends IKdlStatement {
   Type getType();
 
   /**
+   * Optional label for display and provenance records
+   * @return the label
+   */
+  String getLabel();
+  
+  /**
    * Return the declared type of the empty observation that must be created at this step, if any.
    * Alternative to {@link IKdlActuator#getNewObservationUrn()} - if one is not null, the other will
    * be. Both can be null (e.g. in instantiating actuators).

@@ -37,6 +37,7 @@ public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression
 	IExpression condition = null;
 	IGeometry geometry = null;
 	boolean isScalar;
+	IComputableResource resource = null;
 
 	// don't remove - only used as expression
 	public ExpressionResolver() {

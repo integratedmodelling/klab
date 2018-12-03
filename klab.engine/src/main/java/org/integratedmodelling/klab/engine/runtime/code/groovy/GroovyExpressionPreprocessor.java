@@ -218,7 +218,8 @@ public class GroovyExpressionPreprocessor {
 				// if we are translating for a quality context and the var is used with scalar
 				// semantics, we just output the var name
 				IKimConcept.Type type = getIdentifierType(ret, context);
-				if (!(context != null && (type == IKimConcept.Type.QUALITY || type == IKimConcept.Type.TRAIT) && !methodCall)) {
+				if (!(context != null && (type == IKimConcept.Type.QUALITY || type == IKimConcept.Type.TRAIT)
+						&& !methodCall)) {
 					ret = translateParameter(ret);
 				}
 				break;
@@ -338,12 +339,17 @@ public class GroovyExpressionPreprocessor {
 	}
 
 	public IKimConcept.Type getIdentifierType(String ret, IRuntimeContext context) {
+
+		if (context == null) {
+			return IKimConcept.Type.VALUE;
+		}
+
 		if (ret.equals("self")) {
 			return context.getArtifactType();
 		}
 		IArtifact artifact = context.getArtifact(ret);
 		if (artifact instanceof IObservation) {
-			return Observables.INSTANCE.getObservableType(((IObservation)artifact).getObservable(), true);
+			return Observables.INSTANCE.getObservableType(((IObservation) artifact).getObservable(), true);
 		}
 		return IKimConcept.Type.OBSERVABLE;
 	}
@@ -475,7 +481,7 @@ public class GroovyExpressionPreprocessor {
 			}
 		}
 
-		return new TokenDescriptor(UNKNOWN_ID, currentToken);
+		return new TokenDescriptor(context == null ? KNOWN_ID : UNKNOWN_ID, currentToken);
 	}
 
 	private String translateModelObject(String o) {

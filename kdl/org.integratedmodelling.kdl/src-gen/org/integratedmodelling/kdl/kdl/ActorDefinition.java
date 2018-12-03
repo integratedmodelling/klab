@@ -29,6 +29,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getTargets <em>Targets</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getDocstring <em>Docstring</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getLabel <em>Label</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getBody <em>Body</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getLocalName <em>Local Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getCoverage <em>Coverage</em>}</li>
@@ -361,6 +362,32 @@ public interface ActorDefinition extends EObject
    * @generated
    */
   void setDocstring(String value);
+
+  /**
+   * Returns the value of the '<em><b>Label</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Label</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Label</em>' attribute.
+   * @see #setLabel(String)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Label()
+   * @model
+   * @generated
+   */
+  String getLabel();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getLabel <em>Label</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Label</em>' attribute.
+   * @see #getLabel()
+   * @generated
+   */
+  void setLabel(String value);
 
   /**
    * Returns the value of the '<em><b>Body</b></em>' containment reference.

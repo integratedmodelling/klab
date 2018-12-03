@@ -44,11 +44,13 @@ public enum Extensions implements IExtensionService {
 	 */
 	INSTANCE;
 
-	public static final String DEFAULT_EXPRESSION_LANGUAGE = "groovy";
-
 	Map<String, IComponent> components = Collections.synchronizedMap(new HashMap<>());
 	Map<String, Prototype> prototypes = Collections.synchronizedMap(new HashMap<>());
 
+	private Extensions() {
+		Services.INSTANCE.registerService(this, IExtensionService.class);
+	}
+	
 	@Override
 	public Collection<IComponent> getComponents() {
 		return components.values();
@@ -75,9 +77,9 @@ public enum Extensions implements IExtensionService {
 		ret.initialize(Klab.INSTANCE.getRootMonitor());
 
 		for (IPrototype service : ret.getAPI()) {
-			prototypes.put(service.getName(), (Prototype)service);
+			prototypes.put(service.getName(), (Prototype) service);
 		}
-		
+
 		Logging.INSTANCE
 				.info("Component " + ret.getName() + " initialized: " + ret.getAPI().size() + " services provided");
 
@@ -207,15 +209,15 @@ public enum Extensions implements IExtensionService {
 		return ret;
 	}
 
-	public IExpression compileExpression(String expressionCode, String language) throws KlabValidationException {
+	public IExpression compileExpression(String expressionCode, String language) {
 		return getLanguageProcessor(language).compile(expressionCode, null);
 	}
 
-	public IExpression compileExpression(String expressionCode, IComputationContext context, String language)
-			throws KlabValidationException {
+	public IExpression compileExpression(String expressionCode, IComputationContext context, String language) {
 		return getLanguageProcessor(language).compile(expressionCode, context);
 	}
 
+	@Override
 	public ILanguageProcessor getLanguageProcessor(String language) {
 		// TODO
 		return (language == null || language.equals(DEFAULT_EXPRESSION_LANGUAGE)) ? GroovyProcessor.INSTANCE : null;
@@ -257,6 +259,29 @@ public enum Extensions implements IExtensionService {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * A short descriptive text for the service as called, created using the
+	 * prototype label, if any, with interpolation of parameter values if warranted.
+	 * If the prototype has no label, return the service name.
+	 * 
+	 * @return a descriptive label. Never null.
+	 */
+	public String getServiceLabel(IServiceCall call) {
+		IPrototype prototype = getPrototype(call.getName());
+		if (prototype == null || prototype.getLabel() == null) {
+			return call.getName();
+		}
+		String ret = prototype.getLabel();
+		if (ret.contains("$")) {
+			for (String s : call.getParameters().keySet()) {
+				if (ret.contains("$" + s)) {
+					ret = ret.replace("$" + s, call.getParameters().get(s).toString());
+				}
+			}
+		}
+		return ret;
 	}
 
 }

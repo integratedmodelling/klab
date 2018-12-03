@@ -17,6 +17,10 @@ public enum Documentation implements IDocumentationService {
 
     INSTANCE;
     
+	private Documentation() {
+		Services.INSTANCE.registerService(this, IDocumentationService.class);
+	}
+	
     private Map<String, org.integratedmodelling.klab.documentation.Documentation> catalog = Collections.synchronizedMap(new HashMap<>());
 
     @Override

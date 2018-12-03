@@ -7,8 +7,8 @@ public enum Currencies implements ICurrencyService {
 
     INSTANCE;
     
-    Currencies() {
-        // TODO Auto-generated constructor stub
+	private Currencies() {
+		Services.INSTANCE.registerService(this, ICurrencyService.class);
     }
 
     @Override
