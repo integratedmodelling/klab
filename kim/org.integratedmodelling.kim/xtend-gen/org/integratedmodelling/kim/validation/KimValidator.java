@@ -1373,10 +1373,10 @@ public class KimValidator extends AbstractKimValidator {
       }
       this.copyInheritableFlags(flags, type);
     }
-    ConceptDeclaration _motivation = declaration.getMotivation();
-    boolean _tripleNotEquals_5 = (_motivation != null);
+    ConceptDeclaration _adjacent = declaration.getAdjacent();
+    boolean _tripleNotEquals_5 = (_adjacent != null);
     if (_tripleNotEquals_5) {
-      flags = this.checkDeclaration(declaration.getMotivation());
+      flags = this.checkDeclaration(declaration.getAdjacent());
       boolean _isEmpty_6 = flags.isEmpty();
       if (_isEmpty_6) {
         type.clear();
@@ -1384,17 +1384,49 @@ public class KimValidator extends AbstractKimValidator {
         boolean _contains_8 = flags.contains(IKimConcept.Type.MACRO);
         boolean _not_13 = (!_contains_8);
         if (_not_13) {
-          if (((macro != null) && macro.getFields().contains(IKimMacro.Field.GOAL))) {
-            IKimMacro.FieldType rtype_5 = macro.getType(IKimMacro.Field.GOAL);
+          if (((macro != null) && macro.getFields().contains(IKimMacro.Field.ADJACENT))) {
+            IKimMacro.FieldType rtype_5 = macro.getType(IKimMacro.Field.ADJACENT);
             EnumSet<IKimConcept.Type> ctype_5 = Kim.intersection(rtype_5.getType(), flags);
             boolean _containsAll_5 = ctype_5.containsAll(rtype_5.getType());
             boolean _not_14 = (!_containsAll_5);
             if (_not_14) {
               String _name_5 = macro.getName();
-              String _plus_10 = ("The goal type (for) does not match the type requested by the " + _name_5);
+              String _plus_10 = ("The adjacent type (adjacent to) does not match the type requested by the " + _name_5);
               String _plus_11 = (_plus_10 + 
                 " macro");
-              this.error(_plus_11, declaration.getMotivation(), null, KimPackage.CONCEPT_DECLARATION__MOTIVATION);
+              this.error(_plus_11, declaration.getAdjacent(), null, KimPackage.CONCEPT_DECLARATION__ADJACENT);
+              error = true;
+            } else {
+              macro.setField(IKimMacro.Field.ADJACENT, declaration.getAdjacent());
+            }
+          } else {
+          }
+        }
+      }
+      this.copyInheritableFlags(flags, type);
+    }
+    ConceptDeclaration _motivation = declaration.getMotivation();
+    boolean _tripleNotEquals_6 = (_motivation != null);
+    if (_tripleNotEquals_6) {
+      flags = this.checkDeclaration(declaration.getMotivation());
+      boolean _isEmpty_7 = flags.isEmpty();
+      if (_isEmpty_7) {
+        type.clear();
+      } else {
+        boolean _contains_9 = flags.contains(IKimConcept.Type.MACRO);
+        boolean _not_15 = (!_contains_9);
+        if (_not_15) {
+          if (((macro != null) && macro.getFields().contains(IKimMacro.Field.GOAL))) {
+            IKimMacro.FieldType rtype_6 = macro.getType(IKimMacro.Field.GOAL);
+            EnumSet<IKimConcept.Type> ctype_6 = Kim.intersection(rtype_6.getType(), flags);
+            boolean _containsAll_6 = ctype_6.containsAll(rtype_6.getType());
+            boolean _not_16 = (!_containsAll_6);
+            if (_not_16) {
+              String _name_6 = macro.getName();
+              String _plus_12 = ("The goal type (for) does not match the type requested by the " + _name_6);
+              String _plus_13 = (_plus_12 + 
+                " macro");
+              this.error(_plus_13, declaration.getMotivation(), null, KimPackage.CONCEPT_DECLARATION__MOTIVATION);
               error = true;
             } else {
               macro.setField(IKimMacro.Field.GOAL, declaration.getMotivation());
@@ -1406,35 +1438,35 @@ public class KimValidator extends AbstractKimValidator {
       this.copyInheritableFlags(flags, type);
     }
     ConceptDeclaration _during = declaration.getDuring();
-    boolean _tripleNotEquals_6 = (_during != null);
-    if (_tripleNotEquals_6) {
+    boolean _tripleNotEquals_7 = (_during != null);
+    if (_tripleNotEquals_7) {
       flags = this.checkDeclaration(declaration.getDuring());
-      boolean _isEmpty_7 = flags.isEmpty();
-      if (_isEmpty_7) {
+      boolean _isEmpty_8 = flags.isEmpty();
+      if (_isEmpty_8) {
         type.clear();
       } else {
-        boolean _contains_9 = flags.contains(IKimConcept.Type.MACRO);
-        boolean _not_15 = (!_contains_9);
-        if (_not_15) {
+        boolean _contains_10 = flags.contains(IKimConcept.Type.MACRO);
+        boolean _not_17 = (!_contains_10);
+        if (_not_17) {
           if (((macro != null) && macro.getFields().contains(IKimMacro.Field.COOCCURRENT))) {
-            IKimMacro.FieldType rtype_6 = macro.getType(IKimMacro.Field.COOCCURRENT);
-            EnumSet<IKimConcept.Type> ctype_6 = Kim.intersection(rtype_6.getType(), flags);
-            boolean _containsAll_6 = ctype_6.containsAll(rtype_6.getType());
-            boolean _not_16 = (!_containsAll_6);
-            if (_not_16) {
-              String _name_6 = macro.getName();
-              String _plus_12 = ("The co-occurrent type (for) does not match the type requested by the " + _name_6);
-              String _plus_13 = (_plus_12 + 
+            IKimMacro.FieldType rtype_7 = macro.getType(IKimMacro.Field.COOCCURRENT);
+            EnumSet<IKimConcept.Type> ctype_7 = Kim.intersection(rtype_7.getType(), flags);
+            boolean _containsAll_7 = ctype_7.containsAll(rtype_7.getType());
+            boolean _not_18 = (!_containsAll_7);
+            if (_not_18) {
+              String _name_7 = macro.getName();
+              String _plus_14 = ("The co-occurrent type (for) does not match the type requested by the " + _name_7);
+              String _plus_15 = (_plus_14 + 
                 " macro");
-              this.error(_plus_13, declaration.getMotivation(), null, KimPackage.CONCEPT_DECLARATION__MOTIVATION);
+              this.error(_plus_15, declaration.getMotivation(), null, KimPackage.CONCEPT_DECLARATION__MOTIVATION);
               error = true;
             } else {
               macro.setField(IKimMacro.Field.COOCCURRENT, declaration.getMotivation());
             }
           } else {
-            boolean _contains_10 = flags.contains(IKimConcept.Type.EVENT);
-            boolean _not_17 = (!_contains_10);
-            if (_not_17) {
+            boolean _contains_11 = flags.contains(IKimConcept.Type.EVENT);
+            boolean _not_19 = (!_contains_11);
+            if (_not_19) {
               this.error("The co-occurrent type (during) must be an event", declaration.getContext(), null, 
                 KimPackage.CONCEPT_DECLARATION__CONTEXT);
             }
@@ -1443,22 +1475,22 @@ public class KimValidator extends AbstractKimValidator {
       }
       this.copyInheritableFlags(flags, type);
     }
-    boolean _isEmpty_8 = type.isEmpty();
-    boolean _not_18 = (!_isEmpty_8);
-    if (_not_18) {
+    boolean _isEmpty_9 = type.isEmpty();
+    boolean _not_20 = (!_isEmpty_9);
+    if (_not_20) {
       int i = 0;
       EList<ConceptDeclaration> _operands = declaration.getOperands();
       for (final ConceptDeclaration operand : _operands) {
         {
           EnumSet<IKimConcept.Type> otype = this.checkDeclaration(operand);
           boolean _isCompatible = Kim.isCompatible(type, otype);
-          boolean _not_19 = (!_isCompatible);
-          if (_not_19) {
+          boolean _not_21 = (!_isCompatible);
+          if (_not_21) {
             String _get = declaration.getOperators().get(i);
-            String _plus_14 = ("Operands in the \'" + _get);
-            String _plus_15 = (_plus_14 + 
+            String _plus_16 = ("Operands in the \'" + _get);
+            String _plus_17 = (_plus_16 + 
               "\' expression are of incompatible types");
-            this.error(_plus_15, operand, 
+            this.error(_plus_17, operand, 
               KimPackage.Literals.CONCEPT_DECLARATION__OPERANDS, i);
             error = true;
           }

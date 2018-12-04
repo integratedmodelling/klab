@@ -668,4 +668,10 @@ public class Shape extends AbstractExtent implements IShape {
 		return create(geom, projection);
 	}
 
+	@Override
+	public IShape difference(IShape shape) {
+		Geometry geom = this.geometry.difference(((Shape)shape).getJTSGeometry());
+		return create(geom, projection);
+	}
+
 }

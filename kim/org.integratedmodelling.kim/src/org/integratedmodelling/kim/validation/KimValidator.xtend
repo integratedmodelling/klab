@@ -1094,6 +1094,32 @@ class KimValidator extends AbstractKimValidator {
 				}
 				copyInheritableFlags(flags, type);
 			}
+			
+			if (declaration.adjacent !== null) {
+				flags = checkDeclaration(declaration.adjacent)
+				if (flags.isEmpty) {
+					type.clear
+				} else if (!flags.contains(Type.MACRO)) {
+					if (macro !== null && macro.fields.contains(Field.ADJACENT)) {
+						// check against required field type
+						var rtype = macro.getType(Field.ADJACENT);
+						var ctype = Kim.intersection(rtype.type, flags)
+						if (!ctype.containsAll(rtype.type)) {
+							error("The adjacent type (adjacent to) does not match the type requested by the " + macro.name +
+								" macro", declaration.adjacent, null, KimPackage.CONCEPT_DECLARATION__ADJACENT)
+							error = true
+						} else {
+							macro.setField(Field.ADJACENT, declaration.adjacent)
+						}
+					} else {
+//					if (!flags.contains(Type.COUNTABLE)) {
+//						error("The context type (within) must be a subject, event or relationship",
+//							declaration.context, null, KimPackage.CONCEPT_DECLARATION__CONTEXT)
+//					}
+					}
+				}
+				copyInheritableFlags(flags, type);
+			}
 			if (declaration.motivation !== null) {
 				flags = checkDeclaration(declaration.motivation)
 				if (flags.isEmpty) {
