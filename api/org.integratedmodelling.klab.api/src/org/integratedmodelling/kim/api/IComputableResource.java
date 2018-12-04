@@ -6,6 +6,8 @@ import java.util.Map;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.dataflow.IDataflowNode;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -28,7 +30,7 @@ import org.integratedmodelling.klab.utils.Pair;
  * @author Ferd
  *
  */
-public interface IComputableResource extends IKimStatement {
+public interface IComputableResource extends IKimStatement, IDataflowNode {
 
 	/**
 	 * The target observable for this computation; null if the target is the main
@@ -42,7 +44,7 @@ public interface IComputableResource extends IKimStatement {
 
 	/**
 	 * The target artifact ID when this computation is a mediation. In this case the
-	 * computation means "send this artifact through this mediator". 
+	 * computation means "send this artifact through this mediator".
 	 * <p>
 	 * This may be merged with getTarget() at some point as the use cases for it are
 	 * similar.
@@ -165,13 +167,13 @@ public interface IComputableResource extends IKimStatement {
 	Pair<IValueMediator, IValueMediator> getConversion();
 
 	/**
-	 * Add the resolution mode from the originating model to disambiguate resources that
-	 * can be used in more than one.
+	 * Add the resolution mode from the originating model to disambiguate resources
+	 * that can be used in more than one.
 	 * 
 	 * @return
 	 */
 	public Mode getComputationMode();
-	
+
 	/**
 	 * Only meaningful if this computable is a condition computing a (scalar or
 	 * distributed) boolean, this specifies whether this condition was given with

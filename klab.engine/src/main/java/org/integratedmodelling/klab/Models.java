@@ -66,6 +66,7 @@ public enum Models implements IModelService {
 			injector.injectMembers(this);
 		}
 		this.kbox = ModelKbox.create(KBOX_NAME);
+		Services.INSTANCE.registerService(this, IModelService.class);
 	}
 
 	@Override

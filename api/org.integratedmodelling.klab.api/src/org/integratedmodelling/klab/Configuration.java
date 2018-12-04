@@ -83,6 +83,8 @@ public enum Configuration implements IConfigurationService {
 		} catch (Exception e) {
 			throw new KlabIOException("cannot read configuration properties");
 		}
+		
+		Services.INSTANCE.registerService(this, IConfigurationService.class);
 	}
 
 	/** {@inheritDoc} */

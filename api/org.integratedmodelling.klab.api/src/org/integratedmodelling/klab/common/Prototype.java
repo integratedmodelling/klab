@@ -143,6 +143,15 @@ public class Prototype implements IPrototype {
 	protected Geometry geometry;
 	protected boolean distributed;
 	protected boolean contextualizer;
+	protected String label = null;
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
 
 	public void setName(String name) {
 		this.name = name;

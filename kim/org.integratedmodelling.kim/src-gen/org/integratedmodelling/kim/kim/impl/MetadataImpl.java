@@ -250,7 +250,7 @@ public class MetadataImpl extends DocumentationImpl implements Metadata
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuilder result = new StringBuilder(super.toString());
+    StringBuffer result = new StringBuffer(super.toString());
     result.append(" (ids: ");
     result.append(ids);
     result.append(')');

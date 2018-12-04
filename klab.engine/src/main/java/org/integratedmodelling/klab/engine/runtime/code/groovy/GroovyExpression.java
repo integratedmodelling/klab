@@ -312,7 +312,8 @@ public class GroovyExpression extends Expression {
 		if (outputs != null) {
 			knownKeys.addAll(outputs.keySet());
 		}
-		GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace, knownKeys, domain, runtimeContext);
+		GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace, knownKeys, domain,
+				runtimeContext, true);
 		this.preprocessed = processor.process(code);
 		this.errors.addAll(processor.getErrors());
 

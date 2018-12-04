@@ -32,7 +32,7 @@ import org.integratedmodelling.kim.api.IComputableResource;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface IActuator {
+public interface IActuator extends IDataflowNode {
 
     /**
      * All actuators have a name. References may provide a different name for the same actuator.

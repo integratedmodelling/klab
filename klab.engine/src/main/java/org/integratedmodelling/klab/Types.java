@@ -8,7 +8,6 @@ import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.model.Kim;
-import org.integratedmodelling.kim.model.KimConcept;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -22,7 +21,6 @@ import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.data.classification.Classifier;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
-import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Axiom;
 import org.integratedmodelling.klab.owl.Concept;
@@ -70,6 +68,10 @@ public enum Types implements ITypeService {
 
 	INSTANCE;
 
+	private Types() {
+		Services.INSTANCE.registerService(this, ITypeService.class);
+	}
+	
 	/**
 	 * Return a (flat) list of all children up to the passed level of detail, using
 	 * the model object (stated) hierarchy and keeping the order of declaration

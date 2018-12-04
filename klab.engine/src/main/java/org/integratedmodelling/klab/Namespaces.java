@@ -16,6 +16,10 @@ public enum Namespaces implements INamespaceService {
 
     private Map<String, Namespace> namespaces = Collections.synchronizedMap(new HashMap<>());
 
+    private Namespaces() {
+		Services.INSTANCE.registerService(this, INamespaceService.class);
+    }
+    
     @Override
     public Namespace getNamespace(String namespaceId) {
         return namespaces.get(namespaceId);

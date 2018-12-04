@@ -59,6 +59,7 @@ public enum Observables implements IObservableService {
 		if (injector != null) {
 			injector.injectMembers(this);
 		}
+		Services.INSTANCE.registerService(this, IObservableService.class);
 	}
 
 	@Override

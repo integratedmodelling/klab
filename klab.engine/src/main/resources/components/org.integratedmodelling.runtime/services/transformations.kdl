@@ -2,7 +2,10 @@
 @version 0.10.0
 @namespace klab.data
 
-export number normalize {
+export number normalize 
+	"" 
+	label "Normalize input to [0,1]"
+{
 	
 	import number artifact 
 		"The artifact to normalize"
@@ -10,7 +13,10 @@ export number normalize {
 	class org.integratedmodelling.klab.data.transformations.NormalizingTransformation
 }
 
-export number standardize {
+export number standardize 
+	"" 
+	label "Standardize input"
+{
 	
 	import number artifact 
 		"The artifact to standardize"

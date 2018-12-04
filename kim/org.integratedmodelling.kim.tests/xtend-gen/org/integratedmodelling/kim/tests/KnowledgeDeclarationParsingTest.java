@@ -15,6 +15,7 @@ import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimObservable;
 import org.integratedmodelling.kim.tests.KimInjectorProvider;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -41,6 +42,7 @@ public class KnowledgeDeclarationParsingTest {
    * produces an identical definition.
    */
   @Test
+  @Ignore
   public void testReversal() {
     try {
       for (final String test : KnowledgeDeclarationParsingTest.testsOK) {

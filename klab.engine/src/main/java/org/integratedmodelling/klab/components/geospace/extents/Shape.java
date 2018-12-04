@@ -662,4 +662,10 @@ public class Shape extends AbstractExtent implements IShape {
 		return preparedShape != null ? preparedShape.contains(point) : geometry.contains(point);
 	}
 
+	@Override
+	public IShape buffer(double distance) {
+		Geometry geom = this.geometry.buffer(distance);
+		return create(geom, projection);
+	}
+
 }

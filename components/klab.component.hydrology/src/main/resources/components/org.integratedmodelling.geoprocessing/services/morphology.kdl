@@ -8,6 +8,7 @@
 export concept classifier
 	"Classifies each cell into the numeric category of the containing geological form using 
 	 the Geomorphon algorithm."
+	 label 'Classify terrain morphology'
 {
 	import number elevation
 		"A DEM observation to classify"

@@ -108,4 +108,12 @@ public interface IShape extends IReferenced, ISpace {
      */
     Collection<IShape> getHoles();
 
+    /**
+     * Buffer by passed distance in native projection units.
+     * 
+     * @param bdistance
+     * @return a new shape
+     */
+	IShape buffer(double bdistance);
+
 }

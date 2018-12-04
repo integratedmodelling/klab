@@ -18,53 +18,76 @@ package org.integratedmodelling.klab.api.services;
 import java.util.Collection;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 
 /**
- * This service manages extensions, i.e. components and services that can be added to the system
- * through plug-ins. It also provides the global dictionary for service prototypes and manages their
- * execution from service calls (corresponding to functions in k.IM).
+ * This service manages extensions, i.e. components and services that can be
+ * added to the system through plug-ins. It also provides the global dictionary
+ * for service prototypes and manages their execution from service calls
+ * (corresponding to functions in k.IM).
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
 public interface IExtensionService {
 
-  /**
-   * All components registered with the runtime, active or not.
-   *
-   * @return all components
-   */
-  Collection<IComponent> getComponents();
+	public static final String DEFAULT_EXPRESSION_LANGUAGE = "groovy";
 
-  /**
-   * Return a specific component. If active, it will have already been initialized.
-   *
-   * @param componentId a {@link java.lang.String} object.
-   * @return the component, or null if unknown.
-   */
-  IComponent getComponent(String componentId);
+	/**
+	 * All components registered with the runtime, active or not.
+	 *
+	 * @return all components
+	 */
+	Collection<IComponent> getComponents();
 
-  /**
-   * Return the prototype for the named service or function.
-   *
-   * @param service id
-   * @return a prototype, or null if the service is unknown.
-   */
-  IPrototype getPrototype(String service);
+	/**
+	 * Return a specific component. If active, it will have already been
+	 * initialized.
+	 *
+	 * @param componentId
+	 *            a {@link java.lang.String} object.
+	 * @return the component, or null if unknown.
+	 */
+	IComponent getComponent(String componentId);
 
-  /**
-   * Any k.IM function call stated in k.IM and contained in a k.IM object is executed here.
-   *
-   * @param functionCall a {@link org.integratedmodelling.kim.api.IServiceCall} object.
-   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
-   * @return the return value of the function
-   * @throws KlabResourceNotFoundException if the function is unknown
-   * @throws org.integratedmodelling.klab.exceptions.KlabException if any exception was thrown during evaluation
-   */
-  Object callFunction(IServiceCall functionCall, IMonitor monitor) throws KlabException;
+	/**
+	 * Return the prototype for the named service or function.
+	 *
+	 * @param service
+	 *            id
+	 * @return a prototype, or null if the service is unknown.
+	 */
+	IPrototype getPrototype(String service);
+
+	/**
+	 * Any k.IM function call stated in k.IM and contained in a k.IM object is
+	 * executed here.
+	 *
+	 * @param functionCall
+	 *            a {@link org.integratedmodelling.kim.api.IServiceCall} object.
+	 * @param monitor
+	 *            a
+	 *            {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor}
+	 *            object.
+	 * @return the return value of the function
+	 * @throws KlabResourceNotFoundException
+	 *             if the function is unknown
+	 * @throws org.integratedmodelling.klab.exceptions.KlabException
+	 *             if any exception was thrown during evaluation
+	 */
+	Object callFunction(IServiceCall functionCall, IMonitor monitor) throws KlabException;
+
+	/**
+	 * Get an instance of a language processor appropriate for the passed language.
+	 * Only {@link #DEFAULT_EXPRESSION_LANGUAGE} is guaranteed to not return null.
+	 * 
+	 * @param language
+	 * @return a language processor or null
+	 */
+	ILanguageProcessor getLanguageProcessor(String language);
 
 }

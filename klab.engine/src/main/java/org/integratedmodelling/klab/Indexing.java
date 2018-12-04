@@ -15,6 +15,10 @@ public enum Indexing implements IIndexingService {
 
 	INSTANCE;
 
+	private Indexing() {
+		Services.INSTANCE.registerService(this, IIndexingService.class);
+	}
+	
 	/**
 	 * Get a new, empty context to start a query.
 	 * 

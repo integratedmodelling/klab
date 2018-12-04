@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.services.IAnnotationService;
 import org.integratedmodelling.klab.api.services.IAuthenticationService;
 import org.integratedmodelling.klab.auth.AnonymousEngineCertificate;
 import org.integratedmodelling.klab.auth.Hub;
@@ -98,6 +99,7 @@ public enum Authentication implements IAuthenticationService {
 //			defaultGroups = FileCatalog.create(getClass().getClassLoader().getResource("defaults/groups.json"),
 //					Group.class);
 //		}
+		Services.INSTANCE.registerService(this, IAuthenticationService.class);
 	}
 
 	/**

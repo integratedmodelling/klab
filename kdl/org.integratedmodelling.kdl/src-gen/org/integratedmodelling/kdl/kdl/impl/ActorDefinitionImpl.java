@@ -48,6 +48,7 @@ import org.integratedmodelling.kdl.kdl.Value;
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getTargets <em>Targets</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getDocstring <em>Docstring</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getBody <em>Body</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getLocalName <em>Local Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getCoverage <em>Coverage</em>}</li>
@@ -300,6 +301,26 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
    * @ordered
    */
   protected String docstring = DOCSTRING_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLabel()
+   * @generated
+   * @ordered
+   */
+  protected static final String LABEL_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getLabel() <em>Label</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLabel()
+   * @generated
+   * @ordered
+   */
+  protected String label = LABEL_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getBody() <em>Body</em>}' containment reference.
@@ -688,6 +709,29 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getLabel()
+  {
+    return label;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setLabel(String newLabel)
+  {
+    String oldLabel = label;
+    label = newLabel;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__LABEL, oldLabel, label));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public DataflowBody getBody()
   {
     return body;
@@ -988,6 +1032,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return getTargets();
       case KdlPackage.ACTOR_DEFINITION__DOCSTRING:
         return getDocstring();
+      case KdlPackage.ACTOR_DEFINITION__LABEL:
+        return getLabel();
       case KdlPackage.ACTOR_DEFINITION__BODY:
         return getBody();
       case KdlPackage.ACTOR_DEFINITION__LOCAL_NAME:
@@ -1057,6 +1103,9 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return;
       case KdlPackage.ACTOR_DEFINITION__DOCSTRING:
         setDocstring((String)newValue);
+        return;
+      case KdlPackage.ACTOR_DEFINITION__LABEL:
+        setLabel((String)newValue);
         return;
       case KdlPackage.ACTOR_DEFINITION__BODY:
         setBody((DataflowBody)newValue);
@@ -1134,6 +1183,9 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
       case KdlPackage.ACTOR_DEFINITION__DOCSTRING:
         setDocstring(DOCSTRING_EDEFAULT);
         return;
+      case KdlPackage.ACTOR_DEFINITION__LABEL:
+        setLabel(LABEL_EDEFAULT);
+        return;
       case KdlPackage.ACTOR_DEFINITION__BODY:
         setBody((DataflowBody)null);
         return;
@@ -1195,6 +1247,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return targets != null && !targets.isEmpty();
       case KdlPackage.ACTOR_DEFINITION__DOCSTRING:
         return DOCSTRING_EDEFAULT == null ? docstring != null : !DOCSTRING_EDEFAULT.equals(docstring);
+      case KdlPackage.ACTOR_DEFINITION__LABEL:
+        return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
       case KdlPackage.ACTOR_DEFINITION__BODY:
         return body != null;
       case KdlPackage.ACTOR_DEFINITION__LOCAL_NAME:
@@ -1248,6 +1302,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
     result.append(targets);
     result.append(", docstring: ");
     result.append(docstring);
+    result.append(", label: ");
+    result.append(label);
     result.append(", localName: ");
     result.append(localName);
     result.append(", enumValues: ");
