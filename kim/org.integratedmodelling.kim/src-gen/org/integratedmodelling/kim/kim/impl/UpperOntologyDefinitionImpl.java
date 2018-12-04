@@ -428,7 +428,7 @@ public class UpperOntologyDefinitionImpl extends MinimalEObjectImpl.Container im
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuilder result = new StringBuilder(super.toString());
+    StringBuffer result = new StringBuffer(super.toString());
     result.append(" (agentSpecifier: ");
     result.append(agentSpecifier);
     result.append(", concept: ");

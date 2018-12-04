@@ -74,4 +74,13 @@ public interface IEnvelope extends IReferenced {
      * @return an array of {@link double} objects.
      */
     double[] getCenterCoordinates();
+
+    /**
+     * Return the distance in the original units that corresponds to the passed distance in
+     * meters evaluated in this envelope.
+     * 
+     * @param metersDistance
+     * @return the meters distance converted into native envelope units
+     */
+	double convertDistance(double metersDistance);
 }

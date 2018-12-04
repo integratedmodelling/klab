@@ -361,7 +361,6 @@ public class ComputableResource extends KimStatement implements IComputableResou
 					for (String var : descriptor.getIdentifiers()) {
 						requiredResourceNames.add(new Pair<>(var, Type.VALUE));
 					}
-					
 				}
 			} else if (getLookupTable() != null) {
 				for (String arg : lookupTable.getArguments()) {
