@@ -141,6 +141,7 @@ public class GroovyExpressionPreprocessor {
 	private Set<String> scalarIds = new HashSet<>();
 	List<TokenDescriptor> tokens = new ArrayList<>();
 	IRuntimeContext context;
+	private boolean contextual;
 
 	static final int KNOWLEDGE = 1;
 	static final int DEFINE = 2;
@@ -153,11 +154,12 @@ public class GroovyExpressionPreprocessor {
 	static final int NEWLINE = 9;
 
 	public GroovyExpressionPreprocessor(INamespace currentNamespace, Set<String> knownIdentifiers, IGeometry geometry,
-			IRuntimeContext context) {
+			IRuntimeContext context, boolean contextual) {
 		this.domains = geometry;
 		this.namespace = currentNamespace;
 		this.knownIdentifiers = knownIdentifiers;
 		this.context = context;
+		this.contextual = contextual;
 	}
 
 	public Geometry getInferredGeometry() {
@@ -219,7 +221,7 @@ public class GroovyExpressionPreprocessor {
 				// semantics, we just output the var name
 				IKimConcept.Type type = getIdentifierType(ret, context);
 				if (!(context != null && (type == IKimConcept.Type.QUALITY || type == IKimConcept.Type.TRAIT)
-						&& !methodCall)) {
+						&& !methodCall) && contextual) {
 					ret = translateParameter(ret);
 				}
 				break;
@@ -480,8 +482,8 @@ public class GroovyExpressionPreprocessor {
 				return new TokenDescriptor(KNOWN_MODEL_OBJECT, o.getName());
 			}
 		}
-		
-		if (context == null && isValidIdentifier(currentToken)) {
+
+		if (!contextual && isValidIdentifier(currentToken)) {
 			return new TokenDescriptor(KNOWN_ID, currentToken);
 		}
 
@@ -489,8 +491,8 @@ public class GroovyExpressionPreprocessor {
 	}
 
 	/*
-	 * Used only when context is null to discriminate identifiers without a
-	 * list of known ones. The definition is quite restrictive.
+	 * Used only when context is null to discriminate identifiers without a list of
+	 * known ones. The definition is quite restrictive.
 	 */
 	private boolean isValidIdentifier(String token) {
 		for (int i = 0; i < token.length(); i++) {

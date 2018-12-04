@@ -357,7 +357,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 				if (ext != null) {
 					ILanguageProcessor processor = ext.getLanguageProcessor(
 							language == null ? IExtensionService.DEFAULT_EXPRESSION_LANGUAGE : language);
-					Descriptor descriptor = processor.describe(expression, null);
+					Descriptor descriptor = processor.describe(expression);
 					for (String var : descriptor.getIdentifiers()) {
 						requiredResourceNames.add(new Pair<>(var, Type.VALUE));
 					}

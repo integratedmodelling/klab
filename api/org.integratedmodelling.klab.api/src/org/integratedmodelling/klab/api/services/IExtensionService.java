@@ -81,6 +81,13 @@ public interface IExtensionService {
 	 */
 	Object callFunction(IServiceCall functionCall, IMonitor monitor) throws KlabException;
 
+	/**
+	 * Get an instance of a language processor appropriate for the passed language.
+	 * Only {@link #DEFAULT_EXPRESSION_LANGUAGE} is guaranteed to not return null.
+	 * 
+	 * @param language
+	 * @return a language processor or null
+	 */
 	ILanguageProcessor getLanguageProcessor(String language);
 
 }
