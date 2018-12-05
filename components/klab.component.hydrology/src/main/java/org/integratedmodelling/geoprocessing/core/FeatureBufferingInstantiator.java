@@ -80,7 +80,7 @@ public class FeatureBufferingInstantiator implements IInstantiator, IExpression 
 			if (space != null) {
 				IShape oshape = space.getShape();
 				if (simplify > 0) {
-					((Shape)oshape).simplify(simplify);
+					oshape = ((Shape)oshape).getSimplified(simplify);
 				}
 				IShape newShape = oshape.buffer(bdistance);
 				if (simplify > 0) {

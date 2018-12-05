@@ -34,9 +34,9 @@ export object extract
 
 }
 
-export object coalesce 
-	"Extract one polygonal feature from a raster map based on clumping all matching values in one shape."
-	label 'Vectorize surface'
+export object concavehull 
+	"Extract one polygonal feature from a raster map based on the concave hull of all matching points."
+	label 'Concave hull'
 {
 	optional input select
 		"Pass an expression that will return true or false per each point in the spatial context, 
@@ -44,6 +44,20 @@ export object coalesce
 		 dependency names to refer to their state in each point."
 	    default ""
 	
-	class org.integratedmodelling.klab.components.geospace.processing.SurfaceVectorizer
+	class org.integratedmodelling.klab.components.geospace.processing.ConcaveHullInstantiator
+
+}
+
+export object concavexhull 
+	"Extract one polygonal feature from a raster map based on the convex hull of all matching points."
+	label 'Convex hull'
+{
+	optional input select
+		"Pass an expression that will return true or false per each point in the spatial context, 
+		 producing a mask that will be vectorized into spatial contexts for the objects. Use quality
+		 dependency names to refer to their state in each point."
+	    default ""
+	
+	class org.integratedmodelling.klab.components.geospace.processing.ConvexHullInstantiator
 
 }

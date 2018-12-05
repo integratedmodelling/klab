@@ -99,7 +99,31 @@ public class KlabElkGraphFactory {
 	 * @param parent the parent node
 	 * @return the newly created node
 	 */
-	public ElkNode createNode(String identifier, ElkNode parent) {
+	public ElkNode createActuatorNode(String identifier, ElkNode parent) {
+		ElkNode node = ElkGraphUtil.createNode(parent);
+		node.setIdentifier(identifier);
+		/*
+		for (IProperty<? super T> property: properties.keySet()) {
+			node.setProperty(property, properties.get(property));
+		}
+		*/
+		node.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS, SizeConstraint.PORTS, SizeConstraint.MINIMUM_SIZE));
+		node.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.insideTopLeft());
+		node.setProperty(CoreOptions.NODE_LABELS_PADDING, new ElkPadding(10, 0, 0, 5));
+		node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.UNIFORM_PORT_SPACING));
+		node.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
+		// node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.COMPUTE_PADDING));
+		// node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.DEFAULT_MINIMUM_SIZE, SizeOptions.MINIMUM_SIZE_ACCOUNTS_FOR_PADDING, SizeOptions.COMPUTE_PADDING, SizeOptions.PORTS_OVERHANG));
+		return node;
+	}
+	
+	/**
+	 * Create ElkNode with default behavior, if necessary override this method
+	 * @param identifier the node identifier
+	 * @param parent the parent node
+	 * @return the newly created node
+	 */
+	public ElkNode createServiceNode(String identifier, ElkNode parent) {
 		ElkNode node = ElkGraphUtil.createNode(parent);
 		node.setIdentifier(identifier);
 		/*

@@ -124,4 +124,11 @@ public interface IShape extends IReferenced, ISpace {
 	 */
 	IShape difference(IShape shape);
 
+	/**
+	 * Get the centroid as a new IShape.
+	 * 
+	 * @return
+	 */
+	IShape getCentroid();
+
 }

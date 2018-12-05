@@ -1,15 +1,9 @@
 package org.integratedmodelling.klab.components.geospace.processing;
 
-import java.awt.geom.Point2D;
-import java.awt.image.RenderedImage;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.media.jai.iterator.RandomIter;
-import javax.media.jai.iterator.RandomIterFactory;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.integratedmodelling.kim.api.IKimExpression;
@@ -28,17 +22,15 @@ import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
-import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
-import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
-import org.integratedmodelling.klab.engine.runtime.code.groovy.GroovyExpression;
+import org.integratedmodelling.klab.components.geospace.utils.ConcaveHull;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -47,28 +39,15 @@ import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Range;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 
-import ij.IJ;
-import ij.ImagePlus;
-import ij.blob.Blob;
-import ij.blob.ManyBlobs;
-import ij.process.ImageProcessor;
-
-public class SurfaceVectorizer implements IExpression, IInstantiator {
+public class ConcaveHullInstantiator implements IExpression, IInstantiator {
 
 	Descriptor exprDescriptor = null;
 	private IGrid grid;
-	private Shape boundingBox;
-	GeometryFactory gfact = new GeometryFactory();
 
-	public SurfaceVectorizer() {
+	public ConcaveHullInstantiator() {
 	}
 
 	/**
@@ -79,11 +58,11 @@ public class SurfaceVectorizer implements IExpression, IInstantiator {
 	 * 
 	 * @param grid
 	 */
-	public SurfaceVectorizer(IGrid grid) {
+	public ConcaveHullInstantiator(IGrid grid) {
 		this.grid = grid;
 	}
 
-	public SurfaceVectorizer(IParameters<String> parameters, IComputationContext context)
+	public ConcaveHullInstantiator(IParameters<String> parameters, IComputationContext context)
 			throws KlabValidationException {
 		if (parameters.containsKey("select")) {
 			Object expression = parameters.get("select");
@@ -102,7 +81,6 @@ public class SurfaceVectorizer implements IExpression, IInstantiator {
 		}
 
 		this.grid = ((Space) scale.getSpace()).getGrid();
-		this.boundingBox = (Shape) scale.getSpace().getShape();
 	}
 
 	@Override
@@ -221,7 +199,7 @@ public class SurfaceVectorizer implements IExpression, IInstantiator {
 			}
 
 			if (o instanceof Boolean && (Boolean)o) { 
-				geometries.add(((Shape) cell.getShape()).getJTSGeometry());
+				geometries.add(((Shape) cell.getShape().getCentroid()).getJTSGeometry());
 			}
 		}
 
@@ -229,8 +207,9 @@ public class SurfaceVectorizer implements IExpression, IInstantiator {
 		 * build the final geometry
 		 */
 		GeometryCollection geometryCollection = (GeometryCollection) Geospace.gFactory.buildGeometry(geometries);
+		Geometry hull = new ConcaveHull().transform(geometryCollection.union());
 		ret.add(context.newObservation(semantics, semantics.getLocalName() + "_0", Scale.substituteExtent(context.getScale(),
-				Shape.create(geometryCollection.union(), grid.getProjection()))));
+				Shape.create(hull, grid.getProjection()))));
 
 		return ret;
 	}
@@ -247,7 +226,7 @@ public class SurfaceVectorizer implements IExpression, IInstantiator {
 
 	@Override
 	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
-		return new SurfaceVectorizer(parameters, context);
+		return new ConcaveHullInstantiator(parameters, context);
 	}
 
 }
