@@ -831,8 +831,7 @@ NamedObservableSemantics returns ObservableSemantics:
  * ---------------------------------------
  */
 UnitElement:
-	id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID) |
-	num=Number |
+	id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID) |
 	'(' unit=Unit ')';
 
 enum UnitOp:
@@ -882,7 +881,10 @@ terminal UPPERCASE_PATH:
 
 terminal CAMELCASE_ID:
 	('A'..'Z') ('A'..'z'|'0'..'9')*;
-
+	
+terminal BACKCASE_ID:
+	('a'..'z') ('A'..'z'|'0'..'9')*;
+	
 NamespaceId:
 	PathName ':' CAMELCASE_ID;
 

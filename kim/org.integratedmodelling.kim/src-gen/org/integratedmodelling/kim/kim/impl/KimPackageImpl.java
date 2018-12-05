@@ -4217,19 +4217,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getUnitElement_Num()
-  {
-    return (EReference)unitElementEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EReference getUnitElement_Unit()
   {
-    return (EReference)unitElementEClass.getEStructuralFeatures().get(2);
+    return (EReference)unitElementEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -4929,7 +4919,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
     unitElementEClass = createEClass(UNIT_ELEMENT);
     createEAttribute(unitElementEClass, UNIT_ELEMENT__ID);
-    createEReference(unitElementEClass, UNIT_ELEMENT__NUM);
     createEReference(unitElementEClass, UNIT_ELEMENT__UNIT);
 
     reL_OPERATOREClass = createEClass(REL_OPERATOR);
@@ -5413,7 +5402,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
     initEClass(unitElementEClass, UnitElement.class, "UnitElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getUnitElement_Id(), ecorePackage.getEString(), "id", null, 0, 1, UnitElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getUnitElement_Num(), this.getNumber(), null, "num", null, 0, 1, UnitElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getUnitElement_Unit(), this.getUnit(), null, "unit", null, 0, 1, UnitElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(reL_OPERATOREClass, org.integratedmodelling.kim.kim.REL_OPERATOR.class, "REL_OPERATOR", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

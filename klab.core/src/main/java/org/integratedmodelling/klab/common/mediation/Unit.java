@@ -56,8 +56,8 @@ public class Unit implements IUnit {
 
     try {
       unit = (javax.measure.unit.Unit<?>) UnitFormat.getUCUMInstance().parseObject(string);
-    } catch (Exception e) {
-      throw new KlabValidationException(e);
+    } catch (Throwable e) {
+      throw new KlabValidationException("Invalid unit: " + string);
     }
     if (factor != 1.0) {
       unit = unit.times(factor);

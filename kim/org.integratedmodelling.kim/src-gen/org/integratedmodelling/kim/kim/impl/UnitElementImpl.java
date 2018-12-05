@@ -26,7 +26,6 @@ import org.integratedmodelling.kim.kim.UnitElement;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.UnitElementImpl#getId <em>Id</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.UnitElementImpl#getNum <em>Num</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.UnitElementImpl#getUnit <em>Unit</em>}</li>
  * </ul>
  *
@@ -53,16 +52,6 @@ public class UnitElementImpl extends MinimalEObjectImpl.Container implements Uni
    * @ordered
    */
   protected String id = ID_EDEFAULT;
-
-  /**
-   * The cached value of the '{@link #getNum() <em>Num</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getNum()
-   * @generated
-   * @ordered
-   */
-  protected org.integratedmodelling.kim.kim.Number num;
 
   /**
    * The cached value of the '{@link #getUnit() <em>Unit</em>}' containment reference.
@@ -123,54 +112,6 @@ public class UnitElementImpl extends MinimalEObjectImpl.Container implements Uni
    * <!-- end-user-doc -->
    * @generated
    */
-  public org.integratedmodelling.kim.kim.Number getNum()
-  {
-    return num;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetNum(org.integratedmodelling.kim.kim.Number newNum, NotificationChain msgs)
-  {
-    org.integratedmodelling.kim.kim.Number oldNum = num;
-    num = newNum;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.UNIT_ELEMENT__NUM, oldNum, newNum);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setNum(org.integratedmodelling.kim.kim.Number newNum)
-  {
-    if (newNum != num)
-    {
-      NotificationChain msgs = null;
-      if (num != null)
-        msgs = ((InternalEObject)num).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.UNIT_ELEMENT__NUM, null, msgs);
-      if (newNum != null)
-        msgs = ((InternalEObject)newNum).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.UNIT_ELEMENT__NUM, null, msgs);
-      msgs = basicSetNum(newNum, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.UNIT_ELEMENT__NUM, newNum, newNum));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public Unit getUnit()
   {
     return unit;
@@ -224,8 +165,6 @@ public class UnitElementImpl extends MinimalEObjectImpl.Container implements Uni
   {
     switch (featureID)
     {
-      case KimPackage.UNIT_ELEMENT__NUM:
-        return basicSetNum(null, msgs);
       case KimPackage.UNIT_ELEMENT__UNIT:
         return basicSetUnit(null, msgs);
     }
@@ -244,8 +183,6 @@ public class UnitElementImpl extends MinimalEObjectImpl.Container implements Uni
     {
       case KimPackage.UNIT_ELEMENT__ID:
         return getId();
-      case KimPackage.UNIT_ELEMENT__NUM:
-        return getNum();
       case KimPackage.UNIT_ELEMENT__UNIT:
         return getUnit();
     }
@@ -264,9 +201,6 @@ public class UnitElementImpl extends MinimalEObjectImpl.Container implements Uni
     {
       case KimPackage.UNIT_ELEMENT__ID:
         setId((String)newValue);
-        return;
-      case KimPackage.UNIT_ELEMENT__NUM:
-        setNum((org.integratedmodelling.kim.kim.Number)newValue);
         return;
       case KimPackage.UNIT_ELEMENT__UNIT:
         setUnit((Unit)newValue);
@@ -288,9 +222,6 @@ public class UnitElementImpl extends MinimalEObjectImpl.Container implements Uni
       case KimPackage.UNIT_ELEMENT__ID:
         setId(ID_EDEFAULT);
         return;
-      case KimPackage.UNIT_ELEMENT__NUM:
-        setNum((org.integratedmodelling.kim.kim.Number)null);
-        return;
       case KimPackage.UNIT_ELEMENT__UNIT:
         setUnit((Unit)null);
         return;
@@ -310,8 +241,6 @@ public class UnitElementImpl extends MinimalEObjectImpl.Container implements Uni
     {
       case KimPackage.UNIT_ELEMENT__ID:
         return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
-      case KimPackage.UNIT_ELEMENT__NUM:
-        return num != null;
       case KimPackage.UNIT_ELEMENT__UNIT:
         return unit != null;
     }

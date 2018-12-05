@@ -1,28 +1,43 @@
 package org.integratedmodelling.geoprocessing.hydrology;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.integratedmodelling.geoprocessing.GeoprocessingComponent;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.components.geospace.Geospace;
+import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.scale.Scale;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Point;
 
 public class StreamNetworkInstantiator implements IInstantiator, IExpression {
 
 	private static final double DEFAULT_TCA_THRESHOLD = 0.001;
 
 	double threshold = Double.NaN;
+	Map<Cell, List<Coordinate>> segments = new HashMap<>();
+	List<com.vividsolutions.jts.geom.Geometry> lines = new ArrayList<>();
 
 	@Override
 	public IGeometry getGeometry() {
@@ -44,6 +59,7 @@ public class StreamNetworkInstantiator implements IInstantiator, IExpression {
 	@Override
 	public List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context) throws KlabException {
 
+		IState fdr = context.getArtifact("flow_directions_d8", IState.class);
 		IState tca = context.getArtifact("upstream_cell_count", IState.class);
 		Grid grid = Space.extractGrid(tca);
 
@@ -58,13 +74,83 @@ public class StreamNetworkInstantiator implements IInstantiator, IExpression {
 		double ttreshold = (int) (grid.getCellCount() * threshold);
 		context.getMonitor().info("TCA threshold is " + ttreshold);
 
-//		for (ILocator locator : tca.getSpace()) {
-//			if (context.getMonitor().isInterrupted()) {
-//				break;
-//			}
-//			double tcav = tca.get(locator, Double.class).doubleValue();
-//			target.set(locator, Double.isNaN(tcav) ? null : tcav >= ttreshold);
-//		}
-		return null;
+		for (IArtifact artifact : context.getArtifact("stream_outlet")) {
+
+			ISpace space = ((IObservation) artifact).getSpace();
+
+			if (space == null) {
+				continue;
+			}
+
+			Point point = ((Shape) space.getShape()).getJTSGeometry().getCentroid();
+			long xy = grid.getOffsetFromWorldCoordinates(point.getX(), point.getY());
+			Cell start = grid.getCell(xy);
+
+			/*
+			 * Trace all lines upstream of this outlet
+			 */
+			segments.put(start, startSegment(start));
+			trace(start, tca, fdr, context);
+
+		}
+
+		List<IObjectArtifact> ret = new ArrayList<>();
+		
+		if (lines.size() > 0) {
+			ret.add(context.newObservation(semantics, "stream_network", Scale.substituteExtent(context.getScale(),
+					Shape.create(Geospace.gFactory.buildGeometry(lines), grid.getProjection()))));
+		}
+		return ret;
+	}
+
+	private List<Coordinate> startSegment(Cell cell) {
+		List<Coordinate> ret = new ArrayList<>();
+		ret.add(getCoordinate(cell));
+		return ret;
+	}
+
+	private Coordinate getCoordinate(Cell cell) {
+		double[] xy = cell.getCenter();
+		return new Coordinate(xy[0], xy[1]);
+	}
+
+	private void trace(Cell cell, IState tca, IState fdr, IComputationContext context) {
+
+		if (context.getMonitor().isInterrupted()) {
+			return;
+		}
+
+		List<Coordinate> segment = segments.get(cell);
+		double tc = tca.get(cell, Double.class);
+
+		if (tc < threshold) {
+			flush(segment, cell);
+			return;
+		}
+
+		List<Cell> upstream = GeoprocessingComponent.getUpstreamCells(cell, fdr);
+
+		if (upstream.size() == 0) {
+			flush(segment, cell);
+		} else if (upstream.size() == 1) {
+			segment.add(getCoordinate(upstream.get(0)));
+			segments.remove(cell);
+			segments.put(upstream.get(0), segment);
+			trace(upstream.get(0), tca, fdr, context);
+		} else {
+			flush(segment, cell);
+			for (Cell up : upstream) {
+				segments.put(up, startSegment(up));
+				trace(up, tca, fdr, context);
+			}
+		}
+
+	}
+
+	private void flush(List<Coordinate> segment, Cell cell) {
+		if (segment.size() >= 2) {
+			lines.add(Geospace.gFactory.createLineString(segment.toArray(new Coordinate[segment.size()])).buffer(0));
+		}
+		segments.remove(cell);
 	}
 }

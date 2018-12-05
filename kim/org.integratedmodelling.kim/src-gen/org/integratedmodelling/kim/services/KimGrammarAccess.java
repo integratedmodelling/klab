@@ -8470,30 +8470,29 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cIdCAMELCASE_IDTerminalRuleCall_0_0_0 = (RuleCall)cIdAlternatives_0_0.eContents().get(0);
 		private final RuleCall cIdLOWERCASE_IDTerminalRuleCall_0_0_1 = (RuleCall)cIdAlternatives_0_0.eContents().get(1);
 		private final RuleCall cIdUPPERCASE_IDTerminalRuleCall_0_0_2 = (RuleCall)cIdAlternatives_0_0.eContents().get(2);
-		private final Assignment cNumAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
-		private final RuleCall cNumNumberParserRuleCall_1_0 = (RuleCall)cNumAssignment_1.eContents().get(0);
-		private final Group cGroup_2 = (Group)cAlternatives.eContents().get(2);
-		private final Keyword cLeftParenthesisKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
-		private final Assignment cUnitAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
-		private final RuleCall cUnitUnitParserRuleCall_2_1_0 = (RuleCall)cUnitAssignment_2_1.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_2_2 = (Keyword)cGroup_2.eContents().get(2);
+		private final RuleCall cIdBACKCASE_IDTerminalRuleCall_0_0_3 = (RuleCall)cIdAlternatives_0_0.eContents().get(3);
+		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
+		private final Keyword cLeftParenthesisKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
+		private final Assignment cUnitAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cUnitUnitParserRuleCall_1_1_0 = (RuleCall)cUnitAssignment_1_1.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_1_2 = (Keyword)cGroup_1.eContents().get(2);
 		
 		///**
 		// * ---------------------------------------
 		// * Unit of measurement re: jsr-108, parseable by Java
 		// * ---------------------------------------
 		// */ UnitElement:
-		//	id=(CAMELCASE_ID | LOWERCASE_ID | UPPERCASE_ID) | num=Number |
+		//	id=(CAMELCASE_ID | LOWERCASE_ID | UPPERCASE_ID | BACKCASE_ID) |
 		//	'(' unit=Unit ')';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//id=(CAMELCASE_ID | LOWERCASE_ID | UPPERCASE_ID) | num=Number | '(' unit=Unit ')'
+		//id=(CAMELCASE_ID | LOWERCASE_ID | UPPERCASE_ID | BACKCASE_ID) | '(' unit=Unit ')'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//id=(CAMELCASE_ID | LOWERCASE_ID | UPPERCASE_ID)
+		//id=(CAMELCASE_ID | LOWERCASE_ID | UPPERCASE_ID | BACKCASE_ID)
 		public Assignment getIdAssignment_0() { return cIdAssignment_0; }
 		
-		//(CAMELCASE_ID | LOWERCASE_ID | UPPERCASE_ID)
+		//(CAMELCASE_ID | LOWERCASE_ID | UPPERCASE_ID | BACKCASE_ID)
 		public Alternatives getIdAlternatives_0_0() { return cIdAlternatives_0_0; }
 		
 		//CAMELCASE_ID
@@ -8505,26 +8504,23 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//UPPERCASE_ID
 		public RuleCall getIdUPPERCASE_IDTerminalRuleCall_0_0_2() { return cIdUPPERCASE_IDTerminalRuleCall_0_0_2; }
 		
-		//num=Number
-		public Assignment getNumAssignment_1() { return cNumAssignment_1; }
-		
-		//Number
-		public RuleCall getNumNumberParserRuleCall_1_0() { return cNumNumberParserRuleCall_1_0; }
+		//BACKCASE_ID
+		public RuleCall getIdBACKCASE_IDTerminalRuleCall_0_0_3() { return cIdBACKCASE_IDTerminalRuleCall_0_0_3; }
 		
 		//'(' unit=Unit ')'
-		public Group getGroup_2() { return cGroup_2; }
+		public Group getGroup_1() { return cGroup_1; }
 		
 		//'('
-		public Keyword getLeftParenthesisKeyword_2_0() { return cLeftParenthesisKeyword_2_0; }
+		public Keyword getLeftParenthesisKeyword_1_0() { return cLeftParenthesisKeyword_1_0; }
 		
 		//unit=Unit
-		public Assignment getUnitAssignment_2_1() { return cUnitAssignment_2_1; }
+		public Assignment getUnitAssignment_1_1() { return cUnitAssignment_1_1; }
 		
 		//Unit
-		public RuleCall getUnitUnitParserRuleCall_2_1_0() { return cUnitUnitParserRuleCall_2_1_0; }
+		public RuleCall getUnitUnitParserRuleCall_1_1_0() { return cUnitUnitParserRuleCall_1_1_0; }
 		
 		//')'
-		public Keyword getRightParenthesisKeyword_2_2() { return cRightParenthesisKeyword_2_2; }
+		public Keyword getRightParenthesisKeyword_1_2() { return cRightParenthesisKeyword_1_2; }
 	}
 	public class REL_OPERATORElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.REL_OPERATOR");
@@ -9192,6 +9188,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	private final TerminalRule tUPPERCASE_ID;
 	private final TerminalRule tUPPERCASE_PATH;
 	private final TerminalRule tCAMELCASE_ID;
+	private final TerminalRule tBACKCASE_ID;
 	private final NamespaceIdElements pNamespaceId;
 	private final PropertyIdElements pPropertyId;
 	private final VersionNumberElements pVersionNumber;
@@ -9298,6 +9295,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		this.tUPPERCASE_ID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.UPPERCASE_ID");
 		this.tUPPERCASE_PATH = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.UPPERCASE_PATH");
 		this.tCAMELCASE_ID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.CAMELCASE_ID");
+		this.tBACKCASE_ID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.BACKCASE_ID");
 		this.pNamespaceId = new NamespaceIdElements();
 		this.pPropertyId = new PropertyIdElements();
 		this.pVersionNumber = new VersionNumberElements();
@@ -10362,7 +10360,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	// * Unit of measurement re: jsr-108, parseable by Java
 	// * ---------------------------------------
 	// */ UnitElement:
-	//	id=(CAMELCASE_ID | LOWERCASE_ID | UPPERCASE_ID) | num=Number |
+	//	id=(CAMELCASE_ID | LOWERCASE_ID | UPPERCASE_ID | BACKCASE_ID) |
 	//	'(' unit=Unit ')';
 	public UnitElementElements getUnitElementAccess() {
 		return pUnitElement;
@@ -10477,6 +10475,12 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	'A'..'Z' ('A'..'z' | '0'..'9')*;
 	public TerminalRule getCAMELCASE_IDRule() {
 		return tCAMELCASE_ID;
+	}
+	
+	//terminal BACKCASE_ID:
+	//	'a'..'z' ('A'..'z' | '0'..'9')*;
+	public TerminalRule getBACKCASE_IDRule() {
+		return tBACKCASE_ID;
 	}
 	
 	//NamespaceId:

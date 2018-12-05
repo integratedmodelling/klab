@@ -61,7 +61,7 @@ export boolean streamnetwork
 	class org.integratedmodelling.geoprocessing.hydrology.StreamNetworkResolver
 }
 
-export boolean tracestreams
+export object tracestreams
 	"Extracts the stream network as a set of lines indicating presence of a stream, using a cutoff threshold
 	 on the percentage of drainage cells."
 	 label 'Extract stream lines'
