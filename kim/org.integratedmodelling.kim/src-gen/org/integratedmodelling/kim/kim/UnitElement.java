@@ -16,7 +16,6 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.UnitElement#getId <em>Id</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.UnitElement#getNum <em>Num</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.UnitElement#getUnit <em>Unit</em>}</li>
  * </ul>
  *
@@ -51,32 +50,6 @@ public interface UnitElement extends EObject
    * @generated
    */
   void setId(String value);
-
-  /**
-   * Returns the value of the '<em><b>Num</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Num</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Num</em>' containment reference.
-   * @see #setNum(org.integratedmodelling.kim.kim.Number)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getUnitElement_Num()
-   * @model containment="true"
-   * @generated
-   */
-  org.integratedmodelling.kim.kim.Number getNum();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.UnitElement#getNum <em>Num</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Num</em>' containment reference.
-   * @see #getNum()
-   * @generated
-   */
-  void setNum(org.integratedmodelling.kim.kim.Number value);
 
   /**
    * Returns the value of the '<em><b>Unit</b></em>' containment reference.

@@ -224,8 +224,12 @@ public enum KimKnowledgeProcessor {
 		String declaration = concept.getDefinition();
 
 		if (concept.getUnit() != null) {
-			ret.setUnit(Units.INSTANCE.getUnit(concept.getUnit()));
-			declaration += " in " + ret.getUnit();
+			try {
+				ret.setUnit(Units.INSTANCE.getUnit(concept.getUnit()));
+				declaration += " in " + ret.getUnit();
+			} catch (Exception e) {
+				monitor.error(e, concept);
+			}
 		}
 
 		if (concept.getCurrency() != null) {
