@@ -263,9 +263,14 @@ public enum Observations implements IObservationService {
 			/*
 			 * shapes can be huge and only make sense for direct observations, as states get
 			 * the same geometry as their parents.
+			 * 
+			 * TODO fiddle with the parameters to simplifyIfNecessary until interaction is
+			 * smooth.
+			 * 
+			 * TODO these should also be optional settings.
 			 */
 			if (observation instanceof IDirectObservation) {
-				String shape = ((Shape) space.getShape()).getJTSGeometry().toString();
+				String shape = ((Shape) space.getShape()).simplifyIfNecessary(1000, 2000).getJTSGeometry().toString();
 				ret.setEncodedShape(shape);
 				ret.setSpatialProjection(space.getProjection().getSimpleSRS());
 				ret.setShapeType(space.getShape().getGeometryType());

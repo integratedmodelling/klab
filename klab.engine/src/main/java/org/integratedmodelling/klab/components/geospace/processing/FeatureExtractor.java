@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
+import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
@@ -111,6 +112,7 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 		this.grid = ((Space) scale.getSpace()).getGrid();
 		this.boundingBox = (Shape) scale.getSpace().getShape();
 		this.ignoreHoles = !parameters.get("holes", Boolean.TRUE);
+		this.createPointFeatures = parameters.get("points", Boolean.FALSE);
 
 		// TODO these are obviously still unfeasible dimensions for an in-memory image.
 		if (this.grid == null || this.grid.getXCells() > Integer.MAX_VALUE
@@ -292,7 +294,7 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 		Geometry polygon = null;
 		if (blob.getOuterContour().npoints < 4) {
 			if (this.createPointFeatures) {
-				polygon = getPoint(blob.getCenterOfGravity());
+				polygon = getPolygon(blob.getCenterOfGravity());
 			}
 		} else {
 
@@ -365,7 +367,14 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 		double[] xy = grid.getCoordinates(grid.getOffset(x, y));
 		return gfact.createPoint(new Coordinate(xy[0], xy[1]));
 	}
+	
+	private Geometry getPolygon(Point2D point2d) {
 
+		int x = (int) point2d.getX();
+		int y = (int) point2d.getY();
+		return ((Shape)((Grid)grid).getCell(grid.getOffset(x, y)).getShape()).getJTSGeometry();
+	}
+	
 	private LinearRing getLinearRing(java.awt.Polygon p) {
 
 		if (p.npoints < 4) {

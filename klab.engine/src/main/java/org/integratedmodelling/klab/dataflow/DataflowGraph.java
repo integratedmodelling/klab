@@ -51,7 +51,7 @@ public class DataflowGraph {
 		ElkNode root = nodes.get(actuator.getDataflowId());
 		if (root == null) {
 	
-			root = kelk.createNode(actuator.getDataflowId(), parent);
+			root = kelk.createActuatorNode(actuator.getDataflowId(), parent);
 			nodes.put(actuator.getName(), root);
 			root.getLabels().add(kelk.createLabel(actuator, root));
 
@@ -97,7 +97,7 @@ public class DataflowGraph {
 				ElkPort previousOut = out;
 
 				IPrototype prototype = Extensions.INSTANCE.getPrototype(actor.getFirst().getName());
-				call = kelk.createNode(actor.getSecond().getDataflowId(), root);
+				call = kelk.createServiceNode(actor.getSecond().getDataflowId(), root);
 				// HMMM this would be better for space utilization but the node won't resize to contain the label
 //							call.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.insideCenter());
 				call.getLabels().add(

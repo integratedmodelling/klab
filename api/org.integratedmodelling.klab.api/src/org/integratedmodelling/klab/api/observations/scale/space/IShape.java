@@ -116,4 +116,19 @@ public interface IShape extends IReferenced, ISpace {
      */
 	IShape buffer(double bdistance);
 
+	/**
+	 * Subtract the passed shape from this shape.
+	 * 
+	 * @param shape
+	 * @return
+	 */
+	IShape difference(IShape shape);
+
+	/**
+	 * Get the centroid as a new IShape.
+	 * 
+	 * @return
+	 */
+	IShape getCentroid();
+
 }
