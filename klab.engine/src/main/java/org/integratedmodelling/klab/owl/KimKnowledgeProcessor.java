@@ -233,8 +233,12 @@ public enum KimKnowledgeProcessor {
 		}
 
 		if (concept.getCurrency() != null) {
-			ret.setCurrency(Currencies.INSTANCE.getCurrency(concept.getUnit()));
-			declaration += " in " + ret.getCurrency();
+			try {
+				ret.setCurrency(Currencies.INSTANCE.getCurrency(concept.getUnit()));
+				declaration += " in " + ret.getCurrency();
+			} catch (Exception e) {
+				monitor.error(e, concept);
+			}
 		}
 
 		if (concept.getValue() != null) {

@@ -453,7 +453,7 @@ public class KimValidator extends AbstractKimValidator {
           if ((observable == null)) {
             String _modelReference_1 = cd.getModelReference();
             String _plus_2 = ("Model reference " + _modelReference_1);
-            String _plus_3 = (_plus_2 + " is unresolved: please");
+            String _plus_3 = (_plus_2 + " is unresolved: please ");
             String _xifexpression_4 = null;
             boolean _contains = cd.getModelReference().contains(".");
             if (_contains) {
@@ -764,6 +764,7 @@ public class KimValidator extends AbstractKimValidator {
           ((KimObservable) _get_1).setModelReference(_plus_7);
           IKimObservable _get_2 = descriptor.getObservables().get(0);
           ((KimObservable) _get_2).setFormalName(descriptor.name);
+          ns_1.getSymbolTable().put(descriptor.name, descriptor);
         }
         Metadata _metadata = model.getMetadata();
         boolean _tripleNotEquals_13 = (_metadata != null);

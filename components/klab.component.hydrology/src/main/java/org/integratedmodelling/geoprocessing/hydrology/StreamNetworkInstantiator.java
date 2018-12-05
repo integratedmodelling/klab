@@ -29,11 +29,12 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 
 public class StreamNetworkInstantiator implements IInstantiator, IExpression {
 
-	private static final double DEFAULT_TCA_THRESHOLD = 0.001;
+	private static final double DEFAULT_TCA_THRESHOLD = 0.006;
 
 	double threshold = Double.NaN;
 	Map<Cell, List<Coordinate>> segments = new HashMap<>();
@@ -71,8 +72,8 @@ public class StreamNetworkInstantiator implements IInstantiator, IExpression {
 			threshold = DEFAULT_TCA_THRESHOLD;
 		}
 
-		double ttreshold = (int) (grid.getCellCount() * threshold);
-		context.getMonitor().info("TCA threshold is " + ttreshold);
+		double tthreshold = (int) (grid.getCellCount() * threshold);
+		context.getMonitor().info("TCA threshold is " + tthreshold);
 
 		for (IArtifact artifact : context.getArtifact("stream_outlet")) {
 
@@ -90,22 +91,25 @@ public class StreamNetworkInstantiator implements IInstantiator, IExpression {
 			 * Trace all lines upstream of this outlet
 			 */
 			segments.put(start, startSegment(start));
-			trace(start, tca, fdr, context);
+			trace(start, tthreshold, tca, fdr, context);
 
 		}
 
 		List<IObjectArtifact> ret = new ArrayList<>();
-		
+
 		if (lines.size() > 0) {
-			ret.add(context.newObservation(semantics, "stream_network", Scale.substituteExtent(context.getScale(),
-					Shape.create(Geospace.gFactory.buildGeometry(lines), grid.getProjection()))));
+			com.vividsolutions.jts.geom.Geometry shape = Geospace.gFactory.buildGeometry(lines);
+			ret.add(context.newObservation(semantics, "stream_network",
+					Scale.substituteExtent(context.getScale(), Shape.create(shape, grid.getProjection()))));
 		}
 		return ret;
 	}
 
-	private List<Coordinate> startSegment(Cell cell) {
+	private List<Coordinate> startSegment(Cell... cell) {
 		List<Coordinate> ret = new ArrayList<>();
-		ret.add(getCoordinate(cell));
+		for (Cell c : cell) {
+			ret.add(getCoordinate(c));
+		}
 		return ret;
 	}
 
@@ -114,7 +118,7 @@ public class StreamNetworkInstantiator implements IInstantiator, IExpression {
 		return new Coordinate(xy[0], xy[1]);
 	}
 
-	private void trace(Cell cell, IState tca, IState fdr, IComputationContext context) {
+	private void trace(Cell cell, double thresh, IState tca, IState fdr, IComputationContext context) {
 
 		if (context.getMonitor().isInterrupted()) {
 			return;
@@ -123,12 +127,13 @@ public class StreamNetworkInstantiator implements IInstantiator, IExpression {
 		List<Coordinate> segment = segments.get(cell);
 		double tc = tca.get(cell, Double.class);
 
-		if (tc < threshold) {
+		if (tc < thresh) {
 			flush(segment, cell);
 			return;
 		}
 
-		List<Cell> upstream = GeoprocessingComponent.getUpstreamCells(cell, fdr);
+		List<Cell> upstream = GeoprocessingComponent.getUpstreamCells(cell, fdr,
+				(c) -> tca.get(c, Double.class) >= thresh);
 
 		if (upstream.size() == 0) {
 			flush(segment, cell);
@@ -136,12 +141,12 @@ public class StreamNetworkInstantiator implements IInstantiator, IExpression {
 			segment.add(getCoordinate(upstream.get(0)));
 			segments.remove(cell);
 			segments.put(upstream.get(0), segment);
-			trace(upstream.get(0), tca, fdr, context);
+			trace(upstream.get(0), thresh, tca, fdr, context);
 		} else {
 			flush(segment, cell);
 			for (Cell up : upstream) {
-				segments.put(up, startSegment(up));
-				trace(up, tca, fdr, context);
+				segments.put(up, startSegment(cell, up));
+				trace(up, thresh, tca, fdr, context);
 			}
 		}
 
@@ -149,7 +154,8 @@ public class StreamNetworkInstantiator implements IInstantiator, IExpression {
 
 	private void flush(List<Coordinate> segment, Cell cell) {
 		if (segment.size() >= 2) {
-			lines.add(Geospace.gFactory.createLineString(segment.toArray(new Coordinate[segment.size()])).buffer(0));
+			LineString line = Geospace.gFactory.createLineString(segment.toArray(new Coordinate[segment.size()]));
+			lines.add(line);
 		}
 		segments.remove(cell);
 	}
