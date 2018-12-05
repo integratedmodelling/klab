@@ -283,7 +283,6 @@ class KimValidator extends AbstractKimValidator {
 						BAD_OBSERVABLE)
 					ok = false
 				}
-			// fall through to validation
 			}
 		}
 
@@ -343,7 +342,7 @@ class KimValidator extends AbstractKimValidator {
 			if (cd.modelReference !== null) {
 				if (observable === null) {
 					error(
-						'Model reference ' + cd.modelReference + " is unresolved: please" +
+						'Model reference ' + cd.modelReference + " is unresolved: please " +
 							(if(cd.modelReference.contains(".")) "import" else "declare") + " this model",
 						KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, BAD_OBSERVABLE)
 					ok = false
@@ -573,6 +572,8 @@ class KimValidator extends AbstractKimValidator {
 						Kim.getNamespaceId(namespace) + "." + descriptor.name)
 					// important! Name should be the same as the model's.
 					(descriptor.observables.get(0) as KimObservable).setFormalName(descriptor.name)
+					// also this goes in the symbol table
+					ns.symbolTable.put(descriptor.name, descriptor)
 				}
 
 				if (model.metadata !== null) {
