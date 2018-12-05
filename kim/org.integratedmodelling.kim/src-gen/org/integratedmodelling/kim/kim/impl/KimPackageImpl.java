@@ -498,7 +498,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
   /**
    * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
-   *
+   * 
    * <p>This method is used to initialize {@link KimPackage#eINSTANCE} when that field is accessed.
    * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
    * <!-- begin-user-doc -->
@@ -513,8 +513,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     if (isInited) return (KimPackage)EPackage.Registry.INSTANCE.getEPackage(KimPackage.eNS_URI);
 
     // Obtain or create and register package
-    Object registeredKimPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-    KimPackageImpl theKimPackage = registeredKimPackage instanceof KimPackageImpl ? (KimPackageImpl)registeredKimPackage : new KimPackageImpl();
+    KimPackageImpl theKimPackage = (KimPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof KimPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new KimPackageImpl());
 
     isInited = true;
 
@@ -527,6 +526,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     // Mark meta-data to indicate it can't be changed
     theKimPackage.freeze();
 
+  
     // Update the registry and return the package
     EPackage.Registry.INSTANCE.put(KimPackage.eNS_URI, theKimPackage);
     return theKimPackage;
@@ -4217,19 +4217,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getUnitElement_Num()
-  {
-    return (EReference)unitElementEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EReference getUnitElement_Unit()
   {
-    return (EReference)unitElementEClass.getEStructuralFeatures().get(2);
+    return (EReference)unitElementEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -4929,7 +4919,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
     unitElementEClass = createEClass(UNIT_ELEMENT);
     createEAttribute(unitElementEClass, UNIT_ELEMENT__ID);
-    createEReference(unitElementEClass, UNIT_ELEMENT__NUM);
     createEReference(unitElementEClass, UNIT_ELEMENT__UNIT);
 
     reL_OPERATOREClass = createEClass(REL_OPERATOR);
@@ -5413,7 +5402,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
     initEClass(unitElementEClass, UnitElement.class, "UnitElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getUnitElement_Id(), ecorePackage.getEString(), "id", null, 0, 1, UnitElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getUnitElement_Num(), this.getNumber(), null, "num", null, 0, 1, UnitElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getUnitElement_Unit(), this.getUnit(), null, "unit", null, 0, 1, UnitElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(reL_OPERATOREClass, org.integratedmodelling.kim.kim.REL_OPERATOR.class, "REL_OPERATOR", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

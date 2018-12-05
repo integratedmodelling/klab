@@ -448,16 +448,16 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         restrictions+=RestrictionStatement | 
 	 *                         metadata=Metadata
 	 *                     )? 
-	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
-	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
 	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
-	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
 	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
+	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
+	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
 	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
+	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
 	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
-	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
 	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
+	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
 	 *                     ((constituent?='constituent' | constitutes?='consists')? partOf?='of' whole=ConceptDeclaration)? 
 	 *                     (
 	 *                         roles+=ConceptDeclaration 
@@ -1437,7 +1437,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *     UnitElement returns UnitElement
 	 *
 	 * Constraint:
-	 *     (id=CAMELCASE_ID | id=LOWERCASE_ID | id=UPPERCASE_ID | num=Number | unit=Unit)
+	 *     (id=CAMELCASE_ID | id=LOWERCASE_ID | id=UPPERCASE_ID | id=BACKCASE_ID | unit=Unit)
 	 */
 	protected void sequence_UnitElement(ISerializationContext context, UnitElement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

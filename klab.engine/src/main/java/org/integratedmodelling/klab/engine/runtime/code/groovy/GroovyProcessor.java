@@ -31,7 +31,7 @@ public enum GroovyProcessor implements ILanguageProcessor {
         private List<TokenDescriptor> tokens;
         private IRuntimeContext context;
 
-        GroovyDescriptor(String expression, IRuntimeContext context) {
+        GroovyDescriptor(String expression, IRuntimeContext context, boolean contextual) {
 
             /*
              * Context should most definitely be nullable
@@ -44,7 +44,7 @@ public enum GroovyProcessor implements ILanguageProcessor {
             IScale scale = context == null ? null : context.getScale();
 
             GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace, knownIdentifiers,
-                    scale, context);
+                    scale, context, contextual);
 
             this.processedCode = processor.process(expression);
             this.identifiers = processor.getIdentifiers();
@@ -121,12 +121,17 @@ public enum GroovyProcessor implements ILanguageProcessor {
 
     @Override
     public IExpression compile(String expression, IComputationContext context) throws KlabValidationException {
-        return new GroovyDescriptor(expression, (IRuntimeContext) context).compile();
+        return new GroovyDescriptor(expression, (IRuntimeContext) context, true).compile();
     }
 
     @Override
     public Descriptor describe(String expression, IComputationContext context) throws KlabValidationException {
-        return new GroovyDescriptor(expression, (IRuntimeContext) context);
+        return new GroovyDescriptor(expression, (IRuntimeContext) context, true);
+    }
+    
+    @Override
+    public Descriptor describe(String expression) throws KlabValidationException {
+        return new GroovyDescriptor(expression, null, false);
     }
 
     @Override

@@ -1,0 +1,30 @@
+/**
+ * Interface contextualizers for various standard geoprocessing operations.
+ */
+@klab 0.10.0
+@version 0.10.0
+@namespace im.geoprocessing
+
+export object buffer
+	"Transforms or creates spatial objects by adding a buffer to their spatial extent."
+	 label 'Distance buffering'
+{
+	number radius
+		"The distance to add to each spatial feature in meters"
+		
+	optional input artifact 
+		"The artifact to use to produce the objects. If not passed, the target artifact is modified." 
+		default ""
+		
+	optional input subtract 
+		"If passed, only the buffer area is retained in the final result, removing the original 
+		 feature to form a hole. It has no effect if the original feature is 0-dimensional (point
+		 or multipoint)." 
+		default false
+	
+	optional input simplify 
+		"If passed, the original shape is simplified by the passed factor before buffering." 
+		default 0
+	
+	class org.integratedmodelling.geoprocessing.core.FeatureBufferingInstantiator
+}

@@ -108,4 +108,27 @@ public interface IShape extends IReferenced, ISpace {
      */
     Collection<IShape> getHoles();
 
+    /**
+     * Buffer by passed distance in native projection units.
+     * 
+     * @param bdistance
+     * @return a new shape
+     */
+	IShape buffer(double bdistance);
+
+	/**
+	 * Subtract the passed shape from this shape.
+	 * 
+	 * @param shape
+	 * @return
+	 */
+	IShape difference(IShape shape);
+
+	/**
+	 * Get the centroid as a new IShape.
+	 * 
+	 * @return
+	 */
+	IShape getCentroid();
+
 }

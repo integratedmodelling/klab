@@ -122,11 +122,11 @@ public class Shape extends AbstractExtent implements IShape {
 	}
 
 	public static Shape create(Collection<Geometry> geometries, IProjection projection) {
-		
+
 		if (geometries.size() == 0) {
 			return null;
 		}
-		
+
 		if (geometries.size() == 1) {
 			return create(geometries.iterator().next(), projection);
 		}
@@ -656,10 +656,45 @@ public class Shape extends AbstractExtent implements IShape {
 		this.envelope = Envelope.create(this.geometry.getEnvelopeInternal(), this.projection);
 	}
 
+	public Shape getSimplified(double simplifyFactor) {
+		Geometry geom = TopologyPreservingSimplifier.simplify(geometry, simplifyFactor);
+		return create(geom, this.projection);
+	}
+
 	public boolean containsPoint(double[] coordinates) {
 		checkPreparedShape();
 		Point point = geometry.getFactory().createPoint(new Coordinate(coordinates[0], coordinates[1]));
 		return preparedShape != null ? preparedShape.contains(point) : geometry.contains(point);
+	}
+
+	@Override
+	public IShape buffer(double distance) {
+		Geometry geom = this.geometry.buffer(distance);
+		return create(geom, projection);
+	}
+
+	@Override
+	public IShape difference(IShape shape) {
+		Geometry geom = this.geometry.difference(((Shape) shape).getJTSGeometry());
+		return create(geom, projection);
+	}
+
+	/**
+	 * If the number of coordinates is higher than a passed threshold, simplify to
+	 * the distance that retains the max number of subdivisions along the diagonal
+	 * of the envelope.
+	 * 
+	 * @param maxCoordinates
+	 * @param nDivisions
+	 * @return
+	 */
+	public Shape simplifyIfNecessary(int maxCoordinates, int nDivisions) {
+		if (geometry.getNumPoints() > maxCoordinates) {
+			double distance = Math.sqrt(Math.pow(getEnvelope().getWidth(), 2) + Math.pow(getEnvelope().getHeight(), 2))
+					/ (double) nDivisions;
+			return getSimplified(distance);
+		}
+		return this;
 	}
 
 }

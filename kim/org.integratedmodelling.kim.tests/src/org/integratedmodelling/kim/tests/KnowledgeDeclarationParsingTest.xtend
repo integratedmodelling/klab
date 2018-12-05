@@ -11,6 +11,7 @@ import org.eclipse.xtext.testing.util.ParseHelper
 import org.integratedmodelling.kim.kim.Model
 import org.integratedmodelling.kim.model.Kim
 import org.junit.Assert
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -44,8 +45,8 @@ class KnowledgeDeclarationParsingTest {
 	static String[] testsBAD = #[
 		'count of slope',
 		'geography:slope',
-		'slopeCamel'//,
-//		'im:Potential presence (not im:Large) infrastructure:City'
+		'slopeCamel' // ,
+//		'im:Potential presence of (not im:Large) infrastructure:City'
 	]
 
 	@Test
@@ -55,10 +56,10 @@ class KnowledgeDeclarationParsingTest {
 			isEquivalent('count of im:Tall infrastructure:Building per m^2',
 				'count of (im:Tall infrastructure:Building) per m^2')
 		)
-		
-		/*
-		 * TODO add more equivalent definitions
-		 */
+
+	/*
+	 * TODO add more equivalent definitions
+	 */
 	}
 
 	/**
@@ -66,11 +67,14 @@ class KnowledgeDeclarationParsingTest {
 	 * produces an identical definition.
 	 */
 	@Test
+	@Ignore
 	def void testReversal() {
 
 		for (String test : testsOK) {
 			val result1 = parseHelper.parse(test);
 			var observable = Kim.INSTANCE.declareObservable(result1.observable);
+
+			// FIXME toString does not necessarily produce the fully normalized declaration - use proper
 			val obstring = observable.toString();
 			val result2 = parseHelper.parse(obstring);
 			observable = Kim.INSTANCE.declareObservable(result2.observable);

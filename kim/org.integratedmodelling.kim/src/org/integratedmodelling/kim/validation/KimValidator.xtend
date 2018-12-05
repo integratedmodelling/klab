@@ -283,7 +283,6 @@ class KimValidator extends AbstractKimValidator {
 						BAD_OBSERVABLE)
 					ok = false
 				}
-			// fall through to validation
 			}
 		}
 
@@ -343,7 +342,7 @@ class KimValidator extends AbstractKimValidator {
 			if (cd.modelReference !== null) {
 				if (observable === null) {
 					error(
-						'Model reference ' + cd.modelReference + " is unresolved: please" +
+						'Model reference ' + cd.modelReference + " is unresolved: please " +
 							(if(cd.modelReference.contains(".")) "import" else "declare") + " this model",
 						KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, BAD_OBSERVABLE)
 					ok = false
@@ -573,6 +572,8 @@ class KimValidator extends AbstractKimValidator {
 						Kim.getNamespaceId(namespace) + "." + descriptor.name)
 					// important! Name should be the same as the model's.
 					(descriptor.observables.get(0) as KimObservable).setFormalName(descriptor.name)
+					// also this goes in the symbol table
+					ns.symbolTable.put(descriptor.name, descriptor)
 				}
 
 				if (model.metadata !== null) {
@@ -1084,6 +1085,32 @@ class KimValidator extends AbstractKimValidator {
 							error = true
 						} else {
 							macro.setField(Field.CAUSED, declaration.caused)
+						}
+					} else {
+//					if (!flags.contains(Type.COUNTABLE)) {
+//						error("The context type (within) must be a subject, event or relationship",
+//							declaration.context, null, KimPackage.CONCEPT_DECLARATION__CONTEXT)
+//					}
+					}
+				}
+				copyInheritableFlags(flags, type);
+			}
+			
+			if (declaration.adjacent !== null) {
+				flags = checkDeclaration(declaration.adjacent)
+				if (flags.isEmpty) {
+					type.clear
+				} else if (!flags.contains(Type.MACRO)) {
+					if (macro !== null && macro.fields.contains(Field.ADJACENT)) {
+						// check against required field type
+						var rtype = macro.getType(Field.ADJACENT);
+						var ctype = Kim.intersection(rtype.type, flags)
+						if (!ctype.containsAll(rtype.type)) {
+							error("The adjacent type (adjacent to) does not match the type requested by the " + macro.name +
+								" macro", declaration.adjacent, null, KimPackage.CONCEPT_DECLARATION__ADJACENT)
+							error = true
+						} else {
+							macro.setField(Field.ADJACENT, declaration.adjacent)
 						}
 					} else {
 //					if (!flags.contains(Type.COUNTABLE)) {

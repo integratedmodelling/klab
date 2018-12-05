@@ -26,7 +26,6 @@ import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Documentation;
 import org.integratedmodelling.klab.Indexing;
-import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Observables;
@@ -72,6 +71,7 @@ import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.OWL;
+import org.integratedmodelling.klab.rest.DataflowState;
 import org.integratedmodelling.klab.rest.DocumentationReference;
 import org.integratedmodelling.klab.rest.InterruptTask;
 import org.integratedmodelling.klab.rest.ObservableReference;
@@ -547,6 +547,11 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		searchContexts.put(contextId, new Pair<>(newContext, new ArrayList<>()));
 	}
 
+	@MessageHandler(type = IMessage.Type.DataflowNodeDetail)
+	private void handleMatchAction(DataflowState state) {
+		System.out.println("Document node " + state.getNodeId());
+	}
+	
 	@MessageHandler
 	private void handleSearchRequest(SearchRequest request, IMessage message) {
 

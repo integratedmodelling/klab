@@ -55,6 +55,11 @@ public abstract class ObservedArtifact extends Artifact implements IArtifact {
 		return geometry;
 	}
 
+	public void setGeometry(IGeometry geometry) {
+		this.geometry = geometry;
+	}
+
+	
 	@Override
 	public IMetadata getMetadata() {
 		return metadata;

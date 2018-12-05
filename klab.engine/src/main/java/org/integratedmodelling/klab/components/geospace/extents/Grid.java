@@ -8,7 +8,6 @@ import java.util.Iterator;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.ILocator;
-import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
@@ -245,6 +244,14 @@ public class Grid extends Area implements IGrid {
 
 		@Override
 		public Cell N() {
+			if (y > 0) {
+				return new CellImpl(x, y - 1);
+			}
+			return null;
+		}
+
+		@Override
+		public Cell S() {
 			long trow = getYCells() - 1;
 			if (y < trow) {
 				return new CellImpl(x, y + 1);
@@ -253,23 +260,7 @@ public class Grid extends Area implements IGrid {
 		}
 
 		@Override
-		public Cell S() {
-			if (y > 0) {
-				return new CellImpl(x, y - 1);
-			}
-			return null;
-		}
-
-		@Override
 		public Cell E() {
-			if (x > 0) {
-				return new CellImpl(x - 1, y);
-			}
-			return null;
-		}
-
-		@Override
-		public Cell W() {
 			long tcol = getXCells() - 1;
 			if (x < tcol) {
 				return new CellImpl(x + 1, y);
@@ -278,25 +269,15 @@ public class Grid extends Area implements IGrid {
 		}
 
 		@Override
+		public Cell W() {
+			if (x > 0) {
+				return new CellImpl(x - 1, y);
+			}
+			return null;
+		}
+
+		@Override
 		public Cell NW() {
-			long trow = getYCells() - 1, tcol = getXCells() - 1;
-			if (y < trow && x < tcol) {
-				return new CellImpl(x + 1, y + 1);
-			}
-			return null;
-		}
-
-		@Override
-		public Cell NE() {
-			long trow = getYCells() - 1;
-			if (y < trow && x > 0) {
-				return new CellImpl(x - 1, y + 1);
-			}
-			return null;
-		}
-
-		@Override
-		public Cell SE() {
 			if (y > 0 && x > 0) {
 				return new CellImpl(x - 1, y - 1);
 			}
@@ -304,10 +285,29 @@ public class Grid extends Area implements IGrid {
 		}
 
 		@Override
-		public Cell SW() {
+		public Cell NE() {
 			long tcol = getXCells() - 1;
 			if (y > 0 && x < tcol) {
 				return new CellImpl(x + 1, y - 1);
+			}
+			return null;
+		}
+
+		@Override
+		public Cell SE() {
+			long tcol = getXCells() - 1;
+			long trow = getYCells() - 1;
+			if (y < trow && x < tcol) {
+				return new CellImpl(x + 1, y + 1);
+			}
+			return null;
+		}
+
+		@Override
+		public Cell SW() {
+			long trow = getYCells() - 1;
+			if (y < trow && x > 0) {
+				return new CellImpl(x - 1, y + 1);
 			}
 			return null;
 		}

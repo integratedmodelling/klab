@@ -487,7 +487,7 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getSimpleObservableSemanticsAccess().getGroup_1_4(), "rule__SimpleObservableSemantics__Group_1_4__0");
 					put(grammarAccess.getSimpleObservableSemanticsAccess().getGroup_1_5(), "rule__SimpleObservableSemantics__Group_1_5__0");
 					put(grammarAccess.getNamedObservableSemanticsAccess().getGroup(), "rule__NamedObservableSemantics__Group__0");
-					put(grammarAccess.getUnitElementAccess().getGroup_2(), "rule__UnitElement__Group_2__0");
+					put(grammarAccess.getUnitElementAccess().getGroup_1(), "rule__UnitElement__Group_1__0");
 					put(grammarAccess.getUnitAccess().getGroup(), "rule__Unit__Group__0");
 					put(grammarAccess.getUnitAccess().getGroup_2(), "rule__Unit__Group_2__0");
 					put(grammarAccess.getUnitAccess().getGroup_2_0(), "rule__Unit__Group_2_0__0");
@@ -1004,8 +1004,7 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getNamedObservableSemanticsAccess().getDeclarationAssignment_0(), "rule__NamedObservableSemantics__DeclarationAssignment_0");
 					put(grammarAccess.getNamedObservableSemanticsAccess().getNameAssignment_2(), "rule__NamedObservableSemantics__NameAssignment_2");
 					put(grammarAccess.getUnitElementAccess().getIdAssignment_0(), "rule__UnitElement__IdAssignment_0");
-					put(grammarAccess.getUnitElementAccess().getNumAssignment_1(), "rule__UnitElement__NumAssignment_1");
-					put(grammarAccess.getUnitElementAccess().getUnitAssignment_2_1(), "rule__UnitElement__UnitAssignment_2_1");
+					put(grammarAccess.getUnitElementAccess().getUnitAssignment_1_1(), "rule__UnitElement__UnitAssignment_1_1");
 					put(grammarAccess.getREL_OPERATORAccess().getGtAssignment_0(), "rule__REL_OPERATOR__GtAssignment_0");
 					put(grammarAccess.getREL_OPERATORAccess().getLtAssignment_1(), "rule__REL_OPERATOR__LtAssignment_1");
 					put(grammarAccess.getREL_OPERATORAccess().getEqAssignment_2(), "rule__REL_OPERATOR__EqAssignment_2");

@@ -3863,22 +3863,13 @@ public interface KimPackage extends EPackage
   int UNIT_ELEMENT__ID = 0;
 
   /**
-   * The feature id for the '<em><b>Num</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int UNIT_ELEMENT__NUM = 1;
-
-  /**
    * The feature id for the '<em><b>Unit</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int UNIT_ELEMENT__UNIT = 2;
+  int UNIT_ELEMENT__UNIT = 1;
 
   /**
    * The number of structural features of the '<em>Unit Element</em>' class.
@@ -3887,7 +3878,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int UNIT_ELEMENT_FEATURE_COUNT = 3;
+  int UNIT_ELEMENT_FEATURE_COUNT = 2;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.REL_OPERATORImpl <em>REL OPERATOR</em>}' class.
@@ -8156,17 +8147,6 @@ public interface KimPackage extends EPackage
   EAttribute getUnitElement_Id();
 
   /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.UnitElement#getNum <em>Num</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Num</em>'.
-   * @see org.integratedmodelling.kim.kim.UnitElement#getNum()
-   * @see #getUnitElement()
-   * @generated
-   */
-  EReference getUnitElement_Num();
-
-  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.UnitElement#getUnit <em>Unit</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -11512,14 +11492,6 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute UNIT_ELEMENT__ID = eINSTANCE.getUnitElement_Id();
-
-    /**
-     * The meta object literal for the '<em><b>Num</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference UNIT_ELEMENT__NUM = eINSTANCE.getUnitElement_Num();
 
     /**
      * The meta object literal for the '<em><b>Unit</b></em>' containment reference feature.

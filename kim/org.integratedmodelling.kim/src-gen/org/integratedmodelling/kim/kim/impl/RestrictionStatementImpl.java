@@ -449,7 +449,7 @@ public class RestrictionStatementImpl extends MinimalEObjectImpl.Container imple
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuilder result = new StringBuilder(super.toString());
+    StringBuffer result = new StringBuffer(super.toString());
     result.append(" (relType: ");
     result.append(relType);
     result.append(", authorities: ");

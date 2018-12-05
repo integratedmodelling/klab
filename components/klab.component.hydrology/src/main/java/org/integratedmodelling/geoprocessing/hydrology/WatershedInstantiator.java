@@ -6,7 +6,6 @@ import java.awt.image.DataBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hortonmachine.gears.utils.features.FeatureUtilities;
 import org.hortonmachine.hmachine.modules.demmanipulation.wateroutlet.OmsExtractBasin;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IParameters;

@@ -14523,41 +14523,36 @@ ruleUnitElement returns [EObject current=null]
 							lv_id_0_3,
 							"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
 					}
+					    |
+					lv_id_0_4=RULE_BACKCASE_ID
+					{
+						newLeafNode(lv_id_0_4, grammarAccess.getUnitElementAccess().getIdBACKCASE_IDTerminalRuleCall_0_0_3());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getUnitElementRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"id",
+							lv_id_0_4,
+							"org.integratedmodelling.kim.Kim.BACKCASE_ID");
+					}
 				)
 			)
 		)
 		    |
 		(
-			(
-				{
-					newCompositeNode(grammarAccess.getUnitElementAccess().getNumNumberParserRuleCall_1_0());
-				}
-				lv_num_1_0=ruleNumber
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getUnitElementRule());
-					}
-					set(
-						$current,
-						"num",
-						lv_num_1_0,
-						"org.integratedmodelling.kim.Kim.Number");
-					afterParserOrEnumRuleCall();
-				}
-			)
-		)
-		    |
-		(
-			otherlv_2='('
+			otherlv_1='('
 			{
-				newLeafNode(otherlv_2, grammarAccess.getUnitElementAccess().getLeftParenthesisKeyword_2_0());
+				newLeafNode(otherlv_1, grammarAccess.getUnitElementAccess().getLeftParenthesisKeyword_1_0());
 			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getUnitElementAccess().getUnitUnitParserRuleCall_2_1_0());
+						newCompositeNode(grammarAccess.getUnitElementAccess().getUnitUnitParserRuleCall_1_1_0());
 					}
-					lv_unit_3_0=ruleUnit
+					lv_unit_2_0=ruleUnit
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getUnitElementRule());
@@ -14565,15 +14560,15 @@ ruleUnitElement returns [EObject current=null]
 						set(
 							$current,
 							"unit",
-							lv_unit_3_0,
+							lv_unit_2_0,
 							"org.integratedmodelling.kim.Kim.Unit");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
-			otherlv_4=')'
+			otherlv_3=')'
 			{
-				newLeafNode(otherlv_4, grammarAccess.getUnitElementAccess().getRightParenthesisKeyword_2_2());
+				newLeafNode(otherlv_3, grammarAccess.getUnitElementAccess().getRightParenthesisKeyword_1_2());
 			}
 		)
 	)
@@ -15499,6 +15494,8 @@ RULE_UPPERCASE_ID : 'A'..'Z' ('A'..'Z'|'_')*;
 RULE_UPPERCASE_PATH : RULE_UPPERCASE_ID ('.' RULE_UPPERCASE_ID)*;
 
 RULE_CAMELCASE_ID : 'A'..'Z' ('A'..'z'|'0'..'9')*;
+
+RULE_BACKCASE_ID : 'a'..'z' ('A'..'z'|'0'..'9')*;
 
 RULE_ID : '^'? ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
 

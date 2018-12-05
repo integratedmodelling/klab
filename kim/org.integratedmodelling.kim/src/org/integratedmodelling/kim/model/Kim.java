@@ -1249,7 +1249,8 @@ public enum Kim {
 					model = (IKimModel) object;
 				}
 			}
-		} else if (namespace.getSymbolTable().containsKey(string)
+		}  
+		if (model == null && namespace.getSymbolTable().containsKey(string)
 				&& namespace.getSymbolTable().get(string) instanceof IKimModel) {
 			model = (IKimModel) namespace.getSymbolTable().get(string);
 		}

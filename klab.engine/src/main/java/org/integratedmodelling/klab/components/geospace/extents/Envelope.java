@@ -17,7 +17,6 @@ public class Envelope implements IEnvelope {
 	 */
 	public static final int DEFAULT_MIN_RESOLUTION = 5;
 	
-	
 	ReferencedEnvelope envelope;
 	IProjection projection;
 	Integer scaleRank = null;
@@ -55,6 +54,15 @@ public class Envelope implements IEnvelope {
 
 	public String toString() {
 		return envelope.toString();
+	}
+	
+	@Override
+	public double convertDistance(double metersDistance) {
+		if (getProjection().isMeters()) {
+			return metersDistance;
+		}
+		double cMeters = (getMaxX() - getMinX())/asShape().getStandardizedWidth();
+		return metersDistance * cMeters;
 	}
 
 	private Envelope() {
