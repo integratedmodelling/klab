@@ -1,8 +1,13 @@
 package org.integratedmodelling.klab.ide.navigator.e3;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorInput;
@@ -18,6 +23,7 @@ import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.ide.kim.KimData;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
+import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 import org.integratedmodelling.klab.ide.navigator.model.EResource;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.ide.views.ResourceEditor;
@@ -37,12 +43,18 @@ public class LinkHelper implements ILinkHelper {
 			if (namespaceId != null) {
 				IKimNamespace namespace = Kim.INSTANCE.getNamespace(namespaceId);
 				if (namespace != null) {
-					Object selection = KimData.INSTANCE.findObjectAt(caret, namespace);
-					/*
-					 * FIXME Won't do it unless already expanded. Needs treeselection with full
-					 * path?
-					 */
-					return selection == null ? StructuredSelection.EMPTY : new StructuredSelection(selection);
+					
+					ENavigatorItem selection = KimData.INSTANCE.findObjectAt(caret, namespace);
+					if (selection == null) {
+						return StructuredSelection.EMPTY;
+					}
+					
+					List<Object> treePath = new ArrayList<>();
+					while (selection != null) {
+						treePath.add(0, selection);
+						selection = selection.getEParent();
+					}
+					return new TreeSelection(new TreePath(treePath.toArray()));
 				}
 			}
 		}

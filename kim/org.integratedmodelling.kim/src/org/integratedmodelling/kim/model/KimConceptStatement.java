@@ -222,7 +222,6 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 	public KimConceptStatement(ConceptStatementBody statement, IKimStatement parent) {
 		super(statement, parent);
 		this.setDocstring(statement.getDocstring());
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

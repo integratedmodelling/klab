@@ -10,7 +10,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.emf.ecore.EObject;
 import org.integratedmodelling.kim.api.IKimAnnotation;
+import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimMetadata;
+import org.integratedmodelling.kim.api.IKimModel;
+import org.integratedmodelling.kim.api.IKimNamespace;
+import org.integratedmodelling.kim.api.IKimObserver;
+import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.model.KimStatement;
@@ -144,6 +149,24 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
 	
 	public void visit(Visitor visitor) {
 		delegate_.visit(visitor);
+	}
+
+	// create correspondent object without parent. Method in KimData also creates parents.
+	public static ENavigatorItem create(Object focus) {
+        if (focus instanceof IKimConceptStatement) {
+            return new EConcept(((IKimConceptStatement) focus).getNamespace() + ":" + ((IKimConceptStatement) focus).getName(),
+                    ((IKimConceptStatement) focus), null, null);
+        } else if (focus instanceof IKimModel) {
+            return new EModel(((IKimModel)focus).getNamespace() + "." + ((IKimModel) focus).getName(), ((IKimModel) focus), null);
+        } else if (focus instanceof IKimObserver) {
+            return new EObserver(((IKimObserver)focus).getNamespace() + "." + ((IKimObserver) focus).getName(),
+                    ((IKimObserver) focus), null, null);
+        } else if (focus instanceof IKimNamespace) {
+        	return new ENamespace((IKimNamespace)focus, null);
+        } else if (focus instanceof IKimProject) {
+        	return new EProject((IKimProject)focus, null);
+        }
+		return null;
 	}
 	
 }

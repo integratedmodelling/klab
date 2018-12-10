@@ -27,7 +27,7 @@ public class KimObserver extends KimStatement implements IKimObserver {
         super(statement, parent);
         this.observable = observable;
         this.name = observable.getFormalName();
-        this.urn = statement.getUrn() == null ? null : statement.getUrn().getName();
+		this.urn = statement.getUrn() == null ? null : statement.getUrn().getName();
     }
 
     @Override

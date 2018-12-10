@@ -9,6 +9,7 @@ import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.validation.Issue;
 import org.integratedmodelling.kim.api.IKimAnnotation;
+import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 
@@ -28,6 +29,7 @@ public class KimStatement extends KimScope implements IKimStatement {
     protected int firstCharOffset;
     protected int lastCharOffset;
     protected int offset;
+    protected String namespace;
     protected List<IKimAnnotation> annotations = new ArrayList<>();
     protected KimMetadata metadata;
     protected KimMetadata documentationMetadata;
@@ -50,8 +52,23 @@ public class KimStatement extends KimScope implements IKimStatement {
             setCode(statement);
         }
         this.parent = parent;
+		IKimNamespace ns = findNamespace(parent);
+		if (ns != null) {
+			this.namespace = ns.getName();
+		}
     }
 
+	protected static IKimNamespace findNamespace(IKimStatement statement) {
+
+		if (statement == null) {
+			return null;
+		}
+		if (statement instanceof IKimNamespace) {
+			return (IKimNamespace) statement;
+		}
+		return findNamespace(statement.getParent());
+	}
+	
     protected void setCode(EObject statement) {
         this.eObject = statement;
         ICompositeNode node = NodeModelUtils.findActualNodeFor(statement);
@@ -215,7 +232,11 @@ public class KimStatement extends KimScope implements IKimStatement {
     	}
     }
     
-
+    @Override
+    public String getNamespace() {
+    	return namespace;
+    }
+    
     /**
      * Create a dummy statement uniquely to carry the line numbers for a compile notification.
      * 

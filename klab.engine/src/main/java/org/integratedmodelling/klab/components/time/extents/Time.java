@@ -18,15 +18,71 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.scale.AbstractExtent;
 import org.integratedmodelling.klab.scale.Extent;
 import org.integratedmodelling.klab.scale.Scale.Mediator;
+import org.joda.time.DateTime;
 
 public class Time extends Extent implements ITime {
 
 	ITime.Type extentType;
-	TimeInstant start;
-	TimeInstant end;
-	TimeDuration step;
+	ITimeInstant start;
+	ITimeInstant end;
+	ITimeDuration step;
 	boolean realtime = false;
 	Resolution resolution;
+	long multiplicity = 1;
+
+	private static class ResolutionImpl implements Resolution {
+
+		private Type type;
+		private double multiplier;
+
+		public ResolutionImpl(Type type, double multiplier) {
+			this.type = type;
+			this.multiplier = multiplier;
+		}
+
+		@Override
+		public Type getType() {
+			return type;
+		}
+
+		@Override
+		public double getMultiplier() {
+			return multiplier;
+		}
+
+	}
+
+	private Time() {
+	}
+
+	public static Time create(int year) {
+		Time ret = new Time();
+		ret.extentType = ITime.Type.SPECIFIC;
+		ret.start = new TimeInstant(year);
+		ret.end = new TimeInstant(new DateTime(year + 1, 1, 1, 0, 0));
+		ret.resolution = new ResolutionImpl(Resolution.Type.YEAR, 1.0);
+		return ret;
+	}
+
+	public static Time create(int startYear, int endYear) {
+		Time ret = new Time();
+		ret.extentType = ITime.Type.SPECIFIC;
+		ret.start = new TimeInstant(startYear);
+		ret.end = new TimeInstant(endYear);
+		ret.resolution = new ResolutionImpl(Resolution.Type.YEAR, endYear - startYear);
+		return ret;
+	}
+
+	public static Time create(ITime.Type type, Resolution.Type resolutionType, double resolutionMultiplier,
+			ITimeInstant start, ITimeInstant end, ITimeDuration period) {
+		Time ret = new Time();
+		ret.extentType = type;
+		ret.start = start;
+		ret.end = end;
+		ret.resolution = new ResolutionImpl(resolutionType, resolutionMultiplier);
+		ret.step = period;
+		return ret;
+	}
 
 	@Override
 	public int getScaleRank() {
@@ -70,8 +126,7 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public long size() {
-		// TODO Auto-generated method stub
-		return 1;
+		return multiplicity;
 	}
 
 	@Override
@@ -187,8 +242,12 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public String encode() {
-		// TODO Auto-generated method stub
-		return null;
+		String ret = "S" + (multiplicity == 1 ? "0" : "1") + "(" + multiplicity + ")";
+		String opt = "{";
+		if (opt.length() > 1) {
+			ret += opt + "}";
+		}
+		return ret;
 	}
 
 	@Override
