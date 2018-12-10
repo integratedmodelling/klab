@@ -87,9 +87,10 @@ public class ResourceEditor extends ViewPart {
 	private Text text_1;
 	private Text text_2;
 	private Button isPublishable;
-	private Text text_3;
-	private Text text_4;
-	private Text text_5;
+	private Text time_start;
+	private Text time_end;
+	private Text time_step;
+	private Text time_resolution_multiplier;
 
 	public class PropertySupport extends EditingSupport {
 
@@ -414,20 +415,34 @@ public class ResourceEditor extends ViewPart {
 			grpTime.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 2, 1));
 			grpTime.setText("Time");
 			
-			Combo combo_2 = new Combo(grpTime, SWT.READ_ONLY);
-			combo_2.addSelectionListener(new SelectionAdapter() {
+			Combo time_type = new Combo(grpTime, SWT.READ_ONLY);
+			time_type.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 				}
 			});
-			combo_2.setItems(new String[] {"Specific", "Generic", "Grid"});
-			combo_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-			combo_2.select(0);
+			time_type.setItems(new String[] {"Generic", "Specific", "Grid", "Real time"});
+			time_type.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			time_type.select(1);
 			
-			Combo combo_1 = new Combo(grpTime, SWT.READ_ONLY);
-			combo_1.setItems(new String[] {"None", "Year", "Month", "Week", "Day", "Hour", "Minute", "Second"});
-			combo_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-			combo_1.select(0);
+			Composite composite_7 = new Composite(grpTime, SWT.NONE);
+			GridLayout gl_composite_7 = new GridLayout(2, false);
+			gl_composite_7.horizontalSpacing = 2;
+			gl_composite_7.marginWidth = 0;
+			gl_composite_7.marginHeight = 0;
+			composite_7.setLayout(gl_composite_7);
+			composite_7.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+			
+			time_resolution_multiplier = new Text(composite_7, SWT.BORDER);
+			GridData gd_time_resolution_multiplier = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+			gd_time_resolution_multiplier.widthHint = 24;
+			time_resolution_multiplier.setLayoutData(gd_time_resolution_multiplier);
+			time_resolution_multiplier.setText("1");
+			
+			Combo time_resolution = new Combo(composite_7, SWT.READ_ONLY);
+			time_resolution.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			time_resolution.setItems(new String[] {"MIllennium", "Century", "Decade", "Year", "Month", "Week", "Day", "Hour", "Minute", "Second", "Millisecond", "Nanosecond"});
+			time_resolution.select(3);
 			
 			Composite composite_4 = new Composite(grpTime, SWT.NONE);
 			composite_4.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -437,11 +452,14 @@ public class ResourceEditor extends ViewPart {
 			gl_composite_4.marginHeight = 0;
 			composite_4.setLayout(gl_composite_4);
 			
-			text_3 = new Text(composite_4, SWT.BORDER);
-			text_3.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			time_start = new Text(composite_4, SWT.BORDER);
+			time_start.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 			
-			Button btnNewButton_4 = new Button(composite_4, SWT.NONE);
-			btnNewButton_4.setText("S");
+			Button time_chooseStart = new Button(composite_4, SWT.NONE);
+			GridData gd_time_chooseStart = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+			gd_time_chooseStart.widthHint = 48;
+			time_chooseStart.setLayoutData(gd_time_chooseStart);
+			time_chooseStart.setText("Start");
 			
 			Composite composite_5 = new Composite(grpTime, SWT.NONE);
 			composite_5.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -451,13 +469,16 @@ public class ResourceEditor extends ViewPart {
 			gl_composite_5.horizontalSpacing = 2;
 			composite_5.setLayout(gl_composite_5);
 			
-			text_4 = new Text(composite_5, SWT.BORDER);
-			text_4.setEnabled(false);
-			text_4.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			time_end = new Text(composite_5, SWT.BORDER);
+			time_end.setEnabled(false);
+			time_end.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 			
-			Button btnE = new Button(composite_5, SWT.NONE);
-			btnE.setEnabled(false);
-			btnE.setText("E");
+			Button time_chooseEnd = new Button(composite_5, SWT.NONE);
+			GridData gd_time_chooseEnd = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+			gd_time_chooseEnd.widthHint = 48;
+			time_chooseEnd.setLayoutData(gd_time_chooseEnd);
+			time_chooseEnd.setEnabled(false);
+			time_chooseEnd.setText("End");
 			
 			Composite composite_6 = new Composite(grpTime, SWT.NONE);
 			composite_6.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -467,13 +488,16 @@ public class ResourceEditor extends ViewPart {
 			gl_composite_6.horizontalSpacing = 2;
 			composite_6.setLayout(gl_composite_6);
 			
-			text_5 = new Text(composite_6, SWT.BORDER);
-			text_5.setEnabled(false);
-			text_5.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+			time_step = new Text(composite_6, SWT.BORDER);
+			time_step.setEnabled(false);
+			time_step.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 			
-			Button btnG = new Button(composite_6, SWT.NONE);
-			btnG.setEnabled(false);
-			btnG.setText("G");
+			Button time_chooseStep = new Button(composite_6, SWT.NONE);
+			GridData gd_time_chooseStep = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+			gd_time_chooseStep.widthHint = 48;
+			time_chooseStep.setLayoutData(gd_time_chooseStep);
+			time_chooseStep.setEnabled(false);
+			time_chooseStep.setText("Step");
 
 			Group grpAttributes = new Group(composite_1, SWT.NONE);
 			grpAttributes.setLayout(new GridLayout(1, false));

@@ -91,14 +91,14 @@ public class KimHighlightingCalculator extends DefaultSemanticHighlightingCalcul
 						boolean inactive = node.getSemanticElement() instanceof ModelStatement
 								&& ((ModelStatement) node.getSemanticElement()).isInactive();
 
-						if (!inactive && !((ModelStatement) node.getSemanticElement()).getBody().getUrns().isEmpty()) {
-							for (Urn urn : ((ModelStatement) node.getSemanticElement()).getBody().getUrns()) {
-								UrnDescriptor ud = Kim.INSTANCE.getUrnDescriptor(urn.getName());
-								if (ud == null || ud.isDead() || !ud.isAccessible()) {
-									inactive = true;
-								}
-							}
-						}
+//						if (!inactive && !((ModelStatement) node.getSemanticElement()).getBody().getUrns().isEmpty()) {
+//							for (Urn urn : ((ModelStatement) node.getSemanticElement()).getBody().getUrns()) {
+//								UrnDescriptor ud = Kim.INSTANCE.getUrnDescriptor(urn.getName());
+//								if (ud == null || ud.isDead() || !ud.isAccessible()) {
+//									inactive = true;
+//								}
+//							}
+//						}
 						if (inactive) {
 							acceptor.addPosition((start = node.getOffset()), node.getLength(),
 									KimHighlightingConfiguration.VOID_MODEL_ID);
@@ -170,6 +170,9 @@ public class KimHighlightingCalculator extends DefaultSemanticHighlightingCalcul
 					} else if (node.getSemanticElement() instanceof Urn) {
 
 						String text = node.getText().trim();
+						if (text.startsWith("'") || text.startsWith("\"")) {
+							text = text.substring(1, text.length() - 1);
+						}
 						if (!text.isEmpty()) {
 							UrnDescriptor cdesc = Kim.INSTANCE.getUrnDescriptor(text);
 							if (cdesc != null) {
@@ -193,6 +196,8 @@ public class KimHighlightingCalculator extends DefaultSemanticHighlightingCalcul
 								acceptor.addPosition((start = node.getOffset()), node.getLength(),
 										KimHighlightingConfiguration.UNKNOWN_URN_ID);
 							}
+						} else {
+							System.out.println("ZBORRO");
 						}
 					} else if (node.getSemanticElement() instanceof ConceptStatementBody
 							&& ((ConceptStatementBody) node.getSemanticElement()).getName() != null) {

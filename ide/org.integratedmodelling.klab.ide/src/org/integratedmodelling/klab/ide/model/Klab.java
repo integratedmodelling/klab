@@ -232,8 +232,12 @@ public class Klab {
 	 * @return
 	 */
 	public EResourceReference getResource(String urn) {
+		String kurn = urn;
+		if (urn.contains("#")) {
+			kurn = kurn.substring(0, urn.indexOf("#"));
+		}
 		for (Map<String, EResourceReference> container : resourceCatalog.values()) {
-			EResourceReference ret = container.get(urn);
+			EResourceReference ret = container.get(kurn);
 			if (ret != null) {
 				return ret;
 			}
@@ -264,6 +268,14 @@ public class Klab {
 
 	public List<CompileNotificationReference> getErrors(String namespaceId) {
 		return compileInfo.containsKey(namespaceId) ? compileInfo.get(namespaceId).errors : new ArrayList<>();
+	}
+
+	public void updateResource(LocalResourceReference resource) {
+		 EResourceReference res = getResource(resource.getUrn());
+		 if (res != null) {
+			 res.setOnline(resource.isOnline());
+			 res.setError(resource.isError());
+		 }
 	}
 
 }

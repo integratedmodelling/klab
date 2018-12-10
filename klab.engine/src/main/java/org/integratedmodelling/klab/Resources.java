@@ -898,8 +898,9 @@ public enum Resources implements IResourceService {
 		for (String urn : project.getLocalResourceUrns()) {
 			LocalResourceReference rref = new LocalResourceReference();
 			rref.setUrn(urn);
-			// TODO
-			rref.setOnline(true);
+			IResource resource = Resources.INSTANCE.resolveResource(urn);
+			rref.setOnline(Resources.INSTANCE.isResourceOnline(resource));
+			rref.setError(resource.hasErrors());
 			ret.getLocalResources().add(rref);
 		}
 		return ret;

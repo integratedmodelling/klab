@@ -416,7 +416,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 	@MessageHandler(type = IMessage.Type.FeatureAdded)
 	private void handleFeatureAdded(final SpatialLocation location) {
-		
+
 		if (location.getContextId() == null) {
 			Shape shape = Shape.create("EPSG:4326 " + location.getWktShape());
 			Observer observer = Observations.INSTANCE.makeROIObserver(shape, null, monitor);
@@ -429,7 +429,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			// TODO do something with the shape - must involve user to define semantics
 		}
 	}
-	
+
 	@MessageHandler
 	private void handleResourceCRUDRequest(final ResourceCRUDRequest request, IMessage.Type type) {
 
@@ -551,7 +551,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	private void handleMatchAction(DataflowState state) {
 		System.out.println("Document node " + state.getNodeId());
 	}
-	
+
 	@MessageHandler
 	private void handleSearchRequest(SearchRequest request, IMessage message) {
 
@@ -788,16 +788,16 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		}
 
 		if (request.getContextId() != null) {
-			
+
 			IObservation subject = getObservation(request.getContextId());
 			if (!(subject instanceof ISubject)) {
 				throw new IllegalArgumentException("cannot use a state as the context for an observation");
 			}
-			
+
 			if (!OWL.INSTANCE.isSemantic(subject.getObservable())) {
 				throw new IllegalArgumentException("context has no semantics and cannot support further observations");
 			}
-			
+
 			((ISubject) subject).observe(request.getUrn(),
 					request.getScenarios().toArray(new String[request.getScenarios().size()]));
 		} else {
@@ -832,13 +832,18 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			@Override
 			public void run() {
 				ProjectLoadResponse response = new ProjectLoadResponse();
-				for (IKimProject project : Resources.INSTANCE.getLoader()
-						.loadProjectFiles(request.getProjectLocations())) {
-					IProject proj = Resources.INSTANCE.getProject(project.getName());
-					response.getProjects().add(Resources.INSTANCE.createProjectDescriptor(proj));
+				Resources.INSTANCE.getLoader().loadProjectFiles(request.getProjectLocations());
+
+				for (File file : request.getProjectLocations()) {
+					IKimProject project = Kim.INSTANCE.getProjectIn(file, false);
+					if (project != null) {
+						IProject proj = Resources.INSTANCE.getProject(project.getName());
+						response.getProjects().add(Resources.INSTANCE.createProjectDescriptor(proj));
+					}
 				}
+				
 				monitor.send(Message.create(token, IMessage.MessageClass.ProjectLifecycle,
-						IMessage.Type.UserProjectOpened, response).inResponseTo(message));
+						IMessage.Type.UserProjectOpened, response)/* .inResponseTo(message) */);
 			}
 
 		}.start();
@@ -861,7 +866,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			ret.getRootObservations().put(ctx.getRootSubject().getId(), Observations.INSTANCE
 					.createArtifactDescriptor(ctx.getRootSubject(), null, ITime.INITIALIZATION, 0, false));
 		}
-		
+
 		return ret;
 	}
 

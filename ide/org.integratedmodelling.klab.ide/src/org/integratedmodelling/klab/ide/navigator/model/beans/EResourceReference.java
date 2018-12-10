@@ -16,12 +16,15 @@ public class EResourceReference extends ResourceReference {
 
 	private boolean online;
 	private boolean error;
+	private boolean authorized;
 	
 	public EResourceReference() {
 	}
 
 	public EResourceReference(ResourceReference other) {
 		super(other);
+		// TODO
+		this.authorized = true;
 		for (Notification notification : other.getNotifications()) {
 		    if (notification.getLevel().equals(Level.SEVERE.getName())) {
 		        error = true;
@@ -31,6 +34,8 @@ public class EResourceReference extends ResourceReference {
 	
 	public EResourceReference(ResourceReference other, boolean online) {
 		this(other);
+		// TODO
+		this.authorized = true;
 		this.online = online;
 	}
 
@@ -48,6 +53,11 @@ public class EResourceReference extends ResourceReference {
 
 	public void setError(boolean error) {
 		this.error = error;
+	}
+
+	public boolean isUnauthorized() {
+		// TODO Auto-generated method stub
+		return !authorized;
 	}
 	
 	
