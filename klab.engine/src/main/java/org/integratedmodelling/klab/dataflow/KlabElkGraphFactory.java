@@ -43,7 +43,8 @@ public class KlabElkGraphFactory {
 	
 	private static final int FONT_SIZE = 8;
 	private static final double PORT_SIZE = 5;
-	
+	private static final ElkPadding NODE_PADDING = new ElkPadding(12, 0, 0, 5);
+	private static final ElkPadding ROOT_PADDING = new ElkPadding(12, 0, 0, 5);
 	
 	static LayoutMetaDataService service;
 
@@ -83,7 +84,7 @@ public class KlabElkGraphFactory {
 		// root.setProperty(LayeredOptions.HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN);
 		root.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS));
 		root.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.insideTopLeft());
-		root.setProperty(CoreOptions.NODE_LABELS_PADDING, new ElkPadding(10, 0, 0, 10));
+		root.setProperty(CoreOptions.NODE_LABELS_PADDING, ROOT_PADDING);
 		
 		// root.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS,
 		//		SizeConstraint.PORT_LABELS, SizeConstraint.PORTS, SizeConstraint.MINIMUM_SIZE));
@@ -109,7 +110,7 @@ public class KlabElkGraphFactory {
 		*/
 		node.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS, SizeConstraint.PORTS, SizeConstraint.MINIMUM_SIZE));
 		node.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.insideTopLeft());
-		node.setProperty(CoreOptions.NODE_LABELS_PADDING, new ElkPadding(10, 0, 0, 5));
+		node.setProperty(CoreOptions.NODE_LABELS_PADDING, NODE_PADDING);
 		node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.UNIFORM_PORT_SPACING));
 		node.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
 		// node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.COMPUTE_PADDING));
@@ -133,7 +134,7 @@ public class KlabElkGraphFactory {
 		*/
 		node.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS, SizeConstraint.PORTS, SizeConstraint.MINIMUM_SIZE));
 		node.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.insideTopLeft());
-		node.setProperty(CoreOptions.NODE_LABELS_PADDING, new ElkPadding(10, 0, 0, 5));
+		node.setProperty(CoreOptions.NODE_LABELS_PADDING, NODE_PADDING);
 		node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.UNIFORM_PORT_SPACING));
 		node.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
 		// node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.COMPUTE_PADDING));
