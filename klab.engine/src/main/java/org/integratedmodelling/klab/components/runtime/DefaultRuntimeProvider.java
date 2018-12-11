@@ -301,7 +301,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		for (Pair<String, IDataArtifact> variable : variables) {
 			// this ensures that Groovy expressions are computable
 			Object value = variable.getSecond().get(state);
-			if (value == null && targetArtifact.getType() == IArtifact.Type.NUMBER) {
+			if (value == null && variable.getSecond().getType() == IArtifact.Type.NUMBER) {
 				value = Double.NaN;
 			}
 			context.set(variable.getFirst(), value);
