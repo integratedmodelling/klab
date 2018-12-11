@@ -67,13 +67,6 @@
 	</build>
 	<dependencies>
 
-		<!-- ELKI data mining framework for clustering -->
-		<dependency>
-			<groupId>de.lmu.ifi.dbs.elki</groupId>
-			<artifactId>elki</artifactId>
-			<version>0.7.1</version>
-		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>

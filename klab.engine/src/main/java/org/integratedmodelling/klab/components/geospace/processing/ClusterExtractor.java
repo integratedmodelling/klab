@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.math3.ml.clustering.Cluster;
+import org.apache.commons.math3.ml.clustering.DBSCANClusterer;
+import org.apache.commons.math3.ml.clustering.DoublePoint;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
@@ -39,13 +42,15 @@ import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Range;
 
 import com.vividsolutions.jts.algorithm.ConvexHull;
-import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryCollection;
 
 public class ClusterExtractor implements IExpression, IInstantiator {
 
 	Descriptor exprDescriptor = null;
 	private IGrid grid;
+	int minPoints = 15;
+	double epsilon = 0.1;
 
 	public ClusterExtractor() {
 	}
@@ -64,6 +69,15 @@ public class ClusterExtractor implements IExpression, IInstantiator {
 
 	public ClusterExtractor(IParameters<String> parameters, IComputationContext context)
 			throws KlabValidationException {
+
+		// TODO support clustering of point features in other contextualizer
+		IScale scale = context.getScale();
+		if (!(scale.isSpatiallyDistributed() && scale.getDimension(Type.SPACE).size() > 1
+				&& scale.getDimension(Type.SPACE).isRegular())) {
+			throw new KlabValidationException(
+					"point clustering only works on regular distributed spatial extents (grids)");
+		}
+
 		if (parameters.containsKey("select")) {
 			Object expression = parameters.get("select");
 			if (expression instanceof IKimExpression) {
@@ -73,11 +87,13 @@ public class ClusterExtractor implements IExpression, IInstantiator {
 					.describe(expression.toString(), context);
 		}
 
-		IScale scale = context.getScale();
-		if (!(scale.isSpatiallyDistributed() && scale.getDimension(Type.SPACE).size() > 1
-				&& scale.getDimension(Type.SPACE).isRegular())) {
-			throw new KlabValidationException(
-					"feature extraction only works on regular distributed spatial extents (grids)");
+		if (parameters.containsKey("radius")) {
+			this.epsilon = context.getScale().getSpace().getEnvelope()
+					.convertDistance(parameters.get("radius", Double.class));
+		}
+
+		if (parameters.containsKey("minpoints")) {
+			this.minPoints = parameters.get("minpoints", Integer.class);
 		}
 
 		this.grid = ((Space) scale.getSpace()).getGrid();
@@ -109,7 +125,7 @@ public class ClusterExtractor implements IExpression, IInstantiator {
 			}
 			if (sourceStates.isEmpty()) {
 				throw new KlabResourceNotFoundException(
-						"feature extractor: the selection expression does not reference any known state");
+						"cluster extractor: the selection expression does not reference any known state");
 			}
 			expression = exprDescriptor.compile();
 		}
@@ -133,7 +149,7 @@ public class ClusterExtractor implements IExpression, IInstantiator {
 			if (scontext != null && Observables.INSTANCE.isCompatible(semantics.getType(), scontext)) {
 				inheritedStates.add(sourceState);
 				context.getMonitor().info(
-						"feature extractor: instances will inherit a rescaled view of " + sourceState.getObservable());
+						"cluster extractor: instances will inherit a rescaled view of " + sourceState.getObservable());
 			}
 		}
 
@@ -144,7 +160,7 @@ public class ClusterExtractor implements IExpression, IInstantiator {
 			fractionState = sourceStates.get(0);
 			if (!(fractionState.getObservable().getObservationType() == ObservationType.QUANTIFICATION)) {
 				throw new KlabValidationException(
-						"feature extractor: state for fraction extraction " + fractionState + " must be numeric");
+						"cluster extractor: state for fraction extraction " + fractionState + " must be numeric");
 			}
 			// TODO
 			// StateSummary stateSummary =
@@ -153,7 +169,8 @@ public class ClusterExtractor implements IExpression, IInstantiator {
 
 		Parameters<String> parameters = new Parameters<>();
 		boolean warned = false;
-		List<Geometry> geometries = new ArrayList<>();
+//		List<Coordinate> geometries = new ArrayList<>();
+		List<DoublePoint> dpoints = new ArrayList<>();
 
 		for (Cell cell : grid) {
 
@@ -190,26 +207,40 @@ public class ClusterExtractor implements IExpression, IInstantiator {
 				}
 				if (!(o instanceof Boolean)) {
 					throw new KlabValidationException(
-							"feature extractor: feature extraction selector must return true/false");
+							"cluster extractor: feature extraction selector must return true/false");
 				}
 
 			} else if (!warned) {
-				context.getMonitor().warn("feature extractor: no input: specify either select or select fraction");
+				context.getMonitor().warn("cluster extractor: no input: specify either select or select fraction");
 				warned = true;
 			}
 
-			if (o instanceof Boolean && (Boolean)o) { 
-				geometries.add(((Shape) cell.getShape().getCentroid()).getJTSGeometry());
+			if (o instanceof Boolean && (Boolean) o) {
+				Coordinate cdc = ((Shape) cell.getShape().getCentroid()).getJTSGeometry().getCoordinate();
+//				geometries.add(cdc);
+				dpoints.add(new DoublePoint(new double[] {cdc.x, cdc.y}));
 			}
 		}
+		
+		int nc = 0;
+		if (dpoints.size() > 0) {
+			
+			DBSCANClusterer<DoublePoint> clusterer = new DBSCANClusterer<>(epsilon, minPoints);
+			for (Cluster<DoublePoint> cluster : clusterer.cluster(dpoints)) {
+				List<DoublePoint> pts = cluster.getPoints();
+				Coordinate[] points = new Coordinate[pts.size()];
+				for (int i = 0; i < pts.size(); i++) {
+					points[i] = new Coordinate(pts.get(i).getPoint()[0], pts.get(i).getPoint()[1]);
+				}
+				GeometryCollection shape = (GeometryCollection) Geospace.gFactory.createMultiPoint(points);
+				ConvexHull hull = new ConvexHull(shape);
+				ret.add(context.newObservation(semantics, semantics.getLocalName() + "_" + (nc + 1),
+						Scale.substituteExtent(context.getScale(),
+								Shape.create(hull.getConvexHull(), grid.getProjection()))));
 
-		/*
-		 * build the final geometry
-		 */
-		GeometryCollection geometryCollection = (GeometryCollection) Geospace.gFactory.buildGeometry(geometries);
-		ConvexHull hull = new ConvexHull(geometryCollection.union());
-		ret.add(context.newObservation(semantics, semantics.getLocalName() + "_0", Scale.substituteExtent(context.getScale(),
-				Shape.create(hull.getConvexHull(), grid.getProjection()))));
+				nc++;
+			}
+		}
 
 		return ret;
 	}

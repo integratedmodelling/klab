@@ -152,6 +152,7 @@ public class GroovyExpressionPreprocessor {
 	static final int KNOWN_DOMAIN = 7;
 	static final int KNOWN_MODEL_OBJECT = 8;
 	static final int NEWLINE = 9;
+	static final int INFERENCE = 10;
 
 	public GroovyExpressionPreprocessor(INamespace currentNamespace, Set<String> knownIdentifiers, IGeometry geometry,
 			IRuntimeContext context, boolean contextual) {
@@ -357,8 +358,29 @@ public class GroovyExpressionPreprocessor {
 	}
 
 	private String reconstruct(List<TokenDescriptor> tokens) {
+		
 		String ret = "";
-		for (TokenDescriptor t : tokens) {
+
+		/*
+		 * reduce KNOWN_ID 'is' KNOWLEDGE to ID.isa(CONCEPT)
+		 */
+		List<TokenDescriptor> reduced = new ArrayList<>();
+		for (int i = 0; i < tokens.size(); i++) {
+			if (
+					tokens.get(i).type == KNOWN_ID &&
+					tokens.size() - i >= 4 && 
+					tokens.get(i + 1).token.trim().isEmpty() &&
+					tokens.get(i + 2).token.equals("is") &&
+					tokens.get(i + 3).token.trim().isEmpty() &&
+					tokens.get(i + 4).type == KNOWLEDGE) {
+				reduced.add(new TokenDescriptor(INFERENCE, tokens.get(i) + ".isa(" + tokens.get(i+4).translate() + ")"));
+				i += 4;
+			} else {
+				reduced.add(tokens.get(i));
+			}
+		}
+
+		for (TokenDescriptor t : reduced) {
 			ret += t.type == NEWLINE ? "\n" : t.translate();
 		}
 		return ret;
@@ -513,7 +535,7 @@ public class GroovyExpressionPreprocessor {
 	}
 
 	private String translateParameter(String currentToken) {
-		return "_p.get(\"" + currentToken + "\")";
+		return scalarIds.contains(currentToken) ? currentToken : "_p.get(\"" + currentToken + "\")";
 	}
 
 	private String translateKnowledge(String k) {

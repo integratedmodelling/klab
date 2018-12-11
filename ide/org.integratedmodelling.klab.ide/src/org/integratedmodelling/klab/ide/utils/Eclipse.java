@@ -425,8 +425,8 @@ public enum Eclipse {
 				if (editor.getId().equals("org.integratedmodelling.kim.Kim")) {
 					try {
 						XtextEditor xte = EditorUtils.getXtextEditor(editor.getEditor(false));
-						if (xte != null) {
-//							xte.setInput(null);
+						if (xte != null && !xte.isDirty()) {
+							// leave it alone if dirty or we'll lose changes
 							xte.setInput(xte.getEditorInput());
 							// TODO REMEMBER THIS FOR REFACTORING
 //							xte.getDocument().modify(new IUnitOfWork<Object, XtextResource>() {

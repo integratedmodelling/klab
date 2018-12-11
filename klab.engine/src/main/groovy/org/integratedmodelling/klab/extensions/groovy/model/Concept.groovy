@@ -157,61 +157,62 @@ public class Concept {
         return Concepts.getDisplayName(getConcept());
     }
 
-    def is(Object o) {
+    def isa(Object o) {
         resolve();
         IConcept sem = toConcept(o);
         boolean ret = concept.is(sem);
-        if (!ret && (sem.is(IKimConcept.Type.OBSERVABLE) || sem.is(IKimConcept.Type.TRAIT) || sem.is(IKimConcept.Type.ROLE))) {
-            if (sem.is(IKimConcept.Type.TRAIT)) {
-                return Traits.hasTrait(concept, sem.getType());
-            } else if (sem.is(IKimConcept.Type.ROLE)) {
-                if (Roles.hasRole(concept, sem.getType())) {
-                    return true;
-                }
-                if (o instanceof Concept && ((Concept)o).roleContext != null) {
-                    if (((Observation)((Concept)o).roleContext).getExplicitRoles().contains(sem.getType())) {
-                        return true;
-                    }
-                }
-            }
-        }
+		// TODO
+//        if (!ret && (sem.is(IKimConcept.Type.OBSERVABLE) || sem.is(IKimConcept.Type.TRAIT) || sem.is(IKimConcept.Type.ROLE))) {
+//            if (sem.is(IKimConcept.Type.TRAIT)) {
+//                return Traits.hasTrait(concept, sem.getType());
+//            } else if (sem.is(IKimConcept.Type.ROLE)) {
+//                if (Roles.hasRole(concept, sem.getType())) {
+//                    return true;
+//                }
+//                if (o instanceof Concept && ((Concept)o).roleContext != null) {
+//                    if (((Observation)((Concept)o).roleContext).getExplicitRoles().contains(sem.getType())) {
+//                        return true;
+//                    }
+//                }
+//            }
+//        }
         return ret;
     }
 
 
     def isThing() {
         resolve();
-        return NS.isThing(concept);
+        return concept.is(IKimConcept.Type.SUBJECT);
     }
 
     def isQuality() {
         resolve();
-        return NS.isQuality(concept);
+        return concept.is(IKimConcept.Type.QUALITY);
     }
 
     def isProcess() {
         resolve();
-        return NS.isProcess(concept);
+        return concept.is(IKimConcept.Type.PROCESS);
     }
 
     def isEvent() {
         resolve();
-        return NS.isEvent(concept);
+        return concept.is(IKimConcept.Type.EVENT);
     }
 
     def isRelationship() {
         resolve();
-        return NS.isRelationship(concept);
+        return concept.is(IKimConcept.Type.RELATIONSHIP);
     }
 
     def isRole() {
         resolve();
-        return NS.isRole(concept);
+        return concept.is(IKimConcept.Type.ROLE);
     }
 
     def isTrait() {
         resolve();
-        return NS.isTrait(concept);
+        return concept.is(IKimConcept.Type.TRAIT);
     }
 
 
