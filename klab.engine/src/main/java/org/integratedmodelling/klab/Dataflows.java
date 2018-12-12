@@ -85,18 +85,18 @@ public enum Dataflows implements IDataflowService {
 	@Override
 	public Dataflow compile(String name, IResolutionScope scope) throws KlabException {
 
-		DataflowCompiler builder = new DataflowCompiler(name, scope);
+		DataflowCompiler compiler = new DataflowCompiler(name, scope);
 
 		if (((ResolutionScope) scope).getObserver() != null) {
-			builder = builder.withResolvable(((ResolutionScope) scope).getObserver());
+			compiler = compiler.withResolvable(((ResolutionScope) scope).getObserver());
 		}
 
 		for (Link link : ((ResolutionScope) scope).getLinks()) {
-			builder = builder.withResolution(link.getTarget().getResolvable(), link.getSource().getResolvable(),
-					link.getTarget().getCoverage(), link.getComputation());
+			compiler = compiler.withResolution(link.getTarget().getResolvable(), link.getSource().getResolvable(),
+					link.getTarget().getCoverage(), link.getTarget().getMode(), link.getComputation());
 		}
 
-		return builder.compile(scope.getMonitor());
+		return compiler.compile(scope.getMonitor());
 	}
 
 	/**

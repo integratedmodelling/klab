@@ -540,7 +540,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		Map<String, Pair<Observable, Mode>> targetObservables = new HashMap<>();
 
 		if (this.catalog.get(actuator.getName()) == null && !actuator.computesRescaledState()) {
-			targetObservables.put(actuator.getName(), new Pair<>(actuator.getObservable(), scope.getMode()));
+			targetObservables.put(actuator.getName(), new Pair<>(actuator.getObservable(), actuator.getMode()));
 		}
 
 		/*

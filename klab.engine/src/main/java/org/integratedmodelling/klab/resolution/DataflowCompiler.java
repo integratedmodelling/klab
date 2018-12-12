@@ -60,6 +60,7 @@ public class DataflowCompiler {
 	static class ResolutionEdge {
 
 		Coverage coverage;
+		IResolutionScope.Mode mode;
 
 		/*
 		 * if not null, the computation will adapt the source to the target and they may
@@ -68,8 +69,9 @@ public class DataflowCompiler {
 		 */
 		List<IComputableResource> indirectAdapters;
 
-		ResolutionEdge(Coverage coverage, List<IComputableResource> indirectAdapters) {
+		ResolutionEdge(Coverage coverage, IResolutionScope.Mode mode, List<IComputableResource> indirectAdapters) {
 			this.coverage = coverage;
+			this.mode = mode;
 			this.indirectAdapters = indirectAdapters;
 		}
 
@@ -101,12 +103,14 @@ public class DataflowCompiler {
 		for (IResolvable root : getRootResolvables(resolutionGraph)) {
 
 			modelCatalog.clear();
-
-			Node node = compileActuator(root, resolutionGraph, this.context == null ? null : this.context.getScale(),
-					monitor);
+			boolean isResolver = root instanceof IObserver
+					|| !((Observable) root).is(org.integratedmodelling.kim.api.IKimConcept.Type.COUNTABLE);
+			Node node = compileActuator(root,
+					isResolver ? IResolutionScope.Mode.RESOLUTION : IResolutionScope.Mode.INSTANTIATION, 
+					resolutionGraph,
+					this.context == null ? null : this.context.getScale(), monitor);
 			Actuator actuator = node.getActuatorTree(monitor, new HashSet<>());
-			actuator.setCreateObservation(root instanceof IObserver
-					|| !((Observable) root).is(org.integratedmodelling.kim.api.IKimConcept.Type.COUNTABLE));
+			actuator.setCreateObservation(isResolver);
 			ret.getActuators().add(actuator);
 
 			// compute coverage
@@ -146,7 +150,7 @@ public class DataflowCompiler {
 		if (ret.getActuators().isEmpty() && ((ResolutionScope) scope).getObservable().is(IKimConcept.Type.SUBJECT)
 				&& scope.getMode() == Mode.RESOLUTION) {
 
-			Actuator actuator = Actuator.create();
+			Actuator actuator = Actuator.create(Mode.RESOLUTION);
 			actuator.setObservable(((ResolutionScope) scope).getObservable());
 			actuator.setCreateObservation(true);
 			actuator.setType(Type.OBJECT);
@@ -214,6 +218,7 @@ public class DataflowCompiler {
 
 		Observable observable;
 		Observer observer;
+		IResolutionScope.Mode mode;
 		Set<ModelD> models = new HashSet<>();
 		List<Node> children = new ArrayList<>();
 		Scale scale;
@@ -222,7 +227,8 @@ public class DataflowCompiler {
 		ResolvedArtifact resolvedArtifact;
 		public List<IComputableResource> artifactAdapters;
 
-		public Node(IResolvable resolvable) {
+		public Node(IResolvable resolvable, IResolutionScope.Mode mode) {
+			this.mode = mode;
 			if (resolvable instanceof Observable) {
 				this.observable = (Observable) resolvable;
 			} else if (resolvable instanceof Observer) {
@@ -231,7 +237,8 @@ public class DataflowCompiler {
 			} else if (resolvable instanceof ResolvedArtifact) {
 				this.resolvedArtifact = (ResolvedArtifact) resolvable;
 				this.observable = (Observable) resolvedArtifact.getObservable();
-				observableCatalog.put(this.resolvedArtifact.getArtifactId(), (Observable) this.resolvedArtifact.getArtifact().getObservable());
+				observableCatalog.put(this.resolvedArtifact.getArtifactId(),
+						(Observable) this.resolvedArtifact.getArtifact().getObservable());
 			}
 		}
 
@@ -243,7 +250,7 @@ public class DataflowCompiler {
 			/*
 			 * create the original actuator
 			 */
-			Actuator ret = Actuator.create();
+			Actuator ret = Actuator.create(mode);
 
 			ret.setObservable(observable);
 			ret.setDefinesScale(definesScale);
@@ -269,10 +276,10 @@ public class DataflowCompiler {
 			}
 
 			if (observer != null) {
-				
+
 				ret.setNamespace(observer.getNamespace());
 				ret.setName(observer.getId());
-			
+
 			} else if (resolvedArtifact != null && artifactAdapters == null) {
 				/*
 				 * Different situations if we ARE the artifact or we USE it for something. If we
@@ -281,7 +288,7 @@ public class DataflowCompiler {
 				 */
 				ret.setName(resolvedArtifact.getArtifactId());
 				ret.setInput(true);
-				
+
 			} else {
 				ret.setName(observable.getLocalName());
 			}
@@ -300,7 +307,7 @@ public class DataflowCompiler {
 				List<String> modelIds = new ArrayList<>();
 				for (ModelD modelDesc : models) {
 
-					Actuator partial = Actuator.create();
+					Actuator partial = Actuator.create(mode);
 					int index = i++;
 					if (modelDesc.model instanceof RankedModel) {
 						partial.setPriority(((RankedModel) modelDesc.model).getPriority());
@@ -330,33 +337,33 @@ public class DataflowCompiler {
 				// resolvedArtifact.getArtifact().getObservable(),
 				// resolvedArtifact.getObservable());
 
-					/*
-					 * we are adapting the resolved artifact, so we compile in the import and add
-					 * the adapters to our own computation
-					 */
-					Actuator resolved = Actuator.create();
-					resolved.setObservable(resolvedArtifact.getObservable());
-					resolved.setInput(true);
-					resolved.setAlias(resolvedArtifact.getArtifactId());
-					resolved.setName(resolvedArtifact.getArtifactId());
-					resolved.setType(resolvedArtifact.getObservable().getArtifactType());
-					if (artifactAdapters != null) {
-						for (IComputableResource adapter : artifactAdapters) {
-							ret.addComputation(adapter);
-						}
+				/*
+				 * we are adapting the resolved artifact, so we compile in the import and add
+				 * the adapters to our own computation
+				 */
+				Actuator resolved = Actuator.create(mode);
+				resolved.setObservable(resolvedArtifact.getObservable());
+				resolved.setInput(true);
+				resolved.setAlias(resolvedArtifact.getArtifactId());
+				resolved.setName(resolvedArtifact.getArtifactId());
+				resolved.setType(resolvedArtifact.getObservable().getArtifactType());
+				if (artifactAdapters != null) {
+					for (IComputableResource adapter : artifactAdapters) {
+						ret.addComputation(adapter);
 					}
+				}
 
-					/*
-					 * add any mediation needed
-					 */
-//					for (IComputableResource mediator : mediators) {
-//						ret.addMediation(mediator, ret);
-//					}
+				/*
+				 * add any mediation needed
+				 */
+				// for (IComputableResource mediator : mediators) {
+				// ret.addMediation(mediator, ret);
+				// }
 
-					resolved.getAnnotations().addAll(
-							Annotations.INSTANCE.collectAnnotations(observable, resolvedArtifact.getArtifact()));
+				resolved.getAnnotations()
+						.addAll(Annotations.INSTANCE.collectAnnotations(observable, resolvedArtifact.getArtifact()));
 
-					ret.getActuators().add(resolved);
+				ret.getActuators().add(resolved);
 			}
 
 			return ret;
@@ -402,8 +409,8 @@ public class DataflowCompiler {
 			Actuator ret = createActuator(monitor, generated);
 			for (Node child : sortChildren()) {
 				/*
-				 * ACHTUNG the pre-resolved observable (from the original artifact) is not in the
-				 * catalog, so mediators for external inputs do not get generated.
+				 * ACHTUNG the pre-resolved observable (from the original artifact) is not in
+				 * the catalog, so mediators for external inputs do not get generated.
 				 */
 				// this may be a new actuator or a reference to an existing one
 				Actuator achild = child.getActuatorTree(monitor, generated);
@@ -483,10 +490,10 @@ public class DataflowCompiler {
 	 * it; otherwise, a link is created and mediators are put in the reference
 	 * import.
 	 */
-	private Node compileActuator(IResolvable resolvable, Graph<IResolvable, ResolutionEdge> graph, Scale scale,
-			IMonitor monitor) {
+	private Node compileActuator(IResolvable resolvable, IResolutionScope.Mode mode,
+			Graph<IResolvable, ResolutionEdge> graph, Scale scale, IMonitor monitor) {
 
-		Node ret = new Node(resolvable);
+		Node ret = new Node(resolvable, mode);
 
 		if (scale == null && resolvable instanceof Observer) {
 			scale = (Scale.create(((Observer) resolvable).getBehavior().getExtents(monitor)));
@@ -511,7 +518,7 @@ public class DataflowCompiler {
 				ret.artifactAdapters = d.indirectAdapters;
 
 				for (ResolutionEdge o : graph.incomingEdgesOf(source)) {
-					ret.children.add(compileActuator(graph.getEdgeSource(o), graph,
+					ret.children.add(compileActuator(graph.getEdgeSource(o), o.mode, graph,
 							o.coverage == null ? scale : o.coverage, monitor));
 				}
 
@@ -528,7 +535,7 @@ public class DataflowCompiler {
 
 				ModelD md = compileModel(model, d.indirectAdapters);
 				for (ResolutionEdge o : graph.incomingEdgesOf(model)) {
-					ret.children.add(compileActuator(graph.getEdgeSource(o), graph,
+					ret.children.add(compileActuator(graph.getEdgeSource(o), o.mode, graph,
 							o.coverage == null ? scale : o.coverage, monitor));
 				}
 
@@ -652,10 +659,10 @@ public class DataflowCompiler {
 	 * @return the compiler itself
 	 */
 	public DataflowCompiler withResolution(IResolvable source, IResolvable target, ICoverage coverage,
-			List<IComputableResource> computations) {
+			IResolutionScope.Mode mode, List<IComputableResource> computations) {
 		resolutionGraph.addVertex(source);
 		resolutionGraph.addVertex(target);
-		resolutionGraph.addEdge(source, target, new ResolutionEdge((Coverage) coverage, computations));
+		resolutionGraph.addEdge(source, target, new ResolutionEdge((Coverage) coverage, mode, computations));
 		return this;
 	}
 

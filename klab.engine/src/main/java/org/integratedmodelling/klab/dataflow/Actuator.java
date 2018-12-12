@@ -33,6 +33,8 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
@@ -135,6 +137,8 @@ public class Actuator implements IActuator {
 	 * highest ranked partial can be applied last
 	 */
 	private int priority = 0;
+
+	private Mode mode;
 
 	@Override
 	public String getName() {
@@ -366,7 +370,7 @@ public class Actuator implements IActuator {
 		state.setMonitorable(false); // for now
 		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 				IMessage.Type.DataflowStateChanged, state));
-		
+
 		/*
 		 * This is what we get as the original content of self, which may be null or an
 		 * empty state, or contain the result of the previous computation, including
@@ -404,11 +408,11 @@ public class Actuator implements IActuator {
 				((Artifact) ret).chain(object);
 			}
 		}
-		
+
 		state.setStatus(Status.FINISHED);
 		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 				IMessage.Type.DataflowStateChanged, state));
-		
+
 		return ret;
 	}
 
@@ -593,8 +597,10 @@ public class Actuator implements IActuator {
 		return ret;
 	}
 
-	public static Actuator create() {
-		return new Actuator();
+	public static Actuator create(IResolutionScope.Mode mode) {
+		Actuator ret = new Actuator();
+		ret.mode = mode;
+		return ret;
 	}
 
 	public String getAlias() {
@@ -622,7 +628,7 @@ public class Actuator implements IActuator {
 	}
 
 	public IArtifact.Type getType() {
-		return type;
+		return (mode == IResolutionScope.Mode.RESOLUTION && type == IArtifact.Type.OBJECT) ? IArtifact.Type.VOID : type;
 	}
 
 	public void setType(IArtifact.Type type) {
@@ -759,6 +765,10 @@ public class Actuator implements IActuator {
 
 	public void setDataflowId(String dataflowId) {
 		_actuatorId = dataflowId;
+	}
+
+	public IResolutionScope.Mode getMode() {
+		return this.mode;
 	}
 
 }

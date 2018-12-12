@@ -125,6 +125,28 @@ export object delineatewatersheds
 		"If whole = true, only entire watersheds will be extracted, rejecting those whose basin
 		 crosses the context's outline. Default is false. A warning is emitted in any case."
 		default false
-
+		
 	class org.integratedmodelling.geoprocessing.hydrology.WatershedInstantiator
+}
+
+export number runoff
+	"Computes runoff water volume from precipitation in the time unit, using the curve number method."
+{
+
+	import number curve_number
+		"An observation of the curve number for the region."
+
+	import number precipitation_volume
+		"An observation of the precipitation volume for the region in the unit of time."
+
+	import object stream_outlet
+		"Stream outlets. Only the location of the outlets will be used; if the outlet's spatial
+		 extent is not a point, the centroid cell will be used."
+
+	import number flow_directions_d8
+		"The D8 numeric code for flow direction"
+		
+	geometry S2
+		
+	class org.integratedmodelling.geoprocessing.hydrology.RunoffResolver
 }
