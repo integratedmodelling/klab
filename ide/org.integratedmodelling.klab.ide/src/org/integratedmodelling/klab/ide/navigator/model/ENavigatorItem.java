@@ -56,5 +56,9 @@ public abstract class ENavigatorItem implements IAdaptable {
 	public boolean isDocumented() {
 		return false;
 	}
+	
+	public void setParent(ENavigatorItem parent) {
+		this.parent = parent;
+	}
 
 }

@@ -1,5 +1,8 @@
 @media print {
-  #mc-report-wrapper #mc-report-content {
+  #viewer-container, .q-layout-page {
+    display: block !important;
+  }
+  #mc-report-content {
     display: block !important;
     position: relative !important;
     overflow: visible !important;
@@ -8,6 +11,7 @@
     height: 100% !important;
     margin: 0 !important;
     left: 0 !important;
+    border: none !important;
   }
 }
 #mc-empty-report {
@@ -24,10 +28,6 @@
   font-weight: bold;
   color: rgb(17, 170, 187);
 }
-#mc-report-wrapper {
-  background-color: #eee;
-  width: 100%;
-}
 #mc-report-content {
   position: fixed;
   width: 1024px;
@@ -38,6 +38,7 @@
   height: 100%;
   padding: 2em;
   overflow: auto;
+  border: 1px solid #ddd;
 }
 #mc-report-content h1,
 #mc-report-content h2,

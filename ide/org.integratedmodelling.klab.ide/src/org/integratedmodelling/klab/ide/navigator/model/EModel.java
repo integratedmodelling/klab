@@ -157,4 +157,9 @@ public class EModel extends EKimObject implements IKimModel, EDocumentable {
 		return null;
 	}
 
+	@Override
+	public String getNamespace() {
+		return delegate.getNamespace();
+	}
+
 }

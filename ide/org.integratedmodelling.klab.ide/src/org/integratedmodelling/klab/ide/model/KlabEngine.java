@@ -7,7 +7,10 @@ import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.rest.LocalResourceReference;
 import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
+import org.integratedmodelling.klab.rest.ProjectLoadResponse;
+import org.integratedmodelling.klab.rest.ProjectReference;
 
 public class KlabEngine extends KlabPeer {
 
@@ -26,8 +29,6 @@ public class KlabEngine extends KlabPeer {
 
 	@MessageHandler
 	public void handleNotification(NamespaceCompilationResult report) {
-
-		System.out.println("REPORT: " + report);
 		
 		IKimNamespace namespace = Activator.loader().getNamespace(report.getNamespaceId());
 		if (namespace != null) {

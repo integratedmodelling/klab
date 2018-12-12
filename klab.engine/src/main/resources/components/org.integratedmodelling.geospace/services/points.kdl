@@ -1,0 +1,54 @@
+@namespace gis.points
+@klab 0.10.0
+@version 0.10.0
+
+export object extract 
+	"Extract polygonal features from a raster map based on clumping of its values."
+	label 'Vectorize into features'
+{
+	optional input select
+		"Pass an expression that will return true or false per each point in the spatial context, 
+		 producing a mask that will be vectorized into spatial contexts for the objects. Use quality
+		 dependency names to refer to their state in each point."
+	    default ""
+	
+	geometry #s0
+	
+	class org.integratedmodelling.klab.components.geospace.processing.PointExtractor
+
+}
+
+export object cluster 
+	"Extract polygonal features from a raster map based on clustering point values. The resulting polygons are the concave
+	 or (optionally) the convex hull of the points in each cluster. Uses the DBSCAN algorithm."
+	label 'Cluster points'
+{
+	text select
+		"An expression that will return true or false per each point in the spatial context, 
+		 producing a mask that will be vectorized into spatial contexts for the objects. Use quality
+		 dependency names to refer to their state in each point."
+	
+	optional input radius
+		"Radius in m of the neighborhood to consider. Default is defined in grid contexts to allow near-contiguous 
+		 cells to be clustered."
+		default 0.0
+		
+	optional input cellradius
+		"Radius in cells of the neighborhood to consider. Default is defined in grid contexts to allow 
+		 near-contiguous cells to be clustered."
+		default 0
+	
+	optional input minpoints
+		"Minumum number of density-connected points that can form a cluster. Default is 10."
+		default 10
+		
+	optional input convex
+		"Use convex hull to build polygons after clustering. Default true. False will use a concave
+		 hull, which tends to give artifacts due to the non-exhausting nature of the clustering process."
+		default true
+	
+	geometry #s0
+	
+	class org.integratedmodelling.klab.components.geospace.processing.ClusterExtractor
+
+}

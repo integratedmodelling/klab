@@ -27,7 +27,6 @@ public class KimObservable extends KimStatement implements IKimObservable {
 
 	public KimObservable(ObservableSemantics statement, IKimStatement parent) {
 		super(statement, parent);
-		// TODO Auto-generated constructor stub
 	}
 
 	private IKimConcept main;

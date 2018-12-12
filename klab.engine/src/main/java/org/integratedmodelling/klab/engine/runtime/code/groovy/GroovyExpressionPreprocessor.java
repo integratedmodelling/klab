@@ -152,6 +152,7 @@ public class GroovyExpressionPreprocessor {
 	static final int KNOWN_DOMAIN = 7;
 	static final int KNOWN_MODEL_OBJECT = 8;
 	static final int NEWLINE = 9;
+	static final int INFERENCE = 10;
 
 	public GroovyExpressionPreprocessor(INamespace currentNamespace, Set<String> knownIdentifiers, IGeometry geometry,
 			IRuntimeContext context, boolean contextual) {
@@ -220,10 +221,11 @@ public class GroovyExpressionPreprocessor {
 				// if we are translating for a quality context and the var is used with scalar
 				// semantics, we just output the var name
 				IKimConcept.Type type = getIdentifierType(ret, context);
-				if (!(context != null && (type == IKimConcept.Type.QUALITY || type == IKimConcept.Type.TRAIT)
-						&& !methodCall) && contextual) {
-					ret = translateParameter(ret);
-				}
+				boolean canBeScalar = (type == IKimConcept.Type.QUALITY || type == IKimConcept.Type.TRAIT) || !contextual;
+//				if (!(context != null && (type == IKimConcept.Type.QUALITY || type == IKimConcept.Type.TRAIT)
+//						&& contextual)) {
+					ret = translateParameter(ret, canBeScalar && scalarIds.contains(ret) && !this.methodCall);
+//				}
 				break;
 			case URN:
 				ret = translateUrn(ret);
@@ -260,7 +262,7 @@ public class GroovyExpressionPreprocessor {
 		 * error. Don't laugh at the pattern.
 		 */
 		code = code.replaceAll("\\\\\\]", "]");
-
+		
 		List<List<Token>> groups = new ArrayList<>();
 		Lexer lexer = new Lexer(new StringReader(code));
 		lexer.setWhitespaceIncluded(true);
@@ -274,6 +276,10 @@ public class GroovyExpressionPreprocessor {
 			boolean wasSpecial = false;
 			while (true) {
 
+				/*
+				 * TODO identify all #(...) sections with knowledge declarations and substitute them
+				 */
+				
 				Token token = lexer.nextToken();
 				isSpecial = token != null
 						&& (token.getType() == GroovyLexer.IDENT || delimiters.contains(token.getText()));
@@ -334,10 +340,8 @@ public class GroovyExpressionPreprocessor {
 
 			tokens.add(cls);
 		}
-
-		analyze(tokens);
-
-		return reconstruct(tokens);
+		analyze();
+		return reconstruct();
 	}
 
 	public IKimConcept.Type getIdentifierType(String ret, IRuntimeContext context) {
@@ -356,15 +360,36 @@ public class GroovyExpressionPreprocessor {
 		return IKimConcept.Type.OBSERVABLE;
 	}
 
-	private String reconstruct(List<TokenDescriptor> tokens) {
+	private String reconstruct() {
+		
 		String ret = "";
-		for (TokenDescriptor t : tokens) {
+
+		/*
+		 * reduce KNOWN_ID 'is' KNOWLEDGE to ID.isa(CONCEPT)
+		 */
+		List<TokenDescriptor> reduced = new ArrayList<>();
+		for (int i = 0; i < tokens.size(); i++) {
+			if (
+					tokens.get(i).type == KNOWN_ID &&
+					tokens.size() - i >= 4 && 
+					tokens.get(i + 1).token.trim().isEmpty() &&
+					tokens.get(i + 2).token.equals("is") &&
+					tokens.get(i + 3).token.trim().isEmpty() &&
+					tokens.get(i + 4).type == KNOWLEDGE) {
+				reduced.add(new TokenDescriptor(INFERENCE, tokens.get(i) + ".isa(" + tokens.get(i+4).translate() + ")"));
+				i += 4;
+			} else {
+				reduced.add(tokens.get(i));
+			}
+		}
+
+		for (TokenDescriptor t : reduced) {
 			ret += t.type == NEWLINE ? "\n" : t.translate();
 		}
 		return ret;
 	}
 
-	private void analyze(List<TokenDescriptor> tokens) {
+	private void analyze() {
 
 		TokenDescriptor current = null;
 		for (TokenDescriptor t : tokens) {
@@ -512,8 +537,8 @@ public class GroovyExpressionPreprocessor {
 		return "_ns.getSymbolTable().get(\"" + currentToken + "\")";
 	}
 
-	private String translateParameter(String currentToken) {
-		return "_p.get(\"" + currentToken + "\")";
+	private String translateParameter(String currentToken, boolean isScalar) {
+		return isScalar ? currentToken : "_p.get(\"" + currentToken + "\")";
 	}
 
 	private String translateKnowledge(String k) {

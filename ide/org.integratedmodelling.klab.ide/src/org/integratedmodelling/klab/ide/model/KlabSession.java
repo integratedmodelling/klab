@@ -19,7 +19,6 @@ import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
-import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigatorActions;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.EObserver;
 import org.integratedmodelling.klab.ide.navigator.model.beans.DisplayPriority;
@@ -31,9 +30,11 @@ import org.integratedmodelling.klab.ide.navigator.model.beans.ETaskReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.ide.utils.StringUtils;
 import org.integratedmodelling.klab.rest.DataflowReference;
-import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
+import org.integratedmodelling.klab.rest.LocalResourceReference;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationRequest;
+import org.integratedmodelling.klab.rest.ProjectLoadResponse;
+import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.rest.ResourceImportRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.RunScriptRequest;
@@ -367,7 +368,7 @@ public class KlabSession extends KlabPeer {
 			break;
 		}
 	}
-
+	
 	@MessageHandler(messageClass = IMessage.MessageClass.Notification)
 	public void handleNotification(IMessage message, String notification) {
 		if (message.getType() != IMessage.Type.Debug) {
@@ -422,6 +423,18 @@ public class KlabSession extends KlabPeer {
 			send(IMessage.MessageClass.UserInterface, IMessage.Type.HistoryChanged, task);
 		}
 		send(message);
+	}
+	
+	
+	@MessageHandler
+	public void handleProjectNotification(ProjectLoadResponse response) {
+		for (ProjectReference project : response.getProjects()) {
+			for (LocalResourceReference resource : project.getLocalResources()) {
+				Activator.klab().updateResource(resource);
+			}
+		}
+		Eclipse.INSTANCE.refreshOpenEditors();
+		KlabNavigator.refresh();
 	}
 
 	public List<ENotification> getSystemNotifications(Level level) {

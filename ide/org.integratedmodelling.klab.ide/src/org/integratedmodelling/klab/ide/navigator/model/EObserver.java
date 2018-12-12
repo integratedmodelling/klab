@@ -84,4 +84,9 @@ public class EObserver extends EKimObject implements IKimObserver {
 		return delegate.getUrn();
 	}
 
+	@Override
+	public String getNamespace() {
+		return delegate.getNamespace();
+	}
+
 }

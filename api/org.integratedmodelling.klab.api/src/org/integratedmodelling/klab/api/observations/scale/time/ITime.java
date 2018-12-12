@@ -31,6 +31,47 @@ public interface ITime extends IExtent {
 	/** Constant <code>MAX_SCALE_RANK=19</code> */
 	int MAX_SCALE_RANK = 19;
 
+	static public interface Resolution {
+
+		public enum Type {
+
+			MILLENNIUM(0), CENTURY(1), DECADE(2), YEAR(3), MONTH(4), WEEK(5), DAY(6), HOUR(7), MINUTE(8), SECOND(
+					9), MILLISECOND(10), NANOSECOND(11);
+			
+			int rank;
+
+			Type(int rank) {
+				this.rank = rank;
+			}
+			public int getRank() {
+				return rank;
+			}
+
+		}
+
+		Type getType();
+
+		double getMultiplier();
+
+	}
+
+	static public enum Type {
+		/**
+		 * Should be used rarely: generic focus on a period without temporally locating
+		 * it. In every respect like using 'during' semantics, but allowing fuzzy
+		 * matches by period (e.g. closer to certain months) for resolution.
+		 */
+		GENERIC,
+		/**
+		 * Specific time period of any lenght, single multiplicity
+		 */
+		SPECIFIC,
+		/**
+		 * Time grid.
+		 */
+		GRID
+	}
+
 	/**
 	 * The empty, non-descript initialization locator refers to the extent before
 	 * any extent exists.
@@ -82,6 +123,14 @@ public interface ITime extends IExtent {
 	 * @return step if any
 	 */
 	ITimeDuration getStep();
+
+	/**
+	 * Resolution of time observation according to this extent. TODO needs
+	 * multiplier
+	 * 
+	 * @return
+	 */
+	Resolution getResolution();
 
 	/**
 	 * {@inheritDoc}

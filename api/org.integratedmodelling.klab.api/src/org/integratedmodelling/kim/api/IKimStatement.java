@@ -70,6 +70,13 @@ public interface IKimStatement extends IKimScope {
     String getSourceCode();
 
     /**
+     * The namespace ID for this object. Coincides with getName() if this is a IKimNamespace.
+     * 
+     * @return
+     */
+    String getNamespace();
+    
+    /**
      * All statements have a parent statement except a IKimNamespace, which always returns null,
      * or any objects built from declarations not in a structured namespace, such as concept
      * declarations parsed from loose strings.

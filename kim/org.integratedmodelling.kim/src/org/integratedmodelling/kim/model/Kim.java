@@ -85,10 +85,10 @@ public enum Kim {
 
 	private Validator validatorCallback = null;
 
-	/**
-	 * Known URN descriptors. Must be filled in from the outside.
-	 */
-	private Map<String, UrnDescriptor> urnDescriptors = new HashMap<>();
+//	/**
+//	 * Known URN descriptors. Must be filled in from the outside.
+//	 */
+//	private Map<String, UrnDescriptor> urnDescriptors = new HashMap<>();
 
 	/**
 	 * This contains concept descriptors for all concepts encountered, including
@@ -116,11 +116,6 @@ public enum Kim {
 	private boolean initialBuildDone;
 
 	/*
-	 * common workspace for test and sidecar namespaces.
-	 */
-	private KimWorkspace commonWorkspace;
-
-	/*
 	 * All namespaces get registered here. They don't get removed currently, so they
 	 * may be obsoleted.
 	 */
@@ -145,6 +140,7 @@ public enum Kim {
 	public static final int DEAD = 0x000002;
 	public static final int ACCESSIBLE = 0x000004;
 	public static final int KNOWN = 0x000008;
+	public static final int ERROR = 0x000010;
 
 	/**
 	 * these can be installed to resolve any resource URI to the workspace root. For
@@ -299,6 +295,23 @@ public enum Kim {
 		public String getDocumentation() {
 			return documentation;
 		}
+
+		public void setAccessible() {
+			this.flags |= ACCESSIBLE;
+		}
+		
+		public void setOnline() {
+			this.flags |= ALIVE;
+		}
+		
+		public void setError() {
+			this.flags |= ERROR;
+		}
+
+		public void setKnown() {
+			this.flags |= KNOWN;
+		}
+
 	}
 
 	public static interface Validator {
@@ -403,7 +416,7 @@ public enum Kim {
 		this.notifiers.add(notifier);
 	}
 
-	private static UrnDescriptor okUrn = new UrnDescriptor(ALIVE | KNOWN | ACCESSIBLE, "Demo URN");
+	private static UrnDescriptor unvalidatedUrn = new UrnDescriptor(KNOWN | ACCESSIBLE, "Demo URN");
 
 	public Number parseNumber(org.integratedmodelling.kim.kim.Number number) {
 		ICompositeNode node = NodeModelUtils.findActualNodeFor(number);
@@ -622,15 +635,7 @@ public enum Kim {
 		}
 		return ret;
 	}
-
-	// public KimWorkspace loadWorkspace(String workspaceUri, Collection<File>
-	// projectRoots) {
-	// KimWorkspace ret =
-	// KimWorkspace.getWorkspaceForResourceURI(URI.createURI(workspaceUri));
-	// // TODO add projects so that we known them when loading
-	// return ret;
-	// }
-
+	
 	public Parameters<String> parseMetadata(Metadata map, IKimNamespace namespace) {
 		Map<String, Object> ret = new LinkedHashMap<>();
 		for (int i = 0; i < map.getIds().size(); i++) {
@@ -681,22 +686,11 @@ public enum Kim {
 
 	public UrnDescriptor getUrnDescriptor(String urn) {
 
-		/*
-		 * TODO if it's a FILE urn, check for existence of file as named. If it's a
-		 */
-		UrnDescriptor ret = urnDescriptors.get(urn);
-
-		if (ret == null && validatorCallback != null) {
+		UrnDescriptor ret = null;;
+		if (validatorCallback != null) {
 			ret = validatorCallback.classifyUrn(urn);
-			if (ret != null) {
-				urnDescriptors.put(urn, ret);
-			}
 		}
-
-		/*
-		 * TODO remove the OK default after all presentations are done.
-		 */
-		return ret == null ? okUrn : ret;
+		return ret == null ? unvalidatedUrn : ret;
 	}
 
 	public ConceptDescriptor getConceptDescriptor(String conceptId) {
@@ -708,9 +702,9 @@ public enum Kim {
 		return map == null ? null : map.get(st.getName());
 	}
 
-	public void setUrnDescriptor(String urn, UrnDescriptor descriptor) {
-		urnDescriptors.put(urn, descriptor);
-	}
+//	public void setUrnDescriptor(String urn, UrnDescriptor descriptor) {
+//		urnDescriptors.put(urn, descriptor);
+//	}
 
 	public void setConceptDescriptor(String conceptId, ConceptDescriptor descriptor) {
 		setConceptDescriptor(conceptId, descriptor, false);
@@ -1057,25 +1051,6 @@ public enum Kim {
 		String name = Kim.getNamespaceId(namespace);
 		namespaceRegister.remove(name);
 	}
-
-	//
-	// public void handleAddition(String relativePath) {
-	// if (relativePath.endsWith(".kim")) {
-	// // System.out.println("ADDED " + relativePath);
-	// }
-	// }
-	//
-	// public void handleChange(String relativePath) {
-	// if (relativePath.endsWith(".kim")) {
-	// // System.out.println("CHANGED " + relativePath);
-	// }
-	// }
-	//
-	// public void handleDeletion(String relativePath) {
-	// if (relativePath.endsWith(".kim")) {
-	// // System.out.println("DELETED " + relativePath);
-	// }
-	// }
 
 	public boolean initialBuildDone() {
 		return initialBuildDone;

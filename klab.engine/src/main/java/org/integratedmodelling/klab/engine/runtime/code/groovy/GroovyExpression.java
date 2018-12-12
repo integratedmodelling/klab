@@ -47,6 +47,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Path;
+import org.integratedmodelling.klab.utils.Utils;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
@@ -268,18 +269,19 @@ public class GroovyExpression extends Expression {
 		for (String key : parameters.keySet()) {
 			binding.setVariable(key, parameters.get(key));
 		}
+		
 		for (String v : defineIfAbsent) {
 			if (!binding.hasVariable(v)) {
 				binding.setVariable(v, Double.NaN);
 			}
 		}
 
-		Map<String, Object> nonscalar = new HashMap<>();
 
 		/*
 		 * add any artifact names used in a non-scalar context to the _p map, compiled
 		 * in by the preprocessor.
 		 */
+		Map<String, Object> nonscalar = new HashMap<>();
 		for (String identifier : this.descriptor.getIdentifiers()) {
 			if (this.descriptor.isNonscalar(identifier)) {
 				IArtifact artifact = context.getArtifact(identifier);
@@ -292,7 +294,7 @@ public class GroovyExpression extends Expression {
 				&& !nonscalar.containsKey("self")) {
 			nonscalar.put("self", parameters.get("self"));
 		}
-
+		
 		binding.setVariable("_p", nonscalar);
 		binding.setVariable("_ns", context.getNamespace());
 		binding.setVariable("_c", context);
@@ -312,6 +314,7 @@ public class GroovyExpression extends Expression {
 		if (outputs != null) {
 			knownKeys.addAll(outputs.keySet());
 		}
+		
 		GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace, knownKeys, domain,
 				runtimeContext, true);
 		this.preprocessed = processor.process(code);

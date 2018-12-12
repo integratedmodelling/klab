@@ -18,6 +18,8 @@ public class LocalResourceReference {
 	private boolean online;
 	// number of usages in project
 	private int useCount;
+	// true if resource has errors
+	private boolean error;
 	
 	public LocalResourceReference() {
 		// TODO Auto-generated constructor stub
@@ -53,6 +55,19 @@ public class LocalResourceReference {
 
 	public void setUseCount(int useCount) {
 		this.useCount = useCount;
+	}
+
+	@Override
+	public String toString() {
+		return "LocalResourceReference [urn=" + urn + ", online=" + online + ", useCount=" + useCount + "]";
+	}
+
+	public boolean isError() {
+		return error;
+	}
+
+	public void setError(boolean error) {
+		this.error = error;
 	}
 
 	

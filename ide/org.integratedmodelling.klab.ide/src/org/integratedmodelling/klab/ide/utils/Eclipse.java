@@ -55,10 +55,15 @@ import org.eclipse.ui.console.MessageConsoleStream;
 import org.eclipse.ui.dialogs.CheckedTreeSelectionDialog;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
+import org.eclipse.xtext.resource.XtextResource;
+import org.eclipse.xtext.ui.editor.XtextEditor;
+import org.eclipse.xtext.ui.editor.utils.EditorUtils;
+import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -413,6 +418,32 @@ public enum Eclipse {
 		}
 	}
 
+	public void refreshOpenEditors() {
+		Display.getDefault().asyncExec(() -> {
+			for (IEditorReference editor : PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+					.getEditorReferences()) {
+				if (editor.getId().equals("org.integratedmodelling.kim.Kim")) {
+					try {
+						XtextEditor xte = EditorUtils.getXtextEditor(editor.getEditor(false));
+						if (xte != null && !xte.isDirty()) {
+							// leave it alone if dirty or we'll lose changes
+							xte.setInput(xte.getEditorInput());
+							// TODO REMEMBER THIS FOR REFACTORING
+//							xte.getDocument().modify(new IUnitOfWork<Object, XtextResource>() {
+//								@Override
+//								public Object exec(XtextResource state) throws Exception {
+//									return 0;
+//								}
+//							});
+						}
+					} catch (Exception e) {
+						// poh
+					}
+				}
+			}
+		});
+	}
+
 	@SuppressWarnings("unchecked")
 	public <T> Collection<T> chooseMany(String question, Collection<T> alternatives, Function<T, Image> imageProvider) {
 
@@ -578,7 +609,7 @@ public enum Eclipse {
 				for (CompileNotificationReference inot : report.getNotifications()) {
 
 					System.out.println("COMPILE NOTIFICATION: " + inot);
-					
+
 					Activator.klab().recordCompileNotification(inot);
 
 					if (inot.getLevel() == Level.SEVERE.intValue()) {

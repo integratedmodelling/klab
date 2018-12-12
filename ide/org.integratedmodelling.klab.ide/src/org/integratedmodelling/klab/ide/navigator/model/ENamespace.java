@@ -79,7 +79,7 @@ public class ENamespace extends EKimObject implements IKimNamespace {
 	public boolean isErrors() {
 		return delegate.isErrors() || Activator.klab().getErrors(getName()).size() > 0;
 	}
-	
+
 	@Override
 	public boolean isWarnings() {
 		return delegate.isWarnings() || Activator.klab().getWarnings(getName()).size() > 0;
@@ -174,6 +174,11 @@ public class ENamespace extends EKimObject implements IKimNamespace {
 	@Override
 	public List<IServiceCall> getExtents() {
 		return delegate.getExtents();
+	}
+
+	@Override
+	public String getNamespace() {
+		return delegate.getNamespace();
 	}
 
 }
