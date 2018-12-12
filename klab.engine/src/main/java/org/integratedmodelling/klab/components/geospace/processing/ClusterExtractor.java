@@ -96,8 +96,7 @@ public class ClusterExtractor implements IExpression, IInstantiator {
 			this.radius = context.getScale().getSpace().getEnvelope()
 					.convertDistance(parameters.get("radius", Double.class));
 		} else if (parameters.containsKey("cellradius")) {
-			this.radius = context.getScale().getSpace().getEnvelope()
-					.convertDistance(parameters.get("radius", Integer.class)) * grid.getCellWidth();
+			this.radius = (double)parameters.get("cellradius", Integer.class) * grid.getCellWidth();
 		}
 
 		if (parameters.containsKey("minpoints")) {
