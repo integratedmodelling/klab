@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.geospace.utils.ConcaveHull;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -43,6 +44,7 @@ import org.integratedmodelling.klab.utils.Range;
 
 import com.vividsolutions.jts.algorithm.ConvexHull;
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 
 public class ClusterExtractor implements IExpression, IInstantiator {
@@ -50,7 +52,8 @@ public class ClusterExtractor implements IExpression, IInstantiator {
 	Descriptor exprDescriptor = null;
 	private IGrid grid;
 	int minPoints = 15;
-	double epsilon = 0.1;
+	double radius = 0;
+	boolean convex = true;
 
 	public ClusterExtractor() {
 	}
@@ -78,6 +81,8 @@ public class ClusterExtractor implements IExpression, IInstantiator {
 					"point clustering only works on regular distributed spatial extents (grids)");
 		}
 
+		this.grid = ((Space) scale.getSpace()).getGrid();
+		
 		if (parameters.containsKey("select")) {
 			Object expression = parameters.get("select");
 			if (expression instanceof IKimExpression) {
@@ -88,15 +93,27 @@ public class ClusterExtractor implements IExpression, IInstantiator {
 		}
 
 		if (parameters.containsKey("radius")) {
-			this.epsilon = context.getScale().getSpace().getEnvelope()
+			this.radius = context.getScale().getSpace().getEnvelope()
 					.convertDistance(parameters.get("radius", Double.class));
+		} else if (parameters.containsKey("cellradius")) {
+			this.radius = context.getScale().getSpace().getEnvelope()
+					.convertDistance(parameters.get("radius", Integer.class)) * grid.getCellWidth();
 		}
 
 		if (parameters.containsKey("minpoints")) {
 			this.minPoints = parameters.get("minpoints", Integer.class);
 		}
+		
+		if (parameters.containsKey("convex")) {
+			this.convex = parameters.get("convex", Boolean.class);
+		}
 
-		this.grid = ((Space) scale.getSpace()).getGrid();
+		/*
+		 * adaptive radius if not supplied - allowed to skip one cell but not two
+		 */
+		if (this.radius == 0) {
+			this.radius = grid.getCellWidth() * 6;
+		}
 	}
 
 	@Override
@@ -169,7 +186,7 @@ public class ClusterExtractor implements IExpression, IInstantiator {
 
 		Parameters<String> parameters = new Parameters<>();
 		boolean warned = false;
-//		List<Coordinate> geometries = new ArrayList<>();
+		// List<Coordinate> geometries = new ArrayList<>();
 		List<DoublePoint> dpoints = new ArrayList<>();
 
 		for (Cell cell : grid) {
@@ -217,15 +234,15 @@ public class ClusterExtractor implements IExpression, IInstantiator {
 
 			if (o instanceof Boolean && (Boolean) o) {
 				Coordinate cdc = ((Shape) cell.getShape().getCentroid()).getJTSGeometry().getCoordinate();
-//				geometries.add(cdc);
-				dpoints.add(new DoublePoint(new double[] {cdc.x, cdc.y}));
+				// geometries.add(cdc);
+				dpoints.add(new DoublePoint(new double[] { cdc.x, cdc.y }));
 			}
 		}
-		
+
 		int nc = 0;
 		if (dpoints.size() > 0) {
-			
-			DBSCANClusterer<DoublePoint> clusterer = new DBSCANClusterer<>(epsilon, minPoints);
+
+			DBSCANClusterer<DoublePoint> clusterer = new DBSCANClusterer<>(radius, minPoints);
 			for (Cluster<DoublePoint> cluster : clusterer.cluster(dpoints)) {
 				List<DoublePoint> pts = cluster.getPoints();
 				Coordinate[] points = new Coordinate[pts.size()];
@@ -233,10 +250,15 @@ public class ClusterExtractor implements IExpression, IInstantiator {
 					points[i] = new Coordinate(pts.get(i).getPoint()[0], pts.get(i).getPoint()[1]);
 				}
 				GeometryCollection shape = (GeometryCollection) Geospace.gFactory.createMultiPoint(points);
-				ConvexHull hull = new ConvexHull(shape);
+				Geometry geom = null;
+				if (convex) {
+					ConvexHull hull = new ConvexHull(shape);
+					geom = hull.getConvexHull();
+				} else {
+					geom = new ConcaveHull().transform(shape);
+				}
 				ret.add(context.newObservation(semantics, semantics.getLocalName() + "_" + (nc + 1),
-						Scale.substituteExtent(context.getScale(),
-								Shape.create(hull.getConvexHull(), grid.getProjection()))));
+						Scale.substituteExtent(context.getScale(), Shape.create(geom, grid.getProjection()))));
 
 				nc++;
 			}

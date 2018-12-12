@@ -14,7 +14,6 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
-import org.integratedmodelling.klab.engine.runtime.code.groovy.GroovyExpressionPreprocessor.TokenDescriptor;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public enum GroovyProcessor implements ILanguageProcessor {
@@ -28,8 +27,8 @@ public enum GroovyProcessor implements ILanguageProcessor {
         private Set<String> scalarIds;
         private Set<String> objectIds;
         private List<KimNotification> errors;
-        private List<TokenDescriptor> tokens;
-        private IRuntimeContext context;
+//        private List<TokenDescriptor> tokens;
+//        private IRuntimeContext context;
 
         GroovyDescriptor(String expression, IRuntimeContext context, boolean contextual) {
 
@@ -51,8 +50,8 @@ public enum GroovyProcessor implements ILanguageProcessor {
             this.scalarIds = processor.getScalarIdentifiers();
             this.objectIds = processor.getObjectIdentifiers();
             this.errors = processor.getErrors();
-            this.tokens = processor.tokens;
-            this.context = context;
+//            this.tokens = processor.tokens;
+//            this.context = context;
         }
 
         @Override
@@ -90,11 +89,11 @@ public enum GroovyProcessor implements ILanguageProcessor {
 
         @Override
         public IExpression compile() {
-            String ret = "";
-            for (TokenDescriptor token : tokens) {
-                ret += token.translate(context);
-            }
-            return new GroovyExpression(ret, true, this);
+//            String ret = "";
+//            for (TokenDescriptor token : tokens) {
+//                ret += token.translate(context);
+//            }
+            return new GroovyExpression(processedCode, true, this);
         }
 
         @Override
