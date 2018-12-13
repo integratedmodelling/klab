@@ -256,7 +256,8 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 
 			if (ok) {
 				List<IComputableResource> transformations = new ArrayList<>();
-				Observable newobs = Observable.promote(builder.build());
+				IConcept concept = builder.build();
+				Observable newobs = Observable.promote(concept);
 				for (IModel model : transformers) {
 					for (IComputableResource computation : model.getComputation(ITime.INITIALIZATION)) {
 						transformations.add(new Transformation(computation, newobs));

@@ -69,8 +69,19 @@ public enum Observables implements IObservableService {
 		try {
 			ObservableSemantics parsed = observableParser.parse(declaration).getObservable();
 			KimObservable interpreted = Kim.INSTANCE.declareObservable(parsed);
-			System.out.println(interpreted.getDefinition());
 			return KimKnowledgeProcessor.INSTANCE.declare(interpreted, monitor);
+		} catch (Exception e) {
+			monitor.error(e, declaration);
+		}
+
+		return null;
+	}
+
+	public IKimObservable parseDeclaration(String declaration) {
+		IMonitor monitor = Klab.INSTANCE.getRootMonitor();
+		try {
+			ObservableSemantics parsed = observableParser.parse(declaration).getObservable();
+			return Kim.INSTANCE.declareObservable(parsed);
 		} catch (Exception e) {
 			monitor.error(e, declaration);
 		}

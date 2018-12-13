@@ -29,6 +29,11 @@ import org.integratedmodelling.kim.validation.KimValidator;
  *
  */
 public class KimConcept extends KimStatement implements IKimConcept {
+	
+	// roles of each component, to ease modifications
+	public enum ComponentRole {
+		TRAIT, ROLE, CONTEXT, INHERENT, ADJACENT, CAUSED, CAUSANT, COMPRESENT, GOAL, COOCCURRENT
+	}
 
 	private String name;
 
@@ -103,11 +108,45 @@ public class KimConcept extends KimStatement implements IKimConcept {
 
 	private ConceptDescriptor descriptor;
 
+	/**
+	 * If this has been modified by a semantic operator, the type before the
+	 * argument was applied; otherwise null.
+	 */
+	private EnumSet<Type> argumentType;
+
 	private static final long serialVersionUID = 4160895607335615009L;
 
 	public KimConcept(ConceptDeclaration statement, IKimStatement parent) {
 		super(statement, parent);
 		// TODO Auto-generated constructor stub
+	}
+
+	public KimConcept(KimConcept other) {
+		super();
+		this.name = other.name;
+		this.expressionType = other.expressionType;
+		this.observable = other.observable;
+		this.observationType = other.observationType;
+		this.traits.addAll(other.traits);
+		this.roles.addAll(other.roles);
+		this.unclassified.addAll(other.unclassified);
+		this.operands.addAll(other.operands);
+		this.inherent = other.inherent;
+		this.context = other.context;
+		this.otherConcept = other.otherConcept;
+		this.type = other.type;
+		this.authority = other.authority;
+		this.authorityTerm = other.authorityTerm;
+		this.motivation = other.motivation;
+		this.causant = other.causant;
+		this.caused = other.caused;
+		this.compresent = other.compresent;
+		this.adjacent = other.adjacent;
+		this.cooccurrent = other.cooccurrent;
+		this.validParent = other.validParent;
+		this.negated = other.negated;
+		this.template = other.template;
+		this.descriptor = other.descriptor;
 	}
 
 	public KimConcept(Concept statement, IKimStatement parent) {
@@ -452,7 +491,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		} else if (declaration.isProportion()) {
 			observationType = UnarySemanticOperator.PROPORTION;
 			operator = Type.PROPORTION;
-		}  else if (declaration.isPercentage()) {
+		} else if (declaration.isPercentage()) {
 			observationType = UnarySemanticOperator.PERCENTAGE;
 			operator = Type.PERCENTAGE;
 		} else if (declaration.isRatio()) {
@@ -476,7 +515,8 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		}
 
 		if (operator != null) {
-			type = Kim.INSTANCE.makeQuality(type, operator);
+			this.argumentType = this.type;
+			this.type = Kim.INSTANCE.makeQuality(type, operator);
 		}
 
 		return type;
@@ -561,22 +601,22 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			ret += " causing " + caused;
 			complex = true;
 		}
-		
+
 		if (compresent != null) {
 			ret += " with " + compresent;
 			complex = true;
 		}
-		
+
 		if (cooccurrent != null) {
 			ret += " during " + cooccurrent;
 			complex = true;
 		}
-		
+
 		if (adjacent != null) {
 			ret += " adjacent to " + adjacent;
 			complex = true;
 		}
-		
+
 		if (motivation != null) {
 			ret += " for " + motivation;
 			complex = true;
@@ -587,9 +627,38 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			complex = true;
 		}
 
-		return ccomplex || complex ? ("(" + ret + ")") : ret;
+		return (ccomplex || complex) ? parenthesize(ret) : ret;
 	}
 
+	/**
+	 * Add parentheses around a declaration unless it is already enclosed in parentheses.
+	 * 
+	 * @param ret
+	 * @return
+	 */
+	private static String parenthesize(String ret) {
+		int firstOpening = -1;
+		int lastClosing = -1;
+		int level = 0;
+		for (int i = 0; i < ret.length(); i ++) {
+			if (ret.charAt(i) == '(') {
+				if (level == 0) {
+					firstOpening = i;
+				}
+				level ++;
+			} else if (ret.charAt(i) == ')') {
+				level --;
+				if (level == 0) {
+					lastClosing = i;
+				}
+			}
+		}
+		
+		boolean enclosed = firstOpening == 0 && lastClosing == ret.length() - 1;
+		
+		return enclosed ? ret : ("(" + ret + ")");
+	}
+	
 	private String stringify(String term) {
 
 		if (term.startsWith("\"")) {
@@ -904,6 +973,81 @@ public class KimConcept extends KimStatement implements IKimConcept {
 
 	public void setAdjacent(KimConcept adjacent) {
 		this.adjacent = adjacent;
+	}
+
+	public IKimConcept removeOperator() {
+		KimConcept ret = new KimConcept(this);
+		if (this.observationType != null) {
+			ret.observationType = null;
+			ret.otherConcept = null;
+			ret.type = this.argumentType;
+		}
+		return ret;
+	}
+
+	public IKimConcept removeComponents(List<String> declarations, List<ComponentRole> roles) {
+
+		KimConcept ret = new KimConcept(this);
+
+		for (int i = 0; i < declarations.size(); i++) {
+			
+			String declaration = declarations.get(i);
+			ComponentRole role = roles.get(i);
+			
+			switch (role) {
+			case ADJACENT:
+				ret.adjacent = null;
+				break;
+			case CAUSANT:
+				ret.causant = null;
+				break;
+			case CAUSED:
+				ret.caused = null;
+				break;
+			case COMPRESENT:
+				ret.compresent = null;
+				break;
+			case CONTEXT:
+				ret.context = null;
+				break;
+			case COOCCURRENT:
+				ret.cooccurrent = null;
+				break;
+			case GOAL:
+				ret.motivation = null;
+				break;
+			case INHERENT:
+				ret.inherent = null;
+				break;
+			case ROLE:
+				ret.roles = copyWithout(ret.roles, declaration);
+				break;
+			case TRAIT:
+				ret.traits = copyWithout(ret.traits, declaration);
+				break;
+			default:
+				break;
+			}
+		}
+		
+		ret.computeName();
+		
+		return ret;
+	}
+
+	private static List<IKimConcept> copyWithout(List<IKimConcept> concepts, String declaration) {
+		List<IKimConcept> ret = new ArrayList<>();
+		for (IKimConcept c : concepts) {
+			if (!c.toString().equals(declaration)) {
+				ret.add(c);
+			}
+		}
+		return ret;
+	}
+
+	private void computeName() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

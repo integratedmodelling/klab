@@ -319,7 +319,7 @@ public abstract class ObservableKbox extends H2Kbox {
         for (IConcept candidate : candidates) {
 
             if (Observables.INSTANCE.isCompatible(candidate, observable.getType(), compatibility)) {
-                // KLAB.info(" FOUND " + candidate + " = " + candidate.getDefinition());
+                // System.out.println(" FOUND " + candidate + " = " + candidate.getDefinition());
                 long id = getConceptId(candidate);
                 if (id >= 0) {
                     // KLAB.info(" USED IT");

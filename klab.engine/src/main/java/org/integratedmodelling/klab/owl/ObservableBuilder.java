@@ -14,6 +14,8 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.kim.model.KimConcept;
+import org.integratedmodelling.kim.model.KimConcept.ComponentRole;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Reasoner;
@@ -107,6 +109,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.cooccurrent = Observables.INSTANCE.getDirectCooccurrentType(observable.getType());
 		this.goal = Observables.INSTANCE.getDirectGoalType(observable.getType());
 		this.compresent = Observables.INSTANCE.getDirectCompresentType(observable.getType());
+		this.declaration = Observables.INSTANCE.parseDeclaration(observable.getDeclaration()).getMain();
 
 		for (IConcept role : Roles.INSTANCE.getDirectRoles(observable.getType())) {
 			this.roles.add(role);
@@ -129,6 +132,11 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.goal = other.goal;
 		this.traits.addAll(other.traits);
 		this.roles.addAll(other.roles);
+		this.ontology = other.ontology;
+		this.type = other.type;
+		this.declaration = other.declaration;
+		
+		checkTrivial();
 	}
 
 	@Override
@@ -223,48 +231,53 @@ public class ObservableBuilder implements IObservable.Builder {
 
 		if (resolveMain()) {
 
+			/**
+			 * Build the argument, then add the operator
+			 */
+			Concept argument = getArgumentBuilder().build();
+
 			switch (type) {
 			case ASSESSMENT:
-				reset(makeAssessment(build(), false));
+				reset(makeAssessment(argument, false));
 				break;
 			case COUNT:
-				reset(makeCount(build(), false));
+				reset(makeCount(argument, false));
 				break;
 			case DISTANCE:
-				reset(makeDistance(build(), false));
+				reset(makeDistance(argument, false));
 				break;
 			case OCCURRENCE:
-				reset(makeOccurrence(build(), false));
+				reset(makeOccurrence(argument, false));
 				break;
 			case PRESENCE:
-				reset(makePresence(build(), false));
+				reset(makePresence(argument, false));
 				break;
 			case PROBABILITY:
-				reset(makeProbability(build(), false));
+				reset(makeProbability(argument, false));
 				break;
 			case PROPORTION:
-				reset(makeProportion(build(), this.comparison, false, false));
+				reset(makeProportion(argument, this.comparison, false, false));
 				break;
 			case PERCENTAGE:
-				reset(makeProportion(build(), this.comparison, false, true));
+				reset(makeProportion(argument, this.comparison, false, true));
 				break;
 			case RATIO:
-				reset(makeRatio(build(), this.comparison, false));
+				reset(makeRatio(argument, this.comparison, false));
 				break;
 			case UNCERTAINTY:
-				reset(makeUncertainty(build(), false));
+				reset(makeUncertainty(argument, false));
 				break;
 			case VALUE:
-				reset(makeValue(build(), this.comparison, false));
+				reset(makeValue(argument, this.comparison, false));
 				break;
 			case OBSERVABILITY:
-				reset(makeObservability(build(), false));
+				reset(makeObservability(argument, false));
 				break;
 			case MAGNITUDE:
-				reset(makeMagnitude(build(), false));
+				reset(makeMagnitude(argument, false));
 				break;
 			case TYPE:
-				reset(makeType(build(), false));
+				reset(makeType(argument, false));
 				break;
 			default:
 				break;
@@ -272,6 +285,19 @@ public class ObservableBuilder implements IObservable.Builder {
 		}
 
 		return this;
+	}
+
+	/**
+	 * Copy the builder exactly but revise the declaration so that it does not
+	 * include the operator.
+	 * 
+	 * @return a new builder for the concept w/o operator
+	 */
+	private ObservableBuilder getArgumentBuilder() {
+		ObservableBuilder ret = new ObservableBuilder(this);
+		ret.declaration = ((KimConcept) declaration).removeOperator();
+		ret.type = ret.declaration.getType();
+		return ret;
 	}
 
 	private void reset(Concept main) {
@@ -300,83 +326,156 @@ public class ObservableBuilder implements IObservable.Builder {
 
 	@Override
 	public Builder without(IConcept... concepts) {
+
 		ObservableBuilder ret = new ObservableBuilder(this);
+		List<ComponentRole> removedRoles = new ArrayList<>();
 		for (IConcept concept : concepts) {
-			Pair<Collection<IConcept>, Collection<IConcept>> tdelta = Concepts.INSTANCE.copyWithout(this.traits,
+			Pair<Collection<IConcept>, Collection<IConcept>> tdelta = Concepts.INSTANCE.copyWithout(ret.traits,
 					concept);
-			ret.traits.addAll(tdelta.getFirst());
+			ret.traits = new ArrayList<>(tdelta.getFirst());
 			ret.removed.addAll(tdelta.getSecond());
-			Pair<Collection<IConcept>, Collection<IConcept>> rdelta = Concepts.INSTANCE.copyWithout(this.roles,
-					concept);
-			ret.roles.addAll(rdelta.getFirst());
+			for (int i = 0; i < tdelta.getSecond().size(); i++) {
+				removedRoles.add(ComponentRole.TRAIT);
+			}
+			Pair<Collection<IConcept>, Collection<IConcept>> rdelta = Concepts.INSTANCE.copyWithout(ret.roles, concept);
+			ret.roles = new ArrayList<>(rdelta.getFirst());
 			ret.removed.addAll(rdelta.getSecond());
+			for (int i = 0; i < tdelta.getSecond().size(); i++) {
+				removedRoles.add(ComponentRole.ROLE);
+			}
 			if (ret.context != null && ret.context.equals(concept)) {
 				ret.context = null;
+				ret.removed.add(concept);
+				removedRoles.add(ComponentRole.CONTEXT);
 			}
 			if (ret.inherent != null && ret.inherent.equals(concept)) {
 				ret.inherent = null;
+				ret.removed.add(concept);
+				removedRoles.add(ComponentRole.INHERENT);
 			}
 			if (ret.adjacent != null && ret.adjacent.equals(concept)) {
 				ret.adjacent = null;
+				ret.removed.add(concept);
+				removedRoles.add(ComponentRole.ADJACENT);
 			}
 			if (ret.caused != null && ret.caused.equals(concept)) {
 				ret.caused = null;
+				ret.removed.add(concept);
+				removedRoles.add(ComponentRole.CAUSED);
 			}
 			if (ret.causant != null && ret.causant.equals(concept)) {
 				ret.causant = null;
+				ret.removed.add(concept);
+				removedRoles.add(ComponentRole.CAUSANT);
 			}
 			if (ret.compresent != null && ret.compresent.equals(concept)) {
 				ret.compresent = null;
+				ret.removed.add(concept);
+				removedRoles.add(ComponentRole.COMPRESENT);
 			}
 			if (ret.goal != null && ret.goal.equals(concept)) {
 				ret.goal = null;
+				ret.removed.add(concept);
+				removedRoles.add(ComponentRole.GOAL);
 			}
 			if (ret.cooccurrent != null && ret.cooccurrent.equals(concept)) {
 				ret.cooccurrent = null;
+				ret.removed.add(concept);
+				removedRoles.add(ComponentRole.COOCCURRENT);
 			}
 		}
+		if (ret.removed.size() > 0) {
+			List<String> declarations = new ArrayList<>();
+			for (IConcept r : ret.removed) {
+				declarations.add(r.getDefinition());
+			}
+			ret.declaration = ((KimConcept) ret.declaration).removeComponents(declarations, removedRoles);
+		}
+
+		ret.checkTrivial();
+
 		return ret;
 	}
 
 	@Override
 	public Builder withoutAny(IConcept... concepts) {
+
 		ObservableBuilder ret = new ObservableBuilder(this);
+		List<ComponentRole> removedRoles = new ArrayList<>();
 		for (IConcept concept : concepts) {
-			Pair<Collection<IConcept>, Collection<IConcept>> tdelta = Concepts.INSTANCE.copyWithoutAny(this.traits,
+			Pair<Collection<IConcept>, Collection<IConcept>> tdelta = Concepts.INSTANCE.copyWithoutAny(ret.traits,
 					concept);
-			ret.traits.addAll(tdelta.getFirst());
+			ret.traits = new ArrayList<>(tdelta.getFirst());
 			ret.removed.addAll(tdelta.getSecond());
-			Pair<Collection<IConcept>, Collection<IConcept>> rdelta = Concepts.INSTANCE.copyWithoutAny(this.roles,
+			for (int i = 0; i < tdelta.getSecond().size(); i++) {
+				removedRoles.add(ComponentRole.TRAIT);
+			}
+			Pair<Collection<IConcept>, Collection<IConcept>> rdelta = Concepts.INSTANCE.copyWithoutAny(ret.roles,
 					concept);
-			ret.roles.addAll(rdelta.getFirst());
+			ret.roles = new ArrayList<>(rdelta.getFirst());
 			ret.removed.addAll(rdelta.getSecond());
+			for (int i = 0; i < tdelta.getSecond().size(); i++) {
+				removedRoles.add(ComponentRole.ROLE);
+			}
 			if (ret.context != null && ret.context.is(concept)) {
 				ret.context = null;
+				ret.removed.add(concept);
+				removedRoles.add(ComponentRole.CONTEXT);
 			}
 			if (ret.inherent != null && ret.inherent.is(concept)) {
 				ret.inherent = null;
+				ret.removed.add(concept);
+				removedRoles.add(ComponentRole.INHERENT);
 			}
 			if (ret.adjacent != null && ret.adjacent.is(concept)) {
 				ret.adjacent = null;
+				ret.removed.add(concept);
+				removedRoles.add(ComponentRole.ADJACENT);
 			}
 			if (ret.caused != null && ret.caused.is(concept)) {
 				ret.caused = null;
+				ret.removed.add(concept);
+				removedRoles.add(ComponentRole.CAUSED);
 			}
 			if (ret.causant != null && ret.causant.is(concept)) {
 				ret.causant = null;
+				ret.removed.add(concept);
+				removedRoles.add(ComponentRole.CAUSANT);
 			}
 			if (ret.compresent != null && ret.compresent.is(concept)) {
 				ret.compresent = null;
+				ret.removed.add(concept);
+				removedRoles.add(ComponentRole.COMPRESENT);
 			}
 			if (ret.goal != null && ret.goal.is(concept)) {
 				ret.goal = null;
+				ret.removed.add(concept);
+				removedRoles.add(ComponentRole.GOAL);
 			}
 			if (ret.cooccurrent != null && ret.cooccurrent.is(concept)) {
 				ret.cooccurrent = null;
+				ret.removed.add(concept);
+				removedRoles.add(ComponentRole.COOCCURRENT);
 			}
 		}
+		if (ret.removed.size() > 0) {
+			List<String> declarations = new ArrayList<>();
+			for (IConcept r : ret.removed) {
+				declarations.add(r.getDefinition());
+			}
+			ret.declaration = ((KimConcept) ret.declaration).removeComponents(declarations, removedRoles);
+		}
+
+		ret.checkTrivial();
+		
 		return ret;
 
+	}
+
+	void checkTrivial() {
+		this.isTrivial = causant == null && adjacent == null && caused == null && comparison == null
+				&& compresent == null && context == null && inherent == null && cooccurrent == null & goal == null
+				&& traits.isEmpty() && roles.isEmpty();
 	}
 
 	@Override
@@ -564,8 +663,8 @@ public class ObservableBuilder implements IObservable.Builder {
 
 		if (concept.is(Type.QUALITY) || concept.is(Type.CONFIGURATION) || concept.is(Type.TRAIT)
 				|| concept.is(Type.ROLE)) {
-			monitor.error(
-					"presence can be observed only for subjects, events, processes and relationships", declaration);
+			monitor.error("presence can be observed only for subjects, events, processes and relationships",
+					declaration);
 		}
 
 		String cName = getCleanId(concept) + "Presence";
