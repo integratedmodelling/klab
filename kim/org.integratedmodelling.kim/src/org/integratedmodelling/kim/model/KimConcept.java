@@ -1030,6 +1030,8 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			}
 		}
 		
+		// no need to sort again
+		
 		ret.computeName();
 		
 		return ret;
