@@ -231,12 +231,15 @@ public enum Resolver {
 		ResolutionScope ret = parentScope.getChildScope(observable, mode);
 
 		/**
-		 * If we're running in a context that contains an observation of the observable,
-		 * get that artifact as is and return it accepted for the dataflow to compile an
-		 * input actuator.
+		 * If we're resolving something that has been resolved before (i.e. not
+		 * resolving a countable, which only happens before it is created), get the
+		 * artifact as is and return it accepted for the dataflow to compile an import
+		 * actuator.
 		 */
 		Pair<String, IArtifact> previousArtifact = null;
-		if (ret.getContext() != null) {
+		boolean tryPrevious = ret.getContext() != null
+				&& (!observable.is(Type.COUNTABLE) || mode == Mode.INSTANTIATION);
+		if (tryPrevious) {
 			previousArtifact = ((Subject) ret.getContext()).getRuntimeContext().findArtifact(observable);
 		}
 
@@ -260,17 +263,21 @@ public enum Resolver {
 				ObservableReasoner reasoner = new ObservableReasoner(observable, ret);
 				boolean done = false;
 				for (Iterator<CandidateObservable> it = reasoner.iterator(); !done && it.hasNext();) {
+					
 					CandidateObservable candidate = it.next();
+					
 					try {
-						
+
 						// TODO ACHTUNG EMBED IN AND LOOP OVER ALL OBSERVABLES IN CANDIDATE
-						
+
 						// candidate may switch resolution mode
 						for (IRankedModel model : Models.INSTANCE.resolve(candidate.observables.get(0),
 								ret.getChildScope(candidate.observables.get(0), candidate.mode))) {
 
-							previousArtifact = ((Subject) ret.getContext()).getRuntimeContext()
-									.findArtifact(candidate.observables.get(0));
+							previousArtifact = tryPrevious 
+									? ((Subject) ret.getContext()).getRuntimeContext().findArtifact(candidate.observables.get(0))
+									: null;
+									
 							ResolutionScope mscope = previousArtifact == null ? resolve((RankedModel) model, ret)
 									: ret.getChildScope(candidate.observables.get(0), candidate.mode,
 											(IObservation) previousArtifact.getSecond(), previousArtifact.getFirst());
@@ -284,6 +291,7 @@ public enum Resolver {
 								candidate.accept(model);
 								ret.link(mscope, candidate.computation);
 							}
+							
 							if (ret.getCoverage().isComplete()) {
 								done = true;
 								break;

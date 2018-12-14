@@ -21,7 +21,7 @@ class DirectObservation extends Observation {
     DirectObservation(IDirectObservation obs, Binding binding) {
         super(obs, binding);
         name = obs.getName();
-        wrap(obs);
+        // wrap(obs);
     }
 
     def deactivate() {

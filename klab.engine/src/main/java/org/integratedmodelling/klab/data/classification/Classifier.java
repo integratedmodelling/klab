@@ -128,6 +128,10 @@ public class Classifier implements IClassifier {
 	@Override
 	public boolean classify(Object o, IComputationContext context) {
 
+//		if (this.conceptMatch != null && this.conceptMatch.toString().endsWith("ArtificialSurface")) {
+//			System.out.println("");
+//		}
+		
 		if (anythingMatch) {
 			return true;
 		}

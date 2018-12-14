@@ -114,6 +114,7 @@ public class LookupTable implements ILookupTable {
 				return row[searchIndex].asValue(context);
 			}
 		}
+
 		return null;
 	}
 

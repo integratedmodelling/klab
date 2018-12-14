@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -103,14 +104,15 @@ public class DataflowCompiler {
 		for (IResolvable root : getRootResolvables(resolutionGraph)) {
 
 			modelCatalog.clear();
-			boolean isResolver = root instanceof IObserver
-					|| !((Observable) root).is(org.integratedmodelling.kim.api.IKimConcept.Type.COUNTABLE);
+//			boolean isResolver = root instanceof IObserver
+//					|| !((Observable) root).is(org.integratedmodelling.kim.api.IKimConcept.Type.COUNTABLE);
 			Node node = compileActuator(root,
-					isResolver ? IResolutionScope.Mode.RESOLUTION : IResolutionScope.Mode.INSTANTIATION, 
+//					isResolver ? IResolutionScope.Mode.RESOLUTION : IResolutionScope.Mode.INSTANTIATION, 
+					scope.getMode(),
 					resolutionGraph,
 					this.context == null ? null : this.context.getScale(), monitor);
-			Actuator actuator = node.getActuatorTree(monitor, new HashSet<>());
-			actuator.setCreateObservation(isResolver);
+			Actuator actuator = node.getActuatorTree(ret, monitor, new HashSet<>());
+//			actuator.setCreateObservation(scope.getMode() == Mode.RESOLUTION);
 			ret.getActuators().add(actuator);
 
 			// compute coverage
@@ -127,7 +129,7 @@ public class DataflowCompiler {
 			 * if needed and applicable, finish the computational chain with any mediators
 			 * needed to turn the modeled observable into the requested one.
 			 */
-			if (observableCatalog.containsKey(actuator.getName())) {
+			if (observableCatalog.containsKey(actuator.getName()) && root instanceof Observable) {
 				for (IComputableResource mediator : Observables.INSTANCE
 						.computeMediators(observableCatalog.get(actuator.getName()), (Observable) root)) {
 					actuator.addComputation(mediator);
@@ -150,9 +152,9 @@ public class DataflowCompiler {
 		if (ret.getActuators().isEmpty() && ((ResolutionScope) scope).getObservable().is(IKimConcept.Type.SUBJECT)
 				&& scope.getMode() == Mode.RESOLUTION) {
 
-			Actuator actuator = Actuator.create(Mode.RESOLUTION);
+			Actuator actuator = Actuator.create(ret, Mode.RESOLUTION);
 			actuator.setObservable(((ResolutionScope) scope).getObservable());
-			actuator.setCreateObservation(true);
+//			actuator.setCreateObservation(true);
 			actuator.setType(Type.OBJECT);
 			actuator.setNamespace(((ResolutionScope) scope).getResolutionNamespace());
 			actuator.setName(((ResolutionScope) scope).getObservable().getLocalName());
@@ -245,12 +247,12 @@ public class DataflowCompiler {
 		/*
 		 * get the actuator in the node, ignoring the children
 		 */
-		Actuator createActuator(IMonitor monitor, Set<ModelD> generated) {
+		Actuator createActuator(Dataflow dataflow, IMonitor monitor, Set<ModelD> generated) {
 
 			/*
 			 * create the original actuator
 			 */
-			Actuator ret = Actuator.create(mode);
+			Actuator ret = Actuator.create(dataflow, mode);
 
 			ret.setObservable(observable);
 			ret.setDefinesScale(definesScale);
@@ -307,7 +309,7 @@ public class DataflowCompiler {
 				List<String> modelIds = new ArrayList<>();
 				for (ModelD modelDesc : models) {
 
-					Actuator partial = Actuator.create(mode);
+					Actuator partial = Actuator.create(dataflow, mode);
 					int index = i++;
 					if (modelDesc.model instanceof RankedModel) {
 						partial.setPriority(((RankedModel) modelDesc.model).getPriority());
@@ -341,7 +343,7 @@ public class DataflowCompiler {
 				 * we are adapting the resolved artifact, so we compile in the import and add
 				 * the adapters to our own computation
 				 */
-				Actuator resolved = Actuator.create(mode);
+				Actuator resolved = Actuator.create(dataflow, mode);
 				resolved.setObservable(resolvedArtifact.getObservable());
 				resolved.setInput(true);
 				resolved.setAlias(resolvedArtifact.getArtifactId());
@@ -404,16 +406,16 @@ public class DataflowCompiler {
 		 * get the finished actuator with all the children and the mediation strategy
 		 * TODO must add any last mediation for the root observable if needed
 		 */
-		Actuator getActuatorTree(IMonitor monitor, Set<ModelD> generated) {
+		Actuator getActuatorTree(Dataflow dataflow, IMonitor monitor, Set<ModelD> generated) {
 
-			Actuator ret = createActuator(monitor, generated);
+			Actuator ret = createActuator(dataflow, monitor, generated);
 			for (Node child : sortChildren()) {
 				/*
 				 * ACHTUNG the pre-resolved observable (from the original artifact) is not in
 				 * the catalog, so mediators for external inputs do not get generated.
 				 */
 				// this may be a new actuator or a reference to an existing one
-				Actuator achild = child.getActuatorTree(monitor, generated);
+				Actuator achild = child.getActuatorTree(dataflow, monitor, generated);
 				ret.getActuators().add(achild);
 				if (observableCatalog.containsKey(achild.getName())) {
 					for (IComputableResource mediator : Observables.INSTANCE
@@ -509,6 +511,13 @@ public class DataflowCompiler {
 		for (ResolutionEdge d : graph.incomingEdgesOf(resolvable)) {
 
 			IResolvable source = graph.getEdgeSource(d);
+			
+			if (source instanceof IObservable) {
+				Set<ResolutionEdge> sources = graph.incomingEdgesOf(source);
+				if (sources.size() == 1) {
+					source = graph.getEdgeSource(sources.iterator().next());
+				}
+			}
 
 			if (source instanceof ResolvedArtifact) {
 

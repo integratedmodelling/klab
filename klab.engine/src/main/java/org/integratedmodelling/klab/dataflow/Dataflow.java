@@ -2,8 +2,9 @@ package org.integratedmodelling.klab.dataflow;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.List;
-import java.util.UUID;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -48,6 +49,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	private DirectObservation context;
 	private ResolutionScope scope;
 	private boolean primary = true;
+	private Set<String> notified = new HashSet<>();
 
 	/*
 	 * TODO this should be removed and an actual layout should be created
@@ -203,6 +205,14 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public boolean wasNotified(IObservation parent) {
+		boolean ret = notified.contains(parent.getId());
+		if (!ret) {
+			notified.add(parent.getId());
+		}
+		return ret;
 	}
 
 }

@@ -18,18 +18,18 @@ import org.integratedmodelling.klab.scale.Scale;
  * @author ferdinando.villa
  *
  */
-public class ObservationGroup extends Observation {
+public class ObservationGroup extends CountableObservation {
 
 	private IArtifact.Type atype;
 	private List<IArtifact> artifacts = new ArrayList<>();
 
 	public ObservationGroup(Observable observable, Scale scale, IRuntimeContext context, IArtifact.Type type) {
-		super(observable, scale, context);
+		super(observable.getName(), observable, scale, context);
 		this.atype = type;
 	}
 
 	@Override
-	public IObservation at(ILocator locator) {
+	public DirectObservation at(ILocator locator) {
 		// TODO may need to at() all in the group? So far this only gets called if the group is empty.
 		return this;
 	}

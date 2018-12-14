@@ -52,3 +52,39 @@ export object cluster
 	class org.integratedmodelling.klab.components.geospace.processing.ClusterExtractor
 
 }
+
+export number collect 
+	"Collect values in a configurable neighborhood of each location and set the value at the location based on the values
+	 in the neighborhood."
+	label 'Neighborhood analysis'
+{
+	optional input select
+		"An expression that will return true or false per each point in the selected neighborhood, 
+		 choosing whether the point should be considered in the aggregation or not."
+		default ""
+	
+	optional input radius
+		"Radius in m of the neighborhood to consider. Default is the distance spanning one cell at the current
+		 resolution, producing a Neumann neighborhood."
+		default 0.0
+		
+	optional input cellradius
+		"Radius in cells of the neighborhood to consider. Default is 1."
+		default 1
+	
+	optional input aggregation
+		"The type of aggregation requested for the values produced at each location. Default is count if
+		 the value expression produces a boolean the first time it's evaluated, or mean if it produces a
+		 number."
+		default 10 // TODO this should be enum mean, std, sum, min, max, count (maybe shannon etc)
+		
+	optional input compute
+		"An expression producing the value to compute, or the name of an artifact to aggregate. A default is
+		 only accepted if the model behind it has a single dependency, becoming the corresponding artifact."
+		default ""
+	
+	geometry S2
+	
+	class org.integratedmodelling.klab.components.geospace.processing.NeighborhoodResolver
+
+}

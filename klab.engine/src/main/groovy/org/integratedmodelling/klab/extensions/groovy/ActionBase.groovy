@@ -246,7 +246,7 @@ abstract class ActionBase extends Script {
 	def info(String text) {
 		Object o = binding.getVariable("_monitor");
 		if (o instanceof IMonitor) {
-			//            ((IMonitor)o).info(text, Messages.INFOCLASS_USER_OWN);
+			((IMonitor)o).info(text);
 		}
 	}
 

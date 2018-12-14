@@ -71,9 +71,10 @@ public class Actuator implements IActuator {
 	private Observable observable;
 	protected Coverage coverage;
 	private IArtifact.Type type;
+	private Dataflow dataflow;
 	List<IActuator> actuators = new ArrayList<>();
 	Date creationTime = new Date();
-	private boolean createsObservation;
+//	private boolean createsObservation;
 
 	// reference means that this actuator is a stand-in for another in the same
 	// dataflow
@@ -323,14 +324,38 @@ public class Actuator implements IActuator {
 				IObservation notifiable = (IObservation) (ret instanceof ObservationGroup && ret.groupSize() > 0
 						? ret.iterator().next()
 						: ret);
-				ISession session = ctx.getMonitor().getIdentity().getParentIdentity(ISession.class);
-				IObservationReference observation = Observations.INSTANCE.createArtifactDescriptor(notifiable,
-						ctx.getContextObservation().equals(notifiable) ? null : ctx.getContextObservation(),
-						ITime.INITIALIZATION, -1, isMain).withTaskId(ctx.getMonitor().getIdentity().getId());
-				session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
-						IMessage.Type.NewObservation, observation));
 
-				((Report) ctx.getReport()).include(observation);
+				IObservation parent = ctx.getContextObservation().equals(notifiable) ? null
+						: ctx.getContextObservation();
+				ISession session = ctx.getMonitor().getIdentity().getParentIdentity(ISession.class);
+
+				/*
+				 * If we're resolving the root context with a nontrivial dataflow and this is an
+				 * internal observation made by it, the parent observation wasn't notified
+				 * before, so we do this now.
+				 */
+				if (parent != null && !dataflow.wasNotified(parent)) {
+
+					IObservationReference parentReference = Observations.INSTANCE
+							.createArtifactDescriptor(parent, parent.getContext(), ITime.INITIALIZATION, -1, isMain)
+							.withTaskId(ctx.getMonitor().getIdentity().getId());
+
+					session.getMonitor().send(Message.create(session.getId(),
+							IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation, parentReference));
+
+				}
+
+				if (!dataflow.wasNotified(notifiable)) {
+					
+					IObservationReference observation = Observations.INSTANCE
+							.createArtifactDescriptor(notifiable, parent, ITime.INITIALIZATION, -1, isMain)
+							.withTaskId(ctx.getMonitor().getIdentity().getId());
+
+					session.getMonitor().send(Message.create(session.getId(),
+							IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation, observation));
+
+					((Report) ctx.getReport()).include(observation);
+				}
 			}
 		}
 
@@ -401,6 +426,7 @@ public class Actuator implements IActuator {
 					(IState) ret, addParameters(ctx, self, resource), scale.at(ITime.INITIALIZATION));
 
 		} else if (contextualizer instanceof IResolver) {
+			// TODO if the target is a group, we resolve one at a time
 			ret = ((IResolver<IArtifact>) contextualizer).resolve(ret, addParameters(ctx, ret, resource));
 		} else if (contextualizer instanceof IInstantiator) {
 			for (IObjectArtifact object : ((IInstantiator) contextualizer).instantiate(observable,
@@ -538,7 +564,7 @@ public class Actuator implements IActuator {
 	protected String encodeBody(int offset, String ofs) {
 
 		boolean hasBody = actuators.size() > 0 || computationStrategy.size() > 0 || mediationStrategy.size() > 0
-				|| createsObservation;
+				|| mode == Mode.RESOLUTION;
 
 		String ret = "";
 
@@ -597,9 +623,10 @@ public class Actuator implements IActuator {
 		return ret;
 	}
 
-	public static Actuator create(IResolutionScope.Mode mode) {
+	public static Actuator create(Dataflow dataflow, IResolutionScope.Mode mode) {
 		Actuator ret = new Actuator();
 		ret.mode = mode;
+		ret.dataflow = dataflow;
 		return ret;
 	}
 
@@ -639,9 +666,9 @@ public class Actuator implements IActuator {
 		this.name = name;
 	}
 
-	public void setCreateObservation(boolean createObservation) {
-		this.createsObservation = createObservation;
-	}
+//	public void setCreateObservation(boolean createObservation) {
+//		this.createsObservation = createObservation;
+//	}
 
 	public void setReference(boolean reference) {
 		this.reference = reference;

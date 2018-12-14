@@ -309,6 +309,8 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			Dataflow dataflow = Dataflows.INSTANCE
 					.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope).setPrimary(false);
 
+			System.out.println(dataflow.getKdlCode());
+			
 			ret = (ICountableObservation) dataflow.run(scale, ((Monitor) monitor).get(subtask));
 			if (ret != null) {
 				((DirectObservation) ret).setName(name);
@@ -590,7 +592,9 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			}
 		}
 
-		return this.catalog.get(actuator.getName());
+		this.target = this.catalog.get(actuator.getName());
+		
+		return this.target;
 	}
 
 	@Override

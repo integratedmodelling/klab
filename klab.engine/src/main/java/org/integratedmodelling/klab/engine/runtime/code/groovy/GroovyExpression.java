@@ -43,11 +43,11 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Path;
-import org.integratedmodelling.klab.utils.Utils;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
@@ -261,8 +261,8 @@ public class GroovyExpression extends Expression {
 	private void setBindings(Binding binding, IComputationContext context, IParameters<String> parameters) {
 
 		// predefine this if we have a target artifact and we haven't set it from the
-		// outside
-		if (!parameters.containsKey("self") && context.getTargetArtifact() != null) {
+		// outside, unless we're instantiating (TODO use a better check)
+		if (!parameters.containsKey("self") && context.getTargetArtifact() != null && !(context.getTargetArtifact() instanceof ObservationGroup)) {
 			binding.setVariable("_self", context.getTargetArtifact());
 		}
 

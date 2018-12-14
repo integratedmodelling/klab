@@ -39,7 +39,8 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
  * The trivial case is a scalar geometry, describing scalars with no structure and specified by an
  * asterisk (<code>*</code>). Scalar geometries cannot be assigned parameters, nor, obviously, a
  * shape. An empty geometry (which is useless except to report errors) is specified by an uppercase
- * <code>X</code>.
+ * <code>X</code>. Scalar geometries are useful: for example, a resolver for any countable will
+ * have scalar geometry.
  * <p>
  * If the shape is only letters with optional numbers, the topology is for a single object
  * ({@link #getGranularity()} == {@link Granularity#SINGLE}). Otherwise, it can be prefixed by #,

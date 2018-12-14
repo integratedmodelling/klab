@@ -19,17 +19,22 @@ import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
- * Resolver that evaluates an expression computing a data artifact. If the
- * expression returns a data artifact, that substitutes the previous artifact.
+ * Scalar resolver that evaluates an expression resolving an artifact. If the
+ * expression returns a different artifact, that substitutes the previous
+ * artifact.
+ * 
+ * TODO if the expression terminates the artifact, that must be handled by 
+ * the caller.
  * 
  * @author Ferd
  *
  */
-public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression {
+public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 
 	static final public String FUNCTION_ID = "klab.runtime.exec";
 
@@ -57,8 +62,7 @@ public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression
 		IServiceCall ret = KimServiceCall.create(FUNCTION_ID);
 		ret.getParameters().put("code", resource.getExpression());
 		if (resource.getCondition() != null) {
-			ret.getParameters().put(resource.isNegated() ? "unlesscondition" : "ifcondition",
-					resource.getCondition());
+			ret.getParameters().put(resource.isNegated() ? "unlesscondition" : "ifcondition", resource.getCondition());
 		}
 		return ret;
 	}
@@ -114,7 +118,7 @@ public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression
 	}
 
 	@Override
-	public IDataArtifact resolve(IDataArtifact ret, IComputationContext context) throws KlabException {
+	public IArtifact resolve(IArtifact ret, IComputationContext context) throws KlabException {
 
 		boolean ok = true;
 		if (condition != null) {
@@ -132,8 +136,7 @@ public class ExpressionResolver implements IResolver<IDataArtifact>, IExpression
 
 	@Override
 	public IGeometry getGeometry() {
-		// TODO Auto-generated method stub
-		return null;
+		return Geometry.scalar();
 	}
 
 	@Override
