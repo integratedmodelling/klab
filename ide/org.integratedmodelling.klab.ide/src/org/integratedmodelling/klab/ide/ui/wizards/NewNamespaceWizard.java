@@ -96,15 +96,22 @@ public class NewNamespaceWizard extends Wizard {
 		for (IKimProject p : Kim.INSTANCE.getProjects()) {
 			for (IKimNamespace n : p.getNamespaces()) {
 				if (n.getName().equals(nspc)) {
-					this.page.setErrorMessage("Namespace " + nspc + " already exists in project " + p.getName());
+					this.page.setErrorMessage("Namespace " + nspc + " already exists in project " + p.getName() + ".");
 					return false;
 				}
 			}
 		}
 
 		if (StringUtils.containsAny(nspc, StringUtils.UPPERCASE | StringUtils.WHITESPACE | StringUtils.NONLETTERS)) {
-			page.setErrorMessage("namespace identifiers must contain only lowercase letters with no whitespace");
+			page.setErrorMessage("Namespace identifiers must contain only lowercase letters with no whitespace.");
 			return false;
+		}
+		
+		for (String element : nspc.split("\\.")) {
+			if (Kim.INSTANCE.getKimKeywords().contains(element)) {
+				page.setErrorMessage("'" + element + "' is a k.IM keyword and cannot be used as a namespace component.");
+				return false;
+			}
 		}
 
 		return true;

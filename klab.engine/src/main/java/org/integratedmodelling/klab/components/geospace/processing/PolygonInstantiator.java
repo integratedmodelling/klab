@@ -24,7 +24,6 @@ import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -43,11 +42,9 @@ import org.integratedmodelling.klab.engine.runtime.code.groovy.GroovyExpression;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Parameters;
-import org.integratedmodelling.klab.utils.Range;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -62,7 +59,7 @@ import ij.blob.Blob;
 import ij.blob.ManyBlobs;
 import ij.process.ImageProcessor;
 
-public class FeatureExtractor implements IExpression, IInstantiator {
+public class PolygonInstantiator implements IExpression, IInstantiator {
 
 	Descriptor exprDescriptor = null;
 	private IGrid grid;
@@ -76,7 +73,7 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 	// TODO
 	private boolean ignoreHoles;
 
-	public FeatureExtractor() {
+	public PolygonInstantiator() {
 	}
 
 	/**
@@ -87,11 +84,11 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 	 * 
 	 * @param grid
 	 */
-	public FeatureExtractor(IGrid grid) {
+	public PolygonInstantiator(IGrid grid) {
 		this.grid = grid;
 	}
 
-	public FeatureExtractor(IParameters<String> parameters, IComputationContext context)
+	public PolygonInstantiator(IParameters<String> parameters, IComputationContext context)
 			throws KlabValidationException {
 		if (parameters.containsKey("select")) {
 			Object expression = parameters.get("select");
@@ -129,12 +126,6 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 		List<IState> inheritedStates = new ArrayList<>();
 		List<IObjectArtifact> ret = new ArrayList<>();
 		Map<IState, String> stateIdentifiers = new HashMap<>();
-		StateSummary stateSummary = null;
-
-		// TODO
-		double selectFraction = Double.NaN;
-		// TODO
-		boolean topFraction = true;
 
 		IExpression expression = null;
 		if (exprDescriptor != null) {
@@ -176,49 +167,17 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 			}
 		}
 
-		// TODO
-		IState fractionState = null;
-		Range limits = null;
-		if (sourceStates.size() == 1 && !Double.isNaN(selectFraction)) {
-			fractionState = sourceStates.get(0);
-			if (!(fractionState.getObservable().getObservationType() == ObservationType.QUANTIFICATION)) {
-				throw new KlabValidationException(
-						"feature extractor: state for fraction extraction " + fractionState + " must be numeric");
-			}
-			// TODO
-			// StateSummary stateSummary =
-			// Observations.INSTANCE.getStateSummary(fractionState, )
-		}
-
 		// build mask
 		ImagePlus image = IJ.createImage("blobs", "8-bit black", (int) grid.getXCells(), (int) grid.getYCells(), 1);
 		ImageProcessor imp = image.getProcessor();
 		boolean warned = false;
 		Parameters<String> parameters = new Parameters<>();
 
-		// TODO
 		for (Cell cell : grid) {
 
 			Object o = null;
 
-			if (fractionState != null) {
-
-				o = Boolean.FALSE;
-				double d = fractionState.get(cell, Double.class);
-				if (!Double.isNaN(d)) {
-
-					double perc = 0;
-					if (topFraction) {
-						perc = (stateSummary.getRange().get(1) - d)
-								/ (stateSummary.getRange().get(1) - stateSummary.getRange().get(0));
-					} else {
-						perc = (d - stateSummary.getRange().get(0))
-								/ (stateSummary.getRange().get(1) - stateSummary.getRange().get(0));
-					}
-					o = perc <= selectFraction;
-				}
-
-			} else if (expression != null) {
+			if (expression != null) {
 
 				parameters.clear();
 				for (IState state : sourceStates) {
@@ -340,7 +299,7 @@ public class FeatureExtractor implements IExpression, IInstantiator {
 
 	@Override
 	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
-		return new FeatureExtractor(parameters, context);
+		return new PolygonInstantiator(parameters, context);
 	}
 
 	@Override

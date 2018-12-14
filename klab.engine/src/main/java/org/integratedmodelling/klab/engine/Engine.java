@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
+import org.eclipse.xtext.testing.IInjectorProvider;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Annotations;
@@ -63,12 +64,15 @@ import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.xtext.KimInjectorProvider;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.google.inject.Injector;
 
 public class Engine extends Server implements IEngine, UserDetails {
 
@@ -404,6 +408,15 @@ public class Engine extends Server implements IEngine, UserDetails {
 		if (options.isHelp()) {
 			System.out.println(options.usage());
 			System.exit(0);
+		}
+		
+		/*
+		 * set up access to the k.IM grammar
+		 */
+		IInjectorProvider injectorProvider = new KimInjectorProvider();
+		Injector injector = injectorProvider.getInjector();
+		if (injector != null) {
+			Kim.INSTANCE.setup(injector);
 		}
 
 		if (certificate == null) {

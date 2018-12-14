@@ -14,7 +14,7 @@ export object extract
 	
 	geometry #s0
 	
-	class org.integratedmodelling.klab.components.geospace.processing.PointExtractor
+	class org.integratedmodelling.klab.components.geospace.processing.PointInstantiator
 
 }
 
@@ -49,18 +49,20 @@ export object cluster
 	
 	geometry #s0
 	
-	class org.integratedmodelling.klab.components.geospace.processing.ClusterExtractor
+	class org.integratedmodelling.klab.components.geospace.processing.ClusterInstantiator
 
 }
 
 export number collect 
 	"Collect values in a configurable neighborhood of each location and set the value at the location based on the values
-	 in the neighborhood."
-	label 'Neighborhood analysis'
+	 in the neighborhood. Optionally modify other values in the neighborhood as well."
+	label 'Collect neighbors'
 {
 	optional input select
 		"An expression that will return true or false per each point in the selected neighborhood, 
-		 choosing whether the point should be considered in the aggregation or not."
+		 choosing whether the point should be considered in the aggregation or not. All dependencies
+		 will be available with their own name; the current cell will be available as 'space', the
+	     focal cell being computed will be available as 'origin'."
 		default ""
 	
 	optional input radius
@@ -69,19 +71,37 @@ export number collect
 		default 0.0
 		
 	optional input cellradius
-		"Radius in cells of the neighborhood to consider. Default is 1."
+		"Radius in cells of the neighborhood to consider. Default is 1. Pass 0 for local operations (which 
+		 may be useful if the update feature is used)."
 		default 1
 	
 	optional input aggregation
 		"The type of aggregation requested for the values produced at each location. Default is count if
 		 the value expression produces a boolean the first time it's evaluated, or mean if it produces a
 		 number."
-		default 10 // TODO this should be enum mean, std, sum, min, max, count (maybe shannon etc)
+		default "" // TODO this should be enum mean, std, sum, min, max, count (maybe shannon etc)
 		
-	optional input compute
-		"An expression producing the value to compute, or the name of an artifact to aggregate. A default is
-		 only accepted if the model behind it has a single dependency, becoming the corresponding artifact."
+	optional input aggregate
+		"An expression producing the value to compute. The current cell in the neighborhood will be 
+         available as 'space', the one being computed (focal) will be available as 'origin'. The 
+         value of the focal cell will be available as 'self'."
 		default ""
+		
+	optional input skipedges
+		"If true, the cells that do not have a complete neighborhood due to edge effects will be skipped. Default
+		 is false."
+		default false
+	
+	optional input circular
+		"If true, an approximately round neighborhood is used. Default is a square neighborhood."
+		default false
+	
+	optional input update
+		"An optional list containing (artifactname, expression [,....]) pairs, with the expressions producing 
+		 a value to update the named artifact in the neighborhood cells after the value for the
+		 focal cell has been computed. The value of the focal cell will be available as 'self' while the 
+		 current values of all other states will be available as their own names."
+		default ()
 	
 	geometry S2
 	

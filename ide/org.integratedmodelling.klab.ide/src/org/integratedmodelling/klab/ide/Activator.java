@@ -157,6 +157,10 @@ public class Activator extends AbstractUIPlugin {
 				() -> engineOff(), initialSessionId);
 
 		/*
+		 * setup the language helper with access to the grammar
+		 */
+		Kim.INSTANCE.setup(KimActivator.getInstance().getInjector(KimActivator.ORG_INTEGRATEDMODELLING_KIM_KIM));
+		/*
 		 * load the workspace. This is the only point where the ECore -> k.IM
 		 * translation is invoked.
 		 */

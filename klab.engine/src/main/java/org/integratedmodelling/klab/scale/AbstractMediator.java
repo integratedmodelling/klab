@@ -140,7 +140,7 @@ public abstract class AbstractMediator implements Scale.Mediator {
             switch (aggregation) {
             case SUM:
                 return new Sum().aggregate(vals);
-            case AVERAGE:
+            case MEAN:
                 return new Mean().aggregate(vals);
             case MIN:
                 return new Min().aggregate(vals);

@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.math3.ml.clustering.Cluster;
+import org.apache.commons.math3.ml.clustering.DBSCANClusterer;
+import org.apache.commons.math3.ml.clustering.DoublePoint;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
@@ -30,6 +33,7 @@ import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.geospace.utils.ConcaveHull;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -39,15 +43,19 @@ import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Range;
 
 import com.vividsolutions.jts.algorithm.ConvexHull;
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 
-public class PointExtractor implements IExpression, IInstantiator {
+public class ClusterInstantiator implements IExpression, IInstantiator {
 
 	Descriptor exprDescriptor = null;
 	private IGrid grid;
+	int minPoints = 15;
+	double radius = 0;
+	boolean convex = true;
 
-	public PointExtractor() {
+	public ClusterInstantiator() {
 	}
 
 	/**
@@ -58,11 +66,22 @@ public class PointExtractor implements IExpression, IInstantiator {
 	 * 
 	 * @param grid
 	 */
-	public PointExtractor(IGrid grid) {
+	public ClusterInstantiator(IGrid grid) {
 		this.grid = grid;
 	}
 
-	public PointExtractor(IParameters<String> parameters, IComputationContext context) throws KlabValidationException {
+	public ClusterInstantiator(IParameters<String> parameters, IComputationContext context)
+			throws KlabValidationException {
+
+		// TODO support clustering of point features in other contextualizer
+		IScale scale = context.getScale();
+		if (!(scale.isSpatiallyDistributed() && scale.getDimension(Type.SPACE).size() > 1
+				&& scale.getDimension(Type.SPACE).isRegular())) {
+			throw new KlabValidationException(
+					"point clustering only works on regular distributed spatial extents (grids)");
+		}
+
+		this.grid = ((Space) scale.getSpace()).getGrid();
 		
 		if (parameters.containsKey("select")) {
 			Object expression = parameters.get("select");
@@ -73,14 +92,27 @@ public class PointExtractor implements IExpression, IInstantiator {
 					.describe(expression.toString(), context);
 		}
 
-		IScale scale = context.getScale();
-		if (!(scale.isSpatiallyDistributed() && scale.getDimension(Type.SPACE).size() > 1
-				&& scale.getDimension(Type.SPACE).isRegular())) {
-			throw new KlabValidationException(
-					"feature extraction only works on regular distributed spatial extents (grids)");
+		if (parameters.containsKey("radius")) {
+			this.radius = context.getScale().getSpace().getEnvelope()
+					.convertDistance(parameters.get("radius", Double.class));
+		} else if (parameters.containsKey("cellradius")) {
+			this.radius = (double)parameters.get("cellradius", Integer.class) * grid.getCellWidth();
 		}
 
-		this.grid = ((Space) scale.getSpace()).getGrid();
+		if (parameters.containsKey("minpoints")) {
+			this.minPoints = parameters.get("minpoints", Integer.class);
+		}
+		
+		if (parameters.containsKey("convex")) {
+			this.convex = parameters.get("convex", Boolean.class);
+		}
+
+		/*
+		 * adaptive radius if not supplied - allowed to skip one cell but not two
+		 */
+		if (this.radius == 0) {
+			this.radius = grid.getCellWidth() * 6;
+		}
 	}
 
 	@Override
@@ -109,7 +141,7 @@ public class PointExtractor implements IExpression, IInstantiator {
 			}
 			if (sourceStates.isEmpty()) {
 				throw new KlabResourceNotFoundException(
-						"feature extractor: the selection expression does not reference any known state");
+						"cluster extractor: the selection expression does not reference any known state");
 			}
 			expression = exprDescriptor.compile();
 		}
@@ -133,7 +165,7 @@ public class PointExtractor implements IExpression, IInstantiator {
 			if (scontext != null && Observables.INSTANCE.isCompatible(semantics.getType(), scontext)) {
 				inheritedStates.add(sourceState);
 				context.getMonitor().info(
-						"feature extractor: instances will inherit a rescaled view of " + sourceState.getObservable());
+						"cluster extractor: instances will inherit a rescaled view of " + sourceState.getObservable());
 			}
 		}
 
@@ -144,7 +176,7 @@ public class PointExtractor implements IExpression, IInstantiator {
 			fractionState = sourceStates.get(0);
 			if (!(fractionState.getObservable().getObservationType() == ObservationType.QUANTIFICATION)) {
 				throw new KlabValidationException(
-						"feature extractor: state for fraction extraction " + fractionState + " must be numeric");
+						"cluster extractor: state for fraction extraction " + fractionState + " must be numeric");
 			}
 			// TODO
 			// StateSummary stateSummary =
@@ -153,7 +185,8 @@ public class PointExtractor implements IExpression, IInstantiator {
 
 		Parameters<String> parameters = new Parameters<>();
 		boolean warned = false;
-		List<Geometry> geometries = new ArrayList<>();
+		// List<Coordinate> geometries = new ArrayList<>();
+		List<DoublePoint> dpoints = new ArrayList<>();
 
 		for (Cell cell : grid) {
 
@@ -190,22 +223,44 @@ public class PointExtractor implements IExpression, IInstantiator {
 				}
 				if (!(o instanceof Boolean)) {
 					throw new KlabValidationException(
-							"point extractor: feature extraction selector must return true/false");
+							"cluster extractor: feature extraction selector must return true/false");
 				}
 
 			} else if (!warned) {
-				context.getMonitor().warn("point extractor: no input: specify either select or select fraction");
+				context.getMonitor().warn("cluster extractor: no input: specify either select or select fraction");
 				warned = true;
 			}
 
 			if (o instanceof Boolean && (Boolean) o) {
-				geometries.add(((Shape) cell.getShape().getCentroid()).getJTSGeometry());
+				Coordinate cdc = ((Shape) cell.getShape().getCentroid()).getJTSGeometry().getCoordinate();
+				// geometries.add(cdc);
+				dpoints.add(new DoublePoint(new double[] { cdc.x, cdc.y }));
 			}
 		}
 
-		for (int i = 0; i < geometries.size(); i++) {
-			ret.add(context.newObservation(semantics, semantics.getLocalName() + "_" + (i + 1),
-					Scale.substituteExtent(context.getScale(), Shape.create(geometries.get(i), grid.getProjection()))));
+		int nc = 0;
+		if (dpoints.size() > 0) {
+
+			DBSCANClusterer<DoublePoint> clusterer = new DBSCANClusterer<>(radius, minPoints);
+			for (Cluster<DoublePoint> cluster : clusterer.cluster(dpoints)) {
+				List<DoublePoint> pts = cluster.getPoints();
+				Coordinate[] points = new Coordinate[pts.size()];
+				for (int i = 0; i < pts.size(); i++) {
+					points[i] = new Coordinate(pts.get(i).getPoint()[0], pts.get(i).getPoint()[1]);
+				}
+				GeometryCollection shape = (GeometryCollection) Geospace.gFactory.createMultiPoint(points);
+				Geometry geom = null;
+				if (convex) {
+					ConvexHull hull = new ConvexHull(shape);
+					geom = hull.getConvexHull();
+				} else {
+					geom = new ConcaveHull().transform(shape);
+				}
+				ret.add(context.newObservation(semantics, semantics.getLocalName() + "_" + (nc + 1),
+						Scale.substituteExtent(context.getScale(), Shape.create(geom, grid.getProjection()))));
+
+				nc++;
+			}
 		}
 
 		return ret;
@@ -213,7 +268,7 @@ public class PointExtractor implements IExpression, IInstantiator {
 
 	@Override
 	public IGeometry getGeometry() {
-		return org.integratedmodelling.klab.common.Geometry.create("#s0");
+		return org.integratedmodelling.klab.common.Geometry.create("#s2");
 	}
 
 	@Override
@@ -223,7 +278,7 @@ public class PointExtractor implements IExpression, IInstantiator {
 
 	@Override
 	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
-		return new PointExtractor(parameters, context);
+		return new ClusterInstantiator(parameters, context);
 	}
 
 }

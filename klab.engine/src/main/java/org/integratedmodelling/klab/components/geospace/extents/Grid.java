@@ -311,6 +311,16 @@ public class Grid extends Area implements IGrid {
 			}
 			return null;
 		}
+		
+		@Override
+		public Cell getNeighbor(long xOfs, long yOfs) {
+			long tx = x + xOfs;
+			long ty = y + yOfs;
+			if (tx >= 0 && tx < getXCells() && ty >= 0 && ty < getYCells()) {
+				return new CellImpl(tx, ty);
+			}
+			return null;
+		}
 
 		@Override
 		public String toString() {

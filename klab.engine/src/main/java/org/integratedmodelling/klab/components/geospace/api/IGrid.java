@@ -67,6 +67,8 @@ public interface IGrid extends Iterable<Cell> {
 
 		Cell getNeighbor(Orientation orientation);
 
+		Cell getNeighbor(long xOffset, long yOffset);
+		
 		long getX();
 
 		long getY();
@@ -101,6 +103,7 @@ public interface IGrid extends Iterable<Cell> {
 		double[] getCenter();
 
 		IShape getShape();
+
 
 	}
 

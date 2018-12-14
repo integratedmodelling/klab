@@ -29,9 +29,12 @@ package org.integratedmodelling.klab.api.data;
 public enum Aggregation {
     NONE,
     SUM,
-    AVERAGE,
+    MEAN,
+    STD,
     MIN,
     MAX,
     MAJORITY,
-    MAXIMUM_LIKELIHOOD
+    ANY_PRESENT,
+    MAXIMUM_LIKELIHOOD,
+    COUNT
 }

@@ -192,7 +192,7 @@ public enum Observations implements IObservationService {
 	public static Aggregation getAggregator(IObservable observable) {
 		Aggregation ret = Aggregation.MAJORITY;
 		if (observable.getObservationType() == ObservationType.QUANTIFICATION) {
-			ret = Aggregation.AVERAGE;
+			ret = Aggregation.MEAN;
 			if (observable.isExtensive(Concepts.c(NS.SPACE_DOMAIN))) {
 				ret = Aggregation.SUM;
 			}

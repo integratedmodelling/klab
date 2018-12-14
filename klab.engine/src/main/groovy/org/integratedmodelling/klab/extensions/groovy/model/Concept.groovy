@@ -43,12 +43,20 @@ public class Concept {
     Def defs = null;
     Collection<IExtent> searchExtents = new ArrayList<>();
     Collection<String> scenarios = new ArrayList<>();
+	Map<String,Boolean> isaCache = null;
+	
     boolean resolved = false;
 
     Concept(IConcept c, Binding binding) {
         this.concept = c;
         this.binding = binding;
     }
+	
+	Concept(IConcept c, Binding binding, Map<String,Boolean> isaCache) {
+		this.concept = c;
+		this.binding = binding;
+		this.isaCache = isaCache;
+	}
 
     Concept(IConcept c, Binding binding, IObservation roleContext) {
         this.concept = c;
@@ -160,7 +168,18 @@ public class Concept {
     def isa(Object o) {
         resolve();
         IConcept sem = toConcept(o);
+		String cid = null;
+		if (isaCache != null) {
+			cid = concept.toString() + "|" + sem.toString();
+			Boolean b = isaCache.get(cid);
+			if (b != null) {
+				return b;
+			}
+		}
         boolean ret = concept.is(sem);
+		if (isaCache != null) {
+			isaCache.put(cid, ret);
+		}
 		// TODO
 //        if (!ret && (sem.is(IKimConcept.Type.OBSERVABLE) || sem.is(IKimConcept.Type.TRAIT) || sem.is(IKimConcept.Type.ROLE))) {
 //            if (sem.is(IKimConcept.Type.TRAIT)) {

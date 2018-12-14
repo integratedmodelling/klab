@@ -35,6 +35,7 @@ abstract class ActionBase extends Script {
 
 	static inited = false;
 	private Random rgen = new Random();
+	private Map<String,Boolean> isaCache = new HashMap<>();
 
 	ActionBase() {
 		if (!inited) {
@@ -113,7 +114,7 @@ abstract class ActionBase extends Script {
 					}
 				}
 			} else if (vars.get(vname) instanceof IConcept) {
-				binding.setVariable(vname, new Concept(vars.get(vname), binding));
+				binding.setVariable(vname, new Concept(vars.get(vname), binding, isaCache));
 			} else if (vars.get(vname) instanceof IObservation) {
 				binding.setVariable(vname, wrapObject(vars.get(vname)));
 			} else if (vname.equals("_c")) {

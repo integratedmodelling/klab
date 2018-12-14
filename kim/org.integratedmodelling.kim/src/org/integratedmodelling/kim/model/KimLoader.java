@@ -74,13 +74,13 @@ public class KimLoader implements IKimLoader {
     private IResourceValidator validator;
     private Graph<File, DefaultEdge> dependencyGraph;
     private Set<File> projectLocations = new HashSet<>();
-
+    
     public KimLoader() {
     }
 
-    public KimLoader(Injector injector) {
-        setInjector(injector);
-    }
+//    public KimLoader(Injector injector) {
+//        setInjector(injector);
+//    }
 
     private Injector getInjector() {
         if (this.injector == null) {
@@ -89,13 +89,13 @@ public class KimLoader implements IKimLoader {
         return this.injector;
     }
 
-    /**
-     * Call this to use an appropriate injector if calling from a non-standalone
-     * setup.
-     */
-    private void setInjector(Injector injector) {
-        this.injector = injector;
-    }
+//    /**
+//     * Call this to use an appropriate injector if calling from a non-standalone
+//     * setup.
+//     */
+//    private void setInjector(Injector injector) {
+//        this.injector = injector;
+//    }
 
     public KimLoader(IKimLoader loader) {
         if (loader != null) {

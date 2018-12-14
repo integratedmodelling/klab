@@ -29,6 +29,8 @@ import java.util.logging.Level;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.GrammarUtil;
+import org.eclipse.xtext.IGrammarAccess;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
@@ -65,6 +67,9 @@ import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.Range;
 
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+
 /**
  * Parsing functions and interfaces. Holds the state of the knowledge base as
  * new concepts are declared, so that the appropriate highlighting can be
@@ -84,7 +89,18 @@ public enum Kim {
 	public final static String COMMON_PROJECT_ID = "klab.internal.common.project";
 
 	private Validator validatorCallback = null;
+	
+	@Inject
+	private IGrammarAccess grammarAccess;
 
+	/**
+	 * Call before keyword list can be obtained
+	 * @param injector
+	 */
+	public void setup(Injector injector) {
+		injector.injectMembers(this);
+	}
+	
 //	/**
 //	 * Known URN descriptors. Must be filled in from the outside.
 //	 */
@@ -412,6 +428,10 @@ public enum Kim {
 		return declaration == null ? null : KimObservable.normalize(declaration, parent);
 	}
 
+	public Set<String> getKimKeywords() {
+		return GrammarUtil.getAllKeywords(grammarAccess.getGrammar());
+	}
+		
 	public void addNotifier(Notifier notifier) {
 		this.notifiers.add(notifier);
 	}

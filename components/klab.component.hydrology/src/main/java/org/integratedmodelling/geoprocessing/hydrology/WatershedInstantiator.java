@@ -28,7 +28,7 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
-import org.integratedmodelling.klab.components.geospace.processing.FeatureExtractor;
+import org.integratedmodelling.klab.components.geospace.processing.PolygonInstantiator;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -86,7 +86,7 @@ public class WatershedInstantiator implements IInstantiator, IExpression {
 		}
 
 		IState flowDir = context.getArtifact("flow_directions_d8", IState.class);
-		FeatureExtractor extractor = new FeatureExtractor(grid);
+		PolygonInstantiator extractor = new PolygonInstantiator(grid);
 
 		for (IArtifact artifact : context.getArtifact("stream_outlet")) {
 

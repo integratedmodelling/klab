@@ -30,7 +30,7 @@ export object extract
 	 */
 	geometry #s2
 	
-	class org.integratedmodelling.klab.components.geospace.processing.FeatureExtractor
+	class org.integratedmodelling.klab.components.geospace.processing.PolygonInstantiator
 
 }
 
