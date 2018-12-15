@@ -46,8 +46,8 @@ import org.integratedmodelling.klab.utils.Range;
  * enables simpler handling of provenance, as each observation activity returns
  * one artifact, possibly iterable as a group.
  * <p>
- * From an OPM perspective, IArtifact is the equivalent of Entity, including
- * its specialization into Bundle if size() > 1. 
+ * From an OPM perspective, IArtifact is the equivalent of Entity, including its
+ * specialization into Bundle if size() > 1.
  * <p>
  * Each artifact exposes the provenance graph it's part of, allowing all k.LAB
  * tasks to simply return any {@code IArtifact} and provide full information on
@@ -319,5 +319,15 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 	 * @return the type
 	 */
 	Type getType();
+
+	/**
+	 * Call when the artifact can be disposed of. This should schedule the removal
+	 * of any storage and free any resources without terminating the object itself,
+	 * according to the implementation of the storage provider. Calling release() is
+	 * optional and should be done only on temporary artifacts with a well-defined
+	 * life span.
+	 * 
+	 */
+	void release();
 
 }

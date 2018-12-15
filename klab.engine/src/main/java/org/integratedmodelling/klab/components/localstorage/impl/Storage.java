@@ -34,7 +34,7 @@ public abstract class Storage implements IArtifact {
     	this.timeStates = geometry.getDimension(IGeometry.Dimension.Type.TIME).size();
     	this.sliceSize /= this.timeStates;
     }
-//    this.storage.add(new Pair<>(0, Nd4j.zeros((int)this.sliceSize)));
+//    this.storage.add(new Pair<>(0, Nd4j.valueArrayOf(Double.NaN, (int)this.sliceSize)));
   }
 
   public IGeometry getGeometry() {
@@ -50,6 +50,10 @@ public abstract class Storage implements IArtifact {
 		  return storage.get(0).getSecond();
 	  }
 	  throw new IllegalStateException("unimplemented: lookup of temporal slice in storage");
+  }
+  
+  public void release() {
+	  System.out.println("HEY RELEASE ME - I'M TAKING SPACE!");
   }
   
   /*

@@ -173,5 +173,10 @@ public abstract class Artifact implements IArtifact {
 		ret.empty = true;
 		return ret;
 	}
+	
+	@Override
+	public void release() {
+		System.out.println("RELEASING ARTIFACT - UNIMPLEMENTED!");
+	}
 
 }

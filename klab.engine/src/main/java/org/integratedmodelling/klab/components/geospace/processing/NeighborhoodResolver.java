@@ -8,9 +8,11 @@ import java.util.Map;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
@@ -141,7 +143,7 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 		}
 
 		if (hCells <= 0) {
-			context.getMonitor().warn("neighborhood analysis: the neighborhood is too small: no action done");
+			context.getMonitor().warn("Neighborhood analysis: the neighborhood is too small: no action done");
 			return target;
 		}
 
@@ -172,6 +174,9 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 		List<IState> sourceStates = new ArrayList<>();
 		List<IState> selectStates = new ArrayList<>();
 
+		IDataArtifact valueCache = null;
+		boolean isLinear = true;
+
 		IExpression valueExpression = null;
 		if (valueDescriptor != null) {
 			// check inputs and see if the expr is worth anything in this context
@@ -180,11 +185,14 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 					IState state = context.getArtifact(input, IState.class);
 					sourceStates.add(state);
 					this.stateIdentifiers.put(state, input);
+					if (input.equals("origin")) {
+						isLinear = false;
+					}
 				}
 			}
 			if (sourceStates.isEmpty()) {
 				throw new KlabResourceNotFoundException(
-						"neighborhood resolver: the value expression does not reference any known state");
+						"Neighborhood resolver: the value expression does not reference any known state");
 			}
 			valueExpression = valueDescriptor.compile();
 		} else {
@@ -200,11 +208,14 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 					IState state = context.getArtifact(input, IState.class);
 					selectStates.add(state);
 					this.stateIdentifiers.put(state, input);
+					if (input.equals("origin")) {
+						isLinear = false;
+					}
 				}
 			}
 			if (selectStates.isEmpty()) {
 				throw new KlabResourceNotFoundException(
-						"neighborhood resolver: the select expression does not reference any known state");
+						"Neighborhood resolver: the select expression does not reference any known state");
 			}
 			selectExpression = selectDescriptor.compile();
 		}
@@ -212,8 +223,46 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 		/*
 		 * go for it
 		 */
+
+		if (isLinear) {
+			context.getMonitor().info("No contextual references: using pre-loaded value cache for neighborhood analysis");
+			for (Cell locator : grid) {
+
+				Object value = null;
+				boolean evaluate = true;
+
+				if (context.getMonitor().isInterrupted()) {
+					break;
+				}
+
+				if (selectExpression != null) {
+					if (!evalStates(selectExpression, selectStates, locator, Boolean.class)) {
+						evaluate = false;
+					}
+				}
+
+				if (evaluate) {
+					Object self = target.get(locator);
+					value = evalStates(valueExpression, sourceStates, locator, Boolean.class, "self", self);
+					if (value != null && valueCache == null) {
+						valueCache = Klab.INSTANCE.getStorageProvider()
+								.createStorage(Utils.getArtifactType(value.getClass()), target.getScale(), context);
+					}
+				}
+
+				valueCache.set(locator, value);
+			}
+		}
+
+		if (isLinear && valueCache == null) {
+			context.getMonitor().info("No usable values in source data: skipping neighborhood analysis");
+			return target;
+		}
+
 		long ncells = 0;
-		context.getMonitor().info("Neighborhood analysis starting with a " + maskSize + "x" + maskSize + " neighborhood");
+		context.getMonitor()
+				.info("Neighborhood analysis starting with a " + maskSize + "x" + maskSize + " neighborhood");
+
 		for (Cell locator : grid) {
 
 			if (context.getMonitor().isInterrupted()) {
@@ -223,16 +272,22 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 			List<Object> values = new ArrayList<>(maskSize * maskSize);
 			for (Cell cell : getNeighborhood(locator, offsetMask)) {
 
-				if (selectExpression != null) {
-					if (!evalStates(selectExpression, selectStates, cell, Boolean.class, "space", cell, "origin",
-							locator)) {
-						continue;
-					}
-				}
+				Object value = null;
+				if (valueCache == null) {
 
-				Object self = target.get(locator);
-				Object value = evalStates(valueExpression, sourceStates, cell, Boolean.class, "space", cell, "origin",
-						locator, "self", self);
+					if (selectExpression != null) {
+						if (!evalStates(selectExpression, selectStates, cell, Boolean.class, "origin", locator)) {
+							continue;
+						}
+					}
+
+					Object self = target.get(locator);
+					value = evalStates(valueExpression, sourceStates, cell, Boolean.class, "origin", locator,
+							"self", self);
+				} else {
+					value = valueCache.get(cell);
+				}
+				
 				if (!(value == null || (value instanceof Number && Double.isNaN(((Number) value).doubleValue())))) {
 					values.add(value);
 				}
@@ -245,6 +300,10 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 			if ((ncells % 10000) == 0) {
 				context.getMonitor().info(ncells + " cells done...");
 			}
+		}
+
+		if (valueCache != null) {
+			valueCache.release();
 		}
 
 		return target;
@@ -423,6 +482,7 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 			Object... parms) {
 
 		Parameters<String> parameters = Parameters.create(parms);
+		parameters.put("space", where);
 		for (IState state : states) {
 			Object o = state.get(where, Object.class);
 			parameters.put(stateIdentifiers.get(state), o);

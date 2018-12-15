@@ -17,7 +17,7 @@ public class LocalStorageComponent implements IStorageProvider {
 
 	public LocalStorageComponent() {
 		// TODO Auto-generated constructor stub
-		// TODO install reaper for any leftover storage
+		// TODO install reaper for any temporary/leftover storage
 	}
 
 	@Override
