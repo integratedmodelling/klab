@@ -23,7 +23,7 @@ public class NormalizingTransformation implements IResolver<IState>, IExpression
 	public NormalizingTransformation(IParameters<String> parameters, IComputationContext context) {
 		
 		IArtifact artifact = context.getArtifact(parameters.get("artifact", String.class));
-		if (!(artifact instanceof IState) || artifact.getType() != Type.NUMBER) {
+		if (artifact instanceof IState && (artifact.getType() != Type.NUMBER && artifact.getType() != Type.VALUE)) {
 			throw new IllegalArgumentException("normalization operations can only be performed on numeric states");
 		}
 		this.state = (IState) artifact;
@@ -46,6 +46,9 @@ public class NormalizingTransformation implements IResolver<IState>, IExpression
 
 	@Override
 	public IState resolve(IState ret, IComputationContext context) throws KlabException {
+		if (state == null) {
+			state = ret;
+		}
 		StateSummary summary = Observations.INSTANCE.getStateSummary(state, ITime.INITIALIZATION);
 		if (!summary.isDegenerate()) {
 			for (ILocator locator : context.getScale()) {
