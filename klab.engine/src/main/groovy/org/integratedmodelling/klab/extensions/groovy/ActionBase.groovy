@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.extensions.groovy
 
 import org.apache.commons.math3.special.Erf
+import org.codehaus.groovy.runtime.NullObject
 import org.integratedmodelling.klab.Concepts
 import org.integratedmodelling.klab.api.knowledge.IConcept
 import org.integratedmodelling.klab.api.observations.IDirectObservation
@@ -39,32 +40,23 @@ abstract class ActionBase extends Script {
 
 	ActionBase() {
 		if (!inited) {
-			/*
+			
+			ExpandoMetaClass.enableGlobally();
+
+						/*
 			 * enable <n>.<unit> notation to return a number with units.
 			 */
-			ExpandoMetaClass.enableGlobally();
 			//            Number.metaClass.getProperty = { String symbol ->
 			//                Amount.valueOf(delegate, Unit.valueOf(symbol))
 			//            }
 
-			// allows null-proof multiplications and division
-			// Not really. Just ensure all nulls in numeric artifacts are NaN.
-			//			NullObject.metaClass.multiply = { Number n -> Double.NaN }
-			//			NullObject.metaClass.div = { Number n -> Double.NaN }
-			//			NullObject.metaClass.plus = { Number n -> Double.NaN }
-			//			NullObject.metaClass.minus = { Number n -> Double.NaN }
-			//			Number.metaClass.multiply = { NullObject n -> Double.NaN }
-			//			Number.metaClass.div = { NullObject n -> Double.NaN }
-			//			Number.metaClass.plus = { NullObject n -> Double.NaN }
-			//			Number.metaClass.minus = { NullObject n -> Double.NaN }
-			//			BigDecimal.metaClass.multiply = { NullObject n -> Double.NaN }
-			//			BigDecimal.metaClass.div = { NullObject n -> Double.NaN }
-			//			BigDecimal.metaClass.plus = { NullObject n -> Double.NaN }
-			//			BigDecimal.metaClass.minus = { NullObject n -> Double.NaN }
-			//			NullObject.metaClass.multiply = { BigDecimal n -> Double.NaN }
-			//			NullObject.metaClass.div = { BigDecimal n -> Double.NaN }
-			//			NullObject.metaClass.plus = { BigDecimal n -> Double.NaN }
-			//			NullObject.metaClass.minus = { BigDecimal n -> Double.NaN }
+			// Allows sensible math results when the first op is null. Ensure that all 
+			// input null numbers are actually NaN and no more null-proofing should be
+			// required.
+			NullObject.metaClass.multiply = { Object n -> Double.NaN }
+			NullObject.metaClass.div = { Object n -> Double.NaN }
+			NullObject.metaClass.plus = { Object n -> Double.NaN }
+			NullObject.metaClass.minus = { Object n -> Double.NaN }
 
 			/*
 			 * enable arithmetics and comparisons with units:

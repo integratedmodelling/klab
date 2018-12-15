@@ -104,6 +104,10 @@ public class Utils {
 	@SuppressWarnings("unchecked")
 	public static <T> T asType(Object ret, Class<?> cls) {
 
+		if (cls.equals(Object.class)) {
+			return (T) ret;
+		}
+		
 		if (ret == null) {
 			if (cls.equals(Double.class)) {
 				return (T) new Double(Double.NaN);

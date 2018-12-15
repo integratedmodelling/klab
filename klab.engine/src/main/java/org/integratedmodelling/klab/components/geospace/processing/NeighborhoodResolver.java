@@ -225,7 +225,7 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 		 */
 
 		if (isLinear) {
-			context.getMonitor().info("No contextual references: using pre-loaded value cache for neighborhood analysis");
+			context.getMonitor().info("No contextual references: building pre-loaded value cache for neighborhood analysis");
 			for (Cell locator : grid) {
 
 				Object value = null;
@@ -243,7 +243,7 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 
 				if (evaluate) {
 					Object self = target.get(locator);
-					value = evalStates(valueExpression, sourceStates, locator, Boolean.class, "self", self);
+					value = evalStates(valueExpression, sourceStates, locator, Object.class, "self", self);
 					if (value != null && valueCache == null) {
 						valueCache = Klab.INSTANCE.getStorageProvider()
 								.createStorage(Utils.getArtifactType(value.getClass()), target.getScale(), context);
@@ -282,7 +282,7 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 					}
 
 					Object self = target.get(locator);
-					value = evalStates(valueExpression, sourceStates, cell, Boolean.class, "origin", locator,
+					value = evalStates(valueExpression, sourceStates, cell, Object.class, "origin", locator,
 							"self", self);
 				} else {
 					value = valueCache.get(cell);
@@ -297,7 +297,7 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 
 			ncells++;
 
-			if ((ncells % 10000) == 0) {
+			if (ncells == 0 || (ncells % 10000) == 0) {
 				context.getMonitor().info(ncells + " cells done...");
 			}
 		}

@@ -66,22 +66,24 @@ public enum KimData {
 		if (focus != null) {
 
 			ret = EKimObject.create(focus);
-
-			ENavigatorItem current = ret;
-			while (true) {
-				Object kimParent = focus instanceof IKimProject ? null
-						: (focus instanceof IKimNamespace ? ((IKimNamespace) focus).getProject()
-								: ((IKimStatement) focus).getParent());
-				if (kimParent == null) {
-					break;
+			if (ret != null) {
+				// shouldn't happen but does
+				ENavigatorItem current = ret;
+				while (true) {
+					Object kimParent = focus instanceof IKimProject ? null
+							: (focus instanceof IKimNamespace ? ((IKimNamespace) focus).getProject()
+									: ((IKimStatement) focus).getParent());
+					if (kimParent == null) {
+						break;
+					}
+					ENavigatorItem parent = EKimObject.create(kimParent);
+					if (parent == null) {
+						break;
+					}
+					current.setParent(parent);
+					current = parent;
+					focus = kimParent;
 				}
-				ENavigatorItem parent = EKimObject.create(kimParent);
-				if (parent == null) {
-					break;
-				}
-				current.setParent(parent);
-				current = parent;
-				focus = kimParent;
 			}
 		}
 		return ret;

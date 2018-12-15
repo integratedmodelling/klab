@@ -223,7 +223,7 @@ public class Model extends KimObject implements IModel {
 						if (dependency == null && !argument.isOptional()) {
 							monitor.error("contextualizer " + prototype.getName() + " requires a dependency named "
 									+ argument.getName(), resource.getServiceCall());
-						} else if (!IArtifact.Type.isCompatible(argument.getType(), dependency.getArtifactType())) {
+						} else if (dependency != null && !IArtifact.Type.isCompatible(argument.getType(), dependency.getArtifactType())) {
 							monitor.error("contextualizer " + prototype.getName() + " requires type "
 									+ argument.getType().name().toLowerCase() + "for dependency " + argument.getName()
 									+ ":  " + dependency.getArtifactType().name().toLowerCase() + " was supplied",
