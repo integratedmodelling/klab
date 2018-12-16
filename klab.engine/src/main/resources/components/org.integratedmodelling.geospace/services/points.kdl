@@ -58,6 +58,12 @@ export number collect
 	 in the neighborhood. Optionally modify other values in the neighborhood as well."
 	label 'Collect neighbors'
 {
+	input aggregate
+		"An expression producing the value to compute. The current cell in the neighborhood will be 
+         available as 'space', the one being computed (focal) will be available as 'origin'. The 
+         value of the focal cell will be available as 'self'."
+		default ""
+		
 	optional input select
 		"An expression that will return true or false per each point in the selected neighborhood, 
 		 choosing whether the point should be considered in the aggregation or not. All dependencies
@@ -80,12 +86,6 @@ export number collect
 		 the value expression produces a boolean the first time it's evaluated, or mean if it produces a
 		 number."
 		default "" // TODO this should be enum mean, std, sum, min, max, count (maybe shannon etc)
-		
-	optional input aggregate
-		"An expression producing the value to compute. The current cell in the neighborhood will be 
-         available as 'space', the one being computed (focal) will be available as 'origin'. The 
-         value of the focal cell will be available as 'self'."
-		default ""
 		
 	optional input skipedges
 		"If true, the cells that do not have a complete neighborhood due to edge effects will be skipped. Default

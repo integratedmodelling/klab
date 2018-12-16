@@ -96,7 +96,6 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 		if (upd != null && upd.size() > 0) {
 
 		}
-
 	}
 
 	private Aggregation parseAggregation(String aggregation) {
