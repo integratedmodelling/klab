@@ -67,17 +67,14 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 				// TODO children - recurse
 				root.getChildren().add(graph.getRootNode());
 			}
-
-			// This produces a layout, although I can't get it to visualize so I don't know
-			// if it sucks or not.
-			// Uncomment the next two to produce the layout.
+			
 			RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
 			engine.layout(root, new BasicProgressMonitor());
 
 			json = ElkGraphJson.forGraph(root).omitLayout(false).omitZeroDimension(true).omitZeroPositions(true)
 					.shortLayoutOptionKeys(true).prettyPrint(true).toJson();
 
-			System.out.println(json);
+//			System.out.println(json);
 		}
 
 		return json;

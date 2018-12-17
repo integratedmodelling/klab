@@ -179,11 +179,11 @@ public class Concept extends Knowledge implements IConcept {
     }
 
     @Override
-    public synchronized Collection<IConcept> getAllParents() {
+    public /*synchronized*/ Collection<IConcept> getAllParents() {
         return getAllParentsInternal(new HashSet<IConcept>());
     }
 
-    private synchronized Collection<IConcept> getAllParentsInternal(Set<IConcept> seen) {
+    private /*synchronized*/ Collection<IConcept> getAllParentsInternal(Set<IConcept> seen) {
 
         Set<IConcept> concepts = new HashSet<>();
 
@@ -203,7 +203,7 @@ public class Concept extends Knowledge implements IConcept {
     }
 
     @Override
-    public synchronized Collection<IConcept> getChildren() {
+    public /*synchronized*/ Collection<IConcept> getChildren() {
 
         Set<IConcept> concepts = new HashSet<>();
         synchronized (_owl) {
@@ -223,7 +223,7 @@ public class Concept extends Knowledge implements IConcept {
     }
 
     @Override
-    public synchronized Collection<IProperty> getProperties() {
+    public /*synchronized*/ Collection<IProperty> getProperties() {
 
         Collection<IProperty> props = getDirectProperties();
         ArrayList<Collection<IProperty>> psets = new ArrayList<>();

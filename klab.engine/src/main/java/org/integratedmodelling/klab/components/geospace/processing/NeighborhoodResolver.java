@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.StreamSupport;
 
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
@@ -45,13 +46,15 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 	private Double cellradius;
 	private Boolean circular;
 	private Boolean skipEdges;
-	private List<UpdateDescriptor> update = new ArrayList<>();
 
 	private int hCells;
 	private Grid grid;
 	Map<IState, String> stateIdentifiers = new HashMap<>();
 	private IComputationContext context;
 	private boolean dataWarning;
+	IDataArtifact valueCache = null;
+	IExpression selectExpression = null;
+	IExpression valueExpression = null;
 
 	@Override
 	public IGeometry getGeometry() {
@@ -173,10 +176,9 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 		List<IState> sourceStates = new ArrayList<>();
 		List<IState> selectStates = new ArrayList<>();
 
-		IDataArtifact valueCache = null;
+
 		boolean isLinear = true;
 
-		IExpression valueExpression = null;
 		if (valueDescriptor != null) {
 			// check inputs and see if the expr is worth anything in this context
 			for (String input : valueDescriptor.getIdentifiers()) {
@@ -199,7 +201,6 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 					"An expression producing the value to aggregate must be provided as parameter 'aggregate'");
 		}
 
-		IExpression selectExpression = null;
 		if (selectDescriptor != null) {
 			// check inputs and see if the expr is worth anything in this context
 			for (String input : selectDescriptor.getIdentifiers()) {
@@ -224,8 +225,12 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 		 */
 
 		if (isLinear) {
-			context.getMonitor().info("No contextual references: building pre-loaded value cache for neighborhood analysis");
-			for (Cell locator : grid) {
+			context.getMonitor()
+					.info("No contextual references: building pre-loaded value cache for neighborhood analysis");
+
+			// working parallel version commented out - runtime improvement seems small if anything
+//			StreamSupport.stream(grid.spliterator(context.getMonitor()), true).forEach((locator) -> {
+				 for (Cell locator : grid) {
 
 				Object value = null;
 				boolean evaluate = true;
@@ -250,7 +255,8 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 				}
 
 				valueCache.set(locator, value);
-			}
+//			});
+		}
 		}
 
 		if (isLinear && valueCache == null) {
@@ -262,6 +268,7 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 		context.getMonitor()
 				.info("Neighborhood analysis starting with a " + maskSize + "x" + maskSize + " neighborhood");
 
+//		StreamSupport.stream(grid.spliterator(context.getMonitor()), true).forEach((locator) -> {
 		for (Cell locator : grid) {
 
 			if (context.getMonitor().isInterrupted()) {
@@ -281,12 +288,12 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 					}
 
 					Object self = target.get(locator);
-					value = evalStates(valueExpression, sourceStates, cell, Object.class, "origin", locator,
-							"self", self);
+					value = evalStates(valueExpression, sourceStates, cell, Object.class, "origin", locator, "self",
+							self);
 				} else {
 					value = valueCache.get(cell);
 				}
-				
+
 				if (!(value == null || (value instanceof Number && Double.isNaN(((Number) value).doubleValue())))) {
 					values.add(value);
 				}
@@ -299,8 +306,8 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 			if (ncells == 0 || (ncells % 10000) == 0) {
 				context.getMonitor().info(ncells + " cells done...");
 			}
+//		});
 		}
-
 		if (valueCache != null) {
 			valueCache.release();
 		}

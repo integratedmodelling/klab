@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -18,6 +20,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpaceLocator;
 import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -1140,5 +1143,62 @@ public class Grid extends Area implements IGrid {
 		}
 		throw new IllegalArgumentException("grid: cannot use a cell from a different grid as a locator");
 	}
+	
+	public Spliterator<Cell> spliterator(final IMonitor monitor) {
+		return new SplIt(0, getCellCount(), monitor);
+	}
 
+
+	class SplIt implements Spliterator<Cell> {
+
+		Grid splitGrid = Grid.this;
+		long beginSplit;
+		long endSplit = getCellCount();
+		long counter;
+		IMonitor monitor;
+
+		public SplIt(long begin, long end, IMonitor monitor) {
+			this.beginSplit = this.counter = begin;
+			this.endSplit = end;
+			this.monitor = monitor;
+		}
+
+		@Override
+		public int characteristics() {
+			// CHECK not SIZED | SUBSIZED because of nodata cells
+			return NONNULL | CONCURRENT | IMMUTABLE;
+		}
+
+		@Override
+		public long estimateSize() {
+			return endSplit - beginSplit;
+		}
+
+		@Override
+		public boolean tryAdvance(Consumer<? super Cell> arg0) {
+			if (monitor.isInterrupted()) {
+				return false;
+			}
+			if (counter < (endSplit - 1)) {
+				arg0.accept(splitGrid.getCell(counter++));
+				return true;
+			}
+			return false;
+		}
+
+		@Override
+		public Spliterator<Cell> trySplit() {
+
+			if (monitor.isInterrupted()) {
+				return null;
+			}
+			if (estimateSize() > 16) {
+				long midOfs = (endSplit - beginSplit) / 2;
+				long end = this.endSplit;
+				this.endSplit = beginSplit + midOfs;
+				return new SplIt(beginSplit + midOfs, end, monitor);
+			}
+			return null;
+		}
+	};
 }

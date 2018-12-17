@@ -36,7 +36,7 @@ abstract class ActionBase extends Script {
 
 	static inited = false;
 	private Random rgen = new Random();
-	private Map<String,Boolean> isaCache = Collections.synchronizedMap(new HashMap<>());
+	private Map<String,Boolean> isaCache = new HashMap<>();
 
 	ActionBase() {
 		if (!inited) {
@@ -81,6 +81,26 @@ abstract class ActionBase extends Script {
 		}
 	}
 
+	ActionBase(Binding binding) {
+		super(binding)
+		ExpandoMetaClass.enableGlobally();
+		
+								/*
+					 * enable <n>.<unit> notation to return a number with units.
+					 */
+					//            Number.metaClass.getProperty = { String symbol ->
+					//                Amount.valueOf(delegate, Unit.valueOf(symbol))
+					//            }
+		
+					// Allows sensible math results when the first op is null. Ensure that all
+					// input null numbers are actually NaN and no more null-proofing should be
+					// required.
+					NullObject.metaClass.multiply = { Object n -> Double.NaN }
+					NullObject.metaClass.div = { Object n -> Double.NaN }
+					NullObject.metaClass.plus = { Object n -> Double.NaN }
+					NullObject.metaClass.minus = { Object n -> Double.NaN }
+	}
+	
 	/**
 	 * Compiled in before anything happens; will check for context and target and
 	 * set up any proxies.

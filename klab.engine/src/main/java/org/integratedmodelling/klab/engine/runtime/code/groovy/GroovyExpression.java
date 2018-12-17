@@ -28,8 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.codehaus.groovy.control.CompilerConfiguration;
-import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.validation.KimNotification;
@@ -47,16 +45,12 @@ import org.integratedmodelling.klab.components.runtime.observations.ObservationG
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.utils.Path;
 
 import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
 import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
 
 public class GroovyExpression extends Expression {
-
-	private static final String BASE_ACTION_CLASS = "org.integratedmodelling.klab.extensions.groovy.ActionBase";
 
 	protected String code;
 	protected boolean negated = false;
@@ -68,28 +62,26 @@ public class GroovyExpression extends Expression {
 	private boolean initialized = false;
 	private Set<String> defineIfAbsent = new HashSet<>();
 
-	Script script;
+	// each thread gets its own instance of the script with bindings
+	ThreadLocal<Script> script = new ThreadLocal<>();
+
+	/*
+	 * either the Script or the compiled class are saved according to whether we
+	 * want a thread-safe expression or not.
+	 */
+	private Class<?> sclass = null;
+	// Script script;
+
 	IGeometry domain;
 	INamespace namespace;
 
 	private List<KimNotification> errors = new ArrayList<>();
-	private CompilerConfiguration compiler = new CompilerConfiguration();
-	private GroovyShell shell;
+	private KlabGroovyShell shell = new KlabGroovyShell();
 	private String preprocessed = null;
 	private IRuntimeContext runtimeContext;
 	private Descriptor descriptor;
 
-	/*
-	 * used by k.LAB to instantiate Groovy expressions. Will automatically add
-	 * imports for any KimImport class.
-	 */
 	public GroovyExpression() {
-
-		ImportCustomizer customizer = new ImportCustomizer();
-		for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {
-			customizer.addImport(Path.getLast(cls.getCanonicalName(), '.'), cls.getCanonicalName());
-		}
-		compiler.addCompilationCustomizers(customizer);
 	}
 
 	public boolean hasErrors() {
@@ -101,126 +93,31 @@ public class GroovyExpression extends Expression {
 	}
 
 	/*
-	 * used by Thinklab - when using the API use the String constructor. MUST be
-	 * called in all cases.
+	 * MUST be called in all situations.
 	 */
 	public void initialize(Map<String, IObservable> inputs, Map<String, IObservable> outputs) {
 		compile(preprocess(code, inputs, outputs));
 		initialized = true;
 	}
 
-	// /**
-	// * Simple expression without context or receivers. NOT PREPROCESSED in the
-	// context it's in.
-	// *
-	// * @param code
-	// * @param inputs
-	// * @param outputs
-	// * @param domain
-	// */
-	// public GroovyExpression(String code, Map<String, IObservable> inputs,
-	// Map<String, IObservable> outputs, IGeometry domain) {
-	//
-	// ImportCustomizer customizer = new ImportCustomizer();
-	// for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {
-	// customizer.addImport(Path.getLast(cls.getCanonicalName(), '.'),
-	// cls.getCanonicalName());
-	// }
-	// compiler.addCompilationCustomizers(customizer);
-	//
-	// this.code = (code.startsWith("wrap()") ? code : ("wrap();\n\n" + code));
-	// this.domain = domain;
-	// this.compiler.setScriptBaseClass(getBaseClass());
-	// initialize(inputs, outputs);
-	// }
-
-	// /**
-	// * Preprocess with the dependencies of the passed model preset in symbol
-	// table.
-	// *
-	// * @param code
-	// * @param model
-	// */
-	// GroovyExpression(String code, IModel model) {
-	//
-	// ImportCustomizer customizer = new ImportCustomizer();
-	// for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {
-	// customizer.addImport(Path.getLast(cls.getCanonicalName(), '.'),
-	// cls.getCanonicalName());
-	// }
-	// compiler.addCompilationCustomizers(customizer);
-	//
-	// this.code = (code.startsWith("wrap()") ? code : ("wrap();\n\n" + code));
-	// Map<String, IObservable> inputs = new HashMap<>();
-	// for (IObservable d : model.getDependencies()) {
-	// inputs.put(d.getLocalName(), d);
-	// }
-	// initialize(inputs, null);
-	// }
-
-	// GroovyExpression(String code, INamespace namespace, IGeometry domain) {
-	//
-	// ImportCustomizer customizer = new ImportCustomizer();
-	// for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {
-	// customizer.addImport(Path.getLast(cls.getCanonicalName(), '.'),
-	// cls.getCanonicalName());
-	// }
-	// compiler.addCompilationCustomizers(customizer);
-	// this.namespace = namespace;
-	// this.code = (code.startsWith("wrap()") ? code : ("wrap();\n\n" + code));
-	// this.domain = domain;
-	// }
-
-	// GroovyExpression(String code) {
-	// ImportCustomizer customizer = new ImportCustomizer();
-	// for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {
-	// customizer.addImport(Path.getLast(cls.getCanonicalName(), '.'),
-	// cls.getCanonicalName());
-	// }
-	// compiler.addCompilationCustomizers(customizer);
-	// this.code = (code.startsWith("wrap()") ? code : ("wrap();\n\n" + code));
-	// }
-
 	GroovyExpression(String code, boolean preprocessed, ILanguageProcessor.Descriptor descriptor) {
-
-		ImportCustomizer customizer = new ImportCustomizer();
-		for (Class<?> cls : Extensions.INSTANCE.getKimImports()) {
-			customizer.addImport(Path.getLast(cls.getCanonicalName(), '.'), cls.getCanonicalName());
-		}
-		compiler.addCompilationCustomizers(customizer);
 		this.descriptor = descriptor;
 		this.code = (code.startsWith("wrap()") ? code : ("wrap();\n\n" + code));
 		if (preprocessed) {
 			this.preprocessed = this.code;
 		}
+
 	}
 
 	private void compile(String code) {
-		this.compiler.setScriptBaseClass(getBaseClass());
-		this.shell = new GroovyShell(this.getClass().getClassLoader(), new Binding(), compiler);
-		this.script = shell.parse(code);
+		this.sclass = shell.parseToClass(code);
+		// this.script = shell.parse(code);
 	}
 
-	protected String getBaseClass() {
-
-		/*
-		 * choose proper class according to domains so that the appropriate functions
-		 * are supported.
-		 */
-		// if (domain != null) {
-		//
-		// if (domain.contains(KLAB.c(NS.SPACE_DOMAIN)) &&
-		// domain.contains(KLAB.c(NS.TIME_DOMAIN))) {
-		// return "org.integratedmodelling.thinklab.actions.SpatioTemporalActionScript";
-		// } else if (domain.contains(KLAB.c(NS.SPACE_DOMAIN))) {
-		// return "org.integratedmodelling.thinklab.actions.SpatialActionScript";
-		// } else if (domain.contains(KLAB.c(NS.TIME_DOMAIN))) {
-		// return "org.integratedmodelling.thinklab.actions.TemporalActionScript";
-		// }
-		// }
-		return BASE_ACTION_CLASS;
-	}
-
+	/**
+	 * ZIOCAN the run engine seems unable to run the same script concurrently with
+	 * different bindings. Which prevents using these in parallel mode.
+	 */
 	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
 
 		if (isTrue) {
@@ -238,8 +135,13 @@ public class GroovyExpression extends Expression {
 			}
 
 			try {
-				setBindings(script.getBinding(), context, parameters);
-				return script.run();
+				if (script.get() == null) {
+					System.out.println("Creating script for " + code);
+					script.set(shell.createFromClass(sclass, new Binding()));
+				}
+				setBindings(script.get().getBinding(), context, parameters);
+				return script.get().run();
+
 			} catch (MissingPropertyException e) {
 				String property = e.getProperty();
 				if (!defineIfAbsent.contains(property)) {
@@ -258,24 +160,24 @@ public class GroovyExpression extends Expression {
 		return null;
 	}
 
-	private void setBindings(Binding binding, IComputationContext context, IParameters<String> parameters) {
+	private Binding setBindings(Binding binding, IComputationContext context, IParameters<String> parameters) {
 
 		// predefine this if we have a target artifact and we haven't set it from the
 		// outside, unless we're instantiating (TODO use a better check)
-		if (!parameters.containsKey("self") && context.getTargetArtifact() != null && !(context.getTargetArtifact() instanceof ObservationGroup)) {
+		if (!parameters.containsKey("self") && context.getTargetArtifact() != null
+				&& !(context.getTargetArtifact() instanceof ObservationGroup)) {
 			binding.setVariable("_self", context.getTargetArtifact());
 		}
 
 		for (String key : parameters.keySet()) {
 			binding.setVariable(key, parameters.get(key));
 		}
-		
+
 		for (String v : defineIfAbsent) {
 			if (!binding.hasVariable(v)) {
 				binding.setVariable(v, Double.NaN);
 			}
 		}
-
 
 		/*
 		 * add any artifact names used in a non-scalar context to the _p map, compiled
@@ -294,11 +196,13 @@ public class GroovyExpression extends Expression {
 				&& !nonscalar.containsKey("self")) {
 			nonscalar.put("self", parameters.get("self"));
 		}
-		
+
 		binding.setVariable("_p", nonscalar);
 		binding.setVariable("_ns", context.getNamespace());
 		binding.setVariable("_c", context);
 		binding.setVariable("_monitor", context.getMonitor());
+
+		return binding;
 	}
 
 	private String preprocess(String code, Map<String, IObservable> inputs, Map<String, IObservable> outputs) {
@@ -314,7 +218,7 @@ public class GroovyExpression extends Expression {
 		if (outputs != null) {
 			knownKeys.addAll(outputs.keySet());
 		}
-		
+
 		GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace, knownKeys, domain,
 				runtimeContext, true);
 		this.preprocessed = processor.process(code);
