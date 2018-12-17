@@ -58,11 +58,10 @@ export number collect
 	 in the neighborhood. Optionally modify other values in the neighborhood as well."
 	label 'Collect neighbors'
 {
-	input aggregate
+	text aggregate
 		"An expression producing the value to compute. The current cell in the neighborhood will be 
          available as 'space', the one being computed (focal) will be available as 'origin'. The 
          value of the focal cell will be available as 'self'."
-		default ""
 		
 	optional input select
 		"An expression that will return true or false per each point in the selected neighborhood, 
@@ -73,7 +72,7 @@ export number collect
 	
 	optional input radius
 		"Radius in m of the neighborhood to consider. Default is the distance spanning one cell at the current
-		 resolution, producing a Neumann neighborhood."
+		 resolution, producing a Moore neighborhood."
 		default 0.0
 		
 	optional input cellradius
