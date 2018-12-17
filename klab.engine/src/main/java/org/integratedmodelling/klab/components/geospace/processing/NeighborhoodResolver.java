@@ -228,16 +228,16 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 			context.getMonitor()
 					.info("No contextual references: building pre-loaded value cache for neighborhood analysis");
 
-			// working parallel version commented out - runtime improvement seems small if anything
-//			StreamSupport.stream(grid.spliterator(context.getMonitor()), true).forEach((locator) -> {
-				 for (Cell locator : grid) {
+			// working parallel version commented out
+			StreamSupport.stream(grid.spliterator(context.getMonitor()), true).forEach((locator) -> {
+//				 for (Cell locator : grid) {
 
 				Object value = null;
 				boolean evaluate = true;
 
-				if (context.getMonitor().isInterrupted()) {
-					break;
-				}
+//				if (context.getMonitor().isInterrupted()) {
+//					break;
+//				}
 
 				if (selectExpression != null) {
 					if (!evalStates(selectExpression, selectStates, locator, Boolean.class)) {
@@ -255,8 +255,8 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 				}
 
 				valueCache.set(locator, value);
-//			});
-		}
+			});
+//		}
 		}
 
 		if (isLinear && valueCache == null) {
@@ -268,12 +268,12 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 		context.getMonitor()
 				.info("Neighborhood analysis starting with a " + maskSize + "x" + maskSize + " neighborhood");
 
-//		StreamSupport.stream(grid.spliterator(context.getMonitor()), true).forEach((locator) -> {
-		for (Cell locator : grid) {
+		StreamSupport.stream(grid.spliterator(context.getMonitor()), true).forEach((locator) -> {
+//		for (Cell locator : grid) {
 
-			if (context.getMonitor().isInterrupted()) {
-				break;
-			}
+//			if (context.getMonitor().isInterrupted()) {
+//				break;
+//			}
 
 			List<Object> values = new ArrayList<>(maskSize * maskSize);
 			for (Cell cell : getNeighborhood(locator, offsetMask)) {
@@ -301,13 +301,13 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 
 			target.set(locator, aggregate(values));
 
-			ncells++;
+//			ncells++;
 
-			if (ncells == 0 || (ncells % 10000) == 0) {
-				context.getMonitor().info(ncells + " cells done...");
-			}
-//		});
-		}
+//			if (ncells == 0 || (ncells % 10000) == 0) {
+//				context.getMonitor().info(ncells + " cells done...");
+//			}
+		});
+//		}
 		if (valueCache != null) {
 			valueCache.release();
 		}

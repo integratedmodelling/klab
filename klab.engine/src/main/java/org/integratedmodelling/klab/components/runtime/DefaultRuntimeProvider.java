@@ -10,6 +10,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.StreamSupport;
 
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -274,10 +275,12 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			if (context.getMonitor().isInterrupted()) {
 				break;
 			}
-
+			// StreamSupport.stream(((Scale) scale).spliterator(context.getMonitor()),
+			// true).forEach((state) -> {
 			data.set(state, resolver.resolve(data.getObservable(),
 					variables.isEmpty() ? ctx : localizeContext(ctx, state, self, variables)));
-		}
+		} // );
+
 		return data;
 	}
 
