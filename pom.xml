@@ -89,7 +89,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 
-		<nd4j.version>1.0.0-alpha</nd4j.version>
+		<nd4j.version>1.0.0-beta3</nd4j.version>
 		<tycho-version>1.0.0</tycho-version>
 		<xtextVersion>2.12.0</xtextVersion>
 
