@@ -36,7 +36,7 @@ abstract class ActionBase extends Script {
 
 	static inited = false;
 	private Random rgen = new Random();
-	private Map<String,Boolean> isaCache = new HashMap<>();
+	private Map<String,Boolean> isaCache = Collections.synchronizedMap(new HashMap<>());
 
 	ActionBase() {
 		if (!inited) {

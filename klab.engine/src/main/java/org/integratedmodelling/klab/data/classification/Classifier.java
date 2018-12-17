@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.kim.api.IKimClassifier;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -73,7 +74,7 @@ public class Classifier implements IClassifier {
 
 	// each sublist is in AND, each concept in each list is in OR
 	protected List<List<IConcept>> conceptMatches = null;
-	protected HashMap<String, Boolean> _reasonCache;
+	protected Map<String, Boolean> _reasonCache;
 
 	// if not null, we're a classifier for a particularly inherited trait, which
 	// enables
@@ -103,7 +104,7 @@ public class Classifier implements IClassifier {
 			sourceCode = "'" + o + "'";
 		} else if (o instanceof IConcept) {
 			conceptMatch = (IConcept) o;
-			sourceCode = ((IConcept)o).getDefinition();
+			sourceCode = ((IConcept) o).getDefinition();
 		} else if (o instanceof Range) {
 			intervalMatch = (Range) o;
 			sourceCode = o.toString();
@@ -128,10 +129,11 @@ public class Classifier implements IClassifier {
 	@Override
 	public boolean classify(Object o, IComputationContext context) {
 
-//		if (this.conceptMatch != null && this.conceptMatch.toString().endsWith("ArtificialSurface")) {
-//			System.out.println("");
-//		}
-		
+		// if (this.conceptMatch != null &&
+		// this.conceptMatch.toString().endsWith("ArtificialSurface")) {
+		// System.out.println("");
+		// }
+
 		if (anythingMatch) {
 			return true;
 		}
@@ -223,14 +225,14 @@ public class Classifier implements IClassifier {
 		if (c1 == null || c2 == null) {
 			return false;
 		}
-		
+
 		String key = c1 + "#" + c2;
 		Boolean ret = null;
 		if (_reasonCache != null)
 			ret = _reasonCache.get(key);
 		if (ret == null) {
 			if (_reasonCache == null) {
-				_reasonCache = new HashMap<String, Boolean>();
+				_reasonCache = Collections.synchronizedMap(new HashMap<String, Boolean>());
 			}
 			ret = c1.is(c2);
 			_reasonCache.put(key, ret);
@@ -426,8 +428,10 @@ public class Classifier implements IClassifier {
 			return booleanMatch;
 		} else if (intervalMatch != null) {
 			// an interval should be a fine return value. States decide what to do with it.
-			return intervalMatch/*.getLowerBound()
-					+ (new Random().nextDouble() * (intervalMatch.getUpperBound() - intervalMatch.getLowerBound()))*/;
+			return intervalMatch/*
+								 * .getLowerBound() + (new Random().nextDouble() *
+								 * (intervalMatch.getUpperBound() - intervalMatch.getLowerBound()))
+								 */;
 		} else if (conceptMatch != null) {
 			return conceptMatch;
 		} else if (stringMatch != null) {
@@ -446,7 +450,7 @@ public class Classifier implements IClassifier {
 	public String getSourceCode() {
 		return sourceCode;
 	}
-	
+
 	@Override
 	public Type getType() {
 		return type;

@@ -12,12 +12,12 @@ import org.integratedmodelling.klab.utils.Utils;
 public class BooleanStorage extends Storage implements IDataArtifact {
 
 	private BitSet data;
+	// mask is null unless nodata were encountered. If so, the nodata locations are set to true.
 	private BitSet mask;
 
 	public BooleanStorage(IGeometry scale) {
 		super(scale);
 		this.data = new BitSet((int)scale.size());
-		this.mask = new BitSet((int)scale.size());
 	}
 
 	@Override
@@ -32,7 +32,7 @@ public class BooleanStorage extends Storage implements IDataArtifact {
 			// mediation needed
 			throw new KlabUnsupportedFeatureException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
 		}
-		return mask.get((int)offset) ? data.get((int)offset) : null;
+		return mask == null || !mask.get((int)offset) ? data.get((int)offset) : null;
 	}
 
 	@Override
@@ -43,12 +43,14 @@ public class BooleanStorage extends Storage implements IDataArtifact {
 			throw new KlabUnsupportedFeatureException("SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
 		}
 		if (value == null) {
-			mask.set((int)offset, false);
+			if (mask == null) {
+				this.mask = new BitSet(data.size());
+			}
+			mask.set((int)offset, true);
 		} else if (!(value instanceof Boolean)) {
 			throw new IllegalArgumentException("cannot set a boolean state from value " + value);
 		} else {
 			data.set((int)offset, ((Boolean) value));
-			mask.set((int)offset, true);
 		}
 		return offset;
 	}
@@ -66,6 +68,12 @@ public class BooleanStorage extends Storage implements IDataArtifact {
 	@Override
 	public IDataKey getDataKey() {
 		return null;
+	}
+
+	@Override
+	public void release() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

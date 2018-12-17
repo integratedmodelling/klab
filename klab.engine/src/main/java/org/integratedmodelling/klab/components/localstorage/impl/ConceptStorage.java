@@ -9,6 +9,8 @@ import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Utils;
+import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -16,13 +18,12 @@ import com.google.common.collect.HashBiMap;
 public class ConceptStorage extends Storage implements IDataArtifact, IKeyHolder {
 
 	BiMap<IConcept, Integer> conceptKey = HashBiMap.create();
-	int[] data;
+	INDArray data;
 	IDataKey dataKey;
 
 	public ConceptStorage(IGeometry scale) {
 		super(scale);
-		// TODO switch to nd4j
-		data = new int[(int) scale.size()];
+		data = Nd4j.valueArrayOf(scale.size(), 0);
 	}
 
 	@Override
@@ -37,7 +38,7 @@ public class ConceptStorage extends Storage implements IDataArtifact, IKeyHolder
 			// mediation needed
 			throw new KlabUnimplementedException("DIRECT SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
 		}
-		int key = data[(int) offset];
+		int key = data.getInt(new int[] { (int)offset });
 		return key == Integer.MIN_VALUE ? null : conceptKey.inverse().get(key);
 	}
 
@@ -49,7 +50,7 @@ public class ConceptStorage extends Storage implements IDataArtifact, IKeyHolder
 			throw new KlabUnimplementedException("DIRECT SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
 		}
 		if (value == null) {
-			data[(int) offset] = Integer.MIN_VALUE;
+			data.putScalar(offset, Integer.MIN_VALUE);
 		} else if (value instanceof IConcept) {
 			int cValue = dataKey == null ? conceptKey.size() : dataKey.reverseLookup(value);
 			if (conceptKey.containsKey((IConcept) value)) {
@@ -60,7 +61,7 @@ public class ConceptStorage extends Storage implements IDataArtifact, IKeyHolder
 				}
 				conceptKey.put((IConcept) value, cValue);
 			}
-			data[(int) offset] = cValue;
+			data.putScalar(offset, cValue);
 		} else {
 			throw new KlabValidationException(
 					"cannot set value of type " + value.getClass().getCanonicalName() + " into a concept storage");
@@ -93,6 +94,12 @@ public class ConceptStorage extends Storage implements IDataArtifact, IKeyHolder
 	@Override
 	public void setDataKey(IDataKey key) {
 		this.dataKey = key;
+	}
+
+	@Override
+	public void release() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

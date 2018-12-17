@@ -1200,5 +1200,4 @@ public class Scale implements IScale {
         }
         return null;
     }
-
 }

@@ -90,4 +90,10 @@ public class TextStorage extends Storage implements IDataArtifact, IKeyHolder {
 		this.dataKey = key;
 	}
 
+	@Override
+	public void release() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

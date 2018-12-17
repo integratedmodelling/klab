@@ -52,9 +52,6 @@ public abstract class Storage implements IArtifact {
 	  throw new IllegalStateException("unimplemented: lookup of temporal slice in storage");
   }
   
-  public void release() {
-	  System.out.println("HEY RELEASE ME - I'M TAKING SPACE!");
-  }
   
   /*
    * --------------------------------------------------------------------------------
