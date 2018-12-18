@@ -132,7 +132,7 @@ public class GroovyExpression extends Expression {
 
 			try {
 				if (script.get() == null) {
-					System.out.println("Creating script for " + code);
+//					System.out.println("Creating script for " + code);
 					script.set(shell.createFromClass(sclass, new Binding()));
 				}
 				setBindings(script.get().getBinding(), context, parameters);

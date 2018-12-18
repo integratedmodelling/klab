@@ -83,7 +83,7 @@ public enum Configuration implements IConfigurationService {
 		} catch (Exception e) {
 			throw new KlabIOException("cannot read configuration properties");
 		}
-		
+
 		Services.INSTANCE.registerService(this, IConfigurationService.class);
 	}
 
@@ -265,7 +265,7 @@ public enum Configuration implements IConfigurationService {
 	}
 
 	public boolean parallelizeContextualization() {
-		// TODO tie to option
-		return properties.getProperty(KLAB_PARALLELIZE_CONTEXTUALIZATION, "false").equals("true");
+		return System.getProperty("parallel") != null
+				|| properties.getProperty(KLAB_PARALLELIZE_CONTEXTUALIZATION, "false").equals("true");
 	}
 }
