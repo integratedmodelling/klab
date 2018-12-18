@@ -376,6 +376,7 @@ public class DataflowCompiler {
 			Model model = theModel.model;
 			List<IComputableResource> indirectAdapters = theModel.indirectAdapters;
 			ret.setName(name);
+			ret.setModel(model);
 
 			if (!generated.contains(theModel)) {
 				generated.add(theModel);

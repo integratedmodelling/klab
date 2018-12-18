@@ -44,6 +44,7 @@ import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CamelCase;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -123,7 +124,7 @@ public class PolygonInstantiator implements IExpression, IInstantiator {
 	public List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context) throws KlabException {
 
 		List<IState> sourceStates = new ArrayList<>();
-		List<IState> inheritedStates = new ArrayList<>();
+		List<Pair<String, IState>> inheritedStates = new ArrayList<>();
 		List<IObjectArtifact> ret = new ArrayList<>();
 		Map<IState, String> stateIdentifiers = new HashMap<>();
 
@@ -153,17 +154,17 @@ public class PolygonInstantiator implements IExpression, IInstantiator {
 			sourceStates.add(sourceState);
 		}
 
-		for (IState sourceState : sourceStates) {
+		for (Pair<String, IState> contextStates : context.getArtifacts(IState.class)) {
 			/*
 			 * if the semantics is compatible with the quality's context, the instance
 			 * inherits a view of each state.
 			 */
-			IConcept scontext = sourceState.getObservable().getContext();
+			IConcept scontext = contextStates.getSecond().getObservable().getContext();
 			// the first condition should never happen
 			if (scontext != null && Observables.INSTANCE.isCompatible(semantics.getType(), scontext)) {
-				inheritedStates.add(sourceState);
-				context.getMonitor().info(
-						"feature extractor: instances will inherit a rescaled view of " + sourceState.getObservable());
+				inheritedStates.add(contextStates);
+				context.getMonitor().info("feature extractor: instances will inherit a rescaled view of "
+						+ contextStates.getSecond().getObservable());
 			}
 		}
 
@@ -220,11 +221,9 @@ public class PolygonInstantiator implements IExpression, IInstantiator {
 				 * if the extracted semantics is the original quality's context, add the
 				 * aggregated quality used for extraction to the instance.
 				 */
-				for (IState inherited : inheritedStates) {
-					IState stateView = Observations.INSTANCE.getStateView(inherited, instanceScale, context);
+				for (Pair<String, IState> inherited : inheritedStates) {
+					IState stateView = Observations.INSTANCE.getStateView(inherited.getSecond(), instanceScale, context);
 					((IRuntimeContext) context).link(instance, stateView);
-					// System.out.println("Average elevation = " +
-					// stateView.get(instanceScale.getLocator(0)));
 				}
 
 				ret.add(instance);
@@ -326,14 +325,14 @@ public class PolygonInstantiator implements IExpression, IInstantiator {
 		double[] xy = grid.getCoordinates(grid.getOffset(x, y));
 		return gfact.createPoint(new Coordinate(xy[0], xy[1]));
 	}
-	
+
 	private Geometry getPolygon(Point2D point2d) {
 
 		int x = (int) point2d.getX();
 		int y = (int) point2d.getY();
-		return ((Shape)((Grid)grid).getCell(grid.getOffset(x, y)).getShape()).getJTSGeometry();
+		return ((Shape) ((Grid) grid).getCell(grid.getOffset(x, y)).getShape()).getJTSGeometry();
 	}
-	
+
 	private LinearRing getLinearRing(java.awt.Polygon p) {
 
 		if (p.npoints < 4) {
@@ -372,7 +371,7 @@ public class PolygonInstantiator implements IExpression, IInstantiator {
 			for (int y = 0; y < raster.getHeight(); y++) {
 				double value = itera.getSampleDouble(x, y, 0);
 				Object on = selector.eval(Parameters.create("value", value), context);
-					imp.set(x, y, on instanceof Boolean && ((Boolean) on) ? 0 : 255);
+				imp.set(x, y, on instanceof Boolean && ((Boolean) on) ? 0 : 255);
 			}
 		}
 

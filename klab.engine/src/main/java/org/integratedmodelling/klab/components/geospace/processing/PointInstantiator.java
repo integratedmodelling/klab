@@ -10,6 +10,7 @@ import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
@@ -17,7 +18,6 @@ import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -29,13 +29,14 @@ import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
-import org.integratedmodelling.klab.utils.Range;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -59,7 +60,8 @@ public class PointInstantiator implements IExpression, IInstantiator {
 		this.grid = grid;
 	}
 
-	public PointInstantiator(IParameters<String> parameters, IComputationContext context) throws KlabValidationException {
+	public PointInstantiator(IParameters<String> parameters, IComputationContext context)
+			throws KlabValidationException {
 
 		IScale scale = context.getScale();
 		if (!(scale.isSpatiallyDistributed() && scale.getDimension(Type.SPACE).size() > 1
@@ -84,7 +86,7 @@ public class PointInstantiator implements IExpression, IInstantiator {
 	public List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context) throws KlabException {
 
 		List<IState> sourceStates = new ArrayList<>();
-		List<IState> inheritedStates = new ArrayList<>();
+		List<Pair<String, IState>> inheritedStates = new ArrayList<>();
 		List<IObjectArtifact> ret = new ArrayList<>();
 		Map<IState, String> stateIdentifiers = new HashMap<>();
 		StateSummary stateSummary = null;
@@ -120,32 +122,18 @@ public class PointInstantiator implements IExpression, IInstantiator {
 			sourceStates.add(sourceState);
 		}
 
-		for (IState sourceState : sourceStates) {
+		for (Pair<String, IState> contextStates : context.getArtifacts(IState.class)) {
 			/*
 			 * if the semantics is compatible with the quality's context, the instance
 			 * inherits a view of each state.
 			 */
-			IConcept scontext = sourceState.getObservable().getContext();
+			IConcept scontext = contextStates.getSecond().getObservable().getContext();
 			// the first condition should never happen
 			if (scontext != null && Observables.INSTANCE.isCompatible(semantics.getType(), scontext)) {
-				inheritedStates.add(sourceState);
+				inheritedStates.add(contextStates);
 				context.getMonitor().info(
-						"feature extractor: instances will inherit a rescaled view of " + sourceState.getObservable());
+						"feature extractor: instances will inherit a rescaled view of " + contextStates.getSecond().getObservable());
 			}
-		}
-
-		// TODO
-		IState fractionState = null;
-		Range limits = null;
-		if (sourceStates.size() == 1 && !Double.isNaN(selectFraction)) {
-			fractionState = sourceStates.get(0);
-			if (!(fractionState.getObservable().getObservationType() == ObservationType.QUANTIFICATION)) {
-				throw new KlabValidationException(
-						"feature extractor: state for fraction extraction " + fractionState + " must be numeric");
-			}
-			// TODO
-			// StateSummary stateSummary =
-			// Observations.INSTANCE.getStateSummary(fractionState, )
 		}
 
 		Parameters<String> parameters = new Parameters<>();
@@ -156,24 +144,7 @@ public class PointInstantiator implements IExpression, IInstantiator {
 
 			Object o = null;
 
-			if (fractionState != null) {
-
-				o = Boolean.FALSE;
-				double d = fractionState.get(cell, Double.class);
-				if (!Double.isNaN(d)) {
-
-					double perc = 0;
-					if (topFraction) {
-						perc = (stateSummary.getRange().get(1) - d)
-								/ (stateSummary.getRange().get(1) - stateSummary.getRange().get(0));
-					} else {
-						perc = (d - stateSummary.getRange().get(0))
-								/ (stateSummary.getRange().get(1) - stateSummary.getRange().get(0));
-					}
-					o = perc <= selectFraction;
-				}
-
-			} else if (expression != null) {
+			if (expression != null) {
 
 				parameters.clear();
 				for (IState state : sourceStates) {
@@ -201,8 +172,16 @@ public class PointInstantiator implements IExpression, IInstantiator {
 		}
 
 		for (int i = 0; i < geometries.size(); i++) {
-			ret.add(context.newObservation(semantics, semantics.getLocalName() + "_" + (i + 1),
-					Scale.substituteExtent(context.getScale(), Shape.create(geometries.get(i), grid.getProjection()))));
+
+			IScale instanceScale = Scale.substituteExtent(context.getScale(),
+					Shape.create(geometries.get(i), grid.getProjection()));
+			IObjectArtifact instance = context.newObservation(semantics, semantics.getLocalName() + "_" + (i + 1),
+					instanceScale);
+
+			for (Pair<String, IState> inherited : inheritedStates) {
+				IState stateView = Observations.INSTANCE.getStateView(inherited.getSecond(), instanceScale, context);
+				((IRuntimeContext) context).link(instance, stateView);
+			}
 		}
 
 		return ret;
