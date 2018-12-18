@@ -256,7 +256,7 @@ public class ModelKbox extends ObservableKbox {
 
 		for (long l : oids) {
 			ModelReference model = retrieveModel(l, context.getMonitor());
-			if (model != null) {
+			if (model != null && !context.isResolving(model.getName())) {
 				ret.add(model);
 			} else {
 				Logging.INSTANCE.warn("kbox is out of sync with knowledge base");

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,7 +15,6 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IProject;
-import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -321,6 +319,7 @@ public class CoreOntology extends AbstractWorkspace {
         public static final String CORE_ABSENCE_TRAIT                      = "observation:Absence";
         public static final String CORE_EXTENT                             = "observation:Extent";
         public static final String CORE_OBSERVATION_TRANSFORMATION         = "observation:ObservationTransformation";
+        public static final String CORE_MULTIPLICITY_REDUCTION             = "observation:ObservationMultiplicityReduction";
     }
 
     public CoreOntology(File directory) {

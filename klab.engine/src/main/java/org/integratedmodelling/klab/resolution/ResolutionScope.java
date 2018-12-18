@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
+import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -128,6 +129,10 @@ public class ResolutionScope implements IResolutionScope {
 	 */
 	LogicalConnector connector;
 	
+	/*
+	 * Cache of names of models being resolved upstream, to avoid recursive resolutions 
+	 */
+	Set<String> beingResolved = new HashSet<>();
 	/*
 	 * These change during resolution and influence the choice of models
 	 */
@@ -266,6 +271,7 @@ public class ResolutionScope implements IResolutionScope {
 		this.parent = other;
 		this.context = other.context;
 		this.coverage = other.coverage;
+		this.beingResolved.addAll(other.beingResolved);
 		if (copyResolution) {
 			this.observable = other.observable;
 			this.model = other.model;
@@ -273,11 +279,14 @@ public class ResolutionScope implements IResolutionScope {
 			this.links.addAll(other.links);
 			this.resolvedObservables.addAll(other.resolvedObservables);
 		}
-
 	}
 
 	public final ResolutionScope empty() {
 		return new ResolutionScope(this, 0.0);
+	}
+	
+	public boolean isResolving(String modelName) {
+		return beingResolved.contains(modelName);
 	}
 
 	public Collection<Link> getLinks() {
@@ -381,6 +390,7 @@ public class ResolutionScope implements IResolutionScope {
 
 		ret.model = model;
 		ret.resolutionNamespace = (Namespace) model.getNamespace();
+		ret.beingResolved.add(model.getName());
 
 		/*
 		 * models start with full coverage...
