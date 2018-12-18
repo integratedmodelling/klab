@@ -201,7 +201,7 @@ public class RescalingState extends Observation implements IState {
 
 		@Override
 		public boolean hasNext() {
-			return current < (cursor.getMultiplicity() - 1);
+			return current < cursor.getMultiplicity();
 		}
 
 		@Override
