@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
+import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
@@ -48,6 +49,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Artifact;
@@ -140,6 +142,8 @@ public class Actuator implements IActuator {
 	private int priority = 0;
 
 	private Mode mode;
+
+	private Model model;
 
 	@Override
 	public String getName() {
@@ -796,6 +800,14 @@ public class Actuator implements IActuator {
 
 	public IResolutionScope.Mode getMode() {
 		return this.mode;
+	}
+
+	public void setModel(Model model) {
+		this.model = model;
+	}
+	
+	public IModel getModel() {
+		return this.model;
 	}
 
 }
