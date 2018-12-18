@@ -14,20 +14,27 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 
 public class ExpressionStateResolver implements IStateResolver {
 
+	Descriptor expressionDescriptor;
+	Descriptor conditionDescriptor;
 	IExpression expression;
 	IExpression condition;
 
 	public ExpressionStateResolver(Descriptor descriptor, Descriptor condition, IParameters<String> parameters,
 			IComputationContext context) {
-		this.expression = descriptor.compile();
-		if (condition != null) {
-			this.condition = condition.compile();
-		}
+		this.expressionDescriptor = descriptor;
+		this.conditionDescriptor = condition;
 	}
 
 	@Override
 	public Object resolve(IObservable semantics, IComputationContext context) throws KlabException {
+		
 		boolean ok = true;
+		if (this.expression == null) {
+			this.expression = expressionDescriptor.compile();
+			if (conditionDescriptor != null) {
+				this.condition = conditionDescriptor.compile();
+			}
+		}
 		if (condition != null) {
 			Object ret = condition.eval(context, context);
 			ok = ret instanceof Boolean && ((Boolean) ret);

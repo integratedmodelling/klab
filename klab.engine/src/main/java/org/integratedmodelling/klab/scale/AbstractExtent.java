@@ -22,15 +22,15 @@ import org.integratedmodelling.klab.common.LogicalConnector;
  */
 public abstract class AbstractExtent implements IExtent {
 
-	private transient long scaleId;
+	private transient String scaleId;
 	protected transient Dimension baseDimension;
 
-	void setScaleId(long id) {
+	void setScaleId(String id) {
 		this.scaleId = id;
 	}
 
 	boolean isOwnExtent(Scale scale) {
-		return scale.scaleId == scaleId;
+		return scale.getScaleId().equals(scaleId);
 	}
 
 	/**

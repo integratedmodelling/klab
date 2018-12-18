@@ -74,7 +74,7 @@ public class Classifier implements IClassifier {
 
 	// each sublist is in AND, each concept in each list is in OR
 	protected List<List<IConcept>> conceptMatches = null;
-	protected Map<String, Boolean> _reasonCache;
+	protected ThreadLocal<Map<String, Boolean>> _reasonCache = new ThreadLocal<>();
 
 	// if not null, we're a classifier for a particularly inherited trait, which
 	// enables
@@ -196,7 +196,7 @@ public class Classifier implements IClassifier {
 			for (List<IConcept> or : conceptMatches) {
 				boolean oneOk = false;
 				for (IConcept oc : or) {
-					if (negated ? !is(cc, conceptMatch) : is(cc, conceptMatch)) {
+					if (negated ? !is(cc, oc) : is(cc, oc)) {
 						oneOk = true;
 						break;
 					}
@@ -228,14 +228,14 @@ public class Classifier implements IClassifier {
 
 		String key = c1 + "#" + c2;
 		Boolean ret = null;
-		if (_reasonCache != null)
-			ret = _reasonCache.get(key);
+		if (_reasonCache.get() != null)
+			ret = _reasonCache.get().get(key);
 		if (ret == null) {
-			if (_reasonCache == null) {
-				_reasonCache = Collections.synchronizedMap(new HashMap<String, Boolean>());
+			if (_reasonCache.get() == null) {
+				_reasonCache.set(new HashMap<String, Boolean>());
 			}
 			ret = c1.is(c2);
-			_reasonCache.put(key, ret);
+			_reasonCache.get().put(key, ret);
 		}
 		return ret;
 	}

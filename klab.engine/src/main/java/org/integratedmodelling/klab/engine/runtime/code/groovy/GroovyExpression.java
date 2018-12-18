@@ -114,10 +114,6 @@ public class GroovyExpression extends Expression {
 		// this.script = shell.parse(code);
 	}
 
-	/**
-	 * ZIOCAN the run engine seems unable to run the same script concurrently with
-	 * different bindings. Which prevents using these in parallel mode.
-	 */
 	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
 
 		if (isTrue) {

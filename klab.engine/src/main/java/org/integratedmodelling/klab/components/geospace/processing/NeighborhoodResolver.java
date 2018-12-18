@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.StreamSupport;
 
 import org.integratedmodelling.kim.api.IKimExpression;
@@ -55,7 +56,8 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 	IDataArtifact valueCache = null;
 	IExpression selectExpression = null;
 	IExpression valueExpression = null;
-
+	LongAdder adder = new LongAdder();
+	
 	@Override
 	public IGeometry getGeometry() {
 		return Geometry.create("S2");
@@ -301,11 +303,13 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 
 			target.set(locator, aggregate(values));
 
-//			ncells++;
-
-//			if (ncells == 0 || (ncells % 10000) == 0) {
-//				context.getMonitor().info(ncells + " cells done...");
+//			long cells = adder.longValue();
+//			if (cells == 0 || (cells % 10000) == 0) {
+//				context.getMonitor().info(adder.sum() + " cells done...");
 //			}
+//
+//			adder.add(1);
+
 		});
 //		}
 		if (valueCache != null) {

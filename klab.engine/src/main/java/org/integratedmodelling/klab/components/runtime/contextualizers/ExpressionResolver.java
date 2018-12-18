@@ -37,10 +37,12 @@ import org.integratedmodelling.klab.utils.Pair;
 public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 
 	static final public String FUNCTION_ID = "klab.runtime.exec";
-
+	
+	Descriptor expressionDescriptor;
+	Descriptor conditionDescriptor;
 	IExpression expression = null;
 	IExpression condition = null;
-	IGeometry geometry = null;
+//	IGeometry geometry = null;
 	boolean isScalar;
 	IComputableResource resource = null;
 
@@ -50,7 +52,8 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 
 	public ExpressionResolver(Descriptor descriptor, Descriptor condition, IParameters<String> parameters,
 			IComputationContext context) {
-		this.geometry = context.getScale();
+		this.expressionDescriptor = descriptor;
+		this.conditionDescriptor = condition;
 		this.expression = descriptor.compile();
 		if (condition != null) {
 			this.condition = condition.compile();
@@ -58,7 +61,7 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 	}
 
 	public static IServiceCall getServiceCall(IComputableResource resource) {
-
+		
 		IServiceCall ret = KimServiceCall.create(FUNCTION_ID);
 		ret.getParameters().put("code", resource.getExpression());
 		if (resource.getCondition() != null) {
@@ -119,7 +122,13 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 
 	@Override
 	public IArtifact resolve(IArtifact ret, IComputationContext context) throws KlabException {
-
+		
+		if (this.expression == null) {
+			this.expression = expressionDescriptor.compile();
+			if (conditionDescriptor != null) {
+				this.condition = conditionDescriptor.compile();
+			}
+		}
 		boolean ok = true;
 		if (condition != null) {
 			Object cond = condition.eval(context, context);

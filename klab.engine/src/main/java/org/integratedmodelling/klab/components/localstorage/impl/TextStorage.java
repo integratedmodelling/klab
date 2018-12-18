@@ -10,10 +10,11 @@ import org.integratedmodelling.klab.utils.Utils;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Maps;
 
 public class TextStorage extends Storage implements IDataArtifact, IKeyHolder {
 
-	BiMap<String, Integer> conceptKey = HashBiMap.create();
+	BiMap<String, Integer> conceptKey = Maps.synchronizedBiMap(HashBiMap.create());
 	int[] data;
 	IDataKey dataKey;
 

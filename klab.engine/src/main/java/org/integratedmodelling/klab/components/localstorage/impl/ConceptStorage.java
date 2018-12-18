@@ -14,10 +14,11 @@ import org.nd4j.linalg.factory.Nd4j;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Maps;
 
 public class ConceptStorage extends Storage implements IDataArtifact, IKeyHolder {
 
-	BiMap<IConcept, Integer> conceptKey = HashBiMap.create();
+	BiMap<IConcept, Integer> conceptKey = Maps.synchronizedBiMap(HashBiMap.create());
 	INDArray data;
 	IDataKey dataKey;
 
