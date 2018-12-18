@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab.api.services;
 
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -137,5 +138,21 @@ public interface IObservationService {
 	 * @return the state view
 	 */
 	IState getStateView(IState state, IScale scale, IComputationContext context);
+
+	/**
+	 * Get a state that represents a specified observable through the values of
+	 * another state with a potentially different observable, seen through a
+	 * different scale. The different observable may be the same minus a data
+	 * reduction trait, or a completely different one. The resulting state is
+	 * read/write, i.e. any setting of values will propagate to the underlying
+	 * storage according to what the scale mapping requires.
+	 * 
+	 * @param observable
+	 * @param state
+	 * @param scale
+	 * @param context
+	 * @return the state view
+	 */
+	IState getStateViewAs(IObservable observable, IState state, IScale scale, IComputationContext context);
 
 }

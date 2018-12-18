@@ -119,15 +119,9 @@ public class ClusterInstantiator implements IExpression, IInstantiator {
 	public List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context) throws KlabException {
 
 		List<IState> sourceStates = new ArrayList<>();
-		List<IState> inheritedStates = new ArrayList<>();
 		List<IObjectArtifact> ret = new ArrayList<>();
 		Map<IState, String> stateIdentifiers = new HashMap<>();
 		StateSummary stateSummary = null;
-
-		// TODO
-		double selectFraction = Double.NaN;
-		// TODO
-		boolean topFraction = true;
 
 		IExpression expression = null;
 		if (exprDescriptor != null) {
@@ -145,71 +139,15 @@ public class ClusterInstantiator implements IExpression, IInstantiator {
 			}
 			expression = exprDescriptor.compile();
 		}
-
-		if (context.contains("source-state")) {
-			IState sourceState = context.getArtifact(context.get("source-state", String.class), IState.class);
-			if (sourceState == null) {
-				throw new KlabResourceNotFoundException("feature extractor: source state "
-						+ context.get("source-state", String.class) + " not found or not a state");
-			}
-			sourceStates.add(sourceState);
-		}
-
-		for (IState sourceState : sourceStates) {
-			/*
-			 * if the semantics is compatible with the quality's context, the instance
-			 * inherits a view of each state.
-			 */
-			IConcept scontext = sourceState.getObservable().getContext();
-			// the first condition should never happen
-			if (scontext != null && Observables.INSTANCE.isCompatible(semantics.getType(), scontext)) {
-				inheritedStates.add(sourceState);
-				context.getMonitor().info(
-						"cluster extractor: instances will inherit a rescaled view of " + sourceState.getObservable());
-			}
-		}
-
-		// TODO
-		IState fractionState = null;
-		Range limits = null;
-		if (sourceStates.size() == 1 && !Double.isNaN(selectFraction)) {
-			fractionState = sourceStates.get(0);
-			if (!(fractionState.getObservable().getObservationType() == ObservationType.QUANTIFICATION)) {
-				throw new KlabValidationException(
-						"cluster extractor: state for fraction extraction " + fractionState + " must be numeric");
-			}
-			// TODO
-			// StateSummary stateSummary =
-			// Observations.INSTANCE.getStateSummary(fractionState, )
-		}
-
+		
 		Parameters<String> parameters = new Parameters<>();
 		boolean warned = false;
-		// List<Coordinate> geometries = new ArrayList<>();
 		List<DoublePoint> dpoints = new ArrayList<>();
 
 		for (Cell cell : grid) {
 
 			Object o = null;
-
-			if (fractionState != null) {
-
-				o = Boolean.FALSE;
-				double d = fractionState.get(cell, Double.class);
-				if (!Double.isNaN(d)) {
-
-					double perc = 0;
-					if (topFraction) {
-						perc = (stateSummary.getRange().get(1) - d)
-								/ (stateSummary.getRange().get(1) - stateSummary.getRange().get(0));
-					} else {
-						perc = (d - stateSummary.getRange().get(0))
-								/ (stateSummary.getRange().get(1) - stateSummary.getRange().get(0));
-					}
-					o = perc <= selectFraction;
-				}
-
-			} else if (expression != null) {
+			if (expression != null) {
 
 				parameters.clear();
 				for (IState state : sourceStates) {

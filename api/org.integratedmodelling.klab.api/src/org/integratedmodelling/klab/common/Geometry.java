@@ -592,10 +592,6 @@ public class Geometry implements IGeometry {
 
 	public long computeOffset(long[] offsets) {
 
-		if (offsets[0] > 0) {
-			System.out.println("COCK");
-		}
-		
 		// trivial case
 		if (offsets.length == 1 && dimensions.size() == 1 && dimensions.get(0).shape.length == 1) {
 			return offsets[0];

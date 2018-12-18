@@ -10,6 +10,7 @@ import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.data.general.ITable;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
@@ -50,6 +51,17 @@ public class RescalingState extends Observation implements IState {
 		this.newScale = newScale;
 		this.originalGeometry = ((Scale) state.getScale()).asGeometry();
 		this.observationType = state.getObservable().getObservationType();
+		// TODO check if we need to sum in aggregation. Depends on the observable and on
+		// the relationship between the extents (e.g spatially distributed vs. not)
+		// this.redistribute = ...
+	}
+	
+	public RescalingState(IState state, IObservable newObservable, Scale newScale, IRuntimeContext context) {
+		super(new Observable((Observable) newObservable), newScale, context);
+		this.delegate = state;
+		this.newScale = newScale;
+		this.originalGeometry = ((Scale) state.getScale()).asGeometry();
+		this.observationType = newObservable.getObservationType();
 		// TODO check if we need to sum in aggregation. Depends on the observable and on
 		// the relationship between the extents (e.g spatially distributed vs. not)
 		// this.redistribute = ...

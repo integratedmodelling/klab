@@ -11,10 +11,12 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
+import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.ICountableObservation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
@@ -43,6 +45,7 @@ import org.integratedmodelling.klab.engine.runtime.EventBus;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Provenance;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
@@ -87,6 +90,8 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	Scheduler<?> scheduler;
 	IReport report;
 	ContextualizationStrategy contextualizationStrategy;
+	// set only by the actuator, relevant only in instantiators with attributes
+	IModel model;
 
 	// root scope of the entire dataflow, unchanging, for downstream resolutions
 	ResolutionScope resolutionScope;
@@ -309,8 +314,10 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			Dataflow dataflow = Dataflows.INSTANCE
 					.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope).setPrimary(false);
 
-			System.out.println(dataflow.getKdlCode());
-			
+			// instantiator may have observables that are defined from pre-existing
+			// attributes in the context.
+			dataflow.setModel((Model) model);
+
 			ret = (ICountableObservation) dataflow.run(scale, ((Monitor) monitor).get(subtask));
 			if (ret != null) {
 				((DirectObservation) ret).setName(name);
@@ -562,7 +569,8 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			Mode mode = op.getSecond();
 
 			IObservation observation = null;
-
+			List<IState> predefinedStates = new ArrayList<>();
+			
 			if (observable.is(Type.COUNTABLE) && mode == Mode.INSTANTIATION) {
 				observation = new ObservationGroup(observable, (Scale) scale, this, IArtifact.Type.OBJECT);
 			} else if (observable.is(Type.RELATIONSHIP)) {
@@ -570,6 +578,18 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 						scope.getRelationshipSource(), scope.getRelationshipTarget(), this);
 			} else {
 				observation = DefaultRuntimeProvider.createObservation(observable, scale, this);
+				if (parent != null && actuator.getDataflow().getModel() != null) {
+					for (String attr : actuator.getDataflow().getModel().getAttributeObservables().keySet()) {
+						IArtifact artifact = parent.findArtifactByObservableName(attr);
+						if (artifact instanceof IState) {
+							// observable may be different or use data reduction traits
+							IState stateView = Observations.INSTANCE.getStateViewAs(
+									actuator.getDataflow().getModel().getAttributeObservables().get(attr),
+									(IState) artifact, scale, this);
+							predefinedStates.add(stateView);
+						}
+					}
+				}
 			}
 
 			// transmit all annotations and any interpretation keys to the artifact
@@ -590,10 +610,17 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			if (observation instanceof ISubject) {
 				this.network.addVertex((ISubject) observation);
 			}
+			
+			/*
+			 * add any predefined states to the structure
+			 */
+			for (IState state : predefinedStates) {
+				link(observation, state);
+			}
 		}
 
 		this.target = this.catalog.get(actuator.getName());
-		
+
 		return this.target;
 	}
 
@@ -655,6 +682,17 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		return null;
 	}
 
+	public IArtifact findArtifactByObservableName(String name) {
+		for (String key : catalog.keySet()) {
+			IArtifact artifact = catalog.get(key);
+			if (artifact != null && artifact instanceof IObservation
+					&& ((Observable) ((IObservation) artifact).getObservable()).getLocalName().equals(name)) {
+				return artifact;
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public IReport getReport() {
 		return report;
@@ -668,6 +706,11 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	@Override
 	public void setContextualizationStrategy(ContextualizationStrategy contextualizationStrategy) {
 		this.contextualizationStrategy = contextualizationStrategy;
+	}
+
+	@Override
+	public void setModel(Model model) {
+		this.model = model;
 	}
 
 }

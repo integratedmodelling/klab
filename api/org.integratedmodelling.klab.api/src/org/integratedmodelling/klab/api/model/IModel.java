@@ -86,13 +86,11 @@ public interface IModel
 	List<IObservable> getDependencies();
 
 	/**
-	 * This will only be called in models that produce objects (isReificationModel()
+	 * This will only be called in models that produce objects (isInstantiator()
 	 * == true) and have defined observers for attributes of the objects produced.
-	 * It is used to create de-reifying data models by "painting" the object
-	 * attributes over the context, ignoring the identity of the objects. For each
-	 * attribute name returned, the method getAttributeObserver() must return a
-	 * valid observer. Some of the attributes may be internally generated: for
-	 * example, it is always possible to infer 'presence of' an object from an
+	 * For each attribute name returned, the method getAttributeObserver() must
+	 * return a valid observer. Some of the attributes may be internally generated:
+	 * for example, it is always possible to infer 'presence of' an object from an
 	 * observation of the object itself.
 	 *
 	 * @return the list of dereified attributes with their observers

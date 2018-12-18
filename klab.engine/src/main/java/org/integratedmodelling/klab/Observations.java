@@ -104,6 +104,11 @@ public enum Observations implements IObservationService {
 		return new RescalingState(state, (Scale) scale, (IRuntimeContext) context);
 	}
 
+	@Override
+	public IState getStateViewAs(IObservable observable, IState state, IScale scale, IComputationContext context) {
+		return new RescalingState(state, observable, (Scale) scale, (IRuntimeContext) context);
+	}
+	
 	/**
 	 * Return the summary for the data in a state, computing it if necessary.
 	 * 

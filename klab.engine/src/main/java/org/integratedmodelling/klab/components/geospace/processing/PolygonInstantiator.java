@@ -15,14 +15,11 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
-import org.integratedmodelling.klab.Observables;
-import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -37,14 +34,12 @@ import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.code.groovy.GroovyExpression;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CamelCase;
-import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -124,7 +119,6 @@ public class PolygonInstantiator implements IExpression, IInstantiator {
 	public List<IObjectArtifact> instantiate(IObservable semantics, IComputationContext context) throws KlabException {
 
 		List<IState> sourceStates = new ArrayList<>();
-		List<Pair<String, IState>> inheritedStates = new ArrayList<>();
 		List<IObjectArtifact> ret = new ArrayList<>();
 		Map<IState, String> stateIdentifiers = new HashMap<>();
 
@@ -152,20 +146,6 @@ public class PolygonInstantiator implements IExpression, IInstantiator {
 						+ context.get("source-state", String.class) + " not found or not a state");
 			}
 			sourceStates.add(sourceState);
-		}
-
-		for (Pair<String, IState> contextStates : context.getArtifacts(IState.class)) {
-			/*
-			 * if the semantics is compatible with the quality's context, the instance
-			 * inherits a view of each state.
-			 */
-			IConcept scontext = contextStates.getSecond().getObservable().getContext();
-			// the first condition should never happen
-			if (scontext != null && Observables.INSTANCE.isCompatible(semantics.getType(), scontext)) {
-				inheritedStates.add(contextStates);
-				context.getMonitor().info("feature extractor: instances will inherit a rescaled view of "
-						+ contextStates.getSecond().getObservable());
-			}
 		}
 
 		// build mask
@@ -212,22 +192,8 @@ public class PolygonInstantiator implements IExpression, IInstantiator {
 		for (Blob blob : blobs) {
 			Shape shape = getShape(blob);
 			if (shape != null) {
-
 				Scale instanceScale = Scale.createLike(context.getScale(), shape);
-				IObjectArtifact instance = context.newObservation(semantics, baseName + "_" + (created + 1),
-						instanceScale);
-
-				/*
-				 * if the extracted semantics is the original quality's context, add the
-				 * aggregated quality used for extraction to the instance.
-				 */
-				for (Pair<String, IState> inherited : inheritedStates) {
-					IState stateView = Observations.INSTANCE.getStateView(inherited.getSecond(), instanceScale, context);
-					((IRuntimeContext) context).link(instance, stateView);
-				}
-
-				ret.add(instance);
-
+				ret.add(context.newObservation(semantics, baseName + "_" + (created + 1), instanceScale));
 				created++;
 			} else {
 				skipped++;

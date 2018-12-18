@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
+import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.provenance.Provenance;
 import org.integratedmodelling.klab.utils.Pair;
 import org.jgrapht.Graph;
@@ -233,4 +234,7 @@ public interface IRuntimeContext extends IComputationContext {
 
 	// ugly but we don't have a context when we create the first dataflow.
 	void setContextualizationStrategy(ContextualizationStrategy contextualizationStrategy);
+	
+	// same 
+	void setModel(Model model);
 }

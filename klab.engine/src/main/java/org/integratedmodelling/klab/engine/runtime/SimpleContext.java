@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Provenance;
@@ -457,6 +458,12 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 
 	@Override
 	public void setContextualizationStrategy(ContextualizationStrategy contextualizationStrategy) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setModel(Model model) {
 		// TODO Auto-generated method stub
 		
 	}

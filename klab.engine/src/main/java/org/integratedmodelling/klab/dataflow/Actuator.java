@@ -463,6 +463,7 @@ public class Actuator implements IActuator {
 			ret.replaceTarget(self);
 			ret.set("self", self);
 		}
+		ret.setModel(model);
 		for (String name : resource.getParameters().keySet()) {
 			ret.set(name, resource.getParameters().get(name));
 		}
@@ -809,5 +810,8 @@ public class Actuator implements IActuator {
 	public IModel getModel() {
 		return this.model;
 	}
-
+	
+	public Dataflow getDataflow() {
+		return this.dataflow;
+	}
 }
