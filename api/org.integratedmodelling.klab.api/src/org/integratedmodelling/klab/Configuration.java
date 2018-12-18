@@ -263,4 +263,9 @@ public enum Configuration implements IConfigurationService {
 		// TODO tie to engine configuration property. This is 10 minutes
 		return 10 * 60 * 1000;
 	}
+
+	public boolean parallelizeContextualization() {
+		// TODO tie to option
+		return properties.getProperty(KLAB_PARALLELIZE_CONTEXTUALIZATION, "false").equals("true");
+	}
 }

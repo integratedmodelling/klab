@@ -12,6 +12,7 @@ import java.util.Spliterator;
 import java.util.function.Consumer;
 
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
@@ -1227,7 +1228,7 @@ public class Scale implements IScale {
 		@Override
 		public Spliterator<Scale> trySplit() {
 
-			if (monitor.isInterrupted()) {
+			if (!Configuration.INSTANCE.parallelizeContextualization() || monitor.isInterrupted()) {
 				return null;
 			}
 			if (estimateSize() > 16) {
