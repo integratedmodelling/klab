@@ -166,14 +166,26 @@ public class Scale implements IScale {
 	 * @param offset
 	 */
 	public Scale(Scale scale, long offset) {
+		this.originalScale = scale;
+		this.multiplicity = 1;
+		setLocatorsTo(offset);
+	}
+
+	/**
+	 * Call ONLY on a scale locator created with the above constructor, to reset the
+	 * offsets to the passed one.
+	 * 
+	 * @param offset
+	 */
+	public void setLocatorsTo(long offset) {
 
 		this.originalScaleOffset = offset;
-		this.originalScale = scale;
 
-		long[] pos = scale.cursor.getElementIndexes(offset);
-		for (int i = 0; i < scale.extents.size(); i++) {
-			IExtent ext = scale.extents.get(i) instanceof Extent ? ((Extent) scale.extents.get(i)).getExtent(pos[i])
-					: scale.extents.get(i);
+		long[] pos = this.originalScale.cursor.getElementIndexes(offset);
+		for (int i = 0; i < this.originalScale.extents.size(); i++) {
+			IExtent ext = this.originalScale.extents.get(i) instanceof Extent
+					? ((Extent) this.originalScale.extents.get(i)).getExtent(pos[i])
+					: this.originalScale.extents.get(i);
 			this.extents.add(ext);
 			if (ext instanceof ISpace) {
 				this.space = (ISpace) ext;
@@ -181,7 +193,6 @@ public class Scale implements IScale {
 				this.time = (ITime) ext;
 			}
 		}
-		this.multiplicity = 1;
 	}
 
 	/**
@@ -1194,11 +1205,13 @@ public class Scale implements IScale {
 		long endSplit = size();
 		long offset;
 		IMonitor monitor;
-
+		Scale locator;
+		
 		public SplIt(long begin, long end, IMonitor monitor) {
 			this.beginSplit = this.offset = begin;
 			this.endSplit = end;
 			this.monitor = monitor;
+			this.locator = new Scale(Scale.this, begin);
 		}
 
 		@Override
@@ -1218,7 +1231,8 @@ public class Scale implements IScale {
 				return false;
 			}
 			if (offset < endSplit) {
-				arg0.accept(new Scale(Scale.this, offset));
+				this.locator.setLocatorsTo(offset);
+				arg0.accept(locator);
 				offset++;
 				return true;
 			}
@@ -1236,8 +1250,9 @@ public class Scale implements IScale {
 				long end = this.endSplit;
 				this.endSplit = beginSplit + midOfs;
 
-//				System.out.println(beginSplit + "-" + end + " -> " + "(" + beginSplit + "-" + this.endSplit + " "
-//						+ (beginSplit + midOfs) + "-" + end + ")");
+				// System.out.println(beginSplit + "-" + end + " -> " + "(" + beginSplit + "-" +
+				// this.endSplit + " "
+				// + (beginSplit + midOfs) + "-" + end + ")");
 
 				return new SplIt(beginSplit + midOfs, end, monitor);
 			}

@@ -645,12 +645,12 @@ public class Space extends Extent implements ISpace {
 			}
 		}
 
-		/*
-		 * if this == extent return identity; if this.grid != null && extent.grid !=
+		/*		 * if this == extent return identity; if this.grid != null && extent.grid !=
 		 * null && this.grid isa subgrid && this.grid.originalgrid == extent.grid return
 		 * conformant offset remapper; if this.grid != null && extent.grid != null &&
 		 * extent.grid isa subgrid && extent.grid.originalgrid == this.grid return
 		 * inverse conformant offset remapper;
+
 		 */
 
 		return null;

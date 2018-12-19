@@ -327,4 +327,13 @@ public class NumberUtils {
 	    for(int i = 1; i < input.length; i++) result = lcm(result, input[i]);
 	    return result;
 	}
+
+	public static double[] doubleArrayFromCollection(List<Double> vals) {
+		double[] ret = new double[vals.size()];
+		int i = 0;
+		for (Double d : vals) {
+			ret[i++] = d;
+		}
+		return ret;
+	}
 }

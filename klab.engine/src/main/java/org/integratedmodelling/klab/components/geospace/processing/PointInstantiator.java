@@ -93,10 +93,10 @@ public class PointInstantiator implements IExpression, IInstantiator {
 					stateIdentifiers.put(state, input);
 				}
 			}
-			if (sourceStates.isEmpty()) {
-				throw new KlabResourceNotFoundException(
-						"feature extractor: the selection expression does not reference any known state");
-			}
+//			if (sourceStates.isEmpty()) {
+//				throw new KlabResourceNotFoundException(
+//						"feature extractor: the selection expression does not reference any known state");
+//			}
 			expression = exprDescriptor.compile();
 		}
 

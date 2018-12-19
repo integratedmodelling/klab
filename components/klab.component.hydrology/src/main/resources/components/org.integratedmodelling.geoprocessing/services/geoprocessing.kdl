@@ -28,3 +28,49 @@ export object buffer
 	
 	class org.integratedmodelling.geoprocessing.core.FeatureBufferingInstantiator
 }
+
+export number kriging
+	"Interpolates values of point features using the semivariogram method."
+	 label 'Kriging'
+{
+	object artifact 
+		"The object artifact to use to produce the source points. Should identify point features; if not points,
+		 the centroid will be used and the states will be aggregated."
+		
+	concept state 
+		"The semantics for the state to use in the source points or features." 
+
+	optional input radius
+		"The distance in m at which the value of two points become spatially uncorrelated. Must be specified if mode is
+		 Gaussian."
+		default 0.0
+
+	optional input sill
+		"The semivariance when distance >= range. If not specified, the variance of the input values is used."
+		default 0.0
+		
+	optional input nugget
+		"The initial semivariance at distance near 0. If not specified it is set to 0."
+		default 0.0
+		
+	optional input exponential
+		"Use an exponential semivariogram instead of the default exponential one. If true , integral scale and
+		 variance parameters must be passed."
+		default false
+		
+	optional input includezero
+		"Include zero values in the semivariogram computation. Default is true."
+		default true
+		
+	optional input logarithmic
+		"Use log-transformed input data when computing the semivariogram. Default false."
+		default false
+		
+	optional import number elevation 
+		"If passed, elevation is used as a covariate for prediction. Useful in elevation-dependent predictions
+		 such as precipitation or temperature."
+	
+	geometry S2
+	
+	class org.integratedmodelling.geoprocessing.core.KrigingResolver
+}
