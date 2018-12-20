@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.client.utils.JsonUtils;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.simp.stomp.ConnectionLostException;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompHeaders;
@@ -95,6 +96,15 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 	public void handleException(StompSession session, StompCommand command, StompHeaders headers, byte[] payload,
 			Throwable exception) {
 		throw new RuntimeException("STOMP exception: " + exception.getMessage());
+	}
+	
+	@Override
+	public void handleTransportError(StompSession session, Throwable throwable) {
+		if (throwable instanceof ConnectionLostException) {
+            // if connection lost, call this
+			System.out.println("ACHTUNG - TRANPORT ERROR " + throwable);
+        }
+		super.handleTransportError(session, throwable);
 	}
 
 	@Override
