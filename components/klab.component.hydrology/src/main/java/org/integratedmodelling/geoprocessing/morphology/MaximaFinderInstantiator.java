@@ -3,7 +3,6 @@ package org.integratedmodelling.geoprocessing.morphology;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hortonmachine.hmachine.modules.demmanipulation.markoutlets.OmsMarkoutlets;
 import org.hortonmachine.lesto.modules.vegetation.rastermaxima.OmsRasterMaximaFinder;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IParameters;
@@ -17,7 +16,6 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
-import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
@@ -61,6 +59,16 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 		if (grid == null) {
 			throw new KlabValidationException("Local maxima must be computed on a grid extent");
 		}
+
+//        maxFinder.inDsmDtmDiff = getRaster(inDsmDtmDiff);
+//        maxFinder.pMode = pMode;
+//        maxFinder.pThreshold = pThreshold;
+//        maxFinder.pSize = pSize;
+//        maxFinder.pPercent = pPercent;
+//        maxFinder.pMaxRadius = pMaxRadius;
+//        maxFinder.doCircular = doCircular;
+//        maxFinder.pBorderDistanceThres = pBorderDistanceThres;
+//        maxFinder.process();
 		
 		// should either provide a CHM ('chm') or an DEM; if the latter, this is differentiated by
 		// subtracting the minimum so that the algorithm can work.

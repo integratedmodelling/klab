@@ -75,7 +75,7 @@ public class ModelReference {
 
 	private String id;
 	private String name;
-	private String urn;
+//	private String urn;
 
 	private String serverId;
 	private String projectUrn;
@@ -838,15 +838,15 @@ public class ModelReference {
 		// return urn;
 	}
 
-	/**
-	 * Sets the urn.
-	 *
-	 * @param urn
-	 *            the new urn
-	 */
-	public void setUrn(String urn) {
-		this.urn = urn;
-	}
+//	/**
+//	 * Sets the urn.
+//	 *
+//	 * @param urn
+//	 *            the new urn
+//	 */
+//	public void setUrn(String urn) {
+//		this.urn = urn;
+//	}
 
 	public int getPriority() {
 		return priority;

@@ -1,17 +1,18 @@
 package org.integratedmodelling.geoprocessing.core;
 
-import static org.hortonmachine.gears.libs.modules.HMConstants.floatNovalue;
 import static org.hortonmachine.gears.libs.modules.HMConstants.doubleNovalue;
+import static org.hortonmachine.gears.libs.modules.HMConstants.floatNovalue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.math3.stat.descriptive.moment.Variance;
+import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.hortonmachine.gears.utils.coverage.CoverageUtilities;
+import org.hortonmachine.gears.utils.math.matrixes.MatrixException;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.geoprocessing.algorithms.OmsKriging;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -33,6 +34,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
+import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -47,7 +49,7 @@ public class KrigingResolver implements IResolver<IState>, IExpression {
 	private String elevationId;
 	private double radius;
 	private double sill;
-	private double nugget = 0.01;
+	private double nugget = 0.1;
 	private IConcept observable;
 	private boolean gaussian = true;
 	private boolean logarithmic = false;
@@ -65,7 +67,7 @@ public class KrigingResolver implements IResolver<IState>, IExpression {
 	@Override
 	public IState resolve(IState target, IComputationContext context) throws KlabException {
 
-		Grid grid = Space.extractGrid(target);
+		final Grid grid = Space.extractGrid(target);
 		if (grid == null) {
 			throw new KlabValidationException("Kriging must be computed on a grid extent");
 		}
@@ -85,7 +87,7 @@ public class KrigingResolver implements IResolver<IState>, IExpression {
 		kriging.inStations = new DefaultFeatureCollection();
 		kriging.inData = new HashMap<>();
 		kriging.fStationsid = "id";
-		
+
 		SimpleFeatureTypeBuilder b = new SimpleFeatureTypeBuilder();
 		b.setName("kriging");
 		b.setCRS(grid.getProjection().getCoordinateReferenceSystem());
@@ -154,7 +156,7 @@ public class KrigingResolver implements IResolver<IState>, IExpression {
 			// NaN destroy everything
 			z = Double.isNaN(z) ? doubleNovalue : z;
 			v = Double.isNaN(v) ? doubleNovalue : v;
-			
+
 			point.getCoordinate().z = z;
 
 			SimpleFeatureBuilder builder = new SimpleFeatureBuilder(featureType);
@@ -170,9 +172,20 @@ public class KrigingResolver implements IResolver<IState>, IExpression {
 		}
 
 		if (gaussian) {
-			kriging.pA = radius; // context.getScale().getSpace().getEnvelope().convertDistance(radius);
+			if (radius == 0) {
+				/*
+				 * default radius is 1/20th of the diagonal of the bounding box, almost as
+				 * arbitrary as it gets
+				 */
+				radius = Math.sqrt(grid.getEnvelope().getWidth() * grid.getEnvelope().getWidth()
+						+ grid.getEnvelope().getHeight() * grid.getEnvelope().getHeight()) / 20;
+			} else {
+				radius = context.getScale().getSpace().getEnvelope().convertDistance(radius);
+			}
+			kriging.pA = radius;
 			kriging.pNug = nugget;
-			kriging.pS = sill == 0 ? new Variance().evaluate(NumberUtils.doubleArrayFromCollection(vals)) : sill;
+			kriging.pS = sill == 0 ? new StandardDeviation().evaluate(NumberUtils.doubleArrayFromCollection(vals)) / 40
+					: sill;
 			kriging.defaultVariogramMode = 1;
 		} else {
 			// https://gis.stackexchange.com/questions/156349/in-jgrasstools-kriging-what-is-the-variogram-model-used-when-defaultvariogrammo
@@ -182,9 +195,12 @@ public class KrigingResolver implements IResolver<IState>, IExpression {
 		kriging.pm = new TaskMonitor(context.getMonitor());
 		kriging.doProcess = true;
 		kriging.doReset = false;
-		context.getMonitor().info("computing kriging...");
+		context.getMonitor().info("Computing kriging with range = " + radius + ", sill = " + kriging.pS + ", nugget = " + nugget);
 		try {
 			kriging.process();
+		} catch (MatrixException e) {
+			context.getMonitor().error("computation error: " + e.getMessage() + ": review parameters");
+			((Engine.Monitor) context.getMonitor()).interrupt();
 		} catch (Exception e) {
 			throw new KlabException(e);
 		}
@@ -195,6 +211,11 @@ public class KrigingResolver implements IResolver<IState>, IExpression {
 					return Double.NaN;
 				}
 				return a;
+			}, (xy) -> {
+				if (xy[0] == grid.getXCells() - 1) {
+					return false;
+				}
+				return true;
 			});
 		}
 		return target;
@@ -214,7 +235,7 @@ public class KrigingResolver implements IResolver<IState>, IExpression {
 		ret.elevationId = parameters.get("elevation", String.class);
 		ret.radius = parameters.get("radius", 0.0);
 		ret.sill = parameters.get("sill", 0.0);
-		ret.nugget = parameters.get("nugget", 0.01);
+		ret.nugget = parameters.get("nugget", 0.1);
 
 		return ret;
 	}

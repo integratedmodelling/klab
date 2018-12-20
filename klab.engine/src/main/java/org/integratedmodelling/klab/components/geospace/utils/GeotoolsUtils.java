@@ -108,11 +108,19 @@ public enum GeotoolsUtils {
 
 	}
 
+	public void coverageToState(GridCoverage2D layer, IState state) {
+		coverageToState(layer, state, null, null);
+	}
+
+	public void coverageToState(GridCoverage2D layer, IState state, Function<Double, Double> transformation) {
+		coverageToState(layer, state, transformation, null);
+	}
+	
 	/**
 	 * Dump the data from a coverage into a pre-existing state.
 	 * 
 	 */
-	public void coverageToState(GridCoverage2D layer, IState state, Function<Double, Object> transformation) {
+	public void coverageToState(GridCoverage2D layer, IState state, Function<Double, Double> transformation, Function<long[], Boolean> coordinateChecker) {
 
 		ISpace ext = state.getScale().getSpace();
 
@@ -127,9 +135,17 @@ public enum GeotoolsUtils {
 
 		for (int i = 0; i < grid.getCellCount(); i++) {
 			long[] xy = grid.getXYOffsets(i);
-			double value = itera.getSampleDouble((int) xy[0], (int) xy[1], 0);
+			Double value = itera.getSampleDouble((int) xy[0], (int) xy[1], 0);
 			ILocator spl = geometry.getLocator(ext.getOffset(IndexLocator.create(xy)));
-			state.set(spl, transformation == null ? value : transformation.apply(value));
+			if (transformation != null) {
+				value = transformation.apply(value);
+			}
+			if (coordinateChecker != null) {
+				if (!coordinateChecker.apply(xy)) {
+					value = Double.NaN;
+				}
+			}
+			state.set(spl, value);
 		}
 	}
 

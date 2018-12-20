@@ -343,10 +343,7 @@ public class OmsKriging extends HMModel {
                 double yTmp = yStationList.get(i);
                 double zTmp = zStationList.get(i);
                 double hTmp = hStationList.get(i);
-                
-                if (zTmp == 0) {
-                	System.out.println("SPERM");
-                }
+
                 boolean doubleStation = ModelsEngine.verifyDoubleStation(xStation, yStation, zStation, hStation, xTmp, yTmp,
                         zTmp, hTmp, i, false, pm);
                 if (!doubleStation) {
@@ -445,7 +442,7 @@ public class OmsKriging extends HMModel {
                     result[j] = h0;
                     j++;
                     if (Math.abs(sum - 1) >= TOLL) {
-                        throw new ModelsRuntimeException("Error in the coffeicients calculation", this.getClass().getSimpleName());
+                        throw new ModelsRuntimeException("Errors calculating coefficients", this.getClass().getSimpleName());
                     }
 
                 }

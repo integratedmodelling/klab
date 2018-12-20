@@ -26,3 +26,28 @@ export concept classifier
 		
 	class org.integratedmodelling.geoprocessing.morphology.GeomorphonResolver
 }
+
+@constraint(xor(surface, chm))
+export object findmaxima
+	"Classifies each cell into the numeric category of the containing geological form using 
+	 the Geomorphon algorithm."
+	 label 'Classify terrain morphology'
+{
+	optional import number surface
+		"A surface to scan for local maxima."
+		
+	optional import number chm
+		"A crown height raster map (with minimum values starting at 0)."
+		
+	optional input threshold 
+		"Height threshold of relevance for any maximum found." 
+		default 0.0
+		
+	optional input radius
+		"Search radius in m. Represents the scaling of the point of view; large values can be used to
+		 mimic far points of view or for very flat areas. If unspecified, it is set to 1/100th of the
+		 diagonal of the bounding box."
+		default 0.0
+		
+	class org.integratedmodelling.geoprocessing.morphology.MaximaFinderInstantiator
+}
