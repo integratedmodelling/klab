@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.engine.runtime.code;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;

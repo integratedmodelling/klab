@@ -28,17 +28,18 @@ export concept classifier
 }
 
 @constraint(xor(surface, chm))
-@constraint(xor(threshold, relative-threshold))
 export object findmaxima
-	"Find relative maxima in a surface and extract them as points of polygons. Optionally parameterizable for
-	 tree extraction with vegetation-specific options.."
+	"Find relative maxima in a surface and extract them as points of polygons according to semantics. 
+	 Optionally parameterizable for tree extraction with vegetation-specific options. Will optionally
+	 produce a second artifact for the alternative geometry (points if the observable is areal) if
+	 the model has a corresponding second observable of the expected dimensionality."
 	 label 'Extract maxima'
 {
 	optional import number surface
 		"A surface to scan for local maxima."
 		
 	optional import number chm
-		"A crown height raster map (with minimum values starting at 0)."
+		"A crown height grid state (pre-differentiated with minimum values starting at 0)."
 		
 	optional input threshold 
 		"Height threshold of relevance for any maximum found. If surface is passed, refers to the value in
@@ -56,6 +57,12 @@ export object findmaxima
 		 mimic far points of view or for very flat areas. If unspecified, it is set to 1/100th of the
 		 diagonal of the bounding box."
 		default 0.0
+		
+	optional input mode
+		"The mode of extraction. The default 'custom' is for general purposes and should be used for anything
+		 but trees. If trees are being extracted, the modes 'conifer', 'deciduous' and 'mixed' will apply 
+		 specific heuristics to improve detection."
+		default "custom"
 		
 	class org.integratedmodelling.geoprocessing.morphology.MaximaFinderInstantiator
 }
