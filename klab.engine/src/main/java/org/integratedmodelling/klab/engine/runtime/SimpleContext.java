@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
+import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -466,6 +467,12 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 	public void setModel(Model model) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public IModel getModel() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

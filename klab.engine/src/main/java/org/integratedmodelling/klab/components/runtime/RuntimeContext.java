@@ -713,4 +713,9 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		this.model = model;
 	}
 
+	@Override
+	public IModel getModel() {
+		return model;
+	}
+
 }
