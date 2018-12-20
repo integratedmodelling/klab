@@ -53,6 +53,11 @@ public enum GeotoolsUtils {
 	public GridCoverage2D stateToCoverage(IState state) {
 		return stateToCoverage(state, DataBuffer.TYPE_FLOAT, Float.NaN);
 	}
+
+	public GridCoverage2D stateToCoverage(IState state, int type, Float noDataValue) {
+		return stateToCoverage(state, type, noDataValue, null);
+	}
+	
 	/**
 	 * Turn a state into a grid coverage. Assumes the state is scaled so that all
 	 * the values will be spatial.
@@ -61,7 +66,7 @@ public enum GeotoolsUtils {
 	 * @throws IllegalArgumentException
 	 *             if the state is not suitable for a raster representation.
 	 */
-	public GridCoverage2D stateToCoverage(IState state, int type, Float noDataValue) {
+	public GridCoverage2D stateToCoverage(IState state, int type, Float noDataValue, Function<Object, Object> transformation) {
 
 		Space space = (Space) state.getScale().getSpace();
 		if (space == null || space.getGrid() == null) {
@@ -95,10 +100,19 @@ public enum GeotoolsUtils {
 			if (o == null || (o instanceof Double && Double.isNaN((Double) o))) {
 				raster.setSample((int) cell.getX(), (int) cell.getY(), 0, noDataValue);
 			} else if (o instanceof Number) {
+				if (transformation != null) {
+					o = transformation.apply(o);
+				}
 				raster.setSample((int) cell.getX(), (int) cell.getY(), 0, ((Number) o).floatValue());
 			} else if (o instanceof Boolean) {
+				if (transformation != null) {
+					o = transformation.apply(o);
+				}
 				raster.setSample((int) cell.getX(), (int) cell.getY(), 0, (float) (((Boolean) o) ? 1. : 0.));
 			} else if (o instanceof IConcept) {
+				if (transformation != null) {
+					o = transformation.apply(o);
+				}
 				raster.setSample((int) cell.getX(), (int) cell.getY(), 0,
 						(float) state.getDataKey().reverseLookup((IConcept) o));
 			}

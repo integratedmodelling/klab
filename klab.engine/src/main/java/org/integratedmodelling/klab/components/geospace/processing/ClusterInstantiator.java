@@ -94,7 +94,7 @@ public class ClusterInstantiator implements IExpression, IInstantiator {
 
 		if (parameters.containsKey("radius")) {
 			this.radius = context.getScale().getSpace().getEnvelope()
-					.convertDistance(parameters.get("radius", Double.class));
+					.metersToDistance(parameters.get("radius", Double.class));
 		} else if (parameters.containsKey("cellradius")) {
 			this.radius = (double)parameters.get("cellradius", Integer.class) * grid.getCellWidth();
 		}

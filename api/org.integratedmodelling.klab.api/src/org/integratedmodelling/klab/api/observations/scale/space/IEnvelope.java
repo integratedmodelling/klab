@@ -82,5 +82,14 @@ public interface IEnvelope extends IReferenced {
      * @param metersDistance
      * @return the meters distance converted into native envelope units
      */
-	double convertDistance(double metersDistance);
+	double metersToDistance(double metersDistance);
+	
+    /**
+     * Return the distance in meters that corresponds to the passed distance in
+     * original units for in this envelope.
+     * 
+     * @param metersDistance
+     * @return the meters distance converted into native envelope units
+     */
+	double distanceToMeters(double originalDistance);
 }

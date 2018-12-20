@@ -138,7 +138,7 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 		}
 
 		if (this.radius != 0) {
-			this.radius = context.getScale().getSpace().getEnvelope().convertDistance(this.radius);
+			this.radius = context.getScale().getSpace().getEnvelope().metersToDistance(this.radius);
 			hCells = (int) Math.ceil(this.radius / grid.getCellWidth());
 		} else if (this.cellradius != null) {
 			hCells = (int) Math.ceil(this.cellradius);

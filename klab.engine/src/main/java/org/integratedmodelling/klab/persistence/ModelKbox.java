@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.h2gis.utilities.SpatialResultSet;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
@@ -19,6 +20,7 @@ import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
@@ -33,6 +35,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabStorageException;
 import org.integratedmodelling.klab.model.Model;
+import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.persistence.h2.SQL;
 import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
@@ -537,16 +540,14 @@ public class ModelKbox extends ObservableKbox {
 			ret.add(m);
 		}
 
-		
 		if (ret.size() > 0) {
-			/*
-			 * the observer come out of getAttributeObservers() with their inherent type
-			 * already set
-			 */
 			for (IObservable attr : model.getAttributeObservables().values()) {
+				
+				// attribute type must have inherent type added
+				IConcept type = attr.getType(); // FUCK attr.getBuilder().of(model.getObservables().get(0).getType()).buildObservable();
 				ModelReference m = ret.get(0).copy();
-				m.setObservable(attr.getType().getDefinition());
-				m.setObservableConcept(attr.getType());
+				m.setObservable(type.getDefinition());
+				m.setObservableConcept(type.getType());
 				m.setObservationType(attr.getObservationType().name());
 				// m.setObservationConcept(attr.getObservationType());
 				m.setDereifyingAttribute(attr.getLocalName());

@@ -22,6 +22,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
@@ -170,6 +171,13 @@ public interface IComputationContext extends IParameters<String> {
 	 */
 	<T extends IArtifact> Collection<Pair<String, T>> getArtifacts(Class<T> type);
 
+	/**
+	 * Return the model being computed, if any.
+	 * 
+	 * @return a model or null.
+	 */
+	IModel getModel();
+	
 	/**
 	 * Return a valid monitor for any communication.
 	 *

@@ -223,7 +223,17 @@ public interface IObservable extends IConcept, IResolvable {
 		 * @return the built concept
 		 * @throws KlabValidationException
 		 */
-		IConcept build() throws KlabValidationException;
+		IConcept buildConcept() throws KlabValidationException;
+
+		/**
+		 * Build an observable using the observable-specific options (currency, unit,
+		 * classification and detail types). Use after constructing from an observable
+		 * using {@link IObservable#getBuilder()}.
+		 * 
+		 * @return the built concept
+		 * @throws KlabValidationException
+		 */
+		IObservable buildObservable() throws KlabValidationException;
 
 		/**
 		 * Return any exceptions accumulated through the building process before build()
@@ -254,6 +264,14 @@ public interface IObservable extends IConcept, IResolvable {
 
 		Builder withoutAny(IConcept... concepts);
 
+		Builder withUnit(IUnit unit);
+		
+		Builder withCurrency(ICurrency currency);
+		
+		Builder downTo(IConcept detail);
+		
+		Builder by(IConcept classifier);
+		
 		/**
 		 * After any of the "without" functions get called, this can be checked on the
 		 * resulting builder to see what exactly was removed.

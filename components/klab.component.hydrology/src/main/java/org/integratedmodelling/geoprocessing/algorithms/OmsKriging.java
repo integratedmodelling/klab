@@ -1,5 +1,5 @@
 package org.integratedmodelling.geoprocessing.algorithms;
-
+// Forked by Ferd to address issues with z-axis, nodata values and (eventually) fix the zero-column bug and parallelize.
 /* This file is part of HortonMachine (http://www.hortonmachine.org)
  * (C) HydroloGIS - www.hydrologis.com 
  * 
@@ -670,11 +670,11 @@ public class OmsKriging extends HMModel {
      * @return the variogram value
      */
     private double variogram( double c0, double a, double sill, double rx, double ry, double rz ) {
-        if (isNovalue(rz)) {
+        if (isNovalue(rz) || Double.isNaN(rz)) {
             rz = 0;
         }
         double value = 0;
-        double h2 = Math.sqrt(rx * rx /*+ rz * rz*/ + ry * ry);
+        double h2 = Math.sqrt(rx * rx + rz * rz + ry * ry);
         if (pSemivariogramType == 0) {
             value = c0 + sill * (1 - Math.exp(-(h2 * h2) / (a * a)));
         }

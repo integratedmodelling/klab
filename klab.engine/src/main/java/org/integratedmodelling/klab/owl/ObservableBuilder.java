@@ -22,6 +22,8 @@ import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Traits;
+import org.integratedmodelling.klab.api.data.mediation.ICurrency;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -30,6 +32,8 @@ import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.SemanticType;
+import org.integratedmodelling.klab.common.mediation.Currency;
+import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -53,8 +57,6 @@ public class ObservableBuilder implements IObservable.Builder {
 	private IConcept goal;
 	private IConcept cooccurrent;
 	private IConcept adjacent;
-	// private IConcept classifier;
-	// private IConcept downTo;
 	private IConcept comparison;
 	private boolean optional;
 
@@ -64,6 +66,11 @@ public class ObservableBuilder implements IObservable.Builder {
 	private List<KlabValidationException> errors = new ArrayList<>();
 	private Set<IConcept> assignedRoles = new HashSet<>();
 
+	private IConcept classifier;
+	private IConcept downTo;
+	private IUnit unit;
+	private ICurrency currency;
+	
 	private boolean isTrivial = true;
 
 	// This is only for reporting
@@ -117,6 +124,13 @@ public class ObservableBuilder implements IObservable.Builder {
 		for (IConcept trait : Traits.INSTANCE.getDirectTraits(observable.getType())) {
 			this.traits.add(trait);
 		}
+		
+		// these are only used if buildObservable() is called
+		this.unit = observable.getUnit();
+		this.currency = observable.getCurrency();
+		this.downTo = observable.getDownTo();
+		this.classifier = observable.getClassifier();
+		
 	}
 
 	public ObservableBuilder(ObservableBuilder other) {
@@ -234,7 +248,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			/**
 			 * Build the argument, then add the operator
 			 */
-			Concept argument = getArgumentBuilder().build();
+			Concept argument = getArgumentBuilder().buildConcept();
 
 			switch (type) {
 			case ASSESSMENT:
@@ -1163,7 +1177,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	}
 
 	@Override
-	public Concept build() throws KlabValidationException {
+	public Concept buildConcept() throws KlabValidationException {
 
 		if (errors.size() > 0) {
 
@@ -1538,5 +1552,39 @@ public class ObservableBuilder implements IObservable.Builder {
 	@Override
 	public Collection<IConcept> getRemoved() {
 		return removed;
+	}
+
+	@Override
+	public IObservable buildObservable() throws KlabValidationException {
+		Observable ret = Observable.promote(buildConcept());
+		ret.setClassifier((Concept)classifier);
+		ret.setCurrency((Currency)currency);
+		ret.setUnit((Unit)unit);
+		ret.setDownTo((Concept)downTo);
+		return ret;
+	}
+
+	@Override
+	public Builder withUnit(IUnit unit) {
+		this.unit = unit;
+		return this;
+	}
+
+	@Override
+	public Builder withCurrency(ICurrency currency) {
+		this.currency = currency;
+		return this;
+	}
+
+	@Override
+	public Builder downTo(IConcept detail) {
+		this.downTo = detail;
+		return this;
+	}
+
+	@Override
+	public Builder by(IConcept classifier) {
+		this.classifier = classifier;
+		return this;
 	}
 }

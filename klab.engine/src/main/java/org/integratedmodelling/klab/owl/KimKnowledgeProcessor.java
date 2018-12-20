@@ -419,7 +419,7 @@ public enum KimKnowledgeProcessor {
 		Concept ret = null;
 		try {
 
-			ret = (Concept) builder.build();
+			ret = (Concept) builder.buildConcept();
 
 			/*
 			 * handle unions and intersections

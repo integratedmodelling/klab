@@ -68,7 +68,7 @@ public class FeatureBufferingInstantiator implements IInstantiator, IExpression 
 					"buffer instantiator: source artifact does not exist or is not an object artifact");
 		}
 
-		double bdistance = context.getScale().getSpace().getEnvelope().convertDistance(this.distance);
+		double bdistance = context.getScale().getSpace().getEnvelope().metersToDistance(this.distance);
 
 		List<IObjectArtifact> ret = new ArrayList<>();
 		context.getMonitor().info("starting spatial buffer operation");

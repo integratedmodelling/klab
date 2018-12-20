@@ -180,7 +180,7 @@ public class KrigingResolver implements IResolver<IState>, IExpression {
 				radius = Math.sqrt(grid.getEnvelope().getWidth() * grid.getEnvelope().getWidth()
 						+ grid.getEnvelope().getHeight() * grid.getEnvelope().getHeight()) / 20;
 			} else {
-				radius = context.getScale().getSpace().getEnvelope().convertDistance(radius);
+				radius = context.getScale().getSpace().getEnvelope().metersToDistance(radius);
 			}
 			kriging.pA = radius;
 			kriging.pNug = nugget;
@@ -195,7 +195,8 @@ public class KrigingResolver implements IResolver<IState>, IExpression {
 		kriging.pm = new TaskMonitor(context.getMonitor());
 		kriging.doProcess = true;
 		kriging.doReset = false;
-		context.getMonitor().info("Computing kriging with range = " + radius + ", sill = " + kriging.pS + ", nugget = " + nugget);
+		context.getMonitor().info("Computing kriging with range = " + grid.getEnvelope().distanceToMeters(radius)
+				+ ", sill = " + kriging.pS + ", nugget = " + nugget);
 		try {
 			kriging.process();
 		} catch (MatrixException e) {

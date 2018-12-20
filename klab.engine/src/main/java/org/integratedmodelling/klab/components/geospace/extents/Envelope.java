@@ -57,7 +57,7 @@ public class Envelope implements IEnvelope {
 	}
 	
 	@Override
-	public double convertDistance(double metersDistance) {
+	public double metersToDistance(double metersDistance) {
 		if (getProjection().isMeters()) {
 			return metersDistance;
 		}
@@ -65,6 +65,15 @@ public class Envelope implements IEnvelope {
 		return metersDistance * cMeters;
 	}
 
+	@Override
+	public double distanceToMeters(double originalDistance) {
+		if (getProjection().isMeters()) {
+			return originalDistance;
+		}
+		double cMeters = (getMaxX() - getMinX())/asShape().getStandardizedWidth();
+		return originalDistance / cMeters;
+	}
+	
 	private Envelope() {
 		// TODO Auto-generated constructor stub
 	}

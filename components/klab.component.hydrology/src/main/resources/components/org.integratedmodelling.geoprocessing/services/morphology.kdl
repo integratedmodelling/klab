@@ -28,10 +28,11 @@ export concept classifier
 }
 
 @constraint(xor(surface, chm))
+@constraint(xor(threshold, relative-threshold))
 export object findmaxima
-	"Classifies each cell into the numeric category of the containing geological form using 
-	 the Geomorphon algorithm."
-	 label 'Classify terrain morphology'
+	"Find relative maxima in a surface and extract them as points of polygons. Optionally parameterizable for
+	 tree extraction with vegetation-specific options.."
+	 label 'Extract maxima'
 {
 	optional import number surface
 		"A surface to scan for local maxima."
@@ -40,9 +41,16 @@ export object findmaxima
 		"A crown height raster map (with minimum values starting at 0)."
 		
 	optional input threshold 
-		"Height threshold of relevance for any maximum found." 
+		"Height threshold of relevance for any maximum found. If surface is passed, refers to the value in
+		 the map and will be subtracted the minimum value." 
 		default 0.0
 		
+	optional input relative-threshold 
+		"Height threshold of relevance for any maximum found, expressed as a proportion of the maximum 
+		 elevation over the baseline. If this is used, the 'threshold' parameter is used as a minimum
+		 height, to cut off local maxima that may be too low." 
+		default 0.0
+			
 	optional input radius
 		"Search radius in m. Represents the scaling of the point of view; large values can be used to
 		 mimic far points of view or for very flat areas. If unspecified, it is set to 1/100th of the

@@ -1,40 +1,55 @@
 package org.integratedmodelling.geoprocessing.morphology;
 
+import static org.hortonmachine.gears.libs.modules.HMConstants.floatNovalue;
+
+import java.awt.image.DataBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.geotools.data.simple.SimpleFeatureIterator;
 import org.hortonmachine.lesto.modules.vegetation.rastermaxima.OmsRasterMaximaFinder;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
+import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.rest.StateSummary;
+import org.integratedmodelling.klab.scale.Scale;
+import org.opengis.feature.simple.SimpleFeature;
 
 public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 
 	static enum Mode {
-		CUSTOM,
-		MIXED_PINES_AND_DECIDUOUS,
-		DECIDUOUS,
-		CONIFER
+		CUSTOM, MIXED_PINES_AND_DECIDUOUS_TREES, DECIDUOUS, CONIFER
 	}
-	
+
 	private double threshold;
+	private double relativeThreshold;
 	private double maxRadius;
+	private double borderDistanceThreshold = -1;
 	private double downsize = 0.6;
 	private boolean circular;
 	private int windowSize = 3;
 	private Mode mode = Mode.CUSTOM;
-	
+	private String chmId = null;
+	private String surfaceId = null;
+	int size = 3;
+
 	@Override
 	public IGeometry getGeometry() {
 		return Geometry.create("#s0");
@@ -48,6 +63,13 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 	@Override
 	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
 		MaximaFinderInstantiator ret = new MaximaFinderInstantiator();
+		ret.chmId = parameters.get("chm", String.class);
+		ret.surfaceId = parameters.get("surface", String.class);
+		ret.circular = parameters.get("circular", Boolean.FALSE);
+		ret.maxRadius = parameters.get("radius", 0.0);
+		ret.relativeThreshold = parameters.get("relative-threshold", 0.0);
+		ret.downsize = parameters.get("downsize", 0.6);
+		ret.threshold = parameters.get("threshold", -1.0);
 		return ret;
 	}
 
@@ -60,65 +82,92 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 			throw new KlabValidationException("Local maxima must be computed on a grid extent");
 		}
 
-//        maxFinder.inDsmDtmDiff = getRaster(inDsmDtmDiff);
-//        maxFinder.pMode = pMode;
-//        maxFinder.pThreshold = pThreshold;
-//        maxFinder.pSize = pSize;
-//        maxFinder.pPercent = pPercent;
-//        maxFinder.pMaxRadius = pMaxRadius;
-//        maxFinder.doCircular = doCircular;
-//        maxFinder.pBorderDistanceThres = pBorderDistanceThres;
-//        maxFinder.process();
-		
-		// should either provide a CHM ('chm') or an DEM; if the latter, this is differentiated by
-		// subtracting the minimum so that the algorithm can work.
-//
 		OmsRasterMaximaFinder algorithm = new OmsRasterMaximaFinder();
-//		algorithm.inDsmDtmDiff = GeotoolsUtils.INSTANCE.stateToCoverage(flowDir, DataBuffer.TYPE_FLOAT, floatNovalue);
+
+		if (chmId != null) {
+			IState state = context.getArtifact(chmId, IState.class);
+			if (state == null) {
+				throw new IllegalArgumentException(
+						"maxima extractor: no input state named '" + chmId + "' found in context");
+			}
+			algorithm.inDsmDtmDiff = GeotoolsUtils.INSTANCE.stateToCoverage(state, DataBuffer.TYPE_FLOAT, floatNovalue);
+		} else if (surfaceId != null) {
+
+			// differentiate the surface
+			IState state = context.getArtifact(surfaceId, IState.class);
+			if (state == null) {
+				throw new IllegalArgumentException(
+						"maxima extractor: no input state named '" + surfaceId + "' found in context");
+			}
+			StateSummary summary = Observations.INSTANCE.getStateSummary(state, ITime.INITIALIZATION);
+			algorithm.inDsmDtmDiff = GeotoolsUtils.INSTANCE.stateToCoverage(state, DataBuffer.TYPE_FLOAT, floatNovalue,
+					(value) -> {
+						if (value instanceof Number && !Double.isNaN(((Number) value).doubleValue())) {
+							value = ((Number) value).doubleValue() - summary.getRange().get(0);
+						}
+						return value;
+					});
+
+			if (relativeThreshold > 0) {
+				double cutoff = 0;
+				if (threshold > 0) {
+					cutoff = threshold;
+				}
+				threshold = ((summary.getRange().get(1) - summary.getRange().get(0)) * relativeThreshold);
+				if (threshold < cutoff) {
+					threshold = cutoff;
+				}
+			} else {
+				if (threshold < 0) {
+					// top third
+					threshold = (summary.getRange().get(1) - summary.getRange().get(0) / 1.5);
+				} else {
+					// threshold is in non-differentiated values
+					threshold -= summary.getRange().get(0);
+				}
+			}
+
+		} else {
+			// should not happen but it can for now (no xor arg validation yet).
+			throw new IllegalArgumentException(
+					"maxima extractor: no input state provided. Give either 'chm' or 'surface'.");
+		}
+
+		if (maxRadius == 0) {
+			maxRadius = Math.sqrt(grid.getEnvelope().getWidth() * grid.getEnvelope().getWidth()
+					+ grid.getEnvelope().getHeight() * grid.getEnvelope().getHeight()) / 50;
+			maxRadius = grid.getEnvelope().distanceToMeters(maxRadius);
+		}
+
+		algorithm.pMode = mode.name().toLowerCase();
+		algorithm.pThreshold = threshold;
+		algorithm.pSize = mode == Mode.CUSTOM ? 3 : size;
+		algorithm.pPercent = (int) (downsize * 100);
+		algorithm.pMaxRadius = maxRadius;
+		// see this - should probably be larger in small-scale, high-res contexts.
+		// Default was 2 and prevented any results.
+		algorithm.pTopBufferThresCellCount = 0;
+		algorithm.doCircular = circular;
+		algorithm.pBorderDistanceThres = borderDistanceThreshold;
 		algorithm.pm = new TaskMonitor(context.getMonitor());
 		algorithm.doProcess = true;
 		algorithm.doReset = false;
-		context.getMonitor().info("finding outlets...");
 		try {
 			algorithm.process();
 		} catch (Exception e) {
 			throw new KlabException(e);
 		}
 
-//		List<OutletData> outlets = new ArrayList<>();
-//
-//		for (int x = 0; x < image.getWidth(); x++) {
-//			for (int y = 0; y < image.getHeight(); y++) {
-//				if (itera.getSampleDouble(x, y, 0) == FlowNode.OUTLET) {
-//					double importance = (itca.getSampleDouble(x, y, 0) / (npix));
-//					if (importance >= threshold) {
-//						context.getMonitor()
-//								.debug("outlet at " + x + "," + y + " drains " + (importance * 100) + "% of context");
-//						double[] xy = grid.getWorldCoordinatesAt(x, y);
-//						outlets.add(new OutletData(xy[0], xy[1], importance));
-//					}
-//				}
-//			}
-//		}
-//
-//		context.getMonitor().info("found " + outlets.size() + " outlets with basins covering "
-//				+ StringUtils.percent(threshold) + " or more");
-//
-//		Collections.sort(outlets, new Comparator<OutletData>() {
-//
-//			@Override
-//			public int compare(OutletData arg0, OutletData arg1) {
-//				return new Double(arg1.importance).compareTo(arg0.importance);
-//			}
-//		});
-//
-//		for (int i = 0; i < outlets.size(); i++) {
-//			if (extract >= 0 && i >= extract) {
-//				break;
-//			}
-//			ret.add(context.newObservation(semantics, "outlet_" + (i + 1), Scale.substituteExtent(context.getScale(),
-//					Shape.create(outlets.get(i).x, outlets.get(i).y, grid.getProjection()))));
-//		}
+		SimpleFeatureIterator it = algorithm.outMaxima.features();
+		int i = 1;
+		while (it.hasNext()) {
+			SimpleFeature feature = it.next();
+			if (feature.getDefaultGeometry() instanceof com.vividsolutions.jts.geom.Geometry) {
+				IScale instanceScale = Scale.substituteExtent(context.getScale(), Shape.create(
+						(com.vividsolutions.jts.geom.Geometry) feature.getDefaultGeometry(), grid.getProjection()));
+				ret.add(context.newObservation(semantics, semantics.getLocalName() + "_" + (i + 1), instanceScale));
+			}
+		}
 
 		return ret;
 	}
