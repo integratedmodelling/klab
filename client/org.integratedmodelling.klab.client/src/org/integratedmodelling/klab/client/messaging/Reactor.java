@@ -130,7 +130,8 @@ public class Reactor {
 	public synchronized void dispatchMessage(Message message, Object identity) {
 
 		try {
-
+			// really not the size - if needed, use Instrumentation (messy)
+			System.out.println("received payload of size " + message.getPayload() == null ? 0 : message.getPayload().toString().length());
 			/*
 			 * 1. Determine payload type
 			 */

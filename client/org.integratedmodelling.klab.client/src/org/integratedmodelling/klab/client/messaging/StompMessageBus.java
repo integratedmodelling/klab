@@ -77,7 +77,7 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 		List<Transport> transports = new ArrayList<>(1);
 		transports.add(new WebSocketTransport(new StandardWebSocketClient(container)));
 		SockJsClient transport = new SockJsClient(transports);
-		
+
 		/*
 		 * and three more for the next one
 		 */
@@ -102,9 +102,18 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 	public void handleTransportError(StompSession session, Throwable throwable) {
 		if (throwable instanceof ConnectionLostException) {
             // if connection lost, call this
-			System.out.println("ACHTUNG - TRANPORT ERROR " + throwable);
+			error("Internal error: websockets message was likely too large. Client should be restarted. The problem has been reported.");
+        } else {
+			error("Unknown message transport error. Please report the error.");
         }
 		super.handleTransportError(session, throwable);
+	}
+
+	/**
+	 * Override for error handling.
+	 */
+	protected void error(String string) {
+		System.out.println("ERROR: " + string);
 	}
 
 	@Override
@@ -115,6 +124,7 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 	@Override
 	public void handleFrame(StompHeaders headers, Object payload) {
 		// won't happen
+		System.out.println("stomp message bus: what won't happen happened");
 	}
 
 	@Override
@@ -150,6 +160,9 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 				public synchronized void handleFrame(StompHeaders arg0, Object payload) {
 
 					try {
+						
+						System.err.println("received payload of size " + (payload == null ? 0 : payload.toString().length()));
+
 						final Message message = (Message) payload;
 
 						/*
@@ -181,7 +194,7 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 						}.start();
 
 					} catch (Throwable e) {
-						System.out.println("ACHTUNG - COMM ERROR " + e);
+						error("Internal: websockets communication error: " + e);
 						throw new RuntimeException(e);
 					}
 				}

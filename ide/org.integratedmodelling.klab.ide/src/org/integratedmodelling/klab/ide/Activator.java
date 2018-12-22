@@ -154,7 +154,15 @@ public class Activator extends AbstractUIPlugin {
 		plugin = this;
 
 		this.engineStatusMonitor = new EngineMonitor(EngineMonitor.ENGINE_DEFAULT_URL, () -> engineOn(),
-				() -> engineOff(), initialSessionId);
+				() -> engineOff(), initialSessionId) {
+
+					@Override
+					protected void error(String string) {
+						Eclipse.INSTANCE.alert(string);
+						Eclipse.INSTANCE.error(string);
+					}
+			
+		};
 
 		/*
 		 * setup the language helper with access to the grammar

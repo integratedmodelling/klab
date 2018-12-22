@@ -148,7 +148,14 @@ public class EngineMonitor {
                 this.bus.stop();
             }
             this.bus = new StompMessageBus(
-                    engineUrl.replaceAll("http://", "ws://").replaceAll("https://", "ws://") + "/message");
+                    engineUrl.replaceAll("http://", "ws://").replaceAll("https://", "ws://") + "/message") {
+
+						@Override
+						protected void error(String string) {
+							EngineMonitor.this.error(string);
+						}
+            	
+            };
             onEngineUp.run();
         } else {
             stop();
@@ -156,7 +163,15 @@ public class EngineMonitor {
         }
     }
 
-    public String getEngineId() {
+    /**
+     * Override for better error handling
+     * @param string
+     */
+    protected void error(String string) {
+		System.err.println(string);
+	}
+
+	public String getEngineId() {
         return this.engineKey;
     }
 

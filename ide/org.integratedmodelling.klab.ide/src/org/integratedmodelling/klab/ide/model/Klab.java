@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.client.utils.JsonUtils;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
