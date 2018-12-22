@@ -363,13 +363,14 @@ public enum Observations implements IObservationService {
 			}
 
 			ret.setDataSummary(ds);
-
-			// FIXME REMOVE this is just for testing
 		}
 
 		ret.getActions().add(ActionReference.separator());
+		// ACTIONS diocan
 		// ret.getActions().add(new ActionReference("Show metadata", "ShowMetadata"));
 
+		
+		
 		return ret;
 	}
 

@@ -161,7 +161,7 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 
 					try {
 						
-						System.err.println("received payload of size " + (payload == null ? 0 : payload.toString().length()));
+//						System.err.println("received payload of size " + (payload == null ? 0 : payload.toString().length()));
 
 						final Message message = (Message) payload;
 
