@@ -1249,11 +1249,6 @@ public class Scale implements IScale {
 				long midOfs = (endSplit - beginSplit) / 2;
 				long end = this.endSplit;
 				this.endSplit = beginSplit + midOfs;
-
-				// System.out.println(beginSplit + "-" + end + " -> " + "(" + beginSplit + "-" +
-				// this.endSplit + " "
-				// + (beginSplit + midOfs) + "-" + end + ")");
-
 				return new SplIt(beginSplit + midOfs, end, monitor);
 			}
 			return null;
