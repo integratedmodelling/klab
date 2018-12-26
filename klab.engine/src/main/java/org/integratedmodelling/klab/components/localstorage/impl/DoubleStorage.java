@@ -1,13 +1,13 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
+import java.util.Arrays;
+
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.utils.Utils;
-import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.factory.Nd4j;
 
 /**
  * 
@@ -16,15 +16,15 @@ import org.nd4j.linalg.factory.Nd4j;
  */
 public class DoubleStorage extends Storage implements IDataArtifact {
 
-//	private double[] data;
+	private double[] data;
 
-	private INDArray data;
+//	private INDArray data;
 
 	public DoubleStorage(IGeometry scale) {
 		super(scale);
-		this.data = Nd4j.valueArrayOf(scale.size(), Double.NaN);
-//		this.data = new double[(int) scale.size()]; // LArrayJ.newLFloatArray(scale.size());
-//		Arrays.fill(this.data, Double.NaN);
+//		this.data = Nd4j.valueArrayOf(scale.size(), Double.NaN);
+		this.data = new double[(int) scale.size()]; // LArrayJ.newLFloatArray(scale.size());
+		Arrays.fill(this.data, Double.NaN);
 	}
 
 	@Override
@@ -39,7 +39,8 @@ public class DoubleStorage extends Storage implements IDataArtifact {
 			// mediation needed
 			throw new KlabUnsupportedFeatureException("DIRECT SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
 		}
-		double ret = data.getDouble(offset);
+//		double ret = data.getDouble(offset);
+		double ret = data[(int)offset];
 		return Double.isNaN(ret) ? null : (double) ret;
 	}
 
@@ -50,10 +51,10 @@ public class DoubleStorage extends Storage implements IDataArtifact {
 			// mediation needed
 			throw new KlabUnsupportedFeatureException("DIRECT SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
 		}
-		data.putScalar(offset, value instanceof Number ? ((Number) value).doubleValue()
-				: (value == null ? Double.NaN : convert(value)));
-		// data.update(offset, value instanceof Number ? ((Number) value).floatValue() :
-		// convert(value));
+//		data.putScalar(offset, value instanceof Number ? ((Number) value).doubleValue()
+//				: (value == null ? Double.NaN : convert(value)));
+		 data[(int)offset] = value instanceof Number ? ((Number) value).floatValue() 
+			 : (value == null ? Double.NaN : convert(value));
 		return offset;
 	}
 
@@ -65,7 +66,7 @@ public class DoubleStorage extends Storage implements IDataArtifact {
 
 	@Override
 	public void release() {
-		data.cleanup();
+//		data.cleanup();
 	}
 
 	@Override

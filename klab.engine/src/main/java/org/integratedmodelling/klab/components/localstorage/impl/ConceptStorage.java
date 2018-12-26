@@ -19,12 +19,13 @@ import com.google.common.collect.Maps;
 public class ConceptStorage extends Storage implements IDataArtifact, IKeyHolder {
 
 	BiMap<IConcept, Integer> conceptKey = Maps.synchronizedBiMap(HashBiMap.create());
-	INDArray data;
+//	INDArray data;
+	int[] data;
 	IDataKey dataKey;
 
 	public ConceptStorage(IGeometry scale) {
 		super(scale);
-		data = Nd4j.valueArrayOf(scale.size(), 0);
+		data = new int[(int)scale.size()]; // Nd4j.valueArrayOf(scale.size(), 0);
 	}
 
 	@Override
@@ -39,7 +40,7 @@ public class ConceptStorage extends Storage implements IDataArtifact, IKeyHolder
 			// mediation needed
 			throw new KlabUnimplementedException("DIRECT SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
 		}
-		int key = data.getInt(new int[] { (int)offset });
+		int key = data[(int)offset];  // data.getInt(new int[] { (int)offset });
 		return key == Integer.MIN_VALUE ? null : conceptKey.inverse().get(key);
 	}
 
@@ -51,7 +52,7 @@ public class ConceptStorage extends Storage implements IDataArtifact, IKeyHolder
 			throw new KlabUnimplementedException("DIRECT SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
 		}
 		if (value == null) {
-			data.putScalar(offset, Integer.MIN_VALUE);
+			data[(int)offset] = Integer.MIN_VALUE; // data.putScalar(offset, Integer.MIN_VALUE);
 		} else if (value instanceof IConcept) {
 			int cValue = dataKey == null ? conceptKey.size() : dataKey.reverseLookup(value);
 			if (conceptKey.containsKey((IConcept) value)) {
@@ -62,7 +63,7 @@ public class ConceptStorage extends Storage implements IDataArtifact, IKeyHolder
 				}
 				conceptKey.put((IConcept) value, cValue);
 			}
-			data.putScalar(offset, cValue);
+			data[(int)offset] = cValue; // data.putScalar(offset, cValue);
 		} else {
 			throw new KlabValidationException(
 					"cannot set value of type " + value.getClass().getCanonicalName() + " into a concept storage");
