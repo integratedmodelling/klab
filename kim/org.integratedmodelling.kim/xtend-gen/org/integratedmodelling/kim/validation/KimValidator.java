@@ -5,6 +5,7 @@
 package org.integratedmodelling.kim.validation;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -322,8 +323,8 @@ public class KimValidator extends AbstractKimValidator {
   @Check
   public void checkModelDefinition(final ModelBodyStatement model) {
     ModelStatement statement = null;
-    java.util.List<KimObservable> observables = CollectionLiterals.<KimObservable>newArrayList();
-    java.util.List<KimObservable> dependencies = CollectionLiterals.<KimObservable>newArrayList();
+    java.util.List<KimObservable> observables = Lists.<KimObservable>newArrayList();
+    java.util.List<KimObservable> dependencies = Lists.<KimObservable>newArrayList();
     boolean ok = true;
     EObject _eContainer = model.eContainer();
     if ((_eContainer instanceof ModelStatement)) {
@@ -499,7 +500,7 @@ public class KimValidator extends AbstractKimValidator {
     boolean _tripleNotEquals_1 = (_classification != null);
     if (_tripleNotEquals_1) {
       java.util.List<KimConcept> classifiers = null;
-      classifiers = CollectionLiterals.<KimConcept>newArrayList();
+      classifiers = Lists.<KimConcept>newArrayList();
       EnumSet<IKimConcept.Type> type = EnumSet.<IKimConcept.Type>noneOf(IKimConcept.Type.class);
       boolean cchecked = false;
       EList<Classifier> _classifiers = model.getClassification().getClassifiers();
@@ -1872,7 +1873,7 @@ public class KimValidator extends AbstractKimValidator {
     KimConceptStatement ret = new KimConceptStatement(concept, _xifexpression);
     boolean ok = true;
     boolean isAlias = concept.isAlias();
-    java.util.List<KimConceptStatement.ParentConcept> declaredParents = CollectionLiterals.<KimConceptStatement.ParentConcept>newArrayList();
+    java.util.List<KimConceptStatement.ParentConcept> declaredParents = Lists.<KimConceptStatement.ParentConcept>newArrayList();
     boolean template = false;
     int ai = 0;
     EList<Annotation> _annotations = concept.getAnnotations();
@@ -2310,7 +2311,7 @@ public class KimValidator extends AbstractKimValidator {
         ok = false;
       } else {
         int i_3 = 0;
-        ArrayList<IKimConcept> targets = CollectionLiterals.<IKimConcept>newArrayList();
+        ArrayList<KimConcept> targets = Lists.<KimConcept>newArrayList();
         EList<ConceptDeclaration> _targetObservables = concept.getTargetObservables();
         for (final ConceptDeclaration t : _targetObservables) {
           {
@@ -2334,7 +2335,7 @@ public class KimValidator extends AbstractKimValidator {
           targets.add(null);
         }
         i_3 = 0;
-        ArrayList<IKimConcept> restricteds = CollectionLiterals.<IKimConcept>newArrayList();
+        ArrayList<KimConcept> restricteds = Lists.<KimConcept>newArrayList();
         EList<ConceptDeclaration> _restrictedObservables = concept.getRestrictedObservables();
         for (final ConceptDeclaration t_1 : _restrictedObservables) {
           {
@@ -2371,8 +2372,8 @@ public class KimValidator extends AbstractKimValidator {
                 KimPackage.Literals.CONCEPT_STATEMENT_BODY__ROLES, i_3);
               ok = false;
             } else {
-              for (final IKimConcept target : targets) {
-                for (final IKimConcept restricted : restricteds) {
+              for (final KimConcept target : targets) {
+                for (final KimConcept restricted : restricteds) {
                   ret.addRole(role, target, restricted);
                 }
               }

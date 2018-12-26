@@ -1435,7 +1435,7 @@ public class MiscUtilities {
 		// TODO: Is this a safe way for comparing when last file was modified?
 		if (backupFile.lastModified() <= file.lastModified()) {
 			try {
-				URLUtils.copy(file.toURL(), newFile);
+				URLUtils.copy(file.toURI().toURL(), newFile);
 			} catch (Exception e) {
 				throw new KlabIOException(e.getMessage());
 			}

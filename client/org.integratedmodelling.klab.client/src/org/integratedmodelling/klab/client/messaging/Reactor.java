@@ -131,7 +131,7 @@ public class Reactor {
 
 		try {
 			// really not the size - if needed, use Instrumentation (messy)
-			System.out.println("received payload of size " + message.getPayload() == null ? 0 : message.getPayload().toString().length());
+//			System.out.println("received payload of size " + message.getPayload() == null ? 0 : message.getPayload().toString().length());
 			/*
 			 * 1. Determine payload type
 			 */

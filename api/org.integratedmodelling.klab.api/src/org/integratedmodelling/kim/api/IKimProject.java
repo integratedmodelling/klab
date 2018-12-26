@@ -15,24 +15,65 @@ public interface IKimProject {
 	static public final String TESTS_FOLDER = "tests";
 	static public final String RESOURCE_FOLDER = "resources";
 
+	/**
+	 * 
+	 * @return
+	 */
 	String getDefinedWorldview();
 
+	/**
+	 * 
+	 * @return
+	 */
 	List<File> getSourceFiles();
 
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
 	IKimNamespace getNamespace(String id);
 
+	/**
+	 * 
+	 * @return
+	 */
 	IKimWorkspace getWorkspace();
 
+	/**
+	 * 
+	 * @return
+	 */
 	String getName();
 
+	/**
+	 * 
+	 * @return
+	 */
 	String getWorldview();
 
+	/**
+	 * 
+	 * @return
+	 */
 	File getRoot();
 
+	/**
+	 * 
+	 * @return
+	 */
 	Properties getProperties();
 
+	/**
+	 * 
+	 * @return
+	 */
 	List<IKimNamespace> getNamespaces();
 
+	/**
+	 * 
+	 * @return
+	 */
 	boolean isErrors();
 
 	boolean isWarnings();

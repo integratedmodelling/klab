@@ -266,7 +266,7 @@ public class GroovyExpressionPreprocessor {
 		List<List<Token>> groups = new ArrayList<>();
 		Lexer lexer = new Lexer(new StringReader(code));
 		lexer.setWhitespaceIncluded(true);
-		String ret = "";
+//		String ret = "";
 		// String remainder = "";
 
 		try {
