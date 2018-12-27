@@ -10,6 +10,7 @@ import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.integratedmodelling.klab.ide.navigator.model.EDocumentationFolder;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
@@ -22,9 +23,10 @@ public class KlabViewerComparator extends ViewerComparator {
 	static Map<Class<? extends ENavigatorItem>, Integer> categories = new HashMap<>();
 	static {
 		categories.put(ENamespace.class, 0);
-		categories.put(EResourceFolder.class, 1);
-		categories.put(EScriptFolder.class, 2);
-		categories.put(ETestFolder.class, 3);
+		categories.put(EDocumentationFolder.class, 1);
+		categories.put(EResourceFolder.class, 2);
+		categories.put(EScriptFolder.class, 3);
+		categories.put(ETestFolder.class, 4);
 	}
 
 	public KlabViewerComparator() {

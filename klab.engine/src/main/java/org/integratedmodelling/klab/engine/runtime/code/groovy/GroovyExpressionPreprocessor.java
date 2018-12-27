@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 import org.codehaus.groovy.antlr.parser.GroovyLexer;
@@ -39,6 +40,7 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.knowledge.IKnowledge;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -142,6 +144,7 @@ public class GroovyExpressionPreprocessor {
 	List<TokenDescriptor> tokens = new ArrayList<>();
 	IRuntimeContext context;
 	private boolean contextual;
+	private List<IObservable> declarations = new ArrayList<>();
 
 	static final int KNOWLEDGE = 1;
 	static final int DEFINE = 2;
@@ -153,6 +156,7 @@ public class GroovyExpressionPreprocessor {
 	static final int KNOWN_MODEL_OBJECT = 8;
 	static final int NEWLINE = 9;
 	static final int INFERENCE = 10;
+	private static final String DECLARATION_ID_PREFIX = "___DECL_";
 
 	public GroovyExpressionPreprocessor(INamespace currentNamespace, Set<String> knownIdentifiers, IGeometry geometry,
 			IRuntimeContext context, boolean contextual) {
@@ -263,6 +267,9 @@ public class GroovyExpressionPreprocessor {
 		 */
 		code = code.replaceAll("\\\\\\]", "]");
 		
+		// substitute all #(...) declarations with ___DECL_n 
+		code = preprocessDeclarations(code);
+		
 		List<List<Token>> groups = new ArrayList<>();
 		Lexer lexer = new Lexer(new StringReader(code));
 		lexer.setWhitespaceIncluded(true);
@@ -276,10 +283,6 @@ public class GroovyExpressionPreprocessor {
 			boolean wasSpecial = false;
 			while (true) {
 
-				/*
-				 * TODO identify all #(...) sections with knowledge declarations and substitute them
-				 */
-				
 				Token token = lexer.nextToken();
 				isSpecial = token != null
 						&& (token.getType() == GroovyLexer.IDENT || delimiters.contains(token.getText()));
@@ -342,6 +345,46 @@ public class GroovyExpressionPreprocessor {
 		}
 		analyze();
 		return reconstruct();
+	}
+
+	private String preprocessDeclarations(String code) {
+		
+		StringBuffer ret = new StringBuffer(code.length());
+		int level = -1;
+		int ndecl = 0;
+		for (int i = 0; i < code.length(); i++) {
+			char c = code.charAt(i);
+			StringBuffer declaration = new StringBuffer(code.length());
+			if (c == '#' && i < code.length() - 2 && code.charAt(i+1) == '(') {
+				i += 2;
+				for (; i < code.length(); i++) {
+					if (code.charAt(i) == '(') {
+						level ++;
+						declaration.append(code.charAt(i));
+					} else if (code.charAt(i) == ')') {
+						if (level == -1) {
+							break;
+						} else {
+							level --;
+							declaration.append(code.charAt(i));
+						}
+					} else {
+						declaration.append(code.charAt(i));
+					}
+				}
+				
+				if (level >= 0) {
+					errors.add(new KimNotification("concept declaration: unexpected end of input: " + declaration.toString(), Level.SEVERE));
+				} else {
+					this.declarations .add(Observables.INSTANCE.declare(declaration.toString()));
+					ret.append(DECLARATION_ID_PREFIX + (ndecl++));
+				}
+				
+			} else {
+				ret.append(c);
+			}
+		}
+		return ret.toString();
 	}
 
 	public IKimConcept.Type getIdentifierType(String ret, IRuntimeContext context) {
@@ -459,6 +502,10 @@ public class GroovyExpressionPreprocessor {
 		if (currentToken.equals("unknown")) {
 			return new TokenDescriptor(LITERAL_NULL, currentToken);
 		}
+		
+		if (currentToken.startsWith(DECLARATION_ID_PREFIX)) {
+			return new TokenDescriptor(KNOWLEDGE, currentToken);
+		}
 
 		if ((currentToken.equals("space") && (domains != null && domains.getDimension(Type.SPACE) != null))
 				|| (currentToken.equals("time") && (domains != null && domains.getDimension(Type.TIME) != null))) {
@@ -542,6 +589,9 @@ public class GroovyExpressionPreprocessor {
 	}
 
 	private String translateKnowledge(String k) {
+		if (k.startsWith(DECLARATION_ID_PREFIX)) {
+			System.out.println("XZIO " + k);
+		}
 		return "_getConcept(\"" + k + "\")";
 	}
 

@@ -44,20 +44,22 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
  * artifact is its {@link IKimModel syntactic specification}, not a
  * {@link IModel runtime} incarnation of the model, which is an Agent.
  * <p>
- * The equivalent of a OPM Plan is a IDataflow, which organizes model Agents
- * into a strategy to perform Activities. The latter are <strong>observation
- * activities</strong> and are typed according to {@link ObservationType}: they
- * may be acknowledgements, computations (either resolutions or instantiations)
- * or detections.
+ * The equivalent of a OPM Plan is a {@link IDataflow}, which organizes model
+ * Agents into a strategy to perform Activities. The latter are
+ * <strong>observation activities</strong> and are typed according to
+ * {@link ObservationType}: they may be acknowledgements, computations (either
+ * resolutions or instantiations) or detections.
  * <p>
- * The responsibility for Activities is attributed to Agents, which may be a
- * {@link IUserIdentity} (in acknowledgments), the AI in k.LAB (for attribution
- * of plans) or {@link IModel models}. Model agents are associated with the
- * correspondent model artifact, which holds further provenance info. In the
- * k.LAB graph the model agent and the model artifact are just coalesced, as
- * IModel contains its statement. In the full OPM graph, the model artifact is
- * the plan that was followed, by the model agent, in executing the computation
- * activity that created other artifacts.
+ * The observation Activities are organized into super-activities (processes)
+ * correspondent to ITask identities in k.LAB. The responsibility for Activities
+ * is attributed to Agents, which may be {@link IUserIdentity} or the AI in
+ * k.LAB (for attribution of tasks and acknowledgements) or {@link IModel
+ * models} for attribution of individual observation activities. Model agents
+ * are associated with the correspondent model artifact, which holds further
+ * provenance info. In the k.LAB graph the model agent and the model artifact
+ * are just coalesced, as IModel contains its statement. In the full OPM graph,
+ * the model artifact is the plan that was followed, by the model agent, in
+ * executing the computation activity that created other artifacts.
  * <p>
  * The models' sequential execution is driven by a {@link IDataflow}, which is
  * an entity of type Plan, attributed to the AI in k.LAB, an agent representing
@@ -94,10 +96,11 @@ public interface IProvenance {
 
 		/**
 		 * A unique string ID.
+		 * 
 		 * @return
 		 */
 		String getId();
-		
+
 		long getTimestamp();
 
 		/**

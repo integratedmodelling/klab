@@ -173,7 +173,7 @@ public class KlabNavigatorActions {
 			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 					.showView(DocumentationEditor.ID);
 			if (view != null) {
-				((DocumentationEditor) view).setTarget(model.getDocId(), model);;
+				((DocumentationEditor) view).setTarget(model.getDocId(), model);
 			}
 		} catch (PartInitException e) {
 			Eclipse.INSTANCE.handleException(e);
@@ -185,7 +185,7 @@ public class KlabNavigatorActions {
 			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 					.showView(ReferencesEditor.ID);
 			if (view != null) {
-				((ReferencesEditor) view).setTarget(project);;
+				((ReferencesEditor) view).setTarget(project);
 			}
 		} catch (PartInitException e) {
 			Eclipse.INSTANCE.handleException(e);

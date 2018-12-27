@@ -99,6 +99,8 @@ abstract class ActionBase extends Script {
 					NullObject.metaClass.div = { Object n -> Double.NaN }
 					NullObject.metaClass.plus = { Object n -> Double.NaN }
 					NullObject.metaClass.minus = { Object n -> Double.NaN }
+					// without this, null concepts are everything
+					NullObject.metaClass.isa = { Object n -> false }
 	}
 	
 	/**

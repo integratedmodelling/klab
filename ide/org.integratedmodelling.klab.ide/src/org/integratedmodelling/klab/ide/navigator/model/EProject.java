@@ -12,59 +12,61 @@ import org.integratedmodelling.klab.ide.Activator;
 
 public class EProject extends ENavigatorItem {
 
-    IKimProject delegate;
+	IKimProject delegate;
 
-    public EProject(IKimProject project, ENavigatorItem parent) {
-        super(project.getName(), parent);
-        this.delegate = project;
-    }
+	public EProject(IKimProject project, ENavigatorItem parent) {
+		super(project.getName(), parent);
+		this.delegate = project;
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T getAdapter(Class<T> adapter) {
-        if (IResource.class.isAssignableFrom(adapter)) {
-            return (T) ResourcesPlugin.getWorkspace().getRoot().getProject(delegate.getName());
-        }
-        return null;
-    }
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		if (IResource.class.isAssignableFrom(adapter)) {
+			return (T) ResourcesPlugin.getWorkspace().getRoot().getProject(delegate.getName());
+		}
+		return null;
+	}
 
-    @Override
-    public ENavigatorItem[] getEChildren() {
+	@Override
+	public ENavigatorItem[] getEChildren() {
 
-        List<ENavigatorItem> ret = new ArrayList<>(delegate.getNamespaces().size());
+		List<ENavigatorItem> ret = new ArrayList<>(delegate.getNamespaces().size());
 
-        for (IKimNamespace child : delegate.getNamespaces()) {
-            if (!child.isWorldviewBound() && !child.isProjectKnowledge()) {
-                ret.add(new ENamespace(child, this));
-            }
-        }
+		for (IKimNamespace child : delegate.getNamespaces()) {
+			if (!child.isWorldviewBound() && !child.isProjectKnowledge()) {
+				ret.add(new ENamespace(child, this));
+			}
+		}
 
-        /*
-         * we don't let worldviews have resources or scripts
-         */
-        if (delegate.getDefinedWorldview() == null) {
-            ret.add(new EResourceFolder(this));
-            ret.add(new EScriptFolder(this, this,
-                    new File(delegate.getRoot() + File.separator + IKimProject.SCRIPT_FOLDER)));
-            ret.add(new ETestFolder(this, this,
-                    new File(delegate.getRoot() + File.separator + IKimProject.TESTS_FOLDER)));
-        }
+		/*
+		 * we don't let worldviews have resources or scripts
+		 */
+		if (delegate.getDefinedWorldview() == null) {
+			ret.add(new EDocumentationFolder(this,
+					new File(delegate.getRoot() + File.separator + IKimProject.DOCUMENTATION_FOLDER), "Documentation"));
+			ret.add(new EResourceFolder(this));
+			ret.add(new EScriptFolder(this, this,
+					new File(delegate.getRoot() + File.separator + IKimProject.SCRIPT_FOLDER)));
+			ret.add(new ETestFolder(this, this,
+					new File(delegate.getRoot() + File.separator + IKimProject.TESTS_FOLDER)));
+		}
 
-        return ret.toArray(new ENavigatorItem[ret.size()]);
-    }
+		return ret.toArray(new ENavigatorItem[ret.size()]);
+	}
 
-    @Override
-    public boolean hasEChildren() {
-        return true;
-    }
+	@Override
+	public boolean hasEChildren() {
+		return true;
+	}
 
-    public String getName() {
-        return delegate.getName();
-    }
+	public String getName() {
+		return delegate.getName();
+	}
 
-    public File getRoot() {
-        return delegate.getRoot();
-    }
+	public File getRoot() {
+		return delegate.getRoot();
+	}
 
 	public boolean isErrors() {
 		for (IKimNamespace child : delegate.getNamespaces()) {
@@ -83,7 +85,7 @@ public class EProject extends ENavigatorItem {
 		}
 		return false;
 	}
-	
+
 	public IKimProject getProject() {
 		return delegate;
 	}
@@ -92,8 +94,8 @@ public class EProject extends ENavigatorItem {
 		return delegate.getDefinedWorldview() != null;
 	}
 
-    public EResourceFolder getResourceFolder() {
-        return new EResourceFolder(this);
-    }
+	public EResourceFolder getResourceFolder() {
+		return new EResourceFolder(this);
+	}
 
 }
