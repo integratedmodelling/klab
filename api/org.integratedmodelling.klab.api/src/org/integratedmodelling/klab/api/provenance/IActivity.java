@@ -18,6 +18,7 @@ package org.integratedmodelling.klab.api.provenance;
 import java.util.Optional;
 
 /**
+ * Activity (process). 
  * 
  * @author Ferd
  * @version $Id: $Id

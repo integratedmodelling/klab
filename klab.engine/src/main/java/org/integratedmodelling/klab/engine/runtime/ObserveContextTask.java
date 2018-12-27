@@ -103,6 +103,8 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 							 */
 							ret = (ISubject) dataflow.run(scope.getCoverage().copy(), monitor);
 
+							getActivity().finished();
+							
 							/*
 							 * save the initial contextualization strategy with the context
 							 */

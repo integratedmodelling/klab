@@ -94,6 +94,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 	 * A scheduler to periodically check for abandoned sessions and close them
 	 */
 	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+	
 	/**
 	 * Check interval for session expiration in minutes. TODO configure.
 	 */

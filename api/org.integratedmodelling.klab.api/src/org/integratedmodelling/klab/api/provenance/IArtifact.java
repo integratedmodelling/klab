@@ -26,7 +26,6 @@ import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -223,6 +222,13 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 	 * @return a {@link org.integratedmodelling.klab.api.provenance.IAgent} object.
 	 */
 	IAgent getOwner();
+	
+	/**
+	 * The activity (process) that generated the artifact.
+	 * 
+	 * @return
+	 */
+	IActivity getGenerator();
 
 	/**
 	 * Antecedents are the sources of a 'derivedBy' relationship.

@@ -92,6 +92,12 @@ public interface IProvenance {
 	 */
 	abstract interface Node {
 
+		/**
+		 * A unique string ID.
+		 * @return
+		 */
+		String getId();
+		
 		long getTimestamp();
 
 		/**

@@ -30,6 +30,7 @@ import com.google.common.collect.Lists;
 public abstract class Artifact implements IArtifact {
 
 	List<IAnnotation> annotations = new ArrayList<>();
+	private Activity generator;
 
 	/*
 	 * all observation data in a group share the same list; the pre-build object is
@@ -169,6 +170,11 @@ public abstract class Artifact implements IArtifact {
 			public Type getType() {
 				return Type.VOID;
 			}
+
+			@Override
+			public String getId() {
+				return "emptyArtifact";
+			}
 		};
 		ret.empty = true;
 		return ret;
@@ -177,6 +183,14 @@ public abstract class Artifact implements IArtifact {
 	@Override
 	public void release() {
 		System.out.println("RELEASING ARTIFACT - UNIMPLEMENTED!");
+	}
+
+	public Activity getGenerator() {
+		return generator;
+	}
+
+	public void setGenerator(Activity generator) {
+		this.generator = generator;
 	}
 
 }

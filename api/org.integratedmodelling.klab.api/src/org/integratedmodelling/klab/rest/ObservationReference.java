@@ -145,6 +145,7 @@ public class ObservationReference implements IObservationReference {
 	private String encodedShape;
 	private String spatialProjection;
 	private String id;
+	private String rootContextId;
 	private String label;
 	private String observable;
 	private ValueType valueType;
@@ -152,7 +153,6 @@ public class ObservationReference implements IObservationReference {
 	private Set<IKimConcept.Type> semantics = new HashSet<>();
 	private Set<GeometryType> geometryTypes = new HashSet<>();
 	private String literalValue;
-	// private List<ObservationReference> siblings = new ArrayList<>();
 	private List<String> traits = new ArrayList<>();
 	private Map<String, String> metadata = new HashMap<>();
 	private String taskId;
@@ -694,6 +694,14 @@ public class ObservationReference implements IObservationReference {
 
 	public void setExportFormats(List<ExportFormat> exportFormats) {
 		this.exportFormats = exportFormats;
+	}
+
+	public String getRootContextId() {
+		return rootContextId;
+	}
+
+	public void setRootContextId(String rootContextId) {
+		this.rootContextId = rootContextId;
 	}
 
 }

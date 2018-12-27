@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Utils;
 
 public abstract class AbstractSingletonStorage<T> extends Artifact implements IDataArtifact {
@@ -26,10 +27,16 @@ public abstract class AbstractSingletonStorage<T> extends Artifact implements ID
 	// value was set
 	boolean initialized = false;
 	IObjectArtifact parent;
+	String id = NameGenerator.shortUUID();
 
 	protected AbstractSingletonStorage(IObservable observable, Scale scale) {
 		this.semantics = observable;
 		this.scale = scale;
+	}
+
+	@Override
+	public String getId() {
+		return id;
 	}
 
 	// @Override

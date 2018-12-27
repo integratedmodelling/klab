@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.provenance.Activity;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.rest.DataflowReference;
@@ -121,6 +122,9 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 						// at merge.
 						ret = (IObservation) dataflow.run(scope.getCoverage().copy(), monitor);
 
+						// task is done, record for provenance
+						getActivity().finished();
+						
 						/*
 						 * The actuator has sent this already, but we send the final artifact a second
 						 * time to bring it to the foreground for the listeners

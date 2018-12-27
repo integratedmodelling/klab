@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
@@ -64,11 +65,13 @@ import org.integratedmodelling.klab.data.storage.BooleanSingletonStorage;
 import org.integratedmodelling.klab.data.storage.ConceptSingletonStorage;
 import org.integratedmodelling.klab.data.storage.DoubleSingletonStorage;
 import org.integratedmodelling.klab.dataflow.Actuator;
+import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStatusException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.provenance.Activity;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
@@ -327,7 +330,13 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			boolean scalarStorage) {
 
 		boolean createActors = scale.getTime() != null;
-
+		Activity activity = null;
+		
+		IIdentity identity = context.getMonitor().getIdentity();
+		if (identity instanceof AbstractTask) {
+			activity = ((AbstractTask<?>)identity).getActivity();
+		}
+		
 		Observation ret = null;
 		if (observable.is(Type.SUBJECT)) {
 			ret = new Subject(observable.getLocalName(), (Observable) observable, (Scale) scale, context);
@@ -369,9 +378,11 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 					observable.getLocalName(), (Observable) observable, (Scale) scale, context);
 		}
 
-		// TODO if actors must be created (i.e. there are temporal transitions etc) wrap
+		ret.setGenerator(activity);
+
 		// into an Akka
 		// actor and register with the actor
+		
 
 		return ret;
 	}
@@ -379,6 +390,13 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	static IRelationship createRelationship(Observable observable, IScale scale, ISubject relationshipSource,
 			ISubject relationshipTarget, RuntimeContext runtimeContext) {
 
+		Activity activity = null;
+		
+		IIdentity identity = runtimeContext.getMonitor().getIdentity();
+		if (identity instanceof AbstractTask) {
+			activity = ((AbstractTask<?>)identity).getActivity();
+		}
+		
 		IRelationship ret = new Relationship(observable.getLocalName(), (Observable) observable, (Scale) scale,
 				runtimeContext);
 
@@ -387,6 +405,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		runtimeContext.network.addEdge(ret,
 				new edu.uci.ics.jung.graph.util.Pair<ISubject>(relationshipSource, relationshipTarget),
 				observable.is(Type.BIDIRECTIONAL) ? EdgeType.UNDIRECTED : EdgeType.DIRECTED);
+
+		((Observation)ret).setGenerator(activity);
 
 		// TODO if actors must be created (i.e. there are temporal transitions etc) wrap
 		// into an Akka

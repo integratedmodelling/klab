@@ -232,6 +232,11 @@ public enum Observations implements IObservationService {
 			observation = observation.at(locator);
 		}
 
+		ISubject rootSubject = ((Observation)observation).getRuntimeContext().getRootSubject();
+		if (rootSubject != null) {
+			ret.setRootContextId(rootSubject.getId());
+		}
+		
 		ret.setId(observation.getId());
 		ret.setUrn(observation.getUrn());
 		ret.setParentId(parent == null ? null : parent.getId());
@@ -363,6 +368,13 @@ public enum Observations implements IObservationService {
 			}
 
 			ret.setDataSummary(ds);
+		}
+		
+		/*
+		 * activity that generated us.
+		 */
+		if (observation.getGenerator() != null) {
+			ret.setTaskId(observation.getGenerator().getId());
 		}
 
 		ret.getActions().add(ActionReference.separator());
