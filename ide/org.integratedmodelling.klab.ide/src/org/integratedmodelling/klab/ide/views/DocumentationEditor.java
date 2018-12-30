@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.ide.views;
 
+import java.util.Arrays;
+
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -45,9 +47,11 @@ import org.integratedmodelling.klab.documentation.Reference;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
 import org.integratedmodelling.klab.ide.navigator.model.EDocumentable;
+import org.integratedmodelling.klab.ide.navigator.model.EDocumentationItem;
 import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.ide.utils.StringUtils;
 import org.integratedmodelling.klab.rest.DocumentationReference;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -71,6 +75,22 @@ public class DocumentationEditor extends ViewPart {
     protected String           currentSection = "Methods";
     private StyledText         editor;
     private TableViewer        tableViewer;
+    private Combo              sectionCombo;
+    private Combo              triggerCombo;
+    private static String[]           triggers       = new String[] {
+            "Initialization",
+            "Definition",
+            "Termination",
+            "Instantiation",
+            "Transition",
+            "Event" };
+    private static String[]           sections       = new String[] {
+            "Introduction",
+            "Methods",
+            "Results",
+            "Discussion",
+            "Conclusions",
+            "Appendix" };
 
     public DocumentationEditor() {
     }
@@ -114,6 +134,23 @@ public class DocumentationEditor extends ViewPart {
         this.references = new ProjectReferences(this.project.getProject());
         loadReferences();
         loadItem();
+    }
+
+    public void setTarget(EDocumentationItem item) {
+        this.docId = item.getItem();
+        this.project = item.getEParent(EProject.class);
+        this.documentation = item.getDocumentation();
+        this.references = new ProjectReferences(this.project.getProject());
+        this.currentEvent = StringUtils.capitalize(item.getTrigger().name().toLowerCase());
+        this.currentSection = item.getName();
+        loadReferences();
+        Display.getDefault().asyncExec(() -> {
+            itemIdLabel.setText(docId);
+            ModelDocumentation template = documentation.get(getCurrentKey());
+            editor.setText(template == null ? "" : template.getTemplate());
+            sectionCombo.select(Arrays.binarySearch(sections, item.getName()));
+            triggerCombo.select(Arrays.binarySearch(triggers, item.getTrigger().name().toLowerCase()));
+        });
     }
 
     private void loadReferences() {
@@ -174,141 +211,129 @@ public class DocumentationEditor extends ViewPart {
         lblEvent.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         lblEvent.setText("Event:");
 
-        Combo combo = new Combo(composite, SWT.READ_ONLY);
-        combo.addSelectionListener(new SelectionAdapter() {
+        triggerCombo = new Combo(composite, SWT.READ_ONLY);
+        triggerCombo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 if (dirty) {
                     save();
                 }
-                currentEvent = combo.getText();
+                currentEvent = triggerCombo.getText();
                 loadItem();
             }
         });
-        combo.setItems(new String[] {
-                "Initialization",
-                "Definition",
-                "Termination",
-                "Instantiation",
-                "Transition",
-                "Event type..." });
-        combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        combo.select(1);
+        triggerCombo.setItems(triggers);
+        triggerCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        triggerCombo.select(1);
 
         Label lblSection = new Label(composite, SWT.NONE);
         lblSection.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         lblSection.setText("Section:");
 
-        Combo combo_1 = new Combo(composite, SWT.READ_ONLY);
-        combo_1.addSelectionListener(new SelectionAdapter() {
+        sectionCombo = new Combo(composite, SWT.READ_ONLY);
+        sectionCombo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 if (dirty) {
                     save();
                 }
-                currentSection = combo_1.getText();
+                currentSection = sectionCombo.getText();
                 loadItem();
             }
         });
-        combo_1.setItems(new String[] {
-                "Introduction",
-                "Methods",
-                "Results",
-                "Discussion",
-                "Conclusions",
-                "Appendix" });
-        combo_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        combo_1.select(1);
+        sectionCombo.setItems(sections);
+        sectionCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        sectionCombo.select(1);
 
         Button lblNewLabel = new Button(composite, SWT.NONE);
         lblNewLabel.setToolTipText("Add a custom section");
         lblNewLabel.setImage(ResourceManager
                 .getPluginImage("org.integratedmodelling.klab.ide", "icons/add.png"));
-        
+
         SashForm sashForm = new SashForm(parent, SWT.VERTICAL);
         sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-        
-                editor = new StyledText(sashForm, SWT.BORDER | SWT.WRAP | /* SWT.H_SCROLL | */SWT.V_SCROLL);
-                editor.addKeyListener(new KeyAdapter() {
-                    @Override
-                    public void keyPressed(KeyEvent e) {
-                        if ((e.keyCode == 'S' || e.keyCode == 's') && (e.stateMask & SWT.CTRL) != 0) {
-                            save();
-                        } else {
-                            dirty = true;
-                            if (!getTitle().startsWith("*")) {
-                                setPartName("* " + getTitle());
-                            }
-                        }
+
+        editor = new StyledText(sashForm, SWT.BORDER | SWT.WRAP | /* SWT.H_SCROLL | */SWT.V_SCROLL);
+        editor.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if ((e.keyCode == 'S' || e.keyCode == 's') && (e.stateMask & SWT.CTRL) != 0) {
+                    save();
+                } else {
+                    dirty = true;
+                    if (!getTitle().startsWith("*")) {
+                        setPartName("* " + getTitle());
                     }
-                });
-                editor.setAlwaysShowScrollBars(false);
-                
-                        Group grpCrossreferences = new Group(sashForm, SWT.NONE);
-                        grpCrossreferences.setLayout(new GridLayout(1, false));
-                        grpCrossreferences.setText("Cross-references");
-                        
-                                tableViewer = new TableViewer(grpCrossreferences, SWT.BORDER | SWT.FULL_SELECTION);
-                                tableViewer.addDoubleClickListener(new IDoubleClickListener() {
-                                    public void doubleClick(DoubleClickEvent event) {
-                                        Object o = ((StructuredSelection) (event.getSelection())).getFirstElement();
-                                        if (o instanceof Reference) {
-                                            String key = ((Reference) o).get(BibTexFields.KEY);
-                                            editor.insert("@cite(" + key + ")");
-                                        }
-                                    }
-                                });
-                                table = tableViewer.getTable();
-                                table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-                                table.setLinesVisible(true);
-                                
-                                        TableColumn tblclmnNewColumn = new TableColumn(table, SWT.NONE);
-                                        tblclmnNewColumn.setWidth(160);
-                                        tblclmnNewColumn.setText("New Column");
-                                        
-                                                TableColumn tblclmnNewColumn_1 = new TableColumn(table, SWT.NONE);
-                                                tblclmnNewColumn_1.setWidth(720);
-                                                tblclmnNewColumn_1.setText("Citation");
-                                                
-                                                        tableViewer.setContentProvider(new ReferencesContentProvider());
-                                                        tableViewer.setLabelProvider(new ReferencesLabelProvider());
-                                                        
-                                                                text = new Text(grpCrossreferences, SWT.BORDER);
-                                                                text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-                                                                
-                                                                        Composite composite_1 = new Composite(grpCrossreferences, SWT.NONE);
-                                                                        composite_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
-                                                                        RowLayout rl_composite_1 = new RowLayout(SWT.HORIZONTAL);
-                                                                        rl_composite_1.wrap = false;
-                                                                        composite_1.setLayout(rl_composite_1);
-                                                                        
-                                                                                Button button_1 = new Button(composite_1, SWT.NONE);
-                                                                                button_1.addSelectionListener(new SelectionAdapter() {
-                                                                                    @Override
-                                                                                    public void widgetSelected(SelectionEvent e) {
-                                                                                        save();
-                                                                                    }
-                                                                                });
-                                                                                button_1.setLayoutData(new RowData(90, -1));
-                                                                                button_1.setText("Save");
-                                                                                
-                                                                                        Button button_2 = new Button(composite_1, SWT.NONE);
-                                                                                        button_2.addMouseListener(new MouseAdapter() {
-                                                                                            @Override
-                                                                                            public void mouseDown(MouseEvent e) {
-                                                                                                boolean ok = true;
-                                                                                                if (dirty) {
-                                                                                                    ok = Eclipse.INSTANCE.confirm("Abandon changes?");
-                                                                                                }
-                                                                                                if (ok) {
-                                                                                                    PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-                                                                                                            .hideView(DocumentationEditor.this);
-                                                                                                }
-                                                                                            }
-                                                                                        });
-                                                                                        button_2.setLayoutData(new RowData(90, -1));
-                                                                                        button_2.setText("Cancel");
-                                                                                        sashForm.setWeights(new int[] {1, 1});
+                }
+            }
+        });
+        editor.setAlwaysShowScrollBars(false);
+
+        Group grpCrossreferences = new Group(sashForm, SWT.NONE);
+        grpCrossreferences.setLayout(new GridLayout(1, false));
+        grpCrossreferences.setText("Cross-references");
+
+        tableViewer = new TableViewer(grpCrossreferences, SWT.BORDER | SWT.FULL_SELECTION);
+        tableViewer.addDoubleClickListener(new IDoubleClickListener() {
+            public void doubleClick(DoubleClickEvent event) {
+                Object o = ((StructuredSelection) (event.getSelection())).getFirstElement();
+                if (o instanceof Reference) {
+                    String key = ((Reference) o).get(BibTexFields.KEY);
+                    editor.insert("@cite(" + key + ")");
+                }
+            }
+        });
+        table = tableViewer.getTable();
+        table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        table.setLinesVisible(true);
+
+        TableColumn tblclmnNewColumn = new TableColumn(table, SWT.NONE);
+        tblclmnNewColumn.setWidth(160);
+        tblclmnNewColumn.setText("New Column");
+
+        TableColumn tblclmnNewColumn_1 = new TableColumn(table, SWT.NONE);
+        tblclmnNewColumn_1.setWidth(720);
+        tblclmnNewColumn_1.setText("Citation");
+
+        tableViewer.setContentProvider(new ReferencesContentProvider());
+        tableViewer.setLabelProvider(new ReferencesLabelProvider());
+
+        text = new Text(grpCrossreferences, SWT.BORDER);
+        text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
+        Composite composite_1 = new Composite(grpCrossreferences, SWT.NONE);
+        composite_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
+        RowLayout rl_composite_1 = new RowLayout(SWT.HORIZONTAL);
+        rl_composite_1.wrap = false;
+        composite_1.setLayout(rl_composite_1);
+
+        Button button_1 = new Button(composite_1, SWT.NONE);
+        button_1.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                save();
+            }
+        });
+        button_1.setLayoutData(new RowData(90, -1));
+        button_1.setText("Save");
+
+        Button button_2 = new Button(composite_1, SWT.NONE);
+        button_2.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseDown(MouseEvent e) {
+                boolean ok = true;
+                if (dirty) {
+                    ok = Eclipse.INSTANCE.confirm("Abandon changes?");
+                }
+                if (ok) {
+                    PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+                            .hideView(DocumentationEditor.this);
+                }
+            }
+        });
+        button_2.setLayoutData(new RowData(90, -1));
+        button_2.setText("Cancel");
+        sashForm.setWeights(new int[] { 1, 1 });
 
         createActions();
         initializeToolBar();
@@ -331,7 +356,9 @@ public class DocumentationEditor extends ViewPart {
 
             documentation.put(getCurrentKey(), template);
         }
-        template.getDocumentedUrns().add(((ENavigatorItem) item).getId());
+        if (item != null) {
+            template.getDocumentedUrns().add(((ENavigatorItem) item).getId());
+        }
         template.setTemplate(editor.getText());
         documentation.write();
         dirty = false;
@@ -343,9 +370,9 @@ public class DocumentationEditor extends ViewPart {
                     .send(IMessage.MessageClass.ProjectLifecycle, IMessage.Type.DocumentationModified, new DocumentationReference(docId, project
                             .getName()));
         }
-        
+
         KlabNavigator.refresh();
-        
+
     }
 
     public void dispose() {
@@ -377,4 +404,5 @@ public class DocumentationEditor extends ViewPart {
     public void setFocus() {
         // Set the focus
     }
+
 }

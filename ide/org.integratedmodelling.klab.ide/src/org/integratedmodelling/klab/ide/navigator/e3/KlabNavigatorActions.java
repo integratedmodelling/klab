@@ -14,8 +14,10 @@ import org.integratedmodelling.klab.api.data.CRUDOperation;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.model.EDocumentable;
+import org.integratedmodelling.klab.ide.navigator.model.EDocumentationItem;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
+import org.integratedmodelling.klab.ide.navigator.model.EReference;
 import org.integratedmodelling.klab.ide.navigator.model.EResource;
 import org.integratedmodelling.klab.ide.navigator.model.EResourceFolder;
 import org.integratedmodelling.klab.ide.navigator.model.EScript;
@@ -190,6 +192,30 @@ public class KlabNavigatorActions {
 		} catch (PartInitException e) {
 			Eclipse.INSTANCE.handleException(e);
 		}
+    }
+    
+    public static void editDocumentation(EDocumentationItem item) {
+        try {
+            IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+                    .showView(DocumentationEditor.ID);
+            if (view != null) {
+                ((DocumentationEditor) view).setTarget(item);
+            }
+        } catch (PartInitException e) {
+            Eclipse.INSTANCE.handleException(e);
+        }
+    }
+    
+    public static void editReference(EReference project) {
+        try {
+            IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+                    .showView(ReferencesEditor.ID);
+            if (view != null) {
+                ((ReferencesEditor) view).setTarget(project);
+            }
+        } catch (PartInitException e) {
+            Eclipse.INSTANCE.handleException(e);
+        }
     }
 
 }

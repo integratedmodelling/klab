@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.client.documentation;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -75,4 +76,21 @@ public class ProjectDocumentation extends FileCatalog<ModelDocumentation> {
         }
         return ret;
     }
+
+    @Override
+    public void write() {
+        // turd removal; this is optimized for client-side docs where users may save and then empty an item.
+        List<String> toRemove = new ArrayList<>();
+        for (String key : keySet()) {
+            ModelDocumentation r = get(key);
+            if (r.getTemplate().trim().isEmpty()) {
+                toRemove.add(key);
+            }
+        }
+        for (String key : toRemove) {
+            remove(key);
+        }
+        super.write();
+    }
+
 }

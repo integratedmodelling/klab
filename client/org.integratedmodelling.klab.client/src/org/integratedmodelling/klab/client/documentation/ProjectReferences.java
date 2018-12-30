@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.klab.client.utils.FileCatalog;
+import org.integratedmodelling.klab.documentation.BibTexFields;
 import org.integratedmodelling.klab.documentation.Reference;
 
 public class ProjectReferences extends FileCatalog<Reference> {
@@ -37,5 +38,21 @@ public class ProjectReferences extends FileCatalog<Reference> {
 		}
 		return ret.toArray();
 	}
+	
+    @Override
+    public void write() {
+        // turd removal; this is optimized for client-side docs where users may save and then empty an item.
+        List<String> toRemove = new ArrayList<>();
+        for (String key : keySet()) {
+            Reference r = get(key);
+            if (r.get(BibTexFields.EXAMPLE_CITATION) == null || r.get(BibTexFields.EXAMPLE_CITATION).trim().isEmpty()) {
+                toRemove.add(key);
+            }
+        }
+        for (String key : toRemove) {
+            remove(key);
+        }
+        super.write();
+    }
 
 }

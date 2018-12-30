@@ -39,6 +39,7 @@ import org.integratedmodelling.klab.documentation.BibTexFields;
 import org.integratedmodelling.klab.documentation.Reference;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
+import org.integratedmodelling.klab.ide.navigator.model.EReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -96,12 +97,21 @@ public class ReferencesEditor extends ViewPart {
 		this.itemIdLabel.setText(project.getName());
 		refreshReferences();
 	}
+	
+    public void setTarget(EReference reference) {
+        this.project = reference.getEParent(EProject.class);
+        this.references = new ProjectReferences(project.getProject());
+        this.referenceId = reference.getName();
+        refreshReferences();
+        loadItem();
+    }
 
 	private void loadItem() {
 		Display.getDefault().asyncExec(() -> {
 			itemIdLabel.setText(referenceId);
 			Reference template = references.get(getCurrentKey());
-			// editor.setText(template == null ? "" : template.getTemplate());
+			tag.setText(template.get(BibTexFields.KEY));
+            editor.setText(template.get(BibTexFields.EXAMPLE_CITATION));
 		});
 	}
 
@@ -345,4 +355,5 @@ public class ReferencesEditor extends ViewPart {
 	public void setFocus() {
 		// Set the focus
 	}
+
 }
