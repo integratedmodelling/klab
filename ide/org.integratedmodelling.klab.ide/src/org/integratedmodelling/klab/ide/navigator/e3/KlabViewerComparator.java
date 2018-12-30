@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.ide.navigator.model.EDocumentationFolder;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
+import org.integratedmodelling.klab.ide.navigator.model.EReferencesPage;
 import org.integratedmodelling.klab.ide.navigator.model.EResourceFolder;
 import org.integratedmodelling.klab.ide.navigator.model.EScriptFolder;
 import org.integratedmodelling.klab.ide.navigator.model.ETestFolder;
@@ -27,6 +28,7 @@ public class KlabViewerComparator extends ViewerComparator {
 		categories.put(EResourceFolder.class, 2);
 		categories.put(EScriptFolder.class, 3);
 		categories.put(ETestFolder.class, 4);
+        categories.put(EReferencesPage.class, 4);
 	}
 
 	public KlabViewerComparator() {
