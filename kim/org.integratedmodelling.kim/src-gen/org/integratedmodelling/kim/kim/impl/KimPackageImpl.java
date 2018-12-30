@@ -498,7 +498,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
   /**
    * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
-   * 
+   *
    * <p>This method is used to initialize {@link KimPackage#eINSTANCE} when that field is accessed.
    * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
    * <!-- begin-user-doc -->
@@ -513,7 +513,8 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     if (isInited) return (KimPackage)EPackage.Registry.INSTANCE.getEPackage(KimPackage.eNS_URI);
 
     // Obtain or create and register package
-    KimPackageImpl theKimPackage = (KimPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof KimPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new KimPackageImpl());
+    Object registeredKimPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
+    KimPackageImpl theKimPackage = registeredKimPackage instanceof KimPackageImpl ? (KimPackageImpl)registeredKimPackage : new KimPackageImpl();
 
     isInited = true;
 
@@ -526,7 +527,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     // Mark meta-data to indicate it can't be changed
     theKimPackage.freeze();
 
-  
     // Update the registry and return the package
     EPackage.Registry.INSTANCE.put(KimPackage.eNS_URI, theKimPackage);
     return theKimPackage;

@@ -102,9 +102,11 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 	public void handleTransportError(StompSession session, Throwable throwable) {
 		if (throwable instanceof ConnectionLostException) {
             // if connection lost, call this
-			error("Internal error: websockets message was likely too large. Client should be restarted. The problem has been reported.");
+//			error("Connection lost.");
+		    System.out.println("Connection lost.");
         } else {
-			error("Unknown message transport error. Please report the error.");
+//			error("Unknown message transport error. Please report the error.");
+            System.out.println("Unknown message transport error.");
         }
 		super.handleTransportError(session, throwable);
 	}

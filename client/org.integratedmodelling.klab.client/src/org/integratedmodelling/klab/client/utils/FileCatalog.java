@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -42,7 +43,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @param <T>
  *            the type of the resource in the catalog
  */
-public class FileCatalog<T> extends HashMap<String, T> {
+public class FileCatalog<T> extends LinkedHashMap<String, T> {
 
 	private static final long serialVersionUID = 8664294752013639030L;
 

@@ -43,6 +43,7 @@ import org.integratedmodelling.klab.documentation.BibTexFields;
 import org.integratedmodelling.klab.documentation.ModelDocumentation;
 import org.integratedmodelling.klab.documentation.Reference;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
 import org.integratedmodelling.klab.ide.navigator.model.EDocumentable;
 import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
@@ -342,6 +343,9 @@ public class DocumentationEditor extends ViewPart {
                     .send(IMessage.MessageClass.ProjectLifecycle, IMessage.Type.DocumentationModified, new DocumentationReference(docId, project
                             .getName()));
         }
+        
+        KlabNavigator.refresh();
+        
     }
 
     public void dispose() {

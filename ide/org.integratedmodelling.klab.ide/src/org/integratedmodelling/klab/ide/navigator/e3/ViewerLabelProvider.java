@@ -17,12 +17,16 @@ import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.model.EConcept;
 import org.integratedmodelling.klab.ide.navigator.model.EDefinition;
 import org.integratedmodelling.klab.ide.navigator.model.EDocumentationFolder;
+import org.integratedmodelling.klab.ide.navigator.model.EDocumentationItem;
 import org.integratedmodelling.klab.ide.navigator.model.EDocumentationPage;
+import org.integratedmodelling.klab.ide.navigator.model.EDocumentationScope;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.EModel;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.ide.navigator.model.EObserver;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
+import org.integratedmodelling.klab.ide.navigator.model.EReference;
+import org.integratedmodelling.klab.ide.navigator.model.EReferencesPage;
 import org.integratedmodelling.klab.ide.navigator.model.EResource;
 import org.integratedmodelling.klab.ide.navigator.model.EResourceFolder;
 import org.integratedmodelling.klab.ide.navigator.model.EScript;
@@ -227,6 +231,18 @@ public class ViewerLabelProvider extends LabelProvider
         if (element instanceof EDocumentationPage) {
             return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/page.gif");
         }
+        if (element instanceof EReferencesPage) {
+            return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/book.gif");
+        }
+        if (element instanceof EDocumentationScope) {
+            return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/trigger.gif");
+        }
+        if (element instanceof EDocumentationItem) {
+            return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/section.gif");
+        }
+        if (element instanceof EReference) {
+            return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/bookmark.gif");
+        }
         if (element instanceof EScriptFolder) {
             return ResourceManager.decorateImage(ResourceManager
                     .getPluginImage(Activator.PLUGIN_ID, "icons/scripts.gif"), getRunMarker(), SWTResourceManager.TOP_LEFT);
@@ -283,6 +299,21 @@ public class ViewerLabelProvider extends LabelProvider
         }
         if (element instanceof EDocumentationFolder) {
             return ((EDocumentationFolder)element).getName();
+        }
+        if (element instanceof EDocumentationPage) {
+            return ((EDocumentationPage)element).getPagePath();
+        }
+        if (element instanceof EDocumentationItem) {
+            return ((EDocumentationItem)element).getName();
+        }
+        if (element instanceof EDocumentationScope) {
+            return ((EDocumentationScope)element).getName();
+        }
+        if (element instanceof EReferencesPage) {
+            return "References";
+        }
+        if (element instanceof EReference) {
+            return ((EReference)element).getName();
         }
         if (element instanceof EScriptFolder) {
             return "Scripts";

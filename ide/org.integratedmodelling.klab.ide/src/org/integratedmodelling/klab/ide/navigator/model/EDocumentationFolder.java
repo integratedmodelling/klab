@@ -2,27 +2,41 @@ package org.integratedmodelling.klab.ide.navigator.model;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.integratedmodelling.kim.api.IKimProject;
-import org.integratedmodelling.klab.ide.Activator;
-import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
+import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
+import org.integratedmodelling.klab.client.documentation.ProjectDocumentation;
+import org.integratedmodelling.klab.client.documentation.ProjectReferences;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 
 public class EDocumentationFolder extends ENavigatorItem {
 
-	EProject project;
+    ENavigatorItem project;
 	// if directory, children are the subdirectories and subfiles; if file, children
 	// are the pages specified in the included JSON.
 	File file;
+	File page;
+	File refs;
 	String name;
 
-	public EDocumentationFolder(EProject parent, File file, String name) {
-		super(parent.id + "#__DOCUMENTATION__", parent);
+	public EDocumentationFolder(ENavigatorItem parent, File file, String name) {
+		super(parent.id + "." + name, parent);
 		this.project = parent;
 		this.file = file;
+		File pfile = new File(file + File.separator + "documentation.json");
+		if (pfile.exists()) {
+		    this.page = pfile;
+		}
+		pfile = new File(file + File.separator + "references.json");
+        if (pfile.exists()) {
+            this.refs = pfile;
+        }
 		this.name = name;
 	}
 
@@ -30,6 +44,7 @@ public class EDocumentationFolder extends ENavigatorItem {
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		if (IResource.class.isAssignableFrom(adapter) && adapter != IProject.class) {
+		    EProject project = getEParent(EProject.class);
 			return (T) ResourcesPlugin.getWorkspace().getRoot().getProject(project.getName())
 					.getFolder(IKimProject.DOCUMENTATION_FOLDER);
 		}
@@ -38,10 +53,38 @@ public class EDocumentationFolder extends ENavigatorItem {
 
 	@Override
 	public ENavigatorItem[] getEChildren() {
+	    
 		List<ENavigatorItem> ret = new ArrayList<>();
-		for (EResourceReference resource : Activator.klab().getProjectResources(project)) {
-			ret.add(new EResource(resource, this));
+		Set<Trigger> sections = new HashSet<>();
+
+		if (this.page != null) {
+		    ProjectDocumentation documentation = new ProjectDocumentation(this.page);
+		    for (String key : documentation.getItems()) {
+		        for (Trigger trigger : documentation.getTriggers(key)) {
+		            if (trigger == Trigger.DEFINITION) {
+		                ret.add(new EDocumentationPage(this, this.page, key, Trigger.DEFINITION, documentation));
+		            } else if (!sections.contains(trigger)) {
+		                ret.add(new EDocumentationScope(this, documentation, trigger, file));
+		                sections.add(trigger);
+		            }
+		        }
+		    }
 		}
+		
+		for (File file : this.file.listFiles()) {
+		    if (file.isDirectory()) {
+	            String name = MiscUtilities.getFileBaseName(file);
+//	            if (!this.name.equals("Documentation")) {
+//	                name = this.name + "." + name;
+//	            }
+		        ret.add(new EDocumentationFolder(this, file, name));
+		    }
+		}
+
+		if (this.refs != null) {
+		    ret.add(new EReferencesPage(this, file, "References", new ProjectReferences(this.refs)));
+		}
+		
 		return ret.toArray(new ENavigatorItem[ret.size()]);
 	}
 
@@ -51,7 +94,8 @@ public class EDocumentationFolder extends ENavigatorItem {
 	
 	@Override
 	public boolean hasEChildren() {
-		return Activator.klab().getProjectResources(project).size() > 0;
+	    int nfiles = file.listFiles().length;
+		return  nfiles > 0 && (this.page == null || (this.page != null && this.page.length() > 8) || nfiles > 1);
 	}
 
 }

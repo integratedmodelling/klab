@@ -560,7 +560,7 @@ public class LiteralImpl extends MinimalEObjectImpl.Container implements Literal
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuffer result = new StringBuffer(super.toString());
+    StringBuilder result = new StringBuilder(super.toString());
     result.append(" (string: ");
     result.append(string);
     result.append(", boolean: ");

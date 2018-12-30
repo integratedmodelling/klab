@@ -37,6 +37,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.klab.client.documentation.ProjectReferences;
 import org.integratedmodelling.klab.documentation.BibTexFields;
 import org.integratedmodelling.klab.documentation.Reference;
+import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.eclipse.swt.widgets.Menu;
@@ -312,6 +313,7 @@ public class ReferencesEditor extends ViewPart {
 
 	private synchronized void save() {
 		addCurrent();
+		KlabNavigator.refresh();
 	}
 
 	public void dispose() {
