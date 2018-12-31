@@ -21,6 +21,7 @@ import java.util.concurrent.Future;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.klab.api.data.IStorageProvider;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
@@ -43,8 +44,8 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 public interface IRuntimeProvider {
 
 	/**
-	 * The main executor for a k.LAB dataflow. Each call returns a new Future that
-	 * has been started.
+	 * The main executor for a k.LAB dataflow. Each call returns a new Future
+	 * artifact.
 	 *
 	 * @param actuator
 	 *            a top-level actuator that has no dependencies on external ones.
@@ -116,13 +117,16 @@ public interface IRuntimeProvider {
 	 *            the context before distribution - i.e., all states in it will be
 	 *            whole states and need to be contextualized to each extent before
 	 *            computation happens (the resolver expects individual values at
-	 *            each call). The current version of the target artifact will be 
-	 *            set in it as 'self' if it exists.
+	 *            each call). The current version of the target artifact will be set
+	 *            in it as 'self' if it exists.
 	 * @param scale
-	 *            the scale, already set to the slice needed for this computation
+	 *            the scale, already set to the geometry needed for this computation
+	 *            so that all of its states are computed.
+	 * 
 	 * @return the computed result - return the same object passed as data whenever
 	 *         possible. If a different one is collected, the original one will be
 	 *         garbage collected.
+	 * 
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
 	IDataArtifact distributeComputation(IStateResolver resolver, IState data, IComputationContext context, IScale scale)
@@ -141,7 +145,7 @@ public interface IRuntimeProvider {
 	 *            a {@link org.integratedmodelling.klab.api.knowledge.IObservable}
 	 *            object.
 	 * @param context
-	 *           context for the observation, which must be correct.
+	 *            context for the observation, which must be correct.
 	 * @return a {@link org.integratedmodelling.klab.api.observations.IObservation}
 	 *         object.
 	 */
@@ -151,7 +155,8 @@ public interface IRuntimeProvider {
 	 * Create a state to be used for intermediate computations or temporary storage
 	 * of the specified type. The state should not be registered with the context or
 	 * the provenance; such details are left to the logics that use it. The
-	 * installed storage provider should be used to produce the state.
+	 * independently installed {@link IStorageProvider storage provider} should be
+	 * used to produce the state storage.
 	 * 
 	 * @param observable
 	 * @param type
@@ -172,7 +177,7 @@ public interface IRuntimeProvider {
 	 * @param availableType
 	 *            the type of the alternative observable we have
 	 * @param resolutionMode
-	 *         the mode of the desired resolution. Always RESOLUTION this far.
+	 *            the mode of the desired resolution. Always RESOLUTION this far.
 	 * @param desiredObservation
 	 *            the type of the observable we want to obtain
 	 * @return null (not an empty list) if this computation cannot be done;
@@ -180,30 +185,34 @@ public interface IRuntimeProvider {
 	 *         list will be interpreted as "no computation needed", not as "no
 	 *         strategy found".
 	 */
-	List<IComputableResource> getComputation(IObservable availableType, IResolutionScope.Mode resolutionMode, IObservable desiredObservation);
-	
+	List<IComputableResource> getComputation(IObservable availableType, IResolutionScope.Mode resolutionMode,
+			IObservable desiredObservation);
+
 	/**
-	 * Runtime systems may create thread pools and memory mappings. This method will be called
-	 * at system shutdown so that those may be cleaned up.
+	 * Runtime systems may create thread pools and memory mapped files. This method
+	 * will be called at system shutdown so that those may be cleaned up.
 	 */
 	void shutdown();
 
 	/**
-	 * If the source type can be cast to the target type, return a resolver that will
-	 * perform the cast.
+	 * If the source type can be cast to the target type, return a resolver that
+	 * will perform the cast.
 	 * 
 	 * @param sourceType
 	 * @param targetType
 	 * @return a resolver or null
 	 */
 	IComputableResource getCastingResolver(IArtifact.Type sourceType, IArtifact.Type targetType);
-	
-    /*
-     * Called on a computation returned by getComputation() to change the target ID after creation.
-     * FIXME this is ugly and unstable - needs a different logic and removal
-     * @param resource
-     * @param targetId
-     */
+
+	/*
+	 * Called on a computation returned by getComputation() to change the target ID
+	 * after creation. FIXME this is ugly and unstable - needs a different logic and
+	 * removal
+	 * 
+	 * @param resource
+	 * 
+	 * @param targetId
+	 */
 	void setComputationTargetId(IComputableResource resource, String targetId);
 
 }

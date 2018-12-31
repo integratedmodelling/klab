@@ -9,8 +9,6 @@ import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Utils;
-import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.factory.Nd4j;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;

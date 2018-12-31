@@ -2,12 +2,15 @@ package org.integratedmodelling.klab.components.localstorage.impl;
 
 import java.util.Arrays;
 
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.utils.Utils;
+import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 
 /**
  * 
@@ -16,15 +19,19 @@ import org.integratedmodelling.klab.utils.Utils;
  */
 public class DoubleStorage extends Storage implements IDataArtifact {
 
-	private double[] data;
-
-//	private INDArray data;
+	private double[] idata;
+	private INDArray mdata;
+	boolean inMemory = false;
 
 	public DoubleStorage(IGeometry scale) {
 		super(scale);
-//		this.data = Nd4j.valueArrayOf(scale.size(), Double.NaN);
-		this.data = new double[(int) scale.size()]; // LArrayJ.newLFloatArray(scale.size());
-		Arrays.fill(this.data, Double.NaN);
+		this.inMemory = Configuration.INSTANCE.useInMemoryStorage();
+		if (inMemory) {
+			this.idata = new double[(int) scale.size()]; // LArrayJ.newLFloatArray(scale.size());
+			Arrays.fill(this.idata, Double.NaN);
+		} else {
+			this.mdata = Nd4j.valueArrayOf(scale.size(), Double.NaN);
+		}
 	}
 
 	@Override
@@ -39,9 +46,12 @@ public class DoubleStorage extends Storage implements IDataArtifact {
 			// mediation needed
 			throw new KlabUnsupportedFeatureException("DIRECT SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
 		}
-//		double ret = data.getDouble(offset);
-		double ret = data[(int)offset];
-		return Double.isNaN(ret) ? null : (double) ret;
+		if (inMemory) {
+			double ret = idata[(int) offset];
+			return Double.isNaN(ret) ? null : (double) ret;
+		}
+
+		return mdata.getDouble(offset);
 	}
 
 	@Override
@@ -51,10 +61,13 @@ public class DoubleStorage extends Storage implements IDataArtifact {
 			// mediation needed
 			throw new KlabUnsupportedFeatureException("DIRECT SCALE MEDIATION UNIMPLEMENTED - COME BACK LATER");
 		}
-//		data.putScalar(offset, value instanceof Number ? ((Number) value).doubleValue()
-//				: (value == null ? Double.NaN : convert(value)));
-		 data[(int)offset] = value instanceof Number ? ((Number) value).floatValue() 
-			 : (value == null ? Double.NaN : convert(value));
+		if (inMemory) {
+			idata[(int) offset] = value instanceof Number ? ((Number) value).floatValue()
+					: (value == null ? Double.NaN : convert(value));
+		} else {
+			mdata.putScalar(offset, value instanceof Number ? ((Number) value).doubleValue()
+					: (value == null ? Double.NaN : convert(value)));
+		}
 		return offset;
 	}
 
@@ -66,7 +79,9 @@ public class DoubleStorage extends Storage implements IDataArtifact {
 
 	@Override
 	public void release() {
-//		data.cleanup();
+		if (!inMemory) {
+			mdata.cleanup();
+		}
 	}
 
 	@Override

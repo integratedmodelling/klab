@@ -268,4 +268,9 @@ public enum Configuration implements IConfigurationService {
 		return System.getProperty("parallel") != null
 				|| properties.getProperty(KLAB_PARALLELIZE_CONTEXTUALIZATION, "false").equals("true");
 	}
+
+	public boolean useInMemoryStorage() {
+		return System.getProperty("mmap") == null
+				&& properties.getProperty(KLAB_USE_IN_MEMORY_STORAGE, "true").equals("true");
+	}
 }

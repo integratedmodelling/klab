@@ -60,11 +60,8 @@ public interface IConfigurationService {
      * and search time will be affected but RAM footprint will be smaller.
      */
     public static final String KLAB_USE_IN_MEMORY_DATABASE = "klab.database.inmemory";
-    /**
-     * Set to false to store the kbox on disk if the model base is large and doesn't change. Startup
-     * and search time will be affected but RAM footprint will be smaller.
-     */
-    public static final String KLAB_PARALLELIZE_CONTEXTUALIZATION = "klab.database.inmemory";
+    public static final String KLAB_PARALLELIZE_CONTEXTUALIZATION = "klab.computation.parallel";
+    public static final String KLAB_USE_IN_MEMORY_STORAGE = "klab.storage.inmemory";
     
     /** The Constant CERTFILE_PROPERTY. */
     public static final String CERTFILE_PROPERTY = "klab.certificate";

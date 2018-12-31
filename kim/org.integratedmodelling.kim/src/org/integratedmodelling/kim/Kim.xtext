@@ -686,14 +686,14 @@ ParameterList:
 	singleValue=ValueWithIdAndConcept 
 ;
 
-ValueWithConcept returns Value:
-	concept=ConceptDeclaration |
-	literal=Literal |
-	expr=EXPR |
-	list=List |
-	table=LookupTable |
-	map=Map |
-	null?='unknown';
+//ValueWithConcept returns Value:
+//	concept=ConceptDeclaration |
+//	literal=Literal |
+//	expr=EXPR |
+//	list=List |
+//	table=LookupTable |
+//	map=Map |
+//	null?='unknown';
 
 ValueWithIdAndConcept returns Value:
 	concept=ConceptDeclaration |
