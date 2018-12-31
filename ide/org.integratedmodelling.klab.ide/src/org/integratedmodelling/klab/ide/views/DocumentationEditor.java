@@ -4,12 +4,15 @@ import java.util.Arrays;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -29,6 +32,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
@@ -48,15 +52,13 @@ import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
 import org.integratedmodelling.klab.ide.navigator.model.EDocumentable;
 import org.integratedmodelling.klab.ide.navigator.model.EDocumentationItem;
+import org.integratedmodelling.klab.ide.navigator.model.EModel;
 import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
+import org.integratedmodelling.klab.ide.ui.UndoRedoImpl;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.ide.utils.StringUtils;
 import org.integratedmodelling.klab.rest.DocumentationReference;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.swt.custom.SashForm;
 
 public class DocumentationEditor extends ViewPart {
 
@@ -77,6 +79,7 @@ public class DocumentationEditor extends ViewPart {
     private TableViewer        tableViewer;
     private Combo              sectionCombo;
     private Combo              triggerCombo;
+	private StyledText sourceCodeViewer;
     private static String[]           triggers       = new String[] {
             "Initialization",
             "Definition",
@@ -91,6 +94,8 @@ public class DocumentationEditor extends ViewPart {
             "Discussion",
             "Conclusions",
             "Appendix" };
+    private ExpandableComposite sourceCodeBar;
+	private UndoRedoImpl undoManager;
 
     public DocumentationEditor() {
     }
@@ -132,6 +137,7 @@ public class DocumentationEditor extends ViewPart {
         // load docs for this project
         this.documentation = new ProjectDocumentation(docId, this.project.getProject());
         this.references = new ProjectReferences(this.project.getProject());
+        this.sourceCodeBar.setVisible(true);
         loadReferences();
         loadItem();
     }
@@ -143,6 +149,7 @@ public class DocumentationEditor extends ViewPart {
         this.references = new ProjectReferences(this.project.getProject());
         this.currentEvent = StringUtils.capitalize(item.getTrigger().name().toLowerCase());
         this.currentSection = item.getName();
+        this.sourceCodeBar.setVisible(false);
         loadReferences();
         Display.getDefault().asyncExec(() -> {
             itemIdLabel.setText(docId);
@@ -162,6 +169,9 @@ public class DocumentationEditor extends ViewPart {
             itemIdLabel.setText(docId);
             ModelDocumentation template = documentation.get(getCurrentKey());
             editor.setText(template == null ? "" : template.getTemplate());
+            if (item instanceof EModel) {
+            	this.sourceCodeViewer.setText(((EModel)item).getSourceCode());
+            }
         });
     }
 
@@ -192,24 +202,25 @@ public class DocumentationEditor extends ViewPart {
         itemIdLabel.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.NORMAL));
         itemIdLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-        ExpandableComposite expandBar = new ExpandableComposite(parent, SWT.NONE);
-        expandBar.setBackground(SWTResourceManager.getColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
-        expandBar.setText("View source code");
-        expandBar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+        sourceCodeBar = new ExpandableComposite(parent, SWT.NONE);
+        sourceCodeBar.setBackground(SWTResourceManager.getColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
+        sourceCodeBar.setText("View source code");
+        sourceCodeBar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
-        StyledText styledText = new StyledText(expandBar, SWT.BORDER);
-        styledText.setEditable(false);
+        sourceCodeViewer = new StyledText(sourceCodeBar, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP);
+        sourceCodeViewer.setEditable(false);
         GridData gd_styledText = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
         gd_styledText.heightHint = 140;
-        styledText.setLayoutData(gd_styledText);
-
+        sourceCodeViewer.setLayoutData(gd_styledText);
+        sourceCodeBar.setClient(sourceCodeViewer);
+        
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         composite.setLayout(new GridLayout(5, false));
 
         Label lblEvent = new Label(composite, SWT.NONE);
         lblEvent.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-        lblEvent.setText("Event:");
+        lblEvent.setText("Trigger:");
 
         triggerCombo = new Combo(composite, SWT.READ_ONLY);
         triggerCombo.addSelectionListener(new SelectionAdapter() {
@@ -268,7 +279,8 @@ public class DocumentationEditor extends ViewPart {
             }
         });
         editor.setAlwaysShowScrollBars(false);
-
+        undoManager = new UndoRedoImpl(editor);
+        
         Group grpCrossreferences = new Group(sashForm, SWT.NONE);
         grpCrossreferences.setLayout(new GridLayout(1, false));
         grpCrossreferences.setText("Cross-references");
