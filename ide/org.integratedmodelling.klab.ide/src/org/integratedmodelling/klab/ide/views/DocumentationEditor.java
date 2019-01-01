@@ -292,6 +292,7 @@ public class DocumentationEditor extends ViewPart {
                 if (o instanceof Reference) {
                     String key = ((Reference) o).get(BibTexFields.KEY);
                     editor.insert("@cite(" + key + ")");
+                    editor.setFocus();
                 }
             }
         });
