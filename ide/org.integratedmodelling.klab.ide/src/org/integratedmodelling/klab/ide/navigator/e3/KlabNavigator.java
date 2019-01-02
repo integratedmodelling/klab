@@ -38,56 +38,61 @@ import org.integratedmodelling.klab.ide.navigator.model.EWorkspace;
 
 public class KlabNavigator extends CommonNavigator {
 
-    static Viewer _viewer;
-    KlabPeer      klab;
+	static Viewer _viewer;
+	KlabPeer klab;
 
-    public KlabNavigator() {
-        klab = new KlabPeer(Sender.ANY, (message) -> handleMessage(message));
-    }
+	public KlabNavigator() {
+		klab = new KlabPeer(Sender.ANY, (message) -> handleMessage(message));
+	}
 
-    private void handleMessage(IMessage message) {
-        switch (message.getType()) {
-        case EngineDown:
-            KlabNavigatorActionProvider.getAction("NewProject").activate(false);
-            break;
-        case EngineUp:
-            KlabNavigatorActionProvider.getAction("NewProject").activate(true);
-            break;
-        default:
-            break;
+	private void handleMessage(IMessage message) {
+		switch (message.getType()) {
+		case EngineDown:
+			if (KlabNavigatorActionProvider.getAction("NewProject") != null) {
+				KlabNavigatorActionProvider.getAction("NewProject").activate(false);
+			}
+			break;
+		case EngineUp:
+			if (KlabNavigatorActionProvider.getAction("NewProject") != null) {
+				KlabNavigatorActionProvider.getAction("NewProject").activate(true);
+			}
+			break;
+		default:
+			break;
 
-        }
-    }
+		}
+	}
 
-    @Override
-    protected Object getInitialInput() {
-        return EWorkspace.INSTANCE;
-    }
+	@Override
+	protected Object getInitialInput() {
+		return EWorkspace.INSTANCE;
+	}
 
-    public static Font getViewerFont() {
-        return _viewer.getControl().getFont();
-    }
+	public static Font getViewerFont() {
+		return _viewer.getControl().getFont();
+	}
 
-    /**
-     * Link helper will take care of this when link function is active. This is for double-click handling or other special situations only.
-     * 
-     * @param item
-     */
-    public static void show(ENavigatorItem item) {
-        if (_viewer != null) {
-//            _viewer.setSelection...
-        }
-    }
+	/**
+	 * Link helper will take care of this when link function is active. This is for
+	 * double-click handling or other special situations only.
+	 * 
+	 * @param item
+	 */
+	public static void show(ENavigatorItem item) {
+		if (_viewer != null) {
+			// _viewer.setSelection...
+		}
+	}
 
-    public static void refresh() {
-        if (_viewer != null) {
-            Display.getDefault().asyncExec(new Runnable() {
-                @Override
-                public void run() {
-                    _viewer.refresh();
-                }
-            });
-        }
-    }
+	public static void refresh() {
+		if (_viewer != null) {
+			Display.getDefault().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					_viewer.refresh();
+				}
+			});
+		}
+	}
 
 }

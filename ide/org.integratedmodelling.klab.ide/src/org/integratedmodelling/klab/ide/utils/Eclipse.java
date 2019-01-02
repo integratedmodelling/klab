@@ -19,7 +19,9 @@ import java.util.logging.Level;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -55,15 +57,12 @@ import org.eclipse.ui.console.MessageConsoleStream;
 import org.eclipse.ui.dialogs.CheckedTreeSelectionDialog;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
-import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.utils.EditorUtils;
-import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -429,12 +428,12 @@ public enum Eclipse {
 							// leave it alone if dirty or we'll lose changes
 							xte.setInput(xte.getEditorInput());
 							// TODO REMEMBER THIS FOR REFACTORING
-//							xte.getDocument().modify(new IUnitOfWork<Object, XtextResource>() {
-//								@Override
-//								public Object exec(XtextResource state) throws Exception {
-//									return 0;
-//								}
-//							});
+							// xte.getDocument().modify(new IUnitOfWork<Object, XtextResource>() {
+							// @Override
+							// public Object exec(XtextResource state) throws Exception {
+							// return 0;
+							// }
+							// });
 						}
 					} catch (Exception e) {
 						// poh
@@ -546,6 +545,17 @@ public enum Eclipse {
 			System.out.println("ZIOCAN IFILE IS NULL " + file);
 		}
 		return ret;
+	}
+
+	public IFolder getIFolder(File file) {
+		IContainer container = ResourcesPlugin.getWorkspace().getRoot()
+				.getContainerForLocation(new Path(file.getAbsolutePath()));
+
+		if (container instanceof IFolder) {
+			return (IFolder) container;
+		}
+		
+		return null;
 	}
 
 	public File getFile(IFile file) {

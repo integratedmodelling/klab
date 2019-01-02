@@ -103,5 +103,17 @@ public class ServicePrototype {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
+	/*
+	 * bits of functionality carefully not named "get"-anything.
+	 */
+	public Argument findArgument(String argument) {
+		for (Argument arg : arguments) {
+			if (arg.getName().equals(argument))  {
+				return arg;
+			}
+		}
+		return null;
+	}
 
 }

@@ -14,7 +14,9 @@ import org.integratedmodelling.klab.api.data.CRUDOperation;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.model.EDocumentable;
+import org.integratedmodelling.klab.ide.navigator.model.EDocumentationFolder;
 import org.integratedmodelling.klab.ide.navigator.model.EDocumentationItem;
+import org.integratedmodelling.klab.ide.navigator.model.EDocumentationPage;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
 import org.integratedmodelling.klab.ide.navigator.model.EReference;
@@ -217,5 +219,14 @@ public class KlabNavigatorActions {
             Eclipse.INSTANCE.handleException(e);
         }
     }
+
+	public static void addDocumentationSection(EDocumentationPage item) {
+	}
+
+	public static void addDocumentationItem(EDocumentationFolder page) {
+	}
+
+	public static void addDocumentationSubsection(EDocumentationFolder page) {
+	}
 
 }

@@ -20,6 +20,7 @@ public class ModelDocumentation {
 	private String template;
 	private IReport.Section.Type sectionType;
 	private Set<String> documentedUrns = new HashSet<>();
+	private String eventType;
 
 	private Map<String, AttributeReference> variables = new HashMap<>();
 
@@ -93,6 +94,14 @@ public class ModelDocumentation {
 
 	public void setSectionType(IReport.Section.Type sectionType) {
 		this.sectionType = sectionType;
+	}
+
+	public String getEventType() {
+		return eventType;
+	}
+
+	public void setEventType(String eventType) {
+		this.eventType = eventType;
 	}
 
 }

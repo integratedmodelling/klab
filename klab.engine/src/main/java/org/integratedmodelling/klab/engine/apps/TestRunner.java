@@ -8,6 +8,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IIdentity.Type;
@@ -22,14 +23,27 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.utils.SpatialDisplay;
+import org.integratedmodelling.klab.components.testing.assertions.Assertion;
+import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.Session;
 
 public class TestRunner implements Annotations.Handler {
+	
+	class TestMonitor extends Engine.Monitor {
+
+		protected TestMonitor(IMonitor monitor) {
+			super((Monitor)monitor);
+		}
+	}
+	
 
 	@Override
 	public Object process(IKimObject target, IParameters<Object> arguments, IMonitor monitor) throws Exception {
 
+		// switch monitor for a test monitor that also logs and summarizes
+		monitor = new TestMonitor(monitor);
+		
 		String id = arguments.get("name", "unnamed test");
 		int repetitions = arguments.get("repeat", 1);
 
@@ -96,7 +110,12 @@ public class TestRunner implements Annotations.Handler {
 						}
 
 						for (IServiceCall assertion : arguments.get("assertions", new ArrayList<IServiceCall>())) {
-							// TODO check assertion
+							Object test = Extensions.INSTANCE.callFunction(assertion, monitor);
+							if (test instanceof Assertion) {
+								// run it
+							} else {
+								monitor.error("function " + assertion.getName() + " does not produce an assertion: ignored");
+							}
 						}
 
 						if (subject != null && visualize) {
@@ -162,5 +181,6 @@ public class TestRunner implements Annotations.Handler {
 
 		return result;
 	}
+
 
 }

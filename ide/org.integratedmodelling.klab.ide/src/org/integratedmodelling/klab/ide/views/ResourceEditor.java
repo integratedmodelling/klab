@@ -152,7 +152,11 @@ public class ResourceEditor extends ViewPart {
 		@Override
 		protected boolean canEdit(Object element) {
 			// TODO also check if field is final
-			return Activator.engineMonitor().isRunning();
+			if (element instanceof Pair) {
+				String parameter = ((Pair)element).getFirst().toString();
+				return Activator.engineMonitor().isRunning();
+			}
+			return false;
 		}
 
 		@Override

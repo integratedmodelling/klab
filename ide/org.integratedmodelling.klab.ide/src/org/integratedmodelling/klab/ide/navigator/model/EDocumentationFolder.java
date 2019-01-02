@@ -6,10 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
 import org.integratedmodelling.klab.client.documentation.ProjectDocumentation;
 import org.integratedmodelling.klab.client.documentation.ProjectReferences;
@@ -44,13 +43,15 @@ public class EDocumentationFolder extends ENavigatorItem {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getAdapter(Class<T> adapter) {
-        if (IResource.class.isAssignableFrom(adapter) && adapter != IProject.class) {
+    	if (IContainer.class.isAssignableFrom(adapter) && adapter != IProject.class) {
+           	return (T) Eclipse.INSTANCE.getIFolder(this.file);
+    	} else if (IResource.class.isAssignableFrom(adapter) && adapter != IProject.class) {
             if (this.page != null) {
                 return (T) Eclipse.INSTANCE.getIFile(this.page);
             } else if (this.refs != null) {
                 return (T) Eclipse.INSTANCE.getIFile(this.refs);
             } else {
-                // TODO folder
+            	return (T) Eclipse.INSTANCE.getIFolder(this.file);
             }
         }
         return null;

@@ -23,6 +23,8 @@ import org.eclipse.wb.swt.ResourceManager;
 import org.integratedmodelling.klab.api.resources.ResourceUtils;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.model.EDefinition;
+import org.integratedmodelling.klab.ide.navigator.model.EDocumentationFolder;
+import org.integratedmodelling.klab.ide.navigator.model.EDocumentationPage;
 import org.integratedmodelling.klab.ide.navigator.model.EModel;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
@@ -49,8 +51,9 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 				(project) -> KlabNavigatorActions.deleteProject(project));
 		action("New namespace...", "Create a new namespace", "namespace-checked.png", EProject.class,
 				(project) -> KlabNavigatorActions.addNamespace(project));
-		action("Edit references", "Edit the bibliographic references and sections linked to the project", "documentation.gif", 
-				EProject.class, (project) -> KlabNavigatorActions.editReferences(project)).activate();
+		action("Edit references", "Edit the bibliographic references and sections linked to the project",
+				"documentation.gif", EProject.class, (project) -> KlabNavigatorActions.editReferences(project))
+						.activate();
 		action("Delete namespace", "Delete the selected namespace", "namespace-checked.png", ENamespace.class,
 				(namespace) -> KlabNavigatorActions.deleteNamespace(namespace, wSite.getPage()));
 		action("New script...", "Create a new script file", "script.gif", EScriptFolder.class,
@@ -78,16 +81,22 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 						.copyToClipboard(ResourceUtils.extractShapeSpecification(resource.getResource()))).activate();
 		action("Edit resource", "Edit the selected resource", "resource.gif", EResource.class,
 				(resource) -> KlabNavigatorActions.editResource(resource));
-        action("Move resource...", "Move this resource to another project", "resource.gif", EResource.class,
-                (resource) -> KlabNavigatorActions.moveResource(resource));
-        action("Delete resource", "Delete the selected resource", "resource.gif", EResource.class,
+		action("Move resource...", "Move this resource to another project", "resource.gif", EResource.class,
+				(resource) -> KlabNavigatorActions.moveResource(resource));
+		action("Delete resource", "Delete the selected resource", "resource.gif", EResource.class,
 				(resource) -> KlabNavigatorActions.deleteResource(resource));
 		action("Edit documentation", "Edit the documentation for this model", "documentation.gif", EModel.class,
-				(model) -> KlabNavigatorActions.editDocumentation(model))
-			.activate((model) -> model.isDocumented());
+				(model) -> KlabNavigatorActions.editDocumentation(model)).activate((model) -> model.isDocumented());
 		action("Edit documentation", "Edit the documentation for this item", "documentation.gif", EDefinition.class,
-				(model) -> KlabNavigatorActions.editDocumentation(model))
-			.activate((model) -> model.isDocumented());
+				(model) -> KlabNavigatorActions.editDocumentation(model)).activate((model) -> model.isDocumented());
+		action("Add new documentation folder", "Add a documentation folder", "manual.gif", EDocumentationFolder.class,
+				(resource) -> KlabNavigatorActions.addDocumentationSubsection(resource));
+		action("Add new documentation item", "Add a new documentation item to reference for a model", "page.gif",
+				EDocumentationFolder.class, (resource) -> KlabNavigatorActions.addDocumentationItem(resource))
+						.onlyIf((resource) -> resource.getEParent() instanceof EDocumentationFolder);
+		action("Add new target section", "Add a documentation section target for this item", "section.gif",
+				EDocumentationPage.class, (resource) -> KlabNavigatorActions.addDocumentationSection(resource));
+
 	}
 
 	private ICommonViewerWorkbenchSite wSite;
@@ -99,6 +108,7 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 		String tooltip;
 		String icon;
 		Function<ENavigatorItem, Boolean> checker;
+		Function<ENavigatorItem, Boolean> onlyIf;
 		Consumer<ENavigatorItem> action;
 		Runnable voidAction;
 		// 0 = with engine on; 1 = always active
@@ -111,7 +121,7 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 			this.activateUnconditionally = true;
 			return this;
 		}
-		
+
 		ActionDescriptor activate(Function<ENavigatorItem, Boolean> activationCondition) {
 			this.activationCondition = activationCondition;
 			// this avoids catching the second condition if the condition is true
@@ -119,13 +129,18 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 			return this;
 		}
 
+		ActionDescriptor onlyIf(Function<ENavigatorItem, Boolean> activationCondition) {
+			this.onlyIf = activationCondition;
+			return this;
+		}
+
 		ActionDescriptor saveAs(String id) {
 			this.saveAs = id;
 			return this;
 		}
-		
+
 		ActionDescriptor withItem(ENavigatorItem item) {
-			// ACHTUNG just set the item in the general descriptor instead of making a 
+			// ACHTUNG just set the item in the general descriptor instead of making a
 			// copy and returning that. Should be OK as the UI is synchronous and the item
 			// is set before each use.
 			this.item = item;
@@ -188,7 +203,7 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 				&& ((IStructuredSelection) selection).getFirstElement() instanceof ENavigatorItem) {
 			ENavigatorItem item = (ENavigatorItem) (((IStructuredSelection) selection).getFirstElement());
 			for (ActionDescriptor descriptor : contextualDescriptors) {
-				if (descriptor.checker.apply(item)) {
+				if (descriptor.checker.apply(item) && (descriptor.onlyIf == null || descriptor.onlyIf.apply(item))) {
 					actions.add(new KlabAction(descriptor.withItem(item)));
 				}
 			}
@@ -241,15 +256,16 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 
 		@Override
 		public boolean isEnabled() {
-			
-			if (descriptor.activationCondition != null && (descriptor.item == null || !descriptor.activationCondition.apply(descriptor.item))) {
+
+			if (descriptor.activationCondition != null
+					&& (descriptor.item == null || !descriptor.activationCondition.apply(descriptor.item))) {
 				return false;
 			}
-			
+
 			if (!descriptor.activateUnconditionally && !Activator.engineMonitor().isRunning()) {
 				return false;
 			}
-			
+
 			if (descriptor.action != null) {
 				ISelection selection = provider.getSelection();
 				if (!selection.isEmpty()) {
