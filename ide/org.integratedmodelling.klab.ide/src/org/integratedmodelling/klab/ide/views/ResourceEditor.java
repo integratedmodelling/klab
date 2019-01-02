@@ -51,7 +51,9 @@ import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.ui.TimeEditor;
 import org.integratedmodelling.klab.ide.ui.WorldWidget;
+import org.integratedmodelling.klab.ide.utils.StringUtils;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.integratedmodelling.klab.rest.ResourceReference;
@@ -105,14 +107,20 @@ public class ResourceEditor extends ViewPart {
 
 		@Override
 		protected CellEditor getCellEditor(Object element) {
-			// TODO Auto-generated method stub
 			return editor;
 		}
 
 		@Override
 		protected boolean canEdit(Object element) {
-			// TODO also check if field is final
-			return Activator.engineMonitor().isRunning();
+			if (element instanceof Pair && Activator.engineMonitor().isRunning() && adapter != null) {
+				String parameter = ((Pair<?,?>)element).getFirst().toString();
+				Argument arg = adapter.getParameters().findArgument(parameter);
+				if (arg != null && arg.isFinal()) {
+					return false;
+				}
+				return true;
+			}
+			return false;
 		}
 
 		@Override
@@ -120,6 +128,7 @@ public class ResourceEditor extends ViewPart {
 			if (element instanceof Pair) {
 				String key = (String) ((Pair<?, ?>) element).getFirst();
 				// TODO match to adapter field choice
+				System.out.println("ZIO PAPA getValue for " + element);
 				return 0;
 			}
 			return "";
@@ -128,6 +137,7 @@ public class ResourceEditor extends ViewPart {
 		@Override
 		protected void setValue(Object element, Object value) {
 			// TODO Auto-generated method stub
+			System.out.println("ZIO PAPA setValue for " + element + " to "+ value);
 			viewer.update(element, null);
 		}
 
@@ -151,10 +161,13 @@ public class ResourceEditor extends ViewPart {
 
 		@Override
 		protected boolean canEdit(Object element) {
-			// TODO also check if field is final
-			if (element instanceof Pair) {
-				String parameter = ((Pair)element).getFirst().toString();
-				return Activator.engineMonitor().isRunning();
+			if (element instanceof Pair && Activator.engineMonitor().isRunning() && adapter != null) {
+				String parameter = ((Pair<?,?>)element).getFirst().toString();
+				Argument arg = adapter.getParameters().findArgument(parameter);
+				if (arg == null || arg.isFinal()) {
+					return false;
+				}
+				return true;
 			}
 			return false;
 		}
@@ -251,8 +264,13 @@ public class ResourceEditor extends ViewPart {
 				case 0:
 					return (String) ((Pair<?, ?>) element).getFirst();
 				case 1:
-					// TODO type
-					return "TYPE";
+					if (adapter != null) {
+						Argument arg = adapter.getParameters().findArgument(((Pair<?,?>)element).getFirst().toString());
+						if (arg != null) {
+							return StringUtils.capitalize(arg.getType().name().toLowerCase());
+						}
+					}
+					return "";
 				case 2:
 					return (String) ((Pair<?, ?>) element).getSecond();
 				}
@@ -378,6 +396,7 @@ public class ResourceEditor extends ViewPart {
 		}
 		{
 			Group grpGeometry = new Group(container, SWT.NONE);
+//			grpGeometry.setBackground(SWTResourceManager.getColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 			grpGeometry.setLayout(new GridLayout(2, false));
 			grpGeometry.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 			grpGeometry.setText("Geometry");
@@ -419,89 +438,8 @@ public class ResourceEditor extends ViewPart {
 			grpTime.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 2, 1));
 			grpTime.setText("Time");
 			
-			Combo time_type = new Combo(grpTime, SWT.READ_ONLY);
-			time_type.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-				}
-			});
-			time_type.setItems(new String[] {"Generic", "Specific", "Grid", "Real time"});
-			time_type.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-			time_type.select(1);
-			
-			Composite composite_7 = new Composite(grpTime, SWT.NONE);
-			GridLayout gl_composite_7 = new GridLayout(2, false);
-			gl_composite_7.horizontalSpacing = 2;
-			gl_composite_7.marginWidth = 0;
-			gl_composite_7.marginHeight = 0;
-			composite_7.setLayout(gl_composite_7);
-			composite_7.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
-			
-			time_resolution_multiplier = new Text(composite_7, SWT.BORDER);
-			GridData gd_time_resolution_multiplier = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
-			gd_time_resolution_multiplier.widthHint = 24;
-			time_resolution_multiplier.setLayoutData(gd_time_resolution_multiplier);
-			time_resolution_multiplier.setText("1");
-			
-			Combo time_resolution = new Combo(composite_7, SWT.READ_ONLY);
-			time_resolution.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-			time_resolution.setItems(new String[] {"MIllennium", "Century", "Decade", "Year", "Month", "Week", "Day", "Hour", "Minute", "Second", "Millisecond", "Nanosecond"});
-			time_resolution.select(3);
-			
-			Composite composite_4 = new Composite(grpTime, SWT.NONE);
-			composite_4.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-			GridLayout gl_composite_4 = new GridLayout(2, false);
-			gl_composite_4.horizontalSpacing = 2;
-			gl_composite_4.marginWidth = 0;
-			gl_composite_4.marginHeight = 0;
-			composite_4.setLayout(gl_composite_4);
-			
-			time_start = new Text(composite_4, SWT.BORDER);
-			time_start.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-			
-			Button time_chooseStart = new Button(composite_4, SWT.NONE);
-			GridData gd_time_chooseStart = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-			gd_time_chooseStart.widthHint = 48;
-			time_chooseStart.setLayoutData(gd_time_chooseStart);
-			time_chooseStart.setText("Start");
-			
-			Composite composite_5 = new Composite(grpTime, SWT.NONE);
-			composite_5.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-			GridLayout gl_composite_5 = new GridLayout(2, false);
-			gl_composite_5.marginWidth = 0;
-			gl_composite_5.marginHeight = 0;
-			gl_composite_5.horizontalSpacing = 2;
-			composite_5.setLayout(gl_composite_5);
-			
-			time_end = new Text(composite_5, SWT.BORDER);
-			time_end.setEnabled(false);
-			time_end.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-			
-			Button time_chooseEnd = new Button(composite_5, SWT.NONE);
-			GridData gd_time_chooseEnd = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-			gd_time_chooseEnd.widthHint = 48;
-			time_chooseEnd.setLayoutData(gd_time_chooseEnd);
-			time_chooseEnd.setEnabled(false);
-			time_chooseEnd.setText("End");
-			
-			Composite composite_6 = new Composite(grpTime, SWT.NONE);
-			composite_6.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-			GridLayout gl_composite_6 = new GridLayout(2, false);
-			gl_composite_6.marginWidth = 0;
-			gl_composite_6.marginHeight = 0;
-			gl_composite_6.horizontalSpacing = 2;
-			composite_6.setLayout(gl_composite_6);
-			
-			time_step = new Text(composite_6, SWT.BORDER);
-			time_step.setEnabled(false);
-			time_step.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-			
-			Button time_chooseStep = new Button(composite_6, SWT.NONE);
-			GridData gd_time_chooseStep = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-			gd_time_chooseStep.widthHint = 48;
-			time_chooseStep.setLayoutData(gd_time_chooseStep);
-			time_chooseStep.setEnabled(false);
-			time_chooseStep.setText("Step");
+			TimeEditor timeEditor = new TimeEditor(grpTime, SWT.NONE);
+			timeEditor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 			Group grpAttributes = new Group(composite_1, SWT.NONE);
 			grpAttributes.setLayout(new GridLayout(1, false));
@@ -551,9 +489,6 @@ public class ResourceEditor extends ViewPart {
 			Label lblNewLabel_4 = new Label(composite_3, SWT.NONE);
 			lblNewLabel_4
 					.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
-			new Label(composite_1, SWT.NONE);
-			new Label(composite_1, SWT.NONE);
-			new Label(composite_1, SWT.NONE);
 			{
 				geometryDefinition = new Label(grpGeometry, SWT.NONE);
 				geometryDefinition.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));

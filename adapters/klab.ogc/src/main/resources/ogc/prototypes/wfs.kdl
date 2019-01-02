@@ -4,10 +4,10 @@
  annotation wfs 	
 	"" 	
  {
- 	text 'serviceUrl'
+ 	final text 'serviceUrl'
  		""
  		
- 	text 'wfsIdentifier'
+ 	final text 'wfsIdentifier'
  		""
  	
  	optional input 'nameAttribute'

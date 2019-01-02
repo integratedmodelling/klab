@@ -96,7 +96,6 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 						.onlyIf((resource) -> resource.getEParent() instanceof EDocumentationFolder);
 		action("Add new target section", "Add a documentation section target for this item", "section.gif",
 				EDocumentationPage.class, (resource) -> KlabNavigatorActions.addDocumentationSection(resource));
-
 	}
 
 	private ICommonViewerWorkbenchSite wSite;

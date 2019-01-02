@@ -4,7 +4,7 @@
  annotation raster 
 	"" 	
  {
- 	text 'fileUrl'
+ 	final text 'fileUrl'
  		""
  		
  	optional input band

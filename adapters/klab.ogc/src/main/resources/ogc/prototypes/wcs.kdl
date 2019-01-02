@@ -7,10 +7,10 @@
  
  {
 
- 	text 'serviceUrl'
+ 	final text 'serviceUrl'
  		""
  		
- 	text 'wcsIdentifier'
+ 	final text 'wcsIdentifier'
  		""
 
 	text 'wcsVersion'
