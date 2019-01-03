@@ -104,15 +104,16 @@ public class DataflowCompiler {
 		for (IResolvable root : getRootResolvables(resolutionGraph)) {
 
 			modelCatalog.clear();
-//			boolean isResolver = root instanceof IObserver
-//					|| !((Observable) root).is(org.integratedmodelling.kim.api.IKimConcept.Type.COUNTABLE);
+			// boolean isResolver = root instanceof IObserver
+			// || !((Observable)
+			// root).is(org.integratedmodelling.kim.api.IKimConcept.Type.COUNTABLE);
 			Node node = compileActuator(root,
-//					isResolver ? IResolutionScope.Mode.RESOLUTION : IResolutionScope.Mode.INSTANTIATION, 
-					scope.getMode(),
-					resolutionGraph,
-					this.context == null ? null : this.context.getScale(), monitor);
+					// isResolver ? IResolutionScope.Mode.RESOLUTION :
+					// IResolutionScope.Mode.INSTANTIATION,
+					scope.getMode(), resolutionGraph, this.context == null ? null : this.context.getScale(), monitor);
+			node.root = true;
 			Actuator actuator = node.getActuatorTree(ret, monitor, new HashSet<>());
-//			actuator.setCreateObservation(scope.getMode() == Mode.RESOLUTION);
+			// actuator.setCreateObservation(scope.getMode() == Mode.RESOLUTION);
 			ret.getActuators().add(actuator);
 
 			// compute coverage
@@ -154,7 +155,7 @@ public class DataflowCompiler {
 
 			Actuator actuator = Actuator.create(ret, Mode.RESOLUTION);
 			actuator.setObservable(((ResolutionScope) scope).getObservable());
-//			actuator.setCreateObservation(true);
+			// actuator.setCreateObservation(true);
 			actuator.setType(Type.OBJECT);
 			actuator.setNamespace(((ResolutionScope) scope).getResolutionNamespace());
 			actuator.setName(((ResolutionScope) scope).getObservable().getLocalName());
@@ -218,6 +219,7 @@ public class DataflowCompiler {
 	 */
 	class Node {
 
+		public boolean root;
 		Observable observable;
 		Observer observer;
 		IResolutionScope.Mode mode;
@@ -298,7 +300,8 @@ public class DataflowCompiler {
 			if (models.size() == 1) {
 
 				ModelD theModel = models.iterator().next();
-				defineActuator(ret, theModel.model.getLocalNameFor(observable), theModel, generated);
+				defineActuator(ret, root ? observable.getLocalName() : theModel.model.getLocalNameFor(observable),
+						theModel, generated);
 
 			} else if (models.size() > 1) {
 
@@ -512,7 +515,7 @@ public class DataflowCompiler {
 		for (ResolutionEdge d : graph.incomingEdgesOf(resolvable)) {
 
 			IResolvable source = graph.getEdgeSource(d);
-			
+
 			if (source instanceof IObservable) {
 				Set<ResolutionEdge> sources = graph.incomingEdgesOf(source);
 				if (sources.size() == 1) {
