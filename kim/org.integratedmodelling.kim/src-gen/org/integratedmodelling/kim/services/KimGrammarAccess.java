@@ -7640,73 +7640,6 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//ValueWithIdAndConcept
 		public RuleCall getSingleValueValueWithIdAndConceptParserRuleCall_1_0() { return cSingleValueValueWithIdAndConceptParserRuleCall_1_0; }
 	}
-	public class ValueWithConceptElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.ValueWithConcept");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Assignment cConceptAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
-		private final RuleCall cConceptConceptDeclarationParserRuleCall_0_0 = (RuleCall)cConceptAssignment_0.eContents().get(0);
-		private final Assignment cLiteralAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
-		private final RuleCall cLiteralLiteralParserRuleCall_1_0 = (RuleCall)cLiteralAssignment_1.eContents().get(0);
-		private final Assignment cExprAssignment_2 = (Assignment)cAlternatives.eContents().get(2);
-		private final RuleCall cExprEXPRTerminalRuleCall_2_0 = (RuleCall)cExprAssignment_2.eContents().get(0);
-		private final Assignment cListAssignment_3 = (Assignment)cAlternatives.eContents().get(3);
-		private final RuleCall cListListParserRuleCall_3_0 = (RuleCall)cListAssignment_3.eContents().get(0);
-		private final Assignment cTableAssignment_4 = (Assignment)cAlternatives.eContents().get(4);
-		private final RuleCall cTableLookupTableParserRuleCall_4_0 = (RuleCall)cTableAssignment_4.eContents().get(0);
-		private final Assignment cMapAssignment_5 = (Assignment)cAlternatives.eContents().get(5);
-		private final RuleCall cMapMapParserRuleCall_5_0 = (RuleCall)cMapAssignment_5.eContents().get(0);
-		private final Assignment cNullAssignment_6 = (Assignment)cAlternatives.eContents().get(6);
-		private final Keyword cNullUnknownKeyword_6_0 = (Keyword)cNullAssignment_6.eContents().get(0);
-		
-		//ValueWithConcept Value:
-		//	concept=ConceptDeclaration | literal=Literal | expr=EXPR | list=List | table=LookupTable | map=Map | null?='unknown';
-		@Override public ParserRule getRule() { return rule; }
-		
-		//concept=ConceptDeclaration | literal=Literal | expr=EXPR | list=List | table=LookupTable | map=Map | null?='unknown'
-		public Alternatives getAlternatives() { return cAlternatives; }
-		
-		//concept=ConceptDeclaration
-		public Assignment getConceptAssignment_0() { return cConceptAssignment_0; }
-		
-		//ConceptDeclaration
-		public RuleCall getConceptConceptDeclarationParserRuleCall_0_0() { return cConceptConceptDeclarationParserRuleCall_0_0; }
-		
-		//literal=Literal
-		public Assignment getLiteralAssignment_1() { return cLiteralAssignment_1; }
-		
-		//Literal
-		public RuleCall getLiteralLiteralParserRuleCall_1_0() { return cLiteralLiteralParserRuleCall_1_0; }
-		
-		//expr=EXPR
-		public Assignment getExprAssignment_2() { return cExprAssignment_2; }
-		
-		//EXPR
-		public RuleCall getExprEXPRTerminalRuleCall_2_0() { return cExprEXPRTerminalRuleCall_2_0; }
-		
-		//list=List
-		public Assignment getListAssignment_3() { return cListAssignment_3; }
-		
-		//List
-		public RuleCall getListListParserRuleCall_3_0() { return cListListParserRuleCall_3_0; }
-		
-		//table=LookupTable
-		public Assignment getTableAssignment_4() { return cTableAssignment_4; }
-		
-		//LookupTable
-		public RuleCall getTableLookupTableParserRuleCall_4_0() { return cTableLookupTableParserRuleCall_4_0; }
-		
-		//map=Map
-		public Assignment getMapAssignment_5() { return cMapAssignment_5; }
-		
-		//Map
-		public RuleCall getMapMapParserRuleCall_5_0() { return cMapMapParserRuleCall_5_0; }
-		
-		//null?='unknown'
-		public Assignment getNullAssignment_6() { return cNullAssignment_6; }
-		
-		//'unknown'
-		public Keyword getNullUnknownKeyword_6_0() { return cNullUnknownKeyword_6_0; }
-	}
 	public class ValueWithIdAndConceptElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.ValueWithIdAndConcept");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
@@ -7733,6 +7666,14 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cNullAssignment_8 = (Assignment)cAlternatives.eContents().get(8);
 		private final Keyword cNullUnknownKeyword_8_0 = (Keyword)cNullAssignment_8.eContents().get(0);
 		
+		////ValueWithConcept returns Value:
+		////	concept=ConceptDeclaration |
+		////	literal=Literal |
+		////	expr=EXPR |
+		////	list=List |
+		////	table=LookupTable |
+		////	map=Map |
+		////	null?='unknown';
 		//ValueWithIdAndConcept Value:
 		//	concept=ConceptDeclaration | function=Function | literal=Literal | expr=EXPR | id=(PathName | LOWERCASE_ID |
 		//	UPPERCASE_ID | CAMELCASE_ID) | list=List | table=LookupTable | map=Map | null?='unknown';
@@ -9158,7 +9099,6 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	private final DocSelectorElements pDocSelector;
 	private final KeyValuePairElements pKeyValuePair;
 	private final ParameterListElements pParameterList;
-	private final ValueWithConceptElements pValueWithConcept;
 	private final ValueWithIdAndConceptElements pValueWithIdAndConcept;
 	private final ValueElements pValue;
 	private final FunctionElements pFunction;
@@ -9265,7 +9205,6 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		this.pDocSelector = new DocSelectorElements();
 		this.pKeyValuePair = new KeyValuePairElements();
 		this.pParameterList = new ParameterListElements();
-		this.pValueWithConcept = new ValueWithConceptElements();
 		this.pValueWithIdAndConcept = new ValueWithIdAndConceptElements();
 		this.pValue = new ValueElements();
 		this.pFunction = new FunctionElements();
@@ -10147,16 +10086,14 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		return getParameterListAccess().getRule();
 	}
 	
-	//ValueWithConcept Value:
-	//	concept=ConceptDeclaration | literal=Literal | expr=EXPR | list=List | table=LookupTable | map=Map | null?='unknown';
-	public ValueWithConceptElements getValueWithConceptAccess() {
-		return pValueWithConcept;
-	}
-	
-	public ParserRule getValueWithConceptRule() {
-		return getValueWithConceptAccess().getRule();
-	}
-	
+	////ValueWithConcept returns Value:
+	////	concept=ConceptDeclaration |
+	////	literal=Literal |
+	////	expr=EXPR |
+	////	list=List |
+	////	table=LookupTable |
+	////	map=Map |
+	////	null?='unknown';
 	//ValueWithIdAndConcept Value:
 	//	concept=ConceptDeclaration | function=Function | literal=Literal | expr=EXPR | id=(PathName | LOWERCASE_ID |
 	//	UPPERCASE_ID | CAMELCASE_ID) | list=List | table=LookupTable | map=Map | null?='unknown';

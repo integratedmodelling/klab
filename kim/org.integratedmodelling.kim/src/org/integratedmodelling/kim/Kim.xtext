@@ -895,4 +895,3 @@ VersionNumber:
 	INT ('.' INT ('.' INT)?)? ('-')? ((LOWERCASE_ID|UPPERCASE_ID))?
 ;
 
-

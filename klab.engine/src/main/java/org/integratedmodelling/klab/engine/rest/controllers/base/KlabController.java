@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
@@ -28,6 +29,7 @@ import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.rest.Capabilities;
 import org.integratedmodelling.klab.rest.EngineStatus;
+import org.integratedmodelling.klab.rest.KimCapabilities;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.rest.PingResponse;
@@ -67,6 +69,18 @@ public class KlabController {
                 }
             }
         }
+        return ret;
+    }
+    
+    @RequestMapping(value = API.KIM, method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public KimCapabilities kimCapabilities(Principal user, HttpServletRequest request) {
+        KimCapabilities ret = new KimCapabilities();
+        // TODO this will have its own independent version
+        ret.setBuild(Version.VERSION_BUILD);
+        // TODO this will have its own independent version
+        ret.setVersion(Version.CURRENT);
+        ret.getKeywords().addAll(Kim.INSTANCE.getKimKeywords());
         return ret;
     }
     

@@ -399,4 +399,10 @@ public class Range implements IValueMediator {
 
     }
 
+	public boolean isWithin(double n) {
+		boolean left = lowerExclusive ? n > lowerBound : n >= lowerBound;
+		boolean right = upperExclusive ? n < upperBound : n <= upperBound;
+		return left && right;
+	}
+
 }

@@ -159,7 +159,6 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getKeyValuePairAccess().getNameAlternatives_0_0(), "rule__KeyValuePair__NameAlternatives_0_0");
 					put(grammarAccess.getKeyValuePairAccess().getAlternatives_1(), "rule__KeyValuePair__Alternatives_1");
 					put(grammarAccess.getParameterListAccess().getAlternatives(), "rule__ParameterList__Alternatives");
-					put(grammarAccess.getValueWithConceptAccess().getAlternatives(), "rule__ValueWithConcept__Alternatives");
 					put(grammarAccess.getValueWithIdAndConceptAccess().getAlternatives(), "rule__ValueWithIdAndConcept__Alternatives");
 					put(grammarAccess.getValueWithIdAndConceptAccess().getIdAlternatives_4_0(), "rule__ValueWithIdAndConcept__IdAlternatives_4_0");
 					put(grammarAccess.getValueAccess().getAlternatives(), "rule__Value__Alternatives");
@@ -965,13 +964,6 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getParameterListAccess().getPairsAssignment_0_0(), "rule__ParameterList__PairsAssignment_0_0");
 					put(grammarAccess.getParameterListAccess().getPairsAssignment_0_1_1(), "rule__ParameterList__PairsAssignment_0_1_1");
 					put(grammarAccess.getParameterListAccess().getSingleValueAssignment_1(), "rule__ParameterList__SingleValueAssignment_1");
-					put(grammarAccess.getValueWithConceptAccess().getConceptAssignment_0(), "rule__ValueWithConcept__ConceptAssignment_0");
-					put(grammarAccess.getValueWithConceptAccess().getLiteralAssignment_1(), "rule__ValueWithConcept__LiteralAssignment_1");
-					put(grammarAccess.getValueWithConceptAccess().getExprAssignment_2(), "rule__ValueWithConcept__ExprAssignment_2");
-					put(grammarAccess.getValueWithConceptAccess().getListAssignment_3(), "rule__ValueWithConcept__ListAssignment_3");
-					put(grammarAccess.getValueWithConceptAccess().getTableAssignment_4(), "rule__ValueWithConcept__TableAssignment_4");
-					put(grammarAccess.getValueWithConceptAccess().getMapAssignment_5(), "rule__ValueWithConcept__MapAssignment_5");
-					put(grammarAccess.getValueWithConceptAccess().getNullAssignment_6(), "rule__ValueWithConcept__NullAssignment_6");
 					put(grammarAccess.getValueWithIdAndConceptAccess().getConceptAssignment_0(), "rule__ValueWithIdAndConcept__ConceptAssignment_0");
 					put(grammarAccess.getValueWithIdAndConceptAccess().getFunctionAssignment_1(), "rule__ValueWithIdAndConcept__FunctionAssignment_1");
 					put(grammarAccess.getValueWithIdAndConceptAccess().getLiteralAssignment_2(), "rule__ValueWithIdAndConcept__LiteralAssignment_2");

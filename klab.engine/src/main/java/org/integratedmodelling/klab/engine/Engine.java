@@ -440,19 +440,6 @@ public class Engine extends Server implements IEngine, UserDetails {
 			return false;
 		}
 
-//		/*
-//		 * load annotation prototypes declared in this package
-//		 */
-//		for (String kdl : new Reflections(getClass().getPackage().getName(), new ResourcesScanner())
-//				.getResources(Pattern.compile(".*\\.kdl"))) {
-//			try {
-//				Annotations.INSTANCE.declareServices(getClass().getClassLoader().getResource(kdl));
-//			} catch (KlabException e) {
-//				Logging.INSTANCE.error(e);
-//				return false;
-//			}
-//		}
-
 		boolean ret = true;
 		try {
 			/*

@@ -98,7 +98,7 @@ public class NewScriptWizard extends Wizard {
         if (project == null) {
             return false;
         }
-
+        
         /*
          * 1. check that namespace is not already there; set error on page if so 2.
          * check that source folder is valid (later - we only list valid ones)
@@ -113,6 +113,16 @@ public class NewScriptWizard extends Wizard {
             }
         }
 
+        if (nspc.contains(".")) {
+        	page.setErrorMessage("Context ID must be a unique name, not a path: scripts are not hierarchically arranged in a project.");
+        	return false;
+        }
+        
+		if (Kim.INSTANCE.getKimKeywords().contains(nspc)) {
+			page.setErrorMessage("'" + nspc + "' is a k.IM keyword and cannot be used as a namespace component.");
+			return false;
+		}
+        
         if (StringUtils.containsAny(nspc, StringUtils.UPPERCASE | StringUtils.WHITESPACE | StringUtils.NONLETTERS)) {
             page.setErrorMessage("namespace identifiers must contain only lowercase letters with no whitespace");
             return false;

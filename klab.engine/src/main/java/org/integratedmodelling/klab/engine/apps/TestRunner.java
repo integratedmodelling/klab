@@ -22,28 +22,94 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.testing.Assertion;
 import org.integratedmodelling.klab.components.geospace.utils.SpatialDisplay;
-import org.integratedmodelling.klab.components.testing.assertions.Assertion;
+import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.Session;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 
 public class TestRunner implements Annotations.Handler {
-	
-	class TestMonitor extends Engine.Monitor {
 
-		protected TestMonitor(IMonitor monitor) {
-			super((Monitor)monitor);
+	class TestResult {
+
+		IServiceCall assertion;
+		boolean ok;
+		List<Exception> exceptions = new ArrayList<>();
+		String message = "";
+		List<String> details = new ArrayList<>();
+		long startTime, endTime;
+
+		TestResult(IServiceCall assertion, String message, boolean ok, long startTime) {
+			this.assertion = assertion;
+			this.message = message;
+			this.ok = ok;
+			this.startTime = startTime;
+			this.endTime = System.currentTimeMillis();
 		}
 	}
-	
+
+	class TestMonitor extends Engine.Monitor {
+
+		List<TestResult> data = new ArrayList<>();
+
+		int okCount = 0;
+		int failCount = 0;
+		
+
+		protected TestMonitor(IMonitor monitor) {
+			super((Monitor) monitor);
+		}
+
+		public void testError(IServiceCall assertion, Assertion test, long startTime, Object... errors) {
+			error("assertion " + assertion.getName() + " failed");
+			TestResult result = new TestResult(assertion, "assertion " + assertion.getName() + " succeeded", false,
+					System.currentTimeMillis());
+			result.details.addAll(test.getDetails());
+			data.add(result);
+			failCount ++;
+		}
+
+		/**
+		 * Report in reverse
+		 * @return
+		 */
+		public List<String> report() {
+			List<String> ret = new ArrayList<>();
+			for (int i = data.size() - 1; i >= 0; i--) {
+				TestResult result = data.get(i);
+				for (int d = result.details.size() - 1; d >= 0; d --) {
+					ret.add("   " + result.details.get(d));
+				}
+				ret.add((result.ok ? "SUCCESS: " : "   FAIL: ") + result.assertion.getName()
+						+ new Date(result.startTime) + " [" + (result.endTime - result.startTime) + " ms]");
+			}
+			return ret;
+		}
+
+		public void testOk(IServiceCall assertion, Assertion test, long startTime) {
+			info("assertion " + assertion.getName() + " succeeded");
+			data.add(new TestResult(assertion, "assertion " + assertion.getName() + " succeeded", true,
+					System.currentTimeMillis()));
+			okCount ++;
+		}
+
+		public int failCount() {
+			return failCount;
+		}
+
+		public int okCount() {
+			return okCount;
+		}
+	}
 
 	@Override
 	public Object process(IKimObject target, IParameters<Object> arguments, IMonitor monitor) throws Exception {
 
 		// switch monitor for a test monitor that also logs and summarizes
 		monitor = new TestMonitor(monitor);
-		
+
 		String id = arguments.get("name", "unnamed test");
 		int repetitions = arguments.get("repeat", 1);
 
@@ -102,9 +168,6 @@ public class TestRunner implements Annotations.Handler {
 									result.add(ret);
 								}
 							}
-							/*
-							 * TODO run any assertion indicated for the subject
-							 */
 						} else {
 							monitor.warn(id + ": observation of " + observer.getName() + " was unsuccessful");
 						}
@@ -112,9 +175,11 @@ public class TestRunner implements Annotations.Handler {
 						for (IServiceCall assertion : arguments.get("assertions", new ArrayList<IServiceCall>())) {
 							Object test = Extensions.INSTANCE.callFunction(assertion, monitor);
 							if (test instanceof Assertion) {
-								// run it
+								evaluateAssertion(assertion, (Assertion) test, ((Subject) subject).getRuntimeContext(),
+										(TestMonitor) monitor);
 							} else {
-								monitor.error("function " + assertion.getName() + " does not produce an assertion: ignored");
+								monitor.error(
+										"function " + assertion.getName() + " does not produce an assertion: ignored");
 							}
 						}
 
@@ -156,31 +221,58 @@ public class TestRunner implements Annotations.Handler {
 							}
 						}
 
-				        if (subject != null && monitor instanceof Monitor) {
-				        	for (Monitor.Listener listener : ((Monitor)monitor).getListeners()) {
-				        		listener.notifyRootContext(subject);
-				        	}
-				        }
+						if (subject != null && monitor instanceof Monitor) {
+							for (Monitor.Listener listener : ((Monitor) monitor).getListeners()) {
+								listener.notifyRootContext(subject);
+							}
+						}
 
 					} else {
 						monitor.error(id + ": errors in retrieving observer or session");
 					}
 				} catch (Throwable t) {
-					exceptions.add(t);
+					monitor.error(t);
 				}
 			}
 
-			Logging.INSTANCE.info("Finished test " + id + " on " + new Date() + " with "
-					+ ((monitor.hasErrors() || exceptions.size() > 0) ? "errors" : "no errors"));
-
-			for (Throwable t : exceptions) {
-				Logging.INSTANCE.error("Exception running test " + id + ": " + t.getMessage());
+			for (String s : ((TestMonitor) monitor).report()) {
+				Logging.INSTANCE.info(s);
 			}
+			Logging.INSTANCE.info(" TEST REPORT: " + ((TestMonitor) monitor).okCount() + " ok, "
+					+ ((TestMonitor) monitor).failCount() + " failures");
+			Logging.INSTANCE.info("----------------------------------------------------------------------");
+			Logging.INSTANCE.info("Finished test " + id + " on " + new Date() + " with "
+					+ ((monitor.hasErrors() ? "errors" : "no errors")));
 
 		}
 
 		return result;
 	}
 
+	private void evaluateAssertion(IServiceCall assertion, Assertion test, IRuntimeContext runtimeContext,
+			TestMonitor monitor) {
+
+		Object o = assertion.getParameters().get("target");
+		List<String> targets = new ArrayList<>();
+		if (o instanceof List) {
+			for (Object t : ((List<?>) o)) {
+				targets.add(t.toString());
+			}
+		} else {
+			targets.add(o.toString());
+		}
+
+		long startTime = System.currentTimeMillis();
+		try {
+			if (!test.evaluate(targets, assertion.getParameters(), runtimeContext)) {
+				monitor.testError(assertion, test, startTime);
+			} else {
+				monitor.testOk(assertion, test, startTime);
+			}
+		} catch (Throwable e) {
+			monitor.testError(assertion, test, startTime, e);
+		}
+
+	}
 
 }

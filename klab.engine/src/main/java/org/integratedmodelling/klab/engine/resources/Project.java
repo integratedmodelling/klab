@@ -140,6 +140,7 @@ public class Project implements IProject {
         ret = new File(getRoot() + File.separator + IKimProject.SCRIPT_FOLDER + File.separator
                 + scriptPath.replaceAll("\\/", File.separator) + namespaceId.replace('.', File.separatorChar)
                 + ".kim");
+        ret.getParentFile().mkdirs();
         try (PrintWriter out = new PrintWriter(ret)) {
             out.print(KimTemplates.scriptTemplate.replaceAll("__NAME__", namespaceId)
                     .replaceAll("__WORLDVIEW__", Resources.INSTANCE.getWorldview().getName())
@@ -158,6 +159,7 @@ public class Project implements IProject {
         ret = new File(getRoot() + File.separator + IKimProject.TESTS_FOLDER + File.separator
                 + scriptPath.replaceAll("\\/", File.separator) + namespaceId.replace('.', File.separatorChar)
                 + ".kim");
+        ret.getParentFile().mkdirs();
         try (PrintWriter out = new PrintWriter(ret)) {
             out.print(KimTemplates.testCaseTemplate.replaceAll("__NAME__", namespaceId)
                     .replaceAll("__WORLDVIEW__", Resources.INSTANCE.getWorldview().getName())

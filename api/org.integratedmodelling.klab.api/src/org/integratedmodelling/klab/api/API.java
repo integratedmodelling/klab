@@ -89,13 +89,27 @@ public interface API {
 	 * <b>Protocol:</b> GET <br/>
 	 * <b>Response type:</b> Json <br/>
 	 * <b>Response:</b>
-	 * {@code org.integratedmodelling.klab.rest.resources.responses.Capabilities}
+	 * {@code org.integratedmodelling.klab.rest.Capabilities}
 	 * <br/>
 	 * <b>Authentication:</b> open or {@link INetworkSessionIdentity} (response
 	 * reflect access levels)
 	 * 
 	 */
 	public static final String CAPABILITIES = "/capabilities";
+
+	/**
+	 * k.IM descriptor endppoint. Returns info on the language supported, including
+	 * the version, build, list of keywords and other useful statistics.
+	 * 
+	 * <p>
+	 * <b>Protocol:</b> GET <br/>
+	 * <b>Response type:</b> Json <br/>
+	 * <b>Response:</b>
+	 * {@code org.integratedmodelling.klab.rest.KimCapabilities}
+	 * <br/>
+	 * <b>Authentication:</b> open
+	 */
+	public static final String KIM = "/kim";
 
 	public static interface HUB {
 

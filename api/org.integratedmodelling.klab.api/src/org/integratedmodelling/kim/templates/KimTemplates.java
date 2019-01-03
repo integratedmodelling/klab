@@ -31,11 +31,12 @@ public interface KimTemplates {
             "    name = \"__TEST_NAME__\",\r\n" + 
             "    description  = \"\",\r\n" + 
             "    // add to the list any concepts to be observed in the context below\r\n" + 
-            "    observations = (\"\")\r\n" + 
-            "    // you can add assertions to check results after execution\r\n" + 
+            "    observations = (\"\"),\r\n" + 
+            "    // add assertions to check the observations after execution\r\n" + 
+            "    assertions = (\"\")\r\n" + 
             ")\r\n" + 
-            "// change the concept to the one you want; add a URN optionally\r\n" + 
-            "observe /* a:urn:to:use#objectid as */ __WORLDVIEW__:Thing named __NAME__\r\n" + 
+            "// change the concept to the one you want; use a URN optionally (in a separate test project including the resource)\r\n" + 
+            "observe /* a:urn:to:use#objectid as */ __WORLDVIEW__:Region named __NAME__\r\n" + 
             "    // add any space and/or time extents: for example\r\n" + 
             "    // over space(shape=\"EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))\", grid=\"1 km\")\r\n" + 
             ";\r\n\n" + 

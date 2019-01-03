@@ -307,11 +307,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 				sequence_Urn(context, (Urn) semanticObject); 
 				return; 
 			case KimPackage.VALUE:
-				if (rule == grammarAccess.getValueWithConceptRule()) {
-					sequence_ValueWithConcept(context, (Value) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getValueWithIdAndConceptRule()) {
+				if (rule == grammarAccess.getValueWithIdAndConceptRule()) {
 					sequence_ValueWithIdAndConcept(context, (Value) semanticObject); 
 					return; 
 				}
@@ -448,16 +444,16 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         restrictions+=RestrictionStatement | 
 	 *                         metadata=Metadata
 	 *                     )? 
-	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
-	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
-	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
-	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
 	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
+	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
 	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
+	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
 	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
+	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
+	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
-	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
 	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
+	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
 	 *                     ((constituent?='constituent' | constitutes?='consists')? partOf?='of' whole=ConceptDeclaration)? 
 	 *                     (
 	 *                         roles+=ConceptDeclaration 
@@ -1509,26 +1505,6 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *     (execValue=ExecutableValue target=LOWERCASE_ID?)
 	 */
 	protected void sequence_ValueExecution(ISerializationContext context, ValueAssignment semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     ValueWithConcept returns Value
-	 *
-	 * Constraint:
-	 *     (
-	 *         concept=ConceptDeclaration | 
-	 *         literal=Literal | 
-	 *         expr=EXPR | 
-	 *         list=List | 
-	 *         table=LookupTable | 
-	 *         map=Map | 
-	 *         null?='unknown'
-	 *     )
-	 */
-	protected void sequence_ValueWithConcept(ISerializationContext context, Value semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

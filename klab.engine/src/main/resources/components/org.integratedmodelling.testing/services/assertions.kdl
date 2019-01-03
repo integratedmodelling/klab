@@ -1,9 +1,36 @@
 @klab 0.10.0
 @version 0.10.0
+@namespace assert
 
-boolean assert 
-	"The assert function is used within @test annotations to specify basic conditions that the 
-	 test results must match. If any of the declared assertions fails, the test fails."
+boolean exists 
+	""
 {
-	class org.integratedmodelling.klab.components.testing.assertions.Assert
+	list target	
+		"" 
+		
+	class org.integratedmodelling.klab.components.testing.assertions.AssertExists
+}
+
+boolean nodata 
+	""
+{
+	list target
+
+	class org.integratedmodelling.klab.components.testing.assertions.AssertNodata
+}
+
+boolean 'range' 
+	""
+{
+	list target
+
+	class org.integratedmodelling.klab.components.testing.assertions.AssertRange
+}
+
+boolean objects 
+	""
+{
+	list target
+
+	class org.integratedmodelling.klab.components.testing.assertions.AssertObjects
 }

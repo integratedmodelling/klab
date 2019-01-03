@@ -84,13 +84,14 @@ public class NewScript extends WizardPage {
         combo.setLayoutData(fd_combo);
 
         Label lblNewLabel_1 = new Label(container, SWT.NONE);
+        lblNewLabel_1.setToolTipText("The context ID is the name of the context for the new test and the name of the script file.");
         fd_text.left = new FormAttachment(lblNewLabel_1, 27);
         lblNewLabel_1.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
         FormData fd_lblNewLabel_1 = new FormData();
         fd_lblNewLabel_1.top = new FormAttachment(text, 3, SWT.TOP);
         fd_lblNewLabel_1.left = new FormAttachment(lblNewLabel, 0, SWT.LEFT);
         lblNewLabel_1.setLayoutData(fd_lblNewLabel_1);
-        lblNewLabel_1.setText("Namespace ID");
+        lblNewLabel_1.setText("Context ID");
 
         /*
          * Add open projects in namespace, preselecting the one we started with, if any.
@@ -108,6 +109,7 @@ public class NewScript extends WizardPage {
         combo.select(selection);
         
         Label lblScriptName = new Label(container, SWT.NONE);
+        lblScriptName.setToolTipText("The script name is the name of the script or test as set in the correspondent annotation. It should be a hierarchical path name identifying the test suite and topic.");
         lblScriptName.setText("Script name");
         lblScriptName.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
         FormData fd_lblScriptName = new FormData();
