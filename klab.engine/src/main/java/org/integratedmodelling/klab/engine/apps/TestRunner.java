@@ -82,7 +82,7 @@ public class TestRunner implements Annotations.Handler {
 				for (int d = result.details.size() - 1; d >= 0; d --) {
 					ret.add("   " + result.details.get(d));
 				}
-				ret.add((result.ok ? "SUCCESS: " : "   FAIL: ") + result.assertion.getName()
+				ret.add((result.ok ? "SUCCESS: " : "   FAIL: ") + result.assertion.getName() + " on "
 						+ new Date(result.startTime) + " [" + (result.endTime - result.startTime) + " ms]");
 			}
 			return ret;
