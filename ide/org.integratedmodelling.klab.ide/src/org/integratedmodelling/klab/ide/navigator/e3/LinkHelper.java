@@ -21,14 +21,14 @@ import org.eclipse.ui.navigator.ILinkHelper;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.ide.kim.KimData;
-import org.integratedmodelling.klab.ide.navigator.model.EDocumentationItem;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
-import org.integratedmodelling.klab.ide.navigator.model.EReference;
-import org.integratedmodelling.klab.ide.navigator.model.EReferencesPage;
 import org.integratedmodelling.klab.ide.navigator.model.EResource;
+import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumentationItem;
+import org.integratedmodelling.klab.ide.navigator.model.documentation.EReference;
+import org.integratedmodelling.klab.ide.navigator.model.documentation.EReferencesPage;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.ide.views.ResourceEditor;
 

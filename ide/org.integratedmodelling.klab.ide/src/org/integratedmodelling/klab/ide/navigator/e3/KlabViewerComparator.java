@@ -10,14 +10,14 @@ import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
-import org.integratedmodelling.klab.ide.navigator.model.EDocumentationFolder;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
-import org.integratedmodelling.klab.ide.navigator.model.EReferencesPage;
 import org.integratedmodelling.klab.ide.navigator.model.EResourceFolder;
 import org.integratedmodelling.klab.ide.navigator.model.EScriptFolder;
 import org.integratedmodelling.klab.ide.navigator.model.ETestFolder;
+import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumentationFolder;
+import org.integratedmodelling.klab.ide.navigator.model.documentation.EReferencesPage;
 
 public class KlabViewerComparator extends ViewerComparator {
 

@@ -1,7 +1,8 @@
-package org.integratedmodelling.klab.ide.navigator.model;
+package org.integratedmodelling.klab.ide.navigator.model.documentation;
 
 import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
 import org.integratedmodelling.klab.client.documentation.ProjectDocumentation;
+import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 import org.integratedmodelling.klab.ide.utils.StringUtils;
 
 public class EDocumentationItem extends ENavigatorItem {

@@ -1,6 +1,7 @@
-package org.integratedmodelling.klab.ide.navigator.model;
+package org.integratedmodelling.klab.ide.navigator.model.documentation;
 
 import org.integratedmodelling.klab.client.documentation.ProjectReferences;
+import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 
 public class EReference extends ENavigatorItem {
 

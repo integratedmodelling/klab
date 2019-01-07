@@ -39,10 +39,11 @@ import org.integratedmodelling.klab.documentation.BibTexFields;
 import org.integratedmodelling.klab.documentation.Reference;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
-import org.integratedmodelling.klab.ide.navigator.model.EReference;
+import org.integratedmodelling.klab.ide.navigator.model.documentation.EReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.custom.SashForm;
 
 public class ReferencesEditor extends ViewPart {
 
@@ -183,109 +184,111 @@ public class ReferencesEditor extends ViewPart {
 		});
 		lblNewLabel2.setToolTipText("Clear fields");
 		lblNewLabel2.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/Player Record.png"));
-
-
-		editor = new StyledText(parent, SWT.BORDER | SWT.WRAP | /* SWT.H_SCROLL | */SWT.V_SCROLL);
-		editor.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if ((e.keyCode == 'S' || e.keyCode == 's') && (e.stateMask & SWT.CTRL) != 0) {
-					save();
-				} else {
-					dirty = true;
-					if (!getTitle().startsWith("*")) {
-						setPartName("* " + getTitle());
+		
+		SashForm sashForm = new SashForm(parent, SWT.VERTICAL);
+		sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		
+		
+				editor = new StyledText(sashForm, SWT.BORDER | SWT.WRAP | /* SWT.H_SCROLL | */SWT.V_SCROLL);
+				editor.addKeyListener(new KeyAdapter() {
+					@Override
+					public void keyPressed(KeyEvent e) {
+						if ((e.keyCode == 'S' || e.keyCode == 's') && (e.stateMask & SWT.CTRL) != 0) {
+							save();
+						} else {
+							dirty = true;
+							if (!getTitle().startsWith("*")) {
+								setPartName("* " + getTitle());
+							}
+						}
 					}
-				}
-			}
-		});
-		editor.setAlwaysShowScrollBars(false);
-		editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1));
-
-		Group grpCrossreferences = new Group(parent, SWT.NONE);
-		grpCrossreferences.setLayout(new GridLayout(1, false));
-		grpCrossreferences.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		grpCrossreferences.setText("Existing references (double click to edit)");
-
-		tableViewer = new TableViewer(grpCrossreferences, SWT.BORDER | SWT.FULL_SELECTION);
-		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				Object o = ((StructuredSelection) (event.getSelection())).getFirstElement();
-				if (o instanceof Reference) {
-					tag.setText(((Reference) o).get(BibTexFields.KEY));
-					editor.setText(((Reference) o).get(BibTexFields.EXAMPLE_CITATION));
-				}
-			}
-		});
-		table = tableViewer.getTable();
-		table.setHeaderVisible(true);
-		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		table.setLinesVisible(true);
-		tableViewer.setContentProvider(new ReferencesContentProvider());
-		tableViewer.setLabelProvider(new ReferencesLabelProvider());
-
-		TableColumn tblclmnNewColumn = new TableColumn(table, SWT.NONE);
-		tblclmnNewColumn.setWidth(100);
-		tblclmnNewColumn.setText("Tag");
-
-		TableColumn tblclmnReference = new TableColumn(table, SWT.NONE);
-		tblclmnReference.setWidth(740);
-		tblclmnReference.setText("Citation");
-
-		Menu menu = new Menu(table);
-		table.setMenu(menu);
-
-		MenuItem mntmDeleteReference = new MenuItem(menu, SWT.NONE);
-		mntmDeleteReference.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Object o = ((StructuredSelection) (tableViewer.getSelection())).getFirstElement();
-				if (o instanceof Reference) {
-					if (Eclipse.INSTANCE.confirm("Confirm deletion of " + ((Reference) o).get(BibTexFields.KEY) + "?")) {
-						references.remove(((Reference) o).get(BibTexFields.KEY).toString());
-						references.write();
-						refreshReferences();
-					}
-				}
-			}
-		});
-		mntmDeleteReference.setText("Delete reference");
-
-		text = new Text(grpCrossreferences, SWT.BORDER);
-		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-
-		Composite composite_1 = new Composite(grpCrossreferences, SWT.NONE);
-		composite_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
-		RowLayout rl_composite_1 = new RowLayout(SWT.HORIZONTAL);
-		rl_composite_1.wrap = false;
-		composite_1.setLayout(rl_composite_1);
-
-		Button button_1 = new Button(composite_1, SWT.NONE);
-		button_1.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				save();
-			}
-		});
-		button_1.setLayoutData(new RowData(90, -1));
-		button_1.setText("Save");
-
-		Button button_2 = new Button(composite_1, SWT.NONE);
-		button_2.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDown(MouseEvent e) {
-				boolean ok = true;
-				if (dirty) {
-					ok = Eclipse.INSTANCE.confirm("Abandon changes?");
-				}
-				if (ok) {
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-							.hideView(ReferencesEditor.this);
-				}
-			}
-		});
-		button_2.setLayoutData(new RowData(90, -1));
-		button_2.setText("Cancel");
+				});
+				editor.setAlwaysShowScrollBars(false);
+				
+						Group grpCrossreferences = new Group(sashForm, SWT.NONE);
+						grpCrossreferences.setLayout(new GridLayout(1, false));
+						grpCrossreferences.setText("Existing references (double click to edit)");
+						
+								tableViewer = new TableViewer(grpCrossreferences, SWT.BORDER | SWT.FULL_SELECTION);
+								tableViewer.addDoubleClickListener(new IDoubleClickListener() {
+									public void doubleClick(DoubleClickEvent event) {
+										Object o = ((StructuredSelection) (event.getSelection())).getFirstElement();
+										if (o instanceof Reference) {
+											tag.setText(((Reference) o).get(BibTexFields.KEY));
+											editor.setText(((Reference) o).get(BibTexFields.EXAMPLE_CITATION));
+										}
+									}
+								});
+								table = tableViewer.getTable();
+								table.setHeaderVisible(true);
+								table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+								table.setLinesVisible(true);
+								tableViewer.setContentProvider(new ReferencesContentProvider());
+								tableViewer.setLabelProvider(new ReferencesLabelProvider());
+								
+										TableColumn tblclmnNewColumn = new TableColumn(table, SWT.NONE);
+										tblclmnNewColumn.setWidth(100);
+										tblclmnNewColumn.setText("Tag");
+										
+												TableColumn tblclmnReference = new TableColumn(table, SWT.NONE);
+												tblclmnReference.setWidth(740);
+												tblclmnReference.setText("Citation");
+												
+														Menu menu = new Menu(table);
+														table.setMenu(menu);
+														
+																MenuItem mntmDeleteReference = new MenuItem(menu, SWT.NONE);
+																mntmDeleteReference.addSelectionListener(new SelectionAdapter() {
+																	@Override
+																	public void widgetSelected(SelectionEvent e) {
+																		Object o = ((StructuredSelection) (tableViewer.getSelection())).getFirstElement();
+																		if (o instanceof Reference) {
+																			if (Eclipse.INSTANCE.confirm("Confirm deletion of " + ((Reference) o).get(BibTexFields.KEY) + "?")) {
+																				references.remove(((Reference) o).get(BibTexFields.KEY).toString());
+																				references.write();
+																				refreshReferences();
+																			}
+																		}
+																	}
+																});
+																mntmDeleteReference.setText("Delete reference");
+																
+																		text = new Text(grpCrossreferences, SWT.BORDER);
+																		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+																		
+																				Composite composite_1 = new Composite(grpCrossreferences, SWT.NONE);
+																				composite_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
+																				RowLayout rl_composite_1 = new RowLayout(SWT.HORIZONTAL);
+																				rl_composite_1.wrap = false;
+																				composite_1.setLayout(rl_composite_1);
+																				
+																						Button button_1 = new Button(composite_1, SWT.NONE);
+																						button_1.addSelectionListener(new SelectionAdapter() {
+																							@Override
+																							public void widgetSelected(SelectionEvent e) {
+																								save();
+																							}
+																						});
+																						button_1.setLayoutData(new RowData(90, -1));
+																						button_1.setText("Save");
+																						
+																								Button button_2 = new Button(composite_1, SWT.NONE);
+																								button_2.addMouseListener(new MouseAdapter() {
+																									@Override
+																									public void mouseDown(MouseEvent e) {
+																										boolean ok = true;
+																										if (dirty) {
+																											ok = Eclipse.INSTANCE.confirm("Abandon changes?");
+																										}
+																										if (ok) {
+																											PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+																													.hideView(ReferencesEditor.this);
+																										}
+																									}
+																								});
+																								button_2.setLayoutData(new RowData(90, -1));
+																								button_2.setText("Cancel");
+																								sashForm.setWeights(new int[] {1, 2});
 
 		createActions();
 		initializeToolBar();

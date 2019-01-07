@@ -23,8 +23,6 @@ import org.eclipse.wb.swt.ResourceManager;
 import org.integratedmodelling.klab.api.resources.ResourceUtils;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.model.EDefinition;
-import org.integratedmodelling.klab.ide.navigator.model.EDocumentationFolder;
-import org.integratedmodelling.klab.ide.navigator.model.EDocumentationPage;
 import org.integratedmodelling.klab.ide.navigator.model.EModel;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
@@ -35,6 +33,8 @@ import org.integratedmodelling.klab.ide.navigator.model.EScript;
 import org.integratedmodelling.klab.ide.navigator.model.EScriptFolder;
 import org.integratedmodelling.klab.ide.navigator.model.ETestCase;
 import org.integratedmodelling.klab.ide.navigator.model.ETestFolder;
+import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumentationFolder;
+import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumentationPage;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.utils.NameGenerator;
 

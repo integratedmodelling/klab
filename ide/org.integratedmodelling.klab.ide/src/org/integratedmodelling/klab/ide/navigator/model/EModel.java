@@ -13,6 +13,7 @@ import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumentable;
 
 public class EModel extends EKimObject implements IKimModel, EDocumentable {
 

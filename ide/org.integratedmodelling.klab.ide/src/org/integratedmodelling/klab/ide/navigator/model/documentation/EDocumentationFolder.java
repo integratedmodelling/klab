@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.ide.navigator.model;
+package org.integratedmodelling.klab.ide.navigator.model.documentation;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -12,6 +12,7 @@ import org.eclipse.core.resources.IResource;
 import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
 import org.integratedmodelling.klab.client.documentation.ProjectDocumentation;
 import org.integratedmodelling.klab.client.documentation.ProjectReferences;
+import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 
@@ -26,7 +27,7 @@ public class EDocumentationFolder extends ENavigatorItem {
     String         name;
 
     public EDocumentationFolder(ENavigatorItem parent, File file, String name) {
-        super(parent.id + "." + name, parent);
+        super(parent.getId() + "." + name, parent);
         this.project = parent;
         this.file = file;
         File pfile = new File(file + File.separator + "documentation.json");

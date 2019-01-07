@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.ide.navigator.model;
+package org.integratedmodelling.klab.ide.navigator.model.documentation;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
 import org.integratedmodelling.klab.client.documentation.ProjectDocumentation;
+import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 
 public class EDocumentationPage extends ENavigatorItem {
 

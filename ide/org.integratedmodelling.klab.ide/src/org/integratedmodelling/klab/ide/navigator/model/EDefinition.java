@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.ide.navigator.model;
 
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimSymbolDefinition;
+import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumentable;
 
 public class EDefinition extends EKimObject implements IKimSymbolDefinition, EDocumentable {
 

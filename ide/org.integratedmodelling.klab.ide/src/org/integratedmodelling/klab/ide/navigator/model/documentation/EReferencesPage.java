@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.ide.navigator.model;
+package org.integratedmodelling.klab.ide.navigator.model.documentation;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -7,6 +7,7 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.integratedmodelling.klab.client.documentation.ProjectReferences;
+import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 
 public class EReferencesPage extends ENavigatorItem {
