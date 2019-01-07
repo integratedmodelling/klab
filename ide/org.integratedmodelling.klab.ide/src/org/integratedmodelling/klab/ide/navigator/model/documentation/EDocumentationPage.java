@@ -7,6 +7,7 @@ import java.util.List;
 import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
 import org.integratedmodelling.klab.client.documentation.ProjectDocumentation;
 import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
+import org.integratedmodelling.klab.utils.Path;
 
 public class EDocumentationPage extends ENavigatorItem {
 
@@ -43,4 +44,8 @@ public class EDocumentationPage extends ENavigatorItem {
     public String getPagePath() {
         return id;
     }
+
+	public String getName() {
+		return Path.getLast(getPagePath(), '.');
+	}
 }

@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.IAdaptable;
  */
 public abstract class ENavigatorItem implements IAdaptable {
 
-	ENavigatorItem parent;
+	protected ENavigatorItem parent;
 	protected String id;
 
 	protected ENavigatorItem(String id, ENavigatorItem parent) {

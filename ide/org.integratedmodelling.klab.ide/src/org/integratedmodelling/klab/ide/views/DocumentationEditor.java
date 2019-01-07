@@ -1,7 +1,5 @@
 package org.integratedmodelling.klab.ide.views;
 
-import java.util.Arrays;
-
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -39,6 +37,7 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.documentation.IReport.SectionRole;
@@ -73,27 +72,14 @@ public class DocumentationEditor extends ViewPart {
     ProjectReferences          references;
     protected boolean          dirty;
     private EProject           project;
-    protected String           currentEvent   = "Definition";
+    protected String           currentTrigger   = "Definition";
     protected String           currentSection = "Methods";
     private StyledText         editor;
     private TableViewer        tableViewer;
     private Combo              sectionCombo;
     private Combo              triggerCombo;
 	private StyledText sourceCodeViewer;
-    private static String[]           triggers       = new String[] {
-            "Initialization",
-            "Definition",
-            "Termination",
-            "Instantiation",
-            "Transition",
-            "Event" };
-    private static String[]           sections       = new String[] {
-            "Introduction",
-            "Methods",
-            "Results",
-            "Discussion",
-            "Conclusions",
-            "Appendix" };
+
     private ExpandableComposite sourceCodeBar;
 	private UndoRedoImpl undoManager;
 
@@ -142,12 +128,43 @@ public class DocumentationEditor extends ViewPart {
         loadItem();
     }
 
-    public void setTarget(EDocumentationItem item) {
+    public void setTarget(EProject project, String docId, final String trigger, final String section) {
+        this.docId = docId;
+        this.project = project;
+        // load docs for this project
+        this.documentation = new ProjectDocumentation(docId, this.project.getProject());
+        this.references = new ProjectReferences(this.project.getProject());
+        this.sourceCodeBar.setVisible(true);
+        this.currentTrigger = trigger;
+        this.currentSection = section;
+        loadReferences();
+        Display.getDefault().asyncExec(() -> {
+            itemIdLabel.setText(docId);
+            ModelDocumentation template = documentation.get(getCurrentKey());
+            editor.setText(template == null ? "" : template.getTemplate());
+            int sectionIndex = search(IDocumentation.sections, section);
+            int triggerIndex = search(IDocumentation.triggers, trigger);
+            sectionCombo.select(sectionIndex);
+            triggerCombo.select(triggerIndex);
+        });
+        loadItem();
+    }
+
+    private int search(String[] sections, String section) {
+    	for (int i = 0; i < sections.length; i++) {
+    		if (sections[i].equals(section)) {
+    			return i;
+    		}
+    	}
+    	return -1;
+	}
+
+	public void setTarget(EDocumentationItem item) {
         this.docId = item.getItem();
         this.project = item.getEParent(EProject.class);
         this.documentation = item.getDocumentation();
         this.references = new ProjectReferences(this.project.getProject());
-        this.currentEvent = StringUtils.capitalize(item.getTrigger().name().toLowerCase());
+        this.currentTrigger = StringUtils.capitalize(item.getTrigger().name().toLowerCase());
         this.currentSection = item.getName();
         this.sourceCodeBar.setVisible(false);
         loadReferences();
@@ -155,8 +172,8 @@ public class DocumentationEditor extends ViewPart {
             itemIdLabel.setText(docId);
             ModelDocumentation template = documentation.get(getCurrentKey());
             editor.setText(template == null ? "" : template.getTemplate());
-            sectionCombo.select(Arrays.binarySearch(sections, item.getName()));
-            triggerCombo.select(Arrays.binarySearch(triggers, item.getTrigger().name().toLowerCase()));
+            sectionCombo.select(search(IDocumentation.sections, item.getName()));
+            triggerCombo.select(search(IDocumentation.triggers, StringUtils.capitalize(item.getTrigger().name().toLowerCase())));
         });
     }
 
@@ -176,7 +193,7 @@ public class DocumentationEditor extends ViewPart {
     }
 
     private String getCurrentKey() {
-        return docId + "#" + currentEvent + "#" + currentSection;
+        return docId + "#" + currentTrigger + "#" + currentSection;
     }
 
     /**
@@ -229,11 +246,11 @@ public class DocumentationEditor extends ViewPart {
                 if (dirty) {
                     save();
                 }
-                currentEvent = triggerCombo.getText();
+                currentTrigger = triggerCombo.getText();
                 loadItem();
             }
         });
-        triggerCombo.setItems(triggers);
+        triggerCombo.setItems(IDocumentation.triggers);
         triggerCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         triggerCombo.select(1);
 
@@ -252,7 +269,7 @@ public class DocumentationEditor extends ViewPart {
                 loadItem();
             }
         });
-        sectionCombo.setItems(sections);
+        sectionCombo.setItems(IDocumentation.sections);
         sectionCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         sectionCombo.select(1);
 
@@ -363,7 +380,7 @@ public class DocumentationEditor extends ViewPart {
             template = new ModelDocumentation();
             template.setDocumentedId(docId);
             template.setSection(currentSection);
-            template.setTrigger(Trigger.valueOf(currentEvent.toUpperCase()));
+            template.setTrigger(Trigger.valueOf(currentTrigger.toUpperCase()));
             template.setSectionType(IReport.Section.Type.BODY);
             template.setSectionRole(SectionRole.valueOf(currentSection.toUpperCase()));
 

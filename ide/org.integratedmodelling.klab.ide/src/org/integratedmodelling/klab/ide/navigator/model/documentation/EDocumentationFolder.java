@@ -105,5 +105,18 @@ public class EDocumentationFolder extends ENavigatorItem {
         return nfiles > 0
                 && (this.page == null || (this.page != null && this.page.length() > 8) || nfiles > 1);
     }
+    
+    public String getPath() {
+    	if (this.name.equals("Documentation")) {
+    		return "";
+    	}
+    	String ret = this.name;
+    	ENavigatorItem p = getEParent();
+    	while (p instanceof EDocumentationFolder && p.getEParent() instanceof EDocumentationFolder) {
+    		ret = ((EDocumentationFolder)p).name + "." + ret;
+    		p = p.getEParent();
+    	}
+    	return ret;
+    }
 
 }

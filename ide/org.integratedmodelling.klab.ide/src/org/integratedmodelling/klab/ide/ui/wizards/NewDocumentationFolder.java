@@ -28,27 +28,30 @@ package org.integratedmodelling.klab.ide.ui.wizards;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumentationFolder;
 
-public class NewProject extends WizardPage {
+public class NewDocumentationFolder extends WizardPage {
+	
 	private Text text;
-
+	private EDocumentationFolder folder;
 	/**
 	 * Create the wizard.
+	 * @param page 
 	 */
-	public NewProject() {
+	public NewDocumentationFolder(EDocumentationFolder folder) {
 		super("wizardPage");
 		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.jpg"));
-		setTitle("New k.LAB project");
-		setDescription("Create a new local k.LAB project");
+		setTitle("New documentation folder");
+		setDescription("Create a new documentation folder");
+		this.folder = folder;
 	}
 
 	/**
@@ -60,27 +63,24 @@ public class NewProject extends WizardPage {
 		Composite container = new Composite(parent, SWT.NULL);
 
 		setControl(container);
-		container.setLayout(new FormLayout());
+		GridLayout gl_container = new GridLayout(3, false);
+		gl_container.marginTop = 48;
+		container.setLayout(gl_container);
 		
-		text = new Text(container, SWT.BORDER);
-		FormData fd_text = new FormData();
-		fd_text.top = new FormAttachment(0, 47);
-		fd_text.left = new FormAttachment(0, 177);
-		fd_text.right = new FormAttachment(100, -91);
-		text.setLayoutData(fd_text);
+		Label lblNewLabel = new Label(container, SWT.NONE);
+		lblNewLabel.setText("Folder ID: ");
 		
 		Label lblProjectName = new Label(container, SWT.NONE);
+		lblProjectName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		lblProjectName.setAlignment(SWT.RIGHT);
 		lblProjectName.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
-		FormData fd_lblProjectName = new FormData();
-		fd_lblProjectName.bottom = new FormAttachment(text, -3, SWT.BOTTOM);
-		fd_lblProjectName.top = new FormAttachment(text, 3, SWT.TOP);
-		fd_lblProjectName.right = new FormAttachment(text, -18);
-		fd_lblProjectName.left = new FormAttachment(0, 89);
-		lblProjectName.setLayoutData(fd_lblProjectName);
-		lblProjectName.setText("Project name");
+		lblProjectName.setText(folder.getPath().isEmpty() ? "" : (folder.getPath() + "."));
+		
+		text = new Text(container, SWT.BORDER);
+		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 	}
-	public Text getProjectName() {
+	
+	public Text getFolderName() {
 		return text;
 	}
-
 }

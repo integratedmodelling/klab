@@ -30,36 +30,38 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.integratedmodelling.klab.api.monitoring.IMessage;
-import org.integratedmodelling.klab.ide.Activator;
-import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.klab.api.documentation.IDocumentation;
+import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
+import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
+import org.integratedmodelling.klab.ide.navigator.model.EProject;
+import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumentationFolder;
+import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumentationPage;
 import org.integratedmodelling.klab.ide.utils.StringUtils;
-import org.integratedmodelling.klab.rest.ProjectModificationNotification;
-import org.integratedmodelling.klab.rest.ProjectModificationRequest;
 
-public class NewProjectWizard extends Wizard implements INewWizard {
+public class NewDocumentationFolderWizard extends Wizard implements INewWizard {
 
-	private NewProject page;
+	private NewDocumentationFolder page;
+	private EDocumentationFolder folder;
 
-	public NewProjectWizard() {
-		setWindowTitle("New Thinklab project");
+	public NewDocumentationFolderWizard(EDocumentationFolder folder) {
+		setWindowTitle("New documentation folder");
+		this.folder = folder;
 	}
 
 	@Override
 	public void addPages() {
-		addPage(page = new NewProject());
+		addPage(page = new NewDocumentationFolder(this.folder));
 	}
 
 	@Override
 	public boolean performFinish() {
 
-		final String name = page.getProjectName().getText();
-
+		final String name = page.getFolderName().getText();
+		final String path = folder.getPath() + (folder.getPath().isEmpty() ? "" : ".") + name;
 		if (validate(name)) {
-			Activator.post((message)->{
-				Eclipse.INSTANCE.importExistingProject(((ProjectModificationNotification)message.getPayload()).getFile());
-			}, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.CreateProject,
-					new ProjectModificationRequest(name, null));
+			IDocumentation.getDocumentationFolder(path, folder.getEParent(EProject.class).getRoot());
+			KlabNavigator.refresh();
 			return true;
 		}
 
@@ -68,18 +70,32 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 
 	private boolean validate(String src) {
 
-		// TODO do something sensible
 		if (src.isEmpty())
 			return false;
 
 		if (StringUtils.containsAny(src, StringUtils.UPPERCASE | StringUtils.WHITESPACE | StringUtils.NONLETTERS)) {
-			page.setErrorMessage("project names must contain only lowercase letters with no whitespace");
+			page.setErrorMessage("Folder names must contain only lowercase letters with no whitespace");
 			return false;
 		}
 
-		if (StringUtils.containsAny(src, StringUtils.UPPERCASE | StringUtils.WHITESPACE | StringUtils.NONLETTERS)) {
-			page.setErrorMessage("namespace identifiers must contain only lowercase letters with no whitespace");
+		if (src.contains(".")) {
+			page.setErrorMessage("Please create one folder at a time (no dots in the name are accepted).");
 			return false;
+		}
+		
+		if (Kim.INSTANCE.getKimKeywords().contains(src)) {
+			page.setErrorMessage("'" + src + "' is a k.IM keyword and cannot be used as a folder name.");
+			return false;
+		}
+
+		for (ENavigatorItem child : folder.getEChildren()) {
+			if (child instanceof EDocumentationFolder && ((EDocumentationFolder) child).getName().equals(src)) {
+				page.setErrorMessage("A folder named " + src + " already exists in this folder.");
+				return false;
+			} else if (child instanceof EDocumentationPage && ((EDocumentationPage) child).getPagePath().endsWith("." + src)) {
+				page.setErrorMessage("Folder name " + src + " conflicts with an existing documentation page.");
+				return false;
+			}
 		}
 
 		return true;

@@ -28,6 +28,8 @@ import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumenta
 import org.integratedmodelling.klab.ide.navigator.model.documentation.EReference;
 import org.integratedmodelling.klab.ide.ui.wizards.BulkImportResourceWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.MoveResourceWizard;
+import org.integratedmodelling.klab.ide.ui.wizards.NewDocumentationFolderWizard;
+import org.integratedmodelling.klab.ide.ui.wizards.NewDocumentationSectionWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.NewNamespaceWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.NewProjectWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.NewScriptWizard;
@@ -221,12 +223,25 @@ public class KlabNavigatorActions {
     }
 
 	public static void addDocumentationSection(EDocumentationPage item) {
+		// show wizard as below with ID disabled - choose section/trigger disabling those already present
+        WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new NewDocumentationSectionWizard(item));
+        dialog.create();
+        dialog.open();
 	}
 
 	public static void addDocumentationItem(EDocumentationFolder page) {
+		// show wizard - choose ID (path pre-fixed, single word, path allowed) + initial section/trigger
+		System.out.println("OHO " + page.getPath());
+        WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new NewDocumentationSectionWizard(page));
+        dialog.create();
+        dialog.open();
 	}
 
 	public static void addDocumentationSubsection(EDocumentationFolder page) {
+		// show wizard - choose single lowercase word, no path
+        WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new NewDocumentationFolderWizard(page));
+        dialog.create();
+        dialog.open();
 	}
 
 }

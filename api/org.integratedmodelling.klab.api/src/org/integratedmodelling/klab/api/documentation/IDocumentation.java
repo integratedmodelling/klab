@@ -28,6 +28,22 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
  */
 public interface IDocumentation {
 
+    public static String[]           triggers       = new String[] {
+            "Initialization",
+            "Definition",
+            "Termination",
+            "Instantiation",
+            "Transition",
+            "Event" };
+
+    public static String[]           sections       = new String[] {
+            "Introduction",
+            "Methods",
+            "Results",
+            "Discussion",
+            "Conclusions",
+            "Appendix" };
+	
     /**
      * Specifies when a particular template is triggered. Linked to
      * contextualization triggers but separate for ease of extension and
@@ -145,6 +161,27 @@ public interface IDocumentation {
         base.mkdir();
         String[] path = docId.split("\\.");
         for (int i = 0; i < path.length - 1; i++) {
+            base = new File(base + File.separator + path[i]);
+            base.mkdir();
+        }
+        return new File(base + File.separator + "documentation.json");
+    }
+    
+    /**
+     * Return the file path of the documentation catalog for the passed
+     * documentation ID. They are structured in different, hierarchically organized
+     * files by ID path to minimize conflicts in Git workflows.
+     * 
+     * @param docId
+     * @param projectRoot
+     * @return
+     */
+    public static File getDocumentationFolder(String docId, File projectRoot) {
+
+        File base = new File(projectRoot + File.separator + IKimProject.DOCUMENTATION_FOLDER);
+        base.mkdir();
+        String[] path = docId.split("\\.");
+        for (int i = 0; i < path.length; i++) {
             base = new File(base + File.separator + path[i]);
             base.mkdir();
         }
