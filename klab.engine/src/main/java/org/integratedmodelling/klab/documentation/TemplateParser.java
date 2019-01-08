@@ -10,8 +10,6 @@ import org.integratedmodelling.contrib.jtopas.Token;
 import org.integratedmodelling.contrib.jtopas.Tokenizer;
 import org.integratedmodelling.contrib.jtopas.TokenizerException;
 import org.integratedmodelling.contrib.jtopas.TokenizerProperties;
-import org.integratedmodelling.klab.api.documentation.IDocumentation.Template;
-import org.integratedmodelling.klab.documentation.Documentation.SectionImpl;
 import org.integratedmodelling.klab.documentation.Documentation.TemplateImpl;
 
 /**

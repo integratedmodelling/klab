@@ -113,7 +113,7 @@ public class ContextView extends ViewPart {
 			searchModeButton.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseUp(MouseEvent e) {
-					Eclipse.INSTANCE.notification("Po dio", "Fucullazzaroppa");
+//					Eclipse.INSTANCE.notification("Po dio", "Fucullazzaroppa");
 					// KlabNavigator.refresh();
 					// searchMode(searchModeButton.getSelection());
 				}

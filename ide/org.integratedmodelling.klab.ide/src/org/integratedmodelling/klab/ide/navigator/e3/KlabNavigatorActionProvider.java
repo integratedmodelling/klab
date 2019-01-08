@@ -91,7 +91,7 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 				(model) -> KlabNavigatorActions.editDocumentation(model)).activate((model) -> model.isDocumented());
 		action("Add new documentation folder", "Add a documentation folder", "manual.gif", EDocumentationFolder.class,
 				(resource) -> KlabNavigatorActions.addDocumentationSubsection(resource));
-		action("Add new documentation item", "Add a new documentation item to reference for a model", "page.gif",
+		action("Add new documentation page", "Add a new documentation page to reference with a model", "page.gif",
 				EDocumentationFolder.class, (resource) -> KlabNavigatorActions.addDocumentationItem(resource))
 						.onlyIf((resource) -> resource.getEParent() instanceof EDocumentationFolder);
 		action("Add new target section", "Add a documentation section target for this item", "section.gif",
