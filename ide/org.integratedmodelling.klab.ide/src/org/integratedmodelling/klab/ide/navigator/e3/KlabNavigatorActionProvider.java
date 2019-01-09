@@ -72,6 +72,8 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 				(namespace) -> KlabNavigatorActions.deleteScript(namespace, wSite.getPage()));
 		action("Delete test case", "Delete the selected test case", "test.gif", ETestCase.class,
 				(namespace) -> KlabNavigatorActions.deleteTestCase(namespace, wSite.getPage()));
+		action("New resource...", "Create a new resource specifying adapter and parameters", "Database.png",
+				EResourceFolder.class, (folder) -> KlabNavigatorActions.createResource(folder));
 		action("Bulk import resources...", "Bulk import from a directory or a web service URL", "Database.png",
 				EResourceFolder.class, (folder) -> KlabNavigatorActions.importResources(folder));
 		action("Copy URN", "Copy the resource's URN to the clipboard", "copy.gif", EResource.class,
