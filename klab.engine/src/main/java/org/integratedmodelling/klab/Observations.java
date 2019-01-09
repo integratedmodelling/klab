@@ -227,6 +227,7 @@ public enum Observations implements IObservationService {
 		}
 
 		ret.setMain(isMain);
+		ret.setCreationTime(observation.getTimestamp());
 
 		if (locator != null) {
 			observation = observation.at(locator);

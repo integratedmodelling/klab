@@ -232,6 +232,11 @@ public class ObservationReference implements IObservationReference {
 	 * beginning of initialization transition before transitions are started.
 	 */
 	private long contextTime = -1;
+	
+	/**
+	 * Timestamp of creation of the observation.
+	 */
+	private long creationTime;
 
 	/**
 	 * Full URN of the observation.
@@ -702,6 +707,14 @@ public class ObservationReference implements IObservationReference {
 
 	public void setRootContextId(String rootContextId) {
 		this.rootContextId = rootContextId;
+	}
+
+	public long getCreationTime() {
+		return creationTime;
+	}
+
+	public void setCreationTime(long creationTime) {
+		this.creationTime = creationTime;
 	}
 
 }
