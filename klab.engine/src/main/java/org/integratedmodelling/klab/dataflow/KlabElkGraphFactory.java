@@ -10,11 +10,16 @@ import java.util.EnumSet;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.elk.alg.layered.options.EdgeStraighteningStrategy;
+import org.eclipse.elk.alg.layered.options.GraphCompactionStrategy;
 import org.eclipse.elk.alg.layered.options.LayeredMetaDataProvider;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.math.ElkPadding;
+import org.eclipse.elk.core.options.Alignment;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
+import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
@@ -32,6 +37,7 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
 /**
  * k.LAB implementation of ElkFactory to centralize the detailed creation of graph elements
  * In this factory we centralize the view of graph, so a lot of options are as default
+ * Info about options {@link https://www.eclipse.org/elk/reference.html}
  * @author Enrico Girotto
  *
  */
@@ -60,13 +66,8 @@ public class KlabElkGraphFactory {
 	public KlabElkGraphFactory() {
 		// create graphic object to calculate label dimensions
 		BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-		final String fontType;
-		if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) {
-			fontType = "Arial";
-        } else {
-        	fontType = "SansSerif";
-        }
-        graphics = image.createGraphics();
+		final String fontType = java.awt.Font.MONOSPACED;
+		graphics = image.createGraphics();
         graphics.setFont(new java.awt.Font(fontType, 0 /* SWT.NORMAL */, FONT_SIZE));
 	}
 	
@@ -79,18 +80,7 @@ public class KlabElkGraphFactory {
 	public ElkNode createGraph(String identifier) {
 		ElkNode root = ElkGraphUtil.createGraph();
 		root.setIdentifier(identifier);
-		// root.setProperty(CoreOptions.ALGORITHM, "elk.layered");
-		// root.setProperty(CoreOptions.NODE_SIZE_MINIMUM, new KVector(50,50));
-		// root.setProperty(LayeredOptions.HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN);
-		root.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS));
-		root.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.insideTopLeft());
 		root.setProperty(CoreOptions.NODE_LABELS_PADDING, ROOT_PADDING);
-		
-		// root.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS,
-		//		SizeConstraint.PORT_LABELS, SizeConstraint.PORTS, SizeConstraint.MINIMUM_SIZE));
-		// root.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.outsideTopLeft());
-		root.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
-		// root.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.OUTSIDE_NODE_LABELS_OVERHANG))
 		return root;
 	}
 	
@@ -108,10 +98,10 @@ public class KlabElkGraphFactory {
 			node.setProperty(property, properties.get(property));
 		}
 		*/
-		node.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS, SizeConstraint.PORTS, SizeConstraint.MINIMUM_SIZE));
+		node.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS, SizeConstraint.PORTS));
 		node.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.insideTopLeft());
 		node.setProperty(CoreOptions.NODE_LABELS_PADDING, NODE_PADDING);
-		node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.UNIFORM_PORT_SPACING));
+		node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.UNIFORM_PORT_SPACING, SizeOptions.COMPUTE_PADDING));
 		node.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
 		// node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.COMPUTE_PADDING));
 		// node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.DEFAULT_MINIMUM_SIZE, SizeOptions.MINIMUM_SIZE_ACCOUNTS_FOR_PADDING, SizeOptions.COMPUTE_PADDING, SizeOptions.PORTS_OVERHANG));
@@ -132,10 +122,10 @@ public class KlabElkGraphFactory {
 			node.setProperty(property, properties.get(property));
 		}
 		*/
-		node.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS, SizeConstraint.PORTS, SizeConstraint.MINIMUM_SIZE));
-		node.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.insideTopLeft());
-		node.setProperty(CoreOptions.NODE_LABELS_PADDING, NODE_PADDING);
-		node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.UNIFORM_PORT_SPACING));
+		node.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS, SizeConstraint.PORTS));
+		node.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, EnumSet.of(NodeLabelPlacement.H_LEFT, NodeLabelPlacement.V_CENTER, NodeLabelPlacement.INSIDE));
+		// node.setProperty(CoreOptions.NODE_LABELS_PADDING, NODE_PADDING);
+		node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.UNIFORM_PORT_SPACING, SizeOptions.COMPUTE_PADDING));
 		node.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
 		// node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.COMPUTE_PADDING));
 		// node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.DEFAULT_MINIMUM_SIZE, SizeOptions.MINIMUM_SIZE_ACCOUNTS_FOR_PADDING, SizeOptions.COMPUTE_PADDING, SizeOptions.PORTS_OVERHANG));
