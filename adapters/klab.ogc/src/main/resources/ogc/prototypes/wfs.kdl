@@ -10,6 +10,9 @@
  	final text 'wfsIdentifier'
  		""
  	
+ 	final text 'wfsVersion'
+ 		""
+
  	optional input 'nameAttribute'
  		""
  		default ""

@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.ide.ui.wizards.NewDocumentationFolderWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.NewDocumentationSectionWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.NewNamespaceWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.NewProjectWizard;
+import org.integratedmodelling.klab.ide.ui.wizards.NewResourceWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.NewScriptWizard;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.ide.views.DocumentationEditor;
@@ -126,6 +127,14 @@ public class KlabNavigatorActions {
         dialog.open();
     }
 
+	public static void createResource(EResourceFolder folder) {
+        WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE
+                .getShell(), new NewResourceWizard(folder));
+        dialog.create();
+        dialog.open();
+	}
+
+    
     public static void editResource(EResource resource) {
     }
 
@@ -243,5 +252,6 @@ public class KlabNavigatorActions {
         dialog.create();
         dialog.open();
 	}
+
 
 }

@@ -228,7 +228,7 @@ public enum Observations implements IObservationService {
 
 		ret.setMain(isMain);
 		ret.setCreationTime(observation.getTimestamp());
-
+	
 		if (locator != null) {
 			observation = observation.at(locator);
 		}
@@ -320,6 +320,10 @@ public enum Observations implements IObservationService {
 
 		if (time != null) {
 			// TODO
+		}
+		
+		if (observation instanceof IDirectObservation) {
+			ret.setChildCount(((IDirectObservation)observation).getChildren(IObservation.class).size());
 		}
 
 		if (observation instanceof IDirectObservation && (childLevel < 0 || childLevel > 0)) {

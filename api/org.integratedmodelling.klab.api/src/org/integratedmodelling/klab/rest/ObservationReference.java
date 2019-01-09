@@ -232,7 +232,7 @@ public class ObservationReference implements IObservationReference {
 	 * beginning of initialization transition before transitions are started.
 	 */
 	private long contextTime = -1;
-	
+
 	/**
 	 * Timestamp of creation of the observation.
 	 */
@@ -247,6 +247,12 @@ public class ObservationReference implements IObservationReference {
 	 * Number of values for states; 0 otherwise
 	 */
 	private long valueCount;
+
+	/**
+	 * Total number of children (independent of the contents of the children array,
+	 * which depends on the request).
+	 */
+	private int childCount;
 
 	/*
 	 * (non-Javadoc)
@@ -715,6 +721,14 @@ public class ObservationReference implements IObservationReference {
 
 	public void setCreationTime(long creationTime) {
 		this.creationTime = creationTime;
+	}
+
+	public int getChildCount() {
+		return childCount;
+	}
+
+	public void setChildCount(int childCount) {
+		this.childCount = childCount;
 	}
 
 }
