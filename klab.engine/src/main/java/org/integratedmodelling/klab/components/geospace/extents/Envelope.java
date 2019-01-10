@@ -112,10 +112,12 @@ public class Envelope implements IEnvelope {
 		return create(new ReferencedEnvelope(minx, maxx, miny, maxy, crs.getCoordinateReferenceSystem()));
 	}
 
+	@Override
 	public double getWidth() {
 		return envelope.getWidth();
 	}
 
+	@Override
 	public double getHeight() {
 		return envelope.getHeight();
 	}

@@ -12,15 +12,12 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
-import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -40,14 +37,13 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Parameters;
-import org.integratedmodelling.klab.utils.Range;
 
 import com.vividsolutions.jts.algorithm.ConvexHull;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 
-public class ClusterInstantiator implements IExpression, IInstantiator {
+public class PointClusterInstantiator implements IExpression, IInstantiator {
 
 	Descriptor exprDescriptor = null;
 	private IGrid grid;
@@ -55,7 +51,7 @@ public class ClusterInstantiator implements IExpression, IInstantiator {
 	double radius = 0;
 	boolean convex = true;
 
-	public ClusterInstantiator() {
+	public PointClusterInstantiator() {
 	}
 
 	/**
@@ -66,14 +62,13 @@ public class ClusterInstantiator implements IExpression, IInstantiator {
 	 * 
 	 * @param grid
 	 */
-	public ClusterInstantiator(IGrid grid) {
+	public PointClusterInstantiator(IGrid grid) {
 		this.grid = grid;
 	}
 
-	public ClusterInstantiator(IParameters<String> parameters, IComputationContext context)
+	public PointClusterInstantiator(IParameters<String> parameters, IComputationContext context)
 			throws KlabValidationException {
 
-		// TODO support clustering of point features in other contextualizer
 		IScale scale = context.getScale();
 		if (!(scale.isSpatiallyDistributed() && scale.getDimension(Type.SPACE).size() > 1
 				&& scale.getDimension(Type.SPACE).isRegular())) {
@@ -216,7 +211,7 @@ public class ClusterInstantiator implements IExpression, IInstantiator {
 
 	@Override
 	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
-		return new ClusterInstantiator(parameters, context);
+		return new PointClusterInstantiator(parameters, context);
 	}
 
 }

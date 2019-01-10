@@ -57,7 +57,31 @@ export object concavexhull
 		 producing a mask that will be vectorized into spatial contexts for the objects. Use quality
 		 dependency names to refer to their state in each point."
 	    default ""
-	
+
 	class org.integratedmodelling.klab.components.geospace.processing.ConvexHullInstantiator
+
+}
+
+export object cluster 
+	"Cluster point features into polygons, using the DBSCAN algorithm."
+	label 'Cluster features'
+{
+	text artifact
+		"The name of the artifact containing the features to be clustered. If the features are not points, the
+		 centroid will be used."
+	
+	optional input radius
+		"Radius in m of the neighborhood to consider. Default is defined in grid contexts to allow near-contiguous 
+		 cells to be clustered."
+		default 0.0
+		
+	optional input convex
+		"Use convex hull to build polygons after clustering. Default true. False will use a concave
+		 hull, which tends to give artifacts due to the non-exhausting nature of the clustering process."
+		default true
+	
+	geometry #s2
+	
+	class org.integratedmodelling.klab.components.geospace.processing.FeatureClusterInstantiator
 
 }

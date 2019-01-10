@@ -12,7 +12,7 @@ export object extract
 		 dependency names to refer to their state in each point."
 	    default ""
 	
-	geometry #s0
+	geometry #s2
 	
 	class org.integratedmodelling.klab.components.geospace.processing.PointInstantiator
 
@@ -47,9 +47,9 @@ export object cluster
 		 hull, which tends to give artifacts due to the non-exhausting nature of the clustering process."
 		default true
 	
-	geometry #s0
+	geometry #s2
 	
-	class org.integratedmodelling.klab.components.geospace.processing.ClusterInstantiator
+	class org.integratedmodelling.klab.components.geospace.processing.PointClusterInstantiator
 
 }
 

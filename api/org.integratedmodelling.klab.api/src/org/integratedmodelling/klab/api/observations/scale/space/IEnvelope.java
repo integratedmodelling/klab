@@ -50,6 +50,19 @@ public interface IEnvelope extends IReferenced {
      * @return a double.
      */
     double getMaxY();
+    
+    
+    /**
+     * 
+     * @return the width
+     */
+    double getWidth();
+    
+    /**
+     * 
+     * @return the height
+     */
+    double getHeight();
 
     /**
      * <p>asShape.</p>
