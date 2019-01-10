@@ -41,6 +41,7 @@ import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.geospace.processing.osm.Nominatim;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.data.storage.RescalingState;
@@ -385,8 +386,6 @@ public enum Observations implements IObservationService {
 		ret.getActions().add(ActionReference.separator());
 		// ACTIONS diocan
 		// ret.getActions().add(new ActionReference("Show metadata", "ShowMetadata"));
-
-		
 		
 		return ret;
 	}
@@ -413,7 +412,7 @@ public enum Observations implements IObservationService {
 	public Observer makeROIObserver(final SpatialExtent regionOfInterest, Namespace namespace, IMonitor monitor) {
 		// TODO use configured concept from worldview!
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
-		observable.setName("Region of interest");
+		observable.setName(Nominatim.INSTANCE.geocode(regionOfInterest));
 		observable.setOptional(true);
 		if (namespace == null) {
 			namespace = Namespaces.INSTANCE.getNamespace(observable.getNamespace());
@@ -424,7 +423,8 @@ public enum Observations implements IObservationService {
 	public Observer makeROIObserver(final Shape shape, Namespace namespace, IMonitor monitor) {
 		// TODO use configured concept from worldview!
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
-		observable.setName("Region of interest");
+		// TODO set from Nominatim
+		observable.setName(Nominatim.INSTANCE.geocode(shape.getEnvelope()));
 		observable.setOptional(true);
 		if (namespace == null) {
 			namespace = Namespaces.INSTANCE.getNamespace(observable.getNamespace());
