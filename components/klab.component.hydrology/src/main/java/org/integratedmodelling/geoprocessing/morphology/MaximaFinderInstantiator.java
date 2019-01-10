@@ -191,7 +191,7 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 			if (feature.getDefaultGeometry() instanceof com.vividsolutions.jts.geom.Geometry) {
 				IScale instanceScale = Scale.substituteExtent(context.getScale(), Shape.create(
 						(com.vividsolutions.jts.geom.Geometry) feature.getDefaultGeometry(), grid.getProjection()));
-				ret.add(context.newObservation(semantics, semantics.getLocalName() + "_" + (i + 1), instanceScale));
+				ret.add(context.newObservation(semantics, semantics.getLocalName() + "_" + (i ++), instanceScale));
 			}
 		}
 
