@@ -9,7 +9,9 @@ import java.util.List;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.hortonmachine.lesto.modules.vegetation.rastermaxima.OmsRasterMaximaFinder;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
@@ -30,6 +32,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.opengis.feature.simple.SimpleFeature;
 
 public class MaximaFinderInstantiator implements IInstantiator, IExpression {
@@ -49,6 +52,7 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 	private String chmId = null;
 	private String surfaceId = null;
 	int size = 3;
+	private String thresholdExpression;
 
 	@Override
 	public IGeometry getGeometry() {
@@ -69,7 +73,11 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 		ret.maxRadius = parameters.get("radius", 0.0);
 		ret.relativeThreshold = parameters.get("relative-threshold", 0.0);
 		ret.downsize = parameters.get("downsize", 0.6);
-		ret.threshold = parameters.get("threshold", -1.0);
+		if (parameters.get("threshold") instanceof IKimExpression) {
+			ret.thresholdExpression = parameters.get("threshold", IKimExpression.class).getCode();
+		} else {
+			ret.threshold = parameters.get("threshold", -1.0);
+		}
 		return ret;
 	}
 
@@ -118,7 +126,25 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 					threshold = cutoff;
 				}
 			} else {
-				if (threshold < 0) {
+				if (thresholdExpression != null) {
+					
+					IExpression threx = Extensions.INSTANCE.compileExpression(thresholdExpression,
+							Extensions.DEFAULT_EXPRESSION_LANGUAGE);
+					
+					Object o = threx.eval(
+							Parameters.create("min", summary.getRange().get(0), "max", summary.getRange().get(1),
+									"mean", summary.getMean(), "std", summary.getStandardDeviation(), "target", state),
+							context);
+					
+					
+					if (!(o instanceof Number)) {
+						throw new IllegalStateException(
+								"maxima extractor: threshold expression does not evaluate to a number");
+					}
+					
+					threshold = ((Number)o).doubleValue();
+					
+				} else if (threshold < 0) {
 					// top third
 					threshold = (summary.getRange().get(1) - summary.getRange().get(0) / 1.5);
 				} else {
