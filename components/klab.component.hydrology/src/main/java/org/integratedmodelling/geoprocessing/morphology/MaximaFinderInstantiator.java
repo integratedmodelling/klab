@@ -167,7 +167,12 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 
 		algorithm.pMode = mode.name().toLowerCase();
 		algorithm.pThreshold = threshold;
-		algorithm.pSize = mode == Mode.CUSTOM ? 3 : size;
+		algorithm.pSize = mode == Mode.CUSTOM ? (int)(maxRadius/grid.getEnvelope().distanceToMeters(grid.getCellWidth())) : size;
+		if (algorithm.pSize < 2) {
+			algorithm.pSize = 2;
+		} else if (algorithm.pSize > grid.getXCells()/10) {
+			algorithm.pSize = (int)grid.getXCells()/10;
+		}
 		algorithm.pPercent = (int) (downsize * 100);
 		algorithm.pMaxRadius = maxRadius;
 		// see this - should probably be larger in small-scale, high-res contexts.
