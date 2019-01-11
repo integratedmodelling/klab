@@ -201,8 +201,9 @@ public class SearchContext implements IIndexingService.Context {
                         // abstract qualities can be made concrete by adding inherency - we let them through and refuse to
                         // observe unless they have 'of' (should put the A in the icon shown in the UI until inherency is
                         // there).
-                        && !((SearchMatch) match).getSemantics().contains(IKimConcept.Type.QUALITY)) {
-                    System.out.println("FUCKER " + match.getId() + " IS ABSTRACT");
+                        && !((SearchMatch) match).getSemantics().contains(IKimConcept.Type.QUALITY)
+                        // abstract traits are the only ones that are observable in their own right
+                        && !((SearchMatch) match).getSemantics().contains(IKimConcept.Type.TRAIT)) {
                     return false;
                 }
             }

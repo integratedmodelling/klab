@@ -44,6 +44,7 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.kim.KimData;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.ui.Palette;
@@ -189,7 +190,7 @@ public class SearchView extends ViewPart {
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
-
+		
 		topContainer = new Composite(parent, SWT.NONE);
 		// toolkit.paintBordersFor(container);
 		topContainer.setLayout(new GridLayout(1, false));
@@ -245,7 +246,7 @@ public class SearchView extends ViewPart {
 		actionArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 		// begin comment out
-		paletteView = new Palette(null, actionArea, SWT.NONE);
+		paletteView = new Palette(KimData.INSTANCE.getBookmarks(), true, actionArea, SWT.NONE);
 		paletteView.setVisible(true);
 		gd_paletteView = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 		gd_paletteView.exclude = false;
@@ -339,6 +340,8 @@ public class SearchView extends ViewPart {
 		initializeMenu();
 
 		text.setEnabled(Activator.engineMonitor().isRunning());
+		
+		paletteView.draw();
 
 	}
 

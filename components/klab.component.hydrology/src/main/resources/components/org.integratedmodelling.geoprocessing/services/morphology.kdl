@@ -44,7 +44,7 @@ export object findmaxima
 	optional input threshold 
 		"Height threshold of relevance for any maximum found. If surface is passed, refers to the value in
 		 the map and will be subtracted the minimum value. This parameter also accepts an expression where
-		 the variable min and max will be substituted by the known minuma and maxima in the surface." 
+		 the variable min and max will be substituted by the known minima and maxima in the surface." 
 		default 0.0
 		
 	optional input relative-threshold 

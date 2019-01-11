@@ -63,6 +63,8 @@ public class PaletteFolder extends Composite {
 	private void draw(Folder folder) {
 
 		this.folder = folder;
+    	int width = computeSize(SWT.DEFAULT, SWT.DEFAULT).x; 
+
 
 		/*
 		 * remove everything
@@ -88,7 +90,7 @@ public class PaletteFolder extends Composite {
 		setLayout(new GridLayout(3, false));
 
 		if (folder.getDescription() != null && !folder.getDescription().trim().isEmpty()) {
-			Badge descLabel = new Badge(this, Badge.CLOSEABLE | Badge.MULTILINE | Badge.ROUNDED, SWT.NONE) {
+			Badge descLabel = new Badge(this, Badge.CLOSEABLE | Badge.MULTILINE | Badge.ROUNDED, SWT.NONE, width) {
 				@Override
 				protected void close() {
 					folder.setDescription(null);

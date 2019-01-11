@@ -7,6 +7,12 @@ public class Organizer extends TypedContainer {
 
 	private static final long serialVersionUID = 5998940280636370538L;
 
+	public Organizer() {}
+	
+	public Organizer(String name) {
+		this.setName(name);
+	}
+	
 	private List<Folder> folders = new ArrayList<>();
 
 	public List<Folder> getFolders() {

@@ -25,7 +25,6 @@ import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.events.IExpansionListener;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.integratedmodelling.klab.ide.utils.StringUtils;
 import org.integratedmodelling.klab.organizer.Folder;
 import org.integratedmodelling.klab.organizer.Item;
 import org.integratedmodelling.klab.organizer.Organizer;
@@ -35,8 +34,15 @@ public class Palette extends Composite {
 	Composite container;
 	Organizer organizer;
 
-	public Palette(Organizer organizer, Composite parent, int style) {
+	boolean horizontal = false;
+	private boolean drawTitle = false;
+
+	public Palette(Organizer organizer, boolean horizontal, Composite parent, int style) {
 		super(parent, style);
+
+		this.horizontal = horizontal;
+		this.organizer = organizer;
+
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout gl_composite = new GridLayout(1, false);
 		gl_composite.marginWidth = 0;
@@ -44,7 +50,6 @@ public class Palette extends Composite {
 		gl_composite.verticalSpacing = 0;
 		gl_composite.horizontalSpacing = 0;
 		composite.setLayout(gl_composite);
-
 		ScrolledComposite scroll = new ScrolledComposite(composite, SWT.V_SCROLL);
 		scroll.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		scroll.setExpandVertical(true);
@@ -129,6 +134,8 @@ public class Palette extends Composite {
 
 	public void draw() {
 
+    	int width = getSize().x;  //computeSize(SWT.DEFAULT, SWT.DEFAULT).x; 
+		
 		/*
 		 * remove everything
 		 */
@@ -166,15 +173,17 @@ public class Palette extends Composite {
 		/*
 		 * draw title and description
 		 */
-		CLabel titleLabel = new CLabel(container, SWT.NONE);
-		titleLabel.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NONE));
-		titleLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		// toolkit.adapt(titleLabel);
-		// toolkit.paintBordersFor(titleLabel);
-		titleLabel.setText(organizer.getName() + " toolkit");
+		if (drawTitle ) {
+			CLabel titleLabel = new CLabel(container, SWT.NONE);
+			titleLabel.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.NONE));
+			titleLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+			// toolkit.adapt(titleLabel);
+			// toolkit.paintBordersFor(titleLabel);
+			titleLabel.setText(organizer.getName());
+		}
 
 		if (organizer.getDescription() != null && !organizer.getDescription().trim().isEmpty()) {
-			Badge descLabel = new Badge(container, Badge.CLOSEABLE | Badge.MULTILINE | Badge.ROUNDED, SWT.NONE) {
+			Badge descLabel = new Badge(container, Badge.CLOSEABLE | Badge.MULTILINE | Badge.ROUNDED, SWT.NONE, width) {
 				@Override
 				protected void close() {
 					organizer.setDescription(null);
@@ -183,8 +192,8 @@ public class Palette extends Composite {
 			};
 			descLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));
 			descLabel.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
-			descLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-			descLabel.setText(StringUtils.justifyLeft(organizer.getDescription(), 70));
+			descLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+			descLabel.setText(organizer.getDescription());
 		}
 
 		/*
@@ -200,7 +209,8 @@ public class Palette extends Composite {
 			folderSection.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 			folderSection.setText(folder.getName());
 			folderSection.setClient(new PaletteFolder(folderSection, this, folder));
-			folderSection.setSeparatorControl(new Label(folderSection, SWT.HORIZONTAL | SWT.SEPARATOR));
+			folderSection.setSeparatorControl(
+					new Label(folderSection, (this.horizontal ? SWT.VERTICAL : SWT.HORIZONTAL) | SWT.SEPARATOR));
 			folderSection.setExpanded(!folder.isClosed());
 			folderSection.addExpansionListener(new IExpansionListener() {
 
@@ -215,35 +225,34 @@ public class Palette extends Composite {
 			});
 		}
 	}
-	
 
-    public void notifySelection(Item item, Folder folder, boolean enabled, boolean shiftPressed) {
-        // TODO Auto-generated method stub
-        draw();
-    }
+	public void notifySelection(Item item, Folder folder, boolean enabled, boolean shiftPressed) {
+		// TODO Auto-generated method stub
+		draw();
+	}
 
-    public void notifyExpansion(Item item, Folder folder, boolean enabled, boolean shiftPressed) {
-//        if (item.getOnSelect() != null || item.getChildren().size() > 0) {
-//            if (!shiftPressed) {
-//                for (Folder expanded : currentlyExpandedSet) {
-//                    expanded.setStatus("hidden");
-//                }
-//                deactivateOtherItems(item);
-//            }
-//            for (ItemAction a : parseActions(item)) {
-//                a.execute(enabled);
-//            }
-//        }
-        draw();
-    }
-    
-    private void deactivateOtherItems(Item item) {
-        for (Folder folder : organizer.getFolders()) {
-            for (Item it : folder.getItems()) {
-                if (it.isActive() && !item.equals(it)) {
-                    it.setActive(false);
-                }
-            }
-        }
-    }
+	public void notifyExpansion(Item item, Folder folder, boolean enabled, boolean shiftPressed) {
+		// if (item.getOnSelect() != null || item.getChildren().size() > 0) {
+		// if (!shiftPressed) {
+		// for (Folder expanded : currentlyExpandedSet) {
+		// expanded.setStatus("hidden");
+		// }
+		// deactivateOtherItems(item);
+		// }
+		// for (ItemAction a : parseActions(item)) {
+		// a.execute(enabled);
+		// }
+		// }
+		draw();
+	}
+
+	private void deactivateOtherItems(Item item) {
+		for (Folder folder : organizer.getFolders()) {
+			for (Item it : folder.getItems()) {
+				if (it.isActive() && !item.equals(it)) {
+					it.setActive(false);
+				}
+			}
+		}
+	}
 }

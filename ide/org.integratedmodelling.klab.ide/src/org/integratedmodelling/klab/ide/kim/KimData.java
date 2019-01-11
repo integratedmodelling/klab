@@ -9,10 +9,12 @@ import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.client.utils.FileCatalog;
+import org.integratedmodelling.klab.client.utils.JsonUtils;
 import org.integratedmodelling.klab.common.Prototype;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.organizer.Organizer;
 
 /**
  * A singleton holding all synchronized k.IM-relevant data that come from the
@@ -26,8 +28,10 @@ public enum KimData {
 
 	INSTANCE;
 
-	FileCatalog<IPrototype> prototypes;
-	FileCatalog<IPrototype> annotations;
+	private FileCatalog<IPrototype> prototypes;
+	private FileCatalog<IPrototype> annotations;
+	private Organizer bookmarks = new Organizer("Bookmarks");
+	private File bookmarkFile;
 
 	KimData() {
 		File protoFile = new File(System.getProperty("user.home") + File.separator + ".klab" + File.separator
@@ -36,6 +40,17 @@ public enum KimData {
 				+ "language" + File.separator + "annotations.json");
 		prototypes = new FileCatalog<IPrototype>(protoFile, IPrototype.class, Prototype.class);
 		annotations = new FileCatalog<IPrototype>(annotFile, IPrototype.class, Prototype.class);
+		this.bookmarkFile = new File(
+				System.getProperty("user.home") + File.separator + ".klab" + File.separator + "bookmarks.json");
+		if (this.bookmarkFile.exists()) {
+			this.bookmarks = JsonUtils.load(this.bookmarkFile, Organizer.class);
+		} else {
+			this.bookmarks.setDescription(
+					"This is a configurable palette where you can drop concepts, models and observations for future reference. " + 
+					"You can also create folders to improve organization. Your palette is saved in the configuration every"+
+					" time you make a change and is shared with the Explorer. You can export palettes to the network and"+
+					" share them with others. You can save palettes with names and switch between them as you please.");
+		}
 	}
 
 	public IPrototype getFunctionPrototype(String name) {
@@ -87,6 +102,10 @@ public enum KimData {
 			}
 		}
 		return ret;
+	}
+
+	public Organizer getBookmarks() {
+		return bookmarks;
 	}
 
 }

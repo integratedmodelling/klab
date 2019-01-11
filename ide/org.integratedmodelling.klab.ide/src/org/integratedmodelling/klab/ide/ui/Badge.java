@@ -49,9 +49,13 @@ public class Badge extends Canvas {
 
     private List<Control>   widgets      = new ArrayList<>();
 
-    public Badge(Composite parent, int behavior, int style) {
-        super(parent, style);
+	private int containerWidth;
 
+    public Badge(Composite parent, int behavior, int style, int width) {
+
+    	super(parent, style);
+    	
+    	this.containerWidth = width;
         this.closeable = (behavior & CLOSEABLE) != 0;
         this.selectable = (behavior & SELECTABLE) != 0;
         this.multiline = (behavior & MULTILINE) != 0;
@@ -179,16 +183,23 @@ public class Badge extends Canvas {
     }
 
     public void setText(String text) {
-
+    	
         int[] pxy = StringUtils.getParagraphSize(text);
-        textLabel = new CLabel(this, SWT.NONE);
+        textLabel = new CLabel(this, SWT.None);
         GC gc = new GC(textLabel);
         Point size = gc.textExtent(StringUtils.repeat('M', pxy[0]));
         int wHint = size.x / 2 + 36;
         int hHint = size.y * (pxy[1] + 2);
+
+        if (multiline && (text.length() * size.x) > (containerWidth + 36)) {
+        	int just = (containerWidth - 36)/size.x;
+        	text = StringUtils.justifyLeft(text, just);
+        }
+        
         textLabel.setForeground(getForeground());
         textLabel.setBounds(LEFT_MARGIN, getNextY(), wHint - 3, hHint - 3);
         textLabel.setText(text);
+        textLabel.setAlignment(SWT.CENTER);
         textLabel.addMouseTrackListener(new MTL());
         textLabel.addMouseListener(new ML(false));
         Point lsiz = textLabel.getSize();
