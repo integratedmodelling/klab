@@ -34,10 +34,6 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
     
     this.label = actuator.getLabel();
     
-    if (this.name.equals("assert.range")) {
-    	System.out.println("HOHSH");
-    }
-    
     for (IKdlActuator arg : actuator.getActors()) {
 
       ArgumentImpl a = new ArgumentImpl();
