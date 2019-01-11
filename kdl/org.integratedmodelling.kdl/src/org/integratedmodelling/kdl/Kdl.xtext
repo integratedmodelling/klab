@@ -87,7 +87,7 @@ ACTOR:
 	// any acceptable quality type, for declarations only
 	'value' |
 	// all the next are in quality scope; number type is handled internally
-	'number' | 'concept' | 'boolean' | 'text' |
+	'number' | 'concept' | 'boolean' | 'text' | 'list' |
 	// specialized functions that produce extents
 	'extent' | 'spatialextent' | 'temporalextent' |
 	// only contracts for annotations

@@ -1966,40 +1966,46 @@ ruleACTOR returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
 			newLeafNode(kw, grammarAccess.getACTORAccess().getTextKeyword_6());
 		}
 		    |
+		kw='list'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getACTORAccess().getListKeyword_7());
+		}
+		    |
 		kw='extent'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getACTORAccess().getExtentKeyword_7());
+			newLeafNode(kw, grammarAccess.getACTORAccess().getExtentKeyword_8());
 		}
 		    |
 		kw='spatialextent'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getACTORAccess().getSpatialextentKeyword_8());
+			newLeafNode(kw, grammarAccess.getACTORAccess().getSpatialextentKeyword_9());
 		}
 		    |
 		kw='temporalextent'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getACTORAccess().getTemporalextentKeyword_9());
+			newLeafNode(kw, grammarAccess.getACTORAccess().getTemporalextentKeyword_10());
 		}
 		    |
 		kw='annotation'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getACTORAccess().getAnnotationKeyword_10());
+			newLeafNode(kw, grammarAccess.getACTORAccess().getAnnotationKeyword_11());
 		}
 		    |
 		kw='void'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getACTORAccess().getVoidKeyword_11());
+			newLeafNode(kw, grammarAccess.getACTORAccess().getVoidKeyword_12());
 		}
 		    |
 		kw='partition'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getACTORAccess().getPartitionKeyword_12());
+			newLeafNode(kw, grammarAccess.getACTORAccess().getPartitionKeyword_13());
 		}
 	)
 ;

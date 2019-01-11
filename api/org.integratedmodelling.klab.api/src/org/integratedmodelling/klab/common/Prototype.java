@@ -28,7 +28,8 @@ public class Prototype implements IPrototype {
 		public boolean isFinal;
 		public Type type;
 		public boolean artifact;
-		public Object defaultValue = null;
+		// storing as string for serialization, use artifact type to return as POD
+		public String defaultValue = null;
 		public Set<String> enumValues = new HashSet<>();
 
 		public ArgumentImpl() {
@@ -65,7 +66,7 @@ public class Prototype implements IPrototype {
 		}
 
 		@Override
-		public Object getDefaultValue() {
+		public String getDefaultValue() {
 			return defaultValue;
 		}
 
@@ -106,7 +107,7 @@ public class Prototype implements IPrototype {
 			this.type = type;
 		}
 
-		public void setDefaultValue(Object defaultValue) {
+		public void setDefaultValue(String defaultValue) {
 			this.defaultValue = defaultValue;
 		}
 

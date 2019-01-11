@@ -15,6 +15,7 @@ boolean nodata
 	""
 {
 	list target
+		""
 
 	class org.integratedmodelling.klab.components.testing.assertions.AssertNodata
 }
@@ -23,6 +24,7 @@ boolean 'range'
 	""
 {
 	list target
+		""
 
 	class org.integratedmodelling.klab.components.testing.assertions.AssertRange
 }
@@ -31,6 +33,7 @@ boolean objects
 	""
 {
 	list target
+		""
 
 	class org.integratedmodelling.klab.components.testing.assertions.AssertObjects
 }

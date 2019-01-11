@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.rest.ServicePrototype;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -192,6 +193,7 @@ public enum Extensions implements IExtensionService {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.enable(SerializationFeature.INDENT_OUTPUT); // pretty print
+			mapper.setSerializationInclusion(Include.NON_NULL);
 			JavaType type = mapper.getTypeFactory().constructMapLikeType(Map.class, String.class, Prototype.class);
 			mapper.writerFor(type).writeValue(file, this.prototypes);
 		} catch (IOException e) {

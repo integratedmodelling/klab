@@ -1331,39 +1331,45 @@ rule__ACTOR__Alternatives
 	)
 	|
 	(
-		{ before(grammarAccess.getACTORAccess().getExtentKeyword_7()); }
+		{ before(grammarAccess.getACTORAccess().getListKeyword_7()); }
+		'list'
+		{ after(grammarAccess.getACTORAccess().getListKeyword_7()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getACTORAccess().getExtentKeyword_8()); }
 		'extent'
-		{ after(grammarAccess.getACTORAccess().getExtentKeyword_7()); }
+		{ after(grammarAccess.getACTORAccess().getExtentKeyword_8()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getACTORAccess().getSpatialextentKeyword_8()); }
+		{ before(grammarAccess.getACTORAccess().getSpatialextentKeyword_9()); }
 		'spatialextent'
-		{ after(grammarAccess.getACTORAccess().getSpatialextentKeyword_8()); }
+		{ after(grammarAccess.getACTORAccess().getSpatialextentKeyword_9()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getACTORAccess().getTemporalextentKeyword_9()); }
+		{ before(grammarAccess.getACTORAccess().getTemporalextentKeyword_10()); }
 		'temporalextent'
-		{ after(grammarAccess.getACTORAccess().getTemporalextentKeyword_9()); }
+		{ after(grammarAccess.getACTORAccess().getTemporalextentKeyword_10()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getACTORAccess().getAnnotationKeyword_10()); }
+		{ before(grammarAccess.getACTORAccess().getAnnotationKeyword_11()); }
 		'annotation'
-		{ after(grammarAccess.getACTORAccess().getAnnotationKeyword_10()); }
+		{ after(grammarAccess.getACTORAccess().getAnnotationKeyword_11()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getACTORAccess().getVoidKeyword_11()); }
+		{ before(grammarAccess.getACTORAccess().getVoidKeyword_12()); }
 		'void'
-		{ after(grammarAccess.getACTORAccess().getVoidKeyword_11()); }
+		{ after(grammarAccess.getACTORAccess().getVoidKeyword_12()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getACTORAccess().getPartitionKeyword_12()); }
+		{ before(grammarAccess.getACTORAccess().getPartitionKeyword_13()); }
 		'partition'
-		{ after(grammarAccess.getACTORAccess().getPartitionKeyword_12()); }
+		{ after(grammarAccess.getACTORAccess().getPartitionKeyword_13()); }
 	)
 ;
 finally {

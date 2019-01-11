@@ -60,7 +60,7 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 	public KdlActuator(ActorDefinition o) {
 
 		super(o);
-
+		
 		this.name = o.getName();
 		this.alias = o.getLocalName();
 		this.exported = o.isExported();

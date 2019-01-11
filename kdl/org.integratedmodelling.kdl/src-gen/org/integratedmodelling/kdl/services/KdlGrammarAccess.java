@@ -1085,18 +1085,19 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cConceptKeyword_4 = (Keyword)cAlternatives.eContents().get(4);
 		private final Keyword cBooleanKeyword_5 = (Keyword)cAlternatives.eContents().get(5);
 		private final Keyword cTextKeyword_6 = (Keyword)cAlternatives.eContents().get(6);
-		private final Keyword cExtentKeyword_7 = (Keyword)cAlternatives.eContents().get(7);
-		private final Keyword cSpatialextentKeyword_8 = (Keyword)cAlternatives.eContents().get(8);
-		private final Keyword cTemporalextentKeyword_9 = (Keyword)cAlternatives.eContents().get(9);
-		private final Keyword cAnnotationKeyword_10 = (Keyword)cAlternatives.eContents().get(10);
-		private final Keyword cVoidKeyword_11 = (Keyword)cAlternatives.eContents().get(11);
-		private final Keyword cPartitionKeyword_12 = (Keyword)cAlternatives.eContents().get(12);
+		private final Keyword cListKeyword_7 = (Keyword)cAlternatives.eContents().get(7);
+		private final Keyword cExtentKeyword_8 = (Keyword)cAlternatives.eContents().get(8);
+		private final Keyword cSpatialextentKeyword_9 = (Keyword)cAlternatives.eContents().get(9);
+		private final Keyword cTemporalextentKeyword_10 = (Keyword)cAlternatives.eContents().get(10);
+		private final Keyword cAnnotationKeyword_11 = (Keyword)cAlternatives.eContents().get(11);
+		private final Keyword cVoidKeyword_12 = (Keyword)cAlternatives.eContents().get(12);
+		private final Keyword cPartitionKeyword_13 = (Keyword)cAlternatives.eContents().get(13);
 		
 		//ACTOR: // countable, so always a dataflow for direct object instantiation
 		//	'object' | // non-countable, so one object only
 		//	'process' | // any acceptable quality type, for declarations only
 		//	'value' | // all the next are in quality scope; number type is handled internally
-		//	'number' | 'concept' | 'boolean' | 'text' | // specialized functions that produce extents
+		//	'number' | 'concept' | 'boolean' | 'text' | 'list' | // specialized functions that produce extents
 		//	'extent' | 'spatialextent' | 'temporalextent' | // only contracts for annotations
 		//	'annotation' | // only for command prototypes
 		//	'void' | // partial contextualizers for their parents
@@ -1107,7 +1108,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//'object' | // non-countable, so one object only
 		//'process' | // any acceptable quality type, for declarations only
 		//'value' | // all the next are in quality scope; number type is handled internally
-		//'number' | 'concept' | 'boolean' | 'text' | // specialized functions that produce extents
+		//'number' | 'concept' | 'boolean' | 'text' | 'list' | // specialized functions that produce extents
 		//'extent' | 'spatialextent' | 'temporalextent' | // only contracts for annotations
 		//'annotation' | // only for command prototypes
 		//'void' | // partial contextualizers for their parents
@@ -1139,27 +1140,30 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//'text'
 		public Keyword getTextKeyword_6() { return cTextKeyword_6; }
 		
+		//'list'
+		public Keyword getListKeyword_7() { return cListKeyword_7; }
+		
 		//// specialized functions that produce extents
 		//'extent'
-		public Keyword getExtentKeyword_7() { return cExtentKeyword_7; }
+		public Keyword getExtentKeyword_8() { return cExtentKeyword_8; }
 		
 		//'spatialextent'
-		public Keyword getSpatialextentKeyword_8() { return cSpatialextentKeyword_8; }
+		public Keyword getSpatialextentKeyword_9() { return cSpatialextentKeyword_9; }
 		
 		//'temporalextent'
-		public Keyword getTemporalextentKeyword_9() { return cTemporalextentKeyword_9; }
+		public Keyword getTemporalextentKeyword_10() { return cTemporalextentKeyword_10; }
 		
 		//// only contracts for annotations
 		//'annotation'
-		public Keyword getAnnotationKeyword_10() { return cAnnotationKeyword_10; }
+		public Keyword getAnnotationKeyword_11() { return cAnnotationKeyword_11; }
 		
 		//// only for command prototypes
 		//'void'
-		public Keyword getVoidKeyword_11() { return cVoidKeyword_11; }
+		public Keyword getVoidKeyword_12() { return cVoidKeyword_12; }
 		
 		//// partial contextualizers for their parents
 		//'partition'
-		public Keyword getPartitionKeyword_12() { return cPartitionKeyword_12; }
+		public Keyword getPartitionKeyword_13() { return cPartitionKeyword_13; }
 	}
 	public class TARGETElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.TARGET");
@@ -3374,7 +3378,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	//	'object' | // non-countable, so one object only
 	//	'process' | // any acceptable quality type, for declarations only
 	//	'value' | // all the next are in quality scope; number type is handled internally
-	//	'number' | 'concept' | 'boolean' | 'text' | // specialized functions that produce extents
+	//	'number' | 'concept' | 'boolean' | 'text' | 'list' | // specialized functions that produce extents
 	//	'extent' | 'spatialextent' | 'temporalextent' | // only contracts for annotations
 	//	'annotation' | // only for command prototypes
 	//	'void' | // partial contextualizers for their parents

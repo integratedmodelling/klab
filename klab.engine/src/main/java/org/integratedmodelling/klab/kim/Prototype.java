@@ -34,6 +34,10 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
     
     this.label = actuator.getLabel();
     
+    if (this.name.equals("assert.range")) {
+    	System.out.println("HOHSH");
+    }
+    
     for (IKdlActuator arg : actuator.getActors()) {
 
       ArgumentImpl a = new ArgumentImpl();
@@ -44,7 +48,7 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
       a.optional = arg.isOptional();
       a.isFinal = arg.isFinal();
       a.enumValues.addAll(arg.getEnumValues());
-      a.defaultValue = arg.getDefaultValue();
+      a.defaultValue = arg.getDefaultValue() == null ? null : arg.getDefaultValue().toString();
       a.artifact = arg.isImported();
       arguments.put(a.name, a);
     }
