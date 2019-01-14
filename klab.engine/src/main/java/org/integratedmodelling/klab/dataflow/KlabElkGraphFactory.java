@@ -7,19 +7,12 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.EnumSet;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.elk.alg.layered.options.EdgeStraighteningStrategy;
-import org.eclipse.elk.alg.layered.options.GraphCompactionStrategy;
 import org.eclipse.elk.alg.layered.options.LayeredMetaDataProvider;
-import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.math.ElkPadding;
-import org.eclipse.elk.core.options.Alignment;
 import org.eclipse.elk.core.options.CoreOptions;
-import org.eclipse.elk.core.options.Direction;
-import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
@@ -27,11 +20,9 @@ import org.eclipse.elk.core.options.SizeOptions;
 import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkGraphElement;
-import org.eclipse.elk.graph.ElkGraphFactory;
 import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
-import org.eclipse.elk.graph.impl.ElkGraphFactoryImpl;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 /**
@@ -68,7 +59,7 @@ public class KlabElkGraphFactory {
 		BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 		final String fontType = java.awt.Font.MONOSPACED;
 		graphics = image.createGraphics();
-        graphics.setFont(new java.awt.Font(fontType, 0 /* SWT.NORMAL */, FONT_SIZE));
+        graphics.setFont(new java.awt.Font(fontType, java.awt.Font.PLAIN, FONT_SIZE));
 	}
 	
 	
@@ -101,10 +92,8 @@ public class KlabElkGraphFactory {
 		node.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS, SizeConstraint.PORTS));
 		node.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.insideTopLeft());
 		node.setProperty(CoreOptions.NODE_LABELS_PADDING, NODE_PADDING);
-		node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.UNIFORM_PORT_SPACING, SizeOptions.COMPUTE_PADDING));
-		node.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
-		// node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.COMPUTE_PADDING));
-		// node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.DEFAULT_MINIMUM_SIZE, SizeOptions.MINIMUM_SIZE_ACCOUNTS_FOR_PADDING, SizeOptions.COMPUTE_PADDING, SizeOptions.PORTS_OVERHANG));
+		node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.UNIFORM_PORT_SPACING));
+		// node.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
 		return node;
 	}
 	
@@ -117,18 +106,11 @@ public class KlabElkGraphFactory {
 	public ElkNode createServiceNode(String identifier, ElkNode parent) {
 		ElkNode node = ElkGraphUtil.createNode(parent);
 		node.setIdentifier(identifier);
-		/*
-		for (IProperty<? super T> property: properties.keySet()) {
-			node.setProperty(property, properties.get(property));
-		}
-		*/
 		node.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS, SizeConstraint.PORTS));
 		node.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, EnumSet.of(NodeLabelPlacement.H_LEFT, NodeLabelPlacement.V_CENTER, NodeLabelPlacement.INSIDE));
-		// node.setProperty(CoreOptions.NODE_LABELS_PADDING, NODE_PADDING);
+		node.setProperty(CoreOptions.NODE_LABELS_PADDING, NODE_PADDING);
 		node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.UNIFORM_PORT_SPACING, SizeOptions.COMPUTE_PADDING));
-		node.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
-		// node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.COMPUTE_PADDING));
-		// node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.DEFAULT_MINIMUM_SIZE, SizeOptions.MINIMUM_SIZE_ACCOUNTS_FOR_PADDING, SizeOptions.COMPUTE_PADDING, SizeOptions.PORTS_OVERHANG));
+		// node.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
 		return node;
 	}
 	
