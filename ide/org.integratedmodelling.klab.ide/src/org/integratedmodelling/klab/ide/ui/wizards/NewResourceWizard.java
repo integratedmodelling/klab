@@ -44,7 +44,7 @@ public class NewResourceWizard extends Wizard implements INewWizard {
 
 	@Override
 	public void addPages() {
-		addPage(page = new NewResource());
+		addPage(page = new NewResource(folder));
 	}
 
 	@Override

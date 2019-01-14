@@ -4,6 +4,7 @@ public class ResourceAdapterReference {
 
 	private String name;
 	private String description;
+	private String label;
 	private ServicePrototype parameters;
 
 	public ServicePrototype getParameters() {
@@ -28,5 +29,13 @@ public class ResourceAdapterReference {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 }

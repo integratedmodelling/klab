@@ -2,7 +2,8 @@
  * Parameters accepted in a raster resource
  */
  annotation vector	
-	"" 	 
+	"The vector adapter is used to create vector file resources. It accepts common GIS raster files such as ESRI shapefiles (.shp)." 	
+	label "GIS vector file adapter (shapefile)"
  {
 
  	final text 'fileUrl'

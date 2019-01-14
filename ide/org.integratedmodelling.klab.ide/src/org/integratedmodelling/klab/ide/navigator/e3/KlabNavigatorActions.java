@@ -130,6 +130,7 @@ public class KlabNavigatorActions {
 	public static void createResource(EResourceFolder folder) {
         WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE
                 .getShell(), new NewResourceWizard(folder));
+        dialog.setPageSize(800, 550);
         dialog.create();
         dialog.open();
 	}

@@ -23,6 +23,8 @@ import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
 import org.integratedmodelling.kim.model.Kim.Validator;
 import org.integratedmodelling.kim.model.KimLoader;
+import org.integratedmodelling.kim.ui.elink.KimLinkDetector;
+import org.integratedmodelling.kim.ui.elink.KimLinkDetector.LinkOpenListener;
 import org.integratedmodelling.kim.ui.internal.KimActivator;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
@@ -36,6 +38,7 @@ import org.integratedmodelling.klab.ide.model.KlabSession;
 import org.integratedmodelling.klab.ide.model.KlabUser;
 import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.ide.utils.StringUtils;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.ProjectLoadRequest;
 import org.integratedmodelling.klab.rest.ProjectReference;
@@ -149,6 +152,26 @@ public class Activator extends AbstractUIPlugin {
 				return KimData.INSTANCE.getAnnotationPrototype(functionId);
 			}
 
+		});
+		
+		/*
+		 * install link helper
+		 */
+		KimLinkDetector.setListener(new LinkOpenListener() {
+			
+			@Override
+			public void openLink(String text) {
+				int nc = StringUtils.countMatches(text, ":");
+				if (nc > 1) {
+					// URN
+				} else if (nc == 1) {
+					// MODEL OBJECT
+				} else {
+					// DEFINE - either in the definition itself or a reference. Hard to do anything without knowing which 
+					// namespace we are linking from
+				}
+				System.out.println("Link me hostia: " + text);
+			}
 		});
 
 		plugin = this;

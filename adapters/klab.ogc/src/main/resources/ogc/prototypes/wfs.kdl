@@ -2,7 +2,9 @@
  * Parameters accepted in a raster resource
  */
  annotation wfs 	
-	"" 	
+	"The WCS adapter is used to create WFS (Web Feature Service) spatial coverages, supporting servers implementing version 1.1.0 of the WFS standard." 	
+	label "WFS protocol adapter (OGC v1.1.0)" 	
+
  {
  	final text 'serviceUrl'
  		""

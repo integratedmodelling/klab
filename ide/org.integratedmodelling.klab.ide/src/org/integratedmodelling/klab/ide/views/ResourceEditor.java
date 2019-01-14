@@ -89,10 +89,6 @@ public class ResourceEditor extends ViewPart {
 	private Text text_1;
 	private Text text_2;
 	private Button isPublishable;
-	private Text time_start;
-	private Text time_end;
-	private Text time_step;
-	private Text time_resolution_multiplier;
 
 	public class PropertySupport extends EditingSupport {
 
@@ -189,7 +185,7 @@ public class ResourceEditor extends ViewPart {
 
 	}
 
-	class AttributeContentProvider implements IStructuredContentProvider {
+	public static class AttributeContentProvider implements IStructuredContentProvider {
 
 		@Override
 		public Object[] getElements(Object inputElement) {
@@ -200,7 +196,7 @@ public class ResourceEditor extends ViewPart {
 		}
 	}
 
-	class AttributeLabelProvider extends LabelProvider implements ITableLabelProvider {
+	public static class AttributeLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {

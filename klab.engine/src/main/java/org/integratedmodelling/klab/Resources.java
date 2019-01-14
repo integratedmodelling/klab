@@ -959,6 +959,7 @@ public enum Resources implements IResourceService {
 			ResourceAdapterReference ref = new ResourceAdapterReference();
 			ref.setName(adapter);
 			IPrototype configuration = resourceAdapters.get(adapter).getResourceConfiguration();
+			ref.setLabel(configuration.getLabel());
 			ref.setDescription(configuration.getDescription());
 			ref.setParameters(Extensions.INSTANCE.describePrototype(configuration));
 			ret.add(ref);

@@ -3,8 +3,8 @@ package org.integratedmodelling.klab.common;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -132,12 +132,11 @@ public class Prototype implements IPrototype {
 		public void setArtifact(boolean artifact) {
 			this.artifact = artifact;
 		}
-		
-		
+				
 	}
 
 	protected String name;
-	protected Map<String, ArgumentImpl> arguments = new HashMap<>();
+	protected Map<String, ArgumentImpl> arguments = new LinkedHashMap<>();
 	protected String description;
 	protected Class<?> implementation;
 	protected Type type;

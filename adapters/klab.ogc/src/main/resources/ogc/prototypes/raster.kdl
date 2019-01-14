@@ -2,7 +2,8 @@
  * Parameters accepted in a raster resource
  */
  annotation raster 
-	"" 	
+	"The raster adapter is used to create raster file resources. It accepts common GIS raster files such as GeoTIFF." 	
+	label "GIS raster file adapter (GeoTIFF)"
  {
  	final text 'fileUrl'
  		""
