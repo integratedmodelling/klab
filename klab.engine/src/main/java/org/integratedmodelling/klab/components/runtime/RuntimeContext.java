@@ -570,7 +570,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 			IObservation observation = null;
 			List<IState> predefinedStates = new ArrayList<>();
-			
+
 			if (observable.is(Type.COUNTABLE) && mode == Mode.INSTANTIATION) {
 				observation = new ObservationGroup(observable, (Scale) scale, this, IArtifact.Type.OBJECT);
 			} else if (observable.is(Type.RELATIONSHIP)) {
@@ -603,14 +603,16 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 				this.rootSubject = (ISubject) observation;
 			}
 			this.catalog.put(name, observation);
-			this.structure.addVertex(observation);
-			if (scope.getContext() != null) {
-				this.structure.addEdge(observation, scope.getContext());
+			if (!(observation instanceof ObservationGroup)) {
+				this.structure.addVertex(observation);
+				if (scope.getContext() != null) {
+					this.structure.addEdge(observation, scope.getContext());
+				}
 			}
 			if (observation instanceof ISubject) {
 				this.network.addVertex((ISubject) observation);
 			}
-			
+
 			/*
 			 * add any predefined states to the structure
 			 */
