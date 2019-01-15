@@ -1,10 +1,21 @@
 package org.integratedmodelling.klab.ide.model;
 
+import org.integratedmodelling.klab.rest.IdentityReference;
+
 public class KlabUser {
 
 	private String username = "Offline";
 	private String email = "";
 	private boolean online;
+
+	public KlabUser() {
+	}
+
+	public KlabUser(IdentityReference owner) {
+		this.email = owner.getEmail();
+		this.username = owner.getId();
+		this.online = true;
+	}
 
 	public String getUsername() {
 		return username;

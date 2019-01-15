@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.client.messaging.StompMessageBus;
 import org.integratedmodelling.klab.rest.Capabilities;
+import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.PingResponse;
 import org.integratedmodelling.klab.rest.ProjectReference;
 
@@ -141,7 +142,6 @@ public class EngineMonitor {
         this.capabilities = client.get(API.CAPABILITIES, Capabilities.class);
         this.sessionId = client.openSession(this.sessionId != null ? this.sessionId : ping.getLocalSessionId(),
                 relayId);
-
         if (this.sessionId != null) {
             if (this.bus != null) {
                 // shouldn't happen
@@ -163,6 +163,10 @@ public class EngineMonitor {
         }
     }
 
+    public IdentityReference getOwner() {
+    	return this.capabilities == null ? null : this.capabilities.getOwner();
+    }
+    
     /**
      * Override for better error handling
      * @param string

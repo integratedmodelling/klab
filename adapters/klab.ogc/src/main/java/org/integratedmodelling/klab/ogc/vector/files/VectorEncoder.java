@@ -194,6 +194,10 @@ public class VectorEncoder implements IResourceEncoder {
             Object shape = feature.getDefaultGeometryProperty().getValue();
             if (shape instanceof com.vividsolutions.jts.geom.Geometry) {
 
+            	if (((com.vividsolutions.jts.geom.Geometry) shape).isEmpty()) {
+            		continue;
+            	}
+            	
                 if (resource.getParameters().get("sanitize", false)) {
                     shape = GeometrySanitizer.sanitize((com.vividsolutions.jts.geom.Geometry) shape);
                 }
@@ -203,7 +207,11 @@ public class VectorEncoder implements IResourceEncoder {
                         .transform(requestScale.getSpace().getProjection())
                         .intersection(requestScale.getSpace().getShape());
 
-                if (rasterize) {
+            	if (objectShape.isEmpty()) {
+            		continue;
+            	}
+
+            	if (rasterize) {
 
                 	Object value = Boolean.TRUE;
                 	

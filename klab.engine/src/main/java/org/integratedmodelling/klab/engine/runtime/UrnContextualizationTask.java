@@ -88,7 +88,7 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
                         session.getMonitor()
                                 .send(Message.create(session
                                         .getId(), IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation, Observations.INSTANCE
-                                                .createArtifactDescriptor(ret, null, ITime.INITIALIZATION, -1, true)
+                                                .createArtifactDescriptor(ret, null, ITime.INITIALIZATION, -1, false, true)
                                                 .withTaskId(token)));
 
                         // TODO must finish this task and start another, otherwise no context gets registered.
@@ -102,7 +102,7 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
                         
                         session.getMonitor().send(Message.create(session
                                 .getId(), IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation, Observations.INSTANCE
-                                        .createArtifactDescriptor(notifiable, context, ITime.INITIALIZATION, -1, true)
+                                        .createArtifactDescriptor(notifiable, context, ITime.INITIALIZATION, -1, false, true)
                                         .withTaskId(token)));
 
                         /*

@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.integratedmodelling.klab.api.data.ILocator;
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.owl.Observable;

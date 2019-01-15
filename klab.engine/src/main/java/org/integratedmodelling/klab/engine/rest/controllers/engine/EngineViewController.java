@@ -65,14 +65,15 @@ public class EngineViewController {
 	@RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.DESCRIBE_OBSERVATION, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public IObservationReference describeObservation(Principal principal, @PathVariable String observation,
-			@RequestParam(required = false) Integer childLevel, @RequestParam(required = false) String locator) {
+			@RequestParam(required = false) Integer childLevel, @RequestParam(required = false) boolean collapseSiblings,
+			@RequestParam(required = false) String locator) {
 
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
 		ILocator loc = ITime.INITIALIZATION; // TODO parse the locator
 
 		return Observations.INSTANCE.createArtifactDescriptor(obs, obs.getContext(), loc,
-				childLevel == null ? -1 : childLevel, false);
+				childLevel == null ? -1 : childLevel, collapseSiblings, false);
 	}
 
 	/**
@@ -129,7 +130,7 @@ public class EngineViewController {
 				IArtifact artifact = it.next();
 				if (i >= offset) {
 					ObservationReference ref = Observations.INSTANCE.createArtifactDescriptor((IObservation) artifact,
-							obs.getContext(), loc, childLevel == null ? 0 : childLevel, false);
+							obs.getContext(), loc, childLevel == null ? 0 : childLevel, false, false);
 					if (ret == null) {
 						ret = ref;
 					} else {
@@ -149,9 +150,9 @@ public class EngineViewController {
 	/**
 	 * Get the data for an observation in directly usable form, as values or images
 	 * 
-	 * TODO if format == null (currently mandatory) it should return the Protobuf data for
-	 * the corresponding artifact and geometry. For completeness there should also be a 
-	 * GeometryType for this.
+	 * TODO if format == null (currently mandatory) it should return the Protobuf
+	 * data for the corresponding artifact and geometry. For completeness there
+	 * should also be a GeometryType for this.
 	 * 
 	 * TODO use filters or HttpMessageConverter/content negotiation for various
 	 * media types - see

@@ -40,7 +40,10 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -50,7 +53,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
@@ -62,6 +64,7 @@ import org.integratedmodelling.klab.ide.navigator.model.EResourceFolder;
 import org.integratedmodelling.klab.ide.utils.StringUtils;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.integratedmodelling.klab.rest.ServicePrototype;
+import org.integratedmodelling.klab.rest.ServicePrototype.Argument;
 
 public class NewResource extends WizardPage {
 
@@ -193,7 +196,8 @@ public class NewResource extends WizardPage {
 		super("wizardPage");
 		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.jpg"));
 		setTitle("New resource");
-		setDescription("Create a new k.LAB resource for a specified adapter");
+		setDescription(
+				"Create a new k.LAB resource for a specified adapter. Use to specify all parameters manually when drag&drop or bulk import cannot be used.");
 		this.folder = folder;
 	}
 
@@ -259,10 +263,20 @@ public class NewResource extends WizardPage {
 
 		tableViewer = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
 		table = tableViewer.getTable();
-		table.addSelectionListener(new SelectionAdapter() {
+		table.addMouseListener(new MouseAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-
+			public void mouseDown(MouseEvent e) {
+				// show the docs for the parameter that was clicked
+				int narg = table.getSelectionIndex();
+				if (narg >= 0 && narg < adapter.getParameters().getArguments().size()) {
+					Argument arg = (Argument) table.getItem(narg).getData();
+					String description = adapter.getDescription() + "\n\n";
+					int start = description.length();
+					description += arg.getName();
+					description += "\n\n" + arg.getDescription();
+					descriptionText.setText(description);
+					descriptionText.setStyleRange(new StyleRange(start, arg.getName().length(), null, null, SWT.BOLD));
+				}
 			}
 		});
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
@@ -284,9 +298,6 @@ public class NewResource extends WizardPage {
 		valueColumn.setWidth(400);
 		valueColumn.setText("Value");
 		propertyValueColumn.setEditingSupport(new ValueSupport(tableViewer));
-
-		Menu menu = new Menu(table);
-		table.setMenu(menu);
 
 		tableViewer.setLabelProvider(new PropertyLabelProvider());
 		tableViewer.setContentProvider(new PropertyContentProvider());

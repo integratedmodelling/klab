@@ -245,7 +245,7 @@ public class Activator extends AbstractUIPlugin {
 	private void engineOff() {
 		this.engine.send(Message.create(this.engineStatusMonitor.getEngineId(), IMessage.MessageClass.EngineLifecycle,
 				IMessage.Type.EngineDown, this.engineStatusMonitor.getCapabilities()));
-
+		this.user = new KlabUser();
 		System.out.println("--------------\nEngine went off\n----------------");
 	}
 
@@ -258,6 +258,7 @@ public class Activator extends AbstractUIPlugin {
 		this.engine = new KlabEngine(this.engineStatusMonitor.getEngineId());
 		this.session = new KlabSession(sessionId);
 		this.explorer = new KlabExplorer(relayId);
+		this.user = new KlabUser(this.engineStatusMonitor.getOwner());
 		this.engineStatusMonitor.getBus().subscribe(this.engineStatusMonitor.getEngineId(), this.engine);
 		this.engineStatusMonitor.getBus().subscribe(sessionId, this.session);
 		this.engineStatusMonitor.getBus().subscribe(relayId, this.explorer);

@@ -4,8 +4,10 @@ import java.io.File;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
@@ -44,6 +46,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.processing.osm.Nominatim;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
+import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
@@ -207,7 +210,7 @@ public enum Observations implements IObservationService {
 	}
 
 	public ObservationReference createArtifactDescriptor(IObservation observation, IObservation parent,
-			ILocator locator, int childLevel, boolean isMain) {
+			ILocator locator, int childLevel, boolean collapseSiblings, boolean isMain) {
 
 		ObservationReference ret = new ObservationReference();
 
@@ -328,10 +331,22 @@ public enum Observations implements IObservationService {
 		}
 
 		if (observation instanceof IDirectObservation && (childLevel < 0 || childLevel > 0)) {
-			// children. No child is ever main.
+			Set<ObservationGroup> groups = new HashSet<>();
 			for (IObservation child : ((IDirectObservation) observation).getChildren(IObservation.class)) {
+				
+				/*
+				 * if collapseSiblings, only add one representative sibling per type. 
+				 */
+				if (collapseSiblings && ((Observation)child).getGroup() != null) {
+					if (groups.contains(((Observation)child).getGroup())) {
+						continue;
+					} else {
+						groups.add(((Observation)child).getGroup());
+					}
+				}
+				
 				ret.getChildren().add(createArtifactDescriptor(child, observation, locator,
-						childLevel > 0 ? childLevel-- : childLevel, false));
+						childLevel > 0 ? childLevel-- : childLevel, collapseSiblings, false));
 			}
 		}
 

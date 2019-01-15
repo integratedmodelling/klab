@@ -142,7 +142,7 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 														IMessage.Type.NewObservation,
 														Observations.INSTANCE
 																.createArtifactDescriptor(notifiable, context,
-																		ITime.INITIALIZATION, -1, true)
+																		ITime.INITIALIZATION, -1, false, true)
 																.withTaskId(token)));
 							}
 							monitor.info("observation completed with "

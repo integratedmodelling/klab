@@ -341,7 +341,7 @@ public class Actuator implements IActuator {
 				if (parent != null && !dataflow.wasNotified(parent)) {
 
 					IObservationReference parentReference = Observations.INSTANCE
-							.createArtifactDescriptor(parent, parent.getContext(), ITime.INITIALIZATION, 0, isMain)
+							.createArtifactDescriptor(parent, parent.getContext(), ITime.INITIALIZATION, 0, false, isMain)
 							.withTaskId(ctx.getMonitor().getIdentity().getId());
 
 					session.getMonitor().send(Message.create(session.getId(),
@@ -352,7 +352,7 @@ public class Actuator implements IActuator {
 				if (!dataflow.wasNotified(notifiable)) {
 					
 					IObservationReference observation = Observations.INSTANCE
-							.createArtifactDescriptor(notifiable, parent, ITime.INITIALIZATION, 0, isMain)
+							.createArtifactDescriptor(notifiable, parent, ITime.INITIALIZATION, 0, false, isMain)
 							.withTaskId(ctx.getMonitor().getIdentity().getId());
 
 					session.getMonitor().send(Message.create(session.getId(),

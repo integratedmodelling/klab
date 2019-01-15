@@ -150,6 +150,15 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 		this.group = group;
 	}
 
+	/**
+	 * Get the group this is part of, if any.
+	 * 
+	 * @return
+	 */
+	public ObservationGroup getGroup() {
+		return group;
+	}
+	
 	@Override
 	public IArtifact.Type getType() {
 		return observable.getArtifactType();

@@ -7,20 +7,20 @@
  {
 
  	final text 'serviceUrl'
- 		""
+ 		"The URL of the service providing the data."
  		
  	final text 'wcsIdentifier'
- 		""
+ 		"The identifier of the WCS layer, including the namespace if the WCS server needs it."
 
 	final text 'wcsVersion'
- 		""
+ 		"The WCS version for the requests. Currently only 2.0.1 is supported as previous versions do not communicate enough information."
  	
  	optional input band
- 		""
+ 		"The band for a multi-band raster. Default is 0."
  		default 0
 
 	optional input nodata
-		""
+		"The no-data value for this raster. Default is as communicated by the WCS server."
 		default 0.0
 
  }
