@@ -93,6 +93,24 @@ public class Utils {
 		return value;
 	}
 
+	
+	public static boolean validateAs(Object pod, IArtifact.Type type) {
+		if (pod == null) {
+			return false;
+		}
+		IArtifact.Type tp = getArtifactType(pod.getClass());
+		if (type == tp) {
+			return true;
+		}
+		if (tp == Type.TEXT) {
+			Object converted = asPOD(pod.toString());
+			if (converted != null) {
+				return getArtifactType(converted.getClass()) == type;
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * Basic conversions to match a type, including null -> NaN when what's wanted
 	 * is a double or float
