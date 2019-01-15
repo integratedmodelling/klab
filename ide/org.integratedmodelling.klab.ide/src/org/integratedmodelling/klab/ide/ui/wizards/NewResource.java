@@ -65,6 +65,7 @@ import org.integratedmodelling.klab.ide.utils.StringUtils;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.integratedmodelling.klab.rest.ServicePrototype;
 import org.integratedmodelling.klab.rest.ServicePrototype.Argument;
+import org.integratedmodelling.klab.utils.Utils;
 
 public class NewResource extends WizardPage {
 
@@ -122,7 +123,12 @@ public class NewResource extends WizardPage {
 		@Override
 		protected void setValue(Object element, Object value) {
 			if (element instanceof ServicePrototype.Argument) {
-				// TODO validate vs. type
+				setErrorMessage(null);
+				if (value != null && !value.toString().isEmpty()
+						&& !Utils.validateAs(value, ((ServicePrototype.Argument) element).getType())) {
+					setErrorMessage("'" + value + "' is not a suitable value for type "
+							+ ((ServicePrototype.Argument) element).getType().name().toLowerCase());
+				}
 				values.put(((ServicePrototype.Argument) element).getName(), value.toString());
 			}
 			getViewer().update(element, null);
