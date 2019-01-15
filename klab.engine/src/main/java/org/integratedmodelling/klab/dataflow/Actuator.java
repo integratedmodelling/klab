@@ -437,6 +437,10 @@ public class Actuator implements IActuator {
 					addParameters(ctx, self, resource))) {
 				((Artifact) ret).chain(object);
 			}
+			if (ret.groupSize() == 0) {
+				// manually add the empty artifact to the structure; this is not done when a group is created.
+				ctx.link(ctx.getContextObservation(), ret);
+			}
 		}
 
 		state.setStatus(Status.FINISHED);
