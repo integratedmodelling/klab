@@ -36,6 +36,9 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	private ObservationGroup group = null;
 	// last modification. Must be correct for any cache to work.
 	private long timestamp = System.currentTimeMillis();
+	// used to store the "main" status from annotations or because of directly observed. Should eventually
+	// come from provenance. 
+	private boolean main;
 
 	public String getUrn() {
 		return "local:observation:" + getParentIdentity(Session.class).getId() + ":" + getId();
@@ -177,6 +180,14 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	@Override
 	public int groupSize() {
 		return group == null ? 1 : group.groupSize();
+	}
+
+	public boolean isMain() {
+		return main;
+	}
+
+	public void setMain(boolean main) {
+		this.main = main;
 	}		
 
 }

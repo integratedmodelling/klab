@@ -229,10 +229,16 @@ public enum Observations implements IObservationService {
 		} else if (observation instanceof IRelationship) {
 			ret.setObservationType(ObservationReference.ObservationType.RELATIONSHIP);
 		}
-
+		
 		ret.setMain(isMain);
 		ret.setCreationTime(observation.getTimestamp());
-	
+		
+		if (isMain && observation instanceof Observation && !((Observation)observation).isMain()) {
+			((Observation)observation).setMain(true);
+		} else if (((Observation)observation).isMain()) {
+			ret.setMain(true);
+		}
+		
 		if (locator != null) {
 			observation = observation.at(locator);
 		}
