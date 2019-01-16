@@ -4,5 +4,6 @@ public enum CRUDOperation {
     DELETE,
     CREATE,
     MOVE,
-    COPY
+    COPY,
+    UPDATE
 }

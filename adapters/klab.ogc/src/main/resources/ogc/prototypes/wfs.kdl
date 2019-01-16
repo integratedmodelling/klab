@@ -2,9 +2,8 @@
  * Parameters accepted in a raster resource
  */
  annotation wfs 	
-	"The WFS adapter is used to create WFS (Web Feature Service) spatial coverages, supporting servers implementing version 1.1.0 of the WFS standard." 	
-	label "WFS protocol adapter (OGC v1.1.0)" 	
-
+	"The WFS adapter is used to create WFS (Web Feature Service) spatial coverages, supporting servers implementing version 1.0.0 of the WFS standard." 	
+	label "WFS protocol adapter (OGC v1.0.0)" 
  {
  	final text 'serviceUrl'
  		""
@@ -14,10 +13,10 @@
  	
  	final text 'wfsVersion'
  		""
- 		default "1.1.0"
+ 		default "1.0.0"
 
  	optional text 'nameAttribute'
- 		""
+ 		"The attribute that provides the name for objects built from this resource. If not provided, names will be built from the semantics."
  		
  	optional input sanitize
  		""

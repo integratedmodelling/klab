@@ -47,18 +47,25 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.integratedmodelling.klab.api.data.CRUDOperation;
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.ui.TimeEditor;
 import org.integratedmodelling.klab.ide.ui.WorldWidget;
+import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.ide.utils.StringUtils;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
+import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.ServicePrototype;
 import org.integratedmodelling.klab.rest.ServicePrototype.Argument;
 import org.integratedmodelling.klab.utils.UrlValidator;
 import org.integratedmodelling.klab.utils.Utils;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.ModifyEvent;
 
 public class ResourceEditor extends ViewPart {
 
@@ -75,8 +82,8 @@ public class ResourceEditor extends ViewPart {
 	private Label labelWhy;
 	private Table table;
 	private Table propertyTable;
-	private Map<String,String> values = new LinkedHashMap<>();
-	private Map<String,String> metadata = new LinkedHashMap<>();
+	private Map<String, String> values = new LinkedHashMap<>();
+	private Map<String, String> metadata = new LinkedHashMap<>();
 	private ResourceReference resource;
 	private ResourceAdapterReference adapter;
 	private TableViewer attributeViewer;
@@ -88,7 +95,11 @@ public class ResourceEditor extends ViewPart {
 	private Text urlDoi;
 	private Text keywords;
 	private Button isPublishable;
-	
+	private boolean dirty = false;
+	private Button saveButton;
+	private Button publishButton;
+	private Button cancelButton;
+
 	public static class AttributeContentProvider implements IStructuredContentProvider {
 
 		@Override
@@ -131,12 +142,10 @@ public class ResourceEditor extends ViewPart {
 
 	public class ValueSupport extends EditingSupport {
 
-//		private final TableViewer viewer;
 		private final CellEditor editor;
 
 		public ValueSupport(TableViewer viewer) {
 			super(viewer);
-//			this.viewer = viewer;
 			this.editor = new TextCellEditor(viewer.getTable());
 		}
 
@@ -170,20 +179,38 @@ public class ResourceEditor extends ViewPart {
 
 		@Override
 		protected void setValue(Object element, Object value) {
+
 			if (element instanceof ServicePrototype.Argument) {
-				setErrorMessage(null);
-				if (value != null && !value.toString().isEmpty()) {
-					if (!Utils.validateAs(value, ((ServicePrototype.Argument) element).getType())) {
-						setErrorMessage("'" + value + "' is not a suitable value for type "
-								+ ((ServicePrototype.Argument) element).getType().name().toLowerCase());
-					}
-					if (((ServicePrototype.Argument) element).getName().endsWith("Url")) {
-						if (!UrlValidator.getInstance().isValid(value.toString())) {
-							setErrorMessage("'" + value + "' is not a valid URL");
+
+				boolean changed = true;
+
+				String current = values.get(((ServicePrototype.Argument) element).getName());
+				if (current != null && current.trim().isEmpty()) {
+					current = null;
+				}
+				if (value != null && value.toString().isEmpty()) {
+					value = null;
+				}
+				if ((value != null && current != null && value.equals(current)) || (value == null && current == null)) {
+					changed = false;
+				}
+
+				if (changed) {
+					setErrorMessage(null);
+					if (value != null) {
+						if (!Utils.validateAs(value, ((ServicePrototype.Argument) element).getType())) {
+							setErrorMessage("'" + value + "' is not a suitable value for type "
+									+ ((ServicePrototype.Argument) element).getType().name().toLowerCase());
+						}
+						if (((ServicePrototype.Argument) element).getName().endsWith("Url")) {
+							if (!UrlValidator.getInstance().isValid(value.toString())) {
+								setErrorMessage("'" + value + "' is not a valid URL");
+							}
 						}
 					}
+					values.put(((ServicePrototype.Argument) element).getName(), value.toString());
+					setDirty(true);
 				}
-				values.put(((ServicePrototype.Argument) element).getName(), value.toString());
 			}
 			getViewer().update(element, null);
 		}
@@ -293,16 +320,6 @@ public class ResourceEditor extends ViewPart {
 		return false;
 	}
 
-//	private String[] getAdapterProperties() {
-//		List<String> ret = new ArrayList<>();
-//		if (this.adapter != null) {
-//			for (Argument argument : adapter.getParameters().getArguments()) {
-//				ret.add(argument.getName());
-//			}
-//		}
-//		return ret.toArray(new String[ret.size()]);
-//	}
-
 	/**
 	 * Create contents of the view part.
 	 * 
@@ -376,7 +393,7 @@ public class ResourceEditor extends ViewPart {
 		}
 		{
 			Group grpGeometry = new Group(container, SWT.NONE);
-//			grpGeometry.setBackground(SWTResourceManager.getColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
+			// grpGeometry.setBackground(SWTResourceManager.getColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 			grpGeometry.setLayout(new GridLayout(2, false));
 			grpGeometry.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 			grpGeometry.setText("Geometry");
@@ -417,7 +434,7 @@ public class ResourceEditor extends ViewPart {
 			grpTime.setLayout(new GridLayout(1, false));
 			grpTime.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 2, 1));
 			grpTime.setText("Time");
-			
+
 			TimeEditor timeEditor = new TimeEditor(grpTime, SWT.NONE);
 			timeEditor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
@@ -514,25 +531,25 @@ public class ResourceEditor extends ViewPart {
 
 		Menu menu = new Menu(propertyTable);
 		propertyTable.setMenu(menu);
-//		MenuItem addProperty = new MenuItem(menu, SWT.NONE);
-//		addProperty.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				// TODO add parameter for editing
-//				parameterEdit = new Pair<>("", "");
-//				adapterPropertyViewer.setInput(resource.getParameters());
-//			}
-//		});
-//		addProperty.setText("Add new parameter");
-//
-//		MenuItem deleteProperty = new MenuItem(menu, SWT.NONE);
-//		deleteProperty.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				// TODO delete current selection
-//			}
-//		});
-//		deleteProperty.setText("Delete parameter");
+		// MenuItem addProperty = new MenuItem(menu, SWT.NONE);
+		// addProperty.addSelectionListener(new SelectionAdapter() {
+		// @Override
+		// public void widgetSelected(SelectionEvent e) {
+		// // TODO add parameter for editing
+		// parameterEdit = new Pair<>("", "");
+		// adapterPropertyViewer.setInput(resource.getParameters());
+		// }
+		// });
+		// addProperty.setText("Add new parameter");
+		//
+		// MenuItem deleteProperty = new MenuItem(menu, SWT.NONE);
+		// deleteProperty.addSelectionListener(new SelectionAdapter() {
+		// @Override
+		// public void widgetSelected(SelectionEvent e) {
+		// // TODO delete current selection
+		// }
+		// });
+		// deleteProperty.setText("Delete parameter");
 		adapterPropertyViewer.setLabelProvider(new PropertyLabelProvider());
 		adapterPropertyViewer.setContentProvider(new PropertyContentProvider());
 
@@ -553,6 +570,12 @@ public class ResourceEditor extends ViewPart {
 		lblTitle.setText("Title");
 
 		title = new Text(composite_1, SWT.BORDER);
+		title.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				metadata.put(IMetadata.DC_TITLE, title.getText());
+				setDirty(true);
+			}
+		});
 		title.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		title.setBounds(0, 0, 76, 21);
 
@@ -560,6 +583,12 @@ public class ResourceEditor extends ViewPart {
 		lblDescriptionmarkdownAccepted.setText("Description (Markdown accepted)");
 
 		StyledText description = new StyledText(composite_1, SWT.BORDER);
+		description.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				metadata.put(IMetadata.DC_COMMENT, title.getText());
+				setDirty(true);
+			}
+		});
 		GridData gd_description = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
 		gd_description.heightHint = 80;
 		description.setLayoutData(gd_description);
@@ -568,6 +597,12 @@ public class ResourceEditor extends ViewPart {
 		lblOriginators.setText("Originating institution");
 
 		StyledText originatingInstitution = new StyledText(composite_1, SWT.BORDER);
+		originatingInstitution.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				metadata.put(IMetadata.DC_ORIGINATOR, title.getText());
+				setDirty(true);
+			}
+		});
 		GridData gd_originatingInstitution = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
 		gd_originatingInstitution.heightHint = 40;
 		originatingInstitution.setLayoutData(gd_originatingInstitution);
@@ -576,12 +611,24 @@ public class ResourceEditor extends ViewPart {
 		lblUrl.setText("URL/DOI");
 
 		urlDoi = new Text(composite_1, SWT.BORDER);
+		urlDoi.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				metadata.put(IMetadata.DC_URL, title.getText());
+				setDirty(true);
+			}
+		});
 		urlDoi.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		Label lblAuthors = new Label(composite_1, SWT.NONE);
 		lblAuthors.setText("Authors (one per line)");
 
 		StyledText authors = new StyledText(composite_1, SWT.BORDER);
+		authors.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				metadata.put(IMetadata.DC_CREATOR, title.getText());
+				setDirty(true);
+			}
+		});
 		GridData gd_authors = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
 		gd_authors.heightHint = 40;
 		authors.setLayoutData(gd_authors);
@@ -615,6 +662,12 @@ public class ResourceEditor extends ViewPart {
 		lblKeywords.setText("Keywords");
 
 		keywords = new Text(composite_1, SWT.BORDER);
+		keywords.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				metadata.put(IMetadata.IM_KEYWORDS, title.getText());
+				setDirty(true);
+			}
+		});
 		keywords.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		new Label(composite_1, SWT.NONE);
 
@@ -622,6 +675,12 @@ public class ResourceEditor extends ViewPart {
 		lblReferences.setText("References");
 
 		StyledText references = new StyledText(composite_1, SWT.BORDER);
+		references.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				metadata.put(IMetadata.DC_SOURCE, title.getText());
+				setDirty(true);
+			}
+		});
 		GridData gd_references = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
 		gd_references.heightHint = 40;
 		references.setLayoutData(gd_references);
@@ -642,29 +701,66 @@ public class ResourceEditor extends ViewPart {
 		rl_composite.wrap = false;
 		composite.setLayout(rl_composite);
 
-		Button btnNewButton = new Button(composite, SWT.NONE);
-		btnNewButton.setLayoutData(new RowData(90, SWT.DEFAULT));
-		btnNewButton.setGrayed(true);
-		btnNewButton.setText("Publish...");
+		publishButton = new Button(composite, SWT.NONE);
+		publishButton.setLayoutData(new RowData(90, SWT.DEFAULT));
+		publishButton.setGrayed(true);
+		publishButton.setText("Publish...");
+		publishButton.setEnabled(false);
 
-		Button btnNewButton_1 = new Button(composite, SWT.NONE);
-		btnNewButton_1.setLayoutData(new RowData(90, SWT.DEFAULT));
-		btnNewButton_1.setText("Save");
-
-		Button btnNewButton_2 = new Button(composite, SWT.NONE);
-		btnNewButton_2.addMouseListener(new MouseAdapter() {
+		saveButton = new Button(composite, SWT.NONE);
+		saveButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().hideView(ResourceEditor.this);
+				save();
 			}
 		});
-		btnNewButton_2.setLayoutData(new RowData(90, SWT.DEFAULT));
-		btnNewButton_2.setText("Cancel");
+		saveButton.setLayoutData(new RowData(90, SWT.DEFAULT));
+		saveButton.setText("Save");
+		saveButton.setEnabled(false);
+
+		cancelButton = new Button(composite, SWT.NONE);
+		cancelButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				if (!dirty || Eclipse.INSTANCE.confirm("Abandon changes?")) {
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().hideView(ResourceEditor.this);
+				}
+			}
+		});
+		cancelButton.setLayoutData(new RowData(90, SWT.DEFAULT));
+		cancelButton.setText("Cancel");
 		// toolkit.paintBordersFor(container);
 
 		createActions();
 		initializeToolBar();
 		initializeMenu();
+	}
+
+	private void save() {
+		
+		ResourceCRUDRequest request = new ResourceCRUDRequest();
+		request.setOperation(CRUDOperation.UPDATE);
+		request.getParameters().putAll(values);
+		request.getMetadata().putAll(metadata);
+		request.getResourceUrns().add(resource.getUrn());
+		
+		Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.UpdateResource, request);
+
+		setDirty(false);
+	}
+
+	protected void setDirty(boolean b) {
+		if (b) {
+			if (!getTitle().startsWith("*")) {
+				setPartName("* " + getTitle());
+			}
+		} else {
+			if (getTitle().startsWith("*")) {
+				setPartName(getTitle().substring(2));
+			}
+		}
+		saveButton.setEnabled(b && Activator.engineMonitor().isRunning());
+		dirty = b;
 	}
 
 	public void dispose() {
