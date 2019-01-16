@@ -6,8 +6,6 @@
 	label "GIS vector file adapter (shapefile)"
  {
 
- 	final text 'fileUrl'
- 	
  	optional input 'nameAttribute'
  		""
  		default ""

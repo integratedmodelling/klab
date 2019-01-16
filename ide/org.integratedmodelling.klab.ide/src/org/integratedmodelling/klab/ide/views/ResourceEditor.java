@@ -1,10 +1,8 @@
 package org.integratedmodelling.klab.ide.views;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import org.eclipse.jface.action.IMenuManager;
@@ -12,8 +10,8 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnPixelData;
-import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -27,6 +25,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -39,7 +38,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
@@ -57,8 +55,10 @@ import org.integratedmodelling.klab.ide.utils.StringUtils;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.integratedmodelling.klab.rest.ResourceReference;
+import org.integratedmodelling.klab.rest.ServicePrototype;
 import org.integratedmodelling.klab.rest.ServicePrototype.Argument;
-import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.UrlValidator;
+import org.integratedmodelling.klab.utils.Utils;
 
 public class ResourceEditor extends ViewPart {
 
@@ -74,10 +74,9 @@ public class ResourceEditor extends ViewPart {
 	private Text unpublishableReason;
 	private Label labelWhy;
 	private Table table;
-	private Table table_1;
-
-	private Pair<String, String> parameterEdit = null;
-
+	private Table propertyTable;
+	private Map<String,String> values = new LinkedHashMap<>();
+	private Map<String,String> metadata = new LinkedHashMap<>();
 	private ResourceReference resource;
 	private ResourceAdapterReference adapter;
 	private TableViewer attributeViewer;
@@ -85,106 +84,11 @@ public class ResourceEditor extends ViewPart {
 	private TableViewerColumn tableViewerColumn_3;
 	private TableViewerColumn propertyNameColumn;
 	private TableViewerColumn propertyValueColumn;
-	private Text text;
-	private Text text_1;
-	private Text text_2;
+	private Text title;
+	private Text urlDoi;
+	private Text keywords;
 	private Button isPublishable;
-
-	public class PropertySupport extends EditingSupport {
-
-		private final TableViewer viewer;
-		private final CellEditor editor;
-
-		public PropertySupport(TableViewer viewer, String[] properties) {
-			super(viewer);
-			this.viewer = viewer;
-			this.editor = new ComboBoxCellEditor(viewer.getTable(), properties);
-		}
-
-		@Override
-		protected CellEditor getCellEditor(Object element) {
-			return editor;
-		}
-
-		@Override
-		protected boolean canEdit(Object element) {
-			if (element instanceof Pair && Activator.engineMonitor().isRunning() && adapter != null) {
-				String parameter = ((Pair<?,?>)element).getFirst().toString();
-				Argument arg = adapter.getParameters().findArgument(parameter);
-				if (arg != null && arg.isFinal()) {
-					return false;
-				}
-				return true;
-			}
-			return false;
-		}
-
-		@Override
-		protected Object getValue(Object element) {
-			if (element instanceof Pair) {
-				String key = (String) ((Pair<?, ?>) element).getFirst();
-				// TODO match to adapter field choice
-				System.out.println("ZIO PAPA getValue for " + element);
-				return 0;
-			}
-			return "";
-		}
-
-		@Override
-		protected void setValue(Object element, Object value) {
-			// TODO Auto-generated method stub
-			System.out.println("ZIO PAPA setValue for " + element + " to "+ value);
-			viewer.update(element, null);
-		}
-
-	}
-
-	public class ValueSupport extends EditingSupport {
-
-		private final TableViewer viewer;
-		private final CellEditor editor;
-
-		public ValueSupport(TableViewer viewer) {
-			super(viewer);
-			this.viewer = viewer;
-			this.editor = new TextCellEditor(viewer.getTable());
-		}
-
-		@Override
-		protected CellEditor getCellEditor(Object element) {
-			return editor;
-		}
-
-		@Override
-		protected boolean canEdit(Object element) {
-			if (element instanceof Pair && Activator.engineMonitor().isRunning() && adapter != null) {
-				String parameter = ((Pair<?,?>)element).getFirst().toString();
-				Argument arg = adapter.getParameters().findArgument(parameter);
-				if (arg == null || arg.isFinal()) {
-					return false;
-				}
-				return true;
-			}
-			return false;
-		}
-
-		@Override
-		protected Object getValue(Object element) {
-			if (element instanceof Pair) {
-				return ((Pair<?, ?>) element).getSecond();
-			}
-			return "";
-
-		}
-
-		@Override
-		protected void setValue(Object element, Object value) {
-			// TODO Auto-generated method stub
-			viewer.update(element, null);
-		}
-
-	}
-
+	
 	public static class AttributeContentProvider implements IStructuredContentProvider {
 
 		@Override
@@ -225,26 +129,80 @@ public class ResourceEditor extends ViewPart {
 		}
 	}
 
+	public class ValueSupport extends EditingSupport {
+
+//		private final TableViewer viewer;
+		private final CellEditor editor;
+
+		public ValueSupport(TableViewer viewer) {
+			super(viewer);
+//			this.viewer = viewer;
+			this.editor = new TextCellEditor(viewer.getTable());
+		}
+
+		@Override
+		protected CellEditor getCellEditor(Object element) {
+			return editor;
+		}
+
+		@Override
+		protected boolean canEdit(Object element) {
+			// if (element instanceof Pair && Activator.engineMonitor().isRunning() &&
+			// adapter != null) {
+			// String parameter = ((Pair<?, ?>) element).getFirst().toString();
+			// Argument arg = adapter.getParameters().findArgument(parameter);
+			// if (arg == null || arg.isFinal()) {
+			// return false;
+			// }
+			// return true;
+			// }
+			return true;
+		}
+
+		@Override
+		protected Object getValue(Object element) {
+			Object ret = null;
+			if (element instanceof ServicePrototype.Argument) {
+				ret = values.get(((ServicePrototype.Argument) element).getName());
+			}
+			return ret == null ? "" : ret.toString();
+		}
+
+		@Override
+		protected void setValue(Object element, Object value) {
+			if (element instanceof ServicePrototype.Argument) {
+				setErrorMessage(null);
+				if (value != null && !value.toString().isEmpty()) {
+					if (!Utils.validateAs(value, ((ServicePrototype.Argument) element).getType())) {
+						setErrorMessage("'" + value + "' is not a suitable value for type "
+								+ ((ServicePrototype.Argument) element).getType().name().toLowerCase());
+					}
+					if (((ServicePrototype.Argument) element).getName().endsWith("Url")) {
+						if (!UrlValidator.getInstance().isValid(value.toString())) {
+							setErrorMessage("'" + value + "' is not a valid URL");
+						}
+					}
+				}
+				values.put(((ServicePrototype.Argument) element).getName(), value.toString());
+			}
+			getViewer().update(element, null);
+		}
+
+	}
+
 	class PropertyContentProvider implements IStructuredContentProvider {
 
 		@Override
 		public Object[] getElements(Object inputElement) {
-			if (inputElement instanceof Map) {
-				List<Pair<String, String>> ret = new ArrayList<>();
-				for (Entry<?, ?> entry : ((Map<?, ?>) inputElement).entrySet()) {
-					ret.add(new Pair<>(entry.getKey().toString(), entry.getValue().toString()));
-				}
-				if (parameterEdit != null) {
-					ret.add(parameterEdit);
-				}
-				return ret.toArray();
+			if (inputElement instanceof ResourceAdapterReference) {
+				return ((ResourceAdapterReference) inputElement).getParameters().getArguments().toArray();
 			}
 			return new Object[] {};
 		}
 
 	}
 
-	class PropertyLabelProvider extends LabelProvider implements ITableLabelProvider {
+	class PropertyLabelProvider extends LabelProvider implements ITableLabelProvider, IColorProvider {
 
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
@@ -255,22 +213,37 @@ public class ResourceEditor extends ViewPart {
 
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
-			if (element instanceof Pair) {
+			if (element instanceof ServicePrototype.Argument) {
+				ServicePrototype.Argument arg = (ServicePrototype.Argument) element;
 				switch (columnIndex) {
 				case 0:
-					return (String) ((Pair<?, ?>) element).getFirst();
+					return arg.getName();
 				case 1:
-					if (adapter != null) {
-						Argument arg = adapter.getParameters().findArgument(((Pair<?,?>)element).getFirst().toString());
-						if (arg != null) {
-							return StringUtils.capitalize(arg.getType().name().toLowerCase());
-						}
-					}
-					return "";
+					return StringUtils.capitalize(arg.getType().name().toLowerCase());
 				case 2:
-					return (String) ((Pair<?, ?>) element).getSecond();
+					Object ret = values.get(((ServicePrototype.Argument) element).getName());
+					return ret == null ? null : ret.toString();
 				}
 			}
+
+			return null;
+		}
+
+		@Override
+		public Color getForeground(Object element) {
+			if (element instanceof ServicePrototype.Argument && (((ServicePrototype.Argument) element).isFinal()
+					|| ((ServicePrototype.Argument) element).isRequired())) {
+				return values.containsKey(((ServicePrototype.Argument) element).getName())
+						&& !values.get(((ServicePrototype.Argument) element).getName()).trim().isEmpty()
+								? SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN)
+								: SWTResourceManager.getColor(SWT.COLOR_RED);
+			}
+			return null;
+		}
+
+		@Override
+		public Color getBackground(Object element) {
+			// TODO Auto-generated method stub
 			return null;
 		}
 	}
@@ -278,11 +251,23 @@ public class ResourceEditor extends ViewPart {
 	public ResourceEditor() {
 	}
 
+	public void setErrorMessage(String string) {
+		this.isPublishable.setSelection(false);
+		this.unpublishableReason.setText(string == null ? "" : string);
+	}
+
 	public void loadResource(ResourceReference resource) {
 
 		this.resource = resource;
 		this.adapter = Activator.klab().getResourceAdapter(resource.getAdapterType());
-		this.parameterEdit = null;
+		this.values.clear();
+		for (Argument argument : adapter.getParameters().getArguments()) {
+			if (resource.getParameters().containsKey(argument.getName())) {
+				this.values.put(argument.getName(), resource.getParameters().get(argument.getName()));
+			}
+		}
+		this.metadata.clear();
+		this.metadata.putAll(resource.getMetadata());
 		this.urnLabel.setText(resource.getUrn());
 		this.urnLabel.setForeground(hasErrors(resource) ? SWTResourceManager.getColor(SWT.COLOR_RED)
 				: SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
@@ -290,9 +275,8 @@ public class ResourceEditor extends ViewPart {
 		this.localName.setText(resource.getLocalName());
 		this.grpAdapterData.setText(resource.getAdapterType().toUpperCase() + " adapter data");
 		this.worldWidget.setExtent(resource.getSpatialExtent());
-		this.adapterPropertyViewer.setInput(resource.getParameters());
+		this.adapterPropertyViewer.setInput(this.adapter);
 		this.attributeViewer.setInput(resource.getAttributes());
-		propertyNameColumn.setEditingSupport(new PropertySupport(adapterPropertyViewer, getAdapterProperties()));
 
 	}
 
@@ -309,15 +293,15 @@ public class ResourceEditor extends ViewPart {
 		return false;
 	}
 
-	private String[] getAdapterProperties() {
-		List<String> ret = new ArrayList<>();
-		if (this.adapter != null) {
-			for (Argument argument : adapter.getParameters().getArguments()) {
-				ret.add(argument.getName());
-			}
-		}
-		return ret.toArray(new String[ret.size()]);
-	}
+//	private String[] getAdapterProperties() {
+//		List<String> ret = new ArrayList<>();
+//		if (this.adapter != null) {
+//			for (Argument argument : adapter.getParameters().getArguments()) {
+//				ret.add(argument.getName());
+//			}
+//		}
+//		return ret.toArray(new String[ret.size()]);
+//	}
 
 	/**
 	 * Create contents of the view part.
@@ -499,24 +483,23 @@ public class ResourceEditor extends ViewPart {
 		grpAdapterData.setText("Adapter parameters");
 
 		adapterPropertyViewer = new TableViewer(grpAdapterData, SWT.BORDER | SWT.FULL_SELECTION);
-		table_1 = adapterPropertyViewer.getTable();
-		table_1.addMouseListener(new MouseAdapter() {
+		propertyTable = adapterPropertyViewer.getTable();
+		propertyTable.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				if (table_1.getSelection().length == 0 && table_1.getSelectionIndex() < 0) {
+				if (propertyTable.getSelection().length == 0 && propertyTable.getSelectionIndex() < 0) {
 					// click on empty row
 					System.out.println("CLICCKACEEC");
 				}
 			}
 		});
-		table_1.setLinesVisible(true);
-		table_1.setHeaderVisible(true);
+		propertyTable.setLinesVisible(true);
+		propertyTable.setHeaderVisible(true);
 
 		propertyNameColumn = new TableViewerColumn(adapterPropertyViewer, SWT.NONE);
 		TableColumn propertyColumn = propertyNameColumn.getColumn();
 		propertyColumn.setWidth(180);
 		propertyColumn.setText("Adapter property");
-		propertyNameColumn.setEditingSupport(new PropertySupport(adapterPropertyViewer, new String[] {}));
 
 		TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(adapterPropertyViewer, SWT.NONE);
 		TableColumn typeColumn = tableViewerColumn_1.getColumn();
@@ -529,28 +512,27 @@ public class ResourceEditor extends ViewPart {
 		valueColumn.setText("Value");
 		propertyValueColumn.setEditingSupport(new ValueSupport(adapterPropertyViewer));
 
-		Menu menu = new Menu(table_1);
-		table_1.setMenu(menu);
-
-		MenuItem addProperty = new MenuItem(menu, SWT.NONE);
-		addProperty.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// TODO add parameter for editing
-				parameterEdit = new Pair<>("", "");
-				adapterPropertyViewer.setInput(resource.getParameters());
-			}
-		});
-		addProperty.setText("Add new parameter");
-
-		MenuItem deleteProperty = new MenuItem(menu, SWT.NONE);
-		deleteProperty.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				// TODO delete current selection
-			}
-		});
-		deleteProperty.setText("Delete parameter");
+		Menu menu = new Menu(propertyTable);
+		propertyTable.setMenu(menu);
+//		MenuItem addProperty = new MenuItem(menu, SWT.NONE);
+//		addProperty.addSelectionListener(new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				// TODO add parameter for editing
+//				parameterEdit = new Pair<>("", "");
+//				adapterPropertyViewer.setInput(resource.getParameters());
+//			}
+//		});
+//		addProperty.setText("Add new parameter");
+//
+//		MenuItem deleteProperty = new MenuItem(menu, SWT.NONE);
+//		deleteProperty.addSelectionListener(new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				// TODO delete current selection
+//			}
+//		});
+//		deleteProperty.setText("Delete parameter");
 		adapterPropertyViewer.setLabelProvider(new PropertyLabelProvider());
 		adapterPropertyViewer.setContentProvider(new PropertyContentProvider());
 
@@ -570,39 +552,39 @@ public class ResourceEditor extends ViewPart {
 		lblTitle.setBounds(0, 0, 55, 15);
 		lblTitle.setText("Title");
 
-		text = new Text(composite_1, SWT.BORDER);
-		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		text.setBounds(0, 0, 76, 21);
+		title = new Text(composite_1, SWT.BORDER);
+		title.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		title.setBounds(0, 0, 76, 21);
 
 		Label lblDescriptionmarkdownAccepted = new Label(composite_1, SWT.NONE);
 		lblDescriptionmarkdownAccepted.setText("Description (Markdown accepted)");
 
-		StyledText styledText = new StyledText(composite_1, SWT.BORDER);
-		GridData gd_styledText = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
-		gd_styledText.heightHint = 80;
-		styledText.setLayoutData(gd_styledText);
+		StyledText description = new StyledText(composite_1, SWT.BORDER);
+		GridData gd_description = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
+		gd_description.heightHint = 80;
+		description.setLayoutData(gd_description);
 
 		Label lblOriginators = new Label(composite_1, SWT.NONE);
 		lblOriginators.setText("Originating institution");
 
-		StyledText styledText_1 = new StyledText(composite_1, SWT.BORDER);
-		GridData gd_styledText_1 = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
-		gd_styledText_1.heightHint = 40;
-		styledText_1.setLayoutData(gd_styledText_1);
+		StyledText originatingInstitution = new StyledText(composite_1, SWT.BORDER);
+		GridData gd_originatingInstitution = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
+		gd_originatingInstitution.heightHint = 40;
+		originatingInstitution.setLayoutData(gd_originatingInstitution);
 
 		Label lblUrl = new Label(composite_1, SWT.NONE);
 		lblUrl.setText("URL/DOI");
 
-		text_1 = new Text(composite_1, SWT.BORDER);
-		text_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		urlDoi = new Text(composite_1, SWT.BORDER);
+		urlDoi.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		Label lblAuthors = new Label(composite_1, SWT.NONE);
 		lblAuthors.setText("Authors (one per line)");
 
-		StyledText styledText_2 = new StyledText(composite_1, SWT.BORDER);
-		GridData gd_styledText_2 = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
-		gd_styledText_2.heightHint = 40;
-		styledText_2.setLayoutData(gd_styledText_2);
+		StyledText authors = new StyledText(composite_1, SWT.BORDER);
+		GridData gd_authors = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
+		gd_authors.heightHint = 40;
+		authors.setLayoutData(gd_authors);
 
 		Group grpThematicLocators = new Group(composite_1, SWT.NONE);
 		grpThematicLocators.setLayout(new GridLayout(4, false));
@@ -613,36 +595,36 @@ public class ResourceEditor extends ViewPart {
 		lblTheme.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblTheme.setText("Theme");
 
-		Combo combo = new Combo(grpThematicLocators, SWT.READ_ONLY);
-		combo.setItems(new String[] { "Agriculture", "Behavior and social", "Biology", "Chemistry", "Conservation",
+		Combo theme = new Combo(grpThematicLocators, SWT.READ_ONLY);
+		theme.setItems(new String[] { "Agriculture", "Behavior and social", "Biology", "Chemistry", "Conservation",
 				"Demography", "Earth", "Ecology", "Economics", "Engineering", "Geography", "Geology", "Hydrology",
 				"Infrastructure", "Landcover", "Physical and climatic", "Policy", "Socio-ecological", "Soil" });
-		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		combo.select(0);
+		theme.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		theme.select(0);
 
 		Label lblGeographicRegion = new Label(grpThematicLocators, SWT.NONE);
 		lblGeographicRegion.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblGeographicRegion.setText("Geographic region");
 
-		Combo combo_1 = new Combo(grpThematicLocators, SWT.READ_ONLY);
-		combo_1.setItems(new String[] { "Non-spatial", "Global" });
-		combo_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		combo_1.select(0);
+		Combo geoRegion = new Combo(grpThematicLocators, SWT.READ_ONLY);
+		geoRegion.setItems(new String[] { "Non-spatial", "Global" });
+		geoRegion.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		geoRegion.select(0);
 
 		Label lblKeywords = new Label(composite_1, SWT.NONE);
 		lblKeywords.setText("Keywords");
 
-		text_2 = new Text(composite_1, SWT.BORDER);
-		text_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		keywords = new Text(composite_1, SWT.BORDER);
+		keywords.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		new Label(composite_1, SWT.NONE);
 
 		Label lblReferences = new Label(composite_1, SWT.NONE);
 		lblReferences.setText("References");
 
-		StyledText styledText_3 = new StyledText(composite_1, SWT.BORDER);
-		GridData gd_styledText_3 = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
-		gd_styledText_3.heightHint = 40;
-		styledText_3.setLayoutData(gd_styledText_3);
+		StyledText references = new StyledText(composite_1, SWT.BORDER);
+		GridData gd_references = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
+		gd_references.heightHint = 40;
+		references.setLayoutData(gd_references);
 		scrolledComposite.setContent(composite_1);
 		scrolledComposite.setMinSize(composite_1.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		GridData gd_styledText1 = new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1);
