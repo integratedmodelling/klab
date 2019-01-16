@@ -260,22 +260,22 @@ public interface KdlPackage extends EPackage
   int ACTOR_DEFINITION__FINAL = 1;
 
   /**
-   * The feature id for the '<em><b>Exported</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ACTOR_DEFINITION__EXPORTED = 2;
-
-  /**
    * The feature id for the '<em><b>Optional</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__OPTIONAL = 3;
+  int ACTOR_DEFINITION__OPTIONAL = 2;
+
+  /**
+   * The feature id for the '<em><b>Exported</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTOR_DEFINITION__EXPORTED = 3;
 
   /**
    * The feature id for the '<em><b>Imported</b></em>' attribute.
@@ -368,13 +368,22 @@ public interface KdlPackage extends EPackage
   int ACTOR_DEFINITION__LABEL = 13;
 
   /**
+   * The feature id for the '<em><b>Default</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTOR_DEFINITION__DEFAULT = 14;
+
+  /**
    * The feature id for the '<em><b>Body</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__BODY = 14;
+  int ACTOR_DEFINITION__BODY = 15;
 
   /**
    * The feature id for the '<em><b>Local Name</b></em>' attribute.
@@ -383,7 +392,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__LOCAL_NAME = 15;
+  int ACTOR_DEFINITION__LOCAL_NAME = 16;
 
   /**
    * The feature id for the '<em><b>Coverage</b></em>' containment reference list.
@@ -392,7 +401,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__COVERAGE = 16;
+  int ACTOR_DEFINITION__COVERAGE = 17;
 
   /**
    * The feature id for the '<em><b>Enum Values</b></em>' attribute list.
@@ -401,16 +410,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__ENUM_VALUES = 17;
-
-  /**
-   * The feature id for the '<em><b>Default</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ACTOR_DEFINITION__DEFAULT = 18;
+  int ACTOR_DEFINITION__ENUM_VALUES = 18;
 
   /**
    * The feature id for the '<em><b>Range Min</b></em>' containment reference.
@@ -1851,17 +1851,6 @@ public interface KdlPackage extends EPackage
   EAttribute getActorDefinition_Final();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isExported <em>Exported</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Exported</em>'.
-   * @see org.integratedmodelling.kdl.kdl.ActorDefinition#isExported()
-   * @see #getActorDefinition()
-   * @generated
-   */
-  EAttribute getActorDefinition_Exported();
-
-  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isOptional <em>Optional</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1871,6 +1860,17 @@ public interface KdlPackage extends EPackage
    * @generated
    */
   EAttribute getActorDefinition_Optional();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isExported <em>Exported</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Exported</em>'.
+   * @see org.integratedmodelling.kdl.kdl.ActorDefinition#isExported()
+   * @see #getActorDefinition()
+   * @generated
+   */
+  EAttribute getActorDefinition_Exported();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isImported <em>Imported</em>}'.
@@ -1983,6 +1983,17 @@ public interface KdlPackage extends EPackage
   EAttribute getActorDefinition_Label();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getDefault <em>Default</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Default</em>'.
+   * @see org.integratedmodelling.kdl.kdl.ActorDefinition#getDefault()
+   * @see #getActorDefinition()
+   * @generated
+   */
+  EReference getActorDefinition_Default();
+
+  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getBody <em>Body</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2025,17 +2036,6 @@ public interface KdlPackage extends EPackage
    * @generated
    */
   EAttribute getActorDefinition_EnumValues();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getDefault <em>Default</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Default</em>'.
-   * @see org.integratedmodelling.kdl.kdl.ActorDefinition#getDefault()
-   * @see #getActorDefinition()
-   * @generated
-   */
-  EReference getActorDefinition_Default();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getRangeMin <em>Range Min</em>}'.
@@ -3414,20 +3414,20 @@ public interface KdlPackage extends EPackage
     EAttribute ACTOR_DEFINITION__FINAL = eINSTANCE.getActorDefinition_Final();
 
     /**
-     * The meta object literal for the '<em><b>Exported</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute ACTOR_DEFINITION__EXPORTED = eINSTANCE.getActorDefinition_Exported();
-
-    /**
      * The meta object literal for the '<em><b>Optional</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     EAttribute ACTOR_DEFINITION__OPTIONAL = eINSTANCE.getActorDefinition_Optional();
+
+    /**
+     * The meta object literal for the '<em><b>Exported</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ACTOR_DEFINITION__EXPORTED = eINSTANCE.getActorDefinition_Exported();
 
     /**
      * The meta object literal for the '<em><b>Imported</b></em>' attribute feature.
@@ -3510,6 +3510,14 @@ public interface KdlPackage extends EPackage
     EAttribute ACTOR_DEFINITION__LABEL = eINSTANCE.getActorDefinition_Label();
 
     /**
+     * The meta object literal for the '<em><b>Default</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference ACTOR_DEFINITION__DEFAULT = eINSTANCE.getActorDefinition_Default();
+
+    /**
      * The meta object literal for the '<em><b>Body</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3540,14 +3548,6 @@ public interface KdlPackage extends EPackage
      * @generated
      */
     EAttribute ACTOR_DEFINITION__ENUM_VALUES = eINSTANCE.getActorDefinition_EnumValues();
-
-    /**
-     * The meta object literal for the '<em><b>Default</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference ACTOR_DEFINITION__DEFAULT = eINSTANCE.getActorDefinition_Default();
 
     /**
      * The meta object literal for the '<em><b>Range Min</b></em>' containment reference feature.

@@ -12,7 +12,9 @@ public class ResourceCRUDRequest {
     private Set<String>   resourceUrns = new HashSet<>();
     private String        destinationProject;
     private CRUDOperation operation;
+    private String adapter;
     private Map<String, String> parameters = new LinkedHashMap<>();
+    private Map<String, String> metadata = new LinkedHashMap<>();
     private Map<String, ServicePrototype.Argument> attributes = new LinkedHashMap<>();
 
     public Set<String> getResourceUrns() {
@@ -53,6 +55,22 @@ public class ResourceCRUDRequest {
 
 	public void setParameters(Map<String, String> parameters) {
 		this.parameters = parameters;
+	}
+
+	public void setAdapter(String adapter) {
+		this.adapter = adapter;
+	}
+
+	public String getAdapter() {
+		return adapter;
+	}
+
+	public Map<String, String> getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(Map<String, String> metadata) {
+		this.metadata = metadata;
 	}
 
 }

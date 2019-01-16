@@ -65,7 +65,10 @@ import org.integratedmodelling.klab.ide.utils.StringUtils;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.integratedmodelling.klab.rest.ServicePrototype;
 import org.integratedmodelling.klab.rest.ServicePrototype.Argument;
+import org.integratedmodelling.klab.utils.UrlValidator;
 import org.integratedmodelling.klab.utils.Utils;
+import org.eclipse.swt.events.VerifyListener;
+import org.eclipse.swt.events.VerifyEvent;
 
 public class NewResource extends WizardPage {
 
@@ -124,10 +127,16 @@ public class NewResource extends WizardPage {
 		protected void setValue(Object element, Object value) {
 			if (element instanceof ServicePrototype.Argument) {
 				setErrorMessage(null);
-				if (value != null && !value.toString().isEmpty()
-						&& !Utils.validateAs(value, ((ServicePrototype.Argument) element).getType())) {
-					setErrorMessage("'" + value + "' is not a suitable value for type "
-							+ ((ServicePrototype.Argument) element).getType().name().toLowerCase());
+				if (value != null && !value.toString().isEmpty()) {
+					if (!Utils.validateAs(value, ((ServicePrototype.Argument) element).getType())) {
+						setErrorMessage("'" + value + "' is not a suitable value for type "
+								+ ((ServicePrototype.Argument) element).getType().name().toLowerCase());
+					}
+					if (((ServicePrototype.Argument) element).getName().endsWith("Url")) {
+						if (!UrlValidator.getInstance().isValid(value.toString())) {
+							setErrorMessage("'" + value + "' is not a valid URL");
+						}
+					}
 				}
 				values.put(((ServicePrototype.Argument) element).getName(), value.toString());
 			}
@@ -171,6 +180,7 @@ public class NewResource extends WizardPage {
 					return ret == null ? null : ret.toString();
 				}
 			}
+
 			return null;
 		}
 
@@ -178,7 +188,10 @@ public class NewResource extends WizardPage {
 		public Color getForeground(Object element) {
 			if (element instanceof ServicePrototype.Argument && (((ServicePrototype.Argument) element).isFinal()
 					|| ((ServicePrototype.Argument) element).isRequired())) {
-				return SWTResourceManager.getColor(SWT.COLOR_RED);
+				return values.containsKey(((ServicePrototype.Argument) element).getName())
+						&& !values.get(((ServicePrototype.Argument) element).getName()).trim().isEmpty()
+								? SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN)
+								: SWTResourceManager.getColor(SWT.COLOR_RED);
 			}
 			return null;
 		}
@@ -236,6 +249,15 @@ public class NewResource extends WizardPage {
 				+ folder.getEParent(EProject.class).getName() + ":");
 
 		text = new Text(container, SWT.BORDER);
+		text.addVerifyListener(new VerifyListener() {
+			public void verifyText(VerifyEvent e) {
+				if (!text.getText().trim().isEmpty()) {
+					if (Activator.klab().getResource(getResourceURN()) != null) {
+						setErrorMessage("A resource named " + text.getText() + " already exists in this project.");
+					}
+				}
+			}
+		});
 		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		Label lblTrigger = new Label(container, SWT.NONE);
@@ -251,10 +273,12 @@ public class NewResource extends WizardPage {
 				if (adapterCombo.getSelectionIndex() > 0) {
 					adapter = Activator.klab().getResourceAdapter(getSelectedAdapter());
 					description = adapter.getDescription();
+					setValuesFromAdapter();
 					tableViewer.setInput(adapter);
 				}
 				descriptionText.setText(description);
 			}
+
 		});
 		adapterCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		adapterCombo.add("-- choose one --");
@@ -314,18 +338,68 @@ public class NewResource extends WizardPage {
 		descriptionText.setLayoutData(gd_descriptionText);
 	}
 
+	private void setValuesFromAdapter() {
+		for (Argument argument : adapter.getParameters().getArguments()) {
+			if (!values.containsKey(argument.getName()) && argument.getDefaultValue() != null) {
+				values.put(argument.getName(), argument.getDefaultValue());
+			}
+		}
+	}
+
 	protected String getSelectedAdapter() {
 		String text = adapterCombo.getText();
 		int ns = text.indexOf(' ');
 		return ns > 0 ? text = text.substring(0, ns) : text;
 	}
 
-	public Text getResourceName() {
-		return text;
+	public String getResourceURN() {
+		return "local:" + Activator.user().getUsername().toLowerCase() + ":"
+				+ folder.getEParent(EProject.class).getName() + ":" + text.getText();
 	}
 
 	public String getAdapter() {
-		return adapterCombo.getText();
+		return adapter == null ? null : adapter.getName();
+	}
+
+	public Map<String, String> getParameters() {
+		return values;
+	}
+
+	/**
+	 * Return a message describing the first error encountered, or null if no error
+	 * is found.
+	 * 
+	 * @return
+	 */
+	public String validate() {
+
+		if (text.getText().trim().isEmpty()) {
+			return "A resource ID must be supplied";
+		}
+		if (Activator.klab().getResource(getResourceURN()) != null) {
+			return "A resource named " + text.getText() + " already exists in this project.";
+		}
+
+		for (Argument argument : adapter.getParameters().getArguments()) {
+			String val = values.get(argument.getName());
+			if ((argument.isFinal() || argument.isRequired()) && (val == null || val.trim().isEmpty())) {
+				return "A value for " + argument.getName() + " must be supplied";
+			}
+			if (val != null && !val.trim().isEmpty()) {
+				if (!Utils.validateAs(Utils.asPOD(val), argument.getType())) {
+					return "'" + val + "' is not a valid value for " + argument.getName() + ": must be "
+							+ argument.getType().name().toLowerCase();
+				}
+				// FIXME weak check but for now a URL kdl type is overkill
+				if (argument.getName().endsWith("Url")) {
+					if (!UrlValidator.getInstance().isValid(val)) {
+						return "'" + val + "' is not a valid URL";
+					}
+				}
+			}
+		}
+
+		return null;
 	}
 
 }

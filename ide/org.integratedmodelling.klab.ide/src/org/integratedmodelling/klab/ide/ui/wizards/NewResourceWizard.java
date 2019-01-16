@@ -30,7 +30,12 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.integratedmodelling.klab.api.data.CRUDOperation;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.navigator.model.EProject;
 import org.integratedmodelling.klab.ide.navigator.model.EResourceFolder;
+import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 
 public class NewResourceWizard extends Wizard implements INewWizard {
 
@@ -51,6 +56,13 @@ public class NewResourceWizard extends Wizard implements INewWizard {
 	public boolean performFinish() {
 
 		if (validate()) {
+			ResourceCRUDRequest request = new ResourceCRUDRequest();
+			request.setOperation(CRUDOperation.CREATE);
+			request.setAdapter(page.getAdapter());
+			request.setDestinationProject(folder.getEParent(EProject.class).getName());
+			request.getResourceUrns().add(page.getResourceURN());
+			request.getParameters().putAll(page.getParameters());
+			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.CreateResource, request);
 			return true;
 		}
 
@@ -58,7 +70,11 @@ public class NewResourceWizard extends Wizard implements INewWizard {
 	}
 
 	private boolean validate() {
-		return true;
+		String error = page.validate();
+		if (error != null) {
+			page.setErrorMessage(error);
+		}
+		return error == null;
 	}
 
 	@Override
