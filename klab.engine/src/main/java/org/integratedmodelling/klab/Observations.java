@@ -58,6 +58,7 @@ import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.rest.ActionReference;
 import org.integratedmodelling.klab.rest.DataSummary;
@@ -232,6 +233,8 @@ public enum Observations implements IObservationService {
 		
 		ret.setMain(isMain);
 		ret.setCreationTime(observation.getTimestamp());
+		ret.setPreviouslyNotified(((Artifact)observation).isNotified());
+		ret.setLastUpdate(((Observation)observation).getLastUpdate());
 		
 		if (isMain && observation instanceof Observation && !((Observation)observation).isMain()) {
 			((Observation)observation).setMain(true);

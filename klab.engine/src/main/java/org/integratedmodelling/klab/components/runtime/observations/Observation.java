@@ -39,6 +39,8 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	// used to store the "main" status from annotations or because of directly observed. Should eventually
 	// come from provenance. 
 	private boolean main;
+	// only kept updated in the root observation
+	private long lastUpdate;
 
 	public String getUrn() {
 		return "local:observation:" + getParentIdentity(Session.class).getId() + ":" + getId();
@@ -188,6 +190,13 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 
 	public void setMain(boolean main) {
 		this.main = main;
+	}
+
+	public long getLastUpdate() {
+		return lastUpdate;
 	}		
 
+	public void setLastUpdate(long lastUpdate) {
+		this.lastUpdate = lastUpdate;
+	}
 }

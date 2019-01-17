@@ -31,20 +31,17 @@ public abstract class Artifact implements IArtifact {
 
 	List<IAnnotation> annotations = new ArrayList<>();
 	private Activity generator;
-
+	private boolean notified = false;
+	
 	/*
 	 * all observation data in a group share the same list; the pre-build object is
 	 * thrown away at chain(). Saving the constructor call is not worth the
 	 * additional logics.
 	 */
-//	List<IArtifact> group = new ArrayList<>();
 	boolean empty;
 	long timestamp = System.currentTimeMillis();
 
-//	protected Artifact() {
-//		group.add(this);
-//	}
-//
+
 	public void chain(IArtifact data) {
 		throw new IllegalStateException("chain() should only be called on a group");
 	}
@@ -192,5 +189,15 @@ public abstract class Artifact implements IArtifact {
 	public void setGenerator(Activity generator) {
 		this.generator = generator;
 	}
+
+	public boolean isNotified() {
+		return notified;
+	}
+
+	public void setNotified(boolean notified) {
+		this.notified = notified;
+	}
+	
+	
 
 }

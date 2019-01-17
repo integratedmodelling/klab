@@ -27,6 +27,7 @@ import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Activity;
+import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.rest.DataflowReference;
@@ -144,6 +145,9 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 																.createArtifactDescriptor(notifiable, context,
 																		ITime.INITIALIZATION, -1, false, true)
 																.withTaskId(token)));
+
+								((Artifact)notifiable).setNotified(true);
+
 							}
 							monitor.info("observation completed with "
 									+ NumberFormat.getPercentInstance().format(scope.getCoverage().getCoverage())

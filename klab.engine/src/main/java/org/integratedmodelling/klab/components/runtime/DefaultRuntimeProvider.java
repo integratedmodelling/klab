@@ -379,7 +379,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		}
 
 		ret.setGenerator(activity);
-
+		
 		// into an Akka
 		// actor and register with the actor
 		

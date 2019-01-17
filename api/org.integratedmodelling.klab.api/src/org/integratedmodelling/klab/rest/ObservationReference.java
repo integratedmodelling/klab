@@ -253,6 +253,17 @@ public class ObservationReference implements IObservationReference {
 	 * which depends on the request).
 	 */
 	private int childCount;
+	
+	/**
+	 * True <b>after</b> a notification was made of this observation.
+	 */
+	private boolean previouslyNotified;
+	
+	/**
+	 * Only updated for root contexts; contains the timestamp of last update for the entire
+	 * observation structure.
+	 */
+	private long lastUpdate;
 
 	/*
 	 * (non-Javadoc)
@@ -729,6 +740,22 @@ public class ObservationReference implements IObservationReference {
 
 	public void setChildCount(int childCount) {
 		this.childCount = childCount;
+	}
+
+	public boolean isPreviouslyNotified() {
+		return previouslyNotified;
+	}
+
+	public void setPreviouslyNotified(boolean previouslyNotified) {
+		this.previouslyNotified = previouslyNotified;
+	}
+
+	public long getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(long lastUpdate) {
+		this.lastUpdate = lastUpdate;
 	}
 
 }

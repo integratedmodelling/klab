@@ -347,6 +347,8 @@ public class Actuator implements IActuator {
 					session.getMonitor().send(Message.create(session.getId(),
 							IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation, parentReference));
 
+					((Artifact)parent).setNotified(true);
+					
 				}
 
 				if (!dataflow.wasNotified(notifiable)) {
@@ -359,6 +361,9 @@ public class Actuator implements IActuator {
 							IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation, observation));
 
 					((Report) ctx.getReport()).include(observation);
+					
+					((Artifact)notifiable).setNotified(true);
+
 				}
 			}
 		}

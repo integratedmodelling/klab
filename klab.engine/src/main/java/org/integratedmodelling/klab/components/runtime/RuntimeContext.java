@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.components.time.extents.Scheduler;
@@ -576,8 +577,10 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			} else if (observable.is(Type.RELATIONSHIP)) {
 				observation = DefaultRuntimeProvider.createRelationship(observable, scale,
 						scope.getRelationshipSource(), scope.getRelationshipTarget(), this);
+				((Observation)getRootSubject()).setLastUpdate(System.currentTimeMillis());
 			} else {
 				observation = DefaultRuntimeProvider.createObservation(observable, scale, this);
+				((Observation)getRootSubject()).setLastUpdate(System.currentTimeMillis());
 				if (parent != null && actuator.getDataflow().getModel() != null) {
 					for (String attr : actuator.getDataflow().getModel().getAttributeObservables().keySet()) {
 						IArtifact artifact = parent.findArtifactByObservableName(attr);

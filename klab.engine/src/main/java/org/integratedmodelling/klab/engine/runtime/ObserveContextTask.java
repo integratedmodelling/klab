@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.rest.DataflowReference;
@@ -127,6 +128,8 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 										Observations.INSTANCE
 												.createArtifactDescriptor(ret, null, ITime.INITIALIZATION, -1, false, true)
 												.withTaskId(token)));
+								((Artifact)ret).setNotified(true);
+
 							}
 							/*
 							 * Unregister the task
