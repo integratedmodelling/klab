@@ -38,6 +38,7 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.rest.AttributeReference;
 import org.integratedmodelling.klab.rest.Notification;
+import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -370,6 +371,18 @@ public class Resource implements IResource {
 			}
 		}
 		return ret;
+	}
+
+	public void update(ResourceCRUDRequest request) {
+		for (String key : request.getParameters().keySet()) {
+			this.parameters.put(key, Utils.asPOD(request.getParameters().get(key)));
+		}
+		for (String key : request.getMetadata().keySet()) {
+			this.metadata.put(key, request.getParameters().get(key));
+		}
+		if (request.getGeometry() != null) {
+			this.geometry = Geometry.create(request.getGeometry());
+		}
 	}
 
 }

@@ -482,9 +482,19 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 					monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
 							((Resource) resource).getReference());
 				} else if (request.getOperation() == CRUDOperation.DELETE) {
+					
 					resource = Resources.INSTANCE.getLocalResourceCatalog().remove(urn);
 					monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceDeleted,
 							((Resource) resource).getReference());
+				
+				} else if (request.getOperation() == CRUDOperation.UPDATE) {
+				
+					resource = Resources.INSTANCE.getLocalResourceCatalog().remove(urn);
+					((Resource)resource).update(request);
+					resource = Resources.INSTANCE.getLocalResourceCatalog().put(urn, resource);
+					monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceUpdated,
+							((Resource) resource).getReference());
+			
 				}
 			}
 

@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.ide.model.KlabEngine;
 import org.integratedmodelling.klab.ide.model.KlabExplorer;
 import org.integratedmodelling.klab.ide.model.KlabSession;
 import org.integratedmodelling.klab.ide.model.KlabUser;
+import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
 import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.ide.utils.StringUtils;
@@ -303,7 +304,11 @@ public class Activator extends AbstractUIPlugin {
 				post(IMessage.MessageClass.ProjectLifecycle, IMessage.Type.NotifyProjects,
 						new ProjectLoadRequest(projectFiles));
 			}
+
+			KlabNavigator.refresh();
+			Eclipse.INSTANCE.refreshOpenEditors();
 		});
+		
 	}
 
 	public void stop(BundleContext context) throws Exception {

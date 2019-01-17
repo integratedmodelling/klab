@@ -363,6 +363,9 @@ public class KlabSession extends KlabPeer {
 		case ResourceDeleted:
 			Activator.klab().notifyResourceDeleted(resource);
 			break;
+		case ResourceUpdated:
+			Activator.klab().notifyResourceUpdated(resource);
+			break;
 		default:
 			break;
 		}

@@ -99,9 +99,20 @@ public enum Resources implements IResourceService {
 	 */
 	INSTANCE;
 
+	class ResourceData {
+		long timestamp;
+		boolean online;
+	}
+	
+	private Map<String, ResourceData> statusCache = new HashMap<>();
 	private ExecutorService resourceTaskExecutor;
 	private IKimLoader loader = null;
-
+	
+	/**
+	 * interval 
+	 */
+	private long RETRY_INTERVAL_MINUTES = 15;
+	
 	Map<String, IResourceAdapter> resourceAdapters = Collections.synchronizedMap(new HashMap<>());
 
 	/**
@@ -834,7 +845,12 @@ public enum Resources implements IResourceService {
 	}
 
 	public boolean isResourceOnline(IResource resource) {
+		return isResourceOnline(resource, false);
+	}
 
+	
+	public boolean isResourceOnline(IResource resource, boolean forceUpdate) {
+		
 		if (Urns.INSTANCE.isLocal(resource.getUrn())) {
 			IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
 			if (adapter != null) {
