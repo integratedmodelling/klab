@@ -496,7 +496,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getActorDefinition_Exported()
+  public EAttribute getActorDefinition_Optional()
   {
     return (EAttribute)actorDefinitionEClass.getEStructuralFeatures().get(2);
   }
@@ -506,7 +506,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getActorDefinition_Optional()
+  public EAttribute getActorDefinition_Exported()
   {
     return (EAttribute)actorDefinitionEClass.getEStructuralFeatures().get(3);
   }
@@ -616,7 +616,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getActorDefinition_Body()
+  public EReference getActorDefinition_Default()
   {
     return (EReference)actorDefinitionEClass.getEStructuralFeatures().get(14);
   }
@@ -626,9 +626,19 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EReference getActorDefinition_Body()
+  {
+    return (EReference)actorDefinitionEClass.getEStructuralFeatures().get(15);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EAttribute getActorDefinition_LocalName()
   {
-    return (EAttribute)actorDefinitionEClass.getEStructuralFeatures().get(15);
+    return (EAttribute)actorDefinitionEClass.getEStructuralFeatures().get(16);
   }
 
   /**
@@ -638,7 +648,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    */
   public EReference getActorDefinition_Coverage()
   {
-    return (EReference)actorDefinitionEClass.getEStructuralFeatures().get(16);
+    return (EReference)actorDefinitionEClass.getEStructuralFeatures().get(17);
   }
 
   /**
@@ -648,17 +658,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    */
   public EAttribute getActorDefinition_EnumValues()
   {
-    return (EAttribute)actorDefinitionEClass.getEStructuralFeatures().get(17);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getActorDefinition_Default()
-  {
-    return (EReference)actorDefinitionEClass.getEStructuralFeatures().get(18);
+    return (EAttribute)actorDefinitionEClass.getEStructuralFeatures().get(18);
   }
 
   /**
@@ -1813,8 +1813,8 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     actorDefinitionEClass = createEClass(ACTOR_DEFINITION);
     createEReference(actorDefinitionEClass, ACTOR_DEFINITION__ANNOTATIONS);
     createEAttribute(actorDefinitionEClass, ACTOR_DEFINITION__FINAL);
-    createEAttribute(actorDefinitionEClass, ACTOR_DEFINITION__EXPORTED);
     createEAttribute(actorDefinitionEClass, ACTOR_DEFINITION__OPTIONAL);
+    createEAttribute(actorDefinitionEClass, ACTOR_DEFINITION__EXPORTED);
     createEAttribute(actorDefinitionEClass, ACTOR_DEFINITION__IMPORTED);
     createEAttribute(actorDefinitionEClass, ACTOR_DEFINITION__MULTIPLE);
     createEAttribute(actorDefinitionEClass, ACTOR_DEFINITION__ARITY);
@@ -1825,11 +1825,11 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     createEAttribute(actorDefinitionEClass, ACTOR_DEFINITION__TARGETS);
     createEAttribute(actorDefinitionEClass, ACTOR_DEFINITION__DOCSTRING);
     createEAttribute(actorDefinitionEClass, ACTOR_DEFINITION__LABEL);
+    createEReference(actorDefinitionEClass, ACTOR_DEFINITION__DEFAULT);
     createEReference(actorDefinitionEClass, ACTOR_DEFINITION__BODY);
     createEAttribute(actorDefinitionEClass, ACTOR_DEFINITION__LOCAL_NAME);
     createEReference(actorDefinitionEClass, ACTOR_DEFINITION__COVERAGE);
     createEAttribute(actorDefinitionEClass, ACTOR_DEFINITION__ENUM_VALUES);
-    createEReference(actorDefinitionEClass, ACTOR_DEFINITION__DEFAULT);
     createEReference(actorDefinitionEClass, ACTOR_DEFINITION__RANGE_MIN);
     createEReference(actorDefinitionEClass, ACTOR_DEFINITION__RANGE_MAX);
 
@@ -2019,8 +2019,8 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     initEClass(actorDefinitionEClass, ActorDefinition.class, "ActorDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getActorDefinition_Annotations(), this.getAnnotation(), null, "annotations", null, 0, -1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getActorDefinition_Final(), ecorePackage.getEBoolean(), "final", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getActorDefinition_Exported(), ecorePackage.getEBoolean(), "exported", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getActorDefinition_Optional(), ecorePackage.getEBoolean(), "optional", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getActorDefinition_Exported(), ecorePackage.getEBoolean(), "exported", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getActorDefinition_Imported(), ecorePackage.getEBoolean(), "imported", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getActorDefinition_Multiple(), ecorePackage.getEBoolean(), "multiple", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getActorDefinition_Arity(), ecorePackage.getEInt(), "arity", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2031,11 +2031,11 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     initEAttribute(getActorDefinition_Targets(), ecorePackage.getEString(), "targets", null, 0, -1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getActorDefinition_Docstring(), ecorePackage.getEString(), "docstring", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getActorDefinition_Label(), ecorePackage.getEString(), "label", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getActorDefinition_Default(), this.getValue(), null, "default", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getActorDefinition_Body(), this.getDataflowBody(), null, "body", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getActorDefinition_LocalName(), ecorePackage.getEString(), "localName", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getActorDefinition_Coverage(), this.getFunction(), null, "coverage", null, 0, -1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getActorDefinition_EnumValues(), ecorePackage.getEString(), "enumValues", null, 0, -1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getActorDefinition_Default(), this.getValue(), null, "default", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getActorDefinition_RangeMin(), this.getNumber(), null, "rangeMin", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getActorDefinition_RangeMax(), this.getNumber(), null, "rangeMax", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 

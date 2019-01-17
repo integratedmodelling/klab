@@ -52,6 +52,7 @@ import org.integratedmodelling.klab.data.resources.ResourceBuilder;
 import org.integratedmodelling.klab.data.storage.FutureResource;
 import org.integratedmodelling.klab.data.storage.ResourceCatalog;
 import org.integratedmodelling.klab.engine.Engine;
+import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.resources.ComponentsWorkspace;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.MonitorableFileWorkspace;
@@ -70,6 +71,7 @@ import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.LocalResourceReference;
 import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
+import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.FileUtils;
@@ -78,6 +80,7 @@ import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
+import org.integratedmodelling.klab.utils.Utils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -350,6 +353,8 @@ public enum Resources implements IResourceService {
 
 	}
 
+
+	
 	@Override
 	public IResource createLocalResource(String resourceId, File file, IParameters<String> parameters, IProject project,
 			String adapterType, boolean forceUpdate, boolean asynchronous, IMonitor monitor) {
@@ -396,6 +401,36 @@ public enum Resources implements IResourceService {
 				: importResource(urn, project, adapterType, file, parameters, version, history, monitor);
 	}
 
+	/**
+	 * Create a resource from a remote request, which is assumed valid and non-existing.
+	 * 
+	 * @param request
+	 * @param monitor
+	 * @return
+	 */
+	public IResource createLocalResource(ResourceCRUDRequest request, Monitor monitor) {
+		
+		String urn = request.getResourceUrns().iterator().next();
+		IProject project = getProject(request.getDestinationProject());
+		String adapterType = request.getAdapter();
+		IResourceAdapter adapter = getResourceAdapter(adapterType);
+		if (project == null || adapter == null) {
+			throw new IllegalArgumentException("create resource: wrong request (adapter or project missing)");
+		}
+		
+		/*
+		 * translate the parameters to their actual types
+		 */
+		Parameters<String> parameters = Parameters.create();
+		for (IPrototype.Argument argument : adapter.getResourceConfiguration().listArguments()) {
+			if (request.getParameters().containsKey(argument.getName())) {
+				parameters.put(argument.getName(), Utils.asPOD(request.getParameters().get(argument.getName())));
+			}
+		}
+		
+		return importResource(urn, project, adapterType, null, parameters, Version.create("0.0.1"), new ArrayList<>(), monitor);
+	}
+	
 	private IResource importResource(String urn, IProject project, String adapterType, File file,
 			IParameters<String> parameters, Version version, List<IResource> history, IMonitor monitor) {
 
@@ -978,4 +1013,5 @@ public enum Resources implements IResourceService {
 		INamespace ns = Namespaces.INSTANCE.getNamespace(nsId);
 		return ns == null ? null : ns.getSymbolTable().get(Path.getLast(id, '.'));
 	}
+
 }

@@ -433,48 +433,59 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	@MessageHandler
 	private void handleResourceCRUDRequest(final ResourceCRUDRequest request, IMessage.Type type) {
 
-		for (String urn : request.getResourceUrns()) {
-
-			IResource resource = Resources.INSTANCE.resolveResource(urn);
-			if (resource == null) {
-				monitor.warn("requested resource not found: " + urn);
-				continue;
+		if (request.getOperation() == CRUDOperation.CREATE) {
+			
+			IResource resource = Resources.INSTANCE.createLocalResource(request, monitor);
+			if (resource != null) {
+				monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceCreated,
+						((Resource) resource).getReference());
 			}
+			
+		} else {
 
-			IKimProject sourceProject = Kim.INSTANCE.getProject(resource.getLocalProjectName());
+			for (String urn : request.getResourceUrns()) {
 
-			if (sourceProject == null) {
-				monitor.error("resource comes from an unknown project: canceling operation");
-				return;
-			}
-
-			if (request.getOperation() == CRUDOperation.MOVE) {
-
-				IProject destinationProject = Resources.INSTANCE.getProject(request.getDestinationProject());
-				if (destinationProject == null) {
-					monitor.error("resource target is an unknown project: canceling operation");
-					return;
+				IResource resource = Resources.INSTANCE.resolveResource(urn);
+				if (resource == null) {
+					monitor.warn("requested resource not found: " + urn);
+					continue;
 				}
-				monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceDeleted,
-						((Resource) resource).getReference());
-				resource = Resources.INSTANCE.getLocalResourceCatalog().move(resource, destinationProject);
-				monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
-						((Resource) resource).getReference());
-			} else if (request.getOperation() == CRUDOperation.COPY) {
 
-				IProject destinationProject = Resources.INSTANCE.getProject(request.getDestinationProject());
-				if (destinationProject == null) {
-					monitor.error("resource target is an unknown project: canceling operation");
+				IKimProject sourceProject = Kim.INSTANCE.getProject(resource.getLocalProjectName());
+
+				if (sourceProject == null) {
+					monitor.error("resource comes from an unknown project: canceling operation");
 					return;
 				}
 
-				resource = Resources.INSTANCE.getLocalResourceCatalog().copy(resource, destinationProject);
-				monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
-						((Resource) resource).getReference());
-			} else if (request.getOperation() == CRUDOperation.DELETE) {
-				resource = Resources.INSTANCE.getLocalResourceCatalog().remove(urn);
-				monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceDeleted,
-						((Resource) resource).getReference());
+				if (request.getOperation() == CRUDOperation.MOVE) {
+
+					IProject destinationProject = Resources.INSTANCE.getProject(request.getDestinationProject());
+					if (destinationProject == null) {
+						monitor.error("resource target is an unknown project: canceling operation");
+						return;
+					}
+					monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceDeleted,
+							((Resource) resource).getReference());
+					resource = Resources.INSTANCE.getLocalResourceCatalog().move(resource, destinationProject);
+					monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
+							((Resource) resource).getReference());
+				} else if (request.getOperation() == CRUDOperation.COPY) {
+
+					IProject destinationProject = Resources.INSTANCE.getProject(request.getDestinationProject());
+					if (destinationProject == null) {
+						monitor.error("resource target is an unknown project: canceling operation");
+						return;
+					}
+
+					resource = Resources.INSTANCE.getLocalResourceCatalog().copy(resource, destinationProject);
+					monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
+							((Resource) resource).getReference());
+				} else if (request.getOperation() == CRUDOperation.DELETE) {
+					resource = Resources.INSTANCE.getLocalResourceCatalog().remove(urn);
+					monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceDeleted,
+							((Resource) resource).getReference());
+				}
 			}
 
 		}
@@ -841,7 +852,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 						response.getProjects().add(Resources.INSTANCE.createProjectDescriptor(proj));
 					}
 				}
-				
+
 				monitor.send(Message.create(token, IMessage.MessageClass.ProjectLifecycle,
 						IMessage.Type.UserProjectOpened, response)/* .inResponseTo(message) */);
 			}

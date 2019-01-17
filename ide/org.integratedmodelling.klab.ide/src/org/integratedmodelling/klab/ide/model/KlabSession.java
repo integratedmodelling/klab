@@ -241,7 +241,7 @@ public class KlabSession extends KlabPeer {
 	}
 
 	public void recordObservation(ObservationReference observation) {
-		
+
 		EObservationReference obs = observationCatalog.get(observation.getId());
 
 		if (obs != null) {
@@ -262,8 +262,7 @@ public class KlabSession extends KlabPeer {
 				contexts.add(observation.getId());
 			}
 
-			obs = new EObservationReference(observation, observation.getTaskId(),
-					observation.getParentId());
+			obs = new EObservationReference(observation, observation.getTaskId(), observation.getParentId());
 			if (observation.getTaskId() != null) {
 				ETaskReference task = taskCatalog.get(observation.getTaskId());
 				if (task.getContextId() == null) {
@@ -348,7 +347,6 @@ public class KlabSession extends KlabPeer {
 	 * ----- Back-end message handlers -----
 	 */
 
-	
 	/*
 	 * All resource-related responses
 	 */
@@ -358,17 +356,18 @@ public class KlabSession extends KlabPeer {
 		 * TODO
 		 */
 		switch (type) {
+		case ResourceCreated:
 		case ResourceImported:
 			Activator.klab().notifyResourceImport(resource);
 			break;
-        case ResourceDeleted:
-            Activator.klab().notifyResourceDeleted(resource);
-            break;
+		case ResourceDeleted:
+			Activator.klab().notifyResourceDeleted(resource);
+			break;
 		default:
 			break;
 		}
 	}
-	
+
 	@MessageHandler(messageClass = IMessage.MessageClass.Notification)
 	public void handleNotification(IMessage message, String notification) {
 		if (message.getType() != IMessage.Type.Debug) {
@@ -424,8 +423,7 @@ public class KlabSession extends KlabPeer {
 		}
 		send(message);
 	}
-	
-	
+
 	@MessageHandler
 	public void handleProjectNotification(ProjectLoadResponse response) {
 		for (ProjectReference project : response.getProjects()) {

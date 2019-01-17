@@ -5,9 +5,6 @@
 	"The raster adapter is used to create raster file resources. It accepts common GIS raster files such as GeoTIFF." 	
 	label "GIS raster file adapter (GeoTIFF)"
  {
- 	final text 'fileUrl'
- 		""
- 		
  	optional input band
  		""
  		default 0

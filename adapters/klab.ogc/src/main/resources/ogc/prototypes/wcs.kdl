@@ -14,13 +14,13 @@
 
 	final text 'wcsVersion'
  		"The WCS version for the requests. Currently only 2.0.1 is supported as previous versions do not communicate enough information."
- 	
+ 	 	default "2.0.1"
+ 	 		
  	optional input band
  		"The band for a multi-band raster. Default is 0."
  		default 0
 
-	optional input nodata
-		"The no-data value for this raster. Default is as communicated by the WCS server."
-		default 0.0
+	optional number nodata
+		"The no-data value for this raster. If not specified, the nodata value communicated by the WCS server is used. This should only be modified if that is wrong or missing."
 
  }

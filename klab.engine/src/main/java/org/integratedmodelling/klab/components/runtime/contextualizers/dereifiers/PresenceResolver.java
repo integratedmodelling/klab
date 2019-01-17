@@ -76,7 +76,7 @@ public class PresenceResolver implements IResolver<IDataArtifact>, IExpression {
 			// TODO this must locate only on the spatial dimension and leave the others as they are. Needs
 			// a getLocator(offset, Dimension.type);
 			ILocator spl = geometry.getLocator(space.getOffset(IndexLocator.create(xy)));
-			ret.set(spl, present);
+			ret.set(spl, present == null ? false : present);
 		});
 
 		return ret;

@@ -18,8 +18,8 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isFinal <em>Final</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isExported <em>Exported</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isOptional <em>Optional</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isExported <em>Exported</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isImported <em>Imported</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isMultiple <em>Multiple</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getArity <em>Arity</em>}</li>
@@ -30,11 +30,11 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getTargets <em>Targets</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getDocstring <em>Docstring</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getLabel <em>Label</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getDefault <em>Default</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getBody <em>Body</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getLocalName <em>Local Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getCoverage <em>Coverage</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getEnumValues <em>Enum Values</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getDefault <em>Default</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getRangeMin <em>Range Min</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getRangeMax <em>Range Max</em>}</li>
  * </ul>
@@ -88,32 +88,6 @@ public interface ActorDefinition extends EObject
   void setFinal(boolean value);
 
   /**
-   * Returns the value of the '<em><b>Exported</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Exported</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Exported</em>' attribute.
-   * @see #setExported(boolean)
-   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Exported()
-   * @model
-   * @generated
-   */
-  boolean isExported();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isExported <em>Exported</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Exported</em>' attribute.
-   * @see #isExported()
-   * @generated
-   */
-  void setExported(boolean value);
-
-  /**
    * Returns the value of the '<em><b>Optional</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
@@ -138,6 +112,32 @@ public interface ActorDefinition extends EObject
    * @generated
    */
   void setOptional(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Exported</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Exported</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Exported</em>' attribute.
+   * @see #setExported(boolean)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Exported()
+   * @model
+   * @generated
+   */
+  boolean isExported();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isExported <em>Exported</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Exported</em>' attribute.
+   * @see #isExported()
+   * @generated
+   */
+  void setExported(boolean value);
 
   /**
    * Returns the value of the '<em><b>Imported</b></em>' attribute.
@@ -390,6 +390,32 @@ public interface ActorDefinition extends EObject
   void setLabel(String value);
 
   /**
+   * Returns the value of the '<em><b>Default</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Default</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Default</em>' containment reference.
+   * @see #setDefault(Value)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Default()
+   * @model containment="true"
+   * @generated
+   */
+  Value getDefault();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getDefault <em>Default</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Default</em>' containment reference.
+   * @see #getDefault()
+   * @generated
+   */
+  void setDefault(Value value);
+
+  /**
    * Returns the value of the '<em><b>Body</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <p>
@@ -472,32 +498,6 @@ public interface ActorDefinition extends EObject
    * @generated
    */
   EList<String> getEnumValues();
-
-  /**
-   * Returns the value of the '<em><b>Default</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Default</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Default</em>' containment reference.
-   * @see #setDefault(Value)
-   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Default()
-   * @model containment="true"
-   * @generated
-   */
-  Value getDefault();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getDefault <em>Default</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Default</em>' containment reference.
-   * @see #getDefault()
-   * @generated
-   */
-  void setDefault(Value value);
 
   /**
    * Returns the value of the '<em><b>Range Min</b></em>' containment reference.
