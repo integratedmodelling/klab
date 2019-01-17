@@ -71,6 +71,9 @@ public class EngineViewController {
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
 		ILocator loc = ITime.INITIALIZATION; // TODO parse the locator
+		if (obs == null) {
+			throw new IllegalArgumentException("observation " + observation + " does not exist");
+		}
 
 		return Observations.INSTANCE.createArtifactDescriptor(obs, obs.getContext(), loc,
 				childLevel == null ? -1 : childLevel, collapseSiblings, false);
@@ -88,6 +91,9 @@ public class EngineViewController {
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
 		ILocator loc = ITime.INITIALIZATION; // TODO parse the locator
+		if (obs == null) {
+			throw new IllegalArgumentException("observation " + observation + " does not exist");
+		}
 
 		if (!(obs instanceof IState)) {
 			throw new IllegalArgumentException("cannot summarize an observation that is not a state");
@@ -113,6 +119,9 @@ public class EngineViewController {
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
 		ILocator loc = ITime.INITIALIZATION; // TODO parse locator
+		if (obs == null) {
+			throw new IllegalArgumentException("observation " + observation + " does not exist");
+		}
 
 		IObservationReference ret = null;
 
@@ -167,6 +176,9 @@ public class EngineViewController {
 
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
+		if (obs == null) {
+			throw new IllegalArgumentException("observation " + observation + " does not exist");
+		}
 
 		ILocator loc = ITime.INITIALIZATION;
 		if (locator != null) {
