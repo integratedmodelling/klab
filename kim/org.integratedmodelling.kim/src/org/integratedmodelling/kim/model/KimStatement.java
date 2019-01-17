@@ -237,6 +237,10 @@ public class KimStatement extends KimScope implements IKimStatement {
     	return namespace;
     }
     
+    public void setNamespace(String namespace) {
+    	this.namespace = namespace;
+    }
+    
     /**
      * Create a dummy statement uniquely to carry the line numbers for a compile notification.
      * 

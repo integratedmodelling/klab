@@ -65,6 +65,7 @@ import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.utils.EditorUtils;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.ide.Activator;
@@ -299,6 +300,27 @@ public enum Eclipse {
 			return project.getFile(rpath);
 		}
 		return null;
+	}
+
+	public IFile getNamespaceIFile(String namespaceId) {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IKimNamespace namespace = Kim.INSTANCE.getNamespace(namespaceId);
+		IProject project = root.getProject(namespace.getProject().getName());
+		String rpath = null;
+		if (namespace.isWorldviewBound()) {
+			String kimPrefix = "/";
+			if (namespace.getScriptId() != null) {
+				kimPrefix = IKimProject.SCRIPT_FOLDER + "/";
+			} else if (namespace.getTestCaseId() != null) {
+				kimPrefix = IKimProject.TESTS_FOLDER + "/";
+			} else {
+				// oh fuck
+			}
+			rpath = kimPrefix + namespace.getResourceId().substring(namespace.getResourceId().lastIndexOf('/') + 1);
+		} else {
+			rpath = "src/" + namespace.getName().replace('.', '/') + ".kim";
+		}
+		return project.getFile(rpath);
 	}
 
 	public String getNamespaceIdFromIFile(IFile file) {
@@ -554,7 +576,7 @@ public enum Eclipse {
 		if (container instanceof IFolder) {
 			return (IFolder) container;
 		}
-		
+
 		return null;
 	}
 

@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -154,12 +155,12 @@ public class Activator extends AbstractUIPlugin {
 			}
 
 		});
-		
+
 		/*
 		 * install link helper
 		 */
 		KimLinkDetector.setListener(new LinkOpenListener() {
-			
+
 			@Override
 			public void openLink(String text) {
 				int nc = StringUtils.countMatches(text, ":");
@@ -167,8 +168,16 @@ public class Activator extends AbstractUIPlugin {
 					// URN
 				} else if (nc == 1) {
 					// MODEL OBJECT
+					IKimStatement statement = Kim.INSTANCE.getStatement(text);
+					if (statement != null) {
+						IFile ifile = Eclipse.INSTANCE.getNamespaceIFile(statement.getNamespace());
+						if (ifile != null) {
+							Eclipse.INSTANCE.openFile(ifile, statement.getFirstLine());
+						}
+					}
 				} else {
-					// DEFINE - either in the definition itself or a reference. Hard to do anything without knowing which 
+					// DEFINE - either in the definition itself or a reference (non-semantic also?).
+					// Hard to do anything without knowing which
 					// namespace we are linking from
 				}
 				System.out.println("Link me hostia: " + text);
@@ -180,12 +189,12 @@ public class Activator extends AbstractUIPlugin {
 		this.engineStatusMonitor = new EngineMonitor(EngineMonitor.ENGINE_DEFAULT_URL, () -> engineOn(),
 				() -> engineOff(), initialSessionId) {
 
-					@Override
-					protected void error(String string) {
-						Eclipse.INSTANCE.alert(string);
-						Eclipse.INSTANCE.error(string);
-					}
-			
+			@Override
+			protected void error(String string) {
+				Eclipse.INSTANCE.alert(string);
+				Eclipse.INSTANCE.error(string);
+			}
+
 		};
 
 		/*
@@ -308,7 +317,7 @@ public class Activator extends AbstractUIPlugin {
 			KlabNavigator.refresh();
 			Eclipse.INSTANCE.refreshOpenEditors();
 		});
-		
+
 	}
 
 	public void stop(BundleContext context) throws Exception {

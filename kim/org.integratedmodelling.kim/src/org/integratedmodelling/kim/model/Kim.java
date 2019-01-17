@@ -1346,4 +1346,33 @@ public enum Kim {
 		return this.projectRegistry.values();
 	}
 
+	/**
+	 * Return a statement by name.
+	 * 
+	 * @param text
+	 * @return
+	 */
+	public IKimStatement getStatement(String text) {
+		String ns = null;
+		String ob = null;
+		if (text.contains(":")) {
+			String[] nn = text.split(":");
+			if (nn.length == 2) {
+				ns = nn[0];
+				ob = nn[1];
+			}
+		} else if (text.contains(".")) {
+			ns = Path.getLeading(text, '.');
+			ob = Path.getLast(text, '.');
+		}
+		
+		if (ns != null && ob != null) {
+			IKimNamespace namespace = getNamespace(ns);
+			if (namespace != null) {
+				return ((KimNamespace)namespace).getStatement(ob);
+			}
+		}
+		return null;
+	}
+
 }

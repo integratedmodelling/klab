@@ -12,7 +12,9 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimLoader;
+import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimProject;
@@ -48,6 +50,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 	private Set<String> importsScanned = null;
 	private IKimLoader loader;
 	private List<IServiceCall> extents = new ArrayList<>();
+	private Map<String, IKimStatement> statementsByName = new HashMap<>();
 
 	public KimNamespace(Namespace namespace, KimProject project) {
 		super(namespace, null);
@@ -80,7 +83,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 
 	@Override
 	public Set<String> getImportedNamespaceIds(boolean scanUsages) {
-		
+
 		Set<String> ret = new HashSet<>();
 		for (IKimNamespace imported : getImported()) {
 			ret.add(imported.getName());
@@ -289,7 +292,6 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 				}
 			}
 		}
-
 	}
 
 	@Override
@@ -315,7 +317,32 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 		return extents;
 	}
 
+	@Override
+	public void addChild(IKimScope child) {
+		if (child instanceof IKimModel) {
+			statementsByName.put(((IKimModel) child).getName(), (IKimStatement) child);
+		} else if (child instanceof IKimConceptStatement || child instanceof IKimObserver) {
+			addChildrenByName((IKimStatement) child);
+		}
+		if (child instanceof KimStatement) {
+			((KimStatement)child).setNamespace(this.name);
+		}
+		super.addChild(child);
+	}
+
+	private void addChildrenByName(IKimStatement child) {
+		statementsByName.put(child instanceof IKimConceptStatement ? ((IKimConceptStatement) child).getName()
+				: ((IKimObserver) child).getName(), (IKimStatement) child);
+		for (IKimScope ch : child.getChildren()) {
+			addChildrenByName((IKimStatement)ch);
+		}
+	}
+
 	public void addImport(String string) {
 		imported.add(string);
+	}
+	
+	public IKimStatement getStatement(String id) {
+		return statementsByName.get(id);
 	}
 }

@@ -37,6 +37,7 @@ public class KimLinkDetector extends DefaultHyperlinkDetector {
 					start++;
 
 					String cid = textViewer.getDocument().get(start, end - start);
+					
 					if ((Character.isLowerCase(cid.charAt(0)) && (cid.contains(":") || cid.contains("/"))) ||
 					    (Character.isUpperCase(cid.charAt(0)) && !(cid.contains(":") || cid.contains("/")))
 					// TODO add detection of local concept and non-semantic state
