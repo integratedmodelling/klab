@@ -99,8 +99,20 @@ public enum Resources implements IResourceService {
 	 */
 	INSTANCE;
 
+	class ResourceData {
+		long timestamp;
+		boolean online;
+	}
+
+	private Map<String, ResourceData> statusCache = Collections.synchronizedMap(new HashMap<>());
 	private ExecutorService resourceTaskExecutor;
 	private IKimLoader loader = null;
+
+	/**
+	 * Retry interval for resource online status refresh. TODO link to
+	 * configuration.
+	 */
+	private long RETRY_INTERVAL_MINUTES = 15;
 
 	Map<String, IResourceAdapter> resourceAdapters = Collections.synchronizedMap(new HashMap<>());
 
@@ -152,7 +164,7 @@ public enum Resources implements IResourceService {
 	private Resources() {
 		Services.INSTANCE.registerService(this, IResourceService.class);
 	}
-	
+
 	@Override
 	public IWorkspace getLocalWorkspace() {
 		return local;
@@ -353,8 +365,6 @@ public enum Resources implements IResourceService {
 
 	}
 
-
-	
 	@Override
 	public IResource createLocalResource(String resourceId, File file, IParameters<String> parameters, IProject project,
 			String adapterType, boolean forceUpdate, boolean asynchronous, IMonitor monitor) {
@@ -402,14 +412,15 @@ public enum Resources implements IResourceService {
 	}
 
 	/**
-	 * Create a resource from a remote request, which is assumed valid and non-existing.
+	 * Create a resource from a remote request, which is assumed valid and
+	 * non-existing.
 	 * 
 	 * @param request
 	 * @param monitor
 	 * @return
 	 */
 	public IResource createLocalResource(ResourceCRUDRequest request, Monitor monitor) {
-		
+
 		String urn = request.getResourceUrns().iterator().next();
 		IProject project = getProject(request.getDestinationProject());
 		String adapterType = request.getAdapter();
@@ -417,7 +428,7 @@ public enum Resources implements IResourceService {
 		if (project == null || adapter == null) {
 			throw new IllegalArgumentException("create resource: wrong request (adapter or project missing)");
 		}
-		
+
 		/*
 		 * translate the parameters to their actual types
 		 */
@@ -427,10 +438,11 @@ public enum Resources implements IResourceService {
 				parameters.put(argument.getName(), Utils.asPOD(request.getParameters().get(argument.getName())));
 			}
 		}
-		
-		return importResource(urn, project, adapterType, null, parameters, Version.create("0.0.1"), new ArrayList<>(), monitor);
+
+		return importResource(urn, project, adapterType, null, parameters, Version.create("0.0.1"), new ArrayList<>(),
+				monitor);
 	}
-	
+
 	private IResource importResource(String urn, IProject project, String adapterType, File file,
 			IParameters<String> parameters, Version version, List<IResource> history, IMonitor monitor) {
 
@@ -834,11 +846,30 @@ public enum Resources implements IResourceService {
 	}
 
 	public boolean isResourceOnline(IResource resource) {
+		return isResourceOnline(resource, false);
+	}
+
+	public boolean isResourceOnline(IResource resource, boolean forceUpdate) {
+
+		if (!forceUpdate) {
+			ResourceData cached = statusCache.get(resource.getUrn());
+			if (cached != null && (System.currentTimeMillis() - cached.timestamp) < (RETRY_INTERVAL_MINUTES * 60 * 1000)) {
+				return cached.online;
+			}
+		}
 
 		if (Urns.INSTANCE.isLocal(resource.getUrn())) {
 			IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
 			if (adapter != null) {
-				return adapter.getEncoder().isOnline(resource);
+				boolean ret = adapter.getEncoder().isOnline(resource);
+				ResourceData cached = statusCache.get(resource.getUrn());
+				if (cached == null) {
+					cached = new ResourceData();
+					cached.online = ret;
+					cached.timestamp = System.currentTimeMillis();
+					statusCache.put(resource.getUrn(), cached);
+				}
+				return ret;
 			}
 		} else {
 
@@ -852,6 +883,7 @@ public enum Resources implements IResourceService {
 			 * all nodes.
 			 */
 		}
+
 		return false;
 	}
 

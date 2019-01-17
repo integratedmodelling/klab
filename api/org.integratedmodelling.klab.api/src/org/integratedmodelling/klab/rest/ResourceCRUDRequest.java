@@ -16,7 +16,8 @@ public class ResourceCRUDRequest {
     private Map<String, String> parameters = new LinkedHashMap<>();
     private Map<String, String> metadata = new LinkedHashMap<>();
     private Map<String, ServicePrototype.Argument> attributes = new LinkedHashMap<>();
-
+    private String geometry;
+    
     public Set<String> getResourceUrns() {
         return resourceUrns;
     }
@@ -71,6 +72,14 @@ public class ResourceCRUDRequest {
 
 	public void setMetadata(Map<String, String> metadata) {
 		this.metadata = metadata;
+	}
+
+	public String getGeometry() {
+		return geometry;
+	}
+
+	public void setGeometry(String geometry) {
+		this.geometry = geometry;
 	}
 
 }

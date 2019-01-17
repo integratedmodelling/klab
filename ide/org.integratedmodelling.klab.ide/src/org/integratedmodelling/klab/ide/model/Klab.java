@@ -151,7 +151,7 @@ public class Klab {
 		}
 		return null;
 	}
-	
+
 	/*
 	 * called by the session peer, the true receiver for the message
 	 */
@@ -167,6 +167,18 @@ public class Klab {
 				"The resource with URN " + resource.getUrn()
 						+ " is now available and online. It can be referenced within the " + resource.getProjectName()
 						+ " project as " + resource.getLocalName());
+	}
+
+	public void notifyResourceUpdated(ResourceReference resource) {
+		Map<String, EResourceReference> list = resourceCatalog.get(resource.getProjectName());
+		if (list == null) {
+			list = new HashMap<>();
+			resourceCatalog.put(resource.getProjectName(), list);
+		}
+		list.put(resource.getUrn(), new EResourceReference(resource, true));
+		KlabNavigator.refresh();
+		Eclipse.INSTANCE.notification("Resource updated",
+				"The resource with URN " + resource.getUrn() + " was updated by the engine.");
 	}
 
 	public void notifyResourceDeleted(ResourceReference resource) {
@@ -270,11 +282,11 @@ public class Klab {
 	}
 
 	public void updateResource(LocalResourceReference resource) {
-		 EResourceReference res = getResource(resource.getUrn());
-		 if (res != null) {
-			 res.setOnline(resource.isOnline());
-			 res.setError(resource.isError());
-		 }
+		EResourceReference res = getResource(resource.getUrn());
+		if (res != null) {
+			res.setOnline(resource.isOnline());
+			res.setError(resource.isError());
+		}
 	}
 
 }
