@@ -88,9 +88,7 @@ public interface API {
 	 * <p>
 	 * <b>Protocol:</b> GET <br/>
 	 * <b>Response type:</b> Json <br/>
-	 * <b>Response:</b>
-	 * {@code org.integratedmodelling.klab.rest.Capabilities}
-	 * <br/>
+	 * <b>Response:</b> {@code org.integratedmodelling.klab.rest.Capabilities} <br/>
 	 * <b>Authentication:</b> open or {@link INetworkSessionIdentity} (response
 	 * reflect access levels)
 	 * 
@@ -104,8 +102,7 @@ public interface API {
 	 * <p>
 	 * <b>Protocol:</b> GET <br/>
 	 * <b>Response type:</b> Json <br/>
-	 * <b>Response:</b>
-	 * {@code org.integratedmodelling.klab.rest.KimCapabilities}
+	 * <b>Response:</b> {@code org.integratedmodelling.klab.rest.KimCapabilities}
 	 * <br/>
 	 * <b>Authentication:</b> open
 	 */
@@ -445,6 +442,11 @@ public interface API {
 			 * Run temporal transitions in pre-authorized context. Return task descriptor.
 			 */
 			public static final String RUN_CONTEXT = "/engine/session/observation/run/" + P_CONTEXT;
+
+			/**
+			 * Retrieve dataflow for passed root context.
+			 */
+			public static final String RETRIEVE_DATAFLOW = "/engine/session/observation/dataflow/" + P_CONTEXT;
 
 			/**
 			 * Format contextualization report as per request and return it.
