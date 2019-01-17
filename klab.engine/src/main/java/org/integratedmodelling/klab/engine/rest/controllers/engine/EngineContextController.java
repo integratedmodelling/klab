@@ -40,6 +40,9 @@ public class EngineContextController {
 
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation ctx = session.getObservation(context);
+		if (ctx == null) {
+			throw new IllegalArgumentException("context " + context + " does not exist");
+		}
 		return ((Observation) ctx).getRuntimeContext().getReport().render(Encoding.HTML);
 	}
 
@@ -52,6 +55,9 @@ public class EngineContextController {
 
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation ctx = session.getObservation(context);
+		if (ctx == null) {
+			throw new IllegalArgumentException("context " + context + " does not exist");
+		}
 		return new DataflowReference(session.getId(), null,
 				((Observation) ctx).getRuntimeContext().getContextualizationStrategy().getElkGraph());
 	}
