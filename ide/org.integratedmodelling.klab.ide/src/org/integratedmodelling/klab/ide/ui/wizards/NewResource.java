@@ -283,7 +283,9 @@ public class NewResource extends WizardPage {
 		adapterCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		adapterCombo.add("-- choose one --");
 		for (ResourceAdapterReference adapter : Activator.klab().getResourceAdapters()) {
-			adapterCombo.add(adapter.getName() + (adapter.getLabel() == null ? "" : (" - " + adapter.getLabel())));
+			if (!adapter.isFileBased()) {
+				adapterCombo.add(adapter.getName() + (adapter.getLabel() == null ? "" : (" - " + adapter.getLabel())));
+			}
 		}
 		adapterCombo.select(0);
 

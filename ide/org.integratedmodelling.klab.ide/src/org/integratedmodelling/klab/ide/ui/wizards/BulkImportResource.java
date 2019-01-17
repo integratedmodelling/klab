@@ -51,9 +51,9 @@ public class BulkImportResource extends WizardPage {
 
 	private Text text;
 	private Combo combo;
-		
+
 	private static String NO_CHOICE = "All applicable (may result in errors)";
-	
+
 	public BulkImportResource(EResourceFolder folder) {
 		super("wizardPage");
 		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.jpg"));

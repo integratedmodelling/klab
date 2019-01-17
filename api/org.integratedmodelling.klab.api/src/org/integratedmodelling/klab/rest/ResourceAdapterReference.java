@@ -6,6 +6,7 @@ public class ResourceAdapterReference {
 	private String description;
 	private String label;
 	private ServicePrototype parameters;
+	private boolean fileBased;
 
 	public ServicePrototype getParameters() {
 		return parameters;
@@ -37,5 +38,13 @@ public class ResourceAdapterReference {
 
 	public void setLabel(String label) {
 		this.label = label;
+	}
+
+	public boolean isFileBased() {
+		return fileBased;
+	}
+
+	public void setFileBased(boolean fileBased) {
+		this.fileBased = fileBased;
 	}
 }

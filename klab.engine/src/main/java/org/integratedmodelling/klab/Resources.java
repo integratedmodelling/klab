@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
+import org.integratedmodelling.klab.api.data.adapters.IFileResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
@@ -1036,6 +1037,7 @@ public enum Resources implements IResourceService {
 			ref.setLabel(configuration.getLabel());
 			ref.setDescription(configuration.getDescription());
 			ref.setParameters(Extensions.INSTANCE.describePrototype(configuration));
+			ref.setFileBased(resourceAdapters.get(adapter) instanceof IFileResourceAdapter);
 			ret.add(ref);
 		}
 		return ret;

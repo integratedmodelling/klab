@@ -20,7 +20,7 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Version;
-import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
+import org.integratedmodelling.klab.api.data.adapters.IFileResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
@@ -47,7 +47,7 @@ import com.google.common.collect.Sets;
  */
 @ResourceAdapter(type = "raster", version = Version.CURRENT, requires = { "fileUrl" }, optional = { "band",
 		"interpolation", "nodata", "bandmixer" })
-public class RasterAdapter implements IResourceAdapter {
+public class RasterAdapter implements IFileResourceAdapter {
 
 	/**
 	 * All recognized primary file extensions.
