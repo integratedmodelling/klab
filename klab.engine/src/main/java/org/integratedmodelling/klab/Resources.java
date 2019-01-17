@@ -430,12 +430,16 @@ public enum Resources implements IResourceService {
 		}
 
 		/*
-		 * translate the parameters to their actual types
+		 * translate the parameters to their actual types. Empty strings as parameters
+		 * are possible.
 		 */
 		Parameters<String> parameters = Parameters.create();
 		for (IPrototype.Argument argument : adapter.getResourceConfiguration().listArguments()) {
 			if (request.getParameters().containsKey(argument.getName())) {
-				parameters.put(argument.getName(), Utils.asPOD(request.getParameters().get(argument.getName())));
+				String value = request.getParameters().get(argument.getName());
+				if (value != null && !value.trim().isEmpty()) {
+					parameters.put(argument.getName(), Utils.asPOD(value));
+				}
 			}
 		}
 
@@ -853,7 +857,8 @@ public enum Resources implements IResourceService {
 
 		if (!forceUpdate) {
 			ResourceData cached = statusCache.get(resource.getUrn());
-			if (cached != null && (System.currentTimeMillis() - cached.timestamp) < (RETRY_INTERVAL_MINUTES * 60 * 1000)) {
+			if (cached != null
+					&& (System.currentTimeMillis() - cached.timestamp) < (RETRY_INTERVAL_MINUTES * 60 * 1000)) {
 				return cached.online;
 			}
 		}
@@ -966,9 +971,11 @@ public enum Resources implements IResourceService {
 			LocalResourceReference rref = new LocalResourceReference();
 			rref.setUrn(urn);
 			IResource resource = Resources.INSTANCE.resolveResource(urn);
-			rref.setOnline(Resources.INSTANCE.isResourceOnline(resource));
-			rref.setError(resource.hasErrors());
-			ret.getLocalResources().add(rref);
+			if (resource != null) {
+				rref.setOnline(Resources.INSTANCE.isResourceOnline(resource));
+				rref.setError(resource.hasErrors());
+				ret.getLocalResources().add(rref);
+			}
 		}
 		return ret;
 	}
