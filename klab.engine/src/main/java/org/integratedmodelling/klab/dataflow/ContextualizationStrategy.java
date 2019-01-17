@@ -45,39 +45,45 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 	}
 
 	public void add(Dataflow dataflow) {
-		addVertex(dataflow);
-		rootNodes.add(dataflow);
-		json = null;
+		synchronized (this) {
+			addVertex(dataflow);
+			rootNodes.add(dataflow);
+			json = null;
+		}
 	}
 
 	public void add(Dataflow dataflow, Dataflow parent) {
-		addVertex(dataflow);
-		addEdge(parent, dataflow);
-		json = null;
+		synchronized (this) {
+			addVertex(dataflow);
+			addEdge(parent, dataflow);
+			json = null;
+		}
 	}
 
 	public String getElkGraph() {
 
 		if (json == null) {
-			ElkNode root = kelk.createGraph(id);
-			
-			// new nodes
-			for (Dataflow df : rootNodes) {
-				DataflowGraph graph = new DataflowGraph(df, nodes, kelk);
-				// TODO children - recurse
-				root.getChildren().add(graph.getRootNode());
+			synchronized (this) {
+
+				ElkNode root = kelk.createGraph(id);
+
+				// new nodes
+				for (Dataflow df : rootNodes) {
+					DataflowGraph graph = new DataflowGraph(df, nodes, kelk);
+					// TODO children - recurse
+					root.getChildren().add(graph.getRootNode());
+				}
+
+				RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
+				engine.layout(root, new BasicProgressMonitor());
+
+				json = ElkGraphJson.forGraph(root).omitLayout(false).omitZeroDimension(true).omitZeroPositions(true)
+						.shortLayoutOptionKeys(true).prettyPrint(true).toJson();
+
+				// System.out.println(json);
 			}
-			
-			RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
-			engine.layout(root, new BasicProgressMonitor());
-
-			json = ElkGraphJson.forGraph(root).omitLayout(false).omitZeroDimension(true).omitZeroPositions(true)
-					.shortLayoutOptionKeys(true).prettyPrint(true).toJson();
-
-//			System.out.println(json);
 		}
 
 		return json;
 	}
-
 }
