@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.owl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -17,6 +19,7 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -31,6 +34,7 @@ import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.model.Annotation;
 import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Range;
 
@@ -71,6 +75,7 @@ public class Observable extends Concept implements IObservable {
 	private String modelReference;
 	// only used to resolve the subject observable if it has to be marshalled across network boundaries
 	transient String sessionId;
+	private List<IAnnotation> annotations = new ArrayList<>();
 
 	Observable(Concept concept) {
 		super(concept);
@@ -151,6 +156,7 @@ public class Observable extends Concept implements IObservable {
 		this.optional = observable.optional;
 		this.generic = observable.generic;
 		this.assignedRoles.addAll(observable.assignedRoles);
+		this.annotations.addAll(observable.getAnnotations());
 	}
 
 	@Override
@@ -663,5 +669,13 @@ public class Observable extends Concept implements IObservable {
 	@Override
 	public Set<IConcept> getAssignedRoles() {
 		return assignedRoles;
+	}
+
+	public List<IAnnotation> getAnnotations() {
+		return this.annotations;
+	}
+	
+	public void addAnnotation(Annotation annotation) {
+		this.annotations .add(annotation);
 	}
 }

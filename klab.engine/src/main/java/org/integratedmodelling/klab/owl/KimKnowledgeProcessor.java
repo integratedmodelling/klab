@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Expression;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -25,13 +26,14 @@ import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.KimNotifier.ErrorNotifyingMonitor;
+import org.integratedmodelling.klab.model.Annotation;
 import org.integratedmodelling.klab.model.ConceptStatement;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.utils.CamelCase;
@@ -310,6 +312,10 @@ public enum KimKnowledgeProcessor {
 			}
 		}
 
+		for (IKimAnnotation annotation : concept.getAnnotations()) {
+			ret.addAnnotation(new Annotation(annotation));
+		}
+		
 		return ret;
 	}
 

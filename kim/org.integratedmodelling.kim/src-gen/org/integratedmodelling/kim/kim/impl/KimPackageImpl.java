@@ -2367,9 +2367,19 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EReference getDependency_Annotations()
+  {
+    return (EReference)dependencyEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EAttribute getDependency_ModelReference()
   {
-    return (EAttribute)dependencyEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)dependencyEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -2379,7 +2389,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getDependency_Observable()
   {
-    return (EReference)dependencyEClass.getEStructuralFeatures().get(1);
+    return (EReference)dependencyEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -4711,6 +4721,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__NAME);
 
     dependencyEClass = createEClass(DEPENDENCY);
+    createEReference(dependencyEClass, DEPENDENCY__ANNOTATIONS);
     createEAttribute(dependencyEClass, DEPENDENCY__MODEL_REFERENCE);
     createEReference(dependencyEClass, DEPENDENCY__OBSERVABLE);
 
@@ -5194,6 +5205,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEAttribute(getObservableSemantics_Name(), ecorePackage.getEString(), "name", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(dependencyEClass, Dependency.class, "Dependency", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getDependency_Annotations(), this.getAnnotation(), null, "annotations", null, 0, -1, Dependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getDependency_ModelReference(), ecorePackage.getEString(), "modelReference", null, 0, 1, Dependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getDependency_Observable(), this.getObservableSemantics(), null, "observable", null, 0, 1, Dependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 

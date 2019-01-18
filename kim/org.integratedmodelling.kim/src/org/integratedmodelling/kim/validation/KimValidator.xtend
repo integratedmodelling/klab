@@ -310,7 +310,7 @@ class KimValidator extends AbstractKimValidator {
 					Kim.INSTANCE.declareObservable(model.observables.get(obsIdx))
 
 			var definition = observable.descriptor
-			if (definition != null) {
+			if (definition !== null) {
 				if (definition.isUndefined && (obsIdx > 0 || interpretedRole === null)) {
 					error('Observable has undefined semantics', KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES,
 						obsIdx, BAD_OBSERVABLE)
@@ -372,6 +372,19 @@ class KimValidator extends AbstractKimValidator {
 					dependencies.add(observable)
 				}
 			}
+
+			if (observable !== null) {
+				var j = 0
+				var IKimNamespace ns = Kim.INSTANCE.getNamespace(model, true)
+				for (annotation : cd.annotations) {
+					val ann = new KimAnnotation(annotation, ns, observable)
+					for (notification : ann.validateUsage(ann)) {
+						notify(notification, statement, KimPackage.Literals.DEPENDENCY__ANNOTATIONS, j)
+					}
+					j++
+				}
+			}
+
 			i++
 		}
 
@@ -1876,7 +1889,8 @@ class KimValidator extends AbstractKimValidator {
 
 																						// get all the restricting observables
 																						i = 0;
-																						var restricteds = Lists.newArrayList()
+																						var restricteds = Lists.
+																							newArrayList()
 																						for (t : concept.
 																							restrictedObservables) {
 																							var robs = Kim.INSTANCE.
@@ -1910,7 +1924,8 @@ class KimValidator extends AbstractKimValidator {
 																									error(
 																										"This concept is not a role",
 																										concept,
-																										KimPackage.Literals.
+																										KimPackage.
+																											Literals.
 																											CONCEPT_STATEMENT_BODY__ROLES,
 																											i)
 																											ok = false
@@ -1946,7 +1961,8 @@ class KimValidator extends AbstractKimValidator {
 																															error(
 																																"only processes and events can confer traits to their context subjects.",
 																																concept,
-																																KimPackage.Literals.
+																																KimPackage.
+																																	Literals.
 																																	CONCEPT_STATEMENT_BODY__CONFERRED_TRAITS)
 																																	ok = false
 																																} else {
@@ -1964,7 +1980,8 @@ class KimValidator extends AbstractKimValidator {
 																																					error(
 																																						"only traits can be conferred by processes or events",
 																																						concept,
-																																						KimPackage.Literals.
+																																						KimPackage.
+																																							Literals.
 																																							CONCEPT_STATEMENT_BODY__CONFERRED_TRAITS,
 																																							i)
 																																						} else {
@@ -2000,7 +2017,8 @@ class KimValidator extends AbstractKimValidator {
 																																														error(
 																																															"only subjects can use mereological relationships",
 																																															concept,
-																																															KimPackage.Literals.
+																																															KimPackage.
+																																																Literals.
 																																																CONCEPT_STATEMENT_BODY__WHOLE)
 																																																ok = false
 																																															} else {
@@ -2024,7 +2042,8 @@ class KimValidator extends AbstractKimValidator {
 																																																									error(
 																																																										"only subjects can be parts of other subjects",
 																																																										concept,
-																																																										KimPackage.Literals.
+																																																										KimPackage.
+																																																											Literals.
 																																																											CONCEPT_STATEMENT_BODY__WHOLE)
 																																																										} else {
 																																																											if (concept.
@@ -2070,7 +2089,8 @@ class KimValidator extends AbstractKimValidator {
 																																																															error(
 																																																																"only processes can use the 'creates' clause",
 																																																																concept,
-																																																																KimPackage.Literals.
+																																																																KimPackage.
+																																																																	Literals.
 																																																																	CONCEPT_STATEMENT_BODY__CREATES)
 																																																																	ok = false
 																																																																} else {
@@ -2088,7 +2108,8 @@ class KimValidator extends AbstractKimValidator {
 																																																																					error(
 																																																																						"only countable types (subject, event, relationship) can be created by processes or events",
 																																																																						concept,
-																																																																						KimPackage.Literals.
+																																																																						KimPackage.
+																																																																							Literals.
 																																																																							CONCEPT_STATEMENT_BODY__CREATES,
 																																																																							i)
 																																																																						} else {
@@ -2123,7 +2144,8 @@ class KimValidator extends AbstractKimValidator {
 																																																																									error(
 																																																																										"only relationships can use the 'links' clause",
 																																																																										concept,
-																																																																										KimPackage.Literals.
+																																																																										KimPackage.
+																																																																											Literals.
 																																																																											CONCEPT_STATEMENT_BODY__DOMAINS)
 																																																																											ok = false
 																																																																										} else {
@@ -2154,7 +2176,8 @@ class KimValidator extends AbstractKimValidator {
 																																																																																	error(
 																																																																																		"relationship can only link subjects to subjects",
 																																																																																		concept,
-																																																																																		KimPackage.Literals.
+																																																																																		KimPackage.
+																																																																																			Literals.
 																																																																																			CONCEPT_STATEMENT_BODY__DOMAINS,
 																																																																																			i)
 																																																																																			ok = false
@@ -2167,7 +2190,8 @@ class KimValidator extends AbstractKimValidator {
 																																																																																					error(
 																																																																																						"relationship can only link subjects to subjects",
 																																																																																						concept,
-																																																																																						KimPackage.Literals.
+																																																																																						KimPackage.
+																																																																																							Literals.
 																																																																																							CONCEPT_STATEMENT_BODY__RANGES,
 																																																																																							i)
 																																																																																							ok = false
@@ -2193,7 +2217,8 @@ class KimValidator extends AbstractKimValidator {
 																																																																																							error(
 																																																																																								"only relationships can use the 'inverse of' clause",
 																																																																																								concept,
-																																																																																								KimPackage.Literals.
+																																																																																								KimPackage.
+																																																																																									Literals.
 																																																																																									CONCEPT_STATEMENT_BODY__INVERSE)
 																																																																																									ok = false
 																																																																																								} else {
@@ -2212,7 +2237,8 @@ class KimValidator extends AbstractKimValidator {
 																																																																																												error(
 																																																																																													"only processes can use the 'affects' clause",
 																																																																																													concept,
-																																																																																													KimPackage.Literals.
+																																																																																													KimPackage.
+																																																																																														Literals.
 																																																																																														CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED)
 																																																																																														ok = false
 																																																																																													} else {
@@ -2303,7 +2329,8 @@ class KimValidator extends AbstractKimValidator {
 																																																																																																												error(
 																																																																																																													"Cannot declare a raw quality without inheriting from a more specific type",
 																																																																																																													concept,
-																																																																																																													KimPackage.Literals.
+																																																																																																													KimPackage.
+																																																																																																														Literals.
 																																																																																																														CONCEPT_STATEMENT_BODY__NAME)
 
 																																																																																																													} else {

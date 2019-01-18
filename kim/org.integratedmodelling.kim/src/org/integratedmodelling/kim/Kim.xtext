@@ -62,7 +62,6 @@ ModelBodyStatement:
 		 )?
 		 actions+=ActionSpecification*
 		 ('metadata' metadata=Metadata)? 
-//		 ('with' 'documentation' documentation=Documentation)? 
 ;
 
 AttributeIdentifier:
@@ -316,10 +315,12 @@ ObservableSemantics:
 	);
 
 Dependency:
-	modelReference=(LOWERCASE_ID|PathName) |
-	observable=ObservableSemantics
+	annotations += Annotation*
+	(
+		modelReference=(LOWERCASE_ID|PathName) |
+		observable=ObservableSemantics
+	)
 ;
-
 
 ConceptDeclaration:
 	/* (name=STRING)? */ main+=Concept+ 
