@@ -66,6 +66,7 @@ import org.integratedmodelling.klab.utils.UrlValidator;
 import org.integratedmodelling.klab.utils.Utils;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.custom.SashForm;
 
 public class ResourceEditor extends ViewPart {
 
@@ -391,11 +392,13 @@ public class ResourceEditor extends ViewPart {
 			localName.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
 			localName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		}
+		
+		SashForm sashForm = new SashForm(container, SWT.VERTICAL);
+		sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		{
-			Group grpGeometry = new Group(container, SWT.NONE);
+			Group grpGeometry = new Group(sashForm, SWT.NONE);
 			// grpGeometry.setBackground(SWTResourceManager.getColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 			grpGeometry.setLayout(new GridLayout(2, false));
-			grpGeometry.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 			grpGeometry.setText("Geometry");
 
 			mapHolder = new Composite(grpGeometry, SWT.NONE);
@@ -457,8 +460,8 @@ public class ResourceEditor extends ViewPart {
 			tcl_composite.setColumnData(attributeName, new ColumnPixelData(150, true, true));
 			attributeName.setText("New Column");
 
-			TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(attributeViewer, SWT.NONE);
-			TableColumn attributeType = tableViewerColumn_1.getColumn();
+			TableViewerColumn tableViewerColumn_1_1 = new TableViewerColumn(attributeViewer, SWT.NONE);
+			TableColumn attributeType = tableViewerColumn_1_1.getColumn();
 			tcl_composite.setColumnData(attributeType, new ColumnPixelData(150, true, true));
 			attributeType.setText("New Column");
 
@@ -493,65 +496,65 @@ public class ResourceEditor extends ViewPart {
 				geometryDefinition.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 			}
 		}
-
-		grpAdapterData = new Group(container, SWT.NONE);
-		grpAdapterData.setLayout(new FillLayout(SWT.HORIZONTAL));
-		grpAdapterData.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		grpAdapterData.setText("Adapter parameters");
-
-		adapterPropertyViewer = new TableViewer(grpAdapterData, SWT.BORDER | SWT.FULL_SELECTION);
-		propertyTable = adapterPropertyViewer.getTable();
-		propertyTable.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDown(MouseEvent e) {
-				if (propertyTable.getSelection().length == 0 && propertyTable.getSelectionIndex() < 0) {
-					// click on empty row
-					System.out.println("CLICCKACEEC");
-				}
-			}
-		});
-		propertyTable.setLinesVisible(true);
-		propertyTable.setHeaderVisible(true);
-
-		propertyNameColumn = new TableViewerColumn(adapterPropertyViewer, SWT.NONE);
-		TableColumn propertyColumn = propertyNameColumn.getColumn();
-		propertyColumn.setWidth(180);
-		propertyColumn.setText("Adapter property");
-
-		TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(adapterPropertyViewer, SWT.NONE);
-		TableColumn typeColumn = tableViewerColumn_1.getColumn();
-		typeColumn.setWidth(100);
-		typeColumn.setText("Type");
-
-		propertyValueColumn = new TableViewerColumn(adapterPropertyViewer, SWT.NONE);
-		TableColumn valueColumn = propertyValueColumn.getColumn();
-		valueColumn.setWidth(400);
-		valueColumn.setText("Value");
-		propertyValueColumn.setEditingSupport(new ValueSupport(adapterPropertyViewer));
-
-		Menu menu = new Menu(propertyTable);
-		propertyTable.setMenu(menu);
-		// MenuItem addProperty = new MenuItem(menu, SWT.NONE);
-		// addProperty.addSelectionListener(new SelectionAdapter() {
-		// @Override
-		// public void widgetSelected(SelectionEvent e) {
-		// // TODO add parameter for editing
-		// parameterEdit = new Pair<>("", "");
-		// adapterPropertyViewer.setInput(resource.getParameters());
-		// }
-		// });
-		// addProperty.setText("Add new parameter");
-		//
-		// MenuItem deleteProperty = new MenuItem(menu, SWT.NONE);
-		// deleteProperty.addSelectionListener(new SelectionAdapter() {
-		// @Override
-		// public void widgetSelected(SelectionEvent e) {
-		// // TODO delete current selection
-		// }
-		// });
-		// deleteProperty.setText("Delete parameter");
-		adapterPropertyViewer.setLabelProvider(new PropertyLabelProvider());
-		adapterPropertyViewer.setContentProvider(new PropertyContentProvider());
+		
+				grpAdapterData = new Group(sashForm, SWT.NONE);
+				grpAdapterData.setLayout(new FillLayout(SWT.HORIZONTAL));
+				grpAdapterData.setText("Adapter parameters");
+				
+						adapterPropertyViewer = new TableViewer(grpAdapterData, SWT.BORDER | SWT.FULL_SELECTION);
+						propertyTable = adapterPropertyViewer.getTable();
+						propertyTable.addMouseListener(new MouseAdapter() {
+							@Override
+							public void mouseDown(MouseEvent e) {
+								if (propertyTable.getSelection().length == 0 && propertyTable.getSelectionIndex() < 0) {
+									// click on empty row
+									System.out.println("CLICCKACEEC");
+								}
+							}
+						});
+						propertyTable.setLinesVisible(true);
+						propertyTable.setHeaderVisible(true);
+						
+								propertyNameColumn = new TableViewerColumn(adapterPropertyViewer, SWT.NONE);
+								TableColumn propertyColumn = propertyNameColumn.getColumn();
+								propertyColumn.setWidth(180);
+								propertyColumn.setText("Adapter property");
+								
+										TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(adapterPropertyViewer, SWT.NONE);
+										TableColumn typeColumn = tableViewerColumn_1.getColumn();
+										typeColumn.setWidth(100);
+										typeColumn.setText("Type");
+										
+												propertyValueColumn = new TableViewerColumn(adapterPropertyViewer, SWT.NONE);
+												TableColumn valueColumn = propertyValueColumn.getColumn();
+												valueColumn.setWidth(400);
+												valueColumn.setText("Value");
+												propertyValueColumn.setEditingSupport(new ValueSupport(adapterPropertyViewer));
+												
+														Menu menu = new Menu(propertyTable);
+														propertyTable.setMenu(menu);
+														// MenuItem addProperty = new MenuItem(menu, SWT.NONE);
+														// addProperty.addSelectionListener(new SelectionAdapter() {
+														// @Override
+														// public void widgetSelected(SelectionEvent e) {
+														// // TODO add parameter for editing
+														// parameterEdit = new Pair<>("", "");
+														// adapterPropertyViewer.setInput(resource.getParameters());
+														// }
+														// });
+														// addProperty.setText("Add new parameter");
+														//
+														// MenuItem deleteProperty = new MenuItem(menu, SWT.NONE);
+														// deleteProperty.addSelectionListener(new SelectionAdapter() {
+														// @Override
+														// public void widgetSelected(SelectionEvent e) {
+														// // TODO delete current selection
+														// }
+														// });
+														// deleteProperty.setText("Delete parameter");
+														adapterPropertyViewer.setLabelProvider(new PropertyLabelProvider());
+														adapterPropertyViewer.setContentProvider(new PropertyContentProvider());
+														sashForm.setWeights(new int[] {1, 1});
 
 		TabItem tbtmProvenanceData = new TabItem(tabFolder, SWT.NONE);
 		tbtmProvenanceData.setText("Documentation");

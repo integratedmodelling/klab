@@ -422,6 +422,8 @@ public enum Resources implements IResourceService {
 	 */
 	public IResource createLocalResource(ResourceCRUDRequest request, Monitor monitor) {
 
+		monitor.info("Start importing resource " + request.getResourceUrns().iterator().next() + ": this may take a while");
+		
 		String urn = request.getResourceUrns().iterator().next();
 		IProject project = getProject(request.getDestinationProject());
 		String adapterType = request.getAdapter();
@@ -444,8 +446,12 @@ public enum Resources implements IResourceService {
 			}
 		}
 
-		return importResource(urn, project, adapterType, null, parameters, Version.create("0.0.1"), new ArrayList<>(),
+		IResource ret = importResource(urn, project, adapterType, null, parameters, Version.create("0.0.1"), new ArrayList<>(),
 				monitor);
+		
+		monitor.info("Import of resource " + request.getResourceUrns().iterator().next() + " finished");
+
+		return ret;
 	}
 
 	private IResource importResource(String urn, IProject project, String adapterType, File file,
