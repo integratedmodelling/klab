@@ -4,8 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IFile;
 import org.integratedmodelling.klab.client.documentation.ProjectReferences;
 import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
@@ -25,7 +24,7 @@ public class EReferencesPage extends ENavigatorItem {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		if (IResource.class.isAssignableFrom(adapter) && adapter != IProject.class) {
+		if (IFile.class.isAssignableFrom(adapter)) {
 			if (this.file != null) {
 				return (T) Eclipse.INSTANCE.getIFile(this.file);
 			}

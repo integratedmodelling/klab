@@ -392,7 +392,7 @@ public class ResourceEditor extends ViewPart {
 			localName.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
 			localName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		}
-		
+
 		SashForm sashForm = new SashForm(container, SWT.VERTICAL);
 		sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		{
@@ -496,65 +496,65 @@ public class ResourceEditor extends ViewPart {
 				geometryDefinition.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 			}
 		}
-		
-				grpAdapterData = new Group(sashForm, SWT.NONE);
-				grpAdapterData.setLayout(new FillLayout(SWT.HORIZONTAL));
-				grpAdapterData.setText("Adapter parameters");
-				
-						adapterPropertyViewer = new TableViewer(grpAdapterData, SWT.BORDER | SWT.FULL_SELECTION);
-						propertyTable = adapterPropertyViewer.getTable();
-						propertyTable.addMouseListener(new MouseAdapter() {
-							@Override
-							public void mouseDown(MouseEvent e) {
-								if (propertyTable.getSelection().length == 0 && propertyTable.getSelectionIndex() < 0) {
-									// click on empty row
-									System.out.println("CLICCKACEEC");
-								}
-							}
-						});
-						propertyTable.setLinesVisible(true);
-						propertyTable.setHeaderVisible(true);
-						
-								propertyNameColumn = new TableViewerColumn(adapterPropertyViewer, SWT.NONE);
-								TableColumn propertyColumn = propertyNameColumn.getColumn();
-								propertyColumn.setWidth(180);
-								propertyColumn.setText("Adapter property");
-								
-										TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(adapterPropertyViewer, SWT.NONE);
-										TableColumn typeColumn = tableViewerColumn_1.getColumn();
-										typeColumn.setWidth(100);
-										typeColumn.setText("Type");
-										
-												propertyValueColumn = new TableViewerColumn(adapterPropertyViewer, SWT.NONE);
-												TableColumn valueColumn = propertyValueColumn.getColumn();
-												valueColumn.setWidth(400);
-												valueColumn.setText("Value");
-												propertyValueColumn.setEditingSupport(new ValueSupport(adapterPropertyViewer));
-												
-														Menu menu = new Menu(propertyTable);
-														propertyTable.setMenu(menu);
-														// MenuItem addProperty = new MenuItem(menu, SWT.NONE);
-														// addProperty.addSelectionListener(new SelectionAdapter() {
-														// @Override
-														// public void widgetSelected(SelectionEvent e) {
-														// // TODO add parameter for editing
-														// parameterEdit = new Pair<>("", "");
-														// adapterPropertyViewer.setInput(resource.getParameters());
-														// }
-														// });
-														// addProperty.setText("Add new parameter");
-														//
-														// MenuItem deleteProperty = new MenuItem(menu, SWT.NONE);
-														// deleteProperty.addSelectionListener(new SelectionAdapter() {
-														// @Override
-														// public void widgetSelected(SelectionEvent e) {
-														// // TODO delete current selection
-														// }
-														// });
-														// deleteProperty.setText("Delete parameter");
-														adapterPropertyViewer.setLabelProvider(new PropertyLabelProvider());
-														adapterPropertyViewer.setContentProvider(new PropertyContentProvider());
-														sashForm.setWeights(new int[] {1, 1});
+
+		grpAdapterData = new Group(sashForm, SWT.NONE);
+		grpAdapterData.setLayout(new FillLayout(SWT.HORIZONTAL));
+		grpAdapterData.setText("Adapter parameters");
+
+		adapterPropertyViewer = new TableViewer(grpAdapterData, SWT.BORDER | SWT.FULL_SELECTION);
+		propertyTable = adapterPropertyViewer.getTable();
+		propertyTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				if (propertyTable.getSelection().length == 0 && propertyTable.getSelectionIndex() < 0) {
+					// click on empty row
+					System.out.println("CLICCKACEEC");
+				}
+			}
+		});
+		propertyTable.setLinesVisible(true);
+		propertyTable.setHeaderVisible(true);
+
+		propertyNameColumn = new TableViewerColumn(adapterPropertyViewer, SWT.NONE);
+		TableColumn propertyColumn = propertyNameColumn.getColumn();
+		propertyColumn.setWidth(180);
+		propertyColumn.setText("Adapter property");
+
+		TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(adapterPropertyViewer, SWT.NONE);
+		TableColumn typeColumn = tableViewerColumn_1.getColumn();
+		typeColumn.setWidth(100);
+		typeColumn.setText("Type");
+
+		propertyValueColumn = new TableViewerColumn(adapterPropertyViewer, SWT.NONE);
+		TableColumn valueColumn = propertyValueColumn.getColumn();
+		valueColumn.setWidth(400);
+		valueColumn.setText("Value");
+		propertyValueColumn.setEditingSupport(new ValueSupport(adapterPropertyViewer));
+
+		Menu menu = new Menu(propertyTable);
+		propertyTable.setMenu(menu);
+		// MenuItem addProperty = new MenuItem(menu, SWT.NONE);
+		// addProperty.addSelectionListener(new SelectionAdapter() {
+		// @Override
+		// public void widgetSelected(SelectionEvent e) {
+		// // TODO add parameter for editing
+		// parameterEdit = new Pair<>("", "");
+		// adapterPropertyViewer.setInput(resource.getParameters());
+		// }
+		// });
+		// addProperty.setText("Add new parameter");
+		//
+		// MenuItem deleteProperty = new MenuItem(menu, SWT.NONE);
+		// deleteProperty.addSelectionListener(new SelectionAdapter() {
+		// @Override
+		// public void widgetSelected(SelectionEvent e) {
+		// // TODO delete current selection
+		// }
+		// });
+		// deleteProperty.setText("Delete parameter");
+		adapterPropertyViewer.setLabelProvider(new PropertyLabelProvider());
+		adapterPropertyViewer.setContentProvider(new PropertyContentProvider());
+		sashForm.setWeights(new int[] { 1, 1 });
 
 		TabItem tbtmProvenanceData = new TabItem(tabFolder, SWT.NONE);
 		tbtmProvenanceData.setText("Documentation");
@@ -637,7 +637,7 @@ public class ResourceEditor extends ViewPart {
 		authors.setLayoutData(gd_authors);
 
 		Group grpThematicLocators = new Group(composite_1, SWT.NONE);
-		grpThematicLocators.setLayout(new GridLayout(4, false));
+		grpThematicLocators.setLayout(new GridLayout(5, false));
 		grpThematicLocators.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		grpThematicLocators.setText("Thematic locators");
 
@@ -645,21 +645,26 @@ public class ResourceEditor extends ViewPart {
 		lblTheme.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblTheme.setText("Theme");
 
-		Combo theme = new Combo(grpThematicLocators, SWT.READ_ONLY);
+		Combo theme = new Combo(grpThematicLocators, SWT.NONE);
 		theme.setItems(new String[] { "Agriculture", "Behavior and social", "Biology", "Chemistry", "Conservation",
 				"Demography", "Earth", "Ecology", "Economics", "Engineering", "Geography", "Geology", "Hydrology",
 				"Infrastructure", "Landcover", "Physical and climatic", "Policy", "Socio-ecological", "Soil" });
 		theme.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		theme.select(0);
 
 		Label lblGeographicRegion = new Label(grpThematicLocators, SWT.NONE);
 		lblGeographicRegion.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblGeographicRegion.setText("Geographic region");
+		lblGeographicRegion.setText("Geographical region");
 
-		Combo geoRegion = new Combo(grpThematicLocators, SWT.READ_ONLY);
+		Combo geoRegion = new Combo(grpThematicLocators, SWT.NONE);
 		geoRegion.setItems(new String[] { "Non-spatial", "Global" });
 		geoRegion.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		geoRegion.select(0);
+
+		Label lblNewLabel_5 = new Label(grpThematicLocators, SWT.NONE);
+		lblNewLabel_5.setToolTipText(
+				"These fields are open for new entries, but please endeavor to reuse existing keywords.\n"
+						+ "In the geographic location, please start at the continental level and if more specific tags are needed,\n"
+						+ "separate them with forward slashes: e.g. Europe/France/Gascogne");
+		lblNewLabel_5.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
 
 		Label lblKeywords = new Label(composite_1, SWT.NONE);
 		lblKeywords.setText("Keywords");
@@ -740,13 +745,13 @@ public class ResourceEditor extends ViewPart {
 	}
 
 	private void save() {
-		
+
 		ResourceCRUDRequest request = new ResourceCRUDRequest();
 		request.setOperation(CRUDOperation.UPDATE);
 		request.getParameters().putAll(values);
 		request.getMetadata().putAll(metadata);
 		request.getResourceUrns().add(resource.getUrn());
-		
+
 		Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.UpdateResource, request);
 
 		setDirty(false);

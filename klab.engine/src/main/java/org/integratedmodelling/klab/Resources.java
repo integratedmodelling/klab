@@ -154,18 +154,23 @@ public enum Resources implements IResourceService {
 	 * change.
 	 */
 	private IWorkspace local;
+	private IProject localProject;
 
-	/**
-	 * Temporary, ephemeral workspace only meant to host the common project for
-	 * on-demand namespaces.
-	 * 
-	 */
-	private IWorkspace common;
+//	/**
+//	 * Temporary, ephemeral workspace only meant to host the common project for
+//	 * on-demand namespaces.
+//	 * 
+//	 */
+//	private IWorkspace common;
 
 	private Resources() {
 		Services.INSTANCE.registerService(this, IResourceService.class);
 	}
 
+	public IProject getLocalProject() {
+		return this.localProject;
+	}
+	
 	@Override
 	public IWorkspace getLocalWorkspace() {
 		return local;
@@ -257,6 +262,10 @@ public enum Resources implements IResourceService {
 	public boolean loadLocalWorkspace(IMonitor monitor) {
 		try {
 			this.loader = getLocalWorkspace().load(this.loader, monitor);
+			this.localProject = getLocalWorkspace().getProject(INTERNAL_PROJECT_ID);
+			if (this.localProject == null) {
+				this.localProject = getLocalWorkspace().createProject(INTERNAL_PROJECT_ID, monitor);
+			}
 			return true;
 		} catch (Throwable e) {
 			Logging.INSTANCE.error(e.getLocalizedMessage());

@@ -30,6 +30,7 @@ import org.integratedmodelling.kim.ui.internal.KimActivator;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.services.IResourceService;
 import org.integratedmodelling.klab.client.http.EngineMonitor;
 import org.integratedmodelling.klab.ide.kim.KimData;
 import org.integratedmodelling.klab.ide.model.Klab;
@@ -285,7 +286,7 @@ public class Activator extends AbstractUIPlugin {
 			List<ProjectReference> missingProjects = new ArrayList<>();
 			Set<String> localProjectIds = new HashSet<>();
 			for (ProjectReference project : this.engineStatusMonitor.getCapabilities().getLocalWorkspaceProjects()) {
-				if (Eclipse.INSTANCE.getProject(project.getName()) == null) {
+				if (Eclipse.INSTANCE.getProject(project.getName()) == null && !project.getName().equals(IResourceService.INTERNAL_PROJECT_ID)) {
 					missingProjects.add(project);
 				}
 				localProjectIds.add(project.getName());

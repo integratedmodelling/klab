@@ -49,6 +49,8 @@ import org.integratedmodelling.klab.utils.Pair;
  */
 public interface IResourceService {
 
+	public static final String INTERNAL_PROJECT_ID = "local";
+	
     /**
      * An importer for programmatic import of local artifact.
      * 
