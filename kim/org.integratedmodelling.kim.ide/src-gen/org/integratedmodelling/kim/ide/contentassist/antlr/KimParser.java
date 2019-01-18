@@ -94,8 +94,8 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getObservableSemanticsAccess().getAlternatives_3_4_0_1(), "rule__ObservableSemantics__Alternatives_3_4_0_1");
 					put(grammarAccess.getObservableSemanticsAccess().getAlternatives_3_5(), "rule__ObservableSemantics__Alternatives_3_5");
 					put(grammarAccess.getObservableSemanticsAccess().getNameAlternatives_3_7_1_0(), "rule__ObservableSemantics__NameAlternatives_3_7_1_0");
-					put(grammarAccess.getDependencyAccess().getAlternatives(), "rule__Dependency__Alternatives");
-					put(grammarAccess.getDependencyAccess().getModelReferenceAlternatives_0_0(), "rule__Dependency__ModelReferenceAlternatives_0_0");
+					put(grammarAccess.getDependencyAccess().getAlternatives_1(), "rule__Dependency__Alternatives_1");
+					put(grammarAccess.getDependencyAccess().getModelReferenceAlternatives_1_0_0(), "rule__Dependency__ModelReferenceAlternatives_1_0_0");
 					put(grammarAccess.getConceptReferenceAccess().getAlternatives(), "rule__ConceptReference__Alternatives");
 					put(grammarAccess.getConceptReferenceAccess().getTemplateTypeAlternatives_2_0_0(), "rule__ConceptReference__TemplateTypeAlternatives_2_0_0");
 					put(grammarAccess.getConceptReferenceAccess().getAlternatives_2_1(), "rule__ConceptReference__Alternatives_2_1");
@@ -329,6 +329,7 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getObservableSemanticsAccess().getGroup_3_4_1(), "rule__ObservableSemantics__Group_3_4_1__0");
 					put(grammarAccess.getObservableSemanticsAccess().getGroup_3_6(), "rule__ObservableSemantics__Group_3_6__0");
 					put(grammarAccess.getObservableSemanticsAccess().getGroup_3_7(), "rule__ObservableSemantics__Group_3_7__0");
+					put(grammarAccess.getDependencyAccess().getGroup(), "rule__Dependency__Group__0");
 					put(grammarAccess.getConceptDeclarationAccess().getGroup(), "rule__ConceptDeclaration__Group__0");
 					put(grammarAccess.getConceptDeclarationAccess().getGroup_1_0(), "rule__ConceptDeclaration__Group_1_0__0");
 					put(grammarAccess.getConceptDeclarationAccess().getGroup_1_1(), "rule__ConceptDeclaration__Group_1_1__0");
@@ -730,8 +731,9 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getObservableSemanticsAccess().getFromAssignment_3_6_0(), "rule__ObservableSemantics__FromAssignment_3_6_0");
 					put(grammarAccess.getObservableSemanticsAccess().getToAssignment_3_6_2(), "rule__ObservableSemantics__ToAssignment_3_6_2");
 					put(grammarAccess.getObservableSemanticsAccess().getNameAssignment_3_7_1(), "rule__ObservableSemantics__NameAssignment_3_7_1");
-					put(grammarAccess.getDependencyAccess().getModelReferenceAssignment_0(), "rule__Dependency__ModelReferenceAssignment_0");
-					put(grammarAccess.getDependencyAccess().getObservableAssignment_1(), "rule__Dependency__ObservableAssignment_1");
+					put(grammarAccess.getDependencyAccess().getAnnotationsAssignment_0(), "rule__Dependency__AnnotationsAssignment_0");
+					put(grammarAccess.getDependencyAccess().getModelReferenceAssignment_1_0(), "rule__Dependency__ModelReferenceAssignment_1_0");
+					put(grammarAccess.getDependencyAccess().getObservableAssignment_1_1(), "rule__Dependency__ObservableAssignment_1_1");
 					put(grammarAccess.getConceptDeclarationAccess().getMainAssignment_0(), "rule__ConceptDeclaration__MainAssignment_0");
 					put(grammarAccess.getConceptDeclarationAccess().getInherencyAssignment_1_0_1(), "rule__ConceptDeclaration__InherencyAssignment_1_0_1");
 					put(grammarAccess.getConceptDeclarationAccess().getMotivationAssignment_1_1_1(), "rule__ConceptDeclaration__MotivationAssignment_1_1_1");

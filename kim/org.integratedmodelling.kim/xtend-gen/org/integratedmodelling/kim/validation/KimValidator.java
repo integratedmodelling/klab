@@ -407,8 +407,7 @@ public class KimValidator extends AbstractKimValidator {
         }
         KimObservable observable = _xifexpression_3;
         Kim.ConceptDescriptor definition = observable.getDescriptor();
-        boolean _notEquals = (!Objects.equal(definition, null));
-        if (_notEquals) {
+        if ((definition != null)) {
           if ((definition.isUndefined() && ((obsIdx > 0) || (interpretedRole == null)))) {
             this.error("Observable has undefined semantics", KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.BAD_OBSERVABLE);
             ok = false;
@@ -490,6 +489,21 @@ public class KimValidator extends AbstractKimValidator {
               ok = false;
             } else {
               dependencies.add(observable);
+            }
+          }
+        }
+        if ((observable != null)) {
+          int j = 0;
+          IKimNamespace ns = Kim.INSTANCE.getNamespace(model, true);
+          EList<Annotation> _annotations = cd.getAnnotations();
+          for (final Annotation annotation : _annotations) {
+            {
+              final KimAnnotation ann = new KimAnnotation(annotation, ns, observable);
+              java.util.List<KimNotification> _validateUsage = ann.validateUsage(ann);
+              for (final KimNotification notification : _validateUsage) {
+                this.notify(notification, statement, KimPackage.Literals.DEPENDENCY__ANNOTATIONS, j);
+              }
+              j++;
             }
           }
         }

@@ -4,6 +4,8 @@
  */
 package org.integratedmodelling.kim.kim;
 
+import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -15,6 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kim.kim.Dependency#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Dependency#getModelReference <em>Model Reference</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Dependency#getObservable <em>Observable</em>}</li>
  * </ul>
@@ -25,6 +28,22 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Dependency extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Annotations</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.Annotation}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Annotations</em>' containment reference list isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Annotations</em>' containment reference list.
+   * @see org.integratedmodelling.kim.kim.KimPackage#getDependency_Annotations()
+   * @model containment="true"
+   * @generated
+   */
+  EList<Annotation> getAnnotations();
+
   /**
    * Returns the value of the '<em><b>Model Reference</b></em>' attribute.
    * <!-- begin-user-doc -->

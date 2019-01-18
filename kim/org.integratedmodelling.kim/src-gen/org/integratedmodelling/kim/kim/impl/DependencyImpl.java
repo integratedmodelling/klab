@@ -4,8 +4,12 @@
  */
 package org.integratedmodelling.kim.kim.impl;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -13,6 +17,10 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
+
+import org.integratedmodelling.kim.kim.Annotation;
 import org.integratedmodelling.kim.kim.Dependency;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
@@ -25,6 +33,7 @@ import org.integratedmodelling.kim.kim.ObservableSemantics;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#getModelReference <em>Model Reference</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#getObservable <em>Observable</em>}</li>
  * </ul>
@@ -33,6 +42,16 @@ import org.integratedmodelling.kim.kim.ObservableSemantics;
  */
 public class DependencyImpl extends MinimalEObjectImpl.Container implements Dependency
 {
+  /**
+   * The cached value of the '{@link #getAnnotations() <em>Annotations</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getAnnotations()
+   * @generated
+   * @ordered
+   */
+  protected EList<Annotation> annotations;
+
   /**
    * The default value of the '{@link #getModelReference() <em>Model Reference</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -82,6 +101,20 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
   protected EClass eStaticClass()
   {
     return KimPackage.Literals.DEPENDENCY;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EList<Annotation> getAnnotations()
+  {
+    if (annotations == null)
+    {
+      annotations = new EObjectContainmentEList<Annotation>(Annotation.class, this, KimPackage.DEPENDENCY__ANNOTATIONS);
+    }
+    return annotations;
   }
 
   /**
@@ -165,6 +198,8 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
   {
     switch (featureID)
     {
+      case KimPackage.DEPENDENCY__ANNOTATIONS:
+        return ((InternalEList<?>)getAnnotations()).basicRemove(otherEnd, msgs);
       case KimPackage.DEPENDENCY__OBSERVABLE:
         return basicSetObservable(null, msgs);
     }
@@ -181,6 +216,8 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
   {
     switch (featureID)
     {
+      case KimPackage.DEPENDENCY__ANNOTATIONS:
+        return getAnnotations();
       case KimPackage.DEPENDENCY__MODEL_REFERENCE:
         return getModelReference();
       case KimPackage.DEPENDENCY__OBSERVABLE:
@@ -194,11 +231,16 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
    * <!-- end-user-doc -->
    * @generated
    */
+  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
     switch (featureID)
     {
+      case KimPackage.DEPENDENCY__ANNOTATIONS:
+        getAnnotations().clear();
+        getAnnotations().addAll((Collection<? extends Annotation>)newValue);
+        return;
       case KimPackage.DEPENDENCY__MODEL_REFERENCE:
         setModelReference((String)newValue);
         return;
@@ -219,6 +261,9 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
   {
     switch (featureID)
     {
+      case KimPackage.DEPENDENCY__ANNOTATIONS:
+        getAnnotations().clear();
+        return;
       case KimPackage.DEPENDENCY__MODEL_REFERENCE:
         setModelReference(MODEL_REFERENCE_EDEFAULT);
         return;
@@ -239,6 +284,8 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
   {
     switch (featureID)
     {
+      case KimPackage.DEPENDENCY__ANNOTATIONS:
+        return annotations != null && !annotations.isEmpty();
       case KimPackage.DEPENDENCY__MODEL_REFERENCE:
         return MODEL_REFERENCE_EDEFAULT == null ? modelReference != null : !MODEL_REFERENCE_EDEFAULT.equals(modelReference);
       case KimPackage.DEPENDENCY__OBSERVABLE:

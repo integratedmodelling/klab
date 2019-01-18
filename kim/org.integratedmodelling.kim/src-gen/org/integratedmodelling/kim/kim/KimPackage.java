@@ -1968,13 +1968,22 @@ public interface KimPackage extends EPackage
   int DEPENDENCY = 26;
 
   /**
+   * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DEPENDENCY__ANNOTATIONS = 0;
+
+  /**
    * The feature id for the '<em><b>Model Reference</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int DEPENDENCY__MODEL_REFERENCE = 0;
+  int DEPENDENCY__MODEL_REFERENCE = 1;
 
   /**
    * The feature id for the '<em><b>Observable</b></em>' containment reference.
@@ -1983,7 +1992,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DEPENDENCY__OBSERVABLE = 1;
+  int DEPENDENCY__OBSERVABLE = 2;
 
   /**
    * The number of structural features of the '<em>Dependency</em>' class.
@@ -1992,7 +2001,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DEPENDENCY_FEATURE_COUNT = 2;
+  int DEPENDENCY_FEATURE_COUNT = 3;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl <em>Concept Declaration</em>}' class.
@@ -6135,6 +6144,17 @@ public interface KimPackage extends EPackage
   EClass getDependency();
 
   /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.Dependency#getAnnotations <em>Annotations</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Annotations</em>'.
+   * @see org.integratedmodelling.kim.kim.Dependency#getAnnotations()
+   * @see #getDependency()
+   * @generated
+   */
+  EReference getDependency_Annotations();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Dependency#getModelReference <em>Model Reference</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -9966,6 +9986,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EClass DEPENDENCY = eINSTANCE.getDependency();
+
+    /**
+     * The meta object literal for the '<em><b>Annotations</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference DEPENDENCY__ANNOTATIONS = eINSTANCE.getDependency_Annotations();
 
     /**
      * The meta object literal for the '<em><b>Model Reference</b></em>' attribute feature.

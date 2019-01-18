@@ -417,9 +417,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	classificationProperty=PropertyId))? ('lookup' ('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (','
 		//	lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')?
 		//	'into' (lookupTable=Table | lookupTableId=UPPERCASE_ID))?
-		//	actions+=ActionSpecification* ('metadata' metadata=Metadata)?
-		//	//		 ('with' 'documentation' documentation=Documentation)? 
-		//;
+		//	actions+=ActionSpecification* ('metadata' metadata=Metadata)?;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//instantiator?='each'? ((urns+=Urn (',' urns+=Urn)* | function=Function | number=Number | boolean=('true' | 'false') |
@@ -3740,38 +3738,50 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	public class DependencyElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.Dependency");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Assignment cModelReferenceAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
-		private final Alternatives cModelReferenceAlternatives_0_0 = (Alternatives)cModelReferenceAssignment_0.eContents().get(0);
-		private final RuleCall cModelReferenceLOWERCASE_IDTerminalRuleCall_0_0_0 = (RuleCall)cModelReferenceAlternatives_0_0.eContents().get(0);
-		private final RuleCall cModelReferencePathNameParserRuleCall_0_0_1 = (RuleCall)cModelReferenceAlternatives_0_0.eContents().get(1);
-		private final Assignment cObservableAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
-		private final RuleCall cObservableObservableSemanticsParserRuleCall_1_0 = (RuleCall)cObservableAssignment_1.eContents().get(0);
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cAnnotationsAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cAnnotationsAnnotationParserRuleCall_0_0 = (RuleCall)cAnnotationsAssignment_0.eContents().get(0);
+		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
+		private final Assignment cModelReferenceAssignment_1_0 = (Assignment)cAlternatives_1.eContents().get(0);
+		private final Alternatives cModelReferenceAlternatives_1_0_0 = (Alternatives)cModelReferenceAssignment_1_0.eContents().get(0);
+		private final RuleCall cModelReferenceLOWERCASE_IDTerminalRuleCall_1_0_0_0 = (RuleCall)cModelReferenceAlternatives_1_0_0.eContents().get(0);
+		private final RuleCall cModelReferencePathNameParserRuleCall_1_0_0_1 = (RuleCall)cModelReferenceAlternatives_1_0_0.eContents().get(1);
+		private final Assignment cObservableAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
+		private final RuleCall cObservableObservableSemanticsParserRuleCall_1_1_0 = (RuleCall)cObservableAssignment_1_1.eContents().get(0);
 		
 		//Dependency:
-		//	modelReference=(LOWERCASE_ID | PathName) | observable=ObservableSemantics;
+		//	annotations+=Annotation* (modelReference=(LOWERCASE_ID | PathName) | observable=ObservableSemantics);
 		@Override public ParserRule getRule() { return rule; }
 		
+		//annotations+=Annotation* (modelReference=(LOWERCASE_ID | PathName) | observable=ObservableSemantics)
+		public Group getGroup() { return cGroup; }
+		
+		//annotations+=Annotation*
+		public Assignment getAnnotationsAssignment_0() { return cAnnotationsAssignment_0; }
+		
+		//Annotation
+		public RuleCall getAnnotationsAnnotationParserRuleCall_0_0() { return cAnnotationsAnnotationParserRuleCall_0_0; }
+		
 		//modelReference=(LOWERCASE_ID | PathName) | observable=ObservableSemantics
-		public Alternatives getAlternatives() { return cAlternatives; }
+		public Alternatives getAlternatives_1() { return cAlternatives_1; }
 		
 		//modelReference=(LOWERCASE_ID | PathName)
-		public Assignment getModelReferenceAssignment_0() { return cModelReferenceAssignment_0; }
+		public Assignment getModelReferenceAssignment_1_0() { return cModelReferenceAssignment_1_0; }
 		
 		//(LOWERCASE_ID | PathName)
-		public Alternatives getModelReferenceAlternatives_0_0() { return cModelReferenceAlternatives_0_0; }
+		public Alternatives getModelReferenceAlternatives_1_0_0() { return cModelReferenceAlternatives_1_0_0; }
 		
 		//LOWERCASE_ID
-		public RuleCall getModelReferenceLOWERCASE_IDTerminalRuleCall_0_0_0() { return cModelReferenceLOWERCASE_IDTerminalRuleCall_0_0_0; }
+		public RuleCall getModelReferenceLOWERCASE_IDTerminalRuleCall_1_0_0_0() { return cModelReferenceLOWERCASE_IDTerminalRuleCall_1_0_0_0; }
 		
 		//PathName
-		public RuleCall getModelReferencePathNameParserRuleCall_0_0_1() { return cModelReferencePathNameParserRuleCall_0_0_1; }
+		public RuleCall getModelReferencePathNameParserRuleCall_1_0_0_1() { return cModelReferencePathNameParserRuleCall_1_0_0_1; }
 		
 		//observable=ObservableSemantics
-		public Assignment getObservableAssignment_1() { return cObservableAssignment_1; }
+		public Assignment getObservableAssignment_1_1() { return cObservableAssignment_1_1; }
 		
 		//ObservableSemantics
-		public RuleCall getObservableObservableSemanticsParserRuleCall_1_0() { return cObservableObservableSemanticsParserRuleCall_1_0; }
+		public RuleCall getObservableObservableSemanticsParserRuleCall_1_1_0() { return cObservableObservableSemanticsParserRuleCall_1_1_0; }
 	}
 	public class ConceptDeclarationElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.ConceptDeclaration");
@@ -9334,9 +9344,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	classificationProperty=PropertyId))? ('lookup' ('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (','
 	//	lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')?
 	//	'into' (lookupTable=Table | lookupTableId=UPPERCASE_ID))?
-	//	actions+=ActionSpecification* ('metadata' metadata=Metadata)?
-	//	//		 ('with' 'documentation' documentation=Documentation)? 
-	//;
+	//	actions+=ActionSpecification* ('metadata' metadata=Metadata)?;
 	public ModelBodyStatementElements getModelBodyStatementAccess() {
 		return pModelBodyStatement;
 	}
@@ -9696,7 +9704,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Dependency:
-	//	modelReference=(LOWERCASE_ID | PathName) | observable=ObservableSemantics;
+	//	annotations+=Annotation* (modelReference=(LOWERCASE_ID | PathName) | observable=ObservableSemantics);
 	public DependencyElements getDependencyAccess() {
 		return pDependency;
 	}

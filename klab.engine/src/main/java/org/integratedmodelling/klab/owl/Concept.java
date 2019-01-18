@@ -534,7 +534,7 @@ public class Concept extends Knowledge implements IConcept {
         return visitor;
     }
 
-    public synchronized Map<IProperty, String> getAnnotations() {
+    public synchronized Map<IProperty, String> getAnnotationProperties() {
         HashMap<IProperty, String> ret = new HashMap<>();
         if (getOntology() == null)
             return ret;
