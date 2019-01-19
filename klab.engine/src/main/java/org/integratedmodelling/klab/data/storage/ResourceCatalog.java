@@ -125,7 +125,7 @@ public class ResourceCatalog implements IResourceCatalog {
             ret = new File(destinationProject.getRoot() + File.separator + resPath);
             ret.mkdir();
             ResourceReference ref = ((Resource) value).getReference();
-            ref.setLocalPath(destinationProject.getName() + File.separator + resPath);
+            ref.setLocalPath(destinationProject.getName() + "/" + resPath);
             List<String> localfiles = new ArrayList<>();
             for (String localfile : ref.getLocalPaths()) {
                 if (localfile.startsWith(value.getLocalProjectName())) {

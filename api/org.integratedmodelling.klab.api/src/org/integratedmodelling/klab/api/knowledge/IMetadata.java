@@ -185,6 +185,11 @@ public interface IMetadata extends IParameters<String> {
 
 	public static String IM_KEYWORDS = "im:keywords";
 
+    public static String IM_THEMATIC_AREA = "im:thematic-area";
+
+    public static String IM_GEOGRAPHIC_AREA = "im:geographic-area";
+
+	
 	/**
 	 * ISO639-2 http://www.w3.org/TR/NOTE-datetime RFC1766
 	 * http://www.ietf.org/rfc/rfc1766.txt
@@ -205,31 +210,6 @@ public interface IMetadata extends IParameters<String> {
 
 	/** The Constant IM_MAX_TEMPORAL_SCALE. */
 	public static final String IM_MAX_TEMPORAL_SCALE = "im:max-temporal-scale";
-
-	/** Bounding box - expected to point to a PolygonValue. */
-	public static final String GEOSPACE_BOUNDING_BOX = "geospace:hasBoundingBox";
-
-	/** The Constant STATE_HISTOGRAM. */
-	/*
-	 * fields for state. These end up in metadata at the server side, and are
-	 * serialized for transfer to clients.
-	 */
-	public static final String STATE_HISTOGRAM = "state:histogram";
-
-	/** The Constant STATE_BOUNDARIES. */
-	public static final String STATE_BOUNDARIES = "state:boundaries";
-
-	/** The Constant STATE_COLORMAP. */
-	public static final String STATE_COLORMAP = "state:colormap";
-
-	/** The Constant STATE_DISPLAY_DATA. */
-	public static final String STATE_DISPLAY_DATA = "state:display-data";
-
-	/** The Constant STATE_CLASS. */
-	public static final String STATE_CLASS = "state:class";
-
-	/** The Constant STATE_STATED_BOUNDARIES. */
-	public static final String STATE_STATED_BOUNDARIES = "state:stated-boundaries";
 
 	/** The Constant KLAB_LINE_COLOR. */
 	/*

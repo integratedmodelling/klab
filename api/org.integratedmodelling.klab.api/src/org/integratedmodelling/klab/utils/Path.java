@@ -96,4 +96,17 @@ public class Path {
         return ret;
     }
 
+    public static String getFrom(String path, int n, char separatpr) {
+        String s = path;
+        for (int i = 0; i < n; i++ ) {
+            int idx = s.indexOf(separatpr);
+            if (idx >= 0) {
+                s = s.substring(idx);
+            } else {
+                return null;
+            }
+        }
+        return s;
+    }
+
 }
