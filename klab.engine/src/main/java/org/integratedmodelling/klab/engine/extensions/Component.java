@@ -14,6 +14,7 @@ import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
@@ -38,6 +39,7 @@ public class Component implements IComponent {
 	boolean initialized;
 	Version version;
 	Map<String, IPrototype> services = new HashMap<>();
+    Map<String, IPrototype> annotations = new HashMap<>();
 
 	private String initMethod = null;
 	private String setupMethod = null;
@@ -126,6 +128,17 @@ public class Component implements IComponent {
 					}
 				}
 			}
+	         for (Resource res : patternResolver.getResources("components/" + name + "/annotations/*.kdl")) {
+	                try (InputStream input = res.getInputStream()) {
+	                    IKdlDataflow declaration = Dataflows.INSTANCE.declare(input);
+	                    String namespace = declaration.getPackageName();
+	                    for (IKdlActuator actuator : declaration.getActuators()) {
+	                        Prototype prototype = new Prototype(actuator, namespace);
+	                        Annotations.INSTANCE.register(prototype);
+	                        annotations.put(prototype.getName(), prototype);
+	                    }
+	                }
+	            }
 		} catch (KlabException e) {
 			throw new KlabValidationException(e);
 		} catch (Throwable e) {

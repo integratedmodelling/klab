@@ -99,7 +99,7 @@ ACTOR:
 	'partition';
 	
 TARGET:
-	'models' | 'concepts' | 'observers' | 'definitions';
+	'models' | 'concepts' | 'observers' | 'definitions' | 'dependencies';
 
 ClassifierRHS:
 	(boolean='true' | boolean='false') | 

@@ -2,6 +2,7 @@ package org.integratedmodelling.klab;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
@@ -90,6 +91,33 @@ public enum Annotations implements IAnnotationService {
 		}
 		return null;
 	}
+	
+	   public void declareServices(InputStream manifest) throws KlabException {
+
+	        IKdlDataflow declaration = Dataflows.INSTANCE.declare(manifest);
+
+	        String namespace = declaration.getPackageName();
+	        for (IKdlActuator actuator : declaration.getActuators()) {
+	            IPrototype prototype = new Prototype(actuator, namespace);
+	            prototypes.put(prototype.getName(), prototype);
+	            if (prototype.getType() != IArtifact.Type.ANNOTATION) {
+	                throw new KlabInternalErrorException(
+	                        "annotation prototype for " + prototype.getName() + " does not specify an annotation");
+	            } else if (prototype.getExecutorClass() != null) {
+	                try {
+	                    Object handler = prototype.getExecutorClass().getDeclaredConstructor().newInstance();
+	                    if (handler instanceof Handler) {
+	                        handlers.put(prototype.getName(), (Handler) handler);
+	                    } else {
+	                        throw new KlabInternalErrorException("error creating handler for " + prototype.getName()
+	                                + ": handler is not an instance of Annotations.Handler");
+	                    }
+	                } catch (Exception e) {
+	                    throw new KlabInternalErrorException(e);
+	                }
+	            }
+	        }
+	    }
 
 	public void declareServices(URL manifest) throws KlabException {
 
@@ -227,5 +255,9 @@ public enum Annotations implements IAnnotationService {
 			}
 		}
 	}
+
+    public void register(Prototype prototype) {
+        prototypes.put(prototype.getName(), prototype);
+    }
 
 }

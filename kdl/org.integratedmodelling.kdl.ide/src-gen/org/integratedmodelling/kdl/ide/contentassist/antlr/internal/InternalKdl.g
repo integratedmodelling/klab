@@ -1404,6 +1404,12 @@ rule__TARGET__Alternatives
 		'definitions'
 		{ after(grammarAccess.getTARGETAccess().getDefinitionsKeyword_3()); }
 	)
+	|
+	(
+		{ before(grammarAccess.getTARGETAccess().getDependenciesKeyword_4()); }
+		'dependencies'
+		{ after(grammarAccess.getTARGETAccess().getDependenciesKeyword_4()); }
+	)
 ;
 finally {
 	restoreStackSize(stackSize);

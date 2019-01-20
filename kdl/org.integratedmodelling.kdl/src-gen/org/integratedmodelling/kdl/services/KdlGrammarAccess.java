@@ -1184,12 +1184,13 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cConceptsKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
 		private final Keyword cObserversKeyword_2 = (Keyword)cAlternatives.eContents().get(2);
 		private final Keyword cDefinitionsKeyword_3 = (Keyword)cAlternatives.eContents().get(3);
+		private final Keyword cDependenciesKeyword_4 = (Keyword)cAlternatives.eContents().get(4);
 		
 		//TARGET:
-		//	'models' | 'concepts' | 'observers' | 'definitions';
+		//	'models' | 'concepts' | 'observers' | 'definitions' | 'dependencies';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'models' | 'concepts' | 'observers' | 'definitions'
+		//'models' | 'concepts' | 'observers' | 'definitions' | 'dependencies'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//'models'
@@ -1203,6 +1204,9 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//'definitions'
 		public Keyword getDefinitionsKeyword_3() { return cDefinitionsKeyword_3; }
+		
+		//'dependencies'
+		public Keyword getDependenciesKeyword_4() { return cDependenciesKeyword_4; }
 	}
 	public class ClassifierRHSElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.ClassifierRHS");
@@ -3404,7 +3408,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//TARGET:
-	//	'models' | 'concepts' | 'observers' | 'definitions';
+	//	'models' | 'concepts' | 'observers' | 'definitions' | 'dependencies';
 	public TARGETElements getTARGETAccess() {
 		return pTARGET;
 	}

@@ -515,15 +515,6 @@ public class ResourceEditor extends ViewPart {
 
         adapterPropertyViewer = new TableViewer(grpAdapterData, SWT.BORDER | SWT.FULL_SELECTION);
         propertyTable = adapterPropertyViewer.getTable();
-        propertyTable.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseDown(MouseEvent e) {
-                if (propertyTable.getSelection().length == 0 && propertyTable.getSelectionIndex() < 0) {
-                    // click on empty row
-                    System.out.println("CLICCKACEEC");
-                }
-            }
-        });
         propertyTable.setLinesVisible(true);
         propertyTable.setHeaderVisible(true);
 

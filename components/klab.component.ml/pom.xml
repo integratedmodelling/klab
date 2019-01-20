@@ -11,7 +11,7 @@
 	<name>klab.component.ml</name>
 	<description>WEKA Machine Learning component for k.LAB</description>
 	<dependencies>
-
+	
 		<!-- https://mvnrepository.com/artifact/nz.ac.waikato.cms.weka/weka-stable -->
 		<dependency>
 			<groupId>nz.ac.waikato.cms.weka</groupId>

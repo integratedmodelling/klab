@@ -56,20 +56,28 @@ public interface ITime extends IExtent {
 	}
 
 	static public enum Type {
-		/**
+		
+	    /**
 		 * Should be used rarely: generic focus on a period without temporally locating
 		 * it. In every respect like using 'during' semantics, but allowing fuzzy
 		 * matches by period (e.g. closer to certain months) for resolution.
 		 */
 		GENERIC,
+		
 		/**
 		 * Specific time period of any lenght, single multiplicity
 		 */
 		SPECIFIC,
+		
 		/**
 		 * Time grid.
 		 */
-		GRID
+		GRID,
+		
+		/**
+		 * Real time, which is necessarily a grid, potentially irregular.
+		 */
+		REAL
 	}
 
 	/**
@@ -125,8 +133,7 @@ public interface ITime extends IExtent {
 	ITimeDuration getStep();
 
 	/**
-	 * Resolution of time observation according to this extent. TODO needs
-	 * multiplier
+	 * Resolution of time observation according to this extent.
 	 * 
 	 * @return
 	 */

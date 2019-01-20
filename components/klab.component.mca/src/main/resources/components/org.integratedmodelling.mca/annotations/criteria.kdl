@@ -1,0 +1,23 @@
+/**
+ * This file defines the contract for all core annotations recognized in k.IM. Those with a
+ * 'class' specification also have handlers that perform specific tasks when the annotations
+ * are encountered.
+ */
+@klab 0.10.0
+@version 0.10.0
+
+annotation cost for dependencies
+	"The reliability score forms part of the strategy used by k.LAB to rank models during resolution. The value 
+     is used as part of the set of subjective rankings, which are combined using a multiple criteria algorithm
+     and added to the remaining, objective ranking criteria. When not specified, a model has an implicit value
+     of 50."
+{
+}
+
+annotation benefit for dependencies
+	"The reliability score forms part of the strategy used by k.LAB to rank models during resolution. The value 
+     is used as part of the set of subjective rankings, which are combined using a multiple criteria algorithm
+     and added to the remaining, objective ranking criteria. When not specified, a model has an implicit value
+     of 50."
+{
+}
