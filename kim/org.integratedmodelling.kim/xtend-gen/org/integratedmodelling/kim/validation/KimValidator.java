@@ -501,7 +501,7 @@ public class KimValidator extends AbstractKimValidator {
               final KimAnnotation ann = new KimAnnotation(annotation, ns, observable);
               java.util.List<KimNotification> _validateUsage = ann.validateUsage(ann);
               for (final KimNotification notification : _validateUsage) {
-                this.notify(notification, statement, KimPackage.Literals.DEPENDENCY__ANNOTATIONS, j);
+                this.notify(notification, cd, KimPackage.Literals.DEPENDENCY__ANNOTATIONS, j);
               }
               j++;
             }

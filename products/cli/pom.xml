@@ -26,38 +26,35 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- 
-				TODO this is meant to make JAI load its SPI stuff but actually prevents other
-				packages (h2) from initializing. 
-				
-				<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifestEntries>
-							<Specification-Title>k.LAB software stack</Specification-Title>
-							<Specification-Version>0.10.0</Specification-Version>
-							<Specification-Vendor>integratedmodelling.org</Specification-Vendor>
-							<Implementation-Title>0.10.0</Implementation-Title>
-							<Implementation-Version>0.10.0</Implementation-Version>
-							<Implementation-Vendor>integratedmodelling.org</Implementation-Vendor>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>  -->
+			<!-- TODO this is meant to make JAI load its SPI stuff but actually prevents 
+				other packages (h2) from initializing. <plugin> <groupId>org.apache.maven.plugins</groupId> 
+				<artifactId>maven-jar-plugin</artifactId> <configuration> <archive> <manifestEntries> 
+				<Specification-Title>k.LAB software stack</Specification-Title> <Specification-Version>0.10.0</Specification-Version> 
+				<Specification-Vendor>integratedmodelling.org</Specification-Vendor> <Implementation-Title>0.10.0</Implementation-Title> 
+				<Implementation-Version>0.10.0</Implementation-Version> <Implementation-Vendor>integratedmodelling.org</Implementation-Vendor> 
+				</manifestEntries> </archive> </configuration> </plugin> -->
 		</plugins>
 	</build>
 
 	<dependencies>
-	
+
 		<!-- nd4j backend: TODO improve choice -->
 		<dependency>
 			<groupId>org.nd4j</groupId>
 			<artifactId>nd4j-native-platform</artifactId>
 			<version>${nd4j.version}</version>
 		</dependency>
-	
+
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.component.mca</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.component.ml</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.component.hydrology</artifactId>

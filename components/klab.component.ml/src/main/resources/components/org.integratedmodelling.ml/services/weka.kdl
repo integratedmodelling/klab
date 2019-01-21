@@ -1,0 +1,13 @@
+/**
+ * Interface contextualizers for MCA functions.
+ */
+@klab 0.10.0
+@version 0.10.0
+@namespace im.weka
+
+export number bayesnet
+	""
+	label 'WEKA BayesNet'
+{		
+	// class org.integratedmodelling.ml.weka.BayesNetResolver
+}

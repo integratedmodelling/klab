@@ -371,7 +371,7 @@ public interface IKimConcept extends IKimStatement {
      * All direct observables
      */
     public final static EnumSet<Type> DIRECT_OBSERVABLE_TYPES = EnumSet.of(Type.DIRECT_OBSERVABLE, Type.SUBJECT,
-            Type.AGENT, Type.EVENT, Type.RELATIONSHIP, Type.PROCESS, Type.COUNTABLE, /* FIXME ??? */Type.ABSTRACT);
+            Type.AGENT, Type.EVENT, Type.RELATIONSHIP, Type.PROCESS, Type.CONFIGURATION, Type.COUNTABLE, /* FIXME ??? */Type.ABSTRACT);
 
     /**
      * All base observables

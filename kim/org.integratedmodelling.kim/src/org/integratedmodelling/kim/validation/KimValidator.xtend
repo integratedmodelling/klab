@@ -379,7 +379,7 @@ class KimValidator extends AbstractKimValidator {
 				for (annotation : cd.annotations) {
 					val ann = new KimAnnotation(annotation, ns, observable)
 					for (notification : ann.validateUsage(ann)) {
-						notify(notification, statement, KimPackage.Literals.DEPENDENCY__ANNOTATIONS, j)
+						notify(notification, cd, KimPackage.Literals.DEPENDENCY__ANNOTATIONS, j)
 					}
 					j++
 				}

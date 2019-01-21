@@ -1,5 +1,5 @@
 /**
- * Interface contextualizers for the morphometry functionalities in JGrasstools / Horton machine.
+ * Interface contextualizers for MCA functions.
  */
 @klab 0.10.0
 @version 0.10.0
@@ -10,7 +10,7 @@ export number concordance
 	 observers in the context."
 	 label 'MCA concordance'
 {
-	import number levels
+	optional number levels
 		"The number of levels to discretize continuous variables. Default is 5."
 		
 	class org.integratedmodelling.mca.core.ConcordanceResolver
