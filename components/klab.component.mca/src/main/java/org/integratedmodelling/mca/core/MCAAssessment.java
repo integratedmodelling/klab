@@ -2,6 +2,7 @@ package org.integratedmodelling.mca.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,22 +28,15 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.processing.MapClassifier;
 import org.integratedmodelling.klab.components.geospace.processing.MapClassifier.MapClass;
-import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.mca.AHP;
-import org.integratedmodelling.mca.MCA;
-import org.integratedmodelling.mca.Results;
-import org.integratedmodelling.mca.MCA.CriterionDataType;
-import org.integratedmodelling.mca.MCA.CriterionType;
 import org.integratedmodelling.mca.api.IAlternative;
+import org.integratedmodelling.mca.api.ICriterion;
 import org.integratedmodelling.mca.api.IStakeholder;
 
-import com.sun.xml.bind.marshaller.Messages;
-
-public class Assessment {
+public class MCAAssessment {
 
 	List<Stakeholder> stakeholders = new ArrayList<>();
 	List<Alternative> alternatives = new ArrayList<>();
@@ -371,7 +365,7 @@ public class Assessment {
 		List<IAlternative> initializeAlternatives(ILocator transition) {
 			if (this.alternatives == null) {
 				this.alternatives = new ArrayList<>();
-				for (Alternative a : Assessment.this.alternatives) {
+				for (Alternative a : MCAAssessment.this.alternatives) {
 					if (canValue(a)) {
 						this.alternatives.add(a);
 					} else {
@@ -641,7 +635,7 @@ public class Assessment {
 	public class Criterion {
 
 		private IState state;
-		private CriterionType type;
+		private ICriterion.Type type;
 		private IDirectObservation context;
 
 		@Override
@@ -655,11 +649,33 @@ public class Assessment {
 
 		Criterion(IState state, boolean isBenefit, IDirectObservation context) {
 			this.state = state;
-			this.type = isBenefit ? CriterionType.BENEFIT : CriterionType.COST;
+			this.type = isBenefit ? ICriterion.Type.BENEFIT : ICriterion.Type.COST;
 			this.context = context;
 		}
 	}
 
+	
+	/**
+	 * Build the alternatives from distributed criteria
+	 * 
+	 * @param criteria
+	 * @param stakeholders
+	 */
+	public MCAAssessment(Collection<ICriterion> criteria, Collection<IStakeholder> stakeholders) {
+		
+	}
+	
+	/**
+	 * 
+	 * @param alternatives
+	 * @param criteria
+	 * @param stakeholders
+	 */
+	public MCAAssessment(Collection<IAlternative> alternatives, Collection<ICriterion> criteria, Collection<IStakeholder> stakeholders) {
+//		this.alternatives.addAll(alternatives);
+//		this.stakeholders.addAll(stakeholders);
+	}
+	
 	/**
 	 * The constructor creates all the recognized stakeholders and alternatives. If
 	 * no explicit stakeholders and/or alternatives are set, the context is used for
@@ -677,7 +693,7 @@ public class Assessment {
 	 * @param resolutionContext
 	 * @param monitor
 	 */
-	public Assessment(ISubject context, IObservable output, IRuntimeContext resolutionContext) {
+	public MCAAssessment(ISubject context, IObservable output, IRuntimeContext resolutionContext) {
 
 		this.context = context;
 		this.scale = context.getScale();
@@ -787,17 +803,17 @@ public class Assessment {
 
 	}
 
-	public static CriterionDataType getCriterionDataType(IState state) throws KlabValidationException {
+	public static ICriterion.DataType getCriterionDataType(IState state) throws KlabValidationException {
 
-		CriterionDataType ret = null;
+		ICriterion.DataType ret = null;
 
 		if (state.getType() == IArtifact.Type.NUMBER) {
 			// TODO CHECK discretization
-			ret = CriterionDataType.RATIO;
+			ret = ICriterion.DataType.RATIO;
 		} else if (state.getType() == IArtifact.Type.BOOLEAN) {
-			ret = CriterionDataType.BINARY;
+			ret = ICriterion.DataType.BINARY;
 		} else if (state.getType() == IArtifact.Type.CONCEPT && state.getObservable().is(Type.ORDERING)) {
-			ret = CriterionDataType.ORDINAL;
+			ret = ICriterion.DataType.ORDINAL;
 		}
 
 		if (ret == null) {

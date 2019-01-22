@@ -915,8 +915,8 @@ public enum Kim {
 			return EnumSet.of(Type.DISTANCE, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "process":
 			return EnumSet.of(Type.PROCESS, Type.DIRECT_OBSERVABLE, Type.OBSERVABLE);
-		case "assessment":
-			return EnumSet.of(Type.ASSESSMENT, Type.PROCESS, Type.DIRECT_OBSERVABLE, Type.OBSERVABLE);
+//		case "assessment":
+//			return EnumSet.of(Type.ASSESSMENT, Type.PROCESS, Type.DIRECT_OBSERVABLE, Type.OBSERVABLE);
 		case "agent":
 			return EnumSet.of(Type.AGENT, Type.DIRECT_OBSERVABLE, Type.COUNTABLE, Type.OBSERVABLE);
 		case "event":

@@ -49,7 +49,9 @@ public class MapClassifier {
 			if (mds == null) {
 				return 0;
 			}
-			return 0; // TODO! ((Classification)
+			return 0
+					
+					; // TODO! ((Classification)
 						// mds.discretization).getNumericCode(classifiers.get(mds.index));
 		}
 	}

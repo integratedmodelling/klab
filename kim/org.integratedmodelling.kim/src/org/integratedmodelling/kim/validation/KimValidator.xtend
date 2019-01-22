@@ -527,7 +527,7 @@ class KimValidator extends AbstractKimValidator {
 
 				// the rest
 				descriptor.private = statement.isPrivate || ns.isPrivate
-				descriptor.assessmentModel = statement.model.equals('assess')
+//				descriptor.assessmentModel = statement.model.equals('assess')
 				descriptor.learningModel = statement.model.equals('learn')
 				descriptor.type = switch (statement.model) {
 					case 'number': IKimModel.Type.NUMBER

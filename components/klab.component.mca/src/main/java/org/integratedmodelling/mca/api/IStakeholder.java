@@ -7,12 +7,13 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 public interface IStakeholder {
-
+	
     IDirectObservation getSubject();
 
     /**
      * Return all alternatives retained, making sure everything is initialized.
      * @return alternatives at transition
+     * HMM not sure
      */
     List<IAlternative> getAlternatives(ILocator locator);
 

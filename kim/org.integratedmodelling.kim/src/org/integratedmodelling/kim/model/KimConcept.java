@@ -503,10 +503,10 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		} else if (declaration.isUncertainty()) {
 			observationType = UnarySemanticOperator.UNCERTAINTY;
 			operator = Type.UNCERTAINTY;
-		} else if (declaration.isAssessment()) {
+		}/* else if (declaration.isAssessment()) {
 			observationType = UnarySemanticOperator.ASSESSMENT;
 			operator = Type.ASSESSMENT;
-		} else if (declaration.isMagnitude()) {
+		} */else if (declaration.isMagnitude()) {
 			observationType = UnarySemanticOperator.MAGNITUDE;
 			operator = Type.MAGNITUDE;
 		} else if (declaration.isType()) {

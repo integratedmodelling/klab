@@ -20,7 +20,7 @@
  * 330, Boston, MA 02111-1307, USA. The license is also available at:
  * https://www.gnu.org/licenses/agpl.html
  *******************************************************************************/
-package org.integratedmodelling.mca.evamix;
+package org.integratedmodelling.mca.core;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,9 +30,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.mca.MCA;
-import org.integratedmodelling.mca.Results;
-import org.integratedmodelling.mca.MCA.CriterionDataType;
+import org.integratedmodelling.mca.api.ICriterion;
 
 /**
  * Perform EVAMIX concordance analysis of a set of quantitative and/or
@@ -86,7 +84,7 @@ public class Evamix {
 	 * @throws KlabException
 	 *             in case of invalid inputs.
 	 */
-	public static Results run(double[][] input, double[] criteria_weights, CriterionDataType[] criteria_types,
+	public static Results run(double[][] input, double[] criteria_weights, ICriterion.DataType[] criteria_types,
 			boolean[] criteria_cost_benefit, String[] alternative_names, String[] criteria_names, IMonitor monitor)
 			throws KlabException {
 
@@ -239,10 +237,10 @@ public class Evamix {
 		return ret;
 	}
 
-	private static CriterionDataType[] removeElements(CriterionDataType[] input, ArrayList<Integer> degenerateColumns) {
+	private static ICriterion.DataType[] removeElements(ICriterion.DataType[] input, ArrayList<Integer> degenerateColumns) {
 
 		int finalCriteria = input.length - degenerateColumns.size();
-		CriterionDataType[] ret = new CriterionDataType[finalCriteria];
+		ICriterion.DataType[] ret = new ICriterion.DataType[finalCriteria];
 
 		int col = 0;
 		for (int i = 0; i < input.length; i++) {
@@ -637,16 +635,16 @@ public class Evamix {
 	}
 
 	private static Pair<Collection<Integer>, Collection<Integer>> getCriteriaTypeLists(
-			CriterionDataType[] criteria_types) {
+			ICriterion.DataType[] criteria_types) {
 
 		ArrayList<Integer> qual = new ArrayList<>();
 		ArrayList<Integer> quan = new ArrayList<>();
 
 		int i = 0;
-		for (CriterionDataType s : criteria_types) {
-			if (s == CriterionDataType.RATIO)
+		for (ICriterion.DataType s : criteria_types) {
+			if (s == ICriterion.DataType.RATIO)
 				quan.add(i);
-			else if (s == CriterionDataType.ORDINAL || s == CriterionDataType.BINARY) {
+			else if (s == ICriterion.DataType.ORDINAL || s == ICriterion.DataType.BINARY) {
 				qual.add(i);
 			}
 			i++;
@@ -680,13 +678,13 @@ public class Evamix {
 
 		double[] crit_weights2 = { 1, 1, 1, 1, 1, 3.2, 1, 1, 1, 1, 1, 1, 1.7, 1, 1, 1, 1, 1, 5.4, 1 };
 
-		CriterionDataType[] crit_types = { CriterionDataType.ORDINAL, CriterionDataType.ORDINAL,
-				CriterionDataType.ORDINAL, CriterionDataType.ORDINAL, CriterionDataType.ORDINAL,
-				CriterionDataType.ORDINAL, CriterionDataType.ORDINAL, CriterionDataType.ORDINAL,
-				CriterionDataType.ORDINAL, CriterionDataType.ORDINAL, CriterionDataType.ORDINAL,
-				CriterionDataType.ORDINAL, CriterionDataType.ORDINAL, CriterionDataType.ORDINAL,
-				CriterionDataType.ORDINAL, CriterionDataType.ORDINAL, CriterionDataType.ORDINAL,
-				CriterionDataType.ORDINAL, CriterionDataType.RATIO, CriterionDataType.RATIO };
+		ICriterion.DataType[] crit_types = { ICriterion.DataType.ORDINAL, ICriterion.DataType.ORDINAL,
+				ICriterion.DataType.ORDINAL, ICriterion.DataType.ORDINAL, ICriterion.DataType.ORDINAL,
+				ICriterion.DataType.ORDINAL, ICriterion.DataType.ORDINAL, ICriterion.DataType.ORDINAL,
+				ICriterion.DataType.ORDINAL, ICriterion.DataType.ORDINAL, ICriterion.DataType.ORDINAL,
+				ICriterion.DataType.ORDINAL, ICriterion.DataType.ORDINAL, ICriterion.DataType.ORDINAL,
+				ICriterion.DataType.ORDINAL, ICriterion.DataType.ORDINAL, ICriterion.DataType.ORDINAL,
+				ICriterion.DataType.ORDINAL, ICriterion.DataType.RATIO, ICriterion.DataType.RATIO };
 
 		try {
 			Results res = run(input1, crit_weights1, crit_types, null, null, null, null);

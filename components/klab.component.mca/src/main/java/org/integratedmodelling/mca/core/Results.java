@@ -1,11 +1,11 @@
-package org.integratedmodelling.mca;
+package org.integratedmodelling.mca.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.integratedmodelling.klab.utils.NumberUtils;
-import org.integratedmodelling.mca.MCA.CriterionDataType;
+import org.integratedmodelling.mca.api.ICriterion;
 
 /**
  * Evamix results are grouped in an object of this kind.
@@ -35,7 +35,7 @@ public class Results {
     public ArrayList<Integer>   degenerate_columns = null;
     private double[][]          input;
     private double[]            criteria_weights;
-    private CriterionDataType[] criteria_types;
+    private ICriterion.DataType[] criteria_types;
     private boolean[]           criteria_cost_benefit;
     
     private boolean isEmpty = false;
@@ -44,7 +44,7 @@ public class Results {
         isEmpty = true;
     }
 
-    public Results(double[][] input, double[] criteria_weights, CriterionDataType[] criteria_types,
+    public Results(double[][] input, double[] criteria_weights, ICriterion.DataType[] criteria_types,
             boolean[] criteria_cost_benefit) {
 
         this.input = input;

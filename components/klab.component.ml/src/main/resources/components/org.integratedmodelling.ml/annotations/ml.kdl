@@ -6,24 +6,21 @@
 @klab 0.10.0
 @version 0.10.0
 
-annotation cost for dependencies
-	"Use to annotate a dependency as a cost criterion. The value, if passed, can be a single numeric weight or a map of 
-	 stakeholder type to weight."
+annotation explanatory for dependencies
+	""
 {
 	optional value 'value'
 		""
 }
 
-annotation benefit for dependencies
-	"Use to annotate a dependency as a benefit criterion. The value, if passed, can be a single numeric weight or a map of 
-	 stakeholder type to weight."
+annotation independent for dependencies
+	""
 {
 	optional value 'value'
 		""
 }
 
-annotation stakeholder for dependencies
-	"Use to annotate a dependency as a stakeholder type, ensuring that only stakeholders of that type are considered when
-     building the MCA plans."
+annotation classifier for dependencies
+	""
 {
 }

@@ -21,7 +21,7 @@ public interface IKimModel extends IKimActiveStatement {
 
 	List<String> getResourceUrns();
 
-	boolean isAssessmentModel();
+//	boolean isAssessmentModel();
 
 	boolean isLearningModel();
 

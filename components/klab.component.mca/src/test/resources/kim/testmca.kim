@@ -1,0 +1,46 @@
+namespace test.mca;
+
+// no weight, find stakeholders in context, optionally constrain type and observe value in them
+model value of ecology:Biodiversity
+	observing 
+		@stakeholder geography:Country earth:Region,
+		@cost        ecology:NormalizedDifferenceVegetationIndex,
+		@cost        geography:Elevation in m,
+		@benefit     earth:PrecipitationVolume in mm
+	using im.mca.concordance();
+
+// single weight, stakeholder is context, value is objective
+model value of ecology:Biodiversity
+	observing 
+		@cost(0.34)    ecology:NormalizedDifferenceVegetationIndex,
+		@cost(2.31)    geography:Elevation in m,
+		@benefit(22.3) earth:PrecipitationVolume in mm
+	using im.mca.concordance();
+	
+// multiple weights, build stakeholders, value is subjective
+model value of ecology:Biodiversity
+	observing 
+	
+		@cost({policy:Conservative demography:HumanIndividual: 9.34, policy:Progressive demography:HumanIndividual: 34.3}) 
+		ecology:NormalizedDifferenceVegetationIndex,
+		
+		@cost({policy:Conservative demography:HumanIndividual: 25.34, policy:Progressive demography:HumanIndividual: 3.44}) 
+		geography:Elevation in m,
+		
+		@cost({policy:Conservative demography:HumanIndividual: 122.34, policy:Progressive demography:HumanIndividual: 34.3}) 
+		earth:PrecipitationVolume in mm
+		
+	using im.mca.concordance();
+	
+// rank sites according to variables (in them or in the context)
+// each site will get value of biodiversity
+// only way to do it relative to each other
+// problem is that it will create new instances - we could have a wrapping object that can add states
+model each im:Comparable earth:Site with ecology:Biodiversity //,
+//		@cost ... (for attributes to observe in the ranked one)
+	observing 
+		@alternative   earth:Site with ecology:Biodiversity,
+		@cost(0.34)    ecology:NormalizedDifferenceVegetationIndex,
+		@cost(2.31)    geography:Elevation in m,
+		@benefit(22.3) earth:PrecipitationVolume in mm
+	using im.mca.concordance();

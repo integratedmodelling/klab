@@ -661,7 +661,6 @@ public class KimValidator extends AbstractKimValidator {
           }
         }
         descriptor.setPrivate((statement.isPrivate() || ns_1.isPrivate()));
-        descriptor.setAssessmentModel(statement.getModel().equals("assess"));
         descriptor.setLearningModel(statement.getModel().equals("learn"));
         IKimModel.Type _switchResult = null;
         String _model_1 = statement.getModel();

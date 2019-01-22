@@ -36,7 +36,7 @@ public class KimModel extends KimStatement implements IKimModel {
 	private boolean isAbstract = false;
 	private boolean interpreter = false;
 	private boolean learningModel = false;
-	private boolean assessmentModel = false;
+//	private boolean assessmentModel = false;
 	private Type type = Type.SEMANTIC;
 	private boolean isPrivate = false;
 	private List<IKimObservable> observables = new ArrayList<>();
@@ -111,14 +111,14 @@ public class KimModel extends KimStatement implements IKimModel {
 		this.learningModel = learningModel;
 	}
 
-	@Override
-	public boolean isAssessmentModel() {
-		return assessmentModel;
-	}
+//	@Override
+//	public boolean isAssessmentModel() {
+//		return assessmentModel;
+//	}
 
-	public void setAssessmentModel(boolean assessmentModel) {
-		this.assessmentModel = assessmentModel;
-	}
+//	public void setAssessmentModel(boolean assessmentModel) {
+//		this.assessmentModel = assessmentModel;
+//	}
 
 	@Override
 	public Type getType() {

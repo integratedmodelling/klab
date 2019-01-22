@@ -70,9 +70,9 @@ public class EModel extends EKimObject implements IKimModel, EDocumentable {
         return delegate.getResourceUrns();
     }
 
-    public boolean isAssessmentModel() {
-        return delegate.isAssessmentModel();
-    }
+//    public boolean isAssessmentModel() {
+//        return delegate.isAssessmentModel();
+//    }
 
     public boolean isLearningModel() {
         return delegate.isLearningModel();

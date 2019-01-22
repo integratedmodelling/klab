@@ -291,10 +291,10 @@ public interface IKimConcept extends IKimStatement {
          * 
          */
         AMOUNT,
-        /**
-         * 
-         */
-        ASSESSMENT,
+//        /**
+//         * 
+//         */
+//        ASSESSMENT,
         /**
          * 
          */
@@ -327,7 +327,7 @@ public interface IKimConcept extends IKimStatement {
      */
     public static final EnumSet<Type> DECLARABLE_TYPES = EnumSet.of(Type.QUALITY, Type.SUBJECT, Type.AGENT, Type.EVENT,
             Type.CONFIGURATION, Type.DOMAIN, Type.RELATIONSHIP, Type.EXTENT, Type.PROCESS, Type.ATTRIBUTE, Type.REALM,
-            Type.IDENTITY, Type.ROLE, Type.ASSESSMENT);
+            Type.IDENTITY, Type.ROLE);
 
     /**
      * Qualities that are naturally inherent and should not be allowed to have explicit inherency

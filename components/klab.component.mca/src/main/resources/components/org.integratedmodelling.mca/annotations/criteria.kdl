@@ -27,3 +27,8 @@ annotation stakeholder for dependencies
      building the MCA plans."
 {
 }
+
+annotation alternative for dependencies
+	"Use to annotate the artifact to use to provide alternatives when the model produces a ranked set of the same objects."
+{
+}

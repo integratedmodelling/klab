@@ -13,5 +13,13 @@ export number concordance
 	optional number levels
 		"The number of levels to discretize continuous variables. Default is 5."
 		
-	class org.integratedmodelling.mca.core.ConcordanceResolver
+	class org.integratedmodelling.mca.services.ConcordanceResolver
+}
+
+export object ranking
+	"Run a concordance analysis to compute the concordance of a set of criteria variables with corresponding values from
+	 observers in the context."
+	 label 'MCA ranking'
+{
+	class org.integratedmodelling.mca.services.RankingInstantiator
 }

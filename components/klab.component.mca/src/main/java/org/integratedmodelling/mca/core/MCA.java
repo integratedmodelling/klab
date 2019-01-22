@@ -24,7 +24,7 @@
  *     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *     The license is also available at: https://www.gnu.org/licenses/agpl.html
  *******************************************************************************/
-package org.integratedmodelling.mca;
+package org.integratedmodelling.mca.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +32,7 @@ import java.util.HashMap;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.mca.evamix.Evamix;
+import org.integratedmodelling.mca.api.ICriterion;
 
 /**
  * Driver class to run a whole MCA analysis from definition to results. It makes
@@ -60,14 +60,6 @@ public class MCA {
 		EVAMIX, ELECTRE3, PROMETHEE
 	}
 
-	public static enum CriterionDataType {
-		ORDINAL, BINARY, RATIO
-	}
-
-	public static enum CriterionType {
-		COST, BENEFIT
-	}
-
 	// final public static String ORDINAL = "Ordinal";
 	// final public static String BINARY = "Binary";
 	// final public static String RATIO = "Ratio";
@@ -81,8 +73,8 @@ public class MCA {
 	public class Criterion {
 
 		String name;
-		CriterionDataType dataType;
-		CriterionType type;
+		ICriterion.DataType dataType;
+		ICriterion.Type type;
 		double weight;
 	}
 
@@ -118,12 +110,12 @@ public class MCA {
 		return critIndex.get(criterion);
 	}
 
-	public void declareCriterion(String criterionName, CriterionDataType dataType, CriterionType type) {
+	public void declareCriterion(String criterionName, ICriterion.DataType dataType, ICriterion.Type type) {
 
 		if (frozen)
 			throw new KlabValidationException("MCA: cannot add criteria when data input has begun");
 
-		if (type == CriterionType.COST && dataType != CriterionDataType.RATIO)
+		if (type == ICriterion.Type.COST && dataType != ICriterion.DataType.RATIO)
 			throw new KlabValidationException("MCA: cost criteria can only be quantitative");
 
 		Criterion c = new Criterion();
@@ -230,12 +222,12 @@ public class MCA {
 
 		double[][] data = new double[alternatives.size()][criteria.size()];
 		boolean cost[] = new boolean[criteria.size()];
-		CriterionDataType types[] = new CriterionDataType[criteria.size()];
+		ICriterion.DataType types[] = new ICriterion.DataType[criteria.size()];
 		String cnames[] = new String[criteria.size()];
 
 		int i = 0;
 		for (Criterion c : criteria) {
-			cost[i] = c.type == CriterionType.COST;
+			cost[i] = c.type == ICriterion.Type.COST;
 			types[i] = c.dataType;
 			cnames[i] = c.name;
 			i++;
@@ -331,8 +323,8 @@ public class MCA {
 		mca.declareAlternative("PianoCorte");
 		mca.declareAlternative("IsolaBella");
 
-		mca.declareCriterion("Mountain", CriterionDataType.RATIO, CriterionType.BENEFIT);
-		mca.declareCriterion("Water", CriterionDataType.RATIO, CriterionType.BENEFIT);
+		mca.declareCriterion("Mountain", ICriterion.DataType.RATIO, ICriterion.Type.BENEFIT);
+		mca.declareCriterion("Water", ICriterion.DataType.RATIO, ICriterion.Type.BENEFIT);
 
 		mca.setCriterionValue("ImmacolataMicio", "Mountain", 2.15);
 		mca.setCriterionValue("ImmacolataMicio", "Water", 2.4);

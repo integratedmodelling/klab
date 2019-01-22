@@ -86,7 +86,7 @@ public class CoreOntology extends AbstractWorkspace {
         coreConceptIds.put(Type.OCCURRENCE, NS.CORE_OCCURRENCE);
         coreConceptIds.put(Type.PRESENCE, NS.CORE_PRESENCE);
         coreConceptIds.put(Type.EXTENT, NS.CORE_EXTENT);
-        coreConceptIds.put(Type.ASSESSMENT, NS.CORE_ASSESSMENT);
+//        coreConceptIds.put(Type.ASSESSMENT, NS.CORE_ASSESSMENT);
     }
 
     public static interface NS {
@@ -288,7 +288,7 @@ public class CoreOntology extends AbstractWorkspace {
         public static final String CORE_RESISTIVITY                        = "observation:Resistivity";
         public static final String CORE_PRESSURE                           = "observation:Pressure";
         public static final String CORE_ANGLE                              = "observation:Angle";
-        public static final String CORE_ASSESSMENT                         = "observation:Assessment";
+//        public static final String CORE_ASSESSMENT                         = "observation:Assessment";
         public static final String CORE_SPEED                              = "observation:Speed";
         public static final String CORE_TEMPERATURE                        = "observation:Temperature";
         public static final String CORE_VISCOSITY                          = "observation:Viscosity";
@@ -509,9 +509,9 @@ public class CoreOntology extends AbstractWorkspace {
             ret = Type.PRESENCE;
         } else if (type.contains(Type.EXTENT)) {
             ret = Type.EXTENT;
-        } else if (type.contains(Type.ASSESSMENT)) {
+        }/* else if (type.contains(Type.ASSESSMENT)) {
             ret = Type.ASSESSMENT;
-        }
+        }*/
 
         return ret;
     }
