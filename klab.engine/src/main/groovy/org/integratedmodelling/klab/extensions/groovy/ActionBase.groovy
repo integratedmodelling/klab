@@ -57,6 +57,8 @@ abstract class ActionBase extends Script {
 			NullObject.metaClass.div = { Object n -> Double.NaN }
 			NullObject.metaClass.plus = { Object n -> Double.NaN }
 			NullObject.metaClass.minus = { Object n -> Double.NaN }
+			
+			// allow 'is' operator to return on categories with nodata
 			NullObject.metaClass.isa   = { Object n -> false }
 
 			/*
@@ -77,8 +79,6 @@ abstract class ActionBase extends Script {
 			//            Amount.metaClass.div = { Amount factor -> delegate.divide(factor) }
 			//            Amount.metaClass.power = { Number factor -> delegate.pow(factor) }
 			//            Amount.metaClass.negative = { -> delegate.opposite() }
-
-
 		}
 	}
 
@@ -565,97 +565,6 @@ abstract class ActionBase extends Script {
 		}
 		return pu.getFirst();
 	}
-
-	//    /**
-	//     * Mix together concepts ensuring that one and only one is an observable.
-	//     *
-	//     * @param concepts
-	//     * @return
-	//     */
-	//    def c(Concept... concepts) {
-	//
-	//        List<Concept> traits = new ArrayList<>();
-	//        List<Concept> roles = new ArrayList<>();
-	//        Concept observable;
-	//
-	//        for (Concept c : concepts) {
-	//            if (NS.isTrait(c.concept)) {
-	//                traits.add(c);
-	//            } else if (NS.isObservable(c.concept) || NS.isConfiguration(c.concept)) {
-	//                if (observable != null) {
-	//                    throw new KlabRuntimeException(c.concept + ": cannot combine more than one observable");
-	//                }
-	//                observable = c;
-	//            } else if (NS.isRole(c.concept)) {
-	//                roles.add(c);
-	//            } else {
-	//                throw new KlabRuntimeException(c.concept + ": only observables, configurations, traits and roles admitted in a c() expression");
-	//            }
-	//        }
-	//
-	//        if (observable == null) {
-	//            throw new KlabRuntimeException("a c() expression must have one observable");
-	//        }
-	//
-	//        return new Concept(observable, (traits.empty ? null : traits), (roles.empty ? null : roles), binding);
-	//
-	//    }
-
-	//    /*
-	//     * semantic operators
-	//     */
-	//
-	//    def valueOf(Concept c) {
-	//        return new Concept(Observables.makeValue(c.concept, null), binding);
-	//    }
-	//
-	//    def valueOf(Concept c1, Concept c2) {
-	//        return new Concept(Observables.makeValue(c1.concept, c2.concept), binding);
-	//    }
-	//
-	//    def assessmentOf(Concept c) {
-	//        return new Concept(Observables.makeAssessment(c.concept), binding);
-	//    }
-	//
-	//    def presenceOf(Concept c) {
-	//        return new Concept(Observables.makePresence(c.concept), binding);
-	//    }
-	//
-	//    def distanceTo(Concept c) {
-	//        return new Concept(Observables.makeDistance(c.concept), binding);
-	//    }
-	//
-	//    def distanceFrom(Concept c) {
-	//        return distanceTo(c);
-	//    }
-	//
-	//    def proportionOf(Concept c) {
-	//        return new Concept(Observables.makeProportion(c.concept, null), binding);
-	//    }
-	//
-	//    def proportionOf(Concept c1, Concept c2) {
-	//        return new Concept(Observables.makeProportion(c1.concept, c2.concept), binding);
-	//    }
-	//
-	//    def occurrenceOf(Concept c) {
-	//        return new Concept(Observables.makeOccurrence(c.concept), binding);
-	//    }
-	//
-	//    def uncertaintyOf(Concept c) {
-	//        return new Concept(Observables.makeUncertainty(c.concept), binding);
-	//    }
-	//
-	//    def probabilityOf(Concept c) {
-	//        return new Concept(Observables.makeProbability(c.concept), binding);
-	//    }
-	//
-	//    def countOf(Concept c) {
-	//        return new Concept(Observables.makeCount(c.concept), binding);
-	//    }
-	//
-	//    def ratioOf(Concept c1, Concept c2) {
-	//        return new Concept(Observables.makeRatio(c1.concept, c2.concept), binding);
-	//    }
 
 	static def _wrapIfNecessary(Object obj, Binding binding) {
 		//        if (obj instanceof Observation) {

@@ -41,4 +41,9 @@ public class Criterion implements ICriterion {
 		return type;
 	}
 
+	@Override
+	public IState getState() {
+		return state;
+	}
+
 }

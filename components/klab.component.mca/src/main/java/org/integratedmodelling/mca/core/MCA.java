@@ -190,17 +190,6 @@ public class MCA {
 		alt.values[crit] = value;
 	}
 
-	// public Results runPromethee() throws KlabException {
-	//
-	// return null;
-	// }
-
-	// public Results runElectre3() throws KlabException {
-	//
-	// E3Model model = new E3Model();
-	// return null;
-	// }
-
 	public Results run(IMonitor monitor) throws KlabException {
 		Results ret = null;
 		switch (method) {

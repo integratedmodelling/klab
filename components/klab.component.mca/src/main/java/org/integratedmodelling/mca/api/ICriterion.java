@@ -1,6 +1,7 @@
 package org.integratedmodelling.mca.api;
 
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.observations.IState;
 
 public interface ICriterion {
 
@@ -14,6 +15,8 @@ public interface ICriterion {
 
 	IObservable getObservable();
 
+	IState getState();
+	
 	boolean isDistributed();
 
 	Type getType();

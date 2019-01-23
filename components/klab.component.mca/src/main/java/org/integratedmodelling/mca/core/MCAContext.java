@@ -6,11 +6,15 @@ import java.util.Map;
 
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.components.geospace.processing.MapClassifier;
+import org.integratedmodelling.klab.components.geospace.processing.MapClassifier.MapClass;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
@@ -19,6 +23,7 @@ import org.integratedmodelling.mca.api.IAlternative;
 import org.integratedmodelling.mca.api.ICriterion;
 import org.integratedmodelling.mca.api.ICriterion.Type;
 import org.integratedmodelling.mca.api.IStakeholder;
+import org.integratedmodelling.mca.model.Alternative;
 import org.integratedmodelling.mca.model.Criterion;
 import org.integratedmodelling.mca.model.Stakeholder;
 
@@ -39,10 +44,11 @@ public class MCAContext {
 	private List<IStakeholder> stakeholders = new ArrayList<>();
 	private List<ICriterion> criteria = new ArrayList<>();
 	private Specification specification;
+	private boolean computable = true;
 
 	private final static String DEFAULT_STAKEHOLDER = "___default_stakeholder";
 
-	public MCAContext(IObservable concordanceObservable, IRuntimeContext context) {
+	public MCAContext(IObservable concordanceObservable, IRuntimeContext context, ILocator locator, int levels) {
 
 		IObservable stakeholderObservable = null;
 		IObservable alternativeObservable = null;
@@ -53,6 +59,10 @@ public class MCAContext {
 			IAnnotation annotation = getCriterionAnnotation(observable);
 
 			if (annotation != null) {
+
+				if (!observable.is(IKimConcept.Type.QUALITY) && !observable.is(IKimConcept.Type.TRAIT)) {
+					throw new KlabValidationException("mca: criteria must be qualities");
+				}
 
 				// build criterion
 				ICriterion criterion = buildCriterion(observable, context);
@@ -140,17 +150,49 @@ public class MCAContext {
 		if (alternativeObservable == null) {
 			
 			// build alternatives from the context
+			buildDistributedAlternatives(context, locator, levels);
 			
 		} else {
 			
-			// find alternative artifact for ranking
+			// get the alternatives and ensure enough of them contain values for ranking. If not and the criteria
+			// are distributed, give them states based on views.
+			IArtifact alternativesArtifact = context.getArtifact(alternativeObservable.getLocalName());
+			if (!(alternativesArtifact instanceof IObjectArtifact)) {
+				throw new KlabValidationException("mca: alternatives are not suitable for ranking");
+			}
+			if (alternativesArtifact.isEmpty() || alternativesArtifact.groupSize() < 2) {
+				context.getMonitor().warn("mca: not enough alternatives for ranking");
+				computable = false;
+			}
 			
 		}
 
 	}
 
+	private void buildDistributedAlternatives(IRuntimeContext context, ILocator locator, int levels) {
+
+		List<IState> states = new ArrayList<>();
+		for (ICriterion criterion : criteria) {
+			if (criterion.getState() == null || !criterion.isDistributed()) {
+				throw new KlabValidationException("mca: implicit alternatives require distributed criteria");
+			}
+			states.add(criterion.getState());
+		}
+		
+		MapClassifier classifier = new MapClassifier(states, levels, context, locator);
+		classifier.classify();
+		
+		for (MapClass clas : classifier.getClasses()) {
+			alternatives.add(new Alternative(clas));
+		}
+	}
+
 	public Specification getSpecification() {
 		return this.specification;
+	}
+	
+	public boolean isComputable() {
+		return computable;
 	}
 
 	private Stakeholder getOrCreate(String id) {

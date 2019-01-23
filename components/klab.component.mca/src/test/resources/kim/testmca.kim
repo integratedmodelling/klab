@@ -1,5 +1,4 @@
 namespace test.mca;
-
 // no weight, find stakeholders in context, optionally constrain type and observe value in them
 model value of ecology:Biodiversity
 	observing 
@@ -9,20 +8,20 @@ model value of ecology:Biodiversity
 		@benefit     earth:PrecipitationVolume in mm
 	using im.mca.concordance();
 
-// single weight, stakeholder is context, value is objective
+// single weight, stakeholder is context, concordance output is objective
 model value of ecology:Biodiversity
 	observing 
-		@cost(0.34)    ecology:NormalizedDifferenceVegetationIndex,
-		@cost(2.31)    geography:Elevation in m,
+		@cost(0.34)    geography:Slope,
+		@cost(2.31)    geography:Elevation,
 		@benefit(22.3) earth:PrecipitationVolume in mm
 	using im.mca.concordance();
 	
-// multiple weights, build stakeholders, value is subjective
+// multiple weights, build stakeholders, concordance output is subjective
 model value of ecology:Biodiversity
 	observing 
 	
 		@cost({policy:Conservative demography:HumanIndividual: 9.34, policy:Progressive demography:HumanIndividual: 34.3}) 
-		ecology:NormalizedDifferenceVegetationIndex,
+		geography:Slope,
 		
 		@cost({policy:Conservative demography:HumanIndividual: 25.34, policy:Progressive demography:HumanIndividual: 3.44}) 
 		geography:Elevation in m,
@@ -43,4 +42,4 @@ model each im:Comparable earth:Site with ecology:Biodiversity //,
 		@cost(0.34)    ecology:NormalizedDifferenceVegetationIndex,
 		@cost(2.31)    geography:Elevation in m,
 		@benefit(22.3) earth:PrecipitationVolume in mm
-	using im.mca.concordance();
+	using im.mca.ranking(method=Electre4);
