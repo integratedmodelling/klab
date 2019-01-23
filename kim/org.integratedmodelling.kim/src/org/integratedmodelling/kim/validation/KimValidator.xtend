@@ -378,8 +378,13 @@ class KimValidator extends AbstractKimValidator {
 				var IKimNamespace ns = Kim.INSTANCE.getNamespace(model, true)
 				for (annotation : cd.annotations) {
 					val ann = new KimAnnotation(annotation, ns, observable)
+					var errs = 0
 					for (notification : ann.validateUsage(ann)) {
 						notify(notification, cd, KimPackage.Literals.DEPENDENCY__ANNOTATIONS, j)
+						errs ++
+					}
+					if (errs == 0) {
+					    observable.annotations.add(ann);
 					}
 					j++
 				}

@@ -97,6 +97,10 @@ public class MCA {
 
 	Method method = Method.EVAMIX;
 
+	// use default method
+	public MCA() {
+	}
+
 	public MCA(Method method) {
 		// TODO method is unused
 		this.method = method;

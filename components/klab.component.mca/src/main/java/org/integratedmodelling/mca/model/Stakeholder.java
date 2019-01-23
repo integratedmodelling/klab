@@ -1,6 +1,8 @@
 package org.integratedmodelling.mca.model;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -12,19 +14,19 @@ import org.integratedmodelling.mca.api.IStakeholder;
 
 public class Stakeholder implements IStakeholder {
 
-
-	public Stakeholder(ISubject subject) {
-		
-	}
+	private boolean objective;
+	private String name;
+	private Map<String, Double> weights = new HashMap<>();
+	private IObservable observable;
+	private ISubject subject;
 	
-	public Stakeholder(IObservable observable) {
-		
+	public Stakeholder(String name) {
+		this.name = name;
 	}
 	
 	@Override
 	public IDirectObservation getSubject() {
-		// TODO Auto-generated method stub
-		return null;
+		return subject;
 	}
 
 	@Override
@@ -34,7 +36,7 @@ public class Stakeholder implements IStakeholder {
 	}
 
 	@Override
-	public void rankAlternatives(ILocator transition) throws KlabException {
+	public void rankAlternatives(ILocator locator) throws KlabException {
 		// TODO Auto-generated method stub
 		
 	}
@@ -43,6 +45,36 @@ public class Stakeholder implements IStakeholder {
 	public boolean canValue(IAlternative alternative) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public boolean isObjective() {
+		return objective;
+	}
+	
+	public void setObjective(boolean b) {
+		this.objective = b;
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+	
+	public void setWeight(String criterion, double weight) {
+		this.weights.put(criterion, weight);
+	}
+
+	public IObservable getObservable() {
+		return this.observable;
+	}
+	
+	public void setObservable(IObservable oobs) {
+		this.observable = oobs;
+	}
+
+	public void setSubject(ISubject subject) {
+		this.subject = subject;
 	}
 
 }

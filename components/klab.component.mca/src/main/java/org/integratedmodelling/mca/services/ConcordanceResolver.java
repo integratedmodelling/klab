@@ -7,32 +7,40 @@ import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.mca.core.MCAContext;
 
 public class ConcordanceResolver implements IResolver<IState>, IExpression {
 
+	int levels = 5;
+	MCAContext mcaContext;
+	IGeometry geometry;
+	
 	@Override
 	public IGeometry getGeometry() {
-		// TODO Auto-generated method stub
-		return null;
+		return geometry;
 	}
 
 	@Override
 	public Type getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return Type.NUMBER;
 	}
 
 	@Override
 	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
-		// TODO Auto-generated method stub
-		return null;
+		ConcordanceResolver ret = new ConcordanceResolver();
+		ret.levels = parameters.get("levels", 5);
+		return ret;
 	}
 
 	@Override
 	public IState resolve(IState ret, IComputationContext context) throws KlabException {
-		// TODO Auto-generated method stub
-		return null;
+		
+		this.geometry = context.getScale();
+		this.mcaContext = new MCAContext(ret.getObservable(), (IRuntimeContext)context);
+		
+		return ret;
 	}
 
 }

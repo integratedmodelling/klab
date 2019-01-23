@@ -17,4 +17,6 @@ public interface ICriterion {
 	boolean isDistributed();
 
 	Type getType();
+
+	String getName();
 }

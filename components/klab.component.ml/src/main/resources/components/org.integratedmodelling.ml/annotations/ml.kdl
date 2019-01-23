@@ -24,3 +24,24 @@ annotation classifier for dependencies
 	""
 {
 }
+
+annotation veto for models
+	""
+{
+	optional value 'value'
+		""
+}
+
+annotation strong for models
+	""
+{
+	optional value 'value'
+		""
+}
+
+annotation weak for models
+	""
+{
+	optional value 'value'
+		""
+}

@@ -6,30 +6,39 @@ import org.integratedmodelling.mca.api.ICriterion;
 
 public class Criterion implements ICriterion {
 
-	public Criterion(IState state) {
-		
+	IObservable observable;
+	IState state;
+	Type type;
+	
+	public Criterion(IState state, Type type) {
+		this.state = state;
+		this.observable = state.getObservable();
+		this.type = type;
 	}
 
-	public Criterion(IObservable observable) {
-		
+	public Criterion(IObservable observable, Type type) {
+		this.observable = observable;
+		this.type = type;
 	}
 
 	@Override
+	public String getName() {
+		return observable.getLocalName();
+	}
+	
+	@Override
 	public IObservable getObservable() {
-		// TODO Auto-generated method stub
-		return null;
+		return observable;
 	}
 
 	@Override
 	public boolean isDistributed() {
-		// TODO Auto-generated method stub
-		return false;
+		return state != null && state.getScale().isSpatiallyDistributed();
 	}
 
 	@Override
 	public Type getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return type;
 	}
 
 }

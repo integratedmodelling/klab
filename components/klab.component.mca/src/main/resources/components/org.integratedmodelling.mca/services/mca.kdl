@@ -7,19 +7,26 @@
 
 export number concordance
 	"Run a concordance analysis to compute the concordance of a set of criteria variables with corresponding values from
-	 observers in the context."
+	 observers in the context. Can turn quantitative distributed observations into alternatives for spatial and/or temporal 
+	 MCA assessment."
 	 label 'MCA concordance'
 {
 	optional number levels
-		"The number of levels to discretize continuous variables. Default is 5."
+		"The number of levels to discretize distributed continuous variables. Default is 5."
 		
 	class org.integratedmodelling.mca.services.ConcordanceResolver
 }
 
+// TODO constraints for attributes according to method
 export object ranking
-	"Run a concordance analysis to compute the concordance of a set of criteria variables with corresponding values from
-	 observers in the context."
+	"Run a concordance analysis to compute the concordance of a set of supplied alternatives with corresponding values from
+	 observers in the context. Produces a ranked artifact from the same alternatives. The new artifact must use different
+	 semantics from the original (addition of a Comparable attribute is common)."
 	 label 'MCA ranking'
 {
+	optional text method 
+		"The MCA method used to rank alternatives. One of Topsis|Electre{1|1s|1v|2|3|4|Tri|TriMe}. Only Electre3/4 can run
+		 without additional parameters. Default is Electre4."
+
 	class org.integratedmodelling.mca.services.RankingInstantiator
 }
