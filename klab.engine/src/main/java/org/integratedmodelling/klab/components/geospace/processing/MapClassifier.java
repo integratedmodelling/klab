@@ -72,7 +72,7 @@ public class MapClassifier {
 				this.discretization = s.getDataKey();
 			} else if (s.getObservable().getArtifactType() == IArtifact.Type.NUMBER
 					&& s.getObservable().getClassifier() == null) {
-				this.discretization = Observations.INSTANCE.discretize(s, maxBinsPerState);
+				this.discretization = Observations.INSTANCE.discretize(s, locator, maxBinsPerState);
 			}
 		}
 

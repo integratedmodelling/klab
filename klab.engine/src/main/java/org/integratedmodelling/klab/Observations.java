@@ -16,7 +16,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
-import org.integratedmodelling.klab.api.data.classification.IClassification;
+import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
@@ -478,29 +478,9 @@ public enum Observations implements IObservationService {
 	 * @param locators
 	 * @return discretization of range
 	 */
-	public IClassification discretize(IState s, int maxBins) {
+	public IDataKey discretize(IState s, ILocator locator, int maxBins) {
 
-		/*
-		 * establish boundaries
-		 */
-		double min = Double.NaN;
-		double max = Double.NaN;
-		for (ILocator offset : s.getScale()) {
-
-			double val = s.get(offset, Double.class);
-			if (!Double.isNaN(val)) {
-				if (Double.isNaN(min) || min > val) {
-					min = val;
-				}
-				if (Double.isNaN(max) || max < val) {
-					max = val;
-				}
-			}
-		}
-
-		if (Double.isNaN(min) || Double.isNaN(max)) {
-			return null;
-		}
+	    StateSummary summary = getStateSummary(s, locator);
 		
 		// TODO
 		return null;
