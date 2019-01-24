@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.data.storage;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -12,7 +13,9 @@ import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -349,6 +352,7 @@ public class RescalingState extends Observation implements IState {
 	public long size() {
 		return delegate.size();
 	}
+	
 	@Override
 	public IArtifact.Type getType() {
 		return delegate.getType();
@@ -383,5 +387,7 @@ public class RescalingState extends Observation implements IState {
 		return null;
 	}
 
-
+	public ISubjectiveState reinterpret(Collection<IDirectObservation> observers) {
+		return null;
+	}
 }

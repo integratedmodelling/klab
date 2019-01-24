@@ -222,7 +222,7 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 	 * @return a {@link org.integratedmodelling.klab.api.provenance.IAgent} object.
 	 */
 	IAgent getOwner();
-	
+
 	/**
 	 * The activity (process) that generated the artifact.
 	 * 
@@ -335,5 +335,6 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 	 * 
 	 */
 	void release();
+
 
 }

@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.utils;
 import java.io.IOException;
 import java.io.StreamTokenizer;
 import java.io.StringReader;
+import java.text.NumberFormat;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IValueMediator;
@@ -334,6 +335,10 @@ public class Range implements IValueMediator {
         return upperBound - lowerBound;
     }
 
+    public double getMidpoint() {
+    	return lowerBound + (upperBound - lowerBound)/2;
+    }
+    
     @Override
     public boolean isCompatible(IValueMediator other) {
         return other instanceof Range && isBounded() && ((Range) other).isBounded();
@@ -366,6 +371,10 @@ public class Range implements IValueMediator {
      */
     public static Range create(List<Double> range) {
         return new Range(range.get(0), range.get(1), false, false);
+    }
+    
+    public static Range create(double start, double end, boolean rightOpen) {
+        return new Range(start, end, false, rightOpen);
     }
 
     /**

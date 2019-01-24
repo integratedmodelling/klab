@@ -1,12 +1,15 @@
 package org.integratedmodelling.klab.data.storage;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.data.general.ITable;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -133,4 +136,8 @@ public class MediatingState extends Observation implements IState {
 		return delegate.getTable();
 	}
 
+	public ISubjectiveState reinterpret(Collection<IDirectObservation> observers) {
+		return null;
+	}
+	
 }

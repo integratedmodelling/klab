@@ -47,6 +47,7 @@ import org.integratedmodelling.klab.components.geospace.processing.osm.Nominatim
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
+import org.integratedmodelling.klab.data.classification.Discretization;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
@@ -70,6 +71,7 @@ import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.Utils;
 
 public enum Observations implements IObservationService {
@@ -479,33 +481,8 @@ public enum Observations implements IObservationService {
 	 * @return discretization of range
 	 */
 	public IDataKey discretize(IState s, ILocator locator, int maxBins) {
-
 	    StateSummary summary = getStateSummary(s, locator);
-		
-		// TODO
-		return null;
-
-//		/*
-//		 * create ranges.
-//		 */
-//		List<IConcept> levels = NS.getLevels(maxBins);
-//		List<Pair<IClassifier, IConcept>> classifiers = new ArrayList<>();
-//
-//		double ist = min;
-//		double istep = (max - min) / maxBins;
-//		for (int i = 0; i < maxBins; i++) {
-//
-//			double ien = ist + istep;
-//			boolean closeEnd = i == (maxBins - 1);
-//			if (closeEnd && ien < max) {
-//				ien = max;
-//			}
-//			classifiers.add(new Pair<IClassifier, IConcept>(
-//					Classifier.RangeMatcher(new Range(ist, ien, false, !closeEnd)), levels.get(i)));
-//
-//			ist += istep;
-//		}
-//		return new Classification(NS.getUserOrdering(), classifiers);
+		return new Discretization(Range.create(summary.getRange()), maxBins);
 	}
 
 	public File exportToTempFile(IObservation obs, ILocator locator, String outputFormat) {

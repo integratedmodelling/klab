@@ -1,6 +1,7 @@
 package org.integratedmodelling.mca.core;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.geospace.processing.MapClassifier;
@@ -45,6 +47,7 @@ public class MCAContext {
 	private List<ICriterion> criteria = new ArrayList<>();
 	private Specification specification;
 	private boolean computable = true;
+	private MapClassifier classifier;
 
 	private final static String DEFAULT_STAKEHOLDER = "___default_stakeholder";
 
@@ -66,7 +69,7 @@ public class MCAContext {
 
 				// build criterion
 				ICriterion criterion = buildCriterion(observable, context);
-				
+
 				Object value = annotation.get(IKimAnnotation.DEFAULT_PARAMETER_NAME);
 				if (value instanceof Number) {
 
@@ -111,7 +114,7 @@ public class MCAContext {
 					stakeholderObservable = observable;
 				} else {
 					annotation = getAlternativeAnnotation(observable);
-					if(annotation != null) {
+					if (annotation != null) {
 						alternativeObservable = observable;
 					}
 				}
@@ -148,13 +151,14 @@ public class MCAContext {
 
 		// if needed, classify map to build alternatives or build them from an artifact
 		if (alternativeObservable == null) {
-			
+
 			// build alternatives from the context
 			buildDistributedAlternatives(context, locator, levels);
-			
+
 		} else {
-			
-			// get the alternatives and ensure enough of them contain values for ranking. If not and the criteria
+
+			// get the alternatives and ensure enough of them contain values for ranking. If
+			// not and the criteria
 			// are distributed, give them states based on views.
 			IArtifact alternativesArtifact = context.getArtifact(alternativeObservable.getLocalName());
 			if (!(alternativesArtifact instanceof IObjectArtifact)) {
@@ -164,7 +168,7 @@ public class MCAContext {
 				context.getMonitor().warn("mca: not enough alternatives for ranking");
 				computable = false;
 			}
-			
+
 		}
 
 	}
@@ -178,10 +182,10 @@ public class MCAContext {
 			}
 			states.add(criterion.getState());
 		}
-		
-		MapClassifier classifier = new MapClassifier(states, levels, context, locator);
+
+		this.classifier = new MapClassifier(states, levels, context, locator);
 		classifier.classify();
-		
+
 		for (MapClass clas : classifier.getClasses()) {
 			alternatives.add(new Alternative(clas));
 		}
@@ -190,9 +194,10 @@ public class MCAContext {
 	public Specification getSpecification() {
 		return this.specification;
 	}
-	
+
 	public boolean isComputable() {
-		return computable;
+		return computable && this.alternatives.size() >= 2 && this.stakeholders.size() >= 1
+				&& this.criteria.size() >= 2;
 	}
 
 	private Stakeholder getOrCreate(String id) {
@@ -230,18 +235,20 @@ public class MCAContext {
 	private void buildStakeholders(Map<?, ?> value, IObservable observable, IRuntimeContext context, boolean b) {
 
 		for (Object o : value.keySet()) {
-			if (!(o instanceof IConcept) || !(((IConcept)o).is(IKimConcept.Type.SUBJECT) || ((IConcept)o).is(IKimConcept.Type.AGENT))) {
+			if (!(o instanceof IConcept)
+					|| !(((IConcept) o).is(IKimConcept.Type.SUBJECT) || ((IConcept) o).is(IKimConcept.Type.AGENT))) {
 				throw new KlabValidationException("mca: stakeholder observable must be a concept specifying a subject");
 			}
 			if (!(value.get(o) instanceof Number)) {
-				throw new KlabValidationException("mca: stakeholder types must be matched to numeric weights in the criterion annotation");
+				throw new KlabValidationException(
+						"mca: stakeholder types must be matched to numeric weights in the criterion annotation");
 			}
-			
-			IObservable oobs = Observable.promote((IConcept)o);
-			
+
+			IObservable oobs = Observable.promote((IConcept) o);
+
 			Stakeholder stakeholder = getOrCreate(oobs.getLocalName());
 			stakeholder.setObservable(oobs);
-			stakeholder.setWeight(observable.getLocalName(), ((Number)value.get(o)).doubleValue());
+			stakeholder.setWeight(observable.getLocalName(), ((Number) value.get(o)).doubleValue());
 		}
 
 	}
@@ -272,7 +279,7 @@ public class MCAContext {
 		}
 		return null;
 	}
-	
+
 	public List<IAlternative> getAlternatives() {
 		return alternatives;
 	}
@@ -283,6 +290,31 @@ public class MCAContext {
 
 	public List<ICriterion> getCriteria() {
 		return criteria;
+	}
+
+	public void distributeResults(Results results, IState ret) {
+		if (classifier != null) {
+			Map<String, Double> res = results.getConcordances(true);
+			if (classifier != null) {
+				double[] cvals = new double[alternatives.size()];
+				int i = 0;
+				for (IAlternative da : alternatives) {
+					cvals[i++] = res.get(da.getId());
+				}
+				classifier.distributeResults(ret, cvals);
+			}
+		} // TODO else...
+	}
+
+	/**
+	 * Return the observers representing each stakeholder in the same order as the
+	 * stakeholder list.
+	 * 
+	 * @return
+	 */
+	public List<IDirectObservation> getObservers() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

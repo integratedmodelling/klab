@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -8,8 +9,10 @@ import java.util.Optional;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
@@ -198,5 +201,10 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 
 	public void setLastUpdate(long lastUpdate) {
 		this.lastUpdate = lastUpdate;
+	}
+	
+	@Override
+	public ISubjectiveObservation reinterpret(Collection<IDirectObservation> observers) {
+		throw new IllegalStateException("reinterpret() was called on an illegal or unsupported type");
 	}
 }

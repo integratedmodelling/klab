@@ -9,12 +9,13 @@ import java.util.Map;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.data.classification.Classification;
+import org.integratedmodelling.klab.data.classification.Discretization;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.utils.StringUtils;
 
 /**
@@ -44,15 +45,12 @@ public class MapClassifier {
 			return index + ":" + classifiers;
 		}
 
-		public double getValueOf(IConcept k) {
+		public double getValueOf(String k) {
 			MapDescriptor mds = stateIndex.get(k);
 			if (mds == null) {
 				return 0;
 			}
-			return 0
-					
-					; // TODO! ((Classification)
-						// mds.discretization).getNumericCode(classifiers.get(mds.index));
+			return mds.getValue(classifiers.get(mds.index));
 		}
 	}
 
@@ -73,12 +71,23 @@ public class MapClassifier {
 			} else if (s.getObservable().getArtifactType() == IArtifact.Type.NUMBER
 					&& s.getObservable().getClassifier() == null) {
 				this.discretization = Observations.INSTANCE.discretize(s, locator, maxBinsPerState);
+			} else {
+				// I guess boolean is left
+				throw new KlabUnimplementedException("map classification not implemented for type "
+						+ s.getObservable().getArtifactType() + ": please notify developers");
 			}
 		}
 
 		@Override
 		public String toString() {
 			return "D/" + index + "/" + state.getObservable();
+		}
+
+		public double getValue(int n) {
+			if (discretization instanceof Discretization) {
+				return ((Discretization) discretization).getRange(n).getMidpoint();
+			}
+			return n;
 		}
 
 		public int getClass(ILocator offset) {
@@ -112,8 +121,8 @@ public class MapClassifier {
 	// private ILocator locator;
 	Map<String, MapClass> classCatalog = new HashMap<>();
 	List<MapClass> classes = new ArrayList<>();
-	Map<IKnowledge, MapDescriptor> stateIndex = new HashMap<>();
-	private IComputationContext context;
+	Map<String, MapDescriptor> stateIndex = new HashMap<>();
+	// private IComputationContext context;
 
 	/**
 	 * Build the necessary discretizations. Check getStatesCount() before calling
@@ -129,14 +138,14 @@ public class MapClassifier {
 
 		// this.locator = locator;
 		this.maxBinsPerState = maxBinsPerState;
-		this.context = context;
+		// this.context = context;
 
 		int i = 0;
 		for (IState s : states) {
 			MapDescriptor md = new MapDescriptor(s, locator);
 			if (md.discretization != null || md.useRanks) {
 				this.states.add(md);
-				stateIndex.put(s.getObservable().getType(), md);
+				stateIndex.put(s.getObservable().getLocalName(), md);
 				md.index = i++;
 			} else {
 				context.getMonitor()
@@ -147,6 +156,8 @@ public class MapClassifier {
 		if (states.size() > 0) {
 			this.scale = states.iterator().next().getScale();
 		}
+
+		this.index = new int[(int) context.getScale().size()];
 	}
 
 	public int getStatesCount() {
@@ -158,9 +169,6 @@ public class MapClassifier {
 	}
 
 	public int classify() {
-
-		// IScale.Index index = scale.getIndex(locators);
-		// this.index = new int[index.size()];
 
 		// prepare the fastest int array we can use as key
 		List<Integer> mc = new ArrayList<>();

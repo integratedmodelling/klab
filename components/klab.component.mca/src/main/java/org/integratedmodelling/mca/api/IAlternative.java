@@ -1,16 +1,14 @@
 package org.integratedmodelling.mca.api;
 
-import org.integratedmodelling.klab.api.data.ILocator;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 
 public interface IAlternative {
 
-    boolean isDistributed();
+//    boolean isDistributed();
 
-    double getValueOf(IConcept k, ILocator offset, IDirectObservation offsetContext);
-
-    boolean hasCriterion(IConcept observable);
+//    double getValueOf(IConcept k, ILocator offset, IDirectObservation offsetContext);
+//
+//    boolean hasCriterion(IConcept observable);
 
     IDirectObservation getSubject();
 
@@ -21,5 +19,7 @@ public interface IAlternative {
      * @return ID of alternative
      */
     String getId();
+
+	double getValue(String name);
 
 }

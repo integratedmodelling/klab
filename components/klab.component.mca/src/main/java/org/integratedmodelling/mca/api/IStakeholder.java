@@ -1,6 +1,7 @@
 package org.integratedmodelling.mca.api;
 
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
@@ -32,5 +33,7 @@ public interface IStakeholder {
 	boolean isObjective();
 	
 	String getName();
+
+	Map<String, Double> getWeights();
 
 }

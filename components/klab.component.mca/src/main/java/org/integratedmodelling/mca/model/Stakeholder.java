@@ -40,6 +40,11 @@ public class Stakeholder implements IStakeholder {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public Map<String,Double> getWeights() {
+		return weights;
+	}
 
 	@Override
 	public boolean canValue(IAlternative alternative) {

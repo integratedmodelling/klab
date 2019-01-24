@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -12,7 +13,9 @@ import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.data.storage.DataIterator;
@@ -131,6 +134,10 @@ public class State extends Observation implements IState, IKeyHolder {
 
 	public void setTable(ITable<Number> table) {
 		this.table = table;
+	}
+	
+	public ISubjectiveState reinterpret(Collection<IDirectObservation> observers) {
+		return null;
 	}
 	
 }

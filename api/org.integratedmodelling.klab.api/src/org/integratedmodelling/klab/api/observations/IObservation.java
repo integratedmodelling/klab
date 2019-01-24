@@ -15,6 +15,7 @@
  */
 package org.integratedmodelling.klab.api.observations;
 
+import java.util.Collection;
 import java.util.Optional;
 
 import org.integratedmodelling.klab.api.auth.IArtifactIdentity;
@@ -32,89 +33,107 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
  */
 public interface IObservation extends IArtifactIdentity, IArtifact {
 
-  /**
-   * The subject observation that contextualized this observation. This is not the same as the
-   * context observation: it allows recording different viewpoints on observations that are
-   * contextual to the same observable - e.g. qualities of the same subject seen by different child
-   * subjects in it. If null, this was made by the "root subject" that represents the session user.
-   *
-   * We may eventually create a subject to represent the session user for consistency, but as of the
-   * current version this is not done.
-   *
-   * @return the subject that provides the viewpoint for this observation, or empty if this was a
-   *         user-made observation.
-   */
-  Optional<ISubject> getObserver();
+	/**
+	 * The subject observation that contextualized this observation. This is not the
+	 * same as the context observation: it allows recording different viewpoints on
+	 * observations that are contextual to the same observable - e.g. qualities of
+	 * the same subject seen by different child subjects in it. If null, this was
+	 * made by the "root subject" that represents the session user.
+	 *
+	 * We may eventually create a subject to represent the session user for
+	 * consistency, but as of the current version this is not done.
+	 *
+	 * @return the subject that provides the viewpoint for this observation, or
+	 *         empty if this was a user-made observation.
+	 */
+	Optional<ISubject> getObserver();
 
-  /**
-   * Return the observable.
-   *
-   * @return the observation's observable
-   */
-  IObservable getObservable();
+	/**
+	 * Return the observable.
+	 *
+	 * @return the observation's observable
+	 */
+	IObservable getObservable();
 
-  /**
-   * Return the scale seen by this object, merging all the extents declared for the subject in the
-   * observation context. This could simply override {@link org.integratedmodelling.klab.api.provenance.IArtifact#getGeometry()} as a
-   * {@link org.integratedmodelling.klab.api.observations.scale.IScale} is a {@link org.integratedmodelling.klab.api.data.IGeometry}, and in a standard implementation should do just that,
-   * but a {@link org.integratedmodelling.klab.api.observations.scale.IScale} is important enough to deserve its own accessor.
-   *
-   * @return the observation's scale
-   */
-  IScale getScale();
-  
-  /**
-   * Return a view of this observation restricted to the passed locator, which is applied
-   * to the scale to obtain a new scale, used as a filter to obtain the view.
-   * 
-   * @param locator
-   * @return a rescaled view of this observation
-   * @throws IllegalArgumentException if the locator is unsuitable for the observation
-   */
-  IObservation at(ILocator locator);
+	/**
+	 * Return the scale seen by this object, merging all the extents declared for
+	 * the subject in the observation context. This could simply override
+	 * {@link org.integratedmodelling.klab.api.provenance.IArtifact#getGeometry()}
+	 * as a {@link org.integratedmodelling.klab.api.observations.scale.IScale} is a
+	 * {@link org.integratedmodelling.klab.api.data.IGeometry}, and in a standard
+	 * implementation should do just that, but a
+	 * {@link org.integratedmodelling.klab.api.observations.scale.IScale} is
+	 * important enough to deserve its own accessor.
+	 *
+	 * @return the observation's scale
+	 */
+	IScale getScale();
 
-  /**
-   * Observation may have been made in the context of another direct observation. This will always
-   * return non-null in indirect observations, and may return null in direct ones when they
-   * represent the "root" context.
-   *
-   * @return the context for the observation, if any.
-   */
-  IDirectObservation getContext();
-  
-  /**
-   * True if our scale has an observation of space with more than one state value.
-   *
-   * @return true if distributed in space
-   */
-  boolean isSpatiallyDistributed();
+	/**
+	 * Return a view of this observation restricted to the passed locator, which is
+	 * applied to the scale to obtain a new scale, used as a filter to obtain the
+	 * view.
+	 * 
+	 * @param locator
+	 * @return a rescaled view of this observation
+	 * @throws IllegalArgumentException
+	 *             if the locator is unsuitable for the observation
+	 */
+	IObservation at(ILocator locator);
 
-  /**
-   * True if our scale has an observation of time with more than one state value.
-   *
-   * @return true if distributed in time.
-   */
-  boolean isTemporallyDistributed();
+	/**
+	 * Observation may have been made in the context of another direct observation.
+	 * This will always return non-null in indirect observations, and may return
+	 * null in direct ones when they represent the "root" context.
+	 *
+	 * @return the context for the observation, if any.
+	 */
+	IDirectObservation getContext();
 
-  /**
-   * True if our scale has any implementation of time.
-   *
-   * @return if time is known
-   */
-  boolean isTemporal();
+	/**
+	 * True if our scale has an observation of space with more than one state value.
+	 *
+	 * @return true if distributed in space
+	 */
+	boolean isSpatiallyDistributed();
 
-  /**
-   * True if our scale has any implementation of space.
-   *
-   * @return if space is known
-   */
-  boolean isSpatial();
+	/**
+	 * True if our scale has an observation of time with more than one state value.
+	 *
+	 * @return true if distributed in time.
+	 */
+	boolean isTemporallyDistributed();
 
-  /**
-   * Return the spatial extent, or null.
-   *
-   * @return the observation of space
-   */
-  ISpace getSpace();
+	/**
+	 * True if our scale has any implementation of time.
+	 *
+	 * @return if time is known
+	 */
+	boolean isTemporal();
+
+	/**
+	 * True if our scale has any implementation of space.
+	 *
+	 * @return if space is known
+	 */
+	boolean isSpatial();
+
+	/**
+	 * Return the spatial extent, or null.
+	 *
+	 * @return the observation of space
+	 */
+	ISpace getSpace();
+
+	/**
+	 * Reinterpret this artifact as a collection of artifacts reflecting the view of
+	 * each of the passed observers. The result will behave exactly like the
+	 * original artifact but each observer can set itself as the viewpoint,
+	 * selecting different content.
+	 * 
+	 * @param observers
+	 * @return
+	 */
+	ISubjectiveObservation reinterpret(Collection<IDirectObservation> observers);
 
 }

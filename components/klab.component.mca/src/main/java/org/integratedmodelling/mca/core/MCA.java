@@ -34,6 +34,8 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.mca.api.ICriterion;
 
+import com.google.common.primitives.Doubles;
+
 /**
  * Driver class to run a whole MCA analysis from definition to results. It makes
  * using Evamix and PairwiseComparator very simple, but it is not required to
@@ -59,10 +61,6 @@ public class MCA {
 	public static enum Method {
 		EVAMIX, ELECTRE3, PROMETHEE
 	}
-
-	// final public static String ORDINAL = "Ordinal";
-	// final public static String BINARY = "Binary";
-	// final public static String RATIO = "Ratio";
 
 	public class Alternative {
 
@@ -142,7 +140,18 @@ public class MCA {
 		alternatives.add(a);
 		altIndex.put(alternativeName, alternatives.size() - 1);
 	}
+	
+	public void resetWeights() {
+		this.weights = null;
+	}
 
+	public void invertWeights() {
+		double max = Doubles.max(weights);
+		for (int i = 0; i < weights.length; i++) {
+			weights[i] = max - weights[i];
+		}
+	}
+	
 	public boolean setCriterionWeight(String criterionName, double criterionWeight) {
 
 		if (!critIndex.containsKey(criterionName)) {

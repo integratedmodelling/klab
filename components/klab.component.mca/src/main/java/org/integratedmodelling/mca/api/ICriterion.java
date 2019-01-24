@@ -22,4 +22,6 @@ public interface ICriterion {
 	Type getType();
 
 	String getName();
+
+	DataType getDataType();
 }
