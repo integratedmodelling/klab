@@ -56,7 +56,7 @@ import com.google.common.primitives.Doubles;
  * @author Ferdinando Villa
  *
  */
-public class MCA {
+public class MCAAssessment {
 
 	public static enum Method {
 		EVAMIX, ELECTRE3, PROMETHEE
@@ -96,10 +96,10 @@ public class MCA {
 	Method method = Method.EVAMIX;
 
 	// use default method
-	public MCA() {
+	public MCAAssessment() {
 	}
 
-	public MCA(Method method) {
+	public MCAAssessment(Method method) {
 		// TODO method is unused
 		this.method = method;
 	}
@@ -266,99 +266,6 @@ public class MCA {
 		 * TODO - what do we want to do here, just report the score or rank.
 		 */
 		return score;
-	}
-
-	public static void main(String[] args) {
-
-		MCA mca = new MCA(Method.EVAMIX);
-		//
-		// mca.declareAlternative("Villa");
-		// mca.declareAlternative("Costanza");
-		// mca.declareAlternative("Boumans");
-		//
-		// mca.declareCriterion("Fama", RATIO, true);
-		// mca.declareCriterion("Cattiveria", RATIO, false);
-		// mca.declareCriterion("Simpatia", RATIO, true);
-		//
-		// mca.setCriterionValue("Villa", "Fama", 0.6);
-		// mca.setCriterionValue("Villa", "Cattiveria", 0.1);
-		// mca.setCriterionValue("Villa", "Simpatia", 0.7);
-		//
-		// mca.setCriterionValue("Costanza", "Fama", 0.9);
-		// mca.setCriterionValue("Costanza", "Cattiveria", 0.9);
-		// mca.setCriterionValue("Costanza", "Simpatia", 0.1);
-		//
-		// mca.setCriterionValue("Boumans", "Fama", 0.1);
-		// mca.setCriterionValue("Boumans", "Cattiveria", 0.2);
-		// mca.setCriterionValue("Boumans", "Simpatia", 0.7);
-		//
-		// // nice guy scenario; expert choice gives .374, .363, .263 final rankings for
-		// // villa boumans costanza
-		// mca.setCriterionWeight("Fama", 0.067);
-		// mca.setCriterionWeight("Cattiveria", 0.344);
-		// mca.setCriterionWeight("Simpatia", 0.589);
-		//
-		// System.out.println("*** Nice guy scenario ***\n");
-		// try {
-		// mca.runEvamix().dump();
-		// } catch (ThinklabException e) {
-		// e.printStackTrace();
-		// }
-		//
-		// // famous guy scenario
-		// mca.setCriterionWeight("Fama", 0.98);
-		// mca.setCriterionWeight("Cattiveria", 0.01);
-		// mca.setCriterionWeight("Simpatia", 0.01);
-		//
-		// System.out.println("\n*** Famous guy scenario ***\n");
-		// try {
-		// mca.runEvamix().dump();
-		// } catch (ThinklabException e) {
-		// e.printStackTrace();
-		// }
-
-		mca.declareAlternative("ImmacolataMicio");
-		mca.declareAlternative("Monello");
-		mca.declareAlternative("Palombara");
-		mca.declareAlternative("LacheaFaraglioni");
-		mca.declareAlternative("Villasmundo");
-		mca.declareAlternative("PianoCorte");
-		mca.declareAlternative("IsolaBella");
-
-		mca.declareCriterion("Mountain", ICriterion.DataType.RATIO, ICriterion.Type.BENEFIT);
-		mca.declareCriterion("Water", ICriterion.DataType.RATIO, ICriterion.Type.BENEFIT);
-
-		mca.setCriterionValue("ImmacolataMicio", "Mountain", 2.15);
-		mca.setCriterionValue("ImmacolataMicio", "Water", 2.4);
-
-		mca.setCriterionValue("Monello", "Mountain", 8.0);
-		mca.setCriterionValue("Monello", "Water", 0.01);
-
-		mca.setCriterionValue("Palombara", "Mountain", 9.6);
-		mca.setCriterionValue("Palombara", "Water", 0.24);
-
-		mca.setCriterionValue("LacheaFaraglioni", "Mountain", 6.12);
-		mca.setCriterionValue("LacheaFaraglioni", "Water", 1);
-
-		mca.setCriterionValue("Villasmundo", "Mountain", 1.26);
-		mca.setCriterionValue("Villasmundo", "Water", 0.01);
-
-		mca.setCriterionValue("PianoCorte", "Mountain", 0.01);
-		mca.setCriterionValue("PianoCorte", "Water", 4.62);
-
-		mca.setCriterionValue("IsolaBella", "Mountain", 0.01);
-		mca.setCriterionValue("IsolaBella", "Water", 9.6);
-
-		mca.setCriterionWeight("Mountain", 1.0);
-		mca.setCriterionWeight("Water", 1.0);
-
-		try {
-			System.out.println(mca.runEvamix(null).dump());
-			;
-		} catch (KlabException e) {
-			e.printStackTrace();
-		}
-
 	}
 
 }

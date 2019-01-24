@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.mca.api.IAlternative;
 import org.integratedmodelling.mca.api.ICriterion;
 import org.integratedmodelling.mca.api.IStakeholder;
-import org.integratedmodelling.mca.core.MCA;
+import org.integratedmodelling.mca.core.MCAAssessment;
 import org.integratedmodelling.mca.core.MCAContext;
 import org.integratedmodelling.mca.core.MCAContext.Specification;
 import org.integratedmodelling.mca.core.Results;
@@ -50,14 +50,14 @@ public class ConcordanceResolver implements IResolver<IState>, IExpression {
 		
 		if (mcaContext.isComputable()) {
 			
-			MCA mca = new MCA();
+			MCAAssessment mCAAssessment = new MCAAssessment();
 			for (ICriterion criterion : mcaContext.getCriteria()) {
-				mca.declareCriterion(criterion.getName(), criterion.getDataType(), criterion.getType());
+				mCAAssessment.declareCriterion(criterion.getName(), criterion.getDataType(), criterion.getType());
 			}
 			for (IAlternative alternative : mcaContext.getAlternatives()) {
-				mca.declareAlternative(alternative.getId());
+				mCAAssessment.declareAlternative(alternative.getId());
 				for (ICriterion criterion : mcaContext.getCriteria()) {
-					mca.setCriterionValue(alternative.getId(), criterion.getName(), alternative.getValue(criterion.getName()));
+					mCAAssessment.setCriterionValue(alternative.getId(), criterion.getName(), alternative.getValue(criterion.getName()));
 				}
 			}
 			for (IStakeholder stakeholder : mcaContext.getStakeholders()) {
@@ -75,17 +75,17 @@ public class ConcordanceResolver implements IResolver<IState>, IExpression {
 					((ISubjectiveState)ret).setObserver(stakeholder.getSubject());
 				}
 				
-				mca.resetWeights();
+				mCAAssessment.resetWeights();
 				
 				for (String crit : stakeholder.getWeights().keySet()) {
-					mca.setCriterionWeight(crit, stakeholder.getWeights().get(crit));
+					mCAAssessment.setCriterionWeight(crit, stakeholder.getWeights().get(crit));
 				}
 				
 				// invert to turn into priorities
-				mca.invertWeights();
+				mCAAssessment.invertWeights();
 				
 				// run
-				Results results = mca.run(context.getMonitor());
+				Results results = mCAAssessment.run(context.getMonitor());
 				
 				// TODO set directives for reporting
 				System.out.println(results.dump());
