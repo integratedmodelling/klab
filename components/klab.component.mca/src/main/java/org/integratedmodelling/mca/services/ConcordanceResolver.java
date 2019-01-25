@@ -69,7 +69,7 @@ public class ConcordanceResolver implements IResolver<IState>, IExpression {
 				if (!(mcaContext.getSpecification() == Specification.InlineSingle)) {
 					// if state is not an observed set, wrap it into one
 					if (!(ret instanceof ISubjectiveState)) {
-						ret = ret.reinterpret(mcaContext.getObservers());
+						ret = ret.reinterpret(/* TODO */ null);
 					}
 					// set the observer in the stakeholder in the set so that all further assignments reflect its perspective
 					((ISubjectiveState)ret).setObserver(stakeholder.getSubject());
@@ -81,7 +81,7 @@ public class ConcordanceResolver implements IResolver<IState>, IExpression {
 					mCAAssessment.setCriterionWeight(crit, stakeholder.getWeights().get(crit));
 				}
 				
-				// invert to turn into priorities
+				// invert to turn weights into priorities
 				mCAAssessment.invertWeights();
 				
 				// run

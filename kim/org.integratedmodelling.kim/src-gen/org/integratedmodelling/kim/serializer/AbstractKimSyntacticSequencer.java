@@ -23,6 +23,7 @@ import org.integratedmodelling.kim.services.KimGrammarAccess;
 public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSequencer {
 
 	protected KimGrammarAccess grammarAccess;
+	protected AbstractElementAlias match_AnnotatedObservableSemantics_RequiredKeyword_4_5_1_a;
 	protected AbstractElementAlias match_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q;
 	protected AbstractElementAlias match_ClassifierRHSWithId_ExclusiveKeyword_1_1_1_q;
 	protected AbstractElementAlias match_ClassifierRHSWithId_ExclusiveKeyword_1_4_1_q;
@@ -47,6 +48,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	@Inject
 	protected void init(IGrammarAccess access) {
 		grammarAccess = (KimGrammarAccess) access;
+		match_AnnotatedObservableSemantics_RequiredKeyword_4_5_1_a = new TokenAlias(true, true, grammarAccess.getAnnotatedObservableSemanticsAccess().getRequiredKeyword_4_5_1());
 		match_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getAnnotationAccess().getLeftParenthesisKeyword_1_0()), new TokenAlias(false, false, grammarAccess.getAnnotationAccess().getRightParenthesisKeyword_1_2()));
 		match_ClassifierRHSWithId_ExclusiveKeyword_1_1_1_q = new TokenAlias(false, true, grammarAccess.getClassifierRHSWithIdAccess().getExclusiveKeyword_1_1_1());
 		match_ClassifierRHSWithId_ExclusiveKeyword_1_4_1_q = new TokenAlias(false, true, grammarAccess.getClassifierRHSWithIdAccess().getExclusiveKeyword_1_4_1());
@@ -93,7 +95,9 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 		List<INode> transitionNodes = collectNodes(fromNode, toNode);
 		for (AbstractElementAlias syntax : transition.getAmbiguousSyntaxes()) {
 			List<INode> syntaxNodes = getNodesFor(transitionNodes, syntax);
-			if (match_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q.equals(syntax))
+			if (match_AnnotatedObservableSemantics_RequiredKeyword_4_5_1_a.equals(syntax))
+				emit_AnnotatedObservableSemantics_RequiredKeyword_4_5_1_a(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q.equals(syntax))
 				emit_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_ClassifierRHSWithId_ExclusiveKeyword_1_1_1_q.equals(syntax))
 				emit_ClassifierRHSWithId_ExclusiveKeyword_1_1_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
@@ -137,6 +141,148 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 		}
 	}
 
+	/**
+	 * Ambiguous syntax:
+	 *     'required'*
+	 *
+	 * This ambiguous syntax occurs at:
+	 *     accordingTo=PropertyId (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     accordingTo=PropertyId (ambiguity) 'as' role=Concept
+	 *     accordingTo=PropertyId (ambiguity) 'by' by=Concept
+	 *     accordingTo=PropertyId (ambiguity) 'down' 'to' downTo=Concept
+	 *     accordingTo=PropertyId (ambiguity) 'in' currency=Currency
+	 *     accordingTo=PropertyId (ambiguity) 'in' unit=Unit
+	 *     accordingTo=PropertyId (ambiguity) 'named' name=LOWERCASE_ID
+	 *     accordingTo=PropertyId (ambiguity) 'named' name=STRING
+	 *     accordingTo=PropertyId (ambiguity) 'per' unit=Unit
+	 *     accordingTo=PropertyId (ambiguity) (rule end)
+	 *     accordingTo=PropertyId (ambiguity) from=Number
+	 *     accordingTo=PropertyId (ambiguity) optional?='optional'
+	 *     by=Concept (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     by=Concept (ambiguity) 'as' role=Concept
+	 *     by=Concept (ambiguity) 'by' by=Concept
+	 *     by=Concept (ambiguity) 'down' 'to' downTo=Concept
+	 *     by=Concept (ambiguity) 'in' currency=Currency
+	 *     by=Concept (ambiguity) 'in' unit=Unit
+	 *     by=Concept (ambiguity) 'named' name=LOWERCASE_ID
+	 *     by=Concept (ambiguity) 'named' name=STRING
+	 *     by=Concept (ambiguity) 'per' unit=Unit
+	 *     by=Concept (ambiguity) (rule end)
+	 *     by=Concept (ambiguity) from=Number
+	 *     by=Concept (ambiguity) optional?='optional'
+	 *     currency=Currency (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     currency=Currency (ambiguity) 'as' role=Concept
+	 *     currency=Currency (ambiguity) 'by' by=Concept
+	 *     currency=Currency (ambiguity) 'down' 'to' downTo=Concept
+	 *     currency=Currency (ambiguity) 'in' currency=Currency
+	 *     currency=Currency (ambiguity) 'in' unit=Unit
+	 *     currency=Currency (ambiguity) 'named' name=LOWERCASE_ID
+	 *     currency=Currency (ambiguity) 'named' name=STRING
+	 *     currency=Currency (ambiguity) 'per' unit=Unit
+	 *     currency=Currency (ambiguity) (rule end)
+	 *     currency=Currency (ambiguity) from=Number
+	 *     currency=Currency (ambiguity) optional?='optional'
+	 *     declaration=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     declaration=ConceptDeclaration (ambiguity) 'as' role=Concept
+	 *     declaration=ConceptDeclaration (ambiguity) 'by' by=Concept
+	 *     declaration=ConceptDeclaration (ambiguity) 'down' 'to' downTo=Concept
+	 *     declaration=ConceptDeclaration (ambiguity) 'in' currency=Currency
+	 *     declaration=ConceptDeclaration (ambiguity) 'in' unit=Unit
+	 *     declaration=ConceptDeclaration (ambiguity) 'named' name=LOWERCASE_ID
+	 *     declaration=ConceptDeclaration (ambiguity) 'named' name=STRING
+	 *     declaration=ConceptDeclaration (ambiguity) 'per' unit=Unit
+	 *     declaration=ConceptDeclaration (ambiguity) (rule end)
+	 *     declaration=ConceptDeclaration (ambiguity) from=Number
+	 *     declaration=ConceptDeclaration (ambiguity) optional?='optional'
+	 *     downTo=Concept (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     downTo=Concept (ambiguity) 'as' role=Concept
+	 *     downTo=Concept (ambiguity) 'by' by=Concept
+	 *     downTo=Concept (ambiguity) 'down' 'to' downTo=Concept
+	 *     downTo=Concept (ambiguity) 'in' currency=Currency
+	 *     downTo=Concept (ambiguity) 'in' unit=Unit
+	 *     downTo=Concept (ambiguity) 'named' name=LOWERCASE_ID
+	 *     downTo=Concept (ambiguity) 'named' name=STRING
+	 *     downTo=Concept (ambiguity) 'per' unit=Unit
+	 *     downTo=Concept (ambiguity) (rule end)
+	 *     downTo=Concept (ambiguity) from=Number
+	 *     downTo=Concept (ambiguity) optional?='optional'
+	 *     name=LOWERCASE_ID (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     name=LOWERCASE_ID (ambiguity) 'as' role=Concept
+	 *     name=LOWERCASE_ID (ambiguity) 'by' by=Concept
+	 *     name=LOWERCASE_ID (ambiguity) 'down' 'to' downTo=Concept
+	 *     name=LOWERCASE_ID (ambiguity) 'in' currency=Currency
+	 *     name=LOWERCASE_ID (ambiguity) 'in' unit=Unit
+	 *     name=LOWERCASE_ID (ambiguity) 'named' name=LOWERCASE_ID
+	 *     name=LOWERCASE_ID (ambiguity) 'named' name=STRING
+	 *     name=LOWERCASE_ID (ambiguity) 'per' unit=Unit
+	 *     name=LOWERCASE_ID (ambiguity) (rule end)
+	 *     name=LOWERCASE_ID (ambiguity) from=Number
+	 *     name=LOWERCASE_ID (ambiguity) optional?='optional'
+	 *     name=STRING (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     name=STRING (ambiguity) 'as' role=Concept
+	 *     name=STRING (ambiguity) 'by' by=Concept
+	 *     name=STRING (ambiguity) 'down' 'to' downTo=Concept
+	 *     name=STRING (ambiguity) 'in' currency=Currency
+	 *     name=STRING (ambiguity) 'in' unit=Unit
+	 *     name=STRING (ambiguity) 'named' name=LOWERCASE_ID
+	 *     name=STRING (ambiguity) 'named' name=STRING
+	 *     name=STRING (ambiguity) 'per' unit=Unit
+	 *     name=STRING (ambiguity) (rule end)
+	 *     name=STRING (ambiguity) from=Number
+	 *     name=STRING (ambiguity) optional?='optional'
+	 *     optional?='optional' (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     optional?='optional' (ambiguity) 'as' role=Concept
+	 *     optional?='optional' (ambiguity) 'by' by=Concept
+	 *     optional?='optional' (ambiguity) 'down' 'to' downTo=Concept
+	 *     optional?='optional' (ambiguity) 'in' currency=Currency
+	 *     optional?='optional' (ambiguity) 'in' unit=Unit
+	 *     optional?='optional' (ambiguity) 'named' name=LOWERCASE_ID
+	 *     optional?='optional' (ambiguity) 'named' name=STRING
+	 *     optional?='optional' (ambiguity) 'per' unit=Unit
+	 *     optional?='optional' (ambiguity) (rule end)
+	 *     optional?='optional' (ambiguity) from=Number
+	 *     optional?='optional' (ambiguity) optional?='optional'
+	 *     role=Concept (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     role=Concept (ambiguity) 'as' role=Concept
+	 *     role=Concept (ambiguity) 'by' by=Concept
+	 *     role=Concept (ambiguity) 'down' 'to' downTo=Concept
+	 *     role=Concept (ambiguity) 'in' currency=Currency
+	 *     role=Concept (ambiguity) 'in' unit=Unit
+	 *     role=Concept (ambiguity) 'named' name=LOWERCASE_ID
+	 *     role=Concept (ambiguity) 'named' name=STRING
+	 *     role=Concept (ambiguity) 'per' unit=Unit
+	 *     role=Concept (ambiguity) (rule end)
+	 *     role=Concept (ambiguity) from=Number
+	 *     role=Concept (ambiguity) optional?='optional'
+	 *     to=Number (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     to=Number (ambiguity) 'as' role=Concept
+	 *     to=Number (ambiguity) 'by' by=Concept
+	 *     to=Number (ambiguity) 'down' 'to' downTo=Concept
+	 *     to=Number (ambiguity) 'in' currency=Currency
+	 *     to=Number (ambiguity) 'in' unit=Unit
+	 *     to=Number (ambiguity) 'named' name=LOWERCASE_ID
+	 *     to=Number (ambiguity) 'named' name=STRING
+	 *     to=Number (ambiguity) 'per' unit=Unit
+	 *     to=Number (ambiguity) (rule end)
+	 *     to=Number (ambiguity) from=Number
+	 *     to=Number (ambiguity) optional?='optional'
+	 *     unit=Unit (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     unit=Unit (ambiguity) 'as' role=Concept
+	 *     unit=Unit (ambiguity) 'by' by=Concept
+	 *     unit=Unit (ambiguity) 'down' 'to' downTo=Concept
+	 *     unit=Unit (ambiguity) 'in' currency=Currency
+	 *     unit=Unit (ambiguity) 'in' unit=Unit
+	 *     unit=Unit (ambiguity) 'named' name=LOWERCASE_ID
+	 *     unit=Unit (ambiguity) 'named' name=STRING
+	 *     unit=Unit (ambiguity) 'per' unit=Unit
+	 *     unit=Unit (ambiguity) (rule end)
+	 *     unit=Unit (ambiguity) from=Number
+	 *     unit=Unit (ambiguity) optional?='optional'
+	 */
+	protected void emit_AnnotatedObservableSemantics_RequiredKeyword_4_5_1_a(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
 	/**
 	 * Ambiguous syntax:
 	 *     ('(' ')')?

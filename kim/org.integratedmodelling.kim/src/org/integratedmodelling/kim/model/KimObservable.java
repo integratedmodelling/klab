@@ -9,6 +9,7 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.kim.Annotation;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 import org.integratedmodelling.kim.validation.KimValidator;
@@ -80,7 +81,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 	public void setMain(IKimConcept main) {
 		this.main = main;
 	}
-	
+
 	public String getName() {
 		if (formalName != null) {
 			return formalName;
@@ -100,6 +101,10 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		}
 
 		KimObservable ret = new KimObservable(declaration, parent);
+		for (Annotation annotation : declaration.getAnnotations()) {
+			ret.getAnnotations().add(new KimAnnotation(annotation,
+					Kim.INSTANCE.getNamespace(KimValidator.getNamespace(declaration), false), ret));
+		}
 
 		ret.main = concept;
 		ret.formalName = declaration.getName();
@@ -141,7 +146,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 				ret.aggregator = by;
 			}
 		}
-		
+
 		if (declaration.getDownTo() != null) {
 			ret.downTo = KimConcept.normalize(declaration.getDownTo(), parent);
 		}
@@ -178,7 +183,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		if (nonSemanticType != null) {
 			return nonSemanticType + " " + modelReference;
 		}
-		
+
 		String ret = main.getDefinition();
 
 		// TODO

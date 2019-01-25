@@ -47,9 +47,10 @@ ModelBodyStatement:
 			 'as'
 		)? 
 		/*
-		 * If the observable is a single role, then concept must be the actual observable and we're reinterpreting it.
+		 * If the observable is a single role, then concept must be the actual observable and we're reinterpreting it. Observables 
+		 * besides the first may have annotations for the contextualizers to react to.
 		 */
-		 ( (name=LOWERCASE_ID | (observables+=ObservableSemantics (',' observables+=ObservableSemantics)*)))
+		 ( (name=LOWERCASE_ID | (observables+=AnnotatedObservableSemantics (',' observables+=AnnotatedObservableSemantics)*)))
 		 (docstring=STRING)?
 		 ('observing' dependencies+=Dependency (',' dependencies+=Dependency)* )?
 		 ('using' contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
@@ -296,6 +297,28 @@ ObserveStatementBody:
 ObservableSemantics:
 	// value may be an ID and in that case it can be used in models as an attribute for the URN as long
 	// as the ID is not defined in the namespace.
+	(value=Value 'as')?
+	(generic?='any')?
+	declaration=ConceptDeclaration
+	(
+		('by' by=Concept)? &
+		('down' 'to' downTo=Concept)? &
+		('as' role=Concept)? &
+		('according' 'to' accordingTo=PropertyId)? &
+		(
+			('in' (unit=Unit | currency=Currency)) |
+			('per' unit=Unit)
+		)? &
+		(optional?='optional' | 'required')? &
+		(from=Number 'to' to=Number)? &
+		('named' name=(LOWERCASE_ID|STRING))?
+	);
+
+/** 
+ * Same as full observablesemantics above but with annotations. 
+ */
+AnnotatedObservableSemantics returns ObservableSemantics:
+	annotations += Annotation*
 	(value=Value 'as')?
 	(generic?='any')?
 	declaration=ConceptDeclaration
@@ -803,7 +826,7 @@ terminal ANNOTATION_ID:
  * different syntax.
  */
 SimpleObservableSemantics returns ObservableSemantics:
-	
+
 	declaration=ConceptDeclaration
 	(
 		('by' by=Concept)? &

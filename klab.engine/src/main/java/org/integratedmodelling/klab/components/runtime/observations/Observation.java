@@ -204,7 +204,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	}
 	
 	@Override
-	public ISubjectiveObservation reinterpret(Collection<IDirectObservation> observers) {
+	public ISubjectiveObservation reinterpret(IDirectObservation observer) {
 		throw new IllegalStateException("reinterpret() was called on an illegal or unsupported type");
 	}
 }

@@ -15,7 +15,6 @@
  */
 package org.integratedmodelling.klab.api.observations;
 
-import java.util.Collection;
 import java.util.Iterator;
 
 import org.integratedmodelling.kim.api.IValueMediator;
@@ -94,6 +93,6 @@ public interface IState extends IObservation, IDataArtifact {
 	ITable<Number> getTable();
 	
 	@Override
-	ISubjectiveState reinterpret(Collection<IDirectObservation> observers);
+	ISubjectiveState reinterpret(IDirectObservation observer);
 	
 }

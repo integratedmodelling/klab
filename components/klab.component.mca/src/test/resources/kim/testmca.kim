@@ -1,5 +1,9 @@
 namespace test.mca;
-// no weight, find stakeholders in context, optionally constrain type and observe value in them
+
+/* 
+ * No weight, find stakeholders in context, optionally constrain type and observe value in them
+ * 
+ */
 model value of ecology:Biodiversity
 	observing 
 		@stakeholder geography:Country earth:Region,
@@ -8,15 +12,21 @@ model value of ecology:Biodiversity
 		@benefit     earth:PrecipitationVolume in mm
 	using im.mca.concordance();
 
-// single weight, stakeholder is context, concordance output is objective
+/* 
+ * Single weight, stakeholder is context, concordance output is objective
+ * 
+ */
 model value of ecology:Biodiversity
 	observing 
-		@cost(0.34)    geography:Slope,
-		@cost(2.31)    geography:Elevation,
-		@benefit(22.3) earth:PrecipitationVolume in mm
-	using im.mca.concordance();
+		@cost(45)    geography:Slope,
+		@cost(20)    geography:Elevation,
+		@benefit(50) earth:PrecipitationVolume in mm
+	using im.mca.concordance(levels = 15);
 	
-// multiple weights, build stakeholders, concordance output is subjective
+/* 
+ * Multiple weights, build stakeholders, concordance output is subjective.
+ * 
+ */
 model value of ecology:Biodiversity
 	observing 
 	
@@ -30,16 +40,52 @@ model value of ecology:Biodiversity
 		earth:PrecipitationVolume in mm
 		
 	using im.mca.concordance();
-	
-// rank sites according to variables (in them or in the context)
-// each site will get value of biodiversity
-// only way to do it relative to each other
-// problem is that it will create new instances - we could have a wrapping object that can add states
-model each im:Comparable earth:Site with ecology:Biodiversity //,
-//		@cost ... (for attributes to observe in the ranked one)
+
+/**
+ * Ranking OBJECTS based on context qualities:
+ * 
+ * This will produce the artifact with the concordance value as state, ranked highest-first.
+ * Also allows output tag @discordance and puts a score in the metadata in case there are no
+ * outputs linked to the concordance.
+ */	
+model each earth:Site with ecology:Biodiversity,
+	  @concordance value of ecology:Biodiversity
 	observing 
-		@alternative   earth:Site with ecology:Biodiversity,
 		@cost(0.34)    ecology:NormalizedDifferenceVegetationIndex,
 		@cost(2.31)    geography:Elevation in m,
 		@benefit(22.3) earth:PrecipitationVolume in mm
-	using im.mca.ranking(method=Electre4);
+	using 
+		gis.points.extract(select = [random() > 0.995]), 
+		im.mca.ranking(method=Electre4);
+		
+/** 
+ * To use qualities of the objects for ranking, the criteria can be added to a resolver even if it is not
+ * the one that will ultimately perform the ranking. Because the instances are resolved as soon as they are
+ * created, the second contextualizer will find the criteria in each and will be able to perform the
+ * ranking.
+ */
+model each earth:Site with ecology:Biodiversity,
+	  @concordance value of ecology:Biodiversity
+	using 
+		gis.points.extract(select = [random() > 0.995]), 
+		im.mca.ranking(method=Electre4);
+		
+model earth:Site with ecology:Biodiversity
+	observing
+		@cost(0.34) [random() * 2330]  as geography:Elevation in m,
+		@cost(2.31) [random() * 90]    as geography:Elevation in m,
+		@cost(0.34) [random() * 2 - 1] as ecology:NormalizedDifferenceVegetationIndex
+;
+
+/**
+ * If the criteria values are constants or expressions as above, this can be done in one shot using
+ * additional observables in the instantiator:
+ */
+model each earth:Site with ecology:Biodiversity,
+		@cost(0.34) [random() * 2330]  as geography:Elevation in m,
+		@cost(2.31) [random() * 90]    as geography:Elevation in m,
+		@cost(0.34) [random() * 2 - 1] as ecology:NormalizedDifferenceVegetationIndex,
+		@concordance value of ecology:Biodiversity
+	using 
+		gis.points.extract(select = [random() > 0.995]), 
+		im.mca.ranking(method=Electre4);		

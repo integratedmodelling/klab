@@ -136,7 +136,7 @@ public class MediatingState extends Observation implements IState {
 		return delegate.getTable();
 	}
 
-	public ISubjectiveState reinterpret(Collection<IDirectObservation> observers) {
+	public ISubjectiveState reinterpret(IDirectObservation observers) {
 		return null;
 	}
 	

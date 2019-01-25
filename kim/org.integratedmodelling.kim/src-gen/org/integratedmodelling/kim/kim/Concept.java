@@ -25,7 +25,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isCount <em>Count</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isDistance <em>Distance</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isProbability <em>Probability</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.Concept#isAssessment <em>Assessment</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isUncertainty <em>Uncertainty</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isMagnitude <em>Magnitude</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isType <em>Type</em>}</li>
@@ -304,32 +303,6 @@ public interface Concept extends EObject
    * @generated
    */
   void setProbability(boolean value);
-
-  /**
-   * Returns the value of the '<em><b>Assessment</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Assessment</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Assessment</em>' attribute.
-   * @see #setAssessment(boolean)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getConcept_Assessment()
-   * @model
-   * @generated
-   */
-  boolean isAssessment();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Concept#isAssessment <em>Assessment</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Assessment</em>' attribute.
-   * @see #isAssessment()
-   * @generated
-   */
-  void setAssessment(boolean value);
 
   /**
    * Returns the value of the '<em><b>Uncertainty</b></em>' attribute.

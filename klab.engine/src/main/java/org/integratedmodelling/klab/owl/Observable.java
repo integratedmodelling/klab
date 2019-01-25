@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -62,7 +63,7 @@ public class Observable extends Concept implements IObservable {
 	private boolean optional;
 	private boolean generic;
 	private String observerId;
-	private ISubject observer;
+	private IDirectObservation observer;
 	private Set<IConcept> assignedRoles = new HashSet<>();
 
 	/**
@@ -73,7 +74,8 @@ public class Observable extends Concept implements IObservable {
 	 */
 	transient IModel resolvedModel;
 	private String modelReference;
-	// only used to resolve the subject observable if it has to be marshalled across network boundaries
+	// only used to resolve the subject observable if it has to be marshalled across
+	// network boundaries
 	transient String sessionId;
 	private List<IAnnotation> annotations = new ArrayList<>();
 
@@ -89,14 +91,14 @@ public class Observable extends Concept implements IObservable {
 	}
 
 	/**
-	 * Ensure the unit is appropriate for the scale if the observable is
-	 * an extensive property. Modifies the unit - call on a copy.
+	 * Ensure the unit is appropriate for the scale if the observable is an
+	 * extensive property. Modifies the unit - call on a copy.
 	 * 
 	 * @param scale
 	 * @return this observable (not a copy)
 	 */
 	public Observable contextualizeUnits(IScale scale) {
-		
+
 		if (this.is(Type.EXTENSIVE_PROPERTY)) {
 			IUnit unit = this.getUnit();
 			if (unit != null) {
@@ -186,7 +188,7 @@ public class Observable extends Concept implements IObservable {
 	public IConcept getClassifier() {
 		return classifier;
 	}
-	
+
 	@Override
 	public IConcept getAggregator() {
 		return aggregator;
@@ -579,7 +581,7 @@ public class Observable extends Concept implements IObservable {
 	public IConcept getInherentType() {
 		return Observables.INSTANCE.getInherentType(getType());
 	}
-	
+
 	@Override
 	public IConcept getComparisonType() {
 		return Observables.INSTANCE.getComparisonType(getType());
@@ -642,20 +644,32 @@ public class Observable extends Concept implements IObservable {
 	}
 
 	@Override
-	public ISubject getObserver() {
+	public IDirectObservation getObserver() {
 		if (observer == null && observerId != null && sessionId != null) {
 			Session session = Authentication.INSTANCE.getIdentity(sessionId, Session.class);
 			if (session != null) {
-				observer = (ISubject)session.getObservation(observerId);
+				observer = (IDirectObservation) session.getObservation(observerId);
 			}
 		}
 		return observer;
 	}
-	
+
 	public void setObserver(ISubject observer) {
 		this.observer = observer;
 	}
 
+	/**
+	 * Return a subjective observable with the passed observer as observer.
+	 * 
+	 * @param observer
+	 * @return
+	 */
+	public IObservable subjectify(IDirectObservation observer) {
+		Observable ret = new Observable(this);
+		ret.observer = observer;
+		ret.observerId = observer.getId();
+		return ret;
+	}
 
 	public String getObserverId() {
 		return observerId;
@@ -674,8 +688,8 @@ public class Observable extends Concept implements IObservable {
 	public List<IAnnotation> getAnnotations() {
 		return this.annotations;
 	}
-	
+
 	public void addAnnotation(Annotation annotation) {
-		this.annotations .add(annotation);
+		this.annotations.add(annotation);
 	}
 }

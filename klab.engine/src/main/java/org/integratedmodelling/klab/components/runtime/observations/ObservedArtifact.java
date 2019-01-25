@@ -25,6 +25,7 @@ public abstract class ObservedArtifact extends Artifact implements IArtifact {
 	private IRuntimeContext runtimeContext;
 	private IMetadata metadata = new Metadata();
 	private String token = "o" + NameGenerator.shortUUID();
+	private boolean markedForDeletion;
 
 	protected ObservedArtifact() {
 	}
@@ -105,6 +106,26 @@ public abstract class ObservedArtifact extends Artifact implements IArtifact {
 
 	protected void setMetadata(IMetadata metadata) {
 		this.metadata = metadata;
+	}
+
+	/**
+	 * If this returns true, the observation is discarded after creation and not inserted in
+	 * the context. Used by filtering contextualizers.
+	 * 
+	 * @return
+	 */
+	public boolean isMarkedForDeletion() {
+		return markedForDeletion;
+	}
+
+	/**
+	 * Used by filtering contextualizers to mark observations that won't make it to the
+	 * context.
+	 * 
+	 * @param delete
+	 */
+	public void setMarkedForDeletion(boolean delete) {
+		this.markedForDeletion = delete;
 	}
 
 }

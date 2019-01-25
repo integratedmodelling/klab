@@ -304,16 +304,4 @@ public class MCAContext {
 			}
 		} // TODO else...
 	}
-
-	/**
-	 * Return the observers representing each stakeholder in the same order as the
-	 * stakeholder list.
-	 * 
-	 * @return
-	 */
-	public List<IDirectObservation> getObservers() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

@@ -21,6 +21,7 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
@@ -473,7 +474,7 @@ public interface IObservable extends IConcept, IResolvable {
 	 * 
 	 * @return
 	 */
-	ISubject getObserver();
+	IDirectObservation getObserver();
 
 	/**
 	 * One or more roles can be 'assigned' to an observable (using the 'as' clause,

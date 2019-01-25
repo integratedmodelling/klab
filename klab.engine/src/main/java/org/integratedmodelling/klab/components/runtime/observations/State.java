@@ -136,8 +136,8 @@ public class State extends Observation implements IState, IKeyHolder {
 		this.table = table;
 	}
 	
-	public ISubjectiveState reinterpret(Collection<IDirectObservation> observers) {
-		return null;
+	public ISubjectiveState reinterpret(IDirectObservation observer) {
+		return new SubjectiveState(this, observer);
 	}
 	
 }

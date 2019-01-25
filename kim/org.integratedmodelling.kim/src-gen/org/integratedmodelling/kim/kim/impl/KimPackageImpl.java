@@ -2357,6 +2357,16 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EReference getObservableSemantics_Annotations()
+  {
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(13);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getDependency()
   {
     return dependencyEClass;
@@ -2717,7 +2727,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getConcept_Assessment()
+  public EAttribute getConcept_Uncertainty()
   {
     return (EAttribute)conceptEClass.getEStructuralFeatures().get(10);
   }
@@ -2727,7 +2737,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getConcept_Uncertainty()
+  public EAttribute getConcept_Magnitude()
   {
     return (EAttribute)conceptEClass.getEStructuralFeatures().get(11);
   }
@@ -2737,7 +2747,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getConcept_Magnitude()
+  public EAttribute getConcept_Type()
   {
     return (EAttribute)conceptEClass.getEStructuralFeatures().get(12);
   }
@@ -2747,7 +2757,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getConcept_Type()
+  public EAttribute getConcept_Observability()
   {
     return (EAttribute)conceptEClass.getEStructuralFeatures().get(13);
   }
@@ -2757,7 +2767,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getConcept_Observability()
+  public EAttribute getConcept_Proportion()
   {
     return (EAttribute)conceptEClass.getEStructuralFeatures().get(14);
   }
@@ -2767,19 +2777,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getConcept_Proportion()
-  {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(15);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EReference getConcept_Other()
   {
-    return (EReference)conceptEClass.getEStructuralFeatures().get(16);
+    return (EReference)conceptEClass.getEStructuralFeatures().get(15);
   }
 
   /**
@@ -2789,7 +2789,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getConcept_Percentage()
   {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(17);
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(16);
   }
 
   /**
@@ -2799,7 +2799,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getConcept_Ratio()
   {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(18);
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(17);
   }
 
   /**
@@ -2809,7 +2809,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getConcept_Value()
   {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(19);
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(18);
   }
 
   /**
@@ -2819,7 +2819,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getConcept_Occurrence()
   {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(20);
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(19);
   }
 
   /**
@@ -2829,7 +2829,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getConcept_Declaration()
   {
-    return (EReference)conceptEClass.getEStructuralFeatures().get(21);
+    return (EReference)conceptEClass.getEStructuralFeatures().get(20);
   }
 
   /**
@@ -4719,6 +4719,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__FROM);
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__TO);
     createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__NAME);
+    createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__ANNOTATIONS);
 
     dependencyEClass = createEClass(DEPENDENCY);
     createEReference(dependencyEClass, DEPENDENCY__ANNOTATIONS);
@@ -4759,7 +4760,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEAttribute(conceptEClass, CONCEPT__COUNT);
     createEAttribute(conceptEClass, CONCEPT__DISTANCE);
     createEAttribute(conceptEClass, CONCEPT__PROBABILITY);
-    createEAttribute(conceptEClass, CONCEPT__ASSESSMENT);
     createEAttribute(conceptEClass, CONCEPT__UNCERTAINTY);
     createEAttribute(conceptEClass, CONCEPT__MAGNITUDE);
     createEAttribute(conceptEClass, CONCEPT__TYPE);
@@ -5203,6 +5203,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getObservableSemantics_From(), this.getNumber(), null, "from", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObservableSemantics_To(), this.getNumber(), null, "to", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getObservableSemantics_Name(), ecorePackage.getEString(), "name", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getObservableSemantics_Annotations(), this.getAnnotation(), null, "annotations", null, 0, -1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(dependencyEClass, Dependency.class, "Dependency", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getDependency_Annotations(), this.getAnnotation(), null, "annotations", null, 0, -1, Dependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -5243,7 +5244,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEAttribute(getConcept_Count(), ecorePackage.getEBoolean(), "count", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConcept_Distance(), ecorePackage.getEBoolean(), "distance", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConcept_Probability(), ecorePackage.getEBoolean(), "probability", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getConcept_Assessment(), ecorePackage.getEBoolean(), "assessment", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConcept_Uncertainty(), ecorePackage.getEBoolean(), "uncertainty", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConcept_Magnitude(), ecorePackage.getEBoolean(), "magnitude", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConcept_Type(), ecorePackage.getEBoolean(), "type", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

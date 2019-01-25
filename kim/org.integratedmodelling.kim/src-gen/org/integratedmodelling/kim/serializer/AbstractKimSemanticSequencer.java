@@ -251,7 +251,11 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 				sequence_Number(context, (org.integratedmodelling.kim.kim.Number) semanticObject); 
 				return; 
 			case KimPackage.OBSERVABLE_SEMANTICS:
-				if (rule == grammarAccess.getNamedObservableSemanticsRule()) {
+				if (rule == grammarAccess.getAnnotatedObservableSemanticsRule()) {
+					sequence_AnnotatedObservableSemantics(context, (ObservableSemantics) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getNamedObservableSemanticsRule()) {
 					sequence_NamedObservableSemantics(context, (ObservableSemantics) semanticObject); 
 					return; 
 				}
@@ -380,6 +384,38 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	
 	/**
 	 * Contexts:
+	 *     AnnotatedObservableSemantics returns ObservableSemantics
+	 *
+	 * Constraint:
+	 *     (
+	 *         annotations+=Annotation* 
+	 *         value=Value? 
+	 *         generic?='any'? 
+	 *         declaration=ConceptDeclaration 
+	 *         (
+	 *             (
+	 *                 by=Concept | 
+	 *                 downTo=Concept | 
+	 *                 role=Concept | 
+	 *                 accordingTo=PropertyId | 
+	 *                 unit=Unit | 
+	 *                 currency=Currency | 
+	 *                 unit=Unit | 
+	 *                 optional?='optional' | 
+	 *                 name=LOWERCASE_ID | 
+	 *                 name=STRING
+	 *             )? 
+	 *             (from=Number to=Number)?
+	 *         )+
+	 *     )
+	 */
+	protected void sequence_AnnotatedObservableSemantics(ISerializationContext context, ObservableSemantics semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     Annotation returns Annotation
 	 *
 	 * Constraint:
@@ -445,10 +481,10 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         metadata=Metadata
 	 *                     )? 
 	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
-	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
+	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
 	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
 	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
-	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
+	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
 	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
 	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
@@ -747,7 +783,6 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *         (count?='count' concept=SimpleConceptDeclaration) | 
 	 *         (distance?='distance' concept=SimpleConceptDeclaration) | 
 	 *         (probability?='probability' concept=SimpleConceptDeclaration) | 
-	 *         (assessment?='assessment' concept=SimpleConceptDeclaration) | 
 	 *         (uncertainty?='uncertainty' concept=SimpleConceptDeclaration) | 
 	 *         (magnitude?='magnitude' concept=SimpleConceptDeclaration) | 
 	 *         (type?='type' concept=SimpleConceptDeclaration) | 
@@ -1061,7 +1096,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *             boolean='false' | 
 	 *             concept=SimpleObservableSemantics
 	 *         )? 
-	 *         (name=LOWERCASE_ID | (observables+=ObservableSemantics observables+=ObservableSemantics*)) 
+	 *         (name=LOWERCASE_ID | (observables+=AnnotatedObservableSemantics observables+=AnnotatedObservableSemantics*)) 
 	 *         docstring=STRING? 
 	 *         (dependencies+=Dependency dependencies+=Dependency*)? 
 	 *         (contextualizers+=ValueExecution contextualizers+=ValueExecution*)? 

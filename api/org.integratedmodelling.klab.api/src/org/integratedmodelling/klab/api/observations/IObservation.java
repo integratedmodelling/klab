@@ -134,6 +134,6 @@ public interface IObservation extends IArtifactIdentity, IArtifact {
 	 * @param observers
 	 * @return
 	 */
-	ISubjectiveObservation reinterpret(Collection<IDirectObservation> observers);
+	ISubjectiveObservation reinterpret(IDirectObservation observer);
 
 }

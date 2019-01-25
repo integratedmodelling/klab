@@ -4,8 +4,12 @@
  */
 package org.integratedmodelling.kim.kim.impl;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -13,6 +17,10 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
+
+import org.integratedmodelling.kim.kim.Annotation;
 import org.integratedmodelling.kim.kim.Concept;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.Currency;
@@ -42,6 +50,7 @@ import org.integratedmodelling.kim.kim.Value;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getFrom <em>From</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getTo <em>To</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getAnnotations <em>Annotations</em>}</li>
  * </ul>
  *
  * @generated
@@ -217,6 +226,16 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * @ordered
    */
   protected String name = NAME_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getAnnotations() <em>Annotations</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getAnnotations()
+   * @generated
+   * @ordered
+   */
+  protected EList<Annotation> annotations;
 
   /**
    * <!-- begin-user-doc -->
@@ -768,6 +787,20 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * <!-- end-user-doc -->
    * @generated
    */
+  public EList<Annotation> getAnnotations()
+  {
+    if (annotations == null)
+    {
+      annotations = new EObjectContainmentEList<Annotation>(Annotation.class, this, KimPackage.OBSERVABLE_SEMANTICS__ANNOTATIONS);
+    }
+    return annotations;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
@@ -791,6 +824,8 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return basicSetFrom(null, msgs);
       case KimPackage.OBSERVABLE_SEMANTICS__TO:
         return basicSetTo(null, msgs);
+      case KimPackage.OBSERVABLE_SEMANTICS__ANNOTATIONS:
+        return ((InternalEList<?>)getAnnotations()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -831,6 +866,8 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return getTo();
       case KimPackage.OBSERVABLE_SEMANTICS__NAME:
         return getName();
+      case KimPackage.OBSERVABLE_SEMANTICS__ANNOTATIONS:
+        return getAnnotations();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -840,6 +877,7 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * <!-- end-user-doc -->
    * @generated
    */
+  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
@@ -883,6 +921,10 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__NAME:
         setName((String)newValue);
+        return;
+      case KimPackage.OBSERVABLE_SEMANTICS__ANNOTATIONS:
+        getAnnotations().clear();
+        getAnnotations().addAll((Collection<? extends Annotation>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -937,6 +979,9 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
       case KimPackage.OBSERVABLE_SEMANTICS__NAME:
         setName(NAME_EDEFAULT);
         return;
+      case KimPackage.OBSERVABLE_SEMANTICS__ANNOTATIONS:
+        getAnnotations().clear();
+        return;
     }
     super.eUnset(featureID);
   }
@@ -977,6 +1022,8 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return to != null;
       case KimPackage.OBSERVABLE_SEMANTICS__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+      case KimPackage.OBSERVABLE_SEMANTICS__ANNOTATIONS:
+        return annotations != null && !annotations.isEmpty();
     }
     return super.eIsSet(featureID);
   }

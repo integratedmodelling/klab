@@ -387,7 +387,7 @@ public class RescalingState extends Observation implements IState {
 		return null;
 	}
 
-	public ISubjectiveState reinterpret(Collection<IDirectObservation> observers) {
+	public ISubjectiveState reinterpret(IDirectObservation observers) {
 		return null;
 	}
 }
