@@ -36,6 +36,7 @@ import org.integratedmodelling.kim.kim.KimPackage;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isCount <em>Count</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isDistance <em>Distance</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isProbability <em>Probability</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isAssessment <em>Assessment</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isUncertainty <em>Uncertainty</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isMagnitude <em>Magnitude</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isType <em>Type</em>}</li>
@@ -232,6 +233,26 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
    * @ordered
    */
   protected boolean probability = PROBABILITY_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isAssessment() <em>Assessment</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isAssessment()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean ASSESSMENT_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isAssessment() <em>Assessment</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isAssessment()
+   * @generated
+   * @ordered
+   */
+  protected boolean assessment = ASSESSMENT_EDEFAULT;
 
   /**
    * The default value of the '{@link #isUncertainty() <em>Uncertainty</em>}' attribute.
@@ -739,6 +760,29 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
    * <!-- end-user-doc -->
    * @generated
    */
+  public boolean isAssessment()
+  {
+    return assessment;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setAssessment(boolean newAssessment)
+  {
+    boolean oldAssessment = assessment;
+    assessment = newAssessment;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT__ASSESSMENT, oldAssessment, assessment));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public boolean isUncertainty()
   {
     return uncertainty;
@@ -1089,6 +1133,8 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return isDistance();
       case KimPackage.CONCEPT__PROBABILITY:
         return isProbability();
+      case KimPackage.CONCEPT__ASSESSMENT:
+        return isAssessment();
       case KimPackage.CONCEPT__UNCERTAINTY:
         return isUncertainty();
       case KimPackage.CONCEPT__MAGNITUDE:
@@ -1154,6 +1200,9 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return;
       case KimPackage.CONCEPT__PROBABILITY:
         setProbability((Boolean)newValue);
+        return;
+      case KimPackage.CONCEPT__ASSESSMENT:
+        setAssessment((Boolean)newValue);
         return;
       case KimPackage.CONCEPT__UNCERTAINTY:
         setUncertainty((Boolean)newValue);
@@ -1232,6 +1281,9 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
       case KimPackage.CONCEPT__PROBABILITY:
         setProbability(PROBABILITY_EDEFAULT);
         return;
+      case KimPackage.CONCEPT__ASSESSMENT:
+        setAssessment(ASSESSMENT_EDEFAULT);
+        return;
       case KimPackage.CONCEPT__UNCERTAINTY:
         setUncertainty(UNCERTAINTY_EDEFAULT);
         return;
@@ -1299,6 +1351,8 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return distance != DISTANCE_EDEFAULT;
       case KimPackage.CONCEPT__PROBABILITY:
         return probability != PROBABILITY_EDEFAULT;
+      case KimPackage.CONCEPT__ASSESSMENT:
+        return assessment != ASSESSMENT_EDEFAULT;
       case KimPackage.CONCEPT__UNCERTAINTY:
         return uncertainty != UNCERTAINTY_EDEFAULT;
       case KimPackage.CONCEPT__MAGNITUDE:
@@ -1352,6 +1406,8 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
     result.append(distance);
     result.append(", probability: ");
     result.append(probability);
+    result.append(", assessment: ");
+    result.append(assessment);
     result.append(", uncertainty: ");
     result.append(uncertainty);
     result.append(", magnitude: ");

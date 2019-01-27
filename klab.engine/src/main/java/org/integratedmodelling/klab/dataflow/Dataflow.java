@@ -135,17 +135,6 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		return encode(0);
 	}
 
-//	/**
-//	 * Called by tasks
-//	 * 
-//	 * @param name
-//	 * @param description
-//	 */
-//	public void setName(String name, String description) {
-//		this.name = name;
-//		this.description = description;
-//	}
-
 	@Override
 	public ICoverage getCoverage() {
 		return scope.getCoverage();

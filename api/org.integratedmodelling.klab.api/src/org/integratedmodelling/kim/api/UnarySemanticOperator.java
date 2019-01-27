@@ -26,7 +26,7 @@ public enum UnarySemanticOperator {
     COUNT(new Type[] { Type.COUNTABLE }, "count of"),
     VALUE(new Type[] { Type.OBSERVABLE, Type.CONFIGURATION }, "value of", "over"),
     OCCURRENCE(new Type[] { Type.COUNTABLE }, "occurrence of"),
-//    @Deprecated ASSESSMENT(new Type[] { Type.QUALITY }, "assessment of"),
+    ASSESSMENT(new Type[] { Type.QUALITY }, "assessment of"),
     OBSERVABILITY(new Type[] { Type.OBSERVABLE }, "observability of"),
     MAGNITUDE(new Type[] { Type.QUANTIFIABLE }, "magnitude of"),
     TYPE(new Type[] { Type.TRAIT }, "type of");

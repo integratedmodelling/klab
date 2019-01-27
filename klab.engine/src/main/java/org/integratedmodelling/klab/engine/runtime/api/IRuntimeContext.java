@@ -237,4 +237,11 @@ public interface IRuntimeContext extends IComputationContext {
 	
 	// same 
 	void setModel(Model model);
+
+	/**
+	 * Remove artifact from structure if it's there.
+	 * 
+	 * @param object
+	 */
+    void removeArtifact(IArtifact object);
 }

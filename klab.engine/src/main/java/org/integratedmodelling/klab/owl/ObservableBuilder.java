@@ -251,9 +251,9 @@ public class ObservableBuilder implements IObservable.Builder {
 			Concept argument = getArgumentBuilder().buildConcept();
 
 			switch (type) {
-//			case ASSESSMENT:
-//				reset(makeAssessment(argument, false));
-//				break;
+			case ASSESSMENT:
+				reset(makeAssessment(argument, false));
+				break;
 			case COUNT:
 				reset(makeCount(argument, false));
 				break;
@@ -510,51 +510,51 @@ public class ObservableBuilder implements IObservable.Builder {
 		return withTrait(concepts.toArray(new IConcept[concepts.size()]));
 	}
 
-//	/**
-//	 * Turn a concept into its assessment if it's not already one, implementing the
-//	 * corresponding semantic operator.
-//	 * 
-//	 * @param concept
-//	 *            the untransformed concept
-//	 * @param addDefinition
-//	 *            add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass
-//	 *            true if used from outside the builder
-//	 * @return the transformed concept
-//	 */
-//	public static Concept makeAssessment(IConcept concept, boolean addDefinition) {
-//
-//		String cName = getCleanId(concept) + "Assessment";
-//
-//		if (!concept.is(Type.QUALITY)) {
-//			return null;
-//		}
-//
-//		String definition = UnarySemanticOperator.ASSESSMENT.declaration[0] + " " + concept.getDefinition();
-//		Ontology ontology = (Ontology) concept.getOntology();
-//		String conceptId = ontology.getIdForDefinition(definition);
-//
-//		if (conceptId == null) {
-//
-//			conceptId = ontology.createIdForDefinition(definition);
-//
-//			EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.ASSESSMENT.name());
-//
-//			ArrayList<IAxiom> ax = new ArrayList<>();
-//			ax.add(Axiom.ClassAssertion(conceptId, newType));
-//			ax.add(Axiom.SubClass(NS.CORE_ASSESSMENT, conceptId));
-//			ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
-//			ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
-//
-//			if (addDefinition) {
-//				ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
-//			}
-//			ontology.define(ax);
-//			IConcept ret = ontology.getConcept(conceptId);
-//			OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.OBSERVES_PROPERTY), concept);
-//		}
-//
-//		return ontology.getConcept(conceptId);
-//	}
+	/**
+	 * Turn a concept into its assessment if it's not already one, implementing the
+	 * corresponding semantic operator.
+	 * 
+	 * @param concept
+	 *            the untransformed concept
+	 * @param addDefinition
+	 *            add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass
+	 *            true if used from outside the builder
+	 * @return the transformed concept
+	 */
+	public static Concept makeAssessment(IConcept concept, boolean addDefinition) {
+
+		String cName = getCleanId(concept) + "Assessment";
+
+		if (!concept.is(Type.QUALITY)) {
+			return null;
+		}
+
+		String definition = UnarySemanticOperator.ASSESSMENT.declaration[0] + " " + concept.getDefinition();
+		Ontology ontology = (Ontology) concept.getOntology();
+		String conceptId = ontology.getIdForDefinition(definition);
+
+		if (conceptId == null) {
+
+			conceptId = ontology.createIdForDefinition(definition);
+
+			EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.ASSESSMENT.name());
+
+			ArrayList<IAxiom> ax = new ArrayList<>();
+			ax.add(Axiom.ClassAssertion(conceptId, newType));
+			ax.add(Axiom.SubClass(NS.CORE_ASSESSMENT, conceptId));
+			ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+			ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
+
+			if (addDefinition) {
+				ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
+			}
+			ontology.define(ax);
+			IConcept ret = ontology.getConcept(conceptId);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.OBSERVES_PROPERTY), concept);
+		}
+
+		return ontology.getConcept(conceptId);
+	}
 
 	/**
 	 * Turn a concept into its count/numerosity if it's not already one,

@@ -475,4 +475,10 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 		return null;
 	}
 
+    @Override
+    public void removeArtifact(IArtifact object) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

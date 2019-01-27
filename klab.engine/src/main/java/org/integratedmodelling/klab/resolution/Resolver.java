@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -49,311 +50,322 @@ import org.integratedmodelling.klab.utils.Pair;
  */
 public enum Resolver {
 
-	INSTANCE;
+    INSTANCE;
 
-	/**
-	 * Implements the
-	 * {@link IObservationService#resolve(String, ISession, String[])} method,
-	 * exposed by {@link Observations}.
-	 * 
-	 * @param urn
-	 * @param session
-	 * @param scenarios
-	 * @return a dataflow to compute the artifact identified by the urn.
-	 * @throws KlabException
-	 */
-	public IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios) throws KlabException {
+    /**
+     * Implements the
+     * {@link IObservationService#resolve(String, ISession, String[])} method,
+     * exposed by {@link Observations}.
+     * 
+     * @param urn
+     * @param session
+     * @param scenarios
+     * @return a dataflow to compute the artifact identified by the urn.
+     * @throws KlabException
+     */
+    public IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios)
+            throws KlabException {
 
-		IKimObject object = Resources.INSTANCE.getModelObject(urn);
-		if (!(object instanceof Observer)) {
-			throw new IllegalArgumentException("URN " + urn + " does not specify an observation");
-		}
-		IMonitor monitor = session.getMonitor();
-		String taskId = "local:task:" + session.getId() + ":" + object.getId();
-		ResolutionScope scope = resolve((Observer) object, monitor, Arrays.asList(scenarios));
-		if (scope.getCoverage().isRelevant()) {
-			return Dataflows.INSTANCE.compile(taskId, scope);
-		}
-		return Dataflow.empty();
-	}
+        IKimObject object = Resources.INSTANCE.getModelObject(urn);
+        if (!(object instanceof Observer)) {
+            throw new IllegalArgumentException("URN " + urn + " does not specify an observation");
+        }
+        IMonitor monitor = session.getMonitor();
+        String taskId = "local:task:" + session.getId() + ":" + object.getId();
+        ResolutionScope scope = resolve((Observer) object, monitor, Arrays.asList(scenarios));
+        if (scope.getCoverage().isRelevant()) {
+            return Dataflows.INSTANCE.compile(taskId, scope);
+        }
+        return Dataflow.empty();
+    }
 
-	/**
-	 * Implements the
-	 * {@link IObservationService#resolve(String, ISubject, String[])} method,
-	 * exposed by {@link Observations}.
-	 * 
-	 * @param urn
-	 * @param context
-	 * @param scenarios
-	 * @return a dataflow, possibly empty.
-	 * @throws KlabException
-	 */
-	public IDataflow<IArtifact> resolve(String urn, ISubject context, String[] scenarios) throws KlabException {
+    /**
+     * Implements the
+     * {@link IObservationService#resolve(String, ISubject, String[])} method,
+     * exposed by {@link Observations}.
+     * 
+     * @param urn
+     * @param context
+     * @param scenarios
+     * @return a dataflow, possibly empty.
+     * @throws KlabException
+     */
+    public IDataflow<IArtifact> resolve(String urn, ISubject context, String[] scenarios)
+            throws KlabException {
 
-		IMonitor monitor = context.getMonitor();
-		IResolvable resolvable = Resources.INSTANCE.getResolvableResource(urn, context.getScale());
-		String taskId = "local:task:" + context.getId() + ":" + ""; // TODO encode resolvable in URN
-		if (resolvable == null) {
-			return Dataflow.empty();
-		}
+        IMonitor monitor = context.getMonitor();
+        IResolvable resolvable = Resources.INSTANCE.getResolvableResource(urn, context.getScale());
+        String taskId = "local:task:" + context.getId() + ":" + ""; // TODO encode resolvable in URN
+        if (resolvable == null) {
+            return Dataflow.empty();
+        }
 
-		/*
-		 * resolve and run
-		 */
-		ResolutionScope scope = resolve(resolvable,
-				ResolutionScope.create((Subject) context, monitor, Arrays.asList(scenarios)));
-		if (scope.getCoverage().isRelevant()) {
-			return Dataflows.INSTANCE.compile(taskId, scope);
-		}
+        /*
+         * resolve and run
+         */
+        ResolutionScope scope = resolve(resolvable, ResolutionScope
+                .create((Subject) context, monitor, Arrays.asList(scenarios)));
+        if (scope.getCoverage().isRelevant()) {
+            return Dataflows.INSTANCE.compile(taskId, scope);
+        }
 
-		return Dataflow.empty();
-	}
+        return Dataflow.empty();
+    }
 
-	/**
-	 * Resolve the passed object in the passed parent scope, using the resolution
-	 * strategy appropriate for the type.
-	 * 
-	 * @param resolvable
-	 * @param parentScope
-	 * @return the resolved scope
-	 * @throws KlabException
-	 */
-	public ResolutionScope resolve(IResolvable resolvable, ResolutionScope parentScope) throws KlabException {
+    /**
+     * Resolve the passed object in the passed parent scope, using the resolution
+     * strategy appropriate for the type.
+     * 
+     * @param resolvable
+     * @param parentScope
+     * @return the resolved scope
+     * @throws KlabException
+     */
+    public ResolutionScope resolve(IResolvable resolvable, ResolutionScope parentScope) throws KlabException {
 
-		if (resolvable instanceof Observable) {
-			return resolve((Observable) resolvable, parentScope,
-					((Observable) resolvable).is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
-		} else if (resolvable instanceof Model) {
-			return resolve((Model) resolvable, parentScope);
-		} else if (resolvable instanceof Observer) {
-			return resolve((Observer) resolvable, parentScope);
-		}
+        if (resolvable instanceof Observable) {
+            return resolve((Observable) resolvable, parentScope, ((Observable) resolvable).is(Type.COUNTABLE)
+                    ? Mode.INSTANTIATION
+                    : Mode.RESOLUTION);
+        } else if (resolvable instanceof Model) {
+            return resolve((Model) resolvable, parentScope);
+        } else if (resolvable instanceof Observer) {
+            return resolve((Observer) resolvable, parentScope);
+        }
 
-		return parentScope.empty();
-	}
+        return parentScope.empty();
+    }
 
-	/**
-	 * Resolve a root observer to an acknowledged observation tree. This being an
-	 * acknowledgement, coverage will always be 100% unless errors happen.
-	 * 
-	 * @param observer
-	 * @param monitor
-	 * @param scenarios
-	 * @return the scope, with the new subject in it.
-	 * @throws KlabException
-	 */
-	public ResolutionScope resolve(Observer observer, IMonitor monitor, Collection<String> scenarios)
-			throws KlabException {
+    /**
+     * Resolve a root observer to an acknowledged observation tree. This being an
+     * acknowledgement, coverage will always be 100% unless errors happen.
+     * 
+     * @param observer
+     * @param monitor
+     * @param scenarios
+     * @return the scope, with the new subject in it.
+     * @throws KlabException
+     */
+    public ResolutionScope resolve(Observer observer, IMonitor monitor, Collection<String> scenarios)
+            throws KlabException {
 
-		ResolutionScope ret = ResolutionScope.create(observer, monitor, scenarios);
-		if (resolve(observer.getObservable(), ret, Mode.RESOLUTION).getCoverage().isRelevant()) {
-			return ret;
-		}
-		return ret.empty();
-	}
+        ResolutionScope ret = ResolutionScope.create(observer, monitor, scenarios);
+        if (resolve(observer.getObservable(), ret, Mode.RESOLUTION).getCoverage().isRelevant()) {
+            return ret;
+        }
+        return ret.empty();
+    }
 
-	/**
-	 * Resolve an observer in a previously existing context using passed mode and
-	 * scale.
-	 *
-	 * @param observable
-	 * @param parentScope
-	 * @param mode
-	 * @param scale
-	 * @return the merged scope
-	 * @throws KlabException
-	 */
-	public ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Mode mode, IScale scale)
-			throws KlabException {
+    /**
+     * Resolve an observer in a previously existing context using passed mode and
+     * scale.
+     *
+     * @param observable
+     * @param parentScope
+     * @param mode
+     * @param scale
+     * @param model the model that has started the resolution - usually the instantiator for the object being resolved.
+     * @return the merged scope
+     * @throws KlabException
+     */
+    public ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Mode mode, IScale scale, IModel model)
+            throws KlabException {
+        // TODO support model
+        ResolutionScope ret = resolve(observable, parentScope
+                .getChildScope(observable, mode, (Scale) scale, model), mode);
+        if (ret.getCoverage().isRelevant()) {
+            parentScope.merge(ret);
+        }
+        return ret;
+    }
 
-		ResolutionScope ret = resolve(observable, parentScope.getChildScope(observable, mode, (Scale) scale), mode);
-		if (ret.getCoverage().isRelevant()) {
-			parentScope.merge(ret);
-		}
-		return ret;
-	}
+    /**
+     * Resolve a relationship observable between two known subjects using passed
+     * scale
+     * 
+     * @param observable
+     * @param parentScope
+     * @param mode
+     * @param scale
+     * @return the merged scope
+     * @throws KlabException
+     */
+    public ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Subject source, Subject target, IScale scale, IModel upstreamModel)
+            throws KlabException {
 
-	/**
-	 * Resolve a relationship observable between two known subjects using passed
-	 * scale
-	 * 
-	 * @param observable
-	 * @param parentScope
-	 * @param mode
-	 * @param scale
-	 * @return the merged scope
-	 * @throws KlabException
-	 */
-	public ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Subject source, Subject target,
-			IScale scale) throws KlabException {
+        ResolutionScope ret = resolve(observable, parentScope
+                .getChildScope(observable, (Scale) scale, source, target, upstreamModel), Mode.RESOLUTION);
+        if (ret.getCoverage().isRelevant()) {
+            parentScope.merge(ret);
+        }
+        return ret;
+    }
 
-		ResolutionScope ret = resolve(observable, parentScope.getChildScope(observable, (Scale) scale, source, target),
-				Mode.RESOLUTION);
-		if (ret.getCoverage().isRelevant()) {
-			parentScope.merge(ret);
-		}
-		return ret;
-	}
+    /**
+     * Resolve an observer in a previously existing context.
+     * 
+     * @param observer
+     * @param parentScope
+     * @return the merged scope
+     * @throws KlabException
+     */
+    private ResolutionScope resolve(Observer observer, ResolutionScope parentScope) throws KlabException {
 
-	/**
-	 * Resolve an observer in a previously existing context.
-	 * 
-	 * @param observer
-	 * @param parentScope
-	 * @return the merged scope
-	 * @throws KlabException
-	 */
-	private ResolutionScope resolve(Observer observer, ResolutionScope parentScope) throws KlabException {
+        ResolutionScope ret = resolve(observer.getObservable(), parentScope
+                .getChildScope(observer), Mode.RESOLUTION);
+        if (ret.getCoverage().isRelevant()) {
+            parentScope.merge(ret);
+        }
+        return ret;
+    }
 
-		ResolutionScope ret = resolve(observer.getObservable(), parentScope.getChildScope(observer), Mode.RESOLUTION);
-		if (ret.getCoverage().isRelevant()) {
-			parentScope.merge(ret);
-		}
-		return ret;
-	}
+    /**
+     * Resolve an observable in a context by accepting as many models as necessary
+     * to resolve its observation or instantiate the target observations. Final
+     * coverage is the OR of the coverage of all models found; lookup of models
+     * stops when coverage is complete.
+     * 
+     * @param observable
+     * @param parentScope
+     * @param mode
+     * @return the scope with any child scopes for the models and the coverage of
+     *         the resolved observable. If resolution is unsuccessful, return a
+     *         scope with no children, with empty coverage if the observable is
+     *         mandatory, or the passed scope's coverage if it's optional.
+     */
+    private ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Mode mode) {
 
-	/**
-	 * Resolve an observable in a context by accepting as many models as necessary
-	 * to resolve its observation or instantiate the target observations. Final
-	 * coverage is the OR of the coverage of all models found; lookup of models
-	 * stops when coverage is complete.
-	 * 
-	 * @param observable
-	 * @param parentScope
-	 * @param mode
-	 * @return the scope with any child scopes for the models and the coverage of
-	 *         the resolved observable. If resolution is unsuccessful, return a
-	 *         scope with no children, with empty coverage if the observable is
-	 *         mandatory, or the passed scope's coverage if it's optional.
-	 */
-	private ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Mode mode) {
+        ResolutionScope ret = parentScope.getChildScope(observable, mode);
 
-		ResolutionScope ret = parentScope.getChildScope(observable, mode);
+        /**
+         * If we're resolving something that has been resolved before (i.e. not
+         * resolving a countable, which only happens before it is created), get the
+         * artifact as is and return it accepted for the dataflow to compile an import
+         * actuator.
+         */
+        Pair<String, IArtifact> previousArtifact = null;
+        boolean tryPrevious = ret.getContext() != null
+                && (!observable.is(Type.COUNTABLE) || mode == Mode.INSTANTIATION);
+        if (tryPrevious) {
+            previousArtifact = ((Subject) ret.getContext()).getRuntimeContext().findArtifact(observable);
+        }
 
-		/**
-		 * If we're resolving something that has been resolved before (i.e. not
-		 * resolving a countable, which only happens before it is created), get the
-		 * artifact as is and return it accepted for the dataflow to compile an import
-		 * actuator.
-		 */
-		Pair<String, IArtifact> previousArtifact = null;
-		boolean tryPrevious = ret.getContext() != null
-				&& (!observable.is(Type.COUNTABLE) || mode == Mode.INSTANTIATION);
-		if (tryPrevious) {
-			previousArtifact = ((Subject) ret.getContext()).getRuntimeContext().findArtifact(observable);
-		}
+        if (previousArtifact != null) {
 
-		if (previousArtifact != null) {
+            ret.acceptArtifact(observable, (IObservation) previousArtifact.getSecond(), previousArtifact
+                    .getFirst());
 
-			ret.acceptArtifact(observable, (IObservation) previousArtifact.getSecond(), previousArtifact.getFirst());
+        } else if (observable.getReferencedModel() != null) {
 
-		} else if (observable.getReferencedModel() != null) {
+            // observable comes complete with model, semantic or not
+            ResolutionScope mscope = resolve((Model) observable.getReferencedModel(), ret);
+            if (mscope.getCoverage().isRelevant() && ret.or(mscope)) {
+                ret.link(mscope, null);
+            }
 
-			// observable comes complete with model, semantic or not
-			ResolutionScope mscope = resolve((Model) observable.getReferencedModel(), ret);
-			if (mscope.getCoverage().isRelevant() && ret.or(mscope)) {
-				ret.link(mscope, null);
-			}
+        } else {
 
-		} else {
+            // will be non-empty if this observable was resolved before, empty otherwise
+            if (ret.getCoverage().isEmpty()) {
 
-			// will be non-empty if this observable was resolved before, empty otherwise
-			if (ret.getCoverage().isEmpty()) {
+                ObservableReasoner reasoner = new ObservableReasoner(observable, ret);
+                boolean done = false;
+                for (Iterator<CandidateObservable> it = reasoner.iterator(); !done && it.hasNext();) {
 
-				ObservableReasoner reasoner = new ObservableReasoner(observable, ret);
-				boolean done = false;
-				for (Iterator<CandidateObservable> it = reasoner.iterator(); !done && it.hasNext();) {
-					
-					CandidateObservable candidate = it.next();
-					
-					try {
+                    CandidateObservable candidate = it.next();
 
-						// TODO ACHTUNG EMBED IN AND LOOP OVER ALL OBSERVABLES IN CANDIDATE
+                    try {
 
-						// candidate may switch resolution mode
-						for (IRankedModel model : Models.INSTANCE.resolve(candidate.observables.get(0),
-								ret.getChildScope(candidate.observables.get(0), candidate.mode))) {
+                        // TODO ACHTUNG EMBED IN AND LOOP OVER ALL OBSERVABLES IN CANDIDATE
 
-							previousArtifact = tryPrevious 
-									? ((Subject) ret.getContext()).getRuntimeContext().findArtifact(candidate.observables.get(0))
-									: null;
-									
-							ResolutionScope mscope = previousArtifact == null ? resolve((RankedModel) model, ret)
-									: ret.getChildScope(candidate.observables.get(0), candidate.mode,
-											(IObservation) previousArtifact.getSecond(), previousArtifact.getFirst());
+                        // candidate may switch resolution mode
+                        for (IRankedModel model : Models.INSTANCE.resolve(candidate.observables.get(0), ret
+                                .getChildScope(candidate.observables.get(0), candidate.mode))) {
 
-							if (mscope.getCoverage().isRelevant() && ret.or(mscope)) {
-								/*
-								 * FIXME this is to reset the target ID in the computations after we have a
-								 * model that produces the untransformed one. It sucks and requires specialized
-								 * logics in the runtime provider that shouldn't be needed.
-								 */
-								candidate.accept(model);
-								ret.link(mscope, candidate.computation);
-							}
-							
-							if (ret.getCoverage().isComplete()) {
-								done = true;
-								break;
-							}
-						}
-					} catch (KlabException e) {
-						parentScope.getMonitor()
-								.error("error during resolution of " + candidate + ": " + e.getMessage());
-						return parentScope.empty();
-					}
-				}
-			}
-		}
+                            previousArtifact = tryPrevious
+                                    ? ((Subject) ret.getContext()).getRuntimeContext()
+                                            .findArtifact(candidate.observables.get(0))
+                                    : null;
 
-		if (ret.getCoverage().isRelevant()) {
-			parentScope.merge(ret);
-		} else if (observable.isOptional() || (observable.is(Type.SUBJECT) && mode == Mode.RESOLUTION)) {
-			/*
-			 * empty strategy is OK for optional dependencies and resolved subjects. The
-			 * latter are never resolved unless there has been an implicit instantiation
-			 * from an instantiator, so a dataflow that creates them is generated.
-			 */
-			ret.acceptEmpty();
-		}
+                            ResolutionScope mscope = previousArtifact == null
+                                    ? resolve((RankedModel) model, ret)
+                                    : ret.getChildScope(candidate.observables
+                                            .get(0), candidate.mode, (IObservation) previousArtifact
+                                                    .getSecond(), previousArtifact.getFirst());
 
-		return ret;
-	}
+                            if (mscope.getCoverage().isRelevant() && ret.or(mscope)) {
+                                /*
+                                 * FIXME this is to reset the target ID in the computations after we have a
+                                 * model that produces the untransformed one. It sucks and requires specialized
+                                 * logics in the runtime provider that shouldn't be needed.
+                                 */
+                                candidate.accept(model);
+                                ret.link(mscope, candidate.computation);
+                            }
 
-	/**
-	 * Resolve a model's dependencies. Final coverage is the AND of the resolved
-	 * dependencies.
-	 * 
-	 * @param model
-	 * @param parentScope
-	 * @return the merged scope, or an empty one.
-	 * @throws KlabException
-	 */
-	private ResolutionScope resolve(Model model, ResolutionScope parentScope) throws KlabException {
+                            if (ret.getCoverage().isComplete()) {
+                                done = true;
+                                break;
+                            }
+                        }
+                    } catch (KlabException e) {
+                        parentScope.getMonitor()
+                                .error("error during resolution of " + candidate + ": " + e.getMessage());
+                        return parentScope.empty();
+                    }
+                }
+            }
+        }
 
-		ResolutionScope ret = parentScope.getChildScope(model);
-		// use the reasoner to infer any missing dependency from the semantics
-		ObservableReasoner reasoner = new ObservableReasoner(model, parentScope.getObservable(), ret);
-		for (CandidateObservable observable : reasoner.getObservables()) {
-			// ACHTUNG TODO OBSERVABLE CAN BE MULTIPLE (probably not here though)
-			ret.and(resolve(observable.observables.get(0), ret, observable.mode));
-			if (ret.getCoverage().isEmpty()) {
-				parentScope.getMonitor().info("discarding best choice " + model.getId() + " due to missing dependency "
-						+ observable.observables.get(0).getLocalName());
-				break;
-			}
-		}
-		return ret;
-	}
+        if (ret.getCoverage().isRelevant()) {
+            parentScope.merge(ret);
+        } else if (observable.isOptional() || (observable.is(Type.SUBJECT) && mode == Mode.RESOLUTION)) {
+            /*
+             * empty strategy is OK for optional dependencies and resolved subjects. The
+             * latter are never resolved unless there has been an implicit instantiation
+             * from an instantiator, so a dataflow that creates them is generated.
+             */
+            ret.acceptEmpty();
+        }
 
-	/**
-	 * Retrieve an appropriately configured model prioritizer for the passed scope.
-	 * 
-	 * @param context
-	 * @return a prioritizer for this model
-	 */
-	public IPrioritizer<ModelReference> getPrioritizer(ResolutionScope context) {
-		return new Prioritizer(context);
-	}
+        return ret;
+    }
+
+    /**
+     * Resolve a model's dependencies. Final coverage is the AND of the resolved
+     * dependencies.
+     * 
+     * @param model
+     * @param parentScope
+     * @return the merged scope, or an empty one.
+     * @throws KlabException
+     */
+    private ResolutionScope resolve(Model model, ResolutionScope parentScope) throws KlabException {
+
+        ResolutionScope ret = parentScope.getChildScope(model);
+        // use the reasoner to infer any missing dependency from the semantics
+        ObservableReasoner reasoner = new ObservableReasoner(model, parentScope.getObservable(), ret);
+        for (CandidateObservable observable : reasoner.getObservables()) {
+            // ACHTUNG TODO OBSERVABLE CAN BE MULTIPLE (probably not here though)
+            ret.and(resolve(observable.observables.get(0), ret, observable.mode));
+            if (ret.getCoverage().isEmpty()) {
+                parentScope.getMonitor()
+                        .info("discarding best choice " + model.getId() + " due to missing dependency "
+                                + observable.observables.get(0).getLocalName());
+                break;
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Retrieve an appropriately configured model prioritizer for the passed scope.
+     * 
+     * @param context
+     * @return a prioritizer for this model
+     */
+    public IPrioritizer<ModelReference> getPrioritizer(ResolutionScope context) {
+        return new Prioritizer(context);
+    }
 
 }

@@ -15,7 +15,6 @@ import org.integratedmodelling.klab.node.resources.FileStorageService;
 import org.integratedmodelling.klab.node.resources.ResourceManager;
 import org.integratedmodelling.klab.rest.PublishResourceResponse;
 import org.integratedmodelling.klab.rest.ResourceReference;
-import org.integratedmodelling.klab.rest.UploadFileResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
