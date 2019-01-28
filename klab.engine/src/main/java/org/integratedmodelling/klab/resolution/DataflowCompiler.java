@@ -61,6 +61,12 @@ public class DataflowCompiler {
 
 		Coverage coverage;
 		IResolutionScope.Mode mode;
+		// this is for linked instantiators that have initializers for instances. If used, it will be
+		// linked to the observable resolution node for the instance dataflow. Dependencies of the 
+		// linked model must not be linked but additional observables and instantiation actions should
+		// be compiled in as if a resolver was used (it still may be) and they belonged to it, before any actual
+		// resolver is called.
+		boolean initializer = false;
 
 		/*
 		 * if not null, the computation will adapt the source to the target and they may
@@ -79,7 +85,7 @@ public class DataflowCompiler {
 		}
 
 		public String toString() {
-			return "resolves" + (indirectAdapters == null ? "" : " indirectly");
+			return initializer ? "initializes" : ("resolves" + (indirectAdapters == null ? "" : " indirectly"));
 		}
 	}
 
@@ -91,9 +97,9 @@ public class DataflowCompiler {
 
 	public Dataflow compile(IMonitor monitor) {
 
-//		if (!System.getProperty("visualize", "false").equals("false") && resolutionGraph.vertexSet().size() > 1) {
+		if (!System.getProperty("visualize", "false").equals("false") && resolutionGraph.vertexSet().size() > 1) {
 			Graphs.show(resolutionGraph, "Resolution graph");
-//		}
+		}
 
 		Dataflow ret = new Dataflow();
 		ret.setName(this.name);
