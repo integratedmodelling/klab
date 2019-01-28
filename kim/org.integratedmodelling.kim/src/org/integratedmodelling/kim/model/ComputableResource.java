@@ -11,6 +11,7 @@ import java.util.UUID;
 import org.eclipse.emf.ecore.EObject;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimClassification;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimLookupTable;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -23,6 +24,7 @@ import org.integratedmodelling.kim.kim.ValueAssignment;
 import org.integratedmodelling.klab.Services;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
@@ -159,6 +161,31 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	}
 
 	protected ComputableResource() {
+	}
+
+	/**
+	 * Use this to build a resource from an inline model value, which can only be a
+	 * POD (not text), a concept, a function or an expression.
+	 * 
+	 * @param inlineComputable
+	 * @return
+	 */
+	public static ComputableResource create(Object inlineComputable) {
+		
+		
+		if (inlineComputable instanceof Number || inlineComputable instanceof Boolean || inlineComputable instanceof IConcept) {
+			return new ComputableResource(Optional.of(inlineComputable));
+		} else if (inlineComputable instanceof IKimExpression) {
+			ComputableResource ret = new ComputableResource();
+			ret.resolutionMode = Mode.RESOLUTION;
+			ret.expression = ((IKimExpression)ret).getCode();
+			ret.language = ((IKimExpression)ret).getLanguage();
+		} else if (inlineComputable instanceof KimServiceCall) {
+			ComputableResource ret = new ComputableResource();
+			ret.serviceCall = (KimServiceCall)inlineComputable;
+			ret.resolutionMode = Mode.RESOLUTION;
+		}
+		return null;
 	}
 
 	public ComputableResource(ValueAssignment statement, Mode resolutionMode, IKimStatement parent) {

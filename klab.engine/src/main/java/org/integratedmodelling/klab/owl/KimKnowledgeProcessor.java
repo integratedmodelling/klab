@@ -244,6 +244,10 @@ public enum KimKnowledgeProcessor {
 		}
 
 		if (concept.getValue() != null) {
+			Object value = concept.getValue();
+			if (value instanceof IKimConcept) {
+				value = Concepts.INSTANCE.declare((IKimConcept)value);
+			}
 			ret.setValue(concept.getValue());
 		}
 

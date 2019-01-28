@@ -315,7 +315,8 @@ ObservableSemantics:
 	);
 
 /** 
- * Same as full observablesemantics above but with annotations. 
+ * Same as full observablesemantics above but with annotations and without 'as' (using 
+ * contextualizer-specific annotations for role in models).
  */
 AnnotatedObservableSemantics returns ObservableSemantics:
 	annotations += Annotation*
@@ -325,7 +326,7 @@ AnnotatedObservableSemantics returns ObservableSemantics:
 	(
 		('by' by=Concept)? &
 		('down' 'to' downTo=Concept)? &
-		('as' role=Concept)? &
+//		('as' role=Concept)? &
 		('according' 'to' accordingTo=PropertyId)? &
 		(
 			('in' (unit=Unit | currency=Currency)) |
@@ -340,7 +341,7 @@ Dependency:
 	annotations += Annotation*
 	(
 		modelReference=(LOWERCASE_ID|PathName) |
-		observable=ObservableSemantics
+		observable=DependencyObservableSemantics
 	)
 ;
 
@@ -709,15 +710,6 @@ ParameterList:
 	singleValue=ValueWithIdAndConcept 
 ;
 
-//ValueWithConcept returns Value:
-//	concept=ConceptDeclaration |
-//	literal=Literal |
-//	expr=EXPR |
-//	list=List |
-//	table=LookupTable |
-//	map=Map |
-//	null?='unknown';
-
 ValueWithIdAndConcept returns Value:
 	concept=ConceptDeclaration |
 	function=Function |
@@ -738,6 +730,17 @@ Value:
 	table=LookupTable |
 	map=Map |
 	null?='unknown';
+
+// value for 'value as observable' idioms
+LiteralValueWithConcept returns Value:
+	literal=Literal |
+	concept=ConceptDeclaration |
+	function=Function |
+	expr=EXPR |
+	id=(LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID) /* |
+	list=List |
+	table=LookupTable |
+	map=Map */;	
 	
 Function:
 	name=PathName '(' parameters=ParameterList? ')';
@@ -821,13 +824,12 @@ PROPERTY_TYPE:
 terminal ANNOTATION_ID:
 	'@' LOWERCASE_ID;
 
-
 /*
- * Observable without the 'as' to use in model declarations where 'as' has
- * different syntax.
+ * Observable without the 'as' to use in model declarations and without the 'optional' that
+ * is only for dependencies.
  */
 SimpleObservableSemantics returns ObservableSemantics:
-
+	
 	declaration=ConceptDeclaration
 	(
 		('by' by=Concept)? &
@@ -838,8 +840,31 @@ SimpleObservableSemantics returns ObservableSemantics:
 			('per' unit=Unit)
 		)? &
 		(from=Number 'to' to=Number)? &
+		(optional?='optional' | 'required')? &
 		('named' name=(LOWERCASE_ID|STRING))?
 	);
+
+/*
+ * Full observable without the 'as <role>' but with 'optional'
+ */
+DependencyObservableSemantics returns ObservableSemantics:
+	
+	(value=LiteralValueWithConcept 'as')?
+	(generic?='any')?
+	declaration=ConceptDeclaration
+	(
+		('by' by=Concept)? &
+		('down' 'to' downTo=Concept)? &
+		('according' 'to' accordingTo=PropertyId)? &
+		(
+			('in' (unit=Unit | currency=Currency)) |
+			('per' unit=Unit)
+		)? &
+		(from=Number 'to' to=Number)? &
+		(optional?='optional' | 'required')? &
+		('named' name=(LOWERCASE_ID|STRING))?
+	);
+
 
 /*
  * Observable with no quality semantics and mandatory name, for observations. Allows

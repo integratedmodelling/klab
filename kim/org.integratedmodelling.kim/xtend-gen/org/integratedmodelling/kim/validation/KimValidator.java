@@ -477,6 +477,19 @@ public class KimValidator extends AbstractKimValidator {
         ObservableSemantics _observable_1 = cd.getObservable();
         boolean _tripleNotEquals_3 = (_observable_1 != null);
         if (_tripleNotEquals_3) {
+          if (((cd.getObservable().getValue() != null) && (cd.getObservable().getValue().getId() != null))) {
+            this.error("Attributes IDs are not allowed in dependencies (<attribute> \'as\' ...): only values, expressions or functions", 
+              KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
+          }
+          Object _value = observable.getValue();
+          boolean _tripleNotEquals_4 = (_value != null);
+          if (_tripleNotEquals_4) {
+            final String error = observable.validateValue();
+            if ((error != null)) {
+              this.error(error, 
+                KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
+            }
+          }
           Kim.ConceptDescriptor definition = observable.getDescriptor();
           boolean _isUndefined_1 = definition.isUndefined();
           if (_isUndefined_1) {
