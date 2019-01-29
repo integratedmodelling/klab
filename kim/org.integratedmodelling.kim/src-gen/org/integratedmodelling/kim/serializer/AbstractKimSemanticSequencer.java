@@ -255,6 +255,10 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 					sequence_AnnotatedObservableSemantics(context, (ObservableSemantics) semanticObject); 
 					return; 
 				}
+				else if (rule == grammarAccess.getDependencyObservableSemanticsRule()) {
+					sequence_DependencyObservableSemantics(context, (ObservableSemantics) semanticObject); 
+					return; 
+				}
 				else if (rule == grammarAccess.getNamedObservableSemanticsRule()) {
 					sequence_NamedObservableSemantics(context, (ObservableSemantics) semanticObject); 
 					return; 
@@ -311,7 +315,11 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 				sequence_Urn(context, (Urn) semanticObject); 
 				return; 
 			case KimPackage.VALUE:
-				if (rule == grammarAccess.getValueWithIdAndConceptRule()) {
+				if (rule == grammarAccess.getLiteralValueWithConceptRule()) {
+					sequence_LiteralValueWithConcept(context, (Value) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getValueWithIdAndConceptRule()) {
 					sequence_ValueWithIdAndConcept(context, (Value) semanticObject); 
 					return; 
 				}
@@ -396,7 +404,6 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *             (
 	 *                 by=Concept | 
 	 *                 downTo=Concept | 
-	 *                 role=Concept | 
 	 *                 accordingTo=PropertyId | 
 	 *                 unit=Unit | 
 	 *                 currency=Currency | 
@@ -480,16 +487,16 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         restrictions+=RestrictionStatement | 
 	 *                         metadata=Metadata
 	 *                     )? 
+	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
 	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
-	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
+	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
 	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
 	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
-	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
 	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
-	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
+	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
-	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
 	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
+	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
 	 *                     ((constituent?='constituent' | constitutes?='consists')? partOf?='of' whole=ConceptDeclaration)? 
 	 *                     (
 	 *                         roles+=ConceptDeclaration 
@@ -848,10 +855,40 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	
 	/**
 	 * Contexts:
+	 *     DependencyObservableSemantics returns ObservableSemantics
+	 *
+	 * Constraint:
+	 *     (
+	 *         value=LiteralValueWithConcept? 
+	 *         generic?='any'? 
+	 *         declaration=ConceptDeclaration 
+	 *         (
+	 *             (
+	 *                 by=Concept | 
+	 *                 downTo=Concept | 
+	 *                 accordingTo=PropertyId | 
+	 *                 unit=Unit | 
+	 *                 currency=Currency | 
+	 *                 unit=Unit | 
+	 *                 optional?='optional' | 
+	 *                 name=LOWERCASE_ID | 
+	 *                 name=STRING
+	 *             )? 
+	 *             (from=Number to=Number)?
+	 *         )+
+	 *     )
+	 */
+	protected void sequence_DependencyObservableSemantics(ISerializationContext context, ObservableSemantics semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     Dependency returns Dependency
 	 *
 	 * Constraint:
-	 *     (annotations+=Annotation* (modelReference=LOWERCASE_ID | modelReference=PathName | observable=ObservableSemantics))
+	 *     (annotations+=Annotation* (modelReference=LOWERCASE_ID | modelReference=PathName | observable=DependencyObservableSemantics))
 	 */
 	protected void sequence_Dependency(ISerializationContext context, Dependency semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1009,6 +1046,26 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *     )
 	 */
 	protected void sequence_LiteralOrIdOrComma(ISerializationContext context, Literal semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     LiteralValueWithConcept returns Value
+	 *
+	 * Constraint:
+	 *     (
+	 *         literal=Literal | 
+	 *         concept=ConceptDeclaration | 
+	 *         function=Function | 
+	 *         expr=EXPR | 
+	 *         id=LOWERCASE_ID | 
+	 *         id=UPPERCASE_ID | 
+	 *         id=CAMELCASE_ID
+	 *     )
+	 */
+	protected void sequence_LiteralValueWithConcept(ISerializationContext context, Value semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -1385,6 +1442,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 unit=Unit | 
 	 *                 currency=Currency | 
 	 *                 unit=Unit | 
+	 *                 optional?='optional' | 
 	 *                 name=LOWERCASE_ID | 
 	 *                 name=STRING
 	 *             )? 

@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimExpression;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observables;
@@ -691,5 +693,10 @@ public class Observable extends Concept implements IObservable {
 
 	public void addAnnotation(Annotation annotation) {
 		this.annotations.add(annotation);
+	}
+
+	public boolean isResolved() {
+		return value instanceof Number || value instanceof Boolean || value instanceof IConcept
+				|| value instanceof IKimExpression || value instanceof IServiceCall;
 	}
 }

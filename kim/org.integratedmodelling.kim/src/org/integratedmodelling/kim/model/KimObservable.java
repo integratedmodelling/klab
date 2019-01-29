@@ -305,4 +305,29 @@ public class KimObservable extends KimStatement implements IKimObservable {
 	public List<IKimConcept> getAssignedRoles() {
 		return assignedRoles;
 	}
+
+	public String validateValue() {
+		
+	  // any errors on main should be reported elsewhere
+	  if (main == null || value == null) {
+		  return null;
+	  }
+		
+	  if (main.is(Type.COUNTABLE)) {
+		  return "A countable observable cannot have pre-defined values: only qualities and traits can";
+	  }
+	  if (value instanceof Number && !main.is(Type.QUANTIFIABLE) || classifier != null) {
+		  return value + " is not an acceptable value for this observable";
+	  }
+	  if (value instanceof String) {
+		  return "A string is not an acceptable value for any observable";
+	  }
+	  if (value instanceof IKimConcept && !(main.is(Type.CLASS) || main.is(Type.TRAIT) || classifier != null)) {
+		  return "A concept is not an acceptable value for this observable";
+	  }
+	  if (value instanceof IKimConcept && !main.is(((IKimConcept)value).getFundamentalType())) {
+		  return value + " is not an acceptable concept for this observable";
+	  }
+	  return null;
+	}
 }

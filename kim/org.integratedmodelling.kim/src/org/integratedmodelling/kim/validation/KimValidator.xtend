@@ -358,6 +358,22 @@ class KimValidator extends AbstractKimValidator {
 			}
 
 			if (cd.observable !== null) {
+				
+				if (cd.observable.value !== null && cd.observable.value.id !== null) {
+					error("Attributes IDs are not allowed in dependencies (<attribute> 'as' ...): only values, expressions or functions", 
+						KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES,
+						i, BAD_OBSERVABLE)
+				}
+				
+				if (observable.value !== null) {
+					val error = observable.validateValue();
+					if (error !== null) {
+						error(error, 
+							KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES,
+							i, BAD_OBSERVABLE)
+					}
+				}
+				
 				var definition = observable.descriptor
 				if (definition.isUndefined) {
 					error('Dependency has undefined semantics', KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES,

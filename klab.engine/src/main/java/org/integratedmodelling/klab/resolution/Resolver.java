@@ -236,6 +236,16 @@ public enum Resolver {
     private ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Mode mode) {
 
         ResolutionScope ret = parentScope.getChildScope(observable, mode);
+        
+        /*
+         * pre-resolved artifacts contain a number, concept, boolean, expression or function. Those with a symbol
+         * aren't allowed as dependencies.
+         */
+        if (((Observable)observable).isResolved()) {
+        	ret.setInlineValue(observable.getValue());
+        	parentScope.merge(ret);
+        	return ret;
+        }
 
         /**
          * If we're resolving something that has been resolved before (i.e. not

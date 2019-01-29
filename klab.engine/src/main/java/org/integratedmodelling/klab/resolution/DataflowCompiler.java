@@ -22,7 +22,6 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
@@ -62,6 +61,12 @@ public class DataflowCompiler {
 
 		Coverage coverage;
 		IResolutionScope.Mode mode;
+		// this is for linked instantiators that have initializers for instances. If used, it will be
+		// linked to the observable resolution node for the instance dataflow. Dependencies of the 
+		// linked model must not be linked but additional observables and instantiation actions should
+		// be compiled in as if a resolver was used (it still may be) and they belonged to it, before any actual
+		// resolver is called.
+		boolean initializer = false;
 
 		/*
 		 * if not null, the computation will adapt the source to the target and they may
@@ -80,7 +85,7 @@ public class DataflowCompiler {
 		}
 
 		public String toString() {
-			return "resolves" + (indirectAdapters == null ? "" : " indirectly");
+			return initializer ? "initializes" : ("resolves" + (indirectAdapters == null ? "" : " indirectly"));
 		}
 	}
 
@@ -228,17 +233,26 @@ public class DataflowCompiler {
 		Scale scale;
 		boolean definesScale;
 		String alias;
+		Object inlineValue;
 		ResolvedArtifact resolvedArtifact;
 		public List<IComputableResource> artifactAdapters;
 
 		public Node(IResolvable resolvable, IResolutionScope.Mode mode) {
+			
 			this.mode = mode;
+			
 			if (resolvable instanceof Observable) {
+				
 				this.observable = (Observable) resolvable;
+				this.inlineValue = observable.getValue();
+				
 			} else if (resolvable instanceof Observer) {
+				
 				this.observer = (Observer) resolvable;
 				this.observable = this.observer.getObservable();
+			
 			} else if (resolvable instanceof ResolvedArtifact) {
+			
 				this.resolvedArtifact = (ResolvedArtifact) resolvable;
 				this.observable = (Observable) resolvedArtifact.getObservable();
 				observableCatalog.put(this.resolvedArtifact.getArtifactId(),
@@ -369,6 +383,9 @@ public class DataflowCompiler {
 						.addAll(Annotations.INSTANCE.collectAnnotations(observable, resolvedArtifact.getArtifact()));
 
 				ret.getActuators().add(resolved);
+				
+			} else if (inlineValue != null) {
+				ret.addComputation(ComputableResource.create(inlineValue));
 			}
 
 			return ret;
