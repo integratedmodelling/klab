@@ -367,11 +367,7 @@ public class ResolutionScope implements IResolutionScope {
 		if (previous != null) {
 			ret.coverage = previous.coverage;
 		}
-
-		if (upstreamModel != null) {
-			System.out.println("GOT UPSTREAM MODEL: " + upstreamModel);
-		}
-
+		
 		return ret;
 	}
 

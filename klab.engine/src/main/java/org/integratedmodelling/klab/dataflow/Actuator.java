@@ -467,17 +467,6 @@ public class Actuator implements IActuator {
         return ret;
     }
 
-    public void runPostInstantiationActions(IObjectArtifact object, Model model2) {
-        
-        /*
-         * 1. any states with constant, function or expression value
-         */
-        
-        /*
-         * 2. if model has instantiation actions, run them
-         */
-    }
-
     /**
      * Set the call parameters, if any, into the context data so that they can be
      * found by the contextualizer.

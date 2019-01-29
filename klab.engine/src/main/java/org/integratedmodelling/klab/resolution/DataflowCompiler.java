@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.model.ComputableResource;
@@ -22,6 +23,8 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.model.IAction;
+import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
@@ -61,16 +64,6 @@ public class DataflowCompiler {
 
 		Coverage coverage;
 		IResolutionScope.Mode mode;
-		// this is for linked instantiators that have initializers for instances. If
-		// used, it will be
-		// linked to the observable resolution node for the instance dataflow.
-		// Dependencies of the
-		// linked model must not be linked but additional observables and instantiation
-		// actions should
-		// be compiled in as if a resolver was used (it still may be) and they belonged
-		// to it, before any actual
-		// resolver is called.
-		boolean initializer = false;
 
 		/*
 		 * if not null, the computation will adapt the source to the target and they may
@@ -89,7 +82,7 @@ public class DataflowCompiler {
 		}
 
 		public String toString() {
-			return initializer ? "initializes" : ("resolves" + (indirectAdapters == null ? "" : " indirectly"));
+			return "resolves" + (indirectAdapters == null ? "" : " indirectly");
 		}
 	}
 
@@ -121,6 +114,8 @@ public class DataflowCompiler {
 					// IResolutionScope.Mode.INSTANTIATION,
 					scope.getMode(), resolutionGraph, this.context == null ? null : this.context.getScale(), monitor);
 			node.root = true;
+			node.initializer = ((ResolutionScope) scope).getContextModel();
+
 			Actuator actuator = node.getActuatorTree(ret, monitor, new HashSet<>());
 			// actuator.setCreateObservation(scope.getMode() == Mode.RESOLUTION);
 			ret.getActuators().add(actuator);
@@ -168,12 +163,64 @@ public class DataflowCompiler {
 			actuator.setType(Type.OBJECT);
 			actuator.setNamespace(((ResolutionScope) scope).getResolutionNamespace());
 			actuator.setName(((ResolutionScope) scope).getObservable().getLocalName());
-
+			setModelContext(((ResolutionScope) scope).getContextModel(), actuator, ret);
 			ret.getActuators().add(actuator);
 			ret.setNamespace(actuator.getNamespace());
 		}
 
 		return ret;
+	}
+
+	private void setModelContext(IModel contextModel, Actuator actuator, Dataflow dataflow) {
+
+		if (contextModel != null && contextModel.isInstantiator() && actuator.getMode() == Mode.RESOLUTION) {
+
+			/*
+			 * Attribute observers are resolved from the resource
+			 */
+
+			// Attribute observer - use the main resource to resolve. Remove
+			// previous hack from runtimecontext.
+
+			for (String attr : contextModel.getAttributeObservables().keySet()) {
+				
+				// NOT SURE - how is this handled otherwise? 
+				
+				// ALSO - runtimecontext contains logic for state views built from dependencies in the instantiator. Not sure
+				// if that should be brought here, probably so.
+				
+//				IArtifact artifact = parent.findArtifactByObservableName(attr);
+//				if (artifact instanceof IState) {
+//					// observable may be different or use data reduction traits
+//					IState stateView = Observations.INSTANCE.getStateViewAs(
+//							actuator.getDataflow().getModel().getAttributeObservables().get(attr), (IState) artifact,
+//							scale, this);
+//					predefinedStates.add(stateView);
+				}
+			
+			/*
+			 * recover any output states with static initializers
+			 */
+			for (int i = 1; i < contextModel.getObservables().size(); i++) {
+				if (((Observable) contextModel.getObservables().get(i)).isResolved()) {
+					Actuator child = Actuator.create(dataflow, Mode.RESOLUTION);
+					child.setObservable(new Observable((Observable)contextModel.getObservables().get(i)));
+					child.setName(contextModel.getObservables().get(i).getLocalName());
+					child.setType(contextModel.getObservables().get(i).getArtifactType());
+					child.addComputation(ComputableResource.create(contextModel.getObservables().get(i).getValue()));
+					actuator.getActuators().add(child);
+				}
+			}
+
+			/*
+			 * recover any instantiation actions
+			 */
+			for (IAction action : contextModel.getBehavior().getActions(Trigger.INSTANTIATION)) {
+				for (IComputableResource resource : action.getComputation(ITime.INITIALIZATION)) {
+					actuator.addComputation(((ComputableResource) resource).copy());
+				}
+			}
+		}
 	}
 
 	static class ModelD {
@@ -229,7 +276,7 @@ public class DataflowCompiler {
 	 */
 	class Node {
 
-		public boolean root;
+		boolean root;
 		Observable observable;
 		Observer observer;
 		IResolutionScope.Mode mode;
@@ -240,7 +287,14 @@ public class DataflowCompiler {
 		String alias;
 		Object inlineValue;
 		ResolvedArtifact resolvedArtifact;
-		public List<IComputableResource> artifactAdapters;
+		List<IComputableResource> artifactAdapters;
+		/**
+		 * Initializer models are the instantiators that potentially carry states and/or
+		 * actions to be transferred to the resolved objects. Only the root node of a
+		 * compiled dataflow can have an initializer, as these result from resolving
+		 * each instance after instantiation.
+		 */
+		IModel initializer;
 
 		public Node(IResolvable resolvable, IResolutionScope.Mode mode) {
 
@@ -423,9 +477,13 @@ public class DataflowCompiler {
 				for (IDocumentation documentation : model.getDocumentation()) {
 					ret.addDocumentation(documentation);
 				}
+
+				setModelContext(((ResolutionScope) scope).getContextModel(), ret, ret.getDataflow());
+
 			} else {
 				ret.setReference(true);
 			}
+
 		}
 
 		/*
