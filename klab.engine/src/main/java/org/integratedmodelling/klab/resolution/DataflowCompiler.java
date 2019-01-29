@@ -176,29 +176,6 @@ public class DataflowCompiler {
 		if (contextModel != null && contextModel.isInstantiator() && actuator.getMode() == Mode.RESOLUTION) {
 
 			/*
-			 * Attribute observers are resolved from the resource
-			 */
-
-			// Attribute observer - use the main resource to resolve. Remove
-			// previous hack from runtimecontext.
-
-			for (String attr : contextModel.getAttributeObservables().keySet()) {
-				
-				// NOT SURE - how is this handled otherwise? 
-				
-				// ALSO - runtimecontext contains logic for state views built from dependencies in the instantiator. Not sure
-				// if that should be brought here, probably so.
-				
-//				IArtifact artifact = parent.findArtifactByObservableName(attr);
-//				if (artifact instanceof IState) {
-//					// observable may be different or use data reduction traits
-//					IState stateView = Observations.INSTANCE.getStateViewAs(
-//							actuator.getDataflow().getModel().getAttributeObservables().get(attr), (IState) artifact,
-//							scale, this);
-//					predefinedStates.add(stateView);
-				}
-			
-			/*
 			 * recover any output states with static initializers
 			 */
 			for (int i = 1; i < contextModel.getObservables().size(); i++) {

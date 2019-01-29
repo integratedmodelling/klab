@@ -137,7 +137,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	@Override
 	public ICoverage getCoverage() {
-		return scope.getCoverage();
+		return coverage;
 	}
 
 	public DirectObservation getContext() {

@@ -317,6 +317,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 		/*
 		 * cache dataflows and use the coverage to reuse them. Assumes coverage works.
+		 * TODO FIXME ACHTUNG - USE COMPARABLE THAT INCLUDES OBSERVABLE AND MODE or we're fucked.
 		 */
 		List<Pair<ICoverage, Dataflow>> pairs = dataflowCache.get(observable);
 		if (pairs != null) {

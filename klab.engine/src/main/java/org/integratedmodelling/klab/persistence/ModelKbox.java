@@ -489,10 +489,10 @@ public class ModelKbox extends ObservableKbox {
 
 		initialize(monitor);
 
-		if (o instanceof INamespace && ((INamespace)o).isInternal()) {
-		    return 0;
+		if (o instanceof INamespace && ((INamespace) o).isInternal()) {
+			return 0;
 		}
-		
+
 		ArrayList<Object> toStore = new ArrayList<>();
 
 		if (o instanceof org.integratedmodelling.klab.model.Model) {
@@ -528,23 +528,24 @@ public class ModelKbox extends ObservableKbox {
 	 * @return the models implied by the statement
 	 */
 	public static Collection<ModelReference> inferModels(Model model, IMonitor monitor) {
-		
-	    List<ModelReference> ret = new ArrayList<>();
-        
-        // happens in error
-        if (model.getObservables().size() == 0 || model.getObservables().get(0) == null) {
-            return ret;
-        }
-        
+
+		List<ModelReference> ret = new ArrayList<>();
+
+		// happens in error
+		if (model.getObservables().size() == 0 || model.getObservables().get(0) == null) {
+			return ret;
+		}
+
 		for (ModelReference m : getModelDescriptors(model, monitor)) {
 			ret.add(m);
 		}
 
 		if (ret.size() > 0) {
 			for (IObservable attr : model.getAttributeObservables().values()) {
-				
+
 				// attribute type must have inherent type added
-				IConcept type = attr.getType(); // FUCK attr.getBuilder().of(model.getObservables().get(0).getType()).buildObservable();
+				IConcept type = attr.getBuilder().within(model.getObservables().get(0).getType()).buildConcept();
+				System.out.println(type.getDefinition());
 				ModelReference m = ret.get(0).copy();
 				m.setObservable(type.getDefinition());
 				m.setObservableConcept(type.getType());
@@ -614,6 +615,7 @@ public class ModelKbox extends ObservableKbox {
 				}
 				isSpatial = true;
 			}
+			
 			if (scale.getTime() != null) {
 				timeExtent = (ITime) ((AbstractExtent) scale.getTime()).getExtent();
 				if (timeExtent != null) {
@@ -630,52 +632,67 @@ public class ModelKbox extends ObservableKbox {
 		}
 
 		boolean first = true;
-		for (IObservable obs : model.getObservables()) {
 
-			ModelReference m = new ModelReference();
+		/*
+		 * For now just disable additional observables in instantiators and use their attribute observers above.
+		 * We may do different things here:
+		 * 
+		 * 0. keep ignoring them
+		 * 1. keep them all, contextualized to the instantiated observable;
+		 * 2. keep only the non-statically contextualized ones (w/o the value)
+		 * 
+		 */
+		if (!model.isInstantiator()) {
+			
+			for (IObservable obs : model.getObservables()) {
 
-			m.setId(model.getId());
-			m.setName(model.getName());
-			m.setNamespaceId(model.getNamespace().getName());
-			if (model.getNamespace().getProject() != null) {
-				m.setProjectId(model.getNamespace().getProject().getName());
-				if (model.getNamespace().getProject().isRemote()) {
-					m.setServerId(model.getNamespace().getProject().getOriginatingNodeId());
+				ModelReference m = new ModelReference();
+
+				m.setId(model.getId());
+				m.setName(model.getName());
+				m.setNamespaceId(model.getNamespace().getName());
+				if (model.getNamespace().getProject() != null) {
+					m.setProjectId(model.getNamespace().getProject().getName());
+					if (model.getNamespace().getProject().isRemote()) {
+						m.setServerId(model.getNamespace().getProject().getOriginatingNodeId());
+					}
 				}
+
+				m.setTimeEnd(timeEnd);
+				m.setTimeStart(timeStart);
+				m.setTimeMultiplicity(timeMultiplicity);
+				m.setSpaceMultiplicity(spaceMultiplicity);
+				m.setScaleMultiplicity(scaleMultiplicity);
+				m.setSpatial(isSpatial);
+				m.setTemporal(isTemporal);
+				m.setShape(spaceExtent);
+
+				m.setObservable(obs.getType().getDefinition());
+				m.setObservationType(obs.getObservationType().name());
+				m.setObservableConcept(obs.getType());
+				// m.setObservationConcept(obs.getObservationType());
+
+				m.setPrivateModel(model.isPrivate());
+				m.setInScenario(model.getNamespace().isScenario());
+				m.setReification(model.isInstantiator());
+				m.setResolved(model.isResolved());
+				m.setHasDirectData(model.isResolved() && model.getObservables().get(0).is(Type.QUALITY));
+				m.setHasDirectObjects(model.isResolved() && model.getObservables().get(0).is(Type.DIRECT_OBSERVABLE));
+
+				m.setMinSpatialScaleFactor(
+						model.getMetadata().get(IMetadata.IM_MIN_SPATIAL_SCALE, ISpace.MIN_SCALE_RANK));
+				m.setMaxSpatialScaleFactor(
+						model.getMetadata().get(IMetadata.IM_MAX_SPATIAL_SCALE, ISpace.MAX_SCALE_RANK));
+				m.setMinTimeScaleFactor(model.getMetadata().get(IMetadata.IM_MIN_TEMPORAL_SCALE, ITime.MIN_SCALE_RANK));
+				m.setMaxTimeScaleFactor(model.getMetadata().get(IMetadata.IM_MAX_TEMPORAL_SCALE, ITime.MAX_SCALE_RANK));
+
+				m.setPrimaryObservable(first);
+				first = false;
+
+				m.setMetadata(translateMetadata(model.getMetadata()));
+
+				ret.add(m);
 			}
-
-			m.setTimeEnd(timeEnd);
-			m.setTimeStart(timeStart);
-			m.setTimeMultiplicity(timeMultiplicity);
-			m.setSpaceMultiplicity(spaceMultiplicity);
-			m.setScaleMultiplicity(scaleMultiplicity);
-			m.setSpatial(isSpatial);
-			m.setTemporal(isTemporal);
-			m.setShape(spaceExtent);
-
-			m.setObservable(obs.getType().getDefinition());
-			m.setObservationType(obs.getObservationType().name());
-			m.setObservableConcept(obs.getType());
-			// m.setObservationConcept(obs.getObservationType());
-
-			m.setPrivateModel(model.isPrivate());
-			m.setInScenario(model.getNamespace().isScenario());
-			m.setReification(model.isInstantiator());
-			m.setResolved(model.isResolved());
-			m.setHasDirectData(model.isResolved() && model.getObservables().get(0).is(Type.QUALITY));
-			m.setHasDirectObjects(model.isResolved() && model.getObservables().get(0).is(Type.DIRECT_OBSERVABLE));
-
-			m.setMinSpatialScaleFactor(model.getMetadata().get(IMetadata.IM_MIN_SPATIAL_SCALE, ISpace.MIN_SCALE_RANK));
-			m.setMaxSpatialScaleFactor(model.getMetadata().get(IMetadata.IM_MAX_SPATIAL_SCALE, ISpace.MAX_SCALE_RANK));
-			m.setMinTimeScaleFactor(model.getMetadata().get(IMetadata.IM_MIN_TEMPORAL_SCALE, ITime.MIN_SCALE_RANK));
-			m.setMaxTimeScaleFactor(model.getMetadata().get(IMetadata.IM_MAX_TEMPORAL_SCALE, ITime.MAX_SCALE_RANK));
-
-			m.setPrimaryObservable(first);
-			first = false;
-
-			m.setMetadata(translateMetadata(model.getMetadata()));
-
-			ret.add(m);
 		}
 		return ret;
 	}
