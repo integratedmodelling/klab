@@ -36,6 +36,9 @@ import org.integratedmodelling.kim.kim.ObservableSemantics;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#getModelReference <em>Model Reference</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#getObservable <em>Observable</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#getAlternativeObservables <em>Alternative Observables</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#isOptional <em>Optional</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#getName <em>Name</em>}</li>
  * </ul>
  *
  * @generated
@@ -81,6 +84,56 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
    * @ordered
    */
   protected ObservableSemantics observable;
+
+  /**
+   * The cached value of the '{@link #getAlternativeObservables() <em>Alternative Observables</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getAlternativeObservables()
+   * @generated
+   * @ordered
+   */
+  protected EList<ObservableSemantics> alternativeObservables;
+
+  /**
+   * The default value of the '{@link #isOptional() <em>Optional</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isOptional()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean OPTIONAL_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isOptional() <em>Optional</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isOptional()
+   * @generated
+   * @ordered
+   */
+  protected boolean optional = OPTIONAL_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getName()
+   * @generated
+   * @ordered
+   */
+  protected static final String NAME_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getName()
+   * @generated
+   * @ordered
+   */
+  protected String name = NAME_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -193,6 +246,66 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
    * <!-- end-user-doc -->
    * @generated
    */
+  public EList<ObservableSemantics> getAlternativeObservables()
+  {
+    if (alternativeObservables == null)
+    {
+      alternativeObservables = new EObjectContainmentEList<ObservableSemantics>(ObservableSemantics.class, this, KimPackage.DEPENDENCY__ALTERNATIVE_OBSERVABLES);
+    }
+    return alternativeObservables;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public boolean isOptional()
+  {
+    return optional;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setOptional(boolean newOptional)
+  {
+    boolean oldOptional = optional;
+    optional = newOptional;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.DEPENDENCY__OPTIONAL, oldOptional, optional));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getName()
+  {
+    return name;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setName(String newName)
+  {
+    String oldName = name;
+    name = newName;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.DEPENDENCY__NAME, oldName, name));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
@@ -202,6 +315,8 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
         return ((InternalEList<?>)getAnnotations()).basicRemove(otherEnd, msgs);
       case KimPackage.DEPENDENCY__OBSERVABLE:
         return basicSetObservable(null, msgs);
+      case KimPackage.DEPENDENCY__ALTERNATIVE_OBSERVABLES:
+        return ((InternalEList<?>)getAlternativeObservables()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -222,6 +337,12 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
         return getModelReference();
       case KimPackage.DEPENDENCY__OBSERVABLE:
         return getObservable();
+      case KimPackage.DEPENDENCY__ALTERNATIVE_OBSERVABLES:
+        return getAlternativeObservables();
+      case KimPackage.DEPENDENCY__OPTIONAL:
+        return isOptional();
+      case KimPackage.DEPENDENCY__NAME:
+        return getName();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -247,6 +368,16 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
       case KimPackage.DEPENDENCY__OBSERVABLE:
         setObservable((ObservableSemantics)newValue);
         return;
+      case KimPackage.DEPENDENCY__ALTERNATIVE_OBSERVABLES:
+        getAlternativeObservables().clear();
+        getAlternativeObservables().addAll((Collection<? extends ObservableSemantics>)newValue);
+        return;
+      case KimPackage.DEPENDENCY__OPTIONAL:
+        setOptional((Boolean)newValue);
+        return;
+      case KimPackage.DEPENDENCY__NAME:
+        setName((String)newValue);
+        return;
     }
     super.eSet(featureID, newValue);
   }
@@ -270,6 +401,15 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
       case KimPackage.DEPENDENCY__OBSERVABLE:
         setObservable((ObservableSemantics)null);
         return;
+      case KimPackage.DEPENDENCY__ALTERNATIVE_OBSERVABLES:
+        getAlternativeObservables().clear();
+        return;
+      case KimPackage.DEPENDENCY__OPTIONAL:
+        setOptional(OPTIONAL_EDEFAULT);
+        return;
+      case KimPackage.DEPENDENCY__NAME:
+        setName(NAME_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -290,6 +430,12 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
         return MODEL_REFERENCE_EDEFAULT == null ? modelReference != null : !MODEL_REFERENCE_EDEFAULT.equals(modelReference);
       case KimPackage.DEPENDENCY__OBSERVABLE:
         return observable != null;
+      case KimPackage.DEPENDENCY__ALTERNATIVE_OBSERVABLES:
+        return alternativeObservables != null && !alternativeObservables.isEmpty();
+      case KimPackage.DEPENDENCY__OPTIONAL:
+        return optional != OPTIONAL_EDEFAULT;
+      case KimPackage.DEPENDENCY__NAME:
+        return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
     }
     return super.eIsSet(featureID);
   }
@@ -307,6 +453,10 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (modelReference: ");
     result.append(modelReference);
+    result.append(", optional: ");
+    result.append(optional);
+    result.append(", name: ");
+    result.append(name);
     result.append(')');
     return result.toString();
   }

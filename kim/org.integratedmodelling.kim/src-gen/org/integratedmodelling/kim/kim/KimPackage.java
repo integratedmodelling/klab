@@ -1958,13 +1958,22 @@ public interface KimPackage extends EPackage
   int OBSERVABLE_SEMANTICS__ANNOTATIONS = 13;
 
   /**
+   * The feature id for the '<em><b>Condition</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OBSERVABLE_SEMANTICS__CONDITION = 14;
+
+  /**
    * The number of structural features of the '<em>Observable Semantics</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS_FEATURE_COUNT = 14;
+  int OBSERVABLE_SEMANTICS_FEATURE_COUNT = 15;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.DependencyImpl <em>Dependency</em>}' class.
@@ -2004,13 +2013,40 @@ public interface KimPackage extends EPackage
   int DEPENDENCY__OBSERVABLE = 2;
 
   /**
+   * The feature id for the '<em><b>Alternative Observables</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DEPENDENCY__ALTERNATIVE_OBSERVABLES = 3;
+
+  /**
+   * The feature id for the '<em><b>Optional</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DEPENDENCY__OPTIONAL = 4;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DEPENDENCY__NAME = 5;
+
+  /**
    * The number of structural features of the '<em>Dependency</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int DEPENDENCY_FEATURE_COUNT = 3;
+  int DEPENDENCY_FEATURE_COUNT = 6;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl <em>Concept Declaration</em>}' class.
@@ -6154,6 +6190,17 @@ public interface KimPackage extends EPackage
   EReference getObservableSemantics_Annotations();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getCondition <em>Condition</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Condition</em>'.
+   * @see org.integratedmodelling.kim.kim.ObservableSemantics#getCondition()
+   * @see #getObservableSemantics()
+   * @generated
+   */
+  EAttribute getObservableSemantics_Condition();
+
+  /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.Dependency <em>Dependency</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -6195,6 +6242,39 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EReference getDependency_Observable();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.Dependency#getAlternativeObservables <em>Alternative Observables</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Alternative Observables</em>'.
+   * @see org.integratedmodelling.kim.kim.Dependency#getAlternativeObservables()
+   * @see #getDependency()
+   * @generated
+   */
+  EReference getDependency_AlternativeObservables();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Dependency#isOptional <em>Optional</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Optional</em>'.
+   * @see org.integratedmodelling.kim.kim.Dependency#isOptional()
+   * @see #getDependency()
+   * @generated
+   */
+  EAttribute getDependency_Optional();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Dependency#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see org.integratedmodelling.kim.kim.Dependency#getName()
+   * @see #getDependency()
+   * @generated
+   */
+  EAttribute getDependency_Name();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.ConceptDeclaration <em>Concept Declaration</em>}'.
@@ -10006,6 +10086,14 @@ public interface KimPackage extends EPackage
     EReference OBSERVABLE_SEMANTICS__ANNOTATIONS = eINSTANCE.getObservableSemantics_Annotations();
 
     /**
+     * The meta object literal for the '<em><b>Condition</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute OBSERVABLE_SEMANTICS__CONDITION = eINSTANCE.getObservableSemantics_Condition();
+
+    /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.DependencyImpl <em>Dependency</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -10038,6 +10126,30 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EReference DEPENDENCY__OBSERVABLE = eINSTANCE.getDependency_Observable();
+
+    /**
+     * The meta object literal for the '<em><b>Alternative Observables</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference DEPENDENCY__ALTERNATIVE_OBSERVABLES = eINSTANCE.getDependency_AlternativeObservables();
+
+    /**
+     * The meta object literal for the '<em><b>Optional</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DEPENDENCY__OPTIONAL = eINSTANCE.getDependency_Optional();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DEPENDENCY__NAME = eINSTANCE.getDependency_Name();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl <em>Concept Declaration</em>}' class.

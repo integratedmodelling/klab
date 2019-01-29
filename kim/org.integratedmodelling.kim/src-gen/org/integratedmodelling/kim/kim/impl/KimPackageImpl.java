@@ -2367,6 +2367,16 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getObservableSemantics_Condition()
+  {
+    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(14);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getDependency()
   {
     return dependencyEClass;
@@ -2400,6 +2410,36 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   public EReference getDependency_Observable()
   {
     return (EReference)dependencyEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getDependency_AlternativeObservables()
+  {
+    return (EReference)dependencyEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getDependency_Optional()
+  {
+    return (EAttribute)dependencyEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getDependency_Name()
+  {
+    return (EAttribute)dependencyEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -4730,11 +4770,15 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__TO);
     createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__NAME);
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__ANNOTATIONS);
+    createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__CONDITION);
 
     dependencyEClass = createEClass(DEPENDENCY);
     createEReference(dependencyEClass, DEPENDENCY__ANNOTATIONS);
     createEAttribute(dependencyEClass, DEPENDENCY__MODEL_REFERENCE);
     createEReference(dependencyEClass, DEPENDENCY__OBSERVABLE);
+    createEReference(dependencyEClass, DEPENDENCY__ALTERNATIVE_OBSERVABLES);
+    createEAttribute(dependencyEClass, DEPENDENCY__OPTIONAL);
+    createEAttribute(dependencyEClass, DEPENDENCY__NAME);
 
     conceptDeclarationEClass = createEClass(CONCEPT_DECLARATION);
     createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__MAIN);
@@ -5215,11 +5259,15 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getObservableSemantics_To(), this.getNumber(), null, "to", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getObservableSemantics_Name(), ecorePackage.getEString(), "name", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObservableSemantics_Annotations(), this.getAnnotation(), null, "annotations", null, 0, -1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getObservableSemantics_Condition(), ecorePackage.getEString(), "condition", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(dependencyEClass, Dependency.class, "Dependency", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getDependency_Annotations(), this.getAnnotation(), null, "annotations", null, 0, -1, Dependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getDependency_ModelReference(), ecorePackage.getEString(), "modelReference", null, 0, 1, Dependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getDependency_Observable(), this.getObservableSemantics(), null, "observable", null, 0, 1, Dependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getDependency_AlternativeObservables(), this.getObservableSemantics(), null, "alternativeObservables", null, 0, -1, Dependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getDependency_Optional(), ecorePackage.getEBoolean(), "optional", null, 0, 1, Dependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getDependency_Name(), ecorePackage.getEString(), "name", null, 0, 1, Dependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(conceptDeclarationEClass, ConceptDeclaration.class, "ConceptDeclaration", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getConceptDeclaration_Main(), this.getConcept(), null, "main", null, 0, -1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

@@ -20,6 +20,9 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.Dependency#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Dependency#getModelReference <em>Model Reference</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Dependency#getObservable <em>Observable</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Dependency#getAlternativeObservables <em>Alternative Observables</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Dependency#isOptional <em>Optional</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Dependency#getName <em>Name</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kim.kim.KimPackage#getDependency()
@@ -95,5 +98,73 @@ public interface Dependency extends EObject
    * @generated
    */
   void setObservable(ObservableSemantics value);
+
+  /**
+   * Returns the value of the '<em><b>Alternative Observables</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.ObservableSemantics}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Alternative Observables</em>' containment reference list isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Alternative Observables</em>' containment reference list.
+   * @see org.integratedmodelling.kim.kim.KimPackage#getDependency_AlternativeObservables()
+   * @model containment="true"
+   * @generated
+   */
+  EList<ObservableSemantics> getAlternativeObservables();
+
+  /**
+   * Returns the value of the '<em><b>Optional</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Optional</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Optional</em>' attribute.
+   * @see #setOptional(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getDependency_Optional()
+   * @model
+   * @generated
+   */
+  boolean isOptional();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Dependency#isOptional <em>Optional</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Optional</em>' attribute.
+   * @see #isOptional()
+   * @generated
+   */
+  void setOptional(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Name</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Name</em>' attribute.
+   * @see #setName(String)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getDependency_Name()
+   * @model
+   * @generated
+   */
+  String getName();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Dependency#getName <em>Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Name</em>' attribute.
+   * @see #getName()
+   * @generated
+   */
+  void setName(String value);
 
 } // Dependency

@@ -31,6 +31,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getTo <em>To</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getAnnotations <em>Annotations</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getCondition <em>Condition</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics()
@@ -392,5 +393,31 @@ public interface ObservableSemantics extends EObject
    * @generated
    */
   EList<Annotation> getAnnotations();
+
+  /**
+   * Returns the value of the '<em><b>Condition</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Condition</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Condition</em>' attribute.
+   * @see #setCondition(String)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics_Condition()
+   * @model
+   * @generated
+   */
+  String getCondition();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getCondition <em>Condition</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Condition</em>' attribute.
+   * @see #getCondition()
+   * @generated
+   */
+  void setCondition(String value);
 
 } // ObservableSemantics

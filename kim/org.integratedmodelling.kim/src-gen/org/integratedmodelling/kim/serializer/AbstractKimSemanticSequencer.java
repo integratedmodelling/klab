@@ -251,7 +251,11 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 				sequence_Number(context, (org.integratedmodelling.kim.kim.Number) semanticObject); 
 				return; 
 			case KimPackage.OBSERVABLE_SEMANTICS:
-				if (rule == grammarAccess.getAnnotatedObservableSemanticsRule()) {
+				if (rule == grammarAccess.getAlternativeDependencyObservableSemanticsRule()) {
+					sequence_AlternativeDependencyObservableSemantics(context, (ObservableSemantics) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getAnnotatedObservableSemanticsRule()) {
 					sequence_AnnotatedObservableSemantics(context, (ObservableSemantics) semanticObject); 
 					return; 
 				}
@@ -392,6 +396,34 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	
 	/**
 	 * Contexts:
+	 *     AlternativeDependencyObservableSemantics returns ObservableSemantics
+	 *
+	 * Constraint:
+	 *     (
+	 *         value=LiteralValueWithConcept? 
+	 *         generic?='any'? 
+	 *         declaration=ConceptDeclaration 
+	 *         (
+	 *             (
+	 *                 by=Concept | 
+	 *                 downTo=Concept | 
+	 *                 accordingTo=PropertyId | 
+	 *                 unit=Unit | 
+	 *                 currency=Currency | 
+	 *                 unit=Unit
+	 *             )? 
+	 *             (from=Number to=Number)?
+	 *         )+ 
+	 *         condition=EXPR?
+	 *     )
+	 */
+	protected void sequence_AlternativeDependencyObservableSemantics(ISerializationContext context, ObservableSemantics semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     AnnotatedObservableSemantics returns ObservableSemantics
 	 *
 	 * Constraint:
@@ -487,13 +519,13 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         restrictions+=RestrictionStatement | 
 	 *                         metadata=Metadata
 	 *                     )? 
-	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
-	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
 	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
+	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
+	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
 	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
-	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
-	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
 	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
+	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
+	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
 	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
 	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
@@ -888,7 +920,23 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *     Dependency returns Dependency
 	 *
 	 * Constraint:
-	 *     (annotations+=Annotation* (modelReference=LOWERCASE_ID | modelReference=PathName | observable=DependencyObservableSemantics))
+	 *     (
+	 *         annotations+=Annotation* 
+	 *         (
+	 *             modelReference=LOWERCASE_ID | 
+	 *             modelReference=PathName | 
+	 *             observable=DependencyObservableSemantics | 
+	 *             (
+	 *                 (
+	 *                     alternativeObservables+=AlternativeDependencyObservableSemantics 
+	 *                     alternativeObservables+=AlternativeDependencyObservableSemantics* 
+	 *                     optional?='optional'?
+	 *                 ) | 
+	 *                 name=LOWERCASE_ID | 
+	 *                 name=STRING
+	 *             )+
+	 *         )
+	 *     )
 	 */
 	protected void sequence_Dependency(ISerializationContext context, Dependency semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

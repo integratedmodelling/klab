@@ -339,10 +339,17 @@ AnnotatedObservableSemantics returns ObservableSemantics:
 
 Dependency:
 	annotations += Annotation*
-	(
+	((
 		modelReference=(LOWERCASE_ID|PathName) |
 		observable=DependencyObservableSemantics
-	)
+	) |
+	(
+		'(' 
+			alternativeObservables+=AlternativeDependencyObservableSemantics (',' alternativeObservables+=AlternativeDependencyObservableSemantics)*
+		')' 
+			(optional?='optional' | 'required')? & 
+			'named' name=(LOWERCASE_ID|STRING)
+	))
 ;
 
 ConceptDeclaration:
@@ -865,7 +872,27 @@ DependencyObservableSemantics returns ObservableSemantics:
 		('named' name=(LOWERCASE_ID|STRING))?
 	);
 
-
+/*
+ * As above but meant for groups, so without name (supplied outside the group) and optional, but with
+ * an optional condition for switching
+ */
+AlternativeDependencyObservableSemantics returns ObservableSemantics:
+	
+	(value=LiteralValueWithConcept 'as')?
+	(generic?='any')?
+	declaration=ConceptDeclaration
+	(
+		('by' by=Concept)? &
+		('down' 'to' downTo=Concept)? &
+		('according' 'to' accordingTo=PropertyId)? &
+		(
+			('in' (unit=Unit | currency=Currency)) |
+			('per' unit=Unit)
+		)? &
+		(from=Number 'to' to=Number)? 
+	)
+	('if' condition=EXPR)?;
+	
 /*
  * Observable with no quality semantics and mandatory name, for observations. Allows
  * dashes in name.

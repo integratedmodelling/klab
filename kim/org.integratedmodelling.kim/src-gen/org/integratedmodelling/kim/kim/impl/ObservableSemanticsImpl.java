@@ -51,6 +51,7 @@ import org.integratedmodelling.kim.kim.Value;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getTo <em>To</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getAnnotations <em>Annotations</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getCondition <em>Condition</em>}</li>
  * </ul>
  *
  * @generated
@@ -236,6 +237,26 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * @ordered
    */
   protected EList<Annotation> annotations;
+
+  /**
+   * The default value of the '{@link #getCondition() <em>Condition</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getCondition()
+   * @generated
+   * @ordered
+   */
+  protected static final String CONDITION_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getCondition() <em>Condition</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getCondition()
+   * @generated
+   * @ordered
+   */
+  protected String condition = CONDITION_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -801,6 +822,29 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getCondition()
+  {
+    return condition;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setCondition(String newCondition)
+  {
+    String oldCondition = condition;
+    condition = newCondition;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__CONDITION, oldCondition, condition));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
@@ -868,6 +912,8 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return getName();
       case KimPackage.OBSERVABLE_SEMANTICS__ANNOTATIONS:
         return getAnnotations();
+      case KimPackage.OBSERVABLE_SEMANTICS__CONDITION:
+        return getCondition();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -926,6 +972,9 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         getAnnotations().clear();
         getAnnotations().addAll((Collection<? extends Annotation>)newValue);
         return;
+      case KimPackage.OBSERVABLE_SEMANTICS__CONDITION:
+        setCondition((String)newValue);
+        return;
     }
     super.eSet(featureID, newValue);
   }
@@ -982,6 +1031,9 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
       case KimPackage.OBSERVABLE_SEMANTICS__ANNOTATIONS:
         getAnnotations().clear();
         return;
+      case KimPackage.OBSERVABLE_SEMANTICS__CONDITION:
+        setCondition(CONDITION_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -1024,6 +1076,8 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case KimPackage.OBSERVABLE_SEMANTICS__ANNOTATIONS:
         return annotations != null && !annotations.isEmpty();
+      case KimPackage.OBSERVABLE_SEMANTICS__CONDITION:
+        return CONDITION_EDEFAULT == null ? condition != null : !CONDITION_EDEFAULT.equals(condition);
     }
     return super.eIsSet(featureID);
   }
@@ -1047,6 +1101,8 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
     result.append(optional);
     result.append(", name: ");
     result.append(name);
+    result.append(", condition: ");
+    result.append(condition);
     result.append(')');
     return result.toString();
   }

@@ -31,6 +31,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	protected AbstractElementAlias match_ClassifierRHS_ExclusiveKeyword_1_4_1_q;
 	protected AbstractElementAlias match_Concept_FromKeyword_3_1_1_or_ToKeyword_3_1_0;
 	protected AbstractElementAlias match_DependencyObservableSemantics_RequiredKeyword_3_5_1_a;
+	protected AbstractElementAlias match_Dependency_RequiredKeyword_1_1_0_4_1_q;
 	protected AbstractElementAlias match_IdentityRequirement_AttributeKeyword_0_0_1_or_ExtentKeyword_0_0_3_or_IdentityKeyword_0_0_0_or_RealmKeyword_0_0_2;
 	protected AbstractElementAlias match_Namespace___OutsideKeyword_5_6_1_0___ResolveKeyword_5_6_0_0_FromKeyword_5_6_0_1_0_q__a__a;
 	protected AbstractElementAlias match_Namespace___OutsideKeyword_5_6_1_0___ResolveKeyword_5_6_0_0_FromKeyword_5_6_0_1_0_q__a__p;
@@ -58,6 +59,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 		match_ClassifierRHS_ExclusiveKeyword_1_4_1_q = new TokenAlias(false, true, grammarAccess.getClassifierRHSAccess().getExclusiveKeyword_1_4_1());
 		match_Concept_FromKeyword_3_1_1_or_ToKeyword_3_1_0 = new AlternativeAlias(false, false, new TokenAlias(false, false, grammarAccess.getConceptAccess().getFromKeyword_3_1_1()), new TokenAlias(false, false, grammarAccess.getConceptAccess().getToKeyword_3_1_0()));
 		match_DependencyObservableSemantics_RequiredKeyword_3_5_1_a = new TokenAlias(true, true, grammarAccess.getDependencyObservableSemanticsAccess().getRequiredKeyword_3_5_1());
+		match_Dependency_RequiredKeyword_1_1_0_4_1_q = new TokenAlias(false, true, grammarAccess.getDependencyAccess().getRequiredKeyword_1_1_0_4_1());
 		match_IdentityRequirement_AttributeKeyword_0_0_1_or_ExtentKeyword_0_0_3_or_IdentityKeyword_0_0_0_or_RealmKeyword_0_0_2 = new AlternativeAlias(false, false, new TokenAlias(false, false, grammarAccess.getIdentityRequirementAccess().getAttributeKeyword_0_0_1()), new TokenAlias(false, false, grammarAccess.getIdentityRequirementAccess().getExtentKeyword_0_0_3()), new TokenAlias(false, false, grammarAccess.getIdentityRequirementAccess().getIdentityKeyword_0_0_0()), new TokenAlias(false, false, grammarAccess.getIdentityRequirementAccess().getRealmKeyword_0_0_2()));
 		match_Namespace___OutsideKeyword_5_6_1_0___ResolveKeyword_5_6_0_0_FromKeyword_5_6_0_1_0_q__a__a = new GroupAlias(true, true, new TokenAlias(false, false, grammarAccess.getNamespaceAccess().getOutsideKeyword_5_6_1_0()), new GroupAlias(true, true, new TokenAlias(false, false, grammarAccess.getNamespaceAccess().getResolveKeyword_5_6_0_0()), new TokenAlias(false, true, grammarAccess.getNamespaceAccess().getFromKeyword_5_6_0_1_0())));
 		match_Namespace___OutsideKeyword_5_6_1_0___ResolveKeyword_5_6_0_0_FromKeyword_5_6_0_1_0_q__a__p = new GroupAlias(true, false, new TokenAlias(false, false, grammarAccess.getNamespaceAccess().getOutsideKeyword_5_6_1_0()), new GroupAlias(true, true, new TokenAlias(false, false, grammarAccess.getNamespaceAccess().getResolveKeyword_5_6_0_0()), new TokenAlias(false, true, grammarAccess.getNamespaceAccess().getFromKeyword_5_6_0_1_0())));
@@ -115,6 +117,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 				emit_Concept_FromKeyword_3_1_1_or_ToKeyword_3_1_0(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_DependencyObservableSemantics_RequiredKeyword_3_5_1_a.equals(syntax))
 				emit_DependencyObservableSemantics_RequiredKeyword_3_5_1_a(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_Dependency_RequiredKeyword_1_1_0_4_1_q.equals(syntax))
+				emit_Dependency_RequiredKeyword_1_1_0_4_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_IdentityRequirement_AttributeKeyword_0_0_1_or_ExtentKeyword_0_0_3_or_IdentityKeyword_0_0_0_or_RealmKeyword_0_0_2.equals(syntax))
 				emit_IdentityRequirement_AttributeKeyword_0_0_1_or_ExtentKeyword_0_0_3_or_IdentityKeyword_0_0_0_or_RealmKeyword_0_0_2(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Namespace___OutsideKeyword_5_6_1_0___ResolveKeyword_5_6_0_0_FromKeyword_5_6_0_1_0_q__a__a.equals(syntax))
@@ -452,6 +456,20 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     unit=Unit (ambiguity) optional?='optional'
 	 */
 	protected void emit_DependencyObservableSemantics_RequiredKeyword_3_5_1_a(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * Ambiguous syntax:
+	 *     'required'?
+	 *
+	 * This ambiguous syntax occurs at:
+	 *     alternativeObservables+=AlternativeDependencyObservableSemantics ')' (ambiguity) '(' alternativeObservables+=AlternativeDependencyObservableSemantics
+	 *     alternativeObservables+=AlternativeDependencyObservableSemantics ')' (ambiguity) 'named' name=LOWERCASE_ID
+	 *     alternativeObservables+=AlternativeDependencyObservableSemantics ')' (ambiguity) 'named' name=STRING
+	 *     alternativeObservables+=AlternativeDependencyObservableSemantics ')' (ambiguity) (rule end)
+	 */
+	protected void emit_Dependency_RequiredKeyword_1_1_0_4_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	
