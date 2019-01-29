@@ -564,7 +564,8 @@ public class Actuator implements IActuator {
      */
     protected String encode(int offset) {
         String ofs = StringUtils.repeat(" ", offset);
-        return ofs + (input ? "import " : "") + (isPartition() ? "partition" : getType().name().toLowerCase())
+        String ret = ofs + " " + "@semantics(" + getObservable().getDeclaration() + ")\n";
+        return ret + ofs + (input ? "import " : "") + (isPartition() ? "partition" : getType().name().toLowerCase())
                 + " "
                 + getName() + encodeBody(offset, ofs);
     }
@@ -627,13 +628,6 @@ public class Actuator implements IActuator {
                         + (nout < computationStrategy.size() - 1 ? "," : "") + "\n";
                 nout++;
             }
-
-            // UNCOMMENT TO OUTPUT SEMANTICS - FIXME should be an annotation on top of the
-            // actuator
-            // to enable re-runs and the like
-            // if (observable != null) {
-            // ret += ofs + " " + "semantics " + getObservable().getDeclaration() + "\n";
-            // }
 
             ret += ofs + "}";
         }
