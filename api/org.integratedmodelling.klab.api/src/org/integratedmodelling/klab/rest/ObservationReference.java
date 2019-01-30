@@ -172,6 +172,12 @@ public class ObservationReference implements IObservationReference {
 	 * the full list are possible.
 	 */
 	private int siblingCount;
+	
+	/**
+	 * Number of children, some or all of which may be in the children array according to 
+	 * request parameters. 
+	 */
+	private int childrenCount;
 
 	/**
 	 * If this observation is part of a group with >1 siblings, this will be set to
@@ -756,6 +762,14 @@ public class ObservationReference implements IObservationReference {
 
 	public void setLastUpdate(long lastUpdate) {
 		this.lastUpdate = lastUpdate;
+	}
+
+	public int getChildrenCount() {
+		return childrenCount;
+	}
+
+	public void setChildrenCount(int childrenCount) {
+		this.childrenCount = childrenCount;
 	}
 
 }

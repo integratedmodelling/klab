@@ -247,7 +247,7 @@ public enum Observations implements IObservationService {
 		if (locator != null) {
 			observation = observation.at(locator);
 		}
-	
+
 		ISubject rootSubject = ((Observation)observation).getRuntimeContext().getRootSubject();
 		if (rootSubject != null) {
 			ret.setRootContextId(rootSubject.getId());
@@ -268,11 +268,13 @@ public enum Observations implements IObservationService {
 			ret.setLabel(ret.getLabel() + " [" + observation.getObservable().getRange().getLowerBound() + " to "
 					+ observation.getObservable().getRange().getUpperBound() + "]");
 		}
-		
+
 		ret.setObservable(observation.getObservable().getDefinition());
 		if (ret.getObservable() == null) {
 			ret.setObservable("Quantity has no semantics associated");
 		}
+		
+		ret.setChildrenCount(((IDirectObservation) observation).getChildren(IObservation.class).size());
 		ret.setSiblingCount(observation.groupSize());
 		ret.getSemantics().addAll(((Concept) observation.getObservable().getType()).getTypeSet());
 
