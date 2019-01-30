@@ -100,7 +100,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	ResolutionScope resolutionScope;
 
 	// cache for repeated dataflow resolutions
-	Map<IObservable, List<Pair<ICoverage, Dataflow>>> dataflowCache = new HashMap<>();
+	Map<ResolvedObservable, List<Pair<ICoverage, Dataflow>>> dataflowCache = new HashMap<>();
 
 	public RuntimeContext(Actuator actuator, IResolutionScope scope, IScale scale, IMonitor monitor) {
 
@@ -317,11 +317,6 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
 		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
 
-		/*
-		 * cache dataflows and use the coverage to reuse them. Assumes coverage works.
-		 * TODO FIXME ACHTUNG - USE COMPARABLE THAT INCLUDES OBSERVABLE AND MODE or
-		 * we're fucked.
-		 */
 		List<Pair<ICoverage, Dataflow>> pairs = dataflowCache.get(observable);
 		if (pairs != null) {
 			for (Pair<ICoverage, Dataflow> pair : pairs) {
@@ -344,7 +339,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 				// original context.
 				if (pairs == null) {
 					pairs = new ArrayList<>();
-					dataflowCache.put(observable, pairs);
+					dataflowCache.put(new ResolvedObservable((Observable)observable, Mode.RESOLUTION), pairs);
 				}
 				pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
 			}
@@ -782,4 +777,49 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		}
 	}
 
+	// wrapper for proper caching of sub-dataflows
+	class ResolvedObservable {
+		
+		Observable observable;
+		Mode resolutionMode;
+		ResolvedObservable(Observable observable, Mode mode) {
+			this.observable = observable;
+			this.resolutionMode = mode;
+		}
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + ((observable == null) ? 0 : observable.hashCode());
+			result = prime * result + ((resolutionMode == null) ? 0 : resolutionMode.hashCode());
+			return result;
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			ResolvedObservable other = (ResolvedObservable) obj;
+			if (!getOuterType().equals(other.getOuterType()))
+				return false;
+			if (observable == null) {
+				if (other.observable != null)
+					return false;
+			} else if (!observable.equals(other.observable))
+				return false;
+			if (resolutionMode != other.resolutionMode)
+				return false;
+			return true;
+		}
+		private RuntimeContext getOuterType() {
+			return RuntimeContext.this;
+		}
+		
+	}
+	
 }

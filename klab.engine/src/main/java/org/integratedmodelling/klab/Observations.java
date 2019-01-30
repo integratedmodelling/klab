@@ -83,7 +83,7 @@ public enum Observations implements IObservationService {
 	private Observations() {
 		Services.INSTANCE.registerService(this, IObservationService.class);
 	}
-	
+
 	@Override
 	public IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios) throws KlabException {
 		return Resolver.INSTANCE.resolve(urn, session, scenarios);
@@ -115,7 +115,7 @@ public enum Observations implements IObservationService {
 	public IState getStateViewAs(IObservable observable, IState state, IScale scale, IComputationContext context) {
 		return new RescalingState(state, observable, (Scale) scale, (IRuntimeContext) context);
 	}
-	
+
 	/**
 	 * Return the summary for the data in a state, computing it if necessary.
 	 * 
@@ -232,27 +232,27 @@ public enum Observations implements IObservationService {
 		} else if (observation instanceof IRelationship) {
 			ret.setObservationType(ObservationReference.ObservationType.RELATIONSHIP);
 		}
-		
+
 		ret.setMain(isMain);
 		ret.setCreationTime(observation.getTimestamp());
-		ret.setPreviouslyNotified(((Artifact)observation).isNotified());
-		ret.setLastUpdate(((Observation)observation).getLastUpdate());
-		
-		if (isMain && observation instanceof Observation && !((Observation)observation).isMain()) {
-			((Observation)observation).setMain(true);
-		} else if (((Observation)observation).isMain()) {
+		ret.setPreviouslyNotified(((Artifact) observation).isNotified());
+		ret.setLastUpdate(((Observation) observation).getLastUpdate());
+
+		if (isMain && observation instanceof Observation && !((Observation) observation).isMain()) {
+			((Observation) observation).setMain(true);
+		} else if (((Observation) observation).isMain()) {
 			ret.setMain(true);
 		}
-		
+
 		if (locator != null) {
 			observation = observation.at(locator);
 		}
 
-		ISubject rootSubject = ((Observation)observation).getRuntimeContext().getRootSubject();
+		ISubject rootSubject = ((Observation) observation).getRuntimeContext().getRootSubject();
 		if (rootSubject != null) {
 			ret.setRootContextId(rootSubject.getId());
 		}
-		
+
 		ret.setId(observation.getId());
 		ret.setUrn(observation.getUrn());
 		ret.setParentId(parent == null ? null : parent.getId());
@@ -273,8 +273,10 @@ public enum Observations implements IObservationService {
 		if (ret.getObservable() == null) {
 			ret.setObservable("Quantity has no semantics associated");
 		}
-		
-		ret.setChildrenCount(((IDirectObservation) observation).getChildren(IObservation.class).size());
+
+		ret.setChildrenCount(observation instanceof IDirectObservation
+				? ((IDirectObservation) observation).getChildren(IObservation.class).size()
+				: 0);
 		ret.setSiblingCount(observation.groupSize());
 		ret.getSemantics().addAll(((Concept) observation.getObservable().getType()).getTypeSet());
 
@@ -317,10 +319,10 @@ public enum Observations implements IObservationService {
 						NumberFormat.getInstance().format(grid.getCellWidth()) + " x "
 								+ NumberFormat.getInstance().format(grid.getCellHeight()) + " "
 								+ grid.getProjection().getUnits());
-				
+
 				ret.getExportFormats().add(new ExportFormat("PNG Image", "png"));
 				ret.getExportFormats().add(new ExportFormat("GeoTIFF Raster file", "tiff"));
-				
+
 			} else if (observation.groupSize() > 0) {
 				ret.getExportFormats().add(new ExportFormat("Shapefile", "shp"));
 			}
@@ -338,26 +340,26 @@ public enum Observations implements IObservationService {
 		if (time != null) {
 			// TODO
 		}
-		
+
 		if (observation instanceof IDirectObservation) {
-			ret.setChildCount(((IDirectObservation)observation).getChildren(IObservation.class).size());
+			ret.setChildCount(((IDirectObservation) observation).getChildren(IObservation.class).size());
 		}
 
 		if (observation instanceof IDirectObservation && (childLevel < 0 || childLevel > 0)) {
 			Set<ObservationGroup> groups = new HashSet<>();
 			for (IObservation child : ((IDirectObservation) observation).getChildren(IObservation.class)) {
-				
+
 				/*
-				 * if collapseSiblings, only add one representative sibling per type. 
+				 * if collapseSiblings, only add one representative sibling per type.
 				 */
-				if (collapseSiblings && ((Observation)child).getGroup() != null) {
-					if (groups.contains(((Observation)child).getGroup())) {
+				if (collapseSiblings && ((Observation) child).getGroup() != null) {
+					if (groups.contains(((Observation) child).getGroup())) {
 						continue;
 					} else {
-						groups.add(((Observation)child).getGroup());
+						groups.add(((Observation) child).getGroup());
 					}
 				}
-				
+
 				ret.getChildren().add(createArtifactDescriptor(child, observation, locator,
 						childLevel > 0 ? childLevel-- : childLevel, collapseSiblings, false));
 			}
@@ -403,7 +405,7 @@ public enum Observations implements IObservationService {
 
 			ret.setDataSummary(ds);
 		}
-		
+
 		/*
 		 * activity that generated us.
 		 */
@@ -414,7 +416,7 @@ public enum Observations implements IObservationService {
 		ret.getActions().add(ActionReference.separator());
 		// ACTIONS diocan
 		// ret.getActions().add(new ActionReference("Show metadata", "ShowMetadata"));
-		
+
 		return ret;
 	}
 
@@ -447,7 +449,7 @@ public enum Observations implements IObservationService {
 		}
 		return new Observer(regionOfInterest, observable, (Namespace) namespace);
 	}
-	
+
 	public Observer makeROIObserver(final Shape shape, Namespace namespace, IMonitor monitor) {
 		// TODO use configured concept from worldview!
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
@@ -483,17 +485,17 @@ public enum Observations implements IObservationService {
 	 * @return discretization of range
 	 */
 	public IDataKey discretize(IState s, ILocator locator, int maxBins) {
-	    StateSummary summary = getStateSummary(s, locator);
+		StateSummary summary = getStateSummary(s, locator);
 		return new Discretization(Range.create(summary.getRange()), maxBins);
 	}
 
 	public File exportToTempFile(IObservation obs, ILocator locator, String outputFormat) {
-	    if (obs instanceof IState && obs.getGeometry().getDimension(Type.SPACE) != null) {
-	        Dimension space = obs.getGeometry().getDimension(Type.SPACE);
-	        if (space.isRegular() && space.size() > 1) {
-	            return GeotoolsUtils.INSTANCE.exportToTempFile((IState)obs, locator, outputFormat);
-	        }
-	    }
+		if (obs instanceof IState && obs.getGeometry().getDimension(Type.SPACE) != null) {
+			Dimension space = obs.getGeometry().getDimension(Type.SPACE);
+			if (space.isRegular() && space.size() > 1) {
+				return GeotoolsUtils.INSTANCE.exportToTempFile((IState) obs, locator, outputFormat);
+			}
+		}
 		return null;
 	}
 
