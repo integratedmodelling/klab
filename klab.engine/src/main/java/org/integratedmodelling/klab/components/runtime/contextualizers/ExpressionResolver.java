@@ -20,8 +20,10 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Utils;
 
 /**
  * Scalar resolver that evaluates an expression resolving an artifact. If the
@@ -138,6 +140,8 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 			Object o = expression.eval(context, context);
 			if (o instanceof IDataArtifact) {
 				ret = (IDataArtifact) o;
+			} else if (Utils.isPOD(o) && ret instanceof State) {
+				((State)ret).distributeScalar(o);
 			}
 		}
 		return ret;

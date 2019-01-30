@@ -38,6 +38,7 @@ import org.integratedmodelling.kdl.kdl.Urn;
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.FunctionImpl#getParameters <em>Parameters</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.FunctionImpl#getUrn <em>Urn</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.FunctionImpl#getValue <em>Value</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.FunctionImpl#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.FunctionImpl#getVariable <em>Variable</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.FunctionImpl#getChain <em>Chain</em>}</li>
  * </ul>
@@ -115,6 +116,26 @@ public class FunctionImpl extends MinimalEObjectImpl.Container implements Functi
    * @ordered
    */
   protected Literal value;
+
+  /**
+   * The default value of the '{@link #getExpression() <em>Expression</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getExpression()
+   * @generated
+   * @ordered
+   */
+  protected static final String EXPRESSION_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getExpression() <em>Expression</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getExpression()
+   * @generated
+   * @ordered
+   */
+  protected String expression = EXPRESSION_EDEFAULT;
 
   /**
    * The default value of the '{@link #getVariable() <em>Variable</em>}' attribute.
@@ -362,6 +383,29 @@ public class FunctionImpl extends MinimalEObjectImpl.Container implements Functi
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getExpression()
+  {
+    return expression;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setExpression(String newExpression)
+  {
+    String oldExpression = expression;
+    expression = newExpression;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.FUNCTION__EXPRESSION, oldExpression, expression));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public String getVariable()
   {
     return variable;
@@ -436,6 +480,8 @@ public class FunctionImpl extends MinimalEObjectImpl.Container implements Functi
         return getUrn();
       case KdlPackage.FUNCTION__VALUE:
         return getValue();
+      case KdlPackage.FUNCTION__EXPRESSION:
+        return getExpression();
       case KdlPackage.FUNCTION__VARIABLE:
         return getVariable();
       case KdlPackage.FUNCTION__CHAIN:
@@ -469,6 +515,9 @@ public class FunctionImpl extends MinimalEObjectImpl.Container implements Functi
         return;
       case KdlPackage.FUNCTION__VALUE:
         setValue((Literal)newValue);
+        return;
+      case KdlPackage.FUNCTION__EXPRESSION:
+        setExpression((String)newValue);
         return;
       case KdlPackage.FUNCTION__VARIABLE:
         setVariable((String)newValue);
@@ -506,6 +555,9 @@ public class FunctionImpl extends MinimalEObjectImpl.Container implements Functi
       case KdlPackage.FUNCTION__VALUE:
         setValue((Literal)null);
         return;
+      case KdlPackage.FUNCTION__EXPRESSION:
+        setExpression(EXPRESSION_EDEFAULT);
+        return;
       case KdlPackage.FUNCTION__VARIABLE:
         setVariable(VARIABLE_EDEFAULT);
         return;
@@ -536,6 +588,8 @@ public class FunctionImpl extends MinimalEObjectImpl.Container implements Functi
         return urn != null;
       case KdlPackage.FUNCTION__VALUE:
         return value != null;
+      case KdlPackage.FUNCTION__EXPRESSION:
+        return EXPRESSION_EDEFAULT == null ? expression != null : !EXPRESSION_EDEFAULT.equals(expression);
       case KdlPackage.FUNCTION__VARIABLE:
         return VARIABLE_EDEFAULT == null ? variable != null : !VARIABLE_EDEFAULT.equals(variable);
       case KdlPackage.FUNCTION__CHAIN:
@@ -559,6 +613,8 @@ public class FunctionImpl extends MinimalEObjectImpl.Container implements Functi
     result.append(mediated);
     result.append(", name: ");
     result.append(name);
+    result.append(", expression: ");
+    result.append(expression);
     result.append(", variable: ");
     result.append(variable);
     result.append(')');

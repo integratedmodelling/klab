@@ -277,7 +277,7 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *
 	 * Constraint:
 	 *     (
-	 *         (mediated=LOWERCASE_ID? ((name=PathName parameters=ParameterList?) | urn=Urn | value=Literal) variable=LOWERCASE_ID?) | 
+	 *         (mediated=LOWERCASE_ID? ((name=PathName parameters=ParameterList?) | urn=Urn | value=Literal | expression=EXPR) variable=LOWERCASE_ID?) | 
 	 *         (chain+=Function chain+=Function* variable=LOWERCASE_ID?)
 	 *     )
 	 */

@@ -88,6 +88,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	IObservable targetSemantics;
 	String targetName;
 	ISubject rootSubject;
+	IDirectObservation contextSubject;
 	Map<String, IObservation> observations;
 	Scheduler<?> scheduler;
 	IReport report;
@@ -155,6 +156,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		this.targetSemantics = context.targetSemantics;
 		this.targetName = context.targetName;
 		this.rootSubject = context.rootSubject;
+		this.contextSubject = context.contextSubject;
 		this.observations = context.observations;
 		this.dataflowCache.putAll(context.dataflowCache);
 	}
@@ -317,12 +319,13 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 		/*
 		 * cache dataflows and use the coverage to reuse them. Assumes coverage works.
-		 * TODO FIXME ACHTUNG - USE COMPARABLE THAT INCLUDES OBSERVABLE AND MODE or we're fucked.
+		 * TODO FIXME ACHTUNG - USE COMPARABLE THAT INCLUDES OBSERVABLE AND MODE or
+		 * we're fucked.
 		 */
 		List<Pair<ICoverage, Dataflow>> pairs = dataflowCache.get(observable);
 		if (pairs != null) {
 			for (Pair<ICoverage, Dataflow> pair : pairs) {
-				if (pair.getFirst().contains(scale)) {
+				if (pair.getFirst() == null || pair.getFirst().contains(scale)) {
 					dataflow = pair.getSecond();
 					break;
 				}
@@ -345,12 +348,13 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 				}
 				pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
 			}
-
-			ret = (ICountableObservation) dataflow.run(scale, ((Monitor) monitor).get(subtask));
-			if (ret != null) {
-				((DirectObservation) ret).setName(name);
-			}
 		}
+
+		ret = (ICountableObservation) dataflow.run(scale, ((Monitor) monitor).get(subtask));
+		if (ret != null) {
+			((DirectObservation) ret).setName(name);
+		}
+
 		return ret;
 	}
 
@@ -405,7 +409,9 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		ret.targetSemantics = ((Actuator) actuator).getObservable();
 		ret.monitor = monitor;
 		ret.semantics.put(actuator.getName(), ret.targetSemantics);
-
+		if (this.target instanceof IDirectObservation) {
+			ret.contextSubject = (IDirectObservation)this.target;
+		}
 		for (IActuator a : actuator.getActuators()) {
 			if (!((Actuator) a).isExported()) {
 				String id = a.getAlias() == null ? a.getName() : a.getAlias();
@@ -654,8 +660,8 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			this.catalog.put(name, observation);
 			if (!(observation instanceof ObservationGroup)) {
 				this.structure.addVertex(observation);
-				if (scope.getContext() != null) {
-					this.structure.addEdge(observation, scope.getContext());
+				if (contextSubject != null) {
+					this.structure.addEdge(observation, contextSubject);
 				}
 			}
 			if (observation instanceof ISubject) {

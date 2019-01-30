@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kdl.kdl.Function#getParameters <em>Parameters</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.Function#getUrn <em>Urn</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.Function#getValue <em>Value</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.Function#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.Function#getVariable <em>Variable</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.Function#getChain <em>Chain</em>}</li>
  * </ul>
@@ -160,6 +161,32 @@ public interface Function extends EObject
    * @generated
    */
   void setValue(Literal value);
+
+  /**
+   * Returns the value of the '<em><b>Expression</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Expression</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Expression</em>' attribute.
+   * @see #setExpression(String)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getFunction_Expression()
+   * @model
+   * @generated
+   */
+  String getExpression();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.Function#getExpression <em>Expression</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Expression</em>' attribute.
+   * @see #getExpression()
+   * @generated
+   */
+  void setExpression(String value);
 
   /**
    * Returns the value of the '<em><b>Variable</b></em>' attribute.

@@ -139,5 +139,11 @@ public class State extends Observation implements IState, IKeyHolder {
 	public ISubjectiveState reinterpret(IDirectObservation observer) {
 		return new SubjectiveState(this, observer);
 	}
+
+	public void distributeScalar(Object pod) {
+		for (ILocator locator : getScale()) {
+			set(locator, pod);
+		}
+	}
 	
 }

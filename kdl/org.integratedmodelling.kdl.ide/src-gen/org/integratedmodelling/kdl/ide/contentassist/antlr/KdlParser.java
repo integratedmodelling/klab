@@ -333,6 +333,7 @@ public class KdlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getFunctionAccess().getParametersAssignment_0_1_0_2(), "rule__Function__ParametersAssignment_0_1_0_2");
 					put(grammarAccess.getFunctionAccess().getUrnAssignment_0_1_1(), "rule__Function__UrnAssignment_0_1_1");
 					put(grammarAccess.getFunctionAccess().getValueAssignment_0_1_2(), "rule__Function__ValueAssignment_0_1_2");
+					put(grammarAccess.getFunctionAccess().getExpressionAssignment_0_1_3(), "rule__Function__ExpressionAssignment_0_1_3");
 					put(grammarAccess.getFunctionAccess().getVariableAssignment_0_2_1(), "rule__Function__VariableAssignment_0_2_1");
 					put(grammarAccess.getFunctionAccess().getChainAssignment_1_1(), "rule__Function__ChainAssignment_1_1");
 					put(grammarAccess.getFunctionAccess().getChainAssignment_1_2_1(), "rule__Function__ChainAssignment_1_2_1");

@@ -1466,7 +1466,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getFunction_Variable()
+  public EAttribute getFunction_Expression()
   {
     return (EAttribute)functionEClass.getEStructuralFeatures().get(5);
   }
@@ -1476,9 +1476,19 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getFunction_Variable()
+  {
+    return (EAttribute)functionEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EReference getFunction_Chain()
   {
-    return (EReference)functionEClass.getEStructuralFeatures().get(6);
+    return (EReference)functionEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -1927,6 +1937,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     createEReference(functionEClass, FUNCTION__PARAMETERS);
     createEReference(functionEClass, FUNCTION__URN);
     createEReference(functionEClass, FUNCTION__VALUE);
+    createEAttribute(functionEClass, FUNCTION__EXPRESSION);
     createEAttribute(functionEClass, FUNCTION__VARIABLE);
     createEReference(functionEClass, FUNCTION__CHAIN);
 
@@ -2133,6 +2144,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     initEReference(getFunction_Parameters(), this.getParameterList(), null, "parameters", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getFunction_Urn(), this.getUrn(), null, "urn", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getFunction_Value(), this.getLiteral(), null, "value", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getFunction_Expression(), ecorePackage.getEString(), "expression", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getFunction_Variable(), ecorePackage.getEString(), "variable", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getFunction_Chain(), this.getFunction(), null, "chain", null, 0, -1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 

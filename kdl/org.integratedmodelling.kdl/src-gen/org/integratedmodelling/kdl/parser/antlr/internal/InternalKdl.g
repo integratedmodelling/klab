@@ -4470,17 +4470,36 @@ ruleFunction returns [EObject current=null]
 						}
 					)
 				)
+				    |
+				(
+					(
+						lv_expression_8_0=RULE_EXPR
+						{
+							newLeafNode(lv_expression_8_0, grammarAccess.getFunctionAccess().getExpressionEXPRTerminalRuleCall_0_1_3_0());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getFunctionRule());
+							}
+							setWithLastConsumed(
+								$current,
+								"expression",
+								lv_expression_8_0,
+								"org.integratedmodelling.kdl.Kdl.EXPR");
+						}
+					)
+				)
 			)
 			(
-				otherlv_8='as'
+				otherlv_9='as'
 				{
-					newLeafNode(otherlv_8, grammarAccess.getFunctionAccess().getAsKeyword_0_2_0());
+					newLeafNode(otherlv_9, grammarAccess.getFunctionAccess().getAsKeyword_0_2_0());
 				}
 				(
 					(
-						lv_variable_9_0=RULE_LOWERCASE_ID
+						lv_variable_10_0=RULE_LOWERCASE_ID
 						{
-							newLeafNode(lv_variable_9_0, grammarAccess.getFunctionAccess().getVariableLOWERCASE_IDTerminalRuleCall_0_2_1_0());
+							newLeafNode(lv_variable_10_0, grammarAccess.getFunctionAccess().getVariableLOWERCASE_IDTerminalRuleCall_0_2_1_0());
 						}
 						{
 							if ($current==null) {
@@ -4489,7 +4508,7 @@ ruleFunction returns [EObject current=null]
 							setWithLastConsumed(
 								$current,
 								"variable",
-								lv_variable_9_0,
+								lv_variable_10_0,
 								"org.integratedmodelling.kdl.Kdl.LOWERCASE_ID");
 						}
 					)
@@ -4498,16 +4517,16 @@ ruleFunction returns [EObject current=null]
 		)
 		    |
 		(
-			otherlv_10='('
+			otherlv_11='('
 			{
-				newLeafNode(otherlv_10, grammarAccess.getFunctionAccess().getLeftParenthesisKeyword_1_0());
+				newLeafNode(otherlv_11, grammarAccess.getFunctionAccess().getLeftParenthesisKeyword_1_0());
 			}
 			(
 				(
 					{
 						newCompositeNode(grammarAccess.getFunctionAccess().getChainFunctionParserRuleCall_1_1_0());
 					}
-					lv_chain_11_0=ruleFunction
+					lv_chain_12_0=ruleFunction
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getFunctionRule());
@@ -4515,23 +4534,23 @@ ruleFunction returns [EObject current=null]
 						add(
 							$current,
 							"chain",
-							lv_chain_11_0,
+							lv_chain_12_0,
 							"org.integratedmodelling.kdl.Kdl.Function");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
 			(
-				otherlv_12=','
+				otherlv_13=','
 				{
-					newLeafNode(otherlv_12, grammarAccess.getFunctionAccess().getCommaKeyword_1_2_0());
+					newLeafNode(otherlv_13, grammarAccess.getFunctionAccess().getCommaKeyword_1_2_0());
 				}
 				(
 					(
 						{
 							newCompositeNode(grammarAccess.getFunctionAccess().getChainFunctionParserRuleCall_1_2_1_0());
 						}
-						lv_chain_13_0=ruleFunction
+						lv_chain_14_0=ruleFunction
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getFunctionRule());
@@ -4539,27 +4558,27 @@ ruleFunction returns [EObject current=null]
 							add(
 								$current,
 								"chain",
-								lv_chain_13_0,
+								lv_chain_14_0,
 								"org.integratedmodelling.kdl.Kdl.Function");
 							afterParserOrEnumRuleCall();
 						}
 					)
 				)
 			)*
-			otherlv_14=')'
+			otherlv_15=')'
 			{
-				newLeafNode(otherlv_14, grammarAccess.getFunctionAccess().getRightParenthesisKeyword_1_3());
+				newLeafNode(otherlv_15, grammarAccess.getFunctionAccess().getRightParenthesisKeyword_1_3());
 			}
 			(
-				otherlv_15='as'
+				otherlv_16='as'
 				{
-					newLeafNode(otherlv_15, grammarAccess.getFunctionAccess().getAsKeyword_1_4_0());
+					newLeafNode(otherlv_16, grammarAccess.getFunctionAccess().getAsKeyword_1_4_0());
 				}
 				(
 					(
-						lv_variable_16_0=RULE_LOWERCASE_ID
+						lv_variable_17_0=RULE_LOWERCASE_ID
 						{
-							newLeafNode(lv_variable_16_0, grammarAccess.getFunctionAccess().getVariableLOWERCASE_IDTerminalRuleCall_1_4_1_0());
+							newLeafNode(lv_variable_17_0, grammarAccess.getFunctionAccess().getVariableLOWERCASE_IDTerminalRuleCall_1_4_1_0());
 						}
 						{
 							if ($current==null) {
@@ -4568,7 +4587,7 @@ ruleFunction returns [EObject current=null]
 							setWithLastConsumed(
 								$current,
 								"variable",
-								lv_variable_16_0,
+								lv_variable_17_0,
 								"org.integratedmodelling.kdl.Kdl.LOWERCASE_ID");
 						}
 					)

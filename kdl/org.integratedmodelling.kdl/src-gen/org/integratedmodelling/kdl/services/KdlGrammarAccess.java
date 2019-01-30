@@ -2466,6 +2466,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cUrnUrnParserRuleCall_0_1_1_0 = (RuleCall)cUrnAssignment_0_1_1.eContents().get(0);
 		private final Assignment cValueAssignment_0_1_2 = (Assignment)cAlternatives_0_1.eContents().get(2);
 		private final RuleCall cValueLiteralParserRuleCall_0_1_2_0 = (RuleCall)cValueAssignment_0_1_2.eContents().get(0);
+		private final Assignment cExpressionAssignment_0_1_3 = (Assignment)cAlternatives_0_1.eContents().get(3);
+		private final RuleCall cExpressionEXPRTerminalRuleCall_0_1_3_0 = (RuleCall)cExpressionAssignment_0_1_3.eContents().get(0);
 		private final Group cGroup_0_2 = (Group)cGroup_0.eContents().get(2);
 		private final Keyword cAsKeyword_0_2_0 = (Keyword)cGroup_0_2.eContents().get(0);
 		private final Assignment cVariableAssignment_0_2_1 = (Assignment)cGroup_0_2.eContents().get(1);
@@ -2485,17 +2487,19 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cVariableLOWERCASE_IDTerminalRuleCall_1_4_1_0 = (RuleCall)cVariableAssignment_1_4_1.eContents().get(0);
 		
 		//Function:
-		//	(mediated=LOWERCASE_ID '>>')? (name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal) ('as'
+		//	(mediated=LOWERCASE_ID '>>')? (name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal |
+		//	expression=EXPR) ('as'
 		//	variable=LOWERCASE_ID)? |
 		//	'(' chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(mediated=LOWERCASE_ID '>>')? (name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal) ('as'
-		//variable=LOWERCASE_ID)? | '(' chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?
+		//(mediated=LOWERCASE_ID '>>')? (name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal |
+		//expression=EXPR) ('as' variable=LOWERCASE_ID)? | '(' chain+=Function (',' chain+=Function)* ')' ('as'
+		//variable=LOWERCASE_ID)?
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//(mediated=LOWERCASE_ID '>>')? (name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal) ('as'
-		//variable=LOWERCASE_ID)?
+		//(mediated=LOWERCASE_ID '>>')? (name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal |
+		//expression=EXPR) ('as' variable=LOWERCASE_ID)?
 		public Group getGroup_0() { return cGroup_0; }
 		
 		//(mediated=LOWERCASE_ID '>>')?
@@ -2510,7 +2514,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//'>>'
 		public Keyword getGreaterThanSignGreaterThanSignKeyword_0_0_1() { return cGreaterThanSignGreaterThanSignKeyword_0_0_1; }
 		
-		//name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal
+		//name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal | expression=EXPR
 		public Alternatives getAlternatives_0_1() { return cAlternatives_0_1; }
 		
 		//name=PathName '(' parameters=ParameterList? ')'
@@ -2545,6 +2549,12 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//Literal
 		public RuleCall getValueLiteralParserRuleCall_0_1_2_0() { return cValueLiteralParserRuleCall_0_1_2_0; }
+		
+		//expression=EXPR
+		public Assignment getExpressionAssignment_0_1_3() { return cExpressionAssignment_0_1_3; }
+		
+		//EXPR
+		public RuleCall getExpressionEXPRTerminalRuleCall_0_1_3_0() { return cExpressionEXPRTerminalRuleCall_0_1_3_0; }
 		
 		//('as' variable=LOWERCASE_ID)?
 		public Group getGroup_0_2() { return cGroup_0_2; }
@@ -3621,7 +3631,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Function:
-	//	(mediated=LOWERCASE_ID '>>')? (name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal) ('as'
+	//	(mediated=LOWERCASE_ID '>>')? (name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal |
+	//	expression=EXPR) ('as'
 	//	variable=LOWERCASE_ID)? |
 	//	'(' chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?;
 	public FunctionElements getFunctionAccess() {

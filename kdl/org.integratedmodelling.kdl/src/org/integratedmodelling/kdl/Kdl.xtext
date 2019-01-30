@@ -193,7 +193,7 @@ KeyValuePair:
 	name=(LOWERCASE_ID|LOWERCASE_DASHID) (interactive?='=?' | '=') value=Value;
 Function:
 	(mediated=LOWERCASE_ID '>>')?
-	((name=PathName '(' (parameters=ParameterList)? ')') | urn=Urn | value=Literal) ('as'
+	((name=PathName '(' (parameters=ParameterList)? ')') | urn=Urn | value=Literal | expression=EXPR) ('as'
 	variable=LOWERCASE_ID)? |
 	'(' chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?;
 	/**

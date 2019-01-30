@@ -564,7 +564,7 @@ public class Actuator implements IActuator {
      */
     protected String encode(int offset) {
         String ofs = StringUtils.repeat(" ", offset);
-        String ret = ofs + " " + "@semantics(" + getObservable().getDeclaration() + ")\n";
+        String ret = ofs + "@semantics('" + getObservable().getDeclaration() + "')\n";
         return ret + ofs + (input ? "import " : "") + (isPartition() ? "partition" : getType().name().toLowerCase())
                 + " "
                 + getName() + encodeBody(offset, ofs);

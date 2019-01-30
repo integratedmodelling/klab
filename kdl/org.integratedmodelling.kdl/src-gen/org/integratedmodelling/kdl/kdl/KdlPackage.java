@@ -1303,13 +1303,22 @@ public interface KdlPackage extends EPackage
   int FUNCTION__VALUE = 4;
 
   /**
+   * The feature id for the '<em><b>Expression</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int FUNCTION__EXPRESSION = 5;
+
+  /**
    * The feature id for the '<em><b>Variable</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int FUNCTION__VARIABLE = 5;
+  int FUNCTION__VARIABLE = 6;
 
   /**
    * The feature id for the '<em><b>Chain</b></em>' containment reference list.
@@ -1318,7 +1327,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int FUNCTION__CHAIN = 6;
+  int FUNCTION__CHAIN = 7;
 
   /**
    * The number of structural features of the '<em>Function</em>' class.
@@ -1327,7 +1336,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int FUNCTION_FEATURE_COUNT = 7;
+  int FUNCTION_FEATURE_COUNT = 8;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.UnitElementImpl <em>Unit Element</em>}' class.
@@ -2901,6 +2910,17 @@ public interface KdlPackage extends EPackage
   EReference getFunction_Value();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.Function#getExpression <em>Expression</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Expression</em>'.
+   * @see org.integratedmodelling.kdl.kdl.Function#getExpression()
+   * @see #getFunction()
+   * @generated
+   */
+  EAttribute getFunction_Expression();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.Function#getVariable <em>Variable</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4222,6 +4242,14 @@ public interface KdlPackage extends EPackage
      * @generated
      */
     EReference FUNCTION__VALUE = eINSTANCE.getFunction_Value();
+
+    /**
+     * The meta object literal for the '<em><b>Expression</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute FUNCTION__EXPRESSION = eINSTANCE.getFunction_Expression();
 
     /**
      * The meta object literal for the '<em><b>Variable</b></em>' attribute feature.
