@@ -12,6 +12,15 @@ annotation cost for dependencies
 {
 	optional value 'value'
 		""
+	
+	optional number preference-threshold 
+		""
+		
+	optional number veto 
+		""
+		
+	optional number indifference-threshold	
+		""
 }
 
 annotation benefit for dependencies
@@ -20,15 +29,33 @@ annotation benefit for dependencies
 {
 	optional value 'value'
 		""
+	optional number preference-threshold 
+		""
+		
+	optional number veto 
+		""
+		
+	optional number indifference-threshold	
+		""
 }
 
 annotation stakeholder for dependencies
-	"Use to annotate a dependency as a stakeholder type, ensuring that only stakeholders of that type are considered when
-     building the MCA plans."
+	"Use to annotate a dependency as a stakeholder type. The inferred weight type (value of _criterion_type_ for assessment 
+	 of _output_type_) will be observed in each stakeholder."
 {
 }
 
 annotation alternative for dependencies
+	"Use to annotate the artifact to use to provide alternatives when the model produces a ranked set of the same objects."
+{
+}
+
+annotation concordance for dependencies
+	"Use to annotate the artifact to use to provide alternatives when the model produces a ranked set of the same objects."
+{
+}
+
+annotation discordance for dependencies
 	"Use to annotate the artifact to use to provide alternatives when the model produces a ranked set of the same objects."
 {
 }
