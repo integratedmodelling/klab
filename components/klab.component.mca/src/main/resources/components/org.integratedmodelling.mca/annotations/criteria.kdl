@@ -59,3 +59,8 @@ annotation discordance for dependencies
 	"Use to annotate the artifact to use to provide alternatives when the model produces a ranked set of the same objects."
 {
 }
+
+annotation credibility for dependencies
+	"Use to annotate the artifact to use to provide alternatives when the model produces a ranked set of the same objects."
+{
+}
