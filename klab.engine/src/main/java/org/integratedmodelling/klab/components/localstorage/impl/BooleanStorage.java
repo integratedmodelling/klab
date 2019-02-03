@@ -75,5 +75,13 @@ public class BooleanStorage extends Storage implements IDataArtifact {
 		// TODO Auto-generated method stub
 		
 	}
+
+    @Override
+    public <T> T aggregate(IGeometry geometry, Class<? extends T> cls) {
+        if (size() == 1) {
+            return Utils.asType(data.get(0), cls);
+        }
+        return null;
+    }
 	
 }

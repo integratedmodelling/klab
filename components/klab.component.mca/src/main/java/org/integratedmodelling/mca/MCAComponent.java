@@ -342,7 +342,7 @@ public class MCAComponent {
                 for (ICriterion criterion : criteria) {
                     for (IState state : ((IDirectObservation)alt).getStates()) {
                         if (state.getObservable().getLocalName().equals(criterion.getName())) {
-                            
+                            alternative.setValue(criterion, state.aggregate(context.getScale(), Double.class));
                         }
                     }
                 }
@@ -354,7 +354,7 @@ public class MCAComponent {
          * with warnings.
          */
 
-        return false;
+        return true;
     }
 
     public static IAnnotation getAnnotation(IObservable observable, String id) {

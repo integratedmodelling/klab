@@ -682,6 +682,20 @@ public class Observable extends Concept implements IObservable {
 		this.sessionId = session.getId();
 	}
 
+	/**
+	 * Return this same observable after assigning the passed pre-observed value to it.
+	 * Used to create states:
+	 * <pre>
+	 *     state = subject.observe(Observable.promote(concept).withValue(3));
+	 * </pre>
+	 * @param value
+	 * @return
+	 */
+	public Observable withValue(Object value) {
+	    this.value = value;
+	    return this;
+	}
+	
 	@Override
 	public Set<IConcept> getAssignedRoles() {
 		return assignedRoles;

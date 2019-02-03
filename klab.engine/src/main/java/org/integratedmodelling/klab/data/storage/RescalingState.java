@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.data.general.ITable;
@@ -23,6 +24,7 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor;
@@ -390,4 +392,9 @@ public class RescalingState extends Observation implements IState {
 	public ISubjectiveState reinterpret(IDirectObservation observers) {
 		return null;
 	}
+
+    @Override
+    public <T> T aggregate(IGeometry geometry, Class<? extends T> cls) {
+        throw new KlabUnimplementedException("aggregation of rescaled states is unimplemented - please submit a request");
+    }
 }

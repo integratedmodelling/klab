@@ -145,5 +145,10 @@ public class State extends Observation implements IState, IKeyHolder {
 			set(locator, pod);
 		}
 	}
+
+    @Override
+    public <T> T aggregate(IGeometry geometry, Class<? extends T> cls) {
+        return storage.aggregate(geometry, cls);
+    }
 	
 }

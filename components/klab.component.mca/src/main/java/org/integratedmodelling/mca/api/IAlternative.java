@@ -14,6 +14,19 @@ public interface IAlternative {
      */
     String getId();
 
-	double getValue(ICriterion criterion);
+    /**
+     * Value of passed criterion. Must be consistently scaled across any alternative set.
+     * 
+     * @param criterion
+     * @return
+     */
+    double getValue(ICriterion criterion);
+
+    /**
+     * Available after ranking. Higher score means higher concordance with observer's priorities.
+     * 
+     * @return
+     */
+    double getScore();
 
 }

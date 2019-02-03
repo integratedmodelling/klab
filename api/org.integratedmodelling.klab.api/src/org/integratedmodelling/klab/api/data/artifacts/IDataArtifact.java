@@ -110,4 +110,16 @@ public interface IDataArtifact extends IArtifact {
 	 */
 	IDataKey getDataKey();
 
+	/**
+	 * Return a value aggregated over the passed geometry and converted to the passed type if
+	 * necessary and possible.
+	 * 
+	 * @param geometry
+	 * @param cls
+	 * @return the aggregated value
+	 * @throws IllegalArgumentException if the type can't fit the data or the geometry is not 
+	 *         covered by the original geometry.
+	 */
+	<T> T aggregate(IGeometry geometry, Class<? extends T> cls);
+	
 }

@@ -99,4 +99,14 @@ public class DoubleStorage extends Storage implements IDataArtifact {
 		return null;
 	}
 
+    @Override
+    public <T> T aggregate(IGeometry geometry, Class<? extends T> cls) {
+        
+        if (size() == 1) {
+            return Utils.asType(idata[0], cls);
+        }
+
+        return null;
+    }
+
 }

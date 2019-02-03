@@ -28,6 +28,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.AggregationUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
@@ -52,7 +53,6 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 	private Grid grid;
 	Map<IState, String> stateIdentifiers = new HashMap<>();
 	private IComputationContext context;
-	private boolean dataWarning;
 	IDataArtifact valueCache = null;
 	IExpression selectExpression = null;
 	IExpression valueExpression = null;
@@ -301,7 +301,7 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 				}
 			}
 
-			target.set(locator, aggregate(values));
+			target.set(locator, AggregationUtils.aggregate(values, aggregation, context.getMonitor()));
 
 //			long cells = adder.longValue();
 //			if (cells == 0 || (cells % 10000) == 0) {
@@ -317,175 +317,6 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 		}
 
 		return target;
-	}
-
-	private Object aggregate(List<Object> values) {
-
-		if (aggregation == null) {
-			for (Object value : values) {
-				if (value instanceof Boolean) {
-					aggregation = Aggregation.COUNT;
-					break;
-				} else if (value instanceof Number) {
-					aggregation = Aggregation.MEAN;
-					break;
-				} else if (value != null) {
-					aggregation = Aggregation.MAJORITY;
-					break;
-				}
-			}
-		}
-
-		if (aggregation == null) {
-			return null;
-		}
-
-		switch (aggregation) {
-		case ANY_PRESENT:
-			return values.size() > 0;
-		case COUNT:
-			return count(values);
-		case MAJORITY:
-			return dominant(values);
-		case MAX:
-			return max(values);
-		case MEAN:
-			return mean(values);
-		case MIN:
-			return min(values);
-		case STD:
-			return std(values);
-		case SUM:
-			return sum(values);
-		default:
-			break;
-		}
-
-		return null;
-	}
-
-	private Object sum(List<Object> values) {
-		double sum = 0;
-		for (Object value : values) {
-			if (value instanceof Number) {
-				sum += ((Number) value).doubleValue();
-			} else if (!dataWarning) {
-				dataWarning = true;
-				context.getMonitor().warn(
-						"neighborhood analysis: one or more values found to be of incompatible type during aggregation");
-			}
-		}
-		return sum;
-	}
-
-	private Object std(List<Object> values) {
-		double sum = 0;
-		int n = 0;
-		for (Object value : values) {
-			if (value instanceof Number) {
-				sum += ((Number) value).doubleValue();
-				n++;
-			} else if (!dataWarning) {
-				dataWarning = true;
-				context.getMonitor().warn(
-						"neighborhood analysis: one or more values found to be of incompatible type during aggregation");
-			}
-		}
-		double mean = sum / (double) n;
-		double sd = 0;
-		for (Object value : values) {
-			if (value instanceof Number) {
-				sd += Math.pow(((Number) value).doubleValue() - mean, 2);
-			}
-		}
-		return Math.sqrt(sd / (double) n);
-	}
-
-	private Object min(List<Object> values) {
-		Double min = null;
-		for (Object value : values) {
-			if (value instanceof Number) {
-				if (min == null || min > ((Number) value).doubleValue()) {
-					min = ((Number) value).doubleValue();
-				}
-			} else if (!dataWarning) {
-				dataWarning = true;
-				context.getMonitor().warn(
-						"neighborhood analysis: one or more values found to be of incompatible type during aggregation");
-			}
-		}
-		return min;
-	}
-
-	private Object mean(List<Object> values) {
-		double sum = 0;
-		int n = 0;
-		for (Object value : values) {
-			if (value instanceof Number) {
-				sum += ((Number) value).doubleValue();
-				n++;
-			} else if (!dataWarning) {
-				dataWarning = true;
-				context.getMonitor().warn(
-						"neighborhood analysis: one or more values found to be of incompatible type during aggregation");
-			}
-		}
-		return sum / (double) n;
-	}
-
-	private Object max(List<Object> values) {
-		Double max = null;
-		for (Object value : values) {
-			if (value instanceof Number) {
-				if (max == null || max < ((Number) value).doubleValue()) {
-					max = ((Number) value).doubleValue();
-				}
-			} else if (!dataWarning) {
-				dataWarning = true;
-				context.getMonitor().warn(
-						"neighborhood analysis: one or more values found to be of incompatible type during aggregation");
-			}
-		}
-		return max;
-	}
-
-	private Object dominant(List<Object> values) {
-
-		Map<Object, Integer> vals = new HashMap<>();
-		for (Object value : values) {
-			if (vals.containsKey(value)) {
-				vals.put(value, vals.get(value) + 1);
-			} else {
-				vals.put(value, 1);
-			}
-		}
-		Object val = null;
-		int n = 0;
-		for (Object o : vals.keySet()) {
-			if (val == null || vals.get(val) > n) {
-				val = o;
-				n = vals.get(val);
-			}
-		}
-		return val;
-	}
-
-	private Object count(List<Object> values) {
-		int n = 0;
-		for (Object value : values) {
-			if (value instanceof Boolean) {
-				if ((Boolean) value) {
-					n++;
-				}
-			} else if (value instanceof Number) {
-				if (((Number) value).doubleValue() != 0) {
-					n++;
-				}
-			} else {
-				n++;
-			}
-		}
-		return n;
 	}
 
 	private <T> T evalStates(IExpression expression, List<IState> states, ILocator where, Class<? extends T> cls,

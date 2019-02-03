@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.data.general.ITable;
@@ -48,6 +49,14 @@ public class MediatingState extends Observation implements IState {
 				: (T) val;
 	}
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T aggregate(IGeometry geometry, Class<? extends T> cls) {
+        Object val = delegate.aggregate(geometry, cls);
+        return (T)(val instanceof Number ? to.convert(((Number) val).doubleValue(), from) : val);
+    }
+    
+	
 	public long set(ILocator index, Object value) {
 		Object val = value instanceof Number ? from.convert(((Number) value).doubleValue(), to) : value;
 		return delegate.set(index, val);
@@ -139,5 +148,6 @@ public class MediatingState extends Observation implements IState {
 	public ISubjectiveState reinterpret(IDirectObservation observers) {
 		return null;
 	}
-	
+
+
 }

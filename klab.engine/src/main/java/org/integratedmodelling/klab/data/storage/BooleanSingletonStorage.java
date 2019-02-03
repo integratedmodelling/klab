@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.data.storage;
 
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.scale.Scale;
@@ -24,5 +25,14 @@ public class BooleanSingletonStorage extends AbstractSingletonStorage<Boolean> {
 	public IDataKey getDataKey() {
 		return null;
 	}
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T aggregate(IGeometry geometry, Class<? extends T> cls) {
+        if (!Boolean.class.isAssignableFrom(cls)) {
+            throw new IllegalArgumentException("cannot return a boolean state as a " + cls);
+        }
+        return (T)value;
+    }
 
 }

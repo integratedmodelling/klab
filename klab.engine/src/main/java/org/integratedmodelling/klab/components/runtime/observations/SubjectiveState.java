@@ -253,4 +253,9 @@ public class SubjectiveState implements ISubjectiveState {
 		current.release();
 	}
 
+    @Override
+    public <T> T aggregate(IGeometry geometry, Class<? extends T> cls) {
+        return current.aggregate(geometry, cls);
+    }
+
 }

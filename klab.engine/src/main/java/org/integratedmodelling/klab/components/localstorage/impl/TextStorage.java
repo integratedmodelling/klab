@@ -97,4 +97,10 @@ public class TextStorage extends Storage implements IDataArtifact, IKeyHolder {
 		
 	}
 
+    @Override
+    public <T> T aggregate(IGeometry geometry, Class<? extends T> cls) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

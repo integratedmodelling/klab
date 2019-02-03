@@ -438,7 +438,7 @@ public class Scale implements IScale {
 
 		@Override
 		public boolean hasNext() {
-			return offset < size() - 1;
+			return offset < size();
 		}
 
 		@Override

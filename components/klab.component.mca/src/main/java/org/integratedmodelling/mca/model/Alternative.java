@@ -1,5 +1,8 @@
 package org.integratedmodelling.mca.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.components.geospace.processing.MapClassifier.MapClass;
 import org.integratedmodelling.mca.api.IAlternative;
@@ -10,6 +13,8 @@ public class Alternative implements IAlternative {
 	private MapClass mapClass;
 	private String id;
 	private String observationId;
+	private Map<String, Double> values = new HashMap<>();
+	private double score;
 	
 	public Alternative(IDirectObservation observation) {
 		this.observationId = observation.getId();
@@ -36,17 +41,26 @@ public class Alternative implements IAlternative {
 		if (mapClass != null) {
 			return mapClass.getValueOf(name);
 		}
-		return 0;
+		return Double.NaN;
 	}
 
     @Override
     public double getValue(ICriterion criterion) {
-        // TODO Auto-generated method stub
-        return 0;
+        Double ret = values.get(criterion.getName());
+        return ret == null ? Double.NaN : ret;
     }
     
     public void setValue(ICriterion criterion, double value) {
-        // TODO
+        values.put(criterion.getName(), value);
+    }
+
+    @Override
+    public double getScore() {
+        return score;
+    }
+
+    public void setScore(double score) {
+        this.score = score;
     }
 
 }
