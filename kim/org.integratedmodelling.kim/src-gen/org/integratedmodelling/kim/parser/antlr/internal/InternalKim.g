@@ -13580,6 +13580,17 @@ ruleKeyValuePair returns [EObject current=null]
 							lv_name_0_2,
 							"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 					}
+					    |
+					lv_name_0_3='value'
+					{
+						newLeafNode(lv_name_0_3, grammarAccess.getKeyValuePairAccess().getNameValueKeyword_0_0_2());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getKeyValuePairRule());
+						}
+						setWithLastConsumed($current, "name", lv_name_0_3, null);
+					}
 				)
 			)
 		)

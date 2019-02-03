@@ -49,7 +49,7 @@ public class RunoffResolver implements IResolver<IState>, IExpression {
 			throw new KlabValidationException("Flow accumulation must be computed on a grid extent");
 		}
 		
-		double cellArea = grid.getCell(0).getStandardizedArea();
+//		double cellArea = grid.getCell(0).getStandardizedArea();
 		if (tUnit != null && tUnit.equals(Units.INSTANCE.SQUARE_METERS)) {
 			tUnit = null;
 		}

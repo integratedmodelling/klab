@@ -5655,6 +5655,12 @@ rule__KeyValuePair__NameAlternatives_0_0
 		RULE_LOWERCASE_ID
 		{ after(grammarAccess.getKeyValuePairAccess().getNameLOWERCASE_IDTerminalRuleCall_0_0_1()); }
 	)
+	|
+	(
+		{ before(grammarAccess.getKeyValuePairAccess().getNameValueKeyword_0_0_2()); }
+		'value'
+		{ after(grammarAccess.getKeyValuePairAccess().getNameValueKeyword_0_0_2()); }
+	)
 ;
 finally {
 	restoreStackSize(stackSize);

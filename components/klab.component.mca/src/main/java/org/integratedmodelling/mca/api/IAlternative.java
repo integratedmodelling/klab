@@ -4,12 +4,6 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 
 public interface IAlternative {
 
-//    boolean isDistributed();
-
-//    double getValueOf(IConcept k, ILocator offset, IDirectObservation offsetContext);
-//
-//    boolean hasCriterion(IConcept observable);
-
     IDirectObservation getSubject();
 
     /**
@@ -20,6 +14,6 @@ public interface IAlternative {
      */
     String getId();
 
-	double getValue(String name);
+	double getValue(ICriterion criterion);
 
 }

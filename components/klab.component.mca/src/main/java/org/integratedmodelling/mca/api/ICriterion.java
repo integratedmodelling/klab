@@ -13,6 +13,12 @@ public interface ICriterion {
 		COST, BENEFIT
 	}
 
+	double getVetoThreshold();
+	
+	double getPreferenceThreshold();
+	
+	double getIndifferenceThreshold();
+	
 	IObservable getObservable();
 
 	IState getState();

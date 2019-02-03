@@ -520,11 +520,11 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         metadata=Metadata
 	 *                     )? 
 	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
-	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
-	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
-	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
 	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
 	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
+	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
+	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
+	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
 	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
 	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
@@ -1047,7 +1047,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *     KeyValuePair returns KeyValuePair
 	 *
 	 * Constraint:
-	 *     ((name=PathName | name=LOWERCASE_ID) interactive?='?='? value=ValueWithIdAndConcept)
+	 *     ((name=PathName | name=LOWERCASE_ID | name='value') interactive?='?='? value=ValueWithIdAndConcept)
 	 */
 	protected void sequence_KeyValuePair(ISerializationContext context, KeyValuePair semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

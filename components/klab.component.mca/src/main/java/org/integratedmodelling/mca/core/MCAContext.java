@@ -108,11 +108,11 @@ public class MCAContext {
 
 			} else {
 
-				annotation = getStakeholderAnnotation(observable);
+				annotation = MCAComponent.getAnnotation(observable, MCAComponent.STAKEHOLDER_ANNOTATION_ID);
 				if (annotation != null) {
 					stakeholderObservable = observable;
 				} else {
-					annotation = getAlternativeAnnotation(observable);
+					annotation = MCAComponent.getAnnotation(observable, MCAComponent.ALTERNATIVE_ANNOTATION_ID);
 					if (annotation != null) {
 						alternativeObservable = observable;
 					}
@@ -261,23 +261,23 @@ public class MCAContext {
 		return null;
 	}
 
-	private IAnnotation getStakeholderAnnotation(IObservable observable) {
-		for (IAnnotation annotation : ((Observable) observable).getAnnotations()) {
-			if (annotation.getName().equals("stakeholder")) {
-				return annotation;
-			}
-		}
-		return null;
-	}
-
-	private IAnnotation getAlternativeAnnotation(IObservable observable) {
-		for (IAnnotation annotation : ((Observable) observable).getAnnotations()) {
-			if (annotation.getName().equals("alternative")) {
-				return annotation;
-			}
-		}
-		return null;
-	}
+//	private IAnnotation getStakeholderAnnotation(IObservable observable) {
+//		for (IAnnotation annotation : ((Observable) observable).getAnnotations()) {
+//			if (annotation.getName().equals("stakeholder")) {
+//				return annotation;
+//			}
+//		}
+//		return null;
+//	}
+//
+//	private IAnnotation getAlternativeAnnotation(IObservable observable) {
+//		for (IAnnotation annotation : ((Observable) observable).getAnnotations()) {
+//			if (annotation.getName().equals("alternative")) {
+//				return annotation;
+//			}
+//		}
+//		return null;
+//	}
 
 	public List<IAlternative> getAlternatives() {
 		return alternatives;

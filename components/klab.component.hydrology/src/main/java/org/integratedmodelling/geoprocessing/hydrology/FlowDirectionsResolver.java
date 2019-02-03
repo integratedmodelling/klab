@@ -5,7 +5,6 @@ import static org.hortonmachine.gears.libs.modules.HMConstants.floatNovalue;
 import java.awt.image.DataBuffer;
 
 import org.hortonmachine.hmachine.modules.geomorphology.flow.OmsFlowDirections;
-import org.hortonmachine.lesto.Lesto;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;

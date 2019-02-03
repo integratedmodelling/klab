@@ -710,7 +710,7 @@ DocSelector:
 ;
 
 KeyValuePair:
-	name=(PathName | LOWERCASE_ID) (interactive?='?=' | '=') value=ValueWithIdAndConcept;
+	name=(PathName | LOWERCASE_ID | 'value') (interactive?='?=' | '=') value=ValueWithIdAndConcept;
 
 ParameterList:
 	pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)* |

@@ -1167,6 +1167,7 @@ public abstract class AbstractKimProposalProvider extends TerminalsProposalProvi
 	public void completeKeyValuePair_Name(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		completeRuleCall(((RuleCall)((Alternatives)assignment.getTerminal()).getElements().get(0)), context, acceptor);
 		completeRuleCall(((RuleCall)((Alternatives)assignment.getTerminal()).getElements().get(1)), context, acceptor);
+		// subclasses may override
 	}
 	public void completeKeyValuePair_Interactive(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		// subclasses may override

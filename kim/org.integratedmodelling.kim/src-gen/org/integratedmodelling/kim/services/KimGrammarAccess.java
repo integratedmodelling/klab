@@ -7890,6 +7890,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cNameAlternatives_0_0 = (Alternatives)cNameAssignment_0.eContents().get(0);
 		private final RuleCall cNamePathNameParserRuleCall_0_0_0 = (RuleCall)cNameAlternatives_0_0.eContents().get(0);
 		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_0_0_1 = (RuleCall)cNameAlternatives_0_0.eContents().get(1);
+		private final Keyword cNameValueKeyword_0_0_2 = (Keyword)cNameAlternatives_0_0.eContents().get(2);
 		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
 		private final Assignment cInteractiveAssignment_1_0 = (Assignment)cAlternatives_1.eContents().get(0);
 		private final Keyword cInteractiveQuestionMarkEqualsSignKeyword_1_0_0 = (Keyword)cInteractiveAssignment_1_0.eContents().get(0);
@@ -7898,16 +7899,16 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cValueValueWithIdAndConceptParserRuleCall_2_0 = (RuleCall)cValueAssignment_2.eContents().get(0);
 		
 		//KeyValuePair:
-		//	name=(PathName | LOWERCASE_ID) (interactive?='?=' | '=') value=ValueWithIdAndConcept;
+		//	name=(PathName | LOWERCASE_ID | 'value') (interactive?='?=' | '=') value=ValueWithIdAndConcept;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//name=(PathName | LOWERCASE_ID) (interactive?='?=' | '=') value=ValueWithIdAndConcept
+		//name=(PathName | LOWERCASE_ID | 'value') (interactive?='?=' | '=') value=ValueWithIdAndConcept
 		public Group getGroup() { return cGroup; }
 		
-		//name=(PathName | LOWERCASE_ID)
+		//name=(PathName | LOWERCASE_ID | 'value')
 		public Assignment getNameAssignment_0() { return cNameAssignment_0; }
 		
-		//(PathName | LOWERCASE_ID)
+		//(PathName | LOWERCASE_ID | 'value')
 		public Alternatives getNameAlternatives_0_0() { return cNameAlternatives_0_0; }
 		
 		//PathName
@@ -7915,6 +7916,9 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//LOWERCASE_ID
 		public RuleCall getNameLOWERCASE_IDTerminalRuleCall_0_0_1() { return cNameLOWERCASE_IDTerminalRuleCall_0_0_1; }
+		
+		//'value'
+		public Keyword getNameValueKeyword_0_0_2() { return cNameValueKeyword_0_0_2; }
 		
 		//interactive?='?=' | '='
 		public Alternatives getAlternatives_1() { return cAlternatives_1; }
@@ -10937,7 +10941,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//KeyValuePair:
-	//	name=(PathName | LOWERCASE_ID) (interactive?='?=' | '=') value=ValueWithIdAndConcept;
+	//	name=(PathName | LOWERCASE_ID | 'value') (interactive?='?=' | '=') value=ValueWithIdAndConcept;
 	public KeyValuePairElements getKeyValuePairAccess() {
 		return pKeyValuePair;
 	}
