@@ -4,8 +4,8 @@
 		"description": "Integrated Modelling Partnership",
 		"sshKey": null,
 		"projectUrls": [
-			"https://bitbucket.org/ariesteam/im.git#feature/noobservers",
-			"https://bitbucket.org/ariesteam/im.aries.git#feature/noobservers"
+			"https://bitbucket.org/integratedmodelling/im.git#feature/noobservers",
+			"https://bitbucket.org/integratedmodelling/im.aries.git#feature/noobservers"
 		],
 		"observables": [],
 		"worldview": true
@@ -16,11 +16,11 @@
 		"sshKey": null,
 		"worldview": false,
 		"projectUrls": [
-			"https://bitbucket.org/fvilla/im.data.global.git",
-			"https://bitbucket.org/fvilla/im.data.operators.git",
-			"https://bitbucket.org/fvilla/im.data.osm.git",
-			"https://bitbucket.org/fvilla/im.aries.global.git",
-			"https://bitbucket.org/fvilla/im.components.geoprocessing.git"
+			"https://bitbucket.org/integratedmodelling/im.data.global.git",
+			"https://bitbucket.org/integratedmodelling/im.data.operators.git",
+			"https://bitbucket.org/integratedmodelling/im.data.osm.git",
+			"https://bitbucket.org/integratedmodelling/im.aries.global.git",
+			"https://bitbucket.org/integratedmodelling/im.components.geoprocessing.git"
 		],
 		"observables": [
 			{
