@@ -34,10 +34,9 @@
 	</developers>
 
 	<scm>
-		<!-- TODO switch to public rep on github -->
-		<connection>scm:git:http://bitbucket.org/fvilla/klab</connection>
-		<developerConnection>scm:git:https://bitbucket.org/fvilla/klab</developerConnection>
-		<url>https://bitbucket.org/fvilla/klab.git</url>
+		<connection>scm:git:http://bitbucket.org/integratedmodelling/klab</connection>
+		<developerConnection>scm:git:https://bitbucket.org/integratedmodelling/klab</developerConnection>
+		<url>https://bitbucket.org/integratedmodelling/klab.git</url>
 	</scm>
 
 	<organization>
