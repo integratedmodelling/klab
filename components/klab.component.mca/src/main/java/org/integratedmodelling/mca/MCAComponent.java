@@ -330,7 +330,7 @@ public class MCAComponent {
 				Alternative alternative = new Alternative((IDirectObservation) alt);
 				for (ICriterion criterion : criteria) {
 					if (criterion.isDistributed()) {
-
+						// TODO set from a view of the distributed criteria
 					} else {
 						for (IState state : ((IDirectObservation) alt).getStates()) {
 							if (state.getObservable().getLocalName().equals(criterion.getName())) {
