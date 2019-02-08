@@ -78,10 +78,6 @@ public class KimLoader implements IKimLoader {
     public KimLoader() {
     }
 
-//    public KimLoader(Injector injector) {
-//        setInjector(injector);
-//    }
-
     private Injector getInjector() {
         if (this.injector == null) {
             this.injector = new KimStandaloneSetup().createInjectorAndDoEMFRegistration();
@@ -210,7 +206,7 @@ public class KimLoader implements IKimLoader {
                 resources.add(resource);
                 fileMap.put(uri, file);
             } else {
-                System.out.println("PORCATA IN " + file);
+                System.out.println("Unrecoverable parse errors in " + file);
             }
         }
 
@@ -394,7 +390,7 @@ public class KimLoader implements IKimLoader {
                 sorter.add(resource);
                 fileMap.put(uri, file);
             } else {
-                System.out.println("PORCATA IN " + file);
+                System.out.println("Unrecoverable parse errors in " + file);
             }
         }
 
@@ -411,7 +407,7 @@ public class KimLoader implements IKimLoader {
                 nondep.add(resource);
                 fileMap.put(uri, file);
             } else {
-                System.out.println("PORCATA IN " + file);
+                System.out.println("Unrecoverable parse errors in " + file);
             }
         }
 
@@ -478,7 +474,7 @@ public class KimLoader implements IKimLoader {
                 ret.add(info.namespace);
 
             } catch (Throwable e) {
-                System.out.println("ALTRE PORCATE: " + resource);
+                System.out.println("Unrecoverable parse errors in resource: " + resource);
                 e.printStackTrace();
             }
         }

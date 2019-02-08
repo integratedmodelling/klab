@@ -31,6 +31,8 @@ import org.integratedmodelling.mca.api.IAlternative;
 import org.integratedmodelling.mca.api.ICriterion;
 import org.integratedmodelling.mca.api.ICriterion.Type;
 import org.integratedmodelling.mca.api.IStakeholder;
+import org.integratedmodelling.mca.core.MCAAssessment;
+import org.integratedmodelling.mca.core.Results;
 import org.integratedmodelling.mca.model.Alternative;
 import org.integratedmodelling.mca.model.Criterion;
 import org.integratedmodelling.mca.model.Stakeholder;
@@ -79,11 +81,26 @@ public class MCAComponent {
 	}
 
 	public static List<IAlternative> rank(List<IAlternative> alternatives, Collection<ICriterion> criteria,
-			IStakeholder observer, Method method) {
+			IStakeholder observer, Method method, IMonitor monitor) {
 
+		MCAAssessment assessment = new MCAAssessment();
+		Results results = null;
+		
+		for (ICriterion criterion : criteria) {
+			assessment.declareCriterion(criterion.getName(), criterion.getDataType(), criterion.getType());
+			assessment.setCriterionWeight(criterion.getName(), observer.getWeight(criterion));
+		}
+		
+		for (IAlternative alternative : alternatives) {
+			assessment.declareAlternative(alternative.getId());
+			for (ICriterion criterion : criteria) {
+				assessment.setCriterionValue(alternative.getId(), criterion.getName(), alternative.getValue(criterion));
+			}
+		}
+		
 		switch (method) {
 		case EVAMIX:
-			// do this for now
+			 results = assessment.runEvamix(monitor);
 			break;
 		case ELECTRE_I:
 		case ELECTRE_II:
@@ -98,8 +115,16 @@ public class MCAComponent {
 			break;
 		}
 
+		if (results != null) {
+			Map<String, Double> concordances = results.getConcordances(true);
+			for (IAlternative alternative : alternatives) {
+				((Alternative)alternative).setScore(concordances.get(alternative.getId()));
+			}
+		}
+		
 		return alternatives;
 	}
+
 
 	/**
 	 * Extract the elements of a MCA assessment from the passed artifact and put

@@ -655,7 +655,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			this.catalog.put(name, observation);
 			if (!(observation instanceof ObservationGroup)) {
 				this.structure.addVertex(observation);
-				if (contextSubject != null) {
+				if (contextSubject != null  && !(contextSubject instanceof ObservationGroup)) {
 					this.structure.addEdge(observation, contextSubject);
 				}
 			}

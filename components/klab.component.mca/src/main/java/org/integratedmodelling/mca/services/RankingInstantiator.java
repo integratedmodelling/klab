@@ -73,7 +73,7 @@ public class RankingInstantiator implements IInstantiator, IExpression {
 
 		// run MCA
 		for (IStakeholder observer : observers) {
-			List<IAlternative> ranked = MCAComponent.rank(alternatives, criteria, observer, method);
+			List<IAlternative> ranked = MCAComponent.rank(alternatives, criteria, observer, method, context.getMonitor());
 			// build and insert comparator in artifact
 		}
 
