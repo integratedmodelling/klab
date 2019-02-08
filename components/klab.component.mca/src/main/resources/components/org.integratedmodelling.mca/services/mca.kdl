@@ -27,6 +27,10 @@ export object ranking
 	optional text method 
 		"The MCA method used to rank alternatives. One of Topsis|Electre{1|1s|1v|2|3|4|Tri|TriMe}. Only Electre3/4 can run
 		 without additional parameters. Default is Electre4."
+		 
+	optional input normalize
+		"If true, the scores will be normalized so that their range is 0-1. Default is true."
+		default true
 
 	class org.integratedmodelling.mca.services.RankingInstantiator
 }

@@ -33,7 +33,7 @@ public class Alternative implements IAlternative {
 
 	@Override
 	public String getId() {
-		return id;
+		return id == null ? observationId : id;
 	}
 
 //	@Override

@@ -42,6 +42,7 @@ public class MCAComponent {
 
 	public static final String ALTERNATIVE_ANNOTATION_ID = "alternative";
 	public static final String STAKEHOLDER_ANNOTATION_ID = "stakeholder";
+	public static final String SCORE_METADATA_PROPERTY = "mca:score";
 	public static Set<String> criterionAnnotations;
 
 	static {
@@ -70,10 +71,11 @@ public class MCAComponent {
 	public static IObservable getCriterionValueObservable(IObservable criterionObservable,
 			@Nullable IObservable targetObservable, IMonitor monitor) {
 
-		IObservable.Builder builder = ((Observable) criterionObservable).getBuilder(monitor).as(UnarySemanticOperator.VALUE);
+		IObservable.Builder builder = ((Observable) criterionObservable).getBuilder(monitor)
+				.as(UnarySemanticOperator.VALUE);
 		if (targetObservable != null) {
-			builder = builder.withGoal(
-					((Observable) targetObservable).getBuilder(monitor).as(UnarySemanticOperator.ASSESSMENT).buildConcept());
+			builder = builder.withGoal(((Observable) targetObservable).getBuilder(monitor)
+					.as(UnarySemanticOperator.ASSESSMENT).buildConcept());
 
 		}
 		return builder.buildObservable();
@@ -81,26 +83,30 @@ public class MCAComponent {
 	}
 
 	public static List<IAlternative> rank(List<IAlternative> alternatives, Collection<ICriterion> criteria,
-			IStakeholder observer, Method method, IMonitor monitor) {
+			IStakeholder observer, Method method, boolean normalize, IMonitor monitor) {
 
 		MCAAssessment assessment = new MCAAssessment();
 		Results results = null;
-		
+
 		for (ICriterion criterion : criteria) {
 			assessment.declareCriterion(criterion.getName(), criterion.getDataType(), criterion.getType());
-			assessment.setCriterionWeight(criterion.getName(), observer.getWeight(criterion));
 		}
-		
 		for (IAlternative alternative : alternatives) {
 			assessment.declareAlternative(alternative.getId());
+		}
+		for (IAlternative alternative : alternatives) {
 			for (ICriterion criterion : criteria) {
 				assessment.setCriterionValue(alternative.getId(), criterion.getName(), alternative.getValue(criterion));
 			}
 		}
-		
+		for (ICriterion criterion : criteria) {
+			// TODO invert weights for Evamix
+			assessment.setCriterionWeight(criterion.getName(), observer.getWeight(criterion));
+		}
+
 		switch (method) {
 		case EVAMIX:
-			 results = assessment.runEvamix(monitor);
+			results = assessment.runEvamix(monitor);
 			break;
 		case ELECTRE_I:
 		case ELECTRE_II:
@@ -116,15 +122,14 @@ public class MCAComponent {
 		}
 
 		if (results != null) {
-			Map<String, Double> concordances = results.getConcordances(true);
+			Map<String, Double> concordances = results.getConcordances(normalize);
 			for (IAlternative alternative : alternatives) {
-				((Alternative)alternative).setScore(concordances.get(alternative.getId()));
+				((Alternative) alternative).setScore(concordances.get(alternative.getId()));
 			}
 		}
-		
+
 		return alternatives;
 	}
-
 
 	/**
 	 * Extract the elements of a MCA assessment from the passed artifact and put

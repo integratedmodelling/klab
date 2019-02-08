@@ -73,4 +73,8 @@ public class ObservationGroup extends CountableObservation {
 		sorted = false;
 	}
 
+	public void setComparator(Comparator<IArtifact> comparator) {
+		this.comparator = comparator;
+	}
+	
 }
