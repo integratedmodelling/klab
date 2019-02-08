@@ -23,7 +23,9 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.mca.api.IAlternative;
 import org.integratedmodelling.mca.api.ICriterion;
@@ -64,12 +66,12 @@ public class MCAComponent {
 	 * @return the finished value concept
 	 */
 	public static IObservable getCriterionValueObservable(IObservable criterionObservable,
-			@Nullable IObservable targetObservable) {
+			@Nullable IObservable targetObservable, IMonitor monitor) {
 
-		IObservable.Builder builder = ((Observable) criterionObservable).getBuilder().as(UnarySemanticOperator.VALUE);
+		IObservable.Builder builder = ((Observable) criterionObservable).getBuilder(monitor).as(UnarySemanticOperator.VALUE);
 		if (targetObservable != null) {
 			builder = builder.withGoal(
-					((Observable) targetObservable).getBuilder().as(UnarySemanticOperator.ASSESSMENT).buildConcept());
+					((Observable) targetObservable).getBuilder(monitor).as(UnarySemanticOperator.ASSESSMENT).buildConcept());
 
 		}
 		return builder.buildObservable();
@@ -79,7 +81,22 @@ public class MCAComponent {
 	public static List<IAlternative> rank(List<IAlternative> alternatives, Collection<ICriterion> criteria,
 			IStakeholder observer, Method method) {
 
-		// TODO
+		switch (method) {
+		case EVAMIX:
+			// do this for now
+			break;
+		case ELECTRE_I:
+		case ELECTRE_II:
+		case ELECTRE_III:
+		case ELECTRE_IV:
+		case ELECTRE_Is:
+		case ELECTRE_Iv:
+		case ELECTRE_TRI:
+		case TOPSIS:
+			throw new KlabUnimplementedException("Unimplemented ranking method " + method);
+		default:
+			break;
+		}
 
 		return alternatives;
 	}

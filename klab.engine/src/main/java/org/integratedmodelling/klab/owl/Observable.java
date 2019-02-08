@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.engine.runtime.Session;
@@ -631,8 +632,8 @@ public class Observable extends Concept implements IObservable {
 	}
 
 	@Override
-	public Builder getBuilder() {
-		return new ObservableBuilder(this);
+	public Builder getBuilder(IMonitor monitor) {
+		return new ObservableBuilder(this, monitor);
 	}
 
 	public static Observable promote(IConcept operand, Observable observable2) {

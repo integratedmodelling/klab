@@ -287,9 +287,11 @@ public interface IObservable extends IConcept, IResolvable {
      * Get a builder that will rebuild this observable. Use to build alternative
      * observables with added or removed components.
      * 
+     * @param monitor building is monitored, so a monitor must be passed.
+     * 
      * @return
      */
-    Builder getBuilder();
+    Builder getBuilder(IMonitor monitor);
 
     /**
      * Each observable must be able to quickly assess the type of the observation

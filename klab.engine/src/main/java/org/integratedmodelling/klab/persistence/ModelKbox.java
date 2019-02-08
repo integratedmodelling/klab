@@ -544,7 +544,7 @@ public class ModelKbox extends ObservableKbox {
 			for (IObservable attr : model.getAttributeObservables().values()) {
 
 				// attribute type must have inherent type added
-				IConcept type = attr.getBuilder().within(model.getObservables().get(0).getType()).buildConcept();
+				IConcept type = attr.getBuilder(monitor).within(model.getObservables().get(0).getType()).buildConcept();
 				System.out.println(type.getDefinition());
 				ModelReference m = ret.get(0).copy();
 				m.setObservable(type.getDefinition());
