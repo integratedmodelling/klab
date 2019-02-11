@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
+import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
@@ -80,6 +81,20 @@ public class RankingInstantiator implements IInstantiator, IExpression {
 		// run MCA
 		for (IStakeholder observer : observers) {
 			
+			 /**
+             * Stakeholder switching logics. TODO: this will not affect the criteria
+             * if they are also subjective.
+             */
+            if (observers.size() > 1) {
+                // if state is not an observed set, wrap it into one
+                if (!(target instanceof ISubjectiveObservation)) {
+                    target = ((ObservationGroup)target).reinterpret(/* TODO */ null);
+                }
+                // set the observer in the stakeholder in the set so that all further assignments reflect
+                // its perspective
+                ((ObservationGroup) target).setObserver(observer.getSubject());
+            }
+
 			// save scores
 			Map<String, Double> scores = new HashMap<>();
 			for (IAlternative a : MCAComponent.rank(alternatives, criteria, observer, method, normalize, context.getMonitor())) {

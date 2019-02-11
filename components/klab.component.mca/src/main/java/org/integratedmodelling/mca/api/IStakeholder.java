@@ -3,11 +3,14 @@ package org.integratedmodelling.mca.api;
 import java.util.List;
 
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 public interface IStakeholder {
 
+	IObservable getObservable();
+	
 	IDirectObservation getSubject();
 
 	/**

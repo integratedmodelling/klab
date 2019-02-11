@@ -1,7 +1,5 @@
 package org.integratedmodelling.klab.dataflow;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,9 +8,11 @@ import java.util.concurrent.ExecutionException;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
@@ -22,11 +22,9 @@ import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
-
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
 
 /**
  * The semantically aware implementation of {@link IDataflow}, built by the
@@ -51,10 +49,10 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	private boolean primary = true;
 	private Set<String> notified = new HashSet<>();
 
-	/*
-	 * TODO this should be removed and an actual layout should be created
-	 */
-	private static String demoLayout = null;
+//	/*
+//	 * TODO this should be removed and an actual layout should be created
+//	 */
+//	private static String demoLayout = null;
 
 	@Override
 	public IArtifact run(IScale scale, IMonitor monitor) throws KlabException {
@@ -152,10 +150,40 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		this.scope = scope;
 	}
 
-	public static IDataflow<IArtifact> empty() {
+	public static Dataflow empty() {
 		return new Dataflow();
 	}
 
+	public static Dataflow empty(ResolutionScope scope) {
+		Dataflow ret = new Dataflow();
+		ret.scope = scope;
+		return ret;
+	}
+	
+	/**
+	 * Make a trivial dataflow with a single actuator that will create the passed 
+	 * observable target.
+	 * 
+	 * @param observable
+	 * @param scope
+	 * @return
+	 */
+	public static Dataflow empty(IObservable observable, String name, ResolutionScope scope) {
+		
+		Dataflow ret = new Dataflow();
+		ret.scope = scope;
+		
+		Actuator actuator = Actuator.create(ret, scope.getMode());
+		actuator.setObservable((Observable)observable);
+		actuator.setType(observable.getArtifactType());
+		actuator.setNamespace(((ResolutionScope) scope).getResolutionNamespace());
+		actuator.setName(name);
+		ret.getActuators().add(actuator);
+		ret.setNamespace(actuator.getNamespace());
+		
+		return ret;
+	}
+	
 	@Override
 	public boolean isEmpty() {
 		return actuators.size() == 0;
@@ -180,17 +208,17 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		return description;
 	}
 
-	public String getElkJsonLayout() {
-		if (demoLayout == null) {
-			URL url = Resources.getResource("stubs/dataflow_sample.json");
-			try {
-				demoLayout = Resources.toString(url, Charsets.UTF_8);
-			} catch (IOException e) {
-				// hostia!
-			}
-		}
-		return demoLayout;
-	}
+//	public String getElkJsonLayout() {
+//		if (demoLayout == null) {
+//			URL url = Resources.getResource("stubs/dataflow_sample.json");
+//			try {
+//				demoLayout = Resources.toString(url, Charsets.UTF_8);
+//			} catch (IOException e) {
+//				// hostia!
+//			}
+//		}
+//		return demoLayout;
+//	}
 
 	public void setDescription(String description) {
 		this.description = description;

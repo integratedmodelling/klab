@@ -34,21 +34,6 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 public interface IObservation extends IArtifactIdentity, IArtifact {
 
 	/**
-	 * The subject observation that contextualized this observation. This is not the
-	 * same as the context observation: it allows recording different viewpoints on
-	 * observations that are contextual to the same observable - e.g. qualities of
-	 * the same subject seen by different child subjects in it. If null, this was
-	 * made by the "root subject" that represents the session user.
-	 *
-	 * We may eventually create a subject to represent the session user for
-	 * consistency, but as of the current version this is not done.
-	 *
-	 * @return the subject that provides the viewpoint for this observation, or
-	 *         empty if this was a user-made observation.
-	 */
-	Optional<ISubject> getObserver();
-
-	/**
 	 * Return the observable.
 	 *
 	 * @return the observation's observable
