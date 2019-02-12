@@ -1,0 +1,56 @@
+namespace ml;
+
+/*
+ * If there is 'model' instead of 'learn' but a learning contextualizer is called, 
+ * the model artifact is not created and only the 'side effect' of
+ * the learned quality is output. I.e.: 'learn' triggers the generation of a model
+ * artifact (and possibly its contextualization to similar conditions at some point).
+ * Training is triggered by having an archetype and/or not importing a trained model.
+ * If a trained model is imported, there should not be an archetype
+ * 
+ * Predictors must be distributed in context; archetype is required
+ */
+learn value of ecology:Biodiversity
+	observing 
+		@archetype earth:Site with value of ecology:Biodiversity,
+		@predictor geography:Slope,
+		@predictor geography:Elevation,
+		@predictor earth:PrecipitationVolume in mm
+	using im.weka.bayesnet();
+	
+// because it was called with learn, it produces the trained model as
+// a local weka resource and its annotation as a model artifact
+model local:ferdinando.villa:jp.nagoya.hydropower:weka.bayes.r03133
+	as value of ecology:Biodiversity
+	observing 
+		@predictor(id=slope, discretization=(0, 34.4, 10)) 
+		geography:Slope in degree_angle,
+		@predictor(id=elevation, discretization=(-1, 1234.0, 10))
+		geography:Elevation in m,
+		@predictor(id=precipitation, discretization=(0, 346.3, 10))
+		earth:PrecipitationVolume in mm;
+		
+// if "within" is there after learn, insert a dependency for the object and learn IN the instances
+// as directed. This becomes an instantiator with value of ecology:Biodiversity as the second obs
+learn value of ecology:Biodiversity within earth:Site
+	observing 
+		@archetype earth:Site with value of ecology:Biodiversity,
+		// if the instances don't have these, observe these in the context and use them @ each site
+		@predictor geography:Slope,
+		@predictor geography:Elevation,
+		@predictor earth:PrecipitationVolume in mm
+	using im.weka.bayesnet();
+	
+// ------ the archetype --------------------------------------------
+
+private model each earth:Site with value of ecology:Biodiversity,
+	slope as geography:Slope in degree_angle, 
+	elevation as geography:Elevation in m,
+	precipitation_volume as earth:PrecipitationVolume in mm,
+	[precipitation_volume - elevation/3000 - slope/90] as value of ecology:Biodiversity
+  observing
+  	geography:Slope in degree_angle,
+	geography:Elevation in m,
+	earth:PrecipitationVolume in mm
+  using gis.points.extract(select = [random() > 0.999]);
+  

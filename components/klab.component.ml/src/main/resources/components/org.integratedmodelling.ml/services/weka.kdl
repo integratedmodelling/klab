@@ -5,9 +5,16 @@
 @version 0.10.0
 @namespace im.weka
 
-export number bayesnet
+export value bayesnet
 	""
 	label 'WEKA BayesNet'
+{		
+	// class org.integratedmodelling.ml.weka.BayesNetResolver
+}
+
+export value randomforest
+	""
+	label 'WEKA Random Forests'
 {		
 	// class org.integratedmodelling.ml.weka.BayesNetResolver
 }

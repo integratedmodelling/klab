@@ -1,0 +1,11 @@
+/*
+ * Parameters accepted in a raster resource
+ */
+ annotation weka 
+	""
+ {
+ 	optional input classifier
+ 		""
+ 		default 0
+ 		
+ }
