@@ -56,9 +56,6 @@ public class Namespace extends KimObject implements INamespace {
 	public Namespace(IKimNamespace namespace) {
 		super((KimNamespace) namespace);
 		this.name = namespace.getName();
-		if (this.name.startsWith("file:")) {
-			System.out.println("POROCO");
-		}
 		this.isPrivate = namespace.isPrivate();
 		this.inactive = namespace.isInactive();
 		this.scenario = namespace.isScenario();

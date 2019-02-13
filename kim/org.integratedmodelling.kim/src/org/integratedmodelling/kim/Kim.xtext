@@ -303,7 +303,7 @@ ObservableSemantics:
 	(
 		('by' by=Concept)? &
 		('down' 'to' downTo=Concept)? &
-		('as' role=Concept)? &
+//		('as' role=Concept)? &
 		('according' 'to' accordingTo=PropertyId)? &
 		(
 			('in' (unit=Unit | currency=Currency)) |

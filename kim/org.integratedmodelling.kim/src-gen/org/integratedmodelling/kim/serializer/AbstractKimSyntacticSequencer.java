@@ -40,7 +40,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	protected AbstractElementAlias match_Namespace_____OutsideKeyword_5_6_1_0_a_ResolveKeyword_5_6_0_0__p_FromKeyword_5_6_0_1_0__p;
 	protected AbstractElementAlias match_Number_PlusSignKeyword_0_0_q;
 	protected AbstractElementAlias match_Number_PlusSignKeyword_3_0_1_0_q;
-	protected AbstractElementAlias match_ObservableSemantics_RequiredKeyword_3_5_1_a;
+	protected AbstractElementAlias match_ObservableSemantics_RequiredKeyword_3_4_1_a;
 	protected AbstractElementAlias match_ObserveStatementBody_UsingKeyword_1_0_a;
 	protected AbstractElementAlias match_ObserveStatementBody_UsingKeyword_1_0_p;
 	protected AbstractElementAlias match_SimpleObservableSemantics_RequiredKeyword_1_5_1_a;
@@ -68,7 +68,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 		match_Namespace_____OutsideKeyword_5_6_1_0_a_ResolveKeyword_5_6_0_0__p_FromKeyword_5_6_0_1_0__p = new GroupAlias(true, false, new GroupAlias(true, false, new TokenAlias(true, true, grammarAccess.getNamespaceAccess().getOutsideKeyword_5_6_1_0()), new TokenAlias(false, false, grammarAccess.getNamespaceAccess().getResolveKeyword_5_6_0_0())), new TokenAlias(false, false, grammarAccess.getNamespaceAccess().getFromKeyword_5_6_0_1_0()));
 		match_Number_PlusSignKeyword_0_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_0_0());
 		match_Number_PlusSignKeyword_3_0_1_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_3_0_1_0());
-		match_ObservableSemantics_RequiredKeyword_3_5_1_a = new TokenAlias(true, true, grammarAccess.getObservableSemanticsAccess().getRequiredKeyword_3_5_1());
+		match_ObservableSemantics_RequiredKeyword_3_4_1_a = new TokenAlias(true, true, grammarAccess.getObservableSemanticsAccess().getRequiredKeyword_3_4_1());
 		match_ObserveStatementBody_UsingKeyword_1_0_a = new TokenAlias(true, true, grammarAccess.getObserveStatementBodyAccess().getUsingKeyword_1_0());
 		match_ObserveStatementBody_UsingKeyword_1_0_p = new TokenAlias(true, false, grammarAccess.getObserveStatementBodyAccess().getUsingKeyword_1_0());
 		match_SimpleObservableSemantics_RequiredKeyword_1_5_1_a = new TokenAlias(true, true, grammarAccess.getSimpleObservableSemanticsAccess().getRequiredKeyword_1_5_1());
@@ -135,8 +135,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 				emit_Number_PlusSignKeyword_0_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Number_PlusSignKeyword_3_0_1_0_q.equals(syntax))
 				emit_Number_PlusSignKeyword_3_0_1_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_ObservableSemantics_RequiredKeyword_3_5_1_a.equals(syntax))
-				emit_ObservableSemantics_RequiredKeyword_3_5_1_a(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_ObservableSemantics_RequiredKeyword_3_4_1_a.equals(syntax))
+				emit_ObservableSemantics_RequiredKeyword_3_4_1_a(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_ObserveStatementBody_UsingKeyword_1_0_a.equals(syntax))
 				emit_ObserveStatementBody_UsingKeyword_1_0_a(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_ObserveStatementBody_UsingKeyword_1_0_p.equals(syntax))
@@ -732,7 +732,6 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *
 	 * This ambiguous syntax occurs at:
 	 *     accordingTo=PropertyId (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     accordingTo=PropertyId (ambiguity) 'as' role=Concept
 	 *     accordingTo=PropertyId (ambiguity) 'by' by=Concept
 	 *     accordingTo=PropertyId (ambiguity) 'down' 'to' downTo=Concept
 	 *     accordingTo=PropertyId (ambiguity) 'in' currency=Currency
@@ -744,7 +743,6 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     accordingTo=PropertyId (ambiguity) from=Number
 	 *     accordingTo=PropertyId (ambiguity) optional?='optional'
 	 *     by=Concept (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     by=Concept (ambiguity) 'as' role=Concept
 	 *     by=Concept (ambiguity) 'by' by=Concept
 	 *     by=Concept (ambiguity) 'down' 'to' downTo=Concept
 	 *     by=Concept (ambiguity) 'in' currency=Currency
@@ -756,7 +754,6 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     by=Concept (ambiguity) from=Number
 	 *     by=Concept (ambiguity) optional?='optional'
 	 *     currency=Currency (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     currency=Currency (ambiguity) 'as' role=Concept
 	 *     currency=Currency (ambiguity) 'by' by=Concept
 	 *     currency=Currency (ambiguity) 'down' 'to' downTo=Concept
 	 *     currency=Currency (ambiguity) 'in' currency=Currency
@@ -768,7 +765,6 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     currency=Currency (ambiguity) from=Number
 	 *     currency=Currency (ambiguity) optional?='optional'
 	 *     declaration=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     declaration=ConceptDeclaration (ambiguity) 'as' role=Concept
 	 *     declaration=ConceptDeclaration (ambiguity) 'by' by=Concept
 	 *     declaration=ConceptDeclaration (ambiguity) 'down' 'to' downTo=Concept
 	 *     declaration=ConceptDeclaration (ambiguity) 'in' currency=Currency
@@ -780,7 +776,6 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     declaration=ConceptDeclaration (ambiguity) from=Number
 	 *     declaration=ConceptDeclaration (ambiguity) optional?='optional'
 	 *     downTo=Concept (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     downTo=Concept (ambiguity) 'as' role=Concept
 	 *     downTo=Concept (ambiguity) 'by' by=Concept
 	 *     downTo=Concept (ambiguity) 'down' 'to' downTo=Concept
 	 *     downTo=Concept (ambiguity) 'in' currency=Currency
@@ -792,7 +787,6 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     downTo=Concept (ambiguity) from=Number
 	 *     downTo=Concept (ambiguity) optional?='optional'
 	 *     name=LOWERCASE_ID (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     name=LOWERCASE_ID (ambiguity) 'as' role=Concept
 	 *     name=LOWERCASE_ID (ambiguity) 'by' by=Concept
 	 *     name=LOWERCASE_ID (ambiguity) 'down' 'to' downTo=Concept
 	 *     name=LOWERCASE_ID (ambiguity) 'in' currency=Currency
@@ -804,7 +798,6 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=LOWERCASE_ID (ambiguity) from=Number
 	 *     name=LOWERCASE_ID (ambiguity) optional?='optional'
 	 *     name=STRING (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     name=STRING (ambiguity) 'as' role=Concept
 	 *     name=STRING (ambiguity) 'by' by=Concept
 	 *     name=STRING (ambiguity) 'down' 'to' downTo=Concept
 	 *     name=STRING (ambiguity) 'in' currency=Currency
@@ -816,7 +809,6 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=STRING (ambiguity) from=Number
 	 *     name=STRING (ambiguity) optional?='optional'
 	 *     optional?='optional' (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     optional?='optional' (ambiguity) 'as' role=Concept
 	 *     optional?='optional' (ambiguity) 'by' by=Concept
 	 *     optional?='optional' (ambiguity) 'down' 'to' downTo=Concept
 	 *     optional?='optional' (ambiguity) 'in' currency=Currency
@@ -827,20 +819,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     optional?='optional' (ambiguity) (rule end)
 	 *     optional?='optional' (ambiguity) from=Number
 	 *     optional?='optional' (ambiguity) optional?='optional'
-	 *     role=Concept (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     role=Concept (ambiguity) 'as' role=Concept
-	 *     role=Concept (ambiguity) 'by' by=Concept
-	 *     role=Concept (ambiguity) 'down' 'to' downTo=Concept
-	 *     role=Concept (ambiguity) 'in' currency=Currency
-	 *     role=Concept (ambiguity) 'in' unit=Unit
-	 *     role=Concept (ambiguity) 'named' name=LOWERCASE_ID
-	 *     role=Concept (ambiguity) 'named' name=STRING
-	 *     role=Concept (ambiguity) 'per' unit=Unit
-	 *     role=Concept (ambiguity) (rule end)
-	 *     role=Concept (ambiguity) from=Number
-	 *     role=Concept (ambiguity) optional?='optional'
 	 *     to=Number (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     to=Number (ambiguity) 'as' role=Concept
 	 *     to=Number (ambiguity) 'by' by=Concept
 	 *     to=Number (ambiguity) 'down' 'to' downTo=Concept
 	 *     to=Number (ambiguity) 'in' currency=Currency
@@ -852,7 +831,6 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     to=Number (ambiguity) from=Number
 	 *     to=Number (ambiguity) optional?='optional'
 	 *     unit=Unit (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     unit=Unit (ambiguity) 'as' role=Concept
 	 *     unit=Unit (ambiguity) 'by' by=Concept
 	 *     unit=Unit (ambiguity) 'down' 'to' downTo=Concept
 	 *     unit=Unit (ambiguity) 'in' currency=Currency
@@ -864,7 +842,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     unit=Unit (ambiguity) from=Number
 	 *     unit=Unit (ambiguity) optional?='optional'
 	 */
-	protected void emit_ObservableSemantics_RequiredKeyword_3_5_1_a(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+	protected void emit_ObservableSemantics_RequiredKeyword_3_4_1_a(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

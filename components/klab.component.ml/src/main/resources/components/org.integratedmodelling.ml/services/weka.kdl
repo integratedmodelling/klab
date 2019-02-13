@@ -9,12 +9,18 @@ export value bayesnet
 	""
 	label 'WEKA BayesNet'
 {		
-	// class org.integratedmodelling.ml.weka.BayesNetResolver
+	optional text resource 
+		"ID of the local resource containing the trained model"
+
+	class org.integratedmodelling.ml.contextualizers.BayesNetResolver
 }
 
 export value randomforest
 	""
 	label 'WEKA Random Forests'
 {		
+	optional text resource 
+		"ID of the local resource containing the trained model"
+
 	// class org.integratedmodelling.ml.weka.BayesNetResolver
 }

@@ -196,8 +196,6 @@ public class KimHighlightingCalculator extends DefaultSemanticHighlightingCalcul
 								acceptor.addPosition((start = node.getOffset()), node.getLength(),
 										KimHighlightingConfiguration.UNKNOWN_URN_ID);
 							}
-						} else {
-							System.out.println("ZBORRO");
 						}
 					} else if (node.getSemanticElement() instanceof ConceptStatementBody
 							&& ((ConceptStatementBody) node.getSemanticElement()).getName() != null) {

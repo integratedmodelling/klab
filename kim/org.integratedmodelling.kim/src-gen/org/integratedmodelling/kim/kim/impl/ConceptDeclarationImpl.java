@@ -1017,7 +1017,7 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuffer result = new StringBuffer(super.toString());
+    StringBuilder result = new StringBuilder(super.toString());
     result.append(" (operators: ");
     result.append(operators);
     result.append(", name: ");

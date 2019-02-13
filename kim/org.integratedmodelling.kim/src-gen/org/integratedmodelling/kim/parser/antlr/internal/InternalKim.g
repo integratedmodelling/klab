@@ -6188,25 +6188,29 @@ ruleObservableSemantics returns [EObject current=null]
 					{
 						getUnorderedGroupHelper().select(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 2);
 					}
-								({true}?=>(otherlv_10='as'
+								({true}?=>(otherlv_10='according'
 								{
-									newLeafNode(otherlv_10, grammarAccess.getObservableSemanticsAccess().getAsKeyword_3_2_0());
+									newLeafNode(otherlv_10, grammarAccess.getObservableSemanticsAccess().getAccordingKeyword_3_2_0());
+								}
+								otherlv_11='to'
+								{
+									newLeafNode(otherlv_11, grammarAccess.getObservableSemanticsAccess().getToKeyword_3_2_1());
 								}
 								(
 									(
 										{
-											newCompositeNode(grammarAccess.getObservableSemanticsAccess().getRoleConceptParserRuleCall_3_2_1_0());
+											newCompositeNode(grammarAccess.getObservableSemanticsAccess().getAccordingToPropertyIdParserRuleCall_3_2_2_0());
 										}
-										lv_role_11_0=ruleConcept
+										lv_accordingTo_12_0=rulePropertyId
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
 											}
 											set(
 												$current,
-												"role",
-												lv_role_11_0,
-												"org.integratedmodelling.kim.Kim.Concept");
+												"accordingTo",
+												lv_accordingTo_12_0,
+												"org.integratedmodelling.kim.Kim.PropertyId");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -6222,31 +6226,77 @@ ruleObservableSemantics returns [EObject current=null]
 					{
 						getUnorderedGroupHelper().select(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 3);
 					}
-								({true}?=>(otherlv_12='according'
-								{
-									newLeafNode(otherlv_12, grammarAccess.getObservableSemanticsAccess().getAccordingKeyword_3_3_0());
-								}
-								otherlv_13='to'
-								{
-									newLeafNode(otherlv_13, grammarAccess.getObservableSemanticsAccess().getToKeyword_3_3_1());
-								}
-								(
+								({true}?=>((
+									otherlv_13='in'
+									{
+										newLeafNode(otherlv_13, grammarAccess.getObservableSemanticsAccess().getInKeyword_3_3_0_0());
+									}
 									(
-										{
-											newCompositeNode(grammarAccess.getObservableSemanticsAccess().getAccordingToPropertyIdParserRuleCall_3_3_2_0());
-										}
-										lv_accordingTo_14_0=rulePropertyId
-										{
-											if ($current==null) {
-												$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
+										(
+											(
+												{
+													newCompositeNode(grammarAccess.getObservableSemanticsAccess().getUnitUnitParserRuleCall_3_3_0_1_0_0());
+												}
+												lv_unit_14_0=ruleUnit
+												{
+													if ($current==null) {
+														$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
+													}
+													set(
+														$current,
+														"unit",
+														lv_unit_14_0,
+														"org.integratedmodelling.kim.Kim.Unit");
+													afterParserOrEnumRuleCall();
+												}
+											)
+										)
+										    |
+										(
+											(
+												{
+													newCompositeNode(grammarAccess.getObservableSemanticsAccess().getCurrencyCurrencyParserRuleCall_3_3_0_1_1_0());
+												}
+												lv_currency_15_0=ruleCurrency
+												{
+													if ($current==null) {
+														$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
+													}
+													set(
+														$current,
+														"currency",
+														lv_currency_15_0,
+														"org.integratedmodelling.kim.Kim.Currency");
+													afterParserOrEnumRuleCall();
+												}
+											)
+										)
+									)
+								)
+								    |
+								(
+									otherlv_16='per'
+									{
+										newLeafNode(otherlv_16, grammarAccess.getObservableSemanticsAccess().getPerKeyword_3_3_1_0());
+									}
+									(
+										(
+											{
+												newCompositeNode(grammarAccess.getObservableSemanticsAccess().getUnitUnitParserRuleCall_3_3_1_1_0());
 											}
-											set(
-												$current,
-												"accordingTo",
-												lv_accordingTo_14_0,
-												"org.integratedmodelling.kim.Kim.PropertyId");
-											afterParserOrEnumRuleCall();
-										}
+											lv_unit_17_0=ruleUnit
+											{
+												if ($current==null) {
+													$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
+												}
+												set(
+													$current,
+													"unit",
+													lv_unit_17_0,
+													"org.integratedmodelling.kim.Kim.Unit");
+												afterParserOrEnumRuleCall();
+											}
+										)
 									)
 								)
 								))
@@ -6261,78 +6311,24 @@ ruleObservableSemantics returns [EObject current=null]
 						getUnorderedGroupHelper().select(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4);
 					}
 								({true}?=>((
-									otherlv_15='in'
-									{
-										newLeafNode(otherlv_15, grammarAccess.getObservableSemanticsAccess().getInKeyword_3_4_0_0());
-									}
 									(
-										(
-											(
-												{
-													newCompositeNode(grammarAccess.getObservableSemanticsAccess().getUnitUnitParserRuleCall_3_4_0_1_0_0());
-												}
-												lv_unit_16_0=ruleUnit
-												{
-													if ($current==null) {
-														$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
-													}
-													set(
-														$current,
-														"unit",
-														lv_unit_16_0,
-														"org.integratedmodelling.kim.Kim.Unit");
-													afterParserOrEnumRuleCall();
-												}
-											)
-										)
-										    |
-										(
-											(
-												{
-													newCompositeNode(grammarAccess.getObservableSemanticsAccess().getCurrencyCurrencyParserRuleCall_3_4_0_1_1_0());
-												}
-												lv_currency_17_0=ruleCurrency
-												{
-													if ($current==null) {
-														$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
-													}
-													set(
-														$current,
-														"currency",
-														lv_currency_17_0,
-														"org.integratedmodelling.kim.Kim.Currency");
-													afterParserOrEnumRuleCall();
-												}
-											)
-										)
+										lv_optional_18_0='optional'
+										{
+											newLeafNode(lv_optional_18_0, grammarAccess.getObservableSemanticsAccess().getOptionalOptionalKeyword_3_4_0_0());
+										}
+										{
+											if ($current==null) {
+												$current = createModelElement(grammarAccess.getObservableSemanticsRule());
+											}
+											setWithLastConsumed($current, "optional", true, "optional");
+										}
 									)
 								)
 								    |
-								(
-									otherlv_18='per'
-									{
-										newLeafNode(otherlv_18, grammarAccess.getObservableSemanticsAccess().getPerKeyword_3_4_1_0());
-									}
-									(
-										(
-											{
-												newCompositeNode(grammarAccess.getObservableSemanticsAccess().getUnitUnitParserRuleCall_3_4_1_1_0());
-											}
-											lv_unit_19_0=ruleUnit
-											{
-												if ($current==null) {
-													$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
-												}
-												set(
-													$current,
-													"unit",
-													lv_unit_19_0,
-													"org.integratedmodelling.kim.Kim.Unit");
-												afterParserOrEnumRuleCall();
-											}
-										)
-									)
-								)
+								otherlv_19='required'
+								{
+									newLeafNode(otherlv_19, grammarAccess.getObservableSemanticsAccess().getRequiredKeyword_3_4_1());
+								}
 								))
 					{ 
 						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3());
@@ -6346,23 +6342,46 @@ ruleObservableSemantics returns [EObject current=null]
 					}
 								({true}?=>((
 									(
-										lv_optional_20_0='optional'
 										{
-											newLeafNode(lv_optional_20_0, grammarAccess.getObservableSemanticsAccess().getOptionalOptionalKeyword_3_5_0_0());
+											newCompositeNode(grammarAccess.getObservableSemanticsAccess().getFromNumberParserRuleCall_3_5_0_0());
 										}
+										lv_from_20_0=ruleNumber
 										{
 											if ($current==null) {
-												$current = createModelElement(grammarAccess.getObservableSemanticsRule());
+												$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
 											}
-											setWithLastConsumed($current, "optional", true, "optional");
+											set(
+												$current,
+												"from",
+												lv_from_20_0,
+												"org.integratedmodelling.kim.Kim.Number");
+											afterParserOrEnumRuleCall();
 										}
 									)
 								)
-								    |
-								otherlv_21='required'
+								otherlv_21='to'
 								{
-									newLeafNode(otherlv_21, grammarAccess.getObservableSemanticsAccess().getRequiredKeyword_3_5_1());
+									newLeafNode(otherlv_21, grammarAccess.getObservableSemanticsAccess().getToKeyword_3_5_1());
 								}
+								(
+									(
+										{
+											newCompositeNode(grammarAccess.getObservableSemanticsAccess().getToNumberParserRuleCall_3_5_2_0());
+										}
+										lv_to_22_0=ruleNumber
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
+											}
+											set(
+												$current,
+												"to",
+												lv_to_22_0,
+												"org.integratedmodelling.kim.Kim.Number");
+											afterParserOrEnumRuleCall();
+										}
+									)
+								)
 								))
 					{ 
 						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3());
@@ -6374,69 +6393,16 @@ ruleObservableSemantics returns [EObject current=null]
 					{
 						getUnorderedGroupHelper().select(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 6);
 					}
-								({true}?=>((
-									(
-										{
-											newCompositeNode(grammarAccess.getObservableSemanticsAccess().getFromNumberParserRuleCall_3_6_0_0());
-										}
-										lv_from_22_0=ruleNumber
-										{
-											if ($current==null) {
-												$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
-											}
-											set(
-												$current,
-												"from",
-												lv_from_22_0,
-												"org.integratedmodelling.kim.Kim.Number");
-											afterParserOrEnumRuleCall();
-										}
-									)
-								)
-								otherlv_23='to'
+								({true}?=>(otherlv_23='named'
 								{
-									newLeafNode(otherlv_23, grammarAccess.getObservableSemanticsAccess().getToKeyword_3_6_1());
-								}
-								(
-									(
-										{
-											newCompositeNode(grammarAccess.getObservableSemanticsAccess().getToNumberParserRuleCall_3_6_2_0());
-										}
-										lv_to_24_0=ruleNumber
-										{
-											if ($current==null) {
-												$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
-											}
-											set(
-												$current,
-												"to",
-												lv_to_24_0,
-												"org.integratedmodelling.kim.Kim.Number");
-											afterParserOrEnumRuleCall();
-										}
-									)
-								)
-								))
-					{ 
-						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3());
-					}
-				)
-			)|
-			(
-				{getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 7)}?=>(
-					{
-						getUnorderedGroupHelper().select(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 7);
-					}
-								({true}?=>(otherlv_25='named'
-								{
-									newLeafNode(otherlv_25, grammarAccess.getObservableSemanticsAccess().getNamedKeyword_3_7_0());
+									newLeafNode(otherlv_23, grammarAccess.getObservableSemanticsAccess().getNamedKeyword_3_6_0());
 								}
 								(
 									(
 										(
-											lv_name_26_1=RULE_LOWERCASE_ID
+											lv_name_24_1=RULE_LOWERCASE_ID
 											{
-												newLeafNode(lv_name_26_1, grammarAccess.getObservableSemanticsAccess().getNameLOWERCASE_IDTerminalRuleCall_3_7_1_0_0());
+												newLeafNode(lv_name_24_1, grammarAccess.getObservableSemanticsAccess().getNameLOWERCASE_IDTerminalRuleCall_3_6_1_0_0());
 											}
 											{
 												if ($current==null) {
@@ -6445,13 +6411,13 @@ ruleObservableSemantics returns [EObject current=null]
 												setWithLastConsumed(
 													$current,
 													"name",
-													lv_name_26_1,
+													lv_name_24_1,
 													"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 											}
 											    |
-											lv_name_26_2=RULE_STRING
+											lv_name_24_2=RULE_STRING
 											{
-												newLeafNode(lv_name_26_2, grammarAccess.getObservableSemanticsAccess().getNameSTRINGTerminalRuleCall_3_7_1_0_1());
+												newLeafNode(lv_name_24_2, grammarAccess.getObservableSemanticsAccess().getNameSTRINGTerminalRuleCall_3_6_1_0_1());
 											}
 											{
 												if ($current==null) {
@@ -6460,7 +6426,7 @@ ruleObservableSemantics returns [EObject current=null]
 												setWithLastConsumed(
 													$current,
 													"name",
-													lv_name_26_2,
+													lv_name_24_2,
 													"org.eclipse.xtext.common.Terminals.STRING");
 											}
 										)

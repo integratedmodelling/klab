@@ -42,7 +42,6 @@ import org.integratedmodelling.kim.kim.Value;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getDeclaration <em>Declaration</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getBy <em>By</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getDownTo <em>Down To</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getRole <em>Role</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getAccordingTo <em>According To</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getUnit <em>Unit</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getCurrency <em>Currency</em>}</li>
@@ -117,16 +116,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * @ordered
    */
   protected Concept downTo;
-
-  /**
-   * The cached value of the '{@link #getRole() <em>Role</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getRole()
-   * @generated
-   * @ordered
-   */
-  protected Concept role;
 
   /**
    * The default value of the '{@link #getAccordingTo() <em>According To</em>}' attribute.
@@ -499,54 +488,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * <!-- end-user-doc -->
    * @generated
    */
-  public Concept getRole()
-  {
-    return role;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetRole(Concept newRole, NotificationChain msgs)
-  {
-    Concept oldRole = role;
-    role = newRole;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__ROLE, oldRole, newRole);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setRole(Concept newRole)
-  {
-    if (newRole != role)
-    {
-      NotificationChain msgs = null;
-      if (role != null)
-        msgs = ((InternalEObject)role).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.OBSERVABLE_SEMANTICS__ROLE, null, msgs);
-      if (newRole != null)
-        msgs = ((InternalEObject)newRole).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.OBSERVABLE_SEMANTICS__ROLE, null, msgs);
-      msgs = basicSetRole(newRole, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__ROLE, newRole, newRole));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public String getAccordingTo()
   {
     return accordingTo;
@@ -858,8 +799,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return basicSetBy(null, msgs);
       case KimPackage.OBSERVABLE_SEMANTICS__DOWN_TO:
         return basicSetDownTo(null, msgs);
-      case KimPackage.OBSERVABLE_SEMANTICS__ROLE:
-        return basicSetRole(null, msgs);
       case KimPackage.OBSERVABLE_SEMANTICS__UNIT:
         return basicSetUnit(null, msgs);
       case KimPackage.OBSERVABLE_SEMANTICS__CURRENCY:
@@ -894,8 +833,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return getBy();
       case KimPackage.OBSERVABLE_SEMANTICS__DOWN_TO:
         return getDownTo();
-      case KimPackage.OBSERVABLE_SEMANTICS__ROLE:
-        return getRole();
       case KimPackage.OBSERVABLE_SEMANTICS__ACCORDING_TO:
         return getAccordingTo();
       case KimPackage.OBSERVABLE_SEMANTICS__UNIT:
@@ -943,9 +880,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__DOWN_TO:
         setDownTo((Concept)newValue);
-        return;
-      case KimPackage.OBSERVABLE_SEMANTICS__ROLE:
-        setRole((Concept)newValue);
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__ACCORDING_TO:
         setAccordingTo((String)newValue);
@@ -1004,9 +938,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
       case KimPackage.OBSERVABLE_SEMANTICS__DOWN_TO:
         setDownTo((Concept)null);
         return;
-      case KimPackage.OBSERVABLE_SEMANTICS__ROLE:
-        setRole((Concept)null);
-        return;
       case KimPackage.OBSERVABLE_SEMANTICS__ACCORDING_TO:
         setAccordingTo(ACCORDING_TO_EDEFAULT);
         return;
@@ -1058,8 +989,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return by != null;
       case KimPackage.OBSERVABLE_SEMANTICS__DOWN_TO:
         return downTo != null;
-      case KimPackage.OBSERVABLE_SEMANTICS__ROLE:
-        return role != null;
       case KimPackage.OBSERVABLE_SEMANTICS__ACCORDING_TO:
         return ACCORDING_TO_EDEFAULT == null ? accordingTo != null : !ACCORDING_TO_EDEFAULT.equals(accordingTo);
       case KimPackage.OBSERVABLE_SEMANTICS__UNIT:
@@ -1092,7 +1021,7 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuffer result = new StringBuffer(super.toString());
+    StringBuilder result = new StringBuilder(super.toString());
     result.append(" (generic: ");
     result.append(generic);
     result.append(", accordingTo: ");

@@ -44,9 +44,6 @@ public abstract class ObservedArtifact extends Artifact implements IArtifact {
 	Set<String> ids = new HashSet<>();
 	public void chain(IArtifact data) {
 		super.chain(data);
-		if (data instanceof ObservedArtifact && ids.contains(((ObservedArtifact)data).token)) {
-			System.out.println("ZIO MANNARO: " + data + ": " + System.identityHashCode(data));
-		}
 		ids.add(((ObservedArtifact)data).token);
 	}
 

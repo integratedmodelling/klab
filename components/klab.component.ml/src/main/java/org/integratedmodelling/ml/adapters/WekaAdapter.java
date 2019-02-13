@@ -30,9 +30,6 @@ import org.integratedmodelling.klab.kim.Prototype;
 
 import com.google.common.collect.Sets;
 
-/**
- * The Class VectorAdapter.
- */
 @ResourceAdapter(type = "weka", version = Version.CURRENT)
 public class WekaAdapter implements IFileResourceAdapter {
 
@@ -44,8 +41,7 @@ public class WekaAdapter implements IFileResourceAdapter {
 	/**
 	 * All recognized secondary file extensions
 	 */
-	public static Set<String> secondaryFileExtensions = Sets.newHashSet("sbx", "prj", "shx", "dbf", "shp.xml", "txt",
-			"pdf");
+	public static Set<String> secondaryFileExtensions = Sets.newHashSet("arff", "csv");
 
 	@Override
 	public String getName() {
@@ -76,7 +72,7 @@ public class WekaAdapter implements IFileResourceAdapter {
 	public IPrototype getResourceConfiguration() {
 		return new Prototype(Dataflows.INSTANCE
 				.declare(getClass().getClassLoader()
-						.getResource("components/org.integratedmodeling.ml/adapter/weka.kdl"))
+						.getResource("components/org.integratedmodelling.ml/adapter/weka.kdl"))
 				.getActuators().iterator().next(), null);
 	}
 }

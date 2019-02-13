@@ -261,7 +261,7 @@ public class Report implements IReport {
 		ret.append("\n\n" + "[@ref]: Reference [#]\n" + "[@fig]: Figure [#]\n" + "[@table]: Table [#]\n"
 				+ "[@footnote]: Footnote [#]\n" + "[@user]: [#]\n" + "[@dataflow]: Dataflow [#]\n");
 
-		System.out.println(ret.toString());
+//		System.out.println(ret.toString());
 
 		switch (encoding) {
 		case HTML:

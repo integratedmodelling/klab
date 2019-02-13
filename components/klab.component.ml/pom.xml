@@ -11,7 +11,7 @@
 	<name>klab.component.ml</name>
 	<description>WEKA Machine Learning component for k.LAB</description>
 	<dependencies>
-	
+
 		<!-- https://mvnrepository.com/artifact/nz.ac.waikato.cms.weka/weka-stable -->
 		<dependency>
 			<groupId>nz.ac.waikato.cms.weka</groupId>
@@ -35,5 +35,34 @@
 			<artifactId>org.eclipse.xtext.testing</artifactId>
 			<version>${xtextVersion}</version>
 		</dependency>
+
+		<!-- for legacy Riskwiz -->
+		<dependency>
+			<groupId>org.nfunk</groupId>
+			<artifactId>jep</artifactId>
+			<version>2.4.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.mvel/mvel -->
+		<dependency>
+			<groupId>org.mvel</groupId>
+			<artifactId>mvel</artifactId>
+			<version>2.0-dp4</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.ojalgo/ojalgo -->
+		<dependency>
+			<groupId>org.ojalgo</groupId>
+			<artifactId>ojalgo</artifactId>
+			<version>31.0</version>
+		</dependency>
+
 	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>freehep</id>
+			<name>FreeHep Repository</name>
+			<url>http://java.freehep.org/maven2/</url>
+		</repository>
+	</repositories>
+
 </project>

@@ -589,9 +589,6 @@ public class GroovyExpressionPreprocessor {
 	}
 
 	private String translateKnowledge(String k) {
-		if (k.startsWith(DECLARATION_ID_PREFIX)) {
-			System.out.println("XZIO " + k);
-		}
 		return "_getConcept(\"" + k + "\")";
 	}
 

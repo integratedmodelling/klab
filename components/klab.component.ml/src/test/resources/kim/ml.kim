@@ -1,12 +1,12 @@
-namespace ml;
+namespace test.ml;
 
 /*
  * If there is 'model' instead of 'learn' but a learning contextualizer is called, 
- * the model artifact is not created and only the 'side effect' of
- * the learned quality is output. I.e.: 'learn' triggers the generation of a model
+ * the model artifact and resource are not created and only the 'side effect' of
+ * the learned quality is output. In other words, 'learn' triggers the generation of a model
  * artifact (and possibly its contextualization to similar conditions at some point).
- * Training is triggered by having an archetype and/or not importing a trained model.
- * If a trained model is imported, there should not be an archetype
+ * The contextualizers do training: all trained models are imported as resources and do not
+ * require calling a contextualizer.
  * 
  * Predictors must be distributed in context; archetype is required
  */
@@ -16,11 +16,14 @@ learn value of ecology:Biodiversity
 		@predictor geography:Slope,
 		@predictor geography:Elevation,
 		@predictor earth:PrecipitationVolume in mm
-	using im.weka.bayesnet();
+	using im.weka.bayesnet(resource = biodiv.ml.global);
 	
 // because it was called with learn, it produces the trained model as
-// a local weka resource and its annotation as a model artifact
-model local:ferdinando.villa:jp.nagoya.hydropower:weka.bayes.r03133
+// a local weka resource and its annotation as a model artifact.
+// If the Weka contextualizer does not specify a resource ID, each
+// call will produce 'weka.<classifier>.mnnnnnn' with the date of
+// termination
+model local:ferdinando.villa:jp.nagoya.hydropower:biodiv.ml.global
 	as value of ecology:Biodiversity
 	observing 
 		@predictor(id=slope, discretization=(0, 34.4, 10)) 
@@ -32,6 +35,12 @@ model local:ferdinando.villa:jp.nagoya.hydropower:weka.bayes.r03133
 		
 // if "within" is there after learn, insert a dependency for the object and learn IN the instances
 // as directed. This becomes an instantiator with value of ecology:Biodiversity as the second obs
+// Complex; unclear what the resulting resource should be (a filter?) - NO the resource is the 
+// RESOLVER of the quality for the earth:Site. BTW the trained model is identical to the distributed one.
+//
+// Each 'within' or 'of' resolver should work naturally for individual instances
+// the instances are identical to the other case but the resource will predict within objects
+// a within model will add the dependency if the resource is quality or not if the resource is object. 
 learn value of ecology:Biodiversity within earth:Site
 	observing 
 		@archetype earth:Site with value of ecology:Biodiversity,
@@ -40,6 +49,16 @@ learn value of ecology:Biodiversity within earth:Site
 		@predictor geography:Elevation,
 		@predictor earth:PrecipitationVolume in mm
 	using im.weka.bayesnet();
+	
+// -- TODO: how to learn the probability of an event in time based on occurrences? --
+// It's a temporal model so its final result will be after a temporal simulation - OK for now
+// May be just like this
+learn probability of earth:Storm 
+	observing
+		@archetype earth:Storm,
+		@predictor earth:PrecipitationVolume in mm,
+		@predictor earth:AtmosphericTemperature in Celsius
+	using im.weka.bayesnet() over time;	
 	
 // ------ the archetype --------------------------------------------
 

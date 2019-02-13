@@ -987,22 +987,11 @@ public class KimValidator extends AbstractKimValidator {
   
   @Check
   public void checkObservableSemantics(final ObservableSemantics semantics) {
-    Concept _role = semantics.getRole();
-    boolean _tripleNotEquals = (_role != null);
-    if (_tripleNotEquals) {
-      EnumSet<IKimConcept.Type> role = this.checkConcept(semantics.getRole(), null, null);
-      boolean _contains = role.contains(IKimConcept.Type.ROLE);
-      boolean _not = (!_contains);
-      if (_not) {
-        this.error("Only roles can be used in the \'as\' specification of an observable", semantics.getRole(), null, 
-          KimPackage.OBSERVABLE_SEMANTICS__ROLE);
-      }
-    }
     KimConcept declaration = Kim.INSTANCE.declareConcept(semantics.getDeclaration());
     if ((declaration != null)) {
       Unit _unit = semantics.getUnit();
-      boolean _tripleNotEquals_1 = (_unit != null);
-      if (_tripleNotEquals_1) {
+      boolean _tripleNotEquals = (_unit != null);
+      if (_tripleNotEquals) {
         if ((((!declaration.is(IKimConcept.Type.INTENSIVE_PROPERTY)) && (!declaration.is(IKimConcept.Type.EXTENSIVE_PROPERTY))) && 
           (!declaration.is(IKimConcept.Type.NUMEROSITY)))) {
           this.error("Units can only be specified for physical properties or counts", semantics.getUnit(), null, 
@@ -1011,21 +1000,21 @@ public class KimValidator extends AbstractKimValidator {
         }
       }
       Currency _currency = semantics.getCurrency();
-      boolean _tripleNotEquals_2 = (_currency != null);
-      if (_tripleNotEquals_2) {
+      boolean _tripleNotEquals_1 = (_currency != null);
+      if (_tripleNotEquals_1) {
         boolean _is = declaration.is(IKimConcept.Type.MONEY);
-        boolean _not_1 = (!_is);
-        if (_not_1) {
+        boolean _not = (!_is);
+        if (_not) {
           this.error("Currencies can only be specified for monetary values", semantics.getCurrency(), null, 
             KimPackage.OBSERVABLE_SEMANTICS__CURRENCY);
         }
       }
       Concept _by = semantics.getBy();
-      boolean _tripleNotEquals_3 = (_by != null);
-      if (_tripleNotEquals_3) {
+      boolean _tripleNotEquals_2 = (_by != null);
+      if (_tripleNotEquals_2) {
         boolean _is_1 = declaration.is(IKimConcept.Type.QUALITY);
-        boolean _not_2 = (!_is_1);
-        if (_not_2) {
+        boolean _not_1 = (!_is_1);
+        if (_not_1) {
           this.error("Classifiers and aggregators can only be specified for qualities", semantics.getFrom(), null, 
             KimPackage.OBSERVABLE_SEMANTICS__BY);
         }
@@ -1037,8 +1026,8 @@ public class KimValidator extends AbstractKimValidator {
         }
       }
       org.integratedmodelling.kim.kim.Number _from = semantics.getFrom();
-      boolean _tripleNotEquals_4 = (_from != null);
-      if (_tripleNotEquals_4) {
+      boolean _tripleNotEquals_3 = (_from != null);
+      if (_tripleNotEquals_3) {
         if ((((declaration.is(IKimConcept.Type.PROPORTION) || declaration.is(IKimConcept.Type.PROBABILITY)) || declaration.is(IKimConcept.Type.ANGLE)) || 
           declaration.is(IKimConcept.Type.OCCURRENCE))) {
           this.error("Numeric range can not be specified for proportions, percentages, probabilities and angles", 

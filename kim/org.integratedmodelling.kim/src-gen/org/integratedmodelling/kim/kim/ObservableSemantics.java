@@ -22,7 +22,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getDeclaration <em>Declaration</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getBy <em>By</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getDownTo <em>Down To</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getRole <em>Role</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getAccordingTo <em>According To</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getUnit <em>Unit</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getCurrency <em>Currency</em>}</li>
@@ -169,32 +168,6 @@ public interface ObservableSemantics extends EObject
    * @generated
    */
   void setDownTo(Concept value);
-
-  /**
-   * Returns the value of the '<em><b>Role</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Role</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Role</em>' containment reference.
-   * @see #setRole(Concept)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics_Role()
-   * @model containment="true"
-   * @generated
-   */
-  Concept getRole();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getRole <em>Role</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Role</em>' containment reference.
-   * @see #getRole()
-   * @generated
-   */
-  void setRole(Concept value);
 
   /**
    * Returns the value of the '<em><b>According To</b></em>' attribute.

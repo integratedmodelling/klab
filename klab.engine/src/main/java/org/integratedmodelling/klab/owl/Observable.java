@@ -67,7 +67,6 @@ public class Observable extends Concept implements IObservable {
 	private boolean generic;
 	private String observerId;
 	private IDirectObservation observer;
-	private Set<IConcept> assignedRoles = new HashSet<>();
 
 	/**
 	 * This and the next support situations in which the observable contains a
@@ -160,7 +159,6 @@ public class Observable extends Concept implements IObservable {
 		this.observationType = observable.observationType;
 		this.optional = observable.optional;
 		this.generic = observable.generic;
-		this.assignedRoles.addAll(observable.assignedRoles);
 		this.annotations.addAll(observable.getAnnotations());
 	}
 
@@ -696,12 +694,8 @@ public class Observable extends Concept implements IObservable {
 	    this.value = value;
 	    return this;
 	}
-	
-	@Override
-	public Set<IConcept> getAssignedRoles() {
-		return assignedRoles;
-	}
 
+	@Override
 	public List<IAnnotation> getAnnotations() {
 		return this.annotations;
 	}

@@ -781,13 +781,13 @@ class KimValidator extends AbstractKimValidator {
 	@Check
 	def checkObservableSemantics(ObservableSemantics semantics) {
 
-		if (semantics.role !== null) {
-			var role = checkConcept(semantics.role, null, null)
-			if (!role.contains(Type.ROLE)) {
-				error("Only roles can be used in the 'as' specification of an observable", semantics.role, null,
-					KimPackage.OBSERVABLE_SEMANTICS__ROLE)
-			}
-		}
+//		if (semantics.role !== null) {
+//			var role = checkConcept(semantics.role, null, null)
+//			if (!role.contains(Type.ROLE)) {
+//				error("Only roles can be used in the 'as' specification of an observable", semantics.role, null,
+//					KimPackage.OBSERVABLE_SEMANTICS__ROLE)
+//			}
+//		}
 
 		var declaration = Kim.INSTANCE.declareConcept(semantics.declaration)
 
