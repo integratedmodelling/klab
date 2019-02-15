@@ -10,6 +10,7 @@ import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.klab.Dataflows;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
@@ -38,6 +39,7 @@ public class DataflowTests {
     }
 
     @Test
+    @Ignore
     public void parseKdl() throws Exception {
 
         /*
