@@ -75,20 +75,27 @@ public class Projection implements IProjection {
 
 		Envelope standardized = envelope.transform(getLatLon(), true);
 		double[] xy = standardized.getCenterCoordinates();
+		// check longitude, in OpenLayer is possible to get out of range 
+		if (xy[0] > 180 || xy[0] < -180) {
+			throw new IllegalArgumentException("Longitude is out of range (-180/180)");
+		}
+		if (xy[1] > 90 || xy[1] < -90) {
+			throw new IllegalArgumentException("Latitude is out of range (90/-90)");
+		}
 		WGS84 wgs = new WGS84(xy[1], xy[0]);
 		UTM utm = new UTM(wgs);
-
+		
 		int idx = 0;
 		if (wgs.getHemisphere() == 'S') {
 			idx = 1;
 		}
 
-		if (utmProjections[idx][utm.getZone()] == null) {
+		if (utmProjections[idx][utm.getZone() - 1] == null) {
 			String code = "EPSG:32" + (wgs.getHemisphere() == 'S' ? "7" : "6") + String.format("%02d", utm.getZone());
-			utmProjections[idx][utm.getZone()] = create(code);
+			utmProjections[idx][utm.getZone() - 1] = create(code);
 		}
 
-		return utmProjections[idx][utm.getZone()];
+		return utmProjections[idx][utm.getZone() - 1];
 	}
 
 	private Projection(String code) {
