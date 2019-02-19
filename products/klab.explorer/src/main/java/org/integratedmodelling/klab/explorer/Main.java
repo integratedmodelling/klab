@@ -153,7 +153,7 @@ public class Main implements ApplicationListener<ApplicationReadyEvent> {
 			}
 		});
 
-		PandomiumBrowser browser = client.loadURL("http://localhost:8283/modeler/ui/viewer?session=" + session.getId() + "&mode=ide");
+		PandomiumBrowser browser = client.loadURL("http://localhost:8283/modeler/ui/viewer?session=" + session.getId());
 
 		frame.getContentPane().add(browser.toAWTComponent(), BorderLayout.CENTER);
 
