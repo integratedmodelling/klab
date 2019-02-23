@@ -93,8 +93,12 @@ class KnowledgeDeclarationParsingTest {
 		}
 		for (String test : testsBAD) {
 			val result = parseHelper.parse(test)
-			val observable = Kim.INSTANCE.declareObservable(result.observable);
-			Assert.assertNull(observable)
+			try {
+				val observable = Kim.INSTANCE.declareObservable(result.observable);
+				Assert.assertNull(observable)
+			} catch (NullPointerException e) {
+				// OK
+			}
 		}
 	}
 

@@ -74,8 +74,16 @@ public class KnowledgeDeclarationParsingTest {
       for (final String test_1 : KnowledgeDeclarationParsingTest.testsBAD) {
         {
           final Model result = this.parseHelper.parse(test_1);
-          final KimObservable observable = Kim.INSTANCE.declareObservable(result.getObservable());
-          Assert.assertNull(observable);
+          try {
+            final KimObservable observable = Kim.INSTANCE.declareObservable(result.getObservable());
+            Assert.assertNull(observable);
+          } catch (final Throwable _t) {
+            if (_t instanceof NullPointerException) {
+              final NullPointerException e = (NullPointerException)_t;
+            } else {
+              throw Exceptions.sneakyThrow(_t);
+            }
+          }
         }
       }
     } catch (Throwable _e) {

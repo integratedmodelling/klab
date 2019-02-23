@@ -317,7 +317,9 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
 		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
 
-		List<Pair<ICoverage, Dataflow>> pairs = dataflowCache.get(observable);
+		List<Pair<ICoverage, Dataflow>> pairs = dataflowCache
+				.get(new ResolvedObservable((Observable) observable, Mode.RESOLUTION));
+		
 		if (pairs != null) {
 			for (Pair<ICoverage, Dataflow> pair : pairs) {
 				if (pair.getFirst() == null || pair.getFirst().contains(scale)) {
@@ -327,6 +329,12 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			}
 		}
 		if (dataflow == null) {
+
+			if (pairs == null) {
+				pairs = new ArrayList<>();
+				dataflowCache.put(new ResolvedObservable((Observable) observable, Mode.RESOLUTION), pairs);
+			}
+
 			ResolutionScope scope = Resolver.INSTANCE.resolve(obs, this.resolutionScope, Mode.RESOLUTION, scale, model);
 			if (scope.getCoverage().isRelevant()) {
 
@@ -337,11 +345,16 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 				// TODO this must be added to the computational strategy and linked to the
 				// original context.
-				if (pairs == null) {
-					pairs = new ArrayList<>();
-					dataflowCache.put(new ResolvedObservable((Observable)observable, Mode.RESOLUTION), pairs);
-				}
 				pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
+
+			} else if (this.resolutionScope.getPreresolvedModels(observable).getSecond().size() == 0) {
+				/*
+				 * Add an empty dataflow to create the observation. This is only done if there are
+				 * no preloaded resolvers in this scale, so we are certain that other subjects will
+				 * encounter the same conditions.
+				 */
+				pairs.add(new Pair<>(null, dataflow = Dataflow.empty(observable, name, scope)));
+				dataflowCache.put(new ResolvedObservable((Observable) observable, Mode.RESOLUTION), pairs);
 			}
 		}
 
@@ -405,7 +418,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		ret.monitor = monitor;
 		ret.semantics.put(actuator.getName(), ret.targetSemantics);
 		if (this.target instanceof IDirectObservation) {
-			ret.contextSubject = (IDirectObservation)this.target;
+			ret.contextSubject = (IDirectObservation) this.target;
 		}
 		for (IActuator a : actuator.getActuators()) {
 			if (!((Actuator) a).isExported()) {
@@ -655,7 +668,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			this.catalog.put(name, observation);
 			if (!(observation instanceof ObservationGroup)) {
 				this.structure.addVertex(observation);
-				if (contextSubject != null) {
+				if (contextSubject != null && !(contextSubject instanceof ObservationGroup)) {
 					this.structure.addEdge(observation, contextSubject);
 				}
 			}
@@ -779,13 +792,15 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 	// wrapper for proper caching of sub-dataflows
 	class ResolvedObservable {
-		
+
 		Observable observable;
 		Mode resolutionMode;
+
 		ResolvedObservable(Observable observable, Mode mode) {
 			this.observable = observable;
 			this.resolutionMode = mode;
 		}
+
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -795,7 +810,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			result = prime * result + ((resolutionMode == null) ? 0 : resolutionMode.hashCode());
 			return result;
 		}
-		
+
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj)
@@ -816,10 +831,11 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 				return false;
 			return true;
 		}
+
 		private RuntimeContext getOuterType() {
 			return RuntimeContext.this;
 		}
-		
+
 	}
-	
+
 }

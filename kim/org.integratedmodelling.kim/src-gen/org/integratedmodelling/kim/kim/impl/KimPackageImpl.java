@@ -498,7 +498,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
   /**
    * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
-   * 
+   *
    * <p>This method is used to initialize {@link KimPackage#eINSTANCE} when that field is accessed.
    * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
    * <!-- begin-user-doc -->
@@ -513,7 +513,8 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     if (isInited) return (KimPackage)EPackage.Registry.INSTANCE.getEPackage(KimPackage.eNS_URI);
 
     // Obtain or create and register package
-    KimPackageImpl theKimPackage = (KimPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof KimPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new KimPackageImpl());
+    Object registeredKimPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
+    KimPackageImpl theKimPackage = registeredKimPackage instanceof KimPackageImpl ? (KimPackageImpl)registeredKimPackage : new KimPackageImpl();
 
     isInited = true;
 
@@ -526,7 +527,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     // Mark meta-data to indicate it can't be changed
     theKimPackage.freeze();
 
-  
     // Update the registry and return the package
     EPackage.Registry.INSTANCE.put(KimPackage.eNS_URI, theKimPackage);
     return theKimPackage;
@@ -2277,19 +2277,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getObservableSemantics_Role()
-  {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(5);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EAttribute getObservableSemantics_AccordingTo()
   {
-    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(6);
+    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -2299,7 +2289,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getObservableSemantics_Unit()
   {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(7);
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(6);
   }
 
   /**
@@ -2309,7 +2299,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getObservableSemantics_Currency()
   {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(8);
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -2319,7 +2309,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getObservableSemantics_Optional()
   {
-    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(9);
+    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(8);
   }
 
   /**
@@ -2329,7 +2319,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getObservableSemantics_From()
   {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(10);
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -2339,7 +2329,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getObservableSemantics_To()
   {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(11);
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(10);
   }
 
   /**
@@ -2349,7 +2339,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getObservableSemantics_Name()
   {
-    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(12);
+    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(11);
   }
 
   /**
@@ -2359,7 +2349,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getObservableSemantics_Annotations()
   {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(13);
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(12);
   }
 
   /**
@@ -2369,7 +2359,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getObservableSemantics_Condition()
   {
-    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(14);
+    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(13);
   }
 
   /**
@@ -4761,7 +4751,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__DECLARATION);
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__BY);
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__DOWN_TO);
-    createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__ROLE);
     createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__ACCORDING_TO);
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__UNIT);
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__CURRENCY);
@@ -5250,7 +5239,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getObservableSemantics_Declaration(), this.getConceptDeclaration(), null, "declaration", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObservableSemantics_By(), this.getConcept(), null, "by", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObservableSemantics_DownTo(), this.getConcept(), null, "downTo", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getObservableSemantics_Role(), this.getConcept(), null, "role", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getObservableSemantics_AccordingTo(), ecorePackage.getEString(), "accordingTo", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObservableSemantics_Unit(), this.getUnit(), null, "unit", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObservableSemantics_Currency(), this.getCurrency(), null, "currency", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

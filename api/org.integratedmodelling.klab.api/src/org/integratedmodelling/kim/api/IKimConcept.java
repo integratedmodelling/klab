@@ -377,7 +377,7 @@ public interface IKimConcept extends IKimStatement {
      * All base observables
      */
     public final static EnumSet<Type> BASE_OBSERVABLE_TYPES = EnumSet.of(Type.SUBJECT, Type.EVENT, Type.RELATIONSHIP,
-            Type.PROCESS, Type.QUALITY);
+            Type.PROCESS, Type.QUALITY, Type.AGENT);
 
     /**
      * All trait type bits set (not TRAIT itself). Each trait AND this must yield a set of size 1.

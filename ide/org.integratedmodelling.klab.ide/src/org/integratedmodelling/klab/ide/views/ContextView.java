@@ -720,7 +720,7 @@ public class ContextView extends ViewPart {
 				public void run() {
 					if (Activator.engineMonitor().isRunning()) {
 						BrowserUtils.startBrowser("http://localhost:8283/modeler/ui/viewer?session="
-								+ Activator.engineMonitor().getSessionId() + "&mode=ide");
+								+ Activator.engineMonitor().getSessionId());
 					}
 				}
 

@@ -146,6 +146,13 @@ public interface IModel
 	 * @return true if the model reinterprets the observable through a role.
 	 */
 	boolean isReinterpreter();
+	
+	/**
+	 * A learning model must produce a model as its primary artifact.
+	 * 
+	 * @return
+	 */
+	boolean isLearning();
 
 	/**
 	 * Called by the resolver before a model is used so that it has a chance to

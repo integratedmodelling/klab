@@ -234,7 +234,7 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 		 * First strip any data reduction traits that we know how to handle and save
 		 * them.
 		 */
-		IObservable.Builder builder = observable.getBuilder()
+		IObservable.Builder builder = observable.getBuilder(scope.getMonitor())
 				.withoutAny(Concepts.c(NS.CORE_OBSERVATION_TRANSFORMATION));
 
 		if (builder.getRemoved().size() > 0) {

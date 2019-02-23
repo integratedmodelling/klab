@@ -188,7 +188,7 @@ public class Concept extends Knowledge implements IConcept {
         Set<IConcept> concepts = new HashSet<>();
 
         if (seen.contains(this)) {
-            // System.out.println("po'dio, cycle with " + this);
+            // System.out.println("cycle with " + this);
             return concepts;
         }
 

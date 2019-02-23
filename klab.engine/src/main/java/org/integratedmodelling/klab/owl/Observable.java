@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.engine.runtime.Session;
@@ -66,7 +67,6 @@ public class Observable extends Concept implements IObservable {
 	private boolean generic;
 	private String observerId;
 	private IDirectObservation observer;
-	private Set<IConcept> assignedRoles = new HashSet<>();
 
 	/**
 	 * This and the next support situations in which the observable contains a
@@ -159,7 +159,6 @@ public class Observable extends Concept implements IObservable {
 		this.observationType = observable.observationType;
 		this.optional = observable.optional;
 		this.generic = observable.generic;
-		this.assignedRoles.addAll(observable.assignedRoles);
 		this.annotations.addAll(observable.getAnnotations());
 	}
 
@@ -631,8 +630,8 @@ public class Observable extends Concept implements IObservable {
 	}
 
 	@Override
-	public Builder getBuilder() {
-		return new ObservableBuilder(this);
+	public Builder getBuilder(IMonitor monitor) {
+		return new ObservableBuilder(this, monitor);
 	}
 
 	public static Observable promote(IConcept operand, Observable observable2) {
@@ -695,12 +694,8 @@ public class Observable extends Concept implements IObservable {
 	    this.value = value;
 	    return this;
 	}
-	
-	@Override
-	public Set<IConcept> getAssignedRoles() {
-		return assignedRoles;
-	}
 
+	@Override
 	public List<IAnnotation> getAnnotations() {
 		return this.annotations;
 	}

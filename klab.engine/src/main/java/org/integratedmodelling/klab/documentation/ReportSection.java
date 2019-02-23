@@ -146,7 +146,7 @@ public class ReportSection extends Parameters<String> implements Section {
      */
     public void describe(Object[] args, IDocumentation documentation, IComputationContext context) {
         // TODO Auto-generated method stub
-        System.out.println("FOC");
+//        System.out.println("FOC");
     }
 
     /**
@@ -262,7 +262,7 @@ public class ReportSection extends Parameters<String> implements Section {
      */
     public void footnote(Object[] processArguments, IDocumentation documentation, IComputationContext context) {
         // TODO Auto-generated method stub
-        System.out.println("FOC");
+//        System.out.println("FOC");
     }
 
     /**

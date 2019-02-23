@@ -16,13 +16,16 @@
 package org.integratedmodelling.klab.api.knowledge;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimExpression;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
-import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -287,9 +290,11 @@ public interface IObservable extends IConcept, IResolvable {
      * Get a builder that will rebuild this observable. Use to build alternative
      * observables with added or removed components.
      * 
+     * @param monitor building is monitored, so a monitor must be passed.
+     * 
      * @return
      */
-    Builder getBuilder();
+    Builder getBuilder(IMonitor monitor);
 
     /**
      * Each observable must be able to quickly assess the type of the observation
@@ -478,13 +483,10 @@ public interface IObservable extends IConcept, IResolvable {
     IDirectObservation getObserver();
 
     /**
-     * One or more roles can be 'assigned' to an observable (using the 'as' clause,
-     * currently limited to one role). If these are specified, the semantics of the
-     * observable remains unaffected, but the observable may be selected for
-     * specific roles within a dependency or an observation.
-     * 
-     * @return
+     * Return all the annotations attributed to the object in the originating k.IM code.
+     *
+     * @return a list of annotations in order of declaration, or null.
      */
-    Collection<IConcept> getAssignedRoles();
+    List<IAnnotation> getAnnotations();
 
 }

@@ -255,10 +255,6 @@ public enum KimKnowledgeProcessor {
 			ret.setRange(concept.getRange());
 		}
 
-		for (IKimConcept role : concept.getAssignedRoles()) {
-			ret.getAssignedRoles().add(declareInternal(role, monitor));
-		}
-
 		ret.setOptional(concept.isOptional());
 		ret.setGeneric(concept.isAbstractObservable());
 

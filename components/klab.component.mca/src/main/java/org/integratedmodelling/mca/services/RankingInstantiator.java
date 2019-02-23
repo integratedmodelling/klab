@@ -1,7 +1,10 @@
 package org.integratedmodelling.mca.services;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -9,6 +12,7 @@ import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
+import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
@@ -24,8 +28,9 @@ import org.integratedmodelling.mca.api.IStakeholder;
 public class RankingInstantiator implements IInstantiator, IExpression {
 
 	String targetArtifact = null;
-	Method method = Method.ELECTRE_III;
-
+	Method method = Method.EVAMIX;
+	boolean normalize = true;
+	
 	@Override
 	public IGeometry getGeometry() {
 		return Geometry.create("#");
@@ -38,8 +43,10 @@ public class RankingInstantiator implements IInstantiator, IExpression {
 
 	@Override
 	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
-		// TODO parameters
-		return new RankingInstantiator();
+		RankingInstantiator ret = new RankingInstantiator();
+		// TODO method
+		ret.normalize = parameters.get("normalize", Boolean.TRUE);
+		return ret;
 	}
 
 	@Override
@@ -73,8 +80,44 @@ public class RankingInstantiator implements IInstantiator, IExpression {
 
 		// run MCA
 		for (IStakeholder observer : observers) {
-			List<IAlternative> ranked = MCAComponent.rank(alternatives, criteria, observer, method);
-			// build and insert comparator in artifact
+			
+			 /**
+             * Stakeholder switching logics. TODO: this will not affect the criteria
+             * if they are also subjective.
+             */
+            if (observers.size() > 1) {
+                // if state is not an observed set, wrap it into one
+                if (!(target instanceof ISubjectiveObservation)) {
+                    target = ((ObservationGroup)target).reinterpret(/* TODO */ null);
+                }
+                // set the observer in the stakeholder in the set so that all further assignments reflect
+                // its perspective
+                ((ObservationGroup) target).setObserver(observer.getSubject());
+            }
+
+			// save scores
+			Map<String, Double> scores = new HashMap<>();
+			for (IAlternative a : MCAComponent.rank(alternatives, criteria, observer, method, normalize, context.getMonitor())) {
+				scores.put(a.getId(), a.getScore());
+			}
+			
+			// set in metadata
+			for (IArtifact artifact : target) {
+				artifact.getMetadata().put(MCAComponent.SCORE_METADATA_PROPERTY, scores.get(artifact.getId()));
+			}
+			
+			// TODO if @concordance was given and method has concordance, observe state in artifact
+			
+			// build and insert comparator in artifact, descending order
+			((ObservationGroup)target).setComparator(new Comparator<IArtifact>() {
+				
+				@Override
+				public int compare(IArtifact arg0, IArtifact arg1) {
+					double s0 = arg0.getMetadata().get(MCAComponent.SCORE_METADATA_PROPERTY, Double.NaN);
+					double s1 = arg1.getMetadata().get(MCAComponent.SCORE_METADATA_PROPERTY, Double.NaN);
+					return Double.isNaN(s0) || Double.isNaN(s1) ? 0 : Double.compare(s1, s0);
+				}
+			});
 		}
 
 

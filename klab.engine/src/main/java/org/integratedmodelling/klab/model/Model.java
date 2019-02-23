@@ -56,6 +56,7 @@ public class Model extends KimObject implements IModel {
 	private boolean instantiator;
 	private boolean reinterpreter;
 	private boolean inactive;
+	private boolean learning;
 	// saved at resource read, to be intersected with own coverage when requested
 	private Scale resourceCoverage;
 	// own coverage, resulting of own specs if any, namespace's if any, and
@@ -91,6 +92,7 @@ public class Model extends KimObject implements IModel {
 		this.namespace = namespace;
 		this.isPrivate = model.isPrivate();
 		this.instantiator = model.isInstantiator();
+		this.learning = model.isLearningModel();
 		this.setInactive(model.isInactive());
 
 		setDeprecated(model.isDeprecated() || namespace.isDeprecated());
@@ -530,6 +532,11 @@ public class Model extends KimObject implements IModel {
 	@Override
 	public boolean isSemantic() {
 		return getStatement().isSemantic();
+	}
+
+	@Override
+	public boolean isLearning() {
+		return learning;
 	}
 
 }

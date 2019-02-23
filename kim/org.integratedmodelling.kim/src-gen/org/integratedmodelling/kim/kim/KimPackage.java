@@ -1877,22 +1877,13 @@ public interface KimPackage extends EPackage
   int OBSERVABLE_SEMANTICS__DOWN_TO = 4;
 
   /**
-   * The feature id for the '<em><b>Role</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int OBSERVABLE_SEMANTICS__ROLE = 5;
-
-  /**
    * The feature id for the '<em><b>According To</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__ACCORDING_TO = 6;
+  int OBSERVABLE_SEMANTICS__ACCORDING_TO = 5;
 
   /**
    * The feature id for the '<em><b>Unit</b></em>' containment reference.
@@ -1901,7 +1892,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__UNIT = 7;
+  int OBSERVABLE_SEMANTICS__UNIT = 6;
 
   /**
    * The feature id for the '<em><b>Currency</b></em>' containment reference.
@@ -1910,7 +1901,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__CURRENCY = 8;
+  int OBSERVABLE_SEMANTICS__CURRENCY = 7;
 
   /**
    * The feature id for the '<em><b>Optional</b></em>' attribute.
@@ -1919,7 +1910,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__OPTIONAL = 9;
+  int OBSERVABLE_SEMANTICS__OPTIONAL = 8;
 
   /**
    * The feature id for the '<em><b>From</b></em>' containment reference.
@@ -1928,7 +1919,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__FROM = 10;
+  int OBSERVABLE_SEMANTICS__FROM = 9;
 
   /**
    * The feature id for the '<em><b>To</b></em>' containment reference.
@@ -1937,7 +1928,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__TO = 11;
+  int OBSERVABLE_SEMANTICS__TO = 10;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1946,7 +1937,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__NAME = 12;
+  int OBSERVABLE_SEMANTICS__NAME = 11;
 
   /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
@@ -1955,7 +1946,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__ANNOTATIONS = 13;
+  int OBSERVABLE_SEMANTICS__ANNOTATIONS = 12;
 
   /**
    * The feature id for the '<em><b>Condition</b></em>' attribute.
@@ -1964,7 +1955,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__CONDITION = 14;
+  int OBSERVABLE_SEMANTICS__CONDITION = 13;
 
   /**
    * The number of structural features of the '<em>Observable Semantics</em>' class.
@@ -1973,7 +1964,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS_FEATURE_COUNT = 15;
+  int OBSERVABLE_SEMANTICS_FEATURE_COUNT = 14;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.DependencyImpl <em>Dependency</em>}' class.
@@ -6091,17 +6082,6 @@ public interface KimPackage extends EPackage
   EReference getObservableSemantics_DownTo();
 
   /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getRole <em>Role</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Role</em>'.
-   * @see org.integratedmodelling.kim.kim.ObservableSemantics#getRole()
-   * @see #getObservableSemantics()
-   * @generated
-   */
-  EReference getObservableSemantics_Role();
-
-  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getAccordingTo <em>According To</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -10012,14 +9992,6 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EReference OBSERVABLE_SEMANTICS__DOWN_TO = eINSTANCE.getObservableSemantics_DownTo();
-
-    /**
-     * The meta object literal for the '<em><b>Role</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference OBSERVABLE_SEMANTICS__ROLE = eINSTANCE.getObservableSemantics_Role();
 
     /**
      * The meta object literal for the '<em><b>According To</b></em>' attribute feature.

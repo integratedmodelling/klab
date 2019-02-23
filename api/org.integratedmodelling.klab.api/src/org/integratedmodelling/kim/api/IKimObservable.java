@@ -106,14 +106,6 @@ public interface IKimObservable extends IKimStatement {
 	IArtifact.Type getNonSemanticType();
 
 	/**
-	 * Assigned roles follow 'as' and do not concern the semantics of the concept we
-	 * observe - they simply assign roles that are local to this USE of it.
-	 * 
-	 * @return
-	 */
-	Collection<IKimConcept> getAssignedRoles();
-
-	/**
 	 * The canonical definition
 	 * 
 	 * @return

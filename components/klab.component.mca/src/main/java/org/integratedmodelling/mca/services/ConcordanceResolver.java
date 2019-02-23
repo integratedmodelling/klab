@@ -5,12 +5,14 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.mca.api.IAlternative;
 import org.integratedmodelling.mca.api.ICriterion;
 import org.integratedmodelling.mca.api.IStakeholder;
@@ -23,90 +25,92 @@ import org.integratedmodelling.mca.model.Stakeholder;
 
 public class ConcordanceResolver implements IResolver<IState>, IExpression {
 
-    int        levels = 5;
-    MCAContext mcaContext;
-    IGeometry  geometry;
+	int levels = 5;
+	MCAContext mcaContext;
+	IGeometry geometry;
 
-    @Override
-    public IGeometry getGeometry() {
-        return geometry;
-    }
+	@Override
+	public IGeometry getGeometry() {
+		return geometry;
+	}
 
-    @Override
-    public Type getType() {
-        return Type.NUMBER;
-    }
+	@Override
+	public Type getType() {
+		return Type.NUMBER;
+	}
 
-    @Override
-    public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
-        ConcordanceResolver ret = new ConcordanceResolver();
-        ret.levels = parameters.get("levels", 5);
-        return ret;
-    }
+	@Override
+	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+		ConcordanceResolver ret = new ConcordanceResolver();
+		ret.levels = parameters.get("levels", 5);
+		return ret;
+	}
 
-    @Override
-    public IState resolve(IState ret, IComputationContext context) throws KlabException {
+	@Override
+	public IState resolve(IState ret, IComputationContext context) throws KlabException {
 
-        this.geometry = context.getScale();
-        MCAContext mcaContext = new MCAContext(ret
-                .getObservable(), (IRuntimeContext) context, ITime.INITIALIZATION, levels);
+		this.geometry = context.getScale();
+		MCAContext mcaContext = new MCAContext(ret.getObservable(), (IRuntimeContext) context, ITime.INITIALIZATION,
+				levels);
 
-        if (mcaContext.isComputable()) {
+		if (mcaContext.isComputable()) {
 
-            MCAAssessment mCAAssessment = new MCAAssessment();
-            for (ICriterion criterion : mcaContext.getCriteria()) {
-                mCAAssessment
-                        .declareCriterion(criterion.getName(), criterion.getDataType(), criterion.getType());
-            }
-            for (IAlternative alternative : mcaContext.getAlternatives()) {
-                mCAAssessment.declareAlternative(alternative.getId());
-                for (ICriterion criterion : mcaContext.getCriteria()) {
-                    mCAAssessment.setCriterionValue(alternative.getId(), criterion
-                            .getName(), ((Alternative) alternative).getValue(criterion.getName()));
-                }
-            }
-            for (IStakeholder stakeholder : mcaContext.getStakeholders()) {
+			MCAAssessment mCAAssessment = new MCAAssessment();
+			for (ICriterion criterion : mcaContext.getCriteria()) {
+				mCAAssessment.declareCriterion(criterion.getName(), criterion.getDataType(), criterion.getType());
+			}
 
-                /**
-                 * Stakeholder switching logics. TODO: this will not affect the criteria
-                 * if they are also subjective.
-                 */
-                if (!(mcaContext.getSpecification() == Specification.InlineSingle)) {
-                    // if state is not an observed set, wrap it into one
-                    if (!(ret instanceof ISubjectiveState)) {
-                        ret = ret.reinterpret(/* TODO */ null);
-                    }
-                    // set the observer in the stakeholder in the set so that all further assignments reflect
-                    // its perspective
-                    ((ISubjectiveState) ret).setObserver(stakeholder.getSubject());
-                }
+			for (IAlternative alternative : mcaContext.getAlternatives()) {
+				mCAAssessment.declareAlternative(alternative.getId());
+				for (ICriterion criterion : mcaContext.getCriteria()) {
+					mCAAssessment.setCriterionValue(alternative.getId(), criterion.getName(),
+							((Alternative) alternative).getValue(criterion.getName()));
+				}
+			}
 
-                mCAAssessment.resetWeights();
+			for (IStakeholder stakeholder : mcaContext.getStakeholders()) {
 
-                for (String crit : ((Stakeholder)stakeholder).getWeights().keySet()) {
-                    mCAAssessment.setCriterionWeight(crit, ((Stakeholder)stakeholder).getWeights().get(crit));
-                }
+				/**
+				 * Stakeholder switching logics. TODO: this will not affect the criteria if they
+				 * are also subjective.
+				 */
+				if (!(mcaContext.getSpecification() == Specification.InlineSingle)) {
+					// if state is not an observed set, wrap it into one
+					if (!(ret instanceof ISubjectiveState)) {
+						ret = ret.reinterpret(stakeholder.getSubject());
+					}
+					// set the observer in the stakeholder in the set so that all further
+					// assignments reflect
+					// its perspective
+					((ISubjectiveState) ret).setObserver(stakeholder.getSubject());
+				}
 
-                // invert to turn weights into priorities
-                mCAAssessment.invertWeights();
+				mCAAssessment.resetWeights();
 
-                // run
-                Results results = mCAAssessment.run(context.getMonitor());
+				for (String crit : ((Stakeholder) stakeholder).getWeights().keySet()) {
+					mCAAssessment.setCriterionWeight(crit, ((Stakeholder) stakeholder).getWeights().get(crit));
+				}
 
-                // TODO set directives for reporting
-                System.out.println(results.dump());
+				// invert to turn weights into priorities
+				mCAAssessment.invertWeights();
 
-                // have the MCAContext build the resulting artifact
-                mcaContext.distributeResults(results, ret);
+				// run
+				Results results = mCAAssessment.run(context.getMonitor());
 
-            }
+				// TODO set directives for reporting
+				System.out.println(results.dump());
 
-        } else {
-            context.getMonitor()
-                    .warn("MCA is not computable: must have 1+ stakeholders, 2+ valid criteria and 2+ valid alternatives");
-        }
+				// have the MCAContext build the resulting artifact
+				mcaContext.distributeResults(results, ret);
 
-        return ret;
-    }
+			}
+
+		} else {
+			context.getMonitor().warn(
+					"MCA is not computable: must have 1+ stakeholders, 2+ valid criteria and 2+ valid alternatives");
+		}
+
+		return ret;
+	}
 
 }

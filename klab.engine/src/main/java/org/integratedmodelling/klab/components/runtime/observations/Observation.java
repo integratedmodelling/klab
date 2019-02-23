@@ -1,17 +1,16 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -35,7 +34,6 @@ import org.integratedmodelling.klab.utils.Path;
 public abstract class Observation extends ObservedArtifact implements IObservation {
 
 	private Observable observable;
-	private Subject observer;
 	private ObservationGroup group = null;
 	// last modification. Must be correct for any cache to work.
 	private long timestamp = System.currentTimeMillis();
@@ -57,11 +55,6 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	protected Observation(Observable observable, Scale scale, IRuntimeContext context) {
 		super(scale, context);
 		this.observable = observable;
-	}
-
-	@Override
-	public Optional<ISubject> getObserver() {
-		return observer == null ? Optional.empty() : Optional.of(observer);
 	}
 
 	protected void touch() {
@@ -135,11 +128,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	public void setObservable(Observable observable) {
 		this.observable = observable;
 	}
-
-	public void setObserver(Subject observer) {
-		this.observer = observer;
-	}
-
+	
 	public Namespace getNamespace() {
 		return (Namespace) getRuntimeContext().getNamespace();
 	}
@@ -207,4 +196,5 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	public ISubjectiveObservation reinterpret(IDirectObservation observer) {
 		throw new IllegalStateException("reinterpret() was called on an illegal or unsupported type");
 	}
+
 }

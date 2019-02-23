@@ -137,7 +137,7 @@ public class Results {
     public void setNum_quant_criteria(int num_quant_criteria) {
         this.num_quant_criteria = num_quant_criteria;
     }
-
+    
     public Map<String, Double> getConcordances(boolean normalize) {
         
         Map<String,Double> ret = new HashMap<>();

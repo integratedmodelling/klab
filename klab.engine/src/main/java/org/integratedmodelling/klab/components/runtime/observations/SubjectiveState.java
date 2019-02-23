@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Optional;
 
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Klab;
@@ -16,20 +15,17 @@ import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.ISubjectiveState;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IAgent;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.scale.Scale;
 
 /**
  * This one wraps an existing state into a subjective set of 1 or more,
@@ -41,7 +37,7 @@ import org.integratedmodelling.klab.owl.Observable;
  * @author ferdinando.villa
  *
  */
-public class SubjectiveState implements ISubjectiveState {
+public class SubjectiveState extends Observation implements ISubjectiveState {
 
 	IState current;
 	Map<String, IState> cache = new HashMap<>();
@@ -53,16 +49,19 @@ public class SubjectiveState implements ISubjectiveState {
 		if (!observer.equals(this.observer)) {
 			IState state = cache.get(observer.getId());
 			if (state == null) {
-				Klab.INSTANCE.getRuntimeProvider().createState(
+				state = Klab.INSTANCE.getRuntimeProvider().createState(
 						((Observable) current.getObservable()).subjectify(observer), current.getType(),
 						current.getScale(), ((Observation) current).getRuntimeContext());
+				cache.put(observer.getId(), state);
 			}
 			this.current = state;
 			this.observer = observer;
+			((DirectObservation)observer).addSubjectiveObservation(this);
 		}
 	}
 
 	public SubjectiveState(IState state, IDirectObservation observer) {
+		super((Observable)state.getObservable(), (Scale)state.getScale(), ((Observation)state).getRuntimeContext());
 		this.current = state;
 		this.observer = observer;
 		this.cache.put(this.observer.getId(), state);
@@ -72,16 +71,12 @@ public class SubjectiveState implements ISubjectiveState {
 		return current.iterator();
 	}
 
-	public IMonitor getMonitor() {
-		return current.getMonitor();
+	public Monitor getMonitor() {
+		return (Monitor) current.getMonitor();
 	}
 
 	public IEngineSessionIdentity getParentIdentity() {
 		return current.getParentIdentity();
-	}
-
-	public Optional<ISubject> getObserver() {
-		return current.getObserver();
 	}
 
 	public boolean isConstant() {
@@ -96,12 +91,12 @@ public class SubjectiveState implements ISubjectiveState {
 		return current.get(index);
 	}
 
-	public IObservable getObservable() {
-		return current.getObservable();
+	public Observable getObservable() {
+		return (Observable)current.getObservable();
 	}
 
-	public IScale getScale() {
-		return current.getScale();
+	public Scale getScale() {
+		return (Scale)current.getScale();
 	}
 
 	public <T> Iterator<T> iterator(ILocator index, Class<? extends T> cls) {
@@ -124,8 +119,8 @@ public class SubjectiveState implements ISubjectiveState {
 		return current.getTable();
 	}
 
-	public IDirectObservation getContext() {
-		return current.getContext();
+	public DirectObservation getContext() {
+		return (DirectObservation)current.getContext();
 	}
 
 	public long set(ILocator index, Object value) {
@@ -209,10 +204,6 @@ public class SubjectiveState implements ISubjectiveState {
 		return current.getOwner();
 	}
 
-	public IActivity getGenerator() {
-		return current.getGenerator();
-	}
-
 	public Collection<IArtifact> getAntecedents() {
 		return current.getAntecedents();
 	}
@@ -257,5 +248,10 @@ public class SubjectiveState implements ISubjectiveState {
     public <T> T aggregate(IGeometry geometry, Class<? extends T> cls) {
         return current.aggregate(geometry, cls);
     }
+
+	@Override
+	public IDirectObservation getObserver() {
+		return observer;
+	}
 
 }

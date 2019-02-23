@@ -135,7 +135,14 @@ public class ObservationReference implements IObservationReference {
 		/**
 		 * Used in request to get the "raw" export data paired with an output format.
 		 */
-		RAW
+		RAW,
+		
+		/**
+		 * Corresponding to geometry #... - a folder, empty or ready to receive other
+		 * observations. Communicated always with childrenCount == 0, children may
+		 * arrive later.
+		 */
+		GROUP
 	}
 
 	/**
@@ -188,9 +195,17 @@ public class ObservationReference implements IObservationReference {
 
 	/**
 	 * If this observation is part of a group with >1 siblings, each sibling will
-	 * have the display label of the folder that should contain them.
+	 * have the display label of the folder that should contain them. The folder
+	 * will have been previously communicated as a group in case .
 	 */
 	private String folderLabel;
+	
+	/**
+	 * If the observation is part of a group, this will be the ID of the group. Note
+	 * that folderLabel will be the label of the group; on the other hand, not all
+	 * with folderLabel != null will be in a group.
+	 */
+	private String groupId;
 
 	/**
 	 * All roles adopted by this observation, either through the semantics or by
@@ -770,6 +785,14 @@ public class ObservationReference implements IObservationReference {
 
 	public void setChildrenCount(int childrenCount) {
 		this.childrenCount = childrenCount;
+	}
+
+	public String getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(String groupId) {
+		this.groupId = groupId;
 	}
 
 }

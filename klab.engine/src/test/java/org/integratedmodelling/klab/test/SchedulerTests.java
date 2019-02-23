@@ -14,7 +14,7 @@ public class SchedulerTests {
 		HashedWheelTimer timer = new HashedWheelMockTimer(20000);
 		timer.scheduleAtFixedRate(()-> System.out.println("at 10 every 5"), 10, 5, TimeUnit.SECONDS);
 		timer.scheduleAtFixedRate(()-> System.out.println("at 0 every 15"), 0, 15, TimeUnit.SECONDS);
-		timer.start();
+		timer.startUntil(400000);
 		
 		while(true) {
 			if (timer.isFinished()) {

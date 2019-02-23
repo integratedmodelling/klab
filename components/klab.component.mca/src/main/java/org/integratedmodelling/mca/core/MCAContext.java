@@ -1,11 +1,13 @@
 package org.integratedmodelling.mca.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -13,12 +15,14 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.geospace.processing.MapClassifier;
 import org.integratedmodelling.klab.components.geospace.processing.MapClassifier.MapClass;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.mca.MCAComponent;
 import org.integratedmodelling.mca.api.IAlternative;
 import org.integratedmodelling.mca.api.ICriterion;
@@ -128,6 +132,14 @@ public class MCAContext {
 				break;
 			case InlineMultiple:
 				// create stakeholders from specs with values for criteria
+				for (IStakeholder stakeholder : this.stakeholders) {
+					((Stakeholder) stakeholder).setSubject((ISubject) context
+							.newObservation(stakeholder.getObservable(), stakeholder.getName(), Scale.create()));
+					// TODO hostia there's more - criteria values
+					for (ICriterion criterion : this.criteria) {
+//						((ISubject)stakeholder.getSubject()).observe(urn, scenarios)
+					}
+				}
 				break;
 			case InlineSingle:
 				// store weights for single "objective" concordance assessment
@@ -245,7 +257,7 @@ public class MCAContext {
 
 			IObservable oobs = Observable.promote((IConcept) o);
 
-			Stakeholder stakeholder = getOrCreate(oobs.getLocalName());
+			Stakeholder stakeholder = getOrCreate(Concepts.INSTANCE.getDisplayName(oobs));
 			stakeholder.setObservable(oobs);
 			stakeholder.setWeight(observable.getLocalName(), ((Number) value.get(o)).doubleValue());
 		}
@@ -261,23 +273,23 @@ public class MCAContext {
 		return null;
 	}
 
-//	private IAnnotation getStakeholderAnnotation(IObservable observable) {
-//		for (IAnnotation annotation : ((Observable) observable).getAnnotations()) {
-//			if (annotation.getName().equals("stakeholder")) {
-//				return annotation;
-//			}
-//		}
-//		return null;
-//	}
-//
-//	private IAnnotation getAlternativeAnnotation(IObservable observable) {
-//		for (IAnnotation annotation : ((Observable) observable).getAnnotations()) {
-//			if (annotation.getName().equals("alternative")) {
-//				return annotation;
-//			}
-//		}
-//		return null;
-//	}
+	// private IAnnotation getStakeholderAnnotation(IObservable observable) {
+	// for (IAnnotation annotation : ((Observable) observable).getAnnotations()) {
+	// if (annotation.getName().equals("stakeholder")) {
+	// return annotation;
+	// }
+	// }
+	// return null;
+	// }
+	//
+	// private IAnnotation getAlternativeAnnotation(IObservable observable) {
+	// for (IAnnotation annotation : ((Observable) observable).getAnnotations()) {
+	// if (annotation.getName().equals("alternative")) {
+	// return annotation;
+	// }
+	// }
+	// return null;
+	// }
 
 	public List<IAlternative> getAlternatives() {
 		return alternatives;
@@ -294,14 +306,13 @@ public class MCAContext {
 	public void distributeResults(Results results, IState ret) {
 		if (classifier != null) {
 			Map<String, Double> res = results.getConcordances(true);
-			if (classifier != null) {
-				double[] cvals = new double[alternatives.size()];
-				int i = 0;
-				for (IAlternative da : alternatives) {
-					cvals[i++] = res.get(da.getId());
-				}
-				classifier.distributeResults(ret, cvals);
+			double[] cvals = new double[alternatives.size()];
+			Arrays.fill(cvals, Double.NaN);
+			int i = 0;
+			for (IAlternative da : alternatives) {
+				cvals[i++] = res.get(da.getId());
 			}
+			classifier.distributeResults(ret, cvals);
 		} // TODO else...
 	}
 }

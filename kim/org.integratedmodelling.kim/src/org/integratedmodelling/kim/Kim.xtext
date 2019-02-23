@@ -303,7 +303,7 @@ ObservableSemantics:
 	(
 		('by' by=Concept)? &
 		('down' 'to' downTo=Concept)? &
-		('as' role=Concept)? &
+//		('as' role=Concept)? &
 		('according' 'to' accordingTo=PropertyId)? &
 		(
 			('in' (unit=Unit | currency=Currency)) |
@@ -577,7 +577,7 @@ ConceptStatementBody:
 			('in' restrictedObservables+=ConceptDeclaration (',' restrictedObservables+=ConceptDeclaration)*))? &
 
 	/*
-               * for processes: confer given trait(s) to (participant subjects).
+               * for processes: confer given trait(s) [or role(s)] to (participant subjects).
                */
 		('confers' conferredTraits+=ConceptDeclaration (',' conferredTraits+=ConceptDeclaration)*
 			('to' conferredTargets+=ConceptDeclaration (',' conferredTargets+=ConceptDeclaration)*)?

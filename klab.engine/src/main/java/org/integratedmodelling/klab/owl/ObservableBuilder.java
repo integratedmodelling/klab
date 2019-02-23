@@ -104,7 +104,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	 * 
 	 * @param observable
 	 */
-	public ObservableBuilder(Observable observable) {
+	public ObservableBuilder(Observable observable, IMonitor monitor) {
 
 		this.main = (Concept) Observables.INSTANCE.getCoreObservable(observable.getMain());
 		this.type = this.main.getTypeSet();
@@ -131,6 +131,8 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.currency = observable.getCurrency();
 		this.downTo = observable.getDownTo();
 		this.classifier = observable.getClassifier();
+		
+		this.monitor = monitor;
 		
 	}
 

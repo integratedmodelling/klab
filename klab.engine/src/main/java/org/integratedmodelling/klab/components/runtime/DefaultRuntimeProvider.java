@@ -338,7 +338,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		}
 		
 		Observation ret = null;
-		if (observable.is(Type.SUBJECT)) {
+		if (observable.is(Type.SUBJECT) || observable.is(Type.AGENT)) {
 			ret = new Subject(observable.getLocalName(), (Observable) observable, (Scale) scale, context);
 		} else if (observable.is(Type.EVENT)) {
 			ret = new Event(observable.getLocalName(), (Observable) observable, (Scale) scale, context);
