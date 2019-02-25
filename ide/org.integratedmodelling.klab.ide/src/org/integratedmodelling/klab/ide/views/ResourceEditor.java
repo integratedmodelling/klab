@@ -581,12 +581,12 @@ public class ResourceEditor extends ViewPart {
 		Composite composite_3 = new Composite(tabFolder, SWT.NONE);
 		tbtmPermissions.setControl(composite_3);
 
-		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText("New Item");
+//		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
+//		tabItem.setText("New Item");
 
 		ScrolledComposite scrolledComposite = new ScrolledComposite(tabFolder,
 				SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		tabItem.setControl(scrolledComposite);
+		tbtmProvenanceData.setControl(scrolledComposite);
 		scrolledComposite.setExpandHorizontal(true);
 		scrolledComposite.setExpandVertical(true);
 
