@@ -1,4 +1,4 @@
-package app.freelancer.syafiqq.madm.topsis.core.factory;
+package org.integratedmodelling.mca.contrib.topsis;
 
 /*
  * This <topsis> created by : 

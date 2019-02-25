@@ -1,4 +1,4 @@
-package app.freelancer.syafiqq.madm.topsis.core.factory;
+package org.integratedmodelling.mca.contrib.topsis;
 
 /*
  * This <topsis> created by : 
@@ -7,6 +7,6 @@ package app.freelancer.syafiqq.madm.topsis.core.factory;
  * Email        : syafiq.rezpector@gmail.com
  * Github       : syafiqq
  */
-public abstract class Weight
+public abstract class WeightContainer
 {
 }

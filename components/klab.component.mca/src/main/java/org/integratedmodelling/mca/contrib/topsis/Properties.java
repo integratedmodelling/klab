@@ -1,12 +1,12 @@
-package app.freelancer.syafiqq.madm.topsis.core.factory;
+package org.integratedmodelling.mca.contrib.topsis;
 
 /*
  * This <topsis> created by : 
  * Name         : syafiq
- * Date / Time  : 13 April 2017, 7:56 AM.
+ * Date / Time  : 13 April 2017, 8:52 AM.
  * Email        : syafiq.rezpector@gmail.com
  * Github       : syafiqq
  */
-public abstract class WeightContainer
+public abstract class Properties
 {
 }
