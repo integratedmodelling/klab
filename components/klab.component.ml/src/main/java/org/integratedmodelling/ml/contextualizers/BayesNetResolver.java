@@ -39,7 +39,7 @@ java weka.classifiers.bayes.BayesNet -t iris.arff -D \
 public class BayesNetResolver extends AbstractWekaResolver<BayesNet> {
 
 	protected BayesNetResolver(IParameters<String> parameters) {
-		super(BayesNet.class, parameters);
+		super(BayesNet.class, parameters, true);
 	}
 
 	@Override

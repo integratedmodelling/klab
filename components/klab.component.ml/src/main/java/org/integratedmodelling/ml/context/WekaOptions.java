@@ -2,9 +2,11 @@ package org.integratedmodelling.ml.context;
 
 import org.integratedmodelling.kim.api.IParameters;
 
+import weka.classifiers.Classifier;
+
 /**
  * <pre>
- * General options:
+ * General options (common to all classifiers):
 
 -t <name of training file>
         Sets training file.
@@ -59,8 +61,15 @@ import org.integratedmodelling.kim.api.IParameters;
  */
 public class WekaOptions {
 	
-	public WekaOptions(IParameters<String> parameters) {
+	private String[] options;
+	
+	public WekaOptions(Class<? extends Classifier> cls, IParameters<String> parameters) {
 		// TODO Auto-generated constructor stub
+		// TODO lookup classifier semantics in table, process options accordingly
+	}
+	
+	public String[] getWekaOptions() {
+		return options;
 	}
 	
 }

@@ -1,11 +1,11 @@
-package app.freelancer.syafiqq.madm.topsis.core.factory;
+package org.integratedmodelling.mca.contrib.topsis;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-import app.freelancer.syafiqq.madm.topsis.core.factory.interfaces.Compressable;
+import org.integratedmodelling.mca.contrib.topsis.interfaces.Compressable;
 
 /*
  * This <topsis> created by : 

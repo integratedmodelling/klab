@@ -14,6 +14,11 @@ public class WekaClassifier {
 
 	private Classifier classifier;
 
+	public WekaClassifier(Class<? extends Classifier> cls, WekaOptions options) {
+		// TODO create classifier instance
+		// TODO set options
+	}
+
 	public void train(WekaInstances instances) {
 
 	}
