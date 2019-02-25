@@ -491,7 +491,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 				
 					resource = Resources.INSTANCE.getLocalResourceCatalog().remove(urn);
 					((Resource)resource).update(request);
-					resource = Resources.INSTANCE.getLocalResourceCatalog().put(urn, resource);
+					Resources.INSTANCE.getLocalResourceCatalog().put(urn, resource);
 					monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceUpdated,
 							((Resource) resource).getReference());
 			

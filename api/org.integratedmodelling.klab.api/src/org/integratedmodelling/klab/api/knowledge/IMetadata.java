@@ -211,6 +211,12 @@ public interface IMetadata extends IParameters<String> {
 	/** The Constant IM_MAX_TEMPORAL_SCALE. */
 	public static final String IM_MAX_TEMPORAL_SCALE = "im:max-temporal-scale";
 
+	/**
+	 * 
+	 */
+	public static final String IM_NOTES = "im:notes";
+
+	
 	/** The Constant KLAB_LINE_COLOR. */
 	/*
 	 * KLAB-specific, for visualization and display
