@@ -1,11 +1,27 @@
-/*
- * Parameters accepted in a raster resource
+/**
+ * Interface contextualizers for Weka functions.
  */
- annotation weka 
+@klab 0.10.0
+@version 0.10.0
+@namespace im.weka
+
+abstract value classifier {		
+	optional text resource 
+		"ID of the local resource containing the trained model"
+		
+	// TODO all common parameters
+}
+
+export value bayesnet extends wekaclassifier
 	""
- {
- 	optional input classifier
- 		""
- 		default 0
- 		
- }
+	label 'WEKA BayesNet'
+{		
+	class org.integratedmodelling.ml.contextualizers.BayesNetResolver
+}
+
+export value randomforest extends wekaclassifier
+	""
+	label 'WEKA Random Forests'
+{		
+	// class org.integratedmodelling.ml.weka.BayesNetResolver
+}

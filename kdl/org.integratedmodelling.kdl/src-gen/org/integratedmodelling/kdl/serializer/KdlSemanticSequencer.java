@@ -160,12 +160,14 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     (
 	 *         (
 	 *             annotations+=Annotation* 
+	 *             abstract?='abstract'? 
 	 *             final?='final'? 
 	 *             optional?='optional'? 
 	 *             (exported?='export' | (imported?='import' (multiple?='multiple' | (arity=INT minimum?='+'?))?))? 
 	 *             parameter?='parameter'? 
 	 *             type=ACTOR 
 	 *             (name=LOWERCASE_ID | name=LOWERCASE_DASHID | name=STRING) 
+	 *             (extended=LOWERCASE_ID | extended=LOWERCASE_DASHID | extended=STRING)? 
 	 *             (targets+=TARGET targets+=TARGET*)? 
 	 *             docstring=STRING? 
 	 *             label=STRING? 
@@ -175,6 +177,7 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *             (coverage+=Function coverage+=Function*)?
 	 *         ) | 
 	 *         (
+	 *             abstract?='abstract'? 
 	 *             (
 	 *                 optional?='optional' | 
 	 *                 type='number' | 
@@ -185,6 +188,7 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *             ) 
 	 *             (parameter?='input' | imported?='import') 
 	 *             (name=LOWERCASE_ID | name=LOWERCASE_DASHID | name=STRING) 
+	 *             (extended=LOWERCASE_ID | extended=LOWERCASE_DASHID | extended=STRING)? 
 	 *             (enumValues+=UPPERCASE_ID enumValues+=UPPERCASE_ID*)? 
 	 *             docstring=STRING 
 	 *             label=STRING? 

@@ -33,13 +33,18 @@ ActorDefinition:
 	 */
 	
 	annotations += Annotation*
+	// abstract only allowed at root level; only exists to be extended
+	(abstract?='abstract')?
 	(final?='final')? (optional?='optional')? 
 	// export and import are from a CONTEXT and refer to artifact. So 'export number' is a contextualizer that produces numbers.
 	((exported?='export' | (imported?='import') (multiple?='multiple' | arity=INT (minimum?='+')?)?))? 
 	// parameters denotes the ability of the implementation of accepting modified values during run
 	// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
 	(parameter?='parameter')?
-	type=ACTOR name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING) ('for' targets+=TARGET (',' targets+=TARGET)*)? (docstring=STRING)? ('label' label=STRING)?
+	type=ACTOR name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING) 
+		// extends only allowed at root level; must extend another upstream in same file
+		('extends' extended=(LOWERCASE_ID|LOWERCASE_DASHID|STRING))?
+		('for' targets+=TARGET (',' targets+=TARGET)*)? (docstring=STRING)? ('label' label=STRING)?
 	('default' default=Value)?
 	('{' body=DataflowBody '}')?
 	('as' localName=LOWERCASE_ID)?
@@ -51,11 +56,14 @@ ActorDefinition:
 	 * This is the form to declare service prototypes - TODO probably overkill at this point
 	 */
 
+	// abstract only allowed at root level; only exists to be extended
+	(abstract?='abstract')?
 	// parameter for services - takes type from value if optional; default mandatory if optional; docstring is mandatory
 	((optional?='optional') | type=('number' | 'boolean' | 'text' | 'list' | 'enum')) 
 	// input = function parameter; import = artifact from context
 	(parameter?='input'|imported?='import') name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING)
-	// enum values, only for enum type
+	// extends only allowed at root level; must extend another upstream in same file
+	('extends' extended=(LOWERCASE_ID|LOWERCASE_DASHID|STRING))?	// enum values, only for enum type
 	('values' enumValues+=UPPERCASE_ID (',' enumValues+=UPPERCASE_ID)*)?
 	(docstring=STRING) ('label' label=STRING)?
 	('default' default=Value)?

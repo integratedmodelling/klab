@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getAnnotations <em>Annotations</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isAbstract <em>Abstract</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isFinal <em>Final</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isOptional <em>Optional</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isExported <em>Exported</em>}</li>
@@ -27,6 +28,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isParameter <em>Parameter</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getType <em>Type</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getName <em>Name</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getExtended <em>Extended</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getTargets <em>Targets</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getDocstring <em>Docstring</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getLabel <em>Label</em>}</li>
@@ -60,6 +62,32 @@ public interface ActorDefinition extends EObject
    * @generated
    */
   EList<Annotation> getAnnotations();
+
+  /**
+   * Returns the value of the '<em><b>Abstract</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Abstract</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Abstract</em>' attribute.
+   * @see #setAbstract(boolean)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Abstract()
+   * @model
+   * @generated
+   */
+  boolean isAbstract();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isAbstract <em>Abstract</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Abstract</em>' attribute.
+   * @see #isAbstract()
+   * @generated
+   */
+  void setAbstract(boolean value);
 
   /**
    * Returns the value of the '<em><b>Final</b></em>' attribute.
@@ -320,6 +348,32 @@ public interface ActorDefinition extends EObject
    * @generated
    */
   void setName(String value);
+
+  /**
+   * Returns the value of the '<em><b>Extended</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Extended</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Extended</em>' attribute.
+   * @see #setExtended(String)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Extended()
+   * @model
+   * @generated
+   */
+  String getExtended();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getExtended <em>Extended</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Extended</em>' attribute.
+   * @see #getExtended()
+   * @generated
+   */
+  void setExtended(String value);
 
   /**
    * Returns the value of the '<em><b>Targets</b></em>' attribute list.
