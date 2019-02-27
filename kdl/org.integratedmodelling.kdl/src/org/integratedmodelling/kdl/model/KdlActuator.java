@@ -146,7 +146,7 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 			}
 
 			for (ActorDefinition actor : o.getBody().getDataflows()) {
-				IKdlActuator act = new KdlActuator(actor);
+				IKdlActuator act = new KdlActuator(actor, previousActuators);
 				if (act.isImported()) {
 					this.inputs.add(act);
 				}

@@ -4,6 +4,7 @@
 package org.integratedmodelling.kdl.validation;
 
 import com.google.common.base.Objects;
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.validation.Check;
 import org.integratedmodelling.kdl.kdl.ActorDefinition;
@@ -33,6 +34,16 @@ public class KdlValidator extends AbstractKdlValidator {
     if (((actor.isParameter() && actor.isOptional()) && (actor.getDefault() == null))) {
       this.error("Optional parameters must specify a default value", actor, 
         KdlPackage.Literals.ACTOR_DEFINITION__OPTIONAL);
+    }
+    if (((actor.isAbstract() || (actor.getExtended() != null)) && (!(actor.eContainer() instanceof Model)))) {
+      EAttribute _xifexpression = null;
+      boolean _isAbstract = actor.isAbstract();
+      if (_isAbstract) {
+        _xifexpression = KdlPackage.Literals.ACTOR_DEFINITION__ABSTRACT;
+      } else {
+        _xifexpression = KdlPackage.Literals.ACTOR_DEFINITION__EXTENDED;
+      }
+      this.error("abstract actors and extensions are only allowed at top level", actor, _xifexpression);
     }
     if ((((actor.getType() != null) && (actor.getType() == "enum")) && actor.getEnumValues().isEmpty())) {
       this.error("Enum parameters must specify all enum values with \'values\'", actor, 

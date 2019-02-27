@@ -358,22 +358,20 @@ class KimValidator extends AbstractKimValidator {
 			}
 
 			if (cd.observable !== null) {
-				
+
 				if (cd.observable.value !== null && cd.observable.value.id !== null) {
-					error("Attributes IDs are not allowed in dependencies (<attribute> 'as' ...): only values, expressions or functions", 
-						KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES,
-						i, BAD_OBSERVABLE)
+					error(
+						"Attributes IDs are not allowed in dependencies (<attribute> 'as' ...): only values, expressions or functions",
+						KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, BAD_OBSERVABLE)
 				}
-				
+
 				if (observable.value !== null) {
 					val error = observable.validateValue();
 					if (error !== null) {
-						error(error, 
-							KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES,
-							i, BAD_OBSERVABLE)
+						error(error, KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, BAD_OBSERVABLE)
 					}
 				}
-				
+
 				var definition = observable.descriptor
 				if (definition.isUndefined) {
 					error('Dependency has undefined semantics', KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES,
@@ -397,10 +395,10 @@ class KimValidator extends AbstractKimValidator {
 					var errs = 0
 					for (notification : ann.validateUsage(ann)) {
 						notify(notification, cd, KimPackage.Literals.DEPENDENCY__ANNOTATIONS, j)
-						errs ++
+						errs++
 					}
 					if (errs == 0) {
-					    observable.annotations.add(ann);
+						observable.annotations.add(ann);
 					}
 					j++
 				}
@@ -788,7 +786,6 @@ class KimValidator extends AbstractKimValidator {
 //					KimPackage.OBSERVABLE_SEMANTICS__ROLE)
 //			}
 //		}
-
 		var declaration = Kim.INSTANCE.declareConcept(semantics.declaration)
 
 		if (declaration !== null) {
