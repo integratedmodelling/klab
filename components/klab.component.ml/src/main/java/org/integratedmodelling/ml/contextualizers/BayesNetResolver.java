@@ -2,7 +2,12 @@ package org.integratedmodelling.ml.contextualizers;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.scale.Scale;
 
 import weka.classifiers.bayes.BayesNet;
 
@@ -36,22 +41,31 @@ java weka.classifiers.bayes.BayesNet -t iris.arff -D \
  * @author Ferd
  *
  */
-public class BayesNetResolver extends AbstractWekaResolver<BayesNet> {
+public class BayesNetResolver extends AbstractWekaResolver<BayesNet> implements IExpression {
 
-	protected BayesNetResolver(IParameters<String> parameters) {
+	private IComputationContext context;
+
+	public BayesNetResolver() {}
+	
+	public BayesNetResolver(IParameters<String> parameters,IComputationContext context) {
 		super(BayesNet.class, parameters, true);
+		this.context = context;
 	}
 
 	@Override
 	public IGeometry getGeometry() {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO check
+		return ((Scale)context.getScale().at(ITime.INITIALIZATION)).asGeometry();
 	}
 
 	@Override
 	public Type getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return Type.NUMBER;
+	}
+
+	@Override
+	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+		return new BayesNetResolver(parameters, context);
 	}
 
 }

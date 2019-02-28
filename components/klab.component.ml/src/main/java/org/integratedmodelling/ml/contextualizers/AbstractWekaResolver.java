@@ -18,6 +18,8 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 	WekaOptions options;
 	boolean outputModel = false;
 	
+	protected AbstractWekaResolver() {}
+	
 	protected AbstractWekaResolver(Class<T> cls, IParameters<String> parameters, boolean requiresDiscretization) {
 		this.options = new WekaOptions(cls, parameters);
 		this.classifier = new WekaClassifier(cls, this.options);
