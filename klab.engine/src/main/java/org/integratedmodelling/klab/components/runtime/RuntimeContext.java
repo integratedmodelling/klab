@@ -698,6 +698,11 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	public ISubject getRootSubject() {
 		return rootSubject;
 	}
+	
+	@Override
+	public IDirectObservation getContextSubject() {
+		return contextSubject;
+	}
 
 	@Override
 	public IObservation getObservation(String observationId) {

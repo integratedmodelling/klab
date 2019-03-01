@@ -33,6 +33,9 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 			// our main output is a model artifact
 			outputModel = true;
 		}
+		
+		System.out.println(instances.getInstances());
+		
 		return ret;
 	}
 

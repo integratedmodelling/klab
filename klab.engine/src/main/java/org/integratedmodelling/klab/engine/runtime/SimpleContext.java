@@ -481,4 +481,10 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
         
     }
 
+	@Override
+	public IDirectObservation getContextSubject() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

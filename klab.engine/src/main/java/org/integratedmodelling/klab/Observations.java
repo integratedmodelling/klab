@@ -499,4 +499,12 @@ public enum Observations implements IObservationService {
 		return null;
 	}
 
+	public boolean isData(Object o) {
+		return o != null && !(o instanceof Number && Double.isNaN(((Number)o).doubleValue()));
+	}
+
+	public boolean isNodata(Object o) {
+		return !isData(o);
+	}
+
 }

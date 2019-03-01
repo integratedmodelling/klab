@@ -395,6 +395,9 @@ public class RescalingState extends Observation implements IState {
 
     @Override
     public <T> T aggregate(IGeometry geometry, Class<? extends T> cls) {
+    	if (newScale.size() == 1) {
+    		return get(newScale.getLocator(0), cls);
+    	}
         throw new KlabUnimplementedException("aggregation of rescaled states is unimplemented - please submit a request");
     }
 }

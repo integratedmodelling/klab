@@ -15,11 +15,15 @@ annotation predictor for dependencies
 	
 	optional text id
 		""
+		
+	optional number weight
+		""
 }
 
 annotation archetype for dependencies
 	""
 {
-	optional value 'value'
-		""
+	optional concept weight
+		"If specified, defines the observable of a quality to use as weight for each instance created from
+		 the archetype. Instance weights are used by Weka in ways that depend on the classifier chosen."
 }
