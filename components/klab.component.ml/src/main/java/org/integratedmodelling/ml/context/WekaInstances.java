@@ -127,7 +127,8 @@ public class WekaInstances {
 		}
 		
 		// attribute weight from predictor annotation. The archetype has always 1.
-		ret.setWeight(attributeWeights.get(observable.getObservable().getLocalName()));
+		Double weight = attributeWeights.get(observable.getObservable().getLocalName());
+		ret.setWeight(weight == null ? 1.0 : weight);
 		
 		return ret;
 	}
