@@ -1326,7 +1326,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (inherent != null) {
 			IConcept other = Observables.INSTANCE.getInherentType(main);
 			if (other != null && !Observables.INSTANCE.isCompatible(inherent, other)) {
-				monitor.error("cannot add inherent type " + Concepts.INSTANCE.getDisplayName(inherent) + " to concept "
+				monitor.error("cannot set inherent type of " + Concepts.INSTANCE.getDisplayName(inherent) + " to "
 						+ Concepts.INSTANCE.getDisplayName(main) + " as it already has an incompatible inherency: "
 						+ Concepts.INSTANCE.getDisplayName(other), declaration);
 			}
@@ -1339,7 +1339,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (context != null) {
 			IConcept other = Observables.INSTANCE.getContextType(main);
 			if (other != null && !Observables.INSTANCE.isCompatible(context, other)) {
-				monitor.error("cannot add context " + Concepts.INSTANCE.getDisplayName(context) + " to concept "
+				monitor.error("cannot set context of " + Concepts.INSTANCE.getDisplayName(context) + " to "
 						+ Concepts.INSTANCE.getDisplayName(main) + " as it already has an incompatible context: "
 						+ Concepts.INSTANCE.getDisplayName(other), declaration);
 			}
@@ -1352,7 +1352,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (compresent != null) {
 			IConcept other = Observables.INSTANCE.getCompresentType(main);
 			if (other != null && !Observables.INSTANCE.isCompatible(compresent, other)) {
-				monitor.error("cannot add compresent " + Concepts.INSTANCE.getDisplayName(compresent) + " to concept "
+				monitor.error("cannot set compresent type of " + Concepts.INSTANCE.getDisplayName(compresent) + " to "
 						+ Concepts.INSTANCE.getDisplayName(main)
 						+ " as it already has an incompatible compresent type: "
 						+ Concepts.INSTANCE.getDisplayName(other), declaration);
@@ -1366,7 +1366,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			// TODO transform as necessary
 			IConcept other = Observables.INSTANCE.getGoalType(main);
 			if (other != null && !Observables.INSTANCE.isCompatible(goal, other)) {
-				monitor.error("cannot add goal " + Concepts.INSTANCE.getDisplayName(goal) + " to concept "
+				monitor.error("cannot set goal type of " + Concepts.INSTANCE.getDisplayName(goal) + " to "
 						+ Concepts.INSTANCE.getDisplayName(main) + " as it already has an incompatible goal type: "
 						+ Concepts.INSTANCE.getDisplayName(other), declaration);
 			}
@@ -1378,7 +1378,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (caused != null) {
 			IConcept other = Observables.INSTANCE.getCausedType(main);
 			if (other != null && !Observables.INSTANCE.isCompatible(caused, other)) {
-				monitor.error("cannot add caused " + Concepts.INSTANCE.getDisplayName(caused) + " to concept "
+				monitor.error("cannot set caused type of " + Concepts.INSTANCE.getDisplayName(caused) + " to "
 						+ Concepts.INSTANCE.getDisplayName(main) + " as it already has an incompatible caused type: "
 						+ Concepts.INSTANCE.getDisplayName(other), declaration);
 			}
@@ -1390,7 +1390,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (causant != null) {
 			IConcept other = Observables.INSTANCE.getCausantType(main);
 			if (other != null && !Observables.INSTANCE.isCompatible(causant, other)) {
-				monitor.error("cannot add causant " + Concepts.INSTANCE.getDisplayName(causant) + " to concept "
+				monitor.error("cannot set causant type of " + Concepts.INSTANCE.getDisplayName(causant) + " to "
 						+ Concepts.INSTANCE.getDisplayName(main) + " as it already has an incompatible causant type: "
 						+ Concepts.INSTANCE.getDisplayName(other), declaration);
 			}
@@ -1402,7 +1402,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (adjacent != null) {
 			IConcept other = Observables.INSTANCE.getAdjacentType(main);
 			if (other != null && !Observables.INSTANCE.isCompatible(adjacent, other)) {
-				monitor.error("cannot add adjacent " + Concepts.INSTANCE.getDisplayName(adjacent) + " to concept "
+				monitor.error("cannot set adjacent type of " + Concepts.INSTANCE.getDisplayName(adjacent) + " to "
 						+ Concepts.INSTANCE.getDisplayName(main) + " as it already has an incompatible adjacent type: "
 						+ Concepts.INSTANCE.getDisplayName(other), declaration);
 			}
@@ -1414,8 +1414,8 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (cooccurrent != null) {
 			IConcept other = Observables.INSTANCE.getCooccurrentType(cooccurrent);
 			if (other != null && !Observables.INSTANCE.isCompatible(cooccurrent, other)) {
-				monitor.error("cannot add co-occurrent " + Concepts.INSTANCE.getDisplayName(cooccurrent)
-						+ " to concept " + Concepts.INSTANCE.getDisplayName(main)
+				monitor.error("cannot set co-occurrent type of " + Concepts.INSTANCE.getDisplayName(cooccurrent)
+						+ " to " + Concepts.INSTANCE.getDisplayName(main)
 						+ " as it already has an incompatible co-occurrent type: "
 						+ Concepts.INSTANCE.getDisplayName(other), declaration);
 			}

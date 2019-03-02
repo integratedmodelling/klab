@@ -1028,8 +1028,8 @@ class KimValidator extends AbstractKimValidator {
 			}
 
 			if (declaration.context !== null) {
-				if (!type.contains(Type.OBSERVABLE)) {
-					error("Only observables can have context", declaration.context, null,
+				if (!type.contains(Type.OBSERVABLE) && !flags.contains(Type.CONFIGURATION)) {
+					error("Only observables and configurations can have context", declaration.context, null,
 						KimPackage.CONCEPT_DECLARATION__INHERENCY)
 				}
 				flags = checkDeclaration(declaration.context)

@@ -122,7 +122,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 	}
 
 	public KimConcept(KimConcept other) {
-		super();
+		super(other);
 		this.name = other.name;
 		this.expressionType = other.expressionType;
 		this.observable = other.observable;

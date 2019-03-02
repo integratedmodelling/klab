@@ -46,6 +46,21 @@ public class KimStatement extends KimScope implements IKimStatement {
     public KimStatement() {
     }
 
+    public KimStatement(KimStatement statement) {
+        this.firstCharOffset = statement.firstCharOffset;
+        this.lastCharOffset = statement.lastCharOffset;
+        this.firstLine = statement.firstLine;
+        this.lastLine = statement.lastLine;
+        this.offset = statement.offset;
+        this.namespace = statement.namespace;
+        this.resource = statement.resource;
+        this.deprecated = statement.deprecated;
+        this.deprecation = statement.deprecation;
+        this.sourceCode = statement.sourceCode;
+        this.errors = statement.errors;
+        this.warnings = statement.warnings;
+    }
+    
     public KimStatement(EObject statement, IKimStatement parent) {
         this.eObject = statement;
         if (statement != null) {
