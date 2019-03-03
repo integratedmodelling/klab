@@ -3,6 +3,7 @@ package org.integratedmodelling.klab;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -42,6 +43,7 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.owl.Concept;
@@ -623,6 +625,18 @@ public enum Observables implements IObservableService {
         }
     }
 
+    class ConfigurationMatch {
+        public ConfigurationMatch(IConcept configuration, int nt, int sd) {
+            this.configuration = configuration;
+            this.nTargets = nt;
+            this.totalDistance = sd;
+        }
+
+        int      nTargets;
+        int      totalDistance;
+        IConcept configuration;
+    }
+
     /**
      * Configuration detector. Called after each instantiation to examine the known configurations and allow
      * the instantiation of a configuration observation for any that matches.
@@ -631,10 +645,57 @@ public enum Observables implements IObservableService {
      * 
      * @param instances
      * @param context
-     * @return a list of descriptors for each detected configuration.
+     * @return the matching configuration info, including the configuration concept and the observation targets in the
+     * context, or null.
      */
-    public List<Pair<IConcept, List<IObservation>>>  detectConfigurations(ObservationGroup instances, IDirectObservation context) {
+    public Pair<IConcept, Set<IObservation>> detectConfigurations(ObservationGroup instances, IDirectObservation context) {
+
+        List<ConfigurationMatch> matches = new ArrayList<>();
+        for (Configuration configuration : configurations.values()) {
+            int nt = 0;
+            int sd = 0;
+            for (IConcept target : configuration.targets) {
+                if (instances.getObservable().getType().is(target)) {
+                    nt++;
+                    sd += Concepts.INSTANCE.getAssertedDistance(instances.getObservable().getType(), target);
+                }
+            }
+            if (nt > 0) {
+                matches.add(new ConfigurationMatch(configuration.configuration, nt, sd));
+            }
+        }
+
+        if (matches.size() > 0) {
+            // Sort matches by decreasing ntargets and increasing distance; return first in list
+            matches.sort(new Comparator<ConfigurationMatch>() {
+
+                @Override
+                public int compare(ConfigurationMatch o1, ConfigurationMatch o2) {
+                    if (o1.nTargets == o2.nTargets) {
+                        return Integer.compare(o1.totalDistance, o2.totalDistance);
+                    }
+                    return Integer.compare(o2.nTargets, o1.nTargets);
+                }
+            });
+
+            ConfigurationMatch first = matches.iterator().next();
+
+            Set<IObservation> targets = new HashSet<>();
+            targets.add(instances);
+            Configuration configuration = configurations.get(first.configuration);
+            for (IConcept c : configuration.targets) {
+                for (IObservation o : context.getChildren(IObservation.class)) {
+                    if (o.getObservable().is(c)) {
+                        targets.add(o);
+                    }
+                }
+            }
+
+            return new Pair<>(first.configuration, targets);
+
+        }
+
         return null;
     }
-    
+
 }
