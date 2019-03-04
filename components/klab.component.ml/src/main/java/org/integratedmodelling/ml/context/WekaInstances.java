@@ -17,9 +17,11 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.ml.MLComponent;
 
@@ -58,7 +60,7 @@ public class WekaInstances {
 					throw new IllegalArgumentException("Weka: predictors must be observations of qualities");
 				}
 				predictors.add((IState) artifact);
-				attributeWeights.put(((IState)artifact).getObservable().getLocalName(), predictor.get("weight", 1.0));
+				attributeWeights.put(((IState) artifact).getObservable().getLocalName(), predictor.get("weight", 1.0));
 			} else {
 				IAnnotation arch = KimUtils.findAnnotation(dependency.getAnnotations(),
 						MLComponent.ARCHETYPE_ANNOTATION);
@@ -68,8 +70,8 @@ public class WekaInstances {
 						throw new IllegalArgumentException("Weka: archetypes must be observations of objects");
 					}
 					this.archetype = (ObservationGroup) artifact;
-					this.weightObservable = arch.get("weight", IConcept.class); 
-					attributeWeights.put(((ObservationGroup)artifact).getObservable().getLocalName(), 1.0);
+					this.weightObservable = arch.get("weight", IConcept.class);
+					attributeWeights.put(((ObservationGroup) artifact).getObservable().getLocalName(), 1.0);
 				}
 			}
 		}
@@ -118,18 +120,18 @@ public class WekaInstances {
 					new ArrayList<>(observable.getDataKey().getLabels()));
 			break;
 		case BOOLEAN:
-			ret = new Attribute(observable.getObservable().getLocalName(), Lists.newArrayList("true", "false"));
+			ret = new Attribute(observable.getObservable().getLocalName(), Lists.newArrayList("false", "true"));
 			break;
 		default:
 			// shouldn't happen.
 			throw new IllegalStateException("WEKA learning process: occurrence state " + observable
 					+ " is not numeric, categorical or boolean");
 		}
-		
+
 		// attribute weight from predictor annotation. The archetype has always 1.
 		Double weight = attributeWeights.get(observable.getObservable().getLocalName());
 		ret.setWeight(weight == null ? 1.0 : weight);
-		
+
 		return ret;
 	}
 
@@ -153,7 +155,7 @@ public class WekaInstances {
 
 			Object[] instanceValues = new Object[predictors.size() + 1];
 			double instanceWeight = 1;
-			
+
 			if (stateIndex == null) {
 				// build map of predicted/observable name to index in instance. We use one
 				// artifact so the observable names are stable.
@@ -191,7 +193,7 @@ public class WekaInstances {
 						break;
 					} else {
 						instanceValues[stateIndex.get(state.getObservable().getLocalName())] = o;
-						objects ++;
+						objects++;
 					}
 				}
 			}
@@ -202,8 +204,8 @@ public class WekaInstances {
 				if (values != null) {
 					instances.add(new DenseInstance(instanceWeight, values));
 				} else {
-					skipped ++;
-					objects --;
+					skipped++;
+					objects--;
 				}
 			}
 		}
@@ -222,11 +224,21 @@ public class WekaInstances {
 		for (Attribute attribute : getAttributes()) {
 			if (attribute.isNumeric()) {
 				if (instanceValues[i] instanceof Number) {
-					ret[i] = ((Number)instanceValues[i]).doubleValue();
+					ret[i] = ((Number) instanceValues[i]).doubleValue();
 				} else {
 					return null;
 				}
 			} else {
+				IState state = i == 0 ? predicted : predictors.get(i - 1);
+				if (state.getObservable().getArtifactType() == Type.BOOLEAN) {
+					ret[i] = instanceValues[i] instanceof Boolean ? (((Boolean)instanceValues[i]) ? 1 : 0) : 0;
+				} else if (state.getObservable().getArtifactType() == Type.CONCEPT) {
+					ret[i] = state.getDataKey().reverseLookup(instanceValues[i]);
+				} else {
+					// TODO eventually we can index text from non-semantic models using Weka's text
+					// indexing features
+					throw new KlabUnimplementedException("Weka: only numeric, boolean or classification states are supported for now.");
+				}
 				// TODO map to category index
 			}
 			i++;
