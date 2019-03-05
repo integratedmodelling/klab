@@ -43,8 +43,6 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService;
 import org.integratedmodelling.klab.common.LogicalConnector;
-import org.integratedmodelling.klab.components.runtime.observations.Observation;
-import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
@@ -648,7 +646,7 @@ public enum Observables implements IObservableService {
      * @return the matching configuration info, including the configuration concept and the observation targets in the
      * context, or null.
      */
-    public Pair<IConcept, Set<IObservation>> detectConfigurations(ObservationGroup instances, IDirectObservation context) {
+    public Pair<IConcept, Set<IObservation>> detectConfigurations(IObservation instances, IDirectObservation context) {
 
         List<ConfigurationMatch> matches = new ArrayList<>();
         for (Configuration configuration : configurations.values()) {

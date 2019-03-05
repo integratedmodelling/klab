@@ -1,0 +1,8 @@
+/**
+ * Bridge to Weka option handling for Bayes algorithms.
+ */
+@klab 0.10.0
+@version 0.10.0
+@namespace weka.bayes
+
+// TODO k2 and all the rest

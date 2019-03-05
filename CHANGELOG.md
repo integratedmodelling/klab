@@ -1,33 +1,32 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. The number after 
+All notable changes to this project are documented in this file. The number after 
 the minor release is the build number. All changes made in the develop branch appear 
 as unreleased until merged to master.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-<!--
-   Guiding Principles:
-      Changelogs are for humans, not machines.
-      There should be an entry for every single version.
-      The same types of changes should be grouped.
-      Versions and sections should be linkable.
-      The latest version comes first.
-      The release date of each version is displayed.
-      Mention whether you follow Semantic Versioning.
-   Types of changes: 
-      Added for new features.
-      Changed for changes in existing functionality.
-      Deprecated for soon-to-be removed features.
-      Removed for now removed features.
-      Fixed for any bug fixes.
-      Security in case of vulnerabilities.
 
-   Next build: [0.10.0.150]
+[comment]: <>   (Guiding Principles:)
+[comment]: <>   (   Changelogs are for humans, not machines.)
+[comment]: <>   (  There should be an entry for every single version.)
+[comment]: <>   (  The same types of changes should be grouped.)
+[comment]: <>   (  Versions and sections should be linkable.)
+[comment]: <>   (  The latest version comes first.)
+[comment]: <>   (  The release date of each version is displayed.)
+[comment]: <>   (  Mention whether you follow Semantic Versioning.)
+[comment]: <>   (Types of changes: )
+[comment]: <>   (  Added for new features.)
+[comment]: <>   (  Changed for changes in existing functionality.)
+[comment]: <>   (  Deprecated for soon-to-be removed features.)
+[comment]: <>   (  Removed for now removed features.)
+[comment]: <>   (  Fixed for any bug fixes.)
+[comment]: <>   (  Security in case of vulnerabilities.)
+[comment]: <>   ()
+[comment]: <>   (Next build: [0.10.0.150] -- ISO Date)
 
--->
 ## [Unreleased]
-
+### Added
 - Begin keeping this changelog
 - Prototype of configuration detector available
 - ML component: instances generated from archetype (no discretization yet)

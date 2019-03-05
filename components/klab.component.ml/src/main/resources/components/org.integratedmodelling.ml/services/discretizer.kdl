@@ -1,0 +1,74 @@
+/**
+ * Bridge to Weka option handling. Classes are the actual Weka objects and they receive the options
+ * strings built from the KDL specifications.
+ */
+@klab 0.10.0
+@version 0.10.0
+@namespace weka.discretizer
+
+export value unsupervised
+	"Bridge to the WEKA unsupervised discretizer"
+	label 'WEKA Unsupervised discretizer'
+{		
+	optional number bins 
+		"Specifies the (maximum) number of bins to divide numeric attributes into. Default = 10."
+		label "B"
+		default 10
+		
+	optional number weights 
+		"Specifies the desired weight of instances per bin for equal-frequency binning. If this is set to a positive
+         number then the -B option will be ignored. Default = -1."
+         label "M"
+         default -1
+        
+    optional boolean equalfrequency
+    	"Use equal-frequency instead of equal-width discretization. Default false."
+		label "F"
+		default false
+		
+	optional boolean optimize
+		"Optimize number of bins using leave-one-out estimate of estimated entropy (for equal-width discretization).
+         If this is set then the -B option will be ignored."
+  		label "O"
+  		default false
+		
+	optional boolean true
+		"Use bin numbers rather than ranges for discretized attributes. Default false."
+		label "Y"
+		default true
+		
+	optional number precision
+		"Precision for bin boundary labels Default 6."
+		default 6	
+		
+		
+	class weka.filters.unsupervised.attribute.Discretize
+}
+
+export value supervised
+	"Bridge to the WEKA supervised discretizer"
+	label 'WEKA supervised discretizer'
+{		
+    optional boolean encoding
+    	"Use better encoding of split point for MDL."
+		label "E"
+		default false
+		
+	optional boolean mdl
+		"Use Kononenko's MDL criterion."
+  		label "K"
+  		default false
+		
+	optional boolean binnumbers
+		"Use bin numbers rather than ranges for discretized attributes. Default true."
+		label "Y"
+		default true
+		
+	optional number precision
+		"Precision for bin boundary labels Default 6."
+		default 6	
+		
+	class weka.filters.supervised.attribute.Discretize
+}
+
+

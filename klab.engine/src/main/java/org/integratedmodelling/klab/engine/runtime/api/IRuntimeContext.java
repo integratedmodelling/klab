@@ -2,8 +2,10 @@ package org.integratedmodelling.klab.engine.runtime.api;
 
 import java.util.Collection;
 
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
+import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -257,5 +259,14 @@ public interface IRuntimeContext extends IComputationContext {
 	 * @param object
 	 */
 	void removeArtifact(IArtifact object);
+
+	/**
+	 * Create a configuration in the current context, using the passed type and the
+	 * trigger observations detected. Called by actuators, never by API users.
+	 * 
+	 * @param configurationType
+	 * @param targets
+	 */
+	IConfiguration newConfiguration(IConcept configurationType, Collection<IObservation> targets);
 
 }

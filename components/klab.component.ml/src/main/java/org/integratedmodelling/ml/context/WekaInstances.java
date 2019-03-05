@@ -7,7 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.utils.KimUtils;
+import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -22,6 +25,7 @@ import org.integratedmodelling.klab.components.runtime.observations.ObservationG
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
+import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.ml.MLComponent;
 
@@ -31,25 +35,30 @@ import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instances;
 import weka.core.converters.ArffSaver;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Discretize;
 
 public class WekaInstances {
 
 	private IState predicted = null;
 	private List<IState> predictors = new ArrayList<>();
 	private ObservationGroup archetype = null;
-
-	private Instances instances;
+	private boolean requiresDiscretization = false;
+	private Instances rawInstances, instances;
 	private ArrayList<Attribute> attributes;
 	private String name;
 	private IRuntimeContext context;
 	private IConcept weightObservable;
 	private Map<String, Double> attributeWeights = new HashMap<>();
 
-	public WekaInstances(IState predicted, IModel model, IRuntimeContext context) {
+	Map<String, IAnnotation> annotations = new HashMap<>();
+
+	public WekaInstances(IState predicted, IModel model, IRuntimeContext context, boolean mustDiscretize) {
 
 		this.predicted = predicted;
 		this.name = predicted.getObservable().getLocalName();
 		this.context = context;
+		this.requiresDiscretization = mustDiscretize;
 
 		for (IObservable dependency : model.getDependencies()) {
 			IAnnotation predictor = KimUtils.findAnnotation(dependency.getAnnotations(),
@@ -60,6 +69,7 @@ public class WekaInstances {
 					throw new IllegalArgumentException("Weka: predictors must be observations of qualities");
 				}
 				predictors.add((IState) artifact);
+				annotations.put(((IState) artifact).getObservable().getLocalName(), predictor);
 				attributeWeights.put(((IState) artifact).getObservable().getLocalName(), predictor.get("weight", 1.0));
 			} else {
 				IAnnotation arch = KimUtils.findAnnotation(dependency.getAnnotations(),
@@ -88,6 +98,18 @@ public class WekaInstances {
 			build();
 		}
 		return instances;
+	}
+
+	/**
+	 * Build if necessary and return the original, undiscretized instance set.
+	 * 
+	 * @return
+	 */
+	public Instances getRawInstances() {
+		if (instances == null) {
+			build();
+		}
+		return rawInstances;
 	}
 
 	/**
@@ -144,7 +166,7 @@ public class WekaInstances {
 			throw new IllegalStateException("Weka: not enough predictors to build a training set");
 		}
 
-		this.instances = new Instances(name + "_instances", getAttributes(), 0);
+		this.rawInstances = new Instances(name + "_instances", getAttributes(), 0);
 
 		Map<String, Integer> stateIndex = null;
 
@@ -182,6 +204,8 @@ public class WekaInstances {
 				}
 			}
 
+			this.rawInstances.setClassIndex(0);
+			
 			boolean ignore = false;
 			for (IState state : ((IDirectObservation) object).getStates()) {
 				if (stateIndex.containsKey(state.getObservable().getLocalName())) {
@@ -202,7 +226,7 @@ public class WekaInstances {
 				// remap attributes to doubles as needed; ignore instance if there are errors
 				double[] values = mapValuesToDoubles(instanceValues);
 				if (values != null) {
-					instances.add(new DenseInstance(instanceWeight, values));
+					rawInstances.add(new DenseInstance(instanceWeight, values));
 				} else {
 					skipped++;
 					objects--;
@@ -213,9 +237,62 @@ public class WekaInstances {
 		context.getMonitor()
 				.info("Weka: training set generated with " + objects + " instances (" + skipped + " skipped)");
 
-		// TODO go through discretization for each attribute, choose scheme if
+		// go through discretization for each attribute, choose scheme if
 		// discretization is mandatory and attribute is numeric
+		this.instances = rawInstances;
+		int i = 1;
+		for (IState predictor : predictors) {
+			IAnnotation annotation = annotations.get(predictor.getObservable().getLocalName());
+			if (predictor.getObservable().getArtifactType() == Type.NUMBER) {
+				try {
+					if (annotation.containsKey("discretization")) {
+						// build discretizer for i-th field
+						this.instances = Filter.useFilter(this.instances,
+								buildDiscretization(annotation, predictor, i));
+					} else if (requiresDiscretization) {
+						// create default discretizer for i-th field
+						this.instances = Filter.useFilter(this.instances, buildDiscretization(null, predictor, i));
+					}
+				} catch (Exception e) {
+					throw new IllegalStateException(e);
+				}
+			} else if (annotation.containsKey("discretization")) {
+				throw new IllegalArgumentException("Weka: " + predictor.getObservable().getLocalName()
+						+ ": cannot specify discretization for non-numeric predictors");
+			}
+			i++;
+		}
+	}
 
+	private Filter buildDiscretization(IAnnotation annotation, IState predictor, int fieldIndex) {
+
+		String options = "-Y";
+		Class<?> filterClass = Discretize.class;
+
+		if (annotation != null) {
+			IServiceCall call = annotation.get("discretization", IServiceCall.class);
+			Prototype prototype = Extensions.INSTANCE.getPrototype(call.getName());
+			if (prototype == null) {
+				throw new IllegalStateException(
+						"No discretizer found for " + call.getName() + ": check definition");
+			}
+			options = Kim.INSTANCE.createCommandLine(call, prototype, "");
+			filterClass = prototype.getExecutorClass();
+		}
+		
+		options = "-R " + fieldIndex + "-" + fieldIndex + " " + options;
+		
+		Filter filter = Extensions.INSTANCE.createDefaultInstance(filterClass, Filter.class);
+		try {
+			filter.setOptions(weka.core.Utils.splitOptions(options));
+			filter.setInputFormat(this.instances);
+		} catch (Exception e) {
+			throw new IllegalStateException(
+					"Error during WEKA option parsing for " + filterClass + " + : " + e.getMessage());
+		}
+		
+		
+		return filter;
 	}
 
 	private double[] mapValuesToDoubles(Object[] instanceValues) {
@@ -231,15 +308,15 @@ public class WekaInstances {
 			} else {
 				IState state = i == 0 ? predicted : predictors.get(i - 1);
 				if (state.getObservable().getArtifactType() == Type.BOOLEAN) {
-					ret[i] = instanceValues[i] instanceof Boolean ? (((Boolean)instanceValues[i]) ? 1 : 0) : 0;
+					ret[i] = instanceValues[i] instanceof Boolean ? (((Boolean) instanceValues[i]) ? 1 : 0) : 0;
 				} else if (state.getObservable().getArtifactType() == Type.CONCEPT) {
 					ret[i] = state.getDataKey().reverseLookup(instanceValues[i]);
 				} else {
 					// TODO eventually we can index text from non-semantic models using Weka's text
 					// indexing features
-					throw new KlabUnimplementedException("Weka: only numeric, boolean or classification states are supported for now.");
+					throw new KlabUnimplementedException(
+							"Weka: only numeric, boolean or classification states are supported for now.");
 				}
-				// TODO map to category index
 			}
 			i++;
 		}

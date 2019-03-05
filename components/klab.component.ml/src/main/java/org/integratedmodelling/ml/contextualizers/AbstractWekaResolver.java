@@ -28,7 +28,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 	@Override
 	public IState resolve(IState ret, IComputationContext context) throws KlabException {
 
-		WekaInstances instances = new WekaInstances(ret, context.getModel(), (IRuntimeContext)context);
+		WekaInstances instances = new WekaInstances(ret, context.getModel(), (IRuntimeContext)context, true);
 		if (context.getModel().isLearning()) {
 			// our main output is a model artifact
 			outputModel = true;

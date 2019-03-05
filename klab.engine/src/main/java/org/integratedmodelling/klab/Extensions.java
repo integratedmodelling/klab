@@ -143,6 +143,31 @@ public enum Extensions implements IExtensionService {
 	}
 
 	/**
+	 * Call the no-arg constructor for a class and return the instance, managing exceptions according
+	 * to k.LAB conventions.
+	 * 
+	 * @param cls
+	 * @param expected
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T createDefaultInstance(Class<?> cls, Class<? extends T> expected) {
+		try {
+			if (!expected.isAssignableFrom(cls)) {
+				throw new IllegalArgumentException("Cannot produce an object of class " + expected + " from " + cls);
+			}
+			return (T)cls.getDeclaredConstructor().newInstance();
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			throw new KlabInternalErrorException(e);
+		}
+	}
+	
+	public Object createDefaultInstance(Class<?> cls) {
+		return createDefaultInstance(cls, cls);
+	}
+	
+	/**
 	 * Produce the javabean describing the passed service prototype.
 	 * 
 	 * @param prototype

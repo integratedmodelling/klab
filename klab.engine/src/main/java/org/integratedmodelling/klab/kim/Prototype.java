@@ -11,6 +11,8 @@ import org.integratedmodelling.klab.utils.StringUtils;
  * The k.LAB prototype specializes {@link org.integratedmodelling.klab.common.Prototype} in the k.IM
  * package by adding a constructor that reads from a KDL specification.
  * 
+ * Labels of internal parameters become short names.
+ * 
  * @author ferdinando.villa
  *
  */
@@ -42,6 +44,7 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
           arg.getDescription() == null ? "" : StringUtils.pack(arg.getDescription()).trim();
       a.type = arg.getType() == null ? null : Type.valueOf(arg.getType().name());
       a.optional = arg.isOptional();
+      a.shortName = arg.getLabel();
       a.isFinal = arg.isFinal();
       a.enumValues.addAll(arg.getEnumValues());
       a.defaultValue = arg.getDefaultValue() == null ? null : arg.getDefaultValue().toString();

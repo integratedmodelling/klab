@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
@@ -483,6 +484,12 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 
 	@Override
 	public IDirectObservation getContextSubject() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IConfiguration newConfiguration(IConcept configurationType, Collection<IObservation> targets) {
 		// TODO Auto-generated method stub
 		return null;
 	}

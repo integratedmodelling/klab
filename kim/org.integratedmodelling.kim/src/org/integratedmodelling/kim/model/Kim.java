@@ -47,6 +47,7 @@ import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.kim.ClassifierRHS;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
@@ -1373,6 +1374,34 @@ public enum Kim {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Use the passed function call and prototype to create options for the passed command. 
+	 * 
+	 * @param call
+	 * @param prototype
+	 * @param command command to prepend to the options.
+	 * @return
+	 */
+	public String createCommandLine(IServiceCall call, IPrototype prototype, String command) {
+		String ret = "";
+		for (Argument argument : prototype.listArguments()) {
+			if (argument.getShortName() != null) {
+				Object value = call.getParameters().get(argument.getName());
+				if (value != null) {
+					if (argument.getType() == IArtifact.Type.BOOLEAN) {
+						if (((Boolean)value)) {
+							ret += (ret.isEmpty() ? "" : " ") + "-" + argument.getShortName();
+						}
+					} else {
+						ret += (ret.isEmpty() ? "" : " ") + "-" + argument.getShortName() + " " + value.toString();
+					}
+				}
+			}
+		}
+		return command == null ? ret : (command + " " + ret);
+		
 	}
 
 }
