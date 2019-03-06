@@ -23,8 +23,15 @@ public class ScaleReference {
 	private long step;
 	private int spaceScale;
 	private int timeScale;
+	/**
+	 * Resolution is always in m
+	 */
 	private double spaceResolution;
+	/**
+	 * Description is in whatever unit is more convenient
+	 */
 	private String spaceResolutionDescription;
+	private double spaceResolutionConverted;
 	private String spaceUnit;
 	private double timeResolution;
 	private String timeResolutionDescription;
@@ -195,4 +202,12 @@ public class ScaleReference {
     public String getResolutionDescription() {
         return this.resolutionDescription;
     }
+
+	public double getSpaceResolutionConverted() {
+		return spaceResolutionConverted;
+	}
+
+	public void setSpaceResolutionConverted(double spaceResolutionConverted) {
+		this.spaceResolutionConverted = spaceResolutionConverted;
+	}
 }

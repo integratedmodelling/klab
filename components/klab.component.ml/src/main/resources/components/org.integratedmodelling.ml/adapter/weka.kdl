@@ -1,27 +1,16 @@
-/**
- * Interface contextualizers for Weka functions.
+/*
+ * Parameters accepted in a raster resource
  */
-@klab 0.10.0
-@version 0.10.0
-@namespace im.weka
+ annotation weka 	
+	"The Weka adapter enables the use of classifier build by Weka within k.LAB. Weka resources are produced by learning
+	 k.LAB models using Weka contextualizers, or can be imported from external resources such as Weka serialized models
+	 (.model) or Bayesian network specifications. The adapter is compatible with BIF, NET (Netica), XSDL (Genie)." 	
+ {
 
-abstract value classifier {		
-	optional text resource 
-		"ID of the local resource containing the trained model"
-		
-	// TODO all common parameters
-}
-
-export value bayesnet extends wekaclassifier
-	""
-	label 'WEKA BayesNet'
-{		
-	class org.integratedmodelling.ml.contextualizers.BayesNetResolver
-}
-
-export value randomforest extends wekaclassifier
-	""
-	label 'WEKA Random Forests'
-{		
-	// class org.integratedmodelling.ml.weka.BayesNetResolver
-}
+ 	final text 'model'
+ 		"The URL of the service providing the data."
+ 
+ 	final text 'wekaVersion'
+ 		"The WCS version for the requests. Currently only 2.0.1 is supported as previous versions do not communicate enough information."
+ 	 	default "3.8.1"
+ }

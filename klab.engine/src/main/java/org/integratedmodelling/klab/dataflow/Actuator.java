@@ -715,10 +715,6 @@ public class Actuator implements IActuator {
 		this.name = name;
 	}
 
-	// public void setCreateObservation(boolean createObservation) {
-	// this.createsObservation = createObservation;
-	// }
-
 	public void setReference(boolean reference) {
 		this.reference = reference;
 	}

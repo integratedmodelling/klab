@@ -50,15 +50,18 @@ public class WekaInstances {
 	private IRuntimeContext context;
 	private IConcept weightObservable;
 	private Map<String, Double> attributeWeights = new HashMap<>();
+	private IServiceCall classDiscretizer;
 
 	Map<String, IAnnotation> annotations = new HashMap<>();
 
-	public WekaInstances(IState predicted, IModel model, IRuntimeContext context, boolean mustDiscretize) {
+	public WekaInstances(IState predicted, IModel model, IRuntimeContext context, boolean mustDiscretize,
+			IServiceCall classDiscretizer) {
 
 		this.predicted = predicted;
 		this.name = predicted.getObservable().getLocalName();
 		this.context = context;
 		this.requiresDiscretization = mustDiscretize;
+		this.classDiscretizer = classDiscretizer;
 
 		for (IObservable dependency : model.getDependencies()) {
 			IAnnotation predictor = KimUtils.findAnnotation(dependency.getAnnotations(),
@@ -205,7 +208,7 @@ public class WekaInstances {
 			}
 
 			this.rawInstances.setClassIndex(0);
-			
+
 			boolean ignore = false;
 			for (IState state : ((IDirectObservation) object).getStates()) {
 				if (stateIndex.containsKey(state.getObservable().getLocalName())) {
@@ -240,21 +243,35 @@ public class WekaInstances {
 		// go through discretization for each attribute, choose scheme if
 		// discretization is mandatory and attribute is numeric
 		this.instances = rawInstances;
-		int i = 1;
+
+		/*
+		 * discretize the class attribute if requested or required
+		 */
+		if (requiresDiscretization || this.classDiscretizer != null) {
+			try {
+				this.instances = Filter.useFilter(this.instances, buildDiscretization(classDiscretizer, predicted, 1));
+			} catch (Exception e) {
+				throw new IllegalStateException(
+						"Weka: error during discretization of class attribute: " + e.getMessage());
+			}
+		}
+
+		int i = 2;
 		for (IState predictor : predictors) {
 			IAnnotation annotation = annotations.get(predictor.getObservable().getLocalName());
 			if (predictor.getObservable().getArtifactType() == Type.NUMBER) {
 				try {
 					if (annotation.containsKey("discretization")) {
 						// build discretizer for i-th field
-						this.instances = Filter.useFilter(this.instances,
-								buildDiscretization(annotation, predictor, i));
+						this.instances = Filter.useFilter(this.instances, buildDiscretization(
+								annotation.get("discretization", IServiceCall.class), predictor, i));
 					} else if (requiresDiscretization) {
 						// create default discretizer for i-th field
 						this.instances = Filter.useFilter(this.instances, buildDiscretization(null, predictor, i));
 					}
 				} catch (Exception e) {
-					throw new IllegalStateException(e);
+					throw new IllegalStateException("Weka: error during discretization of "
+							+ predictor.getObservable().getLocalName() + ": " + e.getMessage());
 				}
 			} else if (annotation.containsKey("discretization")) {
 				throw new IllegalArgumentException("Weka: " + predictor.getObservable().getLocalName()
@@ -264,24 +281,23 @@ public class WekaInstances {
 		}
 	}
 
-	private Filter buildDiscretization(IAnnotation annotation, IState predictor, int fieldIndex) {
+	private Filter buildDiscretization(IServiceCall specification, IState predictor, int fieldIndex) {
 
 		String options = "-Y";
 		Class<?> filterClass = Discretize.class;
 
-		if (annotation != null) {
-			IServiceCall call = annotation.get("discretization", IServiceCall.class);
-			Prototype prototype = Extensions.INSTANCE.getPrototype(call.getName());
+		if (specification != null) {
+			Prototype prototype = Extensions.INSTANCE.getPrototype(specification.getName());
 			if (prototype == null) {
 				throw new IllegalStateException(
-						"No discretizer found for " + call.getName() + ": check definition");
+						"No discretizer found for " + specification.getName() + ": check definition");
 			}
-			options = Kim.INSTANCE.createCommandLine(call, prototype, "");
+			options = Kim.INSTANCE.createCommandLine(specification, prototype, "");
 			filterClass = prototype.getExecutorClass();
 		}
-		
-		options = "-R " + fieldIndex + "-" + fieldIndex + " " + options;
-		
+
+		options = "-R " + fieldIndex + " " + options;
+
 		Filter filter = Extensions.INSTANCE.createDefaultInstance(filterClass, Filter.class);
 		try {
 			filter.setOptions(weka.core.Utils.splitOptions(options));
@@ -290,8 +306,7 @@ public class WekaInstances {
 			throw new IllegalStateException(
 					"Error during WEKA option parsing for " + filterClass + " + : " + e.getMessage());
 		}
-		
-		
+
 		return filter;
 	}
 
@@ -329,17 +344,16 @@ public class WekaInstances {
 	}
 
 	/**
-	 * Export to an AIRFF file.
+	 * Export instances (raw or discretized) to an ARFF file.
 	 * 
 	 * @param file
 	 * @throws IOException
 	 */
-	public void export(File file) {
+	public void export(File file, boolean raw) {
 		ArffSaver saver = new ArffSaver();
-		saver.setInstances(getInstances());
+		saver.setInstances(raw ? getRawInstances() : getInstances());
 		try {
 			saver.setFile(file);
-			// saver.setDestination(file);
 			saver.writeBatch();
 		} catch (Exception e) {
 			throw new KlabIOException(e);

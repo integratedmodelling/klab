@@ -1,26 +1,76 @@
 /**
- * Interface contextualizers for MCA functions.
+ * Interface contextualizers for Weka functions.
  */
 @klab 0.10.0
 @version 0.10.0
 @namespace im.weka
 
-export value bayesnet
-	""
-	label 'WEKA BayesNet'
-{		
+abstract value classifier {		
+	
 	optional text resource 
 		"ID of the local resource containing the trained model"
+		
+	optional text instances 
+		"Output AIRF file for instances. If a relative path, it will be saved in the default output directory."
+
+	optional text rawinstances 
+		"Output AIRF file for raw (undiscretized) instances. If a relative path, it will be saved in the default 
+		output directory."
+	
+	optional number seed
+		"Seed for cross-validation or percentage split"
+		label "s"
+		default 1
+		
+	optional number splitpercentage
+		"Percentage for the train/test set split, e.g., 0.66"
+		label "split-percentage"
+		default 0.66
+		
+	optional boolean preserveorder
+		"Preserves the order in the percentage split. Default false."
+		label "preserve-order"
+		default false 
+		
+	optional number folds
+		"Number of folds for cross-validation. Default 10."
+		 label "x" 
+		 default 10
+		 
+	optional boolean debug
+		"Output debug information to the console"
+		label "output-debug-info"
+		default false
+}
+
+export value bayesnet extends classifier
+	"Bayes Network learning using various search algorithms and quality measures."
+	label 'WEKA BayesNet'
+{		
+	optional value search
+		"Search algorithm and its parameters"
+		label "Q"
+		
+	optional value estimator
+		"Parameter estimator algorithm with its parameters"
+		label "E"
+		
+	optional boolean noadtree 
+		"Do not use AD-tree to increase speed on counts"
+		label "D"
+		default false
+		
+	optional number batchsize 
+		"The preferred number of instances to process if batch prediction is being performed."
+		label "batch-size"
+		default 100 
 
 	class org.integratedmodelling.ml.contextualizers.BayesNetResolver
 }
 
-export value randomforest
+export value randomforest extends classifier
 	""
 	label 'WEKA Random Forests'
 {		
-	optional text resource 
-		"ID of the local resource containing the trained model"
-
 	// class org.integratedmodelling.ml.weka.BayesNetResolver
 }

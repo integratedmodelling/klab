@@ -23,6 +23,7 @@ import java.util.logging.Level;
 
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.OS;
 
 // TODO: Auto-generated Javadoc
@@ -44,7 +45,7 @@ public enum Configuration implements IConfigurationService {
 	private File dataPath;
 	private Level loggingLevel = Level.SEVERE;
 	private Level notificationLevel = Level.INFO;
-
+	
 	/** The klab relative work path. */
 	public String KLAB_RELATIVE_WORK_PATH = ".klab";
 
@@ -170,6 +171,12 @@ public enum Configuration implements IConfigurationService {
 		}
 		return ret;
 	}
+	
+	public File getDefaultExportDirectory() {
+		File ret = new File(getProperties().getProperty(KLAB_EXPORT_PATH, dataPath + File.separator + "export"));
+		ret.mkdirs();
+		return ret;
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -272,5 +279,12 @@ public enum Configuration implements IConfigurationService {
 	public boolean useInMemoryStorage() {
 		return System.getProperty("mmap") == null
 				&& properties.getProperty(KLAB_USE_IN_MEMORY_STORAGE, "true").equals("true");
+	}
+
+	public File getExportFile(String export) {
+		if (MiscUtilities.isRelativePath(export)) {
+			return new File(getDefaultExportDirectory() + File.separator + export);
+		}
+		return new File(export);
 	}
 }
