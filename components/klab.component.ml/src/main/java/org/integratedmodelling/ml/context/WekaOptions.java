@@ -23,7 +23,7 @@ public class WekaOptions {
 		this.commandLine = Kim.INSTANCE.createCommandLine(parameters, prototype, "",  (call) -> {
 			IPrototype proto = Extensions.INSTANCE.getPrototype(call.getName());
 			String options = Kim.INSTANCE.createCommandLine(call.getParameters(), proto, proto.getExecutorClass().getCanonicalName());
-			return "\"" + options + "\"";
+			return options + " --";
 		});
 
 		try {

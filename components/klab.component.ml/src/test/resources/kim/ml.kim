@@ -9,6 +9,7 @@ namespace test.ml;
  * require calling a contextualizer.
  * 
  * Predictors must be distributed in context; archetype is required
+ * Discretization for final result is set in the contextualizer call
  */
 learn value of ecology:Biodiversity
 	observing 
@@ -17,6 +18,19 @@ learn value of ecology:Biodiversity
 		@predictor geography:Elevation,
 		@predictor earth:PrecipitationVolume in mm
 	using im.weka.bayesnet(resource = biodiv.ml.global);
+
+// with explicit discretization
+learn value of ecology:Biodiversity
+	observing 
+		@archetype earth:Site with value of ecology:Biodiversity,
+		@predictor(discretization = weka.discretizer.unsupervised( bins=4 )) geography:Slope,
+		@predictor geography:Elevation,
+		@predictor earth:PrecipitationVolume in mm
+	using im.weka.bayesnet(
+		resource = biodiv.ml.global, 
+		instances = diopapa.arff, 
+		search = weka.bayes.k2( maxparents=3 )
+	);
 	
 // because it was called with learn, it produces the trained model as
 // a local weka resource and its annotation as a model artifact.
@@ -26,11 +40,11 @@ learn value of ecology:Biodiversity
 model local:ferdinando.villa:jp.nagoya.hydropower:biodiv.ml.global
 	as value of ecology:Biodiversity
 	observing 
-		@predictor(id=slope, discretization=(0, 34.4, 10)) 
+		@predictor(id=slope, discretization=weka.unsupervised.discretize(bins=9)) 
 		geography:Slope in degree_angle,
-		@predictor(id=elevation, discretization=(-1, 1234.0, 10))
+		@predictor(id=elevation)
 		geography:Elevation in m,
-		@predictor(id=precipitation, discretization=(0, 346.3, 10))
+		@predictor(id=precipitation)
 		earth:PrecipitationVolume in mm;
 		
 // if "within" is there after learn, insert a dependency for the object and learn IN the instances
@@ -52,13 +66,13 @@ learn value of ecology:Biodiversity within earth:Site
 	
 // -- TODO: how to learn the probability of an event in time based on occurrences? --
 // It's a temporal model so its final result will be after a temporal simulation - OK for now
-// May be just like this
+// Should use MCMC for these
 learn probability of earth:Storm 
 	observing
 		@archetype earth:Storm,
 		@predictor earth:PrecipitationVolume in mm,
 		@predictor earth:AtmosphericTemperature in Celsius
-	using im.weka.bayesnet() over time;	
+	using im.weka.bayesnet() /* over time */;	
 	
 // ------ the archetype --------------------------------------------
 
@@ -66,7 +80,7 @@ private model each earth:Site with value of ecology:Biodiversity,
 	slope as geography:Slope in degree_angle, 
 	elevation as geography:Elevation in m,
 	precipitation_volume as earth:PrecipitationVolume in mm,
-	[precipitation_volume - elevation/3000 - slope/90] as value of ecology:Biodiversity
+	[precipitation_volume - elevation/100 - slope/90] as value of ecology:Biodiversity
   observing
   	geography:Slope in degree_angle,
 	geography:Elevation in m,
