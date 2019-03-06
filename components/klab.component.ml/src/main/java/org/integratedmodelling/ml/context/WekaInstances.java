@@ -207,8 +207,6 @@ public class WekaInstances {
 				}
 			}
 
-			this.rawInstances.setClassIndex(0);
-
 			boolean ignore = false;
 			for (IState state : ((IDirectObservation) object).getStates()) {
 				if (stateIndex.containsKey(state.getObservable().getLocalName())) {

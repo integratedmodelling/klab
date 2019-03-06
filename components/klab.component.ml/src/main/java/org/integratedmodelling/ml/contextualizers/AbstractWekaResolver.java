@@ -8,7 +8,6 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.ml.context.WekaClassifier;
 import org.integratedmodelling.ml.context.WekaInstances;
 import org.integratedmodelling.ml.context.WekaOptions;
@@ -52,8 +51,6 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 			instances.export(Configuration.INSTANCE.getExportFile(rawInstancesExport), true);
 		}
 		
-		System.out.println(instances.getInstances());
-
 		return ret;
 	}
 
