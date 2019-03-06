@@ -153,7 +153,6 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			.synchronizedMap(new HashMap<>());
 
 	private double gridSize;
-
 	private String gridUnits;
 
 	public interface Listener {
@@ -545,11 +544,11 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		scale.setSouth(envelope.getMinY());
 		scale.setSpaceUnit(resolution.getSecond());
 		scale.setSpaceResolution(resolution.getFirst());
-		scale.setSpaceResolutionConverted(Units.INSTANCE.METERS.convert(resolution.getFirst(), sunit).doubleValue());
+		scale.setSpaceResolutionConverted(sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS).doubleValue());
 		scale.setSpaceResolutionDescription(
-				Units.INSTANCE.METERS.convert(resolution.getFirst(), sunit) + " " + resolution.getSecond());
+				sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS) + " " + resolution.getSecond());
 		scale.setResolutionDescription(
-				Units.INSTANCE.METERS.convert(resolution.getFirst(), sunit) + " " + resolution.getSecond());
+				sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS) + " " + resolution.getSecond());
 		scale.setSpaceScale(scaleRank);
 
 		monitor.send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined, scale);
@@ -845,7 +844,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 				this.setRegionOfInterest(this.regionOfInterest);
 			}
 		} else {
-			this.gridSize = scaleRef.getSpaceResolution();
+			this.gridSize = scaleRef.getSpaceResolutionConverted();
 			this.gridUnits = scaleRef.getSpaceUnit();
 			this.lockResolution = true;
 			// TODO time - may not have space one day

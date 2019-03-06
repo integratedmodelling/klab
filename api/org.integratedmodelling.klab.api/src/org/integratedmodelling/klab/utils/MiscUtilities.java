@@ -1855,6 +1855,6 @@ public class MiscUtilities {
     }
 
 	public static boolean isRelativePath(String export) {
-		return export.contains("/") || export.contains("\\") || export.contains(":");
+		return !export.contains("/") && !export.contains("\\") && !export.contains(":");
 	}
 }
