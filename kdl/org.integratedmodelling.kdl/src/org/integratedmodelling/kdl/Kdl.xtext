@@ -81,7 +81,7 @@ DataflowBody:
 	('units' units=Unit)? &
 	(computations=Computation)? &
 	('metadata' metadata=Metadata)?
-	('class' javaClass=JavaClass)?);
+	('class' javaClass=(JavaClass|STRING))?);
 Computation:
 	'compute' functions+=Function (',' functions+=Function)*;
 Geometry:

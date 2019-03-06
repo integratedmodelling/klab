@@ -1316,6 +1316,27 @@ finally {
 	restoreStackSize(stackSize);
 }
 
+rule__DataflowBody__JavaClassAlternatives_2_3_1_1_0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getDataflowBodyAccess().getJavaClassJavaClassParserRuleCall_2_3_1_1_0_0()); }
+		ruleJavaClass
+		{ after(grammarAccess.getDataflowBodyAccess().getJavaClassJavaClassParserRuleCall_2_3_1_1_0_0()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getDataflowBodyAccess().getJavaClassSTRINGTerminalRuleCall_2_3_1_1_0_1()); }
+		RULE_STRING
+		{ after(grammarAccess.getDataflowBodyAccess().getJavaClassSTRINGTerminalRuleCall_2_3_1_1_0_1()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
 rule__Geometry__Alternatives
 	@init {
 		int stackSize = keepStackSize();
@@ -11967,9 +11988,9 @@ rule__DataflowBody__JavaClassAssignment_2_3_1_1
 	}
 :
 	(
-		{ before(grammarAccess.getDataflowBodyAccess().getJavaClassJavaClassParserRuleCall_2_3_1_1_0()); }
-		ruleJavaClass
-		{ after(grammarAccess.getDataflowBodyAccess().getJavaClassJavaClassParserRuleCall_2_3_1_1_0()); }
+		{ before(grammarAccess.getDataflowBodyAccess().getJavaClassAlternatives_2_3_1_1_0()); }
+		(rule__DataflowBody__JavaClassAlternatives_2_3_1_1_0)
+		{ after(grammarAccess.getDataflowBodyAccess().getJavaClassAlternatives_2_3_1_1_0()); }
 	)
 ;
 finally {

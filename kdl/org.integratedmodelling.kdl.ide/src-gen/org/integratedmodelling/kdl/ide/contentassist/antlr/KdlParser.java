@@ -43,6 +43,7 @@ public class KdlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getActorDefinitionAccess().getNameAlternatives_1_3_0(), "rule__ActorDefinition__NameAlternatives_1_3_0");
 					put(grammarAccess.getActorDefinitionAccess().getExtendedAlternatives_1_4_1_0(), "rule__ActorDefinition__ExtendedAlternatives_1_4_1_0");
 					put(grammarAccess.getActorDefinitionAccess().getAlternatives_1_10(), "rule__ActorDefinition__Alternatives_1_10");
+					put(grammarAccess.getDataflowBodyAccess().getJavaClassAlternatives_2_3_1_1_0(), "rule__DataflowBody__JavaClassAlternatives_2_3_1_1_0");
 					put(grammarAccess.getGeometryAccess().getAlternatives(), "rule__Geometry__Alternatives");
 					put(grammarAccess.getACTORAccess().getAlternatives(), "rule__ACTOR__Alternatives");
 					put(grammarAccess.getTARGETAccess().getAlternatives(), "rule__TARGET__Alternatives");

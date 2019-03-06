@@ -11,6 +11,6 @@
  		"The URL of the service providing the data."
  
  	final text 'wekaVersion'
- 		"The WCS version for the requests. Currently only 2.0.1 is supported as previous versions do not communicate enough information."
- 	 	default "3.8.1"
+ 		"The Weka version that built the models in this resource."
+ 	 	default "3.8.3"
  }

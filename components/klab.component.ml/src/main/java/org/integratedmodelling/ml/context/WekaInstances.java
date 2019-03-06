@@ -290,7 +290,7 @@ public class WekaInstances {
 				throw new IllegalStateException(
 						"No discretizer found for " + specification.getName() + ": check definition");
 			}
-			options = Kim.INSTANCE.createCommandLine(specification, prototype, "");
+			options = Kim.INSTANCE.createCommandLine(specification.getParameters(), prototype, "");
 			filterClass = prototype.getExecutorClass();
 		}
 

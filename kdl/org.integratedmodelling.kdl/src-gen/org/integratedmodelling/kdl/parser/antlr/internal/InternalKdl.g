@@ -1844,21 +1844,38 @@ ruleDataflowBody returns [EObject current=null]
 									}
 									(
 										(
-											{
-												newCompositeNode(grammarAccess.getDataflowBodyAccess().getJavaClassJavaClassParserRuleCall_2_3_1_1_0());
-											}
-											lv_javaClass_11_0=ruleJavaClass
-											{
-												if ($current==null) {
-													$current = createModelElementForParent(grammarAccess.getDataflowBodyRule());
+											(
+												{
+													newCompositeNode(grammarAccess.getDataflowBodyAccess().getJavaClassJavaClassParserRuleCall_2_3_1_1_0_0());
 												}
-												set(
-													$current,
-													"javaClass",
-													lv_javaClass_11_0,
-													"org.integratedmodelling.kdl.Kdl.JavaClass");
-												afterParserOrEnumRuleCall();
-											}
+												lv_javaClass_11_1=ruleJavaClass
+												{
+													if ($current==null) {
+														$current = createModelElementForParent(grammarAccess.getDataflowBodyRule());
+													}
+													set(
+														$current,
+														"javaClass",
+														lv_javaClass_11_1,
+														"org.integratedmodelling.kdl.Kdl.JavaClass");
+													afterParserOrEnumRuleCall();
+												}
+												    |
+												lv_javaClass_11_2=RULE_STRING
+												{
+													newLeafNode(lv_javaClass_11_2, grammarAccess.getDataflowBodyAccess().getJavaClassSTRINGTerminalRuleCall_2_3_1_1_0_1());
+												}
+												{
+													if ($current==null) {
+														$current = createModelElement(grammarAccess.getDataflowBodyRule());
+													}
+													setWithLastConsumed(
+														$current,
+														"javaClass",
+														lv_javaClass_11_2,
+														"org.eclipse.xtext.common.Terminals.STRING");
+												}
+											)
 										)
 									)
 								)?

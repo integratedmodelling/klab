@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.logging.Level;
 
 import org.eclipse.emf.common.util.URI;
@@ -46,6 +47,7 @@ import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -90,22 +92,23 @@ public enum Kim {
 	public final static String COMMON_PROJECT_ID = "klab.internal.common.project";
 
 	private Validator validatorCallback = null;
-	
+
 	@Inject
 	private IGrammarAccess grammarAccess;
 
 	/**
 	 * Call before keyword list can be obtained
+	 * 
 	 * @param injector
 	 */
 	public void setup(Injector injector) {
 		injector.injectMembers(this);
 	}
-	
-//	/**
-//	 * Known URN descriptors. Must be filled in from the outside.
-//	 */
-//	private Map<String, UrnDescriptor> urnDescriptors = new HashMap<>();
+
+	// /**
+	// * Known URN descriptors. Must be filled in from the outside.
+	// */
+	// private Map<String, UrnDescriptor> urnDescriptors = new HashMap<>();
 
 	/**
 	 * This contains concept descriptors for all concepts encountered, including
@@ -316,11 +319,11 @@ public enum Kim {
 		public void setAccessible() {
 			this.flags |= ACCESSIBLE;
 		}
-		
+
 		public void setOnline() {
 			this.flags |= ALIVE;
 		}
-		
+
 		public void setError() {
 			this.flags |= ERROR;
 		}
@@ -432,7 +435,7 @@ public enum Kim {
 	public Set<String> getKimKeywords() {
 		return GrammarUtil.getAllKeywords(grammarAccess.getGrammar());
 	}
-		
+
 	public void addNotifier(Notifier notifier) {
 		this.notifiers.add(notifier);
 	}
@@ -476,7 +479,6 @@ public enum Kim {
 
 		return null;
 	}
-
 
 	/*
 	 * The k.IM map preserves order.
@@ -656,7 +658,7 @@ public enum Kim {
 		}
 		return ret;
 	}
-	
+
 	public Parameters<String> parseMetadata(Metadata map, IKimNamespace namespace) {
 		Map<String, Object> ret = new LinkedHashMap<>();
 		for (int i = 0; i < map.getIds().size(); i++) {
@@ -707,7 +709,8 @@ public enum Kim {
 
 	public UrnDescriptor getUrnDescriptor(String urn) {
 
-		UrnDescriptor ret = null;;
+		UrnDescriptor ret = null;
+		;
 		if (validatorCallback != null) {
 			ret = validatorCallback.classifyUrn(urn);
 		}
@@ -723,9 +726,9 @@ public enum Kim {
 		return map == null ? null : map.get(st.getName());
 	}
 
-//	public void setUrnDescriptor(String urn, UrnDescriptor descriptor) {
-//		urnDescriptors.put(urn, descriptor);
-//	}
+	// public void setUrnDescriptor(String urn, UrnDescriptor descriptor) {
+	// urnDescriptors.put(urn, descriptor);
+	// }
 
 	public void setConceptDescriptor(String conceptId, ConceptDescriptor descriptor) {
 		setConceptDescriptor(conceptId, descriptor, false);
@@ -879,7 +882,8 @@ public enum Kim {
 		case "uncertainty":
 			return EnumSet.of(Type.UNCERTAINTY, Type.QUALITY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "acceleration":
-			return EnumSet.of(Type.ACCELERATION, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
+			return EnumSet.of(Type.ACCELERATION, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE,
+					Type.QUANTIFIABLE);
 		case "priority":
 			return EnumSet.of(Type.PRIORITY, Type.QUALITY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "value":
@@ -889,15 +893,18 @@ public enum Kim {
 		case "count":
 			return EnumSet.of(Type.NUMEROSITY, Type.QUALITY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "electric-potential":
-			return EnumSet.of(Type.ELECTRIC_POTENTIAL, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
+			return EnumSet.of(Type.ELECTRIC_POTENTIAL, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE,
+					Type.QUANTIFIABLE);
 		case "charge":
 			return EnumSet.of(Type.CHARGE, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "resistance":
-			return EnumSet.of(Type.RESISTANCE, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
+			return EnumSet.of(Type.RESISTANCE, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE,
+					Type.QUANTIFIABLE);
 		case "amount":
 			return EnumSet.of(Type.AMOUNT, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "resistivity":
-			return EnumSet.of(Type.RESISTIVITY, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
+			return EnumSet.of(Type.RESISTIVITY, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE,
+					Type.QUANTIFIABLE);
 		case "occurrence":
 			return EnumSet.of(Type.OCCURRENCE, Type.QUALITY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "probability":
@@ -909,15 +916,18 @@ public enum Kim {
 		case "velocity":
 			return EnumSet.of(Type.VELOCITY, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "temperature":
-			return EnumSet.of(Type.TEMPERATURE, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
+			return EnumSet.of(Type.TEMPERATURE, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE,
+					Type.QUANTIFIABLE);
 		case "viscosity":
-			return EnumSet.of(Type.VISCOSITY, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
+			return EnumSet.of(Type.VISCOSITY, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE,
+					Type.QUANTIFIABLE);
 		case "distance":
 			return EnumSet.of(Type.DISTANCE, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "process":
 			return EnumSet.of(Type.PROCESS, Type.DIRECT_OBSERVABLE, Type.OBSERVABLE);
-//		case "assessment":
-//			return EnumSet.of(Type.ASSESSMENT, Type.PROCESS, Type.DIRECT_OBSERVABLE, Type.OBSERVABLE);
+		// case "assessment":
+		// return EnumSet.of(Type.ASSESSMENT, Type.PROCESS, Type.DIRECT_OBSERVABLE,
+		// Type.OBSERVABLE);
 		case "agent":
 			return EnumSet.of(Type.AGENT, Type.DIRECT_OBSERVABLE, Type.COUNTABLE, Type.OBSERVABLE);
 		case "event":
@@ -1245,7 +1255,7 @@ public enum Kim {
 					model = (IKimModel) object;
 				}
 			}
-		}  
+		}
 		if (model == null && namespace.getSymbolTable().containsKey(string)
 				&& namespace.getSymbolTable().get(string) instanceof IKimModel) {
 			model = (IKimModel) namespace.getSymbolTable().get(string);
@@ -1366,42 +1376,71 @@ public enum Kim {
 			ns = Path.getLeading(text, '.');
 			ob = Path.getLast(text, '.');
 		}
-		
+
 		if (ns != null && ob != null) {
 			IKimNamespace namespace = getNamespace(ns);
 			if (namespace != null) {
-				return ((KimNamespace)namespace).getStatement(ob);
+				return ((KimNamespace) namespace).getStatement(ob);
 			}
 		}
 		return null;
 	}
 
 	/**
-	 * Use the passed function call and prototype to create options for the passed command. 
+	 * Use the passed function call and prototype to create options for the passed
+	 * command.
 	 * 
 	 * @param call
 	 * @param prototype
-	 * @param command command to prepend to the options.
-	 * @return
+	 * @param command
+	 *            command to prepend to the options.
+	 * @return the command line
 	 */
-	public String createCommandLine(IServiceCall call, IPrototype prototype, String command) {
+	public String createCommandLine(IParameters<String> parameters, IPrototype prototype, String command) {
+		return createCommandLine(parameters, prototype, command, null);
+	}
+
+	/**
+	 * Use the passed function call and prototype to create options for the passed
+	 * command.
+	 * 
+	 * @param call
+	 * @param prototype
+	 * @param command
+	 *            command to prepend to the options.
+	 * @param callTranslator
+	 *            function to translate any service call argument (nested function)
+	 *            into a command argument. If null, any such arguments are ignored.
+	 * @return the command line
+	 */
+	public String createCommandLine(IParameters<String> parameters, IPrototype prototype, String command,
+			Function<IServiceCall, String> callTranslator) {
 		String ret = "";
 		for (Argument argument : prototype.listArguments()) {
 			if (argument.getShortName() != null) {
-				Object value = call.getParameters().get(argument.getName());
+				Object value = parameters.get(argument.getName());
 				if (value != null) {
-					if (argument.getType() == IArtifact.Type.BOOLEAN) {
-						if (((Boolean)value)) {
+					if (value instanceof IServiceCall && callTranslator != null) {
+						ret += (ret.isEmpty() ? "" : " ") + "-" + argument.getShortName() + " "
+								+ callTranslator.apply((IServiceCall) value);
+					} else if (argument.getType() == IArtifact.Type.BOOLEAN) {
+						if (((Boolean) value)) {
 							ret += (ret.isEmpty() ? "" : " ") + "-" + argument.getShortName();
 						}
 					} else {
 						ret += (ret.isEmpty() ? "" : " ") + "-" + argument.getShortName() + " " + value.toString();
 					}
+				} else if (argument.getType() == IArtifact.Type.BOOLEAN && argument.getDefaultValue() != null) {
+					// for now just add the default when it's a boolean argument and the default is
+					// true
+					if (Boolean.parseBoolean(argument.getDefaultValue().toString())) {
+						ret += (ret.isEmpty() ? "" : " ") + "-" + argument.getShortName();
+					}
 				}
 			}
 		}
 		return command == null ? ret : (command + " " + ret);
-		
+
 	}
 
 }

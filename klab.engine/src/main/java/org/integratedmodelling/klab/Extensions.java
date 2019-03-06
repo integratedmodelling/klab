@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.rest.ServicePrototype;
+import org.integratedmodelling.klab.utils.Parameters;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.JavaType;
@@ -45,6 +46,8 @@ public enum Extensions implements IExtensionService {
 	 */
 	INSTANCE;
 
+	public static final String PROTOTYPE_PARAMETER = "__prototype";
+	
 	Map<String, IComponent> components = Collections.synchronizedMap(new HashMap<>());
 	Map<String, Prototype> prototypes = Collections.synchronizedMap(new HashMap<>());
 
@@ -123,7 +126,9 @@ public enum Extensions implements IExtensionService {
 			if (IExpression.class.isAssignableFrom(cls)) {
 				try {
 					IExpression expr = (IExpression) cls.getDeclaredConstructor().newInstance();
-					ret = expr.eval(functionCall.getParameters(), context);
+					Parameters<String> parameters = new Parameters<String>(functionCall.getParameters());
+					parameters.put(PROTOTYPE_PARAMETER, prototype);
+					ret = expr.eval(parameters, context);
 				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 						| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 					throw new KlabInternalErrorException(e);

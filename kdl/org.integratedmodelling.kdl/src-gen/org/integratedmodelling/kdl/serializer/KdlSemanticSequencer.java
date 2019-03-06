@@ -268,7 +268,17 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     DataflowBody returns DataflowBody
 	 *
 	 * Constraint:
-	 *     (dataflows+=ActorDefinition* (geometry=Geometry | units=Unit | computations=Computation | metadata=Metadata | javaClass=JavaClass)*)
+	 *     (
+	 *         dataflows+=ActorDefinition* 
+	 *         (
+	 *             geometry=Geometry | 
+	 *             units=Unit | 
+	 *             computations=Computation | 
+	 *             metadata=Metadata | 
+	 *             javaClass=JavaClass | 
+	 *             javaClass=STRING
+	 *         )*
+	 *     )
 	 */
 	protected void sequence_DataflowBody(ISerializationContext context, DataflowBody semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

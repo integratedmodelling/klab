@@ -18,7 +18,6 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 
 	protected WekaClassifier classifier = null;
 	protected WekaOptions options;
-	boolean outputModel = false;
 	private IServiceCall classDiscretizer;
 	String instancesExport = null;
 	String rawInstancesExport = null;
@@ -39,18 +38,47 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 
 		WekaInstances instances = new WekaInstances(ret, context.getModel(), (IRuntimeContext) context, true,
 				classDiscretizer);
-		if (context.getModel().isLearning()) {
-			// our main output is a model artifact
-			outputModel = true;
+
+		if (instances.getInstances().isEmpty()) {
+			context.getMonitor().warn("No instances in training set: cannot train Weka classifier");
+			return ret;
 		}
 
+		/*
+		 * Any export
+		 */
 		if (instancesExport != null) {
 			instances.export(Configuration.INSTANCE.getExportFile(instancesExport), false);
 		}
 		if (rawInstancesExport != null) {
 			instances.export(Configuration.INSTANCE.getExportFile(rawInstancesExport), true);
 		}
-		
+
+		/*
+		 * Do the training
+		 */
+		classifier.train(instances);
+
+		/*
+		 * Evaluate model and fill in the template variables
+		 */
+
+		/*
+		 * Produce the result using the resource adapter
+		 */
+
+		/*
+		 * Export the resource if requested, including all discretization parameters to
+		 * reconstruct the filters.
+		 */
+
+		/*
+		 * Produce the model if requested
+		 */
+		if (context.getModel().isLearning()) {
+			// our main output is a model artifact
+		}
+
 		return ret;
 	}
 

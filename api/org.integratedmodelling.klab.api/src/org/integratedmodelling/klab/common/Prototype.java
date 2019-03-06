@@ -72,13 +72,13 @@ public class Prototype implements IPrototype {
 
 		@Override
 		public String getShortName() {
-			if (shortName == null) {
-				shortName = computeShortName();
-			}
+//			if (shortName == null) {
+//				shortName = computeShortName();
+//			}
 			return shortName;
 		}
 
-		private String computeShortName() {
+		public String computeShortName() {
 			// TODO Auto-generated method stub
 			return name;
 		}

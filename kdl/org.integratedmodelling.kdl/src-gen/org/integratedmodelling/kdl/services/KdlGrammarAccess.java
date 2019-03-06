@@ -984,15 +984,17 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup_2_3_1 = (Group)cGroup_2_3.eContents().get(1);
 		private final Keyword cClassKeyword_2_3_1_0 = (Keyword)cGroup_2_3_1.eContents().get(0);
 		private final Assignment cJavaClassAssignment_2_3_1_1 = (Assignment)cGroup_2_3_1.eContents().get(1);
-		private final RuleCall cJavaClassJavaClassParserRuleCall_2_3_1_1_0 = (RuleCall)cJavaClassAssignment_2_3_1_1.eContents().get(0);
+		private final Alternatives cJavaClassAlternatives_2_3_1_1_0 = (Alternatives)cJavaClassAssignment_2_3_1_1.eContents().get(0);
+		private final RuleCall cJavaClassJavaClassParserRuleCall_2_3_1_1_0_0 = (RuleCall)cJavaClassAlternatives_2_3_1_1_0.eContents().get(0);
+		private final RuleCall cJavaClassSTRINGTerminalRuleCall_2_3_1_1_0_1 = (RuleCall)cJavaClassAlternatives_2_3_1_1_0.eContents().get(1);
 		
 		//DataflowBody:
 		//	{DataflowBody} dataflows+=ActorDefinition* (('geometry' geometry=Geometry)? & ('units' units=Unit)? &
-		//	computations=Computation? & ('metadata' metadata=Metadata)? ('class' javaClass=JavaClass)?);
+		//	computations=Computation? & ('metadata' metadata=Metadata)? ('class' javaClass=(JavaClass | STRING))?);
 		@Override public ParserRule getRule() { return rule; }
 		
 		//{DataflowBody} dataflows+=ActorDefinition* (('geometry' geometry=Geometry)? & ('units' units=Unit)? &
-		//computations=Computation? & ('metadata' metadata=Metadata)? ('class' javaClass=JavaClass)?)
+		//computations=Computation? & ('metadata' metadata=Metadata)? ('class' javaClass=(JavaClass | STRING))?)
 		public Group getGroup() { return cGroup; }
 		
 		//{DataflowBody}
@@ -1005,7 +1007,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getDataflowsActorDefinitionParserRuleCall_1_0() { return cDataflowsActorDefinitionParserRuleCall_1_0; }
 		
 		//('geometry' geometry=Geometry)? & ('units' units=Unit)? & computations=Computation? & ('metadata' metadata=Metadata)?
-		//('class' javaClass=JavaClass)?
+		//('class' javaClass=(JavaClass | STRING))?
 		public UnorderedGroup getUnorderedGroup_2() { return cUnorderedGroup_2; }
 		
 		//('geometry' geometry=Geometry)?
@@ -1038,7 +1040,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//Computation
 		public RuleCall getComputationsComputationParserRuleCall_2_2_0() { return cComputationsComputationParserRuleCall_2_2_0; }
 		
-		//('metadata' metadata=Metadata)? ('class' javaClass=JavaClass)?
+		//('metadata' metadata=Metadata)? ('class' javaClass=(JavaClass | STRING))?
 		public Group getGroup_2_3() { return cGroup_2_3; }
 		
 		//('metadata' metadata=Metadata)?
@@ -1053,17 +1055,23 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//Metadata
 		public RuleCall getMetadataMetadataParserRuleCall_2_3_0_1_0() { return cMetadataMetadataParserRuleCall_2_3_0_1_0; }
 		
-		//('class' javaClass=JavaClass)?
+		//('class' javaClass=(JavaClass | STRING))?
 		public Group getGroup_2_3_1() { return cGroup_2_3_1; }
 		
 		//'class'
 		public Keyword getClassKeyword_2_3_1_0() { return cClassKeyword_2_3_1_0; }
 		
-		//javaClass=JavaClass
+		//javaClass=(JavaClass | STRING)
 		public Assignment getJavaClassAssignment_2_3_1_1() { return cJavaClassAssignment_2_3_1_1; }
 		
+		//(JavaClass | STRING)
+		public Alternatives getJavaClassAlternatives_2_3_1_1_0() { return cJavaClassAlternatives_2_3_1_1_0; }
+		
 		//JavaClass
-		public RuleCall getJavaClassJavaClassParserRuleCall_2_3_1_1_0() { return cJavaClassJavaClassParserRuleCall_2_3_1_1_0; }
+		public RuleCall getJavaClassJavaClassParserRuleCall_2_3_1_1_0_0() { return cJavaClassJavaClassParserRuleCall_2_3_1_1_0_0; }
+		
+		//STRING
+		public RuleCall getJavaClassSTRINGTerminalRuleCall_2_3_1_1_0_1() { return cJavaClassSTRINGTerminalRuleCall_2_3_1_1_0_1; }
 	}
 	public class ComputationElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.Computation");
@@ -3452,7 +3460,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//DataflowBody:
 	//	{DataflowBody} dataflows+=ActorDefinition* (('geometry' geometry=Geometry)? & ('units' units=Unit)? &
-	//	computations=Computation? & ('metadata' metadata=Metadata)? ('class' javaClass=JavaClass)?);
+	//	computations=Computation? & ('metadata' metadata=Metadata)? ('class' javaClass=(JavaClass | STRING))?);
 	public DataflowBodyElements getDataflowBodyAccess() {
 		return pDataflowBody;
 	}
