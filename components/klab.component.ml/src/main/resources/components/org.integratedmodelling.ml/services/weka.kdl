@@ -73,5 +73,5 @@ export value randomforest extends classifier
 	""
 	label 'WEKA Random Forests'
 {		
-	class org.integratedmodelling.ml.weka.RandomForestResolver
+	class org.integratedmodelling.ml.contextualizers.RandomForestResolver
 }

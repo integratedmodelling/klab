@@ -41,6 +41,14 @@ public interface IDataKey {
 	List<String> getLabels();
 	
 	/**
+	 * Get the value corresponding to the result of reverseLookup() for that object.
+	 * 
+	 * @param index
+	 * @return the original object
+	 */
+	public Object lookup(int index);
+	
+	/**
 	 * Get value/label pairs
 	 */
 	List<Pair<Integer, String>> getAllValues();

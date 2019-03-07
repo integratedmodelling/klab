@@ -51,14 +51,14 @@ public class BayesNetResolver extends AbstractWekaResolver<BayesNet> implements 
 	public BayesNetResolver() {}
 	
 	public BayesNetResolver(IParameters<String> parameters,IComputationContext context) {
-		super(BayesNet.class, fixDefaults(parameters), true);
+		super(BayesNet.class, checkDefaults(parameters), true, true, false);
 		this.context = context;
 	}
 
-	private static IParameters<String> fixDefaults(IParameters<String> parameters) {
+	private static IParameters<String> checkDefaults(IParameters<String> parameters) {
 
 		/*
-		 * search and estimator parameters are mandatory. This way we enable defaults.
+		 * Both search and estimator parameters are mandatory. This way we enable defaults.
 		 */
 		if (!parameters.containsKey("search")) {
 			parameters.put("search", KimServiceCall.create("weka.bayes.k2", "maxparents", 3));

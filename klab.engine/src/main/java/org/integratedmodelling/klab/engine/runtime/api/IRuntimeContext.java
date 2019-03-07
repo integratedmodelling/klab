@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.engine.runtime.api;
 
 import java.util.Collection;
 
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -268,5 +269,12 @@ public interface IRuntimeContext extends IComputationContext {
 	 * @param targets
 	 */
 	IConfiguration newConfiguration(IConcept configurationType, Collection<IObservation> targets);
+
+    /**
+     * Locate the current computation in time. There is always a single extent when things are computed; if
+     * time isn't in the context, ITime.INITIALIZATION is returned.
+     * @return
+     */
+	ILocator getCurrentTimeLocator();
 
 }

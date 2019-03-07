@@ -52,7 +52,8 @@ public class RandomForestResolver extends AbstractWekaResolver<RandomForest> imp
 	public RandomForestResolver() {}
 	
 	public RandomForestResolver(IParameters<String> parameters,IComputationContext context) {
-		super(RandomForest.class, fixDefaults(parameters), true);
+		// TODO check parameters!
+		super(RandomForest.class, fixDefaults(parameters), true, false, false);
 		this.context = context;
 	}
 
