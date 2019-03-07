@@ -179,6 +179,15 @@ public interface API {
 			 * GET
 			 */
 			public static final String GET_URN = "/resource/get/" + P_URN;
+			
+			/**
+			 * Upload a resource.
+			 * <p>
+			 * <b>Protocol:</b> POST <br/>
+			 * <b>Response type:</b> No response <br/>
+			 * <b>Authentication:</b> session
+			 */
+			public static final String UPLOAD_URN = "/resource/put";
 
 			/**
 			 * Get URN data for passed URN. Includes expiration to control cacheing.
