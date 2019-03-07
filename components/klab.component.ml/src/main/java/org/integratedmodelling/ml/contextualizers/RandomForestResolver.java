@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.rest.ServiceCall;
 import org.integratedmodelling.klab.scale.Scale;
 
 import weka.classifiers.bayes.BayesNet;
+import weka.classifiers.trees.RandomForest;
 
 /**
  * <pre>
@@ -44,21 +45,22 @@ java weka.classifiers.bayes.BayesNet -t iris.arff -D \
  * @author Ferd
  *
  */
-public class BayesNetResolver extends AbstractWekaResolver<BayesNet> implements IExpression {
+public class RandomForestResolver extends AbstractWekaResolver<RandomForest> implements IExpression {
 
 	private IComputationContext context;
 
-	public BayesNetResolver() {}
+	public RandomForestResolver() {}
 	
-	public BayesNetResolver(IParameters<String> parameters,IComputationContext context) {
-		super(BayesNet.class, checkDefaults(parameters), true, true, false);
+	public RandomForestResolver(IParameters<String> parameters,IComputationContext context) {
+		// TODO check parameters!
+		super(RandomForest.class, fixDefaults(parameters), true, false, false);
 		this.context = context;
 	}
 
-	private static IParameters<String> checkDefaults(IParameters<String> parameters) {
+	private static IParameters<String> fixDefaults(IParameters<String> parameters) {
 
 		/*
-		 * Both search and estimator parameters are mandatory. This way we enable defaults.
+		 * search and estimator parameters are mandatory. This way we enable defaults.
 		 */
 		if (!parameters.containsKey("search")) {
 			parameters.put("search", KimServiceCall.create("weka.bayes.k2", "maxparents", 3));
@@ -83,7 +85,7 @@ public class BayesNetResolver extends AbstractWekaResolver<BayesNet> implements 
 
 	@Override
 	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
-		return new BayesNetResolver(parameters, context);
+		return new RandomForestResolver(parameters, context);
 	}
 
 }

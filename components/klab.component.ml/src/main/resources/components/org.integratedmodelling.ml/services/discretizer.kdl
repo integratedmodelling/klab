@@ -32,7 +32,7 @@ export value unsupervised
   		label "O"
   		default false
 		
-	optional boolean true
+	optional boolean simplenames
 		"Use bin numbers rather than ranges for discretized attributes. Default false."
 		label "Y"
 		default true

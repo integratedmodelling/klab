@@ -1402,7 +1402,7 @@ public enum Kim {
 
 	/**
 	 * Use the passed function call and prototype to create options for the passed
-	 * command.
+	 * command. Arguments appear in the same order as in the KDL.
 	 * 
 	 * @param call
 	 * @param prototype

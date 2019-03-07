@@ -123,4 +123,9 @@ public class LookupTable implements ILookupTable {
 		return type;
 	}
 
+	@Override
+	public Object lookup(int index) {
+		return (IConcept) table.getRow(index)[searchIndex].asValue(null);
+	}
+
 }
