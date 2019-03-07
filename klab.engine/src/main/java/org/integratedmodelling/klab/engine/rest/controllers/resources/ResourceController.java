@@ -43,7 +43,7 @@ public class ResourceController {
 		if (file == null) {
 			return new ResponseEntity<HttpStatus>(HttpStatus.UNPROCESSABLE_ENTITY); // 422
 		}
-		System.out.println(String.format("RefId: %", refId != null ? refId : "Not send"));
+		System.out.println(String.format("RefId: %s", refId != null ? refId : "Not send"));
 		System.out.println(String.format("File name %s", file.getName()));
 	    System.out.println(String.format("File original name %s", file.getOriginalFilename()));
 	    System.out.println(String.format("File size %s", file.getSize()));
