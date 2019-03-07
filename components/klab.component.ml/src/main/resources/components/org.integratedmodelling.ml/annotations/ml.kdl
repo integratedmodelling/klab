@@ -24,6 +24,16 @@ annotation predictor for dependencies
 annotation archetype for dependencies
 	""
 {
+	optional number min
+		"If set, overrides the minimum predictable value in the discretization for predicted numeric qualities. Allows
+		 to change the range of the predictions but affects the numeric values in the output."
+		 default 0
+		
+	optional number max
+		"If set, overrides the maximum predictable value in the discretization for predicted numeric qualities. Allows
+		 to change the range of the predictions but affects the numeric values in the output."
+		 default 0
+
 	optional concept weight
 		"If specified, defines an observable for a quality to use as weight for each instance created from
 		 the archetype. Instance weights are used by Weka in ways that depend on the classifier chosen."
