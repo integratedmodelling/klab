@@ -140,7 +140,7 @@ public interface IPrototype {
 	Argument getArgument(String argumentId);
 
 	/**
-	 * All argument descriptors in order of declaration
+	 * All argument descriptors in order of declaration.
 	 * 
 	 * @return all argument descriptors
 	 */

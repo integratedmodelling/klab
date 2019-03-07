@@ -1,8 +1,11 @@
 package org.integratedmodelling.ml.context;
 
 import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
+import org.integratedmodelling.klab.utils.Path;
 
 import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
 import weka.core.OptionHandler;
 
 /**
@@ -21,19 +24,38 @@ public class WekaClassifier {
 		this.classifier = Extensions.INSTANCE.createDefaultInstance(cls, Classifier.class);
 		if (this.classifier instanceof OptionHandler) {
 			try {
-				((OptionHandler)this.classifier).setOptions(options.getWekaOptions());
+				((OptionHandler) this.classifier).setOptions(options.getWekaOptions());
 			} catch (Exception e) {
-				throw new IllegalStateException("Weka: error setting options for " + cls + ": '" + options + "': " + e.getMessage());
+				throw new IllegalStateException(
+						"Weka: error setting options for " + cls + ": '" + options + "': " + e.getMessage());
 			}
 		}
 	}
 
 	public void train(WekaInstances instances) {
 
+		try {
+
+			instances.getInstances().setClassIndex(0);
+			classifier.buildClassifier(instances.getInstances());
+			Evaluation eval = new Evaluation(instances.getInstances());
+			eval.evaluateModel(classifier, instances.getInstances());
+
+			System.out.println(eval.toSummaryString());
+			System.out.println(eval.toClassDetailsString());
+			System.out.println(eval.toMatrixString());
+
+		} catch (Exception e) {
+			throw new IllegalStateException("Weka: training failed with error: " + e.getMessage());
+		}
 	}
 
 	public Classifier getClassifier() {
 		return classifier;
+	}
+
+	public String toString() {
+		return "WEKA " + Path.getLast(classifier.getClass().getCanonicalName(), '.');
 	}
 
 }

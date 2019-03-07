@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.rest.ServiceCall;
 import org.integratedmodelling.klab.scale.Scale;
 
 import weka.classifiers.bayes.BayesNet;
+import weka.classifiers.trees.RandomForest;
 
 /**
  * <pre>
@@ -44,14 +45,14 @@ java weka.classifiers.bayes.BayesNet -t iris.arff -D \
  * @author Ferd
  *
  */
-public class BayesNetResolver extends AbstractWekaResolver<BayesNet> implements IExpression {
+public class RandomForestResolver extends AbstractWekaResolver<RandomForest> implements IExpression {
 
 	private IComputationContext context;
 
-	public BayesNetResolver() {}
+	public RandomForestResolver() {}
 	
-	public BayesNetResolver(IParameters<String> parameters,IComputationContext context) {
-		super(BayesNet.class, fixDefaults(parameters), true);
+	public RandomForestResolver(IParameters<String> parameters,IComputationContext context) {
+		super(RandomForest.class, fixDefaults(parameters), true);
 		this.context = context;
 	}
 
@@ -83,7 +84,7 @@ public class BayesNetResolver extends AbstractWekaResolver<BayesNet> implements 
 
 	@Override
 	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
-		return new BayesNetResolver(parameters, context);
+		return new RandomForestResolver(parameters, context);
 	}
 
 }

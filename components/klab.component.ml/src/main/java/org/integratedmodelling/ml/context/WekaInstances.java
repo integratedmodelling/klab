@@ -132,6 +132,10 @@ public class WekaInstances {
 		}
 		return this.attributes;
 	}
+	
+	public int size() {
+		return getInstances().size();
+	}
 
 	private Attribute getAttribute(IState observable) {
 

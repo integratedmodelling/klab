@@ -1,5 +1,7 @@
 package org.integratedmodelling.ml.contextualizers;
 
+import java.io.File;
+
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Configuration;
@@ -22,6 +24,8 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 	String instancesExport = null;
 	String rawInstancesExport = null;
 
+	protected int MIN_INSTANCES_FOR_TRAINING = 5;
+	
 	protected AbstractWekaResolver() {
 	}
 
@@ -43,25 +47,32 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 			context.getMonitor().warn("No instances in training set: cannot train Weka classifier");
 			return ret;
 		}
+		
+		if (instances.getInstances().size() < MIN_INSTANCES_FOR_TRAINING) {
+			context.getMonitor().warn("Not enough instances in training set: cannot train Weka classifier");
+			return ret;
+		}
 
 		/*
-		 * Any export
+		 * Any exports requested
 		 */
 		if (instancesExport != null) {
-			instances.export(Configuration.INSTANCE.getExportFile(instancesExport), false);
+			File export = Configuration.INSTANCE.getExportFile(instancesExport);
+			instances.export(export, false);
+			context.getMonitor().info("Weka: training set exported to " + export);
 		}
 		if (rawInstancesExport != null) {
-			instances.export(Configuration.INSTANCE.getExportFile(rawInstancesExport), true);
+			File export = Configuration.INSTANCE.getExportFile(rawInstancesExport);
+			instances.export(export, true);
+			context.getMonitor().info("Weka: untransformed training set exported to " + export);
 		}
 
 		/*
 		 * Do the training
 		 */
+		context.getMonitor().info("Start training " + classifier + " classifier on " +  instances.size() + " instances");
 		classifier.train(instances);
-
-		/*
-		 * Evaluate model and fill in the template variables
-		 */
+		context.getMonitor().info("Training completed successfully.");
 
 		/*
 		 * Produce the result using the resource adapter

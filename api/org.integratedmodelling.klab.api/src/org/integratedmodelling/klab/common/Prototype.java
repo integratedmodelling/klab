@@ -136,6 +136,7 @@ public class Prototype implements IPrototype {
 	}
 
 	protected String name;
+	// stable ordering reflecting that of the KDL arguments
 	protected Map<String, ArgumentImpl> arguments = new LinkedHashMap<>();
 	protected String description;
 	protected Class<?> implementation;

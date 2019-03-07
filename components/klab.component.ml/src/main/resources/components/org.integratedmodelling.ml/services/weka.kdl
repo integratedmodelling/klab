@@ -43,18 +43,11 @@ abstract value classifier {
 		default false
 }
 
+// DO NOT CHANGE THE ORDER OF THE OPTIONS!
 export value bayesnet extends classifier
 	"Bayes Network learning using various search algorithms and quality measures."
 	label 'WEKA BayesNet'
 {		
-	optional value search
-		"Search algorithm and its parameters"
-		label "Q"
-		
-	optional value estimator
-		"Parameter estimator algorithm with its parameters"
-		label "E"
-		
 	optional boolean noadtree 
 		"Do not use AD-tree to increase speed on counts"
 		label "D"
@@ -65,6 +58,14 @@ export value bayesnet extends classifier
 		label "batch-size"
 		default 100 
 
+	optional value search
+		"Search algorithm and its parameters"
+		label "Q"
+		
+	optional value estimator
+		"Parameter estimator algorithm with its parameters"
+		label "E"
+
 	class org.integratedmodelling.ml.contextualizers.BayesNetResolver
 }
 
@@ -72,5 +73,5 @@ export value randomforest extends classifier
 	""
 	label 'WEKA Random Forests'
 {		
-	// class org.integratedmodelling.ml.weka.BayesNetResolver
+	class org.integratedmodelling.ml.weka.RandomForestResolver
 }

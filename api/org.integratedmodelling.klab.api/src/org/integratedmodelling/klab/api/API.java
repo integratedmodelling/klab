@@ -188,6 +188,13 @@ public interface API {
 			public static final String RESOLVE_URN = "/resource/resolve/" + P_URN;
 
 			/**
+			 * Get URN data for passed URN. Includes expiration to control cacheing.
+			 * 
+			 * GET
+			 */
+			public static final String UPLOAD_URN = "/resource/put/" + P_URN;
+			
+			/**
 			 * List all resources available to the requesting engine. Parameterize for
 			 * verbose or short return.
 			 * 

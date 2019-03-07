@@ -36,6 +36,9 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
     
     this.label = actuator.getLabel();
     
+    /*
+     * The ordering of the options is the same as the KDL
+     */
     for (IKdlActuator arg : actuator.getActors()) {
 
       ArgumentImpl a = new ArgumentImpl();
