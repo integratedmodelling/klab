@@ -599,6 +599,18 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		}
 
 		/*
+		 * add any other outputs from the model, which will be dealt with by the
+		 * contextualizers
+		 */
+		if (actuator.getModel() != null) {
+			for (int i = 1; i < actuator.getModel().getObservables().size(); i++) {
+				IObservable output = actuator.getModel().getObservables().get(i);
+				targetObservables.put(output.getLocalName(), new Pair<>((Observable) output,
+						output.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
+			}
+		}
+
+		/*
 		 * add any target of indirect computations
 		 */
 		for (IComputableResource computation : actuator.getComputation()) {
