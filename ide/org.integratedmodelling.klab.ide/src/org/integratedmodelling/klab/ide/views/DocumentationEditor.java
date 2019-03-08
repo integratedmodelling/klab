@@ -56,8 +56,8 @@ import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumenta
 import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumentationItem;
 import org.integratedmodelling.klab.ide.ui.UndoRedoImpl;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
-import org.integratedmodelling.klab.ide.utils.StringUtils;
 import org.integratedmodelling.klab.rest.DocumentationReference;
+import org.integratedmodelling.klab.utils.StringUtils;
 
 public class DocumentationEditor extends ViewPart {
 

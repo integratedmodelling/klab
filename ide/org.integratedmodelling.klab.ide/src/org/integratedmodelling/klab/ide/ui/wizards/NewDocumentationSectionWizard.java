@@ -39,8 +39,8 @@ import org.integratedmodelling.klab.ide.navigator.model.EProject;
 import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumentationFolder;
 import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumentationPage;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
-import org.integratedmodelling.klab.ide.utils.StringUtils;
 import org.integratedmodelling.klab.ide.views.DocumentationEditor;
+import org.integratedmodelling.klab.utils.StringUtils;
 
 public class NewDocumentationSectionWizard extends Wizard implements INewWizard {
 

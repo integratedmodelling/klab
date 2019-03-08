@@ -28,6 +28,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Begin keeping this changelog
-- Prototype of configuration detector available
-- ML component: instances generated from archetype (no discretization yet)
+- Prototype of configuration detector
+- ML/Weka component functional (Weka bridge through functions, prediction of distributed qualities and their uncertainties); 
+  generation of models and resources still unimplemented
+- Function documentation on hover in k.Modeler
+### Fixed
+- Additional output states created and reported
+- Various bug fixes
 

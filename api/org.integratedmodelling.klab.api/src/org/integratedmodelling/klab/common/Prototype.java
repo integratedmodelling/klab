@@ -13,8 +13,10 @@ import java.util.logging.Level;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.general.ITable;
+import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.StringUtils;
 
 public class Prototype implements IPrototype {
 
@@ -72,9 +74,9 @@ public class Prototype implements IPrototype {
 
 		@Override
 		public String getShortName() {
-//			if (shortName == null) {
-//				shortName = computeShortName();
-//			}
+			// if (shortName == null) {
+			// shortName = computeShortName();
+			// }
 			return shortName;
 		}
 
@@ -132,7 +134,7 @@ public class Prototype implements IPrototype {
 		public void setArtifact(boolean artifact) {
 			this.artifact = artifact;
 		}
-				
+
 	}
 
 	protected String name;
@@ -299,7 +301,39 @@ public class Prototype implements IPrototype {
 	}
 
 	@Override
-	public String getSynopsis() {
+	public String getSynopsis(Integer... flags) {
+
+		if (flags != null) {
+			boolean tags = false;
+			for (Integer flag : flags) {
+				if (flag == IDocumentation.DOC_HTMLTAGS) {
+					tags = true;
+				}
+			}
+
+			String ret = StringUtils
+					.pack(description == null || description.isEmpty() ? "No description provided." : description)
+					+ (tags ? "<p>" : "\n\n");
+			if (tags) {
+				ret += "<dl>";
+			}
+			for (String argument : arguments.keySet()) {
+				Argument arg = arguments.get(argument);
+				ret += "  " + (tags ? "<dt>" : "") + argument + (tags ? "</dt>" : "") + (tags ? "" : ":\n");
+				String description = StringUtils.pack(
+						arg.getDescription() == null || arg.getDescription().isEmpty() ? "No description provided."
+								: arg.getDescription());
+				ret += tags ? ("<dd>" + description + "</dd>")
+						: StringUtils.indent(StringUtils.justifyLeft(description, 50), 5);
+				ret += (tags ? "" : "\n");
+			}
+			if (tags) {
+				ret += "</dl>";
+			}
+
+			return ret;
+
+		}
 		return getShortSynopsis();
 	}
 
@@ -365,5 +399,5 @@ public class Prototype implements IPrototype {
 	public boolean isContextualizer() {
 		return contextualizer;
 	}
-	
+
 }

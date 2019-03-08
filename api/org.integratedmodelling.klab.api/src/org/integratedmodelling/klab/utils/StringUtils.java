@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.ide.utils;
+package org.integratedmodelling.klab.utils;
 
 public class StringUtils {
 
@@ -84,6 +84,21 @@ public class StringUtils {
         return ret;
     }
 
+    public static String indent(String text, int spaces) {
+    	String pad = spaces(spaces);
+    	StringBuffer ret = new StringBuffer(text.length());
+    	ret.append(pad);
+    	text = text.trim();
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            ret.append(c);
+            if (c == '\n') {
+            	ret.append(pad);
+            }
+        }
+    	return ret.toString();
+    }
+    
     /**
      * Justify left to passed width with wordwrap.
      * 

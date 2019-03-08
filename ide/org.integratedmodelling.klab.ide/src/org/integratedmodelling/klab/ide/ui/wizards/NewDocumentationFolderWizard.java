@@ -37,7 +37,7 @@ import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
 import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumentationFolder;
 import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumentationPage;
-import org.integratedmodelling.klab.ide.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtils;
 
 public class NewDocumentationFolderWizard extends Wizard implements INewWizard {
 

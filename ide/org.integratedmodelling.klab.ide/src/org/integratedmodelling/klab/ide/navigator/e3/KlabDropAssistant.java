@@ -20,7 +20,7 @@ import org.integratedmodelling.klab.ide.navigator.model.EProject;
 import org.integratedmodelling.klab.ide.navigator.model.EResource;
 import org.integratedmodelling.klab.ide.navigator.model.EResourceFolder;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
-import org.integratedmodelling.klab.ide.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtils;
 
 public class KlabDropAssistant extends ResourceDropAdapterAssistant {
 

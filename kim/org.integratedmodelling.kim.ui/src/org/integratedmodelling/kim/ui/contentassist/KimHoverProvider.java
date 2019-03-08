@@ -6,6 +6,7 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.kim.Concept;
 import org.integratedmodelling.kim.kim.ConceptReference;
 import org.integratedmodelling.kim.kim.ConceptStatementBody;
+import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 
@@ -60,10 +61,12 @@ public class KimHoverProvider extends DefaultEObjectHoverProvider {
                 }
 				return ret;
 			} else {
-				return "undefined concept <b>" + name + "</b>";
+				return "Undefined concept <b>" + name + "</b>";
 			}
 		} else if (o instanceof ConceptStatementBody) {
-		    return "definition of <b>" + ((ConceptStatementBody)o).getName() + "</b>";
+		    return "Definition of <b>" + ((ConceptStatementBody)o).getName() + "</b>";
+		} else if (o instanceof Function) {
+		    return "k.IM function <b>" + ((Function)o).getName() + "</b>";
 		}
 		return super.getFirstLine(o);
 	}

@@ -18,9 +18,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.klab.ide.ui.PaletteItem.SelectListener;
-import org.integratedmodelling.klab.ide.utils.StringUtils;
 import org.integratedmodelling.klab.organizer.Folder;
 import org.integratedmodelling.klab.organizer.Item;
+import org.integratedmodelling.klab.utils.StringUtils;
 
 public class PaletteFolder extends Composite {
 
