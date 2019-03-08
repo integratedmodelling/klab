@@ -8,14 +8,16 @@
 abstract value classifier {		
 	
 	optional text resource 
-		"ID of the local resource containing the trained model. Ignored if the model is not a 'learn' model. If not
-		 passed and the model is a learner, a new resource with a default name is generated at each run."
+		"ID of the local resource containing the trained model. Ignored if the model is not a 'learn' model, 
+		 overwritten without warning if the resource exists already. If a resource name is not
+		 passed and the model is a learner, a new resource with a default name is generated at each run. Use a 
+		 dot-separated lowercase path."
 		
 	optional text instances 
-		"Output ARFF file for instances. If a relative path, it will be saved in the default export directory."
+		"Output ARFF file to export the training set. If a relative path, it will be saved in the default export directory."
 
 	optional text rawinstances 
-		"Output ARFF file for raw (undiscretized) instances. If a relative path, it will be saved in the default 
+		"Output ARFF file to export the raw (undiscretized) training set. If a relative path, it will be saved in the default 
 		export directory."
 	
 	optional number seed
@@ -46,7 +48,10 @@ abstract value classifier {
 
 // DO NOT CHANGE THE ORDER OF THE OPTIONS!
 export value bayesnet extends classifier
-	"Bayes Network learning using various search algorithms and quality measures."
+	"Bayesian network learning using configurable search and estimation algorithms. Bridges to the Weka BayesNet classifier. When used with a 
+	 standard model, it will learn a BN and use it to predict the output. With a 'learn' model it will also produce the learned model artifact 
+	 and a computing resource for it (or others) to use. The resource will allow export as BIF and other BN formats. Defines variables for 
+	 reporting (TBD) of classifier evaluation. Use the @archetype and @predictor annotations to tag observations used in learning and inference."
 	label 'WEKA BayesNet'
 {		
 	optional boolean noadtree 
@@ -60,11 +65,13 @@ export value bayesnet extends classifier
 		default 100 
 
 	optional value search
-		"Search algorithm and its parameters. The default is a K2 algorithm with 3 maximum parents per node."
+		"Search algorithm and its parameters. The default is a K2 algorithm with 3 maximum parents per node, equivalent to
+		 calling weka.bayes.k2(maxparents=3)."
 		label "Q"
 		
 	optional value estimator
-		"Parameter estimator algorithm with its parameters. The default estimator is the Weka SimpleEstimator."
+		"Parameter estimator algorithm with its parameters. The default estimator is the Weka SimpleEstimator, equivalent to
+		 calling weka.bayes.simpleestimator()."
 		label "E"
 
 	class org.integratedmodelling.ml.contextualizers.BayesNetResolver

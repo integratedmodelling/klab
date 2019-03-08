@@ -46,7 +46,7 @@ public class WekaInstances {
 	private static final int MAX_ALLOWED_NODATA = 2;
 	private IState predicted = null;
 	private List<IState> predictors = new ArrayList<>();
-	private ObservationGroup archetype = null;
+	private List<ObservationGroup> archetypes = new ArrayList<>();
 	private boolean requiresDiscretization = false;
 	private Instances rawInstances, instances;
 	private ArrayList<Attribute> attributes;
@@ -104,7 +104,7 @@ public class WekaInstances {
 	private boolean admitsNodata;
 	private boolean errorWarning;
 	private Discretization predictedDiscretization;
-	
+
 	// TODO set these from instances unless they're set by the archetype notation
 	private double predictedMin = Double.NaN;
 	private double predictedMax = Double.NaN;
@@ -138,11 +138,17 @@ public class WekaInstances {
 					if (!(artifact instanceof ObservationGroup)) {
 						throw new IllegalArgumentException("Weka: archetypes must be observations of objects");
 					}
-					this.predictedMin = arch.get("min", Double.NaN);
-					this.predictedMax = arch.get("max", Double.NaN);
-					this.archetype = (ObservationGroup) artifact;
-					this.weightObservable = arch.get("weight", IConcept.class);
-					attributeWeights.put(((ObservationGroup) artifact).getObservable().getLocalName(), 1.0);
+					if (arch.containsKey("min")) {
+						this.predictedMin = arch.get("min", Double.NaN);
+					}
+					if (arch.containsKey("max")) {
+						this.predictedMax = arch.get("max", Double.NaN);
+					}
+					this.archetypes.add((ObservationGroup) artifact);
+					if (arch.containsKey("weight")) {
+						this.weightObservable = arch.get("weight", IConcept.class);
+						attributeWeights.put(((ObservationGroup) artifact).getObservable().getLocalName(), 1.0);
+					}
 				}
 			}
 		}
@@ -224,8 +230,8 @@ public class WekaInstances {
 
 	private void build() {
 
-		if (this.archetype == null) {
-			throw new IllegalStateException("Weka: cannot build training set without an archetype");
+		if (this.archetypes.isEmpty()) {
+			throw new IllegalStateException("Weka: cannot build training set without at least one archetype");
 		}
 		if (predictors.size() < 1) {
 			throw new IllegalStateException("Weka: not enough predictors to build a training set");
@@ -238,63 +244,66 @@ public class WekaInstances {
 		int objects = 0;
 		int skipped = 0;
 
-		for (IArtifact object : this.archetype) {
+		for (ObservationGroup archetype : archetypes) {
+			
+			for (IArtifact object : archetype) {
 
-			Object[] instanceValues = new Object[predictors.size() + 1];
-			double instanceWeight = 1;
+				Object[] instanceValues = new Object[predictors.size() + 1];
+				double instanceWeight = 1;
 
-			if (stateIndex == null) {
-				// build map of predicted/observable name to index in instance. We use one
-				// artifact so the observable names are stable.
-				stateIndex = new HashMap<>();
-				for (IState state : ((IDirectObservation) object).getStates()) {
-					if (state.getObservable().equals(predicted.getObservable())) {
-						stateIndex.put(state.getObservable().getLocalName(), 0);
-					} else {
-						int i = 1;
-						for (IState predictor : predictors) {
-							if (state.getObservable().equals(predictor.getObservable())) {
-								stateIndex.put(state.getObservable().getLocalName(), i);
-							} else if (weightObservable != null && state.getObservable().is(weightObservable)) {
-								instanceWeight = state.aggregate(((IObservation) object).getScale(), Double.class);
+				if (stateIndex == null) {
+					// build map of predicted/observable name to index in instance. We use one
+					// artifact so the observable names are stable.
+					stateIndex = new HashMap<>();
+					for (IState state : ((IDirectObservation) object).getStates()) {
+						if (state.getObservable().equals(predicted.getObservable())) {
+							stateIndex.put(state.getObservable().getLocalName(), 0);
+						} else {
+							int i = 1;
+							for (IState predictor : predictors) {
+								if (state.getObservable().equals(predictor.getObservable())) {
+									stateIndex.put(state.getObservable().getLocalName(), i);
+								} else if (weightObservable != null && state.getObservable().is(weightObservable)) {
+									instanceWeight = state.aggregate(((IObservation) object).getScale(), Double.class);
+								}
+								i++;
 							}
-							i++;
+						}
+					}
+
+					if (stateIndex.size() != predictors.size() + 1) {
+						throw new IllegalStateException(
+								"Weka: the archetype observations do not contain values for the learned quality and all predictors");
+					}
+				}
+
+				// TODO set min/max from instances if any is NaN
+
+				boolean ignore = false;
+				for (IState state : ((IDirectObservation) object).getStates()) {
+					if (stateIndex.containsKey(state.getObservable().getLocalName())) {
+						Object o = state.aggregate(((IObservation) object).getScale(),
+								Utils.getClassForType(state.getObservable().getArtifactType()));
+						if (Observations.INSTANCE.isNodata(o)) {
+							skipped++;
+							ignore = true;
+							break;
+						} else {
+							instanceValues[stateIndex.get(state.getObservable().getLocalName())] = o;
+							objects++;
 						}
 					}
 				}
 
-				if (stateIndex.size() != predictors.size() + 1) {
-					throw new IllegalStateException(
-							"Weka: the archetype observations do not contain values for the learned quality and all predictors");
-				}
-			}
-
-			// TODO set min/max from instances if any is NaN
-			
-			boolean ignore = false;
-			for (IState state : ((IDirectObservation) object).getStates()) {
-				if (stateIndex.containsKey(state.getObservable().getLocalName())) {
-					Object o = state.aggregate(((IObservation) object).getScale(),
-							Utils.getClassForType(state.getObservable().getArtifactType()));
-					if (Observations.INSTANCE.isNodata(o)) {
-						skipped++;
-						ignore = true;
-						break;
+				if (!ignore) {
+					// remap attributes to doubles as needed; ignore instance if there are errors
+					double[] values = mapValuesToDoubles(instanceValues);
+					if (values != null) {
+						rawInstances.add(new DenseInstance(instanceWeight, values));
 					} else {
-						instanceValues[stateIndex.get(state.getObservable().getLocalName())] = o;
-						objects++;
+						skipped++;
+						objects--;
 					}
-				}
-			}
-
-			if (!ignore) {
-				// remap attributes to doubles as needed; ignore instance if there are errors
-				double[] values = mapValuesToDoubles(instanceValues);
-				if (values != null) {
-					rawInstances.add(new DenseInstance(instanceWeight, values));
-				} else {
-					skipped++;
-					objects--;
 				}
 			}
 		}
@@ -397,10 +406,10 @@ public class WekaInstances {
 			}
 			i++;
 		}
-		
+
 		/*
-		 * define any limits that are not already defined; don't allow the specified min/max to specify a
-		 * narrower interval than the value spread.
+		 * define any limits that are not already defined; don't allow the specified
+		 * min/max to specify a narrower interval than the value spread.
 		 */
 		if (predicted.getObservable().getArtifactType() == Type.NUMBER && !Double.isNaN(ret[0])) {
 			if (Double.isNaN(predictedMin) || predictedMin > ret[0]) {
@@ -410,7 +419,7 @@ public class WekaInstances {
 				predictedMax = ret[0];
 			}
 		}
-		
+
 		return ret;
 	}
 
