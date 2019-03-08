@@ -397,6 +397,20 @@ public class WekaInstances {
 			}
 			i++;
 		}
+		
+		/*
+		 * define any limits that are not already defined; don't allow the specified min/max to specify a
+		 * narrower interval than the value spread.
+		 */
+		if (predicted.getObservable().getArtifactType() == Type.NUMBER && !Double.isNaN(ret[0])) {
+			if (Double.isNaN(predictedMin) || predictedMin > ret[0]) {
+				predictedMin = ret[0];
+			}
+			if (Double.isNaN(predictedMax) || predictedMax < ret[0]) {
+				predictedMax = ret[0];
+			}
+		}
+		
 		return ret;
 	}
 

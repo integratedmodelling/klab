@@ -140,7 +140,7 @@ public class Actuator implements IActuator {
 	// if this is non-null, coverage is also non-null and the actuator defines a
 	// partition of the named target artifact, covering our coverage only.
 	private String partitionedTarget;
-	
+
 	/*
 	 * when this is a partition, the priority reflects the ranking so that the
 	 * highest ranked partial can be applied last
@@ -301,14 +301,14 @@ public class Actuator implements IActuator {
 			/*
 			 * check for configuration triggered
 			 */
-			Pair<IConcept, Set<IObservation>> confdesc = Observables.INSTANCE
-					.detectConfigurations((IObservation)ret, ctx.getContextObservation());
+			Pair<IConcept, Set<IObservation>> confdesc = Observables.INSTANCE.detectConfigurations((IObservation) ret,
+					ctx.getContextObservation());
 
 			if (confdesc != null) {
 				configuration = ctx.newConfiguration(confdesc.getFirst(), confdesc.getSecond());
 			}
 		}
-		
+
 		if (runtimeContext.getMonitor().isInterrupted()) {
 			return ret;
 		}
@@ -342,9 +342,22 @@ public class Actuator implements IActuator {
 					}
 				}
 
+				// FIXME - just notify the group 
 				IObservation notifiable = (IObservation) (ret instanceof ObservationGroup && ret.groupSize() > 0
 						? ret.iterator().next()
 						: ret);
+
+				List<IObservation> notifiables = new ArrayList<>();
+				if (model != null) {
+					for (int i = 0; i < model.getObservables().size(); i++) {
+						IArtifact artifact = ctx.getArtifact(model.getObservables().get(i).getLocalName());
+						// FIXME this is a hack - all the notification logics must be fixed
+						if (artifact instanceof IState) {
+							notifiables.add((IObservation) artifact);
+						}
+					}
+				}
+				notifiables.add(notifiable);
 
 				IObservation parent = ctx.getContextObservation().equals(notifiable) ? null
 						: ctx.getContextObservation();
@@ -368,19 +381,25 @@ public class Actuator implements IActuator {
 
 				}
 
-				if (!dataflow.wasNotified(notifiable)) {
+				for (int i = 0; i < notifiables.size(); i++) {
+					
+					boolean last = i == notifiables.size() - 1;
+					IObservation obs = notifiables.get(i);
+					
+					if (!dataflow.wasNotified(obs)) {
 
-					IObservationReference observation = Observations.INSTANCE
-							.createArtifactDescriptor(notifiable, parent, ITime.INITIALIZATION, 0, false, isMain)
-							.withTaskId(ctx.getMonitor().getIdentity().getId());
+						IObservationReference observation = Observations.INSTANCE
+								.createArtifactDescriptor(obs, parent, ITime.INITIALIZATION, 0, false, isMain && last)
+								.withTaskId(ctx.getMonitor().getIdentity().getId());
 
-					session.getMonitor().send(Message.create(session.getId(),
-							IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation, observation));
+						session.getMonitor().send(Message.create(session.getId(),
+								IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation, observation));
 
-					((Report) ctx.getReport()).include(observation);
-					((Artifact) notifiable).setNotified(true);
+						((Report) ctx.getReport()).include(observation);
+						((Artifact) obs).setNotified(true);
+					}
 				}
-				
+
 				if (configuration != null) {
 					/*
 					 * TODO notify the configuration.
