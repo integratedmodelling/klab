@@ -172,6 +172,7 @@ public class EngineViewController {
 	public void getObservationData(Principal principal, @PathVariable String observation,
 			@RequestParam(required = false) String viewport, @RequestParam(required = false) String locator,
 			@RequestParam ObservationReference.GeometryType format, @RequestParam(required = false) String outputFormat,
+			@RequestParam(required = false) boolean folder,
 			HttpServletResponse response) throws Exception {
 
 		ISession session = EngineSessionController.getSession(principal);
