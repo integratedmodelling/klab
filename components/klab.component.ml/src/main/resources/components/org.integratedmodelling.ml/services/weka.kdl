@@ -11,19 +11,19 @@ abstract value classifier {
 		"ID of the local resource containing the trained model"
 		
 	optional text instances 
-		"Output AIRF file for instances. If a relative path, it will be saved in the default output directory."
+		"Output ARFF file for instances. If a relative path, it will be saved in the default export directory."
 
 	optional text rawinstances 
-		"Output AIRF file for raw (undiscretized) instances. If a relative path, it will be saved in the default 
-		output directory."
+		"Output ARFF file for raw (undiscretized) instances. If a relative path, it will be saved in the default 
+		export directory."
 	
 	optional number seed
-		"Seed for cross-validation or percentage split"
+		"Seed for cross-validation or percentage split."
 		label "s"
 		default 1
 		
 	optional number splitpercentage
-		"Percentage for the train/test set split, e.g., 0.66"
+		"Percentage for the train/test set split, e.g., 0.66."
 		label "split-percentage"
 		default 0.66
 		
@@ -38,7 +38,7 @@ abstract value classifier {
 		 default 10
 		 
 	optional boolean debug
-		"Output debug information to the console"
+		"Output debug information to the console."
 		label "output-debug-info"
 		default false
 }

@@ -69,30 +69,25 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
     } else {
       this.geometry = Geometry.empty();
     }
-    
-    // compute short arguments
-    for (Argument argument : arguments.values()) {
-    	// TODO
-    }
   }
 
-  @Override
-  public String getSynopsis() {
-
-    String s = getShortSynopsis();
-
-    s += "\n\n" + StringUtils.leftIndent(StringUtils.justifyLeft(description, 70), 3) + "\n";
-
-    if (arguments.size() > 0) {
-      s += "Arguments:\n\n";
-      for (Argument arg : arguments.values()) {
-        s += "  " + arg.getName() + (arg.isOptional() ? " (optional)" : " (required)") + ": \n"
-            + StringUtils.leftIndent(StringUtils.justifyLeft(arg.getDescription(), 60), 6) + "\n";
-      }
-      s += "\n";
-    }
-
-    return s;
-  }
+//  @Override
+//  public String getSynopsis(Integer ... flags) {
+//
+//    String s = getShortSynopsis();
+//
+//    s += "\n\n" + StringUtils.leftIndent(StringUtils.justifyLeft(description, 70), 3) + "\n";
+//
+//    if (arguments.size() > 0) {
+//      s += "Arguments:\n\n";
+//      for (Argument arg : arguments.values()) {
+//        s += "  " + arg.getName() + (arg.isOptional() ? " (optional)" : " (required)") + ": \n"
+//            + StringUtils.leftIndent(StringUtils.justifyLeft(arg.getDescription(), 60), 6) + "\n";
+//      }
+//      s += "\n";
+//    }
+//
+//    return s;
+//  }
 
 }
