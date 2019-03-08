@@ -221,7 +221,7 @@ public class VectorValidator implements IResourceValidator {
 				}
 
 			} catch (Throwable e) {
-				ret.addError("Coverage projection failed reprojection test (check Bursa-Wolfe parameters)");
+				ret.addError("Coverage projection failed reprojection test (check Bursa-Wolfe parameters): EPSG code reported is " + crsCode);
 			}
 		}
 		if (!ret.hasErrors()) {

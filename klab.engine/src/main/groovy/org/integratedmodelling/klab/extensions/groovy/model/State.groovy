@@ -54,6 +54,23 @@ class State extends Observation {
 		return this;
 	}
 
+	public State normalize() {
+		if (obs.type == IArtifact.Type.NUMBER) {
+			def summary = getStateSummary();
+			if (!summary.isDegenerate()) {
+				for (ILocator locator : obs.getScale()) {
+					Double d = ((IState)obs).get(locator, Double.class);
+					if (d != null && !Double.isNaN(d)) {
+						d = (d - summary.getRange().get(0)) / (summary.getRange().get(1) - summary.getRange().get(0));
+						((IState)obs).set(locator, d);
+					}
+				}
+			}
+		}
+		return this;
+	}
+
+	
 	/**
 	 * Return the state with the appropriate type, aggregating as necessary. If we
 	 * have a time pointer, use that.
