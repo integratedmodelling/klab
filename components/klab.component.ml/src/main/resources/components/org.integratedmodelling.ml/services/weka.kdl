@@ -8,7 +8,8 @@
 abstract value classifier {		
 	
 	optional text resource 
-		"ID of the local resource containing the trained model"
+		"ID of the local resource containing the trained model. Ignored if the model is not a 'learn' model. If not
+		 passed and the model is a learner, a new resource with a default name is generated at each run."
 		
 	optional text instances 
 		"Output ARFF file for instances. If a relative path, it will be saved in the default export directory."
@@ -49,7 +50,7 @@ export value bayesnet extends classifier
 	label 'WEKA BayesNet'
 {		
 	optional boolean noadtree 
-		"Do not use AD-tree to increase speed on counts"
+		"Do not use an AD-tree to increase speed on counts."
 		label "D"
 		default false
 		
@@ -59,11 +60,11 @@ export value bayesnet extends classifier
 		default 100 
 
 	optional value search
-		"Search algorithm and its parameters"
+		"Search algorithm and its parameters. The default is a K2 algorithm with 3 maximum parents per node."
 		label "Q"
 		
 	optional value estimator
-		"Parameter estimator algorithm with its parameters"
+		"Parameter estimator algorithm with its parameters. The default estimator is the Weka SimpleEstimator."
 		label "E"
 
 	class org.integratedmodelling.ml.contextualizers.BayesNetResolver
@@ -71,7 +72,7 @@ export value bayesnet extends classifier
 
 export value randomforest extends classifier
 	""
-	label 'WEKA Random Forests'
+	label 'WEKA RandomForests'
 {		
 	class org.integratedmodelling.ml.contextualizers.RandomForestResolver
 }
