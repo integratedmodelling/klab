@@ -28,7 +28,6 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.kim.Prototype;
-import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.ml.MLComponent;
 
@@ -105,6 +104,10 @@ public class WekaInstances {
 	private boolean admitsNodata;
 	private boolean errorWarning;
 	private Discretization predictedDiscretization;
+	
+	// TODO set these from instances unless they're set by the archetype notation
+	private double predictedMin = Double.NaN;
+	private double predictedMax = Double.NaN;
 
 	public WekaInstances(IState predicted, IModel model, IRuntimeContext context, boolean mustDiscretize,
 			boolean admitsNodata, IServiceCall classDiscretizer) {
@@ -135,6 +138,8 @@ public class WekaInstances {
 					if (!(artifact instanceof ObservationGroup)) {
 						throw new IllegalArgumentException("Weka: archetypes must be observations of objects");
 					}
+					this.predictedMin = arch.get("min", Double.NaN);
+					this.predictedMax = arch.get("max", Double.NaN);
 					this.archetype = (ObservationGroup) artifact;
 					this.weightObservable = arch.get("weight", IConcept.class);
 					attributeWeights.put(((ObservationGroup) artifact).getObservable().getLocalName(), 1.0);
@@ -264,6 +269,8 @@ public class WekaInstances {
 				}
 			}
 
+			// TODO set min/max from instances if any is NaN
+			
 			boolean ignore = false;
 			for (IState state : ((IDirectObservation) object).getStates()) {
 				if (stateIndex.containsKey(state.getObservable().getLocalName())) {
@@ -499,10 +506,12 @@ public class WekaInstances {
 	 * Return the distribution breakpoints for the predicted state, computing them
 	 * if necessary.
 	 * 
+	 * TODO needs a min and a max (either from the archetype or from the call)
+	 * 
 	 * @return
 	 */
 	public Discretization getPredictedDiscretization() {
-		
+
 		if (this.predictedDiscretization == null) {
 			DiscretizerDescriptor filter = discretizers.get(predicted.getObservable().getLocalName());
 			if (filter == null) {
@@ -519,9 +528,8 @@ public class WekaInstances {
 				throw new KlabUnimplementedException("Weka: cannot get cut points from discretizer of class "
 						+ filter.getDiscretizer().getClass().getCanonicalName() + ": please report to developers");
 			}
-			StateSummary summary = Observations.INSTANCE.getStateSummary(predicted, context.getCurrentTimeLocator());
-			this.predictedDiscretization = new Discretization(summary.getRange().get(0), cutpoints, summary.getRange().get(1));
-			
+			this.predictedDiscretization = new Discretization(predictedMin, cutpoints, predictedMax);
+
 		}
 		return this.predictedDiscretization;
 	}
