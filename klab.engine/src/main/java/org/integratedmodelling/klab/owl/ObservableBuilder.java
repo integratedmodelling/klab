@@ -926,7 +926,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	 */
 	public Concept makeUncertainty(IConcept concept, boolean addDefinition) {
 
-		String cName = getCleanId(concept) + "Uncertainty";
+		String cName =  "UncertaintyOf" + getCleanId(concept);
 		String definition = UnarySemanticOperator.UNCERTAINTY.declaration[0] + " " + concept.getDefinition();
 		Ontology ontology = (Ontology) concept.getOntology();
 		String conceptId = ontology.getIdForDefinition(definition);

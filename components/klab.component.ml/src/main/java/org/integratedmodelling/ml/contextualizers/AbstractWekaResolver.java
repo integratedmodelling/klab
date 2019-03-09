@@ -149,7 +149,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 
 			if (uncertainty != null) {
 				// TODO categorical distribution should use Shannon - redo with original distribution
-				uncertainty.set(locator, Math.sqrt(distribution.getNumericalVariance()));
+				uncertainty.set(locator, Math.sqrt(distribution.getNumericalVariance())/distribution.getNumericalMean());
 			}
 
 		} else {
