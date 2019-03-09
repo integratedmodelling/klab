@@ -120,6 +120,10 @@ public class VectorValidator implements IResourceValidator {
 			// we only do this when importing, so let's go through them
 			envelope = collection.getBounds();
 		}
+        if (envelope.getCoordinateReferenceSystem() == null) {
+            ret.addError("vector resource is unprojected");
+            return;
+        }
 
 		/**
 		 * Description and other info go in metadata

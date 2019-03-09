@@ -17,7 +17,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 
 public abstract class AbstractWorkspace implements IWorkspace {
 
-	KimWorkspace delegate;
+	protected KimWorkspace delegate;
 	String name;
 	
 	AbstractWorkspace() {

@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 [comment]: <>   (Guiding Principles:)
-[comment]: <>   (   Changelogs are for humans, not machines.)
+[comment]: <>   (  Changelogs are for humans, not machines.)
 [comment]: <>   (  There should be an entry for every single version.)
 [comment]: <>   (  The same types of changes should be grouped.)
 [comment]: <>   (  Versions and sections should be linkable.)
@@ -27,12 +27,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Begin keeping this changelog
-- Prototype of configuration detector
-- ML/Weka component functional (Weka bridge through functions, prediction of distributed qualities and their uncertainties); 
-  generation of models and resources still unimplemented
-- Function documentation on hover in k.Modeler
+- Begin keeping this changelog.
+- Prototype of configuration detector.
+- ML/Weka component is functional (Weka bridge through functions, prediction of distributed qualities and their uncertainties); 
+  generation of models and resources with import/export still unimplemented.
+- Function and annotation documentation appears on hover in k.Modeler.
+- Service workspace for scratch resources and user-level explorer uploads and scenarios is 
+  created and managed by the engine.
+- Beginning of resource add by drop functionalities (need to find a way to upload multi-file 
+  resources naturally)
 ### Fixed
-- Additional output states created and reported
-- Various bug fixes
+- Additional output states created and reported.
+- Various bug fixes.
 
