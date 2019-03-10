@@ -35,9 +35,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Service workspace for scratch resources and user-level explorer uploads and scenarios is 
   created and managed by the engine.
 - Beginning of resource add by drop functionalities (need to find a way to upload multi-file 
-  resources naturally)
-- Improved and generalized observation export features using adapters
-- Export to shapefile working
+  resources naturally).
+- Improved and generalized observation export features using adapters.
+- Export to shapefile working for both individual observations and folders.
+
+
 ### Fixed
 - Additional output states created and reported.
 - Various bug fixes.
