@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.rest.StateSummary;
@@ -197,10 +198,16 @@ public class EngineViewController {
             throw new IllegalArgumentException("observation " + observation + " does not exist");
         }
 
+        if (folder) {
+            obs = ((Observation) obs).getGroup();
+        }
+
         ILocator loc = ITime.INITIALIZATION;
         if (locator != null) {
             loc = Geometry.create(locator);
         }
+
+        boolean done = false;
 
         // special handling for some types: with time, these may be integrated in the adapters
         if (obs instanceof IState) {
@@ -215,6 +222,7 @@ public class EngineViewController {
                 InputStream in = new ByteArrayInputStream(os.toByteArray());
                 response.setContentType(MediaType.IMAGE_PNG_VALUE);
                 IOUtils.copy(in, response.getOutputStream());
+                done = true;
 
             } else if (format == GeometryType.COLORMAP) {
 
@@ -224,6 +232,7 @@ public class EngineViewController {
                     response.getWriter().write(JsonUtils.printAsJson(summary.getColormap()));
                     response.setStatus(HttpServletResponse.SC_OK);
                 }
+                done = true;
 
             } else if (format == GeometryType.SCALAR) {
 
@@ -246,22 +255,25 @@ public class EngineViewController {
                 response.setContentType(MediaType.TEXT_PLAIN_VALUE);
                 response.getWriter().write(descr);
                 response.setStatus(HttpServletResponse.SC_OK);
-
-            } else if (format == GeometryType.RAW) {
-
-                // should have a format field
-                File out = File.createTempFile("klab", "." + outputFormat);
-                out.deleteOnExit();
-                // TODO support explicit adapter
-                out = Observations.INSTANCE.export(obs, loc, out, outputFormat, null);
-                if (out != null) {
-                    response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-                    try (InputStream in = new FileInputStream(out)) {
-                        IOUtils.copy(in, response.getOutputStream());
-                    }
-                }
+                done = true;
 
             }
+        }
+
+        if (!done && format == GeometryType.RAW) {
+
+            // should have a format field
+            File out = File.createTempFile("klab", "." + outputFormat);
+            out.deleteOnExit();
+            // TODO support explicit adapter
+            out = Observations.INSTANCE.export(obs, loc, out, outputFormat, null);
+            if (out != null) {
+                response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+                try (InputStream in = new FileInputStream(out)) {
+                    IOUtils.copy(in, response.getOutputStream());
+                }
+            }
+
         }
 
     }

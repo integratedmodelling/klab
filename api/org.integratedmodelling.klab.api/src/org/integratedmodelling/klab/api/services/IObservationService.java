@@ -15,9 +15,13 @@
  */
 package org.integratedmodelling.klab.api.services;
 
+import java.io.File;
+
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -154,5 +158,17 @@ public interface IObservationService {
 	 * @return the state view
 	 */
 	IState getStateViewAs(IObservable observable, IState state, IScale scale, IComputationContext context);
+
+	/**
+	 * Export an observation to a file using adapter export capabilities. 
+	 * 
+	 * @param observation
+	 * @param locator
+	 * @param file
+	 * @param outputFormat
+	 * @param adapterId may be null.
+	 * @return the same file passed, or a different one if a change was needed (e.g. multiple files in a zip).
+	 */
+    File export(IObservation observation, ILocator locator, File file, String outputFormat, String adapterId);
 
 }

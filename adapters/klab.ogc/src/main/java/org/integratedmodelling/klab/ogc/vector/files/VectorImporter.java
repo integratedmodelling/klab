@@ -1,10 +1,22 @@
 package org.integratedmodelling.klab.ogc.vector.files;
 
 import java.io.File;
+import java.io.Serializable;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.geotools.data.DefaultTransaction;
+import org.geotools.data.Transaction;
+import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.data.shapefile.ShapefileDataStoreFactory;
+import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.data.simple.SimpleFeatureStore;
+import org.geotools.feature.DefaultFeatureCollection;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -12,11 +24,23 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.data.adapters.AbstractFilesetImporter;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.ogc.VectorAdapter;
 import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.Utils;
+import org.integratedmodelling.klab.utils.ZipUtils;
+import org.opengis.feature.simple.SimpleFeatureType;
+
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
 
 public class VectorImporter extends AbstractFilesetImporter {
 
@@ -53,7 +77,7 @@ public class VectorImporter extends AbstractFilesetImporter {
 
         if (observation instanceof ObservationGroup) {
             observation = ((ObservationGroup) observation).groupSize() > 0
-                    ? (IObservation)((ObservationGroup) observation).iterator().next()
+                    ? (IObservation) ((ObservationGroup) observation).iterator().next()
                     : null;
         }
         if (observation instanceof IDirectObservation) {
@@ -66,8 +90,142 @@ public class VectorImporter extends AbstractFilesetImporter {
 
     @Override
     public File exportObservation(File file, IObservation observation, ILocator locator, String format) {
-        // TODO Auto-generated method stub
-        return null;
+
+        if (format.equals("shp")) {
+
+            IObservation first = observation instanceof ObservationGroup
+                    ? (IObservation) ((ObservationGroup) observation).iterator().next()
+                    : observation;
+
+            SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+            builder.setCRS(((Projection) first.getScale().getSpace().getProjection())
+                    .getCoordinateReferenceSystem());
+            
+            builder.setName("the_geom");
+            switch (first.getScale().getSpace().getDimensionality()) {
+            case 0:
+                builder.add("the_geom", Point.class, ((Projection) first.getScale().getSpace()
+                        .getProjection())
+                                .getCoordinateReferenceSystem());
+                break;
+            case 1:
+                builder.add("the_geom", MultiLineString.class, ((Projection) first.getScale().getSpace()
+                        .getProjection())
+                                .getCoordinateReferenceSystem());
+                break;
+            case 2:
+                builder.add("the_geom", MultiPolygon.class, ((Projection) first.getScale().getSpace()
+                        .getProjection())
+                                .getCoordinateReferenceSystem());
+                break;
+            default:
+                throw new IllegalStateException("trying to build shape attributes for a spatial feature with unsupported dimensionality");
+            }
+
+            builder.add("name", String.class);
+
+            List<String> metadataId = new ArrayList<>();
+            for (String s : first.getMetadata().keySet()) {
+                if (Utils.isPOD(first.getMetadata().get(s))) {
+                    metadataId.add(s);
+                    builder.add(s.replaceAll(":", "_"), first.getMetadata().get(s).getClass());
+                }
+            }
+
+            List<String> stateId = new ArrayList<>();
+            if (first instanceof IDirectObservation) {
+                for (IState state : ((IDirectObservation) first).getStates()) {
+                    Class<?> type = Utils.getClassForType(state.getObservable().getArtifactType());
+                    if (!Utils.isPOD(type)) {
+                        stateId.add(state.getObservable().getLocalName());
+                        type = String.class;
+                    }
+                    builder.add(state.getObservable().getLocalName(), type);
+                }
+            }
+
+            SimpleFeatureType type = builder.buildFeatureType();
+            DefaultFeatureCollection collection = new DefaultFeatureCollection(null, null);
+//            GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
+            SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(type);
+
+            Iterable<IArtifact> observations = null;
+            if (observation instanceof ObservationGroup) {
+                observations = ((ObservationGroup) observation);
+            } else {
+                observations = new ArrayList<IArtifact>();
+                ((ArrayList<IArtifact>) observations).add(observation);
+            }
+
+            for (IArtifact obs : observations) {
+                if (obs instanceof IDirectObservation) {
+                    featureBuilder.add(((Shape) ((IDirectObservation) obs).getScale().getSpace().getShape())
+                            .getJTSGeometry());
+
+                    featureBuilder.add(((IDirectObservation) obs).getName());
+
+                    for (String s : metadataId) {
+                        featureBuilder.add(obs.getMetadata().get(s));
+                    }
+                    for (String s : stateId) {
+                        Object value = null;
+                        for (IState state : ((IDirectObservation) obs).getStates()) {
+                            if (state.getObservable().getLocalName().equals(s)) {
+                                value = state.aggregate(((IDirectObservation) obs).getScale()
+                                        .at(locator), Utils.getClassForType(state.getObservable().getArtifactType()));
+                                break;
+                            }
+                        }
+                        featureBuilder.add(value);
+                    }
+                    collection.add(featureBuilder.buildFeature(null));
+                }
+            }
+
+            /*
+             * create a directory from the file name and write the file there, along with all the sidecar 
+             * BS.
+             */
+            File dir = new File(MiscUtilities.changeExtension(file.toString(), "dir"));
+            dir.mkdirs();
+            File out = new File(dir + File.separator + MiscUtilities.getFileName(file));
+            File zip = new File(MiscUtilities.changeExtension(file.toString(), "zip"));
+
+            ShapefileDataStoreFactory dataStoreFactory = new ShapefileDataStoreFactory();
+
+            try {
+                Map<String, Serializable> params = new HashMap<String, Serializable>();
+                params.put("url", out.toURI().toURL());
+                params.put("create spatial index", Boolean.TRUE);
+
+                ShapefileDataStore newDataStore = (ShapefileDataStore) dataStoreFactory
+                        .createNewDataStore(params);
+                newDataStore.createSchema(type);
+
+                Transaction transaction = new DefaultTransaction("create");
+                // String typeName = newDataStore.getTypeNames()[0];
+                SimpleFeatureSource featureSource = newDataStore.getFeatureSource(newDataStore.getTypeNames()[0]);
+                ((SimpleFeatureStore)featureSource).setTransaction(transaction);
+                ((SimpleFeatureStore)featureSource).addFeatures(collection);
+                try {
+                    transaction.commit();
+                } finally {
+                    transaction.close();
+                }
+            } catch (Exception e) {
+                throw new KlabIOException(e);
+            }
+
+            /*
+             * Zip the directory's contents and send back as the final output
+             */
+            ZipUtils.zip(zip, dir, false, false);
+
+            file = zip;
+        }
+        
+        return file;
+
     }
 
     @Override
