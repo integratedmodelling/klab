@@ -266,7 +266,7 @@ public class EngineViewController {
             File out = File.createTempFile("klab", "." + outputFormat);
             out.deleteOnExit();
             // TODO support explicit adapter
-            out = Observations.INSTANCE.export(obs, loc, out, outputFormat, null);
+            out = Observations.INSTANCE.export(obs, loc, out, outputFormat, null, session.getMonitor());
             if (out != null) {
                 response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
                 try (InputStream in = new FileInputStream(out)) {

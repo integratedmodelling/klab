@@ -3,7 +3,10 @@ package org.integratedmodelling.klab.raster.files;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -21,6 +24,7 @@ import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.data.adapters.AbstractFilesetImporter;
 import org.integratedmodelling.klab.ogc.RasterAdapter;
 import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.Triple;
 
 public class RasterImporter extends AbstractFilesetImporter {
 
@@ -53,14 +57,14 @@ public class RasterImporter extends AbstractFilesetImporter {
     }
 
     @Override
-    public Map<String, String> getExportCapabilities(IObservation observation) {
-        Map<String, String> ret = new HashMap<>();
+    public Collection<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
+        List<Triple<String, String, String>> ret = new ArrayList<>();
 
         if (observation instanceof IState) {
             if (observation.getScale().getSpace() != null && observation.getScale().getSpace().isRegular()
                     && observation.getScale().isSpatiallyDistributed()) {
-                ret.put("tiff", "GeoTIFF raster");
-                ret.put("png", "PNG image");
+                ret.add(new Triple<>("tiff", "GeoTIFF raster", "tiff"));
+                ret.add(new Triple<>("png", "PNG image", "png"));
             }
         }
 
@@ -68,7 +72,7 @@ public class RasterImporter extends AbstractFilesetImporter {
     }
 
     @Override
-    public File exportObservation(File file, IObservation observation, ILocator locator, String format) {
+    public File exportObservation(File file, IObservation observation, ILocator locator, String format, IMonitor monitor) {
 
         if (observation instanceof IState && observation.getGeometry().getDimension(Type.SPACE) != null) {
 

@@ -24,14 +24,16 @@ public class ObservationReference implements IObservationReference {
 		private String label;
 		private String value;
 		private String adapter;
+		private String extension;
 		
 		public ExportFormat() {
 		}
 
-		public ExportFormat(String label, String value, String adapter) {
+		public ExportFormat(String label, String value, String adapter, String extension) {
 			this.label = label;
 			this.value = value;
-			this.setAdapter(adapter);
+			this.adapter = adapter;
+			this.extension = extension;
 		}
 
 		public String getValue() {
@@ -56,6 +58,14 @@ public class ObservationReference implements IObservationReference {
 
         public void setAdapter(String adapter) {
             this.adapter = adapter;
+        }
+
+        public String getExtension() {
+            return extension;
+        }
+
+        public void setExtension(String extension) {
+            this.extension = extension;
         }
 	}
 

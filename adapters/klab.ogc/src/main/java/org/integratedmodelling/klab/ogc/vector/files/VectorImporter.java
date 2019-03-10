@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,8 @@ import org.integratedmodelling.klab.data.adapters.AbstractFilesetImporter;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.ogc.VectorAdapter;
 import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.klab.utils.ZipUtils;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -72,9 +75,8 @@ public class VectorImporter extends AbstractFilesetImporter {
     }
 
     @Override
-    public Map<String, String> getExportCapabilities(IObservation observation) {
-        Map<String, String> ret = new HashMap<>();
-
+    public Collection<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
+        List<Triple<String, String, String>> ret = new ArrayList<>();
         if (observation instanceof ObservationGroup) {
             observation = ((ObservationGroup) observation).groupSize() > 0
                     ? (IObservation) ((ObservationGroup) observation).iterator().next()
@@ -82,14 +84,14 @@ public class VectorImporter extends AbstractFilesetImporter {
         }
         if (observation instanceof IDirectObservation) {
             if (observation.getScale().getSpace() != null && !observation.getScale().getSpace().isRegular()) {
-                ret.put("shp", "ESRI Shapefile");
+                ret.add(new Triple<>("shp", "ESRI Shapefile", "zip"));
             }
         }
         return ret;
     }
 
     @Override
-    public File exportObservation(File file, IObservation observation, ILocator locator, String format) {
+    public File exportObservation(File file, IObservation observation, ILocator locator, String format, IMonitor monitor) {
 
         if (format.equals("shp")) {
 
@@ -100,7 +102,7 @@ public class VectorImporter extends AbstractFilesetImporter {
             SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
             builder.setCRS(((Projection) first.getScale().getSpace().getProjection())
                     .getCoordinateReferenceSystem());
-            
+
             builder.setName("the_geom");
             switch (first.getScale().getSpace().getDimensionality()) {
             case 0:
@@ -124,29 +126,44 @@ public class VectorImporter extends AbstractFilesetImporter {
 
             builder.add("name", String.class);
 
-            List<String> metadataId = new ArrayList<>();
+            List<Pair<String, String>> metadataId = new ArrayList<>();
             for (String s : first.getMetadata().keySet()) {
                 if (Utils.isPOD(first.getMetadata().get(s))) {
-                    metadataId.add(s);
-                    builder.add(s.replaceAll(":", "_"), first.getMetadata().get(s).getClass());
+                    String attr = s;
+                    if (s.length() > 10) {
+                        attr = attr.substring(0, 10);
+                    }
+                    attr = attr.replaceAll(":", "_");
+                    if (s.length() != attr.length()) {
+                        monitor.warn("shapefile export: shortening metadata field name "
+                                + s + " to " + attr);
+                    }
+                    metadataId.add(new Pair<>(s, attr));
+                    builder.add(attr, first.getMetadata().get(s).getClass());
                 }
             }
 
-            List<String> stateId = new ArrayList<>();
+            List<Pair<String, String>> stateId = new ArrayList<>();
             if (first instanceof IDirectObservation) {
                 for (IState state : ((IDirectObservation) first).getStates()) {
                     Class<?> type = Utils.getClassForType(state.getObservable().getArtifactType());
                     if (!Utils.isPOD(type)) {
-                        stateId.add(state.getObservable().getLocalName());
                         type = String.class;
                     }
-                    builder.add(state.getObservable().getLocalName(), type);
+                    String attr = state.getObservable().getLocalName();
+                    if (attr.length() > 10) {
+                        attr = attr.substring(0, 10);
+                        monitor.warn("shapefile export: shortening attribute name "
+                                + state.getObservable().getLocalName() + " to " + attr);
+                    }
+                    stateId.add(new Pair<>(state.getObservable().getLocalName(), attr));
+                    builder.add(attr, type);
                 }
             }
 
             SimpleFeatureType type = builder.buildFeatureType();
             DefaultFeatureCollection collection = new DefaultFeatureCollection(null, null);
-//            GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
+            // GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
             SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(type);
 
             Iterable<IArtifact> observations = null;
@@ -164,19 +181,24 @@ public class VectorImporter extends AbstractFilesetImporter {
 
                     featureBuilder.add(((IDirectObservation) obs).getName());
 
-                    for (String s : metadataId) {
-                        featureBuilder.add(obs.getMetadata().get(s));
+                    for (Pair<String, String> s : metadataId) {
+                        featureBuilder.add(obs.getMetadata().get(s.getFirst()));
                     }
-                    for (String s : stateId) {
+                    for (Pair<String, String> s : stateId) {
                         Object value = null;
+                        boolean found = false;
                         for (IState state : ((IDirectObservation) obs).getStates()) {
-                            if (state.getObservable().getLocalName().equals(s)) {
+                            if (state.getObservable().getLocalName().equals(s.getFirst())) {
                                 value = state.aggregate(((IDirectObservation) obs).getScale()
-                                        .at(locator), Utils.getClassForType(state.getObservable().getArtifactType()));
+                                        .at(locator), Utils
+                                                .getClassForType(state.getObservable().getArtifactType()));
+                                found = true;
                                 break;
                             }
                         }
-                        featureBuilder.add(value);
+                        if (found) {
+                            featureBuilder.add(value);
+                        }
                     }
                     collection.add(featureBuilder.buildFeature(null));
                 }
@@ -204,9 +226,10 @@ public class VectorImporter extends AbstractFilesetImporter {
 
                 Transaction transaction = new DefaultTransaction("create");
                 // String typeName = newDataStore.getTypeNames()[0];
-                SimpleFeatureSource featureSource = newDataStore.getFeatureSource(newDataStore.getTypeNames()[0]);
-                ((SimpleFeatureStore)featureSource).setTransaction(transaction);
-                ((SimpleFeatureStore)featureSource).addFeatures(collection);
+                SimpleFeatureSource featureSource = newDataStore
+                        .getFeatureSource(newDataStore.getTypeNames()[0]);
+                ((SimpleFeatureStore) featureSource).setTransaction(transaction);
+                ((SimpleFeatureStore) featureSource).addFeatures(collection);
                 try {
                     transaction.commit();
                 } finally {
@@ -223,7 +246,7 @@ public class VectorImporter extends AbstractFilesetImporter {
 
             file = zip;
         }
-        
+
         return file;
 
     }

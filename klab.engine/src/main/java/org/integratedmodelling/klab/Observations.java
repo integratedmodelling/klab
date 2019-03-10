@@ -74,6 +74,7 @@ import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
+import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.klab.utils.Utils;
 
 public enum Observations implements IObservationService {
@@ -332,11 +333,11 @@ public enum Observations implements IObservationService {
             /*
              * check export formats from all adapters
              */
-            Map<String, Pair<String, String>> formats = new LinkedHashMap<>();
+            Map<String, Pair<Triple<String, String, String>, String>> formats = new LinkedHashMap<>();
             for (IResourceAdapter adapter : Resources.INSTANCE.getResourceAdapters()) {
-                Map<String, String> capabilities = adapter.getImporter().getExportCapabilities(observation);
-                for (String t : capabilities.keySet()) {
-                    formats.put(t, new Pair<>(capabilities.get(t), adapter.getName()));
+                for (Triple<String, String, String> capabilities : adapter.getImporter()
+                        .getExportCapabilities(observation)) {
+                    formats.put(capabilities.getFirst(), new Pair<>(capabilities, adapter.getName()));
                 }
             }
 
@@ -345,8 +346,9 @@ public enum Observations implements IObservationService {
              * set instead of a map and implementing equals() for ExportFormat to check all three.
              */
             for (String format : formats.keySet()) {
-                Pair<String, String> data = formats.get(format);
-                ret.getExportFormats().add(new ExportFormat(data.getFirst(), format, data.getSecond()));
+                Pair<Triple<String, String, String>, String> data = formats.get(format);
+                ret.getExportFormats().add(new ExportFormat(data.getFirst().getSecond(), format, data
+                        .getSecond(), data.getFirst().getThird()));
             }
 
             ret.getGeometryTypes().add(gtype);
@@ -517,15 +519,19 @@ public enum Observations implements IObservationService {
     }
 
     @Override
-    public File export(IObservation observation, ILocator locator, File file, String outputFormat, @Nullable String adapterId) {
+    public File export(IObservation observation, ILocator locator, File file, String outputFormat, @Nullable String adapterId, IMonitor monitor) {
 
         IResourceAdapter adapter = null;
         if (adapterId == null) {
-
             for (IResourceAdapter a : Resources.INSTANCE.getResourceAdapters()) {
-                Map<String, String> capabilities = a.getImporter().getExportCapabilities(observation);
-                if (capabilities.containsKey(outputFormat)) {
-                    adapter = a;
+                for (Triple<String, String, String> capabilities : a.getImporter()
+                        .getExportCapabilities(observation)) {
+                    if (capabilities.getFirst().equals(outputFormat)) {
+                        adapter = a;
+                        break;
+                    }
+                }
+                if (adapter != null) {
                     break;
                 }
             }
@@ -541,7 +547,7 @@ public enum Observations implements IObservationService {
             }
         }
 
-        return adapter.getImporter().exportObservation(file, observation, locator, outputFormat);
+        return adapter.getImporter().exportObservation(file, observation, locator, outputFormat, monitor);
     }
 
     public boolean isData(Object o) {

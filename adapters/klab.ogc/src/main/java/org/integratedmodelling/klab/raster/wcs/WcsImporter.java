@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.ogc.WcsAdapter;
 import org.integratedmodelling.klab.raster.wcs.WCSService.WCSLayer;
 import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.utils.Triple;
 
 public class WcsImporter implements IResourceImporter {
 
@@ -90,13 +91,13 @@ public class WcsImporter implements IResourceImporter {
 	
 
     @Override
-    public Map<String, String> getExportCapabilities(IObservation observation) {
-        Map<String, String> ret = new HashMap<>();
+    public Collection<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
+        List<Triple<String, String, String>> ret = new ArrayList<>();
         return ret;
     }
 
     @Override
-    public File exportObservation(File file, IObservation observation, ILocator locator, String format) {
+    public File exportObservation(File file, IObservation observation, ILocator locator, String format, IMonitor monitor) {
         // TODO Auto-generated method stub
         return null;
     }

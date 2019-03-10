@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.utils.Triple;
 
 public interface IResourceImporter {
 
@@ -37,13 +38,13 @@ public interface IResourceImporter {
     boolean canHandle(String importLocation, IParameters<String> userData);
 
     /**
-     * Return a map of ID/Description for all the formats of file export that
+     * Return a list of triples ID/Description/FileExtension for all the formats of file export that
      * this adapter supports for the passed observation.
      * 
      * @param observation
      * @return
      */
-    Map<String, String> getExportCapabilities(IObservation observation);
+    Collection<Triple<String, String, String>> getExportCapabilities(IObservation observation);
 
     /**
      * Export the passed observation to the passed file using the passed format. The
@@ -54,11 +55,12 @@ public interface IResourceImporter {
      * @param observation
      * @param locator TODO
      * @param format
+     * @param monitor TODO
      * @return the file if successful, null otherwise. The file should be reassigned as some output
      * formats may require to output an archive or another file different from the requested. 
      * Should only throw exceptions when the file can't be written or any parameters are null or invalid.
      */
-    File exportObservation(File file, IObservation observation, ILocator locator, String format);
+    File exportObservation(File file, IObservation observation, ILocator locator, String format, IMonitor monitor);
 
     /**
      * Return a map of ID/Description for all the formats of file export that

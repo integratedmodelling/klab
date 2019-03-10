@@ -36,6 +36,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   created and managed by the engine.
 - Beginning of resource add by drop functionalities (need to find a way to upload multi-file 
   resources naturally)
+- Improved and generalized observation export features using adapters
+- Export to shapefile working
 ### Fixed
 - Additional output states created and reported.
 - Various bug fixes.
