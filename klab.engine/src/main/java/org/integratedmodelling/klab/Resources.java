@@ -204,6 +204,10 @@ public enum Resources implements IResourceService {
     public IWorkspace getComponentsWorkspace() {
         return components;
     }
+    
+    public Collection<IResourceAdapter> getResourceAdapters() {
+        return resourceAdapters.values();
+    }
 
     /*
      * Extract and load the OWL core knowledge workspace.

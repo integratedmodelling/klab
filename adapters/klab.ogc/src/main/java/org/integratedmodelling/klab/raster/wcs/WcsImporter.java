@@ -1,16 +1,22 @@
 package org.integratedmodelling.klab.raster.wcs;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
@@ -81,5 +87,30 @@ public class WcsImporter implements IResourceImporter {
 		return url != null && url.getProtocol().startsWith("http") && lowurl.contains("?")
 				&& lowurl.contains("service=wcs") && lowurl.contains("getcapabilities");
 	}
+	
+
+    @Override
+    public Map<String, String> getExportCapabilities(IObservation observation) {
+        Map<String, String> ret = new HashMap<>();
+        return ret;
+    }
+
+    @Override
+    public File exportObservation(File file, IObservation observation, ILocator locator, String format) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Map<String, String> getExportCapabilities(IResource resource) {
+        Map<String, String> ret = new HashMap<>();
+        return ret;
+    }
+
+    @Override
+    public boolean exportResource(File file, IResource resource, String format) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
 }

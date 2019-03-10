@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.engine.rest.controllers.resources;
 
 import java.io.File;
 import java.security.Principal;
+import java.util.List;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observations;
@@ -10,8 +11,8 @@ import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -22,6 +23,7 @@ import org.integratedmodelling.klab.engine.rest.controllers.engine.EngineSession
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -45,31 +47,47 @@ public class ResourceController {
     @CrossOrigin(origins = "*")
     @Secured(Roles.SESSION)
     @RequestMapping(value = API.NODE.RESOURCE.UPLOAD_URN, method = RequestMethod.POST)
-    public ResponseEntity<HttpStatus> uploadResource(Principal principal, @RequestParam String refId, @RequestParam MultipartFile file)
+    public ResponseEntity<HttpStatus> uploadResource(Principal principal, @RequestParam String refId, @RequestParam MultipartFile[] file)
             throws Exception {
-        
+
         if (file == null) {
             return new ResponseEntity<HttpStatus>(HttpStatus.UNPROCESSABLE_ENTITY); // 422
         }
 
+        ISession session = EngineSessionController.getSession(principal);
+
         /*
          * try importing as a resource.
          */
-        ISession session = EngineSessionController.getSession(principal);
-        File destination = new File(Configuration.INSTANCE.getDataPath("uploads") + File.separator
-                + file.getOriginalFilename());
-        file.transferTo(destination);
-        destination.deleteOnExit();
-        IResource resource = Resources.INSTANCE.importResource(destination.toURI().toURL(), Resources.INSTANCE
+        File primary = null;
+        String filename = null;
+        for (MultipartFile f : file) {
+
+            File destination = new File(Configuration.INSTANCE.getDataPath("uploads") + File.separator
+                    + f.getOriginalFilename());
+            f.transferTo(destination);
+            destination.deleteOnExit();
+
+            if (primary == null) {
+                List<IResourceAdapter> adapters = Resources.INSTANCE
+                        .getResourceAdapter(destination, new Parameters<String>());
+                if (adapters.size() > 0) {
+                    primary = destination;
+                    filename = f.getOriginalFilename();
+                }
+            }
+
+        }
+        IResource resource = Resources.INSTANCE.importResource(primary.toURI().toURL(), Resources.INSTANCE
                 .getServiceWorkspace().getServiceProject(session.getMonitor()));
 
         if (resource == null) {
-            throw new IllegalStateException("uploaded file " + file.getOriginalFilename()
+            throw new IllegalStateException("uploaded file " + filename
                     + " could not be imported as a resource");
         }
 
         if (resource.hasErrors()) {
-            throw new IllegalStateException("uploaded file " + file.getOriginalFilename()
+            throw new IllegalStateException("uploaded file " + filename
                     + " was imported with errors");
         }
 
@@ -124,9 +142,9 @@ public class ResourceController {
          */
 
         System.out.println(String.format("RefId: %s", refId != null ? refId : "Not sent"));
-        System.out.println(String.format("File name %s", file.getName()));
-        System.out.println(String.format("File original name %s", file.getOriginalFilename()));
-        System.out.println(String.format("File size %s", file.getSize()));
+//        System.out.println(String.format("File name %s", file.getName()));
+//        System.out.println(String.format("File original name %s", file.getOriginalFilename()));
+//        System.out.println(String.format("File size %s", file.getSize()));
 
         // TODO: file.getInputStream();
         // TODO: check size, type, etc. is needed? k.EXPLORER take care to checking it

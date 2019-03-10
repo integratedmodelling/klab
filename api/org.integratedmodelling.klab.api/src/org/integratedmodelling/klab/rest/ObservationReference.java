@@ -23,13 +23,15 @@ public class ObservationReference implements IObservationReference {
 
 		private String label;
 		private String value;
-
+		private String adapter;
+		
 		public ExportFormat() {
 		}
 
-		public ExportFormat(String label, String value) {
+		public ExportFormat(String label, String value, String adapter) {
 			this.label = label;
 			this.value = value;
+			this.setAdapter(adapter);
 		}
 
 		public String getValue() {
@@ -47,6 +49,14 @@ public class ObservationReference implements IObservationReference {
 		public void setLabel(String label) {
 			this.label = label;
 		}
+
+        public String getAdapter() {
+            return adapter;
+        }
+
+        public void setAdapter(String adapter) {
+            this.adapter = adapter;
+        }
 	}
 
 	public enum ObservationType {
