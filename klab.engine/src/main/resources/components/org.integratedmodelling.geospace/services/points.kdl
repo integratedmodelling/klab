@@ -54,37 +54,38 @@ export object cluster
 }
 
 export number collect 
-	"Collect values in a configurable neighborhood of each location and set the value at the location based on the values
-	 in the neighborhood. Optionally modify other values in the neighborhood as well."
+	"Collect values in the neighborhood of each point and set the value at the location 
+	 based on the values in the neighborhood. Uses a moving window of configurable size and shape."
 	label 'Collect neighbors'
 {
 	text aggregate
 		"An expression producing the value to compute. The current cell in the neighborhood will be 
          available as 'space', the one being computed (focal) will be available as 'origin'. The 
-         value of the focal cell will be available as 'self'."
+         value of the focal cell will be available as 'self'. Note: using 'origin' will greatly
+         increase the number of evaluations and consequently the run time."
 		
 	optional input select
 		"An expression that will return true or false per each point in the selected neighborhood, 
 		 choosing whether the point should be considered in the aggregation or not. All dependencies
 		 will be available with their own name; the current cell will be available as 'space', the
-	     focal cell being computed will be available as 'origin'."
+	     focal cell being computed will be available as 'origin'.  Note: using 'origin' will greatly
+         increase the number of evaluations and consequently the run time."
 		default ""
 	
 	optional input radius
-		"Radius in m of the neighborhood to consider. Default is the distance spanning one cell at the current
+		"Radius of the neighborhood to consider in meters. Default is the distance spanning one cell at the current
 		 resolution, producing a Moore neighborhood."
 		default 0.0
 		
 	optional input cellradius
-		"Radius in cells of the neighborhood to consider. Default is 1. Pass 0 for local operations (which 
-		 may be useful if the update feature is used)."
+		"Radius in cells of the neighborhood to consider. Default is 1. Pass 0 for local operations."
 		default 1
 	
 	optional input aggregation
-		"The type of aggregation requested for the values produced at each location. Default is count if
-		 the value expression produces a boolean the first time it's evaluated, or mean if it produces a
-		 number."
-		default "" // TODO this should be enum mean, std, sum, min, max, count (maybe shannon etc)
+		"The type of aggregation requested for the values produced at each location. One of sum, mean, std, 
+		 max, min, count, dominant or any. Default is count if the value expression produces a boolean the 
+		 first time it's evaluated, dominant if it produces a concept, or mean if it produces a number."
+		default ""
 		
 	optional input skipedges
 		"If true, the cells that do not have a complete neighborhood due to edge effects will be skipped. Default
@@ -95,12 +96,12 @@ export number collect
 		"If true, an approximately round neighborhood is used. Default is a square neighborhood."
 		default false
 	
-	optional input update
-		"An optional list containing (artifactname, expression [,....]) pairs, with the expressions producing 
-		 a value to update the named artifact in the neighborhood cells after the value for the
-		 focal cell has been computed. The value of the focal cell will be available as 'self' while the 
-		 current values of all other states will be available as their own names."
-		default ()
+//	optional input update
+//		"An optional list containing (artifactname, expression [,....]) pairs, with the expressions producing 
+//		 a value to update the named artifact in the neighborhood cells after the value for the
+//		 focal cell has been computed. The value of the focal cell will be available as 'self' while the 
+//		 current values of all other states will be available as their own names."
+//		default ()
 	
 	geometry S2
 	

@@ -41,7 +41,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Hyperlink resource names to resource editor in modeler when ctrl-clicked.
 ### Changed
 - Make local resource database in-memory for now.
+- Improve docs and handle concept count in GIS neighborhood resolver.
 ### Fixed
 - Additional output states created and reported.
+- New context notification includes scale.
 - Various bug fixes.
 

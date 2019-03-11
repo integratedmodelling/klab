@@ -255,8 +255,9 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 								.createStorage(Utils.getArtifactType(value.getClass()), target.getScale(), context);
 					}
 				}
-
-				valueCache.set(locator, value);
+				if (value != null) {
+					valueCache.set(locator, value);
+				}
 			});
 //		}
 		}
