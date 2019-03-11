@@ -35,7 +35,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * The controller implementing the {@link org.integratedmodelling.klab.api.API.NODE.RESOURCE resource API}.
+ * The controller implementing the
+ * {@link org.integratedmodelling.klab.api.API.NODE.RESOURCE resource API}.
  * 
  * @author ferdinando.villa
  * @author enrico.girotto
@@ -44,113 +45,117 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 public class ResourceController {
 
-    @CrossOrigin(origins = "*")
-    @Secured(Roles.SESSION)
-    @RequestMapping(value = API.NODE.RESOURCE.UPLOAD_URN, method = RequestMethod.POST)
-    public ResponseEntity<HttpStatus> uploadResource(Principal principal, @RequestParam String refId, @RequestParam MultipartFile[] file)
-            throws Exception {
+	@CrossOrigin(origins = "*")
+	@Secured(Roles.SESSION)
+	@RequestMapping(value = API.NODE.RESOURCE.UPLOAD_URN, method = RequestMethod.POST)
+	public ResponseEntity<HttpStatus> uploadResource(Principal principal, @RequestParam String refId,
+			@RequestParam MultipartFile[] files) throws Exception {
 
-        if (file == null) {
-            return new ResponseEntity<HttpStatus>(HttpStatus.UNPROCESSABLE_ENTITY); // 422
-        }
+		if (files == null) {
+			return new ResponseEntity<HttpStatus>(HttpStatus.UNPROCESSABLE_ENTITY); // 422
+		}
 
-        ISession session = EngineSessionController.getSession(principal);
+		ISession session = EngineSessionController.getSession(principal);
 
-        /*
-         * try importing as a resource.
-         */
-        File primary = null;
-        String filename = null;
-        for (MultipartFile f : file) {
+		/*
+		 * try importing as a resource.
+		 */
+		File primary = null;
+		String filename = null;
+		for (MultipartFile f : files) {
 
-            File destination = new File(Configuration.INSTANCE.getDataPath("uploads") + File.separator
-                    + f.getOriginalFilename());
-            f.transferTo(destination);
-            destination.deleteOnExit();
+			File destination = new File(
+					Configuration.INSTANCE.getDataPath("uploads") + File.separator + f.getOriginalFilename());
+			f.transferTo(destination);
+			destination.deleteOnExit();
 
-            if (primary == null) {
-                List<IResourceAdapter> adapters = Resources.INSTANCE
-                        .getResourceAdapter(destination, new Parameters<String>());
-                if (adapters.size() > 0) {
-                    primary = destination;
-                    filename = f.getOriginalFilename();
-                }
-            }
+			if (primary == null) {
+				List<IResourceAdapter> adapters = Resources.INSTANCE.getResourceAdapter(destination,
+						new Parameters<String>());
+				if (adapters.size() > 0) {
+					primary = destination;
+					filename = f.getOriginalFilename();
+				}
+			}
 
-        }
-        IResource resource = Resources.INSTANCE.importResource(primary.toURI().toURL(), Resources.INSTANCE
-                .getServiceWorkspace().getServiceProject(session.getMonitor()));
+		}
+		IResource resource = Resources.INSTANCE.importResource(primary.toURI().toURL(),
+				Resources.INSTANCE.getServiceWorkspace().getServiceProject(session.getMonitor()));
 
-        if (resource == null) {
-            throw new IllegalStateException("uploaded file " + filename
-                    + " could not be imported as a resource");
-        }
+		if (resource == null) {
+			throw new IllegalStateException("uploaded file " + filename + " could not be imported as a resource");
+		}
 
-        if (resource.hasErrors()) {
-            throw new IllegalStateException("uploaded file " + filename
-                    + " was imported with errors");
-        }
+		if (resource.hasErrors()) {
+			throw new IllegalStateException("uploaded file " + filename + " was imported with errors");
+		}
 
-        /*
-         * decide what to do. If we have a non-scalar irregular space and there is no refId, we can create a context.
-         */
-        if (refId == null && resource.getGeometry().getDimension(Type.SPACE) != null) {
+		/*
+		 * decide what to do. If we have a non-scalar irregular space and there is no
+		 * refId, we can create a context.
+		 */
+		if (refId == null && resource.getGeometry().getDimension(Type.SPACE) != null) {
 
-            // ISubject context = null;
+			// ISubject context = null;
 
-            Pair<IArtifact, IArtifact> data = Resources.INSTANCE
-                    .resolveResourceToArtifact(resource.getUrn(), session.getMonitor());
+			Pair<IArtifact, IArtifact> data = Resources.INSTANCE.resolveResourceToArtifact(resource.getUrn(),
+					session.getMonitor());
 
-            ISubject ret = data.getSecond() instanceof ObservationGroup
-                    && ((ObservationGroup) data.getSecond()).groupSize() > 0
-                            ? (ISubject) ((ObservationGroup) data.getSecond()).iterator().next()
-                            : (ISubject) data.getFirst();
+			ISubject ret = data.getSecond() instanceof ObservationGroup
+					&& ((ObservationGroup) data.getSecond()).groupSize() > 0
+							? (ISubject) ((ObservationGroup) data.getSecond()).iterator().next()
+							: (ISubject) data.getFirst();
 
-            /*
-            * notify context
-            */
-            session.getMonitor()
-                    .send(Message.create(session
-                            .getId(), IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation, Observations.INSTANCE
-                                    .createArtifactDescriptor(ret, null, ITime.INITIALIZATION, -1, false, true)));
+			/*
+			 * notify context
+			 */
+			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+					IMessage.Type.NewObservation,
+					Observations.INSTANCE.createArtifactDescriptor(ret, null, ITime.INITIALIZATION, -1, false, true)));
 
-            // TODO must finish this task and start another, otherwise no context gets registered.
+			// TODO must finish this task and start another, otherwise no context gets
+			// registered.
 
-            // /*
-            // * notify result
-            // */
-            // IObservation notifiable = (IObservation) (data.getSecond() instanceof ObservationGroup
-            // && data.getSecond().groupSize() > 0 ? data.getSecond().iterator().next()
-            // : data.getSecond());
-            //
-            // session.getMonitor().send(Message.create(session
-            // .getId(), IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation,
-            // Observations.INSTANCE
-            // .createArtifactDescriptor(notifiable, context, ITime.INITIALIZATION, -1, false, true)
-            // .withTaskId(token)));
+			// /*
+			// * notify result
+			// */
+			// IObservation notifiable = (IObservation) (data.getSecond() instanceof
+			// ObservationGroup
+			// && data.getSecond().groupSize() > 0 ? data.getSecond().iterator().next()
+			// : data.getSecond());
+			//
+			// session.getMonitor().send(Message.create(session
+			// .getId(), IMessage.MessageClass.ObservationLifecycle,
+			// IMessage.Type.NewObservation,
+			// Observations.INSTANCE
+			// .createArtifactDescriptor(notifiable, context, ITime.INITIALIZATION, -1,
+			// false, true)
+			// .withTaskId(token)));
 
-            /*
-             * Register the observation context with the session. It will be disposed of
-             * and/or persisted by the session itself.
-             */
-            ((Session) session).registerObservationContext(((Observation) ret).getRuntimeContext());
+			/*
+			 * Register the observation context with the session. It will be disposed of
+			 * and/or persisted by the session itself.
+			 */
+			((Session) session).registerObservationContext(((Observation) ret).getRuntimeContext());
 
-        }
+		}
 
-        /**
-         * TODO should send back notification to add resource to local tree. Could be a separate tree...
-         */
+		/**
+		 * TODO should send back notification to add resource to local tree. Could be a
+		 * separate tree...
+		 */
 
-        System.out.println(String.format("RefId: %s", refId != null ? refId : "Not sent"));
-//        System.out.println(String.format("File name %s", file.getName()));
-//        System.out.println(String.format("File original name %s", file.getOriginalFilename()));
-//        System.out.println(String.format("File size %s", file.getSize()));
+		System.out.println(String.format("RefId: %s", refId != null ? refId : "Not sent"));
+		// System.out.println(String.format("File name %s", file.getName()));
+		// System.out.println(String.format("File original name %s",
+		// file.getOriginalFilename()));
+		// System.out.println(String.format("File size %s", file.getSize()));
 
-        // TODO: file.getInputStream();
-        // TODO: check size, type, etc. is needed? k.EXPLORER take care to checking it
-        // TODO: do something with file based on type and referenced id
+		// TODO: file.getInputStream();
+		// TODO: check size, type, etc. is needed? k.EXPLORER take care to checking it
+		// TODO: do something with file based on type and referenced id
 
-        return new ResponseEntity<HttpStatus>(HttpStatus.OK);
-    }
+		return new ResponseEntity<HttpStatus>(HttpStatus.OK);
+	}
 
 }

@@ -166,7 +166,10 @@ public class Activator extends AbstractUIPlugin {
             public void openLink(String text) {
                 int nc = StringUtils.countMatches(text, ":");
                 if (nc > 1) {
-                    // URN
+                    // URN - open in editor
+//                	if (klab != null && klab.getResource()) {
+//                		
+//                	}
                 } else if (nc == 1) {
                     // MODEL OBJECT
                     IKimStatement statement = Kim.INSTANCE.getStatement(text);
@@ -181,7 +184,7 @@ public class Activator extends AbstractUIPlugin {
                     // Hard to do anything without knowing which
                     // namespace we are linking from
                 }
-                System.out.println("Link me hostia: " + text);
+//                System.out.println("Link me hostia: " + text);
             }
         });
 
