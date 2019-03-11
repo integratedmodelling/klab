@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
+import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.engine.rest.controllers.engine.EngineSessionController;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.monitoring.Message;
@@ -49,7 +50,7 @@ public class ResourceController {
 	@CrossOrigin(origins = "*")
 	@Secured(Roles.SESSION)
 	@RequestMapping(value = API.NODE.RESOURCE.UPLOAD_URN, method = RequestMethod.POST)
-	public ResponseEntity<HttpStatus> uploadResource(Principal principal, @RequestParam String refId,
+	public ResponseEntity<HttpStatus> uploadResource(Principal principal, @RequestParam(required = false) String refId,
 			@RequestParam("files[]") MultipartFile[] files) throws Exception {
 
 		if (files == null || files.length == 0) {
@@ -81,17 +82,20 @@ public class ResourceController {
 
 		}
 		if (primary == null) {
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No adapter found to handle uploaded file(s)");
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+					"No adapter found to handle uploaded file(s)");
 		}
 		IResource resource = Resources.INSTANCE.importResource(primary.toURI().toURL(),
 				Resources.INSTANCE.getServiceWorkspace().getServiceProject(session.getMonitor()));
 
 		if (resource == null) {
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Uploaded file " + filename + " could not be imported as a resource");
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+					"Uploaded file " + filename + " could not be imported as a resource");
 		}
- 
+
 		if (resource.hasErrors()) {
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Uploaded file " + filename + " was imported with errors");
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+					"Uploaded file " + filename + " was imported with errors");
 		}
 
 		/*
@@ -100,19 +104,13 @@ public class ResourceController {
 		 */
 		if (refId == null && resource.getGeometry().getDimension(Type.SPACE) != null) {
 
-			// ISubject context = null;
-
 			Pair<IArtifact, IArtifact> data = Resources.INSTANCE.resolveResourceToArtifact(resource.getUrn(),
-					session.getMonitor());
+					session.getMonitor(), true, Worldview.getGeoregionConcept(), Worldview.getGeoregionConcept());
 
 			ISubject ret = data.getSecond() instanceof ObservationGroup
 					&& ((ObservationGroup) data.getSecond()).groupSize() > 0
 							? (ISubject) ((ObservationGroup) data.getSecond()).iterator().next()
 							: (ISubject) data.getFirst();
-
-			/*
-			 * notify context
-			 */
 			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 					IMessage.Type.NewObservation,
 					Observations.INSTANCE.createArtifactDescriptor(ret, null, ITime.INITIALIZATION, -1, false, true)));
