@@ -492,7 +492,6 @@ public enum Observations implements IObservationService {
 	}
 
 	public Observer makeROIObserver(final SpatialExtent regionOfInterest, Namespace namespace, IMonitor monitor) {
-		// TODO use configured concept from worldview!
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
 		observable.setName(Nominatim.INSTANCE.geocode(regionOfInterest));
 		observable.setOptional(true);
@@ -503,9 +502,7 @@ public enum Observations implements IObservationService {
 	}
 
 	public Observer makeROIObserver(final Shape shape, Namespace namespace, IMonitor monitor) {
-		// TODO use configured concept from worldview!
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
-		// TODO set from Nominatim
 		observable.setName(Nominatim.INSTANCE.geocode(shape.getEnvelope()));
 		observable.setOptional(true);
 		if (namespace == null) {
@@ -513,7 +510,7 @@ public enum Observations implements IObservationService {
 		}
 		return new Observer(shape, observable, (Namespace) namespace);
 	}
-
+	
 	/**
 	 * True if scale has multiple values in each state of the passed extent type.
 	 * 

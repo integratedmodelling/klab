@@ -23,8 +23,9 @@ public abstract class AbstractWorkspace implements IWorkspace {
 	AbstractWorkspace() {
 	}
 
-	public AbstractWorkspace(File root, File... overridingProjects) {
+	public AbstractWorkspace(String name, File root, File... overridingProjects) {
 		delegate = new KimWorkspace(root, overridingProjects);
+		this.name = name;
 	}
 
 	@Override

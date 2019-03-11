@@ -271,7 +271,8 @@ public enum Resources implements IResourceService {
 	 */
 	public void initializeLocalWorkspace(File workspaceRoot, IMonitor monitor) {
 		if (local == null) {
-			local = new MonitorableFileWorkspace(workspaceRoot);
+			local = new MonitorableFileWorkspace("workspace", workspaceRoot);
+			workspaces.put("workspace", local);
 		}
 	}
 
@@ -282,6 +283,7 @@ public enum Resources implements IResourceService {
 	public void initializeServiceWorkspace(File workspaceRoot, IMonitor monitor) {
 		if (service == null) {
 			service = new ServiceWorkspace(workspaceRoot);
+			workspaces.put(service.getName(), service);
 		}
 	}
 
@@ -313,6 +315,17 @@ public enum Resources implements IResourceService {
 
 	public IWorkspace getWorkspace(String name) {
 		return workspaces.get(name);
+	}
+	
+	public IWorkspace getWorkspaceFor(File projectRoot) {
+		for (IWorkspace workspace : workspaces.values()) {
+			for (File file = projectRoot; file != null; file = file.getParentFile()) {
+				if (workspace.getRoot().equals(file)) {
+					return workspace;
+				}
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -737,7 +750,7 @@ public enum Resources implements IResourceService {
 		}
 	}
 
-//	@Override
+	// @Override
 	public Pair<IArtifact, IArtifact> resolveResourceToArtifact(String urn, IMonitor monitor, boolean forceGrid,
 			IConcept observable, IConcept contextObservable) {
 
@@ -750,16 +763,20 @@ public enum Resources implements IResourceService {
 		}
 
 		if (contextObservable == null) {
-		contextObservable = Observable
-				.promote(OWL.INSTANCE.getNonsemanticPeer("Context", IArtifact.Type.OBJECT));
+			contextObservable = Observable.promote(OWL.INSTANCE.getNonsemanticPeer("Context", IArtifact.Type.OBJECT));
+		} else {
+			contextObservable = Observable.promote(contextObservable);
 		}
-		SimpleContext context = new SimpleContext((Observable)contextObservable, scale, monitor);
+		SimpleContext context = new SimpleContext((Observable) contextObservable, scale, monitor);
 		IArtifact ctxArtifact = context.getTargetArtifact();
 
 		if (observable == null) {
 			observable = Observable.promote(OWL.INSTANCE.getNonsemanticPeer("Artifact", resource.getType()));
+		} else {
+			observable = Observable.promote(observable);
 		}
-		IKlabData data = getResourceData(resource, urnp.getSecond(), scale, context.getChild((Observable)observable, resource));
+		IKlabData data = getResourceData(resource, urnp.getSecond(), scale,
+				context.getChild((Observable) observable, resource));
 
 		return new Pair<>(ctxArtifact, data.getArtifact());
 	}

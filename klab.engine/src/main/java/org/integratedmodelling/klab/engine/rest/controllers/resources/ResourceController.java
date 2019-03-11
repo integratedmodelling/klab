@@ -2,7 +2,9 @@ package org.integratedmodelling.klab.engine.rest.controllers.resources;
 
 import java.io.File;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observations;
@@ -12,17 +14,17 @@ import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
-import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.engine.rest.controllers.engine.EngineSessionController;
+import org.integratedmodelling.klab.engine.runtime.ObserveContextTask;
 import org.integratedmodelling.klab.engine.runtime.Session;
-import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.springframework.http.HttpStatus;
@@ -111,51 +113,14 @@ public class ResourceController {
 					&& ((ObservationGroup) data.getSecond()).groupSize() > 0
 							? (ISubject) ((ObservationGroup) data.getSecond()).iterator().next()
 							: (ISubject) data.getFirst();
-			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
-					IMessage.Type.NewObservation,
-					Observations.INSTANCE.createArtifactDescriptor(ret, null, ITime.INITIALIZATION, -1, false, true)));
 
-			// TODO must finish this task and start another, otherwise no context gets
-			// registered.
-
-			// /*
-			// * notify result
-			// */
-			// IObservation notifiable = (IObservation) (data.getSecond() instanceof
-			// ObservationGroup
-			// && data.getSecond().groupSize() > 0 ? data.getSecond().iterator().next()
-			// : data.getSecond());
-			//
-			// session.getMonitor().send(Message.create(session
-			// .getId(), IMessage.MessageClass.ObservationLifecycle,
-			// IMessage.Type.NewObservation,
-			// Observations.INSTANCE
-			// .createArtifactDescriptor(notifiable, context, ITime.INITIALIZATION, -1,
-			// false, true)
-			// .withTaskId(token)));
-
-			/*
-			 * Register the observation context with the session. It will be disposed of
-			 * and/or persisted by the session itself.
-			 */
-			((Session) session).registerObservationContext(((Observation) ret).getRuntimeContext());
-
+			Observer observer = Observations.INSTANCE.makeROIObserver((Shape)ret.getScale().getSpace().getShape(), null, session.getMonitor());
+			try {
+				new ObserveContextTask((Session)session, observer, new ArrayList<>()).get();
+			} catch (InterruptedException | ExecutionException e) {
+				session.getMonitor().error(e);
+			}
 		}
-
-		/**
-		 * TODO should send back notification to add resource to local tree. Could be a
-		 * separate tree...
-		 */
-
-		System.out.println(String.format("RefId: %s", refId != null ? refId : "Not sent"));
-		// System.out.println(String.format("File name %s", file.getName()));
-		// System.out.println(String.format("File original name %s",
-		// file.getOriginalFilename()));
-		// System.out.println(String.format("File size %s", file.getSize()));
-
-		// TODO: file.getInputStream();
-		// TODO: check size, type, etc. is needed? k.EXPLORER take care to checking it
-		// TODO: do something with file based on type and referenced id
 
 		return new ResponseEntity<HttpStatus>(HttpStatus.OK);
 	}

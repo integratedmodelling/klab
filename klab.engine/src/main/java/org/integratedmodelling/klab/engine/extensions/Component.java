@@ -17,11 +17,13 @@ import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
 import org.integratedmodelling.klab.api.extensions.component.Initialize;
 import org.integratedmodelling.klab.api.extensions.component.Setup;
 import org.integratedmodelling.klab.api.knowledge.IProject;
+import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -396,6 +398,11 @@ public class Component implements IComponent {
 	public IKimProject getStatement() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public IWorkspace getWorkspace() {
+		return Resources.INSTANCE.getComponentsWorkspace();
 	}
 
 }
