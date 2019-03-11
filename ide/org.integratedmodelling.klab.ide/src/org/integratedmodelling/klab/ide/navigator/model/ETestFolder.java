@@ -7,6 +7,7 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.klab.ide.Activator;
 
 public class ETestFolder extends ENavigatorItem {
@@ -37,7 +38,12 @@ public class ETestFolder extends ENavigatorItem {
                 if (script.isDirectory()) {
                     ret.add(new EScriptFolder(project, this, script));
                 } else if (script.toString().endsWith(".kim")) {
-                    ret.add(new ETestCase(Activator.loader().getNamespace(script), this));
+                    IKimNamespace ns = Activator.loader().getNamespace(script);
+                    if (ns != null) {
+                        ret.add(new ETestCase(ns, this));
+                    } else {
+                        System.out.println("ACHTUNG: SCREWED-UP NS: " + script);
+                    }
                 }
             }
         }
