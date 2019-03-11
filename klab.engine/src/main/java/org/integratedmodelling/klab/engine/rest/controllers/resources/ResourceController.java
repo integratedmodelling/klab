@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * The controller implementing the
@@ -49,10 +50,10 @@ public class ResourceController {
 	@Secured(Roles.SESSION)
 	@RequestMapping(value = API.NODE.RESOURCE.UPLOAD_URN, method = RequestMethod.POST)
 	public ResponseEntity<HttpStatus> uploadResource(Principal principal, @RequestParam String refId,
-			@RequestParam MultipartFile[] files) throws Exception {
+			@RequestParam("files[]") MultipartFile[] files) throws Exception {
 
-		if (files == null) {
-			return new ResponseEntity<HttpStatus>(HttpStatus.UNPROCESSABLE_ENTITY); // 422
+		if (files == null || files.length == 0) {
+			throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "No files");
 		}
 
 		ISession session = EngineSessionController.getSession(principal);
@@ -79,15 +80,18 @@ public class ResourceController {
 			}
 
 		}
+		if (primary == null) {
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No adapter found to handle uploaded file(s)");
+		}
 		IResource resource = Resources.INSTANCE.importResource(primary.toURI().toURL(),
 				Resources.INSTANCE.getServiceWorkspace().getServiceProject(session.getMonitor()));
 
 		if (resource == null) {
-			throw new IllegalStateException("uploaded file " + filename + " could not be imported as a resource");
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Uploaded file " + filename + " could not be imported as a resource");
 		}
-
+ 
 		if (resource.hasErrors()) {
-			throw new IllegalStateException("uploaded file " + filename + " was imported with errors");
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Uploaded file " + filename + " was imported with errors");
 		}
 
 		/*
