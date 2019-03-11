@@ -188,7 +188,11 @@ public class ObservationReference implements IObservationReference {
 	private boolean main;
 	private DataSummary dataSummary;
 	private List<ExportFormat> exportFormats = new ArrayList<>();
-
+	/*
+	 * Only sent when the observation redefines the scale (new context)
+	 */
+	private ScaleReference scaleReference;
+	
 	public void setDataSummary(DataSummary dataSummary) {
 		this.dataSummary = dataSummary;
 	}
@@ -813,6 +817,14 @@ public class ObservationReference implements IObservationReference {
 
 	public void setGroupId(String groupId) {
 		this.groupId = groupId;
+	}
+
+	public ScaleReference getScaleReference() {
+		return scaleReference;
+	}
+
+	public void setScaleReference(ScaleReference scaleReference) {
+		this.scaleReference = scaleReference;
 	}
 
 }
