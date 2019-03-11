@@ -8,227 +8,233 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 
 public class Utils {
 
-	/**
-	 * Return file name with no path or extension
-	 * 
-	 * @param s
-	 * @return the simple name of the file without extension or path.
-	 */
-	public static String getFileBaseName(File s) {
+    /**
+     * Return file name with no path or extension
+     * 
+     * @param s
+     * @return the simple name of the file without extension or path.
+     */
+    public static String getFileBaseName(File s) {
 
-		String ret = s.toString();
+        String ret = s.toString();
 
-		int sl = ret.lastIndexOf(File.separator);
-		if (sl > 0)
-			ret = ret.substring(sl + 1);
-		sl = ret.lastIndexOf(".");
-		if (sl > 0)
-			ret = ret.substring(0, sl);
+        int sl = ret.lastIndexOf(File.separator);
+        if (sl > 0)
+            ret = ret.substring(sl + 1);
+        sl = ret.lastIndexOf(".");
+        if (sl > 0)
+            ret = ret.substring(0, sl);
 
-		return ret;
-	}
+        return ret;
+    }
 
-	/**
-	 * Return URL base name with no path or extension. Just like getFileBaseName but
-	 * uses / instead of system separator.
-	 * 
-	 * @param s
-	 * @return extracted name from URL
-	 */
-	public static String getURLBaseName(String s) {
+    /**
+     * Return URL base name with no path or extension. Just like getFileBaseName but
+     * uses / instead of system separator.
+     * 
+     * @param s
+     * @return extracted name from URL
+     */
+    public static String getURLBaseName(String s) {
 
-		/* just in case */
-		String ret = s.replace('\\', '/');
+        /* just in case */
+        String ret = s.replace('\\', '/');
 
-		if (ret.contains("?")) {
-			ret = ret.substring(0, ret.indexOf('?'));
-		}
+        if (ret.contains("?")) {
+            ret = ret.substring(0, ret.indexOf('?'));
+        }
 
-		if (ret.contains("#")) {
-			ret = ret.substring(0, ret.indexOf('#'));
-		}
+        if (ret.contains("#")) {
+            ret = ret.substring(0, ret.indexOf('#'));
+        }
 
-		int sl = ret.lastIndexOf(".");
-		if (sl > 0)
-			ret = ret.substring(0, sl);
-		sl = ret.lastIndexOf("/");
-		if (sl >= 0)
-			ret = ret.substring(sl + 1);
+        int sl = ret.lastIndexOf(".");
+        if (sl > 0)
+            ret = ret.substring(0, sl);
+        sl = ret.lastIndexOf("/");
+        if (sl >= 0)
+            ret = ret.substring(sl + 1);
 
-		return ret;
-	}
+        return ret;
+    }
 
-	public static long[] newArray(long value, int size) {
-		long[] ret = new long[size];
-		Arrays.fill(ret, value);
-		return ret;
-	}
+    public static long[] newArray(long value, int size) {
+        long[] ret = new long[size];
+        Arrays.fill(ret, value);
+        return ret;
+    }
 
-	public static boolean isPOD(Object value) {
-		return value instanceof Number || value instanceof String || value instanceof Boolean;
-	}
+    public static boolean isPOD(Object value) {
+        if (value instanceof Class<?>) {
+            return Number.class.isAssignableFrom((Class<?>) value)
+                    || String.class.isAssignableFrom((Class<?>) value)
+                    || Boolean.class.isAssignableFrom((Class<?>) value);
+        }
+        return value instanceof Number || value instanceof String || value instanceof Boolean;
+    }
 
-	/**
-	 * Return the closest POD that the value can be parsed into. For now only handle
-	 * int and double. May add k.IM - like maps, lists, ranges.
-	 * 
-	 * @param value
-	 * @return
-	 */
-	public static Object asPOD(String value) {
+    /**
+     * Return the closest POD that the value can be parsed into. For now only handle
+     * int and double. May add k.IM - like maps, lists, ranges.
+     * 
+     * @param value
+     * @return
+     */
+    public static Object asPOD(String value) {
 
-		try {
-			return Integer.parseInt(value);
-		} catch (Throwable e) {
-		}
-		try {
-			return Double.parseDouble(value);
-		} catch (Throwable e) {
-		}
+        try {
+            return Integer.parseInt(value);
+        } catch (Throwable e) {
+        }
+        try {
+            return Double.parseDouble(value);
+        } catch (Throwable e) {
+        }
 
-		if (value.toLowerCase().equals("true") || value.toLowerCase().equals("false")) {
-			return value.toLowerCase().equals("true");
-		}
+        if (value.toLowerCase().equals("true") || value.toLowerCase().equals("false")) {
+            return value.toLowerCase().equals("true");
+        }
 
-		return value;
-	}
+        return value;
+    }
 
-	
-	public static boolean validateAs(Object pod, IArtifact.Type type) {
-		if (pod == null) {
-			return false;
-		}
-		IArtifact.Type tp = getArtifactType(pod.getClass());
-		if (type == tp) {
-			return true;
-		}
-		if (tp == Type.TEXT) {
-			Object converted = asPOD(pod.toString());
-			if (converted != null) {
-				return getArtifactType(converted.getClass()) == type;
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * Basic conversions to match a type, including null -> NaN when what's wanted
-	 * is a double or float
-	 * 
-	 * @param ret
-	 * @param cls
-	 * @return the object as a cls or null
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> T asType(Object ret, Class<?> cls) {
+    public static boolean validateAs(Object pod, IArtifact.Type type) {
+        if (pod == null) {
+            return false;
+        }
+        IArtifact.Type tp = getArtifactType(pod.getClass());
+        if (type == tp) {
+            return true;
+        }
+        if (tp == Type.TEXT) {
+            Object converted = asPOD(pod.toString());
+            if (converted != null) {
+                return getArtifactType(converted.getClass()) == type;
+            }
+        }
+        return false;
+    }
 
-		if (cls.equals(Object.class)) {
-			return (T) ret;
-		}
-		
-		if (ret == null) {
-			if (cls.equals(Double.class)) {
-				return (T) new Double(Double.NaN);
-			}
-			if (cls.equals(Float.class)) {
-				return (T) new Float(Float.NaN);
-			}
+    /**
+     * Basic conversions to match a type, including null -> NaN when what's wanted
+     * is a double or float
+     * 
+     * @param ret
+     * @param cls
+     * @return the object as a cls or null
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T asType(Object ret, Class<?> cls) {
 
-			return null;
-		}
+        if (cls.equals(Object.class)) {
+            return (T) ret;
+        }
 
-		if (cls.isAssignableFrom(ret.getClass())) {
-			return (T) ret;
-		}
+        if (ret == null) {
+            if (cls.equals(Double.class)) {
+                return (T) new Double(Double.NaN);
+            }
+            if (cls.equals(Float.class)) {
+                return (T) new Float(Float.NaN);
+            }
 
-		if (cls.equals(String.class)) {
-			return (T) ret.toString();
-		}
+            return null;
+        }
 
-		if (ret instanceof Number) {
-			if (Number.class.isAssignableFrom(cls)) {
-				if (cls.equals(Double.class)) {
-					return (T) new Double(((Number) ret).doubleValue());
-				}
-				if (cls.equals(Long.class)) {
-					return (T) new Long(((Number) ret).longValue());
-				}
-				if (cls.equals(Integer.class)) {
-					return (T) new Integer(((Number) ret).intValue());
-				}
-				if (cls.equals(Float.class)) {
-					return (T) new Float(((Number) ret).floatValue());
-				}
-			} else if (Boolean.class.isAssignableFrom(cls)) {
-				if (cls.equals(Boolean.class)) {
-					return (T) (NumberUtils.equal(((Number) ret).doubleValue(), 0) ? Boolean.FALSE : Boolean.TRUE);
-				}
-			}
-		} else if (ret instanceof Boolean) {
+        if (cls.isAssignableFrom(ret.getClass())) {
+            return (T) ret;
+        }
 
-			if (cls.equals(Double.class)) {
-				return (T) new Double(((Boolean) ret) ? 1 : 0);
-			}
-			if (cls.equals(Long.class)) {
-				return (T) new Long(((Boolean) ret) ? 1 : 0);
-			}
-			if (cls.equals(Integer.class)) {
-				return (T) new Integer(((Boolean) ret) ? 1 : 0);
-			}
-			if (cls.equals(Float.class)) {
-				return (T) new Float(((Boolean) ret) ? 1 : 0);
-			}
+        if (cls.equals(String.class)) {
+            return (T) ret.toString();
+        }
 
-		}
+        if (ret instanceof Number) {
+            if (Number.class.isAssignableFrom(cls)) {
+                if (cls.equals(Double.class)) {
+                    return (T) new Double(((Number) ret).doubleValue());
+                }
+                if (cls.equals(Long.class)) {
+                    return (T) new Long(((Number) ret).longValue());
+                }
+                if (cls.equals(Integer.class)) {
+                    return (T) new Integer(((Number) ret).intValue());
+                }
+                if (cls.equals(Float.class)) {
+                    return (T) new Float(((Number) ret).floatValue());
+                }
+            } else if (Boolean.class.isAssignableFrom(cls)) {
+                if (cls.equals(Boolean.class)) {
+                    return (T) (NumberUtils.equal(((Number) ret).doubleValue(), 0) ? Boolean.FALSE
+                            : Boolean.TRUE);
+                }
+            }
+        } else if (ret instanceof Boolean) {
 
-		throw new IllegalArgumentException("cannot interpret value " + ret + " as a " + cls.getCanonicalName());
-	}
+            if (cls.equals(Double.class)) {
+                return (T) new Double(((Boolean) ret) ? 1 : 0);
+            }
+            if (cls.equals(Long.class)) {
+                return (T) new Long(((Boolean) ret) ? 1 : 0);
+            }
+            if (cls.equals(Integer.class)) {
+                return (T) new Integer(((Boolean) ret) ? 1 : 0);
+            }
+            if (cls.equals(Float.class)) {
+                return (T) new Float(((Boolean) ret) ? 1 : 0);
+            }
 
-	public static Type getArtifactType(Class<?> cls) {
+        }
 
-		Type ret = cls == null ? Type.VOID : Type.VALUE;
-		if (String.class.isAssignableFrom(cls)) {
-			ret = Type.TEXT;
-		} else if (Number.class.isAssignableFrom(cls)) {
-			ret = Type.NUMBER;
-		} else if (Boolean.class.isAssignableFrom(cls)) {
-			ret = Type.BOOLEAN;
-		}
-		return ret;
-	}
+        throw new IllegalArgumentException("cannot interpret value " + ret + " as a "
+                + cls.getCanonicalName());
+    }
 
-	public static Class<?> getClassForType(IArtifact.Type type) {
-		switch (type) {
-		case BOOLEAN:
-			return Boolean.class;
-		case NUMBER:
-			return Double.class;
-		case TEXT:
-			return String.class;
-		default:
-			break;
-		}
-		throw new IllegalArgumentException("type " + type + " has no POD class equivalent");
-	}
-	
-	/**
-	 * Binary root of integer.
-	 * 
-	 * @param x
-	 * @return
-	 */
-	public static int log2int(int x) {
-		int y,v;
-		if (x <= 0) {
-			throw new IllegalArgumentException(""+x+" <= 0");
-		}
-		v = x;
-		y = -1;
-		while (v>0) {
-			v >>=1;
-			y++;
-		}
-		return y;
-	}
-	
+    public static Type getArtifactType(Class<?> cls) {
+
+        Type ret = cls == null ? Type.VOID : Type.VALUE;
+        if (String.class.isAssignableFrom(cls)) {
+            ret = Type.TEXT;
+        } else if (Number.class.isAssignableFrom(cls)) {
+            ret = Type.NUMBER;
+        } else if (Boolean.class.isAssignableFrom(cls)) {
+            ret = Type.BOOLEAN;
+        }
+        return ret;
+    }
+
+    public static Class<?> getClassForType(IArtifact.Type type) {
+        switch (type) {
+        case BOOLEAN:
+            return Boolean.class;
+        case NUMBER:
+            return Double.class;
+        case TEXT:
+            return String.class;
+        default:
+            break;
+        }
+        throw new IllegalArgumentException("type " + type + " has no POD class equivalent");
+    }
+
+    /**
+     * Binary root of integer.
+     * 
+     * @param x
+     * @return
+     */
+    public static int log2int(int x) {
+        int y, v;
+        if (x <= 0) {
+            throw new IllegalArgumentException("" + x + " <= 0");
+        }
+        v = x;
+        y = -1;
+        while (v > 0) {
+            v >>= 1;
+            y++;
+        }
+        return y;
+    }
+
 }

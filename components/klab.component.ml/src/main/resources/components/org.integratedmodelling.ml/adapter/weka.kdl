@@ -1,11 +1,16 @@
 /*
  * Parameters accepted in a raster resource
  */
- annotation weka 
-	""
+ annotation weka 	
+	"The Weka adapter enables the use of classifier build by Weka within k.LAB. Weka resources are produced by learning
+	 k.LAB models using Weka contextualizers, or can be imported from external resources such as Weka serialized models
+	 (.model) or Bayesian network specifications. The adapter is compatible with BIF, NET (Netica), XSDL (Genie)." 	
  {
- 	optional input classifier
- 		""
- 		default 0
- 		
+
+ 	final text 'model'
+ 		"The URL of the service providing the data."
+ 
+ 	final text 'wekaVersion'
+ 		"The Weka version that built the models in this resource."
+ 	 	default "3.8.3"
  }

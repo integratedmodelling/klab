@@ -26,22 +26,22 @@ import java.util.Collection;
  */
 public interface IEngineStartupOptions extends IStartupOptions {
 
-	public static final String BANNER = "\r\n" + 
-			" ____     _      _               ____   ______   \r\n" + 
-			" \\ \\ \\   | |    | |        /\\   |  _ \\  \\ \\ \\ \\  \r\n" + 
-			"  \\ \\ \\  | | __ | |       /  \\  | |_) |  \\ \\ \\ \\ \r\n" + 
-			"   > > > | |/ / | |      / /\\ \\ |  _ <    > > > >\r\n" + 
-			"  / / /  |   < _| |____ / ____ \\| |_) |  / / / / \r\n" + 
-			" /_/_/   |_|\\_(_)______/_/    \\_\\____/  /_/_/_/  \r\n" + 
-			"                  (_)                            \r\n" + 
-			"   ___ _ __   __ _ _ _ __   ___                  \r\n" + 
-			"  / _ \\ '_ \\ / _` | | '_ \\ / _ \\                 \r\n" + 
-			" |  __/ | | | (_| | | | | |  __/                 \r\n" + 
-			"  \\___|_| |_|\\__, |_|_| |_|\\___|                 \r\n" + 
-			"              __/ |                              \r\n" + 
-			"             |___/                               \r\n" + 
-			"";
-	
+    public static final String BANNER = "\r\n" +
+            " ____     _      _               ____   ______   \r\n" +
+            " \\ \\ \\   | |    | |        /\\   |  _ \\  \\ \\ \\ \\  \r\n" +
+            "  \\ \\ \\  | | __ | |       /  \\  | |_) |  \\ \\ \\ \\ \r\n" +
+            "   > > > | |/ / | |      / /\\ \\ |  _ <    > > > >\r\n" +
+            "  / / /  |   < _| |____ / ____ \\| |_) |  / / / / \r\n" +
+            " /_/_/   |_|\\_(_)______/_/    \\_\\____/  /_/_/_/  \r\n" +
+            "                  (_)                            \r\n" +
+            "   ___ _ __   __ _ _ _ __   ___                  \r\n" +
+            "  / _ \\ '_ \\ / _` | | '_ \\ / _ \\                 \r\n" +
+            " |  __/ | | | (_| | | | | |  __/                 \r\n" +
+            "  \\___|_| |_|\\__, |_|_| |_|\\___|                 \r\n" +
+            "              __/ |                              \r\n" +
+            "             |___/                               \r\n" +
+            "";
+
     /**
      * Tied to -workspace option, locates the local workspace which is monitored for changes and automatically
      * reloaded as needed. If there is no option, the workspace is in ~/.klab/workspace and is not monitored.
@@ -49,6 +49,15 @@ public interface IEngineStartupOptions extends IStartupOptions {
      * @return a {@link java.io.File} object.
      */
     File getWorkspaceLocation();
+
+    /**
+     * Tied to -service option, locates the service workspace where temporary uploads and model artifacts will be saved, either
+     * in a scrap project reinitialized at each startup or in a persistent project tied to the session user. If there is no option, 
+     * the workspace is in ~/.klab/service and is not monitored.
+     *
+     * @return a {@link java.io.File} object.
+     */
+    File getServiceLocation();
 
     /**
      * Tied to -certResource, allows the certificate to be read from the classpath rather than from a file. This should be checked before 
@@ -80,7 +89,7 @@ public interface IEngineStartupOptions extends IStartupOptions {
      * @return the paths to all components we want to load
      */
     Collection<File> getComponentPaths();
-    
+
     /**
      * URL of the authenticating hub. Default is set in the certificate.
      * 
@@ -94,5 +103,5 @@ public interface IEngineStartupOptions extends IStartupOptions {
      * 
      * @return true if forcing anonymous mode
      */
-	boolean isAnonymous();
+    boolean isAnonymous();
 }

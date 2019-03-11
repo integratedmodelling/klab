@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.extensions.groovy.model.State
 import org.integratedmodelling.klab.extensions.groovy.model.Time
 import org.integratedmodelling.klab.utils.NumberUtils
 import org.integratedmodelling.klab.utils.Pair
+import org.integratedmodelling.klab.utils.Utils
 
 /**
  * The base class for any k.LAB action or script.
@@ -313,204 +314,10 @@ abstract class ActionBase extends Script {
 		return new Concept(Concepts.c(string), binding);
 	}
 
-	//    IProperty _getProperty(String string) {
-	//        return KLAB.p(string);
-	//    }
-
-	//    IKnowledge _getKnowledge(String string) {
-	//        return KLAB.k(string);
-	//    }
-
 	//    KlabUrn _getUrn(String string) {
 	//        return new KlabUrn(string);
 	//    }
 	//
-	//
-	//    SubjectInfo subject(Concept observable, Object... args) {
-	//        return new SubjectInfo(observable, args);
-	//    }
-	//
-	//    ProcessInfo process(Concept observable, Object... args) {
-	//        return new ProcessInfo(observable, args);
-	//    }
-	//
-	//    EventInfo event(Concept observable, Object... args) {
-	//
-	//        if (!getBinding().hasVariable("now")) {
-	//            throw new KlabValidationException("cannot instantiate events in non-temporal actions", getArtifact(getBinding()));
-	//        }
-	//        def aargs = [];
-	//        if (args != null) {
-	//            for (a in args) {
-	//                aargs.add(a);
-	//            }
-	//        }
-	//        def transition = getBinding().getVariable('now');
-	//        aargs = aargs.add(transition);
-	//        return new EventInfo(observable, aargs as Object[]);
-	//    }
-	//
-	//    StateInfo measure(Concept observable, String unit, Object value) {
-	//        return new StateInfo(new ObservableSemantics(ModelFactory.measureObserver(observable.concept, unit), null, observable.concept.getLocalName()), value);
-	//    }
-	//
-	//    /**
-	//     * TODO leave this only and allow value:
-	//     * @param observable
-	//     * @param unit
-	//     * @return
-	//     */
-	//    StateInfo measure(Concept observable, String unit) {
-	//        return new StateInfo(new ObservableSemantics(ModelFactory.measureObserver(observable.concept, unit), null, observable.concept.getLocalName()), null);
-	//    }
-	//
-	//    /*
-	//     * TODO harmonize API and use keys for value
-	//     */
-	//    StateInfo proportion(Concept observable) {
-	//        def self = binding.getVariable("self");
-	//        def comparison = self == null ? null : self.obs.getObservable().getSemantics().getType();
-	//        return new StateInfo(new ObservableSemantics(ModelFactory.proportionObserver(observable.concept, comparison, false), null, observable.concept.getLocalName()), null);
-	//    }
-	//
-	//    StateInfo percentage(Concept observable) {
-	//        def self = binding.getVariable("self");
-	//        def comparison = self == null ? null : self.obs.getObservable().getSemantics().getType();
-	//        return new StateInfo(new ObservableSemantics(ModelFactory.proportionObserver(observable.concept, comparison, true), null, observable.concept.getLocalName()), null);
-	//    }
-	//
-	//    StateInfo proportion(Map opts, Concept observable) {
-	//        if (!observable.concept.is(KLAB.c(NS.CORE_PROPORTION))) {
-	//            observable = proportionOf(observable);
-	//        }
-	//        def value = null;
-	//        def comparison = null;
-	//        if (opts.containsKey('in')) {
-	//            comparison = opts.get('in');
-	//        } else {
-	//            def self = binding.getVariable("self");
-	//            if (self != null) {
-	//                comparison = new Concept(self.obs.getObservable().getSemantics().getType(), binding);
-	//            }
-	//        }
-	//        if (opts.containsKey('value')) {
-	//            value = opts.get('value');
-	//        }
-	//        return new StateInfo(new ObservableSemantics(ModelFactory.proportionObserver(observable.concept, (comparison == null ? null : comparison.concept), false), null, observable.concept.getLocalName()), value);
-	//    }
-	//
-	//    StateInfo percentage(Map opts, Concept observable) {
-	//        def value = null;
-	//        def comparison = null;
-	//        if (opts.containsKey('in')) {
-	//            comparison = opts.get('in');
-	//        } else {
-	//            def self = binding.getVariable("self");
-	//            if (self != null) {
-	//                comparison = new Concept(self.obs.getObservable().getSemantics().getType(), binding);
-	//            }
-	//        }
-	//        if (opts.containsKey('value')) {
-	//            value = opts.get('value');
-	//        }
-	//        return new StateInfo(new ObservableSemantics(ModelFactory.proportionObserver(observable.concept, (comparison == null ? null : comparison.concept), true), null, observable.concept.getLocalName()), value);
-	//    }
-	//
-	//
-	//    /**
-	//     * TODO allow map syntax for value:, min:, max:, options
-	//     * @param observable
-	//     * @param value
-	//     * @return
-	//     */
-	//    StateInfo rank(Map opts, Concept observable) {
-	//
-	//        List<Integer> range = null;
-	//        def value = null;
-	//        if (opts.containsKey('min') && opts.containsKey('max')) {
-	//            range = new ArrayList<>();
-	//            range.add(opts.get('min') as Integer);
-	//            range.add(opts.get('max') as Integer);
-	//        }
-	//        if (opts.containsKey('value')) {
-	//            value = opts.get('value');
-	//        }
-	//        return new StateInfo(new ObservableSemantics(ModelFactory.rankObserver(observable.concept, range), null, observable.concept.getLocalName()), value);
-	//    }
-	//
-	//    StateInfo rank(Concept observable) {
-	//        return new StateInfo(new ObservableSemantics(ModelFactory.rankObserver(observable.concept, null), null, observable.concept.getLocalName()), null);
-	//    }
-	//
-	//    /**
-	//     * TODO allow map syntax for currency: value:, min:, max:, options
-	//     * @param observable
-	//     * @param value
-	//     * @return
-	//     */
-	//    StateInfo value(Map opts, Concept observable) {
-	//
-	//        def value = null;
-	//        def currency = new Currency();
-	//        def observ = Observables.makeValue(observable.concept, null);
-	//
-	//        if (opts.containsKey('currency')) {
-	//            currency.parse(opts.get('currency').toString());
-	//        } else if (opts.containsKey('min') && opts.containsKey('max')) {
-	//            currency.setConcept(observable.concept, opts.get('min') as Integer, opts.get('max') as Integer);
-	//        }
-	//        if (opts.containsKey('value')) {
-	//            value = opts.get('value');
-	//        }
-	//        return new StateInfo(new ObservableSemantics(ModelFactory.valueObserver(observ, currency), null, observ.getLocalName()), value);
-	//    }
-	//
-	//    /**
-	//     * TODO allow map syntax for currency: value:, min:, max:, options
-	//     * @param observable
-	//     * @param value
-	//     * @return
-	//     */
-	//    StateInfo count(Map opts, Concept observable, String unit) {
-	//
-	//        def value = null;
-	//        def observ = Observables.makeCount(observable.concept);
-	//        if (opts.containsKey('value')) {
-	//            value = opts.get('value');
-	//        }
-	//        return new StateInfo(new ObservableSemantics(ModelFactory.countObserver(observ, unit), null, observ.getLocalName()), value);
-	//    }
-	//
-	//    /**
-	//     * TODO allow map syntax for currency: value:, min:, max:, options
-	//     * @param observable
-	//     * @param value
-	//     * @return
-	//     */
-	//    StateInfo count(Concept observable, String unit) {
-	//        def observ = Observables.makeCount(observable.concept);
-	//        return new StateInfo(new ObservableSemantics(ModelFactory.countObserver(observ, unit), null, observ.getLocalName()), null);
-	//    }
-	//
-	//    StateInfo count(Map opts, Concept observable) {
-	//
-	//        def value = null;
-	//        def unit = null;
-	//        def observ = Observables.makeCount(observable.concept);
-	//        if (opts.containsKey('value')) {
-	//            value = opts.get('value');
-	//        }
-	//        if (opts.containsKey('unit')) {
-	//            unit = opts.get('unit');
-	//        }
-	//        return new StateInfo(new ObservableSemantics(ModelFactory.countObserver(observ, unit), null, observ.getLocalName()), value);
-	//    }
-	//
-	//    StateInfo count(Concept observable) {
-	//        def observ = Observables.makeCount(observable.concept);
-	//        return new StateInfo(new ObservableSemantics(ModelFactory.countObserver(observ, null), null, observ.getLocalName()), null);
-	//    }
-
 
 	//    def getScope() {
 	//        return getScope(binding);
@@ -543,6 +350,29 @@ abstract class ActionBase extends Script {
 		println(ret);
 	}
 
+	def propertyMissing(name) {
+		def ctx = null
+		if (binding.hasVariable("_self") && binding.getVariable("_self") instanceof IDirectObservation) {
+			ctx = (IDirectObservation)binding.getVariable("_self");
+		} else if (binding.hasVariable("_c")) {
+			ctx = ((IRuntimeContext)binding.getVariable("_c")).getContextSubject();
+		}
+		
+		if (ctx != null) {
+			return resolveFromContext(name, ctx);
+		}
+		null
+	}
+
+	def resolveFromContext(String name, IDirectObservation ctx) {
+		for (IState state : ctx.getStates()) {
+			if (state.getObservable().getLocalName().equals(name)) {
+				return state.aggregate(ctx.getScale(), Utils.getClassForType(state.getObservable().getArtifactType()));
+			}
+		}
+		null
+	}
+		
 	/**
 	 * Pass an object (string or double) and a unit through which we want to interpret the
 	 * object as a numeric value. If the object is a number or a string parseable as a number,
@@ -577,7 +407,6 @@ abstract class ActionBase extends Script {
 		//        } else if (obj instanceof IState) {
 		//            obj = new State((IState)obj, binding);
 		//        }
-
 		return obj;
 	}
 }

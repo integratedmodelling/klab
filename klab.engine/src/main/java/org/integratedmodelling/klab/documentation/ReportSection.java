@@ -283,8 +283,10 @@ public class ReportSection extends Parameters<String> implements Section {
             IObservationReference ref = report.getObservation(((IObservation) artifact).getId());
             if (ref != null) {
                 report.setReferenceType(args[1].toString(), RefType.FIG);
+                // this solution work if k.EXPLORER is the hosting one
+                // and doesn't work if it run in 'no engine' URL (as in front end development)
                 body.append("\n\n![" + ref.getLabel()
-                        + "](http://localhost:8283/modeler/engine/session/view/displaydata/"
+                        + "](/modeler/engine/session/view/displaydata/"
                         + report.getSessionId() + "/" + ref.getId() + "?format=RASTER&viewport=800)");
                 body.append("\n[[#" + RefType.FIG.name().toLowerCase() + ":" + args[1] + "] "
                         + (args.length > 2 ? (" " + args[2].toString()) : "") + "]");

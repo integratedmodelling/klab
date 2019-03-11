@@ -120,6 +120,13 @@ public interface IProject {
 	 * @return a {@link java.lang.String} object.
 	 */
 	String getOriginatingNodeId();
+	
+	/**
+	 * Get the workspace where this project resides.
+	 * 
+	 * @return
+	 */
+	IWorkspace getWorkspace();
 
 	/**
 	 * 

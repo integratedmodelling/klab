@@ -92,14 +92,14 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
                                                 .withTaskId(token)));
 
                         // TODO must finish this task and start another, otherwise no context gets registered.
-                        
+
                         /*
                          * notify result
                          */
                         IObservation notifiable = (IObservation) (data.getSecond() instanceof ObservationGroup
                                 && data.getSecond().groupSize() > 0 ? data.getSecond().iterator().next()
                                         : data.getSecond());
-                        
+
                         session.getMonitor().send(Message.create(session
                                 .getId(), IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation, Observations.INSTANCE
                                         .createArtifactDescriptor(notifiable, context, ITime.INITIALIZATION, -1, false, true)
@@ -166,7 +166,7 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
 
     @Override
     public boolean cancel(boolean mayInterruptIfRunning) {
-		monitor.interrupt();
+        monitor.interrupt();
         return delegate.cancel(mayInterruptIfRunning);
     }
 

@@ -2,11 +2,15 @@ package org.integratedmodelling.kim.ui.contentassist;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
+import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.kim.kim.Annotation;
 import org.integratedmodelling.kim.kim.Concept;
 import org.integratedmodelling.kim.kim.ConceptReference;
+import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
+import org.integratedmodelling.klab.api.documentation.IDocumentation;
 
 
 public class KimDocumentationProvider implements IEObjectDocumentationProvider {
@@ -28,7 +32,23 @@ public class KimDocumentationProvider implements IEObjectDocumentationProvider {
 			}
 		} else if (o instanceof ObservableSemantics/* && o.eContainer() instanceof ModelBodyStatement*/) {
 //		    return "ZIO CAROTA ";
-		}
+		} else if (o instanceof Function) {
+			Kim.Validator validator = Kim.INSTANCE.getValidator();
+			if (validator != null) {
+				IPrototype prototype = validator.getFunctionPrototype(((Function)o).getName());
+				if (prototype != null) {
+					return prototype.getSynopsis(IDocumentation.DOC_HTMLTAGS);
+				}
+			}
+		} else if (o instanceof Annotation) {
+            Kim.Validator validator = Kim.INSTANCE.getValidator();
+            if (validator != null) {
+                IPrototype prototype = validator.getAnnotationPrototype(((Annotation)o).getName().substring(1));
+                if (prototype != null) {
+                    return prototype.getSynopsis(IDocumentation.DOC_HTMLTAGS);
+                }
+            }
+        }
 		return null;
 	}
 

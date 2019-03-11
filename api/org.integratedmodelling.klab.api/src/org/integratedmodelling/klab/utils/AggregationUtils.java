@@ -1,10 +1,13 @@
 package org.integratedmodelling.klab.utils;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.klab.api.data.Aggregation;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 public class AggregationUtils {
@@ -167,6 +170,7 @@ public class AggregationUtils {
 
     public static Object count(List<Object> values, IMonitor monitor) {
         int n = 0;
+        Set<Object> set = new HashSet<>();
         for (Object value : values) {
             if (value instanceof Boolean) {
                 if ((Boolean) value) {
@@ -176,7 +180,12 @@ public class AggregationUtils {
                 if (((Number) value).doubleValue() != 0) {
                     n++;
                 }
-            } else {
+            } else if (value instanceof IConcept) {
+                if (!set.contains(value)) {
+                    n++;
+                    set.add(value);
+                }
+            } else if (value != null) {
                 n++;
             }
         }

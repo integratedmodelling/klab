@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.integratedmodelling.kim.api.IComputableResource;
@@ -13,6 +14,7 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
@@ -20,6 +22,7 @@ import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -29,6 +32,7 @@ import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -136,14 +140,13 @@ public class Actuator implements IActuator {
 	// if this is non-null, coverage is also non-null and the actuator defines a
 	// partition of the named target artifact, covering our coverage only.
 	private String partitionedTarget;
+
 	/*
 	 * when this is a partition, the priority reflects the ranking so that the
 	 * highest ranked partial can be applied last
 	 */
 	private int priority = 0;
-
 	private Mode mode;
-
 	private Model model;
 
 	@Override
@@ -293,6 +296,19 @@ public class Actuator implements IActuator {
 			((Report) context.getReport()).include(contextualizer.getSecond());
 		}
 
+		IConfiguration configuration = null;
+		if (!ret.isEmpty()) {
+			/*
+			 * check for configuration triggered
+			 */
+			Pair<IConcept, Set<IObservation>> confdesc = Observables.INSTANCE.detectConfigurations((IObservation) ret,
+					ctx.getContextObservation());
+
+			if (confdesc != null) {
+				configuration = ctx.newConfiguration(confdesc.getFirst(), confdesc.getSecond());
+			}
+		}
+
 		if (runtimeContext.getMonitor().isInterrupted()) {
 			return ret;
 		}
@@ -326,9 +342,22 @@ public class Actuator implements IActuator {
 					}
 				}
 
+				// FIXME - just notify the group 
 				IObservation notifiable = (IObservation) (ret instanceof ObservationGroup && ret.groupSize() > 0
 						? ret.iterator().next()
 						: ret);
+
+				List<IObservation> notifiables = new ArrayList<>();
+				if (model != null) {
+					for (int i = 0; i < model.getObservables().size(); i++) {
+						IArtifact artifact = ctx.getArtifact(model.getObservables().get(i).getLocalName());
+						// FIXME this is a hack - all the notification logics must be fixed
+						if (artifact instanceof IState) {
+							notifiables.add((IObservation) artifact);
+						}
+					}
+				}
+				notifiables.add(notifiable);
 
 				IObservation parent = ctx.getContextObservation().equals(notifiable) ? null
 						: ctx.getContextObservation();
@@ -352,19 +381,29 @@ public class Actuator implements IActuator {
 
 				}
 
-				if (!dataflow.wasNotified(notifiable)) {
+				for (int i = 0; i < notifiables.size(); i++) {
+					
+					boolean last = i == notifiables.size() - 1;
+					IObservation obs = notifiables.get(i);
+					
+					if (!dataflow.wasNotified(obs)) {
 
-					IObservationReference observation = Observations.INSTANCE
-							.createArtifactDescriptor(notifiable, parent, ITime.INITIALIZATION, 0, false, isMain)
-							.withTaskId(ctx.getMonitor().getIdentity().getId());
+						IObservationReference observation = Observations.INSTANCE
+								.createArtifactDescriptor(obs, parent, ITime.INITIALIZATION, 0, false, isMain && last)
+								.withTaskId(ctx.getMonitor().getIdentity().getId());
 
-					session.getMonitor().send(Message.create(session.getId(),
-							IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation, observation));
+						session.getMonitor().send(Message.create(session.getId(),
+								IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation, observation));
 
-					((Report) ctx.getReport()).include(observation);
+						((Report) ctx.getReport()).include(observation);
+						((Artifact) obs).setNotified(true);
+					}
+				}
 
-					((Artifact) notifiable).setNotified(true);
-
+				if (configuration != null) {
+					/*
+					 * TODO notify the configuration.
+					 */
 				}
 			}
 		}
@@ -443,11 +482,11 @@ public class Actuator implements IActuator {
 					addParameters(ctx, self, resource));
 
 			/*
-			 * Instantiators that act as sorters or filters will return a legitimate null, meaning
-			 * "I've done my job, just ignore my output".
+			 * Instantiators that act as sorters or filters will return a legitimate null,
+			 * meaning "I've done my job, just ignore my output".
 			 */
 			if (objects != null) {
-				
+
 				for (IObjectArtifact object : objects) {
 
 					/*
@@ -694,10 +733,6 @@ public class Actuator implements IActuator {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	// public void setCreateObservation(boolean createObservation) {
-	// this.createsObservation = createObservation;
-	// }
 
 	public void setReference(boolean reference) {
 		this.reference = reference;

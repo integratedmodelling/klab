@@ -36,6 +36,7 @@ import org.integratedmodelling.kdl.kdl.Value;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getAnnotations <em>Annotations</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isAbstract <em>Abstract</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isFinal <em>Final</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isOptional <em>Optional</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isExported <em>Exported</em>}</li>
@@ -46,6 +47,7 @@ import org.integratedmodelling.kdl.kdl.Value;
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isParameter <em>Parameter</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getType <em>Type</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getExtended <em>Extended</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getTargets <em>Targets</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getDocstring <em>Docstring</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getLabel <em>Label</em>}</li>
@@ -71,6 +73,26 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
    * @ordered
    */
   protected EList<Annotation> annotations;
+
+  /**
+   * The default value of the '{@link #isAbstract() <em>Abstract</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isAbstract()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean ABSTRACT_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isAbstract() <em>Abstract</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isAbstract()
+   * @generated
+   * @ordered
+   */
+  protected boolean abstract_ = ABSTRACT_EDEFAULT;
 
   /**
    * The default value of the '{@link #isFinal() <em>Final</em>}' attribute.
@@ -273,6 +295,26 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   protected String name = NAME_EDEFAULT;
 
   /**
+   * The default value of the '{@link #getExtended() <em>Extended</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getExtended()
+   * @generated
+   * @ordered
+   */
+  protected static final String EXTENDED_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getExtended() <em>Extended</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getExtended()
+   * @generated
+   * @ordered
+   */
+  protected String extended = EXTENDED_EDEFAULT;
+
+  /**
    * The cached value of the '{@link #getTargets() <em>Targets</em>}' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -435,6 +477,29 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
       annotations = new EObjectContainmentEList<Annotation>(Annotation.class, this, KdlPackage.ACTOR_DEFINITION__ANNOTATIONS);
     }
     return annotations;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public boolean isAbstract()
+  {
+    return abstract_;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setAbstract(boolean newAbstract)
+  {
+    boolean oldAbstract = abstract_;
+    abstract_ = newAbstract;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__ABSTRACT, oldAbstract, abstract_));
   }
 
   /**
@@ -665,6 +730,29 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
     name = newName;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__NAME, oldName, name));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getExtended()
+  {
+    return extended;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setExtended(String newExtended)
+  {
+    String oldExtended = extended;
+    extended = newExtended;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__EXTENDED, oldExtended, extended));
   }
 
   /**
@@ -1008,6 +1096,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
     {
       case KdlPackage.ACTOR_DEFINITION__ANNOTATIONS:
         return getAnnotations();
+      case KdlPackage.ACTOR_DEFINITION__ABSTRACT:
+        return isAbstract();
       case KdlPackage.ACTOR_DEFINITION__FINAL:
         return isFinal();
       case KdlPackage.ACTOR_DEFINITION__OPTIONAL:
@@ -1028,6 +1118,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return getType();
       case KdlPackage.ACTOR_DEFINITION__NAME:
         return getName();
+      case KdlPackage.ACTOR_DEFINITION__EXTENDED:
+        return getExtended();
       case KdlPackage.ACTOR_DEFINITION__TARGETS:
         return getTargets();
       case KdlPackage.ACTOR_DEFINITION__DOCSTRING:
@@ -1067,6 +1159,9 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         getAnnotations().clear();
         getAnnotations().addAll((Collection<? extends Annotation>)newValue);
         return;
+      case KdlPackage.ACTOR_DEFINITION__ABSTRACT:
+        setAbstract((Boolean)newValue);
+        return;
       case KdlPackage.ACTOR_DEFINITION__FINAL:
         setFinal((Boolean)newValue);
         return;
@@ -1096,6 +1191,9 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return;
       case KdlPackage.ACTOR_DEFINITION__NAME:
         setName((String)newValue);
+        return;
+      case KdlPackage.ACTOR_DEFINITION__EXTENDED:
+        setExtended((String)newValue);
         return;
       case KdlPackage.ACTOR_DEFINITION__TARGETS:
         getTargets().clear();
@@ -1147,6 +1245,9 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
       case KdlPackage.ACTOR_DEFINITION__ANNOTATIONS:
         getAnnotations().clear();
         return;
+      case KdlPackage.ACTOR_DEFINITION__ABSTRACT:
+        setAbstract(ABSTRACT_EDEFAULT);
+        return;
       case KdlPackage.ACTOR_DEFINITION__FINAL:
         setFinal(FINAL_EDEFAULT);
         return;
@@ -1176,6 +1277,9 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return;
       case KdlPackage.ACTOR_DEFINITION__NAME:
         setName(NAME_EDEFAULT);
+        return;
+      case KdlPackage.ACTOR_DEFINITION__EXTENDED:
+        setExtended(EXTENDED_EDEFAULT);
         return;
       case KdlPackage.ACTOR_DEFINITION__TARGETS:
         getTargets().clear();
@@ -1223,6 +1327,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
     {
       case KdlPackage.ACTOR_DEFINITION__ANNOTATIONS:
         return annotations != null && !annotations.isEmpty();
+      case KdlPackage.ACTOR_DEFINITION__ABSTRACT:
+        return abstract_ != ABSTRACT_EDEFAULT;
       case KdlPackage.ACTOR_DEFINITION__FINAL:
         return final_ != FINAL_EDEFAULT;
       case KdlPackage.ACTOR_DEFINITION__OPTIONAL:
@@ -1243,6 +1349,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return TYPE_EDEFAULT == null ? type != null : !TYPE_EDEFAULT.equals(type);
       case KdlPackage.ACTOR_DEFINITION__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+      case KdlPackage.ACTOR_DEFINITION__EXTENDED:
+        return EXTENDED_EDEFAULT == null ? extended != null : !EXTENDED_EDEFAULT.equals(extended);
       case KdlPackage.ACTOR_DEFINITION__TARGETS:
         return targets != null && !targets.isEmpty();
       case KdlPackage.ACTOR_DEFINITION__DOCSTRING:
@@ -1277,8 +1385,10 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuilder result = new StringBuilder(super.toString());
-    result.append(" (final: ");
+    StringBuffer result = new StringBuffer(super.toString());
+    result.append(" (abstract: ");
+    result.append(abstract_);
+    result.append(", final: ");
     result.append(final_);
     result.append(", optional: ");
     result.append(optional);
@@ -1298,6 +1408,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
     result.append(type);
     result.append(", name: ");
     result.append(name);
+    result.append(", extended: ");
+    result.append(extended);
     result.append(", targets: ");
     result.append(targets);
     result.append(", docstring: ");

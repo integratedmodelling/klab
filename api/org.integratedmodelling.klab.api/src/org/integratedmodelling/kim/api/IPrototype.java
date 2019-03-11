@@ -140,7 +140,7 @@ public interface IPrototype {
 	Argument getArgument(String argumentId);
 
 	/**
-	 * All argument descriptors in order of declaration
+	 * All argument descriptors in order of declaration.
 	 * 
 	 * @return all argument descriptors
 	 */
@@ -158,11 +158,13 @@ public interface IPrototype {
 
 	/**
 	 * Full synopsis - expecting a multi-line string with full description of
-	 * options, arguments and subcommands.
+	 * options, arguments and subcommands. Integer flags may be passed to affect
+	 * the display (e.g. full, json, markdown, html); implementations are free
+	 * to choose the flags.
 	 * 
 	 * @return longer description
 	 */
-	public String getSynopsis();
+	public String getSynopsis(Integer ... flags);
 
 	/**
 	 * One-line short synopsis intended to document usage without descriptions.

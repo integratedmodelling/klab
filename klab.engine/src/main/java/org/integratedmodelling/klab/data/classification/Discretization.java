@@ -37,6 +37,21 @@ public class Discretization implements IDataKey {
 		}
 	}
 
+	/**
+	 * Build discretization starting at beginValue and using the cutpoints to define
+	 * all successive intervals until max.
+	 * 
+	 * @param beginValue
+	 * @param cutPoints
+	 */
+	public Discretization(double beginValue, double[] cutPoints, double max) {
+		for (int i = 0; i < cutPoints.length + 1; i++) {
+			double endValue = i == cutPoints.length ? max : cutPoints[i];
+			ranges.add(Range.create(beginValue, endValue, false));
+			beginValue = endValue;
+		}
+	}
+
 	@Override
 	public int size() {
 		return ranges.size();
@@ -47,7 +62,7 @@ public class Discretization implements IDataKey {
 		if (value instanceof Number) {
 			int i = 0;
 			for (Range r : ranges) {
-				if (r.contains(((Number)value).doubleValue())) {
+				if (r.contains(((Number) value).doubleValue())) {
 					return i;
 				}
 				i++;
@@ -77,6 +92,21 @@ public class Discretization implements IDataKey {
 
 	public Range getRange(int n) {
 		return ranges.get(n);
+	}
+
+	@Override
+	public Object lookup(int index) {
+		return ranges.get(index).getMidpoint();
+	}
+
+	public double[] getMidpoints() {
+		double[] ret = new double[ranges.size()];
+		int i = 0;
+		for (Range range : ranges) {
+			ret[i++] = range.getMidpoint();
+		}
+		return ret;
+
 	}
 
 }

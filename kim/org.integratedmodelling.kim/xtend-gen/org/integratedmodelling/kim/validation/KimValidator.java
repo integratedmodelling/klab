@@ -478,7 +478,8 @@ public class KimValidator extends AbstractKimValidator {
         boolean _tripleNotEquals_3 = (_observable_1 != null);
         if (_tripleNotEquals_3) {
           if (((cd.getObservable().getValue() != null) && (cd.getObservable().getValue().getId() != null))) {
-            this.error("Attributes IDs are not allowed in dependencies (<attribute> \'as\' ...): only values, expressions or functions", 
+            this.error(
+              "Attributes IDs are not allowed in dependencies (<attribute> \'as\' ...): only values, expressions or functions", 
               KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
           }
           Object _value = observable.getValue();
@@ -486,8 +487,7 @@ public class KimValidator extends AbstractKimValidator {
           if (_tripleNotEquals_4) {
             final String error = observable.validateValue();
             if ((error != null)) {
-              this.error(error, 
-                KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
+              this.error(error, KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
             }
           }
           Kim.ConceptDescriptor definition = observable.getDescriptor();
@@ -1264,10 +1264,8 @@ public class KimValidator extends AbstractKimValidator {
     ConceptDeclaration _context = declaration.getContext();
     boolean _tripleNotEquals_1 = (_context != null);
     if (_tripleNotEquals_1) {
-      boolean _contains_2 = type.contains(IKimConcept.Type.OBSERVABLE);
-      boolean _not_3 = (!_contains_2);
-      if (_not_3) {
-        this.error("Only observables can have context", declaration.getContext(), null, 
+      if (((!type.contains(IKimConcept.Type.OBSERVABLE)) && (!flags.contains(IKimConcept.Type.CONFIGURATION)))) {
+        this.error("Only observables and configurations can have context", declaration.getContext(), null, 
           KimPackage.CONCEPT_DECLARATION__INHERENCY);
       }
       flags = this.checkDeclaration(declaration.getContext());
@@ -1275,15 +1273,15 @@ public class KimValidator extends AbstractKimValidator {
       if (_isEmpty_2) {
         type.clear();
       } else {
-        boolean _contains_3 = flags.contains(IKimConcept.Type.MACRO);
-        boolean _not_4 = (!_contains_3);
-        if (_not_4) {
+        boolean _contains_2 = flags.contains(IKimConcept.Type.MACRO);
+        boolean _not_3 = (!_contains_2);
+        if (_not_3) {
           if (((macro != null) && macro.getFields().contains(IKimMacro.Field.CONTEXT))) {
             IKimMacro.FieldType rtype_1 = macro.getType(IKimMacro.Field.CONTEXT);
             EnumSet<IKimConcept.Type> ctype_1 = Kim.intersection(rtype_1.getType(), flags);
             boolean _containsAll_1 = ctype_1.containsAll(rtype_1.getType());
-            boolean _not_5 = (!_containsAll_1);
-            if (_not_5) {
+            boolean _not_4 = (!_containsAll_1);
+            if (_not_4) {
               String _name_1 = macro.getName();
               String _plus_2 = ("The context type (within) does not match the type requested by the " + _name_1);
               String _plus_3 = (_plus_2 + 
@@ -1294,9 +1292,9 @@ public class KimValidator extends AbstractKimValidator {
               macro.setField(IKimMacro.Field.CONTEXT, declaration.getContext());
             }
           } else {
-            boolean _contains_4 = flags.contains(IKimConcept.Type.COUNTABLE);
-            boolean _not_6 = (!_contains_4);
-            if (_not_6) {
+            boolean _contains_3 = flags.contains(IKimConcept.Type.COUNTABLE);
+            boolean _not_5 = (!_contains_3);
+            if (_not_5) {
               this.error("The context type (within) must be a subject, event or relationship", 
                 declaration.getContext(), null, KimPackage.CONCEPT_DECLARATION__CONTEXT);
             }
@@ -1313,15 +1311,15 @@ public class KimValidator extends AbstractKimValidator {
       if (_isEmpty_3) {
         type.clear();
       } else {
-        boolean _contains_5 = flags.contains(IKimConcept.Type.MACRO);
-        boolean _not_7 = (!_contains_5);
-        if (_not_7) {
+        boolean _contains_4 = flags.contains(IKimConcept.Type.MACRO);
+        boolean _not_6 = (!_contains_4);
+        if (_not_6) {
           if (((macro != null) && macro.getFields().contains(IKimMacro.Field.COMPRESENT))) {
             IKimMacro.FieldType rtype_2 = macro.getType(IKimMacro.Field.COMPRESENT);
             EnumSet<IKimConcept.Type> ctype_2 = Kim.intersection(rtype_2.getType(), flags);
             boolean _containsAll_2 = ctype_2.containsAll(rtype_2.getType());
-            boolean _not_8 = (!_containsAll_2);
-            if (_not_8) {
+            boolean _not_7 = (!_containsAll_2);
+            if (_not_7) {
               String _name_2 = macro.getName();
               String _plus_4 = ("The compresent type (with) does not match the type requested by the " + _name_2);
               String _plus_5 = (_plus_4 + 
@@ -1345,15 +1343,15 @@ public class KimValidator extends AbstractKimValidator {
       if (_isEmpty_4) {
         type.clear();
       } else {
-        boolean _contains_6 = flags.contains(IKimConcept.Type.MACRO);
-        boolean _not_9 = (!_contains_6);
-        if (_not_9) {
+        boolean _contains_5 = flags.contains(IKimConcept.Type.MACRO);
+        boolean _not_8 = (!_contains_5);
+        if (_not_8) {
           if (((macro != null) && macro.getFields().contains(IKimMacro.Field.CAUSANT))) {
             IKimMacro.FieldType rtype_3 = macro.getType(IKimMacro.Field.CAUSANT);
             EnumSet<IKimConcept.Type> ctype_3 = Kim.intersection(rtype_3.getType(), flags);
             boolean _containsAll_3 = ctype_3.containsAll(rtype_3.getType());
-            boolean _not_10 = (!_containsAll_3);
-            if (_not_10) {
+            boolean _not_9 = (!_containsAll_3);
+            if (_not_9) {
               String _name_3 = macro.getName();
               String _plus_6 = ("The causant type (from) does not match the type requested by the " + _name_3);
               String _plus_7 = (_plus_6 + 
@@ -1377,15 +1375,15 @@ public class KimValidator extends AbstractKimValidator {
       if (_isEmpty_5) {
         type.clear();
       } else {
-        boolean _contains_7 = flags.contains(IKimConcept.Type.MACRO);
-        boolean _not_11 = (!_contains_7);
-        if (_not_11) {
+        boolean _contains_6 = flags.contains(IKimConcept.Type.MACRO);
+        boolean _not_10 = (!_contains_6);
+        if (_not_10) {
           if (((macro != null) && macro.getFields().contains(IKimMacro.Field.CAUSED))) {
             IKimMacro.FieldType rtype_4 = macro.getType(IKimMacro.Field.CAUSED);
             EnumSet<IKimConcept.Type> ctype_4 = Kim.intersection(rtype_4.getType(), flags);
             boolean _containsAll_4 = ctype_4.containsAll(rtype_4.getType());
-            boolean _not_12 = (!_containsAll_4);
-            if (_not_12) {
+            boolean _not_11 = (!_containsAll_4);
+            if (_not_11) {
               String _name_4 = macro.getName();
               String _plus_8 = ("The caused type (to) does not match the type requested by the " + _name_4);
               String _plus_9 = (_plus_8 + 
@@ -1409,15 +1407,15 @@ public class KimValidator extends AbstractKimValidator {
       if (_isEmpty_6) {
         type.clear();
       } else {
-        boolean _contains_8 = flags.contains(IKimConcept.Type.MACRO);
-        boolean _not_13 = (!_contains_8);
-        if (_not_13) {
+        boolean _contains_7 = flags.contains(IKimConcept.Type.MACRO);
+        boolean _not_12 = (!_contains_7);
+        if (_not_12) {
           if (((macro != null) && macro.getFields().contains(IKimMacro.Field.ADJACENT))) {
             IKimMacro.FieldType rtype_5 = macro.getType(IKimMacro.Field.ADJACENT);
             EnumSet<IKimConcept.Type> ctype_5 = Kim.intersection(rtype_5.getType(), flags);
             boolean _containsAll_5 = ctype_5.containsAll(rtype_5.getType());
-            boolean _not_14 = (!_containsAll_5);
-            if (_not_14) {
+            boolean _not_13 = (!_containsAll_5);
+            if (_not_13) {
               String _name_5 = macro.getName();
               String _plus_10 = ("The adjacent type (adjacent to) does not match the type requested by the " + _name_5);
               String _plus_11 = (_plus_10 + " macro");
@@ -1441,15 +1439,15 @@ public class KimValidator extends AbstractKimValidator {
       if (_isEmpty_7) {
         type.clear();
       } else {
-        boolean _contains_9 = flags.contains(IKimConcept.Type.MACRO);
-        boolean _not_15 = (!_contains_9);
-        if (_not_15) {
+        boolean _contains_8 = flags.contains(IKimConcept.Type.MACRO);
+        boolean _not_14 = (!_contains_8);
+        if (_not_14) {
           if (((macro != null) && macro.getFields().contains(IKimMacro.Field.GOAL))) {
             IKimMacro.FieldType rtype_6 = macro.getType(IKimMacro.Field.GOAL);
             EnumSet<IKimConcept.Type> ctype_6 = Kim.intersection(rtype_6.getType(), flags);
             boolean _containsAll_6 = ctype_6.containsAll(rtype_6.getType());
-            boolean _not_16 = (!_containsAll_6);
-            if (_not_16) {
+            boolean _not_15 = (!_containsAll_6);
+            if (_not_15) {
               String _name_6 = macro.getName();
               String _plus_12 = ("The goal type (for) does not match the type requested by the " + _name_6);
               String _plus_13 = (_plus_12 + 
@@ -1473,15 +1471,15 @@ public class KimValidator extends AbstractKimValidator {
       if (_isEmpty_8) {
         type.clear();
       } else {
-        boolean _contains_10 = flags.contains(IKimConcept.Type.MACRO);
-        boolean _not_17 = (!_contains_10);
-        if (_not_17) {
+        boolean _contains_9 = flags.contains(IKimConcept.Type.MACRO);
+        boolean _not_16 = (!_contains_9);
+        if (_not_16) {
           if (((macro != null) && macro.getFields().contains(IKimMacro.Field.COOCCURRENT))) {
             IKimMacro.FieldType rtype_7 = macro.getType(IKimMacro.Field.COOCCURRENT);
             EnumSet<IKimConcept.Type> ctype_7 = Kim.intersection(rtype_7.getType(), flags);
             boolean _containsAll_7 = ctype_7.containsAll(rtype_7.getType());
-            boolean _not_18 = (!_containsAll_7);
-            if (_not_18) {
+            boolean _not_17 = (!_containsAll_7);
+            if (_not_17) {
               String _name_7 = macro.getName();
               String _plus_14 = ("The co-occurrent type (for) does not match the type requested by the " + _name_7);
               String _plus_15 = (_plus_14 + " macro");
@@ -1492,9 +1490,9 @@ public class KimValidator extends AbstractKimValidator {
               macro.setField(IKimMacro.Field.COOCCURRENT, declaration.getMotivation());
             }
           } else {
-            boolean _contains_11 = flags.contains(IKimConcept.Type.EVENT);
-            boolean _not_19 = (!_contains_11);
-            if (_not_19) {
+            boolean _contains_10 = flags.contains(IKimConcept.Type.EVENT);
+            boolean _not_18 = (!_contains_10);
+            if (_not_18) {
               this.error("The co-occurrent type (during) must be an event", declaration.getContext(), null, 
                 KimPackage.CONCEPT_DECLARATION__CONTEXT);
             }
@@ -1504,16 +1502,16 @@ public class KimValidator extends AbstractKimValidator {
       this.copyInheritableFlags(flags, type);
     }
     boolean _isEmpty_9 = type.isEmpty();
-    boolean _not_20 = (!_isEmpty_9);
-    if (_not_20) {
+    boolean _not_19 = (!_isEmpty_9);
+    if (_not_19) {
       int i = 0;
       EList<ConceptDeclaration> _operands = declaration.getOperands();
       for (final ConceptDeclaration operand : _operands) {
         {
           EnumSet<IKimConcept.Type> otype = this.checkDeclaration(operand);
           boolean _isCompatible = Kim.isCompatible(type, otype);
-          boolean _not_21 = (!_isCompatible);
-          if (_not_21) {
+          boolean _not_20 = (!_isCompatible);
+          if (_not_20) {
             String _get = declaration.getOperators().get(i);
             String _plus_16 = ("Operands in the \'" + _get);
             String _plus_17 = (_plus_16 + 

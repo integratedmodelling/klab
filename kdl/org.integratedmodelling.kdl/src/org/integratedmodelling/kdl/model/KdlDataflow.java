@@ -2,7 +2,10 @@ package org.integratedmodelling.kdl.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlContextualizer;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
@@ -12,103 +15,110 @@ import org.integratedmodelling.kdl.kdl.Model;
 
 public class KdlDataflow extends KdlStatement implements IKdlDataflow {
 
-    private static final long serialVersionUID = -5880984598966851266L;
+	private static final long serialVersionUID = -5880984598966851266L;
 
-    List<IKdlContextualizer>  scale            = new ArrayList<>();
-    List<IKdlActuator>        actors           = new ArrayList<>();
+	List<IKdlContextualizer> scale = new ArrayList<>();
+	List<IKdlActuator> actors = new ArrayList<>();
 
-    String                    worldview;
-    String                    klabVersion;
-    String                    version;
-    String                    endpoint;
-    String                    packageName;
-    String                    geometry;
+	String worldview;
+	String klabVersion;
+	String version;
+	String endpoint;
+	String packageName;
+	String geometry;
 
-    public KdlDataflow(Model o) {
-        super(o);
-        this.version = o.getVersion();
-        this.klabVersion = o.getKlabVersion();
-        this.geometry = o.getGeometry();
-        this.endpoint = o.getEndpoint();
-        this.packageName = o.getPackage();
+	public KdlDataflow(Model o) {
 
-        for (Function ctx : o.getScale()) {
-            scale.add(new KdlContextualizer(ctx));
-        }
+		super(o);
+		this.version = o.getVersion();
+		this.klabVersion = o.getKlabVersion();
+		this.geometry = o.getGeometry();
+		this.endpoint = o.getEndpoint();
+		this.packageName = o.getPackage();
 
-        for (ActorDefinition actor : o.getActors()) {
-            actors.add(new KdlActuator(actor));
-        }
-    }
+		Map<String, KdlActuator> previousActuators = new HashMap<>();
 
-    @Override
-    public Collection<IKdlActuator> getActuators() {
-        return actors;
-    }
+		for (Function ctx : o.getScale()) {
+			scale.add(new KdlContextualizer(ctx));
+		}
 
-    @Override
-    public List<IKdlContextualizer> getScale() {
-        return scale;
-    }
+		for (ActorDefinition actor : o.getActors()) {
+			KdlActuator actuator = new KdlActuator(actor, previousActuators);
+			if (!actuator.isAbstract) {
+				actors.add(actuator);
+			}
+			previousActuators.put(actuator.getName(), actuator);
+		}
+	}
 
-    public void setScale(List<IKdlContextualizer> scale) {
-        this.scale = scale;
-    }
+	@Override
+	public Collection<IKdlActuator> getActuators() {
+		return actors;
+	}
 
-    @Override
-    public String getWorldview() {
-        return worldview;
-    }
+	@Override
+	public List<IKdlContextualizer> getScale() {
+		return scale;
+	}
 
-    public void setWorldview(String worldview) {
-        this.worldview = worldview;
-    }
+	public void setScale(List<IKdlContextualizer> scale) {
+		this.scale = scale;
+	}
 
-    @Override
-    public String getKlabVersion() {
-        return klabVersion;
-    }
+	@Override
+	public String getWorldview() {
+		return worldview;
+	}
 
-    public void setKlabVersion(String klabVersion) {
-        this.klabVersion = klabVersion;
-    }
+	public void setWorldview(String worldview) {
+		this.worldview = worldview;
+	}
 
-    @Override
-    public String getVersion() {
-        return version;
-    }
+	@Override
+	public String getKlabVersion() {
+		return klabVersion;
+	}
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
+	public void setKlabVersion(String klabVersion) {
+		this.klabVersion = klabVersion;
+	}
 
-    @Override
-    public String getEndpoint() {
-        return endpoint;
-    }
+	@Override
+	public String getVersion() {
+		return version;
+	}
 
-    public void setEndpoint(String endpoint) {
-        this.endpoint = endpoint;
-    }
+	public void setVersion(String version) {
+		this.version = version;
+	}
 
-    @Override
-    public String getPackageName() {
-        return packageName;
-    }
+	@Override
+	public String getEndpoint() {
+		return endpoint;
+	}
 
-    public void setPackageName(String packageName) {
-        this.packageName = packageName;
-    }
+	public void setEndpoint(String endpoint) {
+		this.endpoint = endpoint;
+	}
 
-    @Override
-    public String toString() {
-        String ret = "<dataflow [";
-        int i = 0;
-        for (IKdlActuator actor : actors) {
-            ret += (i == 0 ? "" : ", ") + actor;
-            i++;
-        }
-        return ret + "]>"; 
-    }
-    
+	@Override
+	public String getPackageName() {
+		return packageName;
+	}
+
+	public void setPackageName(String packageName) {
+		this.packageName = packageName;
+	}
+
+	@Override
+	public String toString() {
+		String ret = "<dataflow [";
+		int i = 0;
+		for (IKdlActuator actor : actors) {
+			ret += (i == 0 ? "" : ", ") + actor;
+			i++;
+		}
+		return ret + "]>";
+	}
+
 }

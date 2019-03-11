@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import org.integratedmodelling.kim.api.IKimAction;
 import org.integratedmodelling.kim.api.IKimProject;
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 
 /**
@@ -28,7 +29,16 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
  */
 public interface IDocumentation {
 
-    public static String[]           triggers       = new String[] {
+    /**
+     * Flags for display; not used in IDocumentation at the moment, but possibly
+     * used elsewhere, e.g. in {@link IPrototype#getSynopsis(Integer...)}.
+     */
+    public static final int DOC_MARKDOWN  = 1;
+    public static final int DOC_HTMLTAGS  = 2;
+    public static final int DOC_HTML      = 4;
+    public static final int DOC_FORMATTED = 8;
+
+    public static String[]  triggers      = new String[] {
             "Initialization",
             "Definition",
             "Termination",
@@ -36,14 +46,14 @@ public interface IDocumentation {
             "Transition",
             "Event" };
 
-    public static String[]           sections       = new String[] {
+    public static String[]  sections      = new String[] {
             "Introduction",
             "Methods",
             "Results",
             "Discussion",
             "Conclusions",
             "Appendix" };
-	
+
     /**
      * Specifies when a particular template is triggered. Linked to
      * contextualization triggers but separate for ease of extension and
@@ -166,7 +176,7 @@ public interface IDocumentation {
         }
         return new File(base + File.separator + "documentation.json");
     }
-    
+
     /**
      * Return the file path of the documentation catalog for the passed
      * documentation ID. They are structured in different, hierarchically organized
@@ -200,5 +210,4 @@ public interface IDocumentation {
         return new File(base + File.separator + "references.json");
     }
 
-    
 }

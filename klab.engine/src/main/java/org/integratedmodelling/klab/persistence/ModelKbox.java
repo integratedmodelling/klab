@@ -707,30 +707,30 @@ public class ModelKbox extends ObservableKbox {
 		return ret;
 	}
 
-	public static String generateObjectModelSource(IConcept observable, String objectSource,
-			Map<String, IObservable> attributes, String nameAttribute) {
-
-		String ret = "model each " + objectSource + " as " + observable.getDefinition();
-
-		if (nameAttribute != null || (attributes != null && attributes.size() > 0)) {
-			ret += "\n   interpret\n";
-			if (nameAttribute != null) {
-				ret += "      " + nameAttribute.toUpperCase() + " as im:name"
-						+ (attributes != null && attributes.size() > 0 ? "," : "") + "\n";
-			}
-			if (attributes != null) {
-				int n = 0;
-				for (String s : attributes.keySet()) {
-					ret += "      " + s.toUpperCase() + " as " + attributes.get(s).getDefinition()
-							+ (n == attributes.size() - 1 ? "" : ",") + "\n";
-					n++;
-				}
-			}
-		}
-
-		ret += ";";
-
-		return ret;
-	}
+//	public static String generateObjectModelSource(IConcept observable, String objectSource,
+//			Map<String, IObservable> attributes, String nameAttribute) {
+//
+//		String ret = "model each " + objectSource + " as " + observable.getDefinition();
+//
+//		if (nameAttribute != null || (attributes != null && attributes.size() > 0)) {
+//			ret += "\n   interpret\n";
+//			if (nameAttribute != null) {
+//				ret += "      " + nameAttribute.toUpperCase() + " as im:name"
+//						+ (attributes != null && attributes.size() > 0 ? "," : "") + "\n";
+//			}
+//			if (attributes != null) {
+//				int n = 0;
+//				for (String s : attributes.keySet()) {
+//					ret += "      " + s.toUpperCase() + " as " + attributes.get(s).getDefinition()
+//							+ (n == attributes.size() - 1 ? "" : ",") + "\n";
+//					n++;
+//				}
+//			}
+//		}
+//
+//		ret += ";";
+//
+//		return ret;
+//	}
 
 }

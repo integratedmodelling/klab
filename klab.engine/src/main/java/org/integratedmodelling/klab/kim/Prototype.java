@@ -11,6 +11,8 @@ import org.integratedmodelling.klab.utils.StringUtils;
  * The k.LAB prototype specializes {@link org.integratedmodelling.klab.common.Prototype} in the k.IM
  * package by adding a constructor that reads from a KDL specification.
  * 
+ * Labels of internal parameters become short names.
+ * 
  * @author ferdinando.villa
  *
  */
@@ -34,6 +36,9 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
     
     this.label = actuator.getLabel();
     
+    /*
+     * The ordering of the options is the same as the KDL
+     */
     for (IKdlActuator arg : actuator.getActors()) {
 
       ArgumentImpl a = new ArgumentImpl();
@@ -42,6 +47,7 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
           arg.getDescription() == null ? "" : StringUtils.pack(arg.getDescription()).trim();
       a.type = arg.getType() == null ? null : Type.valueOf(arg.getType().name());
       a.optional = arg.isOptional();
+      a.shortName = arg.getLabel();
       a.isFinal = arg.isFinal();
       a.enumValues.addAll(arg.getEnumValues());
       a.defaultValue = arg.getDefaultValue() == null ? null : arg.getDefaultValue().toString();
@@ -63,30 +69,25 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
     } else {
       this.geometry = Geometry.empty();
     }
-    
-    // compute short arguments
-    for (Argument argument : arguments.values()) {
-    	// TODO
-    }
   }
 
-  @Override
-  public String getSynopsis() {
-
-    String s = getShortSynopsis();
-
-    s += "\n\n" + StringUtils.leftIndent(StringUtils.justifyLeft(description, 70), 3) + "\n";
-
-    if (arguments.size() > 0) {
-      s += "Arguments:\n\n";
-      for (Argument arg : arguments.values()) {
-        s += "  " + arg.getName() + (arg.isOptional() ? " (optional)" : " (required)") + ": \n"
-            + StringUtils.leftIndent(StringUtils.justifyLeft(arg.getDescription(), 60), 6) + "\n";
-      }
-      s += "\n";
-    }
-
-    return s;
-  }
+//  @Override
+//  public String getSynopsis(Integer ... flags) {
+//
+//    String s = getShortSynopsis();
+//
+//    s += "\n\n" + StringUtils.leftIndent(StringUtils.justifyLeft(description, 70), 3) + "\n";
+//
+//    if (arguments.size() > 0) {
+//      s += "Arguments:\n\n";
+//      for (Argument arg : arguments.values()) {
+//        s += "  " + arg.getName() + (arg.isOptional() ? " (optional)" : " (required)") + ": \n"
+//            + StringUtils.leftIndent(StringUtils.justifyLeft(arg.getDescription(), 60), 6) + "\n";
+//      }
+//      s += "\n";
+//    }
+//
+//    return s;
+//  }
 
 }

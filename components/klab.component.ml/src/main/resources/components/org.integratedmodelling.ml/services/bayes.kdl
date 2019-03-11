@@ -1,0 +1,87 @@
+/**
+ * Bridge to Weka option handling for Bayes algorithms.
+ */
+@klab 0.10.0
+@version 0.10.0
+@namespace weka.bayes
+
+export value k2
+	"Bridge to the WEKA local K2 search algorithm"
+{		
+	optional boolean startempty
+		"Start with empty initial structure instead of Naive Bayes."
+  		label "N"
+  		default false
+
+    optional number maxparents
+    	"Maximum number of parents. Default 1."
+		label "P"
+		default 1
+		
+	optional text scoretype
+		"Score type. One of BAYES|MDL|ENTROPY|AIC|CROSS_CLASSIC|CROSS_BAYES."
+		label "S"
+		
+	optional boolean random
+		"Use random order. Default false."
+		label "R"
+		default false	
+
+	optional boolean mbc
+		"Applies a Markov Blanket correction to the network structure, 
+         after a network structure is learned. This ensures that all 
+         nodes in the network are part of the Markov blanket of the 
+         classifier node."
+		label "mbc"
+		default false
+		
+	class 'weka.classifiers.bayes.net.search.local.K2'
+}
+
+export value k2global
+	"Bridge to the WEKA global K2 search algorithm"
+{		
+    optional number maxparents
+    	"Maximum number of parents. Default 1."
+		label "P"
+		default 1
+		
+	optional boolean startempty
+		"Start with empty initial structure instead of Naive Bayes."
+  		label "N"
+  		default false
+		
+	optional text scoretype
+		"Score type. One of LOO-CV, k-Fold-CV or Cumulative-CV."
+		label "S"
+		
+	optional boolean random
+		"Use random order. Default false."
+		label "R"
+		default false	
+
+	optional boolean probabilistic
+		"Use probabilistic scoring instead 0/1 scoring. Default true."
+		label "Q"
+		default true
+		
+	optional boolean mbc
+		"Applies a Markov Blanket correction to the network structure, 
+         after a network structure is learned. This ensures that all 
+         nodes in the network are part of the Markov blanket of the 
+         classifier node."
+		label "mbc"
+		default false
+		
+	class 'weka.classifiers.bayes.net.search.global.K2'
+}
+
+export value simpleestimator {
+
+	optional number alpha
+		"Initial count (alpha factor)"
+		label "A"
+		default 1.0
+
+	class weka.classifiers.bayes.net.estimate.SimpleEstimator
+}

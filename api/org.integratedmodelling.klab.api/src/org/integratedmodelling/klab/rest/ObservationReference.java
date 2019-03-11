@@ -23,13 +23,17 @@ public class ObservationReference implements IObservationReference {
 
 		private String label;
 		private String value;
-
+		private String adapter;
+		private String extension;
+		
 		public ExportFormat() {
 		}
 
-		public ExportFormat(String label, String value) {
+		public ExportFormat(String label, String value, String adapter, String extension) {
 			this.label = label;
 			this.value = value;
+			this.adapter = adapter;
+			this.extension = extension;
 		}
 
 		public String getValue() {
@@ -47,6 +51,22 @@ public class ObservationReference implements IObservationReference {
 		public void setLabel(String label) {
 			this.label = label;
 		}
+
+        public String getAdapter() {
+            return adapter;
+        }
+
+        public void setAdapter(String adapter) {
+            this.adapter = adapter;
+        }
+
+        public String getExtension() {
+            return extension;
+        }
+
+        public void setExtension(String extension) {
+            this.extension = extension;
+        }
 	}
 
 	public enum ObservationType {
@@ -168,7 +188,11 @@ public class ObservationReference implements IObservationReference {
 	private boolean main;
 	private DataSummary dataSummary;
 	private List<ExportFormat> exportFormats = new ArrayList<>();
-
+	/*
+	 * Only sent when the observation redefines the scale (new context)
+	 */
+	private ScaleReference scaleReference;
+	
 	public void setDataSummary(DataSummary dataSummary) {
 		this.dataSummary = dataSummary;
 	}
@@ -793,6 +817,14 @@ public class ObservationReference implements IObservationReference {
 
 	public void setGroupId(String groupId) {
 		this.groupId = groupId;
+	}
+
+	public ScaleReference getScaleReference() {
+		return scaleReference;
+	}
+
+	public void setScaleReference(ScaleReference scaleReference) {
+		this.scaleReference = scaleReference;
 	}
 
 }

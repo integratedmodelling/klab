@@ -74,8 +74,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class RasterEncoder implements IResourceEncoder {
 
 	@Override
-	public void getEncodedData(IResource resource, Map<String,String> urnParameters, IGeometry geometry, IKlabData.Builder builder,
-			IComputationContext context) {
+	public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
+			IKlabData.Builder builder, IComputationContext context) {
 		encodeFromCoverage(resource, urnParameters, getCoverage(resource, geometry), geometry, builder, context);
 	}
 
@@ -91,8 +91,8 @@ public class RasterEncoder implements IResourceEncoder {
 	 * @param builder
 	 * @param context
 	 */
-	public void encodeFromCoverage(IResource resource, Map<String, String> urnParameters, GridCoverage coverage, IGeometry geometry,
-			IKlabData.Builder builder, IComputationContext context) {
+	public void encodeFromCoverage(IResource resource, Map<String, String> urnParameters, GridCoverage coverage,
+			IGeometry geometry, IKlabData.Builder builder, IComputationContext context) {
 
 		/*
 		 * Set the data from the transformed coverage
@@ -254,10 +254,11 @@ public class RasterEncoder implements IResourceEncoder {
 	private GridCoverage getOriginalCoverage(IResource resource) {
 
 		File mainFile = null;
+		File rootPath = Resources.INSTANCE.getProject(resource.getLocalProjectName()).getWorkspace().getRoot();
 
 		for (String path : resource.getLocalPaths()) {
 			if (RasterAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(path))) {
-				mainFile = new File(Resources.INSTANCE.getLocalWorkspace().getRoot() + File.separator + path);
+				mainFile = new File(rootPath + File.separator + path);
 				if (mainFile.exists() && mainFile.canRead()) {
 					break;
 				}

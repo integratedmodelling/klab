@@ -12,12 +12,15 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.documentation.IReport;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.ICountableObservation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -25,6 +28,7 @@ import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -319,7 +323,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 		List<Pair<ICoverage, Dataflow>> pairs = dataflowCache
 				.get(new ResolvedObservable((Observable) observable, Mode.RESOLUTION));
-		
+
 		if (pairs != null) {
 			for (Pair<ICoverage, Dataflow> pair : pairs) {
 				if (pair.getFirst() == null || pair.getFirst().contains(scale)) {
@@ -349,9 +353,9 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 			} else if (this.resolutionScope.getPreresolvedModels(observable).getSecond().size() == 0) {
 				/*
-				 * Add an empty dataflow to create the observation. This is only done if there are
-				 * no preloaded resolvers in this scale, so we are certain that other subjects will
-				 * encounter the same conditions.
+				 * Add an empty dataflow to create the observation. This is only done if there
+				 * are no preloaded resolvers in this scale, so we are certain that other
+				 * subjects will encounter the same conditions.
 				 */
 				pairs.add(new Pair<>(null, dataflow = Dataflow.empty(observable, name, scope)));
 				dataflowCache.put(new ResolvedObservable((Observable) observable, Mode.RESOLUTION), pairs);
@@ -595,6 +599,18 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		}
 
 		/*
+		 * add any other outputs from the model, which will be dealt with by the
+		 * contextualizers
+		 */
+		if (actuator.getModel() != null) {
+			for (int i = 1; i < actuator.getModel().getObservables().size(); i++) {
+				IObservable output = actuator.getModel().getObservables().get(i);
+				targetObservables.put(output.getLocalName(), new Pair<>((Observable) output,
+						output.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
+			}
+		}
+
+		/*
 		 * add any target of indirect computations
 		 */
 		for (IComputableResource computation : actuator.getComputation()) {
@@ -697,6 +713,11 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	@Override
 	public ISubject getRootSubject() {
 		return rootSubject;
+	}
+
+	@Override
+	public IDirectObservation getContextSubject() {
+		return contextSubject;
 	}
 
 	@Override
@@ -836,6 +857,17 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			return RuntimeContext.this;
 		}
 
+	}
+
+	@Override
+	public IConfiguration newConfiguration(IConcept configurationType, Collection<IObservation> targets) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ILocator getCurrentTimeLocator() {
+		return scale.getTime() == null ? ITime.INITIALIZATION : scale.getTime();
 	}
 
 }

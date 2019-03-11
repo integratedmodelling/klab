@@ -6,16 +6,18 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Nullable;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
-import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -30,6 +32,7 @@ import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -41,10 +44,10 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservationService;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
+import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.processing.osm.Nominatim;
-import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.data.classification.Discretization;
@@ -68,10 +71,13 @@ import org.integratedmodelling.klab.rest.Histogram.Builder;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.ExportFormat;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
+import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
+import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.klab.utils.Utils;
 
 public enum Observations implements IObservationService {
@@ -283,6 +289,36 @@ public enum Observations implements IObservationService {
 		ISpace space = ((IScale) observation.getGeometry()).getSpace();
 		ITime time = ((IScale) observation.getGeometry()).getTime();
 
+		/*
+		 * This is a new context, which redefines the current scale.
+		 */
+		if (parent == null) {
+			ScaleReference scaleReference = new ScaleReference();
+			if (space != null) {
+				IEnvelope envelope = space.getEnvelope();
+				Pair<Integer, String> resolution = ((Envelope) envelope).getResolutionForZoomLevel();
+				Unit sunit = Unit.create(resolution.getSecond());
+				int scaleRank = envelope.getScaleRank();
+				scaleReference.setEast(envelope.getMaxX());
+				scaleReference.setWest(envelope.getMinX());
+				scaleReference.setNorth(envelope.getMaxY());
+				scaleReference.setSouth(envelope.getMinY());
+				scaleReference.setSpaceUnit(resolution.getSecond());
+				scaleReference.setSpaceResolution(resolution.getFirst());
+				scaleReference.setSpaceResolutionConverted(
+						sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS).doubleValue());
+				scaleReference.setSpaceResolutionDescription(
+						sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS) + " " + resolution.getSecond());
+				scaleReference.setResolutionDescription(
+						sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS) + " " + resolution.getSecond());
+				scaleReference.setSpaceScale(scaleRank);
+			}
+			if (time != null) {
+				// TODO time
+			}
+			ret.setScaleReference(scaleReference);
+		}
+
 		// fill in spatio/temporal info and mode of visualization
 		if (space != null) {
 
@@ -319,12 +355,28 @@ public enum Observations implements IObservationService {
 						NumberFormat.getInstance().format(grid.getCellWidth()) + " x "
 								+ NumberFormat.getInstance().format(grid.getCellHeight()) + " "
 								+ grid.getProjection().getUnits());
+			}
 
-				ret.getExportFormats().add(new ExportFormat("PNG Image", "png"));
-				ret.getExportFormats().add(new ExportFormat("GeoTIFF Raster file", "tiff"));
+			/*
+			 * check export formats from all adapters
+			 */
+			Map<String, Pair<Triple<String, String, String>, String>> formats = new LinkedHashMap<>();
+			for (IResourceAdapter adapter : Resources.INSTANCE.getResourceAdapters()) {
+				for (Triple<String, String, String> capabilities : adapter.getImporter()
+						.getExportCapabilities(observation)) {
+					formats.put(capabilities.getFirst(), new Pair<>(capabilities, adapter.getName()));
+				}
+			}
 
-			} else if (observation.groupSize() > 0) {
-				ret.getExportFormats().add(new ExportFormat("Shapefile", "shp"));
+			/*
+			 * For now only one adapter is kept per format. Later we may offer the option by
+			 * using a set instead of a map and implementing equals() for ExportFormat to
+			 * check all three.
+			 */
+			for (String format : formats.keySet()) {
+				Pair<Triple<String, String, String>, String> data = formats.get(format);
+				ret.getExportFormats().add(new ExportFormat(data.getFirst().getSecond(), format, data.getSecond(),
+						data.getFirst().getThird()));
 			}
 
 			ret.getGeometryTypes().add(gtype);
@@ -440,7 +492,6 @@ public enum Observations implements IObservationService {
 	}
 
 	public Observer makeROIObserver(final SpatialExtent regionOfInterest, Namespace namespace, IMonitor monitor) {
-		// TODO use configured concept from worldview!
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
 		observable.setName(Nominatim.INSTANCE.geocode(regionOfInterest));
 		observable.setOptional(true);
@@ -451,9 +502,7 @@ public enum Observations implements IObservationService {
 	}
 
 	public Observer makeROIObserver(final Shape shape, Namespace namespace, IMonitor monitor) {
-		// TODO use configured concept from worldview!
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
-		// TODO set from Nominatim
 		observable.setName(Nominatim.INSTANCE.geocode(shape.getEnvelope()));
 		observable.setOptional(true);
 		if (namespace == null) {
@@ -461,7 +510,7 @@ public enum Observations implements IObservationService {
 		}
 		return new Observer(shape, observable, (Namespace) namespace);
 	}
-
+	
 	/**
 	 * True if scale has multiple values in each state of the passed extent type.
 	 * 
@@ -489,14 +538,44 @@ public enum Observations implements IObservationService {
 		return new Discretization(Range.create(summary.getRange()), maxBins);
 	}
 
-	public File exportToTempFile(IObservation obs, ILocator locator, String outputFormat) {
-		if (obs instanceof IState && obs.getGeometry().getDimension(Type.SPACE) != null) {
-			Dimension space = obs.getGeometry().getDimension(Type.SPACE);
-			if (space.isRegular() && space.size() > 1) {
-				return GeotoolsUtils.INSTANCE.exportToTempFile((IState) obs, locator, outputFormat);
+	@Override
+	public File export(IObservation observation, ILocator locator, File file, String outputFormat,
+			@Nullable String adapterId, IMonitor monitor) {
+
+		IResourceAdapter adapter = null;
+		if (adapterId == null) {
+			for (IResourceAdapter a : Resources.INSTANCE.getResourceAdapters()) {
+				for (Triple<String, String, String> capabilities : a.getImporter().getExportCapabilities(observation)) {
+					if (capabilities.getFirst().equals(outputFormat)) {
+						adapter = a;
+						break;
+					}
+				}
+				if (adapter != null) {
+					break;
+				}
+			}
+			if (adapter == null) {
+				throw new IllegalArgumentException("no adapter can handle the output format " + outputFormat);
+			}
+
+		} else {
+			adapter = Resources.INSTANCE.getResourceAdapter(adapterId);
+			if (adapter == null) {
+				throw new IllegalArgumentException(
+						"unknown adapter " + adapterId + " to export output format " + outputFormat);
 			}
 		}
-		return null;
+
+		return adapter.getImporter().exportObservation(file, observation, locator, outputFormat, monitor);
+	}
+
+	public boolean isData(Object o) {
+		return o != null && !(o instanceof Number && Double.isNaN(((Number) o).doubleValue()));
+	}
+
+	public boolean isNodata(Object o) {
+		return !isData(o);
 	}
 
 }

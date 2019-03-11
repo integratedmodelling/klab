@@ -23,17 +23,11 @@ import org.integratedmodelling.klab.utils.MiscUtilities;
 public class Project implements IProject {
 
     IKimProject                    delegate;
-    IWorkspace                     workspace;
     Set<String>                    localResourceUrns = new HashSet<>();
     private Set<ProjectReferences> references        = null;
 
     public Project(IKimProject project) {
         this.delegate = project;
-        // if (project.getName().equals(Kim.COMMON_PROJECT_ID)) {
-        // this.workspace = Resources.INSTANCE.getCommonWorkspace();
-        // } else {
-        this.workspace = Resources.INSTANCE.getWorkspace(project.getWorkspace().getName());
-        // }
         synchronizeResources();
     }
 
@@ -182,4 +176,8 @@ public class Project implements IProject {
         return this.references;
     }
 
+	@Override
+	public IWorkspace getWorkspace() {
+		return Resources.INSTANCE.getWorkspaceFor(getRoot());
+	}
 }

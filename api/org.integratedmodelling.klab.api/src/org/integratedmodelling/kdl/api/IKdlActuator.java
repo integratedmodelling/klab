@@ -130,6 +130,15 @@ public interface IKdlActuator extends IKdlStatement {
    * @return true if optional
    */
   boolean isFinal();
+  
+  /**
+   * Abstract actuators are only used as a base for extensions of others in the same
+   * dataflow.
+   * 
+   * @return
+   */
+  boolean isAbstract();
+  
 
   /**
    * If both {@link #isParameter()} and {@link #isOptional()} return true, this should return the

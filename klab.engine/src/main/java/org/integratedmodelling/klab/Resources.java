@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
@@ -58,6 +59,7 @@ import org.integratedmodelling.klab.engine.resources.ComponentsWorkspace;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.MonitorableFileWorkspace;
 import org.integratedmodelling.klab.engine.resources.Project;
+import org.integratedmodelling.klab.engine.resources.ServiceWorkspace;
 import org.integratedmodelling.klab.engine.runtime.SimpleContext;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
@@ -154,14 +156,22 @@ public enum Resources implements IResourceService {
 	 * change.
 	 */
 	private IWorkspace local;
+
+	/**
+	 * The service workspace contains one project per session user where to define
+	 * uploads, learned models and on-the-fly scenarios, plus one temporary project
+	 * per user where extemporaneous resources are saved.
+	 */
+	private ServiceWorkspace service;
+
 	private IProject localProject;
 
-//	/**
-//	 * Temporary, ephemeral workspace only meant to host the common project for
-//	 * on-demand namespaces.
-//	 * 
-//	 */
-//	private IWorkspace common;
+	// /**
+	// * Temporary, ephemeral workspace only meant to host the common project for
+	// * on-demand namespaces.
+	// *
+	// */
+	// private IWorkspace common;
 
 	private Resources() {
 		Services.INSTANCE.registerService(this, IResourceService.class);
@@ -170,10 +180,15 @@ public enum Resources implements IResourceService {
 	public IProject getLocalProject() {
 		return this.localProject;
 	}
-	
+
 	@Override
 	public IWorkspace getLocalWorkspace() {
 		return local;
+	}
+
+	@Override
+	public ServiceWorkspace getServiceWorkspace() {
+		return service;
 	}
 
 	@Override
@@ -189,6 +204,10 @@ public enum Resources implements IResourceService {
 	@Override
 	public IWorkspace getComponentsWorkspace() {
 		return components;
+	}
+
+	public Collection<IResourceAdapter> getResourceAdapters() {
+		return resourceAdapters.values();
 	}
 
 	/*
@@ -252,7 +271,19 @@ public enum Resources implements IResourceService {
 	 */
 	public void initializeLocalWorkspace(File workspaceRoot, IMonitor monitor) {
 		if (local == null) {
-			local = new MonitorableFileWorkspace(workspaceRoot);
+			local = new MonitorableFileWorkspace("workspace", workspaceRoot);
+			workspaces.put("workspace", local);
+		}
+	}
+
+	/*
+	 * Initialize (index but do not load) the service workspace from the passed
+	 * path.
+	 */
+	public void initializeServiceWorkspace(File workspaceRoot, IMonitor monitor) {
+		if (service == null) {
+			service = new ServiceWorkspace(workspaceRoot);
+			workspaces.put(service.getName(), service);
 		}
 	}
 
@@ -262,10 +293,19 @@ public enum Resources implements IResourceService {
 	public boolean loadLocalWorkspace(IMonitor monitor) {
 		try {
 			this.loader = getLocalWorkspace().load(this.loader, monitor);
-			this.localProject = getLocalWorkspace().getProject(INTERNAL_PROJECT_ID);
-			if (this.localProject == null) {
-				this.localProject = getLocalWorkspace().createProject(INTERNAL_PROJECT_ID, monitor);
-			}
+			return true;
+		} catch (Throwable e) {
+			Logging.INSTANCE.error(e.getLocalizedMessage());
+		}
+		return false;
+	}
+
+	/*
+	 * Create and load the local workspace.
+	 */
+	public boolean loadServiceWorkspace(IMonitor monitor) {
+		try {
+			this.loader = getServiceWorkspace().load(this.loader, monitor);
 			return true;
 		} catch (Throwable e) {
 			Logging.INSTANCE.error(e.getLocalizedMessage());
@@ -275,6 +315,17 @@ public enum Resources implements IResourceService {
 
 	public IWorkspace getWorkspace(String name) {
 		return workspaces.get(name);
+	}
+	
+	public IWorkspace getWorkspaceFor(File projectRoot) {
+		for (IWorkspace workspace : workspaces.values()) {
+			for (File file = projectRoot; file != null; file = file.getParentFile()) {
+				if (workspace.getRoot().equals(file)) {
+					return workspace;
+				}
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -431,8 +482,9 @@ public enum Resources implements IResourceService {
 	 */
 	public IResource createLocalResource(ResourceCRUDRequest request, Monitor monitor) {
 
-		monitor.info("Start importing resource " + request.getResourceUrns().iterator().next() + ": this may take a while");
-		
+		monitor.info(
+				"Start importing resource " + request.getResourceUrns().iterator().next() + ": this may take a while");
+
 		String urn = request.getResourceUrns().iterator().next();
 		IProject project = getProject(request.getDestinationProject());
 		String adapterType = request.getAdapter();
@@ -455,9 +507,9 @@ public enum Resources implements IResourceService {
 			}
 		}
 
-		IResource ret = importResource(urn, project, adapterType, null, parameters, Version.create("0.0.1"), new ArrayList<>(),
-				monitor);
-		
+		IResource ret = importResource(urn, project, adapterType, null, parameters, Version.create("0.0.1"),
+				new ArrayList<>(), monitor);
+
 		monitor.info("Import of resource " + request.getResourceUrns().iterator().next() + " finished");
 
 		return ret;
@@ -698,26 +750,40 @@ public enum Resources implements IResourceService {
 		}
 	}
 
-	@Override
-	public Pair<IArtifact, IArtifact> resolveResourceToArtifact(String urn, IMonitor monitor) {
+	// @Override
+	public Pair<IArtifact, IArtifact> resolveResourceToArtifact(String urn, IMonitor monitor, boolean forceGrid,
+			IConcept observable, IConcept contextObservable) {
 
 		Pair<String, Map<String, String>> urnp = Urns.INSTANCE.resolveParameters(urn);
 		IResource resource = resolveResource(urn);
 
 		Scale scale = Scale.create(resource.getGeometry());
-		if (resource.getType() != Type.OBJECT) {
+		if (forceGrid || resource.getType() != Type.OBJECT) {
 			scale = scale.adaptForExample();
 		}
 
-		IObservable contextObservable = Observable
-				.promote(OWL.INSTANCE.getNonsemanticPeer("Context", IArtifact.Type.OBJECT));
-		SimpleContext context = new SimpleContext(contextObservable, scale, monitor);
+		if (contextObservable == null) {
+			contextObservable = Observable.promote(OWL.INSTANCE.getNonsemanticPeer("Context", IArtifact.Type.OBJECT));
+		} else {
+			contextObservable = Observable.promote(contextObservable);
+		}
+		SimpleContext context = new SimpleContext((Observable) contextObservable, scale, monitor);
 		IArtifact ctxArtifact = context.getTargetArtifact();
 
-		IObservable observable = Observable.promote(OWL.INSTANCE.getNonsemanticPeer("Artifact", resource.getType()));
-		IKlabData data = getResourceData(resource, urnp.getSecond(), scale, context.getChild(observable, resource));
+		if (observable == null) {
+			observable = Observable.promote(OWL.INSTANCE.getNonsemanticPeer("Artifact", resource.getType()));
+		} else {
+			observable = Observable.promote(observable);
+		}
+		IKlabData data = getResourceData(resource, urnp.getSecond(), scale,
+				context.getChild((Observable) observable, resource));
 
 		return new Pair<>(ctxArtifact, data.getArtifact());
+	}
+
+	@Override
+	public Pair<IArtifact, IArtifact> resolveResourceToArtifact(String urn, IMonitor monitor) {
+		return resolveResourceToArtifact(urn, monitor, false, null, null);
 	}
 
 	public IKlabData getResourceData(String urn, IKlabData.Builder builder, IMonitor monitor) {

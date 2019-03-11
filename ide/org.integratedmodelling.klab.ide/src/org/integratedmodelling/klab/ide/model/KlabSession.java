@@ -28,7 +28,6 @@ import org.integratedmodelling.klab.ide.navigator.model.beans.EObservationRefere
 import org.integratedmodelling.klab.ide.navigator.model.beans.ERuntimeObject;
 import org.integratedmodelling.klab.ide.navigator.model.beans.ETaskReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
-import org.integratedmodelling.klab.ide.utils.StringUtils;
 import org.integratedmodelling.klab.rest.DataflowReference;
 import org.integratedmodelling.klab.rest.LocalResourceReference;
 import org.integratedmodelling.klab.rest.ObservationReference;
@@ -41,6 +40,7 @@ import org.integratedmodelling.klab.rest.RunScriptRequest;
 import org.integratedmodelling.klab.rest.SearchRequest;
 import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.TaskReference;
+import org.integratedmodelling.klab.utils.StringUtils;
 
 /**
  * Front-end session proxy and receiver for session messages. Maintains and

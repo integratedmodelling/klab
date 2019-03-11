@@ -43,6 +43,12 @@ public class EngineStartupOptions implements IEngineStartupOptions {
             metaVar = "<DIRECTORY_PATH>")
     File workspaceLocation = null;
 
+    @Option(
+            name = "-service",
+            usage = "service workspace directory (default: ~/.klab/service, not monitored)",
+            metaVar = "<DIRECTORY_PATH>")
+    File serviceLocation = null;
+    
     @Option(name = "-port", usage = "http port for REST communication", metaVar = "<INT>")
     int port = 8183;
 
@@ -114,6 +120,14 @@ public class EngineStartupOptions implements IEngineStartupOptions {
     }
 
     @Override
+    public File getServiceLocation() {
+        if (serviceLocation == null) {
+            serviceLocation = Configuration.INSTANCE.getDataPath("service");
+        }
+        return serviceLocation;
+    }
+    
+    @Override
     public File getCertificateFile() {
         if (certificateFile == null) {
             certificateFile = new File(Configuration.INSTANCE.getDataPath() + File.separator + ICertificate.DEFAULT_ENGINE_CERTIFICATE_FILENAME);
@@ -181,6 +195,10 @@ public class EngineStartupOptions implements IEngineStartupOptions {
     
     public void setWorkspaceLocation(File workspaceLocation) {
         this.workspaceLocation = workspaceLocation;
+    }
+    
+    public void setServiceLocation(File workspaceLocation) {
+        this.serviceLocation = workspaceLocation;
     }
     
     public void setPort(int port) {

@@ -40,7 +40,6 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
-import org.integratedmodelling.klab.api.data.adapters.IResourceValidator.Operation;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -61,6 +60,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Lineal;
 import com.vividsolutions.jts.geom.Polygonal;
+import com.vividsolutions.jts.geom.Puntal;
 import com.vividsolutions.jts.io.WKBWriter;
 import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 
@@ -120,6 +120,10 @@ public class VectorValidator implements IResourceValidator {
 			// we only do this when importing, so let's go through them
 			envelope = collection.getBounds();
 		}
+        if (envelope.getCoordinateReferenceSystem() == null) {
+            ret.addError("vector resource is unprojected");
+            return;
+        }
 
 		/**
 		 * Description and other info go in metadata
@@ -148,6 +152,8 @@ public class VectorValidator implements IResourceValidator {
 						shapeDimension = 1;
 					} else if (Arrays.contains(ad.getType().getBinding().getInterfaces(), Polygonal.class)) {
 						shapeDimension = 2;
+					}  else if (Arrays.contains(ad.getType().getBinding().getInterfaces(), Puntal.class)) {
+						shapeDimension = 0;
 					} else {
 						ret.addError("cannot establish geometry dimensionality for vector resource");
 					}
@@ -219,7 +225,7 @@ public class VectorValidator implements IResourceValidator {
 				}
 
 			} catch (Throwable e) {
-				ret.addError("Coverage projection failed reprojection test (check Bursa-Wolfe parameters)");
+				ret.addError("Coverage projection failed reprojection test (check Bursa-Wolfe parameters): EPSG code reported is " + crsCode);
 			}
 		}
 		if (!ret.hasErrors()) {

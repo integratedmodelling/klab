@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
+import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
@@ -46,6 +47,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.processing.GeometrySanitizer;
 import org.integratedmodelling.klab.components.geospace.processing.Rasterizer;
+import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -74,10 +76,11 @@ public class VectorEncoder implements IResourceEncoder {
 	protected FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(IResource resource, IGeometry geometry) {
 
 		File mainFile = null;
-
+		IProject project = Resources.INSTANCE.getProject(((Resource)resource).getLocalProjectName());
+		File rootPath = project.getWorkspace().getRoot();
 		for (String path : resource.getLocalPaths()) {
 			if (VectorAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(path))) {
-				mainFile = new File(Resources.INSTANCE.getLocalWorkspace().getRoot() + File.separator + path);
+				mainFile = new File(rootPath + File.separator + path);
 				if (mainFile.exists() && mainFile.canRead()) {
 					break;
 				}
@@ -85,7 +88,7 @@ public class VectorEncoder implements IResourceEncoder {
 		}
 
 		if (mainFile == null) {
-			throw new KlabResourceNotFoundException("raster resource " + resource.getUrn() + " cannot be accessed");
+			throw new KlabResourceNotFoundException("vector resource " + resource.getUrn() + " cannot be accessed");
 		}
 
 		Map<String, Object> map = new HashMap<>();
@@ -281,7 +284,8 @@ public class VectorEncoder implements IResourceEncoder {
 
 		File base = null;
 		if (Urns.INSTANCE.isLocal(resource.getUrn())) {
-			base = Resources.INSTANCE.getLocalWorkspace().getRoot();
+			IProject project = Resources.INSTANCE.getProject(resource.getLocalProjectName());
+			base = project == null || project.getWorkspace() == null ? null : project.getWorkspace().getRoot();
 		} else {
 			// TODO
 		}

@@ -49,8 +49,9 @@ public class ResourceCatalog implements IResourceCatalog {
      * @param localPath
      */
     public ResourceCatalog(String name) {
-        this.db = Nitrite.builder()// .compressed() TODO may reintegrate in production
-                .filePath(Configuration.INSTANCE.getDataPath() + File.separator + name + ".db")
+        this.db = Nitrite.builder()
+                // .compressed() TODO may reintegrate in production
+                // .filePath(Configuration.INSTANCE.getDataPath() + File.separator + name + ".db")
                 .openOrCreate("user", "password");
         this.resources = db.getRepository(ResourceReference.class);
     }

@@ -195,21 +195,9 @@ public enum GeotoolsUtils {
 		return ret;
 	}
 
-	public File exportToTempFile(IState state, ILocator locator, String outputFormat) {
-
-		GridCoverage2D coverage = stateToCoverage(state, locator, Float.NaN);
-
-		if (outputFormat.equalsIgnoreCase("tiff")) {
-			try {
-				File out = File.createTempFile("klab", ".tiff");
-				out.deleteOnExit();
-				GeoTiffWriter writer = new GeoTiffWriter(out);
-				writer.write(coverage, null);
-				return out;
-			} catch (IOException e) {
-				throw new KlabIOException(e);
-			}
-		}
-		return null;
-	}
+//	public File exportToTempFile(IState state, ILocator locator, String outputFormat) {
+//
+//
+//		return null;
+//	}
 }

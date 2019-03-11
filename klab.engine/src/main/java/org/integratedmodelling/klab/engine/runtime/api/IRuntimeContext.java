@@ -2,8 +2,12 @@ package org.integratedmodelling.klab.engine.runtime.api;
 
 import java.util.Collection;
 
+import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
+import org.integratedmodelling.klab.api.observations.IConfiguration;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -40,6 +44,18 @@ public interface IRuntimeContext extends IComputationContext {
 	 *         yet.
 	 */
 	ISubject getRootSubject();
+
+	/**
+	 * The context subject for the observation being computed. May differ from
+	 * {@link #getContextObservation()} as the latter is the one in the scope of
+	 * which the runtime operation has been resolved. This applies for example to
+	 * dataflows that resolve an instantiated subject.
+	 * 
+	 * TODO clarify the difference or resolve the conflict if any.
+	 * 
+	 * @return
+	 */
+	IDirectObservation getContextSubject();
 
 	/**
 	 * Return any of the observations created within the context of the root
@@ -234,8 +250,8 @@ public interface IRuntimeContext extends IComputationContext {
 
 	// ugly but we don't have a context when we create the first dataflow.
 	void setContextualizationStrategy(ContextualizationStrategy contextualizationStrategy);
-	
-	// same 
+
+	// same
 	void setModel(Model model);
 
 	/**
@@ -243,5 +259,22 @@ public interface IRuntimeContext extends IComputationContext {
 	 * 
 	 * @param object
 	 */
-    void removeArtifact(IArtifact object);
+	void removeArtifact(IArtifact object);
+
+	/**
+	 * Create a configuration in the current context, using the passed type and the
+	 * trigger observations detected. Called by actuators, never by API users.
+	 * 
+	 * @param configurationType
+	 * @param targets
+	 */
+	IConfiguration newConfiguration(IConcept configurationType, Collection<IObservation> targets);
+
+    /**
+     * Locate the current computation in time. There is always a single extent when things are computed; if
+     * time isn't in the context, ITime.INITIALIZATION is returned.
+     * @return
+     */
+	ILocator getCurrentTimeLocator();
+
 }

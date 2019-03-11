@@ -1853,4 +1853,8 @@ public class MiscUtilities {
     public static String getFileName(File f) {
         return getFileName(f.toString());
     }
+
+	public static boolean isRelativePath(String export) {
+		return !export.contains("/") && !export.contains("\\") && !export.contains(":");
+	}
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
@@ -43,6 +44,7 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 	boolean optional = false;
 	boolean parameter = false;
 	boolean isFinal = false;
+	boolean isAbstract = false;
 	boolean multipleInstances;
 	boolean moreInstancesAllowed;
 	int instanceCount;
@@ -57,7 +59,7 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 		super(o);
 	}
 
-	public KdlActuator(ActorDefinition o) {
+	public KdlActuator(ActorDefinition o, Map<String, KdlActuator> previousActuators) {
 
 		super(o);
 		
@@ -68,6 +70,7 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 		this.optional = o.isOptional();
 		this.parameter = o.isParameter();
 		this.isFinal = o.isFinal();
+		this.isAbstract = o.isAbstract();
 		this.label = o.getLabel();
 
 		for (String s : o.getEnumValues()) {
@@ -105,6 +108,24 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 			this.instanceCount = 1;
 		}
 
+		if (o.getExtended() != null) {
+			KdlActuator extended = previousActuators.get(o.getExtended());
+			if (extended != null) {
+				for (IKdlActuator actor : extended.getActors()) {
+					this.actors.add(actor);
+				}
+				for (IKdlActuator actor : extended.getInputs()) {
+					this.inputs.add(actor);
+				}
+				for (IKdlActuator actor : extended.getOutputs()) {
+					this.outputs.add(actor);
+				}
+				for (IKdlActuator actor : extended.getParameters()) {
+					this.parameters.add(actor);
+				}
+			}
+		}
+		
 		if (o.getBody() != null) {
 
 			this.geometry = o.getBody().getGeometry();
@@ -115,23 +136,6 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 				ICompositeNode node = NodeModelUtils.getNode(o.getBody().getUnits());
 				this.units = node.getText();
 			}
-			// if (o.getBody().getSemantics() != null) {
-			// // store as string
-			// ICompositeNode node = NodeModelUtils.getNode(o.getBody().getSemantics());
-			// this.semantics = node.getText();
-			// }
-			// if (o.getBody().getNewObservation() != null) {
-			// // store as string
-			// ICompositeNode node =
-			// NodeModelUtils.getNode(o.getBody().getNewObservation());
-			// this.newObservationType = node.getText();
-			// }
-			// if (o.getBody().getUrnObservation() != null) {
-			// // store as string
-			// ICompositeNode node =
-			// NodeModelUtils.getNode(o.getBody().getUrnObservation());
-			// this.newObservationUrn = node.getText();
-			// }
 
 			if (o.getBody().getComputations() != null) {
 				KdlComputation kc = new KdlComputation();
@@ -142,7 +146,7 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 			}
 
 			for (ActorDefinition actor : o.getBody().getDataflows()) {
-				IKdlActuator act = new KdlActuator(actor);
+				IKdlActuator act = new KdlActuator(actor, previousActuators);
 				if (act.isImported()) {
 					this.inputs.add(act);
 				}
@@ -418,6 +422,11 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 
 	public void setLabel(String label) {
 		this.label = label;
+	}
+
+	@Override
+	public boolean isAbstract() {
+		return isAbstract;
 	}
 
 }

@@ -1,8 +1,15 @@
 package org.integratedmodelling.ml.contextualizers;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.rest.ServiceCall;
+import org.integratedmodelling.klab.scale.Scale;
 
 import weka.classifiers.bayes.BayesNet;
 
@@ -24,7 +31,8 @@ Options specific to weka.classifiers.bayes.BayesNet:
         Estimator algorithm
 The search algorithm option -Q and estimator option -E options are mandatory.
 
-Note that it is important that the -E options should be used after the -Q option. Extra options can be passed to the search algorithm and the estimator after the class name specified following '-'.
+Note that it is important that the -E options should be used after the -Q option. Extra options 
+can be passed to the search algorithm and the estimator after the class name specified following '-'.
 
 For example:
 
@@ -36,22 +44,46 @@ java weka.classifiers.bayes.BayesNet -t iris.arff -D \
  * @author Ferd
  *
  */
-public class BayesNetResolver extends AbstractWekaResolver<BayesNet> {
+public class BayesNetResolver extends AbstractWekaResolver<BayesNet> implements IExpression {
 
-	protected BayesNetResolver(IParameters<String> parameters) {
-		super(BayesNet.class, parameters);
+	private IComputationContext context;
+
+	public BayesNetResolver() {}
+	
+	public BayesNetResolver(IParameters<String> parameters,IComputationContext context) {
+		super(BayesNet.class, checkDefaults(parameters), true, true, false);
+		this.context = context;
+	}
+
+	private static IParameters<String> checkDefaults(IParameters<String> parameters) {
+
+		/*
+		 * Both search and estimator parameters are mandatory. This way we enable defaults.
+		 */
+		if (!parameters.containsKey("search")) {
+			parameters.put("search", KimServiceCall.create("weka.bayes.k2", "maxparents", 3));
+		}
+		if (!parameters.containsKey("estimator")) {
+			parameters.put("estimator", KimServiceCall.create("weka.bayes.simpleestimator", "alpha", 1.0));
+		}
+		
+		return parameters;
 	}
 
 	@Override
 	public IGeometry getGeometry() {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO check
+		return ((Scale)context.getScale().at(ITime.INITIALIZATION)).asGeometry();
 	}
 
 	@Override
 	public Type getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return Type.NUMBER;
+	}
+
+	@Override
+	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+		return new BayesNetResolver(parameters, context);
 	}
 
 }

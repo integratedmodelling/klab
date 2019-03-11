@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.rest.StateSummary;
@@ -65,8 +66,8 @@ public class EngineViewController {
 	@RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.DESCRIBE_OBSERVATION, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public IObservationReference describeObservation(Principal principal, @PathVariable String observation,
-			@RequestParam(required = false) Integer childLevel, @RequestParam(required = false) boolean collapseSiblings,
-			@RequestParam(required = false) String locator) {
+			@RequestParam(required = false) Integer childLevel,
+			@RequestParam(required = false) boolean collapseSiblings, @RequestParam(required = false) String locator) {
 
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
@@ -163,6 +164,11 @@ public class EngineViewController {
 	 * data for the corresponding artifact and geometry. For completeness there
 	 * should also be a GeometryType for this.
 	 * 
+	 * TODO should honor an 'adapter' parameter to find the specific adapter that
+	 * proposed the format. At the moment it will scan the adapters and propose the
+	 * observation, calling the first one that responds with the same format and
+	 * assuming that only one adapter handles it.
+	 * 
 	 * TODO use filters or HttpMessageConverter/content negotiation for various
 	 * media types - see
 	 * https://stackoverflow.com/questions/3668185/how-to-define-message-converter-based-on-url-extension-in-spring-mvc
@@ -172,6 +178,7 @@ public class EngineViewController {
 	public void getObservationData(Principal principal, @PathVariable String observation,
 			@RequestParam(required = false) String viewport, @RequestParam(required = false) String locator,
 			@RequestParam ObservationReference.GeometryType format, @RequestParam(required = false) String outputFormat,
+			@RequestParam(required = false) boolean folder, @RequestParam(required = false) String adapter,
 			HttpServletResponse response) throws Exception {
 
 		ISession session = EngineSessionController.getSession(principal);
@@ -180,11 +187,19 @@ public class EngineViewController {
 			throw new IllegalArgumentException("observation " + observation + " does not exist");
 		}
 
+		if (folder) {
+			obs = ((Observation) obs).getGroup();
+		}
+
 		ILocator loc = ITime.INITIALIZATION;
 		if (locator != null) {
 			loc = Geometry.create(locator);
 		}
 
+		boolean done = false;
+
+		// special handling for some types: with time, these may be integrated in the
+		// adapters
 		if (obs instanceof IState) {
 
 			if (format == GeometryType.RASTER
@@ -197,6 +212,7 @@ public class EngineViewController {
 				InputStream in = new ByteArrayInputStream(os.toByteArray());
 				response.setContentType(MediaType.IMAGE_PNG_VALUE);
 				IOUtils.copy(in, response.getOutputStream());
+				done = true;
 
 			} else if (format == GeometryType.COLORMAP) {
 
@@ -206,6 +222,7 @@ public class EngineViewController {
 					response.getWriter().write(JsonUtils.printAsJson(summary.getColormap()));
 					response.setStatus(HttpServletResponse.SC_OK);
 				}
+				done = true;
 
 			} else if (format == GeometryType.SCALAR) {
 
@@ -228,20 +245,25 @@ public class EngineViewController {
 				response.setContentType(MediaType.TEXT_PLAIN_VALUE);
 				response.getWriter().write(descr);
 				response.setStatus(HttpServletResponse.SC_OK);
-
-			} else if (format == GeometryType.RAW) {
-
-				// should have a format field
-				File tempFile = Observations.INSTANCE.exportToTempFile(obs, loc, outputFormat);
-				if (tempFile != null) {
-					response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-					try (InputStream in = new FileInputStream(tempFile)) {
-						IOUtils.copy(in, response.getOutputStream());
-					}
-					tempFile.deleteOnExit();
-				}
+				done = true;
 
 			}
+		}
+
+		if (!done && format == GeometryType.RAW) {
+
+			// should have a format field
+			File out = File.createTempFile("klab", "." + outputFormat);
+			out.deleteOnExit();
+			// TODO support explicit adapter
+			out = Observations.INSTANCE.export(obs, loc, out, outputFormat, null, session.getMonitor());
+			if (out != null) {
+				response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+				try (InputStream in = new FileInputStream(out)) {
+					IOUtils.copy(in, response.getOutputStream());
+				}
+			}
+
 		}
 
 	}

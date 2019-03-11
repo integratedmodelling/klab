@@ -94,6 +94,8 @@ public class Modeler implements ApplicationListener<ApplicationReadyEvent> {
 			props.put("server.port", "" + port);
 			props.put("spring.main.banner-mode", "off");
 			props.put("server.servlet.contextPath", contextPath);
+			props.put("spring.servlet.multipart.max-file-size", "1024MB"); //
+			props.put("spring.servlet.multipart.max-request-size", "1024MB");
 			SpringApplication app = new SpringApplication(Modeler.class);
 			app.setDefaultProperties(props);
 			this.context = app.run();

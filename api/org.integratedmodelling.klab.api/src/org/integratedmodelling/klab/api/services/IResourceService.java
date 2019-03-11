@@ -49,8 +49,6 @@ import org.integratedmodelling.klab.utils.Pair;
  */
 public interface IResourceService {
 
-	public static final String INTERNAL_PROJECT_ID = "local";
-	
     /**
      * An importer for programmatic import of local artifact.
      * 
@@ -210,6 +208,16 @@ public interface IResourceService {
      *         object.
      */
     IWorkspace getLocalWorkspace();
+
+    /**
+     * The service workspace contains one project per session user where to define uploads, learned models and
+     * on-the-fly scenarios, plus one temporary project per user where extemporaneous resources are 
+     * saved.
+     *
+     * @return a {@link org.integratedmodelling.klab.api.knowledge.IWorkspace}
+     *         object.
+     */
+    IWorkspace getServiceWorkspace();
 
     /**
      * The upper ontology workspace, automatically synchronized and read only.

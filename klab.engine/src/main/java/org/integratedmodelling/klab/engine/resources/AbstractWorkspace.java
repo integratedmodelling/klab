@@ -17,14 +17,15 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 
 public abstract class AbstractWorkspace implements IWorkspace {
 
-	KimWorkspace delegate;
+	protected KimWorkspace delegate;
 	String name;
 	
 	AbstractWorkspace() {
 	}
 
-	public AbstractWorkspace(File root, File... overridingProjects) {
+	public AbstractWorkspace(String name, File root, File... overridingProjects) {
 		delegate = new KimWorkspace(root, overridingProjects);
+		this.name = name;
 	}
 
 	@Override

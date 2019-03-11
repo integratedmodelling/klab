@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
@@ -55,6 +56,7 @@ import org.integratedmodelling.klab.api.services.IIndexingService;
 import org.integratedmodelling.klab.api.services.IIndexingService.Context;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
@@ -151,7 +153,6 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			.synchronizedMap(new HashMap<>());
 
 	private double gridSize;
-
 	private String gridUnits;
 
 	public interface Listener {
@@ -434,13 +435,13 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	private void handleResourceCRUDRequest(final ResourceCRUDRequest request, IMessage.Type type) {
 
 		if (request.getOperation() == CRUDOperation.CREATE) {
-			
+
 			IResource resource = Resources.INSTANCE.createLocalResource(request, monitor);
 			if (resource != null) {
 				monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceCreated,
 						((Resource) resource).getReference());
 			}
-			
+
 		} else {
 
 			for (String urn : request.getResourceUrns()) {
@@ -482,19 +483,19 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 					monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
 							((Resource) resource).getReference());
 				} else if (request.getOperation() == CRUDOperation.DELETE) {
-					
+
 					resource = Resources.INSTANCE.getLocalResourceCatalog().remove(urn);
 					monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceDeleted,
 							((Resource) resource).getReference());
-				
+
 				} else if (request.getOperation() == CRUDOperation.UPDATE) {
-				
+
 					resource = Resources.INSTANCE.getLocalResourceCatalog().remove(urn);
-					((Resource)resource).update(request);
+					((Resource) resource).update(request);
 					Resources.INSTANCE.getLocalResourceCatalog().put(urn, resource);
 					monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceUpdated,
 							((Resource) resource).getReference());
-			
+
 				}
 			}
 
@@ -535,6 +536,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 				Projection.getLatLon());
 		ScaleReference scale = new ScaleReference();
 		Pair<Integer, String> resolution = envelope.getResolutionForZoomLevel();
+		Unit sunit = Unit.create(resolution.getSecond());
 		int scaleRank = envelope.getScaleRank();
 		scale.setEast(envelope.getMaxX());
 		scale.setWest(envelope.getMinX());
@@ -542,8 +544,11 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		scale.setSouth(envelope.getMinY());
 		scale.setSpaceUnit(resolution.getSecond());
 		scale.setSpaceResolution(resolution.getFirst());
-		scale.setSpaceResolutionDescription(resolution.getFirst() + " " + resolution.getSecond());
-		scale.setResolutionDescription(resolution.getFirst() + " " + resolution.getSecond());
+		scale.setSpaceResolutionConverted(sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS).doubleValue());
+		scale.setSpaceResolutionDescription(
+				sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS) + " " + resolution.getSecond());
+		scale.setResolutionDescription(
+				sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS) + " " + resolution.getSecond());
 		scale.setSpaceScale(scaleRank);
 
 		monitor.send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined, scale);
@@ -839,7 +844,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 				this.setRegionOfInterest(this.regionOfInterest);
 			}
 		} else {
-			this.gridSize = scaleRef.getSpaceResolution();
+			this.gridSize = scaleRef.getSpaceResolutionConverted();
 			this.gridUnits = scaleRef.getSpaceUnit();
 			this.lockResolution = true;
 			// TODO time - may not have space one day

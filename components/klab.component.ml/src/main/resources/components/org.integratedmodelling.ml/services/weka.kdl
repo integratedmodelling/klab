@@ -1,26 +1,85 @@
 /**
- * Interface contextualizers for MCA functions.
+ * Interface contextualizers for Weka functions.
  */
 @klab 0.10.0
 @version 0.10.0
 @namespace im.weka
 
-export value bayesnet
-	""
+abstract value classifier {		
+	
+	optional text resource 
+		"ID of the local resource containing the trained model. Ignored if the model is not a 'learn' model, 
+		 overwritten without warning if the resource exists already. If a resource name is not
+		 passed and the model is a learner, a new resource with a default name is generated at each run. Use a 
+		 dot-separated lowercase path."
+		
+	optional text instances 
+		"Output ARFF file to export the training set. If a relative path, it will be saved in the default export directory."
+
+	optional text rawinstances 
+		"Output ARFF file to export the raw (undiscretized) training set. If a relative path, it will be saved in the default 
+		export directory."
+	
+	optional number seed
+		"Seed for cross-validation or percentage split."
+		label "s"
+		default 1
+		
+	optional number splitpercentage
+		"Percentage for the train/test set split, e.g., 0.66."
+		label "split-percentage"
+		default 0.66
+		
+	optional boolean preserveorder
+		"Preserves the order in the percentage split. Default false."
+		label "preserve-order"
+		default false 
+		
+	optional number folds
+		"Number of folds for cross-validation. Default 10."
+		 label "x" 
+		 default 10
+		 
+	optional boolean debug
+		"Output debug information to the console."
+		label "output-debug-info"
+		default false
+}
+
+// DO NOT CHANGE THE ORDER OF THE OPTIONS!
+export value bayesnet extends classifier
+	"Bayesian network learning using configurable search and estimation algorithms. Bridges to the Weka BayesNet classifier. When used with a 
+	 standard model, it will learn a BN and use it to predict the output. With a 'learn' model it will also produce the learned model artifact 
+	 and a computing resource for it (or others) to use. The resource will allow export as BIF and other BN formats. Defines variables for 
+	 reporting (TBD) of classifier evaluation. Use the @archetype and @predictor annotations to tag observations used in learning and inference."
 	label 'WEKA BayesNet'
 {		
-	optional text resource 
-		"ID of the local resource containing the trained model"
+	optional boolean noadtree 
+		"Do not use an AD-tree to increase speed on counts."
+		label "D"
+		default false
+		
+	optional number batchsize 
+		"The preferred number of instances to process if batch prediction is being performed."
+		label "batch-size"
+		default 100 
+
+	optional value search
+		"Search algorithm and its parameters. The default is a K2 algorithm with 3 maximum parents per node, equivalent to
+		 calling weka.bayes.k2(maxparents=3)."
+		label "Q"
+		
+	optional value estimator
+		"Parameter estimator algorithm with its parameters. The default estimator is the Weka SimpleEstimator, equivalent to
+		 calling weka.bayes.simpleestimator()."
+		label "E"
 
 	class org.integratedmodelling.ml.contextualizers.BayesNetResolver
 }
 
-export value randomforest
+export value randomforest extends classifier
 	""
-	label 'WEKA Random Forests'
+	label 'WEKA RandomForests'
 {		
-	optional text resource 
-		"ID of the local resource containing the trained model"
-
-	// class org.integratedmodelling.ml.weka.BayesNetResolver
+	class org.integratedmodelling.ml.contextualizers.RandomForestResolver
 }

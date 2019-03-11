@@ -1,8 +1,8 @@
 package org.integratedmodelling.klab.ide.navigator.model;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
@@ -25,7 +25,7 @@ public class EResource extends ENavigatorItem {
             return (T) ResourcesPlugin.getWorkspace().getRoot().getProject(project.getName())
                     .getFolder(IKimProject.RESOURCE_FOLDER + "/"
                             + Path.getLast(resource.getLocalPath(), '/'));
-        } else if (IResource.class.isAssignableFrom(adapter) && !IProject.class.isAssignableFrom(adapter)) {
+        } else if (IFile.class.isAssignableFrom(adapter) && !IProject.class.isAssignableFrom(adapter)) {
             return (T) ResourcesPlugin.getWorkspace().getRoot().getProject(project.getName())
                     .getFile(Path.getFrom(resource.getLocalPath(), 1, '/') + "/resource.json");
         }

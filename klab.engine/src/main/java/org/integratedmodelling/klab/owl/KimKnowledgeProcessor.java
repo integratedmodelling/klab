@@ -87,6 +87,10 @@ public enum KimKnowledgeProcessor {
 				ns.define();
 			}
 
+			if (ret.is(Type.CONFIGURATION)) {
+			    Observables.INSTANCE.registerConfiguration(ret);
+			}
+			
 			return ret;
 
 		} catch (Throwable e) {

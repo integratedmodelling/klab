@@ -374,4 +374,9 @@ public class Classification implements IClassification {
 		return ret;
 	}
 
+	@Override
+	public Object lookup(int index) {
+		return conceptOrder.get(index);
+	}
+
 }

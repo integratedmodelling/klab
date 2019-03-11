@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.klab.ide.Activator;
-import org.integratedmodelling.klab.ide.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtils;
 
 public class Badge extends Canvas {
 

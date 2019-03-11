@@ -8,7 +8,7 @@
 export number concordance
 	"Run a concordance analysis to compute the concordance of a set of criteria variables with corresponding values from
 	 observers in the context. Can turn quantitative distributed observations into alternatives for spatial and/or temporal 
-	 MCA assessment."
+	 MCA assessment. Uses the annotations @cost and @benefit to define the criteria."
 	 label 'MCA concordance'
 {
 	optional number levels
@@ -19,14 +19,15 @@ export number concordance
 
 // TODO constraints for attributes according to method
 export object ranking
-	"Run a concordance analysis to compute the concordance of a set of supplied alternatives with corresponding values from
-	 observers in the context. Produces a ranked artifact from the same alternatives. The new artifact must use different
-	 semantics from the original (addition of a Comparable attribute is common)."
+	"Run a concordance analysis to rank the set of alternatives produced by a resource or a contextualizer. Acts as a filter
+	 that computes the concordance ranking and sorts the output set by decreasing concordance. The score will be added to the
+	 metadata and, if provided, to an output tagged with the @concordance annotation. Uses the annotations @cost and @benefit 
+	 to define the criteria."
 	 label 'MCA ranking'
 {
 	optional text method 
 		"The MCA method used to rank alternatives. One of Topsis|Electre{1|1s|1v|2|3|4|Tri|TriMe}. Only Electre3/4 can run
-		 without additional parameters. Default is Electre4."
+		 without additional parameters. Default is Electre3. NOTE: currently forcing Evamix, others still unimplemented."
 		 
 	optional input normalize
 		"If true, the scores will be normalized so that their range is 0-1. Default is true."

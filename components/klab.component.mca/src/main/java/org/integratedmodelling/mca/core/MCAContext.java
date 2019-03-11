@@ -132,7 +132,7 @@ public class MCAContext {
 				break;
 			case InlineMultiple:
 				// create stakeholders from specs with values for criteria
-				for (IStakeholder stakeholder : this.stakeholders) {
+				for (final IStakeholder stakeholder : this.stakeholders) {
 					((Stakeholder) stakeholder).setSubject((ISubject) context
 							.newObservation(stakeholder.getObservable(), stakeholder.getName(), Scale.create()));
 					// TODO hostia there's more - criteria values
@@ -171,7 +171,7 @@ public class MCAContext {
 			// get the alternatives and ensure enough of them contain values for ranking. If
 			// not and the criteria
 			// are distributed, give them states based on views.
-			IArtifact alternativesArtifact = context.getArtifact(alternativeObservable.getLocalName());
+			final IArtifact alternativesArtifact = context.getArtifact(alternativeObservable.getLocalName());
 			if (!(alternativesArtifact instanceof IObjectArtifact)) {
 				throw new KlabValidationException("mca: alternatives are not suitable for ranking");
 			}
@@ -257,7 +257,7 @@ public class MCAContext {
 
 			IObservable oobs = Observable.promote((IConcept) o);
 
-			Stakeholder stakeholder = getOrCreate(Concepts.INSTANCE.getDisplayName(oobs));
+			final Stakeholder stakeholder = getOrCreate(Concepts.INSTANCE.getDisplayName(oobs));
 			stakeholder.setObservable(oobs);
 			stakeholder.setWeight(observable.getLocalName(), ((Number) value.get(o)).doubleValue());
 		}
@@ -265,32 +265,14 @@ public class MCAContext {
 	}
 
 	private IAnnotation getCriterionAnnotation(IObservable observable) {
-		for (IAnnotation annotation : ((Observable) observable).getAnnotations()) {
+		for (final IAnnotation annotation : ((Observable) observable).getAnnotations()) {
 			if (MCAComponent.criterionAnnotations.contains(annotation.getName())) {
 				return annotation;
 			}
 		}
 		return null;
 	}
-
-	// private IAnnotation getStakeholderAnnotation(IObservable observable) {
-	// for (IAnnotation annotation : ((Observable) observable).getAnnotations()) {
-	// if (annotation.getName().equals("stakeholder")) {
-	// return annotation;
-	// }
-	// }
-	// return null;
-	// }
-	//
-	// private IAnnotation getAlternativeAnnotation(IObservable observable) {
-	// for (IAnnotation annotation : ((Observable) observable).getAnnotations()) {
-	// if (annotation.getName().equals("alternative")) {
-	// return annotation;
-	// }
-	// }
-	// return null;
-	// }
-
+	
 	public List<IAlternative> getAlternatives() {
 		return alternatives;
 	}
@@ -305,7 +287,7 @@ public class MCAContext {
 
 	public void distributeResults(Results results, IState ret) {
 		if (classifier != null) {
-			Map<String, Double> res = results.getConcordances(true);
+			final Map<String, Double> res = results.getConcordances(true);
 			double[] cvals = new double[alternatives.size()];
 			Arrays.fill(cvals, Double.NaN);
 			int i = 0;

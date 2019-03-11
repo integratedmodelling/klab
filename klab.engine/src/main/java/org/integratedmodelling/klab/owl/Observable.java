@@ -129,6 +129,9 @@ public class Observable extends Concept implements IObservable {
 	}
 
 	public static Observable promote(IConcept concept) {
+		if (concept instanceof Observable) {
+			return (Observable) concept;
+		}
 		Observable ret = new Observable((Concept) concept);
 		ret.observable = (Concept) concept;
 		ret.main = (Concept) concept;
@@ -682,17 +685,19 @@ public class Observable extends Concept implements IObservable {
 	}
 
 	/**
-	 * Return this same observable after assigning the passed pre-observed value to it.
-	 * Used to create states:
+	 * Return this same observable after assigning the passed pre-observed value to
+	 * it. Used to create states:
+	 * 
 	 * <pre>
-	 *     state = subject.observe(Observable.promote(concept).withValue(3));
+	 * state = subject.observe(Observable.promote(concept).withValue(3));
 	 * </pre>
+	 * 
 	 * @param value
 	 * @return
 	 */
 	public Observable withValue(Object value) {
-	    this.value = value;
-	    return this;
+		this.value = value;
+		return this;
 	}
 
 	@Override

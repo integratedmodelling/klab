@@ -1,5 +1,14 @@
 package org.integratedmodelling.klab.api.monitoring;
 
+import org.integratedmodelling.klab.rest.DropData;
+import org.integratedmodelling.klab.rest.DropPermission;
+import org.integratedmodelling.klab.rest.DropRequest;
+import org.integratedmodelling.klab.rest.GlobalActionRequest;
+import org.integratedmodelling.klab.rest.RuntimeDocumentation;
+import org.integratedmodelling.klab.rest.SettingChangeRequest;
+import org.integratedmodelling.klab.rest.UserInputRequest;
+import org.integratedmodelling.klab.rest.UserInputResponse;
+
 /**
  * Messages exchanged between the engine and its web UI.
  * 
@@ -24,15 +33,16 @@ public interface IMessage {
 		Void,
 
 		/**
-		 * Used only within a UI for communicating things to react to.
+		 * Used within a UI for communicating things to react to and between F/B to
+		 * gather user input.
 		 */
 		UserInterface,
-		
+
 		/**
-		 * F->B when user selects context 
+		 * F->B when user selects context
 		 */
-		UserContextChange, 
-		
+		UserContextChange,
+
 		/**
 		 * B->F after UserContextChange was received, containing the remaining
 		 * definition set by the engine
@@ -121,18 +131,19 @@ public interface IMessage {
 		 * B->F sent whenever a user message affecting the context is processed
 		 */
 		ScaleDefined,
-		
+
 		/**
 		 * F<->B
 		 */
 		ResetContext,
 
 		/*
-		 * Messages with class UserInterface, local to the UI and not marshalled across
-		 * websockets.
+		 * Messages with class UserInterface, some local to the UI and not marshalled
+		 * across websockets, others initiated on either side when user input is
+		 * provided or requested.
 		 */
 		HistoryChanged, FocusChanged, Notification,
-		
+
 		/**
 		 * B->F: notification for projects in user workspace when they are opened.UIs
 		 * may not be aware of them and want to offer to import them. The backend does
@@ -143,11 +154,46 @@ public interface IMessage {
 		 */
 		UserProjectOpened, UserProjectModified, UserProjectDeleted,
 
+		/**
+		 * Class UserInterface: User input requests and responses: request is B->F,
+		 * response is F->B. Use beans {@link UserInputRequest} and
+		 * {@link UserInputResponse} respectively.
+		 */
+		UserInputRequested, UserInputProvided,
+
+		/**
+		 * Class UserInterface: B->F when a new documentation item becomes available for
+		 * display at context level or at the dataflow actuator level. Uses bean
+		 * {@link RuntimeDocumentation}.
+		 */
+		RuntimeDocumentation, DataflowDocumentation,
+
+		/**
+		 * Class UserInterface: request addition of action to either context menu or
+		 * global menu. Use bean {@link GlobalActionRequest}.
+		 */
+		AddGlobalAction,
+
+		/**
+		 * Class UserInterface: handling of drop events in UI
+		 * 
+		 * {@link #DropInitiated}: F->B communicate content type, name and size (bean
+		 * {@link DropRequest} {@link #DropPermission}: B->F accept/reject drop (bean
+		 * {@link DropPermission} {@link #DropData}: F->B execute drop upload and
+		 * communicate on finish (bean {@link DropData}
+		 */
+		DropInitiated, DropPermission, DropData,
+
+		/**
+		 * Class UserInterface: request change in setting communicating through bean
+		 * {@link SettingChangeRequest}. F->B
+		 */
+		ChangeSetting,
+
 		/*
 		 * F->B: ask engine to modify or delete projects or project assets
 		 */
-		CreateNamespace, CreateScenario, CreateCalibration, DeleteNamespace, DeleteLocalResource, 
-		CreateProject, DeleteProject, CreateScript, DeleteScript, CreateTestCase, DeleteTestCase,
+		CreateNamespace, CreateScenario, CreateCalibration, DeleteNamespace, DeleteLocalResource, CreateProject, DeleteProject, CreateScript, DeleteScript, CreateTestCase, DeleteTestCase,
 
 		/**
 		 * F->B: notification when files are explicitly changed, added or deleted;
@@ -184,19 +230,18 @@ public interface IMessage {
 		 * A previously reported observation had its contents modified. Back->Front.
 		 */
 		ModifiedObservation,
-		
+
 		/**
 		 * F->B: user has selected an action among those supplied by the engine with
-		 * each observation. 
+		 * each observation.
 		 */
 		ExecuteObservationAction,
-		
+
 		/**
-		 * --- Task lifecycle --- 
-		 * B -> F
+		 * --- Task lifecycle --- B -> F
 		 */
 		ScriptStarted, TaskStarted, TaskFinished, TaskAborted, DataflowCompiled, DataflowStateChanged,
-		
+
 		/**
 		 * Task lifecycle F -> B
 		 */
@@ -233,14 +278,13 @@ public interface IMessage {
 		ResourceImported, ResourceDeleted, ResourceUpdated, ResourceValidated, ResourceCreated
 	}
 
-	
 	/**
 	 * Unique ID for each message.
 	 * 
 	 * @return
 	 */
 	String getId();
-	
+
 	/**
 	 * The message exposes the identity that created it through a token, which may
 	 * or may not be parseable at the receiving end but will be consistently linked
@@ -270,7 +314,7 @@ public interface IMessage {
 	 * @return
 	 */
 	long getTimestamp();
-	
+
 	/**
 	 * Get the payload of the message, whatever it is.
 	 * 

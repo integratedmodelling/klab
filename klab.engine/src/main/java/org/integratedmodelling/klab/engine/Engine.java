@@ -462,6 +462,11 @@ public class Engine extends Server implements IEngine, UserDetails {
 			 */
 			Resources.INSTANCE.initializeLocalWorkspace(options.getWorkspaceLocation(), this.monitor);
 
+	         /*
+             * initialize but do not load the service workspace.
+             */
+            Resources.INSTANCE.initializeServiceWorkspace(options.getServiceLocation(), this.monitor);
+			
 			/*
 			 * prime and check integrity of kboxes; init listeners for Kim reading
 			 */
@@ -540,6 +545,12 @@ public class Engine extends Server implements IEngine, UserDetails {
 			this.authorities.add(new SimpleGrantedAuthority(Roles.ENGINE));
 			Authentication.INSTANCE.registerIdentity(this);
 
+			/*
+			 * Load the service workspace last. TODO we may want to reset it
+			 * if the load fails.
+			 */
+			Resources.INSTANCE.loadServiceWorkspace(this.monitor);
+			
 			/*
 			 * boot time is now
 			 */
