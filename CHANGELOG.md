@@ -26,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [comment]: <>   (Next build: [0.10.0.150] -- ISO Date)
 
 ## [Unreleased]
+
+## [0.10.0.150] -- 2019/03/11
 ### Added
 - Begin keeping this changelog.
 - Prototype of configuration detector.
