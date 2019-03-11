@@ -34,12 +34,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Function and annotation documentation appears on hover in k.Modeler.
 - Service workspace for scratch resources and user-level explorer uploads and scenarios is 
   created and managed by the engine.
-- Beginning of resource add by drop functionalities (need to find a way to upload multi-file 
-  resources naturally).
+- Beginning of resource add by drop functionalities (imports resource in scratch project; 
+  sets context if resource is object and none is defined).
 - Improved and generalized observation export features using adapters.
 - Export to shapefile working for both individual observations and folders.
-
-
+- Hyperlink resource names to resource editor in modeler when ctrl-clicked.
+### Changed
+- Make local resource database in-memory for now.
 ### Fixed
 - Additional output states created and reported.
 - Various bug fixes.

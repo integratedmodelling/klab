@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.ide.navigator.model.EScript;
 import org.integratedmodelling.klab.ide.navigator.model.EScriptFolder;
 import org.integratedmodelling.klab.ide.navigator.model.ETestCase;
 import org.integratedmodelling.klab.ide.navigator.model.ETestFolder;
+import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
 import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumentable;
 import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumentationFolder;
 import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumentationItem;
@@ -37,6 +38,7 @@ import org.integratedmodelling.klab.ide.ui.wizards.NewScriptWizard;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.ide.views.DocumentationEditor;
 import org.integratedmodelling.klab.ide.views.ReferencesEditor;
+import org.integratedmodelling.klab.ide.views.ResourceEditor;
 import org.integratedmodelling.klab.rest.ProjectModificationNotification;
 import org.integratedmodelling.klab.rest.ProjectModificationRequest;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
@@ -136,7 +138,16 @@ public class KlabNavigatorActions {
 	}
 
     
-    public static void editResource(EResource resource) {
+    public static void editResource(EResourceReference resource) {
+		try {
+			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+					.showView(ResourceEditor.ID);
+			if (view != null) {
+				((ResourceEditor) view).loadResource(resource);
+			}
+		} catch (Exception e) {
+			Eclipse.INSTANCE.handleException(e);
+		}
     }
 
     public static void deleteResource(EResource resource) {

@@ -82,7 +82,7 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 				(resource) -> Eclipse.INSTANCE
 						.copyToClipboard(ResourceUtils.extractShapeSpecification(resource.getResource()))).activate();
 		action("Edit resource", "Edit the selected resource", "resource.gif", EResource.class,
-				(resource) -> KlabNavigatorActions.editResource(resource));
+				(resource) -> KlabNavigatorActions.editResource(resource.getResource()));
 		action("Move resource...", "Move this resource to another project", "resource.gif", EResource.class,
 				(resource) -> KlabNavigatorActions.moveResource(resource));
 		action("Delete resource", "Delete the selected resource", "resource.gif", EResource.class,

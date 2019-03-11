@@ -39,6 +39,7 @@ import org.integratedmodelling.klab.ide.model.KlabExplorer;
 import org.integratedmodelling.klab.ide.model.KlabSession;
 import org.integratedmodelling.klab.ide.model.KlabUser;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
+import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigatorActions;
 import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.monitoring.Message;
@@ -167,9 +168,9 @@ public class Activator extends AbstractUIPlugin {
                 int nc = StringUtils.countMatches(text, ":");
                 if (nc > 1) {
                     // URN - open in editor
-//                	if (klab != null && klab.getResource()) {
-//                		
-//                	}
+                	if (klab != null && klab.getResource(text) != null) {
+                		KlabNavigatorActions.editResource(klab.getResource(text));
+                	}
                 } else if (nc == 1) {
                     // MODEL OBJECT
                     IKimStatement statement = Kim.INSTANCE.getStatement(text);
