@@ -1,5 +1,7 @@
 package org.integratedmodelling.kim.api;
 
+import java.util.Collection;
+
 import org.integratedmodelling.klab.utils.Parameters;
 
 /**
@@ -12,8 +14,8 @@ public interface IServiceCall extends IKimStatement {
 
 	/**
 	 * If the function does not have named parameters, any parameters passed are
-	 * named like this; if there is more than one parameter they will be grouped into
-	 * a list returned with this key.
+	 * named like this; if there is more than one parameter they will be grouped
+	 * into a list returned with this key.
 	 */
 	public static String DEFAULT_PARAMETER_NAME = "value";
 
@@ -32,5 +34,13 @@ public interface IServiceCall extends IKimStatement {
 	 *         naming rules if no names are given.
 	 */
 	Parameters<String> getParameters();
+
+	/**
+	 * Return any parameter IDs that were passed with a syntax that defines those
+	 * that can be changed by the user.
+	 * 
+	 * @return
+	 */
+	Collection<String> getInteractiveParameters();
 
 }

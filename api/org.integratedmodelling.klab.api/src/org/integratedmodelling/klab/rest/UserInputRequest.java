@@ -3,80 +3,10 @@ package org.integratedmodelling.klab.rest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.kim.api.IComputableResource.InteractiveParameter;
 
 public class UserInputRequest {
-
-	public static class Field {
-
-		private String description;
-		private IArtifact.Type type;
-		private String initialValue;
-		private Set<String> values;
-		// validation
-		private List<Double> range;
-		private int numericPrecision;
-		private String regexp;
-		// range, regexp & numeric precision
-
-		public String getDescription() {
-			return description;
-		}
-
-		public void setDescription(String description) {
-			this.description = description;
-		}
-
-		public IArtifact.Type getType() {
-			return type;
-		}
-
-		public void setType(IArtifact.Type type) {
-			this.type = type;
-		}
-
-		public String getInitialValue() {
-			return initialValue;
-		}
-
-		public void setInitialValue(String initialValue) {
-			this.initialValue = initialValue;
-		}
-
-		public Set<String> getValues() {
-			return values;
-		}
-
-		public void setValues(Set<String> values) {
-			this.values = values;
-		}
-
-		public List<Double> getRange() {
-			return range;
-		}
-
-		public void setRange(List<Double> range) {
-			this.range = range;
-		}
-
-		public int getNumericPrecision() {
-			return numericPrecision;
-		}
-
-		public void setNumericPrecision(int numericPrecision) {
-			this.numericPrecision = numericPrecision;
-		}
-
-		public String getRegexp() {
-			return regexp;
-		}
-
-		public void setRegexp(String regexp) {
-			this.regexp = regexp;
-		}
-	}
 
 	private String requestId;
 	private String sectionTitle;
@@ -85,7 +15,7 @@ public class UserInputRequest {
 	/*
 	 * we have either this....
 	 */
-	private List<Field> fields = new ArrayList<>();
+	private List<InteractiveParameter> fields = new ArrayList<>();
 
 	/*
 	 * ...or the next two
@@ -101,11 +31,11 @@ public class UserInputRequest {
 		this.requestId = requestId;
 	}
 
-	public List<Field> getFields() {
+	public List<InteractiveParameter> getFields() {
 		return fields;
 	}
 
-	public void setFields(List<Field> fields) {
+	public void setFields(List<InteractiveParameter> fields) {
 		this.fields = fields;
 	}
 

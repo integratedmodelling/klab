@@ -1,19 +1,23 @@
 package org.integratedmodelling.klab.dataflow;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IComputableResource.InteractiveParameter;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.klab.Interaction;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -25,6 +29,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * The semantically aware implementation of {@link IDataflow}, built by the
@@ -48,11 +53,11 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	private ResolutionScope scope;
 	private boolean primary = true;
 	private Set<String> notified = new HashSet<>();
-
-//	/*
-//	 * TODO this should be removed and an actual layout should be created
-//	 */
-//	private static String demoLayout = null;
+	private ISession session;
+	
+	// execution parameters for user modification if running interactively
+	private List<InteractiveParameter> fields = new ArrayList<>(); 
+	private List<Pair<IComputableResource, List<String>>> resources = new ArrayList<>();
 
 	@Override
 	public IArtifact run(IScale scale, IMonitor monitor) throws KlabException {
@@ -64,6 +69,35 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 			return Observation.empty();
 		}
 
+		if (session != null && session.isInteractive()) {
+			/*
+			 * collect all computables with interaction switched on and wait for
+			 * user response before moving on.
+			 */
+			this.fields = new ArrayList<>(); 
+			this.resources = new ArrayList<>();
+			for (IActuator actuator : actuators) {
+				for (IComputableResource computable : actuator.getComputation()) {
+					List<String> parameterIds = null;
+					for (InteractiveParameter parameter : Interaction.INSTANCE.getInteractiveParameters(computable)) {
+						if (parameterIds == null) {
+							parameterIds = new ArrayList<>();
+						}
+						fields.add(parameter);
+						parameterIds.add(parameter.getId());
+					}
+					if (parameterIds != null) {
+						this.resources.add(new Pair<>(computable, parameterIds));
+					}
+				}
+			}
+			if (fields.size() > 0) {
+				/*
+				 * Issue request and wait for answer 
+				 */
+			}
+		}
+		
 		/*
 		 * Children at the dataflow level run in parallel, so have the runtime start
 		 * futures for each child and chain the results when they come.
@@ -157,6 +191,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	public static Dataflow empty(ResolutionScope scope) {
 		Dataflow ret = new Dataflow();
 		ret.scope = scope;
+		ret.session = scope.getSession();
 		return ret;
 	}
 	
@@ -172,6 +207,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		
 		Dataflow ret = new Dataflow();
 		ret.scope = scope;
+		ret.session = scope.getSession();
 		
 		Actuator actuator = Actuator.create(ret, scope.getMode());
 		actuator.setObservable((Observable)observable);
@@ -207,18 +243,6 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	public String getDescription() {
 		return description;
 	}
-
-//	public String getElkJsonLayout() {
-//		if (demoLayout == null) {
-//			URL url = Resources.getResource("stubs/dataflow_sample.json");
-//			try {
-//				demoLayout = Resources.toString(url, Charsets.UTF_8);
-//			} catch (IOException e) {
-//				// hostia!
-//			}
-//		}
-//		return demoLayout;
-//	}
 
 	public void setDescription(String description) {
 		this.description = description;

@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.common.LogicalConnector;
@@ -931,6 +932,10 @@ public class ResolutionScope implements IResolutionScope {
 	public void setInlineValue(Object inlineValue) {
 		this.inlineValue = inlineValue;
 		this.coverage.setCoverage(1.0);
+	}
+	
+	public ISession getSession() {
+		return monitor.getIdentity().getParentIdentity(ISession.class);
 	}
 
 }
