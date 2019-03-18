@@ -10,6 +10,9 @@
  	final text 'model'
  		"The URL of the service providing the data."
  
+ 	final text 'classifier'
+ 		"The Java class of the WEKA classifier serialized in this resource."
+ 
  	final text 'wekaVersion'
  		"The Weka version that built the models in this resource."
  	 	default "3.8.3"
