@@ -71,7 +71,6 @@ public interface ISession extends IEngineSessionIdentity, Closeable {
 	 */
 	Future<ISubject> observe(String urn, String... scenarios);
 
-
 	/**
 	 * Retrieve a live observation if available, or return null.
 	 * <p>
@@ -101,7 +100,7 @@ public interface ISession extends IEngineSessionIdentity, Closeable {
 	 * @return the task being executed, or null.
 	 */
 	<T extends Future<?>> T getTask(String taskId, Class<T> cls);
-	
+
 	/**
 	 * Run the content of a URL as a script, returning the future that will compute
 	 * its result (often null). The {@link IEngine} has a similar function that
@@ -122,5 +121,13 @@ public interface ISession extends IEngineSessionIdentity, Closeable {
 	 * @return the region of interest, or the empty geometry
 	 */
 	IGeometry getRegionOfInterest();
+
+	/**
+	 * Interactive sessions have a human at the other end of the line and can ask
+	 * her questions.
+	 * 
+	 * @return true if the human has set the session to interactive.
+	 */
+	boolean isInteractive();
 
 }
