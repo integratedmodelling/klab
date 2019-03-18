@@ -424,6 +424,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		switch (request.getSetting()) {
 		case InteractiveMode:
 			this.interactive.set(Boolean.parseBoolean(request.getNewValue()));
+			monitor.info("interactive mode set to " + (interactive.get() ? "on" : "off"));
 			break;
 		default:
 			break;
