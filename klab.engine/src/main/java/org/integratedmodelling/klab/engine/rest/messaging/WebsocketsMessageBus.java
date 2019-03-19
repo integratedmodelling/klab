@@ -12,6 +12,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
 import javax.annotation.PostConstruct;
@@ -44,7 +48,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RestController
 public class WebsocketsMessageBus implements IMessageBus {
 
-    static public String URL = "ws://localhost:8283/modeler/message";
+    static public String             URL       = "ws://localhost:8283/modeler/message";
 
     private Map<String, Set<Object>> receivers = Collections.synchronizedMap(new HashMap<>());
 
@@ -69,26 +73,26 @@ public class WebsocketsMessageBus implements IMessageBus {
 
         class MethodDescriptor {
 
-            Method method;
-            Class<?> payloadType;
+            Method                method;
+            Class<?>              payloadType;
             IMessage.MessageClass mclass = null;
-            IMessage.Type mtype = null;
+            IMessage.Type         mtype  = null;
 
             public MethodDescriptor(Method method, MessageHandler handler) {
 
                 this.method = method;
                 this.method.setAccessible(true);
                 for (Class<?> cls : method.getParameterTypes()) {
-                    if (!IMessage.Type.class.isAssignableFrom(cls) && !IMessage.MessageClass.class.isAssignableFrom(cls)
+                    if (!IMessage.Type.class.isAssignableFrom(cls)
+                            && !IMessage.MessageClass.class.isAssignableFrom(cls)
                             && !IMessage.class.isAssignableFrom(cls)) {
                         this.payloadType = cls;
                         break;
                     }
                 }
                 if (this.payloadType == null) {
-                    throw new IllegalStateException(
-                            "wrong usage of @MessageHandler: the annotated method must have a parameter for the payload"
-                                    + IConfigurationService.REST_RESOURCES_PACKAGE_ID + " as parameter");
+                    throw new IllegalStateException("wrong usage of @MessageHandler: the annotated method must have a parameter for the payload"
+                            + IConfigurationService.REST_RESOURCES_PACKAGE_ID + " as parameter");
                 }
                 if (handler.type() != IMessage.Type.Void) {
                     this.mtype = handler.type();
@@ -123,12 +127,13 @@ public class WebsocketsMessageBus implements IMessageBus {
                     this.method.invoke(identity, params.toArray());
                 } catch (Throwable e) {
                     if (e instanceof InvocationTargetException) {
-                        e = ((InvocationTargetException)e).getTargetException();
+                        e = ((InvocationTargetException) e).getTargetException();
                     }
                     if (identity instanceof IRuntimeIdentity) {
-                        ((IRuntimeIdentity)identity).getMonitor().error(e);
+                        ((IRuntimeIdentity) identity).getMonitor().error(e);
                     } else {
-                        Logging.INSTANCE.error("error while dispatching message to handler: " + e.getMessage());
+                        Logging.INSTANCE
+                                .error("error while dispatching message to handler: " + e.getMessage());
                     }
                 }
             }
@@ -142,13 +147,15 @@ public class WebsocketsMessageBus implements IMessageBus {
     }
 
     private Map<Class<?>, ReceiverDescription> receiverTypes = Collections.synchronizedMap(new HashMap<>());
-    private Map<String, Consumer<IMessage>> responders = Collections.synchronizedMap(new HashMap<>());
+    private Map<String, Consumer<IMessage>>    responders    = Collections.synchronizedMap(new HashMap<>());
+    private Map<String, IMessage>              responses     = Collections.synchronizedMap(new HashMap<>());
+    private Set<String>                        requests      = Collections.synchronizedSet(new HashSet<>());
 
     @Autowired
-    ObjectMapper objectMapper;
+    ObjectMapper                               objectMapper;
 
     @Autowired
-    private SimpMessagingTemplate webSocket;
+    private SimpMessagingTemplate              webSocket;
 
     @PostConstruct
     public void publishMessageBus() {
@@ -157,8 +164,7 @@ public class WebsocketsMessageBus implements IMessageBus {
     }
 
     /**
-     * This gets messages sent to /klab/message from the javascript side of the
-     * dataviewer.
+     * This gets messages sent to /klab/message from the remote side.
      * 
      * @param message
      */
@@ -168,10 +174,20 @@ public class WebsocketsMessageBus implements IMessageBus {
         System.out.println(JsonUtils.printAsJson(message));
 
         if (message.getInResponseTo() != null) {
-            Consumer<IMessage> responder = responders.remove(message.getInResponseTo());
-            if (responder != null) {
-                responder.accept(message);
+
+            if (requests.contains(message.getInResponseTo())) {
+
+                requests.remove(message.getInResponseTo());
+                responses.put(message.getInResponseTo(), message);
                 return;
+
+            } else {
+
+                Consumer<IMessage> responder = responders.remove(message.getInResponseTo());
+                if (responder != null) {
+                    responder.accept(message);
+                    return;
+                }
             }
         }
 
@@ -198,7 +214,8 @@ public class WebsocketsMessageBus implements IMessageBus {
              * 1. Determine payload type
              */
             Class<?> cls = message.getPayloadClass().equals("String") ? String.class
-                    : Class.forName(IConfigurationService.REST_RESOURCES_PACKAGE_ID + "." + message.getPayloadClass());
+                    : Class.forName(IConfigurationService.REST_RESOURCES_PACKAGE_ID + "."
+                            + message.getPayloadClass());
 
             /*
              * 2. Determine if the object has a method to react to it, caching the result
@@ -237,6 +254,77 @@ public class WebsocketsMessageBus implements IMessageBus {
     @Override
     public synchronized void post(IMessage message) {
         webSocket.convertAndSend(API.MESSAGE + "/" + message.getIdentity(), message);
+    }
+
+    @Override
+    public synchronized Future<IMessage> ask(IMessage message) {
+        
+        requests.add(message.getId());
+        webSocket.convertAndSend(API.MESSAGE + "/" + message.getIdentity(), message);
+        return new Future<IMessage>() {
+
+            long     origin = System.currentTimeMillis();
+            IMessage m;
+            boolean  cancelled;
+
+            @Override
+            public boolean cancel(boolean mayInterruptIfRunning) {
+                requests.remove(message.getId());
+                cancelled = true;
+                return true;
+            }
+
+            @Override
+            public boolean isCancelled() {
+                return cancelled;
+            }
+
+            @Override
+            public boolean isDone() {
+                if (responses.containsKey(message.getId())) {
+                    m = responses.get(message.getId());
+                    requests.remove(message.getId());
+                    responses.remove(message.getId());
+                }
+                return m != null;
+            }
+
+            @Override
+            public IMessage get() throws InterruptedException, ExecutionException {
+                while (true) {
+                    if (m != null) {
+                        break;
+                    } else if (responses.containsKey(message.getId())) {
+                        m = responses.get(message.getId());
+                        requests.remove(message.getId());
+                        responses.remove(message.getId());
+                        break;
+                    }
+                    Thread.sleep(250);
+                }
+                return m;
+            }
+
+            @Override
+            public IMessage get(long timeout, TimeUnit unit)
+                    throws InterruptedException, ExecutionException, TimeoutException {
+                while (true) {
+                    if (System.currentTimeMillis() - origin >= unit.toMillis(timeout)) {
+                        return null;
+                    } else if (m != null) {
+                        break;
+                    } else if (responses.containsKey(message.getId())) {
+                        m = responses.get(message.getId());
+                        requests.remove(message.getId());
+                        responses.remove(message.getId());
+                        break;
+                    }
+                    Thread.sleep(250);
+                }
+                return m;
+            }
+
+        };
     }
 
     @Override

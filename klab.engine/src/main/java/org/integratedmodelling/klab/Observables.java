@@ -329,6 +329,10 @@ public enum Observables implements IObservableService {
     @Override
     public boolean isCompatible(IConcept o1, IConcept o2, int flags) {
 
+        if (o1 == o2 || o1.equals(o2)) {
+            return true;
+        }
+        
         boolean mustBeSameCoreType = (flags & REQUIRE_SAME_CORE_TYPE) != 0;
         boolean useRoleParentClosure = (flags & USE_ROLE_PARENT_CLOSURE) != 0;
         // boolean acceptRealmDifferences = (flags & ACCEPT_REALM_DIFFERENCES) != 0;
