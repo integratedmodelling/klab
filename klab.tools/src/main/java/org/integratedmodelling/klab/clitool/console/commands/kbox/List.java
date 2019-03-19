@@ -4,14 +4,9 @@ import java.util.ArrayList;
 
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Models;
-import org.integratedmodelling.klab.Resources;
-import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.clitool.api.ICommand;
-import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.rest.ModelReference;
-import org.integratedmodelling.klab.utils.JsonUtils;
-import org.integratedmodelling.klab.utils.StringUtils;
 
 public class List implements ICommand {
 
@@ -20,7 +15,15 @@ public class List implements ICommand {
 
 		String ret = "";
 		boolean verbose = call.getParameters().get("verbose", false);
-		for (ModelReference model : Models.INSTANCE.listModels(true)) {
+		java.util.List<ModelReference> params = null;
+		if (call.getParameters().get("arguments", java.util.List.class).size() > 0) {
+			params = new ArrayList<>();
+			for (Object o : call.getParameters().get("arguments", java.util.List.class)) {
+				params.add(Models.INSTANCE.getModelReference(o.toString()));
+			}
+			verbose = true;
+		} 		
+		for (ModelReference model : params == null ? Models.INSTANCE.listModels(true) : params) {
 			ret += (ret.isEmpty() ? "" : "\n") + describe(model, verbose);
 		}
 		return ret;
@@ -29,16 +32,10 @@ public class List implements ICommand {
 	private String describe(ModelReference urn, boolean verbose) {
 		String ret = urn.getUrn();
 		if (verbose) {
-			ret += ":";
-			IResource resource = Resources.INSTANCE.getLocalResourceCatalog().get(urn);
-			if (resource == null) {
-				ret += " Error retrieving resource!";
-			} else {
-				ret += "\n   " + StringUtils.leftIndent(JsonUtils.printAsJson(((Resource)resource).getReference()), 3);
-			}
-		} else {
-		    ret += "\n";
-		}
+			ret += "\n  " + urn.getObservable();
+			ret += "\n  " + urn.getShape();
+			ret += "\n  " + urn.getObservationType();
+		} 
 		return ret;
 	}
 

@@ -202,4 +202,8 @@ public enum Models implements IModelService {
         return ret;
     }
 
+	public ModelReference getModelReference(String string) {
+		return kbox.retrieveModel(string, Klab.INSTANCE.getRootMonitor());
+	}
+
 }

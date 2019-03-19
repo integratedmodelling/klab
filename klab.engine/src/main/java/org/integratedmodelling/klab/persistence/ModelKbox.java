@@ -12,15 +12,11 @@ import java.util.Set;
 
 import org.h2gis.utilities.SpatialResultSet;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.Observables;
-import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
@@ -35,7 +31,6 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabStorageException;
 import org.integratedmodelling.klab.model.Model;
-import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.persistence.h2.SQL;
 import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
@@ -382,14 +377,13 @@ public class ModelKbox extends ObservableKbox {
 		}
 		return ret;
 	}
-
-	public ModelReference retrieveModel(long oid, IMonitor monitor) throws KlabException {
-
+	
+	public ModelReference retrieve(String query, IMonitor monitor) {
 		initialize(monitor);
 
 		final ModelReference ret = new ModelReference();
 
-		database.query("SELECT * FROM model WHERE oid = " + oid, new SQL.SimpleResultHandler() {
+		database.query(query, new SQL.SimpleResultHandler() {
 			@Override
 			public void onRow(ResultSet rs) {
 
@@ -441,9 +435,74 @@ public class ModelKbox extends ObservableKbox {
 
 		});
 
-		ret.setMetadata(getMetadataFor(oid));
-
 		return ret;
+	}
+
+	public ModelReference retrieveModel(long oid, IMonitor monitor) throws KlabException {
+
+		ModelReference ret = retrieve("SELECT * FROM model WHERE oid = " + oid, monitor);
+		ret.setMetadata(getMetadataFor(oid));
+		return ret;
+//		
+//		initialize(monitor);
+//
+//		final ModelReference ret = new ModelReference();
+//
+//		database.query("SELECT * FROM model WHERE oid = " + oid, new SQL.SimpleResultHandler() {
+//			@Override
+//			public void onRow(ResultSet rs) {
+//
+//				try {
+//
+//					SpatialResultSet srs = rs.unwrap(SpatialResultSet.class);
+//
+//					long tyid = srs.getLong(7);
+//
+//					ret.setName(srs.getString(4));
+//
+//					IConcept mtype = getType(tyid);
+//
+//					ret.setObservableConcept(mtype);
+//					ret.setObservable(getTypeDefinition(tyid));
+//
+//					ret.setServerId(nullify(srs.getString(2)));
+//					ret.setId(srs.getString(3));
+//
+//					ret.setNamespaceId(srs.getString(5));
+//					ret.setProjectId(nullify(srs.getString(6)));
+//
+//					ret.setPrivateModel(srs.getBoolean(9));
+//					ret.setResolved(srs.getBoolean(10));
+//					ret.setReification(srs.getBoolean(11));
+//					ret.setInScenario(srs.getBoolean(12));
+//					ret.setHasDirectObjects(srs.getBoolean(13));
+//					ret.setHasDirectData(srs.getBoolean(14));
+//					ret.setTimeStart(srs.getLong(15));
+//					ret.setTimeEnd(srs.getLong(16));
+//					ret.setSpatial(srs.getBoolean(17));
+//					ret.setTemporal(srs.getBoolean(18));
+//					ret.setTimeMultiplicity(srs.getLong(19));
+//					ret.setSpaceMultiplicity(srs.getLong(20));
+//					ret.setScaleMultiplicity(srs.getLong(21));
+//					ret.setDereifyingAttribute(nullify(srs.getString(22)));
+//					ret.setMinSpatialScaleFactor(srs.getInt(23));
+//					ret.setMaxSpatialScaleFactor(srs.getInt(24));
+//					ret.setMinTimeScaleFactor(srs.getInt(25));
+//					ret.setMaxTimeScaleFactor(srs.getInt(26));
+//					Geometry geometry = srs.getGeometry(27);
+//					if (!geometry.isEmpty()) {
+//						ret.setShape(Shape.create(geometry, Projection.getLatLon())); // +
+//					}
+//				} catch (SQLException e) {
+//					throw new KlabStorageException(e);
+//				}
+//			}
+//
+//		});
+//
+//		ret.setMetadata(getMetadataFor(oid));
+//
+//		return ret;
 	}
 
 	@Override
@@ -612,6 +671,7 @@ public class ModelKbox extends ObservableKbox {
 			scaleMultiplicity = scale.size();
 			if (scale.getSpace() != null) {
 				spaceExtent = (Shape) scale.getSpace().getShape();
+				spaceExtent = spaceExtent.transform(Projection.getLatLon());
 				// may be null when we just say 'over space'.
 				if (spaceExtent != null) {
 					spaceMultiplicity = scale.getSpace().size();
@@ -705,6 +765,10 @@ public class ModelKbox extends ObservableKbox {
 			ret.put(key, metadata.get(key) == null ? "null" : metadata.get(key).toString());
 		}
 		return ret;
+	}
+
+	public ModelReference retrieveModel(String string, IMonitor monitor) {
+		return retrieve("SELECT * FROM model WHERE name = '" + string + "'", monitor);
 	}
 
 //	public static String generateObjectModelSource(IConcept observable, String objectSource,
