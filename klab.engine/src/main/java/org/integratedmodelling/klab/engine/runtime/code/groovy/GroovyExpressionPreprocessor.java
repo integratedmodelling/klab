@@ -143,6 +143,7 @@ public class GroovyExpressionPreprocessor {
 	List<KimNotification> errors = new ArrayList<>();
 	private Set<String> objectIds = new HashSet<>();
 	private Set<String> scalarIds = new HashSet<>();
+	private Set<String> contextualizers = new HashSet<>();
 	List<TokenDescriptor> tokens = new ArrayList<>();
 	IRuntimeContext context;
 	private boolean contextual;
@@ -227,8 +228,8 @@ public class GroovyExpressionPreprocessor {
 				// if we are translating for a quality context and the var is used with scalar
 				// semantics, we just output the var name
 				IKimConcept.Type type = getIdentifierType(ret, context);
-				boolean canBeScalar = (type == IKimConcept.Type.QUALITY || type == IKimConcept.Type.TRAIT || type == IKimConcept.Type.CLASS)
-						|| !contextual;
+				boolean canBeScalar = (type == IKimConcept.Type.QUALITY || type == IKimConcept.Type.TRAIT
+						|| type == IKimConcept.Type.CLASS) || !contextual;
 				// if (!(context != null && (type == IKimConcept.Type.QUALITY || type ==
 				// IKimConcept.Type.TRAIT)
 				// && contextual)) {
@@ -394,7 +395,7 @@ public class GroovyExpressionPreprocessor {
 		return ret.toString();
 	}
 
-	private static String preprocessContextualizations(String code) {
+	private String preprocessContextualizations(String code) {
 
 		/*
 		 * tokenize into op- or whitespace-separated tokens; record any two tokens
@@ -404,7 +405,7 @@ public class GroovyExpressionPreprocessor {
 		StringBuffer token = new StringBuffer(256);
 		for (int i = 0; i < code.length(); i++) {
 			char c = code.charAt(i);
-			if (opchars.contains(c+"") || Character.isWhitespace(c)) {
+			if (opchars.contains(c + "") || Character.isWhitespace(c)) {
 				if (token.length() > 0) {
 					tokens.add(token.toString());
 					token.setLength(0);
@@ -415,19 +416,34 @@ public class GroovyExpressionPreprocessor {
 		if (token.length() > 0) {
 			tokens.add(token.toString());
 		}
-		
-		for (int i = 0; i < tokens.size(); i++) {
-			
+
+		token.setLength(0);
+		for (String t : tokens) {
+			if (t.contains("@")) {
+				t = t.trim();
+				String[] tt = t.split("@");
+				token.append(" _recontextualize(\"" + tt[0] + "\", \"" + tt[1] + "\")");
+				
+				/*
+				 * record contextualizers
+				 */
+				String[] pp = tt[1].split(",");
+				for (String p : pp) {
+					while (Character.isDigit(p.charAt(p.length() - 1))) {
+						p = p.substring(0, p.length() - 1);
+					}
+					contextualizers.add(p);
+				}
+				
+			} else {
+				token.append(t);
+			}
 		}
-		
-		return code;
-		
+
+		return token.toString();
+
 	}
 
-	public static void main(String[] args) {
-		preprocessContextualizations("  vacca + madonna - can@giobatta");
-	}
-	
 	public IKimConcept.Type getIdentifierType(String ret, IRuntimeContext context) {
 
 		if (context == null) {
@@ -647,5 +663,14 @@ public class GroovyExpressionPreprocessor {
 	 */
 	public Collection<String> getIdentifiers() {
 		return identifiers;
+	}
+
+	/**
+	 * All contextualizers encountered, divided up and without distance locators.
+	 * 
+	 * @return
+	 */
+	public Set<String> getContextualizers() {
+		return contextualizers;
 	}
 }

@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.extensions.groovy
 import org.apache.commons.math3.special.Erf
 import org.codehaus.groovy.runtime.NullObject
 import org.integratedmodelling.klab.Concepts
+import org.integratedmodelling.klab.Observations
 import org.integratedmodelling.klab.api.knowledge.IConcept
 import org.integratedmodelling.klab.api.observations.IDirectObservation
 import org.integratedmodelling.klab.api.observations.IEvent
@@ -198,6 +199,10 @@ abstract class ActionBase extends Script {
 		Erf.erf(d1, d2);
 	}
 
+	def _recontextualize(String targetId, String contextId) {
+		Observations.INSTANCE.recontextualizeIdentifier(targetId, contextId, binding.getVariable("_c"), binding.variables)
+	}
+	
 	/**
 	 * Exponential integral
 	 * @param d

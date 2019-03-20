@@ -196,6 +196,11 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 				throw new KlabResourceNotFoundException(
 						"Neighborhood resolver: the value expression does not reference any known state");
 			}
+
+			if (isLinear && valueDescriptor.getContextualizers().contains("origin")) {
+				isLinear = false;
+			}
+			
 			valueExpression = valueDescriptor.compile();
 		} else {
 			throw new KlabValidationException(
@@ -218,9 +223,12 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 				throw new KlabResourceNotFoundException(
 						"Neighborhood resolver: the select expression does not reference any known state");
 			}
+			if (isLinear && selectDescriptor.getContextualizers().contains("origin")) {
+				isLinear = false;
+			}
 			selectExpression = selectDescriptor.compile();
 		}
-
+		
 		/*
 		 * go for it
 		 */

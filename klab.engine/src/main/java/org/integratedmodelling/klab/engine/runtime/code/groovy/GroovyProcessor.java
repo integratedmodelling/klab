@@ -26,6 +26,8 @@ public enum GroovyProcessor implements ILanguageProcessor {
         Collection<String> identifiers;
         private Set<String> scalarIds;
         private Set<String> objectIds;
+        private Set<String> contextualizers;
+        
         private List<KimNotification> errors;
 //        private List<TokenDescriptor> tokens;
 //        private IRuntimeContext context;
@@ -50,6 +52,7 @@ public enum GroovyProcessor implements ILanguageProcessor {
             this.identifiers = processor.getIdentifiers();
             this.scalarIds = processor.getScalarIdentifiers();
             this.objectIds = processor.getObjectIdentifiers();
+            this.contextualizers = processor.getContextualizers();
             this.errors = processor.getErrors();
 //            this.tokens = processor.tokens;
 //            this.context = context;
@@ -116,6 +119,11 @@ public enum GroovyProcessor implements ILanguageProcessor {
             }
             return false;
 
+		}
+
+		@Override
+		public Collection<String> getContextualizers() {
+			return contextualizers;
 		}
     }
 
