@@ -23,9 +23,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [comment]: <>   (  Fixed for any bug fixes.)
 [comment]: <>   (  Security in case of vulnerabilities.)
 [comment]: <>   ()
-[comment]: <>   (Next build: [0.10.0.150] -- ISO Date)
+[comment]: <>   (Next build: [0.10.0.151] -- ISO Date)
 
 ## [Unreleased]
+### Added
+- Begin supporting recontextualization in expressions through @-modified identifiers 
+  (e.g. elevation@nw)
+- Add CLI 'kbox' command namespace for kbox inquiries.
+### Fixed
+- Better handling of Groovy expressions using and returning concepts.
+- Fixed some NPE situations when parsing models with unknown semantics.
+- Fixed situations where observables would not be compatible with themselves due to 
+  inherency chain issues.
 
 ## [0.10.0.150] -- 2019/03/11
 ### Added
