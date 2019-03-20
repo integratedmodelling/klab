@@ -942,7 +942,10 @@ public class KimValidator extends AbstractKimValidator {
         i++;
       }
     }
-    ret.setErrors((!ok));
+    boolean _notEquals = (!Objects.equal(ret, null));
+    if (_notEquals) {
+      ret.setErrors((!ok));
+    }
     return ret;
   }
   

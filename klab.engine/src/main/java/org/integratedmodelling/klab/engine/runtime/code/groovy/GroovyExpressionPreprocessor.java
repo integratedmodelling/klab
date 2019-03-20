@@ -92,6 +92,8 @@ public class GroovyExpressionPreprocessor {
 	private Geometry inferredGeometry;
 	Pattern extKnowledge = Pattern.compile("[a-z|\\.]+:[A-Za-z][A-Za-z0-9]*");
 
+	final private static String opchars = "{}[]()+-*/%^&|<>~?:='\"";
+
 	static class Lexer extends GroovyLexer {
 
 		int previous = -1;
@@ -225,11 +227,13 @@ public class GroovyExpressionPreprocessor {
 				// if we are translating for a quality context and the var is used with scalar
 				// semantics, we just output the var name
 				IKimConcept.Type type = getIdentifierType(ret, context);
-				boolean canBeScalar = (type == IKimConcept.Type.QUALITY || type == IKimConcept.Type.TRAIT) || !contextual;
-//				if (!(context != null && (type == IKimConcept.Type.QUALITY || type == IKimConcept.Type.TRAIT)
-//						&& contextual)) {
-					ret = translateParameter(ret, canBeScalar && scalarIds.contains(ret) && !this.methodCall);
-//				}
+				boolean canBeScalar = (type == IKimConcept.Type.QUALITY || type == IKimConcept.Type.TRAIT || type == IKimConcept.Type.CLASS)
+						|| !contextual;
+				// if (!(context != null && (type == IKimConcept.Type.QUALITY || type ==
+				// IKimConcept.Type.TRAIT)
+				// && contextual)) {
+				ret = translateParameter(ret, canBeScalar && scalarIds.contains(ret) && !this.methodCall);
+				// }
 				break;
 			case URN:
 				ret = translateUrn(ret);
@@ -266,14 +270,16 @@ public class GroovyExpressionPreprocessor {
 		 * error. Don't laugh at the pattern.
 		 */
 		code = code.replaceAll("\\\\\\]", "]");
-		
-		// substitute all #(...) declarations with ___DECL_n 
+
+		// substitute all #(...) declarations with ___DECL_n
 		code = preprocessDeclarations(code);
-		
+
+		code = preprocessContextualizations(code);
+
 		List<List<Token>> groups = new ArrayList<>();
 		Lexer lexer = new Lexer(new StringReader(code));
 		lexer.setWhitespaceIncluded(true);
-//		String ret = "";
+		// String ret = "";
 		// String remainder = "";
 
 		try {
@@ -348,38 +354,39 @@ public class GroovyExpressionPreprocessor {
 	}
 
 	private String preprocessDeclarations(String code) {
-		
+
 		StringBuffer ret = new StringBuffer(code.length());
 		int level = -1;
 		int ndecl = 0;
 		for (int i = 0; i < code.length(); i++) {
 			char c = code.charAt(i);
 			StringBuffer declaration = new StringBuffer(code.length());
-			if (c == '#' && i < code.length() - 2 && code.charAt(i+1) == '(') {
+			if (c == '#' && i < code.length() - 2 && code.charAt(i + 1) == '(') {
 				i += 2;
 				for (; i < code.length(); i++) {
 					if (code.charAt(i) == '(') {
-						level ++;
+						level++;
 						declaration.append(code.charAt(i));
 					} else if (code.charAt(i) == ')') {
 						if (level == -1) {
 							break;
 						} else {
-							level --;
+							level--;
 							declaration.append(code.charAt(i));
 						}
 					} else {
 						declaration.append(code.charAt(i));
 					}
 				}
-				
+
 				if (level >= 0) {
-					errors.add(new KimNotification("concept declaration: unexpected end of input: " + declaration.toString(), Level.SEVERE));
+					errors.add(new KimNotification(
+							"concept declaration: unexpected end of input: " + declaration.toString(), Level.SEVERE));
 				} else {
-					this.declarations .add(Observables.INSTANCE.declare(declaration.toString()));
+					this.declarations.add(Observables.INSTANCE.declare(declaration.toString()));
 					ret.append(DECLARATION_ID_PREFIX + (ndecl++));
 				}
-				
+
 			} else {
 				ret.append(c);
 			}
@@ -387,6 +394,40 @@ public class GroovyExpressionPreprocessor {
 		return ret.toString();
 	}
 
+	private static String preprocessContextualizations(String code) {
+
+		/*
+		 * tokenize into op- or whitespace-separated tokens; record any two tokens
+		 * separated by one @, substitute with a contextualize call
+		 */
+		List<String> tokens = new ArrayList<>();
+		StringBuffer token = new StringBuffer(256);
+		for (int i = 0; i < code.length(); i++) {
+			char c = code.charAt(i);
+			if (opchars.contains(c+"") || Character.isWhitespace(c)) {
+				if (token.length() > 0) {
+					tokens.add(token.toString());
+					token.setLength(0);
+				}
+			}
+			token.append(c);
+		}
+		if (token.length() > 0) {
+			tokens.add(token.toString());
+		}
+		
+		for (int i = 0; i < tokens.size(); i++) {
+			
+		}
+		
+		return code;
+		
+	}
+
+	public static void main(String[] args) {
+		preprocessContextualizations("  vacca + madonna - can@giobatta");
+	}
+	
 	public IKimConcept.Type getIdentifierType(String ret, IRuntimeContext context) {
 
 		if (context == null) {
@@ -404,7 +445,7 @@ public class GroovyExpressionPreprocessor {
 	}
 
 	private String reconstruct() {
-		
+
 		String ret = "";
 
 		/*
@@ -412,14 +453,11 @@ public class GroovyExpressionPreprocessor {
 		 */
 		List<TokenDescriptor> reduced = new ArrayList<>();
 		for (int i = 0; i < tokens.size(); i++) {
-			if (
-					tokens.get(i).type == KNOWN_ID &&
-					tokens.size() - i >= 4 && 
-					tokens.get(i + 1).token.trim().isEmpty() &&
-					tokens.get(i + 2).token.equals("is") &&
-					tokens.get(i + 3).token.trim().isEmpty() &&
-					tokens.get(i + 4).type == KNOWLEDGE) {
-				reduced.add(new TokenDescriptor(INFERENCE, tokens.get(i) + ".isa(" + tokens.get(i+4).translate() + ")"));
+			if (tokens.get(i).type == KNOWN_ID && tokens.size() - i >= 4 && tokens.get(i + 1).token.trim().isEmpty()
+					&& tokens.get(i + 2).token.equals("is") && tokens.get(i + 3).token.trim().isEmpty()
+					&& tokens.get(i + 4).type == KNOWLEDGE) {
+				reduced.add(
+						new TokenDescriptor(INFERENCE, tokens.get(i) + ".isa(" + tokens.get(i + 4).translate() + ")"));
 				i += 4;
 			} else {
 				reduced.add(tokens.get(i));
@@ -502,7 +540,7 @@ public class GroovyExpressionPreprocessor {
 		if (currentToken.equals("unknown")) {
 			return new TokenDescriptor(LITERAL_NULL, currentToken);
 		}
-		
+
 		if (currentToken.startsWith(DECLARATION_ID_PREFIX)) {
 			return new TokenDescriptor(KNOWLEDGE, currentToken);
 		}

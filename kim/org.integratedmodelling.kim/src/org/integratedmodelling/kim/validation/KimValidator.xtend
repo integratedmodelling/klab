@@ -739,8 +739,9 @@ class KimValidator extends AbstractKimValidator {
 			i++
 		}
 
-		ret.errors = !ok
-
+		if (ret != null) {
+			ret.errors = !ok
+		}
 		// TODO contextualization
 		// TODO if event, ensure we have a time extent 
 		return ret

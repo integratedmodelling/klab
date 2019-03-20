@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.utils;
 import java.io.File;
 import java.util.Arrays;
 
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 
@@ -199,6 +200,8 @@ public class Utils {
             ret = Type.NUMBER;
         } else if (Boolean.class.isAssignableFrom(cls)) {
             ret = Type.BOOLEAN;
+        } else if (IConcept.class.isAssignableFrom(cls)) {
+        	ret = Type.CONCEPT;
         }
         return ret;
     }

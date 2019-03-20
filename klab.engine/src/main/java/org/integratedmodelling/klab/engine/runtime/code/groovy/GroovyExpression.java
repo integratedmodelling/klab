@@ -45,6 +45,8 @@ import org.integratedmodelling.klab.components.runtime.observations.ObservationG
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.extensions.groovy.model.Concept;
+import org.integratedmodelling.klab.extensions.groovy.model.Observation;
 
 import groovy.lang.Binding;
 import groovy.lang.MissingPropertyException;
@@ -132,11 +134,10 @@ public class GroovyExpression extends Expression {
 
 			try {
 				if (script.get() == null) {
-//					System.out.println("Creating script for " + code);
 					script.set(shell.createFromClass(sclass, new Binding()));
 				}
 				setBindings(script.get().getBinding(), context, parameters);
-				return script.get().run();
+				return unwrap(script.get().run());
 
 			} catch (MissingPropertyException e) {
 				String property = e.getProperty();
@@ -154,6 +155,15 @@ public class GroovyExpression extends Expression {
 			return Extensions.INSTANCE.callFunction(functionCall, context);
 		}
 		return null;
+	}
+
+	private static Object unwrap(Object value) {
+		if (value instanceof Concept) {
+			return ((Concept)value).getConcept();
+		} else if (value instanceof Observation) {
+			return ((Observation)value).getObs();
+		}
+		return value;
 	}
 
 	private Binding setBindings(Binding binding, IComputationContext context, IParameters<String> parameters) {
