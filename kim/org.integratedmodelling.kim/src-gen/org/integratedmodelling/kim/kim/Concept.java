@@ -36,6 +36,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isRatio <em>Ratio</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isValue <em>Value</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isOccurrence <em>Occurrence</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Concept#getAuthorityId <em>Authority Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#getDeclaration <em>Declaration</em>}</li>
  * </ul>
  *
@@ -590,6 +591,32 @@ public interface Concept extends EObject
    * @generated
    */
   void setOccurrence(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Authority Id</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Authority Id</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Authority Id</em>' attribute.
+   * @see #setAuthorityId(String)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConcept_AuthorityId()
+   * @model
+   * @generated
+   */
+  String getAuthorityId();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Concept#getAuthorityId <em>Authority Id</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Authority Id</em>' attribute.
+   * @see #getAuthorityId()
+   * @generated
+   */
+  void setAuthorityId(String value);
 
   /**
    * Returns the value of the '<em><b>Declaration</b></em>' containment reference.

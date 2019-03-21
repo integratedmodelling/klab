@@ -1127,12 +1127,13 @@ class KimValidator extends AbstractKimValidator {
 						} else {
 							macro.setField(Field.CAUSED, declaration.caused)
 						}
-					} else {
-//					if (!flags.contains(Type.COUNTABLE)) {
-//						error("The context type (within) must be a subject, event or relationship",
-//							declaration.context, null, KimPackage.CONCEPT_DECLARATION__CONTEXT)
-//					}
 					}
+				/* else {
+				 * //					if (!flags.contains(Type.COUNTABLE)) {
+				 * //						error("The context type (within) must be a subject, event or relationship",
+				 * //							declaration.context, null, KimPackage.CONCEPT_DECLARATION__CONTEXT)
+				 * //					}
+				 } */
 				}
 				copyInheritableFlags(flags, type);
 			}
@@ -1489,14 +1490,6 @@ class KimValidator extends AbstractKimValidator {
 
 				}
 
-//	@Check
-//	def validateAnnotation(Annotation ann) {
-//		val namespace = Kim.INSTANCE.getNamespace(ann, true)
-//		val annot = new KimAnnotation(ann, namespace)
-//		for (notification : annot.validateUsage(null as IKimStatement)) {
-//			notify(notification, ann, KimPackage.Literals.ANNOTATION__NAME, 0)
-//		}
-//	}
 				def KimConceptStatement validateConceptBody(ConceptStatementBody concept, KimNamespace namespace,
 					KimConceptStatement parent, EnumSet<Type> type) {
 
@@ -1506,7 +1499,8 @@ class KimValidator extends AbstractKimValidator {
 					var isAlias = concept.alias
 					var List<ParentConcept> declaredParents = Lists.newArrayList();
 					var template = false
-
+					ret.alias = isAlias
+					
 					var ai = 0
 					for (annotation : concept.annotations) {
 						val ann = new KimAnnotation(annotation, namespace, ret)

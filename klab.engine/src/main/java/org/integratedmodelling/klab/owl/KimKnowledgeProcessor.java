@@ -135,7 +135,11 @@ public enum KimKnowledgeProcessor {
 			}
 
 			if (concepts.size() == 1) {
-				namespace.addAxiom(Axiom.SubClass(concepts.get(0).getUrn(), mainId));
+				if (concept.isAlias()) {
+					namespace.getOntology().addDelegateConcept(mainId, namespace.getStatement(), (Concept)concepts.get(0));
+				} else {
+					namespace.addAxiom(Axiom.SubClass(concepts.get(0).getUrn(), mainId));
+				}
 			} else {
 				IConcept expr = null;
 				switch (parent.getConnector()) {
@@ -154,7 +158,11 @@ public enum KimKnowledgeProcessor {
 					// won't happen
 					break;
 				}
-				namespace.addAxiom(Axiom.SubClass(expr.getUrn(), mainId));
+				if (concept.isAlias()) {
+					namespace.getOntology().addDelegateConcept(mainId, namespace.getStatement(), (Concept)expr);
+				} else {
+					namespace.addAxiom(Axiom.SubClass(expr.getUrn(), mainId));
+				}
 			}
 			namespace.define();
 		}

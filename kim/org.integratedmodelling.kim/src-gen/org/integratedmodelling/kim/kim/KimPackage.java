@@ -2448,13 +2448,22 @@ public interface KimPackage extends EPackage
   int CONCEPT__OCCURRENCE = 20;
 
   /**
+   * The feature id for the '<em><b>Authority Id</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__AUTHORITY_ID = 21;
+
+  /**
    * The feature id for the '<em><b>Declaration</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONCEPT__DECLARATION = 21;
+  int CONCEPT__DECLARATION = 22;
 
   /**
    * The number of structural features of the '<em>Concept</em>' class.
@@ -2463,7 +2472,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_FEATURE_COUNT = 22;
+  int CONCEPT_FEATURE_COUNT = 23;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.UpperOntologyDefinitionImpl <em>Upper Ontology Definition</em>}' class.
@@ -6727,6 +6736,17 @@ public interface KimPackage extends EPackage
   EAttribute getConcept_Occurrence();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Concept#getAuthorityId <em>Authority Id</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Authority Id</em>'.
+   * @see org.integratedmodelling.kim.kim.Concept#getAuthorityId()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_AuthorityId();
+
+  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Concept#getDeclaration <em>Declaration</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -10472,6 +10492,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute CONCEPT__OCCURRENCE = eINSTANCE.getConcept_Occurrence();
+
+    /**
+     * The meta object literal for the '<em><b>Authority Id</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__AUTHORITY_ID = eINSTANCE.getConcept_AuthorityId();
 
     /**
      * The meta object literal for the '<em><b>Declaration</b></em>' containment reference feature.

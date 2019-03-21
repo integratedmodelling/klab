@@ -1399,7 +1399,6 @@ public class KimValidator extends AbstractKimValidator {
             } else {
               macro.setField(IKimMacro.Field.CAUSED, declaration.getCaused());
             }
-          } else {
           }
         }
       }
@@ -1901,6 +1900,7 @@ public class KimValidator extends AbstractKimValidator {
     boolean isAlias = concept.isAlias();
     java.util.List<KimConceptStatement.ParentConcept> declaredParents = Lists.<KimConceptStatement.ParentConcept>newArrayList();
     boolean template = false;
+    ret.setAlias(isAlias);
     int ai = 0;
     EList<Annotation> _annotations = concept.getAnnotations();
     for (final Annotation annotation : _annotations) {

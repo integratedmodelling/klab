@@ -47,6 +47,7 @@ import org.integratedmodelling.kim.kim.KimPackage;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isRatio <em>Ratio</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isValue <em>Value</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isOccurrence <em>Occurrence</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#getAuthorityId <em>Authority Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#getDeclaration <em>Declaration</em>}</li>
  * </ul>
  *
@@ -443,6 +444,26 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
    * @ordered
    */
   protected boolean occurrence = OCCURRENCE_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getAuthorityId() <em>Authority Id</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getAuthorityId()
+   * @generated
+   * @ordered
+   */
+  protected static final String AUTHORITY_ID_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getAuthorityId() <em>Authority Id</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getAuthorityId()
+   * @generated
+   * @ordered
+   */
+  protected String authorityId = AUTHORITY_ID_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getDeclaration() <em>Declaration</em>}' containment reference.
@@ -1038,6 +1059,29 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getAuthorityId()
+  {
+    return authorityId;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setAuthorityId(String newAuthorityId)
+  {
+    String oldAuthorityId = authorityId;
+    authorityId = newAuthorityId;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT__AUTHORITY_ID, oldAuthorityId, authorityId));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public ConceptDeclaration getDeclaration()
   {
     return declaration;
@@ -1155,6 +1199,8 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return isValue();
       case KimPackage.CONCEPT__OCCURRENCE:
         return isOccurrence();
+      case KimPackage.CONCEPT__AUTHORITY_ID:
+        return getAuthorityId();
       case KimPackage.CONCEPT__DECLARATION:
         return getDeclaration();
     }
@@ -1233,6 +1279,9 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return;
       case KimPackage.CONCEPT__OCCURRENCE:
         setOccurrence((Boolean)newValue);
+        return;
+      case KimPackage.CONCEPT__AUTHORITY_ID:
+        setAuthorityId((String)newValue);
         return;
       case KimPackage.CONCEPT__DECLARATION:
         setDeclaration((ConceptDeclaration)newValue);
@@ -1314,6 +1363,9 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
       case KimPackage.CONCEPT__OCCURRENCE:
         setOccurrence(OCCURRENCE_EDEFAULT);
         return;
+      case KimPackage.CONCEPT__AUTHORITY_ID:
+        setAuthorityId(AUTHORITY_ID_EDEFAULT);
+        return;
       case KimPackage.CONCEPT__DECLARATION:
         setDeclaration((ConceptDeclaration)null);
         return;
@@ -1373,6 +1425,8 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return value != VALUE_EDEFAULT;
       case KimPackage.CONCEPT__OCCURRENCE:
         return occurrence != OCCURRENCE_EDEFAULT;
+      case KimPackage.CONCEPT__AUTHORITY_ID:
+        return AUTHORITY_ID_EDEFAULT == null ? authorityId != null : !AUTHORITY_ID_EDEFAULT.equals(authorityId);
       case KimPackage.CONCEPT__DECLARATION:
         return declaration != null;
     }
@@ -1426,6 +1480,8 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
     result.append(value);
     result.append(", occurrence: ");
     result.append(occurrence);
+    result.append(", authorityId: ");
+    result.append(authorityId);
     result.append(')');
     return result.toString();
   }

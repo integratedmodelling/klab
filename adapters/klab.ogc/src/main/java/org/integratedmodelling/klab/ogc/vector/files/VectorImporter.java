@@ -139,7 +139,7 @@ public class VectorImporter extends AbstractFilesetImporter {
                                 + s + " to " + attr);
                     }
                     metadataId.add(new Pair<>(s, attr));
-                    builder.add(attr, first.getMetadata().get(s).getClass());
+                    builder.add(attr, Utils.getPODClass(first.getMetadata().get(s)));
                 }
             }
 

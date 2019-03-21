@@ -74,6 +74,17 @@ public class Utils {
         return value instanceof Number || value instanceof String || value instanceof Boolean;
     }
 
+    public static Class<?> getPODClass(Object value) {
+        if (value instanceof Number) {
+        	return Double.class;
+        }
+        if (value instanceof Boolean) {
+        	return Boolean.class;
+        }
+        return String.class;
+    }
+
+    
     /**
      * Return the closest POD that the value can be parsed into. For now only handle
      * int and double. May add k.IM - like maps, lists, ranges.

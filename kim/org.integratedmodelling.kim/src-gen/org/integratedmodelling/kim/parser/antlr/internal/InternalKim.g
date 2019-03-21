@@ -9247,16 +9247,63 @@ ruleConcept returns [EObject current=null]
 		)
 		    |
 		(
-			otherlv_59='('
+			otherlv_59='identity'
 			{
-				newLeafNode(otherlv_59, grammarAccess.getConceptAccess().getLeftParenthesisKeyword_15_0());
+				newLeafNode(otherlv_59, grammarAccess.getConceptAccess().getIdentityKeyword_15_0());
+			}
+			(
+				(
+					lv_authorityId_60_0=RULE_STRING
+					{
+						newLeafNode(lv_authorityId_60_0, grammarAccess.getConceptAccess().getAuthorityIdSTRINGTerminalRuleCall_15_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getConceptRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"authorityId",
+							lv_authorityId_60_0,
+							"org.eclipse.xtext.common.Terminals.STRING");
+					}
+				)
+			)
+			otherlv_61='by'
+			{
+				newLeafNode(otherlv_61, grammarAccess.getConceptAccess().getByKeyword_15_2());
+			}
+			(
+				(
+					lv_authority_62_0=RULE_UPPERCASE_PATH
+					{
+						newLeafNode(lv_authority_62_0, grammarAccess.getConceptAccess().getAuthorityUPPERCASE_PATHTerminalRuleCall_15_3_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getConceptRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"authority",
+							lv_authority_62_0,
+							"org.integratedmodelling.kim.Kim.UPPERCASE_PATH");
+					}
+				)
+			)
+		)
+		    |
+		(
+			otherlv_63='('
+			{
+				newLeafNode(otherlv_63, grammarAccess.getConceptAccess().getLeftParenthesisKeyword_16_0());
 			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getConceptAccess().getDeclarationExpressionParserRuleCall_15_1_0());
+						newCompositeNode(grammarAccess.getConceptAccess().getDeclarationExpressionParserRuleCall_16_1_0());
 					}
-					lv_declaration_60_0=ruleExpression
+					lv_declaration_64_0=ruleExpression
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getConceptRule());
@@ -9264,15 +9311,15 @@ ruleConcept returns [EObject current=null]
 						set(
 							$current,
 							"declaration",
-							lv_declaration_60_0,
+							lv_declaration_64_0,
 							"org.integratedmodelling.kim.Kim.Expression");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
-			otherlv_61=')'
+			otherlv_65=')'
 			{
-				newLeafNode(otherlv_61, grammarAccess.getConceptAccess().getRightParenthesisKeyword_15_2());
+				newLeafNode(otherlv_65, grammarAccess.getConceptAccess().getRightParenthesisKeyword_16_2());
 			}
 		)
 	)

@@ -27,9 +27,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Begin supporting recontextualization in expressions through @-modified identifiers 
-  (e.g. elevation@nw)
+- Begin supporting recontextualization of distributed states in expressions through @-modified identifiers 
+  (e.g. elevation@nw).
 - Add CLI 'kbox' command namespace for kbox inquiries.
+- Support 'equals' instead of 'is' in concept declarations to declare aliases instead
+  of new concepts. All implications still to be tested.
+- Begin reintegrating authorities, starting from GBIF.
+- Add syntax to refer to a pure authority identity as a concept (identity ID by AUTH.ID).
 ### Fixed
 - Better handling of Groovy expressions using and returning concepts.
 - Fixed some NPE situations when parsing models with unknown semantics.

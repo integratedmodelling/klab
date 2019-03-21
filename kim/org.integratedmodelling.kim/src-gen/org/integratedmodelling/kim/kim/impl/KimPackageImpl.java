@@ -2867,9 +2867,19 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getConcept_AuthorityId()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(21);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EReference getConcept_Declaration()
   {
-    return (EReference)conceptEClass.getEStructuralFeatures().get(21);
+    return (EReference)conceptEClass.getEStructuralFeatures().get(22);
   }
 
   /**
@@ -4814,6 +4824,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEAttribute(conceptEClass, CONCEPT__RATIO);
     createEAttribute(conceptEClass, CONCEPT__VALUE);
     createEAttribute(conceptEClass, CONCEPT__OCCURRENCE);
+    createEAttribute(conceptEClass, CONCEPT__AUTHORITY_ID);
     createEReference(conceptEClass, CONCEPT__DECLARATION);
 
     upperOntologyDefinitionEClass = createEClass(UPPER_ONTOLOGY_DEFINITION);
@@ -5302,6 +5313,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEAttribute(getConcept_Ratio(), ecorePackage.getEBoolean(), "ratio", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConcept_Value(), ecorePackage.getEBoolean(), "value", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConcept_Occurrence(), ecorePackage.getEBoolean(), "occurrence", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_AuthorityId(), ecorePackage.getEString(), "authorityId", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConcept_Declaration(), this.getConceptDeclaration(), null, "declaration", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(upperOntologyDefinitionEClass, UpperOntologyDefinition.class, "UpperOntologyDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

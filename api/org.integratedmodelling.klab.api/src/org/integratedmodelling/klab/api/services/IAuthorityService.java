@@ -15,6 +15,10 @@
  */
 package org.integratedmodelling.klab.api.services;
 
+import java.util.Collection;
+
+import org.integratedmodelling.klab.api.knowledge.IAuthority;
+
 /**
  * The Interface IAuthorityService.
  *
@@ -23,4 +27,8 @@ package org.integratedmodelling.klab.api.services;
  */
 public interface IAuthorityService {
 
+	Collection<IAuthority> getAuthorities();
+	
+	IAuthority getAuthority(String authorityId);
+	
 }

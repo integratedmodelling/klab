@@ -427,6 +427,7 @@ Concept:
 	ratio?='ratio' 'of' concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration |
 	value?='value' 'of' concept=SimpleConceptDeclaration (=> 'over' other=SimpleConceptDeclaration)? |
 	occurrence?='occurrence' 'of' concept=SimpleConceptDeclaration |
+	'identity' authorityId=STRING 'by' authority=UPPERCASE_PATH |
 	'(' declaration=Expression ')';
 
 Expression returns ConceptDeclaration:

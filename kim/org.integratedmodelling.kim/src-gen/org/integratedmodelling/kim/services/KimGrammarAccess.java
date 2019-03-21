@@ -4977,10 +4977,17 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cConceptAssignment_14_2 = (Assignment)cGroup_14.eContents().get(2);
 		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_14_2_0 = (RuleCall)cConceptAssignment_14_2.eContents().get(0);
 		private final Group cGroup_15 = (Group)cAlternatives.eContents().get(15);
-		private final Keyword cLeftParenthesisKeyword_15_0 = (Keyword)cGroup_15.eContents().get(0);
-		private final Assignment cDeclarationAssignment_15_1 = (Assignment)cGroup_15.eContents().get(1);
-		private final RuleCall cDeclarationExpressionParserRuleCall_15_1_0 = (RuleCall)cDeclarationAssignment_15_1.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_15_2 = (Keyword)cGroup_15.eContents().get(2);
+		private final Keyword cIdentityKeyword_15_0 = (Keyword)cGroup_15.eContents().get(0);
+		private final Assignment cAuthorityIdAssignment_15_1 = (Assignment)cGroup_15.eContents().get(1);
+		private final RuleCall cAuthorityIdSTRINGTerminalRuleCall_15_1_0 = (RuleCall)cAuthorityIdAssignment_15_1.eContents().get(0);
+		private final Keyword cByKeyword_15_2 = (Keyword)cGroup_15.eContents().get(2);
+		private final Assignment cAuthorityAssignment_15_3 = (Assignment)cGroup_15.eContents().get(3);
+		private final RuleCall cAuthorityUPPERCASE_PATHTerminalRuleCall_15_3_0 = (RuleCall)cAuthorityAssignment_15_3.eContents().get(0);
+		private final Group cGroup_16 = (Group)cAlternatives.eContents().get(16);
+		private final Keyword cLeftParenthesisKeyword_16_0 = (Keyword)cGroup_16.eContents().get(0);
+		private final Assignment cDeclarationAssignment_16_1 = (Assignment)cGroup_16.eContents().get(1);
+		private final RuleCall cDeclarationExpressionParserRuleCall_16_1_0 = (RuleCall)cDeclarationAssignment_16_1.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_16_2 = (Keyword)cGroup_16.eContents().get(2);
 		
 		//Concept:
 		//	negated?=('not' | 'no')? name=ConceptReference ('identified' 'as' (stringIdentifier=(ID | STRING) |
@@ -4995,6 +5002,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	ratio?='ratio' 'of' concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration | value?='value' 'of'
 		//	concept=SimpleConceptDeclaration (=> 'over' other=SimpleConceptDeclaration)? | occurrence?='occurrence' 'of'
 		//	concept=SimpleConceptDeclaration |
+		//	'identity' authorityId=STRING 'by' authority=UPPERCASE_PATH |
 		//	'(' declaration=Expression ')';
 		@Override public ParserRule getRule() { return rule; }
 		
@@ -5009,7 +5017,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//percentage?='percentage' 'of' concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)? |
 		//ratio?='ratio' 'of' concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration | value?='value' 'of'
 		//concept=SimpleConceptDeclaration (=> 'over' other=SimpleConceptDeclaration)? | occurrence?='occurrence' 'of'
-		//concept=SimpleConceptDeclaration | '(' declaration=Expression ')'
+		//concept=SimpleConceptDeclaration | 'identity' authorityId=STRING 'by' authority=UPPERCASE_PATH | '('
+		//declaration=Expression ')'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//negated?=('not' | 'no')? name=ConceptReference ('identified' 'as' (stringIdentifier=(ID | STRING) | intIdentifier=INT)
@@ -5384,20 +5393,41 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//SimpleConceptDeclaration
 		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_14_2_0() { return cConceptSimpleConceptDeclarationParserRuleCall_14_2_0; }
 		
-		//'(' declaration=Expression ')'
+		//'identity' authorityId=STRING 'by' authority=UPPERCASE_PATH
 		public Group getGroup_15() { return cGroup_15; }
 		
+		//'identity'
+		public Keyword getIdentityKeyword_15_0() { return cIdentityKeyword_15_0; }
+		
+		//authorityId=STRING
+		public Assignment getAuthorityIdAssignment_15_1() { return cAuthorityIdAssignment_15_1; }
+		
+		//STRING
+		public RuleCall getAuthorityIdSTRINGTerminalRuleCall_15_1_0() { return cAuthorityIdSTRINGTerminalRuleCall_15_1_0; }
+		
+		//'by'
+		public Keyword getByKeyword_15_2() { return cByKeyword_15_2; }
+		
+		//authority=UPPERCASE_PATH
+		public Assignment getAuthorityAssignment_15_3() { return cAuthorityAssignment_15_3; }
+		
+		//UPPERCASE_PATH
+		public RuleCall getAuthorityUPPERCASE_PATHTerminalRuleCall_15_3_0() { return cAuthorityUPPERCASE_PATHTerminalRuleCall_15_3_0; }
+		
+		//'(' declaration=Expression ')'
+		public Group getGroup_16() { return cGroup_16; }
+		
 		//'('
-		public Keyword getLeftParenthesisKeyword_15_0() { return cLeftParenthesisKeyword_15_0; }
+		public Keyword getLeftParenthesisKeyword_16_0() { return cLeftParenthesisKeyword_16_0; }
 		
 		//declaration=Expression
-		public Assignment getDeclarationAssignment_15_1() { return cDeclarationAssignment_15_1; }
+		public Assignment getDeclarationAssignment_16_1() { return cDeclarationAssignment_16_1; }
 		
 		//Expression
-		public RuleCall getDeclarationExpressionParserRuleCall_15_1_0() { return cDeclarationExpressionParserRuleCall_15_1_0; }
+		public RuleCall getDeclarationExpressionParserRuleCall_16_1_0() { return cDeclarationExpressionParserRuleCall_16_1_0; }
 		
 		//')'
-		public Keyword getRightParenthesisKeyword_15_2() { return cRightParenthesisKeyword_15_2; }
+		public Keyword getRightParenthesisKeyword_16_2() { return cRightParenthesisKeyword_16_2; }
 	}
 	public class ExpressionElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.Expression");
@@ -10624,6 +10654,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	ratio?='ratio' 'of' concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration | value?='value' 'of'
 	//	concept=SimpleConceptDeclaration (=> 'over' other=SimpleConceptDeclaration)? | occurrence?='occurrence' 'of'
 	//	concept=SimpleConceptDeclaration |
+	//	'identity' authorityId=STRING 'by' authority=UPPERCASE_PATH |
 	//	'(' declaration=Expression ')';
 	public ConceptElements getConceptAccess() {
 		return pConcept;
