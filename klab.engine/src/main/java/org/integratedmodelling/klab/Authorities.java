@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.services.IAuthorityService;
+import org.integratedmodelling.klab.authorities.GBIFAuthority;
 
 public enum Authorities implements IAuthorityService {
 	
@@ -16,6 +17,7 @@ public enum Authorities implements IAuthorityService {
 	
 	private Authorities() {
 		Services.INSTANCE.registerService(this, IAuthorityService.class);
+		GBIFAuthority.register();
 	}
 
 	@Override
@@ -26,5 +28,9 @@ public enum Authorities implements IAuthorityService {
 	@Override
 	public IAuthority getAuthority(String authorityId) {
 		return authorities.get(authorityId);
+	}
+
+	public void registerAuthority(IAuthority authority) {
+		authorities.put(authority.getName(), authority);
 	}
 }

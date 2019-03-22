@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab.utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -90,6 +91,15 @@ public class JsonUtils {
 		});
 	}
 
+	@SuppressWarnings("unchecked")
+	public static <T> T parseObject(String text, Class<T> cls) {
+		try {
+			return (T)defaultMapper.readerFor(cls).readValue(text);
+		} catch (IOException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
 	/**
 	 * Convert node to list of type T.
 	 *
@@ -150,6 +160,14 @@ public class JsonUtils {
 			defaultMapper.writeValue(outFile, object);
 		} catch (Exception e) {
 			throw new KlabIOException(e);
+		}
+	}
+	
+	public static String asString(Object object) {
+		try {
+			return defaultMapper.writeValueAsString(object);
+		} catch (JsonProcessingException e) {
+			throw new IllegalArgumentException("serialization failed: " + e.getMessage());
 		}
 	}
 

@@ -1,41 +1,28 @@
 package org.integratedmodelling.klab.authorities;
 
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentNavigableMap;
 
+import org.integratedmodelling.klab.Authorities;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.data.Metadata;
+import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.utils.Escape;
+import org.integratedmodelling.klab.utils.JsonUtils;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
+import org.mapdb.Serializer;
 import org.springframework.web.client.RestTemplate;
 
-//
-//
-//import java.net.URI;
-//import java.net.URISyntaxException;
-//import java.util.HashMap;
-//import java.util.Map;
-//
-//import org.integratedmodelling.api.metadata.ISearchResult;
-//import org.integratedmodelling.collections.Path;
-//import org.integratedmodelling.common.beans.authority.Authority;
-//import org.integratedmodelling.common.beans.authority.AuthorityConcept;
-//import org.integratedmodelling.common.beans.authority.AuthorityQueryResponse;
-//import org.integratedmodelling.common.data.lists.Escape;
-//import org.integratedmodelling.common.vocabulary.NS;
-//import org.integratedmodelling.common.vocabulary.authority.BaseAuthority;
-//
-//import us.monoid.json.JSONArray;
-//import us.monoid.json.JSONException;
-//import us.monoid.json.JSONObject;
-//import us.monoid.web.JSONResource;
-//import us.monoid.web.Resty;
-//
 public class GBIFAuthority implements IAuthority {
 
 	static final int pageSize = 100;
@@ -50,9 +37,10 @@ public class GBIFAuthority implements IAuthority {
 
 	protected String rank;
 	private RestTemplate client = new RestTemplate();
-	Map<String, IConcept> cache = new HashMap<>();
-
 	private int rankIndex = -1;
+
+	DB db = null;
+	ConcurrentNavigableMap<String, String> cache = null;
 
 	static protected List<String> ranks = null;
 
@@ -67,6 +55,16 @@ public class GBIFAuthority implements IAuthority {
 		ranks.add(SPECIES_RANK);
 	}
 
+	static public void register() {
+		for (String rank : ranks) {
+			Authorities.INSTANCE.registerAuthority(new GBIFAuthority(rank));
+		}
+	}
+
+	private IOntology getOntology() {
+		return OWL.INSTANCE.requireOntology("gbif_" + rank, OWL.INTERNAL_ONTOLOGY_PREFIX + "/authority/");
+	}
+
 	protected GBIFAuthority(String rank) {
 		this.rank = rank;
 		for (int i = 0; i < ranks.size(); i++) {
@@ -78,11 +76,41 @@ public class GBIFAuthority implements IAuthority {
 		if (rankIndex < 0) {
 			throw new IllegalStateException("GBIF authority initialized with invalid rank");
 		}
+		this.db = DBMaker
+				.fileDB(Configuration.INSTANCE.getDataPath("authorities") + File.separator + "gbif" + rank + ".db")
+				.make();
+		this.cache = db.treeMap("collectionName", Serializer.STRING, Serializer.STRING).createOrOpen();
 	}
 
 	@Override
 	public IConcept getIdentity(String identityId) {
+		
+		IConcept ret = getOntology().getConcept("GBIF" + identityId);
+		if (ret == null) {
+			IMetadata source = null;
+			// search cache first
+			String cached = cache.get(identityId);
+			if (cached != null) {
+				source = parseResult(JsonUtils.parseObject(cached, Map.class));
+			} else {
+				// if not in there, use network
+				source = parseResult(client.getForObject(getDescribeURL(identityId), Map.class));
+				cache.put(identityId, JsonUtils.asString(source));
+				db.commit();
+			}
+			
+			if (source != null) {
+				ret = makeIdentity(source);
+			}
+		}
+		return ret;
+	}
+
+	private IConcept makeIdentity(IMetadata source) {
 		// TODO Auto-generated method stub
+		String conceptId = "GBIF" + source.get(IMetadata.IM_KEY, String.class);
+		// TODO call getIdentity() on all the upper levels using the proper authorities and 
+		// link them as parents.
 		return null;
 	}
 
@@ -91,248 +119,51 @@ public class GBIFAuthority implements IAuthority {
 		return true;
 	}
 
+	public IMetadata parseResult(Map<?,?> o) {
+
+		if (o == null) {
+			return null;
+		}
+		
+		Metadata result = new Metadata();
+
+		String key = getString(o, "key");
+		String kingdom = getString(o, "kingdom");
+		String phylum = getString(o, "phylum");
+		String parent = getString(o, "parent");
+		String order = getString(o, "order");
+		String family = getString(o, "family");
+		String clss = getString(o, "class");
+		String kingdomKey = getString(o, "kingdomKey");
+		String classKey = getString(o, "classKey");
+		String phylumKey = getString(o, "phylumKey");
+		String parentKey = getString(o, "parentKey");
+		String orderKey = getString(o, "orderKey");
+		String familyKey = getString(o, "familyKey");
+		String scientificName = getString(o, "scientificName");
+		String canonicalName = getString(o, "canonicalName");
+
+		result.put(IMetadata.IM_KEY, key);
+		result.put(IMetadata.DC_LABEL, canonicalName);
+		result.put(IMetadata.DC_COMMENT, scientificName);
+	
+		return result;
+	}
+	
 	@Override
 	public List<IMetadata> search(String query) {
 		List<IMetadata> ret = new ArrayList<>();
 		Object[] results = client.getForObject(getSearchURL(query, 0), Object[].class);
 		for (Object o : results) {
 			if (o instanceof Map<?, ?> && ((Map<?, ?>) o).containsKey("key")) {
-				Metadata result = new Metadata();
-
-				String key = getString(o, "key");
-				String kingdom = getString(o, "kingdom");
-				String phylum = getString(o, "phylum");
-				String parent = getString(o, "parent");
-				String order = getString(o, "order");
-				String family = getString(o, "family");
-				String clss = getString(o, "class");
-				String kingdomKey = getString(o, "kingdomKey");
-				String classKey = getString(o, "classKey");
-				String phylumKey = getString(o, "phylumKey");
-				String parentKey = getString(o, "parentKey");
-				String orderKey = getString(o, "orderKey");
-				String familyKey = getString(o, "familyKey");
-				String scientificName = getString(o, "scientificName");
-				String canonicalName = getString(o, "canonicalName");
-
-				result.put(IMetadata.IM_KEY, key);
-				result.put(IMetadata.DC_LABEL, canonicalName);
-				result.put(IMetadata.DC_COMMENT, scientificName);
+				IMetadata r = parseResult((Map<?,?>)o);
+				if (r != null) {
+					ret.add(r);
+				}
 			}
 		}
 		return ret;
 	}
-	//
-	// static Map<String, String> rankKeywords = new HashMap<>();
-	//
-	// static final int pageSize = 100;
-	//
-	// static {
-	// rankKeywords.put("GBIF.SPECIES", "SPECIES");
-	// rankKeywords.put("GBIF.CLASS", "CLASS");
-	// rankKeywords.put("GBIF.PHYLUM", "PHYLUM");
-	// rankKeywords.put("GBIF.GENUS", "GENUS");
-	// rankKeywords.put("GBIF.ORDER", "ORDER");
-	// rankKeywords.put("GBIF.FAMILY", "FAMILY");
-	// rankKeywords.put("GBIF.CULTIVAR", "CULTIVAR");
-	// rankKeywords.put("GBIF.KINGDOM", "KINGDOM");
-	// }
-	//
-	// public GBIFAuthority(Authority definition) {
-	// super(definition);
-	// }
-	//
-	// @Override
-	// public ISearchResult<AuthorityConcept> search(String query, String
-	// authorityId) {
-	//
-	// AuthorityQueryResponse ret = new AuthorityQueryResponse();
-	//
-	// try {
-	// // TODO support paged services
-	// JSONResource res = new Resty().json(getSearchURL(query, authorityId, -1));
-	// JSONArray ares = res.array();
-	// for (int i = 0; i < ares.length(); i++) {
-	// JSONObject ores = (JSONObject) ares.get(i);
-	// if (ores != null) {
-	// ret.getMatches().add(parseGBIFResponse(ores, authorityId));
-	// }
-	// }
-	// } catch (Exception e) {
-	// ret.setError(e.getMessage());
-	// }
-	//
-	// // TODO support paged services
-	// ret.setMoreMatches(false);
-	// ret.setPage(-1);
-	//
-	// return ret;
-	// }
-	//
-	// public static GBIFAuthority newInstance() {
-	//
-	// Authority ret = new Authority();
-	//
-	// ret.setName("GBIF");
-	// ret.setOverallDescription("<b>Global Biodiversity Information Facility
-	// (GBIF)</b>\n\n"
-	// + "GBIF provides uniform codes for taxonomic entities such as species. This
-	// authority provides "
-	// + "access to GBIF's <b>suggest</b> service for the listed categories.\n\n"
-	// + "For more details, head over to http://gbif.org");
-	//
-	// ret.getAuthorities().add("GBIF.SPECIES");
-	// ret.getAuthorityDescriptions().add("Provides access to GBIF's species
-	// catalog");
-	// ret.getAuthorities().add("GBIF.CLASS");
-	// ret.getAuthorityDescriptions().add("Provides access to GBIF's taxonomic class
-	// catalog");
-	// ret.getAuthorities().add("GBIF.PHYLUM");
-	// ret.getAuthorityDescriptions().add("Provides access to GBIF's taxonomic
-	// phylum catalog");
-	// ret.getAuthorities().add("GBIF.GENUS");
-	// ret.getAuthorityDescriptions().add("Provides access to GBIF's taxonomic genus
-	// catalog");
-	// ret.getAuthorities().add("GBIF.ORDER");
-	// ret.getAuthorityDescriptions().add("Provides access to GBIF's taxonomic order
-	// catalog");
-	// ret.getAuthorities().add("GBIF.FAMILY");
-	// ret.getAuthorityDescriptions().add("Provides access to GBIF's taxonomic
-	// family catalog");
-	// ret.getAuthorities().add("GBIF.CULTIVAR");
-	// ret.getAuthorityDescriptions().add("Provides access to GBIF's cultivar
-	// catalog");
-	// ret.getAuthorities().add("GBIF.KINGDOM");
-	// ret.getAuthorityDescriptions().add("Provides access to GBIF's kingdom
-	// catalog");
-	//
-	// ret.setOntologyId("gbif");
-	// ret.setSearchable(true);
-	// ret.setWorldview("im");
-	// ret.setVersion("v1");
-	//
-	// /*
-	// * link to the worldview in k.IM
-	// */
-	// ret.getInitialConcepts().add(NS.CORE_IDENTITY_TRAIT + ",Species");
-	// ret.getInitialConcepts().add(NS.CORE_IDENTITY_TRAIT + ",Family");
-	// ret.getInitialConcepts().add(NS.CORE_IDENTITY_TRAIT + ",Class");
-	// ret.getInitialConcepts().add(NS.CORE_IDENTITY_TRAIT + ",Phylum");
-	// ret.getInitialConcepts().add(NS.CORE_IDENTITY_TRAIT + ",Genus");
-	// ret.getInitialConcepts().add(NS.CORE_IDENTITY_TRAIT + ",Order");
-	// ret.getInitialConcepts().add(NS.CORE_IDENTITY_TRAIT + ",Cultivar");
-	// ret.getInitialConcepts().add(NS.CORE_IDENTITY_TRAIT + ",Kingdom");
-	//
-	// /*
-	// * annotation properties for resulting concepts
-	// */
-	// ret.getInitialProperties().add("@familyKey");
-	// ret.getInitialProperties().add("@genusKey");
-	// ret.getInitialProperties().add("@orderKey");
-	// ret.getInitialProperties().add("@classKey");
-	// ret.getInitialProperties().add("@phylumKey");
-	// ret.getInitialProperties().add("@parentKey");
-	// ret.getInitialProperties().add("@kingdomKey");
-	// ret.getInitialProperties().add("@family");
-	// ret.getInitialProperties().add("@genus");
-	// ret.getInitialProperties().add("@order");
-	// ret.getInitialProperties().add("@class");
-	// ret.getInitialProperties().add("@phylum");
-	// ret.getInitialProperties().add("@parent");
-	// ret.getInitialProperties().add("@kingdom");
-	//
-	// /*
-	// * base concepts for all authorities
-	// */
-	// ret.getCoreConcepts().put("GBIF.SPECIES", "Species");
-	// ret.getCoreConcepts().put("GBIF.CLASS", "Class");
-	// ret.getCoreConcepts().put("GBIF.PHYLUM", "Phylum");
-	// ret.getCoreConcepts().put("GBIF.GENUS", "Genus");
-	// ret.getCoreConcepts().put("GBIF.ORDER", "Order");
-	// ret.getCoreConcepts().put("GBIF.FAMILY", "Family");
-	// ret.getCoreConcepts().put("GBIF.CULTIVAR", "Cultivar");
-	// ret.getCoreConcepts().put("GBIF.KINGDOM", "Kingdom");
-	//
-	// return new GBIFAuthority(ret);
-	// }
-	//
-	// @Override
-	// public AuthorityConcept getConcept(String authority, String id) {
-	//
-	// JSONResource res;
-	// try {
-	// res = new Resty().json(getDescribeURL(id));
-	// return parseGBIFResponse(res.object(), authority);
-	// } catch (Exception e) {
-	// // just return null
-	// }
-	// return null;
-	// }
-	//
-	// private AuthorityConcept parseGBIFResponse(JSONObject object, String
-	// authorityId) {
-	//
-	// AuthorityConcept ret = new AuthorityConcept();
-	//
-	// try {
-	//
-	// String key = object.getString("key");
-	// String kingdom = object.optString("kingdom");
-	// String phylum = object.optString("phylum");
-	// String parent = object.optString("parent");
-	// String order = object.optString("order");
-	// String family = object.optString("family");
-	// String clss = object.optString("class");
-	// String kingdomKey = object.optString("kingdomKey");
-	// String classKey = object.optString("classKey");
-	// String phylumKey = object.optString("phylumKey");
-	// String parentKey = object.optString("parentKey");
-	// String orderKey = object.optString("orderKey");
-	// String familyKey = object.optString("familyKey");
-	// String scientificName = object.getString("scientificName");
-	// String canonicalName = object.getString("canonicalName");
-	//
-	// /*
-	// * rank must match the authority
-	// */
-	// String rank = object.getString("rank");
-	// if (!rank.equals(Path.getLast(authorityId, '.'))) {
-	// ret.setError("authority " + authorityId + " cannot be used with identifier of
-	// rank " + rank);
-	// }
-	//
-	// String concept = getBaseIdentity(authorityId) + ",g" + key;
-	//
-	// if (phylum != null && !phylum.isEmpty()) {
-	// concept += ",phylum=" + phylum + ",phylumKey=" + phylumKey;
-	// }
-	// if (kingdom != null && !kingdom.isEmpty()) {
-	// concept += ",kingdom=" + kingdom + ",kingdomKey=" + kingdomKey;
-	// }
-	// if (order != null && !order.isEmpty()) {
-	// concept += ",order=" + order + ",orderKey=" + orderKey;
-	// }
-	// if (family != null && !family.isEmpty()) {
-	// concept += ",family=" + family + ",familyKey=" + familyKey;
-	// }
-	// if (clss != null && !clss.isEmpty()) {
-	// concept += ",class=" + clss + ",classKey=" + classKey;
-	// }
-	// if (parent != null && !parent.isEmpty()) {
-	// concept += ",parent=" + parent + ",parentKey=" + parentKey;
-	// }
-	//
-	// ret.setId("g" + key);
-	// ret.setDefinition(key);
-	// ret.setLabel(canonicalName);
-	// ret.setDescription(scientificName);
-	// ret.getConceptDefinition().add(concept);
-	//
-	// } catch (JSONException e) {
-	// return null;
-	// }
-	// return ret;
-	// }
 
 	private String getString(Object o, String string) {
 		return ((Map<?, ?>) o).containsKey(string) ? ((Map<?, ?>) o).get(string).toString() : null;

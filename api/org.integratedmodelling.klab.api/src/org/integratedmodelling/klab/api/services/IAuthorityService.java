@@ -20,7 +20,7 @@ import java.util.Collection;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
 
 /**
- * The Interface IAuthorityService.
+ * The Interface IAuthorityService. For the time being simply a catalog of installed authorities.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
