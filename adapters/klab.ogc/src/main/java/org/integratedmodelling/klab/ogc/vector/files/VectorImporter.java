@@ -176,6 +176,7 @@ public class VectorImporter extends AbstractFilesetImporter {
 
             for (IArtifact obs : observations) {
                 if (obs instanceof IDirectObservation) {
+                	
                     featureBuilder.add(((Shape) ((IDirectObservation) obs).getScale().getSpace().getShape())
                             .getJTSGeometry());
 

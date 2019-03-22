@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed some NPE situations when parsing models with unknown semantics.
 - Fixed situations where observables would not be compatible with themselves due to 
   inherency chain issues.
+- Fixes in attributes export with shapefiles.
 
 ## [0.10.0.150] -- 2019/03/11
 ### Added

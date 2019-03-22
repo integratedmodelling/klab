@@ -185,6 +185,8 @@ public interface IMetadata extends IParameters<String> {
 
 	public static String IM_KEYWORDS = "im:keywords";
 
+	public static String IM_KEY = "im:key";
+	
     public static String IM_THEMATIC_AREA = "im:thematic-area";
 
     public static String IM_GEOGRAPHIC_AREA = "im:geographic-area";

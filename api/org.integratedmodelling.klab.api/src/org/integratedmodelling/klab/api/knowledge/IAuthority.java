@@ -38,8 +38,9 @@ public interface IAuthority {
 
 	/**
 	 * Called only if {@link #isSearchable()} returns true. Implementations must set
-	 * the {@link IMetadata#DC_NAME} to the identity ID that will produce the
-	 * concept when called in {@link #getIdentity(String)}.
+	 * the {@link IMetadata#IM_KEY} to the unique identity ID that will produce the
+	 * concept when called in {@link #getIdentity(String)}. Remaining fields should be
+	 * set so as to support the user in choosing an identity.
 	 * 
 	 * @param query
 	 * @return

@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isNegated <em>Negated</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#getName <em>Name</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Concept#isAuthConcept <em>Auth Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#getStringIdentifier <em>String Identifier</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#getIntIdentifier <em>Int Identifier</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#getAuthority <em>Authority</em>}</li>
@@ -36,7 +37,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isRatio <em>Ratio</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isValue <em>Value</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isOccurrence <em>Occurrence</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.Concept#getAuthorityId <em>Authority Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#getDeclaration <em>Declaration</em>}</li>
  * </ul>
  *
@@ -97,6 +97,32 @@ public interface Concept extends EObject
    * @generated
    */
   void setName(ConceptReference value);
+
+  /**
+   * Returns the value of the '<em><b>Auth Concept</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Auth Concept</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Auth Concept</em>' attribute.
+   * @see #setAuthConcept(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConcept_AuthConcept()
+   * @model
+   * @generated
+   */
+  boolean isAuthConcept();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Concept#isAuthConcept <em>Auth Concept</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Auth Concept</em>' attribute.
+   * @see #isAuthConcept()
+   * @generated
+   */
+  void setAuthConcept(boolean value);
 
   /**
    * Returns the value of the '<em><b>String Identifier</b></em>' attribute.
@@ -591,32 +617,6 @@ public interface Concept extends EObject
    * @generated
    */
   void setOccurrence(boolean value);
-
-  /**
-   * Returns the value of the '<em><b>Authority Id</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Authority Id</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Authority Id</em>' attribute.
-   * @see #setAuthorityId(String)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getConcept_AuthorityId()
-   * @model
-   * @generated
-   */
-  String getAuthorityId();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Concept#getAuthorityId <em>Authority Id</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Authority Id</em>' attribute.
-   * @see #getAuthorityId()
-   * @generated
-   */
-  void setAuthorityId(String value);
 
   /**
    * Returns the value of the '<em><b>Declaration</b></em>' containment reference.

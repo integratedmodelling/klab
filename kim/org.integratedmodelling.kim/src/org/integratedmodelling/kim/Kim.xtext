@@ -411,7 +411,9 @@ OPERATOR_TARGET:
 ;
 
 Concept:
-	(negated?=('not'|'no'))? name=ConceptReference ('identified' 'as' (stringIdentifier=(ID | STRING) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID|UPPERCASE_PATH))? |
+	(negated?=('not'|'no'))? name=ConceptReference 
+		// if the following is there, the name becomes an alias for the authority concept
+		(authConcept?='identified' 'as' (stringIdentifier=(ID|STRING|UPPERCASE_ID|CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID|UPPERCASE_PATH))? |
 	// unary operators
 	presence?='presence' 'of' concept=SimpleConceptDeclaration |
 	count?='count' 'of' concept=SimpleConceptDeclaration |
@@ -427,7 +429,8 @@ Concept:
 	ratio?='ratio' 'of' concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration |
 	value?='value' 'of' concept=SimpleConceptDeclaration (=> 'over' other=SimpleConceptDeclaration)? |
 	occurrence?='occurrence' 'of' concept=SimpleConceptDeclaration |
-	'identity' authorityId=STRING 'by' authority=UPPERCASE_PATH |
+	// this form specifies an authority concept with no alias (the authority may provide a default label)
+	authConcept?='identity' (stringIdentifier=(ID|STRING|UPPERCASE_ID|CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID|UPPERCASE_PATH) |
 	'(' declaration=Expression ')';
 
 Expression returns ConceptDeclaration:
