@@ -59,7 +59,7 @@ abstract class ActionBase extends Script {
 			NullObject.metaClass.div = { Object n -> Double.NaN }
 			NullObject.metaClass.plus = { Object n -> Double.NaN }
 			NullObject.metaClass.minus = { Object n -> Double.NaN }
-			
+
 			// allow 'is' operator to return on categories with nodata
 			NullObject.metaClass.isa   = { Object n -> false }
 

@@ -1203,6 +1203,10 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (isTrivial()) {
 			return main;
 		}
+		
+		if (this.ontology == null) {
+		    this.ontology = main.getOntology();
+		}
 
 		/*
 		 * retrieve the ID for the declaration; if present, just return the

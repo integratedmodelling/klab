@@ -52,6 +52,13 @@ void reload
 	class org.integratedmodelling.klab.clitool.console.commands.reason.Reload
 }
 
+void 'export'
+	"Export one or more namespaces."
+{
+	class org.integratedmodelling.klab.clitool.console.commands.reason.Export
+}
+
+
 void info
 	"Print information about a concept."
 {
