@@ -20,9 +20,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.clitool.api.ICommand;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Concept;
-import org.integratedmodelling.klab.owl.Ontology;
 import org.integratedmodelling.klab.utils.StringUtils;
-import org.semanticweb.owlapi.model.OWLOntology;
 
 public class ShowInfo implements ICommand {
 
@@ -62,7 +60,7 @@ public class ShowInfo implements ICommand {
     private String describe(IOntology ontology) {
 
         String ret = "";
-        ret += "Imports:\n" + printImports(((Ontology) ontology).getOWLOntology(), 3, new HashSet<>());
+        ret += "Imports:\n" + printImports(ontology, 3, new HashSet<>());
         ret += "Concepts:\n";
         for (IConcept c : ontology.getConcepts()) {
             ret += "   " + c + " [" + c.getDefinition() + "]" + "\n";
@@ -70,12 +68,12 @@ public class ShowInfo implements ICommand {
         return ret;
     }
 
-    private String printImports(OWLOntology owlOntology, int i, Set<OWLOntology> done) {
+    private String printImports(IOntology owlOntology, int i, Set<IOntology> done) {
         String ret = "";
         String spaces = StringUtils.spaces(i);
-        for (OWLOntology o : owlOntology.getImports()) {
+        for (IOntology o : owlOntology.getImports(false)) {
             boolean added = done.add(o);
-            ret += spaces + o.getOntologyID().getOntologyIRI() + "\n"
+            ret += spaces + o + "\n"
                     + (added ? printImports(o, i + 3, done) : "");
         }
         return ret;

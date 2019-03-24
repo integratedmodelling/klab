@@ -85,11 +85,13 @@ public enum KimKnowledgeProcessor {
 				ns.addAxiom(Axiom.AnnotationAssertion(ret.getName(), NS.BASE_DECLARATION, "true"));
 				createProperties(ret, ns);
 				ns.define();
+
+				if (ret.is(Type.CONFIGURATION)) {
+	                Observables.INSTANCE.registerConfiguration(ret);
+	            }
+				
 			}
 
-			if (ret.is(Type.CONFIGURATION)) {
-			    Observables.INSTANCE.registerConfiguration(ret);
-			}
 			
 			return ret;
 
