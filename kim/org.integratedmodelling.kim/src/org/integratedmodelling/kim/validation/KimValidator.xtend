@@ -120,6 +120,7 @@ class KimValidator extends AbstractKimValidator {
 					ns.errors = true
 				}
 				ns.addImport(import.name)
+				// TODO verify circular dependencies and that import is within same workspace.
 				if (import.imports !== null) {
 					var importedVs = Kim.INSTANCE.parseList(import.imports, ns)
 					var j = 0
@@ -1286,6 +1287,8 @@ class KimValidator extends AbstractKimValidator {
 						"UNDEFINED"
 					else
 						Kim.getNamespaceId(namespace)) + ":" + concept.name.name
+				} else {
+					// TODO check imports within namespace
 				}
 
 				// extract concept

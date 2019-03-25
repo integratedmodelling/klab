@@ -20,6 +20,7 @@ import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.kim.model.Kim.UriResolver;
+import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Utils;
 
@@ -36,7 +37,8 @@ public class KimWorkspace implements IKimWorkspace {
     // projects are indexed by name and URI prefix
     private Map<String, IKimProject> allProjects = new HashMap<>();
     private Map<String, IKimProject> projectsByURI = new HashMap<>();
-
+    // preloaded namespace IDs from file structure
+    private Set<String> namespaceIds = new HashSet<>();
     private static Map<String, KimWorkspace> workspacesByURI = new HashMap<>();
 
     public String getName() {
@@ -126,9 +128,30 @@ public class KimWorkspace implements IKimWorkspace {
         }
         this.overridingProjects = overridingProjects;
         workspacesByURI.put(this.url.toString(), this);
+        
+        // preload all namespace IDs so that we can check that imports are within workspace when
+        // loading namespaces.
+        for (File sub : root.listFiles()) {
+        	if (sub.isDirectory() && new File(sub + File.separator + "META-INF" + File.separator + "klab.properties").exists()) {
+                loadNamespaceIds(new File(sub + File.separator + IKimProject.SOURCE_FOLDER), "");
+        	}
+        }
     }
 
-    private URL normalize(URL url2) {
+    private void loadNamespaceIds(File file, String prefix) {
+    	if (!file.exists()) {
+    		return;
+    	}
+    	if (file.isDirectory()) {
+    		for (File sub : file.listFiles()) {
+    			loadNamespaceIds(sub, prefix + (prefix.isEmpty() ? "" : ".") + MiscUtilities.getFileBaseName(sub));
+    		}
+    	} else if (file.isFile() && file.toString().endsWith(".kim")) {
+    		namespaceIds.add(prefix + (prefix.isEmpty() ? "" : ".") + MiscUtilities.getFileBaseName(file));
+    	}
+	}
+
+	private URL normalize(URL url2) {
         String us = url2.toString();
         if (us.endsWith("/")) {
             us = us.substring(0, us.length() - 1);
@@ -323,6 +346,16 @@ public class KimWorkspace implements IKimWorkspace {
     public void registerProject(KimProject project, URL projectUrl) {
         projectsByURI.put(projectUrl.toString(), project);
         allProjects.put(projectUrl.getPath(), project);
+    }
+    
+    /**
+     * Return all the pre-loaded namespace IDs based on the presence of the corresponding files
+     * in the project space.
+     * 
+     * @return
+     */
+    public Set<String> getNamespaceIds() {
+    	return namespaceIds;
     }
 
 }
