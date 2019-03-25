@@ -59,6 +59,7 @@ import org.integratedmodelling.kim.model.KimProject
 import org.integratedmodelling.kim.model.KimServiceCall
 import org.integratedmodelling.kim.model.KimSymbolDefinition
 import org.integratedmodelling.kim.model.KimTable
+import org.integratedmodelling.kim.model.KimWorkspace
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode
 import org.integratedmodelling.klab.utils.CamelCase
 import org.integratedmodelling.klab.utils.Pair
@@ -120,6 +121,11 @@ class KimValidator extends AbstractKimValidator {
 					ns.errors = true
 				}
 				ns.addImport(import.name)
+				if (!(ns.project.workspace as KimWorkspace).namespaceIds.contains(import.name)) {
+					error("Imported namespace " + import.name + " does not belong to the same workspace", namespace,
+						KimPackage.Literals.NAMESPACE__IMPORTED, i, BAD_NAMESPACE_ID)
+					ns.errors = true
+				}
 				// TODO verify circular dependencies and that import is within same workspace.
 				if (import.imports !== null) {
 					var importedVs = Kim.INSTANCE.parseList(import.imports, ns)

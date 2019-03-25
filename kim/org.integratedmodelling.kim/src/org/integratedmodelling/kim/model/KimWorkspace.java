@@ -38,7 +38,7 @@ public class KimWorkspace implements IKimWorkspace {
     private Map<String, IKimProject> allProjects = new HashMap<>();
     private Map<String, IKimProject> projectsByURI = new HashMap<>();
     // preloaded namespace IDs from file structure
-    private Set<String> namespaceIds = new HashSet<>();
+    private Set<String> namespaceIds = null;
     private static Map<String, KimWorkspace> workspacesByURI = new HashMap<>();
 
     public String getName() {
@@ -128,14 +128,6 @@ public class KimWorkspace implements IKimWorkspace {
         }
         this.overridingProjects = overridingProjects;
         workspacesByURI.put(this.url.toString(), this);
-        
-        // preload all namespace IDs so that we can check that imports are within workspace when
-        // loading namespaces.
-        for (File sub : root.listFiles()) {
-        	if (sub.isDirectory() && new File(sub + File.separator + "META-INF" + File.separator + "klab.properties").exists()) {
-                loadNamespaceIds(new File(sub + File.separator + IKimProject.SOURCE_FOLDER), "");
-        	}
-        }
     }
 
     private void loadNamespaceIds(File file, String prefix) {
@@ -355,6 +347,16 @@ public class KimWorkspace implements IKimWorkspace {
      * @return
      */
     public Set<String> getNamespaceIds() {
+        if (namespaceIds == null) {
+            namespaceIds = new HashSet<>();
+            // preload all namespace IDs so that we can check that imports are within workspace when
+            // loading namespaces.
+            for (File sub : getRoot().listFiles()) {
+                if (sub.isDirectory() && new File(sub + File.separator + "META-INF" + File.separator + "klab.properties").exists()) {
+                    loadNamespaceIds(new File(sub + File.separator + IKimProject.SOURCE_FOLDER), "");
+                }
+            }
+        }
     	return namespaceIds;
     }
 

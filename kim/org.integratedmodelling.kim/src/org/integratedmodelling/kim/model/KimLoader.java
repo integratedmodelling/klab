@@ -31,6 +31,7 @@ import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.model.Kim.Notifier;
+import org.integratedmodelling.kim.utils.DependencyGraph;
 import org.integratedmodelling.kim.utils.ResourceSorter;
 import org.integratedmodelling.kim.utils.WorkspaceUtils;
 import org.integratedmodelling.kim.utils.WorkspaceUtils.NamespaceLocation;
@@ -573,9 +574,9 @@ public class KimLoader implements IKimLoader {
      * Build a new dependency graph for display purposes.
      * @return
      */
-	public Graph<String, DefaultEdge> getDependencyGraph() {
+	public DependencyGraph getDependencyGraph() {
 		
-        DefaultDirectedGraph<String, DefaultEdge> ret = new DefaultDirectedGraph<>(DefaultEdge.class);
+	    DependencyGraph ret = new DependencyGraph();
 
         for (IKimNamespace namespace : getNamespaces()) {
         	
@@ -605,38 +606,4 @@ public class KimLoader implements IKimLoader {
         return ret;
 	}
 	
-	/**
-	 * Check if the asserted import graph has any circular dependencies.
-	 * 
-	 * @return
-	 */
-	public boolean detectCircularDependencies() {
-		CycleDetector<String, DefaultEdge> cycleDetector = new CycleDetector<String, DefaultEdge>(getDependencyGraph());
-		if (cycleDetector.detectCycles()) {
-			return true;
-		}
-		return false;
-	}
-	
-	/**
-	 * Check if the asserted import graph has any circular dependency involving any of the passed namespace.
-	 * 
-	 * @param namespace
-	 */
-	public boolean detectCircularDependencies(String ...namespaces) {
-		Set<String> nss = new HashSet<>();
-		for (String n : namespaces) {
-			nss.add(n);
-		}
-		CycleDetector<String, DefaultEdge> cycleDetector = new CycleDetector<String, DefaultEdge>(getDependencyGraph());
-		if (cycleDetector.detectCycles()) {
-			for (String ns : cycleDetector.findCycles()) {
-				if (nss.contains(ns)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
 }

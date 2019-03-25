@@ -31,6 +31,7 @@ import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimTable;
+import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.kim.ActionSpecification;
 import org.integratedmodelling.kim.kim.Annotation;
@@ -84,6 +85,7 @@ import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.kim.model.KimStatement;
 import org.integratedmodelling.kim.model.KimSymbolDefinition;
 import org.integratedmodelling.kim.model.KimTable;
+import org.integratedmodelling.kim.model.KimWorkspace;
 import org.integratedmodelling.kim.validation.AbstractKimValidator;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -157,6 +159,17 @@ public class KimValidator extends AbstractKimValidator {
             ns.setErrors(true);
           }
           ns.addImport(import_.getName());
+          IKimWorkspace _workspace = ns.getProject().getWorkspace();
+          boolean _contains = ((KimWorkspace) _workspace).getNamespaceIds().contains(import_.getName());
+          boolean _not_1 = (!_contains);
+          if (_not_1) {
+            String _name_1 = import_.getName();
+            String _plus_2 = ("Imported namespace " + _name_1);
+            String _plus_3 = (_plus_2 + " does not belong to the same workspace");
+            this.error(_plus_3, namespace, 
+              KimPackage.Literals.NAMESPACE__IMPORTED, i, KimValidator.BAD_NAMESPACE_ID);
+            ns.setErrors(true);
+          }
           List _imports = import_.getImports();
           boolean _tripleNotEquals = (_imports != null);
           if (_tripleNotEquals) {
@@ -166,9 +179,9 @@ public class KimValidator extends AbstractKimValidator {
               {
                 Object object = importedNs.getSymbolTable().get(variable.toString());
                 if ((object == null)) {
-                  String _name_1 = import_.getName();
-                  String _plus_2 = ((("Variable " + variable) + " could not be found in symbols defined by namespace ") + _name_1);
-                  this.error(_plus_2, import_, KimPackage.Literals.IMPORT__IMPORTS, j, KimValidator.BAD_NAMESPACE_ID);
+                  String _name_2 = import_.getName();
+                  String _plus_4 = ((("Variable " + variable) + " could not be found in symbols defined by namespace ") + _name_2);
+                  this.error(_plus_4, import_, KimPackage.Literals.IMPORT__IMPORTS, j, KimValidator.BAD_NAMESPACE_ID);
                   ns.setErrors(true);
                 } else {
                   ns.getSymbolTable().put(variable.toString(), object);
