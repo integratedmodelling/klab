@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,6 +21,7 @@ import org.eclipse.xtext.validation.CheckMode;
 import org.eclipse.xtext.validation.IResourceValidator;
 import org.eclipse.xtext.validation.Issue;
 import org.integratedmodelling.contrib.jgrapht.Graph;
+import org.integratedmodelling.contrib.jgrapht.alg.cycle.CycleDetector;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultDirectedGraph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kim.KimStandaloneSetup;
@@ -602,6 +604,40 @@ public class KimLoader implements IKimLoader {
             }
         }	
         return ret;
+	}
+	
+	/**
+	 * Check if the asserted import graph has any circular dependencies.
+	 * 
+	 * @return
+	 */
+	public boolean detectCircularDependencies() {
+		CycleDetector<String, DefaultEdge> cycleDetector = new CycleDetector<String, DefaultEdge>(getDependencyGraph());
+		if (cycleDetector.detectCycles()) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Check if the asserted import graph has any circular dependency involving any of the passed namespace.
+	 * 
+	 * @param namespace
+	 */
+	public boolean detectCircularDependencies(String ...namespaces) {
+		Set<String> nss = new HashSet<>();
+		for (String n : namespaces) {
+			nss.add(n);
+		}
+		CycleDetector<String, DefaultEdge> cycleDetector = new CycleDetector<String, DefaultEdge>(getDependencyGraph());
+		if (cycleDetector.detectCycles()) {
+			for (String ns : cycleDetector.findCycles()) {
+				if (nss.contains(ns)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 }
