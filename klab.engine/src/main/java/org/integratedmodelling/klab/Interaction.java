@@ -72,9 +72,7 @@ public enum Interaction implements IInteractionService {
             IMessage resp = session.getMonitor()
                     .ask(IMessage.MessageClass.UserInterface, IMessage.Type.UserInputRequested, request)
                     .get();
-
             UserInputResponse response = resp.getPayload(UserInputResponse.class);
-
             // TODO
 
         } catch (Throwable e) {
