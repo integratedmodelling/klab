@@ -1550,7 +1550,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	}
 
 	private Ontology getTargetOntology() {
-		return Ontologies.INSTANCE.getTargetOntology(main, traits, roles, inherent, context, caused, causant,
+		return Ontologies.INSTANCE.getTargetOntology(ontology, main, traits, roles, inherent, context, caused, causant,
 				compresent, goal, cooccurrent, adjacent);
 	}
 
