@@ -165,7 +165,7 @@ public class KimNotifier implements Kim.Notifier {
 
 		Namespaces.INSTANCE.release(namespace.getName(), monitor);
 		Namespace ns = new Namespace(namespace);
-
+		Namespaces.INSTANCE.registerNamespace(ns, monitor);
 		ErrorNotifyingMonitor monitor = new ErrorNotifyingMonitor((Monitor) this.monitor, ns);
 
 		for (Pair<String, String> imp : namespace.getOwlImports()) {
@@ -239,11 +239,7 @@ public class KimNotifier implements Kim.Notifier {
 				ns.addObject(object);
 			}
 		}
-
-		/*
-		 * TODO finalize namespace, send any notification
-		 */
-		Namespaces.INSTANCE.registerNamespace(ns, monitor);
+		
 		Observations.INSTANCE.registerNamespace(ns, (Monitor) monitor);
 
 		Reasoner.INSTANCE.addOntology(ns.getOntology());

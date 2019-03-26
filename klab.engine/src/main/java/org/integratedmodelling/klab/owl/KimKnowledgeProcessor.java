@@ -70,7 +70,7 @@ public enum KimKnowledgeProcessor {
 				if (concept.getUpperConceptDefined() != null) {
 					parent = Concepts.INSTANCE.getConcept(concept.getUpperConceptDefined());
 					if (parent == null) {
-						monitor.error("Core concept " + concept.getUpperConceptDefined() + " unknown", concept);
+						monitor.error("Core concept " + concept.getUpperConceptDefined() + " is unknown", concept);
 					}
 				} else {
 					parent = Resources.INSTANCE.getUpperOntology().getCoreType(concept.getType());
@@ -227,7 +227,7 @@ public enum KimKnowledgeProcessor {
 			return observable;
 		}
 
-		Concept main = declareInternal(concept.getMain(), monitor);
+		Concept main = declareInternal(concept.getMain(), null, monitor);
 
 		if (main == null) {
 			return null;
@@ -299,7 +299,7 @@ public enum KimKnowledgeProcessor {
 
 			IKimConcept modifier = concept.getAggregator() == null ? concept.getClassifier() : concept.getAggregator();
 
-			Concept by = declareInternal(modifier, monitor);
+			Concept by = declareInternal(modifier, null, monitor);
 			declaration += " by " + by;
 
 			if (concept.getAggregator() != null) {
@@ -309,7 +309,7 @@ public enum KimKnowledgeProcessor {
 				Concept downTo = null;
 
 				if (concept.getDownTo() != null) {
-					downTo = declareInternal(concept.getDownTo(), monitor);
+					downTo = declareInternal(concept.getDownTo(), null, monitor);
 					declaration += " down to " + by;
 				}
 
@@ -334,15 +334,15 @@ public enum KimKnowledgeProcessor {
 	}
 
 	public @Nullable IConcept declare(final IKimConcept concept, final IMonitor monitor) {
-		return declareInternal(concept, monitor);
+		return declareInternal(concept, null, monitor);
 	}
 
-	private @Nullable Concept declareInternal(final IKimConcept concept, final IMonitor monitor) {
+	private @Nullable Concept declareInternal(final IKimConcept concept, Ontology ontology, final IMonitor monitor) {
 
 		Concept main = null;
 
 		if (concept.getObservable() != null) {
-			main = declareInternal(concept.getObservable(), monitor);
+			main = declareInternal(concept.getObservable(), ontology, monitor);
 		} else if (concept.getName() != null) {
 			main = Concepts.INSTANCE.getConcept(concept.getName());
 		}
@@ -351,72 +351,70 @@ public enum KimKnowledgeProcessor {
 			return null;
 		}
 
-		Builder builder = new ObservableBuilder(main,
-				(Ontology) (Configuration.INSTANCE.useCommonOntology() ? Reasoner.INSTANCE.getOntology() : null))
-						.withDeclaration(concept, monitor);
+		Builder builder = new ObservableBuilder(main, ontology).withDeclaration(concept, monitor);
 
 		/*
 		 * transformations first
 		 */
 
 		if (concept.getInherent() != null) {
-			IConcept c = declareInternal(concept.getInherent(), monitor);
+			IConcept c = declareInternal(concept.getInherent(), null, monitor);
 			if (c != null) {
 				builder.of(c);
 			}
 		}
 		if (concept.getContext() != null) {
-			IConcept c = declareInternal(concept.getContext(), monitor);
+			IConcept c = declareInternal(concept.getContext(), null, monitor);
 			if (c != null) {
 				builder.within(c);
 			}
 		}
 		if (concept.getCompresent() != null) {
-			IConcept c = declareInternal(concept.getCompresent(), monitor);
+			IConcept c = declareInternal(concept.getCompresent(), null, monitor);
 			if (c != null) {
 				builder.with(c);
 			}
 		}
 		if (concept.getCausant() != null) {
-			IConcept c = declareInternal(concept.getCausant(), monitor);
+			IConcept c = declareInternal(concept.getCausant(), null, monitor);
 			if (c != null) {
 				builder.from(c);
 			}
 		}
 		if (concept.getCaused() != null) {
-			IConcept c = declareInternal(concept.getCaused(), monitor);
+			IConcept c = declareInternal(concept.getCaused(), null, monitor);
 			if (c != null) {
 				builder.to(c);
 			}
 		}
 		if (concept.getMotivation() != null) {
-			IConcept c = declareInternal(concept.getMotivation(), monitor);
+			IConcept c = declareInternal(concept.getMotivation(), null, monitor);
 			if (c != null) {
 				builder.withGoal(c);
 			}
 		}
 		if (concept.getCooccurrent() != null) {
-			IConcept c = declareInternal(concept.getCooccurrent(), monitor);
+			IConcept c = declareInternal(concept.getCooccurrent(), null, monitor);
 			if (c != null) {
 				builder.withCooccurrent(c);
 			}
 		}
 		if (concept.getAdjacent() != null) {
-			IConcept c = declareInternal(concept.getAdjacent(), monitor);
+			IConcept c = declareInternal(concept.getAdjacent(), null, monitor);
 			if (c != null) {
 				builder.withAdjacent(c);
 			}
 		}
 
 		for (IKimConcept c : concept.getTraits()) {
-			IConcept trait = declareInternal(c, monitor);
+			IConcept trait = declareInternal(c, null, monitor);
 			if (trait != null) {
 				builder.withTrait(trait);
 			}
 		}
 
 		for (IKimConcept c : concept.getRoles()) {
-			IConcept role = declareInternal(c, monitor);
+			IConcept role = declareInternal(c, null, monitor);
 			if (role != null) {
 				builder.withRole(role);
 			}
@@ -427,7 +425,7 @@ public enum KimKnowledgeProcessor {
 		if (concept.getObservationType() != null) {
 			IConcept other = null;
 			if (concept.getComparisonConcept() != null) {
-				other = declareInternal(concept.getComparisonConcept(), monitor);
+				other = declareInternal(concept.getComparisonConcept(), null, monitor);
 			}
 			try {
 				builder.as(concept.getObservationType(), other == null ? (IConcept[]) null : new IConcept[] { other });
@@ -448,7 +446,7 @@ public enum KimKnowledgeProcessor {
 				List<IConcept> concepts = new ArrayList<>();
 				concepts.add(ret);
 				for (IKimConcept op : concept.getOperands()) {
-					concepts.add(declareInternal(op, monitor));
+					concepts.add(declareInternal(op, null, monitor));
 				}
 				ret = concept.getExpressionType() == Expression.INTERSECTION
 						? OWL.INSTANCE.getIntersection(concepts, ret.getOntology(),

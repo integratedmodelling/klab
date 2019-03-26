@@ -38,6 +38,7 @@ import java.util.Set;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Ontologies;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
@@ -729,7 +730,7 @@ public enum OWL {
 	}
 
 	public void restrictSome(IConcept target, IProperty property, IConcept filler) {
-		target.getOntology().define(
+		Ontologies.INSTANCE.getTargetOntology(target, property, filler).define(
 				Collections.singleton(Axiom.SomeValuesFrom(target.getName(), property.toString(), filler.toString())));
 	}
 
@@ -753,7 +754,7 @@ public enum OWL {
 				: factory.getOWLObjectIntersectionOf(classes);
 		OWLClassExpression restriction = factory
 				.getOWLObjectAllValuesFrom(((Property) property)._owl.asOWLObjectProperty(), union);
-		manager.addAxiom(((Ontology) target.getOntology()).ontology,
+		manager.addAxiom((Ontologies.INSTANCE.getTargetOntology(target, property, fillers)).ontology,
 				factory.getOWLSubClassOfAxiom(((Concept) target)._owl, restriction));
 	}
 
@@ -782,7 +783,7 @@ public enum OWL {
 	}
 
 	public void restrictAll(IConcept target, IProperty property, IConcept filler) {
-		target.getOntology().define(
+		Ontologies.INSTANCE.getTargetOntology(target, property, filler).define(
 				Collections.singleton(Axiom.AllValuesFrom(target.getName(), property.toString(), filler.toString())));
 	}
 
@@ -807,12 +808,12 @@ public enum OWL {
 				: factory.getOWLObjectIntersectionOf(classes);
 		OWLClassExpression restriction = factory.getOWLObjectMinCardinality(min,
 				((Property) property)._owl.asOWLObjectProperty(), union);
-		manager.addAxiom(((Ontology) target.getOntology()).ontology,
+		manager.addAxiom((Ontologies.INSTANCE.getTargetOntology(target, property, fillers)).ontology,
 				factory.getOWLSubClassOfAxiom(((Concept) target)._owl, restriction));
 	}
 
 	public void restrictAtLeast(IConcept target, IProperty property, IConcept filler, int min) {
-	    target.getOntology().define(Collections
+		Ontologies.INSTANCE.getTargetOntology(target, property, filler).define(Collections
 				.singleton(Axiom.AtLeastNValuesFrom(target.getName(), property.toString(), filler.toString(), min)));
 	}
 
@@ -835,12 +836,12 @@ public enum OWL {
 				: factory.getOWLObjectIntersectionOf(classes);
 		OWLClassExpression restriction = factory.getOWLObjectMaxCardinality(max,
 				((Property) property)._owl.asOWLObjectProperty(), union);
-		manager.addAxiom(((Ontology) target.getOntology()).ontology,
+		manager.addAxiom((Ontologies.INSTANCE.getTargetOntology(target, property, fillers)).ontology,
 				factory.getOWLSubClassOfAxiom(((Concept) target)._owl, restriction));
 	}
 
 	public void restrictAtMost(IConcept target, IProperty property, IConcept filler, int max) {
-	    target.getOntology().define(Collections
+		Ontologies.INSTANCE.getTargetOntology(target, property, filler).define(Collections
 				.singleton(Axiom.AtMostNValuesFrom(target.getName(), property.toString(), filler.toString(), max)));
 	}
 
@@ -863,12 +864,12 @@ public enum OWL {
 				: factory.getOWLObjectIntersectionOf(classes);
 		OWLClassExpression restriction = factory.getOWLObjectExactCardinality(howmany,
 				((Property) property)._owl.asOWLObjectProperty(), union);
-		manager.addAxiom(((Ontology) target.getOntology()).ontology,
+		manager.addAxiom((Ontologies.INSTANCE.getTargetOntology(target, property, fillers)).ontology,
 				factory.getOWLSubClassOfAxiom(((Concept) target)._owl, restriction));
 	}
 
 	public void restrictExactly(IConcept target, IProperty property, IConcept filler, int howMany) {
-	    target.getOntology().define(Collections.singleton(
+		Ontologies.INSTANCE.getTargetOntology(target, property, filler).define(Collections.singleton(
 				Axiom.ExactlyNValuesFrom(target.getName(), property.toString(), filler.toString(), howMany)));
 	}
 

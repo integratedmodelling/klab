@@ -1308,7 +1308,7 @@ class KimValidator extends AbstractKimValidator {
 					// validate imports within namespace and workspace
 					var ns = concept.name.name.substring(0, concept.name.name.indexOf(':'))
 					var namespace = Kim.INSTANCE.getNamespace(concept, true)
-					if ((namespace.project.workspace as KimWorkspace).namespaceIds.contains(ns)) {
+					if (!namespace.worldviewBound && (namespace.project.workspace as KimWorkspace).namespaceIds.contains(ns)) {
 						/* if (namespace.name.equals(ns)) {
 							warning("Concept " + concept.name + " is in this same namespace and should be referred to by ID only", concept, null,
 								KimPackage.CONCEPT__CONCEPT)

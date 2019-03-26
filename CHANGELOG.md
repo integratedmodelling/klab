@@ -27,6 +27,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+### Changed
+- Derived concepts are created in the topmost ontology in the dependency tree including all 
+  component namespaces.
+- Importing of namespaces within the same workspace is now mandatory.
+- Circular dependencies in import lists are detected and flagged as errors.
+### Fixed
+
+## [0.10.0.151] -- 2019/03/26
+### Added
 - Begin supporting recontextualization of distributed states in expressions through @-modified identifiers 
   (e.g. elevation@nw).
 - Add CLI 'kbox' command namespace for kbox inquiries and enable 'reason info' for ontologies.

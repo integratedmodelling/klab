@@ -202,6 +202,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 		return ret;
 	}
 
+	@Override
 	public Collection<String> getImportedIds() {
 		return imported;
 	}

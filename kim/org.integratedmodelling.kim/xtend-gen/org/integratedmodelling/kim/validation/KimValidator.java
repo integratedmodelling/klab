@@ -1649,9 +1649,7 @@ public class KimValidator extends AbstractKimValidator {
           } else {
             String ns = concept.getName().getName().substring(0, concept.getName().getName().indexOf(":"));
             KimNamespace namespace_1 = Kim.INSTANCE.getNamespace(concept, true);
-            IKimWorkspace _workspace = namespace_1.getProject().getWorkspace();
-            boolean _contains_1 = ((KimWorkspace) _workspace).getNamespaceIds().contains(ns);
-            if (_contains_1) {
+            if (((!namespace_1.isWorldviewBound()) && ((KimWorkspace) namespace_1.getProject().getWorkspace()).getNamespaceIds().contains(ns))) {
               if (((!namespace_1.getName().equals(ns)) && (!((KimNamespace) namespace_1).getImportedIds().contains(ns)))) {
                 this.error((("Namespace " + ns) + " is in the same workspace and must be explicitly imported for its concepts to be used"), concept, null, 
                   KimPackage.CONCEPT__CONCEPT);
@@ -1686,8 +1684,8 @@ public class KimValidator extends AbstractKimValidator {
             EnumSet<IKimConcept.Type> operator = EnumSet.<IKimConcept.Type>noneOf(IKimConcept.Type.class);
             boolean _isCount = concept.isCount();
             if (_isCount) {
-              boolean _contains_2 = flags.contains(IKimConcept.Type.COUNTABLE);
-              boolean _not_2 = (!_contains_2);
+              boolean _contains_1 = flags.contains(IKimConcept.Type.COUNTABLE);
+              boolean _not_2 = (!_contains_1);
               if (_not_2) {
                 String _name_4 = concept.getConcept().getName();
                 String _plus_4 = (_name_4 + " is not a countable observable (subject, event or relationship)");
@@ -1698,8 +1696,8 @@ public class KimValidator extends AbstractKimValidator {
             } else {
               boolean _isDistance = concept.isDistance();
               if (_isDistance) {
-                boolean _contains_3 = flags.contains(IKimConcept.Type.COUNTABLE);
-                boolean _not_3 = (!_contains_3);
+                boolean _contains_2 = flags.contains(IKimConcept.Type.COUNTABLE);
+                boolean _not_3 = (!_contains_2);
                 if (_not_3) {
                   this.error("Distance can only be computed relative to countables", concept.getConcept(), null, 
                     KimPackage.CONCEPT__CONCEPT);
@@ -1718,8 +1716,8 @@ public class KimValidator extends AbstractKimValidator {
                   operator.add(IKimConcept.Type.SUBJECTIVE);
                 } else {
                   if ((concept.isOccurrence() || concept.isPresence())) {
-                    boolean _contains_4 = flags.contains(IKimConcept.Type.DIRECT_OBSERVABLE);
-                    boolean _not_4 = (!_contains_4);
+                    boolean _contains_3 = flags.contains(IKimConcept.Type.DIRECT_OBSERVABLE);
+                    boolean _not_4 = (!_contains_3);
                     if (_not_4) {
                       String _xifexpression_1 = null;
                       boolean _isOccurrence = concept.isOccurrence();
@@ -1743,13 +1741,13 @@ public class KimValidator extends AbstractKimValidator {
                   } else {
                     boolean _isProbability = concept.isProbability();
                     if (_isProbability) {
-                      boolean _contains_5 = flags.contains(IKimConcept.Type.EVENT);
-                      boolean _not_5 = (!_contains_5);
+                      boolean _contains_4 = flags.contains(IKimConcept.Type.EVENT);
+                      boolean _not_5 = (!_contains_4);
                       if (_not_5) {
                         String _xifexpression_2 = null;
-                        boolean _contains_6 = flags.contains(
+                        boolean _contains_5 = flags.contains(
                           IKimConcept.Type.DIRECT_OBSERVABLE);
-                        if (_contains_6) {
+                        if (_contains_5) {
                           _xifexpression_2 = "; use occurrence for probability of presence";
                         } else {
                           _xifexpression_2 = "";
@@ -1774,8 +1772,8 @@ public class KimValidator extends AbstractKimValidator {
                           } else {
                             boolean _isUncertainty = concept.isUncertainty();
                             if (_isUncertainty) {
-                              boolean _contains_7 = flags.contains(IKimConcept.Type.QUALITY);
-                              boolean _not_6 = (!_contains_7);
+                              boolean _contains_6 = flags.contains(IKimConcept.Type.QUALITY);
+                              boolean _not_6 = (!_contains_6);
                               if (_not_6) {
                                 this.error(
                                   "Uncertainty is associated to qualities. Use probability or occurrence for other observables", 
@@ -1795,12 +1793,12 @@ public class KimValidator extends AbstractKimValidator {
             boolean _not_7 = (!_isEmpty_2);
             if (_not_7) {
               ret = Kim.INSTANCE.makeQuality(ret, operator.<IKimConcept.Type>toArray(new IKimConcept.Type[operator.size()]));
-              boolean _contains_8 = flags.contains(IKimConcept.Type.MACRO);
-              if (_contains_8) {
+              boolean _contains_7 = flags.contains(IKimConcept.Type.MACRO);
+              if (_contains_7) {
                 ret.add(IKimConcept.Type.MACRO);
               }
-              boolean _contains_9 = flags.contains(IKimConcept.Type.SUBJECTIVE);
-              if (_contains_9) {
+              boolean _contains_8 = flags.contains(IKimConcept.Type.SUBJECTIVE);
+              if (_contains_8) {
                 ret.add(IKimConcept.Type.SUBJECTIVE);
               }
             }

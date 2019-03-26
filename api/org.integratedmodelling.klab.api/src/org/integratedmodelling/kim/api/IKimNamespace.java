@@ -150,4 +150,11 @@ public interface IKimNamespace extends IKimStatement {
      * @return
      */
     List<IServiceCall> getExtents();
+
+    /**
+     * A list of the imported namespace IDs.
+     * 
+     * @return
+     */
+	Collection<String> getImportedIds();
 }
