@@ -113,6 +113,7 @@ class KimValidator extends AbstractKimValidator {
 			}
 
 			var i = 0
+			var dependencies = if (namespace.imported.size() > 0) Kim.INSTANCE.currentLoader.dependencyGraph.copy() else null
 			for (import : namespace.imported) {
 				var importedNs = Kim.INSTANCE.getNamespace(import.name)
 				if (importedNs === null) {
@@ -121,12 +122,22 @@ class KimValidator extends AbstractKimValidator {
 					ns.errors = true
 				}
 				ns.addImport(import.name)
-				if (!(ns.project.workspace as KimWorkspace).namespaceIds.contains(import.name)) {
-					error("Imported namespace " + import.name + " does not belong to the same workspace", namespace,
-						KimPackage.Literals.NAMESPACE__IMPORTED, i, BAD_NAMESPACE_ID)
-					ns.errors = true
+				// check same-namespace rule and circular dependencies only when we're not importing specific objects
+				if (import.imports === null) {
+					if (!(ns.project.workspace as KimWorkspace).namespaceIds.contains(import.name)) {
+						error("Imported namespace " + import.name + " does not belong to the same workspace", namespace,
+							KimPackage.Literals.NAMESPACE__IMPORTED, i, BAD_NAMESPACE_ID)
+						ns.errors = true
+					}
+					// verify circular dependencies
+					if (!dependencies.canImport(namespace.name, import.name)) {
+						error("Importing namespace " + import.name + " causes circular dependencies in workspace", namespace,
+							KimPackage.Literals.NAMESPACE__IMPORTED, i, BAD_NAMESPACE_ID)
+						ns.errors = true
+					} else {
+						dependencies.addDependency(namespace.name, import.name)
+					}
 				}
-				// TODO verify circular dependencies and that import is within same workspace.
 				if (import.imports !== null) {
 					var importedVs = Kim.INSTANCE.parseList(import.imports, ns)
 					var j = 0
@@ -749,7 +760,7 @@ class KimValidator extends AbstractKimValidator {
 			i++
 		}
 
-		if (ret != null) {
+		if (ret !== null) {
 			ret.errors = !ok
 		}
 		// TODO contextualization
@@ -1286,7 +1297,7 @@ class KimValidator extends AbstractKimValidator {
 				}
 
 			} else {
-
+				
 				if (!concept.name.name.contains(":")) {
 					var namespace = KimValidator.getNamespace(concept);
 					concept.name.name = (if (namespace === null)
@@ -1294,7 +1305,18 @@ class KimValidator extends AbstractKimValidator {
 					else
 						Kim.getNamespaceId(namespace)) + ":" + concept.name.name
 				} else {
-					// TODO check imports within namespace
+					// validate imports within namespace and workspace
+					var ns = concept.name.name.substring(0, concept.name.name.indexOf(':'))
+					var namespace = Kim.INSTANCE.getNamespace(concept, true)
+					if ((namespace.project.workspace as KimWorkspace).namespaceIds.contains(ns)) {
+						/* if (namespace.name.equals(ns)) {
+							warning("Concept " + concept.name + " is in this same namespace and should be referred to by ID only", concept, null,
+								KimPackage.CONCEPT__CONCEPT)
+						} else */ if (!namespace.name.equals(ns) && !(namespace as KimNamespace).importedIds.contains(ns)) {
+							error("Namespace " + ns + " is in the same workspace and must be explicitly imported for its concepts to be used", concept, null,
+								KimPackage.CONCEPT__CONCEPT)
+						}
+					}
 				}
 
 				// extract concept

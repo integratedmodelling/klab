@@ -2,7 +2,7 @@
 A technical introduction to k.LAB
 ++++++++++++++++++++++++++++++++++
 
-This note describes k.LAB, a full-stack solution for the activity of _integrated modeling_, which reconciles strong 
+k.LAB is a full-stack software platform for the activity of _integrated modeling_, which reconciles strong 
 semantics with information stewardship and modeling practice, helping achieve advantages such as modularity, 
 interoperability, reusability, and integration of multiple paradigms and scales. 
 

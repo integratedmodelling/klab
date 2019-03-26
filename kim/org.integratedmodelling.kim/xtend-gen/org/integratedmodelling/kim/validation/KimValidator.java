@@ -86,6 +86,7 @@ import org.integratedmodelling.kim.model.KimStatement;
 import org.integratedmodelling.kim.model.KimSymbolDefinition;
 import org.integratedmodelling.kim.model.KimTable;
 import org.integratedmodelling.kim.model.KimWorkspace;
+import org.integratedmodelling.kim.utils.DependencyGraph;
 import org.integratedmodelling.kim.validation.AbstractKimValidator;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -146,6 +147,15 @@ public class KimValidator extends AbstractKimValidator {
         }
       }
       int i = 0;
+      DependencyGraph _xifexpression = null;
+      int _size = namespace.getImported().size();
+      boolean _greaterThan = (_size > 0);
+      if (_greaterThan) {
+        _xifexpression = Kim.INSTANCE.getCurrentLoader().getDependencyGraph().copy();
+      } else {
+        _xifexpression = null;
+      }
+      DependencyGraph dependencies = _xifexpression;
       EList<Import> _imported = namespace.getImported();
       for (final Import import_ : _imported) {
         {
@@ -159,19 +169,35 @@ public class KimValidator extends AbstractKimValidator {
             ns.setErrors(true);
           }
           ns.addImport(import_.getName());
-          IKimWorkspace _workspace = ns.getProject().getWorkspace();
-          boolean _contains = ((KimWorkspace) _workspace).getNamespaceIds().contains(import_.getName());
-          boolean _not_1 = (!_contains);
-          if (_not_1) {
-            String _name_1 = import_.getName();
-            String _plus_2 = ("Imported namespace " + _name_1);
-            String _plus_3 = (_plus_2 + " does not belong to the same workspace");
-            this.error(_plus_3, namespace, 
-              KimPackage.Literals.NAMESPACE__IMPORTED, i, KimValidator.BAD_NAMESPACE_ID);
-            ns.setErrors(true);
-          }
           List _imports = import_.getImports();
-          boolean _tripleNotEquals = (_imports != null);
+          boolean _tripleEquals = (_imports == null);
+          if (_tripleEquals) {
+            IKimWorkspace _workspace = ns.getProject().getWorkspace();
+            boolean _contains = ((KimWorkspace) _workspace).getNamespaceIds().contains(import_.getName());
+            boolean _not_1 = (!_contains);
+            if (_not_1) {
+              String _name_1 = import_.getName();
+              String _plus_2 = ("Imported namespace " + _name_1);
+              String _plus_3 = (_plus_2 + " does not belong to the same workspace");
+              this.error(_plus_3, namespace, 
+                KimPackage.Literals.NAMESPACE__IMPORTED, i, KimValidator.BAD_NAMESPACE_ID);
+              ns.setErrors(true);
+            }
+            boolean _canImport = dependencies.canImport(namespace.getName(), import_.getName());
+            boolean _not_2 = (!_canImport);
+            if (_not_2) {
+              String _name_2 = import_.getName();
+              String _plus_4 = ("Importing namespace " + _name_2);
+              String _plus_5 = (_plus_4 + " causes circular dependencies in workspace");
+              this.error(_plus_5, namespace, 
+                KimPackage.Literals.NAMESPACE__IMPORTED, i, KimValidator.BAD_NAMESPACE_ID);
+              ns.setErrors(true);
+            } else {
+              dependencies.addDependency(namespace.getName(), import_.getName());
+            }
+          }
+          List _imports_1 = import_.getImports();
+          boolean _tripleNotEquals = (_imports_1 != null);
           if (_tripleNotEquals) {
             java.util.List<?> importedVs = Kim.INSTANCE.parseList(import_.getImports(), ns);
             int j = 0;
@@ -179,9 +205,9 @@ public class KimValidator extends AbstractKimValidator {
               {
                 Object object = importedNs.getSymbolTable().get(variable.toString());
                 if ((object == null)) {
-                  String _name_2 = import_.getName();
-                  String _plus_4 = ((("Variable " + variable) + " could not be found in symbols defined by namespace ") + _name_2);
-                  this.error(_plus_4, import_, KimPackage.Literals.IMPORT__IMPORTS, j, KimValidator.BAD_NAMESPACE_ID);
+                  String _name_3 = import_.getName();
+                  String _plus_6 = ((("Variable " + variable) + " could not be found in symbols defined by namespace ") + _name_3);
+                  this.error(_plus_6, import_, KimPackage.Literals.IMPORT__IMPORTS, j, KimValidator.BAD_NAMESPACE_ID);
                   ns.setErrors(true);
                 } else {
                   ns.getSymbolTable().put(variable.toString(), object);
@@ -958,8 +984,7 @@ public class KimValidator extends AbstractKimValidator {
         i++;
       }
     }
-    boolean _notEquals = (!Objects.equal(ret, null));
-    if (_notEquals) {
+    if ((ret != null)) {
       ret.setErrors((!ok));
     }
     return ret;
@@ -1622,6 +1647,16 @@ public class KimValidator extends AbstractKimValidator {
             String _plus_1 = (_plus + _name_2);
             _name_1.setName(_plus_1);
           } else {
+            String ns = concept.getName().getName().substring(0, concept.getName().getName().indexOf(":"));
+            KimNamespace namespace_1 = Kim.INSTANCE.getNamespace(concept, true);
+            IKimWorkspace _workspace = namespace_1.getProject().getWorkspace();
+            boolean _contains_1 = ((KimWorkspace) _workspace).getNamespaceIds().contains(ns);
+            if (_contains_1) {
+              if (((!namespace_1.getName().equals(ns)) && (!((KimNamespace) namespace_1).getImportedIds().contains(ns)))) {
+                this.error((("Namespace " + ns) + " is in the same workspace and must be explicitly imported for its concepts to be used"), concept, null, 
+                  KimPackage.CONCEPT__CONCEPT);
+              }
+            }
           }
           Kim.ConceptDescriptor cd = Kim.INSTANCE.getConceptDescriptor(concept.getName().getName());
           if ((cd != null)) {
@@ -1651,8 +1686,8 @@ public class KimValidator extends AbstractKimValidator {
             EnumSet<IKimConcept.Type> operator = EnumSet.<IKimConcept.Type>noneOf(IKimConcept.Type.class);
             boolean _isCount = concept.isCount();
             if (_isCount) {
-              boolean _contains_1 = flags.contains(IKimConcept.Type.COUNTABLE);
-              boolean _not_2 = (!_contains_1);
+              boolean _contains_2 = flags.contains(IKimConcept.Type.COUNTABLE);
+              boolean _not_2 = (!_contains_2);
               if (_not_2) {
                 String _name_4 = concept.getConcept().getName();
                 String _plus_4 = (_name_4 + " is not a countable observable (subject, event or relationship)");
@@ -1663,8 +1698,8 @@ public class KimValidator extends AbstractKimValidator {
             } else {
               boolean _isDistance = concept.isDistance();
               if (_isDistance) {
-                boolean _contains_2 = flags.contains(IKimConcept.Type.COUNTABLE);
-                boolean _not_3 = (!_contains_2);
+                boolean _contains_3 = flags.contains(IKimConcept.Type.COUNTABLE);
+                boolean _not_3 = (!_contains_3);
                 if (_not_3) {
                   this.error("Distance can only be computed relative to countables", concept.getConcept(), null, 
                     KimPackage.CONCEPT__CONCEPT);
@@ -1683,8 +1718,8 @@ public class KimValidator extends AbstractKimValidator {
                   operator.add(IKimConcept.Type.SUBJECTIVE);
                 } else {
                   if ((concept.isOccurrence() || concept.isPresence())) {
-                    boolean _contains_3 = flags.contains(IKimConcept.Type.DIRECT_OBSERVABLE);
-                    boolean _not_4 = (!_contains_3);
+                    boolean _contains_4 = flags.contains(IKimConcept.Type.DIRECT_OBSERVABLE);
+                    boolean _not_4 = (!_contains_4);
                     if (_not_4) {
                       String _xifexpression_1 = null;
                       boolean _isOccurrence = concept.isOccurrence();
@@ -1708,13 +1743,13 @@ public class KimValidator extends AbstractKimValidator {
                   } else {
                     boolean _isProbability = concept.isProbability();
                     if (_isProbability) {
-                      boolean _contains_4 = flags.contains(IKimConcept.Type.EVENT);
-                      boolean _not_5 = (!_contains_4);
+                      boolean _contains_5 = flags.contains(IKimConcept.Type.EVENT);
+                      boolean _not_5 = (!_contains_5);
                       if (_not_5) {
                         String _xifexpression_2 = null;
-                        boolean _contains_5 = flags.contains(
+                        boolean _contains_6 = flags.contains(
                           IKimConcept.Type.DIRECT_OBSERVABLE);
-                        if (_contains_5) {
+                        if (_contains_6) {
                           _xifexpression_2 = "; use occurrence for probability of presence";
                         } else {
                           _xifexpression_2 = "";
@@ -1739,8 +1774,8 @@ public class KimValidator extends AbstractKimValidator {
                           } else {
                             boolean _isUncertainty = concept.isUncertainty();
                             if (_isUncertainty) {
-                              boolean _contains_6 = flags.contains(IKimConcept.Type.QUALITY);
-                              boolean _not_6 = (!_contains_6);
+                              boolean _contains_7 = flags.contains(IKimConcept.Type.QUALITY);
+                              boolean _not_6 = (!_contains_7);
                               if (_not_6) {
                                 this.error(
                                   "Uncertainty is associated to qualities. Use probability or occurrence for other observables", 
@@ -1760,12 +1795,12 @@ public class KimValidator extends AbstractKimValidator {
             boolean _not_7 = (!_isEmpty_2);
             if (_not_7) {
               ret = Kim.INSTANCE.makeQuality(ret, operator.<IKimConcept.Type>toArray(new IKimConcept.Type[operator.size()]));
-              boolean _contains_7 = flags.contains(IKimConcept.Type.MACRO);
-              if (_contains_7) {
+              boolean _contains_8 = flags.contains(IKimConcept.Type.MACRO);
+              if (_contains_8) {
                 ret.add(IKimConcept.Type.MACRO);
               }
-              boolean _contains_8 = flags.contains(IKimConcept.Type.SUBJECTIVE);
-              if (_contains_8) {
+              boolean _contains_9 = flags.contains(IKimConcept.Type.SUBJECTIVE);
+              if (_contains_9) {
                 ret.add(IKimConcept.Type.SUBJECTIVE);
               }
             }

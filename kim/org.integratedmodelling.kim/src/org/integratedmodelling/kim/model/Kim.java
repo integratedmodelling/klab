@@ -105,11 +105,6 @@ public enum Kim {
 		injector.injectMembers(this);
 	}
 
-	// /**
-	// * Known URN descriptors. Must be filled in from the outside.
-	// */
-	// private Map<String, UrnDescriptor> urnDescriptors = new HashMap<>();
-
 	/**
 	 * This contains concept descriptors for all concepts encountered, including
 	 * library ones and anything added externally, flattened to include children and
@@ -172,6 +167,12 @@ public enum Kim {
 	}
 
 	private Map<String, UriResolver> uriResolvers = new HashMap<>();
+
+	/**
+	 * Set just before validating any resource. Accurate only as long as the
+	 * resources are validated sequentially. Makes no sense after validation.
+	 */
+	private KimLoader currentLoader;
 
 	public static class ConceptDescriptor implements IConceptDescriptor {
 
@@ -1443,4 +1444,17 @@ public enum Kim {
 
 	}
 
+	public void setCurrentLoader(KimLoader kimLoader) {
+		this.currentLoader = kimLoader;
+	}
+
+	/**
+	 * The loader currently loading a resource. ONLY usable during validation to
+	 * access the dependency structure.
+	 * 
+	 * @return
+	 */
+	public KimLoader getCurrentLoader() {
+		return this.currentLoader;
+	}
 }

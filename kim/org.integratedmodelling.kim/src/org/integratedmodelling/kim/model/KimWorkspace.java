@@ -136,7 +136,7 @@ public class KimWorkspace implements IKimWorkspace {
     	}
     	if (file.isDirectory()) {
     		for (File sub : file.listFiles()) {
-    			loadNamespaceIds(sub, prefix + (prefix.isEmpty() ? "" : ".") + MiscUtilities.getFileBaseName(sub));
+    			loadNamespaceIds(sub, prefix + (sub.isDirectory() ? MiscUtilities.getFileBaseName(sub) : ""));
     		}
     	} else if (file.isFile() && file.toString().endsWith(".kim")) {
     		namespaceIds.add(prefix + (prefix.isEmpty() ? "" : ".") + MiscUtilities.getFileBaseName(file));

@@ -2,6 +2,7 @@ package org.integratedmodelling.kim.model;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -201,6 +202,10 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 		return ret;
 	}
 
+	public Collection<String> getImportedIds() {
+		return imported;
+	}
+	
 	@Override
 	public boolean isPrivate() {
 		return isPrivate;

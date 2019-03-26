@@ -20,7 +20,6 @@ import org.eclipse.xtext.validation.CheckMode;
 import org.eclipse.xtext.validation.IResourceValidator;
 import org.eclipse.xtext.validation.Issue;
 import org.integratedmodelling.contrib.jgrapht.Graph;
-import org.integratedmodelling.contrib.jgrapht.alg.cycle.CycleDetector;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultDirectedGraph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kim.KimStandaloneSetup;
@@ -444,6 +443,7 @@ public class KimLoader implements IKimLoader {
             try {
 
                 Kim.INSTANCE.removeNamespace(((Model) resource.getContents().get(0)).getNamespace());
+                Kim.INSTANCE.setCurrentLoader(this);
                 List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
                 String name = Kim.getNamespaceId(((Model) resource.getContents().get(0)).getNamespace());
 
@@ -578,26 +578,15 @@ public class KimLoader implements IKimLoader {
 		
 	    DependencyGraph ret = new DependencyGraph();
 
-        for (IKimNamespace namespace : getNamespaces()) {
+        for (IKimNamespace importing : getNamespaces()) {
         	
-            if (namespace != null && namespace.getFile() != null) {
-                ret.addVertex(namespace.getName());
-                for (String s : namespace.getImportedNamespaceIds(true)) {
-                    if (namespaceFiles.containsKey(s)) {
-                        File f = namespaceFiles.get(s);
-                        if (!f.equals(namespace.getFile())) {
-                            // we just trust that no file in catalog means the dependency is on a core ontology.
-                            ret.addVertex(s);
-                            ret.addEdge(s, namespace.getName(), new DefaultEdge() {
-
-								private static final long serialVersionUID = 1L;
-
-								@Override
-								public String toString() {
-									return "";
-								} 
-                            	
-                            });
+            if (importing != null && importing.getFile() != null) {
+                ret.addVertex(importing.getName());
+                for (String imported : importing.getImportedNamespaceIds(true)) {
+                    if (namespaceFiles.containsKey(imported)) {
+                        File f = namespaceFiles.get(imported);
+                        if (!f.equals(importing.getFile())) {
+                        	ret.addDependency(importing.getName(), imported);
                         }
                     }
                 }
@@ -605,5 +594,5 @@ public class KimLoader implements IKimLoader {
         }	
         return ret;
 	}
-	
+
 }
