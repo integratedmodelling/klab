@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.utils;
 import java.io.File;
 import java.util.Arrays;
 
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 
@@ -73,6 +74,17 @@ public class Utils {
         return value instanceof Number || value instanceof String || value instanceof Boolean;
     }
 
+    public static Class<?> getPODClass(Object value) {
+        if (value instanceof Number) {
+        	return Double.class;
+        }
+        if (value instanceof Boolean) {
+        	return Boolean.class;
+        }
+        return String.class;
+    }
+
+    
     /**
      * Return the closest POD that the value can be parsed into. For now only handle
      * int and double. May add k.IM - like maps, lists, ranges.
@@ -199,6 +211,8 @@ public class Utils {
             ret = Type.NUMBER;
         } else if (Boolean.class.isAssignableFrom(cls)) {
             ret = Type.BOOLEAN;
+        } else if (IConcept.class.isAssignableFrom(cls)) {
+        	ret = Type.CONCEPT;
         }
         return ret;
     }

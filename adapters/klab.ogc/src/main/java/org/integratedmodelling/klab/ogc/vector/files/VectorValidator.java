@@ -237,7 +237,6 @@ public class VectorValidator implements IResourceValidator {
 
 			ret.withGeometry(geometry);
 		}
-
 	}
 
 	@Override
@@ -249,7 +248,7 @@ public class VectorValidator implements IResourceValidator {
 		String extension = MiscUtilities.getFileExtension(resource);
 		if (extension != null) {
 			return
-			// TODO other raster formats understandable by geotools
+			// TODO other vector formats understandable by geotools
 			extension.toLowerCase().equals("shp");
 		}
 

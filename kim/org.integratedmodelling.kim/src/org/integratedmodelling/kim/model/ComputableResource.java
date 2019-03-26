@@ -171,18 +171,19 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	 * @return
 	 */
 	public static ComputableResource create(Object inlineComputable) {
-				
-		if (inlineComputable instanceof Number || inlineComputable instanceof Boolean || inlineComputable instanceof IConcept) {
+
+		if (inlineComputable instanceof Number || inlineComputable instanceof Boolean
+				|| inlineComputable instanceof IConcept) {
 			return new ComputableResource(Optional.of(inlineComputable));
 		} else if (inlineComputable instanceof IKimExpression) {
 			ComputableResource ret = new ComputableResource();
 			ret.resolutionMode = Mode.RESOLUTION;
-			ret.expression = ((IKimExpression)inlineComputable).getCode();
-			ret.language = ((IKimExpression)inlineComputable).getLanguage();
+			ret.expression = ((IKimExpression) inlineComputable).getCode();
+			ret.language = ((IKimExpression) inlineComputable).getLanguage();
 			return ret;
 		} else if (inlineComputable instanceof KimServiceCall) {
 			ComputableResource ret = new ComputableResource();
-			ret.serviceCall = (KimServiceCall)inlineComputable;
+			ret.serviceCall = (KimServiceCall) inlineComputable;
 			ret.resolutionMode = Mode.RESOLUTION;
 			return ret;
 		}
@@ -590,6 +591,21 @@ public class ComputableResource extends KimStatement implements IComputableResou
 
 	public void setDataflowId(String dataflowId) {
 		this.dataflowId = dataflowId;
+	}
+
+	@Override
+	public Collection<String> getInteractiveParameters() {
+		List<String> ret = new ArrayList<>();
+		if (serviceCall != null) {
+			ret.addAll(serviceCall.getInteractiveParameters());
+		}
+		// TODO other interactives
+		return ret;
+	}
+
+	@Override
+	public void setInteractiveParameter(String parameterId, Object value) {
+		// TODO Auto-generated method stub
 	}
 
 }

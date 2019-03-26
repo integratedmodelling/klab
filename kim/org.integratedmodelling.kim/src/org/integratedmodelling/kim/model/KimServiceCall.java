@@ -1,10 +1,14 @@
 package org.integratedmodelling.kim.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
+import org.integratedmodelling.kim.api.IComputableResource.InteractiveParameter;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.kim.Function;
@@ -15,7 +19,6 @@ import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -27,6 +30,7 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 
 	protected String name;
 	protected Parameters<String> parameters = new Parameters<>();
+	private Set<String> interactiveParameterIds = new HashSet<>();
 
 	protected KimServiceCall(EObject object, IKimStatement parent) {
 		super(object, parent);
@@ -56,6 +60,9 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 				} else if (statement.getParameters().getPairs() != null) {
 					for (KeyValuePair kv : statement.getParameters().getPairs()) {
 						this.parameters.put(kv.getName(), Kim.INSTANCE.parseValue(kv.getValue(), namespace));
+						if (kv.isInteractive()) {
+							this.interactiveParameterIds.add(kv.getName());
+						}
 					}
 				}
 			}
@@ -164,6 +171,11 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 
 	public void setParameters(Parameters<String> parameters) {
 		this.parameters = parameters;
+	}
+	
+	@Override
+	public Collection<String> getInteractiveParameters() {
+		return interactiveParameterIds;
 	}
 
 }

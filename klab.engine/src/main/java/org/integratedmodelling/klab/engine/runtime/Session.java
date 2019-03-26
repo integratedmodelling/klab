@@ -17,6 +17,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 import org.integratedmodelling.kim.api.IKimNamespace;
@@ -91,6 +92,7 @@ import org.integratedmodelling.klab.rest.SearchMatchAction;
 import org.integratedmodelling.klab.rest.SearchRequest;
 import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.SessionReference;
+import org.integratedmodelling.klab.rest.SettingChangeRequest;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.rest.SpatialLocation;
 import org.integratedmodelling.klab.utils.CollectionUtils;
@@ -154,6 +156,8 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 	private double gridSize;
 	private String gridUnits;
+
+	private AtomicBoolean interactive = new AtomicBoolean(false);
 
 	public interface Listener {
 		void onClose(ISession session);
@@ -414,6 +418,18 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	 * handlers for messages
 	 * ------------------------------------------------------------------------
 	 */
+
+	@MessageHandler(type = IMessage.Type.ChangeSetting)
+	private void handleSettingChange(final SettingChangeRequest request) {
+		switch (request.getSetting()) {
+		case InteractiveMode:
+			this.interactive.set(Boolean.parseBoolean(request.getNewValue()));
+			monitor.info("interactive mode set to " + (interactive.get() ? "on" : "off"));
+			break;
+		default:
+			break;
+		}
+	}
 
 	@MessageHandler(type = IMessage.Type.FeatureAdded)
 	private void handleFeatureAdded(final SpatialLocation location) {
@@ -907,6 +923,11 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 	public boolean isDefault() {
 		return isDefault;
+	}
+
+	@Override
+	public boolean isInteractive() {
+		return interactive.get();
 	}
 
 }

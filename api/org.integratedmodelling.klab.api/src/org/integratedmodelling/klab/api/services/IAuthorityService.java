@@ -15,12 +15,20 @@
  */
 package org.integratedmodelling.klab.api.services;
 
+import java.util.Collection;
+
+import org.integratedmodelling.klab.api.knowledge.IAuthority;
+
 /**
- * The Interface IAuthorityService.
+ * The Interface IAuthorityService. For the time being simply a catalog of installed authorities.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
 public interface IAuthorityService {
 
+	Collection<IAuthority> getAuthorities();
+	
+	IAuthority getAuthority(String authorityId);
+	
 }

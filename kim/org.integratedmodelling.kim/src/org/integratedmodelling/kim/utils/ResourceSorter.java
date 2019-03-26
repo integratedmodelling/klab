@@ -24,69 +24,71 @@ import org.integratedmodelling.klab.utils.TopologicalSort;
  */
 public class ResourceSorter {
 
-    DirectedGraph<String> graph = new DirectedGraph<>();
-    Map<String, Resource> resources = new HashMap<>();
-    KimWorkspace workspace;
+	DirectedGraph<String> graph = new DirectedGraph<>();
+	Map<String, Resource> resources = new HashMap<>();
+	KimWorkspace workspace;
 
-    // available in order of dependency after getResources() is called
-    List<String> namespaceIds;
+	// available in order of dependency after getResources() is called
+	List<String> namespaceIds;
 
-    public ResourceSorter(KimWorkspace workspace) {
-        this.workspace = workspace;
-    }
+	public ResourceSorter(KimWorkspace workspace) {
+		this.workspace = workspace;
+	}
 
-    public ResourceSorter() {
-    }
+	public ResourceSorter() {
+	}
 
-    public List<Resource> getResources() {
+	public List<Resource> getResources() {
 
-        if (namespaceIds != null) {
-            throw new UnsupportedOperationException("internal: ResourceSorter: getResources() can only be called once");
-        }
+		if (namespaceIds != null) {
+			throw new UnsupportedOperationException("internal: ResourceSorter: getResources() can only be called once");
+		}
 
-        List<Resource> ret = new ArrayList<>();
-        namespaceIds = new ArrayList<>();
-        try {
-            for (String ns : TopologicalSort.sort(graph)) {
-                ret.add(resources.get(ns));
-                namespaceIds.add(ns);
-            }
-        } catch (IllegalArgumentException e) {
-            throw new KimCircularDependencyException(
-                    "Workspace " + (workspace == null ? "" : workspace.getName()) + " has circular dependencies");
-        }
-        return ret;
-    }
+		List<Resource> ret = new ArrayList<>();
+		namespaceIds = new ArrayList<>();
+		try {
+			for (String ns : TopologicalSort.sort(graph)) {
+				ret.add(resources.get(ns));
+				namespaceIds.add(ns);
+			}
+		} catch (IllegalArgumentException e) {
+			throw new KimCircularDependencyException(
+					"Workspace " + (workspace == null ? "" : workspace.getName()) + " has circular dependencies");
+		}
+		return ret;
+	}
 
-    public void add(Resource resource) {
+	public void add(Resource resource) {
 
-        if (namespaceIds != null) {
-            throw new UnsupportedOperationException(
-                    "internal: ResourceSorter: getResources() has already been called: cannot add new elements");
-        }
+		if (namespaceIds != null) {
+			throw new UnsupportedOperationException(
+					"internal: ResourceSorter: getResources() has already been called: cannot add new elements");
+		}
 
-        if (resource instanceof LazyLinkingResource) {
-            Model model = (Model) resource.getContents().get(0);
-            Namespace ns = model.getNamespace();
-            String nsName = Kim.getNamespaceId(ns);
-            graph.addNode(nsName);
-            resources.put(nsName, resource);
-            for (Import dio : ns.getImported()) {
-                String nsId = dio.getName();
-                if (nsId != null) {
-                    graph.addNode(nsId);
-                    graph.addEdge(nsId, nsName);
-                }
-            }
-        }
-    }
+		if (resource instanceof LazyLinkingResource) {
+			if (resource.getContents() != null && resource.getContents().size() > 0) {
+				Model model = (Model) resource.getContents().get(0);
+				Namespace ns = model.getNamespace();
+				String nsName = Kim.getNamespaceId(ns);
+				graph.addNode(nsName);
+				resources.put(nsName, resource);
+				for (Import dio : ns.getImported()) {
+					String nsId = dio.getName();
+					if (nsId != null) {
+						graph.addNode(nsId);
+						graph.addEdge(nsId, nsName);
+					}
+				}
+			}
+		}
+	}
 
-    public List<String> getSortedNamespaceIds() {
-        if (namespaceIds == null) {
-            throw new UnsupportedOperationException(
-                    "internal: ResourceSorter: getResources() has not been called: cannot return namespace order");
-        }
-        return namespaceIds;
-    }
+	public List<String> getSortedNamespaceIds() {
+		if (namespaceIds == null) {
+			throw new UnsupportedOperationException(
+					"internal: ResourceSorter: getResources() has not been called: cannot return namespace order");
+		}
+		return namespaceIds;
+	}
 
 }

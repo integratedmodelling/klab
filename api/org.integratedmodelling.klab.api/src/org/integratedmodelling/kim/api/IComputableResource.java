@@ -1,12 +1,13 @@
 package org.integratedmodelling.kim.api;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
-import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflowNode;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -31,6 +32,91 @@ import org.integratedmodelling.klab.utils.Pair;
  *
  */
 public interface IComputableResource extends IKimStatement, IDataflowNode {
+
+	/**
+	 * The data structure describing interactive parameters. It's a javabean with
+	 * only string for values so that it can be easily serialized for communication.
+	 * 
+	 * @author ferdinando.villa
+	 *
+	 */
+	public static class InteractiveParameter {
+
+		private String id;
+		private String description;
+		private IArtifact.Type type;
+		private String initialValue;
+		private Set<String> values;
+		// validation
+		private List<Double> range;
+		private int numericPrecision;
+		private String regexp;
+		// range, regexp & numeric precision
+
+		public String getDescription() {
+			return description;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
+		public IArtifact.Type getType() {
+			return type;
+		}
+
+		public void setType(IArtifact.Type type) {
+			this.type = type;
+		}
+
+		public String getInitialValue() {
+			return initialValue;
+		}
+
+		public void setInitialValue(String initialValue) {
+			this.initialValue = initialValue;
+		}
+
+		public Set<String> getValues() {
+			return values;
+		}
+
+		public void setValues(Set<String> values) {
+			this.values = values;
+		}
+
+		public List<Double> getRange() {
+			return range;
+		}
+
+		public void setRange(List<Double> range) {
+			this.range = range;
+		}
+
+		public int getNumericPrecision() {
+			return numericPrecision;
+		}
+
+		public void setNumericPrecision(int numericPrecision) {
+			this.numericPrecision = numericPrecision;
+		}
+
+		public String getRegexp() {
+			return regexp;
+		}
+
+		public void setRegexp(String regexp) {
+			this.regexp = regexp;
+		}
+
+		public String getId() {
+			return id;
+		}
+
+		public void setId(String id) {
+			this.id = id;
+		}
+	}
 
 	/**
 	 * The target observable for this computation; null if the target is the main
@@ -144,6 +230,24 @@ public interface IComputableResource extends IKimStatement, IDataflowNode {
 	 * @return parameter map, never null, possibly empty.
 	 */
 	Map<String, Object> getParameters();
+
+	/**
+	 * In interactive mode, resources may expose parameters for users to check and
+	 * modify before execution. Implementation-dependent services will extract
+	 * descriptors and set values.
+	 * 
+	 * @return the list of all parameters that may be changed by users.
+	 */
+	Collection<String> getInteractiveParameters();
+
+	/**
+	 * If interactive parameters have been modified, submit their new values through
+	 * this.
+	 * 
+	 * @param parameterId
+	 * @param value
+	 */
+	void setInteractiveParameter(String parameterId, Object value);
 
 	/**
 	 * This computation may be linked to a condition, which is another computation

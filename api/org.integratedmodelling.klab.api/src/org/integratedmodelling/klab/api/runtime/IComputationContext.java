@@ -89,7 +89,7 @@ public interface IComputationContext extends IParameters<String> {
 	 * @throws IllegalStateException
 	 *             if the context is not temporal.
 	 */
-	IScheduler getScheduler();
+	IScheduler<?> getScheduler();
 
 	/**
 	 * There is one report per root context. Actuators will add sections to it as

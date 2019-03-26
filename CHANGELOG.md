@@ -23,9 +23,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [comment]: <>   (  Fixed for any bug fixes.)
 [comment]: <>   (  Security in case of vulnerabilities.)
 [comment]: <>   ()
-[comment]: <>   (Next build: [0.10.0.150] -- ISO Date)
+[comment]: <>   (Next build: [0.10.0.151] -- ISO Date)
 
 ## [Unreleased]
+### Added
+- Begin supporting recontextualization of distributed states in expressions through @-modified identifiers 
+  (e.g. elevation@nw).
+- Add CLI 'kbox' command namespace for kbox inquiries and enable 'reason info' for ontologies.
+- Support 'equals' instead of 'is' in concept declarations to declare aliases instead
+  of new concepts. All implications still to be tested.
+- Begin reintegrating authorities, starting from GBIF.
+- Add syntax to refer to a pure authority identity as a concept (identity ID by AUTH.ID).
+### Changed
+- Derived concepts are created within the ontology hosting the main concept once again. 
+  This is needed otherwise the import structure becomes circular; should probably eliminate 
+  the configurable option.
+### Fixed
+- Better handling of Groovy expressions using and returning concepts.
+- Fixed some NPE situations when parsing models with unknown semantics.
+- Fixed situations where observables would not be compatible with themselves due to 
+  inherency chain issues.
+- Fixes in attributes exported with shapefiles.
 
 ## [0.10.0.150] -- 2019/03/11
 ### Added

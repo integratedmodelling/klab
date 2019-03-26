@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -182,7 +183,23 @@ public class Engine extends Server implements IEngine, UserDetails {
 				}
 			}
 		}
-
+		
+        @Override
+        public Future<IMessage> ask(Object... o) {
+            if (o != null && o.length > 0) {
+                IMessageBus bus = Klab.INSTANCE.getMessageBus();
+                if (bus != null) {
+                    if (o.length == 1 && o[0] instanceof IMessage) {
+                        return bus.ask((IMessage) o[0]);
+                    } else if (o.length == 1 && o[0] instanceof INotification) {
+                        return bus.ask(Message.create((INotification) o[0], this.identity.getId()));
+                    } else {
+                        return bus.ask(Message.create(this.identity.getId(), o));
+                    }
+                }
+            }
+            return null;
+        }
 		@Override
 		public IIdentity getIdentity() {
 			return identity;

@@ -57,7 +57,7 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 	IExpression selectExpression = null;
 	IExpression valueExpression = null;
 	LongAdder adder = new LongAdder();
-	
+
 	@Override
 	public IGeometry getGeometry() {
 		return Geometry.create("S2");
@@ -178,7 +178,6 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 		List<IState> sourceStates = new ArrayList<>();
 		List<IState> selectStates = new ArrayList<>();
 
-
 		boolean isLinear = true;
 
 		if (valueDescriptor != null) {
@@ -197,6 +196,11 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 				throw new KlabResourceNotFoundException(
 						"Neighborhood resolver: the value expression does not reference any known state");
 			}
+
+			if (isLinear && valueDescriptor.getContextualizers().contains("origin")) {
+				isLinear = false;
+			}
+			
 			valueExpression = valueDescriptor.compile();
 		} else {
 			throw new KlabValidationException(
@@ -219,9 +223,12 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 				throw new KlabResourceNotFoundException(
 						"Neighborhood resolver: the select expression does not reference any known state");
 			}
+			if (isLinear && selectDescriptor.getContextualizers().contains("origin")) {
+				isLinear = false;
+			}
 			selectExpression = selectDescriptor.compile();
 		}
-
+		
 		/*
 		 * go for it
 		 */
@@ -232,14 +239,14 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 
 			// working parallel version commented out
 			StreamSupport.stream(grid.spliterator(context.getMonitor()), true).forEach((locator) -> {
-//				 for (Cell locator : grid) {
+				// for (Cell locator : grid) {
 
 				Object value = null;
 				boolean evaluate = true;
 
-//				if (context.getMonitor().isInterrupted()) {
-//					break;
-//				}
+				// if (context.getMonitor().isInterrupted()) {
+				// break;
+				// }
 
 				if (selectExpression != null) {
 					if (!evalStates(selectExpression, selectStates, locator, Boolean.class)) {
@@ -251,32 +258,35 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 					Object self = target.get(locator);
 					value = evalStates(valueExpression, sourceStates, locator, Object.class, "self", self);
 					if (value != null && valueCache == null) {
-						valueCache = Klab.INSTANCE.getStorageProvider()
-								.createStorage(Utils.getArtifactType(value.getClass()), target.getScale(), context);
+						synchronized (NeighborhoodResolver.this) {
+							valueCache = Klab.INSTANCE.getStorageProvider()
+									.createStorage(Utils.getArtifactType(value.getClass()), target.getScale(), context);
+						}
 					}
 				}
 				if (value != null) {
 					valueCache.set(locator, value);
 				}
 			});
-//		}
+			// }
 		}
 
-		if (isLinear && valueCache == null) {
-			context.getMonitor().info("No usable values in source data: skipping neighborhood analysis");
-			return target;
-		}
+		// if (isLinear && valueCache == null) {
+		// context.getMonitor().info("No usable values in source data: skipping
+		// neighborhood analysis");
+		// return target;
+		// }
 
 		long ncells = 0;
 		context.getMonitor()
 				.info("Neighborhood analysis starting with a " + maskSize + "x" + maskSize + " neighborhood");
 
 		StreamSupport.stream(grid.spliterator(context.getMonitor()), true).forEach((locator) -> {
-//		for (Cell locator : grid) {
+			// for (Cell locator : grid) {
 
-//			if (context.getMonitor().isInterrupted()) {
-//				break;
-//			}
+			// if (context.getMonitor().isInterrupted()) {
+			// break;
+			// }
 
 			List<Object> values = new ArrayList<>(maskSize * maskSize);
 			for (Cell cell : getNeighborhood(locator, offsetMask)) {
@@ -304,15 +314,15 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 
 			target.set(locator, AggregationUtils.aggregate(values, aggregation, context.getMonitor()));
 
-//			long cells = adder.longValue();
-//			if (cells == 0 || (cells % 10000) == 0) {
-//				context.getMonitor().info(adder.sum() + " cells done...");
-//			}
-//
-//			adder.add(1);
+			// long cells = adder.longValue();
+			// if (cells == 0 || (cells % 10000) == 0) {
+			// context.getMonitor().info(adder.sum() + " cells done...");
+			// }
+			//
+			// adder.add(1);
 
 		});
-//		}
+		// }
 		if (valueCache != null) {
 			valueCache.release();
 		}

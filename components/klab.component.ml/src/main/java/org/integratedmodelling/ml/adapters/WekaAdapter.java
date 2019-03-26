@@ -36,7 +36,7 @@ public class WekaAdapter implements IFileResourceAdapter {
 	/**
 	 * All recognized primary file extensions.
 	 */
-	public static Set<String> fileExtensions = Sets.newHashSet("bif");
+	public static Set<String> fileExtensions = Sets.newHashSet("bif", "xdsl", "model");
 
 	/**
 	 * All recognized secondary file extensions

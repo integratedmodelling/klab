@@ -1,0 +1,14 @@
+@klab 0.10.0
+@version 0.10.0
+@namespace kbox
+
+void 'list'
+	"List the models in the local kbox."
+{
+	
+	optional input verbose
+		"Verbose output: list model details"
+		default false
+	
+	class org.integratedmodelling.klab.clitool.console.commands.kbox.List
+}

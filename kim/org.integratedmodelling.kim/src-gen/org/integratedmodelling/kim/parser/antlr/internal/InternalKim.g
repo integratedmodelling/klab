@@ -8463,10 +8463,20 @@ ruleConcept returns [EObject current=null]
 				)
 			)
 			(
-				otherlv_2='identified'
-				{
-					newLeafNode(otherlv_2, grammarAccess.getConceptAccess().getIdentifiedKeyword_0_2_0());
-				}
+				(
+					(
+						lv_authConcept_2_0='identified'
+						{
+							newLeafNode(lv_authConcept_2_0, grammarAccess.getConceptAccess().getAuthConceptIdentifiedKeyword_0_2_0_0());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getConceptRule());
+							}
+							setWithLastConsumed($current, "authConcept", true, "identified");
+						}
+					)
+				)
 				otherlv_3='as'
 				{
 					newLeafNode(otherlv_3, grammarAccess.getConceptAccess().getAsKeyword_0_2_1());
@@ -8503,6 +8513,36 @@ ruleConcept returns [EObject current=null]
 										"stringIdentifier",
 										lv_stringIdentifier_4_2,
 										"org.eclipse.xtext.common.Terminals.STRING");
+								}
+								    |
+								lv_stringIdentifier_4_3=RULE_UPPERCASE_ID
+								{
+									newLeafNode(lv_stringIdentifier_4_3, grammarAccess.getConceptAccess().getStringIdentifierUPPERCASE_IDTerminalRuleCall_0_2_2_0_0_2());
+								}
+								{
+									if ($current==null) {
+										$current = createModelElement(grammarAccess.getConceptRule());
+									}
+									setWithLastConsumed(
+										$current,
+										"stringIdentifier",
+										lv_stringIdentifier_4_3,
+										"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
+								}
+								    |
+								lv_stringIdentifier_4_4=RULE_CAMELCASE_ID
+								{
+									newLeafNode(lv_stringIdentifier_4_4, grammarAccess.getConceptAccess().getStringIdentifierCAMELCASE_IDTerminalRuleCall_0_2_2_0_0_3());
+								}
+								{
+									if ($current==null) {
+										$current = createModelElement(grammarAccess.getConceptRule());
+									}
+									setWithLastConsumed(
+										$current,
+										"stringIdentifier",
+										lv_stringIdentifier_4_4,
+										"org.integratedmodelling.kim.Kim.CAMELCASE_ID");
 								}
 							)
 						)
@@ -9247,16 +9287,158 @@ ruleConcept returns [EObject current=null]
 		)
 		    |
 		(
-			otherlv_59='('
+			(
+				(
+					lv_authConcept_59_0='identity'
+					{
+						newLeafNode(lv_authConcept_59_0, grammarAccess.getConceptAccess().getAuthConceptIdentityKeyword_15_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getConceptRule());
+						}
+						setWithLastConsumed($current, "authConcept", true, "identity");
+					}
+				)
+			)
+			(
+				(
+					(
+						(
+							lv_stringIdentifier_60_1=RULE_ID
+							{
+								newLeafNode(lv_stringIdentifier_60_1, grammarAccess.getConceptAccess().getStringIdentifierIDTerminalRuleCall_15_1_0_0_0());
+							}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getConceptRule());
+								}
+								setWithLastConsumed(
+									$current,
+									"stringIdentifier",
+									lv_stringIdentifier_60_1,
+									"org.eclipse.xtext.common.Terminals.ID");
+							}
+							    |
+							lv_stringIdentifier_60_2=RULE_STRING
+							{
+								newLeafNode(lv_stringIdentifier_60_2, grammarAccess.getConceptAccess().getStringIdentifierSTRINGTerminalRuleCall_15_1_0_0_1());
+							}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getConceptRule());
+								}
+								setWithLastConsumed(
+									$current,
+									"stringIdentifier",
+									lv_stringIdentifier_60_2,
+									"org.eclipse.xtext.common.Terminals.STRING");
+							}
+							    |
+							lv_stringIdentifier_60_3=RULE_UPPERCASE_ID
+							{
+								newLeafNode(lv_stringIdentifier_60_3, grammarAccess.getConceptAccess().getStringIdentifierUPPERCASE_IDTerminalRuleCall_15_1_0_0_2());
+							}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getConceptRule());
+								}
+								setWithLastConsumed(
+									$current,
+									"stringIdentifier",
+									lv_stringIdentifier_60_3,
+									"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
+							}
+							    |
+							lv_stringIdentifier_60_4=RULE_CAMELCASE_ID
+							{
+								newLeafNode(lv_stringIdentifier_60_4, grammarAccess.getConceptAccess().getStringIdentifierCAMELCASE_IDTerminalRuleCall_15_1_0_0_3());
+							}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getConceptRule());
+								}
+								setWithLastConsumed(
+									$current,
+									"stringIdentifier",
+									lv_stringIdentifier_60_4,
+									"org.integratedmodelling.kim.Kim.CAMELCASE_ID");
+							}
+						)
+					)
+				)
+				    |
+				(
+					(
+						lv_intIdentifier_61_0=RULE_INT
+						{
+							newLeafNode(lv_intIdentifier_61_0, grammarAccess.getConceptAccess().getIntIdentifierINTTerminalRuleCall_15_1_1_0());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getConceptRule());
+							}
+							setWithLastConsumed(
+								$current,
+								"intIdentifier",
+								lv_intIdentifier_61_0,
+								"org.eclipse.xtext.common.Terminals.INT");
+						}
+					)
+				)
+			)
+			otherlv_62='by'
 			{
-				newLeafNode(otherlv_59, grammarAccess.getConceptAccess().getLeftParenthesisKeyword_15_0());
+				newLeafNode(otherlv_62, grammarAccess.getConceptAccess().getByKeyword_15_2());
+			}
+			(
+				(
+					(
+						lv_authority_63_1=RULE_UPPERCASE_ID
+						{
+							newLeafNode(lv_authority_63_1, grammarAccess.getConceptAccess().getAuthorityUPPERCASE_IDTerminalRuleCall_15_3_0_0());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getConceptRule());
+							}
+							setWithLastConsumed(
+								$current,
+								"authority",
+								lv_authority_63_1,
+								"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
+						}
+						    |
+						lv_authority_63_2=RULE_UPPERCASE_PATH
+						{
+							newLeafNode(lv_authority_63_2, grammarAccess.getConceptAccess().getAuthorityUPPERCASE_PATHTerminalRuleCall_15_3_0_1());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getConceptRule());
+							}
+							setWithLastConsumed(
+								$current,
+								"authority",
+								lv_authority_63_2,
+								"org.integratedmodelling.kim.Kim.UPPERCASE_PATH");
+						}
+					)
+				)
+			)
+		)
+		    |
+		(
+			otherlv_64='('
+			{
+				newLeafNode(otherlv_64, grammarAccess.getConceptAccess().getLeftParenthesisKeyword_16_0());
 			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getConceptAccess().getDeclarationExpressionParserRuleCall_15_1_0());
+						newCompositeNode(grammarAccess.getConceptAccess().getDeclarationExpressionParserRuleCall_16_1_0());
 					}
-					lv_declaration_60_0=ruleExpression
+					lv_declaration_65_0=ruleExpression
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getConceptRule());
@@ -9264,15 +9446,15 @@ ruleConcept returns [EObject current=null]
 						set(
 							$current,
 							"declaration",
-							lv_declaration_60_0,
+							lv_declaration_65_0,
 							"org.integratedmodelling.kim.Kim.Expression");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
-			otherlv_61=')'
+			otherlv_66=')'
 			{
-				newLeafNode(otherlv_61, grammarAccess.getConceptAccess().getRightParenthesisKeyword_15_2());
+				newLeafNode(otherlv_66, grammarAccess.getConceptAccess().getRightParenthesisKeyword_16_2());
 			}
 		)
 	)

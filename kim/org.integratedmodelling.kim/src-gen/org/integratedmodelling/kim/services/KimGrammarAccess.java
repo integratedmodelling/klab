@@ -4861,13 +4861,16 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cNameAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
 		private final RuleCall cNameConceptReferenceParserRuleCall_0_1_0 = (RuleCall)cNameAssignment_0_1.eContents().get(0);
 		private final Group cGroup_0_2 = (Group)cGroup_0.eContents().get(2);
-		private final Keyword cIdentifiedKeyword_0_2_0 = (Keyword)cGroup_0_2.eContents().get(0);
+		private final Assignment cAuthConceptAssignment_0_2_0 = (Assignment)cGroup_0_2.eContents().get(0);
+		private final Keyword cAuthConceptIdentifiedKeyword_0_2_0_0 = (Keyword)cAuthConceptAssignment_0_2_0.eContents().get(0);
 		private final Keyword cAsKeyword_0_2_1 = (Keyword)cGroup_0_2.eContents().get(1);
 		private final Alternatives cAlternatives_0_2_2 = (Alternatives)cGroup_0_2.eContents().get(2);
 		private final Assignment cStringIdentifierAssignment_0_2_2_0 = (Assignment)cAlternatives_0_2_2.eContents().get(0);
 		private final Alternatives cStringIdentifierAlternatives_0_2_2_0_0 = (Alternatives)cStringIdentifierAssignment_0_2_2_0.eContents().get(0);
 		private final RuleCall cStringIdentifierIDTerminalRuleCall_0_2_2_0_0_0 = (RuleCall)cStringIdentifierAlternatives_0_2_2_0_0.eContents().get(0);
 		private final RuleCall cStringIdentifierSTRINGTerminalRuleCall_0_2_2_0_0_1 = (RuleCall)cStringIdentifierAlternatives_0_2_2_0_0.eContents().get(1);
+		private final RuleCall cStringIdentifierUPPERCASE_IDTerminalRuleCall_0_2_2_0_0_2 = (RuleCall)cStringIdentifierAlternatives_0_2_2_0_0.eContents().get(2);
+		private final RuleCall cStringIdentifierCAMELCASE_IDTerminalRuleCall_0_2_2_0_0_3 = (RuleCall)cStringIdentifierAlternatives_0_2_2_0_0.eContents().get(3);
 		private final Assignment cIntIdentifierAssignment_0_2_2_1 = (Assignment)cAlternatives_0_2_2.eContents().get(1);
 		private final RuleCall cIntIdentifierINTTerminalRuleCall_0_2_2_1_0 = (RuleCall)cIntIdentifierAssignment_0_2_2_1.eContents().get(0);
 		private final Keyword cByKeyword_0_2_3 = (Keyword)cGroup_0_2.eContents().get(3);
@@ -4977,43 +4980,64 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cConceptAssignment_14_2 = (Assignment)cGroup_14.eContents().get(2);
 		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_14_2_0 = (RuleCall)cConceptAssignment_14_2.eContents().get(0);
 		private final Group cGroup_15 = (Group)cAlternatives.eContents().get(15);
-		private final Keyword cLeftParenthesisKeyword_15_0 = (Keyword)cGroup_15.eContents().get(0);
-		private final Assignment cDeclarationAssignment_15_1 = (Assignment)cGroup_15.eContents().get(1);
-		private final RuleCall cDeclarationExpressionParserRuleCall_15_1_0 = (RuleCall)cDeclarationAssignment_15_1.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_15_2 = (Keyword)cGroup_15.eContents().get(2);
+		private final Assignment cAuthConceptAssignment_15_0 = (Assignment)cGroup_15.eContents().get(0);
+		private final Keyword cAuthConceptIdentityKeyword_15_0_0 = (Keyword)cAuthConceptAssignment_15_0.eContents().get(0);
+		private final Alternatives cAlternatives_15_1 = (Alternatives)cGroup_15.eContents().get(1);
+		private final Assignment cStringIdentifierAssignment_15_1_0 = (Assignment)cAlternatives_15_1.eContents().get(0);
+		private final Alternatives cStringIdentifierAlternatives_15_1_0_0 = (Alternatives)cStringIdentifierAssignment_15_1_0.eContents().get(0);
+		private final RuleCall cStringIdentifierIDTerminalRuleCall_15_1_0_0_0 = (RuleCall)cStringIdentifierAlternatives_15_1_0_0.eContents().get(0);
+		private final RuleCall cStringIdentifierSTRINGTerminalRuleCall_15_1_0_0_1 = (RuleCall)cStringIdentifierAlternatives_15_1_0_0.eContents().get(1);
+		private final RuleCall cStringIdentifierUPPERCASE_IDTerminalRuleCall_15_1_0_0_2 = (RuleCall)cStringIdentifierAlternatives_15_1_0_0.eContents().get(2);
+		private final RuleCall cStringIdentifierCAMELCASE_IDTerminalRuleCall_15_1_0_0_3 = (RuleCall)cStringIdentifierAlternatives_15_1_0_0.eContents().get(3);
+		private final Assignment cIntIdentifierAssignment_15_1_1 = (Assignment)cAlternatives_15_1.eContents().get(1);
+		private final RuleCall cIntIdentifierINTTerminalRuleCall_15_1_1_0 = (RuleCall)cIntIdentifierAssignment_15_1_1.eContents().get(0);
+		private final Keyword cByKeyword_15_2 = (Keyword)cGroup_15.eContents().get(2);
+		private final Assignment cAuthorityAssignment_15_3 = (Assignment)cGroup_15.eContents().get(3);
+		private final Alternatives cAuthorityAlternatives_15_3_0 = (Alternatives)cAuthorityAssignment_15_3.eContents().get(0);
+		private final RuleCall cAuthorityUPPERCASE_IDTerminalRuleCall_15_3_0_0 = (RuleCall)cAuthorityAlternatives_15_3_0.eContents().get(0);
+		private final RuleCall cAuthorityUPPERCASE_PATHTerminalRuleCall_15_3_0_1 = (RuleCall)cAuthorityAlternatives_15_3_0.eContents().get(1);
+		private final Group cGroup_16 = (Group)cAlternatives.eContents().get(16);
+		private final Keyword cLeftParenthesisKeyword_16_0 = (Keyword)cGroup_16.eContents().get(0);
+		private final Assignment cDeclarationAssignment_16_1 = (Assignment)cGroup_16.eContents().get(1);
+		private final RuleCall cDeclarationExpressionParserRuleCall_16_1_0 = (RuleCall)cDeclarationAssignment_16_1.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_16_2 = (Keyword)cGroup_16.eContents().get(2);
 		
 		//Concept:
-		//	negated?=('not' | 'no')? name=ConceptReference ('identified' 'as' (stringIdentifier=(ID | STRING) |
-		//	intIdentifier=INT) 'by' authority=(UPPERCASE_ID | UPPERCASE_PATH))? | presence?='presence' 'of'
-		//	concept=SimpleConceptDeclaration | count?='count' 'of' concept=SimpleConceptDeclaration | distance?='distance' ('to'
-		//	| 'from') concept=SimpleConceptDeclaration | probability?='probability' 'of' concept=SimpleConceptDeclaration |
-		//	assessment?='assessment' 'of' concept=SimpleConceptDeclaration | uncertainty?='uncertainty' 'of'
-		//	concept=SimpleConceptDeclaration | magnitude?='magnitude' 'of' concept=SimpleConceptDeclaration | type?='type' 'of'
-		//	concept=SimpleConceptDeclaration | observability?='observability' 'of' concept=SimpleConceptDeclaration |
-		//	proportion?='proportion' 'of' concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)? |
-		//	percentage?='percentage' 'of' concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)? |
-		//	ratio?='ratio' 'of' concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration | value?='value' 'of'
+		//	negated?=('not' | 'no')? name=ConceptReference (authConcept?='identified' 'as' (stringIdentifier=(ID | STRING |
+		//	UPPERCASE_ID | CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID | UPPERCASE_PATH))? |
+		//	presence?='presence' 'of' concept=SimpleConceptDeclaration | count?='count' 'of' concept=SimpleConceptDeclaration |
+		//	distance?='distance' ('to' | 'from') concept=SimpleConceptDeclaration | probability?='probability' 'of'
+		//	concept=SimpleConceptDeclaration | assessment?='assessment' 'of' concept=SimpleConceptDeclaration |
+		//	uncertainty?='uncertainty' 'of' concept=SimpleConceptDeclaration | magnitude?='magnitude' 'of'
+		//	concept=SimpleConceptDeclaration | type?='type' 'of' concept=SimpleConceptDeclaration |
+		//	observability?='observability' 'of' concept=SimpleConceptDeclaration | proportion?='proportion' 'of'
+		//	concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)? | percentage?='percentage' 'of'
+		//	concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)? | ratio?='ratio' 'of'
+		//	concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration | value?='value' 'of'
 		//	concept=SimpleConceptDeclaration (=> 'over' other=SimpleConceptDeclaration)? | occurrence?='occurrence' 'of'
-		//	concept=SimpleConceptDeclaration |
+		//	concept=SimpleConceptDeclaration | authConcept?='identity' (stringIdentifier=(ID | STRING | UPPERCASE_ID |
+		//	CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID | UPPERCASE_PATH) |
 		//	'(' declaration=Expression ')';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//negated?=('not' | 'no')? name=ConceptReference ('identified' 'as' (stringIdentifier=(ID | STRING) | intIdentifier=INT)
-		//'by' authority=(UPPERCASE_ID | UPPERCASE_PATH))? | presence?='presence' 'of' concept=SimpleConceptDeclaration |
-		//count?='count' 'of' concept=SimpleConceptDeclaration | distance?='distance' ('to' | 'from')
-		//concept=SimpleConceptDeclaration | probability?='probability' 'of' concept=SimpleConceptDeclaration |
-		//assessment?='assessment' 'of' concept=SimpleConceptDeclaration | uncertainty?='uncertainty' 'of'
-		//concept=SimpleConceptDeclaration | magnitude?='magnitude' 'of' concept=SimpleConceptDeclaration | type?='type' 'of'
-		//concept=SimpleConceptDeclaration | observability?='observability' 'of' concept=SimpleConceptDeclaration |
-		//proportion?='proportion' 'of' concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)? |
-		//percentage?='percentage' 'of' concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)? |
-		//ratio?='ratio' 'of' concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration | value?='value' 'of'
-		//concept=SimpleConceptDeclaration (=> 'over' other=SimpleConceptDeclaration)? | occurrence?='occurrence' 'of'
-		//concept=SimpleConceptDeclaration | '(' declaration=Expression ')'
+		//negated?=('not' | 'no')? name=ConceptReference (authConcept?='identified' 'as' (stringIdentifier=(ID | STRING |
+		//UPPERCASE_ID | CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID | UPPERCASE_PATH))? |
+		//presence?='presence' 'of' concept=SimpleConceptDeclaration | count?='count' 'of' concept=SimpleConceptDeclaration |
+		//distance?='distance' ('to' | 'from') concept=SimpleConceptDeclaration | probability?='probability' 'of'
+		//concept=SimpleConceptDeclaration | assessment?='assessment' 'of' concept=SimpleConceptDeclaration |
+		//uncertainty?='uncertainty' 'of' concept=SimpleConceptDeclaration | magnitude?='magnitude' 'of'
+		//concept=SimpleConceptDeclaration | type?='type' 'of' concept=SimpleConceptDeclaration | observability?='observability'
+		//'of' concept=SimpleConceptDeclaration | proportion?='proportion' 'of' concept=SimpleConceptDeclaration (=> 'in'
+		//other=SimpleConceptDeclaration)? | percentage?='percentage' 'of' concept=SimpleConceptDeclaration (=> 'in'
+		//other=SimpleConceptDeclaration)? | ratio?='ratio' 'of' concept=SimpleConceptDeclaration => 'to'
+		//other=SimpleConceptDeclaration | value?='value' 'of' concept=SimpleConceptDeclaration (=> 'over'
+		//other=SimpleConceptDeclaration)? | occurrence?='occurrence' 'of' concept=SimpleConceptDeclaration |
+		//authConcept?='identity' (stringIdentifier=(ID | STRING | UPPERCASE_ID | CAMELCASE_ID) | intIdentifier=INT) 'by'
+		//authority=(UPPERCASE_ID | UPPERCASE_PATH) | '(' declaration=Expression ')'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//negated?=('not' | 'no')? name=ConceptReference ('identified' 'as' (stringIdentifier=(ID | STRING) | intIdentifier=INT)
-		//'by' authority=(UPPERCASE_ID | UPPERCASE_PATH))?
+		//negated?=('not' | 'no')? name=ConceptReference (authConcept?='identified' 'as' (stringIdentifier=(ID | STRING |
+		//UPPERCASE_ID | CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID | UPPERCASE_PATH))?
 		public Group getGroup_0() { return cGroup_0; }
 		
 		//negated?=('not' | 'no')?
@@ -5034,22 +5058,26 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//ConceptReference
 		public RuleCall getNameConceptReferenceParserRuleCall_0_1_0() { return cNameConceptReferenceParserRuleCall_0_1_0; }
 		
-		//('identified' 'as' (stringIdentifier=(ID | STRING) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID | UPPERCASE_PATH))?
+		//(authConcept?='identified' 'as' (stringIdentifier=(ID | STRING | UPPERCASE_ID | CAMELCASE_ID) | intIdentifier=INT) 'by'
+		//authority=(UPPERCASE_ID | UPPERCASE_PATH))?
 		public Group getGroup_0_2() { return cGroup_0_2; }
 		
+		//authConcept?='identified'
+		public Assignment getAuthConceptAssignment_0_2_0() { return cAuthConceptAssignment_0_2_0; }
+		
 		//'identified'
-		public Keyword getIdentifiedKeyword_0_2_0() { return cIdentifiedKeyword_0_2_0; }
+		public Keyword getAuthConceptIdentifiedKeyword_0_2_0_0() { return cAuthConceptIdentifiedKeyword_0_2_0_0; }
 		
 		//'as'
 		public Keyword getAsKeyword_0_2_1() { return cAsKeyword_0_2_1; }
 		
-		//stringIdentifier=(ID | STRING) | intIdentifier=INT
+		//stringIdentifier=(ID | STRING | UPPERCASE_ID | CAMELCASE_ID) | intIdentifier=INT
 		public Alternatives getAlternatives_0_2_2() { return cAlternatives_0_2_2; }
 		
-		//stringIdentifier=(ID | STRING)
+		//stringIdentifier=(ID | STRING | UPPERCASE_ID | CAMELCASE_ID)
 		public Assignment getStringIdentifierAssignment_0_2_2_0() { return cStringIdentifierAssignment_0_2_2_0; }
 		
-		//(ID | STRING)
+		//(ID | STRING | UPPERCASE_ID | CAMELCASE_ID)
 		public Alternatives getStringIdentifierAlternatives_0_2_2_0_0() { return cStringIdentifierAlternatives_0_2_2_0_0; }
 		
 		//ID
@@ -5057,6 +5085,12 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//STRING
 		public RuleCall getStringIdentifierSTRINGTerminalRuleCall_0_2_2_0_0_1() { return cStringIdentifierSTRINGTerminalRuleCall_0_2_2_0_0_1; }
+		
+		//UPPERCASE_ID
+		public RuleCall getStringIdentifierUPPERCASE_IDTerminalRuleCall_0_2_2_0_0_2() { return cStringIdentifierUPPERCASE_IDTerminalRuleCall_0_2_2_0_0_2; }
+		
+		//CAMELCASE_ID
+		public RuleCall getStringIdentifierCAMELCASE_IDTerminalRuleCall_0_2_2_0_0_3() { return cStringIdentifierCAMELCASE_IDTerminalRuleCall_0_2_2_0_0_3; }
 		
 		//intIdentifier=INT
 		public Assignment getIntIdentifierAssignment_0_2_2_1() { return cIntIdentifierAssignment_0_2_2_1; }
@@ -5384,20 +5418,74 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//SimpleConceptDeclaration
 		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_14_2_0() { return cConceptSimpleConceptDeclarationParserRuleCall_14_2_0; }
 		
-		//'(' declaration=Expression ')'
+		//// this form specifies an authority concept with no alias (the authority may provide a default label)
+		//authConcept?='identity' (stringIdentifier=(ID | STRING | UPPERCASE_ID | CAMELCASE_ID) | intIdentifier=INT) 'by'
+		//authority=(UPPERCASE_ID | UPPERCASE_PATH)
 		public Group getGroup_15() { return cGroup_15; }
 		
+		//// this form specifies an authority concept with no alias (the authority may provide a default label)
+		//authConcept?='identity'
+		public Assignment getAuthConceptAssignment_15_0() { return cAuthConceptAssignment_15_0; }
+		
+		//'identity'
+		public Keyword getAuthConceptIdentityKeyword_15_0_0() { return cAuthConceptIdentityKeyword_15_0_0; }
+		
+		//stringIdentifier=(ID | STRING | UPPERCASE_ID | CAMELCASE_ID) | intIdentifier=INT
+		public Alternatives getAlternatives_15_1() { return cAlternatives_15_1; }
+		
+		//stringIdentifier=(ID | STRING | UPPERCASE_ID | CAMELCASE_ID)
+		public Assignment getStringIdentifierAssignment_15_1_0() { return cStringIdentifierAssignment_15_1_0; }
+		
+		//(ID | STRING | UPPERCASE_ID | CAMELCASE_ID)
+		public Alternatives getStringIdentifierAlternatives_15_1_0_0() { return cStringIdentifierAlternatives_15_1_0_0; }
+		
+		//ID
+		public RuleCall getStringIdentifierIDTerminalRuleCall_15_1_0_0_0() { return cStringIdentifierIDTerminalRuleCall_15_1_0_0_0; }
+		
+		//STRING
+		public RuleCall getStringIdentifierSTRINGTerminalRuleCall_15_1_0_0_1() { return cStringIdentifierSTRINGTerminalRuleCall_15_1_0_0_1; }
+		
+		//UPPERCASE_ID
+		public RuleCall getStringIdentifierUPPERCASE_IDTerminalRuleCall_15_1_0_0_2() { return cStringIdentifierUPPERCASE_IDTerminalRuleCall_15_1_0_0_2; }
+		
+		//CAMELCASE_ID
+		public RuleCall getStringIdentifierCAMELCASE_IDTerminalRuleCall_15_1_0_0_3() { return cStringIdentifierCAMELCASE_IDTerminalRuleCall_15_1_0_0_3; }
+		
+		//intIdentifier=INT
+		public Assignment getIntIdentifierAssignment_15_1_1() { return cIntIdentifierAssignment_15_1_1; }
+		
+		//INT
+		public RuleCall getIntIdentifierINTTerminalRuleCall_15_1_1_0() { return cIntIdentifierINTTerminalRuleCall_15_1_1_0; }
+		
+		//'by'
+		public Keyword getByKeyword_15_2() { return cByKeyword_15_2; }
+		
+		//authority=(UPPERCASE_ID | UPPERCASE_PATH)
+		public Assignment getAuthorityAssignment_15_3() { return cAuthorityAssignment_15_3; }
+		
+		//(UPPERCASE_ID | UPPERCASE_PATH)
+		public Alternatives getAuthorityAlternatives_15_3_0() { return cAuthorityAlternatives_15_3_0; }
+		
+		//UPPERCASE_ID
+		public RuleCall getAuthorityUPPERCASE_IDTerminalRuleCall_15_3_0_0() { return cAuthorityUPPERCASE_IDTerminalRuleCall_15_3_0_0; }
+		
+		//UPPERCASE_PATH
+		public RuleCall getAuthorityUPPERCASE_PATHTerminalRuleCall_15_3_0_1() { return cAuthorityUPPERCASE_PATHTerminalRuleCall_15_3_0_1; }
+		
+		//'(' declaration=Expression ')'
+		public Group getGroup_16() { return cGroup_16; }
+		
 		//'('
-		public Keyword getLeftParenthesisKeyword_15_0() { return cLeftParenthesisKeyword_15_0; }
+		public Keyword getLeftParenthesisKeyword_16_0() { return cLeftParenthesisKeyword_16_0; }
 		
 		//declaration=Expression
-		public Assignment getDeclarationAssignment_15_1() { return cDeclarationAssignment_15_1; }
+		public Assignment getDeclarationAssignment_16_1() { return cDeclarationAssignment_16_1; }
 		
 		//Expression
-		public RuleCall getDeclarationExpressionParserRuleCall_15_1_0() { return cDeclarationExpressionParserRuleCall_15_1_0; }
+		public RuleCall getDeclarationExpressionParserRuleCall_16_1_0() { return cDeclarationExpressionParserRuleCall_16_1_0; }
 		
 		//')'
-		public Keyword getRightParenthesisKeyword_15_2() { return cRightParenthesisKeyword_15_2; }
+		public Keyword getRightParenthesisKeyword_16_2() { return cRightParenthesisKeyword_16_2; }
 	}
 	public class ExpressionElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.Expression");
@@ -10612,18 +10700,20 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Concept:
-	//	negated?=('not' | 'no')? name=ConceptReference ('identified' 'as' (stringIdentifier=(ID | STRING) |
-	//	intIdentifier=INT) 'by' authority=(UPPERCASE_ID | UPPERCASE_PATH))? | presence?='presence' 'of'
-	//	concept=SimpleConceptDeclaration | count?='count' 'of' concept=SimpleConceptDeclaration | distance?='distance' ('to'
-	//	| 'from') concept=SimpleConceptDeclaration | probability?='probability' 'of' concept=SimpleConceptDeclaration |
-	//	assessment?='assessment' 'of' concept=SimpleConceptDeclaration | uncertainty?='uncertainty' 'of'
-	//	concept=SimpleConceptDeclaration | magnitude?='magnitude' 'of' concept=SimpleConceptDeclaration | type?='type' 'of'
-	//	concept=SimpleConceptDeclaration | observability?='observability' 'of' concept=SimpleConceptDeclaration |
-	//	proportion?='proportion' 'of' concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)? |
-	//	percentage?='percentage' 'of' concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)? |
-	//	ratio?='ratio' 'of' concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration | value?='value' 'of'
+	//	negated?=('not' | 'no')? name=ConceptReference (authConcept?='identified' 'as' (stringIdentifier=(ID | STRING |
+	//	UPPERCASE_ID | CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID | UPPERCASE_PATH))? |
+	//	presence?='presence' 'of' concept=SimpleConceptDeclaration | count?='count' 'of' concept=SimpleConceptDeclaration |
+	//	distance?='distance' ('to' | 'from') concept=SimpleConceptDeclaration | probability?='probability' 'of'
+	//	concept=SimpleConceptDeclaration | assessment?='assessment' 'of' concept=SimpleConceptDeclaration |
+	//	uncertainty?='uncertainty' 'of' concept=SimpleConceptDeclaration | magnitude?='magnitude' 'of'
+	//	concept=SimpleConceptDeclaration | type?='type' 'of' concept=SimpleConceptDeclaration |
+	//	observability?='observability' 'of' concept=SimpleConceptDeclaration | proportion?='proportion' 'of'
+	//	concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)? | percentage?='percentage' 'of'
+	//	concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)? | ratio?='ratio' 'of'
+	//	concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration | value?='value' 'of'
 	//	concept=SimpleConceptDeclaration (=> 'over' other=SimpleConceptDeclaration)? | occurrence?='occurrence' 'of'
-	//	concept=SimpleConceptDeclaration |
+	//	concept=SimpleConceptDeclaration | authConcept?='identity' (stringIdentifier=(ID | STRING | UPPERCASE_ID |
+	//	CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID | UPPERCASE_PATH) |
 	//	'(' declaration=Expression ')';
 	public ConceptElements getConceptAccess() {
 		return pConcept;

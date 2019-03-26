@@ -2677,7 +2677,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getConcept_StringIdentifier()
+  public EAttribute getConcept_AuthConcept()
   {
     return (EAttribute)conceptEClass.getEStructuralFeatures().get(2);
   }
@@ -2687,7 +2687,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getConcept_IntIdentifier()
+  public EAttribute getConcept_StringIdentifier()
   {
     return (EAttribute)conceptEClass.getEStructuralFeatures().get(3);
   }
@@ -2697,7 +2697,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getConcept_Authority()
+  public EAttribute getConcept_IntIdentifier()
   {
     return (EAttribute)conceptEClass.getEStructuralFeatures().get(4);
   }
@@ -2707,7 +2707,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getConcept_Presence()
+  public EAttribute getConcept_Authority()
   {
     return (EAttribute)conceptEClass.getEStructuralFeatures().get(5);
   }
@@ -2717,9 +2717,19 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getConcept_Presence()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EReference getConcept_Concept()
   {
-    return (EReference)conceptEClass.getEStructuralFeatures().get(6);
+    return (EReference)conceptEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -2729,7 +2739,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getConcept_Count()
   {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(7);
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(8);
   }
 
   /**
@@ -2739,7 +2749,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getConcept_Distance()
   {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(8);
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -2749,7 +2759,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getConcept_Probability()
   {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(9);
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(10);
   }
 
   /**
@@ -2759,7 +2769,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getConcept_Assessment()
   {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(10);
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(11);
   }
 
   /**
@@ -2769,7 +2779,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getConcept_Uncertainty()
   {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(11);
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(12);
   }
 
   /**
@@ -2779,7 +2789,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getConcept_Magnitude()
   {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(12);
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(13);
   }
 
   /**
@@ -2789,7 +2799,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getConcept_Type()
   {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(13);
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(14);
   }
 
   /**
@@ -2799,7 +2809,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getConcept_Observability()
   {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(14);
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(15);
   }
 
   /**
@@ -2809,7 +2819,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getConcept_Proportion()
   {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(15);
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(16);
   }
 
   /**
@@ -2819,7 +2829,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getConcept_Other()
   {
-    return (EReference)conceptEClass.getEStructuralFeatures().get(16);
+    return (EReference)conceptEClass.getEStructuralFeatures().get(17);
   }
 
   /**
@@ -2829,7 +2839,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getConcept_Percentage()
   {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(17);
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(18);
   }
 
   /**
@@ -2839,7 +2849,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getConcept_Ratio()
   {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(18);
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(19);
   }
 
   /**
@@ -2849,7 +2859,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getConcept_Value()
   {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(19);
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(20);
   }
 
   /**
@@ -2859,7 +2869,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getConcept_Occurrence()
   {
-    return (EAttribute)conceptEClass.getEStructuralFeatures().get(20);
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(21);
   }
 
   /**
@@ -2869,7 +2879,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getConcept_Declaration()
   {
-    return (EReference)conceptEClass.getEStructuralFeatures().get(21);
+    return (EReference)conceptEClass.getEStructuralFeatures().get(22);
   }
 
   /**
@@ -4795,6 +4805,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     conceptEClass = createEClass(CONCEPT);
     createEAttribute(conceptEClass, CONCEPT__NEGATED);
     createEReference(conceptEClass, CONCEPT__NAME);
+    createEAttribute(conceptEClass, CONCEPT__AUTH_CONCEPT);
     createEAttribute(conceptEClass, CONCEPT__STRING_IDENTIFIER);
     createEAttribute(conceptEClass, CONCEPT__INT_IDENTIFIER);
     createEAttribute(conceptEClass, CONCEPT__AUTHORITY);
@@ -5283,6 +5294,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEClass(conceptEClass, Concept.class, "Concept", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getConcept_Negated(), ecorePackage.getEBoolean(), "negated", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConcept_Name(), this.getConceptReference(), null, "name", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_AuthConcept(), ecorePackage.getEBoolean(), "authConcept", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConcept_StringIdentifier(), ecorePackage.getEString(), "stringIdentifier", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConcept_IntIdentifier(), ecorePackage.getEInt(), "intIdentifier", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConcept_Authority(), ecorePackage.getEString(), "authority", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

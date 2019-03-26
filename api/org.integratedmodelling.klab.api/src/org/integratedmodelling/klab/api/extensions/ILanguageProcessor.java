@@ -44,6 +44,13 @@ public interface ILanguageProcessor {
 		 * @return set of identifiers
 		 */
 		Collection<String> getIdentifiers();
+		
+		/**
+		 * Return all contextualizers encountered (in expressions such as "elevation@nw")
+		 * 
+		 * @return set of contextualizers
+		 */
+		Collection<String> getContextualizers();
 
 		/**
 		 * Return true if the expression contains scalar usage for the passed

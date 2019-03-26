@@ -17,10 +17,21 @@ Semantic, non-semantic and model assets in k.LAB
 
 Types of assets. All identified by a unique URN. The main paradigm: non-semantic assets annotated with semantic assets and operated upon by 
 
+|                   | Non-semantic asset                           | Semantic asset                                       |
+| ----------------- | -------------------------------------------- | ---------------------------------------------------- |
+| May consist of    | doidoi doi doi doi doid oi doi d br for newl | du du du dud ud ud duduududududududududududududududu |
+| Specified by      |                                              |                                                      |
+| Contextualized to |                                              |                                                      |
+| Producing         |                                              |                                                      |
+| With type         |                                              |                                                      |
+
+
 Non-semantic assets: the resource lifecycle
 -------------------------------------------
 
 URN and their resolution. What is wrapped and how. Local -> public resources. Include geometry, metadata and provenance info that is assmbled into the final provenance graph for each dataflow.
+
+Resource adapters for flexibility - adapt data and computations to k.LAB transfer model
 
 Semantic assets: the worldview
 -------------------------------
@@ -29,16 +40,36 @@ Semantic assets: the worldview
 Models:
 -------------------------------
 
+In action
+==========
+
 Contextualizers as points of extension. Wrapping and adapting web and multi-platform code.
 
-Resolution and its products
-============================
+Diagram: resolution, contextualization, export back into resources
 
-Sessions and Example session. 
+Resolution
+----------------------------
+
+Contextualization
+------------------
+
+Results in a set of artifact that rigorously adhere to the observation ontology (based on provenance). All artifacts are created by actions that describe intentionality, consequentiality or emergence.
 
 Report, dataflow, provenance. Each dataflow can become a resource for reproducibility and be annotated anew.
 
 Possible use cases: embedded, modeler, 
 
+Software
+--------
+
+Servers, clients [API for consuming as embedded service; API to link; Web; IDE}]
+
 The k.LAB network: deploying a working semantic web for science
 ================================================================
+
+Diagram(s) 
+
+Extending 
+
+Mapping to FAIR
+----------------

@@ -519,13 +519,13 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         restrictions+=RestrictionStatement | 
 	 *                         metadata=Metadata
 	 *                     )? 
-	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
-	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
-	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
-	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
-	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
 	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
+	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
 	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
+	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
+	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
+	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
+	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
 	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
 	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
@@ -816,7 +816,11 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *         (
 	 *             (negated?='not' | negated?='no')? 
 	 *             name=ConceptReference 
-	 *             ((stringIdentifier=ID | stringIdentifier=STRING | intIdentifier=INT) (authority=UPPERCASE_ID | authority=UPPERCASE_PATH))?
+	 *             (
+	 *                 authConcept?='identified' 
+	 *                 (stringIdentifier=ID | stringIdentifier=STRING | stringIdentifier=UPPERCASE_ID | stringIdentifier=CAMELCASE_ID | intIdentifier=INT) 
+	 *                 (authority=UPPERCASE_ID | authority=UPPERCASE_PATH)
+	 *             )?
 	 *         ) | 
 	 *         (presence?='presence' concept=SimpleConceptDeclaration) | 
 	 *         (count?='count' concept=SimpleConceptDeclaration) | 
@@ -832,6 +836,11 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *         (ratio?='ratio' concept=SimpleConceptDeclaration other=SimpleConceptDeclaration) | 
 	 *         (value?='value' concept=SimpleConceptDeclaration other=SimpleConceptDeclaration?) | 
 	 *         (occurrence?='occurrence' concept=SimpleConceptDeclaration) | 
+	 *         (
+	 *             authConcept?='identity' 
+	 *             (stringIdentifier=ID | stringIdentifier=STRING | stringIdentifier=UPPERCASE_ID | stringIdentifier=CAMELCASE_ID | intIdentifier=INT) 
+	 *             (authority=UPPERCASE_ID | authority=UPPERCASE_PATH)
+	 *         ) | 
 	 *         declaration=Expression
 	 *     )
 	 */

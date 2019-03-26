@@ -139,7 +139,7 @@ public class VectorImporter extends AbstractFilesetImporter {
                                 + s + " to " + attr);
                     }
                     metadataId.add(new Pair<>(s, attr));
-                    builder.add(attr, first.getMetadata().get(s).getClass());
+                    builder.add(attr, Utils.getPODClass(first.getMetadata().get(s)));
                 }
             }
 
@@ -176,6 +176,7 @@ public class VectorImporter extends AbstractFilesetImporter {
 
             for (IArtifact obs : observations) {
                 if (obs instanceof IDirectObservation) {
+                	
                     featureBuilder.add(((Shape) ((IDirectObservation) obs).getScale().getSpace().getShape())
                             .getJTSGeometry());
 

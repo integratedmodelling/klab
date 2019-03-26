@@ -28,6 +28,7 @@ import org.integratedmodelling.kim.kim.KimPackage;
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isNegated <em>Negated</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isAuthConcept <em>Auth Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#getStringIdentifier <em>String Identifier</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#getIntIdentifier <em>Int Identifier</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#getAuthority <em>Authority</em>}</li>
@@ -83,6 +84,26 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
    * @ordered
    */
   protected ConceptReference name;
+
+  /**
+   * The default value of the '{@link #isAuthConcept() <em>Auth Concept</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isAuthConcept()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean AUTH_CONCEPT_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isAuthConcept() <em>Auth Concept</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isAuthConcept()
+   * @generated
+   * @ordered
+   */
+  protected boolean authConcept = AUTH_CONCEPT_EDEFAULT;
 
   /**
    * The default value of the '{@link #getStringIdentifier() <em>String Identifier</em>}' attribute.
@@ -544,6 +565,29 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
     }
     else if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT__NAME, newName, newName));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public boolean isAuthConcept()
+  {
+    return authConcept;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setAuthConcept(boolean newAuthConcept)
+  {
+    boolean oldAuthConcept = authConcept;
+    authConcept = newAuthConcept;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT__AUTH_CONCEPT, oldAuthConcept, authConcept));
   }
 
   /**
@@ -1117,6 +1161,8 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return isNegated();
       case KimPackage.CONCEPT__NAME:
         return getName();
+      case KimPackage.CONCEPT__AUTH_CONCEPT:
+        return isAuthConcept();
       case KimPackage.CONCEPT__STRING_IDENTIFIER:
         return getStringIdentifier();
       case KimPackage.CONCEPT__INT_IDENTIFIER:
@@ -1176,6 +1222,9 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return;
       case KimPackage.CONCEPT__NAME:
         setName((ConceptReference)newValue);
+        return;
+      case KimPackage.CONCEPT__AUTH_CONCEPT:
+        setAuthConcept((Boolean)newValue);
         return;
       case KimPackage.CONCEPT__STRING_IDENTIFIER:
         setStringIdentifier((String)newValue);
@@ -1257,6 +1306,9 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
       case KimPackage.CONCEPT__NAME:
         setName((ConceptReference)null);
         return;
+      case KimPackage.CONCEPT__AUTH_CONCEPT:
+        setAuthConcept(AUTH_CONCEPT_EDEFAULT);
+        return;
       case KimPackage.CONCEPT__STRING_IDENTIFIER:
         setStringIdentifier(STRING_IDENTIFIER_EDEFAULT);
         return;
@@ -1335,6 +1387,8 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return negated != NEGATED_EDEFAULT;
       case KimPackage.CONCEPT__NAME:
         return name != null;
+      case KimPackage.CONCEPT__AUTH_CONCEPT:
+        return authConcept != AUTH_CONCEPT_EDEFAULT;
       case KimPackage.CONCEPT__STRING_IDENTIFIER:
         return STRING_IDENTIFIER_EDEFAULT == null ? stringIdentifier != null : !STRING_IDENTIFIER_EDEFAULT.equals(stringIdentifier);
       case KimPackage.CONCEPT__INT_IDENTIFIER:
@@ -1392,6 +1446,8 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (negated: ");
     result.append(negated);
+    result.append(", authConcept: ");
+    result.append(authConcept);
     result.append(", stringIdentifier: ");
     result.append(stringIdentifier);
     result.append(", intIdentifier: ");

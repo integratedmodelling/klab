@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
@@ -98,7 +99,8 @@ public class DataflowCompiler {
 			Graphs.show(resolutionGraph, "Resolution graph");
 		}
 
-		Dataflow ret = new Dataflow();
+		Dataflow ret = new Dataflow(monitor.getIdentity().getParentIdentity(ISession.class));
+		
 		ret.setName(this.name);
 		ret.setContext(this.context);
 		ret.setResolutionScope((ResolutionScope) scope);

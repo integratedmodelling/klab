@@ -2277,13 +2277,22 @@ public interface KimPackage extends EPackage
   int CONCEPT__NAME = 1;
 
   /**
+   * The feature id for the '<em><b>Auth Concept</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__AUTH_CONCEPT = 2;
+
+  /**
    * The feature id for the '<em><b>String Identifier</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONCEPT__STRING_IDENTIFIER = 2;
+  int CONCEPT__STRING_IDENTIFIER = 3;
 
   /**
    * The feature id for the '<em><b>Int Identifier</b></em>' attribute.
@@ -2292,7 +2301,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__INT_IDENTIFIER = 3;
+  int CONCEPT__INT_IDENTIFIER = 4;
 
   /**
    * The feature id for the '<em><b>Authority</b></em>' attribute.
@@ -2301,7 +2310,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__AUTHORITY = 4;
+  int CONCEPT__AUTHORITY = 5;
 
   /**
    * The feature id for the '<em><b>Presence</b></em>' attribute.
@@ -2310,7 +2319,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__PRESENCE = 5;
+  int CONCEPT__PRESENCE = 6;
 
   /**
    * The feature id for the '<em><b>Concept</b></em>' containment reference.
@@ -2319,7 +2328,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__CONCEPT = 6;
+  int CONCEPT__CONCEPT = 7;
 
   /**
    * The feature id for the '<em><b>Count</b></em>' attribute.
@@ -2328,7 +2337,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__COUNT = 7;
+  int CONCEPT__COUNT = 8;
 
   /**
    * The feature id for the '<em><b>Distance</b></em>' attribute.
@@ -2337,7 +2346,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__DISTANCE = 8;
+  int CONCEPT__DISTANCE = 9;
 
   /**
    * The feature id for the '<em><b>Probability</b></em>' attribute.
@@ -2346,7 +2355,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__PROBABILITY = 9;
+  int CONCEPT__PROBABILITY = 10;
 
   /**
    * The feature id for the '<em><b>Assessment</b></em>' attribute.
@@ -2355,7 +2364,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__ASSESSMENT = 10;
+  int CONCEPT__ASSESSMENT = 11;
 
   /**
    * The feature id for the '<em><b>Uncertainty</b></em>' attribute.
@@ -2364,7 +2373,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__UNCERTAINTY = 11;
+  int CONCEPT__UNCERTAINTY = 12;
 
   /**
    * The feature id for the '<em><b>Magnitude</b></em>' attribute.
@@ -2373,7 +2382,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__MAGNITUDE = 12;
+  int CONCEPT__MAGNITUDE = 13;
 
   /**
    * The feature id for the '<em><b>Type</b></em>' attribute.
@@ -2382,7 +2391,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__TYPE = 13;
+  int CONCEPT__TYPE = 14;
 
   /**
    * The feature id for the '<em><b>Observability</b></em>' attribute.
@@ -2391,7 +2400,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__OBSERVABILITY = 14;
+  int CONCEPT__OBSERVABILITY = 15;
 
   /**
    * The feature id for the '<em><b>Proportion</b></em>' attribute.
@@ -2400,7 +2409,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__PROPORTION = 15;
+  int CONCEPT__PROPORTION = 16;
 
   /**
    * The feature id for the '<em><b>Other</b></em>' containment reference.
@@ -2409,7 +2418,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__OTHER = 16;
+  int CONCEPT__OTHER = 17;
 
   /**
    * The feature id for the '<em><b>Percentage</b></em>' attribute.
@@ -2418,7 +2427,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__PERCENTAGE = 17;
+  int CONCEPT__PERCENTAGE = 18;
 
   /**
    * The feature id for the '<em><b>Ratio</b></em>' attribute.
@@ -2427,7 +2436,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__RATIO = 18;
+  int CONCEPT__RATIO = 19;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -2436,7 +2445,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__VALUE = 19;
+  int CONCEPT__VALUE = 20;
 
   /**
    * The feature id for the '<em><b>Occurrence</b></em>' attribute.
@@ -2445,7 +2454,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__OCCURRENCE = 20;
+  int CONCEPT__OCCURRENCE = 21;
 
   /**
    * The feature id for the '<em><b>Declaration</b></em>' containment reference.
@@ -2454,7 +2463,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__DECLARATION = 21;
+  int CONCEPT__DECLARATION = 22;
 
   /**
    * The number of structural features of the '<em>Concept</em>' class.
@@ -2463,7 +2472,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_FEATURE_COUNT = 22;
+  int CONCEPT_FEATURE_COUNT = 23;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.UpperOntologyDefinitionImpl <em>Upper Ontology Definition</em>}' class.
@@ -6518,6 +6527,17 @@ public interface KimPackage extends EPackage
   EReference getConcept_Name();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Concept#isAuthConcept <em>Auth Concept</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Auth Concept</em>'.
+   * @see org.integratedmodelling.kim.kim.Concept#isAuthConcept()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_AuthConcept();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Concept#getStringIdentifier <em>String Identifier</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -10320,6 +10340,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EReference CONCEPT__NAME = eINSTANCE.getConcept_Name();
+
+    /**
+     * The meta object literal for the '<em><b>Auth Concept</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__AUTH_CONCEPT = eINSTANCE.getConcept_AuthConcept();
 
     /**
      * The meta object literal for the '<em><b>String Identifier</b></em>' attribute feature.

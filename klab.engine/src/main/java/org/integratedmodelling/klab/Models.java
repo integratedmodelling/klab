@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -36,6 +37,7 @@ import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.persistence.ModelKbox;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
+import org.integratedmodelling.klab.rest.ModelReference;
 import org.integratedmodelling.klab.utils.xtext.KimInjectorProvider;
 
 import com.google.inject.Inject;
@@ -184,6 +186,24 @@ public enum Models implements IModelService {
 	public IModel resolve(IConcept trait, IResolutionScope scope) {
 		List<IRankedModel> ret = kbox.query(Observable.promote(trait), (ResolutionScope)scope);
 		return ret.isEmpty() ? null : ret.get(0);
+	}
+
+    public List<ModelReference> listModels(boolean sort) {
+        List<ModelReference> ret = kbox.retrieveAll(Klab.INSTANCE.getRootMonitor());
+        if (sort) {
+            ret.sort(new Comparator<ModelReference>() {
+
+                @Override
+                public int compare(ModelReference o1, ModelReference o2) {
+                    return o1.getUrn().compareTo(o2.getUrn());
+                }
+            });
+        }
+        return ret;
+    }
+
+	public ModelReference getModelReference(String string) {
+		return kbox.retrieveModel(string, Klab.INSTANCE.getRootMonitor());
 	}
 
 }

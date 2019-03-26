@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
 import javax.websocket.ContainerProvider;
@@ -242,5 +243,11 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 		}
 		subscriptions.clear();
 	}
+
+    @Override
+    public Future<IMessage> ask(IMessage message) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }
