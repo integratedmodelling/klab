@@ -63,7 +63,7 @@ public enum Concepts implements IConceptService {
 
 	@Override
 	public IConcept declare(IKimConcept conceptDefinition) {
-		return KimKnowledgeProcessor.INSTANCE.declare(conceptDefinition, Klab.INSTANCE.getRootMonitor());
+		return KimKnowledgeProcessor.INSTANCE.declare(conceptDefinition, Reasoner.INSTANCE.getOntology(), Klab.INSTANCE.getRootMonitor());
 	}
 
 	@Override

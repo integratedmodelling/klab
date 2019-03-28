@@ -54,7 +54,6 @@ public class ObservableBuilder implements IObservable.Builder {
 	private IMonitor monitor;
 
 	private Ontology ontology;
-	private Ontology declaringOntology;
 
 	private Concept main;
 	private Concept parent;
@@ -82,8 +81,6 @@ public class ObservableBuilder implements IObservable.Builder {
 	private IUnit unit;
 	private ICurrency currency;
 
-	private static Map<String, IConcept> byDeclaration = Collections.synchronizedMap(new HashMap<>());
-
 	private boolean isTrivial = true;
 
 	// This is only for reporting
@@ -92,14 +89,18 @@ public class ObservableBuilder implements IObservable.Builder {
 	public ObservableBuilder(Concept main, Ontology ontology) {
 		this.main = main;
 		this.ontology = ontology;
-		this.declaringOntology = ontology;
+		if (ontology == null) {
+			System.out.println("SCRWQW");
+		}
 		this.type = ((Concept) main).type;
 	}
 
 	public ObservableBuilder(String main, Concept parent, Ontology ontology) {
 		this.mainId = main;
 		this.ontology = ontology;
-		this.declaringOntology = ontology;
+		if (ontology == null) {
+			System.out.println("SCRWQW");
+		}
 		this.parent = parent;
 		this.type = ((Concept) parent).type;
 	}
@@ -107,7 +108,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	public ObservableBuilder(String main, Set<Type> parent, Ontology ontology) {
 		this.mainId = main;
 		this.ontology = ontology;
-		this.declaringOntology = ontology;
+		if (ontology == null) {
+			System.out.println("SCRWQW");
+		}
 		this.parent = Resources.INSTANCE.getUpperOntology().getCoreType(parent);
 		this.type = parent;
 	}
@@ -168,7 +171,6 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.ontology = other.ontology;
 		this.type = other.type;
 		this.declaration = other.declaration;
-		this.declaringOntology = other.declaringOntology;
 
 		checkTrivial();
 	}
@@ -570,7 +572,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			}
 			ontology.define(ax);
 			IConcept ret = ontology.getConcept(conceptId);
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.OBSERVES_PROPERTY), concept);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.OBSERVES_PROPERTY), concept, ontology);
 		}
 
 		return ontology.getConcept(conceptId);
@@ -626,7 +628,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			/*
 			 * numerosity is inherent to the thing that's counted.
 			 */
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), concept);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), concept, ontology);
 		}
 
 		return ontology.getConcept(conceptId);
@@ -675,7 +677,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			/*
 			 * distance is inherent to the thing that's present.
 			 */
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), (IConcept) concept);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), (IConcept) concept, ontology);
 		}
 
 		return ontology.getConcept(conceptId);
@@ -725,7 +727,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			/*
 			 * presence is inherent to the thing that's present.
 			 */
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), (IConcept) concept);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), (IConcept) concept, ontology);
 		}
 
 		return ontology.getConcept(conceptId);
@@ -776,7 +778,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			/*
 			 * occurrence is inherent to the event that's possible.
 			 */
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), concept);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), concept, ontology);
 		}
 
 		return ontology.getConcept(conceptId);
@@ -825,7 +827,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			/*
 			 * observability is inherent to the thing that's present.
 			 */
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), (IConcept) concept);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), (IConcept) concept, ontology);
 		}
 
 		return ontology.getConcept(conceptId);
@@ -874,7 +876,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			/*
 			 * probability is inherent to the event that's possible.
 			 */
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), concept);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), concept, ontology);
 		}
 
 		return ontology.getConcept(conceptId);
@@ -923,7 +925,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			/*
 			 * probability is inherent to the event that's possible.
 			 */
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), concept);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), concept, ontology);
 		}
 
 		return ontology.getConcept(conceptId);
@@ -966,7 +968,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			/*
 			 * uncertainty is inherent to the thing that's present.
 			 */
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), (IConcept) concept);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), (IConcept) concept, ontology);
 		}
 
 		return ontology.getConcept(conceptId);
@@ -1015,9 +1017,9 @@ public class ObservableBuilder implements IObservable.Builder {
 			/*
 			 * proportion is inherent to the thing that's present.
 			 */
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), (IConcept) concept);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), (IConcept) concept, ontology);
 			if (comparison != null) {
-				OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_COMPARED_TO_PROPERTY), comparison);
+				OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_COMPARED_TO_PROPERTY), comparison, ontology);
 			}
 		}
 
@@ -1075,8 +1077,8 @@ public class ObservableBuilder implements IObservable.Builder {
 			/*
 			 * ratio is inherent to the thing that's present.
 			 */
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), concept);
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_COMPARED_TO_PROPERTY), comparison);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), concept, ontology);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_COMPARED_TO_PROPERTY), comparison, ontology);
 
 		}
 
@@ -1115,9 +1117,9 @@ public class ObservableBuilder implements IObservable.Builder {
 			/*
 			 * value is inherent to the thing that's present.
 			 */
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), concept);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), concept, ontology);
 			if (comparison != null) {
-				OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_COMPARED_TO_PROPERTY), comparison);
+				OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_COMPARED_TO_PROPERTY), comparison, ontology);
 			}
 		}
 
@@ -1155,14 +1157,14 @@ public class ObservableBuilder implements IObservable.Builder {
 			ontology.define(axioms);
 			IConcept ret = ontology.getConcept(conceptId);
 
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.EXPOSES_TRAIT_PROPERTY), classified);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.EXPOSES_TRAIT_PROPERTY), classified, ontology);
 
 			/*
 			 * types inherit the context from their trait
 			 */
 			IConcept context = Observables.INSTANCE.getContextType(classified);
 			if (context != null) {
-				OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context);
+				OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context, ontology);
 			}
 		}
 
@@ -1221,9 +1223,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			return main;
 		}
 
-		if (this.ontology == null) {
-			this.ontology = getTargetOntology();
-		}
+		this.ontology = getTargetOntology();
 
 		/*
 		 * retrieve the ID for the declaration; if present, just return the
@@ -1506,40 +1506,43 @@ public class ObservableBuilder implements IObservable.Builder {
 		 */
 
 		if (identities.size() > 0) {
-			Traits.INSTANCE.restrict(ret, Concepts.p(NS.HAS_IDENTITY_PROPERTY), LogicalConnector.UNION, identities);
+			Traits.INSTANCE.restrict(ret, Concepts.p(NS.HAS_IDENTITY_PROPERTY), LogicalConnector.UNION, identities,
+					ontology);
 		}
 		if (realms.size() > 0) {
-			Traits.INSTANCE.restrict(ret, Concepts.p(NS.HAS_REALM_PROPERTY), LogicalConnector.UNION, realms);
+			Traits.INSTANCE.restrict(ret, Concepts.p(NS.HAS_REALM_PROPERTY), LogicalConnector.UNION, realms, ontology);
 		}
 		if (attributes.size() > 0) {
-			Traits.INSTANCE.restrict(ret, Concepts.p(NS.HAS_ATTRIBUTE_PROPERTY), LogicalConnector.UNION, attributes);
+			Traits.INSTANCE.restrict(ret, Concepts.p(NS.HAS_ATTRIBUTE_PROPERTY), LogicalConnector.UNION, attributes,
+					ontology);
 		}
 		if (acceptedRoles.size() > 0) {
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_ROLE_PROPERTY), LogicalConnector.UNION, acceptedRoles);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_ROLE_PROPERTY), LogicalConnector.UNION, acceptedRoles,
+					ontology);
 		}
 		if (inherent != null) {
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), inherent);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), inherent, ontology);
 		}
 		if (context != null) {
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context, ontology);
 		}
 		if (caused != null) {
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_CAUSED_PROPERTY), caused);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_CAUSED_PROPERTY), caused, ontology);
 		}
 		if (causant != null) {
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_CAUSANT_PROPERTY), causant);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_CAUSANT_PROPERTY), causant, ontology);
 		}
 		if (compresent != null) {
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_COMPRESENT_PROPERTY), compresent);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_COMPRESENT_PROPERTY), compresent, ontology);
 		}
 		if (goal != null) {
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_PURPOSE_PROPERTY), goal);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_PURPOSE_PROPERTY), goal, ontology);
 		}
 		if (cooccurrent != null) {
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.OCCURS_DURING_PROPERTY), cooccurrent);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.OCCURS_DURING_PROPERTY), cooccurrent, ontology);
 		}
 		if (adjacent != null) {
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_ADJACENT_TO_PROPERTY), adjacent);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_ADJACENT_TO_PROPERTY), adjacent, ontology);
 		}
 
 		if (monitor != null && !Reasoner.INSTANCE.isSatisfiable(ret)) {

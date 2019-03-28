@@ -181,4 +181,9 @@ public class ENamespace extends EKimObject implements IKimNamespace {
 		return delegate.getNamespace();
 	}
 
+	@Override
+	public Collection<String> getImportedIds() {
+		return delegate.getImportedIds();
+	}
+
 }

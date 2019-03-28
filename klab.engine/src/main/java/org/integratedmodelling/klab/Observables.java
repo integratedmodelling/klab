@@ -48,6 +48,7 @@ import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.owl.Ontology;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.xtext.KimInjectorProvider;
 
@@ -92,7 +93,7 @@ public enum Observables implements IObservableService {
         try {
             ObservableSemantics parsed = observableParser.parse(declaration).getObservable();
             KimObservable interpreted = Kim.INSTANCE.declareObservable(parsed);
-            return KimKnowledgeProcessor.INSTANCE.declare(interpreted, monitor);
+            return KimKnowledgeProcessor.INSTANCE.declare(interpreted, Reasoner.INSTANCE.getOntology(), monitor);
         } catch (Exception e) {
             monitor.error(e, declaration);
         }
@@ -114,7 +115,7 @@ public enum Observables implements IObservableService {
 
     @Override
     public Observable declare(IKimObservable observable, IMonitor monitor) {
-        return KimKnowledgeProcessor.INSTANCE.declare(observable, monitor);
+        return KimKnowledgeProcessor.INSTANCE.declare(observable, Reasoner.INSTANCE.getOntology(), monitor);
     }
 
     @Override
@@ -536,19 +537,19 @@ public enum Observables implements IObservableService {
      * @param type
      * @param applicables
      */
-    public void setApplicableObservables(IConcept type, List<IConcept> applicables) {
+    public void setApplicableObservables(IConcept type, List<IConcept> applicables, Ontology ontology) {
         // TODO validate
         OWL.INSTANCE
-                .restrictSome(type, Concepts.p(NS.APPLIES_TO_PROPERTY), LogicalConnector.UNION, applicables);
+                .restrictSome(type, Concepts.p(NS.APPLIES_TO_PROPERTY), LogicalConnector.UNION, applicables, ontology);
     }
 
-    public void defineRelationship(Concept relationship, IConcept source, IConcept target) {
+    public void defineRelationship(Concept relationship, IConcept source, IConcept target, Ontology ontology) {
         IProperty hasSource = Concepts.p(NS.IMPLIES_SOURCE_PROPERTY);
         IProperty hasTarget = Concepts.p(NS.IMPLIES_DESTINATION_PROPERTY);
         OWL.INSTANCE
-                .restrictSome(relationship, hasSource, LogicalConnector.UNION, Collections.singleton(source));
+                .restrictSome(relationship, hasSource, LogicalConnector.UNION, Collections.singleton(source), ontology);
         OWL.INSTANCE
-                .restrictSome(relationship, hasTarget, LogicalConnector.UNION, Collections.singleton(target));
+                .restrictSome(relationship, hasTarget, LogicalConnector.UNION, Collections.singleton(target), ontology);
     }
 
     /**
@@ -559,7 +560,7 @@ public enum Observables implements IObservableService {
      * @param type
      * @param target
      */
-    public void copyContext(IConcept type, IConcept target) {
+    public void copyContext(IConcept type, IConcept target, Ontology ontology) {
 
         IConcept inherent = getInherentType(type);
         IConcept context = getContextType(type);
@@ -569,22 +570,22 @@ public enum Observables implements IObservableService {
         IConcept compresent = getCompresentType(type);
 
         if (inherent != null) {
-            OWL.INSTANCE.restrictSome(target, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), inherent);
+            OWL.INSTANCE.restrictSome(target, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), inherent, ontology);
         }
         if (context == null) {
-            OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context);
+            OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context, ontology);
         }
         if (caused != null) {
-            OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CAUSED_PROPERTY), caused);
+            OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CAUSED_PROPERTY), caused, ontology);
         }
         if (causant != null) {
-            OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CAUSANT_PROPERTY), causant);
+            OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CAUSANT_PROPERTY), causant, ontology);
         }
         if (compresent != null) {
-            OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_COMPRESENT_PROPERTY), compresent);
+            OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_COMPRESENT_PROPERTY), compresent, ontology);
         }
         if (goal != null) {
-            OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_PURPOSE_PROPERTY), goal);
+            OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_PURPOSE_PROPERTY), goal, ontology);
         }
 
         Collection<IConcept> identities = Traits.INSTANCE.getIdentities(type);
@@ -594,19 +595,19 @@ public enum Observables implements IObservableService {
 
         if (identities.size() > 0) {
             Traits.INSTANCE.restrict(target, Concepts
-                    .p(NS.HAS_IDENTITY_PROPERTY), LogicalConnector.UNION, identities);
+                    .p(NS.HAS_IDENTITY_PROPERTY), LogicalConnector.UNION, identities, ontology);
         }
         if (realms.size() > 0) {
             Traits.INSTANCE
-                    .restrict(target, Concepts.p(NS.HAS_REALM_PROPERTY), LogicalConnector.UNION, realms);
+                    .restrict(target, Concepts.p(NS.HAS_REALM_PROPERTY), LogicalConnector.UNION, realms, ontology);
         }
         if (attributes.size() > 0) {
             Traits.INSTANCE.restrict(target, Concepts
-                    .p(NS.HAS_ATTRIBUTE_PROPERTY), LogicalConnector.UNION, attributes);
+                    .p(NS.HAS_ATTRIBUTE_PROPERTY), LogicalConnector.UNION, attributes, ontology);
         }
         if (acceptedRoles.size() > 0) {
             OWL.INSTANCE.restrictSome(target, Concepts
-                    .p(NS.HAS_ROLE_PROPERTY), LogicalConnector.UNION, acceptedRoles);
+                    .p(NS.HAS_ROLE_PROPERTY), LogicalConnector.UNION, acceptedRoles, ontology);
         }
     }
 
