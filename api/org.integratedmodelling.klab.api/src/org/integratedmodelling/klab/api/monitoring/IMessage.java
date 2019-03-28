@@ -137,6 +137,17 @@ public interface IMessage {
 		 */
 		ResetContext,
 
+		/**
+		 * F->B whenever the user wants to (re)contextualize to either a URN specifying
+		 * one or more contexts, a query (both may require users to choose one), or a
+		 * specified observation ID. The last use case can happen with a parent context
+		 * set, when users want to select a sub-context of the current, or without when
+		 * the user wants to revert back to the original root context.
+		 * 
+		 * Class: ObservationLifecycle
+		 */
+		Recontextualize,
+
 		/*
 		 * Messages with class UserInterface, some local to the UI and not marshalled
 		 * across websockets, others initiated on either side when user input is

@@ -74,6 +74,7 @@ import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.OWL;
+import org.integratedmodelling.klab.rest.ContextualizationRequest;
 import org.integratedmodelling.klab.rest.DataflowState;
 import org.integratedmodelling.klab.rest.DocumentationReference;
 import org.integratedmodelling.klab.rest.InterruptTask;
@@ -805,6 +806,11 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		}
 	}
 
+	@MessageHandler
+	private void handleRecontextualizationRequest(ContextualizationRequest request) {
+		System.out.println(request);
+	}
+	
 	@MessageHandler
 	private void handleDocumentationEvent(final DocumentationReference documentation, IMessage.Type type) {
 		IKimProject project = Kim.INSTANCE.getProject(documentation.getProjectName());
