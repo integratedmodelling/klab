@@ -671,10 +671,6 @@ public class Ontology implements IOntology {
             if (!cc.getNamespace().equals(this.id) && !this.imported.contains(cc.getNamespace())) {
 
                 this.imported.add(cc.getNamespace());
-                System.out.println("IMPORTING FUCKACLAS " + cc.getNamespace() + " INTO " + id);
-                if (cc.getNamespace().equals("soil") && id.equals("ecology")) {
-                	System.out.println("COZIROIG");
-                }
                 IRI importIRI = ((Ontology) cc.getOntology()).ontology.getOntologyID().getOntologyIRI();
                 OWLImportsDeclaration importDeclaraton = this.ontology.getOWLOntologyManager()
                         .getOWLDataFactory().getOWLImportsDeclaration(importIRI);
@@ -719,8 +715,6 @@ public class Ontology implements IOntology {
             if (!cc.getNamespace().equals(this.id) && !this.imported.contains(cc.getNamespace())) {
 
                 this.imported.add(cc.getNamespace());
-                System.out.println("IMPORTING FUCKAPROP " + cc.getNamespace() + " INTO " + id);
-
                 IRI importIRI = ((Ontology) cc.getOntology()).ontology.getOntologyID().getOntologyIRI();
                 OWLImportsDeclaration importDeclaraton = this.ontology.getOWLOntologyManager()
                         .getOWLDataFactory().getOWLImportsDeclaration(importIRI);

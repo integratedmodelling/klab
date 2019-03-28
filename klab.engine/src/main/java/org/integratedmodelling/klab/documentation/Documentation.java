@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.documentation.IReport;
@@ -26,6 +27,10 @@ import org.integratedmodelling.klab.utils.Utils;
  */
 public class Documentation implements IDocumentation {
 
+	// this goes in each template expression as a comment so it can be recognized at compilation and the
+	// recontextualization features turned off, to avoid conflicts in the use of @
+	public static final String COMMENT_TEXT = "k.LAB template v" + Version.CURRENT;
+	
 	List<TemplateImpl> templates = new ArrayList<>();
 	List<ProjectReferences> referencesAvailable = new ArrayList<>();
 
@@ -378,7 +383,7 @@ public class Documentation implements IDocumentation {
 				}
 				ret += "return " + vid + ";";
 			}
-			return ret;
+			return "// " + COMMENT_TEXT + " \n" + ret;
 		}
 	}
 
