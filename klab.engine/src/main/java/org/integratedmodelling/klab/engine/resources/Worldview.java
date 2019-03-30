@@ -12,9 +12,8 @@ import org.integratedmodelling.klab.scale.Scale;
 
 public class Worldview extends MonitorableGitWorkspace implements IWorldview {
 
-    public Worldview(String name, File root, Collection<String> gitUrls, File... overridingProjects) {
-        super(root, gitUrls, overridingProjects);
-        this.setName(name);
+    public Worldview(String name, File root, Collection<String> gitUrls) {
+        super(root, name, gitUrls);
         this.setSkipSync(System.getProperty("skipWorldviewSync") != null);
     }
 

@@ -52,6 +52,7 @@ import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
@@ -124,17 +125,17 @@ public enum Kim {
 	 * worldviews, and are validated through a callback.
 	 */
 	private Map<String, EnumSet<Type>> coreConcepts = new HashMap<>();
-
-	/**
-	 * Workspace for libraries. May be null. Loaded automatically at startup if
-	 * present, with code generation only in the engine.
-	 */
-	private KimWorkspace libWorkspace;
+	//
+	// /**
+	// * Workspace for libraries. May be null. Loaded automatically at startup if
+	// * present, with code generation only in the engine.
+	// */
+	// private KimWorkspace libWorkspace;
 
 	private List<Notifier> notifiers = new ArrayList<>();
 
-	private boolean libraryInitialized;
-	private boolean workspaceInited;
+	// private boolean libraryInitialized;
+	// private boolean workspaceInited;
 	private boolean initialBuildDone;
 
 	/*
@@ -771,33 +772,34 @@ public enum Kim {
 		return ret;
 	}
 
-	public boolean isLibraryInitialized() {
-		return libraryInitialized;
-	}
+	// public boolean isLibraryInitialized() {
+	// return libraryInitialized;
+	// }
+	//
+	// public void setLibraryInitialized(boolean b) {
+	// libraryInitialized = b;
+	// }
 
-	public void setLibraryInitialized(boolean b) {
-		libraryInitialized = b;
-	}
-
-	/**
-	 * Get the workspace containing the worldview and any library.
-	 *
-	 * @param libname
-	 *            the libname
-	 * @param overridingProjects
-	 *            the overriding projects
-	 * @return the workspace
-	 */
-	public KimWorkspace getLibrary(String libname, File... overridingProjects) {
-
-		if (!workspaceInited) {
-			// TODO substitute with callback
-			libWorkspace = new KimWorkspace(
-					new File(System.getProperty("user.home") + File.separator + ".klab" + File.separator + libname));
-			workspaceInited = true;
-		}
-		return libWorkspace;
-	}
+	// /**
+	// * Get the workspace containing the worldview and any library.
+	// *
+	// * @param libname
+	// * the libname
+	// * @param overridingProjects
+	// * the overriding projects
+	// * @return the workspace
+	// */
+	// public KimWorkspace getLibrary(String libname, File... overridingProjects) {
+	//
+	// if (!workspaceInited) {
+	// // TODO substitute with callback
+	// libWorkspace = new KimWorkspace(
+	// new File(System.getProperty("user.home") + File.separator + ".klab" +
+	// File.separator + libname));
+	// workspaceInited = true;
+	// }
+	// return libWorkspace;
+	// }
 
 	public boolean hasErrors(EObject object) {
 		ICompositeNode node = NodeModelUtils.getNode(object);
@@ -1031,6 +1033,9 @@ public enum Kim {
 					ret = new KimNamespace(uri, null);
 					orphanNamespaceRegistry.put(uri, ret);
 				}
+			} else {
+				throw new KlabInternalErrorException(
+						"cannot establish ownership for namespace " + Kim.getNamespaceId(namespace));
 			}
 		}
 
@@ -1560,6 +1565,7 @@ public enum Kim {
 	 */
 	public void notifyProjectOperation(File projectDirectory, CRUDOperation operation) {
 		// TODO rearrange workspaces and reload as necessary after add/delete/close etc
+		// TODO ensure that project ID -> workspace catalog is up to date
 		switch (operation) {
 		case COPY:
 			break;
@@ -1579,16 +1585,35 @@ public enum Kim {
 
 	public KimWorkspace getWorkspaceForResource(Resource resource) {
 		String projectName = getProjectName(resource.getURI().toString());
-		return projectName == null ? null : Kim.INSTANCE.getWorkspaceForProject(projectName);
+		return projectName == null ? null : getWorkspaceForProject(projectName);
 	}
 
 	public KimProject getProjectForResource(Resource resource) {
 		String projectName = getProjectName(resource.getURI().toString());
-		KimWorkspace workspace = projectName == null ? null : Kim.INSTANCE.getWorkspaceForProject(projectName);
+		KimWorkspace workspace = projectName == null ? null : getWorkspaceForProject(projectName);
 		return workspace == null ? null : workspace.getProject(projectName);
 	}
 
 	public KimWorkspace getWorkspaceForProject(String projectName) {
 		return projectWorkspaces.get(projectName);
+	}
+
+	/**
+	 * Called by API-generated workspace constructors after reading in all projects.
+	 * Uses the name to attribute worldview and workspace fields.
+	 * 
+	 * @param kimWorkspace
+	 */
+	public void registerWorkspace(KimWorkspace kimWorkspace) {
+		this.workspaces.put(kimWorkspace.getName(), kimWorkspace);
+		for (IKimProject project : kimWorkspace.getProjects()) {
+			this.projectWorkspaces.put(project.getName(), kimWorkspace);
+		}
+		if ("worldview".equals(kimWorkspace.getName())) {
+			this.worldview = kimWorkspace;
+		} else if ("workspace".equals(kimWorkspace.getName())) {
+			this.userWorkspace = kimWorkspace;
+		}
+
 	}
 }

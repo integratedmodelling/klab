@@ -43,7 +43,8 @@ public interface IKimLoader {
 
     /**
      * Same as {@link #load(IKimProject...)} but starting from project file
-     * locations.
+     * locations. The passed project may override projects that are already
+     * loaded.
      * 
      * @param projectRoots
      */

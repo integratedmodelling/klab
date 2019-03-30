@@ -208,8 +208,9 @@ public class Activator extends AbstractUIPlugin {
 		Kim.INSTANCE.setup(KimActivator.getInstance().getInjector(KimActivator.ORG_INTEGRATEDMODELLING_KIM_KIM));
 
 		/*
-		 * TODO Pre-build workspaces and set up any overriding of others from projects
-		 * in Eclipse workspace.
+		 * Pre-build workspaces and set up any overriding of others from projects in
+		 * Eclipse workspace. The IDE only has the worldview and the user workspace; the
+		 * engine has more, which can be put in the workspace of the IDE if desired.
 		 */
 		Kim.INSTANCE.prebuildWorkspaces(getProjectFiles(), getWorldviewFiles());
 
@@ -236,10 +237,10 @@ public class Activator extends AbstractUIPlugin {
 
 	}
 
-	private Object getWorkspaceFiles() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	// private Object getWorkspaceFiles() {
+	// // TODO Auto-generated method stub
+	// return null;
+	// }
 
 	private Collection<File> getProjectFiles() {
 		List<File> projectFiles = new ArrayList<>();

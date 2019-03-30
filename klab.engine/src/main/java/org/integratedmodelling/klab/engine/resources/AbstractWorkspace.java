@@ -18,19 +18,17 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 public abstract class AbstractWorkspace implements IWorkspace {
 
 	protected KimWorkspace delegate;
-	String name;
 	
 	AbstractWorkspace() {
 	}
 
 	public AbstractWorkspace(String name, File root) {
-		delegate = new KimWorkspace(root);
-		this.name = name;
+		delegate = new KimWorkspace(root, name);
 	}
 
 	@Override
 	public String getName() {
-		return name;
+		return delegate.getName();
 	}
 
 	public Collection<File> getProjectLocations() {
@@ -69,10 +67,6 @@ public abstract class AbstractWorkspace implements IWorkspace {
 	@Override
 	public File getRoot() {
 		return delegate.getRoot();
-	}
-
-	public void setName(String s) {
-		this.name = s;
 	}
 
 	public Collection<IProject> getProjects() {

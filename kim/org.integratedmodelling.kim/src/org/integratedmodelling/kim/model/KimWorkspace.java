@@ -15,6 +15,7 @@ import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 
 public class KimWorkspace implements IKimWorkspace {
@@ -79,9 +80,9 @@ public class KimWorkspace implements IKimWorkspace {
 
 	/**
 	 * Constructor for a logical workspace with a default file location at the
-	 * passed subspace in the k.LAB data dir. Created manually and forced into the
-	 * projects as they are reported and modified. Used explicitly through catalogs
-	 * in Kim.INSTANCE.
+	 * passed subspace which serves as a name and also creates or registers a
+	 * directory in the k.LAB data dir. Projects are created manually and explicitly
+	 * after creation, and may be in the file workspace or not.
 	 * 
 	 * @param workspaceSubdir
 	 */
@@ -97,24 +98,35 @@ public class KimWorkspace implements IKimWorkspace {
 	}
 
 	/**
-	 * Constructor for a file-based workspace. This one will be able to enumerate
-	 * its projects and Kim resources after construction. You can pass any number of
-	 * project directories that will override the ones in the library if they
-	 * specify a project of the same name.
+	 * Constructor for a file-based workspace. This one will use the root file
+	 * location as an actual physical workspace and register any k.IM projects in
+	 * it. Meant to be created by the API user (e.g. an engine) and not through the
+	 * global Kim instance, so it will register itself into it.
+	 * 
+	 * The names decide whether Kim register these as the worldview or the 
+	 * r/w user workspace.
 	 * 
 	 * @param root
 	 * @param overridingProjects
 	 */
-	public KimWorkspace(File root) {
+	public KimWorkspace(File root, String name) {
 		this.root = root;
+		this.name = name;
 		try {
 			this.url = normalize(root.toURI().toURL());
 		} catch (MalformedURLException e) {
 			// aaaargh
 			throw new RuntimeException(e);
 		}
+		for (File sub : root.listFiles()) {
+			if (Kim.INSTANCE.isKimProject(sub)) {
+				projectLocations.add(sub);
+			}
+		}
+		readProjects();
+		Kim.INSTANCE.registerWorkspace(this);
 	}
-
+	
 	private void loadNamespaceIds(File file, String prefix) {
 		if (!file.exists()) {
 			return;
@@ -211,6 +223,11 @@ public class KimWorkspace implements IKimWorkspace {
 
 	public String toString() {
 		return "<W " + name + " (" + projectNames + ")>";
+	}
+
+	public IKimProject overrideProject(String name, File rootPath) {
+		namespaceIds = null;
+		throw new KlabUnimplementedException("UNIMPLEMENTED - OVERRIDING OF PROJECT");
 	}
 
 }

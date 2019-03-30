@@ -16,9 +16,9 @@ public class MonitorableGitWorkspace extends MonitorableFileWorkspace {
     boolean synced;
     boolean skipSync = false;
     
-    public MonitorableGitWorkspace(File root, Collection<String> gitUrls, File... overridingProjects) {
+    public MonitorableGitWorkspace(File root, String name, Collection<String> gitUrls, File... overridingProjects) {
         
-        delegate = new KimWorkspace(root) {
+        delegate = new KimWorkspace(root, name) {
 
             @Override
             public void readProjects() {
