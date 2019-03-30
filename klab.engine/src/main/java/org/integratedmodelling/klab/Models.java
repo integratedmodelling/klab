@@ -109,7 +109,7 @@ public enum Models implements IModelService {
 
 				// recover the namespace that was parsed
 				IKimNamespace namespace = Kim.INSTANCE/* .getCommonProject() */
-						.getNamespace(model.getNamespace(), true);
+						.getNamespace(model.getNamespace());
 
 				if (namespace != null) {
 					for (Notifier notifier : Kim.INSTANCE.getNotifiers()) {

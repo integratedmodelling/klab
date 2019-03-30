@@ -235,7 +235,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		} else if (value.getExpr() != null) {
 			this.expression = removeDelimiters(value.getExpr());
 		} else if (value.getLiteral() != null) {
-			this.literal = Kim.INSTANCE.parseLiteral(value.getLiteral(), Kim.INSTANCE.getNamespace(value, false));
+			this.literal = Kim.INSTANCE.parseLiteral(value.getLiteral(), Kim.INSTANCE.getNamespace(value));
 		}
 		this.resolutionMode = Mode.RESOLUTION;
 	}
@@ -301,7 +301,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 			this.expression = removeDelimiters(value.getExpr());
 			// this.type = IArtifact.Type.VALUE;
 		} else if (value.getLiteral() != null) {
-			this.literal = Kim.INSTANCE.parseLiteral(value.getLiteral(), Kim.INSTANCE.getNamespace(value, false));
+			this.literal = Kim.INSTANCE.parseLiteral(value.getLiteral(), Kim.INSTANCE.getNamespace(value));
 			// this.type = Utils.getArtifactType(this.literal.getClass());
 		}
 

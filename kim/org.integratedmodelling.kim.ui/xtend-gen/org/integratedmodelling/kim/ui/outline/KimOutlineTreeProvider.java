@@ -18,7 +18,6 @@ import org.integratedmodelling.kim.kim.Statement;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimNamespace;
 import org.integratedmodelling.kim.model.KimProject;
-import org.integratedmodelling.kim.model.KimWorkspace;
 
 /**
  * Customization of the default outline structure.
@@ -44,7 +43,7 @@ public class KimOutlineTreeProvider extends DefaultOutlineTreeProvider {
   }
   
   public void _createChildren(final DocumentRootNode parent, final Model model) {
-    final KimProject project = KimWorkspace.getWorkspaceForResource(model.eResource()).getProjectForResource(model.eResource());
+    final KimProject project = Kim.INSTANCE.getProjectForResource(model.eResource());
     AbstractOutlineNode pnode = parent;
     if ((project != null)) {
       pnode = this.getProjectNode(pnode, project);

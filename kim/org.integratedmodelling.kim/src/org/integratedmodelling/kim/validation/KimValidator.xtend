@@ -97,7 +97,7 @@ class KimValidator extends AbstractKimValidator {
 		// check domain
 		if (!namespace.worldviewBound) {
 
-			var ns = Kim.INSTANCE.getNamespace(namespace, true)
+			var ns = Kim.INSTANCE.getNamespace(namespace)
 
 			var project = ns.project
 			var expectedId = (project as KimProject).getNamespaceIdFor(namespace)
@@ -169,7 +169,7 @@ class KimValidator extends AbstractKimValidator {
 	@Check
 	def checkDefine(DefineStatement statement) {
 		val namespace = (statement.eContainer.eContainer as Model).namespace
-		var ns = Kim.INSTANCE.getNamespace(namespace, true)
+		var ns = Kim.INSTANCE.getNamespace(namespace)
 		val KimSymbolDefinition definition = new KimSymbolDefinition(statement, ns)
 		var i = 0
 		for (annotation : statement.annotations) {
@@ -410,7 +410,7 @@ class KimValidator extends AbstractKimValidator {
 
 			if (observable !== null) {
 				var j = 0
-				var IKimNamespace ns = Kim.INSTANCE.getNamespace(model, true)
+				var IKimNamespace ns = Kim.INSTANCE.getNamespace(model)
 				for (annotation : cd.annotations) {
 					val ann = new KimAnnotation(annotation, ns, observable)
 					var errs = 0
@@ -459,7 +459,7 @@ class KimValidator extends AbstractKimValidator {
 
 			var KimLookupTable table = null;
 			if (model.lookupTableId !== null) {
-				var IKimNamespace ns = Kim.INSTANCE.getNamespace(model, true)
+				var IKimNamespace ns = Kim.INSTANCE.getNamespace(model)
 				var tobj = ns.getSymbolTable().get(model.lookupTableId)
 				if (!(tobj instanceof IKimTable)) {
 					error('Identifier ' + model.lookupTableId + ' does not specify a k.IM table',
@@ -531,7 +531,7 @@ class KimValidator extends AbstractKimValidator {
 			if (namespace !== null) {
 
 				// add to namespace
-				var ns = Kim.INSTANCE.getNamespace(namespace, true)
+				var ns = Kim.INSTANCE.getNamespace(namespace)
 
 				var descriptor = new KimModel(statement, ns);
 
@@ -691,7 +691,7 @@ class KimValidator extends AbstractKimValidator {
 	def checkObservation(ObserveStatement observation) {
 		var obs = checkObservation(observation.body, null)
 		if (obs !== null) {
-			var ns = Kim.INSTANCE.getNamespace(observation, true)
+			var ns = Kim.INSTANCE.getNamespace(observation)
 			var i = 0
 			for (annotation : observation.annotations) {
 				val ann = new KimAnnotation(annotation, ns, obs)
@@ -1307,7 +1307,7 @@ class KimValidator extends AbstractKimValidator {
 				} else {
 					// validate imports within namespace and workspace
 					var ns = concept.name.name.substring(0, concept.name.name.indexOf(':'))
-					var namespace = Kim.INSTANCE.getNamespace(concept, true)
+					var namespace = Kim.INSTANCE.getNamespace(concept)
 					if (!namespace.worldviewBound && (namespace.project.workspace as KimWorkspace).namespaceIds.contains(ns)) {
 						/* if (namespace.name.equals(ns)) {
 							warning("Concept " + concept.name + " is in this same namespace and should be referred to by ID only", concept, null,
@@ -1499,7 +1499,7 @@ class KimValidator extends AbstractKimValidator {
 
 		if (ok && statement.body !== null) {
 
-			var namespace = Kim.INSTANCE.getNamespace(statement, true)
+			var namespace = Kim.INSTANCE.getNamespace(statement)
 			var concept = validateConceptBody(statement.body, namespace, null, type)
 			if (concept !== null) {
 				statement.name = namespace.name + ":" + statement.body.name;

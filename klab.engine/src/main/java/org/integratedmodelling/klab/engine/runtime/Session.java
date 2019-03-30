@@ -883,7 +883,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 				Resources.INSTANCE.getLoader().loadProjectFiles(request.getProjectLocations());
 
 				for (File file : request.getProjectLocations()) {
-					IKimProject project = Kim.INSTANCE.getProjectIn(file, false);
+					IKimProject project = Kim.INSTANCE.getProjectIn(file);
 					if (project != null) {
 						IProject proj = Resources.INSTANCE.getProject(project.getName());
 						response.getProjects().add(Resources.INSTANCE.createProjectDescriptor(proj));

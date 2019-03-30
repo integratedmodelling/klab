@@ -16,6 +16,9 @@
 package org.integratedmodelling.kim.model;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,12 +27,14 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.GrammarUtil;
 import org.eclipse.xtext.IGrammarAccess;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
@@ -62,9 +67,11 @@ import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.kim.validation.KimValidator;
+import org.integratedmodelling.klab.api.data.CRUDOperation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.SemanticType;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
@@ -145,8 +152,14 @@ public enum Kim {
 	/*
 	 * Same with projects
 	 */
-	Map<String, IKimProject> projectRegistry = new HashMap<>();
-	Map<File, IKimProject> projectRootRegistry = new HashMap<>();
+	// Map<String, IKimProject> projectRegistry = new HashMap<>();
+	// Map<File, IKimProject> projectRootRegistry = new HashMap<>();
+
+	// workspaces may be pre-set by IDEs or other clients
+	KimWorkspace worldview;
+	KimWorkspace userWorkspace;
+	Map<String, KimWorkspace> projectWorkspaces = new HashMap<>();
+	Map<String, KimWorkspace> workspaces = new HashMap<>();
 
 	/*
 	 * flags for resources and URNs
@@ -173,6 +186,10 @@ public enum Kim {
 	 * resources are validated sequentially. Makes no sense after validation.
 	 */
 	private KimLoader currentLoader;
+
+	private Collection<File> projectFiles;
+
+	private Collection<File> worldviewFiles;
 
 	public static class ConceptDescriptor implements IConceptDescriptor {
 
@@ -990,7 +1007,7 @@ public enum Kim {
 		return this.uriResolvers.get(scheme);
 	}
 
-	public KimNamespace getNamespace(EObject statement, boolean createIfAbsent) {
+	public KimNamespace getNamespace(EObject statement) {
 
 		KimNamespace ret = null;
 		Namespace namespace = KimValidator.getNamespace(statement);
@@ -1002,11 +1019,7 @@ public enum Kim {
 				return (KimNamespace) namespaceRegistry.get(name);
 			}
 
-			KimProject project = null;
-			KimWorkspace workspace = KimWorkspace.getWorkspaceForResource(namespace.eResource());
-			if (workspace != null) {
-				project = workspace.getProjectForResource(namespace.eResource());
-			}
+			KimProject project = getProjectForResource(namespace.eResource());
 			if (project != null) {
 				// it will register itself
 				ret = new KimNamespace(namespace, project);
@@ -1029,11 +1042,10 @@ public enum Kim {
 	}
 
 	/**
-	 * 
 	 * @return all workspaces
 	 */
 	public Collection<KimWorkspace> getWorkspaces() {
-		return KimWorkspace.getWorkspaces();
+		return workspaces.values();
 	}
 
 	/**
@@ -1049,29 +1061,73 @@ public enum Kim {
 	 *            returned.
 	 * @return the project or null
 	 */
-	public IKimProject getProject(String id, File workspaceRoot) {
+	public IKimProject getProject(String id) {
 
-		IKimProject ret = null;
-		for (KimWorkspace workspace : getWorkspaces()) {
-			for (IKimProject project : workspace.getProjects()) {
-				if (project.getName().equals(id)) {
-					if (workspaceRoot == null) {
-						return project;
-					} else if (workspace.getRoot().equals(workspaceRoot) || ret == null) {
-						ret = project;
-					}
+		KimWorkspace workspace = projectWorkspaces.get(id);
+		return workspace == null ? null : workspace.getProject(id);
+		// for (KimWorkspace workspace : getWorkspaces()) {
+		// for (IKimProject project : workspace.getProjects()) {
+		// if (project.getName().equals(id)) {
+		// if (workspaceRoot == null) {
+		// return project;
+		// } else if (workspace.getRoot().equals(workspaceRoot) || ret == null) {
+		// ret = project;
+		// }
+		// }
+		// }
+		// }
+		// return ret;
+	}
+
+	/**
+	 * Get the project name from the string form of any Xtext resource URI.
+	 * 
+	 * @param resourceURI
+	 * @return
+	 */
+	public String getProjectName(String resourceURI) {
+
+		String ret = null;
+		try {
+			URL url = new URL(resourceURI);
+			String path = url.getPath();
+			Properties properties = null;
+			URL purl = null;
+			while ((path = chopLastPathElement(path)) != null) {
+				purl = new URL(url.getProtocol(), url.getAuthority(), url.getPort(),
+						path + "/META-INF/klab.properties");
+				try (InputStream is = purl.openStream()) {
+					properties = new Properties();
+					properties.load(is);
+					break;
+				} catch (IOException exception) {
+					continue;
 				}
 			}
+			if (properties != null) {
+				ret = path.substring(path.lastIndexOf('/') + 1);
+			}
+
+		} catch (Exception e) {
+			// just return null;
 		}
+
 		return ret;
+	}
+
+	private String chopLastPathElement(String path) {
+		int idx = path.lastIndexOf('/');
+		if (idx <= 0) {
+			return null;
+		}
+		return path.substring(0, idx);
 	}
 
 	public void removeNamespace(Namespace namespace) {
 
 		String name = Kim.getNamespaceId(namespace);
 		KimProject project = null;
-		KimWorkspace workspace = KimWorkspace.getWorkspaceForResource(namespace.eResource());
-		project = workspace == null ? null : workspace.getProjectForResource(namespace.eResource());
+		project = getProjectForResource(namespace.eResource());
 		if (project != null) {
 			project.removeNamespace(name);
 		}
@@ -1223,29 +1279,9 @@ public enum Kim {
 		return this.notifiers;
 	}
 
-	// public void warn(String warning) {
-	// // TODO redirect to a callback
-	// System.err.println("WARNING: " + warning);
-	// }
-	//
-	// public void error(String warning) {
-	// // TODO redirect to a callback
-	// System.err.println("ERROR: " + warning);
-	// }
-	//
-	// public void info(String warning) {
-	// // TODO redirect to a callback
-	// System.out.println("INFO: " + warning);
-	// }
-	//
-	// public void debug(String warning) {
-	// // TODO redirect to a callback
-	// System.out.println("DEBUG: " + warning);
-	// }
-
 	public KimObservable declareModelReference(ModelBodyStatement statement, String string) {
 
-		KimNamespace namespace = getNamespace(statement, true);
+		KimNamespace namespace = getNamespace(statement);
 		IKimModel model = null;
 		if (string.startsWith(namespace.getName())) {
 			string = Path.getLast(string, '.');
@@ -1291,27 +1327,28 @@ public enum Kim {
 		return this.namespaceRegistry.get(id);
 	}
 
-	public void registerProject(KimProject kimProject) {
-		this.projectRegistry.put(kimProject.getName(), kimProject);
-		this.projectRootRegistry.put(kimProject.getRoot(), kimProject);
-	}
-
-	public IKimProject getProject(String id) {
-		return this.projectRegistry.get(id);
-	}
-
-	public IKimProject getProjectIn(File root, boolean createIfAbsent) {
-		IKimProject ret = this.projectRootRegistry.get(root);
-		if (ret == null && createIfAbsent) {
-			KimWorkspace workspace = KimWorkspace.getWorkspaceForProjectFile(root);
-			String pname = root.toString().substring(root.toString().lastIndexOf(File.separator) + 1);
-			ret = new KimProject(workspace, pname, root);
-			this.projectRegistry.put(pname, ret);
-			this.projectRootRegistry.put(root, ret);
+	/**
+	 * Get the project located in the passed root path. It must be pre-registered in
+	 * a workspace.
+	 * 
+	 * @param root
+	 * @return
+	 */
+	public IKimProject getProjectIn(File root) {
+		KimWorkspace workspace = projectWorkspaces.get(MiscUtilities.getFileName(root));
+		if (workspace != null) {
+			return workspace.getProject(MiscUtilities.getFileName(root));
 		}
-		return ret;
+		return null;
 	}
 
+	/**
+	 * Simple check for the existence of k.LAB metadata to assess if a file is the
+	 * root of a k.LAB project.
+	 * 
+	 * @param file
+	 * @return
+	 */
 	public boolean isKimProject(File file) {
 		File props = new File(file + File.separator + "META-INF" + File.separator + "klab.properties");
 		return props.exists() && props.isFile();
@@ -1355,7 +1392,11 @@ public enum Kim {
 	 * @return
 	 */
 	public Collection<IKimProject> getProjects() {
-		return this.projectRegistry.values();
+		List<IKimProject> ret = new ArrayList<>();
+		for (KimWorkspace workspace : workspaces.values()) {
+			ret.addAll(workspace.getProjects());
+		}
+		return ret;
 	}
 
 	/**
@@ -1456,5 +1497,98 @@ public enum Kim {
 	 */
 	public KimLoader getCurrentLoader() {
 		return this.currentLoader;
+	}
+
+	/**
+	 * Called when there is a pre-defined collection of project files that may be
+	 * located anywhere and would override projects in the worldview, to ensure that
+	 * all projects are attributed to the proper workspace when workspaces are
+	 * needed in validation of imports. This is the situation of a modeler using a
+	 * IDE.
+	 * 
+	 * @param projectFiles
+	 * @param worldviewFiles
+	 */
+	public void prebuildWorkspaces(Collection<File> projectFiles, Collection<File> worldviewFiles) {
+
+		this.projectFiles = projectFiles;
+		this.worldviewFiles = worldviewFiles;
+		// TODO create workspace for user files; ensure it contains all project files.
+		workspaces.put("worldview", this.worldview = new KimWorkspace("worldview"));
+		workspaces.put("workspace", this.userWorkspace = new KimWorkspace("workspace"));
+		buildStandardWorkspaces();
+	}
+
+	private void buildStandardWorkspaces() {
+
+		Map<String, File> wfiles = new HashMap<>();
+		Map<String, File> ufiles = new HashMap<>();
+
+		for (File file : this.worldviewFiles) {
+			String pname = MiscUtilities.getFileName(file);
+			wfiles.put(pname, file);
+			projectWorkspaces.put(pname, worldview);
+		}
+		for (File file : this.projectFiles) {
+			String pname = MiscUtilities.getFileName(file);
+			// override worldview projects if they are in the user's workspace
+			if (wfiles.containsKey(pname)) {
+				wfiles.put(pname, file);
+			} else {
+				ufiles.put(pname, file);
+				projectWorkspaces.put(pname, userWorkspace);
+			}
+		}
+
+		for (File file : wfiles.values()) {
+			worldview.addProjectPath(file);
+		}
+		for (File file : ufiles.values()) {
+			userWorkspace.addProjectPath(file);
+		}
+
+		worldview.readProjects();
+		userWorkspace.readProjects();
+	}
+
+	/**
+	 * External managers such as an IDE must notify project-level actions to ensure
+	 * proper handling.
+	 * 
+	 * @param projectDirectory
+	 * @param operation
+	 */
+	public void notifyProjectOperation(File projectDirectory, CRUDOperation operation) {
+		// TODO rearrange workspaces and reload as necessary after add/delete/close etc
+		switch (operation) {
+		case COPY:
+			break;
+		case CREATE:
+			break;
+		case DELETE:
+			break;
+		case MOVE:
+			break;
+		case UPDATE:
+			break;
+		default:
+			break;
+
+		}
+	}
+
+	public KimWorkspace getWorkspaceForResource(Resource resource) {
+		String projectName = getProjectName(resource.getURI().toString());
+		return projectName == null ? null : Kim.INSTANCE.getWorkspaceForProject(projectName);
+	}
+
+	public KimProject getProjectForResource(Resource resource) {
+		String projectName = getProjectName(resource.getURI().toString());
+		KimWorkspace workspace = projectName == null ? null : Kim.INSTANCE.getWorkspaceForProject(projectName);
+		return workspace == null ? null : workspace.getProject(projectName);
+	}
+
+	public KimWorkspace getWorkspaceForProject(String projectName) {
+		return projectWorkspaces.get(projectName);
 	}
 }

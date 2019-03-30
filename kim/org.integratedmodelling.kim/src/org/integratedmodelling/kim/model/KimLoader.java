@@ -129,7 +129,7 @@ public class KimLoader implements IKimLoader {
         List<IKimProject> projects = new ArrayList<>();
         for (File root : projectRoots) {
             if (!projectLocations.contains(root)) {
-                IKimProject project = Kim.INSTANCE.getProjectIn(root, true);
+                IKimProject project = Kim.INSTANCE.getProjectIn(root/*, true*/);
                 projects.add(project);
             }
         }

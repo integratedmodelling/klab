@@ -133,7 +133,7 @@ public class KimValidator extends AbstractKimValidator {
     boolean _isWorldviewBound = namespace.isWorldviewBound();
     boolean _not = (!_isWorldviewBound);
     if (_not) {
-      KimNamespace ns = Kim.INSTANCE.getNamespace(namespace, true);
+      KimNamespace ns = Kim.INSTANCE.getNamespace(namespace);
       IKimProject project = ns.getProject();
       String expectedId = ((KimProject) project).getNamespaceIdFor(namespace);
       if ((expectedId == null)) {
@@ -237,7 +237,7 @@ public class KimValidator extends AbstractKimValidator {
     {
       EObject _eContainer = statement.eContainer().eContainer();
       final Namespace namespace = ((Model) _eContainer).getNamespace();
-      KimNamespace ns = Kim.INSTANCE.getNamespace(namespace, true);
+      KimNamespace ns = Kim.INSTANCE.getNamespace(namespace);
       final KimSymbolDefinition definition = new KimSymbolDefinition(statement, ns);
       int i = 0;
       EList<Annotation> _annotations = statement.getAnnotations();
@@ -549,7 +549,7 @@ public class KimValidator extends AbstractKimValidator {
         }
         if ((observable != null)) {
           int j = 0;
-          IKimNamespace ns = Kim.INSTANCE.getNamespace(model, true);
+          IKimNamespace ns = Kim.INSTANCE.getNamespace(model);
           EList<Annotation> _annotations = cd.getAnnotations();
           for (final Annotation annotation : _annotations) {
             {
@@ -602,7 +602,7 @@ public class KimValidator extends AbstractKimValidator {
       String _lookupTableId = model.getLookupTableId();
       boolean _tripleNotEquals_2 = (_lookupTableId != null);
       if (_tripleNotEquals_2) {
-        IKimNamespace ns = Kim.INSTANCE.getNamespace(model, true);
+        IKimNamespace ns = Kim.INSTANCE.getNamespace(model);
         Object tobj = ns.getSymbolTable().get(model.getLookupTableId());
         if ((!(tobj instanceof IKimTable))) {
           String _lookupTableId_1 = model.getLookupTableId();
@@ -680,7 +680,7 @@ public class KimValidator extends AbstractKimValidator {
     }
     if ((statement != null)) {
       if ((namespace != null)) {
-        KimNamespace ns_1 = Kim.INSTANCE.getNamespace(namespace, true);
+        KimNamespace ns_1 = Kim.INSTANCE.getNamespace(namespace);
         KimModel descriptor = new KimModel(statement, ns_1);
         if ((!ok)) {
           descriptor.setErrors(true);
@@ -912,7 +912,7 @@ public class KimValidator extends AbstractKimValidator {
   public void checkObservation(final ObserveStatement observation) {
     KimObserver obs = this.checkObservation(observation.getBody(), null);
     if ((obs != null)) {
-      KimNamespace ns = Kim.INSTANCE.getNamespace(observation, true);
+      KimNamespace ns = Kim.INSTANCE.getNamespace(observation);
       int i = 0;
       EList<Annotation> _annotations = observation.getAnnotations();
       for (final Annotation annotation : _annotations) {
@@ -1648,7 +1648,7 @@ public class KimValidator extends AbstractKimValidator {
             _name_1.setName(_plus_1);
           } else {
             String ns = concept.getName().getName().substring(0, concept.getName().getName().indexOf(":"));
-            KimNamespace namespace_1 = Kim.INSTANCE.getNamespace(concept, true);
+            KimNamespace namespace_1 = Kim.INSTANCE.getNamespace(concept);
             if (((!namespace_1.isWorldviewBound()) && ((KimWorkspace) namespace_1.getProject().getWorkspace()).getNamespaceIds().contains(ns))) {
               if (((!namespace_1.getName().equals(ns)) && (!((KimNamespace) namespace_1).getImportedIds().contains(ns)))) {
                 this.error((("Namespace " + ns) + " is in the same workspace and must be explicitly imported for its concepts to be used"), concept, null, 
@@ -1907,7 +1907,7 @@ public class KimValidator extends AbstractKimValidator {
       }
     }
     if ((ok && (statement.getBody() != null))) {
-      KimNamespace namespace = Kim.INSTANCE.getNamespace(statement, true);
+      KimNamespace namespace = Kim.INSTANCE.getNamespace(statement);
       KimConceptStatement concept = this.validateConceptBody(statement.getBody(), namespace, null, type);
       if ((concept != null)) {
         String _name = namespace.getName();

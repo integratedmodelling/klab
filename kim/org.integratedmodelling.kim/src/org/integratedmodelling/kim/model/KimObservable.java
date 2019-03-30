@@ -99,7 +99,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		KimObservable ret = new KimObservable(declaration, parent);
 		for (Annotation annotation : declaration.getAnnotations()) {
 			ret.getAnnotations().add(new KimAnnotation(annotation,
-					Kim.INSTANCE.getNamespace(KimValidator.getNamespace(declaration), false), ret));
+					Kim.INSTANCE.getNamespace(KimValidator.getNamespace(declaration)), ret));
 		}
 
 		ret.main = concept;
@@ -109,7 +109,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		if (declaration.getValue() != null) {
 			String id = declaration.getValue().getId();
 			ret.value = Kim.INSTANCE.parseValue(declaration.getValue(),
-					Kim.INSTANCE.getNamespace(KimValidator.getNamespace(declaration), false));
+					Kim.INSTANCE.getNamespace(KimValidator.getNamespace(declaration)));
 			if (id != null && ret.value instanceof String && id.equals(ret.value)) {
 				ret.hasAttribute = true;
 			}

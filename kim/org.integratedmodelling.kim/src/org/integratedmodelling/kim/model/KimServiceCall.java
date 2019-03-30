@@ -1,6 +1,5 @@
 package org.integratedmodelling.kim.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -8,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
-import org.integratedmodelling.kim.api.IComputableResource.InteractiveParameter;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.kim.Function;
@@ -51,7 +49,7 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 	public KimServiceCall(Function statement, IKimStatement parent) {
 		super(statement, parent);
 		if (statement != null) {
-			KimNamespace namespace = Kim.INSTANCE.getNamespace(statement, false);
+			KimNamespace namespace = Kim.INSTANCE.getNamespace(statement);
 			this.name = statement.getName();
 			if (statement.getParameters() != null) {
 				if (statement.getParameters().getSingleValue() != null) {
