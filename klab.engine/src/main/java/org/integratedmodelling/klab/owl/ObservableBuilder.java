@@ -1491,8 +1491,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		 * add the core observable concept ID using NS.CORE_OBSERVABLE_PROPERTY
 		 */
 		axioms.add(Axiom.AnnotationAssertion(conceptId, NS.CORE_OBSERVABLE_PROPERTY, main.toString()));
-		ret.getOntology().define(Collections.singletonList(
-				Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, declaration.getDefinition())));
+		axioms.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, declaration.getDefinition()));
 
 		if (type.contains(Type.ABSTRACT)) {
 			axioms.add(Axiom.AnnotationAssertion(conceptId, NS.IS_ABSTRACT, "true"));

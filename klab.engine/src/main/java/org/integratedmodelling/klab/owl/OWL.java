@@ -731,7 +731,7 @@ public enum OWL {
 
 	public void restrictSome(IConcept target, IProperty property, IConcept filler, Ontology ontology) {
 		Ontologies.INSTANCE.getTargetOntology(ontology, target, property, filler).define(
-				Collections.singleton(Axiom.SomeValuesFrom(target.getName(), property.toString(), filler.toString())));
+				Collections.singleton(Axiom.SomeValuesFrom(target.toString(), property.toString(), filler.toString())));
 	}
 
 	public void restrictAll(IConcept target, IProperty property, LogicalConnector how, Collection<IConcept> fillers, Ontology ontology) {
@@ -784,7 +784,7 @@ public enum OWL {
 
 	public void restrictAll(IConcept target, IProperty property, IConcept filler, Ontology ontology) {
 		Ontologies.INSTANCE.getTargetOntology(ontology, target, property, filler).define(
-				Collections.singleton(Axiom.AllValuesFrom(target.getName(), property.toString(), filler.toString())));
+				Collections.singleton(Axiom.AllValuesFrom(target.toString(), property.toString(), filler.toString())));
 	}
 
 	public void restrictAtLeast(IConcept target, IProperty property, LogicalConnector how, Collection<IConcept> fillers,
@@ -814,7 +814,7 @@ public enum OWL {
 
 	public void restrictAtLeast(IConcept target, IProperty property, IConcept filler, int min, Ontology ontology) {
 		Ontologies.INSTANCE.getTargetOntology(ontology, target, property, filler).define(Collections
-				.singleton(Axiom.AtLeastNValuesFrom(target.getName(), property.toString(), filler.toString(), min)));
+				.singleton(Axiom.AtLeastNValuesFrom(target.toString(), property.toString(), filler.toString(), min)));
 	}
 
 	public void restrictAtMost(IConcept target, IProperty property, LogicalConnector how, Collection<IConcept> fillers,
@@ -842,7 +842,7 @@ public enum OWL {
 
 	public void restrictAtMost(IConcept target, IProperty property, IConcept filler, int max, Ontology ontology) {
 		Ontologies.INSTANCE.getTargetOntology(ontology, target, property, filler).define(Collections
-				.singleton(Axiom.AtMostNValuesFrom(target.getName(), property.toString(), filler.toString(), max)));
+				.singleton(Axiom.AtMostNValuesFrom(target.toString(), property.toString(), filler.toString(), max)));
 	}
 
 	public void restrictExactly(IConcept target, IProperty property, LogicalConnector how, Collection<IConcept> fillers,
@@ -870,7 +870,7 @@ public enum OWL {
 
 	public void restrictExactly(IConcept target, IProperty property, IConcept filler, int howMany, Ontology ontology) {
 		Ontologies.INSTANCE.getTargetOntology(ontology, target, property, filler).define(Collections.singleton(
-				Axiom.ExactlyNValuesFrom(target.getName(), property.toString(), filler.toString(), howMany)));
+				Axiom.ExactlyNValuesFrom(target.toString(), property.toString(), filler.toString(), howMany)));
 	}
 
 	/**
