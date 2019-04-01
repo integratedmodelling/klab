@@ -417,13 +417,22 @@ public enum Kim {
 
 		/**
 		 * If the core type is known, return the type of declarable this core type
-		 * represents. If it is unknown or it's not declarable, return 0.
+		 * represents. If it is unknown or it's not declarable, return an empty typeset.
 		 * 
 		 * @param string
 		 * @param statedType
 		 * @return the type
 		 */
 		EnumSet<Type> classifyCoreType(String string, EnumSet<Type> statedType);
+
+		/**
+		 * Called whenever a 'is core <coretype>' statement is validated to establish
+		 * the worldview peer of the passed core concept.
+		 * 
+		 * @param coreConcept
+		 * @param worldviewConcept
+		 */
+		void createWorldviewPeerConcept(String coreConcept, String worldviewConcept);
 
 	}
 
@@ -1269,7 +1278,9 @@ public enum Kim {
 	}
 
 	public void declareCoreConceptPeer(String worldviewConcept, String coreConcept) {
-		// TODO use callback to define inheritance from core concept
+		if (validatorCallback != null) {
+			validatorCallback.createWorldviewPeerConcept(coreConcept, worldviewConcept);
+		}
 	}
 
 	public Validator getValidator() {

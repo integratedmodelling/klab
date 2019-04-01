@@ -156,6 +156,12 @@ public class Activator extends AbstractUIPlugin {
 				return KimData.INSTANCE.getAnnotationPrototype(functionId);
 			}
 
+			@Override
+			public void createWorldviewPeerConcept(String coreConcept, String worldviewConcept) {
+				// this is a pure syntactic validator, no action due and no harm done as long
+				// as the engine doesn't use the same.
+			}
+
 		});
 
 		/*

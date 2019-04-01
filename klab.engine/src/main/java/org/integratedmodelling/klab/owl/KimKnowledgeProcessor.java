@@ -2,7 +2,9 @@ package org.integratedmodelling.klab.owl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -49,6 +51,16 @@ public enum KimKnowledgeProcessor {
 
 	INSTANCE;
 
+	private Map<String, String> coreConceptPeers = new HashMap<>();
+
+	/*
+	 * Record correspondence of core concept peers to worldview concepts. Called by KimValidator for
+	 * later use at namespace construction.
+	 */
+	public void setWorldviewPeer(String coreConcept, String worldviewConcept) {
+		coreConceptPeers.put(worldviewConcept, coreConcept);
+	}
+	
 	public @Nullable Concept build(final IKimConceptStatement concept, final INamespace namespace,
 			final IMonitor monitor) {
 		return build(concept, namespace, null, monitor);
@@ -74,6 +86,10 @@ public enum KimKnowledgeProcessor {
 					}
 				} else {
 					parent = Resources.INSTANCE.getUpperOntology().getCoreType(concept.getType());
+					if (coreConceptPeers.containsKey(ret.toString())) {
+						// ensure that any non-trivial core inheritance is dealt with appropriately
+						parent = Resources.INSTANCE.getUpperOntology().alignCoreInheritance(ret);
+					}
 				}
 
 				if (parent != null) {
@@ -90,6 +106,10 @@ public enum KimKnowledgeProcessor {
 					Observables.INSTANCE.registerConfiguration(ret);
 				}
 
+				if (coreConceptPeers.containsKey(ret.toString())) {
+					Resources.INSTANCE.getUpperOntology().setAsCoreType(ret);
+				}
+				
 			}
 
 			return ret;
@@ -120,6 +140,7 @@ public enum KimKnowledgeProcessor {
 			namespace.addAxiom(Axiom.AnnotationAssertion(mainId, CoreOntology.NS.IS_ABSTRACT, "true"));
 		}
 
+		
 		namespace.define();
 		main = namespace.getOntology().getConcept(mainId);
 

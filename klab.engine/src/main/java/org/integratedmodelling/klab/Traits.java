@@ -94,7 +94,7 @@ public enum Traits implements ITraitService {
             return trait;
         }
 
-        for (IConcept c : trait.getAllParents()) {
+        for (IConcept c : trait.getParents()) {
             IConcept r = getBaseParentTrait(c);
             if (r != null) {
                 return r;
