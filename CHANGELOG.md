@@ -28,11 +28,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 ### Changed
-- Derived concepts are created in the topmost ontology in the dependency tree including all 
-  component namespaces.
+- Derived concepts are created in the topmost ontology in the dependency tree, including all 
+  component namespaces, or in the reasoner's top ontology if circular dependencies would
+  occur doing so.
 - Importing of namespaces within the same workspace is now mandatory.
 - Circular dependencies in import lists are detected and flagged as errors.
+- Metadata of instantiated objects are available to the dataflow to resolve attribute 
+  observers if needed.
 ### Fixed
+- WFS and vector attribute fixes
 
 ## [0.10.0.151] -- 2019/03/26
 ### Added

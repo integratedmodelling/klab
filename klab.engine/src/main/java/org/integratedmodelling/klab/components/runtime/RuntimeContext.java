@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -39,6 +40,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
+import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.components.time.extents.Scheduler;
 import org.integratedmodelling.klab.dataflow.Actuator;
@@ -59,6 +61,7 @@ import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.utils.Utils;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -299,7 +302,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	}
 
 	@Override
-	public ICountableObservation newObservation(IObservable observable, String name, IScale scale)
+	public ICountableObservation newObservation(IObservable observable, String name, IScale scale, IMetadata metadata)
 			throws KlabException {
 
 		if (!observable.is(Type.COUNTABLE)) {
@@ -344,7 +347,6 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 				dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope)
 						.setPrimary(false);
-
 				dataflow.setModel((Model) model);
 
 				// TODO this must be added to the computational strategy and linked to the
@@ -362,7 +364,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			}
 		}
 
-		ret = (ICountableObservation) dataflow.run(scale, ((Monitor) monitor).get(subtask));
+		ret = (ICountableObservation) dataflow.withMetadata(metadata).run(scale, ((Monitor) monitor).get(subtask));
 		if (ret != null) {
 			((DirectObservation) ret).setName(name);
 		}
@@ -372,7 +374,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 	@Override
 	public IRelationship newRelationship(IObservable observable, String name, IScale scale, IObjectArtifact source,
-			IObjectArtifact target) {
+			IObjectArtifact target, IMetadata metadata) {
 
 		if (!observable.is(Type.RELATIONSHIP)) {
 			throw new IllegalArgumentException(
@@ -631,31 +633,29 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 			if (observable.is(Type.COUNTABLE) && mode == Mode.INSTANTIATION) {
 				observation = new ObservationGroup(observable, (Scale) scale, this, IArtifact.Type.OBJECT);
-			} else if (observable.is(Type.RELATIONSHIP)) {
-				observation = DefaultRuntimeProvider.createRelationship(observable, scale,
-						scope.getRelationshipSource(), scope.getRelationshipTarget(), this);
-				if (getRootSubject() != null) {
-					((Observation) getRootSubject()).setLastUpdate(System.currentTimeMillis());
-				}
 			} else {
 
-				observation = DefaultRuntimeProvider.createObservation(observable, scale, this);
+				if (observable.is(Type.RELATIONSHIP)) {
+					observation = DefaultRuntimeProvider.createRelationship(observable, scale,
+							scope.getRelationshipSource(), scope.getRelationshipTarget(), this);
+				} else {
+					observation = DefaultRuntimeProvider.createObservation(observable, scale, this);
+				}
 
 				if (getRootSubject() != null) {
 					((Observation) getRootSubject()).setLastUpdate(System.currentTimeMillis());
 				}
 
 				/*
-				 * TODO if current model is an instantiator, run post-instantiation actions
-				 * (e.g. states from the instantiator model) before resolution
-				 * 
-				 * No - when it gets here model is null (already resolving) or the resolver.
-				 * Must lookup an instantiator upstream before the resolution is attempted.
+				 * When we get here the model is the resolver, or null for instantiated objects
+				 * that found no resolver. If we are downstream of an instantiator, resolve
+				 * pre-defined states before resolution is attempted. States are resolved from
+				 * resource metadata only if no contextual states are present.
 				 */
-
-				// runPostInstantiationActions(object, model);
-
-				// after which object may be scheduled for deletion
+				IMetadata metadata = actuator.getDataflow().getMetadata();
+				if (metadata != null) {
+					observation.getMetadata().putAll(metadata);
+				}
 
 				if (parent != null && actuator.getDataflow().getModel() != null) {
 					for (String attr : actuator.getDataflow().getModel().getAttributeObservables().keySet()) {
@@ -666,6 +666,16 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 									actuator.getDataflow().getModel().getAttributeObservables().get(attr),
 									(IState) artifact, scale, this);
 							predefinedStates.add(stateView);
+						} else if (metadata != null) {
+							/* state specs may be in metadata from resource attributes */
+							Object obj = metadata.getCaseInsensitive(attr);
+							if (obj != null) {
+								IState state = (IState) DefaultRuntimeProvider.createObservation(
+										actuator.getDataflow().getModel().getAttributeObservables().get(attr), scale,
+										this);
+								((State) state).distributeScalar(obj);
+								predefinedStates.add(state);
+							}
 						}
 					}
 				}

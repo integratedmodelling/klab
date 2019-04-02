@@ -95,7 +95,7 @@ public class FeatureBufferingInstantiator implements IInstantiator, IExpression 
 					((ObservedArtifact) obj).setGeometry(newScale);
 				} else {
 					ret.add(context.newObservation(semantics, ((IDirectObservation) obj).getName() + "_buffered",
-							newScale));
+							newScale, /* TODO send useful metadata */null));
 				}
 				spc++;
 			}

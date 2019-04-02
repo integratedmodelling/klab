@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -41,6 +42,7 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabStorageException;
+import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.persistence.h2.H2Database;
 import org.integratedmodelling.klab.persistence.h2.H2Kbox;
 import org.integratedmodelling.klab.persistence.h2.SQL;
@@ -89,6 +91,9 @@ public abstract class ObservableKbox extends H2Kbox {
 
     public IConcept getType(long id) {
         if (typeHash.containsKey(id)) {
+        	if (typeHash.get(id).startsWith("nonsemantic:")) {
+        		return Observable.promote(Concepts.c(typeHash.get(id)));
+        	}
             return Observables.INSTANCE.declare(typeHash.get(id));
         }
         return null;

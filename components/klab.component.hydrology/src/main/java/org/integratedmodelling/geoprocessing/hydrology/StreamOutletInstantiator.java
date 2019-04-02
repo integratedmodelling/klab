@@ -141,8 +141,10 @@ public class StreamOutletInstantiator implements IInstantiator, IExpression {
 			if (extract >= 0 && i >= extract) {
 				break;
 			}
-			ret.add(context.newObservation(semantics, "outlet_" + (i + 1), Scale.substituteExtent(context.getScale(),
-					Shape.create(outlets.get(i).x, outlets.get(i).y, grid.getProjection()))));
+			ret.add(context.newObservation(semantics, "outlet_" + (i + 1),
+					Scale.substituteExtent(context.getScale(),
+							Shape.create(outlets.get(i).x, outlets.get(i).y, grid.getProjection())),
+					/* TODO send useful metadata */null));
 		}
 
 		return ret;

@@ -133,11 +133,12 @@ public class MCAContext {
 			case InlineMultiple:
 				// create stakeholders from specs with values for criteria
 				for (final IStakeholder stakeholder : this.stakeholders) {
-					((Stakeholder) stakeholder).setSubject((ISubject) context
-							.newObservation(stakeholder.getObservable(), stakeholder.getName(), Scale.create()));
+					((Stakeholder) stakeholder)
+							.setSubject((ISubject) context.newObservation(stakeholder.getObservable(),
+									stakeholder.getName(), Scale.create(), /* TODO send useful metadata */null));
 					// TODO hostia there's more - criteria values
 					for (ICriterion criterion : this.criteria) {
-//						((ISubject)stakeholder.getSubject()).observe(urn, scenarios)
+						// ((ISubject)stakeholder.getSubject()).observe(urn, scenarios)
 					}
 				}
 				break;
@@ -272,7 +273,7 @@ public class MCAContext {
 		}
 		return null;
 	}
-	
+
 	public List<IAlternative> getAlternatives() {
 		return alternatives;
 	}

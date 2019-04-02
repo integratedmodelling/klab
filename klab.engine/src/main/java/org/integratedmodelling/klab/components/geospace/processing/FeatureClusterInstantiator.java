@@ -103,7 +103,7 @@ public class FeatureClusterInstantiator implements IExpression, IInstantiator {
 					geom = new ConcaveHull().transform(shape);
 				}
 				ret.add(context.newObservation(semantics, semantics.getLocalName() + "_" + (nc + 1),
-						Scale.substituteExtent(context.getScale(), Shape.create(geom, context.getScale().getSpace().getProjection()))));
+						Scale.substituteExtent(context.getScale(), Shape.create(geom, context.getScale().getSpace().getProjection())), /* TODO send useful metadata */null));
 
 				nc++;
 			}

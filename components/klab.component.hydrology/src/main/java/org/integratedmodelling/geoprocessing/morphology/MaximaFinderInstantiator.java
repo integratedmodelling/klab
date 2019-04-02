@@ -127,23 +127,22 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 				}
 			} else {
 				if (thresholdExpression != null) {
-					
+
 					IExpression threx = Extensions.INSTANCE.compileExpression(thresholdExpression,
 							Extensions.DEFAULT_EXPRESSION_LANGUAGE);
-					
+
 					Object o = threx.eval(
 							Parameters.create("min", summary.getRange().get(0), "max", summary.getRange().get(1),
 									"mean", summary.getMean(), "std", summary.getStandardDeviation(), "target", state),
 							context);
-					
-					
+
 					if (!(o instanceof Number)) {
 						throw new IllegalStateException(
 								"maxima extractor: threshold expression does not evaluate to a number");
 					}
-					
-					threshold = ((Number)o).doubleValue();
-					
+
+					threshold = ((Number) o).doubleValue();
+
 				} else if (threshold < 0) {
 					// top third
 					threshold = (summary.getRange().get(1) - summary.getRange().get(0) / 1.5);
@@ -167,11 +166,13 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 
 		algorithm.pMode = mode.name().toLowerCase();
 		algorithm.pThreshold = threshold;
-		algorithm.pSize = mode == Mode.CUSTOM ? (int)(maxRadius/grid.getEnvelope().distanceToMeters(grid.getCellWidth())) : size;
+		algorithm.pSize = mode == Mode.CUSTOM
+				? (int) (maxRadius / grid.getEnvelope().distanceToMeters(grid.getCellWidth()))
+				: size;
 		if (algorithm.pSize < 2) {
 			algorithm.pSize = 2;
-		} else if (algorithm.pSize > grid.getXCells()/10) {
-			algorithm.pSize = (int)grid.getXCells()/10;
+		} else if (algorithm.pSize > grid.getXCells() / 10) {
+			algorithm.pSize = (int) grid.getXCells() / 10;
 		}
 		algorithm.pPercent = (int) (downsize * 100);
 		algorithm.pMaxRadius = maxRadius;
@@ -196,7 +197,8 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 			if (feature.getDefaultGeometry() instanceof com.vividsolutions.jts.geom.Geometry) {
 				IScale instanceScale = Scale.substituteExtent(context.getScale(), Shape.create(
 						(com.vividsolutions.jts.geom.Geometry) feature.getDefaultGeometry(), grid.getProjection()));
-				ret.add(context.newObservation(semantics, semantics.getLocalName() + "_" + (i ++), instanceScale));
+				ret.add(context.newObservation(semantics, semantics.getLocalName() + "_" + (i++), instanceScale,
+						/* TODO send useful metadata */null));
 			}
 		}
 

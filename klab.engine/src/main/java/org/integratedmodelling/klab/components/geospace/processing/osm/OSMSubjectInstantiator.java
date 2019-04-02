@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
@@ -26,10 +27,10 @@ import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -350,19 +351,18 @@ public class OSMSubjectInstantiator implements IInstantiator, IExpression {
         String id = (tags.containsKey("name") ? tags.get("name")
                 : CamelCase.toLowerCase(Concepts.INSTANCE.getDisplayName(observable), '-') + "_"
                         + this.nsubjs);
-
-        ISubject ret = (ISubject) context.newObservation(observable, id, getScale(shape, contextSubject));
-
+        
         /*
-        * add the unused metadata from OSM
+        * add the unused metadata from OSM so the resolver can use them
         */
+        IMetadata metadata = new Metadata();
         for (String tag : tags.keySet()) {
             // weird shit happens
             String tgv = tags.get(tag).replaceAll("\\P{Print}", "");
-            ret.getMetadata().put(tag, tgv);
+            metadata.put(tag, tgv);
         }
 
-        return ret;
+        return (ISubject) context.newObservation(observable, id, getScale(shape, contextSubject), metadata);
     }
 
     private IScale getScale(ISpace extent, IDirectObservation context) throws KlabException {

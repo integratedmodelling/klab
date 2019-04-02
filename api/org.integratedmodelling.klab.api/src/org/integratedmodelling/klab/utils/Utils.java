@@ -225,10 +225,12 @@ public class Utils {
             return Double.class;
         case TEXT:
             return String.class;
+        case CONCEPT:
+            return IConcept.class;
         default:
             break;
         }
-        throw new IllegalArgumentException("type " + type + " has no POD class equivalent");
+        throw new IllegalArgumentException("type " + type + " has no Java class equivalent");
     }
 
     /**

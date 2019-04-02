@@ -77,7 +77,7 @@ public class PointClusterInstantiator implements IExpression, IInstantiator {
 		}
 
 		this.grid = ((Space) scale.getSpace()).getGrid();
-		
+
 		if (parameters.containsKey("select")) {
 			Object expression = parameters.get("select");
 			if (expression instanceof IKimExpression) {
@@ -91,13 +91,13 @@ public class PointClusterInstantiator implements IExpression, IInstantiator {
 			this.radius = context.getScale().getSpace().getEnvelope()
 					.metersToDistance(parameters.get("radius", Double.class));
 		} else if (parameters.containsKey("cellradius")) {
-			this.radius = (double)parameters.get("cellradius", Integer.class) * grid.getCellWidth();
+			this.radius = (double) parameters.get("cellradius", Integer.class) * grid.getCellWidth();
 		}
 
 		if (parameters.containsKey("minpoints")) {
 			this.minPoints = parameters.get("minpoints", Integer.class);
 		}
-		
+
 		if (parameters.containsKey("convex")) {
 			this.convex = parameters.get("convex", Boolean.class);
 		}
@@ -134,7 +134,7 @@ public class PointClusterInstantiator implements IExpression, IInstantiator {
 			}
 			expression = exprDescriptor.compile();
 		}
-		
+
 		Parameters<String> parameters = new Parameters<>();
 		boolean warned = false;
 		List<DoublePoint> dpoints = new ArrayList<>();
@@ -190,7 +190,8 @@ public class PointClusterInstantiator implements IExpression, IInstantiator {
 					geom = new ConcaveHull().transform(shape);
 				}
 				ret.add(context.newObservation(semantics, semantics.getLocalName() + "_" + (nc + 1),
-						Scale.substituteExtent(context.getScale(), Shape.create(geom, grid.getProjection()))));
+						Scale.substituteExtent(context.getScale(), Shape.create(geom, grid.getProjection())),
+						/* TODO send useful metadata */null));
 
 				nc++;
 			}
