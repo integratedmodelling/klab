@@ -130,13 +130,6 @@ public enum Configuration implements IConfigurationService {
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean useCommonOntology() {
-		return false;//!(getProperties().containsKey(KLAB_USE_COMMON_ONTOLOGY)
-				//&& !Boolean.parseBoolean(getProperties().getProperty(KLAB_USE_COMMON_ONTOLOGY)));
-	}
-
-	/** {@inheritDoc} */
-	@Override
 	public OS getOS() {
 
 		if (this.os == null) {

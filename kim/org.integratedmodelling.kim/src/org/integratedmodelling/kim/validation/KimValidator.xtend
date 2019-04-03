@@ -2018,12 +2018,12 @@ class KimValidator extends AbstractKimValidator {
 				for (var i = 0; i < concept.domains.size; i++) {
 					var domain = Kim.INSTANCE.declareConcept(concept.domains.get(i))
 					var range = Kim.INSTANCE.declareConcept(concept.ranges.get(i))
-					if (domain.type.contains(Type.SUBJECT)) {
+					if (!domain.type.contains(Type.SUBJECT)) {
 						error("relationship can only link subjects to subjects", concept,
 							KimPackage.Literals.CONCEPT_STATEMENT_BODY__DOMAINS, i)
 						ok = false
 					}
-					if (range.type.contains(Type.SUBJECT)) {
+					if (!range.type.contains(Type.SUBJECT)) {
 						error("relationship can only link subjects to subjects", concept,
 							KimPackage.Literals.CONCEPT_STATEMENT_BODY__RANGES, i)
 						ok = false

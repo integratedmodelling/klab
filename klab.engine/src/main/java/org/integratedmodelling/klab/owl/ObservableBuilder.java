@@ -1351,7 +1351,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (inherent != null) {
 			IConcept other = Observables.INSTANCE.getInherentType(main);
 			if (other != null && !Observables.INSTANCE.isCompatible(inherent, other)) {
-				monitor.error("cannot set inherent type of " + Concepts.INSTANCE.getDisplayName(main) + " to "
+				monitor.error("cannot set the inherent type of " + Concepts.INSTANCE.getDisplayName(main) + " to "
 						+ Concepts.INSTANCE.getDisplayName(inherent) + " as it already has an incompatible inherency: "
 						+ Concepts.INSTANCE.getDisplayName(other), declaration);
 			}

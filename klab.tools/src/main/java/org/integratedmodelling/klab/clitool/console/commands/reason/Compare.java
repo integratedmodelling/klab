@@ -19,10 +19,28 @@ public class Compare implements ICommand {
     String ret = "";
     List<IConcept> concepts = new ArrayList<>();
 
+    List<String> declarations = new ArrayList<>();
+    String declaration = "";
     for (Object p : (List<?>) call.getParameters().get("arguments")) {
-      concepts.add(Concepts.c(p.toString()));
+    	if (p.toString().equals("vs")) {
+    		declarations.add(declaration.trim());
+    		declaration = "";
+    	} else {
+    		concepts.add(Concepts.c(p.toString()));
+        	declaration += (declaration.isEmpty() ? "" : " ") + p.toString();
+    	}
     }
 
+    if (!declarations.isEmpty()) {
+    	if (!declaration.isEmpty()) {
+    		declarations.add(declaration);
+    	}
+    	concepts.clear();
+    	for (String d : declarations) {
+    		concepts.add(Observables.INSTANCE.declare(d));
+    	}
+    }
+    
     for (int i = 0; i < concepts.size(); i++) {
       for (int j = 0; j < concepts.size(); j++) {
         if (j != i) {
