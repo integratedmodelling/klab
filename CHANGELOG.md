@@ -26,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [comment]: <>   (Next build: [0.10.0.151] -- ISO Date)
 
 ## [Unreleased]
+
+## [0.10.0.152] -- 2019/04/04
 ### Added
 ### Changed
 - Overhaul resolution using IConcept.resolves() rather than isCompatible and removing 
