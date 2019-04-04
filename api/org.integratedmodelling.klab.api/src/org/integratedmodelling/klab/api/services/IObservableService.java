@@ -17,16 +17,13 @@ import java.util.Collection;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IComputableResource;
-import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimObservable;
-import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -195,116 +192,6 @@ public interface IObservableService {
 	 */
 	IConcept getCoreObservable(IConcept c);
 
-	
-
-	// /**
-	// * Get a builder for a declaration of named observable, which will allow
-	// adding traits and
-	// clauses
-	// * and obtain the final concept by calling {@link Builder#build()} on it.
-	// *
-	// * The concept is created in the reasoner's ontology if a reasoner is active,
-	// or in the ontology
-	// * where the main concept is located if not.
-	// *
-	// * @param main
-	// * @return a builder for the main concept
-	// */
-	// // Builder declare(IConcept main);
-	//
-	// /**
-	// * Get a builder for a declaration of named observable, which will allow
-	// adding traits and
-	// clauses
-	// * and obtain the final concept by calling {@link Builder#build()} on it. This
-	// version can be
-	// * passed a name which can be with or without namespace, and a parent. The
-	// concept is only
-	// created
-	// * if it's not there.
-	// *
-	// * The concept is created in the reasoner's ontology if a reasoner is active,
-	// or in the ontology
-	// * where the main concept is located if not.
-	// *
-	// * @param main concept ID, which must be fully specified or build() will throw
-	// an exception.
-	// * @param parent
-	// * @return a builder for the main concept
-	// */
-	// // Builder declare(String main, @NotNull IConcept parent);
-	//
-	// /**
-	// * Get a builder for a declaration of named observable, which will allow
-	// adding traits and
-	// clauses
-	// * and obtain the final concept by calling {@link Builder#build()} on it. This
-	// version can be
-	// * passed a name which can be with or without namespace, and a type to
-	// establish the core
-	// parent.
-	// * The concept is only created if it's not there.
-	// *
-	// * The concept is created in the reasoner's ontology if a reasoner is active,
-	// or in the ontology
-	// * where the main concept is located if not.
-	// *
-	// * @param main concept ID, which must be fully specified or build() will throw
-	// an exception
-	// * @param type
-	// * @return a builder for the main concept
-	// */
-	// // Builder declare(String main, @NotNull Set<Type> type);
-	//
-	// /**
-	// * Get a builder for a declaration of named observable, which will allow
-	// adding traits and
-	// clauses
-	// * and obtain the final concept by calling {@link Builder#build()} on it.
-	// *
-	// * @param main
-	// * @param ontology
-	// * @return a builder for the main concept
-	// */
-	// // Builder declare(IConcept main, IOntology ontology);
-	//
-	// /**
-	// * Get a builder for a declaration of named observable, which will allow
-	// adding traits and
-	// clauses
-	// * and obtain the final concept by calling {@link Builder#build()} on it. This
-	// version can be
-	// * passed a name which can be with or without namespace, and a parent. The
-	// concept is only
-	// created
-	// * if it's not there.
-	// *
-	// * @param main
-	// * @param parent
-	// * @param ontology
-	// * @return a builder for the main concept
-	// */
-	// // Builder declare(String main, @NotNull IConcept parent, IOntology
-	// ontology);
-	//
-	// /**
-	// * Get a builder for a declaration of named observable, which will allow
-	// adding traits and
-	// clauses
-	// * and obtain the final concept by calling {@link Builder#build()} on it. This
-	// version can be
-	// * passed a name which can be with or without namespace, and a type to
-	// establish the core
-	// parent.
-	// * The concept is only created if it's not there.
-	// *
-	// * @param main
-	// * @param type
-	// * @param ontology
-	// * @return a builder for the main concept
-	// */
-	// // Builder declare(String main, @NotNull Set<Type> type, IOntology ontology);
-
 	/**
 	 * True if o1 and o2 are observables from recognized domains, have compatible
 	 * context and inherency, o1 is o2, and o1 adopts all the traits and roles that
@@ -316,6 +203,7 @@ public interface IObservableService {
 	 * @param o2
 	 *            a {@link org.integratedmodelling.klab.api.knowledge.IConcept}
 	 *            object.
+	 *            
 	 * @return true if these are compatible observables
 	 */
 	boolean isCompatible(IConcept o1, IConcept o2);
@@ -468,4 +356,15 @@ public interface IObservableService {
 	IConcept getDirectContextType(IConcept concept);
 
 	IConcept getComparisonType(IConcept concept);
+
+	/**
+	 * Recontextualize an observable to a different COMPATIBLE context. If the context is not compatible,
+	 * throw an IllegalArgumentException. Used during resolution of any concept to ensure its context 
+	 * matter.
+	 * 
+	 * @param observable
+	 * @param newContext
+	 * @return the recontextualized observable
+	 */
+	IObservable contextualizeTo(IObservable observable, IConcept newContext, IMonitor monitor);
 }

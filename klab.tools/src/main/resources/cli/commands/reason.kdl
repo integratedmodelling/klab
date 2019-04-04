@@ -42,10 +42,17 @@ void restrictions
 
 void compare
 	"Cross-compare a set of concepts for specificity and compatibility. List concepts to
-	 compare as arguments; for complex declarations, use 'vs' as separator."
+	 compare as arguments; for complex declarations, use 'with' as separator."
 {
 	class org.integratedmodelling.klab.clitool.console.commands.reason.Compare
 }
+
+void contextualize
+	"Recontextualize a concept to another and describe it. Use 'to' as separator."
+{
+	class org.integratedmodelling.klab.clitool.console.commands.reason.Contextualize
+}
+
 
 void reload
 	"Reload one or more namespaces."

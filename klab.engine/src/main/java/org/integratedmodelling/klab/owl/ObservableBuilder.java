@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -19,7 +17,6 @@ import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimConcept;
 import org.integratedmodelling.kim.model.KimConcept.ComponentRole;
 import org.integratedmodelling.klab.Concepts;
-import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Ontologies;
 import org.integratedmodelling.klab.Reasoner;
@@ -33,7 +30,6 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
-import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.SemanticType;
@@ -42,12 +38,7 @@ import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.utils.Pair;
-import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.traverse.TopologicalOrderIterator;
 
 public class ObservableBuilder implements IObservable.Builder {
 
@@ -82,38 +73,35 @@ public class ObservableBuilder implements IObservable.Builder {
 	private ICurrency currency;
 
 	private boolean isTrivial = true;
+	private KimConcept declaration;
 
-	// This is only for reporting
-	private IKimConcept declaration;
+	// this gets set to true if a finished declaration is set using withDeclaration() and the
+	// builder is merely building it. 
+	private boolean declarationIsComplete = false;
 
 	public ObservableBuilder(Concept main, Ontology ontology) {
 		this.main = main;
 		this.ontology = ontology;
-		if (ontology == null) {
-			System.out.println("SCRWQW");
-		}
+		this.declaration = Concepts.INSTANCE.getDeclaration(main);
 		this.type = ((Concept) main).type;
 	}
 
-	public ObservableBuilder(String main, Concept parent, Ontology ontology) {
-		this.mainId = main;
-		this.ontology = ontology;
-		if (ontology == null) {
-			System.out.println("SCRWQW");
-		}
-		this.parent = parent;
-		this.type = ((Concept) parent).type;
-	}
+	// public ObservableBuilder(String main, Concept parent, Ontology ontology) {
+	// this.mainId = main;
+	// this.ontology = ontology;
+	// this.parent = parent;
+	// this.declaration = Concepts.INSTANCE.declare(main);
+	// this.declaration.setParent(Concepts.INSTANCE.getDeclaration(parent));
+	// this.type = ((Concept) parent).type;
+	// }
 
-	public ObservableBuilder(String main, Set<Type> parent, Ontology ontology) {
-		this.mainId = main;
-		this.ontology = ontology;
-		if (ontology == null) {
-			System.out.println("SCRWQW");
-		}
-		this.parent = Resources.INSTANCE.getUpperOntology().getCoreType(parent);
-		this.type = parent;
-	}
+	// public ObservableBuilder(String main, Set<Type> parent, Ontology ontology) {
+	// this.mainId = main;
+	// this.ontology = ontology;
+	// this.parent = Resources.INSTANCE.getUpperOntology().getCoreType(parent);
+	// this.declaration = Concepts.INSTANCE.declare(main);
+	// this.type = parent;
+	// }
 
 	/**
 	 * Copies all info from the first level of specification of the passed
@@ -136,7 +124,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.cooccurrent = Observables.INSTANCE.getDirectCooccurrentType(observable.getType());
 		this.goal = Observables.INSTANCE.getDirectGoalType(observable.getType());
 		this.compresent = Observables.INSTANCE.getDirectCompresentType(observable.getType());
-		this.declaration = Observables.INSTANCE.parseDeclaration(observable.getDeclaration()).getMain();
+		this.declaration = Concepts.INSTANCE.getDeclaration(observable.getMain());
 
 		for (IConcept role : Roles.INSTANCE.getDirectRoles(observable.getType())) {
 			this.roles.add(role);
@@ -179,8 +167,9 @@ public class ObservableBuilder implements IObservable.Builder {
 
 	@Override
 	public Builder withDeclaration(IKimConcept declaration, IMonitor monitor) {
-		this.declaration = declaration;
+		this.declaration = (KimConcept) declaration;
 		this.monitor = monitor;
+		this.declarationIsComplete  = true;
 		return this;
 	}
 
@@ -194,6 +183,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	@Override
 	public Builder within(IConcept concept) {
 		this.context = concept;
+		if (!declarationIsComplete) {
+			this.declaration.setContext((KimConcept) Concepts.INSTANCE.getDeclaration(concept));
+		}
 		isTrivial = false;
 		return this;
 	}
@@ -201,6 +193,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	@Override
 	public Builder to(IConcept concept) {
 		this.caused = concept;
+		if (!declarationIsComplete) {
+			this.declaration.setCaused((KimConcept) Concepts.INSTANCE.getDeclaration(concept));
+		}
 		isTrivial = false;
 		return this;
 	}
@@ -208,6 +203,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	@Override
 	public Builder from(IConcept concept) {
 		this.causant = concept;
+		if (!declarationIsComplete) {
+			this.declaration.setCausant((KimConcept) Concepts.INSTANCE.getDeclaration(concept));
+		}
 		isTrivial = false;
 		return this;
 	}
@@ -215,6 +213,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	@Override
 	public Builder with(IConcept concept) {
 		this.compresent = concept;
+		if (!declarationIsComplete) {
+			this.declaration.setCompresent((KimConcept) Concepts.INSTANCE.getDeclaration(concept));
+		}
 		isTrivial = false;
 		return this;
 	}
@@ -224,6 +225,9 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (!concept.is(Type.ROLE)) {
 			errors.add(new KlabValidationException("cannot use concept " + concept + " as a role"));
 		}
+		if (!declarationIsComplete) {
+			this.declaration.getRoles().add(Concepts.INSTANCE.getDeclaration(concept));
+		}
 		this.roles.add(concept);
 		isTrivial = false;
 		return this;
@@ -232,6 +236,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	@Override
 	public Builder withGoal(IConcept goal) {
 		this.goal = goal;
+		if (!declarationIsComplete) {
+			this.declaration.setMotivation((KimConcept) Concepts.INSTANCE.getDeclaration(goal));
+		}
 		isTrivial = false;
 		return this;
 	}
@@ -239,6 +246,9 @@ public class ObservableBuilder implements IObservable.Builder {
 	@Override
 	public Builder withCooccurrent(IConcept cooccurrent) {
 		this.cooccurrent = cooccurrent;
+		if (!declarationIsComplete) {
+			this.declaration.setCooccurrent((KimConcept) Concepts.INSTANCE.getDeclaration(cooccurrent));
+		}
 		isTrivial = false;
 		return this;
 	}
@@ -246,27 +256,31 @@ public class ObservableBuilder implements IObservable.Builder {
 	@Override
 	public Builder withAdjacent(IConcept adjacent) {
 		this.adjacent = adjacent;
+		if (!declarationIsComplete) {
+			this.declaration.setAdjacent((KimConcept) Concepts.INSTANCE.getDeclaration(adjacent));
+		}
 		isTrivial = false;
-		return this;
-	}
-
-	@Override
-	public Builder contextualizedTo(IConcept context) {
-		// TODO Auto-generated method stub
 		return this;
 	}
 
 	@Override
 	public Builder as(UnarySemanticOperator type, IConcept... participants) throws KlabValidationException {
 
+		if (!declarationIsComplete) {
+			this.declaration.setObservationType(type);
+		}
+		
 		if (participants != null) {
 			this.comparison = participants[0];
+			if (!declarationIsComplete) {
+				this.declaration.setOtherConcept(Concepts.INSTANCE.getDeclaration(participants[0]));
+			}
 			if (participants.length > 1) {
 				throw new KlabValidationException(
 						"cannot handle more than one participant concept in semantic operator");
 			}
 		}
-
+		
 		if (resolveMain()) {
 
 			/**
@@ -333,7 +347,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	 */
 	private ObservableBuilder getArgumentBuilder() {
 		ObservableBuilder ret = new ObservableBuilder(this);
-		ret.declaration = ((KimConcept) declaration).removeOperator();
+		ret.declaration = declaration.removeOperator();
 		ret.type = ret.declaration.getType();
 		return ret;
 	}
@@ -345,6 +359,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		roles.clear();
 		comparison = context = inherent = /* classifier = downTo = */ caused = compresent = inherent = parent = null;
 		isTrivial = true;
+		// declaration remains the same
 	}
 
 	@Override
@@ -427,7 +442,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			for (IConcept r : ret.removed) {
 				declarations.add(r.getDefinition());
 			}
-			ret.declaration = ((KimConcept) ret.declaration).removeComponents(declarations, removedRoles);
+			ret.declaration = ret.declaration.removeComponents(declarations, removedRoles);
 		}
 
 		ret.checkTrivial();
@@ -501,7 +516,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			for (IConcept r : ret.removed) {
 				declarations.add(r.getDefinition());
 			}
-			ret.declaration = ((KimConcept) ret.declaration).removeComponents(declarations, removedRoles);
+			ret.declaration = ret.declaration.removeComponents(declarations, removedRoles);
 		}
 
 		ret.checkTrivial();
@@ -523,6 +538,9 @@ public class ObservableBuilder implements IObservable.Builder {
 				errors.add(new KlabValidationException("cannot use concept " + concept + " as a trait"));
 			} else {
 				traits.add(concept);
+				if (!declarationIsComplete) {
+					this.declaration.getTraits().add(Concepts.INSTANCE.getDeclaration(concept));
+				}
 			}
 		}
 		isTrivial = false;
@@ -1364,7 +1382,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (context != null) {
 			IConcept other = Observables.INSTANCE.getContextType(main);
 			if (other != null && !Observables.INSTANCE.isCompatible(context, other)) {
-				monitor.error("cannot set context of " + Concepts.INSTANCE.getDisplayName(main) + " to "
+				monitor.error("cannot set the context type of " + Concepts.INSTANCE.getDisplayName(main) + " to "
 						+ Concepts.INSTANCE.getDisplayName(context) + " as it already has an incompatible context: "
 						+ Concepts.INSTANCE.getDisplayName(other), declaration);
 			}
@@ -1377,7 +1395,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (compresent != null) {
 			IConcept other = Observables.INSTANCE.getCompresentType(main);
 			if (other != null && !Observables.INSTANCE.isCompatible(compresent, other)) {
-				monitor.error("cannot set compresent type of " + Concepts.INSTANCE.getDisplayName(main) + " to "
+				monitor.error("cannot set the compresent type of " + Concepts.INSTANCE.getDisplayName(main) + " to "
 						+ Concepts.INSTANCE.getDisplayName(context)
 						+ " as it already has an incompatible compresent type: "
 						+ Concepts.INSTANCE.getDisplayName(other), declaration);
@@ -1391,7 +1409,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			// TODO transform as necessary
 			IConcept other = Observables.INSTANCE.getGoalType(main);
 			if (other != null && !Observables.INSTANCE.isCompatible(goal, other)) {
-				monitor.error("cannot set goal type of " + Concepts.INSTANCE.getDisplayName(main) + " to "
+				monitor.error("cannot set the goal type of " + Concepts.INSTANCE.getDisplayName(main) + " to "
 						+ Concepts.INSTANCE.getDisplayName(goal) + " as it already has an incompatible goal type: "
 						+ Concepts.INSTANCE.getDisplayName(other), declaration);
 			}
@@ -1403,7 +1421,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (caused != null) {
 			IConcept other = Observables.INSTANCE.getCausedType(main);
 			if (other != null && !Observables.INSTANCE.isCompatible(caused, other)) {
-				monitor.error("cannot set caused type of " + Concepts.INSTANCE.getDisplayName(main) + " to "
+				monitor.error("cannot set the caused type of " + Concepts.INSTANCE.getDisplayName(main) + " to "
 						+ Concepts.INSTANCE.getDisplayName(caused) + " as it already has an incompatible caused type: "
 						+ Concepts.INSTANCE.getDisplayName(other), declaration);
 			}
@@ -1415,9 +1433,10 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (causant != null) {
 			IConcept other = Observables.INSTANCE.getCausantType(main);
 			if (other != null && !Observables.INSTANCE.isCompatible(causant, other)) {
-				monitor.error("cannot set causant type of " + Concepts.INSTANCE.getDisplayName(main) + " to "
-						+ Concepts.INSTANCE.getDisplayName(causant) + " as it already has an incompatible causant type: "
-						+ Concepts.INSTANCE.getDisplayName(other), declaration);
+				monitor.error("cannot set the causant type of " + Concepts.INSTANCE.getDisplayName(main) + " to "
+						+ Concepts.INSTANCE.getDisplayName(causant)
+						+ " as it already has an incompatible causant type: " + Concepts.INSTANCE.getDisplayName(other),
+						declaration);
 			}
 			cleanId = getCleanId(causant);
 			cId += "From" + cleanId;
@@ -1427,8 +1446,9 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (adjacent != null) {
 			IConcept other = Observables.INSTANCE.getAdjacentType(main);
 			if (other != null && !Observables.INSTANCE.isCompatible(adjacent, other)) {
-				monitor.error("cannot set adjacent type of " + Concepts.INSTANCE.getDisplayName(main) + " to "
-						+ Concepts.INSTANCE.getDisplayName(adjacent) + " as it already has an incompatible adjacent type: "
+				monitor.error("cannot set the adjacent type of " + Concepts.INSTANCE.getDisplayName(main) + " to "
+						+ Concepts.INSTANCE.getDisplayName(adjacent)
+						+ " as it already has an incompatible adjacent type: "
 						+ Concepts.INSTANCE.getDisplayName(other), declaration);
 			}
 			cleanId = getCleanId(adjacent);
@@ -1439,8 +1459,8 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (cooccurrent != null) {
 			IConcept other = Observables.INSTANCE.getCooccurrentType(cooccurrent);
 			if (other != null && !Observables.INSTANCE.isCompatible(cooccurrent, other)) {
-				monitor.error("cannot set co-occurrent type of " + Concepts.INSTANCE.getDisplayName(main)
-						+ " to " + Concepts.INSTANCE.getDisplayName(cooccurrent)
+				monitor.error("cannot set the co-occurrent type of " + Concepts.INSTANCE.getDisplayName(main) + " to "
+						+ Concepts.INSTANCE.getDisplayName(cooccurrent)
 						+ " as it already has an incompatible co-occurrent type: "
 						+ Concepts.INSTANCE.getDisplayName(other), declaration);
 			}

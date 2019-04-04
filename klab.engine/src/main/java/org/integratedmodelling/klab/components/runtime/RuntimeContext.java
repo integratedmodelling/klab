@@ -660,6 +660,12 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 				if (parent != null && actuator.getDataflow().getModel() != null) {
 					for (String attr : actuator.getDataflow().getModel().getAttributeObservables().keySet()) {
 						IArtifact artifact = parent.findArtifactByObservableName(attr);
+						if (artifact == null) {
+							// TODO Check - should this be the ONLY way?
+							artifact = parent
+									.findArtifact(actuator.getDataflow().getModel().getAttributeObservables().get(attr))
+									.getSecond();
+						}
 						if (artifact instanceof IState) {
 							// observable may be different or use data reduction traits
 							IState stateView = Observations.INSTANCE.getStateViewAs(

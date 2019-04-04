@@ -975,7 +975,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		this.adjacent = adjacent;
 	}
 
-	public IKimConcept removeOperator() {
+	public KimConcept removeOperator() {
 		KimConcept ret = new KimConcept(this);
 		if (this.observationType != null) {
 			ret.observationType = null;
@@ -985,7 +985,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		return ret;
 	}
 
-	public IKimConcept removeComponents(List<String> declarations, List<ComponentRole> roles) {
+	public KimConcept removeComponents(List<String> declarations, List<ComponentRole> roles) {
 
 		KimConcept ret = new KimConcept(this);
 

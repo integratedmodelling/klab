@@ -12,3 +12,14 @@ void 'list'
 	
 	class org.integratedmodelling.klab.clitool.console.commands.kbox.List
 }
+
+void 'compatible'
+	"List the available observables that are compatible with the passed semantics."
+{
+	
+	optional input verbose
+		"Verbose output: list model details"
+		default false
+	
+	class org.integratedmodelling.klab.clitool.console.commands.kbox.Compatible
+}

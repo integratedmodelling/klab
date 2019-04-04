@@ -4,6 +4,7 @@ import java.io.File;
 import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -581,7 +582,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 			}
 
 		} catch (Exception e) {
-			Logging.INSTANCE.error(e);
+			Logging.INSTANCE.error(e.getClass().getCanonicalName() + ": " + e);
 			ret = false;
 		} finally {
 			Indexer.INSTANCE.commitChanges();

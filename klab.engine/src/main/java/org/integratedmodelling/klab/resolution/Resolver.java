@@ -8,6 +8,7 @@ import java.util.Iterator;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Models;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.model.IKimObject;
@@ -304,9 +305,11 @@ public enum Resolver {
 								 * logics in the runtime provider that shouldn't be needed.
 								 */
 								candidate.accept(model);
-								mscope.getMonitor().debug("accepting " + model.getName() + " to resolve "
-										+ NumberFormat.getPercentInstance().format(mscope.getCoverage().getCoverage())
-										+ " of " + observable);
+								mscope.getMonitor()
+										.debug("accepting "
+												+ model.getName() + " to resolve " + NumberFormat.getPercentInstance()
+														.format(mscope.getCoverage().getCoverage())
+												+ " of " + observable);
 								ret.link(mscope, candidate.computation);
 							}
 

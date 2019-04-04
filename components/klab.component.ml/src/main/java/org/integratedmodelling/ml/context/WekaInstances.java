@@ -255,6 +255,7 @@ public class WekaInstances {
 					// build map of predicted/observable name to index in instance. We use one
 					// artifact so the observable names are stable.
 					stateIndex = new HashMap<>();
+					
 					for (IState state : ((IDirectObservation) object).getStates()) {
 						if (state.getObservable().equals(predicted.getObservable())) {
 							stateIndex.put(state.getObservable().getLocalName(), 0);
@@ -290,9 +291,9 @@ public class WekaInstances {
 							break;
 						} else {
 							instanceValues[stateIndex.get(state.getObservable().getLocalName())] = o;
-							objects++;
 						}
 					}
+					objects++;
 				}
 
 				if (!ignore) {

@@ -14,6 +14,7 @@ import org.h2gis.utilities.SpatialResultSet;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -153,6 +154,12 @@ public class ModelKbox extends ObservableKbox {
 
 		initialize(context.getMonitor());
 
+		// HERE is the place to contextualize the observable - which is also used to establish semantic distance in the matcher
+		if (context.getContext() != null) {
+			observable = Observables.INSTANCE.contextualizeTo(observable,
+					context.getContext().getObservable().getType(), context.getMonitor());
+		}
+		
 		Pair<Scale, Set<IRankedModel>> preResolved = context.isCaching() ? null
 				: context.getPreresolvedModels(observable);
 

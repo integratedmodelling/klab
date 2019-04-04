@@ -594,10 +594,16 @@ public class ResolutionScope implements IResolutionScope {
 	private Collection<IObservable> getResolvedObservables(IObservable toSkip) {
 		if (this.model != null) {
 			List<IObservable> ret = new ArrayList<>();
+			int i = 0;
 			for (IObservable obs : this.model.getObservables()) {
-				if (!obs.equals(toSkip)) {
+				/*
+				 * TODO/FIXME: observables beyond the first, if used, must be contextualized to the 
+				 * observable in instantiators
+				 */
+				if (!obs.equals(toSkip) && i == 0) {
 					ret.add(obs);
 				}
+				i++;
 			}
 			return ret;
 		} else if (this.observable != null && !this.observable.equals(toSkip)) {
@@ -913,6 +919,10 @@ public class ResolutionScope implements IResolutionScope {
 	}
 
 	public boolean isBeingResolved(IConcept observable, Mode mode) {
+		/*
+		 * TODO this should also apply to the dereifying versions of a model being resolved - or not? 
+		 * Probably not - as long as the context of resolution is appropriate.
+		 */
 		if (this.observable != null && this.observable.getType().equals(observable) && this.mode == mode) {
 			return true;
 		}

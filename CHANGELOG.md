@@ -28,6 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 ### Changed
+- Overhaul resolution using IConcept.resolves() rather than isCompatible and removing 
+  use of inheritance in kbox search strategy, as derived concepts can now be redundant.
 - Derived concepts are created in the topmost ontology in the dependency tree, including all 
   component namespaces, or in the reasoner's top ontology if additional ontology dependencies 
   would occur doing so. Redundancy for the same declaration is now possible, with a 
@@ -39,14 +41,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   type.
 - Metadata of instantiated objects are available to the dataflow to resolve attribute 
   observers if needed.
+- Full round-trip path between k.IM text declarations, syntactic concept declarations 
+  (IKimConcept) and concepts in ontologies (IConcept). ObservableBuilder should now
+  correctly enable any modification of existing concepts.
 ### Fixed
-- WFS and vector attribute fixes
+- WFS and vector attribute fixes.
+- More contextualization exceptions are now reported to clients.
 
 ## [0.10.0.151] -- 2019/03/26
 ### Added
 - Begin supporting recontextualization of distributed states in expressions through @-modified identifiers 
   (e.g. elevation@nw). These are recognized but not used yet. Use of recontextualization 
-  is disabled for expressions used in documentation.
+  is disabled for expressions used in documentation to avoid conflicting with @-directives.
 - Add CLI 'kbox' command namespace for kbox inquiries and enable 'reason info' for ontologies.
 - Support 'equals' instead of 'is' in concept declarations to declare aliases instead
   of new concepts. All implications still to be tested.

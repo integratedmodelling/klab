@@ -206,4 +206,8 @@ public enum Models implements IModelService {
 		return kbox.retrieveModel(string, Klab.INSTANCE.getRootMonitor());
 	}
 
+	public ModelKbox getKbox() {
+		return kbox;
+	}
+
 }

@@ -2533,17 +2533,13 @@ public class KimValidator extends AbstractKimValidator {
           {
             KimConcept domain = Kim.INSTANCE.declareConcept(concept.getDomains().get(i_6));
             KimConcept range = Kim.INSTANCE.declareConcept(concept.getRanges().get(i_6));
-            boolean _contains_7 = domain.getType().contains(IKimConcept.Type.SUBJECT);
-            boolean _not_8 = (!_contains_7);
-            if (_not_8) {
-              this.error("relationship can only link subjects to subjects", concept, 
+            if (((!domain.getType().contains(IKimConcept.Type.SUBJECT)) && (!domain.getType().contains(IKimConcept.Type.AGENT)))) {
+              this.error("relationship can only link subjects or agents", concept, 
                 KimPackage.Literals.CONCEPT_STATEMENT_BODY__DOMAINS, i_6);
               ok = false;
             }
-            boolean _contains_8 = range.getType().contains(IKimConcept.Type.SUBJECT);
-            boolean _not_9 = (!_contains_8);
-            if (_not_9) {
-              this.error("relationship can only link subjects to subjects", concept, 
+            if (((!domain.getType().contains(IKimConcept.Type.SUBJECT)) && (!domain.getType().contains(IKimConcept.Type.AGENT)))) {
+              this.error("relationship can only link subjects or agents", concept, 
                 KimPackage.Literals.CONCEPT_STATEMENT_BODY__RANGES, i_6);
               ok = false;
             }

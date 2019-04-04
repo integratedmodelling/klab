@@ -79,11 +79,11 @@ public class ShowInfo implements ICommand {
         return ret;
     }
 
-    private String describe(IConcept concept) {
+    public static String describe(IConcept concept) {
 
         String ret = "";
-
-        ret += concept.getDefinition() + "\n";
+        ret += "Core observable: " + Observables.INSTANCE.getCoreObservable(concept).getDefinition() + "\n";
+        ret += "Definition:    " + concept.getDefinition() + "\n";
         ret += Arrays.toString(((Concept) concept.getType()).getTypeSet().toArray()) + "\n";
         ret += "        Context type: " + decl(Observables.INSTANCE.getContextType(concept.getType()))
                 + " [direct: "
@@ -133,7 +133,7 @@ public class ShowInfo implements ICommand {
         return ret;
     }
 
-    String decl(IConcept concept) {
+    static String decl(IConcept concept) {
         return concept == null ? "NONE" : concept.getDefinition();
     }
 

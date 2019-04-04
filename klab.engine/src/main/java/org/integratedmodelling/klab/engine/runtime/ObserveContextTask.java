@@ -143,6 +143,7 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 					} catch (Throwable e) {
 
 						ObserveContextTask.this.descriptor.setError(e.getLocalizedMessage());
+						monitor.error(e);
 						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 								IMessage.Type.TaskAborted, ObserveContextTask.this.descriptor));
 						throw e;

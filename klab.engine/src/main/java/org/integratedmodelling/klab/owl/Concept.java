@@ -32,8 +32,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Roles;
+import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -644,6 +648,163 @@ public class Concept extends Knowledge implements IConcept {
 		}
 
 		return ret;
+	}
+
+	@Override
+	public int resolves(IConcept concept) {
+
+		int distance = 0;
+
+		if (this == concept || this.equals(concept)) {
+			return distance;
+		}
+
+		IConcept core1 = Observables.INSTANCE.getCoreObservable(this);
+		IConcept core2 = Observables.INSTANCE.getCoreObservable(concept);
+
+		if (core1 == null || core2 == null) {
+			return -100;
+		}
+
+		/*
+		 * in order to resolve an observation, the core observables must be equal;
+		 * subsumption is not OK (lidar elevation does not resolve elevation as it
+		 * creates different observations; same for different observation techniques -
+		 * easy strategy to annotate techs that make measurements incompatible = use a
+		 * subclass instead of a related trait).
+		 */
+		if (!core1.equals(core2)) {
+			return -50;
+		}
+
+		int mainDistance = Concepts.INSTANCE.getAssertedDistance(this, concept);
+		distance += mainDistance * 50;
+		if (distance < 0) {
+			return distance;
+		}
+
+		// should have all the same traits - additional traits are allowed only
+		// in contextual types
+		for (IConcept t : Traits.INSTANCE.getTraits(this)) {
+			boolean ok = Traits.INSTANCE.hasTrait(concept, t);
+			if (!ok) {
+				return -50;
+			}
+		}
+
+		for (IConcept t : Traits.INSTANCE.getTraits(concept)) {
+			if (!Traits.INSTANCE.hasTrait(this, t)) {
+				return -50;
+			}
+		}
+
+		int component = getDistance(Observables.INSTANCE.getContextType(this),
+				Observables.INSTANCE.getContextType(concept));
+
+		if (component < 0) {
+			double d = ((double) component / 10.0);
+			return -1 * (int) (d > 10 ? d : 10);
+		}
+		distance += component;
+
+		component = getDistance(Observables.INSTANCE.getInherentType(this),
+				Observables.INSTANCE.getInherentType(concept));
+
+		if (component < 0) {
+			double d = ((double) component / 10.0);
+			return -1 * (int) (d > 10 ? d : 10);
+		}
+		distance += component;
+
+		component = getDistance(Observables.INSTANCE.getGoalType(this), Observables.INSTANCE.getGoalType(concept));
+
+		if (component < 0) {
+			double d = ((double) component / 10.0);
+			return -1 * (int) (d > 10 ? d : 10);
+		}
+		distance += component;
+
+		component = getDistance(Observables.INSTANCE.getCooccurrentType(this),
+				Observables.INSTANCE.getCooccurrentType(concept));
+
+		if (component < 0) {
+			double d = ((double) component / 10.0);
+			return -1 * (int) (d > 10 ? d : 10);
+		}
+		distance += component;
+
+		component = getDistance(Observables.INSTANCE.getCausantType(this),
+				Observables.INSTANCE.getCausantType(concept));
+
+		if (component < 0) {
+			double d = ((double) component / 10.0);
+			return -1 * (int) (d > 10 ? d : 10);
+		}
+		distance += component;
+
+		component = getDistance(Observables.INSTANCE.getCausedType(this), Observables.INSTANCE.getCausedType(concept));
+
+		if (component < 0) {
+			double d = ((double) component / 10.0);
+			return -1 * (int) (d > 10 ? d : 10);
+		}
+		distance += component;
+
+		component = getDistance(Observables.INSTANCE.getAdjacentType(this),
+				Observables.INSTANCE.getAdjacentType(concept));
+
+		if (component < 0) {
+			double d = ((double) component / 10.0);
+			return -1 * (int) (d > 10 ? d : 10);
+		}
+		distance += component;
+
+		component = getDistance(Observables.INSTANCE.getCompresentType(this),
+				Observables.INSTANCE.getCompresentType(concept));
+
+		if (component < 0) {
+			double d = ((double) component / 10.0);
+			return -1 * (int) (d > 10 ? d : 10);
+		}
+		distance += component;
+
+		component = getDistance(Observables.INSTANCE.getComparisonType(this),
+				Observables.INSTANCE.getComparisonType(concept));
+
+		if (component < 0) {
+			double d = ((double) component / 10.0);
+			return -1 * (int) (d > 10 ? d : 10);
+		}
+		distance += component;
+
+		return distance;
+	}
+
+	private int getDistance(IConcept cc1, IConcept cc2) {
+
+		int ret = 0;
+		if (cc1 == null && cc2 != null) {
+			ret = 50;
+		} else if (cc1 != null && cc2 == null) {
+			ret = -50;
+		} else if (cc1 != null && cc2 != null) {
+			ret = cc2.is(cc1) ? Concepts.INSTANCE.getAssertedDistance(cc2, cc1) : -100;
+			if (ret >= 0) {
+				for (IConcept t : Traits.INSTANCE.getTraits(cc1)) {
+					boolean ok = Traits.INSTANCE.hasTrait(cc2, t);
+					if (!ok) {
+						return -50;
+					}
+				}
+				for (IConcept t : Traits.INSTANCE.getTraits(cc2)) {
+					if (!Traits.INSTANCE.hasTrait(cc1, t)) {
+						ret += 10;
+					}
+				}
+			}
+		}
+
+		return ret > 100 ? 100 : ret;
 	}
 
 }

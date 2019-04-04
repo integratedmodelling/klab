@@ -23,6 +23,7 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
+import org.integratedmodelling.kim.model.KimConcept;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
@@ -61,6 +62,16 @@ public enum Concepts implements IConceptService {
 		return OWL.INSTANCE.getConcept(conceptId);
 	}
 
+	@Override
+	public KimConcept getDeclaration(IConcept concept) {
+		return declare(concept.getDefinition());
+	}
+	
+	@Override
+	public KimConcept declare(String declaration) {
+		return (KimConcept)Observables.INSTANCE.parseDeclaration(declaration).getMain();
+	}
+	
 	@Override
 	public IConcept declare(IKimConcept conceptDefinition) {
 		return KimKnowledgeProcessor.INSTANCE.declare(conceptDefinition, Reasoner.INSTANCE.getOntology(), Klab.INSTANCE.getRootMonitor());

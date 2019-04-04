@@ -30,6 +30,23 @@ import org.integratedmodelling.klab.api.knowledge.IProperty;
 public interface IConceptService {
 
 	/**
+	 * Create or retrieve the syntactic parse result for the passed declaration.
+	 * 
+	 * @param declaration
+	 * @return
+	 */
+	IKimConcept declare(String declaration);
+
+	/**
+	 * Get a new, ontology-independent declaration of the passed concept.
+	 * 
+	 * @param concept
+	 * @return
+	 */
+	IKimConcept getDeclaration(IConcept concept);
+
+	
+	/**
 	 * Create or retrieve the IConcept correspondent to the parsed declaration
 	 * passed.
 	 * 
@@ -158,5 +175,6 @@ public interface IConceptService {
 	 *         comparable.
 	 */
 	int compareSpecificity(IConcept c1, IConcept c2, boolean useBaseTrait);
+
 
 }
