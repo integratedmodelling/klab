@@ -254,9 +254,6 @@ public class VectorEncoder implements IResourceEncoder {
                     }
 
                     builder = builder.startObject(context.getTargetName(), objectName, objectScale);
-
-                    // TODO make object
-                    // TODO process from metadata
                     for (String key : attributes.keySet()) {
                         Object nattr = feature.getAttribute(key);
                         if (nattr == null) {

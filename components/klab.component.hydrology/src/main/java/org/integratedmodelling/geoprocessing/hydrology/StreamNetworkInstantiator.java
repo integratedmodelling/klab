@@ -100,7 +100,8 @@ public class StreamNetworkInstantiator implements IInstantiator, IExpression {
 		if (lines.size() > 0) {
 			com.vividsolutions.jts.geom.Geometry shape = Geospace.gFactory.buildGeometry(lines);
 			ret.add(context.newObservation(semantics, "stream_network",
-					Scale.substituteExtent(context.getScale(), Shape.create(shape, grid.getProjection()))));
+					Scale.substituteExtent(context.getScale(), Shape.create(shape, grid.getProjection())),
+					/* TODO send useful metadata */null));
 		}
 		return ret;
 	}

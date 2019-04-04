@@ -13,6 +13,7 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.services.ITraitService;
 import org.integratedmodelling.klab.common.LogicalConnector;
@@ -22,6 +23,7 @@ import org.integratedmodelling.klab.owl.Axiom;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
+import org.integratedmodelling.klab.owl.Ontology;
 import org.integratedmodelling.klab.utils.Pair;
 
 public enum Traits implements ITraitService {
@@ -92,7 +94,7 @@ public enum Traits implements ITraitService {
             return trait;
         }
 
-        for (IConcept c : trait.getAllParents()) {
+        for (IConcept c : trait.getParents()) {
             IConcept r = getBaseParentTrait(c);
             if (r != null) {
                 return r;
@@ -125,7 +127,7 @@ public enum Traits implements ITraitService {
         return false;
     }
 
-    public void restrict(IConcept target, IProperty property, LogicalConnector how, Collection<IConcept> fillers)
+    public void restrict(IConcept target, IProperty property, LogicalConnector how, Collection<IConcept> fillers, IOntology ontology)
             throws KlabValidationException {
 
         /*
@@ -156,7 +158,7 @@ public enum Traits implements ITraitService {
             }
             // System.out.println("TRAIT " + pairs.get(base) + " for " + target + " with " +
             // prop);
-            OWL.INSTANCE.restrictSome(target, Concepts.p(prop), how, pairs.get(base));
+            OWL.INSTANCE.restrictSome(target, Concepts.p(prop), how, pairs.get(base), (Ontology) ontology);
         }
     }
 
@@ -191,7 +193,7 @@ public enum Traits implements ITraitService {
         return new Pair<>(root, tret);
     }
 
-    public void addTrait(Concept main, IConcept trait) throws KlabValidationException {
+    public void addTrait(Concept main, IConcept trait, IOntology ontology) throws KlabValidationException {
         IProperty property = null;
         if (trait.is(Type.IDENTITY)) {
             property = Concepts.p(NS.HAS_IDENTITY_PROPERTY);
@@ -201,11 +203,11 @@ public enum Traits implements ITraitService {
             property = Concepts.p(NS.HAS_ATTRIBUTE_PROPERTY);
         }
         if (property != null) {
-            restrict(main, property, LogicalConnector.UNION, Collections.singleton(trait));
+            restrict(main, property, LogicalConnector.UNION, Collections.singleton(trait), (Ontology)ontology);
         }
     }
 
-    public IConcept makeNegation(Concept attribute) {
+    public IConcept makeNegation(Concept attribute, IOntology ontology) {
 
         IConcept negation = getNegated(attribute);
         if (negation != null) {
@@ -238,67 +240,10 @@ public enum Traits implements ITraitService {
 
             ret = attribute.getOntology().getConcept(conceptId);
 
-            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_NEGATION_OF), attribute);
+            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_NEGATION_OF), attribute, (Ontology)ontology);
         }
 
         return ret;
     }
-
-    // /**
-    // * Find traits (optionally of a specified type) at the first level of specification in the passed
-    // concept and
-    // * return the concept without those traits, plus the list of all traits found.
-    // * <p>
-    // * TODO Removal happens lexically by string substitution for now, no time for pattern matching on the
-    // * kimConcept structure as it should be.
-    // *
-    // * @param original
-    // * @param traitType
-    // * @return
-    // */
-    // public Pair<IObservable, List<IConcept>> removeTraits(IObservable original, @Nullable IConcept
-    // traitType) {
-    //
-    // List<IConcept> traits = new ArrayList<>();
-    // IObservable concept = original;
-    //
-    // for (IConcept trait : getTraits(original)) {
-    // if (traitType == null || trait.is(traitType)) {
-    // traits.add(trait);
-    // }
-    // }
-    //
-    // if (traits.size() > 0) {
-    //
-    // String definition = original.getDefinition().trim();
-    // if (definition.startsWith("(")) {
-    // definition = definition.substring(1, definition.length() - 1);
-    // }
-    // String first = definition;
-    // String last = "";
-    // String middle = "";
-    // int firstp = definition.indexOf('(');
-    // int lastp = definition.lastIndexOf(')');
-    // if (firstp >= 0) {
-    // first = definition.substring(0, firstp);
-    // }
-    // if (lastp > 0) {
-    // last = definition.substring(lastp + 1);
-    // }
-    // if (firstp >= 0 && lastp > 0) {
-    // middle = definition.substring(firstp, lastp+1);
-    // }
-    //
-    // for (IConcept trait : traits) {
-    // first = first.replace(trait.toString(), "");
-    // last = last.replace(trait.toString(), "");
-    // }
-    //
-    // definition = first + middle + last;
-    // concept = Observables.INSTANCE.declare(definition);
-    // }
-    //
-    // return new Pair<>(concept, traits);
-    // }
 
 }

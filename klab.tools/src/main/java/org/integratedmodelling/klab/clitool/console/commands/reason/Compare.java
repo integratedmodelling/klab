@@ -13,61 +13,82 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public class Compare implements ICommand {
 
-  @Override
-  public Object execute(IServiceCall call, ISession session) throws KlabValidationException {
+	@Override
+	public Object execute(IServiceCall call, ISession session) throws KlabValidationException {
 
-    String ret = "";
-    List<IConcept> concepts = new ArrayList<>();
+		String ret = "";
 
-    for (Object p : (List<?>) call.getParameters().get("arguments")) {
-      concepts.add(Concepts.c(p.toString()));
-    }
+		List<String> declarations = new ArrayList<>();
+		String declaration = "";
+		for (Object p : (List<?>) call.getParameters().get("arguments")) {
+			if (p.toString().equals("to")) {
+				declarations.add(declaration.trim());
+				declaration = "";
+			} else {
+				declaration += (declaration.isEmpty() ? "" : " ") + p.toString();
+			}
+		}
 
-    for (int i = 0; i < concepts.size(); i++) {
-      for (int j = 0; j < concepts.size(); j++) {
-        if (j != i) {
-          ret += (ret.isEmpty() ? "" : "\n") + compare(concepts.get(i), concepts.get(j));
-        }
-      }
-    }
+		List<IConcept> concepts = new ArrayList<>();
+		if (!declarations.isEmpty()) {
+			if (!declaration.isEmpty()) {
+				declarations.add(declaration);
+			}
+			for (String d : declarations) {
+				concepts.add(Observables.INSTANCE.declare(d).getMain());
+			}
+		}
 
-    return ret;
-  }
+		for (int i = 0; i < concepts.size(); i++) {
+			for (int j = 0; j < concepts.size(); j++) {
+				if (j != i) {
+					ret += (ret.isEmpty() ? "" : "\n") + compare(concepts.get(i), concepts.get(j));
+				}
+			}
+		}
 
-  private String compare(IConcept c1, IConcept c2) {
+		return ret;
+	}
 
-    String ret = c1 + " vs. " + c2 + ":\n";
+	private String compare(IConcept c1, IConcept c2) {
 
-    if (c1.is(Type.OBSERVABLE) && c2.is(Type.OBSERVABLE)) {
-      ret += "   Observable compatibility: "
-          + (Observables.INSTANCE.isCompatible(c1, c2) ? "compatible" : "not compatible") + "\n";
-    } else {
-      ret += "   Observable compatibility: not observables\n";
-    }
+		String ret = c1 + " vs. " + c2 + ":\n";
 
-    IConcept common = Concepts.INSTANCE.getLeastGeneralCommonConcept(c1, c2);
+		if (c1.is(Type.OBSERVABLE) && c2.is(Type.OBSERVABLE)) {
+			ret += "   Observable compatibility: "
+					+ (Observables.INSTANCE.isCompatible(c1, c2) ? "compatible" : "not compatible") + "\n";
+		} else {
+			ret += "   Observable compatibility: not observables\n";
+		}
 
-    ret +=
-        "   Least general common parent: " + (common == null ? "none" : common.toString()) + "\n";
+		int c1c2distance = c1.resolves(c2);
+		int c2c1distance = c2.resolves(c1);
 
-    if (common != null) {
-      ret += "      " + c1 + ": asserted distance from common = " + Concepts.INSTANCE.getAssertedDistance(c1, common)
-          + "\n";
-      ret += "      " + c2 + ": asserted distance from common = " + Concepts.INSTANCE.getAssertedDistance(c2, common)
-          + "\n";
-    }
+		ret += "   " + c1.getDefinition() + (c1c2distance < 0 ? " DOES NOT RESOLVE " : "    RESOLVES    ")
+				+ c2.getDefinition() + ": distance is " + c1c2distance + "\n";
+		ret += "   " + c2.getDefinition() + (c2c1distance < 0 ? " DOES NOT RESOLVE " : "    RESOLVES    ")
+				+ c1.getDefinition() + ": distance is " + c2c1distance + "\n";
 
-    int specificity =
-        Concepts.INSTANCE.compareSpecificity(c1, c2, c1.is(Type.TRAIT) && c2.is(Type.TRAIT));
+		IConcept common = Concepts.INSTANCE.getLeastGeneralCommonConcept(c1, c2);
 
-    ret +=
-        "   Specificity: " + c1
-            + (specificity == Integer.MIN_VALUE ? " has nothing in common with "
-                : (specificity > 0 ? " is more specific than "
-                    : (specificity == 0 ? " is at the same level of " : " is less specific than ")))
-            + c2 + "\n";
+		ret += "   Least general common parent: " + (common == null ? "none" : common.toString()) + "\n";
 
-    return ret;
-  }
+		if (common != null) {
+			ret += "      " + c1 + ": asserted distance from common = "
+					+ Concepts.INSTANCE.getAssertedDistance(c1, common) + "\n";
+			ret += "      " + c2 + ": asserted distance from common = "
+					+ Concepts.INSTANCE.getAssertedDistance(c2, common) + "\n";
+		}
+
+		int specificity = Concepts.INSTANCE.compareSpecificity(c1, c2, c1.is(Type.TRAIT) && c2.is(Type.TRAIT));
+
+		ret += "   Specificity: " + c1
+				+ (specificity == Integer.MIN_VALUE ? " has nothing in common with "
+						: (specificity > 0 ? " is more specific than "
+								: (specificity == 0 ? " is at the same level of " : " is less specific than ")))
+				+ c2 + "\n";
+
+		return ret;
+	}
 
 }

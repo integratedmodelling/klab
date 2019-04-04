@@ -280,10 +280,7 @@ public class KlabCertificate implements ICertificate {
 
 	@Override
 	public IWorldview getWorldview() {
-		return new Worldview(worldview, Configuration.INSTANCE.getDataPath("worldview"), worldview_repositories,
-				((AbstractWorkspace) Resources.INSTANCE.getLocalWorkspace()).getProjectLocations()
-						.toArray(new File[((AbstractWorkspace) Resources.INSTANCE.getLocalWorkspace())
-								.getProjectLocations().size()]));
+		return new Worldview(worldview, Configuration.INSTANCE.getDataPath("worldview"), worldview_repositories);
 	}
 
 	@Override

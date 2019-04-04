@@ -27,13 +27,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+### Changed
+- Overhaul resolution using IConcept.resolves() rather than isCompatible and removing 
+  use of inheritance in kbox search strategy, as derived concepts can now be redundant.
+- Derived concepts are created in the topmost ontology in the dependency tree, including all 
+  component namespaces, or in the reasoner's top ontology if additional ontology dependencies 
+  would occur doing so. Redundancy for the same declaration is now possible, with a 
+  linear ontology import closure as the advantage. Option to direct the "common ontology" 
+  externally is now disabled.
+- Importing of referenced namespaces within the same workspace is now mandatory, and import of 
+  namespaces outside of the workspace is an error.
+- Circular dependencies in import lists are now detected and flagged as errors as you 
+  type.
+- Metadata of instantiated objects are available to the dataflow to resolve attribute 
+  observers if needed.
+- Full round-trip path between k.IM text declarations, syntactic concept declarations 
+  (IKimConcept) and concepts in ontologies (IConcept). ObservableBuilder should now
+  correctly enable any modification of existing concepts.
+### Fixed
+- WFS and vector attribute fixes.
+- More contextualization exceptions are now reported to clients.
+
+## [0.10.0.151] -- 2019/03/26
+### Added
 - Begin supporting recontextualization of distributed states in expressions through @-modified identifiers 
-  (e.g. elevation@nw).
+  (e.g. elevation@nw). These are recognized but not used yet. Use of recontextualization 
+  is disabled for expressions used in documentation to avoid conflicting with @-directives.
 - Add CLI 'kbox' command namespace for kbox inquiries and enable 'reason info' for ontologies.
 - Support 'equals' instead of 'is' in concept declarations to declare aliases instead
   of new concepts. All implications still to be tested.
 - Begin reintegrating authorities, starting from GBIF.
-- Add syntax to refer to a pure authority identity as a concept (identity ID by AUTH.ID).
+- Add syntax (only) to refer to a pure authority identity as a concept (identity ID by AUTH.ID).
 ### Changed
 - Derived concepts are created within the ontology hosting the main concept once again. 
   This is needed otherwise the import structure becomes circular; should probably eliminate 

@@ -152,11 +152,6 @@ public class ENamespace extends EKimObject implements IKimNamespace {
 		return delegate.getResourceId();
 	}
 
-	@Override
-	public boolean isProjectKnowledge() {
-		return delegate.isProjectKnowledge();
-	}
-
 	public void visit(Visitor visitor) {
 		delegate.visit(visitor);
 	}
@@ -179,6 +174,11 @@ public class ENamespace extends EKimObject implements IKimNamespace {
 	@Override
 	public String getNamespace() {
 		return delegate.getNamespace();
+	}
+
+	@Override
+	public Collection<String> getImportedIds() {
+		return delegate.getImportedIds();
 	}
 
 }

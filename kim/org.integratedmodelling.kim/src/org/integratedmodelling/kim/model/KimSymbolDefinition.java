@@ -16,7 +16,7 @@ public class KimSymbolDefinition extends KimStatement implements IKimSymbolDefin
 		
 		super(statement, parent);
 		
-    	IKimNamespace namespace = Kim.INSTANCE.getNamespace(statement, true);
+    	IKimNamespace namespace = Kim.INSTANCE.getNamespace(statement);
 		this.name = statement.getDefineBody().getName();
 		this.value = Kim.INSTANCE.parseValue(statement.getDefineBody().getValue(), namespace);
 	}

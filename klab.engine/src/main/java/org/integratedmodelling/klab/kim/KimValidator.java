@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class KimValidator implements Kim.Validator {
@@ -122,6 +123,11 @@ public class KimValidator implements Kim.Validator {
 	@Override
 	public IPrototype getAnnotationPrototype(String functionId) {
 		return Annotations.INSTANCE.getPrototype(functionId);
+	}
+
+	@Override
+	public void createWorldviewPeerConcept(String coreConcept, String worldviewConcept) {
+		KimKnowledgeProcessor.INSTANCE.setWorldviewPeer(coreConcept, worldviewConcept);
 	}
 
 }

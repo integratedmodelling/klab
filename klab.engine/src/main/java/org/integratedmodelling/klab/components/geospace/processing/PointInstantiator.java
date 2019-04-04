@@ -93,10 +93,11 @@ public class PointInstantiator implements IExpression, IInstantiator {
 					stateIdentifiers.put(state, input);
 				}
 			}
-//			if (sourceStates.isEmpty()) {
-//				throw new KlabResourceNotFoundException(
-//						"feature extractor: the selection expression does not reference any known state");
-//			}
+			// if (sourceStates.isEmpty()) {
+			// throw new KlabResourceNotFoundException(
+			// "feature extractor: the selection expression does not reference any known
+			// state");
+			// }
 			expression = exprDescriptor.compile();
 		}
 
@@ -147,7 +148,8 @@ public class PointInstantiator implements IExpression, IInstantiator {
 		for (int i = 0; i < geometries.size(); i++) {
 			IScale instanceScale = Scale.substituteExtent(context.getScale(),
 					Shape.create(geometries.get(i), grid.getProjection()));
-			ret.add(context.newObservation(semantics, semantics.getLocalName() + "_" + (i + 1), instanceScale));
+			ret.add(context.newObservation(semantics, semantics.getLocalName() + "_" + (i + 1), instanceScale,
+					/* TODO send useful metadata */null));
 		}
 
 		return ret;

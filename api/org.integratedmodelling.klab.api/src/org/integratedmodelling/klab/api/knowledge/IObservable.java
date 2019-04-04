@@ -141,17 +141,6 @@ public interface IObservable extends IConcept, IResolvable {
         Builder withRole(IConcept role);
 
         /**
-         * Contextualize the concept built so far to the passed context one. Will choose
-         * the semantics appropriately for the specific context and observables
-         * requested - e.g. a quality contextual to a region will restrict the context,
-         * a quality inherent to an agent in a region will use inherency etc.
-         * 
-         * @param context
-         * @return the same builder this was called on, for chaining calls
-         */
-        Builder contextualizedTo(IConcept context);
-
-        /**
          * Transform the original concept into its equivalent filtered by the passed
          * semantic operator. For example, transform an original event into its
          * probability by passing SemanticOperator.PROBABILITY. If the operator implies

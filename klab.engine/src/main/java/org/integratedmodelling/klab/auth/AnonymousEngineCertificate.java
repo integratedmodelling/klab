@@ -1,13 +1,10 @@
 package org.integratedmodelling.klab.auth;
 
-import java.io.File;
 import java.util.Collection;
 
 import org.integratedmodelling.klab.Configuration;
-import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
-import org.integratedmodelling.klab.engine.resources.AbstractWorkspace;
 import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.utils.StringUtils;
 
@@ -23,10 +20,7 @@ public class AnonymousEngineCertificate implements ICertificate {
 
 	@Override
 	public IWorldview getWorldview() {
-		return new Worldview(worldview, Configuration.INSTANCE.getDataPath("worldview"), worldview_repositories,
-				((AbstractWorkspace) Resources.INSTANCE.getLocalWorkspace()).getProjectLocations()
-						.toArray(new File[((AbstractWorkspace) Resources.INSTANCE.getLocalWorkspace())
-								.getProjectLocations().size()]));
+		return new Worldview(worldview, Configuration.INSTANCE.getDataPath("worldview"), worldview_repositories);
 	}
 
 	@Override

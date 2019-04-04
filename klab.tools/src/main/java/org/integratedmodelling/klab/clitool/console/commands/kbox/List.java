@@ -26,6 +26,11 @@ public class List implements ICommand {
 		for (ModelReference model : params == null ? Models.INSTANCE.listModels(true) : params) {
 			ret += (ret.isEmpty() ? "" : "\n") + describe(model, verbose);
 		}
+		ret += "\nKnown definitions:\n";
+		for (String definition : Models.INSTANCE.getKbox().getKnownDefinitions()) {
+			ret += "   " + definition + "\n";
+		}
+		
 		return ret;
 	}
 

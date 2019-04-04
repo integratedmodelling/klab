@@ -69,6 +69,7 @@ import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStatusException;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Activity;
@@ -326,7 +327,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		return Observation.empty(observable, context);
 	}
 
-	private static IObservation createObservation(IObservable observable, IScale scale, RuntimeContext context,
+	public static IObservation createObservation(IObservable observable, IScale scale, RuntimeContext context,
 			boolean scalarStorage) {
 
 		boolean createActors = scale.getTime() != null;
@@ -345,7 +346,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		} else if (observable.is(Type.PROCESS)) {
 			ret = new Process(observable.getLocalName(), (Observable) observable, (Scale) scale, context);
 		} else if (observable.is(Type.RELATIONSHIP)) {
-			throw new IllegalArgumentException(
+			throw new KlabInternalErrorException(
 					"createObservation() does not create relationships: use createRelationship()");
 		} else if (observable.is(Type.QUALITY) || observable.is(Type.TRAIT)) {
 

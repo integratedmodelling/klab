@@ -17,6 +17,8 @@ package org.integratedmodelling.klab.api.knowledge;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Set;
+
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
@@ -119,6 +121,14 @@ public interface IOntology  {
      * @return a {@link org.integratedmodelling.klab.api.knowledge.IMetadata} object.
      */
     IMetadata getMetadata();
+
+    /**
+     * Return the imports, either direct (recursive = false) or the full closure.
+     * 
+     * @param recursive
+     * @return
+     */
+    Set<IOntology> getImports(boolean recursive);
 
 
 }

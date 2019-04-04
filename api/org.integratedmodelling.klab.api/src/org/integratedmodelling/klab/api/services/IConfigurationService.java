@@ -143,12 +143,6 @@ public interface IConfigurationService {
     public static final String KLAB_ENGINE_LAUNCH_AUTOMATICALLY = "klab.engine.launchAutomatically";
 
     /**
-     * Create derived concepts in the common ontology owned by the reasoner (true)
-     * or in the ontology holding the main concept in the declaration (false).
-     */
-    public static final String KLAB_USE_COMMON_ONTOLOGY = "klab.engine.useCommonOntology";
-
-    /**
      * Class to choose to create storage - used only to disambiguate if > 1 storage
      * providers are available.
      */
@@ -202,16 +196,6 @@ public interface IConfigurationService {
      * @return the k.LAB workspace directory.
      */
     File getDataPath();
-
-    /**
-     * Create derived concepts in the common ontology owned by the reasoner (true)
-     * or in the ontology holding the main concept in the declaration (false).
-     * Default is true.
-     *
-     * @return the value of this setting (default true, should be false only for
-     *         special purposes, such as using k.LAB only as an OWL processor)
-     */
-    boolean useCommonOntology();
 
     /**
      * True if debugging mode has been enabled.

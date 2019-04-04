@@ -231,4 +231,12 @@ public interface IMetadata extends IParameters<String> {
 	/** The Constant KLAB_OPACITY. */
 	public static final String KLAB_OPACITY = "klab:opacity";
 
+	/**
+	 * Get a variable irrespective of case.
+	 * 
+	 * @param attr
+	 * @return
+	 */
+	public Object getCaseInsensitive(String attr);
+
 }

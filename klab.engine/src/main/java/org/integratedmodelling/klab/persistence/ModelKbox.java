@@ -14,6 +14,7 @@ import org.h2gis.utilities.SpatialResultSet;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -153,6 +154,12 @@ public class ModelKbox extends ObservableKbox {
 
 		initialize(context.getMonitor());
 
+		// HERE is the place to contextualize the observable - which is also used to establish semantic distance in the matcher
+		if (context.getContext() != null) {
+			observable = Observables.INSTANCE.contextualizeTo(observable,
+					context.getContext().getObservable().getType(), context.getMonitor());
+		}
+		
 		Pair<Scale, Set<IRankedModel>> preResolved = context.isCaching() ? null
 				: context.getPreresolvedModels(observable);
 
@@ -254,8 +261,10 @@ public class ModelKbox extends ObservableKbox {
 
 		for (long l : oids) {
 			ModelReference model = retrieveModel(l, context.getMonitor());
-			if (model != null && !context.isResolving(model.getName())) {
-				ret.add(model);
+			if (model != null) {
+				if (!context.isResolving(model.getName())) {
+					ret.add(model);
+				}
 			} else {
 				Logging.INSTANCE.warn("kbox is out of sync with knowledge base");
 			}
@@ -377,7 +386,7 @@ public class ModelKbox extends ObservableKbox {
 		}
 		return ret;
 	}
-	
+
 	public ModelReference retrieve(String query, IMonitor monitor) {
 		initialize(monitor);
 
@@ -443,66 +452,67 @@ public class ModelKbox extends ObservableKbox {
 		ModelReference ret = retrieve("SELECT * FROM model WHERE oid = " + oid, monitor);
 		ret.setMetadata(getMetadataFor(oid));
 		return ret;
-//		
-//		initialize(monitor);
-//
-//		final ModelReference ret = new ModelReference();
-//
-//		database.query("SELECT * FROM model WHERE oid = " + oid, new SQL.SimpleResultHandler() {
-//			@Override
-//			public void onRow(ResultSet rs) {
-//
-//				try {
-//
-//					SpatialResultSet srs = rs.unwrap(SpatialResultSet.class);
-//
-//					long tyid = srs.getLong(7);
-//
-//					ret.setName(srs.getString(4));
-//
-//					IConcept mtype = getType(tyid);
-//
-//					ret.setObservableConcept(mtype);
-//					ret.setObservable(getTypeDefinition(tyid));
-//
-//					ret.setServerId(nullify(srs.getString(2)));
-//					ret.setId(srs.getString(3));
-//
-//					ret.setNamespaceId(srs.getString(5));
-//					ret.setProjectId(nullify(srs.getString(6)));
-//
-//					ret.setPrivateModel(srs.getBoolean(9));
-//					ret.setResolved(srs.getBoolean(10));
-//					ret.setReification(srs.getBoolean(11));
-//					ret.setInScenario(srs.getBoolean(12));
-//					ret.setHasDirectObjects(srs.getBoolean(13));
-//					ret.setHasDirectData(srs.getBoolean(14));
-//					ret.setTimeStart(srs.getLong(15));
-//					ret.setTimeEnd(srs.getLong(16));
-//					ret.setSpatial(srs.getBoolean(17));
-//					ret.setTemporal(srs.getBoolean(18));
-//					ret.setTimeMultiplicity(srs.getLong(19));
-//					ret.setSpaceMultiplicity(srs.getLong(20));
-//					ret.setScaleMultiplicity(srs.getLong(21));
-//					ret.setDereifyingAttribute(nullify(srs.getString(22)));
-//					ret.setMinSpatialScaleFactor(srs.getInt(23));
-//					ret.setMaxSpatialScaleFactor(srs.getInt(24));
-//					ret.setMinTimeScaleFactor(srs.getInt(25));
-//					ret.setMaxTimeScaleFactor(srs.getInt(26));
-//					Geometry geometry = srs.getGeometry(27);
-//					if (!geometry.isEmpty()) {
-//						ret.setShape(Shape.create(geometry, Projection.getLatLon())); // +
-//					}
-//				} catch (SQLException e) {
-//					throw new KlabStorageException(e);
-//				}
-//			}
-//
-//		});
-//
-//		ret.setMetadata(getMetadataFor(oid));
-//
-//		return ret;
+		//
+		// initialize(monitor);
+		//
+		// final ModelReference ret = new ModelReference();
+		//
+		// database.query("SELECT * FROM model WHERE oid = " + oid, new
+		// SQL.SimpleResultHandler() {
+		// @Override
+		// public void onRow(ResultSet rs) {
+		//
+		// try {
+		//
+		// SpatialResultSet srs = rs.unwrap(SpatialResultSet.class);
+		//
+		// long tyid = srs.getLong(7);
+		//
+		// ret.setName(srs.getString(4));
+		//
+		// IConcept mtype = getType(tyid);
+		//
+		// ret.setObservableConcept(mtype);
+		// ret.setObservable(getTypeDefinition(tyid));
+		//
+		// ret.setServerId(nullify(srs.getString(2)));
+		// ret.setId(srs.getString(3));
+		//
+		// ret.setNamespaceId(srs.getString(5));
+		// ret.setProjectId(nullify(srs.getString(6)));
+		//
+		// ret.setPrivateModel(srs.getBoolean(9));
+		// ret.setResolved(srs.getBoolean(10));
+		// ret.setReification(srs.getBoolean(11));
+		// ret.setInScenario(srs.getBoolean(12));
+		// ret.setHasDirectObjects(srs.getBoolean(13));
+		// ret.setHasDirectData(srs.getBoolean(14));
+		// ret.setTimeStart(srs.getLong(15));
+		// ret.setTimeEnd(srs.getLong(16));
+		// ret.setSpatial(srs.getBoolean(17));
+		// ret.setTemporal(srs.getBoolean(18));
+		// ret.setTimeMultiplicity(srs.getLong(19));
+		// ret.setSpaceMultiplicity(srs.getLong(20));
+		// ret.setScaleMultiplicity(srs.getLong(21));
+		// ret.setDereifyingAttribute(nullify(srs.getString(22)));
+		// ret.setMinSpatialScaleFactor(srs.getInt(23));
+		// ret.setMaxSpatialScaleFactor(srs.getInt(24));
+		// ret.setMinTimeScaleFactor(srs.getInt(25));
+		// ret.setMaxTimeScaleFactor(srs.getInt(26));
+		// Geometry geometry = srs.getGeometry(27);
+		// if (!geometry.isEmpty()) {
+		// ret.setShape(Shape.create(geometry, Projection.getLatLon())); // +
+		// }
+		// } catch (SQLException e) {
+		// throw new KlabStorageException(e);
+		// }
+		// }
+		//
+		// });
+		//
+		// ret.setMetadata(getMetadataFor(oid));
+		//
+		// return ret;
 	}
 
 	@Override
@@ -771,30 +781,32 @@ public class ModelKbox extends ObservableKbox {
 		return retrieve("SELECT * FROM model WHERE name = '" + string + "'", monitor);
 	}
 
-//	public static String generateObjectModelSource(IConcept observable, String objectSource,
-//			Map<String, IObservable> attributes, String nameAttribute) {
-//
-//		String ret = "model each " + objectSource + " as " + observable.getDefinition();
-//
-//		if (nameAttribute != null || (attributes != null && attributes.size() > 0)) {
-//			ret += "\n   interpret\n";
-//			if (nameAttribute != null) {
-//				ret += "      " + nameAttribute.toUpperCase() + " as im:name"
-//						+ (attributes != null && attributes.size() > 0 ? "," : "") + "\n";
-//			}
-//			if (attributes != null) {
-//				int n = 0;
-//				for (String s : attributes.keySet()) {
-//					ret += "      " + s.toUpperCase() + " as " + attributes.get(s).getDefinition()
-//							+ (n == attributes.size() - 1 ? "" : ",") + "\n";
-//					n++;
-//				}
-//			}
-//		}
-//
-//		ret += ";";
-//
-//		return ret;
-//	}
+	// public static String generateObjectModelSource(IConcept observable, String
+	// objectSource,
+	// Map<String, IObservable> attributes, String nameAttribute) {
+	//
+	// String ret = "model each " + objectSource + " as " +
+	// observable.getDefinition();
+	//
+	// if (nameAttribute != null || (attributes != null && attributes.size() > 0)) {
+	// ret += "\n interpret\n";
+	// if (nameAttribute != null) {
+	// ret += " " + nameAttribute.toUpperCase() + " as im:name"
+	// + (attributes != null && attributes.size() > 0 ? "," : "") + "\n";
+	// }
+	// if (attributes != null) {
+	// int n = 0;
+	// for (String s : attributes.keySet()) {
+	// ret += " " + s.toUpperCase() + " as " + attributes.get(s).getDefinition()
+	// + (n == attributes.size() - 1 ? "" : ",") + "\n";
+	// n++;
+	// }
+	// }
+	// }
+	//
+	// ret += ";";
+	//
+	// return ret;
+	// }
 
 }

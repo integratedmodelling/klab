@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -189,7 +190,7 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 	}
 
 	@Override
-	public IObjectArtifact newObservation(IObservable observable, String name, IScale scale) throws KlabException {
+	public IObjectArtifact newObservation(IObservable observable, String name, IScale scale, IMetadata metadata) throws KlabException {
 
 		IDirectObservation ret = null;
 		if (observable.is(Type.SUBJECT)) {
@@ -207,6 +208,9 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 			if (parent != null && parent.target != null) {
 				structure.addEdge(ret, parent.target);
 			}
+			if (metadata != null) {
+				ret.getMetadata().putAll(metadata);
+			}
 		}
 
 		return ret;
@@ -214,7 +218,7 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 
 	@Override
 	public IObjectArtifact newRelationship(IObservable observable, String name, IScale scale, IObjectArtifact source,
-			IObjectArtifact target) {
+			IObjectArtifact target, IMetadata metadata) {
 		// TODO Auto-generated method stub
 		return null;
 	}

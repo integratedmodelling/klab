@@ -25,7 +25,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,14 +35,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observables;
-import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabStorageException;
+import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.persistence.h2.H2Database;
 import org.integratedmodelling.klab.persistence.h2.H2Kbox;
 import org.integratedmodelling.klab.persistence.h2.SQL;
@@ -71,9 +74,11 @@ import org.integratedmodelling.klab.utils.Escape;
  */
 public abstract class ObservableKbox extends H2Kbox {
 
-    private Map<String, Long> conceptHash = new HashMap<>();
+    private Map<String, Long> definitionHash = new HashMap<>();
     private Map<Long, String> typeHash = new HashMap<>();
-
+    private Map<String, Set<String>> coreTypeHash = new HashMap<>();
+    private Map<String, IConcept> conceptHash = new HashMap<>();
+    
     /**
      * The version is used to create storage on the file system. Change this when incompatible changes
      * are made to force a rebuild.
@@ -89,6 +94,9 @@ public abstract class ObservableKbox extends H2Kbox {
 
     public IConcept getType(long id) {
         if (typeHash.containsKey(id)) {
+        	if (typeHash.get(id).startsWith("nonsemantic:")) {
+        		return Observable.promote(Concepts.c(typeHash.get(id)));
+        	}
             return Observables.INSTANCE.declare(typeHash.get(id));
         }
         return null;
@@ -217,10 +225,17 @@ public abstract class ObservableKbox extends H2Kbox {
      * @return the ID for the concept, or -1 if not seen before
      */
     public long getConceptId(IConcept c) {
-        Long ret = conceptHash.get(c.getType().getDefinition());
+        Long ret = definitionHash.get(c.getType().getDefinition());
         return ret == null ? -1l : ret;
     }
 
+    public List<String> getKnownDefinitions() {
+    	List<String> ret = new ArrayList<>();
+    	ret.addAll(definitionHash.keySet());
+    	Collections.sort(ret);
+    	return ret;
+    }
+    
     /**
      * Check that the passed observable has been inserted, and if not make sure it is represented in
      * the database. Return the stable ID to use for storing records that use it.
@@ -246,8 +261,21 @@ public abstract class ObservableKbox extends H2Kbox {
                     return "INSERT INTO concepts VALUES (" + primaryKey + ", '" + definition + "', 1);";
                 }
             }, monitor);
-            conceptHash.put(definition, ret);
+            
+            definitionHash.put(definition, ret);
             typeHash.put(ret, definition);
+            conceptHash.put(definition,  observable.getType());
+            
+            // store all existing definitions with same core type
+            IConcept coreType = Observables.INSTANCE.getCoreObservable(observable.getType());
+            String cdef = coreType.getDefinition();
+            Set<String> cset = coreTypeHash.get(cdef);
+            if (cset == null) {
+            	cset = new HashSet<>();
+            	coreTypeHash.put(cdef, cset);
+            }
+            cset.add(definition);
+            conceptHash.put(cdef,  coreType);
 
         } catch (KlabException e) {
             throw new KlabStorageException(e);
@@ -274,7 +302,7 @@ public abstract class ObservableKbox extends H2Kbox {
         // observable.getDefinition());
 
         Set<Long> ret = new HashSet<>();
-        IConcept main = Observables.INSTANCE.getCoreObservable(observable);
+        IConcept main = Observables.INSTANCE.getCoreObservable(observable.getType());
         if (main == null) {
             /*
              * not a domain concept or abstract; can't have observables.
@@ -282,43 +310,38 @@ public abstract class ObservableKbox extends H2Kbox {
             return ret;
         }
 
-        /*
-         * add self if it's its own core observable. This may not be equal just because it's in another
-         * ontology but with identical definition, so we also add it to the compat list below.
-         */
-        if (main.equals(observable)) {
-            // KLAB.info(" USING " + observable + " ITSELF");
-            long id = getConceptId(observable);
-            if (id >= 0) {
-                ret.add(id);
-            }
-        }
-
+//        /*
+//         * add self if it's its own core observable. This may not be equal just because it's in another
+//         * ontology but with identical definition, so we also add it to the compat list below.
+//         */
+//        if (main.equals(observable)) {
+//            // KLAB.info(" USING " + observable + " ITSELF");
+//            long id = getConceptId(observable);
+//            if (id >= 0) {
+//                ret.add(id);
+//            }
+//        }
+//
         /*
          * We lookup all models whose observable incarnates the core type, adding all possible specific
          * models if the observable is abstract or the context requires generic matching ('any'
          * dependencies). The initial set of candidates is weeded out of all incompatible or
          * unrepresented concepts later.
          */
-        Set<IConcept> candidates = Reasoner.INSTANCE.getParentClosure(main);
+        Set<IConcept> candidates = getCandidates(main);
+//        candidates.add(observable.getType());
 
-        if (main.isAbstract() || observable.isGeneric()) {
-            candidates.addAll(Reasoner.INSTANCE.getSemanticClosure(main));
-            candidates.add(main);
-        }
-
-        candidates.add(observable.getType());
-
-        int compatibility = 0;
-        if (main.isAbstract() || observable.isGeneric()) {
-            compatibility |= Observables.USE_ROLE_PARENT_CLOSURE;
-        } else {
-            compatibility |= Observables.REQUIRE_SAME_CORE_TYPE;
-        }
+//        int compatibility = 0;
+//        if (main.isAbstract() || observable.isGeneric()) {
+//            compatibility |= Observables.USE_ROLE_PARENT_CLOSURE;
+//        } else {
+//            compatibility |= Observables.REQUIRE_SAME_CORE_TYPE;
+//        }
 
         for (IConcept candidate : candidates) {
 
-            if (Observables.INSTANCE.isCompatible(candidate, observable.getType(), compatibility)) {
+/*            if (Observables.INSTANCE.isCompatible(observable.getType(), candidate, compatibility)) {
+*/            if (candidate.resolves(observable.getType()) >= 0) {
                 // System.out.println(" FOUND " + candidate + " = " + candidate.getDefinition());
                 long id = getConceptId(candidate);
                 if (id >= 0) {
@@ -327,11 +350,23 @@ public abstract class ObservableKbox extends H2Kbox {
                 }
             }
         }
+        
 
         return ret;
     }
 
-    public ObservableKbox(String name) {
+    private Set<IConcept> getCandidates(IConcept main) {
+		Set<IConcept> ret = new HashSet<>();
+		Set<String> defs = coreTypeHash.get(main.getDefinition());
+		if (defs != null) {
+			for (String def : defs) {
+				ret.add(conceptHash.get(def));
+			}
+		}
+		return ret;
+	}
+
+	public ObservableKbox(String name) {
 
         super(name);
 
@@ -359,7 +394,7 @@ public abstract class ObservableKbox extends H2Kbox {
                 try {
                     // IKnowledge k = Knowledge.parse(rs.getString(2));
                     // if (k != null) {
-                    conceptHash.put(rs.getString(2), rs.getLong(1));
+                    definitionHash.put(rs.getString(2), rs.getLong(1));
                     typeHash.put(rs.getLong(1), rs.getString(2));
                     // } else {
                     // obsoleteConcepts.add(rs.getString(2));

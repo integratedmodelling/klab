@@ -165,7 +165,7 @@ public class KimNotifier implements Kim.Notifier {
 
 		Namespaces.INSTANCE.release(namespace.getName(), monitor);
 		Namespace ns = new Namespace(namespace);
-
+		Namespaces.INSTANCE.registerNamespace(ns, monitor);
 		ErrorNotifyingMonitor monitor = new ErrorNotifyingMonitor((Monitor) this.monitor, ns);
 
 		for (Pair<String, String> imp : namespace.getOwlImports()) {
@@ -178,15 +178,15 @@ public class KimNotifier implements Kim.Notifier {
 		}
 
 		/*
-		 * TODO resolve k.IM imports and add any external symbols to the symbol table
-		 */
-
-		/*
 		 * these should never throw exceptions; instead they should notify any errors,
 		 * no matter how internal, through the monitor.
 		 * 
 		 * Indexing is called only if the objects are not private, which includes
 		 * anything in scripts.
+		 * 
+		 * TODO all these must pass the namespace as the "fallback" ontology to anything
+		 * that creates concepts. The fallback must happen every time, always checking if
+		 * each derived concept can be built in a stable namespace.
 		 */
 		for (IKimScope statement : namespace.getChildren()) {
 
@@ -239,11 +239,7 @@ public class KimNotifier implements Kim.Notifier {
 				ns.addObject(object);
 			}
 		}
-
-		/*
-		 * TODO finalize namespace, send any notification
-		 */
-		Namespaces.INSTANCE.registerNamespace(ns, monitor);
+		
 		Observations.INSTANCE.registerNamespace(ns, (Monitor) monitor);
 
 		Reasoner.INSTANCE.addOntology(ns.getOntology());

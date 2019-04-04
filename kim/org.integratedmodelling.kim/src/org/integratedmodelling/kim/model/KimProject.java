@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -42,7 +43,7 @@ public class KimProject implements IKimProject {
 				// TODO log error
 			}
 		}
-		Kim.INSTANCE.registerProject(this);
+		// Kim.INSTANCE.registerProject(this);
 	}
 
 	@Override
@@ -62,12 +63,17 @@ public class KimProject implements IKimProject {
 
 	public String getNamespaceIdFor(EObject o) {
 
+		// FIXME won't work with projects in logical workspaces. Use
+		// getURI().toFileString and just give up if not a file.
+
 		final String PLATFORM_URI_PREFIX = "platform:/resource/";
 		String ret = null;
 		String sourceDir = SOURCE_FOLDER;
 		String kuri = workspace.getURL() + "/" + name + "/META-INF/knowledge.kim";
 		String wuri = o.eResource().getURI().toString(); // THIS GETS platform for workspace files even
 															// if they are the same.
+		String furi = o.eResource().getURI().toFileString();
+
 		if (wuri.startsWith(PLATFORM_URI_PREFIX) && kuri.startsWith("file:")) {
 			// substitute actual file location of workspace
 			UriResolver resolver = Kim.INSTANCE.getUriResolver("platform");
@@ -80,16 +86,23 @@ public class KimProject implements IKimProject {
 		if (wuri.startsWith(kuri)) {
 			return this.name;
 		} else {
-			kuri = workspace.getURL() + "/" + name
-					+ (sourceDir == null || sourceDir.isEmpty() ? "" : ("/" + sourceDir));
-			if (wuri.startsWith(kuri)) {
-				ret = wuri.substring(kuri.length() + 1);
-				if (ret.endsWith(".kim")) {
-					ret = ret.substring(0, ret.length() - 4);
+			try {
+				kuri = root.toURI().toURL() + (sourceDir == null || sourceDir.isEmpty() ? "" : sourceDir);
+				if (wuri.startsWith(kuri)) {
+					ret = wuri.substring(kuri.length() + 1);
+					if (ret.endsWith(".kim")) {
+						ret = ret.substring(0, ret.length() - 4);
+					}
+					ret = ret.replaceAll("\\/", "\\.");
 				}
-				ret = ret.replaceAll("\\/", "\\.");
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
+//		if (ret == null) {
+//			System.out.println("DIOXIPPY");
+//		}
 		// no correspondence: resource is outside the beaten path
 		return ret;
 	}

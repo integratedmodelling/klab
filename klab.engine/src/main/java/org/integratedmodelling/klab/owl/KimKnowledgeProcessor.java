@@ -2,7 +2,9 @@ package org.integratedmodelling.klab.owl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -17,7 +19,6 @@ import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.model.KimConceptStatement;
 import org.integratedmodelling.kim.model.KimConceptStatement.ParentConcept;
 import org.integratedmodelling.klab.Concepts;
-import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Currencies;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Reasoner;
@@ -27,6 +28,7 @@ import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
+import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
@@ -49,6 +51,16 @@ public enum KimKnowledgeProcessor {
 
 	INSTANCE;
 
+	private Map<String, String> coreConceptPeers = new HashMap<>();
+
+	/*
+	 * Record correspondence of core concept peers to worldview concepts. Called by KimValidator for
+	 * later use at namespace construction.
+	 */
+	public void setWorldviewPeer(String coreConcept, String worldviewConcept) {
+		coreConceptPeers.put(worldviewConcept, coreConcept);
+	}
+	
 	public @Nullable Concept build(final IKimConceptStatement concept, final INamespace namespace,
 			final IMonitor monitor) {
 		return build(concept, namespace, null, monitor);
@@ -70,10 +82,14 @@ public enum KimKnowledgeProcessor {
 				if (concept.getUpperConceptDefined() != null) {
 					parent = Concepts.INSTANCE.getConcept(concept.getUpperConceptDefined());
 					if (parent == null) {
-						monitor.error("Core concept " + concept.getUpperConceptDefined() + " unknown", concept);
+						monitor.error("Core concept " + concept.getUpperConceptDefined() + " is unknown", concept);
 					}
 				} else {
 					parent = Resources.INSTANCE.getUpperOntology().getCoreType(concept.getType());
+					if (coreConceptPeers.containsKey(ret.toString())) {
+						// ensure that any non-trivial core inheritance is dealt with appropriately
+						parent = Resources.INSTANCE.getUpperOntology().alignCoreInheritance(ret);
+					}
 				}
 
 				if (parent != null) {
@@ -85,12 +101,17 @@ public enum KimKnowledgeProcessor {
 				ns.addAxiom(Axiom.AnnotationAssertion(ret.getName(), NS.BASE_DECLARATION, "true"));
 				createProperties(ret, ns);
 				ns.define();
+
+				if (ret.is(Type.CONFIGURATION)) {
+					Observables.INSTANCE.registerConfiguration(ret);
+				}
+
+				if (coreConceptPeers.containsKey(ret.toString())) {
+					Resources.INSTANCE.getUpperOntology().setAsCoreType(ret);
+				}
+				
 			}
 
-			if (ret.is(Type.CONFIGURATION)) {
-			    Observables.INSTANCE.registerConfiguration(ret);
-			}
-			
 			return ret;
 
 		} catch (Throwable e) {
@@ -119,6 +140,7 @@ public enum KimKnowledgeProcessor {
 			namespace.addAxiom(Axiom.AnnotationAssertion(mainId, CoreOntology.NS.IS_ABSTRACT, "true"));
 		}
 
+		
 		namespace.define();
 		main = namespace.getOntology().getConcept(mainId);
 
@@ -126,7 +148,7 @@ public enum KimKnowledgeProcessor {
 
 			List<IConcept> concepts = new ArrayList<>();
 			for (IKimConcept pdecl : parent.getConcepts()) {
-				IConcept declared = declare(pdecl, monitor);
+				IConcept declared = declare(pdecl, namespace.getOntology(), monitor);
 				if (declared == null) {
 					monitor.error("parent declaration " + pdecl + " does not identify known concepts", pdecl);
 					return null;
@@ -136,7 +158,8 @@ public enum KimKnowledgeProcessor {
 
 			if (concepts.size() == 1) {
 				if (concept.isAlias()) {
-					namespace.getOntology().addDelegateConcept(mainId, namespace.getStatement(), (Concept)concepts.get(0));
+					namespace.getOntology().addDelegateConcept(mainId, namespace.getStatement(),
+							(Concept) concepts.get(0));
 				} else {
 					namespace.addAxiom(Axiom.SubClass(concepts.get(0).getUrn(), mainId));
 				}
@@ -159,7 +182,7 @@ public enum KimKnowledgeProcessor {
 					break;
 				}
 				if (concept.isAlias()) {
-					namespace.getOntology().addDelegateConcept(mainId, namespace.getStatement(), (Concept)expr);
+					namespace.getOntology().addDelegateConcept(mainId, namespace.getStatement(), (Concept) expr);
 				} else {
 					namespace.addAxiom(Axiom.SubClass(expr.getUrn(), mainId));
 				}
@@ -186,13 +209,13 @@ public enum KimKnowledgeProcessor {
 		}
 
 		for (IKimConcept inherited : ((KimConceptStatement) concept).getTraitsInherited()) {
-			IConcept trait = declare(inherited, monitor);
+			IConcept trait = declare(inherited, namespace.getOntology(), monitor);
 			if (trait == null) {
 				monitor.error("inherited " + inherited.getName() + " does not identify known concepts", inherited);
 				return null;
 			}
 			try {
-				Traits.INSTANCE.addTrait(main, trait);
+				Traits.INSTANCE.addTrait(main, trait, namespace.getOntology());
 			} catch (KlabValidationException e) {
 				monitor.error(e, inherited);
 			}
@@ -201,8 +224,9 @@ public enum KimKnowledgeProcessor {
 		for (ApplicableConcept link : concept.getSubjectsLinked()) {
 			if (link.getOriginalObservable() == null && link.getSource() != null) {
 				// relationship source->target
-				Observables.INSTANCE.defineRelationship(main, declare(link.getSource(), monitor),
-						declare(link.getTarget(), monitor));
+				Observables.INSTANCE.defineRelationship(main,
+						declare(link.getSource(), namespace.getOntology(), monitor),
+						declare(link.getTarget(), namespace.getOntology(), monitor), namespace.getOntology());
 			} else {
 				// TODO
 			}
@@ -215,7 +239,8 @@ public enum KimKnowledgeProcessor {
 		return main;
 	}
 
-	public @Nullable Observable declare(final IKimObservable concept, final IMonitor monitor) {
+	public @Nullable Observable declare(final IKimObservable concept, IOntology declarationOntology,
+			final IMonitor monitor) {
 
 		if (concept.getNonSemanticType() != null) {
 			Concept nsmain = OWL.INSTANCE.getNonsemanticPeer(concept.getModelReference(), concept.getNonSemanticType());
@@ -225,7 +250,7 @@ public enum KimKnowledgeProcessor {
 			return observable;
 		}
 
-		Concept main = declareInternal(concept.getMain(), monitor);
+		Concept main = declareInternal(concept.getMain(), (Ontology)declarationOntology, monitor);
 
 		if (main == null) {
 			return null;
@@ -258,7 +283,7 @@ public enum KimKnowledgeProcessor {
 		if (concept.getValue() != null) {
 			Object value = concept.getValue();
 			if (value instanceof IKimConcept) {
-				value = Concepts.INSTANCE.declare((IKimConcept)value);
+				value = Concepts.INSTANCE.declare((IKimConcept) value);
 			}
 			ret.setValue(concept.getValue());
 		}
@@ -297,7 +322,7 @@ public enum KimKnowledgeProcessor {
 
 			IKimConcept modifier = concept.getAggregator() == null ? concept.getClassifier() : concept.getAggregator();
 
-			Concept by = declareInternal(modifier, monitor);
+			Concept by = declareInternal(modifier, (Ontology) declarationOntology, monitor);
 			declaration += " by " + by;
 
 			if (concept.getAggregator() != null) {
@@ -307,13 +332,12 @@ public enum KimKnowledgeProcessor {
 				Concept downTo = null;
 
 				if (concept.getDownTo() != null) {
-					downTo = declareInternal(concept.getDownTo(), monitor);
+					downTo = declareInternal(concept.getDownTo(), (Ontology) declarationOntology, monitor);
 					declaration += " down to " + by;
 				}
 
 				IConcept classifiedType = Types.INSTANCE.getTypeByTrait(ret, by, downTo,
-						(Ontology) (Configuration.INSTANCE.useCommonOntology() ? Reasoner.INSTANCE.getOntology()
-								: null));
+						(Ontology) declarationOntology);
 
 				ret.setObservable((Concept) classifiedType);
 				ret.setClassifier(by);
@@ -327,20 +351,30 @@ public enum KimKnowledgeProcessor {
 		for (IKimAnnotation annotation : concept.getAnnotations()) {
 			ret.addAnnotation(new Annotation(annotation));
 		}
-		
+
 		return ret;
 	}
 
-	public @Nullable IConcept declare(final IKimConcept concept, final IMonitor monitor) {
-		return declareInternal(concept, monitor);
+	/**
+	 * 
+	 * @param concept
+	 * @param declarationNamespace
+	 *            the namespace where derived concepts will be put if declaring them
+	 *            in the original ontologies causes loss of referential integrity.
+	 * @param monitor
+	 * @return
+	 */
+	public @Nullable IConcept declare(final IKimConcept concept, IOntology declarationOntology,
+			final IMonitor monitor) {
+		return declareInternal(concept, (Ontology) declarationOntology, monitor);
 	}
 
-	private @Nullable Concept declareInternal(final IKimConcept concept, final IMonitor monitor) {
+	private @Nullable Concept declareInternal(final IKimConcept concept, Ontology ontology, final IMonitor monitor) {
 
 		Concept main = null;
 
 		if (concept.getObservable() != null) {
-			main = declareInternal(concept.getObservable(), monitor);
+			main = declareInternal(concept.getObservable(), ontology, monitor);
 		} else if (concept.getName() != null) {
 			main = Concepts.INSTANCE.getConcept(concept.getName());
 		}
@@ -349,72 +383,70 @@ public enum KimKnowledgeProcessor {
 			return null;
 		}
 
-		Builder builder = new ObservableBuilder(main,
-				(Ontology) (Configuration.INSTANCE.useCommonOntology() ? Reasoner.INSTANCE.getOntology() : null))
-						.withDeclaration(concept, monitor);
+		Builder builder = new ObservableBuilder(main, ontology).withDeclaration(concept, monitor);
 
 		/*
 		 * transformations first
 		 */
 
 		if (concept.getInherent() != null) {
-			IConcept c = declareInternal(concept.getInherent(), monitor);
+			IConcept c = declareInternal(concept.getInherent(), ontology, monitor);
 			if (c != null) {
 				builder.of(c);
 			}
 		}
 		if (concept.getContext() != null) {
-			IConcept c = declareInternal(concept.getContext(), monitor);
+			IConcept c = declareInternal(concept.getContext(), ontology, monitor);
 			if (c != null) {
 				builder.within(c);
 			}
 		}
 		if (concept.getCompresent() != null) {
-			IConcept c = declareInternal(concept.getCompresent(), monitor);
+			IConcept c = declareInternal(concept.getCompresent(), ontology, monitor);
 			if (c != null) {
 				builder.with(c);
 			}
 		}
 		if (concept.getCausant() != null) {
-			IConcept c = declareInternal(concept.getCausant(), monitor);
+			IConcept c = declareInternal(concept.getCausant(), ontology, monitor);
 			if (c != null) {
 				builder.from(c);
 			}
 		}
 		if (concept.getCaused() != null) {
-			IConcept c = declareInternal(concept.getCaused(), monitor);
+			IConcept c = declareInternal(concept.getCaused(), ontology, monitor);
 			if (c != null) {
 				builder.to(c);
 			}
 		}
 		if (concept.getMotivation() != null) {
-			IConcept c = declareInternal(concept.getMotivation(), monitor);
+			IConcept c = declareInternal(concept.getMotivation(), ontology, monitor);
 			if (c != null) {
 				builder.withGoal(c);
 			}
 		}
 		if (concept.getCooccurrent() != null) {
-			IConcept c = declareInternal(concept.getCooccurrent(), monitor);
+			IConcept c = declareInternal(concept.getCooccurrent(), ontology, monitor);
 			if (c != null) {
 				builder.withCooccurrent(c);
 			}
 		}
 		if (concept.getAdjacent() != null) {
-			IConcept c = declareInternal(concept.getAdjacent(), monitor);
+			IConcept c = declareInternal(concept.getAdjacent(), ontology, monitor);
 			if (c != null) {
 				builder.withAdjacent(c);
 			}
 		}
 
 		for (IKimConcept c : concept.getTraits()) {
-			IConcept trait = declareInternal(c, monitor);
+			IConcept trait = declareInternal(c, ontology, monitor);
 			if (trait != null) {
 				builder.withTrait(trait);
 			}
 		}
 
 		for (IKimConcept c : concept.getRoles()) {
-			IConcept role = declareInternal(c, monitor);
+			IConcept role = declareInternal(c, ontology, monitor);
 			if (role != null) {
 				builder.withRole(role);
 			}
@@ -425,7 +457,7 @@ public enum KimKnowledgeProcessor {
 		if (concept.getObservationType() != null) {
 			IConcept other = null;
 			if (concept.getComparisonConcept() != null) {
-				other = declareInternal(concept.getComparisonConcept(), monitor);
+				other = declareInternal(concept.getComparisonConcept(), ontology, monitor);
 			}
 			try {
 				builder.as(concept.getObservationType(), other == null ? (IConcept[]) null : new IConcept[] { other });
@@ -446,12 +478,11 @@ public enum KimKnowledgeProcessor {
 				List<IConcept> concepts = new ArrayList<>();
 				concepts.add(ret);
 				for (IKimConcept op : concept.getOperands()) {
-					concepts.add(declareInternal(op, monitor));
+					concepts.add(declareInternal(op, ontology, monitor));
 				}
 				ret = concept.getExpressionType() == Expression.INTERSECTION
-						? OWL.INSTANCE.getIntersection(concepts, ret.getOntology(),
-								concept.getOperands().get(0).getType())
-						: OWL.INSTANCE.getUnion(concepts, ret.getOntology(), concept.getOperands().get(0).getType());
+						? OWL.INSTANCE.getIntersection(concepts, ontology, concept.getOperands().get(0).getType())
+						: OWL.INSTANCE.getUnion(concepts, ontology, concept.getOperands().get(0).getType());
 			}
 
 			// set the k.IM definition in the concept FIXME this must only happen if the
@@ -470,7 +501,7 @@ public enum KimKnowledgeProcessor {
 		}
 
 		if (concept.isNegated()) {
-			ret = (Concept) Traits.INSTANCE.makeNegation(ret);
+			ret = (Concept) Traits.INSTANCE.makeNegation(ret, ontology);
 		}
 
 		return ret;

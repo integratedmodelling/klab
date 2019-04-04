@@ -3,9 +3,9 @@ package org.integratedmodelling.klab;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.services.IReasonerService;
 import org.integratedmodelling.klab.owl.KlabReasoner;
+import org.integratedmodelling.klab.owl.Ontology;
 
 public enum Reasoner implements IReasonerService {
     
@@ -21,12 +21,12 @@ public enum Reasoner implements IReasonerService {
         this.reasoner = klabReasoner;
     }
 
-    public void addOntology(IOntology ontology) {
+    public void addOntology(Ontology ontology) {
         this.reasoner.addOntology(ontology);
     }
 
-    public IOntology getOntology() {
-        return reasoner.getOntology();
+    public Ontology getOntology() {
+        return (Ontology)reasoner.getOntology();
     }
 
     @Override

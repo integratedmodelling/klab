@@ -35,7 +35,7 @@ public class EProject extends ENavigatorItem {
 		List<ENavigatorItem> ret = new ArrayList<>(delegate.getNamespaces().size());
 
 		for (IKimNamespace child : delegate.getNamespaces()) {
-			if (!child.isWorldviewBound() && !child.isProjectKnowledge()) {
+			if (!child.isWorldviewBound()) {
 				ret.add(new ENamespace(child, this));
 			}
 		}

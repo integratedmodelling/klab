@@ -16,9 +16,9 @@ public class MonitorableGitWorkspace extends MonitorableFileWorkspace {
     boolean synced;
     boolean skipSync = false;
     
-    public MonitorableGitWorkspace(File root, Collection<String> gitUrls, File... overridingProjects) {
+    public MonitorableGitWorkspace(File root, String name, Collection<String> gitUrls, File... overridingProjects) {
         
-        delegate = new KimWorkspace(root, overridingProjects) {
+        delegate = new KimWorkspace(root, name) {
 
             @Override
             public void readProjects() {
@@ -28,6 +28,7 @@ public class MonitorableGitWorkspace extends MonitorableFileWorkspace {
                     for (String url : gitUrls) {
                         try {
                             GitUtils.requireUpdatedRepository(url, getRoot());
+                            addProjectPath(new File(root + File.separator + MiscUtilities.getURLBaseName(url)));
                         } catch (KlabException e) {
                             if (new File(root + File.separator + MiscUtilities.getURLBaseName(url) + File.separator + ".git").exists()) {
                                 Logging.INSTANCE.error("cannot sync existing repository "  + url + ": skipping");

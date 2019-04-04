@@ -31,6 +31,7 @@ import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimTable;
+import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.kim.ActionSpecification;
 import org.integratedmodelling.kim.kim.Annotation;
@@ -84,6 +85,8 @@ import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.kim.model.KimStatement;
 import org.integratedmodelling.kim.model.KimSymbolDefinition;
 import org.integratedmodelling.kim.model.KimTable;
+import org.integratedmodelling.kim.model.KimWorkspace;
+import org.integratedmodelling.kim.utils.DependencyGraph;
 import org.integratedmodelling.kim.validation.AbstractKimValidator;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -130,7 +133,7 @@ public class KimValidator extends AbstractKimValidator {
     boolean _isWorldviewBound = namespace.isWorldviewBound();
     boolean _not = (!_isWorldviewBound);
     if (_not) {
-      KimNamespace ns = Kim.INSTANCE.getNamespace(namespace, true);
+      KimNamespace ns = Kim.INSTANCE.getNamespace(namespace);
       IKimProject project = ns.getProject();
       String expectedId = ((KimProject) project).getNamespaceIdFor(namespace);
       if ((expectedId == null)) {
@@ -144,6 +147,15 @@ public class KimValidator extends AbstractKimValidator {
         }
       }
       int i = 0;
+      DependencyGraph _xifexpression = null;
+      int _size = namespace.getImported().size();
+      boolean _greaterThan = (_size > 0);
+      if (_greaterThan) {
+        _xifexpression = Kim.INSTANCE.getCurrentLoader().getDependencyGraph().copy();
+      } else {
+        _xifexpression = null;
+      }
+      DependencyGraph dependencies = _xifexpression;
       EList<Import> _imported = namespace.getImported();
       for (final Import import_ : _imported) {
         {
@@ -158,7 +170,34 @@ public class KimValidator extends AbstractKimValidator {
           }
           ns.addImport(import_.getName());
           List _imports = import_.getImports();
-          boolean _tripleNotEquals = (_imports != null);
+          boolean _tripleEquals = (_imports == null);
+          if (_tripleEquals) {
+            IKimWorkspace _workspace = ns.getProject().getWorkspace();
+            boolean _contains = ((KimWorkspace) _workspace).getNamespaceIds().contains(import_.getName());
+            boolean _not_1 = (!_contains);
+            if (_not_1) {
+              String _name_1 = import_.getName();
+              String _plus_2 = ("Imported namespace " + _name_1);
+              String _plus_3 = (_plus_2 + " does not belong to the same workspace");
+              this.error(_plus_3, namespace, 
+                KimPackage.Literals.NAMESPACE__IMPORTED, i, KimValidator.BAD_NAMESPACE_ID);
+              ns.setErrors(true);
+            }
+            boolean _canImport = dependencies.canImport(namespace.getName(), import_.getName());
+            boolean _not_2 = (!_canImport);
+            if (_not_2) {
+              String _name_2 = import_.getName();
+              String _plus_4 = ("Importing namespace " + _name_2);
+              String _plus_5 = (_plus_4 + " causes circular dependencies in workspace");
+              this.error(_plus_5, namespace, 
+                KimPackage.Literals.NAMESPACE__IMPORTED, i, KimValidator.BAD_NAMESPACE_ID);
+              ns.setErrors(true);
+            } else {
+              dependencies.addDependency(namespace.getName(), import_.getName());
+            }
+          }
+          List _imports_1 = import_.getImports();
+          boolean _tripleNotEquals = (_imports_1 != null);
           if (_tripleNotEquals) {
             java.util.List<?> importedVs = Kim.INSTANCE.parseList(import_.getImports(), ns);
             int j = 0;
@@ -166,9 +205,9 @@ public class KimValidator extends AbstractKimValidator {
               {
                 Object object = importedNs.getSymbolTable().get(variable.toString());
                 if ((object == null)) {
-                  String _name_1 = import_.getName();
-                  String _plus_2 = ((("Variable " + variable) + " could not be found in symbols defined by namespace ") + _name_1);
-                  this.error(_plus_2, import_, KimPackage.Literals.IMPORT__IMPORTS, j, KimValidator.BAD_NAMESPACE_ID);
+                  String _name_3 = import_.getName();
+                  String _plus_6 = ((("Variable " + variable) + " could not be found in symbols defined by namespace ") + _name_3);
+                  this.error(_plus_6, import_, KimPackage.Literals.IMPORT__IMPORTS, j, KimValidator.BAD_NAMESPACE_ID);
                   ns.setErrors(true);
                 } else {
                   ns.getSymbolTable().put(variable.toString(), object);
@@ -198,7 +237,7 @@ public class KimValidator extends AbstractKimValidator {
     {
       EObject _eContainer = statement.eContainer().eContainer();
       final Namespace namespace = ((Model) _eContainer).getNamespace();
-      KimNamespace ns = Kim.INSTANCE.getNamespace(namespace, true);
+      KimNamespace ns = Kim.INSTANCE.getNamespace(namespace);
       final KimSymbolDefinition definition = new KimSymbolDefinition(statement, ns);
       int i = 0;
       EList<Annotation> _annotations = statement.getAnnotations();
@@ -510,7 +549,7 @@ public class KimValidator extends AbstractKimValidator {
         }
         if ((observable != null)) {
           int j = 0;
-          IKimNamespace ns = Kim.INSTANCE.getNamespace(model, true);
+          IKimNamespace ns = Kim.INSTANCE.getNamespace(model);
           EList<Annotation> _annotations = cd.getAnnotations();
           for (final Annotation annotation : _annotations) {
             {
@@ -563,7 +602,7 @@ public class KimValidator extends AbstractKimValidator {
       String _lookupTableId = model.getLookupTableId();
       boolean _tripleNotEquals_2 = (_lookupTableId != null);
       if (_tripleNotEquals_2) {
-        IKimNamespace ns = Kim.INSTANCE.getNamespace(model, true);
+        IKimNamespace ns = Kim.INSTANCE.getNamespace(model);
         Object tobj = ns.getSymbolTable().get(model.getLookupTableId());
         if ((!(tobj instanceof IKimTable))) {
           String _lookupTableId_1 = model.getLookupTableId();
@@ -641,7 +680,7 @@ public class KimValidator extends AbstractKimValidator {
     }
     if ((statement != null)) {
       if ((namespace != null)) {
-        KimNamespace ns_1 = Kim.INSTANCE.getNamespace(namespace, true);
+        KimNamespace ns_1 = Kim.INSTANCE.getNamespace(namespace);
         KimModel descriptor = new KimModel(statement, ns_1);
         if ((!ok)) {
           descriptor.setErrors(true);
@@ -873,7 +912,7 @@ public class KimValidator extends AbstractKimValidator {
   public void checkObservation(final ObserveStatement observation) {
     KimObserver obs = this.checkObservation(observation.getBody(), null);
     if ((obs != null)) {
-      KimNamespace ns = Kim.INSTANCE.getNamespace(observation, true);
+      KimNamespace ns = Kim.INSTANCE.getNamespace(observation);
       int i = 0;
       EList<Annotation> _annotations = observation.getAnnotations();
       for (final Annotation annotation : _annotations) {
@@ -945,8 +984,7 @@ public class KimValidator extends AbstractKimValidator {
         i++;
       }
     }
-    boolean _notEquals = (!Objects.equal(ret, null));
-    if (_notEquals) {
+    if ((ret != null)) {
       ret.setErrors((!ok));
     }
     return ret;
@@ -1608,6 +1646,15 @@ public class KimValidator extends AbstractKimValidator {
             String _name_2 = concept.getName().getName();
             String _plus_1 = (_plus + _name_2);
             _name_1.setName(_plus_1);
+          } else {
+            String ns = concept.getName().getName().substring(0, concept.getName().getName().indexOf(":"));
+            KimNamespace namespace_1 = Kim.INSTANCE.getNamespace(concept);
+            if (((!namespace_1.isWorldviewBound()) && ((KimWorkspace) namespace_1.getProject().getWorkspace()).getNamespaceIds().contains(ns))) {
+              if (((!namespace_1.getName().equals(ns)) && (!((KimNamespace) namespace_1).getImportedIds().contains(ns)))) {
+                this.error((("Namespace " + ns) + " is in the same workspace and must be explicitly imported for its concepts to be used"), concept, null, 
+                  KimPackage.CONCEPT__CONCEPT);
+              }
+            }
           }
           Kim.ConceptDescriptor cd = Kim.INSTANCE.getConceptDescriptor(concept.getName().getName());
           if ((cd != null)) {
@@ -1860,7 +1907,7 @@ public class KimValidator extends AbstractKimValidator {
       }
     }
     if ((ok && (statement.getBody() != null))) {
-      KimNamespace namespace = Kim.INSTANCE.getNamespace(statement, true);
+      KimNamespace namespace = Kim.INSTANCE.getNamespace(statement);
       KimConceptStatement concept = this.validateConceptBody(statement.getBody(), namespace, null, type);
       if ((concept != null)) {
         String _name = namespace.getName();
@@ -2486,15 +2533,13 @@ public class KimValidator extends AbstractKimValidator {
           {
             KimConcept domain = Kim.INSTANCE.declareConcept(concept.getDomains().get(i_6));
             KimConcept range = Kim.INSTANCE.declareConcept(concept.getRanges().get(i_6));
-            boolean _contains_7 = domain.getType().contains(IKimConcept.Type.SUBJECT);
-            if (_contains_7) {
-              this.error("relationship can only link subjects to subjects", concept, 
+            if (((!domain.getType().contains(IKimConcept.Type.SUBJECT)) && (!domain.getType().contains(IKimConcept.Type.AGENT)))) {
+              this.error("relationship can only link subjects or agents", concept, 
                 KimPackage.Literals.CONCEPT_STATEMENT_BODY__DOMAINS, i_6);
               ok = false;
             }
-            boolean _contains_8 = range.getType().contains(IKimConcept.Type.SUBJECT);
-            if (_contains_8) {
-              this.error("relationship can only link subjects to subjects", concept, 
+            if (((!domain.getType().contains(IKimConcept.Type.SUBJECT)) && (!domain.getType().contains(IKimConcept.Type.AGENT)))) {
+              this.error("relationship can only link subjects or agents", concept, 
                 KimPackage.Literals.CONCEPT_STATEMENT_BODY__RANGES, i_6);
               ok = false;
             }

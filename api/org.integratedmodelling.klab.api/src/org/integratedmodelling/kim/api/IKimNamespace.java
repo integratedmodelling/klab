@@ -119,13 +119,6 @@ public interface IKimNamespace extends IKimStatement {
     List<IKimStatement> getAllStatements();
 
     /**
-     * True if this is the META-INF/knowledge.kim file for the project this is in.
-     * 
-     * @return
-     */
-    boolean isProjectKnowledge();
-
-    /**
      * Return the set of namespace IDs corresponding to all objects being imported,
      * either explicitly or (if scanUsages == true) implicitly through referenced
      * worldview concepts.
@@ -150,4 +143,11 @@ public interface IKimNamespace extends IKimStatement {
      * @return
      */
     List<IServiceCall> getExtents();
+
+    /**
+     * A list of the imported namespace IDs.
+     * 
+     * @return
+     */
+	Collection<String> getImportedIds();
 }

@@ -2,6 +2,7 @@ package org.integratedmodelling.kim.model;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,7 +46,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 	private String testCaseId;
 	private boolean worldviewBound = false;
 	private File file;
-	private boolean projectKnowledge;
+//	private boolean projectKnowledge;
 	private boolean annotationsScanned = false;
 	private Set<String> importsScanned = null;
 	private IKimLoader loader;
@@ -55,7 +56,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 	public KimNamespace(Namespace namespace, KimProject project) {
 		super(namespace, null);
 		this.name = this.namespace = Kim.getNamespaceId(namespace);
-		this.projectKnowledge = namespace.eResource().getURI().toString().contains("META-INF/knowledge.kim");
+//		this.projectKnowledge = namespace.eResource().getURI().toString().contains("META-INF/knowledge.kim");
 		if (namespace.eResource().getURI().isFile()) {
 			this.file = new File(namespace.eResource().getURI().toFileString());
 			if (file.exists()) {
@@ -202,6 +203,11 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 	}
 
 	@Override
+	public Collection<String> getImportedIds() {
+		return imported;
+	}
+	
+	@Override
 	public boolean isPrivate() {
 		return isPrivate;
 	}
@@ -294,10 +300,10 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 		}
 	}
 
-	@Override
-	public boolean isProjectKnowledge() {
-		return projectKnowledge;
-	}
+//	@Override
+//	public boolean isProjectKnowledge() {
+//		return projectKnowledge;
+//	}
 
 	public void setFile(File file) {
 		this.file = file;

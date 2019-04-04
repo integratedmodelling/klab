@@ -347,7 +347,7 @@ public enum Eclipse {
 
 	private void error(Exception e) {
 		// TODO Auto-generated method stub
-		System.out.println("SHIT, HANDLE ME: " + e);
+		System.out.println("HANDLE ME: " + e);
 	}
 
 	public void openFile(String filename) throws KlabException {

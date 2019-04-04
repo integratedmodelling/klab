@@ -59,6 +59,7 @@ import org.integratedmodelling.kim.model.KimProject
 import org.integratedmodelling.kim.model.KimServiceCall
 import org.integratedmodelling.kim.model.KimSymbolDefinition
 import org.integratedmodelling.kim.model.KimTable
+import org.integratedmodelling.kim.model.KimWorkspace
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode
 import org.integratedmodelling.klab.utils.CamelCase
 import org.integratedmodelling.klab.utils.Pair
@@ -96,7 +97,7 @@ class KimValidator extends AbstractKimValidator {
 		// check domain
 		if (!namespace.worldviewBound) {
 
-			var ns = Kim.INSTANCE.getNamespace(namespace, true)
+			var ns = Kim.INSTANCE.getNamespace(namespace)
 
 			var project = ns.project
 			var expectedId = (project as KimProject).getNamespaceIdFor(namespace)
@@ -112,6 +113,7 @@ class KimValidator extends AbstractKimValidator {
 			}
 
 			var i = 0
+			var dependencies = if (namespace.imported.size() > 0) Kim.INSTANCE.currentLoader.dependencyGraph.copy() else null
 			for (import : namespace.imported) {
 				var importedNs = Kim.INSTANCE.getNamespace(import.name)
 				if (importedNs === null) {
@@ -120,6 +122,22 @@ class KimValidator extends AbstractKimValidator {
 					ns.errors = true
 				}
 				ns.addImport(import.name)
+				// check same-namespace rule and circular dependencies only when we're not importing specific objects
+				if (import.imports === null) {
+					if (!(ns.project.workspace as KimWorkspace).namespaceIds.contains(import.name)) {
+						error("Imported namespace " + import.name + " does not belong to the same workspace", namespace,
+							KimPackage.Literals.NAMESPACE__IMPORTED, i, BAD_NAMESPACE_ID)
+						ns.errors = true
+					}
+					// verify circular dependencies
+					if (!dependencies.canImport(namespace.name, import.name)) {
+						error("Importing namespace " + import.name + " causes circular dependencies in workspace", namespace,
+							KimPackage.Literals.NAMESPACE__IMPORTED, i, BAD_NAMESPACE_ID)
+						ns.errors = true
+					} else {
+						dependencies.addDependency(namespace.name, import.name)
+					}
+				}
 				if (import.imports !== null) {
 					var importedVs = Kim.INSTANCE.parseList(import.imports, ns)
 					var j = 0
@@ -151,7 +169,7 @@ class KimValidator extends AbstractKimValidator {
 	@Check
 	def checkDefine(DefineStatement statement) {
 		val namespace = (statement.eContainer.eContainer as Model).namespace
-		var ns = Kim.INSTANCE.getNamespace(namespace, true)
+		var ns = Kim.INSTANCE.getNamespace(namespace)
 		val KimSymbolDefinition definition = new KimSymbolDefinition(statement, ns)
 		var i = 0
 		for (annotation : statement.annotations) {
@@ -392,7 +410,7 @@ class KimValidator extends AbstractKimValidator {
 
 			if (observable !== null) {
 				var j = 0
-				var IKimNamespace ns = Kim.INSTANCE.getNamespace(model, true)
+				var IKimNamespace ns = Kim.INSTANCE.getNamespace(model)
 				for (annotation : cd.annotations) {
 					val ann = new KimAnnotation(annotation, ns, observable)
 					var errs = 0
@@ -441,7 +459,7 @@ class KimValidator extends AbstractKimValidator {
 
 			var KimLookupTable table = null;
 			if (model.lookupTableId !== null) {
-				var IKimNamespace ns = Kim.INSTANCE.getNamespace(model, true)
+				var IKimNamespace ns = Kim.INSTANCE.getNamespace(model)
 				var tobj = ns.getSymbolTable().get(model.lookupTableId)
 				if (!(tobj instanceof IKimTable)) {
 					error('Identifier ' + model.lookupTableId + ' does not specify a k.IM table',
@@ -513,7 +531,7 @@ class KimValidator extends AbstractKimValidator {
 			if (namespace !== null) {
 
 				// add to namespace
-				var ns = Kim.INSTANCE.getNamespace(namespace, true)
+				var ns = Kim.INSTANCE.getNamespace(namespace)
 
 				var descriptor = new KimModel(statement, ns);
 
@@ -673,7 +691,7 @@ class KimValidator extends AbstractKimValidator {
 	def checkObservation(ObserveStatement observation) {
 		var obs = checkObservation(observation.body, null)
 		if (obs !== null) {
-			var ns = Kim.INSTANCE.getNamespace(observation, true)
+			var ns = Kim.INSTANCE.getNamespace(observation)
 			var i = 0
 			for (annotation : observation.annotations) {
 				val ann = new KimAnnotation(annotation, ns, obs)
@@ -742,7 +760,7 @@ class KimValidator extends AbstractKimValidator {
 			i++
 		}
 
-		if (ret != null) {
+		if (ret !== null) {
 			ret.errors = !ok
 		}
 		// TODO contextualization
@@ -1279,13 +1297,26 @@ class KimValidator extends AbstractKimValidator {
 				}
 
 			} else {
-
+				
 				if (!concept.name.name.contains(":")) {
 					var namespace = KimValidator.getNamespace(concept);
 					concept.name.name = (if (namespace === null)
 						"UNDEFINED"
 					else
 						Kim.getNamespaceId(namespace)) + ":" + concept.name.name
+				} else {
+					// validate imports within namespace and workspace
+					var ns = concept.name.name.substring(0, concept.name.name.indexOf(':'))
+					var namespace = Kim.INSTANCE.getNamespace(concept)
+					if (!namespace.worldviewBound && (namespace.project.workspace as KimWorkspace).namespaceIds.contains(ns)) {
+						/* if (namespace.name.equals(ns)) {
+							warning("Concept " + concept.name + " is in this same namespace and should be referred to by ID only", concept, null,
+								KimPackage.CONCEPT__CONCEPT)
+						} else */ if (!namespace.name.equals(ns) && !(namespace as KimNamespace).importedIds.contains(ns)) {
+							error("Namespace " + ns + " is in the same workspace and must be explicitly imported for its concepts to be used", concept, null,
+								KimPackage.CONCEPT__CONCEPT)
+						}
+					}
 				}
 
 				// extract concept
@@ -1468,7 +1499,7 @@ class KimValidator extends AbstractKimValidator {
 
 		if (ok && statement.body !== null) {
 
-			var namespace = Kim.INSTANCE.getNamespace(statement, true)
+			var namespace = Kim.INSTANCE.getNamespace(statement)
 			var concept = validateConceptBody(statement.body, namespace, null, type)
 			if (concept !== null) {
 				statement.name = namespace.name + ":" + statement.body.name;
@@ -1987,13 +2018,13 @@ class KimValidator extends AbstractKimValidator {
 				for (var i = 0; i < concept.domains.size; i++) {
 					var domain = Kim.INSTANCE.declareConcept(concept.domains.get(i))
 					var range = Kim.INSTANCE.declareConcept(concept.ranges.get(i))
-					if (domain.type.contains(Type.SUBJECT)) {
-						error("relationship can only link subjects to subjects", concept,
+					if (!domain.type.contains(Type.SUBJECT) && !domain.type.contains(Type.AGENT)) {
+						error("relationship can only link subjects or agents", concept,
 							KimPackage.Literals.CONCEPT_STATEMENT_BODY__DOMAINS, i)
 						ok = false
 					}
-					if (range.type.contains(Type.SUBJECT)) {
-						error("relationship can only link subjects to subjects", concept,
+					if (!domain.type.contains(Type.SUBJECT) && !domain.type.contains(Type.AGENT)) {
+						error("relationship can only link subjects or agents", concept,
 							KimPackage.Literals.CONCEPT_STATEMENT_BODY__RANGES, i)
 						ok = false
 					}

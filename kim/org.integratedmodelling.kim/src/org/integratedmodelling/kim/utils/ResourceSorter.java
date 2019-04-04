@@ -80,6 +80,9 @@ public class ResourceSorter {
 					}
 				}
 			}
+		} else {
+			// TODO should add logging and/or some kind of user notification besides printing
+			System.err.println("k.IM resource " + resource + " has no k.IM content and will not be included in the k.LAB workspace");
 		}
 	}
 

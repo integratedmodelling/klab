@@ -135,19 +135,21 @@ public class WatershedInstantiator implements IInstantiator, IExpression {
 			for (IShape shape : extractor.extractShapes(ebasin.outBasin, Extensions.INSTANCE
 					.compileExpression("value == 1.0", context, Extensions.DEFAULT_EXPRESSION_LANGUAGE), context)) {
 				ret.add(context.newObservation(semantics, "watershed_of_" + ((IDirectObservation) artifact).getName(),
-						Scale.substituteExtent(context.getScale(), shape)));
+						Scale.substituteExtent(context.getScale(), shape), /* TODO send useful metadata */null));
 			}
 
 			// adios - come back when JAI bug is addressed. Sad as the above is a lot
 			// slower.
-//			if (ebasin.outVectorBasin != null && ebasin.outVectorBasin.size() > 0) {
-//
-//				List<com.vividsolutions.jts.geom.Geometry> geoms = FeatureUtilities
-//						.featureCollectionToGeometriesList(ebasin.outVectorBasin, false, null);
-//				Shape shape = Shape.create(geoms, context.getScale().getSpace().getProjection());
-//				ret.add(context.newObservation(semantics, "watershed_of_" + ((IDirectObservation) artifact).getName(),
-//						Scale.substituteExtent(context.getScale(), shape)));
-//			}
+			// if (ebasin.outVectorBasin != null && ebasin.outVectorBasin.size() > 0) {
+			//
+			// List<com.vividsolutions.jts.geom.Geometry> geoms = FeatureUtilities
+			// .featureCollectionToGeometriesList(ebasin.outVectorBasin, false, null);
+			// Shape shape = Shape.create(geoms,
+			// context.getScale().getSpace().getProjection());
+			// ret.add(context.newObservation(semantics, "watershed_of_" +
+			// ((IDirectObservation) artifact).getName(),
+			// Scale.substituteExtent(context.getScale(), shape)));
+			// }
 
 		}
 

@@ -63,4 +63,16 @@ public class Metadata extends Parameters<String> implements IMetadata {
     return ret;
   }
 
+  @Override
+  public Object getCaseInsensitive(String attr) {
+
+	  for (String s : keySet()) {
+		  if (s.compareToIgnoreCase(attr) == 0) {
+			  return get(s);
+		  }
+	  }
+	  
+	  return null;
+  }
+
 }

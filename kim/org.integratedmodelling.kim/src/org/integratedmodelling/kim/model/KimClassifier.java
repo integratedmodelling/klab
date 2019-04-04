@@ -51,7 +51,7 @@ public class KimClassifier extends KimStatement implements IKimClassifier {
     public KimClassifier(ClassifierRHS statement, boolean negate, IKimConcept matchedConcept, IKimStatement parent) {
 
     	super(statement, parent);
-    	IKimNamespace namespace = Kim.INSTANCE.getNamespace(statement, true);
+    	IKimNamespace namespace = Kim.INSTANCE.getNamespace(statement);
 
     	this.negated = negate;
         

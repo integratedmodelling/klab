@@ -7,6 +7,7 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.documentation.IReport;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -77,13 +78,13 @@ public abstract class Expression implements IExpression {
     }
 
     @Override
-    public IObjectArtifact newObservation(IObservable observable, String name, IScale scale) {
+    public IObjectArtifact newObservation(IObservable observable, String name, IScale scale, IMetadata metadata) {
       return null;
     }
 
     @Override
     public IObjectArtifact newRelationship(IObservable observable, String name, IScale scale,
-        IObjectArtifact source, IObjectArtifact target) {
+        IObjectArtifact source, IObjectArtifact target, IMetadata metadata) {
       return null;
     }
 

@@ -301,44 +301,44 @@ public enum Types implements ITypeService {
 		}
 	}
 
-	public Collection<IConcept> getExposedTraits(IConcept cls) {
-		return OWL.INSTANCE.getRestrictedClasses(cls, Concepts.p(NS.EXPOSES_TRAIT_PROPERTY));
-	}
+//	public Collection<IConcept> getExposedTraits(IConcept cls) {
+//		return OWL.INSTANCE.getRestrictedClasses(cls, Concepts.p(NS.EXPOSES_TRAIT_PROPERTY));
+//	}
+//
+//	public boolean isDelegate(IConcept concept) {
+//		return concept.getMetadata().get(NS.IS_TYPE_DELEGATE) != null;
+//	}
 
-	public boolean isDelegate(IConcept concept) {
-		return concept.getMetadata().get(NS.IS_TYPE_DELEGATE) != null;
-	}
+//	/**
+//	 * Produces the quality observable that will carry the contextualizable meaning
+//	 * of one or more universals. Concept must exist but it may not be a type yet.
+//	 * 
+//	 * @param type
+//	 * @param exposedTraits
+//	 */
+//	public void setExposedTraits(IConcept type, Collection<IConcept> exposedTraits) {
+//		OWL.INSTANCE.restrictSome(type, Concepts.p(NS.EXPOSES_TRAIT_PROPERTY), LogicalConnector.UNION, exposedTraits);
+//	}
 
-	/**
-	 * Produces the quality observable that will carry the contextualizable meaning
-	 * of one or more universals. Concept must exist but it may not be a type yet.
-	 * 
-	 * @param type
-	 * @param exposedTraits
-	 */
-	public void setExposedTraits(IConcept type, Collection<IConcept> exposedTraits) {
-		OWL.INSTANCE.restrictSome(type, Concepts.p(NS.EXPOSES_TRAIT_PROPERTY), LogicalConnector.UNION, exposedTraits);
-	}
-
-	/**
-	 * True if trait is exposedTrait, or if trait is a valid value for it - e.g. is
-	 * part of the restricted closure of a "down to" specification.
-	 * 
-	 * @param trait
-	 * @param exposedTrait
-	 * @return true if the trait is exposed as asked
-	 */
-	public boolean isExposedAs(IKnowledge trait, IConcept exposedTrait) {
-		if (trait.is(exposedTrait)) {
-			return true;
-		}
-		for (IConcept c : OWL.INSTANCE.getRestrictedClasses(exposedTrait, Concepts.p(NS.LIMITED_BY_PROPERTY))) {
-			if (trait.is(c)) {
-				return true;
-			}
-		}
-		return false;
-	}
+//	/**
+//	 * True if trait is exposedTrait, or if trait is a valid value for it - e.g. is
+//	 * part of the restricted closure of a "down to" specification.
+//	 * 
+//	 * @param trait
+//	 * @param exposedTrait
+//	 * @return true if the trait is exposed as asked
+//	 */
+//	public boolean isExposedAs(IKnowledge trait, IConcept exposedTrait) {
+//		if (trait.is(exposedTrait)) {
+//			return true;
+//		}
+//		for (IConcept c : OWL.INSTANCE.getRestrictedClasses(exposedTrait, Concepts.p(NS.LIMITED_BY_PROPERTY))) {
+//			if (trait.is(c)) {
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
 
 	/**
 	 * Create a classification based on the encodings stored as metadata in the
@@ -458,11 +458,11 @@ public enum Types implements ITypeService {
 			ontology.define(axioms);
 			ret = ontology.getConcept(id);
 			
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.REPRESENTED_BY_PROPERTY), by);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.REPRESENTED_BY_PROPERTY), by, ontology);
 			if (downTo != null) {
-				OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.LIMITED_BY_PROPERTY), LogicalConnector.UNION, allowedDetail);
+				OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.LIMITED_BY_PROPERTY), LogicalConnector.UNION, allowedDetail, ontology);
 			}
-			Observables.INSTANCE.copyContext(observable.getType(), ret);
+			Observables.INSTANCE.copyContext(observable.getType(), ret, ontology);
 		}
 
 		return ret;

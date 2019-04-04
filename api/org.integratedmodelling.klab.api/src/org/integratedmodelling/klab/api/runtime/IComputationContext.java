@@ -21,6 +21,7 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.documentation.IReport;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -177,7 +178,7 @@ public interface IComputationContext extends IParameters<String> {
 	 * @return a model or null.
 	 */
 	IModel getModel();
-	
+
 	/**
 	 * Return a valid monitor for any communication.
 	 *
@@ -242,13 +243,18 @@ public interface IComputationContext extends IParameters<String> {
 	 *            a
 	 *            {@link org.integratedmodelling.klab.api.observations.scale.IScale}
 	 *            object.
+	 * @param metadata
+	 *            metadata for the new observation, which may be used during
+	 *            resolution if specified by a model with attribute-driven
+	 *            observations. May be null.
 	 * @return a new observation for the observable and geometry
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 *             from the resolution
 	 * @throw IllegalArgumentException if the observable describes a non-countable
 	 *        or a relationship.
 	 */
-	IObjectArtifact newObservation(IObservable observable, String name, IScale scale) throws KlabException;
+	IObjectArtifact newObservation(IObservable observable, String name, IScale scale, IMetadata metadata)
+			throws KlabException;
 
 	/**
 	 * Create and resolve a new observation of the specified relationship with with
@@ -276,12 +282,16 @@ public interface IComputationContext extends IParameters<String> {
 	 *            a
 	 *            {@link org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact}
 	 *            object.
+	 * @param metadata
+	 *            metadata for the new observation, which may be used during
+	 *            resolution if specified by a model with attribute-driven
+	 *            observations. May be null.
 	 * @return a new observation for the observable and geometry
 	 * @throw IllegalArgumentException if the observable does not describe a
 	 *        relationship.
 	 */
 	IObjectArtifact newRelationship(IObservable observable, String name, IScale scale, IObjectArtifact source,
-			IObjectArtifact target);
+			IObjectArtifact target, IMetadata metadata);
 
 	/**
 	 * Get the semantics for the primary target of the computation.

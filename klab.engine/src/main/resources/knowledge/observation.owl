@@ -620,12 +620,6 @@ Main author</dc:contributor>
 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Configuration">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#universal"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://integratedmodelling.org/ks/observation.owl#isInherentTo"/>
-                <owl:someValuesFrom rdf:resource="http://integratedmodelling.org/ks/observation.owl#CountableThing"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
         <rdfs:comment>A configuration is what human observation perceives as a resultant &quot;pattern&quot; summing up the perceived effects of multiple qualities in a subject. It is not observable in k.LAB, but it can be used (exclusively) as the inherent subject for qualities. It must specify the subject type it pertains to (using an inherentTo restriction), and the subject type must match the subject where any observation of Q/Ts inherent to it are made.</rdfs:comment>
     </owl:Class>
     

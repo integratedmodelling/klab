@@ -193,7 +193,8 @@ public class PolygonInstantiator implements IExpression, IInstantiator {
 			Shape shape = getShape(blob);
 			if (shape != null) {
 				Scale instanceScale = Scale.createLike(context.getScale(), shape);
-				ret.add(context.newObservation(semantics, baseName + "_" + (created + 1), instanceScale));
+				ret.add(context.newObservation(semantics, baseName + "_" + (created + 1), instanceScale,
+						/* TODO send useful metadata */null));
 				created++;
 			} else {
 				skipped++;

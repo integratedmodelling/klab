@@ -16,7 +16,6 @@ import org.integratedmodelling.kim.kim.Statement
 import org.integratedmodelling.kim.model.Kim
 import org.integratedmodelling.kim.model.KimNamespace
 import org.integratedmodelling.kim.model.KimProject
-import org.integratedmodelling.kim.model.KimWorkspace
 
 /**
  * Customization of the default outline structure.
@@ -43,7 +42,7 @@ class KimOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
 	def _createChildren(DocumentRootNode parent, Model model) {
 
-		val project = KimWorkspace.getWorkspaceForResource(model.eResource).getProjectForResource(model.eResource)
+		val project = Kim.INSTANCE.getProjectForResource(model.eResource)
 		var AbstractOutlineNode pnode = parent
 		if (project !== null) {
 			pnode = getProjectNode(pnode, project)

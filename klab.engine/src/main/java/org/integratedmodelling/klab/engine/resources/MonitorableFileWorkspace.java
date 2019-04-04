@@ -29,8 +29,8 @@ public class MonitorableFileWorkspace extends AbstractWorkspace implements IWork
     MonitorableFileWorkspace() {
     }
 
-    public MonitorableFileWorkspace(String name, File root, File... overridingProjects) {
-        super(name, root, overridingProjects);
+    public MonitorableFileWorkspace(String name, File root) {
+        super(name, root);
     }
 
     @Override
