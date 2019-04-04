@@ -241,9 +241,7 @@ public class WekaInstances {
 
 		Map<String, Integer> stateIndex = null;
 
-		int objects = 0;
 		int skipped = 0;
-
 		for (ObservationGroup archetype : archetypes) {
 			
 			for (IArtifact object : archetype) {
@@ -293,7 +291,6 @@ public class WekaInstances {
 							instanceValues[stateIndex.get(state.getObservable().getLocalName())] = o;
 						}
 					}
-					objects++;
 				}
 
 				if (!ignore) {
@@ -303,14 +300,13 @@ public class WekaInstances {
 						rawInstances.add(new DenseInstance(instanceWeight, values));
 					} else {
 						skipped++;
-						objects--;
 					}
 				}
 			}
 		}
 
 		context.getMonitor()
-				.info("Weka: training set generated with " + objects + " instances (" + skipped + " skipped)");
+				.info("Weka: training set generated with " + rawInstances.size() + " instances (" + skipped + " skipped)");
 
 		// go through discretization for each attribute, choose scheme if
 		// discretization is mandatory and attribute is numeric

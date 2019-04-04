@@ -659,20 +659,9 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 				if (parent != null && actuator.getDataflow().getModel() != null) {
 					for (String attr : actuator.getDataflow().getModel().getAttributeObservables().keySet()) {
-						IArtifact artifact = parent.findArtifactByObservableName(attr);
-						if (artifact == null) {
-							// TODO Check - should this be the ONLY way?
-							artifact = parent
-									.findArtifact(actuator.getDataflow().getModel().getAttributeObservables().get(attr))
-									.getSecond();
-						}
-						if (artifact instanceof IState) {
-							// observable may be different or use data reduction traits
-							IState stateView = Observations.INSTANCE.getStateViewAs(
-									actuator.getDataflow().getModel().getAttributeObservables().get(attr),
-									(IState) artifact, scale, this);
-							predefinedStates.add(stateView);
-						} else if (metadata != null) {
+
+						boolean done = false;
+						if (metadata != null) {
 							/* state specs may be in metadata from resource attributes */
 							Object obj = metadata.getCaseInsensitive(attr);
 							if (obj != null) {
@@ -681,6 +670,24 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 										this);
 								((State) state).distributeScalar(obj);
 								predefinedStates.add(state);
+								done = true;
+							}
+						}
+
+						if (!done) {
+							IArtifact artifact = parent.findArtifactByObservableName(attr);
+							if (artifact == null) {
+								artifact = parent
+										.findArtifact(
+												actuator.getDataflow().getModel().getAttributeObservables().get(attr))
+										.getSecond();
+							}
+							if (artifact instanceof IState) {
+								// observable may be different or use data reduction traits
+								IState stateView = Observations.INSTANCE.getStateViewAs(
+										actuator.getDataflow().getModel().getAttributeObservables().get(attr),
+										(IState) artifact, scale, this);
+								predefinedStates.add(stateView);
 							}
 						}
 					}
