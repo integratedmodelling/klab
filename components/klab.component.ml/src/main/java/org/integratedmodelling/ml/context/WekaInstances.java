@@ -243,7 +243,7 @@ public class WekaInstances {
 
 		int skipped = 0;
 		for (ObservationGroup archetype : archetypes) {
-			
+
 			for (IArtifact object : archetype) {
 
 				Object[] instanceValues = new Object[predictors.size() + 1];
@@ -253,7 +253,7 @@ public class WekaInstances {
 					// build map of predicted/observable name to index in instance. We use one
 					// artifact so the observable names are stable.
 					stateIndex = new HashMap<>();
-					
+
 					for (IState state : ((IDirectObservation) object).getStates()) {
 						if (state.getObservable().equals(predicted.getObservable())) {
 							stateIndex.put(state.getObservable().getLocalName(), 0);
@@ -305,8 +305,8 @@ public class WekaInstances {
 			}
 		}
 
-		context.getMonitor()
-				.info("Weka: training set generated with " + rawInstances.size() + " instances (" + skipped + " skipped)");
+		context.getMonitor().info("Weka: training set generated with " + rawInstances.size() + " instances (" + skipped
+				+ " skipped because of no-data)");
 
 		// go through discretization for each attribute, choose scheme if
 		// discretization is mandatory and attribute is numeric

@@ -26,7 +26,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [comment]: <>   (Next build: [0.10.0.151] -- ISO Date)
 
 ## [Unreleased]
-
+### Added
+- Info messages in k.Modeler are double-clickable for detail pop-up again.
+### Changed
+### Fixed
+- Improve camelcase translation in observable names to avoid a_b_c_d weirdness.
+  
 ## [0.10.0.152] -- 2019/04/04
 ### Added
 ### Changed
@@ -42,13 +47,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Circular dependencies in import lists are now detected and flagged as errors as you 
   type.
 - Metadata of instantiated objects are available to the dataflow to resolve attribute 
-  observers if needed.
+  observers if needed. Resolution uses metadata first, names of states next and types
+  of states last.
 - Full round-trip path between k.IM text declarations, syntactic concept declarations 
   (IKimConcept) and concepts in ontologies (IConcept). ObservableBuilder should now
   correctly enable any modification of existing concepts.
 ### Fixed
 - WFS and vector attribute fixes.
-- More contextualization exceptions are now reported to clients.
+- More contextualization exceptions are now reported to clients (no need to look in 
+  engine UI window).
+- Number of instances correctly reported in WEKA training.
 
 ## [0.10.0.151] -- 2019/03/26
 ### Added

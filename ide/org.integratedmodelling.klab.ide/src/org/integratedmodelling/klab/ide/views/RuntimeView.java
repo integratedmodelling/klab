@@ -734,6 +734,19 @@ public class RuntimeView extends ViewPart {
 	protected void handleSelection(Object o) {
 		if (o instanceof EDataflowReference) {
 			Eclipse.INSTANCE.edit(((EDataflowReference) o).getKdlCode(), "dataflow", "kdl", false);
+		} else if (o instanceof ENotification) {
+			switch (((ENotification)o).getLevel()) {
+			case "SEVERE":
+				Eclipse.INSTANCE.alert(((ENotification)o).getMessage());
+				break;
+			case "WARNING":
+				Eclipse.INSTANCE.warning(((ENotification)o).getMessage());
+				break;
+			case "INFO":
+			case "FINE":
+				Eclipse.INSTANCE.info(((ENotification)o).getMessage());
+				break;
+			}
 		}
 	}
 
