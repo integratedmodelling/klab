@@ -70,10 +70,38 @@ public class CamelCase {
      * @return the lower case string with the chosen separator
      */
     public static String toLowerCase(String value, char sep) {
-        return toUnderscoreCaseHelper(value, false, sep);
+        return toUnderscoreCaseHelper(normalizeAcronyms(value), false, sep);
     }
 
     /**
+     * Turn any ABCD consecutive string of uppercase characters into Abcd so that
+     * lowercase conversion becomes abcd_ instead of a_b_c_d_.
+     * 
+     * @param value
+     * @return the normalized string
+     */
+    public static String normalizeAcronyms(String value) {
+
+        StringBuilder result = new StringBuilder(value.length());
+        boolean inAcronym = false;
+        for (int i = 0; i < value.length(); i++) {
+            char ch = value.charAt(i);
+            if ((ch >= 'A') && (ch <= 'Z')) {
+            	if (inAcronym) {
+            		result.append(toAsciiLowerCase(ch));
+            	} else {
+            		inAcronym = true;
+            		result.append(ch);
+            	}
+            } else {
+            	inAcronym = false;
+        		result.append(ch);
+            }
+        }
+        return result.toString();
+	}
+
+	/**
      * Converts a string to lower came case (Ex. "justASimple_String" becomes
      * "JustASimpleString"). This function is idempotent.
      * 

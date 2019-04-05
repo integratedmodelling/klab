@@ -112,4 +112,13 @@ public interface IKimObservable extends IKimStatement {
 	 */
 	String getDefinition();
 
+	/**
+	 * Return a descriptive name for this concept suitable for use as the name of a
+	 * k.IM object. If the concept comes from an observable specification with a
+	 * 'named' clause, return the supplied name instead.
+	 * 
+	 * @return the name for k.IM code
+	 */
+	String getCodeName();
+	
 }

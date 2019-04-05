@@ -13,6 +13,7 @@ import org.integratedmodelling.kim.validation.KimValidator;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Range;
+import org.integratedmodelling.klab.utils.SemanticType;
 
 public class KimObservable extends KimStatement implements IKimObservable {
 
@@ -316,5 +317,11 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		  return value + " is not an acceptable concept for this observable";
 	  }
 	  return null;
+	}
+
+	@Override
+	public String getCodeName() {
+		// FIXME old shit here
+		return CamelCase.toLowerCase(new SemanticType(main.getObservable().getName()).getName(), '-');
 	}
 }

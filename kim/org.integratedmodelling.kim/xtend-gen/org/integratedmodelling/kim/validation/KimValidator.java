@@ -90,9 +90,7 @@ import org.integratedmodelling.kim.utils.DependencyGraph;
 import org.integratedmodelling.kim.validation.AbstractKimValidator;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
-import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.utils.SemanticType;
 
 /**
  * This class contains custom validation rules.
@@ -827,21 +825,17 @@ public class KimValidator extends AbstractKimValidator {
                 _xifexpression_4 = "resolver";
               }
               String name = _xifexpression_4;
-              String _name_2 = descriptor.getObservables().get(0).getMain().getObservable().getName();
-              SemanticType st = new SemanticType(_name_2);
-              String _lowerCase = CamelCase.toLowerCase(st.getName(), '-');
-              String _plus_4 = (_lowerCase + "-");
-              String _plus_5 = (_plus_4 + name);
-              descriptor.name = _plus_5;
+              String st = descriptor.getObservables().get(0).getCodeName();
+              descriptor.name = ((st + "-") + name);
             }
           }
         }
         if ((KimValidator.nonSemanticModels.contains(statement.getModel()) && (descriptor.getObservables().size() > 0))) {
           IKimObservable _get_1 = descriptor.getObservables().get(0);
           String _namespaceId_1 = Kim.getNamespaceId(namespace);
-          String _plus_6 = (_namespaceId_1 + ".");
-          String _plus_7 = (_plus_6 + descriptor.name);
-          ((KimObservable) _get_1).setModelReference(_plus_7);
+          String _plus_4 = (_namespaceId_1 + ".");
+          String _plus_5 = (_plus_4 + descriptor.name);
+          ((KimObservable) _get_1).setModelReference(_plus_5);
           IKimObservable _get_2 = descriptor.getObservables().get(0);
           ((KimObservable) _get_2).setFormalName(descriptor.name);
           ns_1.getSymbolTable().put(descriptor.name, descriptor);
