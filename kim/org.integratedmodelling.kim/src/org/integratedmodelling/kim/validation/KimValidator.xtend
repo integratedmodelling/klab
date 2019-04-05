@@ -2023,7 +2023,7 @@ class KimValidator extends AbstractKimValidator {
 							KimPackage.Literals.CONCEPT_STATEMENT_BODY__DOMAINS, i)
 						ok = false
 					}
-					if (!domain.type.contains(Type.SUBJECT) && !domain.type.contains(Type.AGENT)) {
+					if (!range.type.contains(Type.SUBJECT) && !range.type.contains(Type.AGENT)) {
 						error("relationship can only link subjects or agents", concept,
 							KimPackage.Literals.CONCEPT_STATEMENT_BODY__RANGES, i)
 						ok = false

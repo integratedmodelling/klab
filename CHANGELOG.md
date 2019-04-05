@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Info messages in k.Modeler are double-clickable for detail pop-up again.
 ### Changed
+- Self-generated model names are now fully descriptive.
 ### Fixed
 - Improve camelcase translation in observable names to avoid a_b_c_d weirdness.
   

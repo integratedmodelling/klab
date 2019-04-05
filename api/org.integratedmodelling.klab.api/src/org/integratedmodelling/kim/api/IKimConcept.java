@@ -497,4 +497,11 @@ public interface IKimConcept extends IKimStatement {
 	 */
 	IKimConcept getAdjacent();
 
+	/**
+	 * Return a string suitable for naming a k.IM object after this concept.
+	 * 
+	 * @return
+	 */
+	String getCodeName();
+
 }

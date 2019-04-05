@@ -2532,7 +2532,7 @@ public class KimValidator extends AbstractKimValidator {
                 KimPackage.Literals.CONCEPT_STATEMENT_BODY__DOMAINS, i_6);
               ok = false;
             }
-            if (((!domain.getType().contains(IKimConcept.Type.SUBJECT)) && (!domain.getType().contains(IKimConcept.Type.AGENT)))) {
+            if (((!range.getType().contains(IKimConcept.Type.SUBJECT)) && (!range.getType().contains(IKimConcept.Type.AGENT)))) {
               this.error("relationship can only link subjects or agents", concept, 
                 KimPackage.Literals.CONCEPT_STATEMENT_BODY__RANGES, i_6);
               ok = false;

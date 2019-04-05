@@ -44,4 +44,12 @@ public enum UnarySemanticOperator {
 	public Set<Type> getAllowedOperandTypes() {
 		return allowedOperandTypes;
 	}
+	
+	public String getCodeName(String conceptName, String other) {
+		String ret = declaration[0].replaceAll(" ", "-") + "-" + conceptName;
+		if (other != null) {
+			ret += "-" + declaration[1] + "-" + other;
+		}
+		return ret;
+	}
 }

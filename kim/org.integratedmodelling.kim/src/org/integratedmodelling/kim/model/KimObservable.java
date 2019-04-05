@@ -322,6 +322,16 @@ public class KimObservable extends KimStatement implements IKimObservable {
 	@Override
 	public String getCodeName() {
 		// FIXME old shit here
-		return CamelCase.toLowerCase(new SemanticType(main.getObservable().getName()).getName(), '-');
+		if (main == null) {
+			return "undefined";
+		}
+		String ret = main.getCodeName();
+		if (classifier != null) {
+			ret = ret + "-by-" + classifier.getCodeName();
+		}
+		if (downTo != null) {
+			ret = ret + "-to-" + downTo.getCodeName();
+		}
+		return ret; //CamelCase.toLowerCase(new SemanticType(main.getObservable().getName()).getName(), '-');
 	}
 }

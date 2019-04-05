@@ -15,6 +15,8 @@ import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 import org.integratedmodelling.kim.validation.KimValidator;
+import org.integratedmodelling.klab.utils.CamelCase;
+import org.integratedmodelling.klab.utils.SemanticType;
 
 /**
  * Normalized translation of a concept declaration, with a stable ordering of
@@ -1032,7 +1034,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		
 		// no need to sort again
 		
-		ret.computeName();
+//		ret.computeName();
 		
 		return ret;
 	}
@@ -1047,9 +1049,52 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		return ret;
 	}
 
-	private void computeName() {
-		// TODO Auto-generated method stub
+//	private void computeName() {
+//		// TODO Auto-generated method stub
+//		
+//	}
+
+	@Override
+	public String getCodeName() {
 		
+		String ret = CamelCase.toLowerCase(new SemanticType(getName()).getName(), '-');
+		if (observable != null) {
+			ret = observable.getCodeName();
+		}
+		
+		for (IKimConcept trait : traits) {
+			ret = trait.getCodeName() + "-" + ret;
+		}
+
+		if (inherent != null) {
+			ret += "-of-" + inherent.getCodeName();
+		}
+
+		if (context != null) {
+			ret += "-within-" + context.getCodeName();
+		}
+
+		if (causant != null) {
+			ret += "-caused-by-" + causant.getCodeName();
+		}
+
+		if (caused != null) {
+			ret += "-causing-" + caused.getCodeName();
+		}
+
+		if (compresent != null) {
+			ret += "-with-" + compresent.getCodeName();
+		}
+
+		if (motivation != null) {
+			ret += "-for-" + motivation.getCodeName();
+		}
+
+		if (observationType != null) {
+			ret = observationType.getCodeName(ret, otherConcept == null ? null : otherConcept.getCodeName());
+		}
+
+		return ret;
 	}
 
 }
