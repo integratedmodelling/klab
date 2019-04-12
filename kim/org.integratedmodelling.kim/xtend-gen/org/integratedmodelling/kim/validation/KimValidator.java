@@ -1763,6 +1763,10 @@ public class KimValidator extends AbstractKimValidator {
                           boolean _isValue = concept.isValue();
                           if (_isValue) {
                             operator.add(IKimConcept.Type.VALUE);
+                            boolean _isMonetary = concept.isMonetary();
+                            if (_isMonetary) {
+                              operator.add(IKimConcept.Type.MONETARY);
+                            }
                           } else {
                             boolean _isUncertainty = concept.isUncertainty();
                             if (_isUncertainty) {

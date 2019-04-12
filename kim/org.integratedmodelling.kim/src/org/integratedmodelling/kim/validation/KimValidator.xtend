@@ -1402,6 +1402,9 @@ class KimValidator extends AbstractKimValidator {
 					operator.add(Type.RATIO)
 				} else if (concept.isValue) {
 					operator.add(Type.VALUE)
+					if (concept.isMonetary) {
+						operator.add(Type.MONETARY)
+					}
 				} else if (concept.isUncertainty) {
 					if (!flags.contains(Type.QUALITY)) {
 						error(
@@ -1479,7 +1482,7 @@ class KimValidator extends AbstractKimValidator {
 				})
 			}
 		}
-
+		
 		if (statement.propertySpecifiers !== null) {
 			var i = 0;
 			for (specifier : statement.propertySpecifiers) {
@@ -1496,6 +1499,7 @@ class KimValidator extends AbstractKimValidator {
 				i++
 			}
 		}
+
 
 		if (ok && statement.body !== null) {
 

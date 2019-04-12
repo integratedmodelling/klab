@@ -409,7 +409,7 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getConceptAccess().getGroup_11_3(), "rule__Concept__Group_11_3__0");
 					put(grammarAccess.getConceptAccess().getGroup_12(), "rule__Concept__Group_12__0");
 					put(grammarAccess.getConceptAccess().getGroup_13(), "rule__Concept__Group_13__0");
-					put(grammarAccess.getConceptAccess().getGroup_13_3(), "rule__Concept__Group_13_3__0");
+					put(grammarAccess.getConceptAccess().getGroup_13_4(), "rule__Concept__Group_13_4__0");
 					put(grammarAccess.getConceptAccess().getGroup_14(), "rule__Concept__Group_14__0");
 					put(grammarAccess.getConceptAccess().getGroup_15(), "rule__Concept__Group_15__0");
 					put(grammarAccess.getConceptAccess().getGroup_16(), "rule__Concept__Group_16__0");
@@ -878,9 +878,10 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getConceptAccess().getRatioAssignment_12_0(), "rule__Concept__RatioAssignment_12_0");
 					put(grammarAccess.getConceptAccess().getConceptAssignment_12_2(), "rule__Concept__ConceptAssignment_12_2");
 					put(grammarAccess.getConceptAccess().getOtherAssignment_12_4(), "rule__Concept__OtherAssignment_12_4");
-					put(grammarAccess.getConceptAccess().getValueAssignment_13_0(), "rule__Concept__ValueAssignment_13_0");
-					put(grammarAccess.getConceptAccess().getConceptAssignment_13_2(), "rule__Concept__ConceptAssignment_13_2");
-					put(grammarAccess.getConceptAccess().getOtherAssignment_13_3_1(), "rule__Concept__OtherAssignment_13_3_1");
+					put(grammarAccess.getConceptAccess().getMonetaryAssignment_13_0(), "rule__Concept__MonetaryAssignment_13_0");
+					put(grammarAccess.getConceptAccess().getValueAssignment_13_1(), "rule__Concept__ValueAssignment_13_1");
+					put(grammarAccess.getConceptAccess().getConceptAssignment_13_3(), "rule__Concept__ConceptAssignment_13_3");
+					put(grammarAccess.getConceptAccess().getOtherAssignment_13_4_1(), "rule__Concept__OtherAssignment_13_4_1");
 					put(grammarAccess.getConceptAccess().getOccurrenceAssignment_14_0(), "rule__Concept__OccurrenceAssignment_14_0");
 					put(grammarAccess.getConceptAccess().getConceptAssignment_14_2(), "rule__Concept__ConceptAssignment_14_2");
 					put(grammarAccess.getConceptAccess().getAuthConceptAssignment_15_0(), "rule__Concept__AuthConceptAssignment_15_0");

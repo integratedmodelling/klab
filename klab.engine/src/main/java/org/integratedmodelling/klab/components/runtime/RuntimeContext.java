@@ -892,4 +892,15 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		return scale.getTime() == null ? ITime.INITIALIZATION : scale.getTime();
 	}
 
+	@Override
+	public Collection<IArtifact> getArtifact(IConcept observable) {
+		List<IArtifact> ret = new ArrayList<>();
+		for (IArtifact artifact : catalog.values()) {
+			if (artifact instanceof IObservation && ((IObservation)artifact).getObservable().getType().is(observable)) {
+				ret.add(artifact);
+			}
+		}
+		return ret;
+	}
+
 }

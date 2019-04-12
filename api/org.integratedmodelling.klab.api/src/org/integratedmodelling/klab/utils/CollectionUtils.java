@@ -24,4 +24,15 @@ public class CollectionUtils {
 		}
 		return ret;
 	}
+	
+	@SafeVarargs
+	public static <T> List<T> join(Iterable<T>... resources) {
+		List<T> ret = new ArrayList<>();
+		for (Iterable<T> list : resources) {
+			for (T o : list) {
+				ret.add(o);
+			}
+		}
+		return ret;
+	}
 }

@@ -35,6 +35,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#getOther <em>Other</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isPercentage <em>Percentage</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isRatio <em>Ratio</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Concept#isMonetary <em>Monetary</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isValue <em>Value</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isOccurrence <em>Occurrence</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#getDeclaration <em>Declaration</em>}</li>
@@ -565,6 +566,32 @@ public interface Concept extends EObject
    * @generated
    */
   void setRatio(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Monetary</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Monetary</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Monetary</em>' attribute.
+   * @see #setMonetary(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConcept_Monetary()
+   * @model
+   * @generated
+   */
+  boolean isMonetary();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Concept#isMonetary <em>Monetary</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Monetary</em>' attribute.
+   * @see #isMonetary()
+   * @generated
+   */
+  void setMonetary(boolean value);
 
   /**
    * Returns the value of the '<em><b>Value</b></em>' attribute.

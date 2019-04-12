@@ -46,6 +46,7 @@ import org.integratedmodelling.kim.kim.KimPackage;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#getOther <em>Other</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isPercentage <em>Percentage</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isRatio <em>Ratio</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isMonetary <em>Monetary</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isValue <em>Value</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isOccurrence <em>Occurrence</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#getDeclaration <em>Declaration</em>}</li>
@@ -424,6 +425,26 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
    * @ordered
    */
   protected boolean ratio = RATIO_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isMonetary() <em>Monetary</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isMonetary()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean MONETARY_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isMonetary() <em>Monetary</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isMonetary()
+   * @generated
+   * @ordered
+   */
+  protected boolean monetary = MONETARY_EDEFAULT;
 
   /**
    * The default value of the '{@link #isValue() <em>Value</em>}' attribute.
@@ -1036,6 +1057,29 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
    * <!-- end-user-doc -->
    * @generated
    */
+  public boolean isMonetary()
+  {
+    return monetary;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setMonetary(boolean newMonetary)
+  {
+    boolean oldMonetary = monetary;
+    monetary = newMonetary;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT__MONETARY, oldMonetary, monetary));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public boolean isValue()
   {
     return value;
@@ -1197,6 +1241,8 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return isPercentage();
       case KimPackage.CONCEPT__RATIO:
         return isRatio();
+      case KimPackage.CONCEPT__MONETARY:
+        return isMonetary();
       case KimPackage.CONCEPT__VALUE:
         return isValue();
       case KimPackage.CONCEPT__OCCURRENCE:
@@ -1276,6 +1322,9 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return;
       case KimPackage.CONCEPT__RATIO:
         setRatio((Boolean)newValue);
+        return;
+      case KimPackage.CONCEPT__MONETARY:
+        setMonetary((Boolean)newValue);
         return;
       case KimPackage.CONCEPT__VALUE:
         setValue((Boolean)newValue);
@@ -1360,6 +1409,9 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
       case KimPackage.CONCEPT__RATIO:
         setRatio(RATIO_EDEFAULT);
         return;
+      case KimPackage.CONCEPT__MONETARY:
+        setMonetary(MONETARY_EDEFAULT);
+        return;
       case KimPackage.CONCEPT__VALUE:
         setValue(VALUE_EDEFAULT);
         return;
@@ -1423,6 +1475,8 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return percentage != PERCENTAGE_EDEFAULT;
       case KimPackage.CONCEPT__RATIO:
         return ratio != RATIO_EDEFAULT;
+      case KimPackage.CONCEPT__MONETARY:
+        return monetary != MONETARY_EDEFAULT;
       case KimPackage.CONCEPT__VALUE:
         return value != VALUE_EDEFAULT;
       case KimPackage.CONCEPT__OCCURRENCE:
@@ -1478,6 +1532,8 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
     result.append(percentage);
     result.append(", ratio: ");
     result.append(ratio);
+    result.append(", monetary: ");
+    result.append(monetary);
     result.append(", value: ");
     result.append(value);
     result.append(", occurrence: ");

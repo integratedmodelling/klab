@@ -2439,13 +2439,22 @@ public interface KimPackage extends EPackage
   int CONCEPT__RATIO = 19;
 
   /**
+   * The feature id for the '<em><b>Monetary</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__MONETARY = 20;
+
+  /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONCEPT__VALUE = 20;
+  int CONCEPT__VALUE = 21;
 
   /**
    * The feature id for the '<em><b>Occurrence</b></em>' attribute.
@@ -2454,7 +2463,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__OCCURRENCE = 21;
+  int CONCEPT__OCCURRENCE = 22;
 
   /**
    * The feature id for the '<em><b>Declaration</b></em>' containment reference.
@@ -2463,7 +2472,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__DECLARATION = 22;
+  int CONCEPT__DECLARATION = 23;
 
   /**
    * The number of structural features of the '<em>Concept</em>' class.
@@ -2472,7 +2481,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_FEATURE_COUNT = 23;
+  int CONCEPT_FEATURE_COUNT = 24;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.UpperOntologyDefinitionImpl <em>Upper Ontology Definition</em>}' class.
@@ -6725,6 +6734,17 @@ public interface KimPackage extends EPackage
   EAttribute getConcept_Ratio();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Concept#isMonetary <em>Monetary</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Monetary</em>'.
+   * @see org.integratedmodelling.kim.kim.Concept#isMonetary()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Monetary();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Concept#isValue <em>Value</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -10484,6 +10504,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute CONCEPT__RATIO = eINSTANCE.getConcept_Ratio();
+
+    /**
+     * The meta object literal for the '<em><b>Monetary</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__MONETARY = eINSTANCE.getConcept_Monetary();
 
     /**
      * The meta object literal for the '<em><b>Value</b></em>' attribute feature.

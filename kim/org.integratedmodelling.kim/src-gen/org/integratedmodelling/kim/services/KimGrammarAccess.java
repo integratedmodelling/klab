@@ -4965,15 +4965,17 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cOtherAssignment_12_4 = (Assignment)cGroup_12.eContents().get(4);
 		private final RuleCall cOtherSimpleConceptDeclarationParserRuleCall_12_4_0 = (RuleCall)cOtherAssignment_12_4.eContents().get(0);
 		private final Group cGroup_13 = (Group)cAlternatives.eContents().get(13);
-		private final Assignment cValueAssignment_13_0 = (Assignment)cGroup_13.eContents().get(0);
-		private final Keyword cValueValueKeyword_13_0_0 = (Keyword)cValueAssignment_13_0.eContents().get(0);
-		private final Keyword cOfKeyword_13_1 = (Keyword)cGroup_13.eContents().get(1);
-		private final Assignment cConceptAssignment_13_2 = (Assignment)cGroup_13.eContents().get(2);
-		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_13_2_0 = (RuleCall)cConceptAssignment_13_2.eContents().get(0);
-		private final Group cGroup_13_3 = (Group)cGroup_13.eContents().get(3);
-		private final Keyword cOverKeyword_13_3_0 = (Keyword)cGroup_13_3.eContents().get(0);
-		private final Assignment cOtherAssignment_13_3_1 = (Assignment)cGroup_13_3.eContents().get(1);
-		private final RuleCall cOtherSimpleConceptDeclarationParserRuleCall_13_3_1_0 = (RuleCall)cOtherAssignment_13_3_1.eContents().get(0);
+		private final Assignment cMonetaryAssignment_13_0 = (Assignment)cGroup_13.eContents().get(0);
+		private final Keyword cMonetaryMonetaryKeyword_13_0_0 = (Keyword)cMonetaryAssignment_13_0.eContents().get(0);
+		private final Assignment cValueAssignment_13_1 = (Assignment)cGroup_13.eContents().get(1);
+		private final Keyword cValueValueKeyword_13_1_0 = (Keyword)cValueAssignment_13_1.eContents().get(0);
+		private final Keyword cOfKeyword_13_2 = (Keyword)cGroup_13.eContents().get(2);
+		private final Assignment cConceptAssignment_13_3 = (Assignment)cGroup_13.eContents().get(3);
+		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_13_3_0 = (RuleCall)cConceptAssignment_13_3.eContents().get(0);
+		private final Group cGroup_13_4 = (Group)cGroup_13.eContents().get(4);
+		private final Keyword cOverKeyword_13_4_0 = (Keyword)cGroup_13_4.eContents().get(0);
+		private final Assignment cOtherAssignment_13_4_1 = (Assignment)cGroup_13_4.eContents().get(1);
+		private final RuleCall cOtherSimpleConceptDeclarationParserRuleCall_13_4_1_0 = (RuleCall)cOtherAssignment_13_4_1.eContents().get(0);
 		private final Group cGroup_14 = (Group)cAlternatives.eContents().get(14);
 		private final Assignment cOccurrenceAssignment_14_0 = (Assignment)cGroup_14.eContents().get(0);
 		private final Keyword cOccurrenceOccurrenceKeyword_14_0_0 = (Keyword)cOccurrenceAssignment_14_0.eContents().get(0);
@@ -5014,7 +5016,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	observability?='observability' 'of' concept=SimpleConceptDeclaration | proportion?='proportion' 'of'
 		//	concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)? | percentage?='percentage' 'of'
 		//	concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)? | ratio?='ratio' 'of'
-		//	concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration | value?='value' 'of'
+		//	concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration | monetary?='monetary'? value?='value' 'of'
 		//	concept=SimpleConceptDeclaration (=> 'over' other=SimpleConceptDeclaration)? | occurrence?='occurrence' 'of'
 		//	concept=SimpleConceptDeclaration | authConcept?='identity' (stringIdentifier=(ID | STRING | UPPERCASE_ID |
 		//	CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID | UPPERCASE_PATH) |
@@ -5031,7 +5033,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'of' concept=SimpleConceptDeclaration | proportion?='proportion' 'of' concept=SimpleConceptDeclaration (=> 'in'
 		//other=SimpleConceptDeclaration)? | percentage?='percentage' 'of' concept=SimpleConceptDeclaration (=> 'in'
 		//other=SimpleConceptDeclaration)? | ratio?='ratio' 'of' concept=SimpleConceptDeclaration => 'to'
-		//other=SimpleConceptDeclaration | value?='value' 'of' concept=SimpleConceptDeclaration (=> 'over'
+		//other=SimpleConceptDeclaration | monetary?='monetary'? value?='value' 'of' concept=SimpleConceptDeclaration (=> 'over'
 		//other=SimpleConceptDeclaration)? | occurrence?='occurrence' 'of' concept=SimpleConceptDeclaration |
 		//authConcept?='identity' (stringIdentifier=(ID | STRING | UPPERCASE_ID | CAMELCASE_ID) | intIdentifier=INT) 'by'
 		//authority=(UPPERCASE_ID | UPPERCASE_PATH) | '(' declaration=Expression ')'
@@ -5371,35 +5373,41 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//SimpleConceptDeclaration
 		public RuleCall getOtherSimpleConceptDeclarationParserRuleCall_12_4_0() { return cOtherSimpleConceptDeclarationParserRuleCall_12_4_0; }
 		
-		//value?='value' 'of' concept=SimpleConceptDeclaration (=> 'over' other=SimpleConceptDeclaration)?
+		//monetary?='monetary'? value?='value' 'of' concept=SimpleConceptDeclaration (=> 'over' other=SimpleConceptDeclaration)?
 		public Group getGroup_13() { return cGroup_13; }
 		
+		//monetary?='monetary'?
+		public Assignment getMonetaryAssignment_13_0() { return cMonetaryAssignment_13_0; }
+		
+		//'monetary'
+		public Keyword getMonetaryMonetaryKeyword_13_0_0() { return cMonetaryMonetaryKeyword_13_0_0; }
+		
 		//value?='value'
-		public Assignment getValueAssignment_13_0() { return cValueAssignment_13_0; }
+		public Assignment getValueAssignment_13_1() { return cValueAssignment_13_1; }
 		
 		//'value'
-		public Keyword getValueValueKeyword_13_0_0() { return cValueValueKeyword_13_0_0; }
+		public Keyword getValueValueKeyword_13_1_0() { return cValueValueKeyword_13_1_0; }
 		
 		//'of'
-		public Keyword getOfKeyword_13_1() { return cOfKeyword_13_1; }
+		public Keyword getOfKeyword_13_2() { return cOfKeyword_13_2; }
 		
 		//concept=SimpleConceptDeclaration
-		public Assignment getConceptAssignment_13_2() { return cConceptAssignment_13_2; }
+		public Assignment getConceptAssignment_13_3() { return cConceptAssignment_13_3; }
 		
 		//SimpleConceptDeclaration
-		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_13_2_0() { return cConceptSimpleConceptDeclarationParserRuleCall_13_2_0; }
+		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_13_3_0() { return cConceptSimpleConceptDeclarationParserRuleCall_13_3_0; }
 		
 		//(=> 'over' other=SimpleConceptDeclaration)?
-		public Group getGroup_13_3() { return cGroup_13_3; }
+		public Group getGroup_13_4() { return cGroup_13_4; }
 		
 		//=> 'over'
-		public Keyword getOverKeyword_13_3_0() { return cOverKeyword_13_3_0; }
+		public Keyword getOverKeyword_13_4_0() { return cOverKeyword_13_4_0; }
 		
 		//other=SimpleConceptDeclaration
-		public Assignment getOtherAssignment_13_3_1() { return cOtherAssignment_13_3_1; }
+		public Assignment getOtherAssignment_13_4_1() { return cOtherAssignment_13_4_1; }
 		
 		//SimpleConceptDeclaration
-		public RuleCall getOtherSimpleConceptDeclarationParserRuleCall_13_3_1_0() { return cOtherSimpleConceptDeclarationParserRuleCall_13_3_1_0; }
+		public RuleCall getOtherSimpleConceptDeclarationParserRuleCall_13_4_1_0() { return cOtherSimpleConceptDeclarationParserRuleCall_13_4_1_0; }
 		
 		//occurrence?='occurrence' 'of' concept=SimpleConceptDeclaration
 		public Group getGroup_14() { return cGroup_14; }
@@ -10711,7 +10719,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	observability?='observability' 'of' concept=SimpleConceptDeclaration | proportion?='proportion' 'of'
 	//	concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)? | percentage?='percentage' 'of'
 	//	concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)? | ratio?='ratio' 'of'
-	//	concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration | value?='value' 'of'
+	//	concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration | monetary?='monetary'? value?='value' 'of'
 	//	concept=SimpleConceptDeclaration (=> 'over' other=SimpleConceptDeclaration)? | occurrence?='occurrence' 'of'
 	//	concept=SimpleConceptDeclaration | authConcept?='identity' (stringIdentifier=(ID | STRING | UPPERCASE_ID |
 	//	CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID | UPPERCASE_PATH) |

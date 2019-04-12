@@ -2857,7 +2857,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getConcept_Value()
+  public EAttribute getConcept_Monetary()
   {
     return (EAttribute)conceptEClass.getEStructuralFeatures().get(20);
   }
@@ -2867,7 +2867,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getConcept_Occurrence()
+  public EAttribute getConcept_Value()
   {
     return (EAttribute)conceptEClass.getEStructuralFeatures().get(21);
   }
@@ -2877,9 +2877,19 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getConcept_Occurrence()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(22);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EReference getConcept_Declaration()
   {
-    return (EReference)conceptEClass.getEStructuralFeatures().get(22);
+    return (EReference)conceptEClass.getEStructuralFeatures().get(23);
   }
 
   /**
@@ -4823,6 +4833,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(conceptEClass, CONCEPT__OTHER);
     createEAttribute(conceptEClass, CONCEPT__PERCENTAGE);
     createEAttribute(conceptEClass, CONCEPT__RATIO);
+    createEAttribute(conceptEClass, CONCEPT__MONETARY);
     createEAttribute(conceptEClass, CONCEPT__VALUE);
     createEAttribute(conceptEClass, CONCEPT__OCCURRENCE);
     createEReference(conceptEClass, CONCEPT__DECLARATION);
@@ -5312,6 +5323,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getConcept_Other(), this.getConceptDeclaration(), null, "other", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConcept_Percentage(), ecorePackage.getEBoolean(), "percentage", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConcept_Ratio(), ecorePackage.getEBoolean(), "ratio", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_Monetary(), ecorePackage.getEBoolean(), "monetary", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConcept_Value(), ecorePackage.getEBoolean(), "value", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConcept_Occurrence(), ecorePackage.getEBoolean(), "occurrence", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConcept_Declaration(), this.getConceptDeclaration(), null, "declaration", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

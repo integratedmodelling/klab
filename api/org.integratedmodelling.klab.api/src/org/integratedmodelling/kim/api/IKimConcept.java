@@ -318,8 +318,11 @@ public interface IKimConcept extends IKimStatement {
 		/**
 		 * Reserved for intersections built from declarations
 		 */
-		INTERSECTION
-
+		INTERSECTION,
+		/**
+		 * Specifier for values; affects validation of currencies
+		 */
+		MONETARY
 	}
 
 	/**

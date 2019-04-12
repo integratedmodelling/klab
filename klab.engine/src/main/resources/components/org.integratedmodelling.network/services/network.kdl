@@ -1,17 +1,14 @@
 /**
- * This file defines the contract for the services in k.IM that bridge to machine learning
- * functionalities. Most of these wrap functionalities provided by WEKA.
+ * This file defines the contract for the services in k.IM that create and operate on networks.
  */
 @klab 0.10.0
 @version 0.10.0
-@namespace network
+@namespace klab.networks
 
 export object random
-	"Instantiator for random networks.
-
-	## TODO Markdown docs."
+	"Connects subjects by building a random network using configurable methods. Each configuration can optionally be
+	 assigned a spatial context connecting the space of the related subjects with configurable methods."
 {
-	
 	concept type
 		"The semantics for the relationships being instantiated"
 		
@@ -19,36 +16,56 @@ export object random
 		"The parameter that defines the network being created. Its 
          meaning changes according to the method."	
 		
-	optional input sourcetype 
-		"Semantics for the type of the subjects used as source for the relationships"
-		default observation:Subject
+	optional text source
+		"Artifact providing the source for the relationships. By default all artifacts that incarnate the 
+		 relationship source type are used."
 
-	optional input targettype 
-		"Semantics for the type of the subjects used as target for the relationships"
-		default observation:Subject
+	optional text target
+		"Artifact providing the target for the relationships. By default all artifacts that incarnate the 
+		 relationship target type are used."
 
-	optional input space 
+	optional input space
 		"Type of spatial link to create if the vertices are spatial and distinct. Default is none.
 	     Possible values are None, LineCentroid, LineEdge, ConvexHull."
 	     default "None"
 	     
-	optional input route
-		"If passed, a network of the passed type is looked up (or created) and the subjects 
-  		 are routed through it to create the connection."
-         default observation:Relationship
+	optional number seed
+		"The random number seed. By default each generation will use a different one."     
 	     
 	optional input selfconnections
 		"If true, self-connections are created. Default is false"
 		default false
 
+	optional boolean reciprocal
+		"If true, A->B does not prevent B->A from being created. Default false. Only meaningful if the
+		 annotated concept is a relationship and not a bond."
+
 	optional input method 
-		"The method to use to create the random network. Choose between BarabasiAlbert, EppsteinPowerLaw, 
+		"The method to use to create the random network. Choose between OutDegree, BarabasiAlbert, EppsteinPowerLaw, 
 		 ErdosRenyi, Lattice2D (restricted to grid space contexts) and KleinbergSmallWorld. If relationship
-	 	 is unidirectional, only ErdosRenyi is supported.
+	 	 is unidirectional, only ErdosRenyi and OutDegree are supported.
 		 ## TODO Markdown documentation
 		" 
 		default "ErdosRenyi"
 		
 	class org.integratedmodelling.klab.components.network.services.RandomInstantiator
+
+}
+
+export object route 
+	"Connects subjects through routes computed along a specified spatial configuration. Relationships are only
+	 created if a route exists."
+{
+	optional input source
+		"Semantics for the type of the subjects used as source for the relationships"
+		default ""
+
+	optional input target
+		"Semantics for the type of the subjects used as target for the relationships"
+		default ""
+
+//	TODO configuration to use 
+
+	class org.integratedmodelling.klab.components.network.services.RoutingInstantiator
 
 }
