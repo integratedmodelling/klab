@@ -1625,6 +1625,14 @@ public enum Kim {
 		} else if ("workspace".equals(kimWorkspace.getName())) {
 			this.userWorkspace = kimWorkspace;
 		}
-
+	}
+	
+	/**
+	 * Called by k.LAB workspaces when they create a new project
+	 * @param projectName
+	 * @param kimWorkspace
+	 */
+	public void registerProject(String projectName, IKimWorkspace kimWorkspace) {
+		this.projectWorkspaces.put(projectName, (KimWorkspace)kimWorkspace);
 	}
 }

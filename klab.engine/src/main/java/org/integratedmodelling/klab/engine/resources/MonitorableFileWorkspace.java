@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.integratedmodelling.kim.api.IKimProject;
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.templates.KimTemplates;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.knowledge.IProject;
@@ -70,7 +71,10 @@ public class MonitorableFileWorkspace extends AbstractWorkspace implements IWork
         }
 
         delegate.loadProject(dir);
-
+        
+        // needed to ensure the project is found. Cleaner but more wasteful, we could just reload the WS
+        Kim.INSTANCE.registerProject(projectId, delegate);
+        
         IProject ret = getProject(projectId);
 
         /*

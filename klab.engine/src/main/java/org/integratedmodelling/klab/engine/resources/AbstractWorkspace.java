@@ -14,6 +14,8 @@ import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.utils.FileUtils;
 
 public abstract class AbstractWorkspace implements IWorkspace {
 
@@ -83,4 +85,13 @@ public abstract class AbstractWorkspace implements IWorkspace {
 		return ret == null ? null : Resources.INSTANCE.retrieveOrCreate(ret);
 	}
 
+	public void deleteProject(IProject project) {
+		delegate.deleteProject(((Project)project).delegate);
+		try {
+			FileUtils.deleteDirectory(project.getRoot());
+		} catch (IOException e) {
+			throw new KlabIOException(e);
+		}
+	}
+	
 }

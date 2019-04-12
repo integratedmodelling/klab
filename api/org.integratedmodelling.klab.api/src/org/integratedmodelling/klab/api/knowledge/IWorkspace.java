@@ -89,5 +89,12 @@ public interface IWorkspace {
 	 * @return the project or null if project is not in the workspace
 	 */
 	IProject getProject(String projectId);
+
+	/**
+	 * Workspaces have control over a project's deletion.
+	 * 
+	 * @param project
+	 */
+	void deleteProject(IProject project);
     
 }

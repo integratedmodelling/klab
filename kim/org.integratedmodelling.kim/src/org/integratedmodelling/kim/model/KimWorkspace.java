@@ -239,4 +239,13 @@ public class KimWorkspace implements IKimWorkspace {
 		// no reloading - that's the responsibility of the caller
 	}
 
+	public void deleteProject(IKimProject project) {
+		namespaceIds = null;
+		IKimProject previous = projects.remove(project.getName());
+		if (previous != null) {
+			projectLocations.remove(previous.getRoot());
+		}
+		readProjects();
+	}
+
 }

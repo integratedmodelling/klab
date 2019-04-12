@@ -316,7 +316,7 @@ public enum Resources implements IResourceService {
 	public IWorkspace getWorkspace(String name) {
 		return workspaces.get(name);
 	}
-	
+
 	public IWorkspace getWorkspaceFor(File projectRoot) {
 		for (IWorkspace workspace : workspaces.values()) {
 			for (File file = projectRoot; file != null; file = file.getParentFile()) {
@@ -1137,15 +1137,11 @@ public enum Resources implements IResourceService {
 	}
 
 	public void deleteProject(String projectId) {
-		
+
 		// physically delete project
 		IProject project = getProject(projectId);
 		if (project != null) {
-			try {
-				FileUtils.deleteDirectory(project.getRoot());
-			} catch (IOException e) {
-				throw new KlabIOException(e);
-			}
+			project.getWorkspace().deleteProject(project);
 		}
 		// reload
 		getLoader().rescan(true);
