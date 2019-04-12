@@ -26,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [comment]: <>   (Next build: [0.10.0.151] -- ISO Date)
 
 ## [Unreleased]
+
+## [0.10.0.153] -- 2019/04/12
 ### Added
 - Info messages in k.Modeler are double-clickable for detail pop-up again.
 - Project deletion is now implemented (engine does physical deletion - use with caution).
