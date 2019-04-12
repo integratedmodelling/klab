@@ -53,9 +53,9 @@ public class MonitorableFileWorkspace extends AbstractWorkspace implements IWork
                     + ".project"), KimTemplates.projectTemplate.replaceAll("__PROJECT__", projectId), false);
             FileUtils.writeStringToFile(new File(dir + File.separator + "META-INF" + File.separator
                     + "klab.properties"), KimTemplates.propertiesTemplate, false);
-            FileUtils.writeStringToFile(new File(dir + File.separator + "META-INF" + File.separator
-                    + "knowledge.kim"), KimTemplates.knowledgeTemplate
-                            .replaceAll("__PROJECT__", projectId), false);
+//            FileUtils.writeStringToFile(new File(dir + File.separator + "META-INF" + File.separator
+//                    + "knowledge.kim"), KimTemplates.knowledgeTemplate
+//                            .replaceAll("__PROJECT__", projectId), false);
             FileUtils.writeStringToFile(new File(dir + File.separator + IKimProject.RESOURCE_FOLDER
                     + File.separator
                     + "resources.json"), KimTemplates.emptyJSONTemplate, false);

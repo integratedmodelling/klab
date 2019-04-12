@@ -1086,6 +1086,10 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			ret += "-with-" + compresent.getCodeName();
 		}
 
+		if (cooccurrent != null) {
+			ret += "-during-" + cooccurrent.getCodeName();
+		}
+
 		if (motivation != null) {
 			ret += "-for-" + motivation.getCodeName();
 		}

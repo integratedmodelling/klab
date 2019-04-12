@@ -6123,9 +6123,9 @@ ruleObservableSemantics returns [EObject current=null]
 								(
 									(
 										{
-											newCompositeNode(grammarAccess.getObservableSemanticsAccess().getByConceptParserRuleCall_3_0_1_0());
+											newCompositeNode(grammarAccess.getObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_3_0_1_0());
 										}
-										lv_by_6_0=ruleConcept
+										lv_by_6_0=ruleConceptDeclaration
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
@@ -6134,7 +6134,7 @@ ruleObservableSemantics returns [EObject current=null]
 												$current,
 												"by",
 												lv_by_6_0,
-												"org.integratedmodelling.kim.Kim.Concept");
+												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -6573,9 +6573,9 @@ ruleAnnotatedObservableSemantics returns [EObject current=null]
 								(
 									(
 										{
-											newCompositeNode(grammarAccess.getAnnotatedObservableSemanticsAccess().getByConceptParserRuleCall_4_0_1_0());
+											newCompositeNode(grammarAccess.getAnnotatedObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_4_0_1_0());
 										}
-										lv_by_7_0=ruleConcept
+										lv_by_7_0=ruleConceptDeclaration
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getAnnotatedObservableSemanticsRule());
@@ -6584,7 +6584,7 @@ ruleAnnotatedObservableSemantics returns [EObject current=null]
 												$current,
 												"by",
 												lv_by_7_0,
-												"org.integratedmodelling.kim.Kim.Concept");
+												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -15013,9 +15013,9 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 								(
 									(
 										{
-											newCompositeNode(grammarAccess.getSimpleObservableSemanticsAccess().getByConceptParserRuleCall_1_0_1_0());
+											newCompositeNode(grammarAccess.getSimpleObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_1_0_1_0());
 										}
-										lv_by_3_0=ruleConcept
+										lv_by_3_0=ruleConceptDeclaration
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getSimpleObservableSemanticsRule());
@@ -15024,7 +15024,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 												$current,
 												"by",
 												lv_by_3_0,
-												"org.integratedmodelling.kim.Kim.Concept");
+												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -15444,9 +15444,9 @@ ruleDependencyObservableSemantics returns [EObject current=null]
 								(
 									(
 										{
-											newCompositeNode(grammarAccess.getDependencyObservableSemanticsAccess().getByConceptParserRuleCall_3_0_1_0());
+											newCompositeNode(grammarAccess.getDependencyObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_3_0_1_0());
 										}
-										lv_by_6_0=ruleConcept
+										lv_by_6_0=ruleConceptDeclaration
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getDependencyObservableSemanticsRule());
@@ -15455,7 +15455,7 @@ ruleDependencyObservableSemantics returns [EObject current=null]
 												$current,
 												"by",
 												lv_by_6_0,
-												"org.integratedmodelling.kim.Kim.Concept");
+												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
@@ -15875,9 +15875,9 @@ ruleAlternativeDependencyObservableSemantics returns [EObject current=null]
 								(
 									(
 										{
-											newCompositeNode(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getByConceptParserRuleCall_3_0_1_0());
+											newCompositeNode(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_3_0_1_0());
 										}
-										lv_by_6_0=ruleConcept
+										lv_by_6_0=ruleConceptDeclaration
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getAlternativeDependencyObservableSemanticsRule());
@@ -15886,7 +15886,7 @@ ruleAlternativeDependencyObservableSemantics returns [EObject current=null]
 												$current,
 												"by",
 												lv_by_6_0,
-												"org.integratedmodelling.kim.Kim.Concept");
+												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)

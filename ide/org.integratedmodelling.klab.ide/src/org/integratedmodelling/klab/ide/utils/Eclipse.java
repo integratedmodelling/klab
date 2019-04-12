@@ -69,8 +69,10 @@ import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
+import org.integratedmodelling.klab.ide.navigator.model.EProject;
 import org.integratedmodelling.klab.rest.CompileNotificationReference;
 import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
 
@@ -354,6 +356,26 @@ public enum Eclipse {
 		openFile(filename, 0);
 	}
 
+
+	/**
+	 * Physically delete a project from workspace.
+	 * 
+	 * @param project
+	 */
+	public void deleteProject(EProject project) {
+		IProject p = getProject(project.getName());
+		if (p != null) {
+			try {
+				p.delete(true, new NullProgressMonitor());
+				Activator.get().reloadWorkspace();
+				KlabNavigator.refresh();
+			} catch (CoreException e) {
+				handleException(e);
+			}
+		}
+	}
+
+	
 	/**
 	 * Import an Eclipse project programmatically into the workspace. Does not check
 	 * for existence and overwrites whatever is there.
@@ -384,6 +406,7 @@ public enum Eclipse {
 			importOperation.run(new NullProgressMonitor());
 
 			project.open(new NullProgressMonitor());
+			Activator.get().reloadWorkspace();
 
 		} catch (Exception e) {
 			error(e);

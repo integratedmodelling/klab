@@ -1047,7 +1047,7 @@ public class KimValidator extends AbstractKimValidator {
             KimPackage.OBSERVABLE_SEMANTICS__CURRENCY);
         }
       }
-      Concept _by = semantics.getBy();
+      ConceptDeclaration _by = semantics.getBy();
       boolean _tripleNotEquals_2 = (_by != null);
       if (_tripleNotEquals_2) {
         boolean _is_1 = declaration.is(IKimConcept.Type.QUALITY);

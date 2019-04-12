@@ -3507,7 +3507,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup_3_0 = (Group)cUnorderedGroup_3.eContents().get(0);
 		private final Keyword cByKeyword_3_0_0 = (Keyword)cGroup_3_0.eContents().get(0);
 		private final Assignment cByAssignment_3_0_1 = (Assignment)cGroup_3_0.eContents().get(1);
-		private final RuleCall cByConceptParserRuleCall_3_0_1_0 = (RuleCall)cByAssignment_3_0_1.eContents().get(0);
+		private final RuleCall cByConceptDeclarationParserRuleCall_3_0_1_0 = (RuleCall)cByAssignment_3_0_1.eContents().get(0);
 		private final Group cGroup_3_1 = (Group)cUnorderedGroup_3.eContents().get(1);
 		private final Keyword cDownKeyword_3_1_0 = (Keyword)cGroup_3_1.eContents().get(0);
 		private final Keyword cToKeyword_3_1_1 = (Keyword)cGroup_3_1.eContents().get(1);
@@ -3552,14 +3552,15 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		// */ ObservableSemantics:
 		//	(value=Value 'as')?
 		//	generic?='any'?
-		//	declaration=ConceptDeclaration (('by' by=Concept)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
+		//	declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
 		//	accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (optional?='optional' |
 		//	'required')? & (from=Number 'to' to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?);
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(value=Value 'as')? generic?='any'? declaration=ConceptDeclaration (('by' by=Concept)? & ('down' 'to' downTo=Concept)? &
-		//('according' 'to' accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? &
-		//(optional?='optional' | 'required')? & (from=Number 'to' to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?)
+		//(value=Value 'as')? generic?='any'? declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to'
+		//downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per'
+		//unit=Unit)? & (optional?='optional' | 'required')? & (from=Number 'to' to=Number)? & ('named' name=(LOWERCASE_ID |
+		//STRING))?)
 		public Group getGroup() { return cGroup; }
 		
 		//(value=Value 'as')?
@@ -3586,22 +3587,22 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//ConceptDeclaration
 		public RuleCall getDeclarationConceptDeclarationParserRuleCall_2_0() { return cDeclarationConceptDeclarationParserRuleCall_2_0; }
 		
-		//('by' by=Concept)? & ('down' 'to' downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in' (unit=Unit |
-		//currency=Currency) | 'per' unit=Unit)? & (optional?='optional' | 'required')? & (from=Number 'to' to=Number)? &
-		//('named' name=(LOWERCASE_ID | STRING))?
+		//('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in'
+		//(unit=Unit | currency=Currency) | 'per' unit=Unit)? & (optional?='optional' | 'required')? & (from=Number 'to'
+		//to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?
 		public UnorderedGroup getUnorderedGroup_3() { return cUnorderedGroup_3; }
 		
-		//('by' by=Concept)?
+		//('by' by=ConceptDeclaration)?
 		public Group getGroup_3_0() { return cGroup_3_0; }
 		
 		//'by'
 		public Keyword getByKeyword_3_0_0() { return cByKeyword_3_0_0; }
 		
-		//by=Concept
+		//by=ConceptDeclaration
 		public Assignment getByAssignment_3_0_1() { return cByAssignment_3_0_1; }
 		
-		//Concept
-		public RuleCall getByConceptParserRuleCall_3_0_1_0() { return cByConceptParserRuleCall_3_0_1_0; }
+		//ConceptDeclaration
+		public RuleCall getByConceptDeclarationParserRuleCall_3_0_1_0() { return cByConceptDeclarationParserRuleCall_3_0_1_0; }
 		
 		//('down' 'to' downTo=Concept)?
 		public Group getGroup_3_1() { return cGroup_3_1; }
@@ -3734,7 +3735,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup_4_0 = (Group)cUnorderedGroup_4.eContents().get(0);
 		private final Keyword cByKeyword_4_0_0 = (Keyword)cGroup_4_0.eContents().get(0);
 		private final Assignment cByAssignment_4_0_1 = (Assignment)cGroup_4_0.eContents().get(1);
-		private final RuleCall cByConceptParserRuleCall_4_0_1_0 = (RuleCall)cByAssignment_4_0_1.eContents().get(0);
+		private final RuleCall cByConceptDeclarationParserRuleCall_4_0_1_0 = (RuleCall)cByAssignment_4_0_1.eContents().get(0);
 		private final Group cGroup_4_1 = (Group)cUnorderedGroup_4.eContents().get(1);
 		private final Keyword cDownKeyword_4_1_0 = (Keyword)cGroup_4_1.eContents().get(0);
 		private final Keyword cToKeyword_4_1_1 = (Keyword)cGroup_4_1.eContents().get(1);
@@ -3780,15 +3781,15 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		// */ AnnotatedObservableSemantics ObservableSemantics:
 		//	annotations+=Annotation* (value=Value 'as')?
 		//	generic?='any'?
-		//	declaration=ConceptDeclaration (('by' by=Concept)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
+		//	declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
 		//	accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (optional?='optional' |
 		//	'required')? & (from=Number 'to' to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?);
 		@Override public ParserRule getRule() { return rule; }
 		
-		//annotations+=Annotation* (value=Value 'as')? generic?='any'? declaration=ConceptDeclaration (('by' by=Concept)? &
-		//('down' 'to' downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) |
-		//'per' unit=Unit)? & (optional?='optional' | 'required')? & (from=Number 'to' to=Number)? & ('named' name=(LOWERCASE_ID
-		//| STRING))?)
+		//annotations+=Annotation* (value=Value 'as')? generic?='any'? declaration=ConceptDeclaration (('by'
+		//by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in'
+		//(unit=Unit | currency=Currency) | 'per' unit=Unit)? & (optional?='optional' | 'required')? & (from=Number 'to'
+		//to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?)
 		public Group getGroup() { return cGroup; }
 		
 		//annotations+=Annotation*
@@ -3821,22 +3822,22 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//ConceptDeclaration
 		public RuleCall getDeclarationConceptDeclarationParserRuleCall_3_0() { return cDeclarationConceptDeclarationParserRuleCall_3_0; }
 		
-		//('by' by=Concept)? & ('down' 'to' downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in' (unit=Unit |
-		//currency=Currency) | 'per' unit=Unit)? & (optional?='optional' | 'required')? & (from=Number 'to' to=Number)? &
-		//('named' name=(LOWERCASE_ID | STRING))?
+		//('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in'
+		//(unit=Unit | currency=Currency) | 'per' unit=Unit)? & (optional?='optional' | 'required')? & (from=Number 'to'
+		//to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?
 		public UnorderedGroup getUnorderedGroup_4() { return cUnorderedGroup_4; }
 		
-		//('by' by=Concept)?
+		//('by' by=ConceptDeclaration)?
 		public Group getGroup_4_0() { return cGroup_4_0; }
 		
 		//'by'
 		public Keyword getByKeyword_4_0_0() { return cByKeyword_4_0_0; }
 		
-		//by=Concept
+		//by=ConceptDeclaration
 		public Assignment getByAssignment_4_0_1() { return cByAssignment_4_0_1; }
 		
-		//Concept
-		public RuleCall getByConceptParserRuleCall_4_0_1_0() { return cByConceptParserRuleCall_4_0_1_0; }
+		//ConceptDeclaration
+		public RuleCall getByConceptDeclarationParserRuleCall_4_0_1_0() { return cByConceptDeclarationParserRuleCall_4_0_1_0; }
 		
 		//('down' 'to' downTo=Concept)?
 		public Group getGroup_4_1() { return cGroup_4_1; }
@@ -8657,7 +8658,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup_1_0 = (Group)cUnorderedGroup_1.eContents().get(0);
 		private final Keyword cByKeyword_1_0_0 = (Keyword)cGroup_1_0.eContents().get(0);
 		private final Assignment cByAssignment_1_0_1 = (Assignment)cGroup_1_0.eContents().get(1);
-		private final RuleCall cByConceptParserRuleCall_1_0_1_0 = (RuleCall)cByAssignment_1_0_1.eContents().get(0);
+		private final RuleCall cByConceptDeclarationParserRuleCall_1_0_1_0 = (RuleCall)cByAssignment_1_0_1.eContents().get(0);
 		private final Group cGroup_1_1 = (Group)cUnorderedGroup_1.eContents().get(1);
 		private final Keyword cDownKeyword_1_1_0 = (Keyword)cGroup_1_1.eContents().get(0);
 		private final Keyword cToKeyword_1_1_1 = (Keyword)cGroup_1_1.eContents().get(1);
@@ -8701,12 +8702,12 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		// * Observable without the 'as' to use in model declarations and without the 'optional' that
 		// * is only for dependencies.
 		// */ SimpleObservableSemantics ObservableSemantics:
-		//	declaration=ConceptDeclaration (('by' by=Concept)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
+		//	declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
 		//	accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)?
 		//	& (optional?='optional' | 'required')? & ('named' name=(LOWERCASE_ID | STRING))?);
 		@Override public ParserRule getRule() { return rule; }
 		
-		//declaration=ConceptDeclaration (('by' by=Concept)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
+		//declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
 		//accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)? &
 		//(optional?='optional' | 'required')? & ('named' name=(LOWERCASE_ID | STRING))?)
 		public Group getGroup() { return cGroup; }
@@ -8717,22 +8718,22 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//ConceptDeclaration
 		public RuleCall getDeclarationConceptDeclarationParserRuleCall_0_0() { return cDeclarationConceptDeclarationParserRuleCall_0_0; }
 		
-		//('by' by=Concept)? & ('down' 'to' downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in' (unit=Unit |
-		//currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)? & (optional?='optional' | 'required')? &
-		//('named' name=(LOWERCASE_ID | STRING))?
+		//('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in'
+		//(unit=Unit | currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)? & (optional?='optional' |
+		//'required')? & ('named' name=(LOWERCASE_ID | STRING))?
 		public UnorderedGroup getUnorderedGroup_1() { return cUnorderedGroup_1; }
 		
-		//('by' by=Concept)?
+		//('by' by=ConceptDeclaration)?
 		public Group getGroup_1_0() { return cGroup_1_0; }
 		
 		//'by'
 		public Keyword getByKeyword_1_0_0() { return cByKeyword_1_0_0; }
 		
-		//by=Concept
+		//by=ConceptDeclaration
 		public Assignment getByAssignment_1_0_1() { return cByAssignment_1_0_1; }
 		
-		//Concept
-		public RuleCall getByConceptParserRuleCall_1_0_1_0() { return cByConceptParserRuleCall_1_0_1_0; }
+		//ConceptDeclaration
+		public RuleCall getByConceptDeclarationParserRuleCall_1_0_1_0() { return cByConceptDeclarationParserRuleCall_1_0_1_0; }
 		
 		//('down' 'to' downTo=Concept)?
 		public Group getGroup_1_1() { return cGroup_1_1; }
@@ -8863,7 +8864,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup_3_0 = (Group)cUnorderedGroup_3.eContents().get(0);
 		private final Keyword cByKeyword_3_0_0 = (Keyword)cGroup_3_0.eContents().get(0);
 		private final Assignment cByAssignment_3_0_1 = (Assignment)cGroup_3_0.eContents().get(1);
-		private final RuleCall cByConceptParserRuleCall_3_0_1_0 = (RuleCall)cByAssignment_3_0_1.eContents().get(0);
+		private final RuleCall cByConceptDeclarationParserRuleCall_3_0_1_0 = (RuleCall)cByAssignment_3_0_1.eContents().get(0);
 		private final Group cGroup_3_1 = (Group)cUnorderedGroup_3.eContents().get(1);
 		private final Keyword cDownKeyword_3_1_0 = (Keyword)cGroup_3_1.eContents().get(0);
 		private final Keyword cToKeyword_3_1_1 = (Keyword)cGroup_3_1.eContents().get(1);
@@ -8908,15 +8909,15 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		// */ DependencyObservableSemantics ObservableSemantics:
 		//	(value=LiteralValueWithConcept 'as')?
 		//	generic?='any'?
-		//	declaration=ConceptDeclaration (('by' by=Concept)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
+		//	declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
 		//	accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)?
 		//	& (optional?='optional' | 'required')? & ('named' name=(LOWERCASE_ID | STRING))?);
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(value=LiteralValueWithConcept 'as')? generic?='any'? declaration=ConceptDeclaration (('by' by=Concept)? & ('down' 'to'
-		//downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per'
-		//unit=Unit)? & (from=Number 'to' to=Number)? & (optional?='optional' | 'required')? & ('named' name=(LOWERCASE_ID |
-		//STRING))?)
+		//(value=LiteralValueWithConcept 'as')? generic?='any'? declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? &
+		//('down' 'to' downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) |
+		//'per' unit=Unit)? & (from=Number 'to' to=Number)? & (optional?='optional' | 'required')? & ('named' name=(LOWERCASE_ID
+		//| STRING))?)
 		public Group getGroup() { return cGroup; }
 		
 		//(value=LiteralValueWithConcept 'as')?
@@ -8943,22 +8944,22 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//ConceptDeclaration
 		public RuleCall getDeclarationConceptDeclarationParserRuleCall_2_0() { return cDeclarationConceptDeclarationParserRuleCall_2_0; }
 		
-		//('by' by=Concept)? & ('down' 'to' downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in' (unit=Unit |
-		//currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)? & (optional?='optional' | 'required')? &
-		//('named' name=(LOWERCASE_ID | STRING))?
+		//('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in'
+		//(unit=Unit | currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)? & (optional?='optional' |
+		//'required')? & ('named' name=(LOWERCASE_ID | STRING))?
 		public UnorderedGroup getUnorderedGroup_3() { return cUnorderedGroup_3; }
 		
-		//('by' by=Concept)?
+		//('by' by=ConceptDeclaration)?
 		public Group getGroup_3_0() { return cGroup_3_0; }
 		
 		//'by'
 		public Keyword getByKeyword_3_0_0() { return cByKeyword_3_0_0; }
 		
-		//by=Concept
+		//by=ConceptDeclaration
 		public Assignment getByAssignment_3_0_1() { return cByAssignment_3_0_1; }
 		
-		//Concept
-		public RuleCall getByConceptParserRuleCall_3_0_1_0() { return cByConceptParserRuleCall_3_0_1_0; }
+		//ConceptDeclaration
+		public RuleCall getByConceptDeclarationParserRuleCall_3_0_1_0() { return cByConceptDeclarationParserRuleCall_3_0_1_0; }
 		
 		//('down' 'to' downTo=Concept)?
 		public Group getGroup_3_1() { return cGroup_3_1; }
@@ -9089,7 +9090,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup_3_0 = (Group)cUnorderedGroup_3.eContents().get(0);
 		private final Keyword cByKeyword_3_0_0 = (Keyword)cGroup_3_0.eContents().get(0);
 		private final Assignment cByAssignment_3_0_1 = (Assignment)cGroup_3_0.eContents().get(1);
-		private final RuleCall cByConceptParserRuleCall_3_0_1_0 = (RuleCall)cByAssignment_3_0_1.eContents().get(0);
+		private final RuleCall cByConceptDeclarationParserRuleCall_3_0_1_0 = (RuleCall)cByAssignment_3_0_1.eContents().get(0);
 		private final Group cGroup_3_1 = (Group)cUnorderedGroup_3.eContents().get(1);
 		private final Keyword cDownKeyword_3_1_0 = (Keyword)cGroup_3_1.eContents().get(0);
 		private final Keyword cToKeyword_3_1_1 = (Keyword)cGroup_3_1.eContents().get(1);
@@ -9129,14 +9130,14 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		// */ AlternativeDependencyObservableSemantics ObservableSemantics:
 		//	(value=LiteralValueWithConcept 'as')?
 		//	generic?='any'?
-		//	declaration=ConceptDeclaration (('by' by=Concept)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
+		//	declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
 		//	accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)?)
 		//	('if' condition=EXPR)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(value=LiteralValueWithConcept 'as')? generic?='any'? declaration=ConceptDeclaration (('by' by=Concept)? & ('down' 'to'
-		//downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per'
-		//unit=Unit)? & (from=Number 'to' to=Number)?) ('if' condition=EXPR)?
+		//(value=LiteralValueWithConcept 'as')? generic?='any'? declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? &
+		//('down' 'to' downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) |
+		//'per' unit=Unit)? & (from=Number 'to' to=Number)?) ('if' condition=EXPR)?
 		public Group getGroup() { return cGroup; }
 		
 		//(value=LiteralValueWithConcept 'as')?
@@ -9163,21 +9164,21 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//ConceptDeclaration
 		public RuleCall getDeclarationConceptDeclarationParserRuleCall_2_0() { return cDeclarationConceptDeclarationParserRuleCall_2_0; }
 		
-		//('by' by=Concept)? & ('down' 'to' downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in' (unit=Unit |
-		//currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)?
+		//('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in'
+		//(unit=Unit | currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)?
 		public UnorderedGroup getUnorderedGroup_3() { return cUnorderedGroup_3; }
 		
-		//('by' by=Concept)?
+		//('by' by=ConceptDeclaration)?
 		public Group getGroup_3_0() { return cGroup_3_0; }
 		
 		//'by'
 		public Keyword getByKeyword_3_0_0() { return cByKeyword_3_0_0; }
 		
-		//by=Concept
+		//by=ConceptDeclaration
 		public Assignment getByAssignment_3_0_1() { return cByAssignment_3_0_1; }
 		
-		//Concept
-		public RuleCall getByConceptParserRuleCall_3_0_1_0() { return cByConceptParserRuleCall_3_0_1_0; }
+		//ConceptDeclaration
+		public RuleCall getByConceptDeclarationParserRuleCall_3_0_1_0() { return cByConceptDeclarationParserRuleCall_3_0_1_0; }
 		
 		//('down' 'to' downTo=Concept)?
 		public Group getGroup_3_1() { return cGroup_3_1; }
@@ -10607,7 +10608,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	// */ ObservableSemantics:
 	//	(value=Value 'as')?
 	//	generic?='any'?
-	//	declaration=ConceptDeclaration (('by' by=Concept)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
+	//	declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
 	//	accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (optional?='optional' |
 	//	'required')? & (from=Number 'to' to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?);
 	public ObservableSemanticsElements getObservableSemanticsAccess() {
@@ -10624,7 +10625,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	// */ AnnotatedObservableSemantics ObservableSemantics:
 	//	annotations+=Annotation* (value=Value 'as')?
 	//	generic?='any'?
-	//	declaration=ConceptDeclaration (('by' by=Concept)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
+	//	declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
 	//	accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (optional?='optional' |
 	//	'required')? & (from=Number 'to' to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?);
 	public AnnotatedObservableSemanticsElements getAnnotatedObservableSemanticsAccess() {
@@ -11219,7 +11220,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	// * Observable without the 'as' to use in model declarations and without the 'optional' that
 	// * is only for dependencies.
 	// */ SimpleObservableSemantics ObservableSemantics:
-	//	declaration=ConceptDeclaration (('by' by=Concept)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
+	//	declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
 	//	accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)?
 	//	& (optional?='optional' | 'required')? & ('named' name=(LOWERCASE_ID | STRING))?);
 	public SimpleObservableSemanticsElements getSimpleObservableSemanticsAccess() {
@@ -11235,7 +11236,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	// */ DependencyObservableSemantics ObservableSemantics:
 	//	(value=LiteralValueWithConcept 'as')?
 	//	generic?='any'?
-	//	declaration=ConceptDeclaration (('by' by=Concept)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
+	//	declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
 	//	accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)?
 	//	& (optional?='optional' | 'required')? & ('named' name=(LOWERCASE_ID | STRING))?);
 	public DependencyObservableSemanticsElements getDependencyObservableSemanticsAccess() {
@@ -11252,7 +11253,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	// */ AlternativeDependencyObservableSemantics ObservableSemantics:
 	//	(value=LiteralValueWithConcept 'as')?
 	//	generic?='any'?
-	//	declaration=ConceptDeclaration (('by' by=Concept)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
+	//	declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
 	//	accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)?)
 	//	('if' condition=EXPR)?;
 	public AlternativeDependencyObservableSemanticsElements getAlternativeDependencyObservableSemanticsAccess() {

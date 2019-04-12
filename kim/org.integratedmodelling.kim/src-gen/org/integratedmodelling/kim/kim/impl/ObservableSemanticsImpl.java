@@ -105,7 +105,7 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * @generated
    * @ordered
    */
-  protected Concept by;
+  protected ConceptDeclaration by;
 
   /**
    * The cached value of the '{@link #getDownTo() <em>Down To</em>}' containment reference.
@@ -392,7 +392,7 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * <!-- end-user-doc -->
    * @generated
    */
-  public Concept getBy()
+  public ConceptDeclaration getBy()
   {
     return by;
   }
@@ -402,9 +402,9 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetBy(Concept newBy, NotificationChain msgs)
+  public NotificationChain basicSetBy(ConceptDeclaration newBy, NotificationChain msgs)
   {
-    Concept oldBy = by;
+    ConceptDeclaration oldBy = by;
     by = newBy;
     if (eNotificationRequired())
     {
@@ -419,7 +419,7 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setBy(Concept newBy)
+  public void setBy(ConceptDeclaration newBy)
   {
     if (newBy != by)
     {
@@ -876,7 +876,7 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         setDeclaration((ConceptDeclaration)newValue);
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__BY:
-        setBy((Concept)newValue);
+        setBy((ConceptDeclaration)newValue);
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__DOWN_TO:
         setDownTo((Concept)newValue);
@@ -933,7 +933,7 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         setDeclaration((ConceptDeclaration)null);
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__BY:
-        setBy((Concept)null);
+        setBy((ConceptDeclaration)null);
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__DOWN_TO:
         setDownTo((Concept)null);
@@ -1021,7 +1021,7 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuilder result = new StringBuilder(super.toString());
+    StringBuffer result = new StringBuffer(super.toString());
     result.append(" (generic: ");
     result.append(generic);
     result.append(", accordingTo: ");

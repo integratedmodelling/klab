@@ -159,7 +159,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *
 	 * This ambiguous syntax occurs at:
 	 *     accordingTo=PropertyId (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     accordingTo=PropertyId (ambiguity) 'by' by=Concept
+	 *     accordingTo=PropertyId (ambiguity) 'by' by=ConceptDeclaration
 	 *     accordingTo=PropertyId (ambiguity) 'down' 'to' downTo=Concept
 	 *     accordingTo=PropertyId (ambiguity) 'in' currency=Currency
 	 *     accordingTo=PropertyId (ambiguity) 'in' unit=Unit
@@ -169,19 +169,19 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     accordingTo=PropertyId (ambiguity) (rule end)
 	 *     accordingTo=PropertyId (ambiguity) from=Number
 	 *     accordingTo=PropertyId (ambiguity) optional?='optional'
-	 *     by=Concept (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     by=Concept (ambiguity) 'by' by=Concept
-	 *     by=Concept (ambiguity) 'down' 'to' downTo=Concept
-	 *     by=Concept (ambiguity) 'in' currency=Currency
-	 *     by=Concept (ambiguity) 'in' unit=Unit
-	 *     by=Concept (ambiguity) 'named' name=LOWERCASE_ID
-	 *     by=Concept (ambiguity) 'named' name=STRING
-	 *     by=Concept (ambiguity) 'per' unit=Unit
-	 *     by=Concept (ambiguity) (rule end)
-	 *     by=Concept (ambiguity) from=Number
-	 *     by=Concept (ambiguity) optional?='optional'
+	 *     by=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     by=ConceptDeclaration (ambiguity) 'by' by=ConceptDeclaration
+	 *     by=ConceptDeclaration (ambiguity) 'down' 'to' downTo=Concept
+	 *     by=ConceptDeclaration (ambiguity) 'in' currency=Currency
+	 *     by=ConceptDeclaration (ambiguity) 'in' unit=Unit
+	 *     by=ConceptDeclaration (ambiguity) 'named' name=LOWERCASE_ID
+	 *     by=ConceptDeclaration (ambiguity) 'named' name=STRING
+	 *     by=ConceptDeclaration (ambiguity) 'per' unit=Unit
+	 *     by=ConceptDeclaration (ambiguity) (rule end)
+	 *     by=ConceptDeclaration (ambiguity) from=Number
+	 *     by=ConceptDeclaration (ambiguity) optional?='optional'
 	 *     currency=Currency (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     currency=Currency (ambiguity) 'by' by=Concept
+	 *     currency=Currency (ambiguity) 'by' by=ConceptDeclaration
 	 *     currency=Currency (ambiguity) 'down' 'to' downTo=Concept
 	 *     currency=Currency (ambiguity) 'in' currency=Currency
 	 *     currency=Currency (ambiguity) 'in' unit=Unit
@@ -192,7 +192,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     currency=Currency (ambiguity) from=Number
 	 *     currency=Currency (ambiguity) optional?='optional'
 	 *     declaration=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     declaration=ConceptDeclaration (ambiguity) 'by' by=Concept
+	 *     declaration=ConceptDeclaration (ambiguity) 'by' by=ConceptDeclaration
 	 *     declaration=ConceptDeclaration (ambiguity) 'down' 'to' downTo=Concept
 	 *     declaration=ConceptDeclaration (ambiguity) 'in' currency=Currency
 	 *     declaration=ConceptDeclaration (ambiguity) 'in' unit=Unit
@@ -203,7 +203,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     declaration=ConceptDeclaration (ambiguity) from=Number
 	 *     declaration=ConceptDeclaration (ambiguity) optional?='optional'
 	 *     downTo=Concept (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     downTo=Concept (ambiguity) 'by' by=Concept
+	 *     downTo=Concept (ambiguity) 'by' by=ConceptDeclaration
 	 *     downTo=Concept (ambiguity) 'down' 'to' downTo=Concept
 	 *     downTo=Concept (ambiguity) 'in' currency=Currency
 	 *     downTo=Concept (ambiguity) 'in' unit=Unit
@@ -214,7 +214,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     downTo=Concept (ambiguity) from=Number
 	 *     downTo=Concept (ambiguity) optional?='optional'
 	 *     name=LOWERCASE_ID (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     name=LOWERCASE_ID (ambiguity) 'by' by=Concept
+	 *     name=LOWERCASE_ID (ambiguity) 'by' by=ConceptDeclaration
 	 *     name=LOWERCASE_ID (ambiguity) 'down' 'to' downTo=Concept
 	 *     name=LOWERCASE_ID (ambiguity) 'in' currency=Currency
 	 *     name=LOWERCASE_ID (ambiguity) 'in' unit=Unit
@@ -225,7 +225,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=LOWERCASE_ID (ambiguity) from=Number
 	 *     name=LOWERCASE_ID (ambiguity) optional?='optional'
 	 *     name=STRING (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     name=STRING (ambiguity) 'by' by=Concept
+	 *     name=STRING (ambiguity) 'by' by=ConceptDeclaration
 	 *     name=STRING (ambiguity) 'down' 'to' downTo=Concept
 	 *     name=STRING (ambiguity) 'in' currency=Currency
 	 *     name=STRING (ambiguity) 'in' unit=Unit
@@ -236,7 +236,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=STRING (ambiguity) from=Number
 	 *     name=STRING (ambiguity) optional?='optional'
 	 *     optional?='optional' (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     optional?='optional' (ambiguity) 'by' by=Concept
+	 *     optional?='optional' (ambiguity) 'by' by=ConceptDeclaration
 	 *     optional?='optional' (ambiguity) 'down' 'to' downTo=Concept
 	 *     optional?='optional' (ambiguity) 'in' currency=Currency
 	 *     optional?='optional' (ambiguity) 'in' unit=Unit
@@ -247,7 +247,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     optional?='optional' (ambiguity) from=Number
 	 *     optional?='optional' (ambiguity) optional?='optional'
 	 *     to=Number (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     to=Number (ambiguity) 'by' by=Concept
+	 *     to=Number (ambiguity) 'by' by=ConceptDeclaration
 	 *     to=Number (ambiguity) 'down' 'to' downTo=Concept
 	 *     to=Number (ambiguity) 'in' currency=Currency
 	 *     to=Number (ambiguity) 'in' unit=Unit
@@ -258,7 +258,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     to=Number (ambiguity) from=Number
 	 *     to=Number (ambiguity) optional?='optional'
 	 *     unit=Unit (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     unit=Unit (ambiguity) 'by' by=Concept
+	 *     unit=Unit (ambiguity) 'by' by=ConceptDeclaration
 	 *     unit=Unit (ambiguity) 'down' 'to' downTo=Concept
 	 *     unit=Unit (ambiguity) 'in' currency=Currency
 	 *     unit=Unit (ambiguity) 'in' unit=Unit
@@ -345,7 +345,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *
 	 * This ambiguous syntax occurs at:
 	 *     accordingTo=PropertyId (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     accordingTo=PropertyId (ambiguity) 'by' by=Concept
+	 *     accordingTo=PropertyId (ambiguity) 'by' by=ConceptDeclaration
 	 *     accordingTo=PropertyId (ambiguity) 'down' 'to' downTo=Concept
 	 *     accordingTo=PropertyId (ambiguity) 'in' currency=Currency
 	 *     accordingTo=PropertyId (ambiguity) 'in' unit=Unit
@@ -355,19 +355,19 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     accordingTo=PropertyId (ambiguity) (rule end)
 	 *     accordingTo=PropertyId (ambiguity) from=Number
 	 *     accordingTo=PropertyId (ambiguity) optional?='optional'
-	 *     by=Concept (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     by=Concept (ambiguity) 'by' by=Concept
-	 *     by=Concept (ambiguity) 'down' 'to' downTo=Concept
-	 *     by=Concept (ambiguity) 'in' currency=Currency
-	 *     by=Concept (ambiguity) 'in' unit=Unit
-	 *     by=Concept (ambiguity) 'named' name=LOWERCASE_ID
-	 *     by=Concept (ambiguity) 'named' name=STRING
-	 *     by=Concept (ambiguity) 'per' unit=Unit
-	 *     by=Concept (ambiguity) (rule end)
-	 *     by=Concept (ambiguity) from=Number
-	 *     by=Concept (ambiguity) optional?='optional'
+	 *     by=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     by=ConceptDeclaration (ambiguity) 'by' by=ConceptDeclaration
+	 *     by=ConceptDeclaration (ambiguity) 'down' 'to' downTo=Concept
+	 *     by=ConceptDeclaration (ambiguity) 'in' currency=Currency
+	 *     by=ConceptDeclaration (ambiguity) 'in' unit=Unit
+	 *     by=ConceptDeclaration (ambiguity) 'named' name=LOWERCASE_ID
+	 *     by=ConceptDeclaration (ambiguity) 'named' name=STRING
+	 *     by=ConceptDeclaration (ambiguity) 'per' unit=Unit
+	 *     by=ConceptDeclaration (ambiguity) (rule end)
+	 *     by=ConceptDeclaration (ambiguity) from=Number
+	 *     by=ConceptDeclaration (ambiguity) optional?='optional'
 	 *     currency=Currency (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     currency=Currency (ambiguity) 'by' by=Concept
+	 *     currency=Currency (ambiguity) 'by' by=ConceptDeclaration
 	 *     currency=Currency (ambiguity) 'down' 'to' downTo=Concept
 	 *     currency=Currency (ambiguity) 'in' currency=Currency
 	 *     currency=Currency (ambiguity) 'in' unit=Unit
@@ -378,7 +378,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     currency=Currency (ambiguity) from=Number
 	 *     currency=Currency (ambiguity) optional?='optional'
 	 *     declaration=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     declaration=ConceptDeclaration (ambiguity) 'by' by=Concept
+	 *     declaration=ConceptDeclaration (ambiguity) 'by' by=ConceptDeclaration
 	 *     declaration=ConceptDeclaration (ambiguity) 'down' 'to' downTo=Concept
 	 *     declaration=ConceptDeclaration (ambiguity) 'in' currency=Currency
 	 *     declaration=ConceptDeclaration (ambiguity) 'in' unit=Unit
@@ -389,7 +389,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     declaration=ConceptDeclaration (ambiguity) from=Number
 	 *     declaration=ConceptDeclaration (ambiguity) optional?='optional'
 	 *     downTo=Concept (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     downTo=Concept (ambiguity) 'by' by=Concept
+	 *     downTo=Concept (ambiguity) 'by' by=ConceptDeclaration
 	 *     downTo=Concept (ambiguity) 'down' 'to' downTo=Concept
 	 *     downTo=Concept (ambiguity) 'in' currency=Currency
 	 *     downTo=Concept (ambiguity) 'in' unit=Unit
@@ -400,7 +400,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     downTo=Concept (ambiguity) from=Number
 	 *     downTo=Concept (ambiguity) optional?='optional'
 	 *     name=LOWERCASE_ID (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     name=LOWERCASE_ID (ambiguity) 'by' by=Concept
+	 *     name=LOWERCASE_ID (ambiguity) 'by' by=ConceptDeclaration
 	 *     name=LOWERCASE_ID (ambiguity) 'down' 'to' downTo=Concept
 	 *     name=LOWERCASE_ID (ambiguity) 'in' currency=Currency
 	 *     name=LOWERCASE_ID (ambiguity) 'in' unit=Unit
@@ -411,7 +411,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=LOWERCASE_ID (ambiguity) from=Number
 	 *     name=LOWERCASE_ID (ambiguity) optional?='optional'
 	 *     name=STRING (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     name=STRING (ambiguity) 'by' by=Concept
+	 *     name=STRING (ambiguity) 'by' by=ConceptDeclaration
 	 *     name=STRING (ambiguity) 'down' 'to' downTo=Concept
 	 *     name=STRING (ambiguity) 'in' currency=Currency
 	 *     name=STRING (ambiguity) 'in' unit=Unit
@@ -422,7 +422,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=STRING (ambiguity) from=Number
 	 *     name=STRING (ambiguity) optional?='optional'
 	 *     optional?='optional' (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     optional?='optional' (ambiguity) 'by' by=Concept
+	 *     optional?='optional' (ambiguity) 'by' by=ConceptDeclaration
 	 *     optional?='optional' (ambiguity) 'down' 'to' downTo=Concept
 	 *     optional?='optional' (ambiguity) 'in' currency=Currency
 	 *     optional?='optional' (ambiguity) 'in' unit=Unit
@@ -433,7 +433,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     optional?='optional' (ambiguity) from=Number
 	 *     optional?='optional' (ambiguity) optional?='optional'
 	 *     to=Number (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     to=Number (ambiguity) 'by' by=Concept
+	 *     to=Number (ambiguity) 'by' by=ConceptDeclaration
 	 *     to=Number (ambiguity) 'down' 'to' downTo=Concept
 	 *     to=Number (ambiguity) 'in' currency=Currency
 	 *     to=Number (ambiguity) 'in' unit=Unit
@@ -444,7 +444,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     to=Number (ambiguity) from=Number
 	 *     to=Number (ambiguity) optional?='optional'
 	 *     unit=Unit (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     unit=Unit (ambiguity) 'by' by=Concept
+	 *     unit=Unit (ambiguity) 'by' by=ConceptDeclaration
 	 *     unit=Unit (ambiguity) 'down' 'to' downTo=Concept
 	 *     unit=Unit (ambiguity) 'in' currency=Currency
 	 *     unit=Unit (ambiguity) 'in' unit=Unit
@@ -732,7 +732,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *
 	 * This ambiguous syntax occurs at:
 	 *     accordingTo=PropertyId (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     accordingTo=PropertyId (ambiguity) 'by' by=Concept
+	 *     accordingTo=PropertyId (ambiguity) 'by' by=ConceptDeclaration
 	 *     accordingTo=PropertyId (ambiguity) 'down' 'to' downTo=Concept
 	 *     accordingTo=PropertyId (ambiguity) 'in' currency=Currency
 	 *     accordingTo=PropertyId (ambiguity) 'in' unit=Unit
@@ -742,19 +742,19 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     accordingTo=PropertyId (ambiguity) (rule end)
 	 *     accordingTo=PropertyId (ambiguity) from=Number
 	 *     accordingTo=PropertyId (ambiguity) optional?='optional'
-	 *     by=Concept (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     by=Concept (ambiguity) 'by' by=Concept
-	 *     by=Concept (ambiguity) 'down' 'to' downTo=Concept
-	 *     by=Concept (ambiguity) 'in' currency=Currency
-	 *     by=Concept (ambiguity) 'in' unit=Unit
-	 *     by=Concept (ambiguity) 'named' name=LOWERCASE_ID
-	 *     by=Concept (ambiguity) 'named' name=STRING
-	 *     by=Concept (ambiguity) 'per' unit=Unit
-	 *     by=Concept (ambiguity) (rule end)
-	 *     by=Concept (ambiguity) from=Number
-	 *     by=Concept (ambiguity) optional?='optional'
+	 *     by=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     by=ConceptDeclaration (ambiguity) 'by' by=ConceptDeclaration
+	 *     by=ConceptDeclaration (ambiguity) 'down' 'to' downTo=Concept
+	 *     by=ConceptDeclaration (ambiguity) 'in' currency=Currency
+	 *     by=ConceptDeclaration (ambiguity) 'in' unit=Unit
+	 *     by=ConceptDeclaration (ambiguity) 'named' name=LOWERCASE_ID
+	 *     by=ConceptDeclaration (ambiguity) 'named' name=STRING
+	 *     by=ConceptDeclaration (ambiguity) 'per' unit=Unit
+	 *     by=ConceptDeclaration (ambiguity) (rule end)
+	 *     by=ConceptDeclaration (ambiguity) from=Number
+	 *     by=ConceptDeclaration (ambiguity) optional?='optional'
 	 *     currency=Currency (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     currency=Currency (ambiguity) 'by' by=Concept
+	 *     currency=Currency (ambiguity) 'by' by=ConceptDeclaration
 	 *     currency=Currency (ambiguity) 'down' 'to' downTo=Concept
 	 *     currency=Currency (ambiguity) 'in' currency=Currency
 	 *     currency=Currency (ambiguity) 'in' unit=Unit
@@ -765,7 +765,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     currency=Currency (ambiguity) from=Number
 	 *     currency=Currency (ambiguity) optional?='optional'
 	 *     declaration=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     declaration=ConceptDeclaration (ambiguity) 'by' by=Concept
+	 *     declaration=ConceptDeclaration (ambiguity) 'by' by=ConceptDeclaration
 	 *     declaration=ConceptDeclaration (ambiguity) 'down' 'to' downTo=Concept
 	 *     declaration=ConceptDeclaration (ambiguity) 'in' currency=Currency
 	 *     declaration=ConceptDeclaration (ambiguity) 'in' unit=Unit
@@ -776,7 +776,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     declaration=ConceptDeclaration (ambiguity) from=Number
 	 *     declaration=ConceptDeclaration (ambiguity) optional?='optional'
 	 *     downTo=Concept (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     downTo=Concept (ambiguity) 'by' by=Concept
+	 *     downTo=Concept (ambiguity) 'by' by=ConceptDeclaration
 	 *     downTo=Concept (ambiguity) 'down' 'to' downTo=Concept
 	 *     downTo=Concept (ambiguity) 'in' currency=Currency
 	 *     downTo=Concept (ambiguity) 'in' unit=Unit
@@ -787,7 +787,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     downTo=Concept (ambiguity) from=Number
 	 *     downTo=Concept (ambiguity) optional?='optional'
 	 *     name=LOWERCASE_ID (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     name=LOWERCASE_ID (ambiguity) 'by' by=Concept
+	 *     name=LOWERCASE_ID (ambiguity) 'by' by=ConceptDeclaration
 	 *     name=LOWERCASE_ID (ambiguity) 'down' 'to' downTo=Concept
 	 *     name=LOWERCASE_ID (ambiguity) 'in' currency=Currency
 	 *     name=LOWERCASE_ID (ambiguity) 'in' unit=Unit
@@ -798,7 +798,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=LOWERCASE_ID (ambiguity) from=Number
 	 *     name=LOWERCASE_ID (ambiguity) optional?='optional'
 	 *     name=STRING (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     name=STRING (ambiguity) 'by' by=Concept
+	 *     name=STRING (ambiguity) 'by' by=ConceptDeclaration
 	 *     name=STRING (ambiguity) 'down' 'to' downTo=Concept
 	 *     name=STRING (ambiguity) 'in' currency=Currency
 	 *     name=STRING (ambiguity) 'in' unit=Unit
@@ -809,7 +809,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=STRING (ambiguity) from=Number
 	 *     name=STRING (ambiguity) optional?='optional'
 	 *     optional?='optional' (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     optional?='optional' (ambiguity) 'by' by=Concept
+	 *     optional?='optional' (ambiguity) 'by' by=ConceptDeclaration
 	 *     optional?='optional' (ambiguity) 'down' 'to' downTo=Concept
 	 *     optional?='optional' (ambiguity) 'in' currency=Currency
 	 *     optional?='optional' (ambiguity) 'in' unit=Unit
@@ -820,7 +820,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     optional?='optional' (ambiguity) from=Number
 	 *     optional?='optional' (ambiguity) optional?='optional'
 	 *     to=Number (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     to=Number (ambiguity) 'by' by=Concept
+	 *     to=Number (ambiguity) 'by' by=ConceptDeclaration
 	 *     to=Number (ambiguity) 'down' 'to' downTo=Concept
 	 *     to=Number (ambiguity) 'in' currency=Currency
 	 *     to=Number (ambiguity) 'in' unit=Unit
@@ -831,7 +831,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     to=Number (ambiguity) from=Number
 	 *     to=Number (ambiguity) optional?='optional'
 	 *     unit=Unit (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     unit=Unit (ambiguity) 'by' by=Concept
+	 *     unit=Unit (ambiguity) 'by' by=ConceptDeclaration
 	 *     unit=Unit (ambiguity) 'down' 'to' downTo=Concept
 	 *     unit=Unit (ambiguity) 'in' currency=Currency
 	 *     unit=Unit (ambiguity) 'in' unit=Unit
@@ -918,7 +918,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *
 	 * This ambiguous syntax occurs at:
 	 *     accordingTo=PropertyId (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     accordingTo=PropertyId (ambiguity) 'by' by=Concept
+	 *     accordingTo=PropertyId (ambiguity) 'by' by=ConceptDeclaration
 	 *     accordingTo=PropertyId (ambiguity) 'down' 'to' downTo=Concept
 	 *     accordingTo=PropertyId (ambiguity) 'in' currency=Currency
 	 *     accordingTo=PropertyId (ambiguity) 'in' unit=Unit
@@ -928,19 +928,19 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     accordingTo=PropertyId (ambiguity) (rule end)
 	 *     accordingTo=PropertyId (ambiguity) from=Number
 	 *     accordingTo=PropertyId (ambiguity) optional?='optional'
-	 *     by=Concept (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     by=Concept (ambiguity) 'by' by=Concept
-	 *     by=Concept (ambiguity) 'down' 'to' downTo=Concept
-	 *     by=Concept (ambiguity) 'in' currency=Currency
-	 *     by=Concept (ambiguity) 'in' unit=Unit
-	 *     by=Concept (ambiguity) 'named' name=LOWERCASE_ID
-	 *     by=Concept (ambiguity) 'named' name=STRING
-	 *     by=Concept (ambiguity) 'per' unit=Unit
-	 *     by=Concept (ambiguity) (rule end)
-	 *     by=Concept (ambiguity) from=Number
-	 *     by=Concept (ambiguity) optional?='optional'
+	 *     by=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     by=ConceptDeclaration (ambiguity) 'by' by=ConceptDeclaration
+	 *     by=ConceptDeclaration (ambiguity) 'down' 'to' downTo=Concept
+	 *     by=ConceptDeclaration (ambiguity) 'in' currency=Currency
+	 *     by=ConceptDeclaration (ambiguity) 'in' unit=Unit
+	 *     by=ConceptDeclaration (ambiguity) 'named' name=LOWERCASE_ID
+	 *     by=ConceptDeclaration (ambiguity) 'named' name=STRING
+	 *     by=ConceptDeclaration (ambiguity) 'per' unit=Unit
+	 *     by=ConceptDeclaration (ambiguity) (rule end)
+	 *     by=ConceptDeclaration (ambiguity) from=Number
+	 *     by=ConceptDeclaration (ambiguity) optional?='optional'
 	 *     currency=Currency (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     currency=Currency (ambiguity) 'by' by=Concept
+	 *     currency=Currency (ambiguity) 'by' by=ConceptDeclaration
 	 *     currency=Currency (ambiguity) 'down' 'to' downTo=Concept
 	 *     currency=Currency (ambiguity) 'in' currency=Currency
 	 *     currency=Currency (ambiguity) 'in' unit=Unit
@@ -951,7 +951,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     currency=Currency (ambiguity) from=Number
 	 *     currency=Currency (ambiguity) optional?='optional'
 	 *     declaration=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     declaration=ConceptDeclaration (ambiguity) 'by' by=Concept
+	 *     declaration=ConceptDeclaration (ambiguity) 'by' by=ConceptDeclaration
 	 *     declaration=ConceptDeclaration (ambiguity) 'down' 'to' downTo=Concept
 	 *     declaration=ConceptDeclaration (ambiguity) 'in' currency=Currency
 	 *     declaration=ConceptDeclaration (ambiguity) 'in' unit=Unit
@@ -962,7 +962,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     declaration=ConceptDeclaration (ambiguity) from=Number
 	 *     declaration=ConceptDeclaration (ambiguity) optional?='optional'
 	 *     downTo=Concept (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     downTo=Concept (ambiguity) 'by' by=Concept
+	 *     downTo=Concept (ambiguity) 'by' by=ConceptDeclaration
 	 *     downTo=Concept (ambiguity) 'down' 'to' downTo=Concept
 	 *     downTo=Concept (ambiguity) 'in' currency=Currency
 	 *     downTo=Concept (ambiguity) 'in' unit=Unit
@@ -973,7 +973,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     downTo=Concept (ambiguity) from=Number
 	 *     downTo=Concept (ambiguity) optional?='optional'
 	 *     name=LOWERCASE_ID (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     name=LOWERCASE_ID (ambiguity) 'by' by=Concept
+	 *     name=LOWERCASE_ID (ambiguity) 'by' by=ConceptDeclaration
 	 *     name=LOWERCASE_ID (ambiguity) 'down' 'to' downTo=Concept
 	 *     name=LOWERCASE_ID (ambiguity) 'in' currency=Currency
 	 *     name=LOWERCASE_ID (ambiguity) 'in' unit=Unit
@@ -984,7 +984,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=LOWERCASE_ID (ambiguity) from=Number
 	 *     name=LOWERCASE_ID (ambiguity) optional?='optional'
 	 *     name=STRING (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     name=STRING (ambiguity) 'by' by=Concept
+	 *     name=STRING (ambiguity) 'by' by=ConceptDeclaration
 	 *     name=STRING (ambiguity) 'down' 'to' downTo=Concept
 	 *     name=STRING (ambiguity) 'in' currency=Currency
 	 *     name=STRING (ambiguity) 'in' unit=Unit
@@ -995,7 +995,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=STRING (ambiguity) from=Number
 	 *     name=STRING (ambiguity) optional?='optional'
 	 *     optional?='optional' (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     optional?='optional' (ambiguity) 'by' by=Concept
+	 *     optional?='optional' (ambiguity) 'by' by=ConceptDeclaration
 	 *     optional?='optional' (ambiguity) 'down' 'to' downTo=Concept
 	 *     optional?='optional' (ambiguity) 'in' currency=Currency
 	 *     optional?='optional' (ambiguity) 'in' unit=Unit
@@ -1006,7 +1006,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     optional?='optional' (ambiguity) from=Number
 	 *     optional?='optional' (ambiguity) optional?='optional'
 	 *     to=Number (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     to=Number (ambiguity) 'by' by=Concept
+	 *     to=Number (ambiguity) 'by' by=ConceptDeclaration
 	 *     to=Number (ambiguity) 'down' 'to' downTo=Concept
 	 *     to=Number (ambiguity) 'in' currency=Currency
 	 *     to=Number (ambiguity) 'in' unit=Unit
@@ -1017,7 +1017,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     to=Number (ambiguity) from=Number
 	 *     to=Number (ambiguity) optional?='optional'
 	 *     unit=Unit (ambiguity) 'according' 'to' accordingTo=PropertyId
-	 *     unit=Unit (ambiguity) 'by' by=Concept
+	 *     unit=Unit (ambiguity) 'by' by=ConceptDeclaration
 	 *     unit=Unit (ambiguity) 'down' 'to' downTo=Concept
 	 *     unit=Unit (ambiguity) 'in' currency=Currency
 	 *     unit=Unit (ambiguity) 'in' unit=Unit

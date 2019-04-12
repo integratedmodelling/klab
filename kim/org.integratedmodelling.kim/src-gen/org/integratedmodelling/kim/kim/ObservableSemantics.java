@@ -126,12 +126,12 @@ public interface ObservableSemantics extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>By</em>' containment reference.
-   * @see #setBy(Concept)
+   * @see #setBy(ConceptDeclaration)
    * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics_By()
    * @model containment="true"
    * @generated
    */
-  Concept getBy();
+  ConceptDeclaration getBy();
 
   /**
    * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getBy <em>By</em>}' containment reference.
@@ -141,7 +141,7 @@ public interface ObservableSemantics extends EObject
    * @see #getBy()
    * @generated
    */
-  void setBy(Concept value);
+  void setBy(ConceptDeclaration value);
 
   /**
    * Returns the value of the '<em><b>Down To</b></em>' containment reference.

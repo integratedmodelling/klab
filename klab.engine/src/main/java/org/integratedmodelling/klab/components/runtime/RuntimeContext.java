@@ -401,7 +401,6 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 			Dataflow dataflow = Dataflows.INSTANCE
 					.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope).setPrimary(false);
-			;
 
 			ret = (IRelationship) dataflow.run(scale, ((Monitor) monitor).get(subtask));
 		}

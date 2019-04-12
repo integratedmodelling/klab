@@ -28,20 +28,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Info messages in k.Modeler are double-clickable for detail pop-up again.
+- Project deletion is now implemented (engine does physical deletion - use with caution).
 ### Changed
-- Self-generated model names are now fully descriptive.
+- Allow complex declarations after classifier 'by' to eventually enable conceptual or contextual 
+  redistribution of models.
+- Self-generated model names are now fully descriptive of their observables.
+- Completely remove knowledge.kim project-wide namespace as it conflicts with k.LAB 
+  best practices.
 ### Fixed
 - Improve camelcase translation in observable names to avoid a_b_c_d weirdness.
-  
+- KLAB-127 Exception when creating new projects due to incomplete removal of knowledge.kim 
+  from logics.
+- Only 'within' concept can be null in contextual resolution (caused bad resolution bug, 
+  visible in soil retention model).
+- Project creation refreshes navigator properly.
+    
 ## [0.10.0.152] -- 2019/04/04
 ### Added
 ### Changed
+- All concepts "dropped" are now resolved contextually, i.e. modified before resolution 
+  to the same concept 'within' the subject concept that they are observed into. This enables  
+  selective resolution (i.e. within watershed can select different model than within region) 
+  and enables much more sophisticated validation, but also tests the ontologies to new 
+  levels, so extra care is now needed in attributing context to concepts. The IM ontologies 
+  are being revised to ensure correct operation everywhere, so far all main models should 
+  be OK.
 - Overhaul resolution using IConcept.resolves() rather than isCompatible and removing 
   use of inheritance in kbox search strategy, as derived concepts can now be redundant.
 - Derived concepts are created in the topmost ontology in the dependency tree, including all 
   component namespaces, or in the reasoner's top ontology if additional ontology dependencies 
   would occur doing so. Redundancy for the same declaration is now possible, with a 
-  linear ontology import closure as the advantage. Option to direct the "common ontology" 
+  linear ontology import closure as the advantage. Option to redirect the "common ontology" 
   externally is now disabled.
 - Importing of referenced namespaces within the same workspace is now mandatory, and import of 
   namespaces outside of the workspace is an error.
@@ -62,7 +79,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.10.0.151] -- 2019/03/26
 ### Added
 - Begin supporting recontextualization of distributed states in expressions through @-modified identifiers 
-  (e.g. elevation@nw). These are recognized but not used yet. Use of recontextualization 
+  (e.g. elevation@nw). These are recognized and transpiled but not used yet. Use of recontextualization 
   is disabled for expressions used in documentation to avoid conflicting with @-directives.
 - Add CLI 'kbox' command namespace for kbox inquiries and enable 'reason info' for ontologies.
 - Support 'equals' instead of 'is' in concept declarations to declare aliases instead

@@ -41,8 +41,4 @@ public class ProjectReference {
 	public String toString() {
 		return name;
 	}
-	
-	
-
-
 }

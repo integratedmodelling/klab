@@ -191,7 +191,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			if (((Actuator) a).isReference()) {
 				IActuator ref = catalog.get(a.getName());
 				if (ref == null) {
-					throw new KlabIllegalStatusException("referenced actuator not found");
+					throw new KlabIllegalStatusException("referenced actuator not found: " + a.getName());
 				}
 				graph.addEdge(ref, actuator);
 			} else {

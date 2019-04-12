@@ -767,6 +767,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			break;
 
 		case DeleteProject:
+			Resources.INSTANCE.deleteProject(request.getProjectId()); 
 			break;
 		case DeleteResource:
 			break;

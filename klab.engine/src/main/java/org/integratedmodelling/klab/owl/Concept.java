@@ -699,7 +699,7 @@ public class Concept extends Knowledge implements IConcept {
 		}
 
 		int component = getDistance(Observables.INSTANCE.getContextType(this),
-				Observables.INSTANCE.getContextType(concept));
+				Observables.INSTANCE.getContextType(concept), true);
 
 		if (component < 0) {
 			double d = ((double) component / 10.0);
@@ -708,7 +708,7 @@ public class Concept extends Knowledge implements IConcept {
 		distance += component;
 
 		component = getDistance(Observables.INSTANCE.getInherentType(this),
-				Observables.INSTANCE.getInherentType(concept));
+				Observables.INSTANCE.getInherentType(concept), false);
 
 		if (component < 0) {
 			double d = ((double) component / 10.0);
@@ -716,7 +716,7 @@ public class Concept extends Knowledge implements IConcept {
 		}
 		distance += component;
 
-		component = getDistance(Observables.INSTANCE.getGoalType(this), Observables.INSTANCE.getGoalType(concept));
+		component = getDistance(Observables.INSTANCE.getGoalType(this), Observables.INSTANCE.getGoalType(concept), false);
 
 		if (component < 0) {
 			double d = ((double) component / 10.0);
@@ -725,7 +725,7 @@ public class Concept extends Knowledge implements IConcept {
 		distance += component;
 
 		component = getDistance(Observables.INSTANCE.getCooccurrentType(this),
-				Observables.INSTANCE.getCooccurrentType(concept));
+				Observables.INSTANCE.getCooccurrentType(concept), false);
 
 		if (component < 0) {
 			double d = ((double) component / 10.0);
@@ -734,7 +734,7 @@ public class Concept extends Knowledge implements IConcept {
 		distance += component;
 
 		component = getDistance(Observables.INSTANCE.getCausantType(this),
-				Observables.INSTANCE.getCausantType(concept));
+				Observables.INSTANCE.getCausantType(concept), false);
 
 		if (component < 0) {
 			double d = ((double) component / 10.0);
@@ -742,7 +742,7 @@ public class Concept extends Knowledge implements IConcept {
 		}
 		distance += component;
 
-		component = getDistance(Observables.INSTANCE.getCausedType(this), Observables.INSTANCE.getCausedType(concept));
+		component = getDistance(Observables.INSTANCE.getCausedType(this), Observables.INSTANCE.getCausedType(concept), false);
 
 		if (component < 0) {
 			double d = ((double) component / 10.0);
@@ -751,7 +751,7 @@ public class Concept extends Knowledge implements IConcept {
 		distance += component;
 
 		component = getDistance(Observables.INSTANCE.getAdjacentType(this),
-				Observables.INSTANCE.getAdjacentType(concept));
+				Observables.INSTANCE.getAdjacentType(concept), false);
 
 		if (component < 0) {
 			double d = ((double) component / 10.0);
@@ -760,7 +760,7 @@ public class Concept extends Knowledge implements IConcept {
 		distance += component;
 
 		component = getDistance(Observables.INSTANCE.getCompresentType(this),
-				Observables.INSTANCE.getCompresentType(concept));
+				Observables.INSTANCE.getCompresentType(concept), false);
 
 		if (component < 0) {
 			double d = ((double) component / 10.0);
@@ -769,7 +769,7 @@ public class Concept extends Knowledge implements IConcept {
 		distance += component;
 
 		component = getDistance(Observables.INSTANCE.getComparisonType(this),
-				Observables.INSTANCE.getComparisonType(concept));
+				Observables.INSTANCE.getComparisonType(concept), false);
 
 		if (component < 0) {
 			double d = ((double) component / 10.0);
@@ -780,11 +780,11 @@ public class Concept extends Knowledge implements IConcept {
 		return distance;
 	}
 
-	private int getDistance(IConcept cc1, IConcept cc2) {
+	private int getDistance(IConcept cc1, IConcept cc2, boolean acceptAbsent) {
 
 		int ret = 0;
 		if (cc1 == null && cc2 != null) {
-			ret = 50;
+			ret = acceptAbsent ? 50 : -50;
 		} else if (cc1 != null && cc2 == null) {
 			ret = -50;
 		} else if (cc1 != null && cc2 != null) {

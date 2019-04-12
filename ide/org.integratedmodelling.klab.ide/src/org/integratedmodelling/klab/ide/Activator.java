@@ -242,6 +242,13 @@ public class Activator extends AbstractUIPlugin {
 		this.engineStatusMonitor.start(relayId);
 
 	}
+	
+	/**
+	 * Call this after adding or removing projects
+	 */
+	public void reloadWorkspace() {
+		this.loader.loadProjectFiles(getProjectFiles());
+	}
 
 	// private Object getWorkspaceFiles() {
 	// // TODO Auto-generated method stub

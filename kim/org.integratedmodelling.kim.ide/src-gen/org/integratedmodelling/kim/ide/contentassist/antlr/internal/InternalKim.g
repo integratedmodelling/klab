@@ -37470,9 +37470,9 @@ rule__ObservableSemantics__ByAssignment_3_0_1
 	}
 :
 	(
-		{ before(grammarAccess.getObservableSemanticsAccess().getByConceptParserRuleCall_3_0_1_0()); }
-		ruleConcept
-		{ after(grammarAccess.getObservableSemanticsAccess().getByConceptParserRuleCall_3_0_1_0()); }
+		{ before(grammarAccess.getObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_3_0_1_0()); }
+		ruleConceptDeclaration
+		{ after(grammarAccess.getObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_3_0_1_0()); }
 	)
 ;
 finally {
@@ -37688,9 +37688,9 @@ rule__AnnotatedObservableSemantics__ByAssignment_4_0_1
 	}
 :
 	(
-		{ before(grammarAccess.getAnnotatedObservableSemanticsAccess().getByConceptParserRuleCall_4_0_1_0()); }
-		ruleConcept
-		{ after(grammarAccess.getAnnotatedObservableSemanticsAccess().getByConceptParserRuleCall_4_0_1_0()); }
+		{ before(grammarAccess.getAnnotatedObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_4_0_1_0()); }
+		ruleConceptDeclaration
+		{ after(grammarAccess.getAnnotatedObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_4_0_1_0()); }
 	)
 ;
 finally {
@@ -42083,9 +42083,9 @@ rule__SimpleObservableSemantics__ByAssignment_1_0_1
 	}
 :
 	(
-		{ before(grammarAccess.getSimpleObservableSemanticsAccess().getByConceptParserRuleCall_1_0_1_0()); }
-		ruleConcept
-		{ after(grammarAccess.getSimpleObservableSemanticsAccess().getByConceptParserRuleCall_1_0_1_0()); }
+		{ before(grammarAccess.getSimpleObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_1_0_1_0()); }
+		ruleConceptDeclaration
+		{ after(grammarAccess.getSimpleObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_1_0_1_0()); }
 	)
 ;
 finally {
@@ -42286,9 +42286,9 @@ rule__DependencyObservableSemantics__ByAssignment_3_0_1
 	}
 :
 	(
-		{ before(grammarAccess.getDependencyObservableSemanticsAccess().getByConceptParserRuleCall_3_0_1_0()); }
-		ruleConcept
-		{ after(grammarAccess.getDependencyObservableSemanticsAccess().getByConceptParserRuleCall_3_0_1_0()); }
+		{ before(grammarAccess.getDependencyObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_3_0_1_0()); }
+		ruleConceptDeclaration
+		{ after(grammarAccess.getDependencyObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_3_0_1_0()); }
 	)
 ;
 finally {
@@ -42489,9 +42489,9 @@ rule__AlternativeDependencyObservableSemantics__ByAssignment_3_0_1
 	}
 :
 	(
-		{ before(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getByConceptParserRuleCall_3_0_1_0()); }
-		ruleConcept
-		{ after(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getByConceptParserRuleCall_3_0_1_0()); }
+		{ before(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_3_0_1_0()); }
+		ruleConceptDeclaration
+		{ after(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_3_0_1_0()); }
 	)
 ;
 finally {

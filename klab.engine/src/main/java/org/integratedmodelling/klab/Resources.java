@@ -1136,4 +1136,19 @@ public enum Resources implements IResourceService {
 		return ns == null ? null : ns.getSymbolTable().get(Path.getLast(id, '.'));
 	}
 
+	public void deleteProject(String projectId) {
+		
+		// physically delete project
+		IProject project = getProject(projectId);
+		if (project != null) {
+			try {
+				FileUtils.deleteDirectory(project.getRoot());
+			} catch (IOException e) {
+				throw new KlabIOException(e);
+			}
+		}
+		// reload
+		getLoader().rescan(true);
+	}
+
 }

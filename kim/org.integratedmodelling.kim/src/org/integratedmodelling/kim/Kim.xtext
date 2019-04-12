@@ -301,7 +301,7 @@ ObservableSemantics:
 	(generic?='any')?
 	declaration=ConceptDeclaration
 	(
-		('by' by=Concept)? &
+		('by' by=ConceptDeclaration)? &
 		('down' 'to' downTo=Concept)? &
 //		('as' role=Concept)? &
 		('according' 'to' accordingTo=PropertyId)? &
@@ -324,7 +324,7 @@ AnnotatedObservableSemantics returns ObservableSemantics:
 	(generic?='any')?
 	declaration=ConceptDeclaration
 	(
-		('by' by=Concept)? &
+		('by' by=ConceptDeclaration)? &
 		('down' 'to' downTo=Concept)? &
 //		('as' role=Concept)? &
 		('according' 'to' accordingTo=PropertyId)? &
@@ -843,7 +843,7 @@ SimpleObservableSemantics returns ObservableSemantics:
 	
 	declaration=ConceptDeclaration
 	(
-		('by' by=Concept)? &
+		('by' by=ConceptDeclaration)? &
 		('down' 'to' downTo=Concept)? &
 		('according' 'to' accordingTo=PropertyId)? &
 		(
@@ -864,7 +864,7 @@ DependencyObservableSemantics returns ObservableSemantics:
 	(generic?='any')?
 	declaration=ConceptDeclaration
 	(
-		('by' by=Concept)? &
+		('by' by=ConceptDeclaration)? &
 		('down' 'to' downTo=Concept)? &
 		('according' 'to' accordingTo=PropertyId)? &
 		(
@@ -886,7 +886,7 @@ AlternativeDependencyObservableSemantics returns ObservableSemantics:
 	(generic?='any')?
 	declaration=ConceptDeclaration
 	(
-		('by' by=Concept)? &
+		('by' by=ConceptDeclaration)? &
 		('down' 'to' downTo=Concept)? &
 		('according' 'to' accordingTo=PropertyId)? &
 		(

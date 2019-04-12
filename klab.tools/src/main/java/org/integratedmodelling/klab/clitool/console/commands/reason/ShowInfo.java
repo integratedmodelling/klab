@@ -42,7 +42,7 @@ public class ShowInfo implements ICommand {
 
             IConcept concept = declaration.startsWith("k:")
                     ? Reasoner.INSTANCE.getOntology().getConcept(declaration.substring(2))
-                    : Observables.INSTANCE.declare(declaration);
+                    : Observables.INSTANCE.declare(declaration).getType();
 
             if (concept == null) {
                 throw new KlabValidationException("expression '" + declaration
@@ -83,7 +83,7 @@ public class ShowInfo implements ICommand {
 
         String ret = "";
         ret += "Core observable: " + Observables.INSTANCE.getCoreObservable(concept).getDefinition() + "\n";
-        ret += "Definition:    " + concept.getDefinition() + "\n";
+        ret += "Definition:    " + concept.getDefinition() + " [" + concept + "]\n";
         ret += Arrays.toString(((Concept) concept.getType()).getTypeSet().toArray()) + "\n";
         ret += "        Context type: " + decl(Observables.INSTANCE.getContextType(concept.getType()))
                 + " [direct: "

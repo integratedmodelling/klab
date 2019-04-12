@@ -54,7 +54,11 @@ public class KlabNavigatorActions {
     public static void deleteProject(EProject project) {
         if (MessageDialog.openConfirm(Eclipse.INSTANCE.getShell(), "Confirm deletion", "Delete project "
                 + project.getName() + "? This action cannot be recovered.")) {
-            System.out.println("BUMMER!");
+            Eclipse.INSTANCE.deleteProject(project);
+            if (Activator.engineMonitor().isRunning()) {
+            	Activator.post(IMessage.MessageClass.ProjectLifecycle, IMessage.Type.DeleteProject,
+					new ProjectModificationRequest(project.getName(), null));
+            }
         }
     }
 

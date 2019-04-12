@@ -49,10 +49,10 @@ public class KimProject implements IKimProject {
 	@Override
 	public List<File> getSourceFiles() {
 		List<File> ret = getSourceFiles(new File(root + File.separator + IKimProject.SOURCE_FOLDER));
-		File kkim = new File(root + File.separator + "META-INF" + File.separator + "knowledge.kim");
-		if (kkim.isFile()) {
-			ret.add(kkim);
-		}
+//		File kkim = new File(root + File.separator + "META-INF" + File.separator + "knowledge.kim");
+//		if (kkim.isFile()) {
+//			ret.add(kkim);
+//		}
 		return ret;
 	}
 
@@ -69,12 +69,12 @@ public class KimProject implements IKimProject {
 		final String PLATFORM_URI_PREFIX = "platform:/resource/";
 		String ret = null;
 		String sourceDir = SOURCE_FOLDER;
-		String kuri = workspace.getURL() + "/" + name + "/META-INF/knowledge.kim";
+//		String kuri = workspace.getURL() + "/" + name + "/META-INF/knowledge.kim";
 		String wuri = o.eResource().getURI().toString(); // THIS GETS platform for workspace files even
 															// if they are the same.
 		String furi = o.eResource().getURI().toFileString();
 
-		if (wuri.startsWith(PLATFORM_URI_PREFIX) && kuri.startsWith("file:")) {
+		if (wuri.startsWith(PLATFORM_URI_PREFIX) /*&& kuri.startsWith("file:")*/) {
 			// substitute actual file location of workspace
 			UriResolver resolver = Kim.INSTANCE.getUriResolver("platform");
 			if (resolver != null) {
@@ -83,11 +83,11 @@ public class KimProject implements IKimProject {
 				wuri = ws + (ws.endsWith("/") ? "" : "/") + wuri.substring(PLATFORM_URI_PREFIX.length());
 			}
 		}
-		if (wuri.startsWith(kuri)) {
-			return this.name;
-		} else {
+//		if (wuri.startsWith(kuri)) {
+//			return this.name;
+//		} else {
 			try {
-				kuri = root.toURI().toURL() + (sourceDir == null || sourceDir.isEmpty() ? "" : sourceDir);
+				String kuri = root.toURI().toURL() + (sourceDir == null || sourceDir.isEmpty() ? "" : sourceDir);
 				if (wuri.startsWith(kuri)) {
 					ret = wuri.substring(kuri.length() + 1);
 					if (ret.endsWith(".kim")) {
@@ -99,9 +99,6 @@ public class KimProject implements IKimProject {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
-//		if (ret == null) {
-//			System.out.println("DIOXIPPY");
 //		}
 		// no correspondence: resource is outside the beaten path
 		return ret;

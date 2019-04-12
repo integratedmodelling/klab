@@ -16762,7 +16762,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleObservableSemantics"
-    // InternalKim.g:6038:1: ruleObservableSemantics returns [EObject current=null] : ( ( ( (lv_value_0_0= ruleValue ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) ) ;
+    // InternalKim.g:6038:1: ruleObservableSemantics returns [EObject current=null] : ( ( ( (lv_value_0_0= ruleValue ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) ) ;
     public final EObject ruleObservableSemantics() throws RecognitionException {
         EObject current = null;
 
@@ -16809,11 +16809,11 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	);
 
         try {
-            // InternalKim.g:6047:2: ( ( ( ( (lv_value_0_0= ruleValue ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) ) )
-            // InternalKim.g:6048:2: ( ( ( (lv_value_0_0= ruleValue ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) )
+            // InternalKim.g:6047:2: ( ( ( ( (lv_value_0_0= ruleValue ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) ) )
+            // InternalKim.g:6048:2: ( ( ( (lv_value_0_0= ruleValue ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) )
             {
-            // InternalKim.g:6048:2: ( ( ( (lv_value_0_0= ruleValue ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) )
-            // InternalKim.g:6049:3: ( ( (lv_value_0_0= ruleValue ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) )
+            // InternalKim.g:6048:2: ( ( ( (lv_value_0_0= ruleValue ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) )
+            // InternalKim.g:6049:3: ( ( (lv_value_0_0= ruleValue ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) )
             {
             // InternalKim.g:6049:3: ( ( (lv_value_0_0= ruleValue ) ) otherlv_1= 'as' )?
             int alt143=2;
@@ -16941,45 +16941,45 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalKim.g:6107:3: ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) )
-            // InternalKim.g:6108:4: ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) )
+            // InternalKim.g:6107:3: ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) )
+            // InternalKim.g:6108:4: ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) )
             {
-            // InternalKim.g:6108:4: ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) )
-            // InternalKim.g:6109:5: ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* )
+            // InternalKim.g:6108:4: ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) )
+            // InternalKim.g:6109:5: ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* )
             {
             getUnorderedGroupHelper().enter(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3());
-            // InternalKim.g:6112:5: ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* )
-            // InternalKim.g:6113:6: ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )*
+            // InternalKim.g:6112:5: ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* )
+            // InternalKim.g:6113:6: ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )*
             {
-            // InternalKim.g:6113:6: ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )*
+            // InternalKim.g:6113:6: ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )*
             loop149:
             do {
                 int alt149=8;
                 alt149 = dfa149.predict(input);
                 switch (alt149) {
             	case 1 :
-            	    // InternalKim.g:6114:4: ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) )
+            	    // InternalKim.g:6114:4: ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) )
             	    {
-            	    // InternalKim.g:6114:4: ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) )
-            	    // InternalKim.g:6115:5: {...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) )
+            	    // InternalKim.g:6114:4: ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) )
+            	    // InternalKim.g:6115:5: {...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) )
             	    {
             	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 0) ) {
             	        if (state.backtracking>0) {state.failed=true; return current;}
             	        throw new FailedPredicateException(input, "ruleObservableSemantics", "getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 0)");
             	    }
-            	    // InternalKim.g:6115:116: ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) )
-            	    // InternalKim.g:6116:6: ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) )
+            	    // InternalKim.g:6115:116: ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) )
+            	    // InternalKim.g:6116:6: ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) )
             	    {
             	    getUnorderedGroupHelper().select(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 0);
-            	    // InternalKim.g:6119:9: ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) )
-            	    // InternalKim.g:6119:10: {...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) )
+            	    // InternalKim.g:6119:9: ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) )
+            	    // InternalKim.g:6119:10: {...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) )
             	    {
             	    if ( !((true)) ) {
             	        if (state.backtracking>0) {state.failed=true; return current;}
             	        throw new FailedPredicateException(input, "ruleObservableSemantics", "true");
             	    }
-            	    // InternalKim.g:6119:19: (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) )
-            	    // InternalKim.g:6119:20: otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) )
+            	    // InternalKim.g:6119:19: (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) )
+            	    // InternalKim.g:6119:20: otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) )
             	    {
             	    otherlv_5=(Token)match(input,100,FOLLOW_22); if (state.failed) return current;
             	    if ( state.backtracking==0 ) {
@@ -16987,19 +16987,19 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	      									newLeafNode(otherlv_5, grammarAccess.getObservableSemanticsAccess().getByKeyword_3_0_0());
             	      								
             	    }
-            	    // InternalKim.g:6123:9: ( (lv_by_6_0= ruleConcept ) )
-            	    // InternalKim.g:6124:10: (lv_by_6_0= ruleConcept )
+            	    // InternalKim.g:6123:9: ( (lv_by_6_0= ruleConceptDeclaration ) )
+            	    // InternalKim.g:6124:10: (lv_by_6_0= ruleConceptDeclaration )
             	    {
-            	    // InternalKim.g:6124:10: (lv_by_6_0= ruleConcept )
-            	    // InternalKim.g:6125:11: lv_by_6_0= ruleConcept
+            	    // InternalKim.g:6124:10: (lv_by_6_0= ruleConceptDeclaration )
+            	    // InternalKim.g:6125:11: lv_by_6_0= ruleConceptDeclaration
             	    {
             	    if ( state.backtracking==0 ) {
 
-            	      											newCompositeNode(grammarAccess.getObservableSemanticsAccess().getByConceptParserRuleCall_3_0_1_0());
+            	      											newCompositeNode(grammarAccess.getObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_3_0_1_0());
             	      										
             	    }
             	    pushFollow(FOLLOW_96);
-            	    lv_by_6_0=ruleConcept();
+            	    lv_by_6_0=ruleConceptDeclaration();
 
             	    state._fsp--;
             	    if (state.failed) return current;
@@ -17012,7 +17012,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	      												current,
             	      												"by",
             	      												lv_by_6_0,
-            	      												"org.integratedmodelling.kim.Kim.Concept");
+            	      												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
             	      											afterParserOrEnumRuleCall();
             	      										
             	    }
@@ -17861,7 +17861,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleAnnotatedObservableSemantics"
-    // InternalKim.g:6469:1: ruleAnnotatedObservableSemantics returns [EObject current=null] : ( ( (lv_annotations_0_0= ruleAnnotation ) )* ( ( (lv_value_1_0= ruleValue ) ) otherlv_2= 'as' )? ( (lv_generic_3_0= 'any' ) )? ( (lv_declaration_4_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) ) ;
+    // InternalKim.g:6469:1: ruleAnnotatedObservableSemantics returns [EObject current=null] : ( ( (lv_annotations_0_0= ruleAnnotation ) )* ( ( (lv_value_1_0= ruleValue ) ) otherlv_2= 'as' )? ( (lv_generic_3_0= 'any' ) )? ( (lv_declaration_4_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) ) ;
     public final EObject ruleAnnotatedObservableSemantics() throws RecognitionException {
         EObject current = null;
 
@@ -17910,11 +17910,11 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	);
 
         try {
-            // InternalKim.g:6478:2: ( ( ( (lv_annotations_0_0= ruleAnnotation ) )* ( ( (lv_value_1_0= ruleValue ) ) otherlv_2= 'as' )? ( (lv_generic_3_0= 'any' ) )? ( (lv_declaration_4_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) ) )
-            // InternalKim.g:6479:2: ( ( (lv_annotations_0_0= ruleAnnotation ) )* ( ( (lv_value_1_0= ruleValue ) ) otherlv_2= 'as' )? ( (lv_generic_3_0= 'any' ) )? ( (lv_declaration_4_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) )
+            // InternalKim.g:6478:2: ( ( ( (lv_annotations_0_0= ruleAnnotation ) )* ( ( (lv_value_1_0= ruleValue ) ) otherlv_2= 'as' )? ( (lv_generic_3_0= 'any' ) )? ( (lv_declaration_4_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) ) )
+            // InternalKim.g:6479:2: ( ( (lv_annotations_0_0= ruleAnnotation ) )* ( ( (lv_value_1_0= ruleValue ) ) otherlv_2= 'as' )? ( (lv_generic_3_0= 'any' ) )? ( (lv_declaration_4_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) )
             {
-            // InternalKim.g:6479:2: ( ( (lv_annotations_0_0= ruleAnnotation ) )* ( ( (lv_value_1_0= ruleValue ) ) otherlv_2= 'as' )? ( (lv_generic_3_0= 'any' ) )? ( (lv_declaration_4_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) )
-            // InternalKim.g:6480:3: ( (lv_annotations_0_0= ruleAnnotation ) )* ( ( (lv_value_1_0= ruleValue ) ) otherlv_2= 'as' )? ( (lv_generic_3_0= 'any' ) )? ( (lv_declaration_4_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) )
+            // InternalKim.g:6479:2: ( ( (lv_annotations_0_0= ruleAnnotation ) )* ( ( (lv_value_1_0= ruleValue ) ) otherlv_2= 'as' )? ( (lv_generic_3_0= 'any' ) )? ( (lv_declaration_4_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) )
+            // InternalKim.g:6480:3: ( (lv_annotations_0_0= ruleAnnotation ) )* ( ( (lv_value_1_0= ruleValue ) ) otherlv_2= 'as' )? ( (lv_generic_3_0= 'any' ) )? ( (lv_declaration_4_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) )
             {
             // InternalKim.g:6480:3: ( (lv_annotations_0_0= ruleAnnotation ) )*
             loop150:
@@ -18095,45 +18095,45 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalKim.g:6557:3: ( ( ( ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) )
-            // InternalKim.g:6558:4: ( ( ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )* ) )
+            // InternalKim.g:6557:3: ( ( ( ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) )
+            // InternalKim.g:6558:4: ( ( ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )* ) )
             {
-            // InternalKim.g:6558:4: ( ( ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )* ) )
-            // InternalKim.g:6559:5: ( ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )* )
+            // InternalKim.g:6558:4: ( ( ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )* ) )
+            // InternalKim.g:6559:5: ( ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )* )
             {
             getUnorderedGroupHelper().enter(grammarAccess.getAnnotatedObservableSemanticsAccess().getUnorderedGroup_4());
-            // InternalKim.g:6562:5: ( ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )* )
-            // InternalKim.g:6563:6: ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )*
+            // InternalKim.g:6562:5: ( ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )* )
+            // InternalKim.g:6563:6: ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )*
             {
-            // InternalKim.g:6563:6: ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )*
+            // InternalKim.g:6563:6: ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )*
             loop157:
             do {
                 int alt157=8;
                 alt157 = dfa157.predict(input);
                 switch (alt157) {
             	case 1 :
-            	    // InternalKim.g:6564:4: ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) ) ) )
+            	    // InternalKim.g:6564:4: ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) ) ) )
             	    {
-            	    // InternalKim.g:6564:4: ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) ) ) )
-            	    // InternalKim.g:6565:5: {...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) ) )
+            	    // InternalKim.g:6564:4: ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) ) ) )
+            	    // InternalKim.g:6565:5: {...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) ) )
             	    {
             	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getAnnotatedObservableSemanticsAccess().getUnorderedGroup_4(), 0) ) {
             	        if (state.backtracking>0) {state.failed=true; return current;}
             	        throw new FailedPredicateException(input, "ruleAnnotatedObservableSemantics", "getUnorderedGroupHelper().canSelect(grammarAccess.getAnnotatedObservableSemanticsAccess().getUnorderedGroup_4(), 0)");
             	    }
-            	    // InternalKim.g:6565:125: ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) ) )
-            	    // InternalKim.g:6566:6: ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) )
+            	    // InternalKim.g:6565:125: ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) ) )
+            	    // InternalKim.g:6566:6: ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) )
             	    {
             	    getUnorderedGroupHelper().select(grammarAccess.getAnnotatedObservableSemanticsAccess().getUnorderedGroup_4(), 0);
-            	    // InternalKim.g:6569:9: ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) )
-            	    // InternalKim.g:6569:10: {...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) )
+            	    // InternalKim.g:6569:9: ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) )
+            	    // InternalKim.g:6569:10: {...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) )
             	    {
             	    if ( !((true)) ) {
             	        if (state.backtracking>0) {state.failed=true; return current;}
             	        throw new FailedPredicateException(input, "ruleAnnotatedObservableSemantics", "true");
             	    }
-            	    // InternalKim.g:6569:19: (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) )
-            	    // InternalKim.g:6569:20: otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) )
+            	    // InternalKim.g:6569:19: (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) )
+            	    // InternalKim.g:6569:20: otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) )
             	    {
             	    otherlv_6=(Token)match(input,100,FOLLOW_22); if (state.failed) return current;
             	    if ( state.backtracking==0 ) {
@@ -18141,19 +18141,19 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	      									newLeafNode(otherlv_6, grammarAccess.getAnnotatedObservableSemanticsAccess().getByKeyword_4_0_0());
             	      								
             	    }
-            	    // InternalKim.g:6573:9: ( (lv_by_7_0= ruleConcept ) )
-            	    // InternalKim.g:6574:10: (lv_by_7_0= ruleConcept )
+            	    // InternalKim.g:6573:9: ( (lv_by_7_0= ruleConceptDeclaration ) )
+            	    // InternalKim.g:6574:10: (lv_by_7_0= ruleConceptDeclaration )
             	    {
-            	    // InternalKim.g:6574:10: (lv_by_7_0= ruleConcept )
-            	    // InternalKim.g:6575:11: lv_by_7_0= ruleConcept
+            	    // InternalKim.g:6574:10: (lv_by_7_0= ruleConceptDeclaration )
+            	    // InternalKim.g:6575:11: lv_by_7_0= ruleConceptDeclaration
             	    {
             	    if ( state.backtracking==0 ) {
 
-            	      											newCompositeNode(grammarAccess.getAnnotatedObservableSemanticsAccess().getByConceptParserRuleCall_4_0_1_0());
+            	      											newCompositeNode(grammarAccess.getAnnotatedObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_4_0_1_0());
             	      										
             	    }
             	    pushFollow(FOLLOW_96);
-            	    lv_by_7_0=ruleConcept();
+            	    lv_by_7_0=ruleConceptDeclaration();
 
             	    state._fsp--;
             	    if (state.failed) return current;
@@ -18166,7 +18166,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	      												current,
             	      												"by",
             	      												lv_by_7_0,
-            	      												"org.integratedmodelling.kim.Kim.Concept");
+            	      												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
             	      											afterParserOrEnumRuleCall();
             	      										
             	    }
@@ -40867,7 +40867,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleSimpleObservableSemantics"
-    // InternalKim.g:14967:1: ruleSimpleObservableSemantics returns [EObject current=null] : ( ( (lv_declaration_0_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) ) ;
+    // InternalKim.g:14967:1: ruleSimpleObservableSemantics returns [EObject current=null] : ( ( (lv_declaration_0_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) ) ;
     public final EObject ruleSimpleObservableSemantics() throws RecognitionException {
         EObject current = null;
 
@@ -40910,11 +40910,11 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	);
 
         try {
-            // InternalKim.g:14976:2: ( ( ( (lv_declaration_0_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) ) )
-            // InternalKim.g:14977:2: ( ( (lv_declaration_0_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) )
+            // InternalKim.g:14976:2: ( ( ( (lv_declaration_0_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) ) )
+            // InternalKim.g:14977:2: ( ( (lv_declaration_0_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) )
             {
-            // InternalKim.g:14977:2: ( ( (lv_declaration_0_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) )
-            // InternalKim.g:14978:3: ( (lv_declaration_0_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) )
+            // InternalKim.g:14977:2: ( ( (lv_declaration_0_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) )
+            // InternalKim.g:14978:3: ( (lv_declaration_0_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) )
             {
             // InternalKim.g:14978:3: ( (lv_declaration_0_0= ruleConceptDeclaration ) )
             // InternalKim.g:14979:4: (lv_declaration_0_0= ruleConceptDeclaration )
@@ -40951,45 +40951,45 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalKim.g:14997:3: ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) )
-            // InternalKim.g:14998:4: ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )* ) )
+            // InternalKim.g:14997:3: ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) )
+            // InternalKim.g:14998:4: ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )* ) )
             {
-            // InternalKim.g:14998:4: ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )* ) )
-            // InternalKim.g:14999:5: ( ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )* )
+            // InternalKim.g:14998:4: ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )* ) )
+            // InternalKim.g:14999:5: ( ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )* )
             {
             getUnorderedGroupHelper().enter(grammarAccess.getSimpleObservableSemanticsAccess().getUnorderedGroup_1());
-            // InternalKim.g:15002:5: ( ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )* )
-            // InternalKim.g:15003:6: ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )*
+            // InternalKim.g:15002:5: ( ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )* )
+            // InternalKim.g:15003:6: ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )*
             {
-            // InternalKim.g:15003:6: ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )*
+            // InternalKim.g:15003:6: ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )*
             loop306:
             do {
                 int alt306=8;
                 alt306 = dfa306.predict(input);
                 switch (alt306) {
             	case 1 :
-            	    // InternalKim.g:15004:4: ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) ) ) )
+            	    // InternalKim.g:15004:4: ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) ) ) )
             	    {
-            	    // InternalKim.g:15004:4: ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) ) ) )
-            	    // InternalKim.g:15005:5: {...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) ) )
+            	    // InternalKim.g:15004:4: ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) ) ) )
+            	    // InternalKim.g:15005:5: {...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) ) )
             	    {
             	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getSimpleObservableSemanticsAccess().getUnorderedGroup_1(), 0) ) {
             	        if (state.backtracking>0) {state.failed=true; return current;}
             	        throw new FailedPredicateException(input, "ruleSimpleObservableSemantics", "getUnorderedGroupHelper().canSelect(grammarAccess.getSimpleObservableSemanticsAccess().getUnorderedGroup_1(), 0)");
             	    }
-            	    // InternalKim.g:15005:122: ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) ) )
-            	    // InternalKim.g:15006:6: ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) )
+            	    // InternalKim.g:15005:122: ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) ) )
+            	    // InternalKim.g:15006:6: ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) )
             	    {
             	    getUnorderedGroupHelper().select(grammarAccess.getSimpleObservableSemanticsAccess().getUnorderedGroup_1(), 0);
-            	    // InternalKim.g:15009:9: ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) )
-            	    // InternalKim.g:15009:10: {...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) )
+            	    // InternalKim.g:15009:9: ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) )
+            	    // InternalKim.g:15009:10: {...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) )
             	    {
             	    if ( !((true)) ) {
             	        if (state.backtracking>0) {state.failed=true; return current;}
             	        throw new FailedPredicateException(input, "ruleSimpleObservableSemantics", "true");
             	    }
-            	    // InternalKim.g:15009:19: (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) )
-            	    // InternalKim.g:15009:20: otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) )
+            	    // InternalKim.g:15009:19: (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) )
+            	    // InternalKim.g:15009:20: otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) )
             	    {
             	    otherlv_2=(Token)match(input,100,FOLLOW_22); if (state.failed) return current;
             	    if ( state.backtracking==0 ) {
@@ -40997,19 +40997,19 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	      									newLeafNode(otherlv_2, grammarAccess.getSimpleObservableSemanticsAccess().getByKeyword_1_0_0());
             	      								
             	    }
-            	    // InternalKim.g:15013:9: ( (lv_by_3_0= ruleConcept ) )
-            	    // InternalKim.g:15014:10: (lv_by_3_0= ruleConcept )
+            	    // InternalKim.g:15013:9: ( (lv_by_3_0= ruleConceptDeclaration ) )
+            	    // InternalKim.g:15014:10: (lv_by_3_0= ruleConceptDeclaration )
             	    {
-            	    // InternalKim.g:15014:10: (lv_by_3_0= ruleConcept )
-            	    // InternalKim.g:15015:11: lv_by_3_0= ruleConcept
+            	    // InternalKim.g:15014:10: (lv_by_3_0= ruleConceptDeclaration )
+            	    // InternalKim.g:15015:11: lv_by_3_0= ruleConceptDeclaration
             	    {
             	    if ( state.backtracking==0 ) {
 
-            	      											newCompositeNode(grammarAccess.getSimpleObservableSemanticsAccess().getByConceptParserRuleCall_1_0_1_0());
+            	      											newCompositeNode(grammarAccess.getSimpleObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_1_0_1_0());
             	      										
             	    }
             	    pushFollow(FOLLOW_96);
-            	    lv_by_3_0=ruleConcept();
+            	    lv_by_3_0=ruleConceptDeclaration();
 
             	    state._fsp--;
             	    if (state.failed) return current;
@@ -41022,7 +41022,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	      												current,
             	      												"by",
             	      												lv_by_3_0,
-            	      												"org.integratedmodelling.kim.Kim.Concept");
+            	      												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
             	      											afterParserOrEnumRuleCall();
             	      										
             	    }
@@ -41963,7 +41963,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleDependencyObservableSemantics"
-    // InternalKim.g:15359:1: ruleDependencyObservableSemantics returns [EObject current=null] : ( ( ( (lv_value_0_0= ruleLiteralValueWithConcept ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) ) ;
+    // InternalKim.g:15359:1: ruleDependencyObservableSemantics returns [EObject current=null] : ( ( ( (lv_value_0_0= ruleLiteralValueWithConcept ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) ) ;
     public final EObject ruleDependencyObservableSemantics() throws RecognitionException {
         EObject current = null;
 
@@ -42010,11 +42010,11 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	);
 
         try {
-            // InternalKim.g:15368:2: ( ( ( ( (lv_value_0_0= ruleLiteralValueWithConcept ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) ) )
-            // InternalKim.g:15369:2: ( ( ( (lv_value_0_0= ruleLiteralValueWithConcept ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) )
+            // InternalKim.g:15368:2: ( ( ( ( (lv_value_0_0= ruleLiteralValueWithConcept ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) ) )
+            // InternalKim.g:15369:2: ( ( ( (lv_value_0_0= ruleLiteralValueWithConcept ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) )
             {
-            // InternalKim.g:15369:2: ( ( ( (lv_value_0_0= ruleLiteralValueWithConcept ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) )
-            // InternalKim.g:15370:3: ( ( (lv_value_0_0= ruleLiteralValueWithConcept ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) )
+            // InternalKim.g:15369:2: ( ( ( (lv_value_0_0= ruleLiteralValueWithConcept ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) ) )
+            // InternalKim.g:15370:3: ( ( (lv_value_0_0= ruleLiteralValueWithConcept ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) )
             {
             // InternalKim.g:15370:3: ( ( (lv_value_0_0= ruleLiteralValueWithConcept ) ) otherlv_1= 'as' )?
             int alt307=2;
@@ -42142,45 +42142,45 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalKim.g:15428:3: ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) )
-            // InternalKim.g:15429:4: ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) )
+            // InternalKim.g:15428:3: ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) ) )
+            // InternalKim.g:15429:4: ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) )
             {
-            // InternalKim.g:15429:4: ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) )
-            // InternalKim.g:15430:5: ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* )
+            // InternalKim.g:15429:4: ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* ) )
+            // InternalKim.g:15430:5: ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* )
             {
             getUnorderedGroupHelper().enter(grammarAccess.getDependencyObservableSemanticsAccess().getUnorderedGroup_3());
-            // InternalKim.g:15433:5: ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* )
-            // InternalKim.g:15434:6: ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )*
+            // InternalKim.g:15433:5: ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )* )
+            // InternalKim.g:15434:6: ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )*
             {
-            // InternalKim.g:15434:6: ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )*
+            // InternalKim.g:15434:6: ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )*
             loop313:
             do {
                 int alt313=8;
                 alt313 = dfa313.predict(input);
                 switch (alt313) {
             	case 1 :
-            	    // InternalKim.g:15435:4: ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) )
+            	    // InternalKim.g:15435:4: ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) )
             	    {
-            	    // InternalKim.g:15435:4: ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) )
-            	    // InternalKim.g:15436:5: {...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) )
+            	    // InternalKim.g:15435:4: ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) )
+            	    // InternalKim.g:15436:5: {...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) )
             	    {
             	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getDependencyObservableSemanticsAccess().getUnorderedGroup_3(), 0) ) {
             	        if (state.backtracking>0) {state.failed=true; return current;}
             	        throw new FailedPredicateException(input, "ruleDependencyObservableSemantics", "getUnorderedGroupHelper().canSelect(grammarAccess.getDependencyObservableSemanticsAccess().getUnorderedGroup_3(), 0)");
             	    }
-            	    // InternalKim.g:15436:126: ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) )
-            	    // InternalKim.g:15437:6: ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) )
+            	    // InternalKim.g:15436:126: ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) )
+            	    // InternalKim.g:15437:6: ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) )
             	    {
             	    getUnorderedGroupHelper().select(grammarAccess.getDependencyObservableSemanticsAccess().getUnorderedGroup_3(), 0);
-            	    // InternalKim.g:15440:9: ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) )
-            	    // InternalKim.g:15440:10: {...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) )
+            	    // InternalKim.g:15440:9: ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) )
+            	    // InternalKim.g:15440:10: {...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) )
             	    {
             	    if ( !((true)) ) {
             	        if (state.backtracking>0) {state.failed=true; return current;}
             	        throw new FailedPredicateException(input, "ruleDependencyObservableSemantics", "true");
             	    }
-            	    // InternalKim.g:15440:19: (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) )
-            	    // InternalKim.g:15440:20: otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) )
+            	    // InternalKim.g:15440:19: (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) )
+            	    // InternalKim.g:15440:20: otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) )
             	    {
             	    otherlv_5=(Token)match(input,100,FOLLOW_22); if (state.failed) return current;
             	    if ( state.backtracking==0 ) {
@@ -42188,19 +42188,19 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	      									newLeafNode(otherlv_5, grammarAccess.getDependencyObservableSemanticsAccess().getByKeyword_3_0_0());
             	      								
             	    }
-            	    // InternalKim.g:15444:9: ( (lv_by_6_0= ruleConcept ) )
-            	    // InternalKim.g:15445:10: (lv_by_6_0= ruleConcept )
+            	    // InternalKim.g:15444:9: ( (lv_by_6_0= ruleConceptDeclaration ) )
+            	    // InternalKim.g:15445:10: (lv_by_6_0= ruleConceptDeclaration )
             	    {
-            	    // InternalKim.g:15445:10: (lv_by_6_0= ruleConcept )
-            	    // InternalKim.g:15446:11: lv_by_6_0= ruleConcept
+            	    // InternalKim.g:15445:10: (lv_by_6_0= ruleConceptDeclaration )
+            	    // InternalKim.g:15446:11: lv_by_6_0= ruleConceptDeclaration
             	    {
             	    if ( state.backtracking==0 ) {
 
-            	      											newCompositeNode(grammarAccess.getDependencyObservableSemanticsAccess().getByConceptParserRuleCall_3_0_1_0());
+            	      											newCompositeNode(grammarAccess.getDependencyObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_3_0_1_0());
             	      										
             	    }
             	    pushFollow(FOLLOW_96);
-            	    lv_by_6_0=ruleConcept();
+            	    lv_by_6_0=ruleConceptDeclaration();
 
             	    state._fsp--;
             	    if (state.failed) return current;
@@ -42213,7 +42213,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	      												current,
             	      												"by",
             	      												lv_by_6_0,
-            	      												"org.integratedmodelling.kim.Kim.Concept");
+            	      												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
             	      											afterParserOrEnumRuleCall();
             	      										
             	    }
@@ -43170,7 +43170,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleAlternativeDependencyObservableSemantics"
-    // InternalKim.g:15790:1: ruleAlternativeDependencyObservableSemantics returns [EObject current=null] : ( ( ( (lv_value_0_0= ruleLiteralValueWithConcept ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_21= 'if' ( (lv_condition_22_0= RULE_EXPR ) ) )? ) ;
+    // InternalKim.g:15790:1: ruleAlternativeDependencyObservableSemantics returns [EObject current=null] : ( ( ( (lv_value_0_0= ruleLiteralValueWithConcept ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_21= 'if' ( (lv_condition_22_0= RULE_EXPR ) ) )? ) ;
     public final EObject ruleAlternativeDependencyObservableSemantics() throws RecognitionException {
         EObject current = null;
 
@@ -43214,11 +43214,11 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	);
 
         try {
-            // InternalKim.g:15799:2: ( ( ( ( (lv_value_0_0= ruleLiteralValueWithConcept ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_21= 'if' ( (lv_condition_22_0= RULE_EXPR ) ) )? ) )
-            // InternalKim.g:15800:2: ( ( ( (lv_value_0_0= ruleLiteralValueWithConcept ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_21= 'if' ( (lv_condition_22_0= RULE_EXPR ) ) )? )
+            // InternalKim.g:15799:2: ( ( ( ( (lv_value_0_0= ruleLiteralValueWithConcept ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_21= 'if' ( (lv_condition_22_0= RULE_EXPR ) ) )? ) )
+            // InternalKim.g:15800:2: ( ( ( (lv_value_0_0= ruleLiteralValueWithConcept ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_21= 'if' ( (lv_condition_22_0= RULE_EXPR ) ) )? )
             {
-            // InternalKim.g:15800:2: ( ( ( (lv_value_0_0= ruleLiteralValueWithConcept ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_21= 'if' ( (lv_condition_22_0= RULE_EXPR ) ) )? )
-            // InternalKim.g:15801:3: ( ( (lv_value_0_0= ruleLiteralValueWithConcept ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_21= 'if' ( (lv_condition_22_0= RULE_EXPR ) ) )?
+            // InternalKim.g:15800:2: ( ( ( (lv_value_0_0= ruleLiteralValueWithConcept ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_21= 'if' ( (lv_condition_22_0= RULE_EXPR ) ) )? )
+            // InternalKim.g:15801:3: ( ( (lv_value_0_0= ruleLiteralValueWithConcept ) ) otherlv_1= 'as' )? ( (lv_generic_2_0= 'any' ) )? ( (lv_declaration_3_0= ruleConceptDeclaration ) ) ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_21= 'if' ( (lv_condition_22_0= RULE_EXPR ) ) )?
             {
             // InternalKim.g:15801:3: ( ( (lv_value_0_0= ruleLiteralValueWithConcept ) ) otherlv_1= 'as' )?
             int alt314=2;
@@ -43346,45 +43346,45 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalKim.g:15859:3: ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )* ) ) )
-            // InternalKim.g:15860:4: ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )* ) )
+            // InternalKim.g:15859:3: ( ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )* ) ) )
+            // InternalKim.g:15860:4: ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )* ) )
             {
-            // InternalKim.g:15860:4: ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )* ) )
-            // InternalKim.g:15861:5: ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )* )
+            // InternalKim.g:15860:4: ( ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )* ) )
+            // InternalKim.g:15861:5: ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )* )
             {
             getUnorderedGroupHelper().enter(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getUnorderedGroup_3());
-            // InternalKim.g:15864:5: ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )* )
-            // InternalKim.g:15865:6: ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )*
+            // InternalKim.g:15864:5: ( ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )* )
+            // InternalKim.g:15865:6: ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )*
             {
-            // InternalKim.g:15865:6: ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )*
+            // InternalKim.g:15865:6: ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )*
             loop318:
             do {
                 int alt318=6;
                 alt318 = dfa318.predict(input);
                 switch (alt318) {
             	case 1 :
-            	    // InternalKim.g:15866:4: ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) )
+            	    // InternalKim.g:15866:4: ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) )
             	    {
-            	    // InternalKim.g:15866:4: ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) )
-            	    // InternalKim.g:15867:5: {...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) )
+            	    // InternalKim.g:15866:4: ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) )
+            	    // InternalKim.g:15867:5: {...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) )
             	    {
             	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getUnorderedGroup_3(), 0) ) {
             	        if (state.backtracking>0) {state.failed=true; return current;}
             	        throw new FailedPredicateException(input, "ruleAlternativeDependencyObservableSemantics", "getUnorderedGroupHelper().canSelect(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getUnorderedGroup_3(), 0)");
             	    }
-            	    // InternalKim.g:15867:137: ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) )
-            	    // InternalKim.g:15868:6: ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) )
+            	    // InternalKim.g:15867:137: ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) )
+            	    // InternalKim.g:15868:6: ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) )
             	    {
             	    getUnorderedGroupHelper().select(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getUnorderedGroup_3(), 0);
-            	    // InternalKim.g:15871:9: ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) )
-            	    // InternalKim.g:15871:10: {...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) )
+            	    // InternalKim.g:15871:9: ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) )
+            	    // InternalKim.g:15871:10: {...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) )
             	    {
             	    if ( !((true)) ) {
             	        if (state.backtracking>0) {state.failed=true; return current;}
             	        throw new FailedPredicateException(input, "ruleAlternativeDependencyObservableSemantics", "true");
             	    }
-            	    // InternalKim.g:15871:19: (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) )
-            	    // InternalKim.g:15871:20: otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) )
+            	    // InternalKim.g:15871:19: (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) )
+            	    // InternalKim.g:15871:20: otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) )
             	    {
             	    otherlv_5=(Token)match(input,100,FOLLOW_22); if (state.failed) return current;
             	    if ( state.backtracking==0 ) {
@@ -43392,19 +43392,19 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	      									newLeafNode(otherlv_5, grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getByKeyword_3_0_0());
             	      								
             	    }
-            	    // InternalKim.g:15875:9: ( (lv_by_6_0= ruleConcept ) )
-            	    // InternalKim.g:15876:10: (lv_by_6_0= ruleConcept )
+            	    // InternalKim.g:15875:9: ( (lv_by_6_0= ruleConceptDeclaration ) )
+            	    // InternalKim.g:15876:10: (lv_by_6_0= ruleConceptDeclaration )
             	    {
-            	    // InternalKim.g:15876:10: (lv_by_6_0= ruleConcept )
-            	    // InternalKim.g:15877:11: lv_by_6_0= ruleConcept
+            	    // InternalKim.g:15876:10: (lv_by_6_0= ruleConceptDeclaration )
+            	    // InternalKim.g:15877:11: lv_by_6_0= ruleConceptDeclaration
             	    {
             	    if ( state.backtracking==0 ) {
 
-            	      											newCompositeNode(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getByConceptParserRuleCall_3_0_1_0());
+            	      											newCompositeNode(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_3_0_1_0());
             	      										
             	    }
             	    pushFollow(FOLLOW_167);
-            	    lv_by_6_0=ruleConcept();
+            	    lv_by_6_0=ruleConceptDeclaration();
 
             	    state._fsp--;
             	    if (state.failed) return current;
@@ -43417,7 +43417,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	      												current,
             	      												"by",
             	      												lv_by_6_0,
-            	      												"org.integratedmodelling.kim.Kim.Concept");
+            	      												"org.integratedmodelling.kim.Kim.ConceptDeclaration");
             	      											afterParserOrEnumRuleCall();
             	      										
             	    }
@@ -51557,44 +51557,44 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         EObject lv_by_6_0 = null;
 
 
-        // InternalKim.g:6114:4: ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) )
-        // InternalKim.g:6114:4: ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) )
+        // InternalKim.g:6114:4: ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) )
+        // InternalKim.g:6114:4: ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) )
         {
-        // InternalKim.g:6114:4: ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) )
-        // InternalKim.g:6115:5: {...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) )
+        // InternalKim.g:6114:4: ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) )
+        // InternalKim.g:6115:5: {...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) )
         {
         if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 0) ) {
             if (state.backtracking>0) {state.failed=true; return ;}
             throw new FailedPredicateException(input, "synpred241_InternalKim", "getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 0)");
         }
-        // InternalKim.g:6115:116: ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) )
-        // InternalKim.g:6116:6: ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) )
+        // InternalKim.g:6115:116: ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) )
+        // InternalKim.g:6116:6: ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) )
         {
         getUnorderedGroupHelper().select(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 0);
-        // InternalKim.g:6119:9: ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) )
-        // InternalKim.g:6119:10: {...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) )
+        // InternalKim.g:6119:9: ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) )
+        // InternalKim.g:6119:10: {...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) )
         {
         if ( !((true)) ) {
             if (state.backtracking>0) {state.failed=true; return ;}
             throw new FailedPredicateException(input, "synpred241_InternalKim", "true");
         }
-        // InternalKim.g:6119:19: (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) )
-        // InternalKim.g:6119:20: otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) )
+        // InternalKim.g:6119:19: (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) )
+        // InternalKim.g:6119:20: otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) )
         {
         otherlv_5=(Token)match(input,100,FOLLOW_22); if (state.failed) return ;
-        // InternalKim.g:6123:9: ( (lv_by_6_0= ruleConcept ) )
-        // InternalKim.g:6124:10: (lv_by_6_0= ruleConcept )
+        // InternalKim.g:6123:9: ( (lv_by_6_0= ruleConceptDeclaration ) )
+        // InternalKim.g:6124:10: (lv_by_6_0= ruleConceptDeclaration )
         {
-        // InternalKim.g:6124:10: (lv_by_6_0= ruleConcept )
-        // InternalKim.g:6125:11: lv_by_6_0= ruleConcept
+        // InternalKim.g:6124:10: (lv_by_6_0= ruleConceptDeclaration )
+        // InternalKim.g:6125:11: lv_by_6_0= ruleConceptDeclaration
         {
         if ( state.backtracking==0 ) {
 
-          											newCompositeNode(grammarAccess.getObservableSemanticsAccess().getByConceptParserRuleCall_3_0_1_0());
+          											newCompositeNode(grammarAccess.getObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_3_0_1_0());
           										
         }
         pushFollow(FOLLOW_2);
-        lv_by_6_0=ruleConcept();
+        lv_by_6_0=ruleConceptDeclaration();
 
         state._fsp--;
         if (state.failed) return ;
@@ -52377,44 +52377,44 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         EObject lv_by_7_0 = null;
 
 
-        // InternalKim.g:6564:4: ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) ) ) ) )
-        // InternalKim.g:6564:4: ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) ) ) )
+        // InternalKim.g:6564:4: ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) ) ) ) )
+        // InternalKim.g:6564:4: ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) ) ) )
         {
-        // InternalKim.g:6564:4: ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) ) ) )
-        // InternalKim.g:6565:5: {...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) ) )
+        // InternalKim.g:6564:4: ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) ) ) )
+        // InternalKim.g:6565:5: {...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) ) )
         {
         if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getAnnotatedObservableSemanticsAccess().getUnorderedGroup_4(), 0) ) {
             if (state.backtracking>0) {state.failed=true; return ;}
             throw new FailedPredicateException(input, "synpred255_InternalKim", "getUnorderedGroupHelper().canSelect(grammarAccess.getAnnotatedObservableSemanticsAccess().getUnorderedGroup_4(), 0)");
         }
-        // InternalKim.g:6565:125: ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) ) )
-        // InternalKim.g:6566:6: ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) )
+        // InternalKim.g:6565:125: ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) ) )
+        // InternalKim.g:6566:6: ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) )
         {
         getUnorderedGroupHelper().select(grammarAccess.getAnnotatedObservableSemanticsAccess().getUnorderedGroup_4(), 0);
-        // InternalKim.g:6569:9: ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) )
-        // InternalKim.g:6569:10: {...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) )
+        // InternalKim.g:6569:9: ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) )
+        // InternalKim.g:6569:10: {...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) )
         {
         if ( !((true)) ) {
             if (state.backtracking>0) {state.failed=true; return ;}
             throw new FailedPredicateException(input, "synpred255_InternalKim", "true");
         }
-        // InternalKim.g:6569:19: (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) )
-        // InternalKim.g:6569:20: otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) )
+        // InternalKim.g:6569:19: (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) )
+        // InternalKim.g:6569:20: otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) )
         {
         otherlv_6=(Token)match(input,100,FOLLOW_22); if (state.failed) return ;
-        // InternalKim.g:6573:9: ( (lv_by_7_0= ruleConcept ) )
-        // InternalKim.g:6574:10: (lv_by_7_0= ruleConcept )
+        // InternalKim.g:6573:9: ( (lv_by_7_0= ruleConceptDeclaration ) )
+        // InternalKim.g:6574:10: (lv_by_7_0= ruleConceptDeclaration )
         {
-        // InternalKim.g:6574:10: (lv_by_7_0= ruleConcept )
-        // InternalKim.g:6575:11: lv_by_7_0= ruleConcept
+        // InternalKim.g:6574:10: (lv_by_7_0= ruleConceptDeclaration )
+        // InternalKim.g:6575:11: lv_by_7_0= ruleConceptDeclaration
         {
         if ( state.backtracking==0 ) {
 
-          											newCompositeNode(grammarAccess.getAnnotatedObservableSemanticsAccess().getByConceptParserRuleCall_4_0_1_0());
+          											newCompositeNode(grammarAccess.getAnnotatedObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_4_0_1_0());
           										
         }
         pushFollow(FOLLOW_2);
-        lv_by_7_0=ruleConcept();
+        lv_by_7_0=ruleConceptDeclaration();
 
         state._fsp--;
         if (state.failed) return ;
@@ -59257,44 +59257,44 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         EObject lv_by_3_0 = null;
 
 
-        // InternalKim.g:15004:4: ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) ) ) ) )
-        // InternalKim.g:15004:4: ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) ) ) )
+        // InternalKim.g:15004:4: ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) ) ) ) )
+        // InternalKim.g:15004:4: ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) ) ) )
         {
-        // InternalKim.g:15004:4: ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) ) ) )
-        // InternalKim.g:15005:5: {...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) ) )
+        // InternalKim.g:15004:4: ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) ) ) )
+        // InternalKim.g:15005:5: {...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) ) )
         {
         if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getSimpleObservableSemanticsAccess().getUnorderedGroup_1(), 0) ) {
             if (state.backtracking>0) {state.failed=true; return ;}
             throw new FailedPredicateException(input, "synpred572_InternalKim", "getUnorderedGroupHelper().canSelect(grammarAccess.getSimpleObservableSemanticsAccess().getUnorderedGroup_1(), 0)");
         }
-        // InternalKim.g:15005:122: ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) ) )
-        // InternalKim.g:15006:6: ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) )
+        // InternalKim.g:15005:122: ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) ) )
+        // InternalKim.g:15006:6: ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) )
         {
         getUnorderedGroupHelper().select(grammarAccess.getSimpleObservableSemanticsAccess().getUnorderedGroup_1(), 0);
-        // InternalKim.g:15009:9: ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) )
-        // InternalKim.g:15009:10: {...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) )
+        // InternalKim.g:15009:9: ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) )
+        // InternalKim.g:15009:10: {...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) )
         {
         if ( !((true)) ) {
             if (state.backtracking>0) {state.failed=true; return ;}
             throw new FailedPredicateException(input, "synpred572_InternalKim", "true");
         }
-        // InternalKim.g:15009:19: (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) )
-        // InternalKim.g:15009:20: otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) )
+        // InternalKim.g:15009:19: (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) )
+        // InternalKim.g:15009:20: otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) )
         {
         otherlv_2=(Token)match(input,100,FOLLOW_22); if (state.failed) return ;
-        // InternalKim.g:15013:9: ( (lv_by_3_0= ruleConcept ) )
-        // InternalKim.g:15014:10: (lv_by_3_0= ruleConcept )
+        // InternalKim.g:15013:9: ( (lv_by_3_0= ruleConceptDeclaration ) )
+        // InternalKim.g:15014:10: (lv_by_3_0= ruleConceptDeclaration )
         {
-        // InternalKim.g:15014:10: (lv_by_3_0= ruleConcept )
-        // InternalKim.g:15015:11: lv_by_3_0= ruleConcept
+        // InternalKim.g:15014:10: (lv_by_3_0= ruleConceptDeclaration )
+        // InternalKim.g:15015:11: lv_by_3_0= ruleConceptDeclaration
         {
         if ( state.backtracking==0 ) {
 
-          											newCompositeNode(grammarAccess.getSimpleObservableSemanticsAccess().getByConceptParserRuleCall_1_0_1_0());
+          											newCompositeNode(grammarAccess.getSimpleObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_1_0_1_0());
           										
         }
         pushFollow(FOLLOW_2);
-        lv_by_3_0=ruleConcept();
+        lv_by_3_0=ruleConceptDeclaration();
 
         state._fsp--;
         if (state.failed) return ;
@@ -60077,44 +60077,44 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         EObject lv_by_6_0 = null;
 
 
-        // InternalKim.g:15435:4: ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) )
-        // InternalKim.g:15435:4: ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) )
+        // InternalKim.g:15435:4: ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) )
+        // InternalKim.g:15435:4: ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) )
         {
-        // InternalKim.g:15435:4: ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) )
-        // InternalKim.g:15436:5: {...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) )
+        // InternalKim.g:15435:4: ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) )
+        // InternalKim.g:15436:5: {...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) )
         {
         if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getDependencyObservableSemanticsAccess().getUnorderedGroup_3(), 0) ) {
             if (state.backtracking>0) {state.failed=true; return ;}
             throw new FailedPredicateException(input, "synpred585_InternalKim", "getUnorderedGroupHelper().canSelect(grammarAccess.getDependencyObservableSemanticsAccess().getUnorderedGroup_3(), 0)");
         }
-        // InternalKim.g:15436:126: ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) )
-        // InternalKim.g:15437:6: ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) )
+        // InternalKim.g:15436:126: ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) )
+        // InternalKim.g:15437:6: ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) )
         {
         getUnorderedGroupHelper().select(grammarAccess.getDependencyObservableSemanticsAccess().getUnorderedGroup_3(), 0);
-        // InternalKim.g:15440:9: ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) )
-        // InternalKim.g:15440:10: {...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) )
+        // InternalKim.g:15440:9: ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) )
+        // InternalKim.g:15440:10: {...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) )
         {
         if ( !((true)) ) {
             if (state.backtracking>0) {state.failed=true; return ;}
             throw new FailedPredicateException(input, "synpred585_InternalKim", "true");
         }
-        // InternalKim.g:15440:19: (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) )
-        // InternalKim.g:15440:20: otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) )
+        // InternalKim.g:15440:19: (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) )
+        // InternalKim.g:15440:20: otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) )
         {
         otherlv_5=(Token)match(input,100,FOLLOW_22); if (state.failed) return ;
-        // InternalKim.g:15444:9: ( (lv_by_6_0= ruleConcept ) )
-        // InternalKim.g:15445:10: (lv_by_6_0= ruleConcept )
+        // InternalKim.g:15444:9: ( (lv_by_6_0= ruleConceptDeclaration ) )
+        // InternalKim.g:15445:10: (lv_by_6_0= ruleConceptDeclaration )
         {
-        // InternalKim.g:15445:10: (lv_by_6_0= ruleConcept )
-        // InternalKim.g:15446:11: lv_by_6_0= ruleConcept
+        // InternalKim.g:15445:10: (lv_by_6_0= ruleConceptDeclaration )
+        // InternalKim.g:15446:11: lv_by_6_0= ruleConceptDeclaration
         {
         if ( state.backtracking==0 ) {
 
-          											newCompositeNode(grammarAccess.getDependencyObservableSemanticsAccess().getByConceptParserRuleCall_3_0_1_0());
+          											newCompositeNode(grammarAccess.getDependencyObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_3_0_1_0());
           										
         }
         pushFollow(FOLLOW_2);
-        lv_by_6_0=ruleConcept();
+        lv_by_6_0=ruleConceptDeclaration();
 
         state._fsp--;
         if (state.failed) return ;
@@ -60897,44 +60897,44 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         EObject lv_by_6_0 = null;
 
 
-        // InternalKim.g:15866:4: ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) )
-        // InternalKim.g:15866:4: ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) )
+        // InternalKim.g:15866:4: ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) )
+        // InternalKim.g:15866:4: ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) )
         {
-        // InternalKim.g:15866:4: ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) )
-        // InternalKim.g:15867:5: {...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) )
+        // InternalKim.g:15866:4: ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) )
+        // InternalKim.g:15867:5: {...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) )
         {
         if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getUnorderedGroup_3(), 0) ) {
             if (state.backtracking>0) {state.failed=true; return ;}
             throw new FailedPredicateException(input, "synpred598_InternalKim", "getUnorderedGroupHelper().canSelect(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getUnorderedGroup_3(), 0)");
         }
-        // InternalKim.g:15867:137: ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) )
-        // InternalKim.g:15868:6: ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) )
+        // InternalKim.g:15867:137: ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) )
+        // InternalKim.g:15868:6: ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) )
         {
         getUnorderedGroupHelper().select(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getUnorderedGroup_3(), 0);
-        // InternalKim.g:15871:9: ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) )
-        // InternalKim.g:15871:10: {...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) )
+        // InternalKim.g:15871:9: ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) )
+        // InternalKim.g:15871:10: {...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) )
         {
         if ( !((true)) ) {
             if (state.backtracking>0) {state.failed=true; return ;}
             throw new FailedPredicateException(input, "synpred598_InternalKim", "true");
         }
-        // InternalKim.g:15871:19: (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) )
-        // InternalKim.g:15871:20: otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) )
+        // InternalKim.g:15871:19: (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) )
+        // InternalKim.g:15871:20: otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) )
         {
         otherlv_5=(Token)match(input,100,FOLLOW_22); if (state.failed) return ;
-        // InternalKim.g:15875:9: ( (lv_by_6_0= ruleConcept ) )
-        // InternalKim.g:15876:10: (lv_by_6_0= ruleConcept )
+        // InternalKim.g:15875:9: ( (lv_by_6_0= ruleConceptDeclaration ) )
+        // InternalKim.g:15876:10: (lv_by_6_0= ruleConceptDeclaration )
         {
-        // InternalKim.g:15876:10: (lv_by_6_0= ruleConcept )
-        // InternalKim.g:15877:11: lv_by_6_0= ruleConcept
+        // InternalKim.g:15876:10: (lv_by_6_0= ruleConceptDeclaration )
+        // InternalKim.g:15877:11: lv_by_6_0= ruleConceptDeclaration
         {
         if ( state.backtracking==0 ) {
 
-          											newCompositeNode(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getByConceptParserRuleCall_3_0_1_0());
+          											newCompositeNode(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getByConceptDeclarationParserRuleCall_3_0_1_0());
           										
         }
         pushFollow(FOLLOW_2);
-        lv_by_6_0=ruleConcept();
+        lv_by_6_0=ruleConceptDeclaration();
 
         state._fsp--;
         if (state.failed) return ;
@@ -66598,7 +66598,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             this.transition = dfa_126;
         }
         public String getDescription() {
-            return "()* loopback of 6113:6: ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )*";
+            return "()* loopback of 6113:6: ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_20_0= ruleNumber ) ) otherlv_21= 'to' ( (lv_to_22_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )*";
         }
         public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
             TokenStream input = (TokenStream)_input;
@@ -67059,7 +67059,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             this.transition = dfa_140;
         }
         public String getDescription() {
-            return "()* loopback of 6563:6: ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )*";
+            return "()* loopback of 6563:6: ( ({...}? => ( ({...}? => (otherlv_6= 'by' ( (lv_by_7_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'down' otherlv_9= 'to' ( (lv_downTo_10_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'according' otherlv_12= 'to' ( (lv_accordingTo_13_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_14= 'in' ( ( (lv_unit_15_0= ruleUnit ) ) | ( (lv_currency_16_0= ruleCurrency ) ) ) ) | (otherlv_17= 'per' ( (lv_unit_18_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_19_0= 'optional' ) ) | otherlv_20= 'required' ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_21_0= ruleNumber ) ) otherlv_22= 'to' ( (lv_to_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'named' ( ( (lv_name_25_1= RULE_LOWERCASE_ID | lv_name_25_2= RULE_STRING ) ) ) ) ) ) ) )*";
         }
         public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
             TokenStream input = (TokenStream)_input;
@@ -70956,7 +70956,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             this.transition = dfa_248;
         }
         public String getDescription() {
-            return "()* loopback of 15003:6: ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )*";
+            return "()* loopback of 15003:6: ( ({...}? => ( ({...}? => (otherlv_2= 'by' ( (lv_by_3_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_4= 'down' otherlv_5= 'to' ( (lv_downTo_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'according' otherlv_8= 'to' ( (lv_accordingTo_9_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_15_0= ruleNumber ) ) otherlv_16= 'to' ( (lv_to_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_18_0= 'optional' ) ) | otherlv_19= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_20= 'named' ( ( (lv_name_21_1= RULE_LOWERCASE_ID | lv_name_21_2= RULE_STRING ) ) ) ) ) ) ) )*";
         }
         public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
             TokenStream input = (TokenStream)_input;
@@ -71457,7 +71457,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             this.transition = dfa_255;
         }
         public String getDescription() {
-            return "()* loopback of 15434:6: ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )*";
+            return "()* loopback of 15434:6: ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_optional_21_0= 'optional' ) ) | otherlv_22= 'required' ) ) ) ) | ({...}? => ( ({...}? => (otherlv_23= 'named' ( ( (lv_name_24_1= RULE_LOWERCASE_ID | lv_name_24_2= RULE_STRING ) ) ) ) ) ) ) )*";
         }
         public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
             TokenStream input = (TokenStream)_input;
@@ -71916,7 +71916,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             this.transition = dfa_260;
         }
         public String getDescription() {
-            return "()* loopback of 15865:6: ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )*";
+            return "()* loopback of 15865:6: ( ({...}? => ( ({...}? => (otherlv_5= 'by' ( (lv_by_6_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_7= 'down' otherlv_8= 'to' ( (lv_downTo_9_0= ruleConcept ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_10= 'according' otherlv_11= 'to' ( (lv_accordingTo_12_0= rulePropertyId ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (lv_from_18_0= ruleNumber ) ) otherlv_19= 'to' ( (lv_to_20_0= ruleNumber ) ) ) ) ) ) )*";
         }
         public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
             TokenStream input = (TokenStream)_input;
