@@ -1097,6 +1097,10 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		if (observationType != null) {
 			ret = observationType.getCodeName(ret, otherConcept == null ? null : otherConcept.getCodeName());
 		}
+		
+		if (negated) {
+			ret = "not-" + ret;
+		}
 
 		return ret;
 	}

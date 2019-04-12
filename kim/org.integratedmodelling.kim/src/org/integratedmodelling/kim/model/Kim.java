@@ -1635,4 +1635,10 @@ public enum Kim {
 	public void registerProject(String projectName, IKimWorkspace kimWorkspace) {
 		this.projectWorkspaces.put(projectName, (KimWorkspace)kimWorkspace);
 	}
+
+	public void unregisterProject(IKimProject project) {
+		this.projectFiles.remove(project.getRoot());
+		this.projectWorkspaces.remove(project.getName());
+	}
+
 }

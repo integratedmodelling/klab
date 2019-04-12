@@ -245,6 +245,7 @@ public class KimWorkspace implements IKimWorkspace {
 		if (previous != null) {
 			projectLocations.remove(previous.getRoot());
 		}
+		Kim.INSTANCE.unregisterProject(project);
 		readProjects();
 	}
 
