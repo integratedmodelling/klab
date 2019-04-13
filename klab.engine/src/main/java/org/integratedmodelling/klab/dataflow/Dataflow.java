@@ -14,7 +14,9 @@ import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
@@ -55,6 +57,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	private boolean primary = true;
 	private Set<String> notified = new HashSet<>();
 	private ISession session;
+	IDirectObservation relationshipSource;
+	IDirectObservation relationshipTarget;
 
 	// execution parameters for user modification if running interactively
 	private List<InteractiveParameter> fields = new ArrayList<>();
@@ -270,6 +274,12 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		this.metadata = metadata;
 		return this;
 	}
+	
+	public Dataflow connecting(IDirectObservation source, IDirectObservation target) {
+		this.relationshipSource = source;
+		this.relationshipTarget = target;
+		return this;
+	}
 
 	/**
 	 * Metadata may be added to the dataflow before computation to resolve states
@@ -281,4 +291,11 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		return metadata;
 	}
 
+	public IDirectObservation getRelationshipSource() {
+		return relationshipSource;
+	}
+
+	public IDirectObservation getRelationshipTarget() {
+		return relationshipTarget;
+	}
 }

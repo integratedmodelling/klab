@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.scale.AbstractExtent;
 
+import com.vividsolutions.jts.algorithm.ConvexHull;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
@@ -695,6 +696,53 @@ public class Shape extends AbstractExtent implements IShape {
 			return getSimplified(distance);
 		}
 		return this;
+	}
+
+	/**
+	 * Join the passed shapes into another shape of the passed type, optionally
+	 * including or excluding the shapes themselves.
+	 * 
+	 * Assumes both shapes have the same projection.
+	 * 
+	 * @param a
+	 * @param b
+	 * @param type
+	 * @param includeSources
+	 * @return a new shape
+	 */
+	public static Shape join(IShape a, IShape b, IShape.Type type, boolean includeSources) {
+
+		Geometry aj = ((Shape) a).getStandardizedGeometry();
+		Geometry bj = ((Shape) b).getStandardizedGeometry();
+		Geometry merged = null;
+
+		switch (type) {
+		case LINESTRING:
+			merged = aj.getFactory().createLineString(
+					new Coordinate[] { aj.getCentroid().getCoordinates()[0], bj.getCentroid().getCoordinates()[0] });
+			break;
+		case POLYGON:
+		case MULTIPOLYGON:
+			List<Coordinate> cloud = new ArrayList<>();
+			for (Coordinate c : aj.getBoundary().getCoordinates()) {
+				cloud.add(c);
+			}
+			for (Coordinate c : bj.getBoundary().getCoordinates()) {
+				cloud.add(c);
+			}
+			ConvexHull hull = new ConvexHull(cloud.toArray(new Coordinate[0]), aj.getFactory());
+			merged = hull.getConvexHull().buffer(0);
+			break;
+		default:
+			throw new IllegalArgumentException("cannot join two shapes into a " + type.name().toLowerCase());
+		}
+
+		if (merged != null && !includeSources) {
+			merged = merged.difference(aj);
+			merged = merged.difference(bj);
+		}
+		
+		return merged == null ? null : Shape.create(merged, a.getProjection());
 	}
 
 }

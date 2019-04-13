@@ -61,7 +61,6 @@ import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
-import org.integratedmodelling.klab.utils.Utils;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -83,7 +82,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	Provenance provenance;
 	EventBus eventBus;
 	ConfigurationDetector configurationDetector;
-	DirectedSparseMultigraph<ISubject, IRelationship> network;
+	DirectedSparseMultigraph<IDirectObservation, IRelationship> network;
 	Graph<IArtifact, DefaultEdge> structure;
 	Map<String, IArtifact> catalog;
 	IMonitor monitor;
@@ -231,12 +230,12 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	}
 
 	@Override
-	public ISubject getSourceSubject(IRelationship relationship) {
+	public IDirectObservation getSourceSubject(IRelationship relationship) {
 		return network.getSource(relationship);
 	}
 
 	@Override
-	public ISubject getTargetSubject(IRelationship relationship) {
+	public IDirectObservation getTargetSubject(IRelationship relationship) {
 		return network.getDest(relationship);
 	}
 
@@ -312,6 +311,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 		ICountableObservation ret = null;
 		Observable obs = new Observable((Observable) observable);
+		obs.setName(name);
 
 		/*
 		 * preload all the possible resolvers in the wider scope before specializing the
@@ -391,19 +391,62 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		 * with the preloaded cache.
 		 */
 		this.resolutionScope.preloadResolvers(observable);
-		ResolutionScope scope = Resolver.INSTANCE.resolve(obs, this.resolutionScope, (Subject) source, (Subject) target,
-				scale, model);
 
-		if (scope.getCoverage().isRelevant()) {
+		Dataflow dataflow = null;
+		ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
+		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
 
-			ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
-			ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
+		List<Pair<ICoverage, Dataflow>> pairs = dataflowCache
+				.get(new ResolvedObservable((Observable) observable, Mode.RESOLUTION));
 
-			Dataflow dataflow = Dataflows.INSTANCE
-					.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope).setPrimary(false);
-
-			ret = (IRelationship) dataflow.run(scale, ((Monitor) monitor).get(subtask));
+		if (pairs != null) {
+			for (Pair<ICoverage, Dataflow> pair : pairs) {
+				if (pair.getFirst() == null || pair.getFirst().contains(scale)) {
+					dataflow = pair.getSecond();
+					break;
+				}
+			}
 		}
+
+		if (dataflow == null) {
+
+			if (pairs == null) {
+				pairs = new ArrayList<>();
+				dataflowCache.put(new ResolvedObservable((Observable) observable, Mode.RESOLUTION), pairs);
+			}
+
+			ResolutionScope scope = Resolver.INSTANCE.resolve(obs, this.resolutionScope, (Subject) source,
+					(Subject) target, scale, model);
+
+			if (scope.getCoverage().isRelevant()) {
+
+				dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope)
+						.setPrimary(false);
+				dataflow.setModel((Model) model);
+
+				// TODO this must be added to the computational strategy and linked to the
+				// original context.
+				pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
+
+			} else if (this.resolutionScope.getPreresolvedModels(observable).getSecond().size() == 0) {
+				/*
+				 * Add an empty dataflow to create the observation. This is only done if there
+				 * are no preloaded resolvers in this scale, so we are certain that other
+				 * subjects will encounter the same conditions.
+				 */
+				pairs.add(new Pair<>(null, dataflow = Dataflow.empty(observable, name, scope)));
+				dataflowCache.put(new ResolvedObservable((Observable) observable, Mode.RESOLUTION), pairs);
+			}
+		}
+
+		ret = (IRelationship) dataflow.withMetadata(metadata)
+				.connecting((IDirectObservation) source, (IDirectObservation) target)
+				.run(scale, ((Monitor) monitor).get(subtask));
+		
+		if (ret != null) {
+			((DirectObservation) ret).setName(name);
+		}
+
 		return ret;
 	}
 
@@ -636,7 +679,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 				if (observable.is(Type.RELATIONSHIP)) {
 					observation = DefaultRuntimeProvider.createRelationship(observable, scale,
-							scope.getRelationshipSource(), scope.getRelationshipTarget(), this);
+							actuator.getDataflow().getRelationshipSource(), actuator.getDataflow().getRelationshipTarget(), this);
 				} else {
 					observation = DefaultRuntimeProvider.createObservation(observable, scale, this);
 				}
@@ -896,7 +939,8 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	public Collection<IArtifact> getArtifact(IConcept observable) {
 		List<IArtifact> ret = new ArrayList<>();
 		for (IArtifact artifact : catalog.values()) {
-			if (artifact instanceof IObservation && ((IObservation)artifact).getObservable().getType().is(observable)) {
+			if (artifact instanceof IObservation
+					&& ((IObservation) artifact).getObservable().getType().is(observable)) {
 				ret.add(artifact);
 			}
 		}

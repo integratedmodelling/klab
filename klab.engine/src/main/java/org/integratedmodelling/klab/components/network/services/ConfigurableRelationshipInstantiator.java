@@ -6,27 +6,36 @@ import java.util.List;
 import java.util.Random;
 
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
-public class RandomInstantiator implements IExpression, IInstantiator {
+public class ConfigurableRelationshipInstantiator implements IExpression, IInstantiator {
 
 	private String sourceArtifact = null;
 	private String targetArtifact = null;
@@ -34,7 +43,9 @@ public class RandomInstantiator implements IExpression, IInstantiator {
 	private double probability = 0.01;
 	private boolean allowSelfConnections;
 	private boolean allowReciprocal;
-	private boolean allowCycles;
+	private boolean allowCycles;	
+	Descriptor selectorDescriptor = null;
+
 
 	enum Method {
 		ErdosRenyi, OutDegree
@@ -42,27 +53,36 @@ public class RandomInstantiator implements IExpression, IInstantiator {
 	}
 
 	enum SpaceType {
-		None, Line, LineCentroid, LineEdge, ConvexHull
+		Default, None, Line, LineCentroid, LineEdge, ConvexHull, SpaceBetween
 	}
 
 	private Method method = Method.ErdosRenyi;
-	private SpaceType spaceType = SpaceType.None;
+	private SpaceType spaceType = SpaceType.Default;
 	private Graph<IObjectArtifact, DefaultEdge> graph;
 	private IComputationContext context;
 
-	public RandomInstantiator() {
+	public ConfigurableRelationshipInstantiator() {
 		/* to instantiate as expression - do not remove (or use) */}
 
-	public RandomInstantiator(IParameters<String> parameters, IComputationContext context) {
+	public ConfigurableRelationshipInstantiator(IParameters<String> parameters, IComputationContext context) {
 
 		this.context = context;
 		this.sourceArtifact = parameters.get("source", String.class);
 		this.targetArtifact = parameters.get("target", String.class);
-		this.probability = parameters.get("p", 0.01);
+		this.probability = parameters.get("p", parameters.containsKey("select") ? 1.0 : 0.01);
 		this.allowSelfConnections = parameters.get("selfconnections", Boolean.FALSE);
 		this.allowReciprocal = parameters.get("reciprocal", Boolean.FALSE);
 		this.allowCycles = parameters.get("cycles", Boolean.TRUE);
 
+		if (parameters.containsKey("select")) {
+			Object expression = parameters.get("select");
+			if (expression instanceof IKimExpression) {
+				expression = ((IKimExpression) expression).getCode();
+			}
+			this.selectorDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
+					.describe(expression.toString(), context);
+		}
+		
 		if (parameters.contains("seed")) {
 			random.setSeed(parameters.get("seed", Number.class).longValue());
 		}
@@ -72,6 +92,7 @@ public class RandomInstantiator implements IExpression, IInstantiator {
 		if (parameters.contains("space")) {
 			this.spaceType = SpaceType.valueOf(parameters.get("space", String.class));
 		}
+		
 	}
 
 	@Override
@@ -88,7 +109,7 @@ public class RandomInstantiator implements IExpression, IInstantiator {
 		if (semantics.getType().is(IKimConcept.Type.BIDIRECTIONAL)) {
 			allowReciprocal = false;
 		}
-		
+
 		IConcept sourceConcept = Observables.INSTANCE.getRelationshipSource(semantics.getType());
 		IConcept targetConcept = Observables.INSTANCE.getRelationshipTarget(semantics.getType());
 
@@ -120,6 +141,13 @@ public class RandomInstantiator implements IExpression, IInstantiator {
 			}
 		}
 
+		IExpression selector = null;
+		Parameters<String> parameters = new Parameters<>();
+		if (selectorDescriptor != null) {
+			selector = selectorDescriptor.compile();
+		}
+		
+		
 		boolean samePools = (sourceArtifact != null && targetArtifact != null && sourceArtifact.equals(targetArtifact))
 				|| (sourceArtifact == null && targetArtifact == null && sourceConcept.equals(targetConcept));
 
@@ -147,6 +175,25 @@ public class RandomInstantiator implements IExpression, IInstantiator {
 					throw new IllegalArgumentException("target observations are not direct observations");
 				}
 
+				if (selector != null) {
+
+					parameters.clear();
+					parameters.put("source", source);
+					parameters.put("target", target);
+					Object o = selector.eval(parameters, context);
+					if (o == null) {
+						o = Boolean.FALSE;
+					}
+					if (!(o instanceof Boolean)) {
+						throw new KlabValidationException(
+								"relationship instantiator: selector expression must return true/false");
+					}
+					
+					if (!(Boolean)o) {
+						continue;
+					}
+				}
+				
 				switch (method) {
 				case ErdosRenyi:
 					if (random.nextDouble() < probability) {
@@ -163,20 +210,67 @@ public class RandomInstantiator implements IExpression, IInstantiator {
 				}
 			}
 		}
-		
-		context.getMonitor().info("creating " + graph.edgeSet().size() + " relationships of type " + semantics.getType().getDefinition());
-		
-		return instantiateRelationships();
+
+		context.getMonitor().info(
+				"creating " + graph.edgeSet().size() + " relationships of type " + semantics.getType().getDefinition());
+
+		return instantiateRelationships(semantics);
 	}
 
-	private List<IObjectArtifact> instantiateRelationships() {
-		
+	private List<IObjectArtifact> instantiateRelationships(IObservable observable) {
+
+		int i = 1;
 		List<IObjectArtifact> ret = new ArrayList<>();
-		// TODO build from graph
+		// build from graph
 		for (DefaultEdge edge : graph.edgeSet()) {
-			
+			IDirectObservation source = (IDirectObservation) graph.getEdgeSource(edge);
+			IDirectObservation target = (IDirectObservation) graph.getEdgeTarget(edge);
+			IScale scale = getScale(source, target);
+			ret.add(context.newRelationship(observable, observable.getName() + "_" + i, scale, source, target, null));
+			i++;
 		}
 		return ret;
+	}
+
+	private IScale getScale(IDirectObservation source, IDirectObservation target) {
+
+		SpaceType spt = spaceType;
+		if (spt == SpaceType.Default) {
+			spt = (source.getSpace() != null && target.getSpace() != null)
+					? ((source.getSpace().getDimensionality() > 1 && target.getSpace().getDimensionality() > 1)
+							? SpaceType.ConvexHull
+							: SpaceType.LineEdge)
+					: SpaceType.None;
+		}
+
+		Shape shape = null;
+
+		if (spt != SpaceType.None) {
+
+			IShape ss = source.getSpace().getShape();
+			IShape st = target.getSpace().getShape();
+			
+			switch (spt) {
+			case ConvexHull:
+				shape = Shape.join(ss, st, IShape.Type.POLYGON, true);
+				break;
+			case SpaceBetween:
+				shape = Shape.join(ss, st, IShape.Type.POLYGON, false);
+				break;
+			case Line:
+			case LineCentroid:
+				shape = Shape.join(ss, st, IShape.Type.LINESTRING, true);
+				break;
+			case LineEdge:
+				shape = Shape.join(ss, st, IShape.Type.LINESTRING, false);
+				break;
+			default:
+				break;
+			}
+		}
+
+		return shape == null ? ((Scale) context.getScale()).removeExtent(IGeometry.Dimension.Type.SPACE)
+				: Scale.substituteExtent(context.getScale(), shape);
 	}
 
 	private void connect(IDirectObservation source, IDirectObservation target) {
@@ -192,7 +286,7 @@ public class RandomInstantiator implements IExpression, IInstantiator {
 				return;
 			}
 		}
-		
+
 		// add to graph for bookkeeping unless we don't need it
 		graph.addVertex(source);
 		graph.addVertex(target);
@@ -218,7 +312,7 @@ public class RandomInstantiator implements IExpression, IInstantiator {
 		if (!hadTarget) {
 			graph.addVertex(target);
 		}
-		
+
 		// try it
 		graph.addEdge(source, target);
 		boolean ret = new CycleDetector<IObjectArtifact, DefaultEdge>(graph).detectCycles();
@@ -231,13 +325,13 @@ public class RandomInstantiator implements IExpression, IInstantiator {
 		if (!hadTarget) {
 			graph.removeVertex(target);
 		}
-		
+
 		return ret;
 	}
 
 	@Override
 	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
-		return new RandomInstantiator(parameters, context);
+		return new ConfigurableRelationshipInstantiator(parameters, context);
 	}
 
 	@Override

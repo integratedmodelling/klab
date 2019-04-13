@@ -909,6 +909,18 @@ public class Scale implements IScale {
 		return create(exts.toArray(new IExtent[exts.size()]));
 	}
 
+	public IScale removeExtent(Type extentType) {
+
+		List<IExtent> exts = new ArrayList<>();
+		for (IExtent e : getExtents()) {
+			if (!e.getType().equals(extentType)) {
+				exts.add(e);
+			}
+		}
+		return create(exts.toArray(new IExtent[exts.size()]));
+	};
+
+	
 	/**
 	 * Return a new scale with the passed domains collapsed into a 1-multiplicity
 	 * extent.
@@ -1253,6 +1265,7 @@ public class Scale implements IScale {
 			}
 			return null;
 		}
-	};
+	}
+
 
 }

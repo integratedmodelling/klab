@@ -5,13 +5,20 @@
 @version 0.10.0
 @namespace klab.networks
 
-export object random
-	"Connects subjects by building a random network using configurable methods. Each configuration can optionally be
-	 assigned a spatial context connecting the space of the related subjects with configurable methods."
+export object connect
+	"Connects subjects by building relationships using configurable deterministic or stochastic methods. Each 
+	 relationship can optionally be assigned a spatial context connecting the space of the related subjects 
+	 with configurable methods."
 {		
 	number p
-		"The parameter that defines the network being created. Its 
-         meaning changes according to the method."	
+		"The parameter that defines the network being created. Its meaning changes according to the method. If the
+		selector expression is passed, this defaults to 1.0."	
+		
+	optional input select
+		"An expression evaluated per each legitimate pair of objects to be connected, returning true or false. If
+		 false is returned, the relationship will not be created. The variables 'source' and 'target' are set to
+		 the objects to be linked."
+	    default ""	
 		
 	optional text source
 		"Artifact providing the source for the relationships. By default all artifacts that incarnate the 
@@ -23,7 +30,9 @@ export object random
 
 	optional input space
 		"Type of spatial link to create if the vertices are spatial and distinct.
-	     Possible values are None, Line, LineCentroid, LineEdge, ConvexHull. Default is None."
+	     Possible values are None, Line, LineCentroid, LineEdge, ConvexHull. Default is ConvexHull
+	     if the source and target are polygonal, Line if they are points, and None if they are 
+	     non-spatial."
 	     default "None"
 	     
 	optional number seed
@@ -44,7 +53,7 @@ export object random
 		" 
 		default "ErdosRenyi"
 		
-	class org.integratedmodelling.klab.components.network.services.RandomInstantiator
+	class org.integratedmodelling.klab.components.network.services.ConfigurableRelationshipInstantiator
 
 }
 
@@ -62,6 +71,6 @@ export object route
 
 //	TODO configuration to use 
 
-	class org.integratedmodelling.klab.components.network.services.RoutingInstantiator
+	class org.integratedmodelling.klab.components.network.services.RoutingRelationshipInstantiator
 
 }

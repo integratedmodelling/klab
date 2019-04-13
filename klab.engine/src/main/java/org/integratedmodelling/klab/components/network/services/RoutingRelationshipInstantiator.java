@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 
-public class RoutingInstantiator implements IExpression, IInstantiator {
+public class RoutingRelationshipInstantiator implements IExpression, IInstantiator {
 
 // From Unai for directed network:
 //	# %% random network directed
@@ -36,9 +36,9 @@ public class RoutingInstantiator implements IExpression, IInstantiator {
 //	        if int(random.random()+k/(n-1))==1 and i!=j:
 //	            a[i].append(j)
 	
-	public RoutingInstantiator() {/* to instantiate as expression - do not remove (or use) */}
+	public RoutingRelationshipInstantiator() {/* to instantiate as expression - do not remove (or use) */}
 	
-	public RoutingInstantiator(IParameters<String> parameters, IComputationContext context) {
+	public RoutingRelationshipInstantiator(IParameters<String> parameters, IComputationContext context) {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -57,7 +57,7 @@ public class RoutingInstantiator implements IExpression, IInstantiator {
 
 	@Override
 	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
-		return new RoutingInstantiator(parameters, context);
+		return new RoutingRelationshipInstantiator(parameters, context);
 	}
 
 	@Override

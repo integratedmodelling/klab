@@ -325,7 +325,7 @@ public interface IComputationContext extends IParameters<String> {
 	 * @param relationship
 	 * @return a subject, never null
 	 */
-	ISubject getSourceSubject(IRelationship relationship);
+	IDirectObservation getSourceSubject(IRelationship relationship);
 
 	/**
 	 * Return the target of the passed relationship.
@@ -333,7 +333,7 @@ public interface IComputationContext extends IParameters<String> {
 	 * @param relationship
 	 * @return a subject, never null
 	 */
-	ISubject getTargetSubject(IRelationship relationship);
+	IDirectObservation getTargetSubject(IRelationship relationship);
 
 	/**
 	 * The context observation we are being computed into. Null if the context is

@@ -388,8 +388,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		return ret;
 	}
 
-	static IRelationship createRelationship(Observable observable, IScale scale, ISubject relationshipSource,
-			ISubject relationshipTarget, RuntimeContext runtimeContext) {
+	static IRelationship createRelationship(Observable observable, IScale scale, IDirectObservation relationshipSource,
+			IDirectObservation relationshipTarget, RuntimeContext runtimeContext) {
 
 		Activity activity = null;
 		
@@ -401,10 +401,10 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		IRelationship ret = new Relationship(observable.getLocalName(), (Observable) observable, (Scale) scale,
 				runtimeContext);
 
-		// TODO semantic of the relationship may define whether we want a directed or
+		// the semantics of the relationship may define whether we want a directed or
 		// undirected edge.
 		runtimeContext.network.addEdge(ret,
-				new edu.uci.ics.jung.graph.util.Pair<ISubject>(relationshipSource, relationshipTarget),
+				new edu.uci.ics.jung.graph.util.Pair<IDirectObservation>(relationshipSource, relationshipTarget),
 				observable.is(Type.BIDIRECTIONAL) ? EdgeType.UNDIRECTED : EdgeType.DIRECTED);
 
 		((Observation)ret).setGenerator(activity);

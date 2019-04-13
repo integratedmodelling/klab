@@ -305,6 +305,7 @@ public class Actuator implements IActuator {
 					ctx.getContextObservation());
 
 			if (confdesc != null) {
+				System.out.println("HOSTIA! Configuration: " + confdesc.getFirst().getDefinition());
 				configuration = ctx.newConfiguration(confdesc.getFirst(), confdesc.getSecond());
 			}
 		}
