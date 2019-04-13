@@ -318,6 +318,19 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 			// we need the aggregator observation + the adapter after the state is computed
 		}
 
+		if (observable.is(Type.RELATIONSHIP)) {
+			IConcept source = Observables.INSTANCE.getRelationshipSource(observable.getType());
+			IConcept target = Observables.INSTANCE.getRelationshipTarget(observable.getType());
+			if (model.findDependency(source) == null) {
+				ret.add(new CandidateObservable(Observable.promote(source),
+						source.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
+			}
+			if (!target.equals(source) && model.findDependency(target) == null) {
+				ret.add(new CandidateObservable(Observable.promote(target),
+						target.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
+			}
+		}
+		
 		//
 		// /**
 		// * original minus those that apply to a scale we don't have.

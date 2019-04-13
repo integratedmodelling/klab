@@ -152,11 +152,11 @@ public class DataflowCompiler {
 		}
 
 		/**
-		 * This happens when we resolved a subject observable (from a previous
+		 * This happens when we resolved a countable observable (from a previous
 		 * instantiator calls) without an observer and resolution did not find any
 		 * models.
 		 */
-		if (ret.getActuators().isEmpty() && ((ResolutionScope) scope).getObservable().is(IKimConcept.Type.SUBJECT)
+		if (ret.getActuators().isEmpty() && ((ResolutionScope) scope).getObservable().is(IKimConcept.Type.COUNTABLE)
 				&& scope.getMode() == Mode.RESOLUTION) {
 
 			Actuator actuator = Actuator.create(ret, Mode.RESOLUTION);

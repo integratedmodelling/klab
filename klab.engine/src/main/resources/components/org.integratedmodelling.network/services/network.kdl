@@ -8,10 +8,7 @@
 export object random
 	"Connects subjects by building a random network using configurable methods. Each configuration can optionally be
 	 assigned a spatial context connecting the space of the related subjects with configurable methods."
-{
-	concept type
-		"The semantics for the relationships being instantiated"
-		
+{		
 	number p
 		"The parameter that defines the network being created. Its 
          meaning changes according to the method."	
@@ -25,25 +22,24 @@ export object random
 		 relationship target type are used."
 
 	optional input space
-		"Type of spatial link to create if the vertices are spatial and distinct. Default is none.
-	     Possible values are None, LineCentroid, LineEdge, ConvexHull."
+		"Type of spatial link to create if the vertices are spatial and distinct.
+	     Possible values are None, Line, LineCentroid, LineEdge, ConvexHull. Default is None."
 	     default "None"
 	     
 	optional number seed
 		"The random number seed. By default each generation will use a different one."     
 	     
 	optional input selfconnections
-		"If true, self-connections are created. Default is false"
+		"If true, self-connections can be created. Default is false"
 		default false
 
 	optional boolean reciprocal
-		"If true, A->B does not prevent B->A from being created. Default false. Only meaningful if the
-		 annotated concept is a relationship and not a bond."
+		"If true, A->B does not prevent B->A from being created. Default false. Forced to false
+		 if the annotated concept is a bond."
 
 	optional input method 
 		"The method to use to create the random network. Choose between OutDegree, BarabasiAlbert, EppsteinPowerLaw, 
-		 ErdosRenyi, Lattice2D (restricted to grid space contexts) and KleinbergSmallWorld. If relationship
-	 	 is unidirectional, only ErdosRenyi and OutDegree are supported.
+		 ErdosRenyi, Lattice2D and KleinbergSmallWorld (the last two restricted to grid space contexts).
 		 ## TODO Markdown documentation
 		" 
 		default "ErdosRenyi"

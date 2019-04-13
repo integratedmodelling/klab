@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -255,6 +256,22 @@ public class Model extends KimObject implements IModel {
 		}
 		return null;
 	}
+	
+	/**
+	 * Find a dependency by concept. Uses resolves == 0 for the check.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public IObservable findDependency(IConcept concept) {
+		for (IObservable dependency : dependencies) {
+			if (dependency.getType().resolves(concept) == 0) {
+				return dependency;
+			}
+		}
+		return null;
+	}
+
 
 	/**
 	 * 

@@ -500,7 +500,10 @@ public enum Kim {
 		} else if (value.getTable() != null) {
 			return new KimTable(value.getTable().getTable(), namespace);
 		} else if (value.getConcept() != null) {
-			return declareConcept(value.getConcept());
+			// this intercepts any camelcase, so ensure that only fully qualified concepts are parsed
+			if (value.toString().contains(":")) {
+				return declareConcept(value.getConcept());
+			} else return value.toString();
 		} else if (value.getExpr() != null) {
 			return new KimExpression(value.getExpr(), null);
 		}
