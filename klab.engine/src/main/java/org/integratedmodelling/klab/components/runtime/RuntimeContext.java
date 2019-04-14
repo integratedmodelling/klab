@@ -83,7 +83,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	Provenance provenance;
 	EventBus eventBus;
 	ConfigurationDetector configurationDetector;
-	DirectedSparseMultigraph<IDirectObservation, IRelationship> network;
+	Graph<IDirectObservation, IRelationship> network;
 	Graph<IArtifact, DefaultEdge> structure;
 	Map<String, IArtifact> catalog;
 	IMonitor monitor;
@@ -114,7 +114,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		this.catalog = new HashMap<>();
 		this.report = new Report(this, monitor.getIdentity().getParentIdentity(ISession.class).getId());
 		this.observations = new HashMap<>();
-		this.network = new DirectedSparseMultigraph<>();
+		this.network = new DefaultDirectedGraph<>(IRelationship.class);
 		this.structure = new DefaultDirectedGraph<>(DefaultEdge.class);
 		this.provenance = new Provenance();
 		this.monitor = monitor;
@@ -205,13 +205,13 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	}
 
 	@Override
-	public Collection<IRelationship> getOutgoingRelationships(ISubject observation) {
-		return network.getOutEdges(observation);
+	public Collection<IRelationship> getOutgoingRelationships(IDirectObservation observation) {
+		return network.outgoingEdgesOf(observation);
 	}
 
 	@Override
-	public Collection<IRelationship> getIncomingRelationships(ISubject observation) {
-		return network.getInEdges(observation);
+	public Collection<IRelationship> getIncomingRelationships(IDirectObservation observation) {
+		return network.incomingEdgesOf(observation);
 	}
 
 	@Override
@@ -232,12 +232,12 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 	@Override
 	public IDirectObservation getSourceSubject(IRelationship relationship) {
-		return network.getSource(relationship);
+		return network.getEdgeSource(relationship);
 	}
 
 	@Override
 	public IDirectObservation getTargetSubject(IRelationship relationship) {
-		return network.getDest(relationship);
+		return network.getEdgeTarget(relationship);
 	}
 
 	@Override
@@ -324,7 +324,8 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			Dataflow dataflow = Dataflows.INSTANCE
 					.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope).setPrimary(false);
 			dataflow.setModel((Model) model);
-			ret = (IConfiguration) dataflow.withMetadata(metadata).withConfigurationTargets(targets).run(scale, ((Monitor) monitor).get(subtask));
+			ret = (IConfiguration) dataflow.withMetadata(metadata).withConfigurationTargets(targets).run(scale,
+					((Monitor) monitor).get(subtask));
 		}
 		return ret;
 	}
@@ -495,7 +496,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		ret.targetSemantics = ((Actuator) actuator).getObservable();
 		ret.monitor = monitor;
 		ret.semantics.put(actuator.getName(), ret.targetSemantics);
-		
+
 		if (this.target instanceof IDirectObservation) {
 			ret.contextSubject = (IDirectObservation) this.target;
 		}
@@ -514,7 +515,8 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		ret.target = ret.createTarget((Actuator) actuator, scale, scope, rootSubject);
 		if (ret.target != null && this.target != null) {
 			ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());
-//			ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable(), true);
+			// ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator)
+			// actuator).getObservable(), true);
 		}
 
 		return ret;
@@ -788,12 +790,12 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			if (observation instanceof ISubject) {
 				this.network.addVertex((ISubject) observation);
 			}
-			
+
 			/*
 			 * set the target observations if this is a configuration
 			 */
 			if (observation instanceof IConfiguration) {
-				((Configuration)observation).setTargets(actuator.getDataflow().getConfigurationTargets());
+				((Configuration) observation).setTargets(actuator.getDataflow().getConfigurationTargets());
 			}
 
 			/*

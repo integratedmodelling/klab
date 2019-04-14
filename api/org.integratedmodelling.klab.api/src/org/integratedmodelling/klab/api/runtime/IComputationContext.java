@@ -107,22 +107,22 @@ public interface IComputationContext extends IParameters<String> {
 	 * that have the passed subject as target.
 	 *
 	 * @param observation
-	 *            a {@link org.integratedmodelling.klab.api.observations.ISubject}
+	 *            a {@link org.integratedmodelling.klab.api.observations.IDirectObservation}
 	 *            object.
 	 * @return a {@link java.util.Collection} object.
 	 */
-	Collection<IRelationship> getOutgoingRelationships(ISubject observation);
+	Collection<IRelationship> getOutgoingRelationships(IDirectObservation observation);
 
 	/**
 	 * Inspect the network graph of the current context, returning all relationships
 	 * that have the passed subject as target.
 	 *
 	 * @param observation
-	 *            a {@link org.integratedmodelling.klab.api.observations.ISubject}
+	 *            a {@link org.integratedmodelling.klab.api.observations.IDirectObservation}
 	 *            object.
 	 * @return a {@link java.util.Collection} object.
 	 */
-	Collection<IRelationship> getIncomingRelationships(ISubject observation);
+	Collection<IRelationship> getIncomingRelationships(IDirectObservation observation);
 
 	/**
 	 * Even computations that have more than one output have a single target

@@ -137,12 +137,12 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 	}
 
 	@Override
-	public Collection<IRelationship> getOutgoingRelationships(ISubject observation) {
+	public Collection<IRelationship> getOutgoingRelationships(IDirectObservation observation) {
 		return new ArrayList<>();
 	}
 
 	@Override
-	public Collection<IRelationship> getIncomingRelationships(ISubject observation) {
+	public Collection<IRelationship> getIncomingRelationships(IDirectObservation observation) {
 		return new ArrayList<>();
 	}
 

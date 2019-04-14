@@ -10,7 +10,7 @@ export object connect
 	 relationship can optionally be assigned a spatial context connecting the space of the related subjects 
 	 with configurable methods."
 {		
-	number p
+	optional number p
 		"The parameter that defines the network being created. Its meaning changes according to the method. If the
 		selector expression is passed, this defaults to 1.0."	
 		

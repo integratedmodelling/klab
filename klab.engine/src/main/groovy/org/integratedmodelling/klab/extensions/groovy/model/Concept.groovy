@@ -197,7 +197,11 @@ public class Concept {
 //        }
         return ret;
     }
-
+	
+	def isAgent() {
+		resolve();
+		return concept.is(IKimConcept.Type.AGENT);
+	}
 
     def isThing() {
         resolve();

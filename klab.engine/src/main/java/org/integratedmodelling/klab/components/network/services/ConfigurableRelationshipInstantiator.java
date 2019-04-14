@@ -8,6 +8,7 @@ import java.util.Random;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -48,7 +49,7 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 
 	enum Method {
 		ErdosRenyi, OutDegree
-		// TODO add others
+		// TODO add others - small world particularly useful, others not sure
 	}
 
 	enum SpaceType {
@@ -210,8 +211,8 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 		}
 
 		context.getMonitor()
-				.info("creating " + graph.edgeSet().size() + " relationships of type "
-						+ semantics.getType().getDefinition() + "[" + (allowCycles ? "" : "no ") + "cycles, "
+				.info("creating " + graph.edgeSet().size() + Concepts.INSTANCE.getDisplayName(semantics.getType())
+						+ " relationships [" + (allowCycles ? "" : "no ") + "cycles, "
 						+ (allowSelfConnections ? "" : "no ") + "self connections]");
 
 		return instantiateRelationships(semantics);

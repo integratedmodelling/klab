@@ -401,12 +401,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		IRelationship ret = new Relationship(observable.getLocalName(), (Observable) observable, (Scale) scale,
 				runtimeContext);
 
-		// the semantics of the relationship may define whether we want a directed or
-		// undirected edge.
-		runtimeContext.network.addEdge(ret,
-				new edu.uci.ics.jung.graph.util.Pair<IDirectObservation>(relationshipSource, relationshipTarget),
-				observable.is(Type.BIDIRECTIONAL) ? EdgeType.UNDIRECTED : EdgeType.DIRECTED);
-
+		runtimeContext.network.addEdge(relationshipSource, relationshipTarget, ret);
 		((Observation)ret).setGenerator(activity);
 
 		// TODO if actors must be created (i.e. there are temporal transitions etc) wrap
