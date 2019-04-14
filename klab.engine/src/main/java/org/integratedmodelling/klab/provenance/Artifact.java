@@ -198,6 +198,17 @@ public abstract class Artifact implements IArtifact {
 		this.notified = notified;
 	}
 	
-	
+
+	@Override
+	public boolean is(Class<?> cls) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public <T> T as(Class<?> cls) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

@@ -147,5 +147,16 @@ public abstract class Storage implements IArtifact {
 		return id;
 	}
 
+	@Override
+	public boolean is(Class<?> cls) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public <T> T as(Class<?> cls) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
