@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.Event;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.Process;
+import org.integratedmodelling.klab.components.runtime.observations.Relationship;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
@@ -78,6 +79,7 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 	Map<String, IArtifact> artifacts;
 	Map<String, IObservation> observations;
 	Graph<IArtifact, DefaultEdge> structure;
+	Graph<IArtifact, Relationship> network;
 	ISubject rootSubject;
 	Map<String, IObservable> semantics;
 
@@ -92,6 +94,7 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 		this.observable = observable;
 		this.scale = scale;
 		this.structure = new DefaultDirectedGraph<>(DefaultEdge.class);
+		this.network = new DefaultDirectedGraph<>(Relationship.class);
 		this.artifacts = new HashMap<>();
 		this.observations = new HashMap<>();
 		this.semantics = new HashMap<>();
@@ -107,6 +110,7 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 	public SimpleContext(SimpleContext parent) {
 		this.scale = parent.scale;
 		this.structure = parent.structure;
+		this.network = parent.network;
 		this.monitor = parent.monitor;
 		this.namespace = parent.namespace;
 		this.artifacts = parent.artifacts;
@@ -219,8 +223,27 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 	@Override
 	public IObjectArtifact newRelationship(IObservable observable, String name, IScale scale, IObjectArtifact source,
 			IObjectArtifact target, IMetadata metadata) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Relationship ret = new Relationship(name, (Observable) observable, (Scale) scale, this);
+
+		if (ret != null) {
+
+			observations.put(ret.getId(), ret);
+			structure.addVertex(ret);
+			if (parent != null && parent.target != null) {
+				structure.addEdge(ret, parent.target);
+			}
+			
+			network.addVertex(source);
+			network.addVertex(target);
+			network.addEdge(source, target, ret);
+
+			if (metadata != null) {
+				ret.getMetadata().putAll(metadata);
+			}
+		}
+
+		return ret;
 	}
 
 	@Override
@@ -493,13 +516,7 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public IConfiguration newConfiguration(IConcept configurationType, Collection<IObservation> targets) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	@Override
 	public ILocator getCurrentTimeLocator() {
 		return scale.getTime() == null ? ITime.INITIALIZATION : scale.getTime();
@@ -514,6 +531,13 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 			}
 		}
 		return ret;
+	}
+
+	@Override
+	public IConfiguration newConfiguration(IConcept configurationType, Collection<IObservation> targets,
+			IMetadata metadata) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

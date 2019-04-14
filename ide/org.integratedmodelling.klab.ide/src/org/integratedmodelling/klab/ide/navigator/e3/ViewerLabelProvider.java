@@ -179,7 +179,7 @@ public class ViewerLabelProvider extends LabelProvider
                 	// TODO SCREAM (at Javier)
                     break;
                 case CONFIGURATION:
-                    break;
+                    return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/configuration_resolver.png");
                 case EVENT:
                     return ResourceManager
                             .getPluginImage(Activator.PLUGIN_ID, ((EModel) element).isInstantiator()

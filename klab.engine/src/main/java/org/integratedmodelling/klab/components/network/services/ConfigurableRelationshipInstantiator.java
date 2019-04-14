@@ -43,9 +43,8 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 	private double probability = 0.01;
 	private boolean allowSelfConnections;
 	private boolean allowReciprocal;
-	private boolean allowCycles;	
+	private boolean allowCycles;
 	Descriptor selectorDescriptor = null;
-
 
 	enum Method {
 		ErdosRenyi, OutDegree
@@ -82,7 +81,7 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 			this.selectorDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
 					.describe(expression.toString(), context);
 		}
-		
+
 		if (parameters.contains("seed")) {
 			random.setSeed(parameters.get("seed", Number.class).longValue());
 		}
@@ -92,7 +91,7 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 		if (parameters.contains("space")) {
 			this.spaceType = SpaceType.valueOf(parameters.get("space", String.class));
 		}
-		
+
 	}
 
 	@Override
@@ -146,8 +145,7 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 		if (selectorDescriptor != null) {
 			selector = selectorDescriptor.compile();
 		}
-		
-		
+
 		boolean samePools = (sourceArtifact != null && targetArtifact != null && sourceArtifact.equals(targetArtifact))
 				|| (sourceArtifact == null && targetArtifact == null && sourceConcept.equals(targetConcept));
 
@@ -188,12 +186,12 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 						throw new KlabValidationException(
 								"relationship instantiator: selector expression must return true/false");
 					}
-					
-					if (!(Boolean)o) {
+
+					if (!(Boolean) o) {
 						continue;
 					}
 				}
-				
+
 				switch (method) {
 				case ErdosRenyi:
 					if (random.nextDouble() < probability) {
@@ -211,8 +209,10 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 			}
 		}
 
-		context.getMonitor().info(
-				"creating " + graph.edgeSet().size() + " relationships of type " + semantics.getType().getDefinition());
+		context.getMonitor()
+				.info("creating " + graph.edgeSet().size() + " relationships of type "
+						+ semantics.getType().getDefinition() + "[" + (allowCycles ? "" : "no ") + "cycles, "
+						+ (allowSelfConnections ? "" : "no ") + "self connections]");
 
 		return instantiateRelationships(semantics);
 	}
@@ -249,7 +249,7 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 
 			IShape ss = source.getSpace().getShape();
 			IShape st = target.getSpace().getShape();
-			
+
 			switch (spt) {
 			case ConvexHull:
 				shape = Shape.join(ss, st, IShape.Type.POLYGON, true);

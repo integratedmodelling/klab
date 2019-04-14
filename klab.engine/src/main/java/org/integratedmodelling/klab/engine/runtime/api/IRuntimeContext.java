@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
@@ -268,7 +269,7 @@ public interface IRuntimeContext extends IComputationContext {
 	 * @param configurationType
 	 * @param targets
 	 */
-	IConfiguration newConfiguration(IConcept configurationType, Collection<IObservation> targets);
+	IConfiguration newConfiguration(IConcept configurationType, Collection<IObservation> targets, IMetadata metadata);
 
     /**
      * Locate the current computation in time. There is always a single extent when things are computed; if

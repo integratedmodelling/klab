@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.observations.Configuration;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
@@ -301,6 +302,34 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	}
 
 	@Override
+	public IConfiguration newConfiguration(IConcept configurationType, Collection<IObservation> targets,
+			IMetadata metadata) {
+
+		if (!configurationType.is(Type.CONFIGURATION)) {
+			throw new IllegalArgumentException(
+					"RuntimeContext: cannot create a non-configuration with newConfiguration()");
+		}
+
+		Observable observable = Observable.promote(configurationType);
+
+		/*
+		 * these are one-off so no caching of resolvers needed
+		 */
+		IConfiguration ret = null;
+		ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
+		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
+		ResolutionScope scope = Resolver.INSTANCE.resolve(observable, this.resolutionScope, Mode.RESOLUTION, scale,
+				model);
+		if (scope.getCoverage().isRelevant()) {
+			Dataflow dataflow = Dataflows.INSTANCE
+					.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope).setPrimary(false);
+			dataflow.setModel((Model) model);
+			ret = (IConfiguration) dataflow.withMetadata(metadata).withConfigurationTargets(targets).run(scale, ((Monitor) monitor).get(subtask));
+		}
+		return ret;
+	}
+
+	@Override
 	public ICountableObservation newObservation(IObservable observable, String name, IScale scale, IMetadata metadata)
 			throws KlabException {
 
@@ -442,7 +471,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		ret = (IRelationship) dataflow.withMetadata(metadata)
 				.connecting((IDirectObservation) source, (IDirectObservation) target)
 				.run(scale, ((Monitor) monitor).get(subtask));
-		
+
 		if (ret != null) {
 			((DirectObservation) ret).setName(name);
 		}
@@ -459,12 +488,14 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		ret.targetName = ((Actuator) actuator).isPartition() ? ((Actuator) actuator).getPartitionedTarget()
 				: actuator.getName();
 		ret.resolutionScope = (ResolutionScope) scope;
-		ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable(), true);
+		ret.artifactType = ((Actuator) actuator).getObservable().is(Type.CONFIGURATION) ? Type.CONFIGURATION
+				: Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable(), true);
 		ret.scale = scale;
 		ret.semantics = new HashMap<>();
 		ret.targetSemantics = ((Actuator) actuator).getObservable();
 		ret.monitor = monitor;
 		ret.semantics.put(actuator.getName(), ret.targetSemantics);
+		
 		if (this.target instanceof IDirectObservation) {
 			ret.contextSubject = (IDirectObservation) this.target;
 		}
@@ -483,7 +514,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		ret.target = ret.createTarget((Actuator) actuator, scale, scope, rootSubject);
 		if (ret.target != null && this.target != null) {
 			ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());
-			ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable(), true);
+//			ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable(), true);
 		}
 
 		return ret;
@@ -679,7 +710,8 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 				if (observable.is(Type.RELATIONSHIP)) {
 					observation = DefaultRuntimeProvider.createRelationship(observable, scale,
-							actuator.getDataflow().getRelationshipSource(), actuator.getDataflow().getRelationshipTarget(), this);
+							actuator.getDataflow().getRelationshipSource(),
+							actuator.getDataflow().getRelationshipTarget(), this);
 				} else {
 					observation = DefaultRuntimeProvider.createObservation(observable, scale, this);
 				}
@@ -755,6 +787,13 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			}
 			if (observation instanceof ISubject) {
 				this.network.addVertex((ISubject) observation);
+			}
+			
+			/*
+			 * set the target observations if this is a configuration
+			 */
+			if (observation instanceof IConfiguration) {
+				((Configuration)observation).setTargets(actuator.getDataflow().getConfigurationTargets());
 			}
 
 			/*
@@ -922,12 +961,6 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			return RuntimeContext.this;
 		}
 
-	}
-
-	@Override
-	public IConfiguration newConfiguration(IConcept configurationType, Collection<IObservation> targets) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

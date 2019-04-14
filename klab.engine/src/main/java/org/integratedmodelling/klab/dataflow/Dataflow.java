@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.dataflow;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -64,6 +65,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	private List<InteractiveParameter> fields = new ArrayList<>();
 	private List<Pair<IComputableResource, List<String>>> resources = new ArrayList<>();
 	private IMetadata metadata;
+	private Collection<IObservation> configurationTargets;
 
 	private Dataflow() {
 	}
@@ -297,5 +299,14 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	public IDirectObservation getRelationshipTarget() {
 		return relationshipTarget;
+	}
+
+	public Dataflow withConfigurationTargets(Collection<IObservation> targets) {
+		this.configurationTargets = targets;
+		return this;
+	}
+	
+	public Collection<IObservation> getConfigurationTargets() {
+		return this.configurationTargets;
 	}
 }

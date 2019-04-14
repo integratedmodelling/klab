@@ -12,6 +12,7 @@ import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
@@ -47,6 +48,7 @@ import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
+import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.documentation.Report;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
@@ -297,16 +299,16 @@ public class Actuator implements IActuator {
 		}
 
 		IConfiguration configuration = null;
-		if (!ret.isEmpty()) {
+		if (!ret.isEmpty() && (mode == Mode.INSTANTIATION || ret instanceof IState)) {
 			/*
-			 * check for configuration triggered
+			 * check for configuration triggered, only if we just resolved a state or instantiated 1+ objects
 			 */
 			Pair<IConcept, Set<IObservation>> confdesc = Observables.INSTANCE.detectConfigurations((IObservation) ret,
 					ctx.getContextObservation());
 
 			if (confdesc != null) {
-				System.out.println("HOSTIA! Configuration: " + confdesc.getFirst().getDefinition());
-				configuration = ctx.newConfiguration(confdesc.getFirst(), confdesc.getSecond());
+				ctx.getMonitor().info("emergent configuration " + Concepts.INSTANCE.getDisplayName(confdesc.getFirst()) + " detected");
+				configuration = ctx.newConfiguration(confdesc.getFirst(), confdesc.getSecond(), /* TODO metadata */ new Metadata());
 			}
 		}
 
@@ -402,9 +404,19 @@ public class Actuator implements IActuator {
 				}
 
 				if (configuration != null) {
+					
 					/*
-					 * TODO notify the configuration.
+					 * notify the configuration.
 					 */
+					IObservationReference observation = Observations.INSTANCE
+							.createArtifactDescriptor(configuration, parent, ITime.INITIALIZATION, 0, false, false)
+							.withTaskId(ctx.getMonitor().getIdentity().getId());
+
+					session.getMonitor().send(Message.create(session.getId(),
+							IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation, observation));
+
+					((Report) ctx.getReport()).include(observation);
+					((Artifact) configuration).setNotified(true);
 				}
 			}
 		}

@@ -29,6 +29,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add and support 'monetary' qualifier to 'value of' semantic operator also to enable validation 
   of currencies.
+- Relationships are instantiated and resolved.
+- Configurations are detected, created and resolved.
+- Relationship instantiator klab.networks.connect functional (some methods missing).
 ### Changed
 ### Fixed
 

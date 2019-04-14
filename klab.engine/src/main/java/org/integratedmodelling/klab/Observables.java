@@ -261,7 +261,7 @@ public enum Observables implements IObservableService {
 		}
 
 		/*
-		 * if we apply to something, that is our context unless we specified otherwise 
+		 * if we apply to something, that is our context unless we specified otherwise
 		 */
 		if (ret == null && recurse) {
 			Collection<IConcept> contexts = getApplicableObservables(concept);
@@ -269,7 +269,7 @@ public enum Observables implements IObservableService {
 		}
 
 		/*
-		 * last resort, if we describe something with a context, that's our context too 
+		 * last resort, if we describe something with a context, that's our context too
 		 */
 		if (ret == null && recurse) {
 			List<IConcept> contexts = new ArrayList<>();
@@ -613,19 +613,50 @@ public enum Observables implements IObservableService {
 		}
 	}
 
-	public void registerConfiguration(IConcept ret) {
+	/**
+	 * Register any configuration directly or through inherency.
+	 * 
+	 * @param concept
+	 */
+	public void registerConfigurations(IConcept concept) {
+		
+		if (concept.is(Type.CONFIGURATION)) {
+			registerConfiguration(concept);
+		} else {
+			IConcept inherent = getInherentType(concept);
+			if (inherent != null && inherent.is(Type.CONFIGURATION)) {
+				Configuration descriptor = configurations.get(inherent);
+				if (descriptor == null) {
+					registerConfiguration(inherent);
+					descriptor = configurations.get(inherent);
+				}
+				boolean found = false;
+				for (IConcept target : descriptor.targets) {
+					if (concept.equals(target)) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					descriptor.targets.add(concept);
+				}
+			}
+		}
+	}
+
+	private void registerConfiguration(IConcept concept) {
 		// register the configuration with the configuration detector
-		if (!ret.isAbstract()) {
-			IConcept inherent = getInherentType(ret);
+		if (!concept.isAbstract()) {
+			IConcept inherent = getInherentType(concept);
 			if (inherent != null) {
 				// TODO separate out operands if it's a union or intersection
 				Configuration descriptor = new Configuration();
 				descriptor.targets.add(inherent);
-				descriptor.configuration = ret;
-				configurations.put(ret, descriptor);
+				descriptor.configuration = concept;
+				configurations.put(concept, descriptor);
 			}
 		}
-		for (IConcept child : ret.getChildren()) {
+		for (IConcept child : concept.getChildren()) {
 			registerConfiguration(child);
 		}
 	}
@@ -698,9 +729,7 @@ public enum Observables implements IObservableService {
 					}
 				}
 			}
-
 			return new Pair<>(first.configuration, targets);
-
 		}
 
 		return null;

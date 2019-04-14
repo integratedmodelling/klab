@@ -54,13 +54,13 @@ public enum KimKnowledgeProcessor {
 	private Map<String, String> coreConceptPeers = new HashMap<>();
 
 	/*
-	 * Record correspondence of core concept peers to worldview concepts. Called by KimValidator for
-	 * later use at namespace construction.
+	 * Record correspondence of core concept peers to worldview concepts. Called by
+	 * KimValidator for later use at namespace construction.
 	 */
 	public void setWorldviewPeer(String coreConcept, String worldviewConcept) {
 		coreConceptPeers.put(worldviewConcept, coreConcept);
 	}
-	
+
 	public @Nullable Concept build(final IKimConceptStatement concept, final INamespace namespace,
 			final IMonitor monitor) {
 		return build(concept, namespace, null, monitor);
@@ -102,14 +102,12 @@ public enum KimKnowledgeProcessor {
 				createProperties(ret, ns);
 				ns.define();
 
-				if (ret.is(Type.CONFIGURATION)) {
-					Observables.INSTANCE.registerConfiguration(ret);
-				}
+				Observables.INSTANCE.registerConfigurations(ret);
 
 				if (coreConceptPeers.containsKey(ret.toString())) {
 					Resources.INSTANCE.getUpperOntology().setAsCoreType(ret);
 				}
-				
+
 			}
 
 			return ret;
@@ -140,7 +138,6 @@ public enum KimKnowledgeProcessor {
 			namespace.addAxiom(Axiom.AnnotationAssertion(mainId, CoreOntology.NS.IS_ABSTRACT, "true"));
 		}
 
-		
 		namespace.define();
 		main = namespace.getOntology().getConcept(mainId);
 
@@ -250,7 +247,7 @@ public enum KimKnowledgeProcessor {
 			return observable;
 		}
 
-		Concept main = declareInternal(concept.getMain(), (Ontology)declarationOntology, monitor);
+		Concept main = declareInternal(concept.getMain(), (Ontology) declarationOntology, monitor);
 
 		if (main == null) {
 			return null;
