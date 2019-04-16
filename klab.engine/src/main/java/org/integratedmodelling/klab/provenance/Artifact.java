@@ -2,14 +2,17 @@ package org.integratedmodelling.klab.provenance;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.INetwork;
 import org.integratedmodelling.klab.api.provenance.IAgent;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
@@ -32,6 +35,7 @@ public abstract class Artifact implements IArtifact {
 	List<IAnnotation> annotations = new ArrayList<>();
 	private Activity generator;
 	private boolean notified = false;
+	private Map<Class<?>, Object> peers = new HashMap<>();
 	
 	/*
 	 * all observation data in a group share the same list; the pre-build object is
@@ -198,17 +202,30 @@ public abstract class Artifact implements IArtifact {
 		this.notified = notified;
 	}
 	
-
+	/**
+	 * Base implementation just looks for installed peers. Can be overridden to
+	 * support translation to PODs or other objects.
+	 */
 	@Override
 	public boolean is(Class<?> cls) {
-		// TODO Auto-generated method stub
-		return false;
+		return peers.get(cls) != null;
 	}
 
+	/**
+	 * Base implementation just looks for installed peers. Can be overridden to
+	 * support translation to PODs or other objects.
+	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T as(Class<?> cls) {
-		// TODO Auto-generated method stub
-		return null;
+		return (T)peers.get(cls);
+	}
+
+	/*
+	 * basic method to support the two above
+	 */
+	public void addPeer(Object peer, Class<INetwork> class1) {
+		peers.put(class1, peer);
 	}
 
 }

@@ -37,7 +37,7 @@ public class MonitorableGitWorkspace extends MonitorableFileWorkspace {
                             gitUrlByName.put(MiscUtilities.getURLBaseName(url), url);
                         } catch (KlabException e) {
                             if (new File(root + File.separator + MiscUtilities.getURLBaseName(url) + File.separator + ".git").exists()) {
-                                Logging.INSTANCE.error("cannot sync existing repository "  + url + ": skipping");
+                                Logging.INSTANCE.error("cannot sync existing repository "  + url + ": error is " + e.getMessage());
                             } else {
                                 throw new KlabIOException(e);
                             }

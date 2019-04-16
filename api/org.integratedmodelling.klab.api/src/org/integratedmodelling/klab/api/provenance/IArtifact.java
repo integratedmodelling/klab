@@ -337,19 +337,19 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 	void release();
 
 	/**
-	 * We leave specific views of artifacts flexible
-	 * without specializing the base class. This method, paired with
-	 * {@link #as(Class)}, enables checking for support of specific
-	 * types.
+	 * We leave specific views of artifacts flexible without specializing the base
+	 * class through a simple adaptation mechanism, suitable for PODs or more
+	 * complex objects. This method, paired with {@link #as(Class)}, enables
+	 * checking for adaptability to specific types.
 	 * 
 	 * @param cls
-	 * @return true if the configuration is cls
+	 * @return true if the artifact can be adapted to the passed type.
 	 */
 	boolean is(Class<?> cls);
 
 	/**
-	 * Use after {@link #is(Class)} has returned true to get the specific type of
-	 * needed to support requested operations. 
+	 * Use after {@link #is(Class)} has returned true to adapt to the corresponding
+	 * object of that type.
 	 * 
 	 * @param cls
 	 * @return the specific class requested

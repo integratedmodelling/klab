@@ -76,7 +76,15 @@
 	</build>
 	<dependencies>
 
-		<!-- MapDB for various persistent caches. Simple, used it a lot, never a problem. -->
+		<!-- gexf4j to export networks as GEXF -->
+		<dependency>
+			<groupId>it.uniroma1.dis.wsngroup.gexf4j</groupId>
+			<artifactId>gexf4j</artifactId>
+			<version>0.4.3-BETA</version>
+		</dependency>
+
+		<!-- MapDB for various persistent caches. Simple, used it a lot, never 
+			a problem. -->
 		<dependency>
 			<groupId>org.mapdb</groupId>
 			<artifactId>mapdb</artifactId>
