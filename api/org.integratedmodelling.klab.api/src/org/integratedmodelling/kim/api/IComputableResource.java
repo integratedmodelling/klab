@@ -43,6 +43,7 @@ public interface IComputableResource extends IKimStatement, IDataflowNode {
 	public static class InteractiveParameter {
 
 		private String id;
+		private String functionId;
 		private String description;
 		private IArtifact.Type type;
 		private String initialValue;
@@ -115,6 +116,14 @@ public interface IComputableResource extends IKimStatement, IDataflowNode {
 
 		public void setId(String id) {
 			this.id = id;
+		}
+
+		public String getFunctionId() {
+			return functionId;
+		}
+
+		public void setFunctionId(String functionId) {
+			this.functionId = functionId;
 		}
 	}
 

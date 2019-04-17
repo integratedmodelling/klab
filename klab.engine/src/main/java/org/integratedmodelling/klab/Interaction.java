@@ -3,6 +3,7 @@ package org.integratedmodelling.klab;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IComputableResource.InteractiveParameter;
@@ -13,6 +14,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.services.IInteractionService;
 import org.integratedmodelling.klab.rest.UserInputRequest;
 import org.integratedmodelling.klab.rest.UserInputResponse;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.Pair;
 
 public enum Interaction implements IInteractionService {
@@ -31,6 +33,7 @@ public enum Interaction implements IInteractionService {
 		IPrototype prototype = Extensions.INSTANCE.getPrototype(call.getName());
 		if (prototype != null) {
 			p = new InteractiveParameter();
+			p.setFunctionId(prototype.getName());
 			p.setId(parameter);
 			p.setDescription(prototype.getArgument(parameter).getDescription());
 			p.setType(prototype.getArgument(parameter).getType());
@@ -81,8 +84,11 @@ public enum Interaction implements IInteractionService {
 			// a semaphore in the dataflow, reset when the response arrives.
 			IMessage resp = session.getMonitor()
 					.ask(IMessage.MessageClass.UserInterface, IMessage.Type.UserInputRequested, request).get();
-			UserInputResponse response = resp.getPayload(UserInputResponse.class);
-			// TODO
+			Object payload = resp.getPayload(Object.class);
+			if (payload instanceof Map) {
+				UserInputResponse response = JsonUtils.convertMap((Map<?,?>) payload, UserInputResponse.class);
+				// TODO do something
+			}
 
 		} catch (Throwable e) {
 			session.getMonitor().error(e);

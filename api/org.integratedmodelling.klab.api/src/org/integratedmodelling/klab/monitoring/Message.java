@@ -16,10 +16,12 @@
 package org.integratedmodelling.klab.monitoring;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.logging.Level;
 
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
+import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.Utils;
@@ -242,6 +244,7 @@ public class Message implements IMessage, Serializable {
 		if (payload == null) {
 			return null;
 		}
+	
 		return Utils.asType(payload, cls);
 	}
 

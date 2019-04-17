@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.rest.UserInputResponse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -39,8 +40,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
  */
 public class JsonUtils {
 
-	static ObjectMapper defaultMapper = new ObjectMapper()
-	        .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+	static ObjectMapper defaultMapper = new ObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
 
 	/**
 	 * Default conversion for a map object.
@@ -94,12 +94,12 @@ public class JsonUtils {
 	@SuppressWarnings("unchecked")
 	public static <T> T parseObject(String text, Class<T> cls) {
 		try {
-			return (T)defaultMapper.readerFor(cls).readValue(text);
+			return (T) defaultMapper.readerFor(cls).readValue(text);
 		} catch (IOException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
-	
+
 	/**
 	 * Convert node to list of type T.
 	 *
@@ -162,7 +162,7 @@ public class JsonUtils {
 			throw new KlabIOException(e);
 		}
 	}
-	
+
 	public static String asString(Object object) {
 		try {
 			return defaultMapper.writeValueAsString(object);
@@ -195,6 +195,18 @@ public class JsonUtils {
 		} catch (JsonProcessingException e) {
 			throw new IllegalArgumentException("serialization failed: " + e.getMessage());
 		}
+	}
+
+	/**
+	 * Convert a map resulting from parsing generic JSON (or any other source) to
+	 * the passed type.
+	 * 
+	 * @param payload
+	 * @param cls
+	 * @return the converted object
+	 */
+	public static <T> T convertMap(Map<?, ?> payload, Class<T> cls) {
+		return defaultMapper.convertValue(payload, cls);
 	}
 
 }
