@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IEvent;
+import org.integratedmodelling.klab.api.observations.INetwork;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IRelationship;
@@ -369,6 +370,17 @@ public enum Observations implements IObservationService {
 			}
 
 			/*
+			 * add anything we don't have adapters for, at the moment just networks
+			 */
+			if (observation instanceof IConfiguration && ((IConfiguration) observation).is(INetwork.class)) {
+				INetwork network = ((IConfiguration) observation).as(INetwork.class);
+				for (Triple<String, String, String> capabilities : network.getExportCapabilities(observation)) {
+					formats.put(capabilities.getFirst(), new Pair<>(capabilities,
+							org.integratedmodelling.klab.components.network.model.Network.ADAPTER_ID));
+				}
+			}
+
+			/*
 			 * For now only one adapter is kept per format. Later we may offer the option by
 			 * using a set instead of a map and implementing equals() for ExportFormat to
 			 * check all three.
@@ -510,7 +522,7 @@ public enum Observations implements IObservationService {
 		}
 		return new Observer(shape, observable, (Namespace) namespace);
 	}
-	
+
 	/**
 	 * True if scale has multiple values in each state of the passed extent type.
 	 * 
@@ -579,16 +591,17 @@ public enum Observations implements IObservationService {
 	}
 
 	/**
-	 * Called from Groovy when expressions like "id@nw" are found. Applies some memoizing to handle the 
-	 * context IDs quicker.
+	 * Called from Groovy when expressions like "id@nw" are found. Applies some
+	 * memoizing to handle the context IDs quicker.
 	 * 
 	 * @param targetId
 	 * @param contextIds
 	 * @param context
 	 * @return
 	 */
-	public Object recontextualizeIdentifier(String targetId, String contextIds, IRuntimeContext context, Map<?,?> variables) {
+	public Object recontextualizeIdentifier(String targetId, String contextIds, IRuntimeContext context,
+			Map<?, ?> variables) {
 		return null;
 	}
-	
+
 }

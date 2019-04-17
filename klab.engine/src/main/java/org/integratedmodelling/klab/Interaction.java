@@ -9,6 +9,7 @@ import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IComputableResource.InteractiveParameter;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.services.IInteractionService;
@@ -28,12 +29,12 @@ public enum Interaction implements IInteractionService {
 	 * @param parameter
 	 * @return the interactive parameter descriptor.
 	 */
-	public InteractiveParameter getParameterDescriptor(IServiceCall call, String parameter) {
+	public InteractiveParameter getParameterDescriptor(String id, IServiceCall call, String parameter) {
 		InteractiveParameter p = null;
 		IPrototype prototype = Extensions.INSTANCE.getPrototype(call.getName());
 		if (prototype != null) {
 			p = new InteractiveParameter();
-			p.setFunctionId(prototype.getName());
+			p.setFunctionId(id + "/" + prototype.getName());
 			p.setId(parameter);
 			p.setDescription(prototype.getArgument(parameter).getDescription());
 			p.setType(prototype.getArgument(parameter).getType());
@@ -49,7 +50,8 @@ public enum Interaction implements IInteractionService {
 		List<InteractiveParameter> ret = new ArrayList<>();
 		if (computable.getServiceCall() != null) {
 			for (String id : computable.getServiceCall().getInteractiveParameters()) {
-				InteractiveParameter descriptor = getParameterDescriptor(computable.getServiceCall(), id);
+				InteractiveParameter descriptor = getParameterDescriptor(
+						((ComputableResource) computable).getResourceId(), computable.getServiceCall(), id);
 				if (descriptor != null) {
 					ret.add(descriptor);
 				}
@@ -72,7 +74,7 @@ public enum Interaction implements IInteractionService {
 
 		/*
 		 * Send the session ID as request ID so that multiple requests can be compounded
-		 * at the client side for a single response. 
+		 * at the client side for a single response.
 		 */
 		request.setRequestId(session.getId());
 
@@ -80,14 +82,16 @@ public enum Interaction implements IInteractionService {
 			request.setDescription(
 					"The following parameters admit user input in interactive mode. Please submit the desired values.");
 			request.getFields().addAll(fields);
-			// TODO if more messages are possible, this should be asynchronous and the waiting should be 
-			// a semaphore in the dataflow, reset when the response arrives.
 			IMessage resp = session.getMonitor()
 					.ask(IMessage.MessageClass.UserInterface, IMessage.Type.UserInputRequested, request).get();
 			Object payload = resp.getPayload(Object.class);
 			if (payload instanceof Map) {
-				UserInputResponse response = JsonUtils.convertMap((Map<?,?>) payload, UserInputResponse.class);
-				// TODO do something
+				UserInputResponse response = JsonUtils.convertMap((Map<?, ?>) payload, UserInputResponse.class);
+				for (Pair<IComputableResource, List<String>> resource : resources) {
+					for (String value : response.getValues().keySet()) {
+						//
+					}
+				}
 			}
 
 		} catch (Throwable e) {

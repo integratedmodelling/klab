@@ -20,6 +20,8 @@ import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.observations.IConfiguration;
+import org.integratedmodelling.klab.api.observations.INetwork;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
@@ -248,6 +250,18 @@ public class EngineViewController {
 				done = true;
 
 			}
+		}
+		
+		if (obs instanceof IConfiguration) {
+			
+			if (obs.is(INetwork.class)) {
+				INetwork network = obs.as(INetwork.class);
+				/*
+				 * Output a JSON network structure
+				 */
+			}
+			
+			done = true;
 		}
 
 		if (!done && format == GeometryType.RAW) {

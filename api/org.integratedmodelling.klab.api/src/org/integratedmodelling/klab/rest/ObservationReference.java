@@ -25,7 +25,7 @@ public class ObservationReference implements IObservationReference {
 		private String value;
 		private String adapter;
 		private String extension;
-		
+
 		public ExportFormat() {
 		}
 
@@ -52,21 +52,21 @@ public class ObservationReference implements IObservationReference {
 			this.label = label;
 		}
 
-        public String getAdapter() {
-            return adapter;
-        }
+		public String getAdapter() {
+			return adapter;
+		}
 
-        public void setAdapter(String adapter) {
-            this.adapter = adapter;
-        }
+		public void setAdapter(String adapter) {
+			this.adapter = adapter;
+		}
 
-        public String getExtension() {
-            return extension;
-        }
+		public String getExtension() {
+			return extension;
+		}
 
-        public void setExtension(String extension) {
-            this.extension = extension;
-        }
+		public void setExtension(String extension) {
+			this.extension = extension;
+		}
 	}
 
 	public enum ObservationType {
@@ -128,9 +128,9 @@ public class ObservationReference implements IObservationReference {
 
 		/**
 		 * Observation is a structure of relationships connecting subjects.
-		 * {@link ObservationReference#getStructure()} will return all connections. The
-		 * spatial and temporal character of the observations linked and linking will
-		 * determine the best way of displaying the connections.
+		 * {@link ObservationReference#getStructure()} will return all vertices and
+		 * connections The spatial and temporal character of the observations linked and
+		 * linking will determine the best way of displaying the connections.
 		 */
 		NETWORK,
 
@@ -156,7 +156,7 @@ public class ObservationReference implements IObservationReference {
 		 * Used in request to get the "raw" export data paired with an output format.
 		 */
 		RAW,
-		
+
 		/**
 		 * Corresponding to geometry #... - a folder, empty or ready to receive other
 		 * observations. Communicated always with childrenCount == 0, children may
@@ -192,7 +192,7 @@ public class ObservationReference implements IObservationReference {
 	 * Only sent when the observation redefines the scale (new context)
 	 */
 	private ScaleReference scaleReference;
-	
+
 	public void setDataSummary(DataSummary dataSummary) {
 		this.dataSummary = dataSummary;
 	}
@@ -203,10 +203,10 @@ public class ObservationReference implements IObservationReference {
 	 * the full list are possible.
 	 */
 	private int siblingCount;
-	
+
 	/**
-	 * Number of children, some or all of which may be in the children array according to 
-	 * request parameters. 
+	 * Number of children, some or all of which may be in the children array
+	 * according to request parameters.
 	 */
 	private int childrenCount;
 
@@ -223,7 +223,7 @@ public class ObservationReference implements IObservationReference {
 	 * will have been previously communicated as a group in case .
 	 */
 	private String folderLabel;
-	
+
 	/**
 	 * If the observation is part of a group, this will be the ID of the group. Note
 	 * that folderLabel will be the label of the group; on the other hand, not all
@@ -298,15 +298,15 @@ public class ObservationReference implements IObservationReference {
 	 * which depends on the request).
 	 */
 	private int childCount;
-	
+
 	/**
 	 * True <b>after</b> a notification was made of this observation.
 	 */
 	private boolean previouslyNotified;
-	
+
 	/**
-	 * Only updated for root contexts; contains the timestamp of last update for the entire
-	 * observation structure.
+	 * Only updated for root contexts; contains the timestamp of last update for the
+	 * entire observation structure.
 	 */
 	private long lastUpdate;
 

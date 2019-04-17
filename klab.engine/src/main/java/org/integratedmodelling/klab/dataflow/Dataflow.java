@@ -17,7 +17,6 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
@@ -108,7 +107,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 			}
 			if (fields.size() > 0) {
 				/*
-				 * Issue request and wait for answer
+				 * Issue request, wait for answer and reset parameters in the computation
 				 */
 				Interaction.INSTANCE.submitParameters(this.resources, this.fields, session);
 			}
