@@ -94,6 +94,8 @@ public class Actuator implements IActuator {
 	// export is currently unused but can be used to tag some artifacts for an
 	// output port
 	private boolean exported;
+	
+	protected ISession session;
 
 	// this is only for the API
 	private List<IComputableResource> computedResources = new ArrayList<>();
@@ -713,6 +715,7 @@ public class Actuator implements IActuator {
 		Actuator ret = new Actuator();
 		ret.mode = mode;
 		ret.dataflow = dataflow;
+		ret.session = dataflow.getSession();
 		return ret;
 	}
 
@@ -760,6 +763,11 @@ public class Actuator implements IActuator {
 		return reference;
 	}
 
+	public ISession getSession() {
+	    return this.session;
+	}
+	
+	
 	@Override
 	public boolean isComputed() {
 		return computationStrategy.size() > 0;

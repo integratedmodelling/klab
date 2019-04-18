@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
+import java.util.Map;
+
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -11,45 +13,56 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class ExpressionStateResolver implements IStateResolver {
 
-	Descriptor expressionDescriptor;
-	Descriptor conditionDescriptor;
-	IExpression expression;
-	IExpression condition;
+    Descriptor                  expressionDescriptor;
+    Descriptor                  conditionDescriptor;
+    IExpression                 expression;
+    IExpression                 condition;
+    private Map<String, Object> additionalParameters;
 
-	public ExpressionStateResolver(Descriptor descriptor, Descriptor condition, IParameters<String> parameters,
-			IComputationContext context) {
-		this.expressionDescriptor = descriptor;
-		this.conditionDescriptor = condition;
-	}
+    public ExpressionStateResolver(Descriptor descriptor, Descriptor condition,
+            IParameters<String> parameters,
+            IComputationContext context, Map<String, Object> additionalParameters) {
+        this.expressionDescriptor = descriptor;
+        this.conditionDescriptor = condition;
+        this.additionalParameters = additionalParameters;
+    }
 
-	@Override
-	public Object resolve(IObservable semantics, IComputationContext context) throws KlabException {
-		
-		boolean ok = true;
-		if (this.expression == null) {
-			this.expression = expressionDescriptor.compile();
-			if (conditionDescriptor != null) {
-				this.condition = conditionDescriptor.compile();
-			}
-		}
-		if (condition != null) {
-			Object ret = condition.eval(context, context);
-			ok = ret instanceof Boolean && ((Boolean) ret);
-		}
-		return ok ? expression.eval(context, context) : null;
-	}
+    @Override
+    public Object resolve(IObservable semantics, IComputationContext context) throws KlabException {
 
-	@Override
-	public IGeometry getGeometry() {
-		return Geometry.scalar();
-	}
+        IParameters<String> parameters = context;
+        if (additionalParameters != null) {
+            parameters = new Parameters<String>();
+            parameters.putAll(context);
+            parameters.putAll(additionalParameters);
+        }
 
-	@Override
-	public IArtifact.Type getType() {
-		return Type.VALUE;
-	}
+        boolean ok = true;
+        if (this.expression == null) {
+            this.expression = expressionDescriptor.compile();
+            if (conditionDescriptor != null) {
+                this.condition = conditionDescriptor.compile();
+            }
+        }
+        if (condition != null) {
+            Object ret = condition.eval(parameters, context);
+            ok = ret instanceof Boolean && ((Boolean) ret);
+        }
+        return ok ? expression.eval(parameters, context) : null;
+    }
+
+    @Override
+    public IGeometry getGeometry() {
+        return Geometry.scalar();
+    }
+
+    @Override
+    public IArtifact.Type getType() {
+        return Type.VALUE;
+    }
 
 }

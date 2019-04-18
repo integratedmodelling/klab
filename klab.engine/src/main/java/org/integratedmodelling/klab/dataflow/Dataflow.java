@@ -56,7 +56,6 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	private ResolutionScope scope;
 	private boolean primary = true;
 	private Set<String> notified = new HashSet<>();
-	private ISession session;
 	IDirectObservation relationshipSource;
 	IDirectObservation relationshipTarget;
 

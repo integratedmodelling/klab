@@ -11,6 +11,7 @@ import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.services.IInteractionService;
@@ -49,6 +50,16 @@ public enum Interaction implements IInteractionService {
         return p;
     }
 
+    private InteractiveParameter getParameterDescriptor(String id, IAnnotation annotation) {
+        InteractiveParameter p = new InteractiveParameter();
+        p.setFunctionId(id + "/EXTERNAL");
+        p.setId(annotation.get("name", String.class));
+        p.setDescription(annotation.get("description", String.class));
+        p.setType(Utils.getArtifactType(annotation.get("default", Object.class).getClass()));
+        p.setInitialValue(annotation.get("default", Object.class).toString());
+        return p;
+    }
+
     @Override
     public Collection<InteractiveParameter> getInteractiveParameters(IComputableResource computable) {
         List<InteractiveParameter> ret = new ArrayList<>();
@@ -59,6 +70,12 @@ public enum Interaction implements IInteractionService {
                 if (descriptor != null) {
                     ret.add(descriptor);
                 }
+            }
+        }
+        if (((ComputableResource) computable).getExternalParameters() != null) {
+            for (IAnnotation parameter : ((ComputableResource) computable).getExternalParameters()) {
+                ret.add(getParameterDescriptor(((ComputableResource) computable)
+                        .getId(), parameter));
             }
         }
         return ret;
@@ -96,7 +113,8 @@ public enum Interaction implements IInteractionService {
                     for (Pair<IComputableResource, List<String>> resource : resources) {
                         if (((ComputableResource) resource.getFirst()).getId().equals(keys[0])) {
                             ((ComputableResource) resource.getFirst())
-                                    .setInteractiveParameter(keys[2], parseValue(response.getValues().get(value), keys[2], resource.getFirst()));
+                                    .setInteractiveParameter(keys[2], parseValue(response.getValues()
+                                            .get(value), keys[2], resource.getFirst()));
                         }
                     }
                 }
@@ -108,11 +126,21 @@ public enum Interaction implements IInteractionService {
     }
 
     private Object parseValue(Object value, String key, IComputableResource resource) {
+        boolean found = false;
         if (resource.getServiceCall() != null) {
             Prototype prototype = Extensions.INSTANCE.getPrototype(resource.getServiceCall().getName());
             Argument argument = prototype == null ? null : prototype.getArgument(key);
             if (argument != null) {
+                found = true;
                 value = TypeUtils.convert(value, Utils.getClassForType(argument.getType()));
+            }
+        }
+        if (!found) {
+            for (IAnnotation annotation : ((ComputableResource)resource).getExternalParameters()) {
+                if (annotation.get("name", String.class).equals(key)) {
+                    value = TypeUtils.convert(value, annotation.get("default").getClass());
+                    break;
+                }
             }
         }
         return value;

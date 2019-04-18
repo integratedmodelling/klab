@@ -463,8 +463,9 @@ public class Model extends KimObject implements IModel {
 	}
 
 	/**
-	 * Return all the computational steps required to compute the model, encoded as
-	 * function calls.
+	 * Return all the computational steps required to compute the model. If there are
+	 * annotations that define parameters (possibly interactive), add them to the
+	 * computables.
 	 * 
 	 * @param transition
 	 *            the transition to be computed
@@ -473,14 +474,29 @@ public class Model extends KimObject implements IModel {
 	@Override
 	public List<IComputableResource> getComputation(ILocator transition) {
 
+	    List<IAnnotation> parameters = new ArrayList<>();
+	    for (IAnnotation annotation : getAnnotations()) {
+	        if (annotation.getName().equals("parameter")) {
+	            parameters.add(annotation);
+	        }
+	    }
+	    
 		List<IComputableResource> ret = new ArrayList<>();
 		for (IComputableResource resource : resources) {
-			ret.add(((ComputableResource) resource).copy());
+		    ComputableResource res = ((ComputableResource) resource).copy();
+		    if (parameters.size() > 0) {
+		        res.addParameters(parameters);
+		    }
+			ret.add(res);
 		}
 		for (Trigger trigger : Dataflows.INSTANCE.getActionTriggersFor(transition)) {
 			for (IAction action : behavior.getActions(trigger)) {
 				for (IComputableResource resource : action.getComputation(transition)) {
-					ret.add(((ComputableResource) resource).copy());
+		            ComputableResource res = ((ComputableResource) resource).copy();
+		            if (parameters.size() > 0) {
+		                res.addParameters(parameters);
+		            }
+					ret.add(res);
 				}
 			}
 		}

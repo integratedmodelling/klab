@@ -17,6 +17,27 @@ annotation reliability for models
 	     only the range 25-75 should be used, leaving the extremes for internal use."
 }
 
+annotation 'parameter' for models
+	"Specify parameters with their name and default value to use in Groovy code executed by this model.
+	 Optionally set interact=true and provide a description to make the parameter user-editable in 
+	 interactive mode."
+{
+	text name
+		"The name of the parameter. Can be any Groovy compatible (lowercase) variable name that does not conflict with
+		 dependencies."
+		 
+	value 'default'
+		"The default value for the parameter, which will be used silently if interactive mode is not engaged."
+		
+	optional text description
+		"A description for the parameter and its role in the model. Needed if interact=true, to explain the
+		 role of the parameter to the user changing it."
+		 
+    optional boolean interact
+    	"If true, this parameter becomes part of the interactive parameter form when the model is used. Default
+    	 false."
+}
+
 annotation documented for models, definitions
 	"Documentation for each model is tied to phases of execution and is written as a template, which is 
      computed at run time and used to assemble the final contextualization report using the provenance

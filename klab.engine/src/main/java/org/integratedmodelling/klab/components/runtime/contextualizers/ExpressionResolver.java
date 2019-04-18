@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IComputableResource;
@@ -23,6 +25,7 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
 
 /**
@@ -44,18 +47,28 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 	Descriptor conditionDescriptor;
 	IExpression expression = null;
 	IExpression condition = null;
+	Map<String, Object> additionalParameters = null;
 //	IGeometry geometry = null;
 	boolean isScalar;
 	IComputableResource resource = null;
-
+	private static Set<String> prototypeParameters;
+	
+	static {
+	    prototypeParameters = new HashSet<>();
+	    prototypeParameters.add("unlesscondition");
+        prototypeParameters.add("ifcondition");
+        prototypeParameters.add("code");
+	}
+	
 	// don't remove - only used as expression
 	public ExpressionResolver() {
 	}
 
 	public ExpressionResolver(Descriptor descriptor, Descriptor condition, IParameters<String> parameters,
-			IComputationContext context) {
+			IComputationContext context, Map<String, Object> additionalParameters) {
 		this.expressionDescriptor = descriptor;
 		this.conditionDescriptor = condition;
+		this.additionalParameters = additionalParameters;
 		this.expression = descriptor.compile();
 		if (condition != null) {
 			this.condition = condition.compile();
@@ -88,6 +101,15 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 			condition = processor.describe(condCode, context);
 		}
 
+		for (String key : parameters.keySet()) {
+		    if (!key.startsWith("_") && !prototypeParameters.contains(key)) {
+		        if (additionalParameters == null) {
+		            additionalParameters = new HashMap<>();
+		        }
+		        additionalParameters.put(key, parameters.get(key));
+		    }
+		}
+		
 		/**
 		 * If we're computing a quality and there is any scalar usage of the known
 		 * non-scalar quantities, create a distributed state resolver.
@@ -103,13 +125,13 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 		}
 
 		if (scalar) {
-			return new ExpressionStateResolver(descriptor, condition, parameters, context);
+			return new ExpressionStateResolver(descriptor, condition, parameters, context, additionalParameters);
 		}
 
 		/**
 		 * otherwise just a single-shot expression resolver
 		 */
-		return new ExpressionResolver(descriptor, condition, parameters, context);
+		return new ExpressionResolver(descriptor, condition, parameters, context, additionalParameters);
 	}
 
 	private Set<String> getDistributedStateIds(IComputationContext context) {
@@ -125,6 +147,13 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 	@Override
 	public IArtifact resolve(IArtifact ret, IComputationContext context) throws KlabException {
 		
+	    IParameters<String> parameters = context;
+	    if (additionalParameters != null) {
+	        parameters = new Parameters<String>();
+	        parameters.putAll(context);
+	        parameters.putAll(additionalParameters);
+	    }
+	    
 		if (this.expression == null) {
 			this.expression = expressionDescriptor.compile();
 			if (conditionDescriptor != null) {
@@ -133,11 +162,11 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 		}
 		boolean ok = true;
 		if (condition != null) {
-			Object cond = condition.eval(context, context);
+			Object cond = condition.eval(parameters, context);
 			ok = cond instanceof Boolean && ((Boolean) cond);
 		}
 		if (ok) {
-			Object o = expression.eval(context, context);
+			Object o = expression.eval(parameters, context);
 			if (o instanceof IDataArtifact) {
 				ret = (IDataArtifact) o;
 			} else if (Utils.isPOD(o) && ret instanceof State) {
