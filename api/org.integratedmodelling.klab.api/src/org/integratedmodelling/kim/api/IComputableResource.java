@@ -249,14 +249,14 @@ public interface IComputableResource extends IKimStatement, IDataflowNode {
 	 */
 	Collection<String> getInteractiveParameters();
 
-	/**
-	 * If interactive parameters have been modified, submit their new values through
-	 * this.
-	 * 
-	 * @param parameterId
-	 * @param value
-	 */
-	void setInteractiveParameter(String parameterId, Object value);
+//	/**
+//	 * If interactive parameters have been modified, submit their new values through
+//	 * this.
+//	 * 
+//	 * @param parameterId
+//	 * @param value
+//	 */
+//	void setInteractiveParameter(String parameterId, Object value);
 
 	/**
 	 * This computation may be linked to a condition, which is another computation

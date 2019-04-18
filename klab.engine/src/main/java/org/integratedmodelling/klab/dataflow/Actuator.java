@@ -220,6 +220,11 @@ public class Actuator implements IActuator {
 				return Observation.empty(getObservable(), runtimeContext);
 			}
 
+			IServiceCall function = service.getFirst();
+			if (((ComputableResource)service.getSecond()).getModifiedParameters() != null) {
+			    function.getParameters().putAll(((ComputableResource)service.getSecond()).getModifiedParameters());
+			}
+			
 			Object contextualizer = Extensions.INSTANCE.callFunction(service.getFirst(), ctx);
 			if (contextualizer == null) {
 				// this happens when a condition isn't met, so it's legal.

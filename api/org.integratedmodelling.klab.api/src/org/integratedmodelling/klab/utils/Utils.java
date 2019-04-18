@@ -196,6 +196,22 @@ public class Utils {
                 return (T) new Float(((Boolean) ret) ? 1 : 0);
             }
 
+        } else if (ret instanceof String) {
+            if (cls.equals(Double.class)) {
+                return (T) new Double(Double.parseDouble((String)ret));
+            }
+            if (cls.equals(Long.class)) {
+                return (T) new Long(Long.parseLong((String)ret));
+            }
+            if (cls.equals(Integer.class)) {
+                return (T) new Integer(Integer.parseInt((String)ret));
+            }
+            if (cls.equals(Float.class)) {
+                return (T) new Float(Float.parseFloat((String)ret));
+            }
+            if (cls.equals(Boolean.class)) {
+                return (T) new Boolean(Boolean.parseBoolean((String)ret));
+            }
         }
 
         throw new IllegalArgumentException("cannot interpret value " + ret + " as a "

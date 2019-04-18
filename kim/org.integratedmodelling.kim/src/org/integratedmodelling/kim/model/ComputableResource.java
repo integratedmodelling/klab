@@ -57,7 +57,8 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	private ComputableResource condition;
 	private Pair<IValueMediator, IValueMediator> conversion;
 	private Collection<Pair<String, IArtifact.Type>> requiredResourceNames = null;
-
+	private Map<String, Object> interactiveParameters;
+	
 	/**
 	 * Slot to save a validated resource so that it won't need to be validated
 	 * twice. Shouldn't be serialized.
@@ -96,6 +97,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		ret.target = this.target;
 		ret.targetId = this.targetId;
 		ret.copy = true;
+		ret.interactiveParameters = this.interactiveParameters;
 		// ret.type = this.type;
 		ret.resolutionMode = this.resolutionMode;
 		return ret;
@@ -603,9 +605,21 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		return ret;
 	}
 
-	@Override
-	public void setInteractiveParameter(String parameterId, Object value) {
-		// TODO Auto-generated method stub
+	public Map<String, Object> getModifiedParameters() {
+	    return interactiveParameters;
 	}
+	
+//	@Override
+	public void setInteractiveParameter(String parameterId, Object value) {
+	    if (this.interactiveParameters == null) {
+	        this.interactiveParameters = new HashMap<>();
+	    }
+	    this.interactiveParameters.put(parameterId, value);
+	}
+
+    public String getId() {
+        return _resourceId;
+    }
+
 
 }

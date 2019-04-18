@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Relationships are instantiated and resolved.
 - Configurations are detected, created and resolved.
 - Relationship instantiator klab.networks.connect functional (some methods missing).
+- k.Explorer interactive mode supported and working.
 ### Changed
 ### Fixed
 

@@ -84,7 +84,7 @@ public class Network implements INetwork {
 	public Collection<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
 		List<Triple<String, String, String>> ret = new ArrayList<>();
 		// TODO others, more for code-compatible formats and possibly spatial networks
-		ret.add(new Triple<>("gefx", "GEFX 1.2 network export (Gephi compatible)", "gefx"));
+		ret.add(new Triple<>("gefx", "GEFX 1.2 network (Gephi compatible)", "gefx"));
 		return ret;
 	}
 

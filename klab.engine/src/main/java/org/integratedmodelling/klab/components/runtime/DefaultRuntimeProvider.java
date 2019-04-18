@@ -16,6 +16,7 @@ import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
+import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
@@ -34,7 +35,6 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -83,7 +83,6 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 
 import akka.actor.ActorSystem;
-import edu.uci.ics.jung.graph.util.EdgeType;
 
 /**
  * This component provides the default dataflow execution runtime and the
@@ -222,45 +221,50 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 	@Override
 	public IServiceCall getServiceCall(IComputableResource resource, IActuator target) {
+	    
+	    IServiceCall ret = null;
+	    
 		if (resource.getServiceCall() != null) {
 			if (resource.getCondition() != null) {
-				return ConditionalContextualizer.getServiceCall(resource);
+				ret = ConditionalContextualizer.getServiceCall(resource);
+			} else {
+			    ret = ((KimServiceCall)resource.getServiceCall()).copy();
 			}
-			return resource.getServiceCall();
 		} else if (resource.getUrn() != null) {
 			if (resource.getComputationMode() == Mode.INSTANTIATION) {
-				return UrnInstantiator.getServiceCall(resource.getUrn(), resource.getCondition(), resource.isNegated());
+				ret = UrnInstantiator.getServiceCall(resource.getUrn(), resource.getCondition(), resource.isNegated());
 			} else {
-				return UrnResolver.getServiceCall(resource.getUrn(), resource.getCondition(), resource.isNegated());
+				ret = UrnResolver.getServiceCall(resource.getUrn(), resource.getCondition(), resource.isNegated());
 			}
 		} else if (resource.getExpression() != null) {
-			return ExpressionResolver.getServiceCall(resource);
+			ret = ExpressionResolver.getServiceCall(resource);
 		} else if (resource.getLiteral() != null) {
-			return LiteralStateResolver.getServiceCall(resource.getLiteral(), resource.getCondition(),
+			ret = LiteralStateResolver.getServiceCall(resource.getLiteral(), resource.getCondition(),
 					resource.isNegated());
 		} else if (resource.getConversion() != null) {
 			try {
-				return ConversionResolver.getServiceCall(resource.getConversion());
+				ret = ConversionResolver.getServiceCall(resource.getConversion());
 			} catch (KlabValidationException e) {
 				throw new IllegalArgumentException(e);
 			}
 		} else if (resource.getClassification() != null) {
-			return ClassifyingStateResolver.getServiceCall(
+			ret = ClassifyingStateResolver.getServiceCall(
 					((ComputableResource) resource).getValidatedResource(IClassification.class),
 					resource.getCondition(), resource.isNegated());
 		} else if (resource.getAccordingTo() != null) {
 			IClassification classification = Types.INSTANCE.createClassificationFromMetadata(
 					((Actuator) target).getObservable().getType(), resource.getAccordingTo());
-			return ClassifyingStateResolver.getServiceCall(classification, resource.getCondition(),
+			ret = ClassifyingStateResolver.getServiceCall(classification, resource.getCondition(),
 					resource.isNegated());
 		} else if (resource.getLookupTable() != null) {
-			return LookupStateResolver.getServiceCall(
+			ret = LookupStateResolver.getServiceCall(
 					((ComputableResource) resource).getValidatedResource(ILookupTable.class), resource.getCondition(),
 					resource.isNegated());
+		} else {
+		    throw new IllegalArgumentException("unsupported computable passed to getServiceCall()");
 		}
 
-		// temp
-		throw new IllegalArgumentException("unsupported computable passed to getServiceCall()");
+		return ret;
 	}
 
 	@Override

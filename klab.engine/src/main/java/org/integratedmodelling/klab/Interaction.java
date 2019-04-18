@@ -8,95 +8,114 @@ import java.util.Map;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IComputableResource.InteractiveParameter;
 import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.services.IInteractionService;
+import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.rest.UserInputRequest;
 import org.integratedmodelling.klab.rest.UserInputResponse;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.TypeUtils;
+import org.integratedmodelling.klab.utils.Utils;
 
 public enum Interaction implements IInteractionService {
 
-	INSTANCE;
+    INSTANCE;
 
-	/**
-	 * Describe the passed parameter for the passed service call.
-	 * 
-	 * @param call
-	 * @param parameter
-	 * @return the interactive parameter descriptor.
-	 */
-	public InteractiveParameter getParameterDescriptor(String id, IServiceCall call, String parameter) {
-		InteractiveParameter p = null;
-		IPrototype prototype = Extensions.INSTANCE.getPrototype(call.getName());
-		if (prototype != null) {
-			p = new InteractiveParameter();
-			p.setFunctionId(id + "/" + prototype.getName());
-			p.setId(parameter);
-			p.setDescription(prototype.getArgument(parameter).getDescription());
-			p.setType(prototype.getArgument(parameter).getType());
-			if (call.getParameters().contains(parameter)) {
-				p.setInitialValue(call.getParameters().get(parameter).toString());
-			}
-		}
-		return p;
-	}
+    /**
+     * Describe the passed parameter for the passed service call.
+     * 
+     * @param call
+     * @param parameter
+     * @return the interactive parameter descriptor.
+     */
+    public InteractiveParameter getParameterDescriptor(String id, IServiceCall call, String parameter) {
+        InteractiveParameter p = null;
+        IPrototype prototype = Extensions.INSTANCE.getPrototype(call.getName());
+        if (prototype != null) {
+            p = new InteractiveParameter();
+            p.setFunctionId(id + "/" + prototype.getName());
+            p.setId(parameter);
+            p.setDescription(prototype.getArgument(parameter).getDescription());
+            p.setType(prototype.getArgument(parameter).getType());
+            if (call.getParameters().contains(parameter)) {
+                p.setInitialValue(call.getParameters().get(parameter).toString());
+            }
+        }
+        return p;
+    }
 
-	@Override
-	public Collection<InteractiveParameter> getInteractiveParameters(IComputableResource computable) {
-		List<InteractiveParameter> ret = new ArrayList<>();
-		if (computable.getServiceCall() != null) {
-			for (String id : computable.getServiceCall().getInteractiveParameters()) {
-				InteractiveParameter descriptor = getParameterDescriptor(
-						((ComputableResource) computable).getResourceId(), computable.getServiceCall(), id);
-				if (descriptor != null) {
-					ret.add(descriptor);
-				}
-			}
-		}
-		return ret;
-	}
+    @Override
+    public Collection<InteractiveParameter> getInteractiveParameters(IComputableResource computable) {
+        List<InteractiveParameter> ret = new ArrayList<>();
+        if (computable.getServiceCall() != null) {
+            for (String id : computable.getServiceCall().getInteractiveParameters()) {
+                InteractiveParameter descriptor = getParameterDescriptor(((ComputableResource) computable)
+                        .getId(), computable.getServiceCall(), id);
+                if (descriptor != null) {
+                    ret.add(descriptor);
+                }
+            }
+        }
+        return ret;
+    }
 
-	/**
-	 * Submit the passed parameters, wait for a user's response which will directly
-	 * modify the the passed resources.
-	 * 
-	 * @param resources
-	 * @param fields
-	 */
-	public void submitParameters(List<Pair<IComputableResource, List<String>>> resources,
-			List<InteractiveParameter> fields, ISession session) {
+    /**
+     * Submit the passed parameters, wait for a user's response which will directly
+     * modify the the passed resources.
+     * 
+     * @param resources
+     * @param fields
+     */
+    public void submitParameters(List<Pair<IComputableResource, List<String>>> resources, List<InteractiveParameter> fields, ISession session) {
 
-		UserInputRequest request = new UserInputRequest();
+        UserInputRequest request = new UserInputRequest();
 
-		/*
-		 * Send the session ID as request ID so that multiple requests can be compounded
-		 * at the client side for a single response.
-		 */
-		request.setRequestId(session.getId());
+        /*
+         * Send the session ID as request ID so that multiple requests can be compounded
+         * at the client side for a single response.
+         */
+        request.setRequestId(session.getId());
 
-		try {
-			request.setDescription(
-					"The following parameters admit user input in interactive mode. Please submit the desired values.");
-			request.getFields().addAll(fields);
-			IMessage resp = session.getMonitor()
-					.ask(IMessage.MessageClass.UserInterface, IMessage.Type.UserInputRequested, request).get();
-			Object payload = resp.getPayload(Object.class);
-			if (payload instanceof Map) {
-				UserInputResponse response = JsonUtils.convertMap((Map<?, ?>) payload, UserInputResponse.class);
-				for (Pair<IComputableResource, List<String>> resource : resources) {
-					for (String value : response.getValues().keySet()) {
-						//
-					}
-				}
-			}
+        try {
+            request.setDescription("The following parameters admit user input in interactive mode. Please submit the desired values.");
+            request.getFields().addAll(fields);
+            IMessage resp = session.getMonitor()
+                    .ask(IMessage.MessageClass.UserInterface, IMessage.Type.UserInputRequested, request)
+                    .get();
+            Object payload = resp.getPayload(Object.class);
+            if (payload instanceof Map) {
+                UserInputResponse response = JsonUtils
+                        .convertMap((Map<?, ?>) payload, UserInputResponse.class);
+                for (String value : response.getValues().keySet()) {
+                    String keys[] = value.split("/");
+                    for (Pair<IComputableResource, List<String>> resource : resources) {
+                        if (((ComputableResource) resource.getFirst()).getId().equals(keys[0])) {
+                            ((ComputableResource) resource.getFirst())
+                                    .setInteractiveParameter(keys[2], parseValue(response.getValues().get(value), keys[2], resource.getFirst()));
+                        }
+                    }
+                }
+            }
 
-		} catch (Throwable e) {
-			session.getMonitor().error(e);
-		}
-	}
+        } catch (Throwable e) {
+            session.getMonitor().error(e);
+        }
+    }
+
+    private Object parseValue(Object value, String key, IComputableResource resource) {
+        if (resource.getServiceCall() != null) {
+            Prototype prototype = Extensions.INSTANCE.getPrototype(resource.getServiceCall().getName());
+            Argument argument = prototype == null ? null : prototype.getArgument(key);
+            if (argument != null) {
+                value = TypeUtils.convert(value, Utils.getClassForType(argument.getType()));
+            }
+        }
+        return value;
+    }
 
 }
