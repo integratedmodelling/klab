@@ -256,9 +256,13 @@ public class EngineViewController {
 			
 			if (obs.is(INetwork.class)) {
 				INetwork network = obs.as(INetwork.class);
-				/*
-				 * Output a JSON network structure
-				 */
+				if (outputFormat.equals("json")) {
+	                /*
+	                 * Output a JSON network structure
+	                 */
+				} else {
+				    network.export(outputFormat, response.getOutputStream());
+				}
 			}
 			
 			done = true;

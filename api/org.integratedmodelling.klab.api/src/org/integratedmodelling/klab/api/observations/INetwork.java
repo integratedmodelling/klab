@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.api.observations;
 
+import java.io.OutputStream;
 import java.util.Collection;
 
 import org.integratedmodelling.klab.utils.Triple;
@@ -22,5 +23,14 @@ public interface INetwork {
      * @return
      */
     Collection<Triple<String, String, String>> getExportCapabilities(IObservation observation);
-	
+
+    /**
+     * Export the network on the passed output stream using the passed format. Formats
+     * are implementation-dependent.
+     * 
+     * @param outputFormat
+     * @param outputStream
+     */
+    void export(String outputFormat, OutputStream outputStream);
+
 }

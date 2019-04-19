@@ -14,7 +14,6 @@ import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
@@ -32,168 +31,192 @@ import org.integratedmodelling.klab.utils.Path;
  */
 public abstract class Observation extends ObservedArtifact implements IObservation {
 
-	private Observable observable;
-	private ObservationGroup group = null;
-	// last modification. Must be correct for any cache to work.
-	private long timestamp = System.currentTimeMillis();
-	// used to store the "main" status from annotations or because of directly observed. Should eventually
-	// come from provenance. 
-	private boolean main;
-	// only kept updated in the root observation
-	private long lastUpdate;
+    private Observable       observable;
+    private ObservationGroup group     = null;
+    // last modification. Must be correct for any cache to work.
+    private long             timestamp = System.currentTimeMillis();
+    // used to store the "main" status from annotations or because of directly observed. Should eventually
+    // come from provenance.
+    private boolean          main;
+    // only kept updated in the root observation
+    private long             lastUpdate;
+    // separately kept time of creation and exit, using timestamp if non-temporal
+    private long             creationTime;
+    private long             exitTime;
 
-	public String getUrn() {
-		return "local:observation:" + getParentIdentity(Session.class).getId() + ":" + getId();
-	}
+    public String getUrn() {
+        return "local:observation:" + getParentIdentity(Session.class).getId() + ":" + getId();
+    }
 
-	public static IObservation empty(IObservable observable, IComputationContext context) {
-		return new ObservationGroup((Observable) observable, (Scale) context.getScale(), (IRuntimeContext) context,
-				observable.getArtifactType());
-	}
+    public static IObservation empty(IObservable observable, IComputationContext context) {
+        return new ObservationGroup((Observable) observable, (Scale) context
+                .getScale(), (IRuntimeContext) context, observable.getArtifactType());
+    }
 
-	protected Observation(Observable observable, Scale scale, IRuntimeContext context) {
-		super(scale, context);
-		this.observable = observable;
-	}
+    protected Observation(Observable observable, Scale scale, IRuntimeContext context) {
+        super(scale, context);
+        this.observable = observable;
+        this.setCreationTime(context.getScheduler() != null ? context.getScheduler().getTime() : timestamp);
+        this.setExitTime(-1);
+    }
 
-	protected void touch() {
-		this.timestamp = System.currentTimeMillis();
-	}
-	
-	public long getTimestamp() {
-		return timestamp;
-	}
+    protected void touch() {
+        this.timestamp = System.currentTimeMillis();
+    }
 
-	@Override
-	public Observable getObservable() {
-		return observable;
-	}
+    public long getTimestamp() {
+        return timestamp;
+    }
 
-	@Override
-	public Scale getScale() {
-		return (Scale) getGeometry();
-	}
+    @Override
+    public Observable getObservable() {
+        return observable;
+    }
 
-	@Override
-	public boolean isSpatiallyDistributed() {
-		return getScale().isSpatiallyDistributed();
-	}
+    @Override
+    public Scale getScale() {
+        return (Scale) getGeometry();
+    }
 
-	@Override
-	public boolean isTemporallyDistributed() {
-		return getScale().isTemporallyDistributed();
-	}
+    @Override
+    public boolean isSpatiallyDistributed() {
+        return getScale().isSpatiallyDistributed();
+    }
 
-	@Override
-	public boolean isTemporal() {
-		return getScale().getTime() != null;
-	}
+    @Override
+    public boolean isTemporallyDistributed() {
+        return getScale().isTemporallyDistributed();
+    }
 
-	@Override
-	public boolean isSpatial() {
-		return getScale().getSpace() != null;
-	}
+    @Override
+    public boolean isTemporal() {
+        return getScale().getTime() != null;
+    }
 
-	@Override
-	public ISpace getSpace() {
-		return getScale().getSpace();
-	}
+    @Override
+    public boolean isSpatial() {
+        return getScale().getSpace() != null;
+    }
 
-	@Override
-	public IEngineSessionIdentity getParentIdentity() {
-		return getMonitor().getIdentity().getParentIdentity(IEngineSessionIdentity.class);
-	}
+    @Override
+    public ISpace getSpace() {
+        return getScale().getSpace();
+    }
 
-	@Override
-	public Monitor getMonitor() {
-		return (Monitor) getRuntimeContext().getMonitor();
-	}
+    @Override
+    public IEngineSessionIdentity getParentIdentity() {
+        return getMonitor().getIdentity().getParentIdentity(IEngineSessionIdentity.class);
+    }
 
-	@Override
-	public boolean is(IIdentity.Type type) {
-		return type == IIdentity.Type.OBSERVATION;
-	}
+    @Override
+    public Monitor getMonitor() {
+        return (Monitor) getRuntimeContext().getMonitor();
+    }
 
-	@Override
-	public <T extends IIdentity> T getParentIdentity(Class<T> type) {
-		return IIdentity.findParent(this, type);
-	}
+    @Override
+    public boolean is(IIdentity.Type type) {
+        return type == IIdentity.Type.OBSERVATION;
+    }
 
-	@Override
-	public IProvenance getProvenance() {
-		return getRuntimeContext().getProvenance();
-	}
+    @Override
+    public <T extends IIdentity> T getParentIdentity(Class<T> type) {
+        return IIdentity.findParent(this, type);
+    }
 
-	public void setObservable(Observable observable) {
-		this.observable = observable;
-	}
-	
-	public Namespace getNamespace() {
-		return (Namespace) getRuntimeContext().getNamespace();
-	}
+    @Override
+    public IProvenance getProvenance() {
+        return getRuntimeContext().getProvenance();
+    }
 
-	@Override
-	public DirectObservation getContext() {
-		return (DirectObservation) getRuntimeContext().getParentOf(this);
-	}
+    public void setObservable(Observable observable) {
+        this.observable = observable;
+    }
 
-	public String toString() {
-		return "{" + Path.getLast(this.getClass().getCanonicalName(), '.') + " " + getId() + ": " + getObservable()
-				+ "}";
-	}
+    public Namespace getNamespace() {
+        return (Namespace) getRuntimeContext().getNamespace();
+    }
 
-	void setGroup(ObservationGroup group) {
-		this.group = group;
-	}
+    @Override
+    public DirectObservation getContext() {
+        return (DirectObservation) getRuntimeContext().getParentOf(this);
+    }
 
-	/**
-	 * Get the group this is part of, if any.
-	 * 
-	 * @return
-	 */
-	public ObservationGroup getGroup() {
-		return group;
-	}
-	
-	@Override
-	public IArtifact.Type getType() {
-		return observable.getArtifactType();
-	}
+    public String toString() {
+        return "{" + Path.getLast(this.getClass().getCanonicalName(), '.') + " " + getId() + ": "
+                + getObservable()
+                + "}";
+    }
 
-	@Override
-	public Iterator<IArtifact> iterator() {
-		if (group == null) {
-		    List<IArtifact> list = new ArrayList<>();
-		    list.add(this);
-		    return list.iterator();
-		}
-		return group.iterator();
-	}
+    void setGroup(ObservationGroup group) {
+        this.group = group;
+    }
 
-	@Override
-	public int groupSize() {
-		return group == null ? 1 : group.groupSize();
-	}
+    /**
+     * Get the group this is part of, if any.
+     * 
+     * @return
+     */
+    public ObservationGroup getGroup() {
+        return group;
+    }
 
-	public boolean isMain() {
-		return main;
-	}
+    @Override
+    public IArtifact.Type getType() {
+        return observable.getArtifactType();
+    }
 
-	public void setMain(boolean main) {
-		this.main = main;
-	}
+    @Override
+    public Iterator<IArtifact> iterator() {
+        if (group == null) {
+            List<IArtifact> list = new ArrayList<>();
+            list.add(this);
+            return list.iterator();
+        }
+        return group.iterator();
+    }
 
-	public long getLastUpdate() {
-		return lastUpdate;
-	}		
+    @Override
+    public int groupSize() {
+        return group == null ? 1 : group.groupSize();
+    }
 
-	public void setLastUpdate(long lastUpdate) {
-		this.lastUpdate = lastUpdate;
-	}
-	
-	@Override
-	public ISubjectiveObservation reinterpret(IDirectObservation observer) {
-		throw new IllegalStateException("reinterpret() was called on an illegal or unsupported type");
-	}
+    public boolean isMain() {
+        return main;
+    }
+
+    public void setMain(boolean main) {
+        this.main = main;
+    }
+
+    public long getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(long lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
+
+    @Override
+    public ISubjectiveObservation reinterpret(IDirectObservation observer) {
+        throw new IllegalStateException("reinterpret() was called on an illegal or unsupported type");
+    }
+
+    @Override
+    public long getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(long creationTime) {
+        this.creationTime = creationTime;
+    }
+
+    @Override
+    public long getExitTime() {
+        return exitTime;
+    }
+
+    public void setExitTime(long exitTime) {
+        this.exitTime = exitTime;
+    }
 
 }

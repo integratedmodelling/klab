@@ -47,4 +47,11 @@ public interface IScheduler<T> {
 	 * Stop the scheduler.
 	 */
 	void stop();
+
+	/**
+	 * Current absolute time. May have to switch to bigint for nanosecond resolution.
+	 * 
+	 * @return
+	 */
+    long getTime();
 }

@@ -836,14 +836,10 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		return structure;
 	}
 
-	/**
-	 * TODO the scheduler starts right away, so this is actually "run" if the
-	 * scheduler is null.
-	 */
 	@Override
 	public Scheduler<?> getScheduler() {
-		if (rootSubject == null || rootSubject.getScale().getTime() == null) {
-			throw new IllegalStateException("cannot create a scheduler for a non-temporal observation");
+		if (rootSubject == null || !rootSubject.isSpatiallyDistributed()) {
+		    return null;
 		}
 		if (this.scheduler == null) {
 			// TODO create and configure the scheduler

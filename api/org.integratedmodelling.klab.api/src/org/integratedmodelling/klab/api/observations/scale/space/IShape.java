@@ -130,5 +130,13 @@ public interface IShape extends IReferenced, ISpace {
 	 * @return
 	 */
 	IShape getCentroid();
+	
+	/**
+	 * Get the center x,y coordinates in projection units or in standardized
+	 * units.
+	 * 
+	 * @return
+	 */
+	double[] getCenter(boolean standardized);
 
 }

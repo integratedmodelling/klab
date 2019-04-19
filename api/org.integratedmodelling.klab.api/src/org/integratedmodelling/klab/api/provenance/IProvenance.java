@@ -101,6 +101,12 @@ public interface IProvenance {
 		 */
 		String getId();
 
+		/**
+		 * Timestamp. TODO: this must reflect scheduler time if these are instantiated
+		 * with a scheduler active.
+		 * 
+		 * @return
+		 */
 		long getTimestamp();
 
 		/**
