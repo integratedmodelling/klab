@@ -416,13 +416,15 @@ public class GroovyExpressionPreprocessor {
 		StringBuffer token = new StringBuffer(256);
 		for (int i = 0; i < code.length(); i++) {
 			char c = code.charAt(i);
-			if (opchars.contains(c + "") || Character.isWhitespace(c)) {
+			if (opchars.indexOf(c) >= 0 || Character.isWhitespace(c)) {
 				if (token.length() > 0) {
 					tokens.add(token.toString());
 					token.setLength(0);
 				}
+				tokens.add(c+"");
+			} else {
+			    token.append(c);
 			}
-			token.append(c);
 		}
 		if (token.length() > 0) {
 			tokens.add(token.toString());

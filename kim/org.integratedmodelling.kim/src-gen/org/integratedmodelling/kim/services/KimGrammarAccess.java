@@ -4147,13 +4147,21 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cWithinKeyword_1_9_0 = (Keyword)cGroup_1_9.eContents().get(0);
 		private final Assignment cContextAssignment_1_9_1 = (Assignment)cGroup_1_9.eContents().get(1);
 		private final RuleCall cContextSimpleConceptDeclarationParserRuleCall_1_9_1_0 = (RuleCall)cContextAssignment_1_9_1.eContents().get(0);
+		private final Group cGroup_1_10 = (Group)cUnorderedGroup_1.eContents().get(10);
+		private final Keyword cLinkingKeyword_1_10_0 = (Keyword)cGroup_1_10.eContents().get(0);
+		private final Assignment cRelationshipSourceAssignment_1_10_1 = (Assignment)cGroup_1_10.eContents().get(1);
+		private final RuleCall cRelationshipSourceSimpleConceptDeclarationParserRuleCall_1_10_1_0 = (RuleCall)cRelationshipSourceAssignment_1_10_1.eContents().get(0);
+		private final Keyword cToKeyword_1_10_2 = (Keyword)cGroup_1_10.eContents().get(2);
+		private final Assignment cRelationshipTargetAssignment_1_10_3 = (Assignment)cGroup_1_10.eContents().get(3);
+		private final RuleCall cRelationshipTargetSimpleConceptDeclarationParserRuleCall_1_10_3_0 = (RuleCall)cRelationshipTargetAssignment_1_10_3.eContents().get(0);
 		
 		//ConceptDeclaration:
 		//	main+=Concept+ (('of' inherency=SimpleConceptDeclaration)? & ('for' motivation=SimpleConceptDeclaration)? & ('with'
 		//	compresent=SimpleConceptDeclaration)? & ('caused' 'by' causant=SimpleConceptDeclaration)? & ('adjacent' 'to'
 		//	adjacent=SimpleConceptDeclaration)? & ('contained' 'in' container=SimpleConceptDeclaration)? & ('containing'
 		//	contained=SimpleConceptDeclaration)? & ('causing' caused=SimpleConceptDeclaration)? & ('during'
-		//	during=SimpleConceptDeclaration)? & ('within' context=SimpleConceptDeclaration)?)?;
+		//	during=SimpleConceptDeclaration)? & ('within' context=SimpleConceptDeclaration)? & ('linking'
+		//	relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?)?;
 		@Override public ParserRule getRule() { return rule; }
 		
 		///* (name=STRING)? */ main+=Concept+ (('of' inherency=SimpleConceptDeclaration)? & ('for'
@@ -4161,7 +4169,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//causant=SimpleConceptDeclaration)? & ('adjacent' 'to' adjacent=SimpleConceptDeclaration)? & ('contained' 'in'
 		//container=SimpleConceptDeclaration)? & ('containing' contained=SimpleConceptDeclaration)? & ('causing'
 		//caused=SimpleConceptDeclaration)? & ('during' during=SimpleConceptDeclaration)? & ('within'
-		//context=SimpleConceptDeclaration)?)?
+		//context=SimpleConceptDeclaration)? & ('linking' relationshipSource=SimpleConceptDeclaration 'to'
+		//relationshipTarget=SimpleConceptDeclaration)?)?
 		public Group getGroup() { return cGroup; }
 		
 		///* (name=STRING)? */ main+=Concept+
@@ -4174,7 +4183,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//compresent=SimpleConceptDeclaration)? & ('caused' 'by' causant=SimpleConceptDeclaration)? & ('adjacent' 'to'
 		//adjacent=SimpleConceptDeclaration)? & ('contained' 'in' container=SimpleConceptDeclaration)? & ('containing'
 		//contained=SimpleConceptDeclaration)? & ('causing' caused=SimpleConceptDeclaration)? & ('during'
-		//during=SimpleConceptDeclaration)? & ('within' context=SimpleConceptDeclaration)?)?
+		//during=SimpleConceptDeclaration)? & ('within' context=SimpleConceptDeclaration)? & ('linking'
+		//relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?)?
 		public UnorderedGroup getUnorderedGroup_1() { return cUnorderedGroup_1; }
 		
 		//('of' inherency=SimpleConceptDeclaration)?
@@ -4305,6 +4315,27 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//SimpleConceptDeclaration
 		public RuleCall getContextSimpleConceptDeclarationParserRuleCall_1_9_1_0() { return cContextSimpleConceptDeclarationParserRuleCall_1_9_1_0; }
+		
+		//('linking' relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?
+		public Group getGroup_1_10() { return cGroup_1_10; }
+		
+		//'linking'
+		public Keyword getLinkingKeyword_1_10_0() { return cLinkingKeyword_1_10_0; }
+		
+		//relationshipSource=SimpleConceptDeclaration
+		public Assignment getRelationshipSourceAssignment_1_10_1() { return cRelationshipSourceAssignment_1_10_1; }
+		
+		//SimpleConceptDeclaration
+		public RuleCall getRelationshipSourceSimpleConceptDeclarationParserRuleCall_1_10_1_0() { return cRelationshipSourceSimpleConceptDeclarationParserRuleCall_1_10_1_0; }
+		
+		//'to'
+		public Keyword getToKeyword_1_10_2() { return cToKeyword_1_10_2; }
+		
+		//relationshipTarget=SimpleConceptDeclaration
+		public Assignment getRelationshipTargetAssignment_1_10_3() { return cRelationshipTargetAssignment_1_10_3; }
+		
+		//SimpleConceptDeclaration
+		public RuleCall getRelationshipTargetSimpleConceptDeclarationParserRuleCall_1_10_3_0() { return cRelationshipTargetSimpleConceptDeclarationParserRuleCall_1_10_3_0; }
 	}
 	public class ConceptReferenceElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.ConceptReference");
@@ -10664,7 +10695,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	compresent=SimpleConceptDeclaration)? & ('caused' 'by' causant=SimpleConceptDeclaration)? & ('adjacent' 'to'
 	//	adjacent=SimpleConceptDeclaration)? & ('contained' 'in' container=SimpleConceptDeclaration)? & ('containing'
 	//	contained=SimpleConceptDeclaration)? & ('causing' caused=SimpleConceptDeclaration)? & ('during'
-	//	during=SimpleConceptDeclaration)? & ('within' context=SimpleConceptDeclaration)?)?;
+	//	during=SimpleConceptDeclaration)? & ('within' context=SimpleConceptDeclaration)? & ('linking'
+	//	relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?)?;
 	public ConceptDeclarationElements getConceptDeclarationAccess() {
 		return pConceptDeclaration;
 	}

@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.provenance.Artifact;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.Triple;
 
 import com.google.common.collect.Lists;
@@ -125,12 +126,17 @@ public class Network implements INetwork {
 
     private void exportJson(Writer output) {
 
+        JsonGraph graph = new JsonGraph();
         for (IDirectObservation o : network.getVertices()) {
-
+            graph.nodes.add(new NodeDescriptor(o));
         }
-
         for (IRelationship r : network.getEdges()) {
-
+            graph.edges.add(new EdgeDescriptor(r));
+        }
+        try {
+            output.append(JsonUtils.asString(graph));
+        } catch (IOException e) {
+            throw new KlabIOException(e);
         }
 
     }
@@ -184,23 +190,7 @@ public class Network implements INetwork {
                 }
                 node.getSpells().add(spell);
             }
-
-            /*
-             * TODO attributes
-             * AttributeList attrList = new AttributeListImpl(AttributeClass.NODE);
-            graph.getAttributeLists().add(attrList);
             
-            Attribute attUrl = attrList.createAttribute("0", AttributeType.STRING, "url");
-            Attribute attIndegree = attrList.createAttribute("1", AttributeType.FLOAT, "indegree");
-            Attribute attFrog = attrList.createAttribute("2", AttributeType.BOOLEAN, "frog")
-            .setDefaultValue("true");
-            
-            // for each node:
-            gephi.getAttributeValues()
-                .addValue(attUrl, "http://gephi.org")
-                .addValue(attIndegree, "1");
-             */
-
             nodes.put(o.getId(), node);
 
         }
@@ -246,6 +236,94 @@ public class Network implements INetwork {
         ret.add(new Triple<>("gexf", "GEXF 1.2 network (dynamic)", "gexf"));
         ret.add(new Triple<>("graphml", "GraphML 1.0 graph (static)", "gml"));
         return ret;
+    }
+
+    
+    /*
+     * ---------------------------------------------
+     * JSON support classes
+     * ---------------------------------------------
+     */
+
+    static class NodeDescriptor {
+        
+        private String label;
+        private String id;
+
+        NodeDescriptor(IDirectObservation observation) {
+            this.setLabel(observation.getName());
+            this.setId(observation.getId());
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public void setLabel(String label) {
+            this.label = label;
+        }
+    }
+
+    static class EdgeDescriptor {
+        
+        public String label;
+        public String id;
+        public String source;
+        public String target;
+        
+        EdgeDescriptor(IRelationship relationship) {
+            this.label = relationship.getName();
+            this.id = relationship.getId();
+            this.source = relationship.getSource().getId();
+            this.target = relationship.getTarget().getId();
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public void setLabel(String label) {
+            this.label = label;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getSource() {
+            return source;
+        }
+
+        public void setSource(String source) {
+            this.source = source;
+        }
+
+        public String getTarget() {
+            return target;
+        }
+
+        public void setTarget(String target) {
+            this.target = target;
+        }
+        
+        
+    }
+
+    static private class JsonGraph {
+        List<NodeDescriptor> nodes = new ArrayList<>();
+        List<EdgeDescriptor> edges = new ArrayList<>();
     }
 
 }

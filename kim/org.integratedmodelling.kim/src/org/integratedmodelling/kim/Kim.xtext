@@ -375,7 +375,9 @@ ConceptDeclaration:
 			// concomitant with event (?)
 			('during'   during=SimpleConceptDeclaration)? &
 			// context or secondary inherency
-			('within' context=SimpleConceptDeclaration)?
+			('within' context=SimpleConceptDeclaration)? &
+			// for relationships: specialize source and target types
+			('linking' relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?
 		)?
 ;
 

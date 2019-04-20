@@ -2149,13 +2149,31 @@ public interface KimPackage extends EPackage
   int CONCEPT_DECLARATION__CONTEXT = 10;
 
   /**
+   * The feature id for the '<em><b>Relationship Source</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__RELATIONSHIP_SOURCE = 11;
+
+  /**
+   * The feature id for the '<em><b>Relationship Target</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__RELATIONSHIP_TARGET = 12;
+
+  /**
    * The feature id for the '<em><b>Operators</b></em>' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__OPERATORS = 11;
+  int CONCEPT_DECLARATION__OPERATORS = 13;
 
   /**
    * The feature id for the '<em><b>Operands</b></em>' containment reference list.
@@ -2164,7 +2182,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__OPERANDS = 12;
+  int CONCEPT_DECLARATION__OPERANDS = 14;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2173,7 +2191,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__NAME = 13;
+  int CONCEPT_DECLARATION__NAME = 15;
 
   /**
    * The number of structural features of the '<em>Concept Declaration</em>' class.
@@ -2182,7 +2200,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION_FEATURE_COUNT = 14;
+  int CONCEPT_DECLARATION_FEATURE_COUNT = 16;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ConceptReferenceImpl <em>Concept Reference</em>}' class.
@@ -6406,6 +6424,28 @@ public interface KimPackage extends EPackage
   EReference getConceptDeclaration_Context();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getRelationshipSource <em>Relationship Source</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Relationship Source</em>'.
+   * @see org.integratedmodelling.kim.kim.ConceptDeclaration#getRelationshipSource()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EReference getConceptDeclaration_RelationshipSource();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getRelationshipTarget <em>Relationship Target</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Relationship Target</em>'.
+   * @see org.integratedmodelling.kim.kim.ConceptDeclaration#getRelationshipTarget()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EReference getConceptDeclaration_RelationshipTarget();
+
+  /**
    * Returns the meta object for the attribute list '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getOperators <em>Operators</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -10260,6 +10300,22 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EReference CONCEPT_DECLARATION__CONTEXT = eINSTANCE.getConceptDeclaration_Context();
+
+    /**
+     * The meta object literal for the '<em><b>Relationship Source</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT_DECLARATION__RELATIONSHIP_SOURCE = eINSTANCE.getConceptDeclaration_RelationshipSource();
+
+    /**
+     * The meta object literal for the '<em><b>Relationship Target</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT_DECLARATION__RELATIONSHIP_TARGET = eINSTANCE.getConceptDeclaration_RelationshipTarget();
 
     /**
      * The meta object literal for the '<em><b>Operators</b></em>' attribute list feature.

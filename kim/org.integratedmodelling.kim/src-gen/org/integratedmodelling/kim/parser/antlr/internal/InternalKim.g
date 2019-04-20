@@ -7565,6 +7565,63 @@ ruleConceptDeclaration returns [EObject current=null]
 						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1());
 					}
 				)
+			)|
+			(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 10)}?=>(
+					{
+						getUnorderedGroupHelper().select(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 10);
+					}
+								({true}?=>(otherlv_25='linking'
+								{
+									newLeafNode(otherlv_25, grammarAccess.getConceptDeclarationAccess().getLinkingKeyword_1_10_0());
+								}
+								(
+									(
+										{
+											newCompositeNode(grammarAccess.getConceptDeclarationAccess().getRelationshipSourceSimpleConceptDeclarationParserRuleCall_1_10_1_0());
+										}
+										lv_relationshipSource_26_0=ruleSimpleConceptDeclaration
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+											}
+											set(
+												$current,
+												"relationshipSource",
+												lv_relationshipSource_26_0,
+												"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
+											afterParserOrEnumRuleCall();
+										}
+									)
+								)
+								otherlv_27='to'
+								{
+									newLeafNode(otherlv_27, grammarAccess.getConceptDeclarationAccess().getToKeyword_1_10_2());
+								}
+								(
+									(
+										{
+											newCompositeNode(grammarAccess.getConceptDeclarationAccess().getRelationshipTargetSimpleConceptDeclarationParserRuleCall_1_10_3_0());
+										}
+										lv_relationshipTarget_28_0=ruleSimpleConceptDeclaration
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+											}
+											set(
+												$current,
+												"relationshipTarget",
+												lv_relationshipTarget_28_0,
+												"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
+											afterParserOrEnumRuleCall();
+										}
+									)
+								)
+								))
+					{ 
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1());
+					}
+				)
 			)
 					)*
 				)

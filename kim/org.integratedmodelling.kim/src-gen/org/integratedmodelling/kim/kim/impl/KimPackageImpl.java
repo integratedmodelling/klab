@@ -2557,9 +2557,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getConceptDeclaration_Operators()
+  public EReference getConceptDeclaration_RelationshipSource()
   {
-    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(11);
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(11);
   }
 
   /**
@@ -2567,7 +2567,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getConceptDeclaration_Operands()
+  public EReference getConceptDeclaration_RelationshipTarget()
   {
     return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(12);
   }
@@ -2577,9 +2577,29 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getConceptDeclaration_Name()
+  public EAttribute getConceptDeclaration_Operators()
   {
     return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(13);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getConceptDeclaration_Operands()
+  {
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(14);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getConceptDeclaration_Name()
+  {
+    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(15);
   }
 
   /**
@@ -4801,6 +4821,8 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__CAUSED);
     createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__DURING);
     createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__CONTEXT);
+    createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__RELATIONSHIP_SOURCE);
+    createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__RELATIONSHIP_TARGET);
     createEAttribute(conceptDeclarationEClass, CONCEPT_DECLARATION__OPERATORS);
     createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__OPERANDS);
     createEAttribute(conceptDeclarationEClass, CONCEPT_DECLARATION__NAME);
@@ -5291,6 +5313,8 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getConceptDeclaration_Caused(), this.getConceptDeclaration(), null, "caused", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptDeclaration_During(), this.getConceptDeclaration(), null, "during", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptDeclaration_Context(), this.getConceptDeclaration(), null, "context", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getConceptDeclaration_RelationshipSource(), this.getConceptDeclaration(), null, "relationshipSource", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getConceptDeclaration_RelationshipTarget(), this.getConceptDeclaration(), null, "relationshipTarget", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConceptDeclaration_Operators(), ecorePackage.getEString(), "operators", null, 0, -1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptDeclaration_Operands(), this.getConceptDeclaration(), null, "operands", null, 0, -1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConceptDeclaration_Name(), ecorePackage.getEString(), "name", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

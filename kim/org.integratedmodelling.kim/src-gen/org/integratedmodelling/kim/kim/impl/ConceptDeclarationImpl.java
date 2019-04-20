@@ -44,6 +44,8 @@ import org.integratedmodelling.kim.kim.KimPackage;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getCaused <em>Caused</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getDuring <em>During</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getContext <em>Context</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getRelationshipSource <em>Relationship Source</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getRelationshipTarget <em>Relationship Target</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getOperators <em>Operators</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getOperands <em>Operands</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getName <em>Name</em>}</li>
@@ -162,6 +164,26 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
    * @ordered
    */
   protected ConceptDeclaration context;
+
+  /**
+   * The cached value of the '{@link #getRelationshipSource() <em>Relationship Source</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getRelationshipSource()
+   * @generated
+   * @ordered
+   */
+  protected ConceptDeclaration relationshipSource;
+
+  /**
+   * The cached value of the '{@link #getRelationshipTarget() <em>Relationship Target</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getRelationshipTarget()
+   * @generated
+   * @ordered
+   */
+  protected ConceptDeclaration relationshipTarget;
 
   /**
    * The cached value of the '{@link #getOperators() <em>Operators</em>}' attribute list.
@@ -723,6 +745,102 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
+  public ConceptDeclaration getRelationshipSource()
+  {
+    return relationshipSource;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetRelationshipSource(ConceptDeclaration newRelationshipSource, NotificationChain msgs)
+  {
+    ConceptDeclaration oldRelationshipSource = relationshipSource;
+    relationshipSource = newRelationshipSource;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_SOURCE, oldRelationshipSource, newRelationshipSource);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setRelationshipSource(ConceptDeclaration newRelationshipSource)
+  {
+    if (newRelationshipSource != relationshipSource)
+    {
+      NotificationChain msgs = null;
+      if (relationshipSource != null)
+        msgs = ((InternalEObject)relationshipSource).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_SOURCE, null, msgs);
+      if (newRelationshipSource != null)
+        msgs = ((InternalEObject)newRelationshipSource).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_SOURCE, null, msgs);
+      msgs = basicSetRelationshipSource(newRelationshipSource, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_SOURCE, newRelationshipSource, newRelationshipSource));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ConceptDeclaration getRelationshipTarget()
+  {
+    return relationshipTarget;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetRelationshipTarget(ConceptDeclaration newRelationshipTarget, NotificationChain msgs)
+  {
+    ConceptDeclaration oldRelationshipTarget = relationshipTarget;
+    relationshipTarget = newRelationshipTarget;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_TARGET, oldRelationshipTarget, newRelationshipTarget);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setRelationshipTarget(ConceptDeclaration newRelationshipTarget)
+  {
+    if (newRelationshipTarget != relationshipTarget)
+    {
+      NotificationChain msgs = null;
+      if (relationshipTarget != null)
+        msgs = ((InternalEObject)relationshipTarget).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_TARGET, null, msgs);
+      if (newRelationshipTarget != null)
+        msgs = ((InternalEObject)newRelationshipTarget).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_TARGET, null, msgs);
+      msgs = basicSetRelationshipTarget(newRelationshipTarget, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_TARGET, newRelationshipTarget, newRelationshipTarget));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EList<String> getOperators()
   {
     if (operators == null)
@@ -801,6 +919,10 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
         return basicSetDuring(null, msgs);
       case KimPackage.CONCEPT_DECLARATION__CONTEXT:
         return basicSetContext(null, msgs);
+      case KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_SOURCE:
+        return basicSetRelationshipSource(null, msgs);
+      case KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_TARGET:
+        return basicSetRelationshipTarget(null, msgs);
       case KimPackage.CONCEPT_DECLARATION__OPERANDS:
         return ((InternalEList<?>)getOperands()).basicRemove(otherEnd, msgs);
     }
@@ -839,6 +961,10 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
         return getDuring();
       case KimPackage.CONCEPT_DECLARATION__CONTEXT:
         return getContext();
+      case KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_SOURCE:
+        return getRelationshipSource();
+      case KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_TARGET:
+        return getRelationshipTarget();
       case KimPackage.CONCEPT_DECLARATION__OPERATORS:
         return getOperators();
       case KimPackage.CONCEPT_DECLARATION__OPERANDS:
@@ -893,6 +1019,12 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
         return;
       case KimPackage.CONCEPT_DECLARATION__CONTEXT:
         setContext((ConceptDeclaration)newValue);
+        return;
+      case KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_SOURCE:
+        setRelationshipSource((ConceptDeclaration)newValue);
+        return;
+      case KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_TARGET:
+        setRelationshipTarget((ConceptDeclaration)newValue);
         return;
       case KimPackage.CONCEPT_DECLARATION__OPERATORS:
         getOperators().clear();
@@ -952,6 +1084,12 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
       case KimPackage.CONCEPT_DECLARATION__CONTEXT:
         setContext((ConceptDeclaration)null);
         return;
+      case KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_SOURCE:
+        setRelationshipSource((ConceptDeclaration)null);
+        return;
+      case KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_TARGET:
+        setRelationshipTarget((ConceptDeclaration)null);
+        return;
       case KimPackage.CONCEPT_DECLARATION__OPERATORS:
         getOperators().clear();
         return;
@@ -997,6 +1135,10 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
         return during != null;
       case KimPackage.CONCEPT_DECLARATION__CONTEXT:
         return context != null;
+      case KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_SOURCE:
+        return relationshipSource != null;
+      case KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_TARGET:
+        return relationshipTarget != null;
       case KimPackage.CONCEPT_DECLARATION__OPERATORS:
         return operators != null && !operators.isEmpty();
       case KimPackage.CONCEPT_DECLARATION__OPERANDS:

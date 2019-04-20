@@ -434,6 +434,14 @@ public enum KimKnowledgeProcessor {
 				builder.withAdjacent(c);
 			}
 		}
+		if (concept.getRelationshipSource() != null) {
+            IConcept source = declareInternal(concept.getRelationshipSource(), ontology, monitor);
+            IConcept target = declareInternal(concept.getRelationshipTarget(), ontology, monitor);
+            if (source != null && target != null) {
+                builder.linking(source, target);
+            }
+		    
+		}
 
 		for (IKimConcept c : concept.getTraits()) {
 			IConcept trait = declareInternal(c, ontology, monitor);

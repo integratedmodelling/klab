@@ -28,6 +28,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getCaused <em>Caused</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getDuring <em>During</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getContext <em>Context</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getRelationshipSource <em>Relationship Source</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getRelationshipTarget <em>Relationship Target</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getOperators <em>Operators</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getOperands <em>Operands</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getName <em>Name</em>}</li>
@@ -314,6 +316,58 @@ public interface ConceptDeclaration extends EObject
    * @generated
    */
   void setContext(ConceptDeclaration value);
+
+  /**
+   * Returns the value of the '<em><b>Relationship Source</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Relationship Source</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Relationship Source</em>' containment reference.
+   * @see #setRelationshipSource(ConceptDeclaration)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptDeclaration_RelationshipSource()
+   * @model containment="true"
+   * @generated
+   */
+  ConceptDeclaration getRelationshipSource();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getRelationshipSource <em>Relationship Source</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Relationship Source</em>' containment reference.
+   * @see #getRelationshipSource()
+   * @generated
+   */
+  void setRelationshipSource(ConceptDeclaration value);
+
+  /**
+   * Returns the value of the '<em><b>Relationship Target</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Relationship Target</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Relationship Target</em>' containment reference.
+   * @see #setRelationshipTarget(ConceptDeclaration)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptDeclaration_RelationshipTarget()
+   * @model containment="true"
+   * @generated
+   */
+  ConceptDeclaration getRelationshipTarget();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getRelationshipTarget <em>Relationship Target</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Relationship Target</em>' containment reference.
+   * @see #getRelationshipTarget()
+   * @generated
+   */
+  void setRelationshipTarget(ConceptDeclaration value);
 
   /**
    * Returns the value of the '<em><b>Operators</b></em>' attribute list.

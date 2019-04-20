@@ -520,12 +520,12 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         metadata=Metadata
 	 *                     )? 
 	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
-	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
 	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
 	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
-	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
-	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
 	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
+	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
+	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
+	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
 	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
 	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
@@ -654,17 +654,20 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *     (
 	 *         main+=Concept+ 
 	 *         (
-	 *             inherency=SimpleConceptDeclaration | 
-	 *             motivation=SimpleConceptDeclaration | 
-	 *             compresent=SimpleConceptDeclaration | 
-	 *             causant=SimpleConceptDeclaration | 
-	 *             adjacent=SimpleConceptDeclaration | 
-	 *             container=SimpleConceptDeclaration | 
-	 *             contained=SimpleConceptDeclaration | 
-	 *             caused=SimpleConceptDeclaration | 
-	 *             during=SimpleConceptDeclaration | 
-	 *             context=SimpleConceptDeclaration
-	 *         )*
+	 *             (
+	 *                 inherency=SimpleConceptDeclaration | 
+	 *                 motivation=SimpleConceptDeclaration | 
+	 *                 compresent=SimpleConceptDeclaration | 
+	 *                 causant=SimpleConceptDeclaration | 
+	 *                 adjacent=SimpleConceptDeclaration | 
+	 *                 container=SimpleConceptDeclaration | 
+	 *                 contained=SimpleConceptDeclaration | 
+	 *                 caused=SimpleConceptDeclaration | 
+	 *                 during=SimpleConceptDeclaration | 
+	 *                 context=SimpleConceptDeclaration
+	 *             )? 
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
+	 *         )+
 	 *     )
 	 */
 	protected void sequence_ConceptDeclaration(ISerializationContext context, ConceptDeclaration semanticObject) {
@@ -680,17 +683,20 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *     (
 	 *         main+=Concept+ 
 	 *         (
-	 *             inherency=SimpleConceptDeclaration | 
-	 *             motivation=SimpleConceptDeclaration | 
-	 *             compresent=SimpleConceptDeclaration | 
-	 *             causant=SimpleConceptDeclaration | 
-	 *             adjacent=SimpleConceptDeclaration | 
-	 *             container=SimpleConceptDeclaration | 
-	 *             contained=SimpleConceptDeclaration | 
-	 *             caused=SimpleConceptDeclaration | 
-	 *             during=SimpleConceptDeclaration | 
-	 *             context=SimpleConceptDeclaration
-	 *         )* 
+	 *             (
+	 *                 inherency=SimpleConceptDeclaration | 
+	 *                 motivation=SimpleConceptDeclaration | 
+	 *                 compresent=SimpleConceptDeclaration | 
+	 *                 causant=SimpleConceptDeclaration | 
+	 *                 adjacent=SimpleConceptDeclaration | 
+	 *                 container=SimpleConceptDeclaration | 
+	 *                 contained=SimpleConceptDeclaration | 
+	 *                 caused=SimpleConceptDeclaration | 
+	 *                 during=SimpleConceptDeclaration | 
+	 *                 context=SimpleConceptDeclaration
+	 *             )? 
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
+	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)*
 	 *     )
 	 */
@@ -708,17 +714,20 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *     (
 	 *         main+=Concept+ 
 	 *         (
-	 *             inherency=SimpleConceptDeclaration | 
-	 *             motivation=SimpleConceptDeclaration | 
-	 *             compresent=SimpleConceptDeclaration | 
-	 *             causant=SimpleConceptDeclaration | 
-	 *             adjacent=SimpleConceptDeclaration | 
-	 *             container=SimpleConceptDeclaration | 
-	 *             contained=SimpleConceptDeclaration | 
-	 *             caused=SimpleConceptDeclaration | 
-	 *             during=SimpleConceptDeclaration | 
-	 *             context=SimpleConceptDeclaration
-	 *         )* 
+	 *             (
+	 *                 inherency=SimpleConceptDeclaration | 
+	 *                 motivation=SimpleConceptDeclaration | 
+	 *                 compresent=SimpleConceptDeclaration | 
+	 *                 causant=SimpleConceptDeclaration | 
+	 *                 adjacent=SimpleConceptDeclaration | 
+	 *                 container=SimpleConceptDeclaration | 
+	 *                 contained=SimpleConceptDeclaration | 
+	 *                 caused=SimpleConceptDeclaration | 
+	 *                 during=SimpleConceptDeclaration | 
+	 *                 context=SimpleConceptDeclaration
+	 *             )? 
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
+	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)* 
 	 *         (operators+='or' operands+=Factor)*
 	 *     )

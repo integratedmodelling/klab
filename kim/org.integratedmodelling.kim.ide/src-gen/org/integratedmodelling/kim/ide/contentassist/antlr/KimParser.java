@@ -371,6 +371,7 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getConceptDeclarationAccess().getGroup_1_7(), "rule__ConceptDeclaration__Group_1_7__0");
 					put(grammarAccess.getConceptDeclarationAccess().getGroup_1_8(), "rule__ConceptDeclaration__Group_1_8__0");
 					put(grammarAccess.getConceptDeclarationAccess().getGroup_1_9(), "rule__ConceptDeclaration__Group_1_9__0");
+					put(grammarAccess.getConceptDeclarationAccess().getGroup_1_10(), "rule__ConceptDeclaration__Group_1_10__0");
 					put(grammarAccess.getConceptReferenceAccess().getGroup_2(), "rule__ConceptReference__Group_2__0");
 					put(grammarAccess.getConceptReferenceAccess().getGroup_2_1_0(), "rule__ConceptReference__Group_2_1_0__0");
 					put(grammarAccess.getConceptReferenceAccess().getGroup_2_1_0_1_1(), "rule__ConceptReference__Group_2_1_0_1_1__0");
@@ -811,6 +812,8 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getConceptDeclarationAccess().getCausedAssignment_1_7_1(), "rule__ConceptDeclaration__CausedAssignment_1_7_1");
 					put(grammarAccess.getConceptDeclarationAccess().getDuringAssignment_1_8_1(), "rule__ConceptDeclaration__DuringAssignment_1_8_1");
 					put(grammarAccess.getConceptDeclarationAccess().getContextAssignment_1_9_1(), "rule__ConceptDeclaration__ContextAssignment_1_9_1");
+					put(grammarAccess.getConceptDeclarationAccess().getRelationshipSourceAssignment_1_10_1(), "rule__ConceptDeclaration__RelationshipSourceAssignment_1_10_1");
+					put(grammarAccess.getConceptDeclarationAccess().getRelationshipTargetAssignment_1_10_3(), "rule__ConceptDeclaration__RelationshipTargetAssignment_1_10_3");
 					put(grammarAccess.getConceptReferenceAccess().getNameAssignment_0(), "rule__ConceptReference__NameAssignment_0");
 					put(grammarAccess.getConceptReferenceAccess().getNameAssignment_1(), "rule__ConceptReference__NameAssignment_1");
 					put(grammarAccess.getConceptReferenceAccess().getTemplateTypeAssignment_2_0(), "rule__ConceptReference__TemplateTypeAssignment_2_0");

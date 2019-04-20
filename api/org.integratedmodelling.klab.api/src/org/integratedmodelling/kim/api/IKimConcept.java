@@ -443,6 +443,10 @@ public interface IKimConcept extends IKimStatement {
 
 	UnarySemanticOperator getObservationType();
 
+	IKimConcept getRelationshipSource();
+
+	IKimConcept getRelationshipTarget();
+
 	List<IKimConcept> getTraits();
 
 	List<IKimConcept> getRoles();

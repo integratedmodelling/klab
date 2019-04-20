@@ -1078,7 +1078,37 @@ class KimValidator extends AbstractKimValidator {
 			}
 			copyInheritableFlags(flags, type);
 		}
-
+		if (declaration.relationshipSource !== null) {
+			if (!type.contains(Type.RELATIONSHIP)) {
+				error("Only relationships can link concepts to concepts", declaration.relationshipSource, null,
+					KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_SOURCE)
+			}
+			flags = checkDeclaration(declaration.relationshipSource)
+			if (flags.isEmpty) {
+				type.clear
+			} else if (!flags.contains(Type.MACRO)) {
+				if (!flags.contains(Type.DIRECT_OBSERVABLE)) {
+					error("The relationship source type is not a direct observable", declaration.relationshipSource, 
+						null, KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_SOURCE
+					)
+					error = true
+				}
+				// TODO macro support				
+			}
+			flags = checkDeclaration(declaration.relationshipTarget)
+			if (flags.isEmpty) {
+				type.clear
+			} else if (!flags.contains(Type.MACRO)) {
+				if (!flags.contains(Type.DIRECT_OBSERVABLE)) {
+					error("The relationship source type is not a direct observable", declaration.relationshipSource, 
+						null, KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_SOURCE
+					)
+					error = true
+				}
+				// TODO macro support				
+			}
+			copyInheritableFlags(flags, type);
+		}
 		if (declaration.compresent !== null) {
 			flags = checkDeclaration(declaration.compresent)
 			if (flags.isEmpty) {

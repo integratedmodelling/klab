@@ -273,6 +273,8 @@ public interface IObservable extends IConcept, IResolvable {
          */
         Collection<IConcept> getRemoved();
 
+        Builder linking(IConcept source, IConcept target);
+
     }
 
     /**
