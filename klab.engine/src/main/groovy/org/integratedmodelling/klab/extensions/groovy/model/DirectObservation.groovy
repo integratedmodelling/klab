@@ -181,7 +181,7 @@ class DirectObservation<T extends IDirectObservation> extends Observation<IDirec
             return null;
         }
 
-        def ret = ((org.integratedmodelling.klab.components.runtime.observations.DirectObservation)obs).
+        def ret = ((org.integratedmodelling.klab.components.runtime.observations.DirectObservation)unwrap()).
                 createAggregatedState(stateConcept.getConcept(), ags);
 
         return ret instanceof IState ? new State(ret, binding) : null;
@@ -268,7 +268,7 @@ class DirectObservation<T extends IDirectObservation> extends Observation<IDirec
 
         IScale scale = Utils.extractScale(args);
 
-        ISubject ctx = ((ISubject) obs.getContextObservation());
+        ISubject ctx = ((ISubject) unwrap().getContext());
 
         // functional relationships get time from source by default
 //        if (scale.getTime() == null && obs.getScale().getTime() != null && NS.isFunctionalRelationship(concept.concept)) {
@@ -293,16 +293,16 @@ class DirectObservation<T extends IDirectObservation> extends Observation<IDirec
         return new ObservationSet(context: this, recursive: true, children: true, args: args);
     }
 
-    def wrap(IDirectObservation obs) {
-
-        for (state in obs.getStates()) {
-            setVar(getFormalName(state), new State(state, binding));
-        }
-
-        setVar("space", obs.getScale().getSpace() == null ? null : new Space(obs.getScale().getSpace(), binding));
-        setVar("time", obs.getScale().getTime() == null ? null : new Time(obs.getScale().getTime(), binding));
-        setVar("scale", new Scale(obs.getScale(), binding));
-    }
+//    def wrap(IDirectObservation obs) {
+//
+//        for (state in obs.getStates()) {
+//            setVar(getFormalName(state), new State(state, binding));
+//        }
+//
+//        setVar("space", obs.getScale().getSpace() == null ? null : new Space(obs.getScale().getSpace(), binding));
+//        setVar("time", obs.getScale().getTime() == null ? null : new Time(obs.getScale().getTime(), binding));
+//        setVar("scale", new Scale(obs.getScale(), binding));
+//    }
 
     def requireState(IConcept concept) {
 		throw new KlabUnimplementedException("groovy.DirectObservation:requireState");
@@ -460,19 +460,19 @@ class DirectObservation<T extends IDirectObservation> extends Observation<IDirec
 //        return wrapAll(context.getNewObservations());
     }
 
-    def wrapAll(Collection obs) {
-        List<Observation> ret = new ArrayList<>();
-        for (o in obs) {
-            if (o instanceof IRelationship) {
-                ret.add(new Relationship(o, binding));
-            } else if (o instanceof IDirectObservation) {
-                ret.add(new DirectObservation(o, binding));
-            } else if (o instanceof IState) {
-                ret.add(new State(o, binding));
-            }
-        }
-        return ret;
-    }
+//    def wrapAll(Collection obs) {
+//        List<Observation> ret = new ArrayList<>();
+//        for (o in obs) {
+//            if (o instanceof IRelationship) {
+//                ret.add(new Relationship(o, binding));
+//            } else if (o instanceof IDirectObservation) {
+//                ret.add(new DirectObservation(o, binding));
+//            } else if (o instanceof IState) {
+//                ret.add(new State(o, binding));
+//            }
+//        }
+//        return ret;
+//    }
 
     def propertyMissing(String id) {
         getVar(id);

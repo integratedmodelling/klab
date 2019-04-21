@@ -139,7 +139,7 @@ class State extends Observation<IState> {
 	def leftShift(Object value) {
 		throw new KlabUnimplementedException("groovy.State:leftShift");
 		setTimePointer();
-		States.set(((IState)obs), value, timePointer);
+		States.set(unwrap(), value, timePointer);
 	}
 
 
@@ -285,7 +285,7 @@ class State extends Observation<IState> {
 
 	def getMin() {
 		double t = Double.NaN;
-		if (((IState)obs).getType() == IArtifact.Type.NUMBER) {
+		if (unwrap().getType() == IArtifact.Type.NUMBER) {
 			t = getStateSummary().getRange().get(0)
 		}
 		return t;
@@ -293,7 +293,7 @@ class State extends Observation<IState> {
 
 	def getMax() {
 		double t = Double.NaN;
-		if (((IState)obs).getType() == IArtifact.Type.NUMBER) {
+		if (unwrap().getType() == IArtifact.Type.NUMBER) {
 			t = getStateSummary().getRange().get(1)
 		}
 		return t;

@@ -276,14 +276,14 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
             if (this.descriptor.isNonscalar(identifier)) {
                 IArtifact artifact = context.getArtifact(identifier);
                 if (artifact != null) {
-                    nonscalar.put(identifier, artifact);
+                    nonscalar.put(identifier, Wrapper.wrap(artifact, identifier, bindings));
                 }
             }
         }
 
         if (parameters.containsKey("self") && parameters.get("self") instanceof IObservation
                 && !nonscalar.containsKey("self")) {
-            nonscalar.put("self", parameters.get("self"));
+            nonscalar.put("self", Wrapper.wrap(parameters.get("self"), "self", bindings));
         }
 
         bindings.setVariable("_p", nonscalar);
