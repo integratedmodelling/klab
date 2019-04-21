@@ -17,14 +17,17 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.Component;
+import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IExtensionService;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.engine.runtime.code.groovy.GroovyProcessor;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -316,5 +319,40 @@ public enum Extensions implements IExtensionService {
 		}
 		return ret;
 	}
+	
+
+    /**
+     * Called from Groovy when expressions like "id@nw" are found. Applies some
+     * memoizing to handle the context IDs quicker.
+     * 
+     * @param targetId
+     * @param contextIds
+     * @param context
+     * @return
+     */
+    public Object recontextualizeIdentifier(String targetId, String contextId, IRuntimeContext context, ILanguageExpression expression,
+            Map<?, ?> variables) {
+        switch (contextId) {
+        case "w":
+        case "n":
+        case "s":
+        case "e":
+        case "sw":
+        case "nw":
+        case "se":
+        case "ne":
+            break;
+        case "previous":
+            break;
+        default:
+            Object o = expression.unwrap(variables.get(contextId));
+            if (o instanceof IDirectObservation) {
+                
+            }
+            // find contextId in parameters as observation
+            break;
+        }
+        return null;
+    }
 
 }

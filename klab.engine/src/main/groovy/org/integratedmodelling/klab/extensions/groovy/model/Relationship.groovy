@@ -6,17 +6,21 @@ import org.integratedmodelling.klab.api.observations.IRelationship
 
 import groovy.lang.Binding;
 
-public class Relationship extends DirectObservation {
+public class Relationship extends DirectObservation<IRelationship> {
 
-    public Relationship(IDirectObservation obs, Binding binding) {
+    public Relationship(String id, Binding binding) {
+        super(id, binding)
+    }
+    
+    public Relationship(IRelationship obs, Binding binding) {
         super(obs, binding);
     }
 
     public DirectObservation getSource() {
-        return new DirectObservation(((IRelationship)obs).getSource(), binding);
+        return new DirectObservation(unwrap().getSource(), binding);
     }
     
     public DirectObservation getTarget() {
-        return new DirectObservation(((IRelationship)obs).getSource(), binding);
+        return new DirectObservation(unwrap().getTarget(), binding);
     }
 }

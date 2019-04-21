@@ -1,42 +1,34 @@
 package org.integratedmodelling.klab.extensions.groovy.model
 
-import java.util.Iterator
-
 import org.integratedmodelling.klab.api.observations.scale.IExtent
+import org.integratedmodelling.klab.common.LogicalConnector
+import org.integratedmodelling.klab.engine.runtime.code.groovy.Wrapper
 
 
-class Extent {
-	
-	IExtent extent;
-    Binding binding;
+class Extent<T extends IExtent> extends Wrapper<T> {
 
-	Extent(IExtent extent, Binding binding) {
-		this.extent = extent;
-        this.binding = binding;
+    Extent(String id, Binding binding) {
+        super(id, binding)
+    }
+
+    Extent(IExtent extent, Binding binding) {
+        super(extent, binding)
 	}
-
-    def or(Object e) {
-        return extent.union(e);
-    }
     
-    def and(Object e) {
-        return extent.intersection(e);
-    }
-    
-    def getMultiplicity() {
-        return extent.getMultiplicity();
+    def getSize() {
+        return unwrap().size();
     }
     
     def isEmpty() {
-        return extent.isEmpty();
+        return unwrap().isEmpty();
     }
     
     Iterator iterator() {
-        return extent.iterator();
+        return unwrap().iterator();
     }
     
 	def getScale() {
-		return extent.getScaleRank();
+		return unwrap().getScaleRank();
 	}
     
 }

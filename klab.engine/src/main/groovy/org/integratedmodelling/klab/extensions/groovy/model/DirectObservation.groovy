@@ -16,16 +16,20 @@ import org.integratedmodelling.klab.extensions.groovy.Utils
 import org.integratedmodelling.klab.extensions.groovy.sets.ObservationSet
 import org.integratedmodelling.klab.extensions.groovy.sets.RoledObservationSet
 
-class DirectObservation extends Observation {
+class DirectObservation<T extends IDirectObservation> extends Observation<IDirectObservation> {
+
+    DirectObservation(String id, Binding binding) {
+        super(id, binding);
+        name = unwrap().name;
+    }
 
     DirectObservation(IDirectObservation obs, Binding binding) {
         super(obs, binding);
-        name = obs.getName();
-        // wrap(obs);
+        name = obs.name;
     }
 
     def deactivate() {
-        ((IDirectObservation)obs).setActive(false);
+        unwrap().setActive(false);
     }
 
     private void setVar(String s, Object o) {
@@ -40,50 +44,50 @@ class DirectObservation extends Observation {
         ((org.integratedmodelling.klab.components.runtime.observations.DirectObservation)obs).setVar(s,o);
     }
 
-    private Object getVar(String s) {
-
-        def var = ((org.integratedmodelling.klab.components.runtime.observations.DirectObservation)obs).getVar(s);
-        // reset the transition if we have just retrieved an observation, possibly saved at an earlier one.
-        // TODO check if we should transfer (or merge?) all the bindings instead and anyway (for anything
-        // that has bindings, using an interface).
-        if (var instanceof Observation && getTransition() != null) {
-			throw new KlabUnimplementedException("groovy.DirectObservation:getVar");
-            var.binding.setVariable("_transition", getTransition());
-//            var.binding.setVariable("now", new Transition(getTransition()));
-        }
-        return var;
-    }
+//    private Object getVar(String s) {
+//
+//        def var = ((org.integratedmodelling.klab.components.runtime.observations.DirectObservation)obs).getVar(s);
+//        // reset the transition if we have just retrieved an observation, possibly saved at an earlier one.
+//        // TODO check if we should transfer (or merge?) all the bindings instead and anyway (for anything
+//        // that has bindings, using an interface).
+//        if (var instanceof Observation && getTransition() != null) {
+//			throw new KlabUnimplementedException("groovy.DirectObservation:getVar");
+//            var.binding.setVariable("_transition", getTransition());
+////            var.binding.setVariable("now", new Transition(getTransition()));
+//        }
+//        return var;
+//    }
 
     public String toString() {
-        return obs == null ? "[null observation]" : obs.toString();
+        return unwrap() == null ? "[null observation]" : unwrap().toString();
     }
 
-    /**
-     * Set user data.
-     * Change names with a prefix to avoid potential conflicts.
-     * 
-     * @param s
-     * @param o
-     * @return
-     */
-    def set(String s, Object o) {
-        setVar("___u_" + s, o);
-    }
-
-    /**
-     * Retrieve user data. 
-     * Change names with a prefix to avoid potential conflicts.
-     * 
-     * @param s
-     * @return
-     */
-    def get(String s) {
-        def ret = getVar("___u_" + s);
-        if (ret == null) {
-            ret = getVar(s);
-        }
-        return ret;
-    }
+//    /**
+//     * Set user data.
+//     * Change names with a prefix to avoid potential conflicts.
+//     * 
+//     * @param s
+//     * @param o
+//     * @return
+//     */
+//    def set(String s, Object o) {
+//        setVar("___u_" + s, o);
+//    }
+//
+//    /**
+//     * Retrieve user data. 
+//     * Change names with a prefix to avoid potential conflicts.
+//     * 
+//     * @param s
+//     * @return
+//     */
+//    def get(String s) {
+//        def ret = getVar("___u_" + s);
+//        if (ret == null) {
+//            ret = getVar(s);
+//        }
+//        return ret;
+//    }
 
     def rename(String name) {
         ((org.integratedmodelling.klab.components.runtime.observations.DirectObservation)obs).setName(name);
@@ -100,7 +104,7 @@ class DirectObservation extends Observation {
         Concept roleSelector = null;
         // ensure observations were made, and allow rescale operations
         if (args == null) {
-            throw new KlabValidationException("observation selection on " + obs + " must be called with non-null arguments");
+            throw new KlabValidationException("observation selection on " + unwrap() + " must be called with non-null arguments");
         } else {
             for (Object o : args) {
                 if (o instanceof Concept) {
@@ -136,7 +140,7 @@ class DirectObservation extends Observation {
         }
 
         if (concept.is(IKimConcept.Type.QUALITY)) {
-            return ((org.integratedmodelling.klab.components.runtime.observations.DirectObservation)obs).getExistingState(concept);
+            return ((org.integratedmodelling.klab.components.runtime.observations.DirectObservation)unwrap()).getExistingState(concept);
         }
 
         /*
@@ -164,9 +168,9 @@ class DirectObservation extends Observation {
 
     def aggregateStates(Map options, Concept stateConcept, ObservationSet agents) {
 
-        if (getTransition() != null) {
-            throw new KlabValidationException("cannot define aggregated states during a transition");
-        }
+//        if (getTransition() != null) {
+//            throw new KlabValidationException("cannot define aggregated states during a transition");
+//        }
 
         if (stateConcept == null) {
             return null;
@@ -184,23 +188,19 @@ class DirectObservation extends Observation {
     }
 
     def isSubject() {
-        return obs.getObservable().is(IKimConcept.Type.SUBJECT);
+        return unwrap().observable.is(IKimConcept.Type.SUBJECT);
     }
 
     def isProcess() {
-        return obs.getObservable().is(IKimConcept.Type.PROCESS);
+        return unwrap().observable.is(IKimConcept.Type.PROCESS);
     }
 
     def isEvent() {
-        return obs.getObservable().is(IKimConcept.Type.EVENT);
-    }
-
-    def isRelationship() {
-        return obs.getObservable().is(IKimConcept.Type.RELATIONSHIP);
+        return unwrap().observable.is(IKimConcept.Type.EVENT);
     }
 
     def isCountable() {
-        return obs.getObservable().is(IKimConcept.Type.COUNTABLE);
+        return unwrap().observable.is(IKimConcept.Type.COUNTABLE);
     }
 
     /**

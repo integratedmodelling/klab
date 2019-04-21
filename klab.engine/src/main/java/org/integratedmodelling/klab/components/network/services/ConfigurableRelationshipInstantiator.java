@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -141,7 +142,7 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 			}
 		}
 
-		IExpression selector = null;
+		ILanguageExpression selector = null;
 		Parameters<String> parameters = new Parameters<>();
 		if (selectorDescriptor != null) {
 			selector = selectorDescriptor.compile();
@@ -177,9 +178,7 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 				if (selector != null) {
 
 					parameters.clear();
-					parameters.put("source", source);
-					parameters.put("target", target);
-					Object o = selector.eval(parameters, context);
+					Object o = selector.override("source", source, "target", target).eval(parameters, context);
 					if (o == null) {
 						o = Boolean.FALSE;
 					}

@@ -20,164 +20,181 @@ import org.integratedmodelling.kim.api.IParameters;
  */
 public class Parameters<T> implements IParameters<T> {
 
-	private Map<T, Object> delegate;
+    private Map<T, Object> delegate;
 
-	public Parameters(Map<T, Object> delegate) {
-		this.delegate = delegate;
-	}
+    public Parameters(Map<T, Object> delegate) {
+        this.delegate = delegate;
+    }
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <T> Parameters<T> create(Object... o) {
-		Map<T, Object> inp = new HashMap<T, Object>();
-		if (o != null) {
-			for (int i = 0; i < o.length; i++) {
-				inp.put((T)o[i], o[++i]);
-			}	
-		}
-		return new Parameters(inp);
-	}
+    public static final String IGNORED_PARAMETER = "__IGNORED__";
 
-	/**
-	 * Only used when the object must be serialized through reflection.
-	 * 
-	 * @return a map with all data
-	 */
-	public Map<T, Object> getData() {
-		return delegate;
-	}
+    /**
+     * Create a parameters object from a list of key/value pairs, optionally
+     * including also other (non-paired) map objects whose values are added
+     * as is. A null in first position of a pair is ignored, as well as anything
+     * whose key is {@link #IGNORED_PARAMETER}.
+     *  
+     * @param o
+     * @return
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public static <T> Parameters<T> create(Object... o) {
+        Map<T, Object> inp = new HashMap<T, Object>();
+        if (o != null) {
+            for (int i = 0; i < o.length; i++) {
+                if (o[i] instanceof Map) {
+                    inp.putAll((Map) o[i]);
+                } else if (o[i] != null) {
+                    if (!IGNORED_PARAMETER.equals(o[i])) {
+                        inp.put((T) o[i], o[i + 1]);
+                    }
+                    i++;
+                }
+            }
+        }
+        return new Parameters(inp);
+    }
 
-	@Override
-	public <K> K get(T name, K defaultValue) {
-		Object ret = get(name);
-		if (ret == null) {
-			return defaultValue;
-		}
-		return defaultValue == null ? null : Utils.asType(ret, defaultValue.getClass());
-	}
+    /**
+     * Only used when the object must be serialized through reflection.
+     * 
+     * @return a map with all data
+     */
+    public Map<T, Object> getData() {
+        return delegate;
+    }
 
-	@Override
-	public <K> K get(T name, Class<? extends K> cls) {
-		Object ret = get(name);
-		if (ret == null) {
-			return null;
-		}
-		return Utils.asType(ret, cls);
-	}
+    @Override
+    public <K> K get(T name, K defaultValue) {
+        Object ret = get(name);
+        if (ret == null) {
+            return defaultValue;
+        }
+        return defaultValue == null ? null : Utils.asType(ret, defaultValue.getClass());
+    }
 
-	public Parameters() {
-		this.delegate = new LinkedHashMap<>();
-	}
+    @Override
+    public <K> K get(T name, Class<? extends K> cls) {
+        Object ret = get(name);
+        if (ret == null) {
+            return null;
+        }
+        return Utils.asType(ret, cls);
+    }
 
-	public int size() {
-		return delegate.size();
-	}
+    public Parameters() {
+        this.delegate = new LinkedHashMap<>();
+    }
 
-	public boolean isEmpty() {
-		return delegate.isEmpty();
-	}
+    public int size() {
+        return delegate.size();
+    }
 
-	public boolean containsKey(Object key) {
-		return delegate.containsKey(key);
-	}
+    public boolean isEmpty() {
+        return delegate.isEmpty();
+    }
 
-	public boolean containsValue(Object value) {
-		return delegate.containsValue(value);
-	}
+    public boolean containsKey(Object key) {
+        return delegate.containsKey(key);
+    }
 
-	public Object get(Object key) {
-		return delegate.get(key);
-	}
+    public boolean containsValue(Object value) {
+        return delegate.containsValue(value);
+    }
 
-	public Object put(T key, Object value) {
-		return delegate.put(key, value);
-	}
+    public Object get(Object key) {
+        return delegate.get(key);
+    }
 
-	public Object remove(Object key) {
-		return delegate.remove(key);
-	}
+    public Object put(T key, Object value) {
+        return delegate.put(key, value);
+    }
 
-	public void putAll(Map<? extends T, ? extends Object> m) {
-		delegate.putAll(m);
-	}
+    public Object remove(Object key) {
+        return delegate.remove(key);
+    }
 
-	public void clear() {
-		delegate.clear();
-	}
+    public void putAll(Map<? extends T, ? extends Object> m) {
+        delegate.putAll(m);
+    }
 
-	public Set<T> keySet() {
-		return delegate.keySet();
-	}
+    public void clear() {
+        delegate.clear();
+    }
 
-	public Collection<Object> values() {
-		return delegate.values();
-	}
+    public Set<T> keySet() {
+        return delegate.keySet();
+    }
 
-	public Set<Entry<T, Object>> entrySet() {
-		return delegate.entrySet();
-	}
+    public Collection<Object> values() {
+        return delegate.values();
+    }
 
-	public boolean equals(Object o) {
-		return delegate.equals(o);
-	}
+    public Set<Entry<T, Object>> entrySet() {
+        return delegate.entrySet();
+    }
 
-	public int hashCode() {
-		return delegate.hashCode();
-	}
+    public boolean equals(Object o) {
+        return delegate.equals(o);
+    }
 
-	public Object getOrDefault(Object key, Object defaultValue) {
-		return delegate.getOrDefault(key, defaultValue);
-	}
+    public int hashCode() {
+        return delegate.hashCode();
+    }
 
-	public void forEach(BiConsumer<? super T, ? super Object> action) {
-		delegate.forEach(action);
-	}
+    public Object getOrDefault(Object key, Object defaultValue) {
+        return delegate.getOrDefault(key, defaultValue);
+    }
 
-	public void replaceAll(BiFunction<? super T, ? super Object, ? extends Object> function) {
-		delegate.replaceAll(function);
-	}
+    public void forEach(BiConsumer<? super T, ? super Object> action) {
+        delegate.forEach(action);
+    }
 
-	public Object putIfAbsent(T key, Object value) {
-		return delegate.putIfAbsent(key, value);
-	}
+    public void replaceAll(BiFunction<? super T, ? super Object, ? extends Object> function) {
+        delegate.replaceAll(function);
+    }
 
-	public boolean remove(Object key, Object value) {
-		return delegate.remove(key, value);
-	}
+    public Object putIfAbsent(T key, Object value) {
+        return delegate.putIfAbsent(key, value);
+    }
 
-	public boolean replace(T key, Object oldValue, Object newValue) {
-		return delegate.replace(key, oldValue, newValue);
-	}
+    public boolean remove(Object key, Object value) {
+        return delegate.remove(key, value);
+    }
 
-	public Object replace(T key, Object value) {
-		return delegate.replace(key, value);
-	}
+    public boolean replace(T key, Object oldValue, Object newValue) {
+        return delegate.replace(key, oldValue, newValue);
+    }
 
-	public Object computeIfAbsent(T key, Function<? super T, ? extends Object> mappingFunction) {
-		return delegate.computeIfAbsent(key, mappingFunction);
-	}
+    public Object replace(T key, Object value) {
+        return delegate.replace(key, value);
+    }
 
-	public Object computeIfPresent(T key, BiFunction<? super T, ? super Object, ? extends Object> remappingFunction) {
-		return delegate.computeIfPresent(key, remappingFunction);
-	}
+    public Object computeIfAbsent(T key, Function<? super T, ? extends Object> mappingFunction) {
+        return delegate.computeIfAbsent(key, mappingFunction);
+    }
 
-	public Object compute(T key, BiFunction<? super T, ? super Object, ? extends Object> remappingFunction) {
-		return delegate.compute(key, remappingFunction);
-	}
+    public Object computeIfPresent(T key, BiFunction<? super T, ? super Object, ? extends Object> remappingFunction) {
+        return delegate.computeIfPresent(key, remappingFunction);
+    }
 
-	public Object merge(T key, Object value,
-			BiFunction<? super Object, ? super Object, ? extends Object> remappingFunction) {
-		return delegate.merge(key, value, remappingFunction);
-	}
+    public Object compute(T key, BiFunction<? super T, ? super Object, ? extends Object> remappingFunction) {
+        return delegate.compute(key, remappingFunction);
+    }
 
-	@Override
-	public boolean contains(T key) {
-		return delegate.get(key) != null;
-	}
+    public Object merge(T key, Object value, BiFunction<? super Object, ? super Object, ? extends Object> remappingFunction) {
+        return delegate.merge(key, value, remappingFunction);
+    }
 
-	@Override
-	public boolean contains(T key, Class<?> cls) {
-		Object obj = delegate.get(key);
-		return obj != null && cls.isAssignableFrom(obj.getClass());
-	}
+    @Override
+    public boolean contains(T key) {
+        return delegate.get(key) != null;
+    }
+
+    @Override
+    public boolean contains(T key, Class<?> cls) {
+        Object obj = delegate.get(key);
+        return obj != null && cls.isAssignableFrom(obj.getClass());
+    }
 
 }

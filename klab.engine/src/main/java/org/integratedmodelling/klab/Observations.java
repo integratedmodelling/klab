@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
+import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
@@ -590,18 +591,5 @@ public enum Observations implements IObservationService {
 		return !isData(o);
 	}
 
-	/**
-	 * Called from Groovy when expressions like "id@nw" are found. Applies some
-	 * memoizing to handle the context IDs quicker.
-	 * 
-	 * @param targetId
-	 * @param contextIds
-	 * @param context
-	 * @return
-	 */
-	public Object recontextualizeIdentifier(String targetId, String contextIds, IRuntimeContext context,
-			Map<?, ?> variables) {
-		return null;
-	}
 
 }

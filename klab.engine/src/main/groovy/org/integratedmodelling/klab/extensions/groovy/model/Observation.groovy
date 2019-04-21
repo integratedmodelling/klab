@@ -1,32 +1,36 @@
 package org.integratedmodelling.klab.extensions.groovy.model
 
-import org.integratedmodelling.klab.api.data.ILocator
 import org.integratedmodelling.klab.api.model.IModel
 import org.integratedmodelling.klab.api.observations.IDirectObservation
 import org.integratedmodelling.klab.api.observations.IObservation
-import org.integratedmodelling.klab.api.observations.ISubject
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor
+import org.integratedmodelling.klab.engine.runtime.code.groovy.Wrapper
 
-abstract class Observation {
+abstract class Observation<T extends IObservation> extends Wrapper<T> {
 
-    IObservation obs;
     String name;
-    Binding binding;
     IModel model;
 
     def Observation(IObservation observation, Binding binding) {
-        this.obs = observation;
-        this.binding = binding;
+        super(observation, binding);
         if (binding.hasVariable("_model")) {
             this.model = binding.getVariable("_model");
         }
     }
+
+    def Observation(String id, Binding binding) {
+        super(id, binding);
+        if (binding.hasVariable("_model")) {
+            this.model = binding.getVariable("_model");
+        }
+    }
+
     
     def size() {
         // gimmick to be able to call size() on a selection even if it results in one observation.
         return 1;
     }
-    
+
     def named(String name) {
         this.name = name;
     }
@@ -34,30 +38,25 @@ abstract class Observation {
     def getName() {
         return name;
     }
-    
+
     def getObservable() {
-        return new Concept(obs.getObservable().getSemantics().getType(), binding);
-    }
-    
-    def getObservingSubject() {
-        ISubject subj = obs.getObservingSubject();
-        return subj == null ? null : new DirectObservation(subj, binding);
+        return new Concept(unwrap().observable.type, binding);
     }
 
-    def unwrap() {
-        return obs;
+    def getObserver() {
+        return new DirectObservation(unwrap().observable.observer, binding);
     }
 
     def getId() {
-        return ((Observation)obs).getInternalId();
+        return unwrap().id;
     }
 
     def getSpace() {
-        return obs.getScale().getSpace() == null ? null : new Space(obs.getScale().getSpace(), binding);
+        return unwrap().scale.space == null ? null : new Space(unwrap().scale.space, binding);
     }
 
     def getTime() {
-        return obs.getScale().getTime() == null ? null : new Time(obs.getScale().getTime(), binding);
+        return unwrap().scale.time == null ? null : new Time(unwrap().scale.time, binding);
     }
 
     def getScale() {
@@ -65,21 +64,20 @@ abstract class Observation {
     }
 
     def isSibling(Observation o) {
-        return
-             o.obs.getContextObservation() != null &&
-                obs.getContextObservation() != null &&
-                o.obs.getContextObservation() == obs.getContextObservation();
+        unwrap().context != null &&
+                unwrap().context != null &&
+                o.unwrap().context == unwrap().context;
     }
 
     /*
      * internal use
      */
-    protected ILocator getTransition() {
-        if (binding.hasVariable('_transition')) {
-            return binding.getVariable('_transition');
-        }
-        return null;
-    }
+    //    protected ILocator getTransition() {
+    //        if (binding.hasVariable('_transition')) {
+    //            return binding.getVariable('_transition');
+    //        }
+    //        return null;
+    //    }
 
     IMonitor getMonitor() {
         Object o = binding.getVariable("_monitor");
@@ -90,14 +88,13 @@ abstract class Observation {
     }
 
     def getMetadata() {
-        return obs.getMetadata();
+        return unwrap().metadata;
     }
 
     def getContext() {
-        IDirectObservation ret = obs.getContextObservation();
-        return ret == null ? null : DefaultAction._wrapIfNecessary(ret, binding);
+        return new DirectObservation(unwrap().context, binding);
     }
-    
+
     /**
      * Used to force non-scalar usage when we need the object as is and
      * we have scalar usage in the same expression.

@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -20,17 +21,19 @@ public enum GroovyProcessor implements ILanguageProcessor {
 
     INSTANCE;
 
+    public static final String   ID           = "groovy";
+
     class GroovyDescriptor implements Descriptor {
 
-        String processedCode;
-        Collection<String> identifiers;
-        private Set<String> scalarIds;
-        private Set<String> objectIds;
-        private Set<String> contextualizers;
-        
+        String                        processedCode;
+        Collection<String>            identifiers;
+        private Set<String>           scalarIds;
+        private Set<String>           objectIds;
+        private Set<String>           contextualizers;
+
         private List<KimNotification> errors;
-//        private List<TokenDescriptor> tokens;
-//        private IRuntimeContext context;
+        // private List<TokenDescriptor> tokens;
+        // private IRuntimeContext context;
 
         GroovyDescriptor(String expression, IRuntimeContext context, boolean contextual) {
 
@@ -42,11 +45,10 @@ public enum GroovyProcessor implements ILanguageProcessor {
                     : context.getArtifacts(IState.class).stream().map(data -> data.getFirst())
                             .collect(Collectors.toSet());
             knownIdentifiers.add("self");
-            
+
             IScale scale = context == null ? null : context.getScale();
 
-            GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace, knownIdentifiers,
-                    scale, context, contextual);
+            GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace, knownIdentifiers, scale, context, contextual);
 
             this.processedCode = processor.process(expression);
             this.identifiers = processor.getIdentifiers();
@@ -54,8 +56,8 @@ public enum GroovyProcessor implements ILanguageProcessor {
             this.objectIds = processor.getObjectIdentifiers();
             this.contextualizers = processor.getContextualizers();
             this.errors = processor.getErrors();
-//            this.tokens = processor.tokens;
-//            this.context = context;
+            // this.tokens = processor.tokens;
+            // this.context = context;
         }
 
         @Override
@@ -83,20 +85,20 @@ public enum GroovyProcessor implements ILanguageProcessor {
 
         @Override
         public Collection<String> getIdentifiersInScalarScope() {
-        	return this.scalarIds;
+            return this.scalarIds;
         }
 
         @Override
         public Collection<String> getIdentifiersInNonscalarScope() {
-        	return this.objectIds;
+            return this.objectIds;
         }
 
         @Override
-        public IExpression compile() {
-//            String ret = "";
-//            for (TokenDescriptor token : tokens) {
-//                ret += token.translate(context);
-//            }
+        public ILanguageExpression compile() {
+            // String ret = "";
+            // for (TokenDescriptor token : tokens) {
+            // ret += token.translate(context);
+            // }
             return new GroovyExpression(processedCode, true, this);
         }
 
@@ -105,13 +107,13 @@ public enum GroovyProcessor implements ILanguageProcessor {
             return scalarIds.contains(identifier);
         }
 
-		@Override
-		public boolean isNonscalar(String identifier) {
-			return objectIds.contains(identifier);
-		}
+        @Override
+        public boolean isNonscalar(String identifier) {
+            return objectIds.contains(identifier);
+        }
 
-		@Override
-		public boolean isNonscalar(Collection<String> stateIdentifiers) {
+        @Override
+        public boolean isNonscalar(Collection<String> stateIdentifiers) {
             for (String id : stateIdentifiers) {
                 if (this.objectIds.contains(id)) {
                     return true;
@@ -119,24 +121,26 @@ public enum GroovyProcessor implements ILanguageProcessor {
             }
             return false;
 
-		}
+        }
 
-		@Override
-		public Collection<String> getContextualizers() {
-			return contextualizers;
-		}
+        @Override
+        public Collection<String> getContextualizers() {
+            return contextualizers;
+        }
     }
 
     @Override
-    public IExpression compile(String expression, IComputationContext context) throws KlabValidationException {
+    public IExpression compile(String expression, IComputationContext context)
+            throws KlabValidationException {
         return new GroovyDescriptor(expression, (IRuntimeContext) context, true).compile();
     }
 
     @Override
-    public Descriptor describe(String expression, IComputationContext context) throws KlabValidationException {
+    public Descriptor describe(String expression, IComputationContext context)
+            throws KlabValidationException {
         return new GroovyDescriptor(expression, (IRuntimeContext) context, true);
     }
-    
+
     @Override
     public Descriptor describe(String expression) throws KlabValidationException {
         return new GroovyDescriptor(expression, null, false);

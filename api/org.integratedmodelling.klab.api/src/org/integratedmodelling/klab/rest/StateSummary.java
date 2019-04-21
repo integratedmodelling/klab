@@ -54,6 +54,7 @@ public class StateSummary {
 	private double standardDeviation;
 	private double variance;
 	private boolean singleValued;
+	private double sum;
 	
 	/**
 	 * The value count
@@ -162,6 +163,14 @@ public class StateSummary {
 
 	public void setStateTimestamp(long stateTimestamp) {
 		this.stateTimestamp = stateTimestamp;
+	}
+
+	public double getSum() {
+	    return this.sum;
+	}
+
+	public void setSum(double sum) {
+	    this.sum = sum;
 	}
 
 	/**

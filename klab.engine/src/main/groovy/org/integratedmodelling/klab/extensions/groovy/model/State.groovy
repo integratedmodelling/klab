@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.extensions.groovy.model
 
-import org.apache.lucene.analysis.sinks.TeeSinkTokenFilter.States
 import org.integratedmodelling.klab.Observations
 import org.integratedmodelling.klab.api.data.ILocator
 import org.integratedmodelling.klab.api.knowledge.IConcept
@@ -11,7 +10,7 @@ import org.integratedmodelling.klab.exceptions.KlabUnimplementedException
 import org.integratedmodelling.klab.exceptions.KlabValidationException
 import org.integratedmodelling.klab.rest.StateSummary
 
-class State extends Observation {
+class State extends Observation<IState> {
 
 	// only used to tag a state for reduction when transformed
 	IConcept dataReduction = null;
@@ -22,13 +21,17 @@ class State extends Observation {
 		super(obs, binding);
 	}
 
+    State(String id, Binding binding) {
+        super(id, binding)
+    }
+    
 	String toString() {
-		return obs.toString();
+		return unwrap().toString();
 	}
 
 	private StateSummary getStateSummary() {
 		if (summary == null) {
-			summary = Observations.INSTANCE.getStateSummary((IState)obs, timePointer);
+			summary = Observations.INSTANCE.getStateSummary(unwrap(), timePointer);
 		}
 		return summary;
 	}
@@ -39,14 +42,14 @@ class State extends Observation {
 	 * @return
 	 */
 	public State invert() {
-		if (obs.type == IArtifact.Type.NUMBER) {
+		if (unwrap().type == IArtifact.Type.NUMBER) {
 			def summary = getStateSummary();
 			if (!summary.isDegenerate()) {
-				for (ILocator locator : obs.getScale()) {
-					Double d = ((IState)obs).get(locator, Double.class);
+				for (ILocator locator : unwrap().getScale()) {
+					Double d = unwrap().get(locator, Double.class);
 					if (d != null && !Double.isNaN(d)) {
 						d = summary.getRange().get(1) - d + summary.getRange().get(0);
-						((IState)obs).set(locator, d);
+						unwrap().set(locator, d);
 					}
 				}
 			}
@@ -55,14 +58,14 @@ class State extends Observation {
 	}
 
 	public State normalize() {
-		if (obs.type == IArtifact.Type.NUMBER) {
+		if (unwrap().type == IArtifact.Type.NUMBER) {
 			def summary = getStateSummary();
 			if (!summary.isDegenerate()) {
-				for (ILocator locator : obs.getScale()) {
-					Double d = ((IState)obs).get(locator, Double.class);
+				for (ILocator locator : unwrap().getScale()) {
+					Double d = unwrap().get(locator, Double.class);
 					if (d != null && !Double.isNaN(d)) {
 						d = (d - summary.getRange().get(0)) / (summary.getRange().get(1) - summary.getRange().get(0));
-						((IState)obs).set(locator, d);
+						unwrap().set(locator, d);
 					}
 				}
 			}
@@ -210,7 +213,7 @@ class State extends Observation {
 		if (!(o instanceof Concept)) {
 			throw new KlabValidationException("the division operator on a state can only be used with a data reduction trait");
 		}
-		State ret = new State(obs, binding);
+		State ret = new State(unwrap(), binding);
 		ret.dataReduction = ((Concept)o).concept;
 		return ret;
 	}
@@ -266,7 +269,7 @@ class State extends Observation {
 
 	def getSum() {
 		double t = Double.NaN;
-		if (((IState)obs).getType() == IArtifact.Type.NUMBER) {
+		if (unwrap().getType() == IArtifact.Type.NUMBER) {
 			t = getStateSummary().getSum()
 		}
 		return t;
@@ -274,7 +277,7 @@ class State extends Observation {
 
 	def getAvg() {
 		double t = Double.NaN;
-		if (((IState)obs).getType() == IArtifact.Type.NUMBER) {
+		if (unwrap().getType() == IArtifact.Type.NUMBER) {
 			t = getStateSummary().getMean()
 		}
 		return t;

@@ -1,9 +1,12 @@
 package org.integratedmodelling.klab.extensions.groovy.model
 
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension
 import org.integratedmodelling.klab.api.observations.scale.IExtent
 import org.integratedmodelling.klab.api.observations.scale.IScale
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace
 import org.integratedmodelling.klab.api.observations.scale.time.ITime
+import org.integratedmodelling.klab.common.LogicalConnector
+import org.integratedmodelling.klab.engine.runtime.code.groovy.Wrapper
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException
 
 /**
@@ -20,15 +23,16 @@ import org.integratedmodelling.klab.exceptions.KlabUnimplementedException
  * @author Ferd
  *
  */
-class Scale {
+class Scale extends Wrapper<IScale> {
 
-    IScale scale;
-    Binding binding;
-
-    Scale(IScale scale, Binding binding) {
-        this.scale = scale;
-        this.binding = binding;
+    Scale(String id, Binding binding) {
+        super(id, binding)
     }
+    
+    Scale(IScale scale, Binding binding) {
+        super(scale, binding)
+    }
+    
     
     Iterator iterator() {
 
@@ -41,15 +45,15 @@ class Scale {
     }
     
     def getSpace() {
-        return scale.getSpace() == null ? null : new Space(scale.getSpace(), binding);
+        return unwrap().getSpace() == null ? null : new Space(unwrap().getSpace(), binding);
     }
 
     def getTime() {
-        return scale.getTime() == null ? null : new Time(scale.getTime(), binding);
+        return unwrap().getTime() == null ? null : new Time(unwrap().getTime(), binding);
     }
 
-    def getExtent(Concept o) {
-        IExtent ext = scale.getExtent(o.concept);
+    def getExtent(Dimension.Type type) {
+        IExtent ext = unwrap().getDimension(type);
         if (ext == null) {
             return null;
         }
@@ -59,19 +63,19 @@ class Scale {
         if (ext instanceof ITime) {
             return new Time(ext, binding);
         }
-        return new Extent(ext, binding);
+        return null;
     }
     
     def or(Object e) {
-        return scale.union(e);
+        return new Scale(unwrap().merge(e instanceof Wrapper ? (IScale)((Wrapper)e).unwrap() : (IScale)e, LogicalConnector.UNION), binding);
     }
-    
+
     def and(Object e) {
-        return scale.intersection(e);
+        return new Scale(unwrap().merge(e instanceof Wrapper ? (IScale)((Wrapper)e).unwrap() : (IScale)e, LogicalConnector.INTERSECTION), binding);
     }
     
-    def getMultiplicity() {
-        return scale.getMultiplicity();
+    def getSize() {
+        return unwrap().size();
     }
 
 }

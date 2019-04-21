@@ -17,7 +17,6 @@ package org.integratedmodelling.klab.api.data.general;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
-import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
  * Simple execution interface for expressions. A new expression is generated per each call to the
@@ -28,17 +27,17 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  */
 public interface IExpression {
 
-  /**
-   * Execute the expression
-   *
-   * @param parameters from context or defined in a language call
-   * @param context possibly empty, may be added to determine the result of the evaluation according
-   *        to the calling context. The {@link IComputationContext#getMonitor() monitor in the
-   *        context} will never be null and can be used to send messages or interrupt the
-   *        computation.
-   * @return the result of evaluating the expression
-   * @throws org.integratedmodelling.klab.exceptions.KlabException TODO
-   */
-  Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException;
+    /**
+     * Execute the expression
+     *
+     * @param parameters from context or defined in a language call
+     * @param context possibly empty, may be added to determine the result of the evaluation according
+     *        to the calling context. The {@link IComputationContext#getMonitor() monitor in the
+     *        context} will never be null and can be used to send messages or interrupt the
+     *        computation.
+     * @return the result of evaluating the expression
+     * @throws org.integratedmodelling.klab.exceptions.KlabException TODO
+     */
+    Object eval(IParameters<String> parameters, IComputationContext context);
 
 }

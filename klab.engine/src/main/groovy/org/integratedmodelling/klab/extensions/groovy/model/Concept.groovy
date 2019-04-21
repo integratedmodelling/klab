@@ -96,32 +96,32 @@ public class Concept {
         this.defs.by = of;
     }
 
-    def getObservable() {
-
-        if (!concept.is(IKimConcept.Type.ROLE)) {
-            throw new KlabValidationException("getObservable can only be called on a role", ActionBase.getArtifact(binding));
-        }
-
-        IConcept observable = Roles.getObservableWithRole(concept, null);
-        if (observable == null) {
-            return null;
-        }
-
-        if (observable.isAbstract()) {
-            throw new KlabValidationException(
-            "role " + this +
-            " applies to an abstract observable (" + observable +
-            ") and can not be used to produce an observable", ActionBase.getArtifact(binding));
-        }
-
-        return new Concept(observable, binding);
-    }
+//    def getObservable() {
+//
+//        if (!concept.is(IKimConcept.Type.ROLE)) {
+//            throw new KlabValidationException("getObservable can only be called on a role", ActionBase.getArtifact(binding));
+//        }
+//
+//        IConcept observable = Roles.getObservableWithRole(concept, null);
+//        if (observable == null) {
+//            return null;
+//        }
+//
+//        if (observable.isAbstract()) {
+//            throw new KlabValidationException(
+//            "role " + this +
+//            " applies to an abstract observable (" + observable +
+//            ") and can not be used to produce an observable", ActionBase.getArtifact(binding));
+//        }
+//
+//        return new Concept(observable, binding);
+//    }
 
     def getRole(Concept baseRole) {
         if (!baseRole.concept.is(IKimConcept.Type.ROLE)) {
             throw new KlabValidationException("getRole can only be called with a role parameter", ActionBase.getArtifact(binding));
         }
-        for (IConcept c : Roles.getRoles(concept)) {
+        for (IConcept c : Roles.INSTANCE.getRoles(concept)) {
             if (c.is(baseRole.concept)) {
                 return new Concept(c, binding);
             }
@@ -129,24 +129,24 @@ public class Concept {
         return null;
     }
 
-    def implied(Concept baseRole) {
-        if (!baseRole.concept.is(IKimConcept.Type.ROLE) || !concept.is(IKimConcept.Type.ROLE)) {
-            throw new KlabValidationException("implied() can only be called on a role and with a role parameter", ActionBase.getArtifact(binding));
-        }
-        for (IConcept c : Roles.getImpliedObservableRoles(concept)) {
-            if (c.is(baseRole.concept)) {
-                return new Concept(c, binding);
-            }
-        }
-        return null;
-    }
+//    def implied(Concept baseRole) {
+//        if (!baseRole.concept.is(IKimConcept.Type.ROLE) || !concept.is(IKimConcept.Type.ROLE)) {
+//            throw new KlabValidationException("implied() can only be called on a role and with a role parameter", ActionBase.getArtifact(binding));
+//        }
+//        for (IConcept c : Roles.getImpliedObservableRoles(concept)) {
+//            if (c.is(baseRole.concept)) {
+//                return new Concept(c, binding);
+//            }
+//        }
+//        return null;
+//    }
 
     def getName() {
         return concept.getName();
     }
 
     def getTrait(Concept baseTrait) {
-        for (IConcept c : Traits.getTraits(concept)) {
+        for (IConcept c : Traits.INSTANCE.getTraits(concept)) {
             if (c.is(baseTrait.concept)) {
                 return new Concept(c, binding);
             }
@@ -162,7 +162,7 @@ public class Concept {
     }
 
     public String toString() {
-        return Concepts.getDisplayName(getConcept());
+        return Concepts.INSTANCE.getDisplayName(getConcept());
     }
 
     def isa(Object o) {
@@ -253,8 +253,8 @@ public class Concept {
             return this;
         }
 
-        if (o instanceof DirectObservation) {
-            for (IExtent ext : ((DirectObservation)o).obs.getScale()) {
+        if (o instanceof org.integratedmodelling.klab.extensions.groovy.model.DirectObservation) {
+            for (IExtent ext : ((org.integratedmodelling.klab.extensions.groovy.model.DirectObservation)o).obs.getScale()) {
                 searchExtents.add(ext);
             }
             return this;
@@ -286,18 +286,18 @@ public class Concept {
      */
     def div(Object obs) {
         if (!concept.is(IKimConcept.Type.ROLE)) {
-            throw new KlabValidationException("role context operator: target concept " + concept + " is not a role", DefaultAction.getArtifact(binding));
+            throw new KlabValidationException("role context operator: target concept " + concept + " is not a role"/*, DefaultAction.getArtifact(binding)*/);
         }
         IConcept observable = null;
         if (obs instanceof Concept) {
             observable = ((Concept)obs).concept;
-        } else if (obs instanceof Observation) {
-            observable = ((Observation)obs).obs.getObservable().getSemantics().getType();
+        } else if (obs instanceof org.integratedmodelling.klab.extensions.groovy.model.Observation) {
+            observable = ((org.integratedmodelling.klab.extensions.groovy.model.Observation)obs).obs.getObservable().getType();
         } else {
-            throw new KlabValidationException("role context operator: argument must be an observation", DefaultAction.getArtifact(binding));
+            throw new KlabValidationException("role context operator: argument must be an observation"/*, DefaultAction.getArtifact(binding)*/);
         }
         
-        IConcept actual = Roles.getImpliedRole(concept, observable);
+        IConcept actual = Roles.INSTANCE.getImpliedRole(concept, observable);
         if (actual != null) {
            return new Concept(actual, binding);
         }

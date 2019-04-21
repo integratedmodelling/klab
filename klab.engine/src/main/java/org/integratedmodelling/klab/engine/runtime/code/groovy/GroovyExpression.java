@@ -33,216 +33,322 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
-import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.extensions.groovy.model.Concept;
-import org.integratedmodelling.klab.extensions.groovy.model.Observation;
+import org.integratedmodelling.klab.utils.Parameters;
 
 import groovy.lang.Binding;
 import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
 
-public class GroovyExpression extends Expression {
+public class GroovyExpression extends Expression implements ILanguageExpression {
 
-	protected String code;
-	protected boolean negated = false;
-	protected Object object;
-	protected IServiceCall functionCall;
-	protected IModel model;
-	protected boolean isNull = false;
-	protected boolean isTrue = false;
-	private boolean initialized = false;
-	private Set<String> defineIfAbsent = new HashSet<>();
+    protected String              code;
+    protected boolean             negated        = false;
+    protected Object              object;
+    protected IServiceCall        functionCall;
+    protected IModel              model;
+    protected boolean             isNull         = false;
+    protected boolean             isTrue         = false;
+    private boolean               initialized    = false;
+    private Set<String>           defineIfAbsent = new HashSet<>();
+    private Set<String>           overridingIds  = new HashSet<>();
+    private Object[]              overriding     = null;
 
-	// each thread gets its own instance of the script with bindings
-	ThreadLocal<Script> script = new ThreadLocal<>();
+    private Map<String, Concept>  conceptCache   = new HashMap<>();
 
-	/*
-	 * either the Script or the compiled class are saved according to whether we
-	 * want a thread-safe expression or not.
-	 */
-	private Class<?> sclass = null;
-	// Script script;
+    // each thread gets its own instance of the script with bindings
+    ThreadLocal<Script>           script         = new ThreadLocal<>();
 
-	IGeometry domain;
-	INamespace namespace;
+    /*
+     * either the Script or the compiled class are saved according to whether we
+     * want a thread-safe expression or not.
+     */
+    private Class<?>              sclass         = null;
+    // Script script;
 
-	private List<KimNotification> errors = new ArrayList<>();
-	private KlabGroovyShell shell = new KlabGroovyShell();
-	private String preprocessed = null;
-	private IRuntimeContext runtimeContext;
-	private Descriptor descriptor;
+    IGeometry                     domain;
+    INamespace                    namespace;
 
-	public GroovyExpression() {
-	}
+    private List<KimNotification> errors         = new ArrayList<>();
+    private KlabGroovyShell       shell          = new KlabGroovyShell();
+    private String                preprocessed   = null;
+    private IRuntimeContext       runtimeContext;
+    private Descriptor            descriptor;
 
-	public boolean hasErrors() {
-		return errors.size() > 0;
-	}
+    public GroovyExpression() {
+    }
 
-	public List<KimNotification> getErrors() {
-		return errors;
-	}
+    public boolean hasErrors() {
+        return errors.size() > 0;
+    }
 
-	/*
-	 * MUST be called in all situations.
-	 */
-	public void initialize(Map<String, IObservable> inputs, Map<String, IObservable> outputs) {
-		compile(preprocess(code, inputs, outputs));
-		initialized = true;
-	}
+    public List<KimNotification> getErrors() {
+        return errors;
+    }
 
-	GroovyExpression(String code, boolean preprocessed, ILanguageProcessor.Descriptor descriptor) {
-		this.descriptor = descriptor;
-		this.code = (code.startsWith("wrap()") ? code : ("wrap();\n\n" + code));
-		if (preprocessed) {
-			this.preprocessed = this.code;
-		}
+    /*
+     * MUST be called in all situations.
+     */
+    public void initialize(Map<String, IObservable> inputs, Map<String, IObservable> outputs) {
+        compile(preprocess(code, inputs, outputs));
+        initialized = true;
+    }
 
-	}
+    GroovyExpression(String code, boolean preprocessed, ILanguageProcessor.Descriptor descriptor) {
+        this.descriptor = descriptor;
+        this.code = code; // (code.startsWith("wrap()") ? code : ("wrap();\n\n" + code));
+        if (preprocessed) {
+            this.preprocessed = this.code;
+        }
 
-	private void compile(String code) {
-		this.sclass = shell.parseToClass(code);
-		// this.script = shell.parse(code);
-	}
+    }
 
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+    private void compile(String code) {
+        this.sclass = shell.parseToClass(code);
+        // this.script = shell.parse(code);
+    }
 
-		if (isTrue) {
-			return true;
-		}
+    public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
 
-		if (isNull) {
-			return null;
-		}
+        if (isTrue) {
+            return true;
+        }
 
-		if (code != null) {
+        if (isNull) {
+            return null;
+        }
 
-			if (!initialized) {
-				initialize(new HashMap<>(), new HashMap<>());
-			}
+        boolean firstTime = false;
+        if (code != null) {
 
-			try {
-				if (script.get() == null) {
-					script.set(shell.createFromClass(sclass, new Binding()));
-				}
-				setBindings(script.get().getBinding(), context, parameters);
-				return unwrap(script.get().run());
+            if (!initialized) {
+                initialize(new HashMap<>(), new HashMap<>());
+                setupBindings(context, parameters);
+                firstTime = true;
+            }
 
-			} catch (MissingPropertyException e) {
-				String property = e.getProperty();
-				if (!defineIfAbsent.contains(property)) {
-					context.getMonitor().warn("variable " + property
-							+ " undefined. Defining as numeric no-data (NaN) for subsequent evaluations.");
-					defineIfAbsent.add(property);
-				}
-			} catch (Throwable t) {
-				throw new KlabException(t);
-			}
-		} else if (object != null) {
-			return object;
-		} else if (functionCall != null) {
-			return Extensions.INSTANCE.callFunction(functionCall, context);
-		}
-		return null;
-	}
+            try {
+                Binding binding = script.get().getBinding();
 
-	private static Object unwrap(Object value) {
-		if (value instanceof Concept) {
-			return ((Concept)value).getConcept();
-		} else if (value instanceof Observation) {
-			return ((Observation)value).getObs();
-		}
-		return value;
-	}
+                if (overriding != null) {
+                    // caller has overridden some wrapped variables.
+                    for (int i = 0; i < overriding.length; i++) {
+                        if (overridingIds.contains(overriding[i])) {
+                            binding.setVariable("_j" + overriding[i], overriding[i + 1]);
+                        } else if (overriding[i + 1] instanceof IConcept) {
+                            binding.setVariable((String) overriding[i], getConceptPeer((IConcept) overriding[i
+                                    + 1], binding));
+                        } else if (firstTime && mustWrap(overriding[i + 1])) {
+                            Wrapper.wrap(overriding[i + 1], (String) overriding[i], binding);
+                            overridingIds.add((String) overriding[i]);
+                        } else if (overriding[i + 1] == null) {
+                            binding.setVariable((String) overriding[i], null);
+                        }
+                        i++;
+                    }
+                    // need to call override() another time if we want more overriding.
+                    overriding = null;
+                    firstTime = false;
+                }
 
-	private Binding setBindings(Binding binding, IComputationContext context, IParameters<String> parameters) {
+                for (String key : parameters.keySet()) {
+                    Object value = parameters.get(key);
+                    if (value instanceof IConcept) {
+                        // use cache to minimize the allocation of Groovy peers, which seems to be very
+                        // costly.
+                        value = getConceptPeer((IConcept) value, binding);
+                    }
+                    binding.setVariable(key, value);
+                }
 
-		// predefine this if we have a target artifact and we haven't set it from the
-		// outside, unless we're instantiating (TODO use a better check)
-		if (!parameters.containsKey("self") && context.getTargetArtifact() != null
-				&& !(context.getTargetArtifact() instanceof ObservationGroup)) {
-			binding.setVariable("_self", context.getTargetArtifact());
-		}
+                for (String v : defineIfAbsent) {
+                    if (!binding.hasVariable(v)) {
+                        binding.setVariable(v, Double.NaN);
+                    }
+                }
+                return unwrap(script.get().run());
 
-		for (String key : parameters.keySet()) {
-			binding.setVariable(key, parameters.get(key));
-		}
+            } catch (MissingPropertyException e) {
+                String property = e.getProperty();
+                if (!defineIfAbsent.contains(property)) {
+                    context.getMonitor().warn("variable " + property
+                            + " undefined. Defining as numeric no-data (NaN) for subsequent evaluations.");
+                    defineIfAbsent.add(property);
+                }
+            } catch (Throwable t) {
+                throw new KlabException(t);
+            }
+        } else if (object != null) {
+            return object;
+        } else if (functionCall != null) {
+            return Extensions.INSTANCE.callFunction(functionCall, context);
+        }
+        return null;
+    }
 
-		for (String v : defineIfAbsent) {
-			if (!binding.hasVariable(v)) {
-				binding.setVariable(v, Double.NaN);
-			}
-		}
+    private Object getConceptPeer(IConcept value, Binding binding) {
 
-		/*
-		 * add any artifact names used in a non-scalar context to the _p map, compiled
-		 * in by the preprocessor.
-		 */
-		Map<String, Object> nonscalar = new HashMap<>();
-		for (String identifier : this.descriptor.getIdentifiers()) {
-			if (this.descriptor.isNonscalar(identifier)) {
-				IArtifact artifact = context.getArtifact(identifier);
-				if (artifact != null) {
-					nonscalar.put(identifier, artifact);
-				}
-			}
-		}
-		if (parameters.containsKey("self") && parameters.get("self") instanceof IObservation
-				&& !nonscalar.containsKey("self")) {
-			nonscalar.put("self", parameters.get("self"));
-		}
+        Concept ret = conceptCache.get(value.toString());
+        if (ret == null) {
+            ret = new Concept(value, binding);
+            conceptCache.put(value.toString(), ret);
+        }
+        return ret;
+    }
 
-		binding.setVariable("_p", nonscalar);
-		binding.setVariable("_ns", context.getNamespace());
-		binding.setVariable("_c", context);
-		binding.setVariable("_monitor", context.getMonitor());
+    /**
+     * True if this is an object we provide wrappers for. 
+     * 
+     * @param object
+     * @return
+     */
+    private boolean mustWrap(Object object) {
+        return object instanceof IExtent || object instanceof IObservation || object instanceof IScale;
+    }
 
-		return binding;
-	}
+    private void setupBindings(IComputationContext context, IParameters<String> parameters) {
 
-	private String preprocess(String code, Map<String, IObservable> inputs, Map<String, IObservable> outputs) {
+        Binding bindings = new Binding();
 
-		if (this.preprocessed != null) {
-			return this.preprocessed;
-		}
+        /*
+         * overridingIds are those vars that may change at each evaluation if they appear in the parameters. If so, 
+         * we leave the wrapper as is but we change the object pointed to.
+         */
+        this.overridingIds.clear();
+        try {
+            script.set(shell.createFromClass(sclass, bindings));
+        } catch (Exception e) {
+            throw new KlabInternalErrorException(e);
+        }
 
-		Set<String> knownKeys = new HashSet<>();
-		if (inputs != null) {
-			knownKeys.addAll(inputs.keySet());
-		}
-		if (outputs != null) {
-			knownKeys.addAll(outputs.keySet());
-		}
+        bindings.setVariable(eid2j("scale"), context.getScale());
+        overridingIds.add("scale");
 
-		GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace, knownKeys, domain,
-				runtimeContext, true);
-		this.preprocessed = processor.process(code);
-		this.errors.addAll(processor.getErrors());
+        if (context.getScale().getSpace() != null) {
+            Wrapper.wrap(context.getScale().getSpace(), "space", bindings);
+            overridingIds.add("space");
+        }
+        if (context.getScale().getTime() != null) {
+            Wrapper.wrap(context.getScale().getTime(), "time", bindings);
+            overridingIds.add("time");
+        }
 
-		return this.preprocessed;
-	}
+        if (context.getContextObservation() != null) {
+            // context is not overriddable
+            Wrapper.wrap(context.getContextObservation(), "context", bindings);
+        }
+        
+        /*
+         * Any artifacts used in non-scalar context goes into the _p map. We should rename it
+         * to _nonscalars just for clarity.
+         */
+        Map<String, Object> nonscalar = new HashMap<>();
+        for (String identifier : this.descriptor.getIdentifiers()) {
+            if (this.descriptor.isNonscalar(identifier)) {
+                IArtifact artifact = context.getArtifact(identifier);
+                if (artifact != null) {
+                    nonscalar.put(identifier, artifact);
+                }
+            }
+        }
 
-	public String toString() {
-		return code;
-	}
+        if (parameters.containsKey("self") && parameters.get("self") instanceof IObservation
+                && !nonscalar.containsKey("self")) {
+            nonscalar.put("self", parameters.get("self"));
+        }
 
-	public void setNegated(boolean negate) {
-		negated = negate;
-	}
+        bindings.setVariable("_p", nonscalar);
+        bindings.setVariable("_exp", this);
+        bindings.setVariable("_ns", context.getNamespace());
+        bindings.setVariable("_c", context);
+        bindings.setVariable("_monitor", context.getMonitor());
+    }
+    
+    private String preprocess(String code, Map<String, IObservable> inputs, Map<String, IObservable> outputs) {
 
-	public boolean isNegated() {
-		return negated;
-	}
+        if (this.preprocessed != null) {
+            return this.preprocessed;
+        }
+
+        Set<String> knownKeys = new HashSet<>();
+        if (inputs != null) {
+            knownKeys.addAll(inputs.keySet());
+        }
+        if (outputs != null) {
+            knownKeys.addAll(outputs.keySet());
+        }
+
+        GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace, knownKeys, domain, runtimeContext, true);
+        this.preprocessed = processor.process(code);
+        this.errors.addAll(processor.getErrors());
+
+        return this.preprocessed;
+    }
+
+    public String toString() {
+        return code;
+    }
+
+    public void setNegated(boolean negate) {
+        negated = negate;
+    }
+
+    public boolean isNegated() {
+        return negated;
+    }
+
+    @Override
+    public Object eval(IComputationContext context, Object... parameters) {
+        return eval(Parameters.create(parameters), context);
+    }
+
+    @Override
+    public Object wrap(Object object) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Object unwrap(Object value) {
+        if (value instanceof Wrapper) {
+            return ((Wrapper<?>) value).unwrap();
+        }
+        return value;
+    }
+
+    public static String eid2j(String id) {
+        return "_j" + id;
+    }
+
+    public static String jid2e(String id) {
+        return id.substring(2);
+    }
+
+    @Override
+    public String getLanguage() {
+        return GroovyProcessor.ID;
+    }
+
+    @Override
+    public ILanguageExpression override(Object... variables) {
+        this.overriding = variables;
+        return this;
+    }
 
 }

@@ -41,6 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add and support syntax to further specialize relationship source and target types 
   in declarations (... linking ... to ...).
 ### Changed
+- Easter egg: new Groovy wrapping and caching strategy makes expressions evaluate at least 10 times faster, 
+  speeding up most raster-based models enormously :)
 ### Fixed
 
 ## [0.10.0.153] -- 2019/04/12
