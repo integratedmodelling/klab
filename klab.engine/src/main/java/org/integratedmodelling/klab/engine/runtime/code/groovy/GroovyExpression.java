@@ -217,7 +217,8 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
     }
 
     /**
-     * True if this is an object we provide wrappers for. 
+     * True if this is an object we provide wrappers for. This intentionally does not include concepts,
+     * which are wrapped individually on-demand but the wrappers are cached on a per-thread basis.
      * 
      * @param object
      * @return
@@ -226,6 +227,14 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
         return object instanceof IExtent || object instanceof IObservation || object instanceof IScale;
     }
 
+    /**
+     * This only gets done once per thread. All wrappers (except for concepts) are created once and 
+     * reused by swapping the wrapped object instead of the wrapper itself. This is to avoid creating
+     * wrappers from inside Groovy at every eval, which has proved extremely slow.
+     * 
+     * @param context
+     * @param parameters
+     */
     private void setupBindings(IComputationContext context, IParameters<String> parameters) {
 
         Binding bindings = new Binding();
