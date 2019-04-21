@@ -31,15 +31,6 @@ public interface ILanguageExpression extends IExpression {
     Object eval(IComputationContext context, Object... parameters);
 
     /**
-     * Wrap the object if necessary for use within the language. Only necessary if the
-     * language is run by a JVM.
-     * 
-     * @param object
-     * @return
-     */
-    Object wrap(Object object);
-
-    /**
      * Unwrap an object from an expression result if needed.
      * 
      * @param object

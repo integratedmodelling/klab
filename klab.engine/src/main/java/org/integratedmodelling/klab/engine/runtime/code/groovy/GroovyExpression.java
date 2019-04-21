@@ -65,7 +65,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
     protected IModel              model;
     protected boolean             isNull         = false;
     protected boolean             isTrue         = false;
-    private boolean               initialized    = false;
+
     private Set<String>           defineIfAbsent = new HashSet<>();
     private Set<String>           overridingIds  = new HashSet<>();
     private Object[]              overriding     = null;
@@ -73,14 +73,14 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
     private Map<String, Concept>  conceptCache   = new HashMap<>();
 
     // each thread gets its own instance of the script with bindings
-    ThreadLocal<Script>           script         = new ThreadLocal<>();
+    private ThreadLocal<Boolean>  initialized    = new ThreadLocal<>();
+    private ThreadLocal<Script>   script         = new ThreadLocal<>();
 
     /*
      * either the Script or the compiled class are saved according to whether we
      * want a thread-safe expression or not.
      */
     private Class<?>              sclass         = null;
-    // Script script;
 
     IGeometry                     domain;
     INamespace                    namespace;
@@ -92,6 +92,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
     private Descriptor            descriptor;
 
     public GroovyExpression() {
+        initialized.set(Boolean.FALSE);
     }
 
     public boolean hasErrors() {
@@ -107,10 +108,11 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
      */
     public void initialize(Map<String, IObservable> inputs, Map<String, IObservable> outputs) {
         compile(preprocess(code, inputs, outputs));
-        initialized = true;
+        initialized.set(Boolean.TRUE);
     }
 
     GroovyExpression(String code, boolean preprocessed, ILanguageProcessor.Descriptor descriptor) {
+        initialized.set(Boolean.FALSE);
         this.descriptor = descriptor;
         this.code = code; // (code.startsWith("wrap()") ? code : ("wrap();\n\n" + code));
         if (preprocessed) {
@@ -121,7 +123,6 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 
     private void compile(String code) {
         this.sclass = shell.parseToClass(code);
-        // this.script = shell.parse(code);
     }
 
     public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
@@ -137,7 +138,10 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
         boolean firstTime = false;
         if (code != null) {
 
-            if (!initialized) {
+            // initialized.get() == null happens when expressions are used in lookup tables or other code
+            // where the creating thread has
+            // finished. In this case we recycle them (TODO CHECK if this creates any problems).
+            if (initialized.get() == null || !initialized.get()) {
                 initialize(new HashMap<>(), new HashMap<>());
                 setupBindings(context, parameters);
                 firstTime = true;
@@ -253,7 +257,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
             // context is not overriddable
             Wrapper.wrap(context.getContextObservation(), "context", bindings);
         }
-        
+
         /*
          * Any artifacts used in non-scalar context goes into the _p map. We should rename it
          * to _nonscalars just for clarity.
@@ -279,7 +283,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
         bindings.setVariable("_c", context);
         bindings.setVariable("_monitor", context.getMonitor());
     }
-    
+
     private String preprocess(String code, Map<String, IObservable> inputs, Map<String, IObservable> outputs) {
 
         if (this.preprocessed != null) {
@@ -319,15 +323,11 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
     }
 
     @Override
-    public Object wrap(Object object) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public Object unwrap(Object value) {
         if (value instanceof Wrapper) {
             return ((Wrapper<?>) value).unwrap();
+        } else if (value instanceof Concept) {
+            return ((Concept) value).getConcept();
         }
         return value;
     }

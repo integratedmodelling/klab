@@ -3,27 +3,22 @@ package org.integratedmodelling.klab.engine.runtime.code.groovy;
 import java.lang.reflect.Constructor;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.Map;
 
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
-import org.codehaus.groovy.runtime.InvokerHelper;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.utils.Path;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyCodeSource;
-import groovy.lang.GroovyObject;
 import groovy.lang.GroovyShell;
-import groovy.lang.MetaClass;
-import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
 
 public class KlabGroovyShell extends GroovyShell {
 
 	private static final String BASE_ACTION_CLASS = "org.integratedmodelling.klab.extensions.groovy.ActionBase";
-	private static final Object[] EMPTY_MAIN_ARGS = new Object[] { new String[0] };
+//	private static final Object[] EMPTY_MAIN_ARGS = new Object[] { new String[0] };
 
 	private static CompilerConfiguration getConfiguration() {
 		CompilerConfiguration compilerConfiguration = new CompilerConfiguration();
