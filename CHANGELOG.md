@@ -40,10 +40,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Basic JSON network configuration export with format 'json', untested.
 - Add and support syntax to further specialize relationship source and target types 
   in declarations (... linking ... to ...).
+- Various state contextualization use cases (using @ after the identifier ) are now supported.
 ### Changed
 - Easter egg surprise: new Groovy wrapping and caching strategy makes expressions evaluate much 
   faster. Most raster-based repeated calculations that took many minutes now compute in under a second.
 ### Fixed
+- Abstract child classes in concept definition weren't abstract and now they are.
 
 ## [0.10.0.153] -- 2019/04/12
 ### Added
