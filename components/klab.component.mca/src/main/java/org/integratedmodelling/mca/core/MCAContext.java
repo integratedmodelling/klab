@@ -13,7 +13,6 @@ import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -62,7 +61,7 @@ public class MCAContext {
 		// extract from annotations
 		for (IObservable observable : context.getModel().getDependencies()) {
 
-			IAnnotation annotation = getCriterionAnnotation(observable);
+			IAnnotation annotation = getCriterionAnnotation(observable, context);
 
 			if (annotation != null) {
 
@@ -235,10 +234,10 @@ public class MCAContext {
 				throw new KlabValidationException("mca: criteria must be qualities");
 			}
 			this.criteria.add(ret = new Criterion((IState) crit,
-					getCriterionAnnotation(observable).getName().equals("cost") ? Type.COST : Type.BENEFIT));
+					getCriterionAnnotation(observable, context).getName().equals("cost") ? Type.COST : Type.BENEFIT));
 		} else {
 			this.criteria.add(ret = new Criterion(observable,
-					getCriterionAnnotation(observable).getName().equals("cost") ? Type.COST : Type.BENEFIT));
+					getCriterionAnnotation(observable, context).getName().equals("cost") ? Type.COST : Type.BENEFIT));
 		}
 
 		return ret;
@@ -265,8 +264,8 @@ public class MCAContext {
 
 	}
 
-	private IAnnotation getCriterionAnnotation(IObservable observable) {
-		for (final IAnnotation annotation : ((Observable) observable).getAnnotations()) {
+	private IAnnotation getCriterionAnnotation(IObservable observable, IRuntimeContext context) {
+		for (final IAnnotation annotation : ((Observable) observable).getAnnotations(context)) {
 			if (MCAComponent.criterionAnnotations.contains(annotation.getName())) {
 				return annotation;
 			}

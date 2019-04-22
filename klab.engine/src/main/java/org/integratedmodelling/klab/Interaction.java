@@ -11,11 +11,13 @@ import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.services.IInteractionService;
 import org.integratedmodelling.klab.kim.Prototype;
+import org.integratedmodelling.klab.model.Annotation;
 import org.integratedmodelling.klab.rest.UserInputRequest;
 import org.integratedmodelling.klab.rest.UserInputResponse;
 import org.integratedmodelling.klab.utils.JsonUtils;
@@ -81,6 +83,22 @@ public enum Interaction implements IInteractionService {
         return ret;
     }
 
+    public Collection<InteractiveParameter> getInteractiveParameters(IAnnotation computable, IObservable observable) {
+        List<InteractiveParameter> ret = new ArrayList<>();
+        for (String id : ((Annotation)computable).getInteractiveParameters()) {
+            InteractiveParameter descriptor = getParameterDescriptor(computable, observable, id);
+            if (descriptor != null) {
+                ret.add(descriptor);
+            }
+        }
+        return ret;
+    }
+
+    private InteractiveParameter getParameterDescriptor(IAnnotation computable, IObservable observable, String id) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
     /**
      * Submit the passed parameters, wait for a user's response which will directly
      * modify the the passed resources.
@@ -136,7 +154,7 @@ public enum Interaction implements IInteractionService {
             }
         }
         if (!found) {
-            for (IAnnotation annotation : ((ComputableResource)resource).getExternalParameters()) {
+            for (IAnnotation annotation : ((ComputableResource) resource).getExternalParameters()) {
                 if (annotation.get("name", String.class).equals(key)) {
                     value = TypeUtils.convert(value, annotation.get("default").getClass());
                     break;
