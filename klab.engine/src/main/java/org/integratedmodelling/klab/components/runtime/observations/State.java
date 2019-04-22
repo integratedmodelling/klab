@@ -1,8 +1,10 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IValueMediator;
@@ -23,8 +25,11 @@ import org.integratedmodelling.klab.data.storage.MediatingState;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.AggregationUtils;
+import org.integratedmodelling.klab.utils.Utils;
 
 /**
  * A state is simply an Observation wrapper for one (or more) {@link IDataArtifact}s. 
@@ -149,6 +154,21 @@ public class State extends Observation implements IState, IKeyHolder {
     @Override
     public <T> T aggregate(IGeometry geometry, Class<? extends T> cls) {
         return storage.aggregate(geometry, cls);
+    }
+
+    @Override
+    public Object aggregate(ILocator... locators) {
+        if (getScale().size() == 1) {
+            return get(getScale().getLocator(0), Utils.getClassForType(getType()));
+        }
+        if (locators == null) {
+            List<Object> values = new ArrayList<>();
+            for (ILocator locator : getScale()) {
+                values.add(get(locator));
+            }
+            AggregationUtils.aggregate(values, AggregationUtils.getAggregation(getObservable()), getRuntimeContext().getMonitor());
+        }
+        throw new KlabUnimplementedException("aggregation of rescaled states is unimplemented - please submit a request");
     }
 	
 }

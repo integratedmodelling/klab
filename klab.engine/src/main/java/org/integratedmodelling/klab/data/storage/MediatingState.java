@@ -56,6 +56,11 @@ public class MediatingState extends Observation implements IState {
         return (T)(val instanceof Number ? to.convert(((Number) val).doubleValue(), from) : val);
     }
     
+    @Override
+    public Object aggregate(ILocator... locators) {
+        Object val = delegate.aggregate(locators);
+        return val instanceof Number ? to.convert(((Number) val).doubleValue(), from) : val;
+    }
 	
 	public long set(ILocator index, Object value) {
 		Object val = value instanceof Number ? from.convert(((Number) value).doubleValue(), to) : value;
@@ -148,6 +153,7 @@ public class MediatingState extends Observation implements IState {
 	public ISubjectiveState reinterpret(IDirectObservation observers) {
 		return null;
 	}
+
 
 
 }

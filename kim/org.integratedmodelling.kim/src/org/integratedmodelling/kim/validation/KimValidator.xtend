@@ -1726,6 +1726,9 @@ class KimValidator extends AbstractKimValidator {
 					if (childsc === null) {
 						ok = false
 					} else {
+						if (child.isAbstract) {
+							childsc.type.add(Type.ABSTRACT)				
+						}
 						ret.addChild(childsc)
 					}
 				}

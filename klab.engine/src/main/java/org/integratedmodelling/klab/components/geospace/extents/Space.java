@@ -725,6 +725,10 @@ public class Space extends Extent implements ISpace {
 		return getShape().getStandardizedLength();
 	}
 	
+	public double getStandardizedDistance(ISpace space) {
+	    return getShape().getStandardizedDistance(space.getShape());
+	}
+	
 	public static Grid extractGrid(IObservation obs) {
 		ISpace ext = obs.getSpace();
 		if (!(ext instanceof Space && ((Space) ext).getGrid() != null)) {

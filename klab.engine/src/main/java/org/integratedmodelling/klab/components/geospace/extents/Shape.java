@@ -657,6 +657,11 @@ public class Shape extends AbstractExtent implements IShape {
     }
 
     @Override
+    public double getStandardizedDistance(ISpace space) {
+        return getMeteredShape().distance(((Shape)space.getShape()).getMeteredShape());
+    }
+
+    @Override
     public double getStandardizedDepth() {
         return Double.NaN;
     }

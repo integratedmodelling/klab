@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.observations.IState
 import org.integratedmodelling.klab.api.observations.ISubject
 import org.integratedmodelling.klab.api.observations.scale.IExtent
 import org.integratedmodelling.klab.api.observations.scale.IScale
+import org.integratedmodelling.klab.components.geospace.extents.Space
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException
 import org.integratedmodelling.klab.exceptions.KlabValidationException
 import org.integratedmodelling.klab.extensions.groovy.ActionBase
@@ -316,6 +317,10 @@ class DirectObservation<T extends IDirectObservation> extends Observation<IDirec
 //            return model.getNameFor(observation.getObservable().getLo);
 //        }
         return observation.getObservable().getLocalName();
+    }
+    
+    def distanceTo (Observation observation) {
+        unwrap().space.getStandardizedDistance(observation.unwrap().space)
     }
 
     def leftShift(observation) {

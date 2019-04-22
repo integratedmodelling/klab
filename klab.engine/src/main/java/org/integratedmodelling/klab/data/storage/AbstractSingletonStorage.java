@@ -85,4 +85,8 @@ public abstract class AbstractSingletonStorage<T> extends Artifact implements ID
 		return Utils.asType(get(index), cls);
 	}
 
+    public Object aggregate(ILocator... locators) {
+        return value;
+    }
+
 }

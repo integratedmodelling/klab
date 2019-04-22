@@ -254,4 +254,9 @@ public class SubjectiveState extends Observation implements ISubjectiveState {
 		return observer;
 	}
 
+    @Override
+    public Object aggregate(ILocator... locators) {
+        return current.aggregate(locators);
+    }
+
 }

@@ -95,5 +95,16 @@ public interface IState extends IObservation, IDataArtifact {
 	
 	@Override
 	ISubjectiveState reinterpret(IDirectObservation observer);
+
+    /**
+    * Return the state value aggregated over entire state or a subset defined by a set of locators.
+    *  
+    * @param geometry
+    * @param cls
+    * @return the aggregated value
+    * @throws IllegalArgumentException if the type can't fit the data or the geometry is not 
+    *         covered by the original geometry.
+    */
+    Object aggregate(ILocator... locators);
 	
 }

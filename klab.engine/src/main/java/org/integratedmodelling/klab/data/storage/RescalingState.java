@@ -27,6 +27,7 @@ import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.AggregationUtils;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Utils;
@@ -398,6 +399,21 @@ public class RescalingState extends Observation implements IState {
     	if (newScale.size() == 1) {
     		return get(newScale.getLocator(0), cls);
     	}
+        throw new KlabUnimplementedException("aggregation of rescaled states is unimplemented - please submit a request");
+    }
+
+    @Override
+    public Object aggregate(ILocator... locators) {
+        if (newScale.size() == 1) {
+            return get(newScale.getLocator(0), Utils.getClassForType(delegate.getType()));
+        }
+        if (locators == null) {
+            List<Object> values = new ArrayList<>();
+            for (ILocator locator : getScale()) {
+                values.add(get(locator));
+            }
+            AggregationUtils.aggregate(values, AggregationUtils.getAggregation(getObservable()), getRuntimeContext().getMonitor());
+        }
         throw new KlabUnimplementedException("aggregation of rescaled states is unimplemented - please submit a request");
     }
 }

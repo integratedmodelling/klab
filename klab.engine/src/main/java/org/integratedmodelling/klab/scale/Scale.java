@@ -994,6 +994,18 @@ public class Scale implements IScale {
 			if (((Scale) locator).getScaleId().equals(getScaleId())) {
 				return this;
 			}
+			if (((Scale)locator).hasSameExtents(this)) {
+			    List<IExtent> exts = new ArrayList<>();
+			    for (int i = 0; i < extents.size(); i++) {
+			        IExtent ours = extents.get(i);
+			        IExtent hers = ((Scale)locator).extents.get(i);
+			        if (!ours.contains(hers)) {
+			            return null;
+			        }
+			        exts.add(hers);
+			    }
+			    return new Scale(exts);
+			}
 			// all-around mediation possible
 		} else {
 			throw new IllegalArgumentException("cannot use " + locator + " as a scale locator");

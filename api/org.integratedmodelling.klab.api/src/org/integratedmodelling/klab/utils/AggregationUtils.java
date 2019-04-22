@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 public class AggregationUtils {
@@ -190,6 +192,21 @@ public class AggregationUtils {
             }
         }
         return n;
+    }
+
+    public static Aggregation getAggregation(IObservable observable) {
+        switch (observable.getObservationType()) {
+        case CLASSIFICATION:
+        case VERIFICATION:
+            return Aggregation.MAJORITY;
+        case QUANTIFICATION:
+            return observable.is(Type.EXTENSIVE_PROPERTY) ? Aggregation.SUM : Aggregation.MEAN;
+        case DETECTION:
+        case INSTANTIATION:
+        case SIMULATION:
+            break;
+        }
+        return null;
     }
 
 }

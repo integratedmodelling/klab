@@ -664,6 +664,11 @@ public class Grid extends Area implements IGrid {
 		public double getStandardizedLength() {
 			return getFirstCell().getStandardizedLength();
 		}
+		
+		@Override
+		public double getStandardizedDistance(ISpace space) {
+		    return getShape().getStandardizedDistance(space.getShape());
+		}
 	}
 
 	Shape shape;

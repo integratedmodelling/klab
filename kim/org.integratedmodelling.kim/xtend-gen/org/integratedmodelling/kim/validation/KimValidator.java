@@ -2188,6 +2188,10 @@ public class KimValidator extends AbstractKimValidator {
             if ((childsc == null)) {
               ok = false;
             } else {
+              boolean _isAbstract = child.isAbstract();
+              if (_isAbstract) {
+                childsc.getType().add(IKimConcept.Type.ABSTRACT);
+              }
               ret.addChild(childsc);
             }
           }

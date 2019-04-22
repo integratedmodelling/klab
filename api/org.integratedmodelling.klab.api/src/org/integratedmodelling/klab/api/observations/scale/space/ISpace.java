@@ -115,4 +115,12 @@ public interface ISpace extends IExtent {
 	 */
 	double getStandardizedLength();
 
+	/**
+	 * Edge-to-edge distance in standard SI units (meters).
+	 * 
+	 * @param shape
+	 * @return the distance
+	 */
+    double getStandardizedDistance(ISpace extent);
+
 }
