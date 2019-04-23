@@ -25,7 +25,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [comment]: <>   ()
 [comment]: <>   (Next build: [0.10.0.151] -- ISO Date)
 
-## [Unreleased]
+## Unreleased
+### Added
+### Changed
+### Fixed
+
+## [0.10.0.154] -- 2019/04/23
 ### Added
 - Add and support 'monetary' qualifier to 'value of' semantic operator also to enable validation 
   of currencies.
