@@ -1,7 +1,6 @@
 package org.integratedmodelling.ml.contextualizers;
 
 import java.io.File;
-import java.util.Arrays;
 
 import javax.annotation.Nullable;
 

@@ -20,15 +20,21 @@ import org.integratedmodelling.klab.utils.Parameters;
 public class Annotation extends Parameters<Object> implements IAnnotation {
 
     String name;
+    IKimAnnotation statement;
     String id = "ann" + NameGenerator.shortUUID();
     Set<String> interactiveParameters = new HashSet<>();
     
     public Annotation(IKimAnnotation statement) {
         this.name = statement.getName();
+        this.statement = statement;
         this.interactiveParameters.addAll(statement.getInteractiveParameters());
         this.putAll(KimValidator.compileMapLiteral(statement.getParameters()));
     }
 
+    public Annotation copy() {
+    	return new Annotation(this.statement);
+    }
+    
     @Override
     public String getName() {
         return name;

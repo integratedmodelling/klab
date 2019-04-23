@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - k.Explorer interactive mode supported and working.
 - Enable parameterization of models with Groovy code through @parameter annotation,
   which also admits interactive mode editing.
+- Enable interactive parameters in observable annotations with special label handling.
 - Basic GEXF and GraphML export for network configurations, including spatial attributes 
   for GEXF.
 - Basic JSON network configuration export with format 'json', untested.

@@ -12,6 +12,7 @@ annotation cost for dependencies
 {
 	optional value 'value'
 		""
+		label 'Cost weight'
 	
 	optional number preference-threshold 
 		""
@@ -29,6 +30,8 @@ annotation benefit for dependencies
 {
 	optional value 'value'
 		""
+		label 'Benefit weight'
+
 	optional number preference-threshold 
 		""
 		

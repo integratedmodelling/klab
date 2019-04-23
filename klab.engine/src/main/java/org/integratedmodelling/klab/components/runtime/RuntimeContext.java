@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
+import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.Configuration;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
@@ -65,8 +66,6 @@ import org.integratedmodelling.klab.utils.Parameters;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
-
-import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
 
 /**
  * A runtime context is installed in the root subject to keep track of what
@@ -108,6 +107,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 	// cache for repeated dataflow resolutions
 	Map<ResolvedObservable, List<Pair<ICoverage, Dataflow>>> dataflowCache = new HashMap<>();
+	private IActuator actuator;
 
 	public RuntimeContext(Actuator actuator, IResolutionScope scope, IScale scale, IMonitor monitor) {
 
@@ -121,7 +121,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		this.namespace = actuator.getNamespace();
 		this.scale = scale;
 		this.targetName = actuator.isPartition() ? actuator.getPartitionedTarget() : actuator.getName();
-
+		this.actuator = actuator;
 		this.targetSemantics = actuator.getObservable();
 		this.artifactType = Observables.INSTANCE.getObservableType(actuator.getObservable(), true);
 
@@ -166,6 +166,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		this.contextSubject = context.contextSubject;
 		this.observations = context.observations;
 		this.dataflowCache.putAll(context.dataflowCache);
+		this.actuator = context.actuator;
 	}
 
 	@Override
@@ -496,6 +497,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		ret.targetSemantics = ((Actuator) actuator).getObservable();
 		ret.monitor = monitor;
 		ret.semantics.put(actuator.getName(), ret.targetSemantics);
+		ret.actuator = actuator;
 
 		if (this.target instanceof IDirectObservation) {
 			ret.contextSubject = (IDirectObservation) this.target;
@@ -538,7 +540,8 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		ret.targetSemantics = ((Actuator) actuator).getObservable();
 		ret.monitor = monitor;
 		ret.semantics.put(actuator.getName(), ret.targetSemantics);
-
+		ret.actuator = actuator;
+		
 		for (IActuator a : actuator.getActuators()) {
 			if (!((Actuator) a).isExported()) {
 				String id = a.getAlias() == null ? a.getName() : a.getAlias();
@@ -976,6 +979,15 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			}
 		}
 		return ret;
+	}
+
+	public IActuator getActuator() {
+		return actuator;
+	}
+
+	@Override
+	public IDataflow<?> getDataflow() {
+		return actuator == null ? null : ((Actuator)actuator).getDataflow();
 	}
 
 }

@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IEventBus;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
+import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.Event;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
@@ -536,6 +537,12 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 	@Override
 	public IConfiguration newConfiguration(IConcept configurationType, Collection<IObservation> targets,
 			IMetadata metadata) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IDataflow<?> getDataflow() {
 		// TODO Auto-generated method stub
 		return null;
 	}

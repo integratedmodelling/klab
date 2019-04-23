@@ -17,11 +17,14 @@ public class KimAnnotation extends KimServiceCall implements IKimAnnotation {
         this.name = statement.getName().substring(1);
         if (statement.getParameters() != null) {
             if (statement.getParameters().getSingleValue() != null) {
-                this.parameters.put(DEFAULT_PARAMETER_NAME, Kim.INSTANCE.parseValue(statement
-                        .getParameters().getSingleValue(), namespace));
+                this.parameters.put(DEFAULT_PARAMETER_NAME, Kim.INSTANCE
+                        .parseValue(statement.getParameters().getSingleValue(), namespace));
             } else if (statement.getParameters().getPairs() != null) {
                 for (KeyValuePair kv : statement.getParameters().getPairs()) {
                     this.parameters.put(kv.getName(), Kim.INSTANCE.parseValue(kv.getValue(), namespace));
+                    if (kv.isInteractive()) {
+                        this.interactiveParameterIds.add(kv.getName());
+                    }
                 }
             }
         }

@@ -45,6 +45,7 @@ public interface IComputableResource extends IKimStatement, IDataflowNode {
 		private String id;
 		private String functionId;
 		private String description;
+		private String label;
 		private IArtifact.Type type;
 		private String initialValue;
 		private Set<String> values;
@@ -125,6 +126,22 @@ public interface IComputableResource extends IKimStatement, IDataflowNode {
 		public void setFunctionId(String functionId) {
 			this.functionId = functionId;
 		}
+
+		public String getLabel() {
+			return label;
+		}
+
+		public void setLabel(String label) {
+			this.label = label;
+		}
+		
+		@Override
+		public String toString() {
+			return "InteractiveParameter [id=" + id + ", functionId=" + functionId + ", description=" + description
+					+ ", label=" + label + ", type=" + type + ", initialValue=" + initialValue + ", values=" + values
+					+ "]";
+		}
+
 	}
 
 	/**
@@ -248,15 +265,6 @@ public interface IComputableResource extends IKimStatement, IDataflowNode {
 	 * @return the list of all parameters that may be changed by users.
 	 */
 	Collection<String> getInteractiveParameters();
-
-//	/**
-//	 * If interactive parameters have been modified, submit their new values through
-//	 * this.
-//	 * 
-//	 * @param parameterId
-//	 * @param value
-//	 */
-//	void setInteractiveParameter(String parameterId, Object value);
 
 	/**
 	 * This computation may be linked to a condition, which is another computation

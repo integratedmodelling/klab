@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.utils.Utils;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
@@ -48,13 +49,13 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
     private boolean allowCycles;
     Descriptor      selectorDescriptor = null;
 
-    enum Method {
+    static enum Method {
         ErdosRenyi,
         OutDegree
         // TODO add others - small world particularly useful, others not sure
     }
 
-    enum SpaceType {
+    static enum SpaceType {
         Default,
         None,
         Line,
@@ -96,10 +97,10 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
             random.setSeed(parameters.get("seed", Number.class).longValue());
         }
         if (parameters.contains("method")) {
-            this.method = Method.valueOf(parameters.get("method", String.class));
+            this.method = Method.valueOf(Utils.removePrefix(parameters.get("method", String.class)));
         }
         if (parameters.contains("space")) {
-            this.spaceType = SpaceType.valueOf(parameters.get("space", String.class));
+            this.spaceType = SpaceType.valueOf(Utils.removePrefix(parameters.get("space", String.class)));
         }
 
     }

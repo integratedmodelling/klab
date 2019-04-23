@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
+import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.model.Model;
@@ -277,5 +278,12 @@ public interface IRuntimeContext extends IComputationContext {
      * @return
      */
 	ILocator getCurrentTimeLocator();
+	
+	/**
+	 * Get the dataflow we're executing.
+	 * 
+	 * @return
+	 */
+	IDataflow<?> getDataflow();
 	
 }

@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
@@ -30,11 +31,15 @@ import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.model.Annotation;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Triple;
+import org.integratedmodelling.klab.utils.TypeUtils;
+import org.integratedmodelling.klab.utils.Utils;
 
 /**
  * The semantically aware implementation of {@link IDataflow}, built by the
@@ -53,287 +58,352 @@ import org.integratedmodelling.klab.utils.Pair;
  */
 public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
-    private String                                        description;
-    private DirectObservation                             context;
-    private ResolutionScope                               scope;
-    private boolean                                       primary     = true;
-    private Set<String>                                   notified    = new HashSet<>();
-    IDirectObservation                                    relationshipSource;
-    IDirectObservation                                    relationshipTarget;
+	private String description;
+	private DirectObservation context;
+	private ResolutionScope scope;
+	private boolean primary = true;
+	private Set<String> notified = new HashSet<>();
+	IDirectObservation relationshipSource;
+	IDirectObservation relationshipTarget;
 
-    // execution parameters for user modification if running interactively
-    private List<InteractiveParameter>                    fields      = new ArrayList<>();
-    private List<Pair<IComputableResource, List<String>>> resources   = new ArrayList<>();
-    private List<Pair<IAnnotation, List<String>>>         annotations = new ArrayList<>();
-    private IMetadata                                     metadata;
-    private Collection<IObservation>                      configurationTargets;
+	// execution parameters for user modification if running interactively
+	private List<InteractiveParameter> fields = new ArrayList<>();
+	private List<Pair<IComputableResource, List<String>>> resources = new ArrayList<>();
+	private List<Pair<IAnnotation, List<String>>> annotations = new ArrayList<>();
+	private IMetadata metadata;
+	private Collection<IObservation> configurationTargets;
 
-    private Dataflow() {
-    }
+	class AnnotationParameterValue {
+		
+		String annotationId;
+		String parameterName;
+		String value;
+		Type type;
 
-    public Dataflow(ISession session) {
-        this.session = session;
-    }
+		public AnnotationParameterValue(String id, String id2, String initialValue, Type type) {
+			this.annotationId = id;
+			this.parameterName = id2;
+			this.value = initialValue;
+			this.type = type;
+		}
+	}
 
-    @Override
-    public IArtifact run(IScale scale, IMonitor monitor) throws KlabException {
+	List<AnnotationParameterValue> annotationParameters = new ArrayList<>();
 
-        if (actuators.size() == 0) {
-            if (scope.getResolvedArtifact() != null) {
-                return scope.getResolvedArtifact().getArtifact();
-            }
-            return Observation.empty();
-        }
+	private Dataflow() {
+	}
 
-        if (session != null && session.isInteractive()) {
-            /*
-             * collect all computables with interaction switched on and wait for user
-             * response before moving on.
-             * 
-             * TODO add annotation processing for models
-             */
-            this.fields = new ArrayList<>();
-            this.resources = new ArrayList<>();
-            for (IActuator actuator : actuators) {
+	public Dataflow(ISession session) {
+		this.session = session;
+	}
 
-                // HERE process model annotations
-                if (((Actuator) actuator).getModel() != null) {
-                    for (IObservable o : CollectionUtils.join(((Actuator) actuator).getModel()
-                            .getObservables(), ((Actuator) actuator).getModel().getDependencies())) {
-                        List<String> parameterIds = null;
-                        for (IAnnotation annotation : o.getAnnotations()) {
-                            for (InteractiveParameter parameter : Interaction.INSTANCE
-                                    .getInteractiveParameters(annotation, o)) {
-                                if (parameterIds == null) {
-                                    parameterIds = new ArrayList<>();
-                                }
-                                fields.add(parameter);
-                                parameterIds.add(parameter.getId());
-                            }
-                            if (parameterIds != null) {
-                                this.annotations.add(new Pair<>(annotation, parameterIds));
-                            }
-                        }
-                    }
-                }
+	@Override
+	public IArtifact run(IScale scale, IMonitor monitor) throws KlabException {
 
-                for (IComputableResource computable : actuator.getComputation()) {
-                    List<String> parameterIds = null;
-                    for (InteractiveParameter parameter : Interaction.INSTANCE
-                            .getInteractiveParameters(computable)) {
-                        if (parameterIds == null) {
-                            parameterIds = new ArrayList<>();
-                        }
-                        fields.add(parameter);
-                        parameterIds.add(parameter.getId());
-                    }
-                    if (parameterIds != null) {
-                        this.resources.add(new Pair<>(computable, parameterIds));
-                    }
-                }
-            }
-            if (fields.size() > 0) {
-                /*
-                 * Issue request, wait for answer and reset parameters in the computation
-                 */
-                Interaction.INSTANCE.submitParameters(this.resources, this.fields, session);
-            }
-        }
+		if (actuators.size() == 0) {
+			if (scope.getResolvedArtifact() != null) {
+				return scope.getResolvedArtifact().getArtifact();
+			}
+			return Observation.empty();
+		}
 
-        /*
-         * Children at the dataflow level run in parallel, so have the runtime start
-         * futures for each child and chain the results when they come.
-         */
-        IArtifact ret = null;
-        for (IActuator actuator : actuators) {
-            try {
+		if (session != null && session.isInteractive()) {
+			/*
+			 * collect all computables with interaction switched on and wait for user
+			 * response before moving on.
+			 * 
+			 * TODO add annotation processing for models
+			 */
+			this.fields = new ArrayList<>();
+			this.resources = new ArrayList<>();
+			for (IActuator actuator : actuators) {
 
-                IArtifact data = Klab.INSTANCE.getRuntimeProvider()
-                        .compute(actuator, scale, scope, context, monitor)
-                        .get();
+				// HERE process model annotations
+				if (((Actuator) actuator).getModel() != null) {
+					for (IObservable o : CollectionUtils.join(((Actuator) actuator).getModel().getObservables(),
+							((Actuator) actuator).getModel().getDependencies())) {
+						List<String> parameterIds = null;
+						for (IAnnotation annotation : o.getAnnotations()) {
+							for (InteractiveParameter parameter : Interaction.INSTANCE
+									.getInteractiveParameters(annotation, o)) {
+								if (parameterIds == null) {
+									parameterIds = new ArrayList<>();
+								}
+								fields.add(parameter);
+								parameterIds.add(parameter.getId());
+								annotationParameters.add(new AnnotationParameterValue(((Annotation)annotation).getId(), parameter.getId(), parameter.getInitialValue(), parameter.getType()));
+							}
+							if (parameterIds != null) {
+								this.annotations.add(new Pair<>(annotation, parameterIds));
+							}
+						}
+					}
+				}
 
-                if (ret == null) {
-                    ret = data;
-                } else {
-                    ((ObservedArtifact) ret).chain(data);
-                }
-            } catch (InterruptedException e) {
-                return null;
-            } catch (ExecutionException e) {
-                throw new KlabContextualizationException(e);
-            }
-        }
+				for (IComputableResource computable : actuator.getComputation()) {
+					List<String> parameterIds = null;
+					for (InteractiveParameter parameter : Interaction.INSTANCE.getInteractiveParameters(computable)) {
+						if (parameterIds == null) {
+							parameterIds = new ArrayList<>();
+						}
+						fields.add(parameter);
+						parameterIds.add(parameter.getId());
+					}
+					if (parameterIds != null) {
+						this.resources.add(new Pair<>(computable, parameterIds));
+					}
+				}
+			}
+			if (fields.size() > 0) {
+				/*
+				 * Issue request, wait for answer and reset parameters in the computation.
+				 * Method returns all interactive observable annotation parameters for
+				 * recording.
+				 */
+				for (Triple<String, String, String> annotationValue : Interaction.INSTANCE
+						.submitParameters(this.resources, this.fields, session)) {
+					AnnotationParameterValue aval = getAnnotationValueFor(annotationValue.getFirst(), annotationValue.getSecond());
+					if (aval != null /* should never happen but implementation may change */) {
+						aval.value = annotationValue.getThird();
+					}
+				}
+			}
+		}
 
-        return ret;
-    }
+		/*
+		 * Children at the dataflow level run in parallel, so have the runtime start
+		 * futures for each child and chain the results when they come.
+		 */
+		IArtifact ret = null;
+		for (IActuator actuator : actuators) {
+			try {
 
-    @Override
-    protected String encode(int offset) {
+				IArtifact data = Klab.INSTANCE.getRuntimeProvider().compute(actuator, scale, scope, context, monitor)
+						.get();
 
-        String ret = "";
+				if (ret == null) {
+					ret = data;
+				} else {
+					((ObservedArtifact) ret).chain(data);
+				}
+			} catch (InterruptedException e) {
+				return null;
+			} catch (ExecutionException e) {
+				throw new KlabContextualizationException(e);
+			}
+		}
 
-        if (offset == 0) {
-            ret += "@klab " + Version.CURRENT + "\n";
-            ret += "@dataflow " + getName() + "\n";
-            ret += "@author 'k.LAB resolver " + creationTime + "'" + "\n";
-            if (getContext() != null) {
-                ret += "@context " + getContext().getUrn() + "\n";
-            }
-            if (coverage != null && coverage.getExtentCount() > 0) {
-                List<IServiceCall> scaleSpecs = ((Scale) coverage).getKimSpecification();
-                if (!scaleSpecs.isEmpty()) {
-                    ret += "@coverage";
-                    for (int i = 0; i < scaleSpecs.size(); i++) {
-                        ret += " " + scaleSpecs.get(i).getSourceCode()
-                                + ((i < scaleSpecs.size() - 1) ? (",\n" + "   ") : "");
-                    }
-                    ret += "\n";
-                }
-            }
-            ret += "\n";
-        }
+		return ret;
+	}
+	
+	/**
+	 * If the parameters in a specified annotation have been changed by the user,
+	 * return a new annotation with the new parameters.
+	 * 
+	 * Called by an observable's getAnnotations() when a runtime context is passed for
+	 * contextualization of parameter.
+	 * 
+	 * @param annotation
+	 * @return a new annotation or the same if parameters haven't changed.
+	 */
+	public IAnnotation parameterizeAnnotation(IAnnotation annotation) {
+		boolean first = true;
+		Annotation ret = (Annotation)annotation;
+		for (AnnotationParameterValue av : getAnnotationValuesFor(((Annotation)annotation).getId())) {
+			if (first) {
+				ret = ret.copy();
+			}
+			ret.put(av.parameterName, TypeUtils.convert(av.value, Utils.getClassForType(av.type)));
+		}
+		return ret;
+	}
+	
+	private Collection<AnnotationParameterValue> getAnnotationValuesFor(String annotationId) {
+		List<AnnotationParameterValue> ret = new ArrayList<>();
+		for (AnnotationParameterValue a : annotationParameters) {
+			if (a.annotationId.equals(annotationId)) {
+				ret.add(a);
+			}
+		}
+		return ret;
+	}
 
-        for (IActuator actuator : actuators) {
-            ret += ((Actuator) actuator).encode(offset) + "\n";
-        }
+	private AnnotationParameterValue getAnnotationValueFor(String annotationId, String parameterId) {
+		for (AnnotationParameterValue a : annotationParameters) {
+			if (a.annotationId.equals(annotationId) && a.parameterName.equals(parameterId)) {
+				return a;
+			}
+		}
+		return null;
+	}
 
-        return ret;
-    }
+	@Override
+	protected String encode(int offset) {
 
-    /**
-     * Return the source code of the dataflow.
-     * 
-     * @return the source code as a string.
-     */
-    @Override
-    public String getKdlCode() {
-        return encode(0);
-    }
+		String ret = "";
 
-    @Override
-    public ICoverage getCoverage() {
-        return coverage;
-    }
+		if (offset == 0) {
+			ret += "@klab " + Version.CURRENT + "\n";
+			ret += "@dataflow " + getName() + "\n";
+			ret += "@author 'k.LAB resolver " + creationTime + "'" + "\n";
+			if (getContext() != null) {
+				ret += "@context " + getContext().getUrn() + "\n";
+			}
+			if (coverage != null && coverage.getExtentCount() > 0) {
+				List<IServiceCall> scaleSpecs = ((Scale) coverage).getKimSpecification();
+				if (!scaleSpecs.isEmpty()) {
+					ret += "@coverage";
+					for (int i = 0; i < scaleSpecs.size(); i++) {
+						ret += " " + scaleSpecs.get(i).getSourceCode()
+								+ ((i < scaleSpecs.size() - 1) ? (",\n" + "   ") : "");
+					}
+					ret += "\n";
+				}
+			}
+			ret += "\n";
+		}
 
-    public DirectObservation getContext() {
-        return context;
-    }
+		for (IActuator actuator : actuators) {
+			ret += ((Actuator) actuator).encode(offset) + "\n";
+		}
 
-    public void setContext(DirectObservation context) {
-        this.context = context;
-    }
+		return ret;
+	}
 
-    public void setResolutionScope(ResolutionScope scope) {
-        this.scope = scope;
-    }
+	/**
+	 * Return the source code of the dataflow.
+	 * 
+	 * @return the source code as a string.
+	 */
+	@Override
+	public String getKdlCode() {
+		return encode(0);
+	}
 
-    public static Dataflow empty() {
-        return new Dataflow();
-    }
+	@Override
+	public ICoverage getCoverage() {
+		return coverage;
+	}
 
-    public static Dataflow empty(ResolutionScope scope) {
-        Dataflow ret = new Dataflow();
-        ret.scope = scope;
-        ret.session = scope.getSession();
-        return ret;
-    }
+	public DirectObservation getContext() {
+		return context;
+	}
 
-    /**
-     * Make a trivial dataflow with a single actuator that will create the passed
-     * observable target.
-     * 
-     * @param observable
-     * @param scope
-     * @return
-     */
-    public static Dataflow empty(IObservable observable, String name, ResolutionScope scope) {
+	public void setContext(DirectObservation context) {
+		this.context = context;
+	}
 
-        Dataflow ret = new Dataflow();
-        ret.scope = scope;
-        ret.session = scope.getSession();
+	public void setResolutionScope(ResolutionScope scope) {
+		this.scope = scope;
+	}
 
-        Actuator actuator = Actuator.create(ret, scope.getMode());
-        actuator.setObservable((Observable) observable);
-        actuator.setType(observable.getArtifactType());
-        actuator.setNamespace(((ResolutionScope) scope).getResolutionNamespace());
-        actuator.setName(name);
-        ret.getActuators().add(actuator);
-        ret.setNamespace(actuator.getNamespace());
+	public static Dataflow empty() {
+		return new Dataflow();
+	}
 
-        return ret;
-    }
+	public static Dataflow empty(ResolutionScope scope) {
+		Dataflow ret = new Dataflow();
+		ret.scope = scope;
+		ret.session = scope.getSession();
+		return ret;
+	}
 
-    @Override
-    public boolean isEmpty() {
-        return actuators.size() == 0;
-    }
+	/**
+	 * Make a trivial dataflow with a single actuator that will create the passed
+	 * observable target.
+	 * 
+	 * @param observable
+	 * @param scope
+	 * @return
+	 */
+	public static Dataflow empty(IObservable observable, String name, ResolutionScope scope) {
 
-    /**
-     * True if the dataflow is handling an API observation request. False if the
-     * request is to resolve an object instantiated by another dataflow.
-     * 
-     * @return
-     */
-    public boolean isPrimary() {
-        return primary;
-    }
+		Dataflow ret = new Dataflow();
+		ret.scope = scope;
+		ret.session = scope.getSession();
 
-    public Dataflow setPrimary(boolean b) {
-        this.primary = b;
-        return this;
-    }
+		Actuator actuator = Actuator.create(ret, scope.getMode());
+		actuator.setObservable((Observable) observable);
+		actuator.setType(observable.getArtifactType());
+		actuator.setNamespace(((ResolutionScope) scope).getResolutionNamespace());
+		actuator.setName(name);
+		ret.getActuators().add(actuator);
+		ret.setNamespace(actuator.getNamespace());
 
-    public String getDescription() {
-        return description;
-    }
+		return ret;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	@Override
+	public boolean isEmpty() {
+		return actuators.size() == 0;
+	}
 
-    public boolean wasNotified(IObservation parent) {
-        boolean ret = notified.contains(parent.getId());
-        if (!ret) {
-            notified.add(parent.getId());
-        }
-        return ret;
-    }
+	/**
+	 * True if the dataflow is handling an API observation request. False if the
+	 * request is to resolve an object instantiated by another dataflow.
+	 * 
+	 * @return
+	 */
+	public boolean isPrimary() {
+		return primary;
+	}
 
-    public Dataflow withMetadata(IMetadata metadata) {
-        this.metadata = metadata;
-        return this;
-    }
+	public Dataflow setPrimary(boolean b) {
+		this.primary = b;
+		return this;
+	}
 
-    public Dataflow connecting(IDirectObservation source, IDirectObservation target) {
-        this.relationshipSource = source;
-        this.relationshipTarget = target;
-        return this;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    /**
-     * Metadata may be added to the dataflow before computation to resolve states
-     * and/or add to the target observation as specified by the model.
-     * 
-     * @return
-     */
-    public IMetadata getMetadata() {
-        return metadata;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public IDirectObservation getRelationshipSource() {
-        return relationshipSource;
-    }
+	public boolean wasNotified(IObservation parent) {
+		boolean ret = notified.contains(parent.getId());
+		if (!ret) {
+			notified.add(parent.getId());
+		}
+		return ret;
+	}
 
-    public IDirectObservation getRelationshipTarget() {
-        return relationshipTarget;
-    }
+	public Dataflow withMetadata(IMetadata metadata) {
+		this.metadata = metadata;
+		return this;
+	}
 
-    public Dataflow withConfigurationTargets(Collection<IObservation> targets) {
-        this.configurationTargets = targets;
-        return this;
-    }
+	public Dataflow connecting(IDirectObservation source, IDirectObservation target) {
+		this.relationshipSource = source;
+		this.relationshipTarget = target;
+		return this;
+	}
 
-    public Collection<IObservation> getConfigurationTargets() {
-        return this.configurationTargets;
-    }
+	/**
+	 * Metadata may be added to the dataflow before computation to resolve states
+	 * and/or add to the target observation as specified by the model.
+	 * 
+	 * @return
+	 */
+	public IMetadata getMetadata() {
+		return metadata;
+	}
+
+	public IDirectObservation getRelationshipSource() {
+		return relationshipSource;
+	}
+
+	public IDirectObservation getRelationshipTarget() {
+		return relationshipTarget;
+	}
+
+	public Dataflow withConfigurationTargets(Collection<IObservation> targets) {
+		this.configurationTargets = targets;
+		return this;
+	}
+
+	public Collection<IObservation> getConfigurationTargets() {
+		return this.configurationTargets;
+	}
 }

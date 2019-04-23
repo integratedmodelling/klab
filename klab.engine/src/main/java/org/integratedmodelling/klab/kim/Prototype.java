@@ -52,6 +52,11 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
       a.enumValues.addAll(arg.getEnumValues());
       a.defaultValue = arg.getDefaultValue() == null ? null : arg.getDefaultValue().toString();
       a.artifact = arg.isImported();
+      if (arg.getLabel() != null) {
+    	  a.label = arg.getLabel();
+      } else {
+    	  a.label = StringUtils.capitalize(a.name).replaceAll("_", " ").replaceAll("\\-", " ");
+      }
       arguments.put(a.name, a);
     }
 
@@ -71,23 +76,5 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
     }
   }
 
-//  @Override
-//  public String getSynopsis(Integer ... flags) {
-//
-//    String s = getShortSynopsis();
-//
-//    s += "\n\n" + StringUtils.leftIndent(StringUtils.justifyLeft(description, 70), 3) + "\n";
-//
-//    if (arguments.size() > 0) {
-//      s += "Arguments:\n\n";
-//      for (Argument arg : arguments.values()) {
-//        s += "  " + arg.getName() + (arg.isOptional() ? " (optional)" : " (required)") + ": \n"
-//            + StringUtils.leftIndent(StringUtils.justifyLeft(arg.getDescription(), 60), 6) + "\n";
-//      }
-//      s += "\n";
-//    }
-//
-//    return s;
-//  }
 
 }

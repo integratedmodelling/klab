@@ -96,6 +96,14 @@ public interface IPrototype {
 		boolean isFinal();
 		
 		/**
+		 * A label for forms or other display. If not specified it should always be set 
+		 * from the parameter name.
+		 * 
+		 * @return
+		 */
+		String getLabel();
+		
+		/**
 		 * If true, the argument matches an imported artifact of the specified type.
 		 * 
 		 * @return

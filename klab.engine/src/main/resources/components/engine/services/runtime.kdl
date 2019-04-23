@@ -26,6 +26,10 @@ annotation 'parameter' for models
 		"The name of the parameter. Can be any Groovy compatible (lowercase) variable name that does not conflict with
 		 dependencies."
 		 
+	optional text 'label'
+		"A label to use for display in the interactive form. Unused if interact=false. Default is built from the
+		 name using capitalization and other embellishments."
+
 	value 'default'
 		"The default value for the parameter, which will be used silently if interactive mode is not engaged."
 		

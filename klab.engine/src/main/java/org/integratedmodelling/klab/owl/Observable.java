@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Unit;
+import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -717,7 +718,14 @@ public class Observable extends Concept implements IObservable {
      * @return
      */
     public List<IAnnotation> getAnnotations(IRuntimeContext context) {
-        
+        Dataflow dataflow = (Dataflow)context.getDataflow();
+        if (dataflow != null) {
+        	List<IAnnotation> ret = new ArrayList<>();
+        	for (IAnnotation annotation : this.annotations) {
+        		ret.add(dataflow.parameterizeAnnotation(annotation));
+        	}
+        	return ret;
+        }
         return this.annotations;
     }
 

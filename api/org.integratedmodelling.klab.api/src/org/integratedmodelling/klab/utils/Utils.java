@@ -269,4 +269,18 @@ public class Utils {
         return y;
     }
 
+    /**
+     * Remove prefix: from prefix:xxx.
+     * 
+     * @param string
+     * @return
+     */
+	public static String removePrefix(String string) {
+		int idx = string.lastIndexOf(':');
+		if (idx >= 0) {
+			string = string.substring(idx + 1);
+		}
+		return string;
+	}
+
 }

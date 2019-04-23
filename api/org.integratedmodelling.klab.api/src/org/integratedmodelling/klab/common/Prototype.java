@@ -20,389 +20,397 @@ import org.integratedmodelling.klab.utils.StringUtils;
 
 public class Prototype implements IPrototype {
 
-    public static class ArgumentImpl implements IPrototype.Argument {
+	public static class ArgumentImpl implements IPrototype.Argument {
 
-        public String      name;
-        public String      shortName;
-        public String      description  = "";
-        public boolean     option;
-        public boolean     optional;
-        public boolean     isFinal;
-        public Type        type;
-        public boolean     artifact;
-        // storing as string for serialization, use artifact type to return as POD
-        public String      defaultValue = null;
-        public Set<String> enumValues   = new HashSet<>();
+		public String name;
+		public String shortName;
+		public String description = "";
+		public boolean option;
+		public boolean optional;
+		public boolean isFinal;
+		public Type type;
+		public boolean artifact;
+		// storing as string for serialization, use artifact type to return as POD
+		public String defaultValue = null;
+		public Set<String> enumValues = new HashSet<>();
+		public String label = null;
 
-        public ArgumentImpl() {
-        }
+		public ArgumentImpl() {
+		}
 
-        @Override
-        public String getName() {
-            return name;
-        }
+		@Override
+		public String getName() {
+			return name;
+		}
 
-        @Override
-        public String getDescription() {
-            return description;
-        }
+		@Override
+		public String getDescription() {
+			return description;
+		}
 
-        @Override
-        public boolean isOption() {
-            return option;
-        }
+		@Override
+		public boolean isOption() {
+			return option;
+		}
 
-        @Override
-        public boolean isOptional() {
-            return optional;
-        }
+		@Override
+		public boolean isOptional() {
+			return optional;
+		}
 
-        @Override
-        public Type getType() {
-            return type;
-        }
+		@Override
+		public Type getType() {
+			return type;
+		}
 
-        @Override
-        public Set<String> getEnumValues() {
-            return enumValues;
-        }
+		@Override
+		public Set<String> getEnumValues() {
+			return enumValues;
+		}
 
-        @Override
-        public String getDefaultValue() {
-            return defaultValue;
-        }
+		@Override
+		public String getDefaultValue() {
+			return defaultValue;
+		}
 
-        @Override
-        public String getShortName() {
-            // if (shortName == null) {
-            // shortName = computeShortName();
-            // }
-            return shortName;
-        }
+		@Override
+		public String getShortName() {
+			// if (shortName == null) {
+			// shortName = computeShortName();
+			// }
+			return shortName;
+		}
 
-        public String computeShortName() {
-            // TODO Auto-generated method stub
-            return name;
-        }
+		public String computeShortName() {
+			// TODO Auto-generated method stub
+			return name;
+		}
 
-        public void setName(String name) {
-            this.name = name;
-        }
+		public void setName(String name) {
+			this.name = name;
+		}
 
-        public void setShortName(String shortName) {
-            this.shortName = shortName;
-        }
+		public void setShortName(String shortName) {
+			this.shortName = shortName;
+		}
 
-        public void setDescription(String description) {
-            this.description = description;
-        }
+		public void setDescription(String description) {
+			this.description = description;
+		}
 
-        public void setOption(boolean option) {
-            this.option = option;
-        }
+		public void setOption(boolean option) {
+			this.option = option;
+		}
 
-        public void setOptional(boolean optional) {
-            this.optional = optional;
-        }
+		public void setOptional(boolean optional) {
+			this.optional = optional;
+		}
 
-        public void setType(Type type) {
-            this.type = type;
-        }
+		public void setType(Type type) {
+			this.type = type;
+		}
 
-        public void setDefaultValue(String defaultValue) {
-            this.defaultValue = defaultValue;
-        }
+		public void setDefaultValue(String defaultValue) {
+			this.defaultValue = defaultValue;
+		}
 
-        public void setEnumValues(Set<String> enumValues) {
-            this.enumValues = enumValues;
-        }
+		public void setEnumValues(Set<String> enumValues) {
+			this.enumValues = enumValues;
+		}
 
-        @Override
-        public boolean isFinal() {
-            return isFinal;
-        }
+		@Override
+		public boolean isFinal() {
+			return isFinal;
+		}
 
-        @Override
-        public boolean isArtifact() {
-            return artifact;
-        }
+		@Override
+		public boolean isArtifact() {
+			return artifact;
+		}
 
-        public void setFinal(boolean isFinal) {
-            this.isFinal = isFinal;
-        }
+		public void setFinal(boolean isFinal) {
+			this.isFinal = isFinal;
+		}
 
-        public void setArtifact(boolean artifact) {
-            this.artifact = artifact;
-        }
+		public void setArtifact(boolean artifact) {
+			this.artifact = artifact;
+		}
 
-    }
+		@Override
+		public String getLabel() {
+			return label == null ? name : label;
+		}
+		
+		public void setLabel(String label) {
+			this.label = label;
+		}
 
-    protected String                    name;
-    // stable ordering reflecting that of the KDL arguments
-    protected Map<String, ArgumentImpl> arguments = new LinkedHashMap<>();
-    protected String                    description;
-    protected Class<?>                  implementation;
-    protected Type                      type;
-    protected Geometry                  geometry;
-    protected boolean                   distributed;
-    protected boolean                   contextualizer;
-    protected String                    label     = null;
+	}
 
-    public String getLabel() {
-        return label;
-    }
+	protected String name;
+	// stable ordering reflecting that of the KDL arguments
+	protected Map<String, ArgumentImpl> arguments = new LinkedHashMap<>();
+	protected String description;
+	protected Class<?> implementation;
+	protected Type type;
+	protected Geometry geometry;
+	protected boolean distributed;
+	protected boolean contextualizer;
+	protected String label = null;
 
-    public void setLabel(String label) {
-        this.label = label;
-    }
+	public String getLabel() {
+		return label;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setLabel(String label) {
+		this.label = label;
+	}
 
-    public void setArguments(Map<String, ArgumentImpl> arguments) {
-        this.arguments = arguments;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setType(Type type) {
-        this.type = type;
-    }
+	public void setArguments(Map<String, ArgumentImpl> arguments) {
+		this.arguments = arguments;
+	}
 
-    public void setGeometry(Geometry geometry) {
-        this.geometry = geometry;
-    }
+	public void setType(Type type) {
+		this.type = type;
+	}
 
-    public void setDistributed(boolean distributed) {
-        this.distributed = distributed;
-    }
+	public void setGeometry(Geometry geometry) {
+		this.geometry = geometry;
+	}
 
-    public void setContextualizer(boolean contextualizer) {
-        this.contextualizer = contextualizer;
-    }
+	public void setDistributed(boolean distributed) {
+		this.distributed = distributed;
+	}
 
-    @Override
-    public String getName() {
-        return name;
-    }
+	public void setContextualizer(boolean contextualizer) {
+		this.contextualizer = contextualizer;
+	}
 
-    @Override
-    public Type getType() {
-        return type;
-    }
+	@Override
+	public String getName() {
+		return name;
+	}
 
-    @Override
-    public Argument getArgument(String argumentId) {
-        return arguments.get(argumentId);
-    }
+	@Override
+	public Type getType() {
+		return type;
+	}
 
-    public Map<String, ArgumentImpl> getArguments() {
-        return arguments;
-    }
+	@Override
+	public Argument getArgument(String argumentId) {
+		return arguments.get(argumentId);
+	}
 
-    @Override
-    public List<IPrototype.Argument> listArguments() {
-        return new ArrayList<>(arguments.values());
-    }
+	public Map<String, ArgumentImpl> getArguments() {
+		return arguments;
+	}
 
-    @Override
-    public List<Pair<String, Level>> validate(IServiceCall function) {
-        List<Pair<String, Level>> ret = new ArrayList<>();
-        // validate existing arguments
-        for (String arg : function.getParameters().keySet()) {
-            ArgumentImpl argument = arguments.get(arg);
-            if (argument == null) {
-                ret.add(new Pair<>(name + ": argument " + arg + " is not recognized", Level.SEVERE));
-            } else {
-                Object val = function.getParameters().get(arg);
-                if (!classify(val, argument)) {
-                    ret.add(new Pair<>(name + ": argument " + arg + " is of incompatible type: "
-                            + (argument.getType() == Type.ENUM
-                                    ? ("one of " + Arrays.toString(argument.enumValues
-                                            .toArray(new String[argument.enumValues.size()])))
-                                    : argument.getType().name().toLowerCase())
-                            + " expected", Level.SEVERE));
-                }
-            }
-        }
-        // ensure that all mandatory args are there
-        for (ArgumentImpl arg : arguments.values()) {
-            if (!arg.isOptional() && !function.getParameters().containsKey(arg.name)) {
-                ret.add(new Pair<>(name + ": mandatory argument " + arg.name
-                        + " was not passed", Level.SEVERE));
-            }
-        }
-        return ret;
-    }
+	@Override
+	public List<IPrototype.Argument> listArguments() {
+		return new ArrayList<>(arguments.values());
+	}
 
-    private boolean classify(Object val, ArgumentImpl argument) {
-        if (val == null) {
-            return true;
-        }
-        switch (argument.getType()) {
-        case ANNOTATION:
-            break;
-        case BOOLEAN:
-            if (!(val instanceof Boolean)) {
-                return false;
-            }
-            break;
-        case CONCEPT:
-            // IConceptDescriptor cd = Kim.INSTANCE.getConceptDescriptor(val.toString());
-            // if (cd == null) {
-            // return false;
-            // }
-            break;
-        case ENUM:
-            if (argument.enumValues == null || !argument.enumValues.contains(val.toString())) {
-                return false;
-            }
-            break;
-        case LIST:
-            if (!(val instanceof List)) {
-                return false;
-            }
-            break;
-        case NUMBER:
-            if (!(val instanceof Number)) {
-                return false;
-            }
-            break;
-        case EXTENT:
-        case SPATIALEXTENT:
-        case TEMPORALEXTENT:
-        case OBJECT:
-            // TODO must be a map or table literal with proper type specs, or a symbol
-            // defined as
-            // such, if passed through k.IM.
-            break;
-        case PROCESS:
-            break;
-        case RANGE:
-            break;
-        case TEXT:
-            if (!(val instanceof String)) {
-                return false;
-            }
-            break;
-        case VALUE:
-            break;
-        case TABLE:
-            if (!(val instanceof Map || val instanceof ITable)) {
-                return false;
-            }
-            break;
-        case VOID:
-            // shoulnd't happen
-            break;
-        default:
-            break;
+	@Override
+	public List<Pair<String, Level>> validate(IServiceCall function) {
+		List<Pair<String, Level>> ret = new ArrayList<>();
+		// validate existing arguments
+		for (String arg : function.getParameters().keySet()) {
+			ArgumentImpl argument = arguments.get(arg);
+			if (argument == null) {
+				ret.add(new Pair<>(name + ": argument " + arg + " is not recognized", Level.SEVERE));
+			} else {
+				Object val = function.getParameters().get(arg);
+				if (!classify(val, argument)) {
+					ret.add(new Pair<>(name + ": argument " + arg + " is of incompatible type: "
+							+ (argument.getType() == Type.ENUM
+									? ("one of " + Arrays.toString(
+											argument.enumValues.toArray(new String[argument.enumValues.size()])))
+									: argument.getType().name().toLowerCase())
+							+ " expected", Level.SEVERE));
+				}
+			}
+		}
+		// ensure that all mandatory args are there
+		for (ArgumentImpl arg : arguments.values()) {
+			if (!arg.isOptional() && !function.getParameters().containsKey(arg.name)) {
+				ret.add(new Pair<>(name + ": mandatory argument " + arg.name + " was not passed", Level.SEVERE));
+			}
+		}
+		// TODO does not check that invalid parameters are NOT passed. At the moment it would break a lot of code so
+		// do it when things are calm.
+		return ret;
+	}
 
-        }
-        return true;
-    }
+	private boolean classify(Object val, ArgumentImpl argument) {
+		if (val == null) {
+			return true;
+		}
+		switch (argument.getType()) {
+		case ANNOTATION:
+			break;
+		case BOOLEAN:
+			if (!(val instanceof Boolean)) {
+				return false;
+			}
+			break;
+		case CONCEPT:
+			// IConceptDescriptor cd = Kim.INSTANCE.getConceptDescriptor(val.toString());
+			// if (cd == null) {
+			// return false;
+			// }
+			break;
+		case ENUM:
+			if (argument.enumValues == null || !argument.enumValues.contains(val.toString())) {
+				return false;
+			}
+			break;
+		case LIST:
+			if (!(val instanceof List)) {
+				return false;
+			}
+			break;
+		case NUMBER:
+			if (!(val instanceof Number)) {
+				return false;
+			}
+			break;
+		case EXTENT:
+		case SPATIALEXTENT:
+		case TEMPORALEXTENT:
+		case OBJECT:
+			// TODO must be a map or table literal with proper type specs, or a symbol
+			// defined as
+			// such, if passed through k.IM.
+			break;
+		case PROCESS:
+			break;
+		case RANGE:
+			break;
+		case TEXT:
+			if (!(val instanceof String)) {
+				return false;
+			}
+			break;
+		case VALUE:
+			break;
+		case TABLE:
+			if (!(val instanceof Map || val instanceof ITable)) {
+				return false;
+			}
+			break;
+		case VOID:
+			// shoulnd't happen
+			break;
+		default:
+			break;
 
-    @Override
-    public String getSynopsis(Integer... flags) {
+		}
+		return true;
+	}
 
-        if (flags != null) {
-            boolean tags = false;
-            for (Integer flag : flags) {
-                if (flag == IDocumentation.DOC_HTMLTAGS) {
-                    tags = true;
-                }
-            }
+	@Override
+	public String getSynopsis(Integer... flags) {
 
-            String ret = StringUtils
-                    .pack(description == null || description.isEmpty() ? "No description provided."
-                            : description)
-                    + (tags ? "<p>" : "\n\n");
-            if (tags) {
-                ret += "<dl>";
-            }
-            for (String argument : arguments.keySet()) {
-                Argument arg = arguments.get(argument);
-                ret += "  " + (tags ? "<dt>" : "") + (arg.isOptional() ? "" : "* ") + argument
-                        + (tags ? "</dt>" : "") + (tags ? "" : ":\n");
-                String description = StringUtils
-                        .pack(arg.getDescription() == null || arg.getDescription().isEmpty()
-                                ? "No description provided."
-                                : arg.getDescription());
-                ret += tags
-                        ? ("<dd>" + description + "</dd>")
-                        : StringUtils.indent(StringUtils.justifyLeft(description, 50), 5);
-                ret += (tags ? "" : "\n");
-            }
-            if (tags) {
-                ret += "</dl>";
-            }
+		if (flags != null) {
+			boolean tags = false;
+			for (Integer flag : flags) {
+				if (flag == IDocumentation.DOC_HTMLTAGS) {
+					tags = true;
+				}
+			}
 
-            return ret;
+			String ret = StringUtils
+					.pack(description == null || description.isEmpty() ? "No description provided." : description)
+					+ (tags ? "<p>" : "\n\n");
+			if (tags) {
+				ret += "<dl>";
+			}
+			for (String argument : arguments.keySet()) {
+				Argument arg = arguments.get(argument);
+				ret += "  " + (tags ? "<dt>" : "") + (arg.isOptional() ? "" : "* ") + argument + (tags ? "</dt>" : "")
+						+ (tags ? "" : ":\n");
+				String description = StringUtils.pack(
+						arg.getDescription() == null || arg.getDescription().isEmpty() ? "No description provided."
+								: arg.getDescription());
+				ret += tags ? ("<dd>" + description + "</dd>")
+						: StringUtils.indent(StringUtils.justifyLeft(description, 50), 5);
+				ret += (tags ? "" : "\n");
+			}
+			if (tags) {
+				ret += "</dl>";
+			}
 
-        }
-        return getShortSynopsis();
-    }
+			return ret;
 
-    @Override
-    public String getShortSynopsis() {
+		}
+		return getShortSynopsis();
+	}
 
-        String ret = getName();
+	@Override
+	public String getShortSynopsis() {
 
-        for (ArgumentImpl arg : arguments.values()) {
-            if (arg.isOptional()) {
-                ret += " [" + arg.getName() + "=" + arg.type + printEnumValues(arg) + "]";
-            } else {
-                ret += " " + arg.name + "=" + arg.type + printEnumValues(arg);
-            }
-        }
+		String ret = getName();
 
-        return ret;
-    }
+		for (ArgumentImpl arg : arguments.values()) {
+			if (arg.isOptional()) {
+				ret += " [" + arg.getName() + "=" + arg.type + printEnumValues(arg) + "]";
+			} else {
+				ret += " " + arg.name + "=" + arg.type + printEnumValues(arg);
+			}
+		}
 
-    private String printEnumValues(ArgumentImpl arg) {
-        String ret = "";
-        if (arg.type == Type.ENUM) {
-            ret += "(";
-            for (String s : arg.enumValues) {
-                ret += (ret.length() == 1 ? "" : ",") + s;
-            }
-            ret += ")";
-        }
-        return ret;
-    }
+		return ret;
+	}
 
-    @Override
-    public Class<?> getExecutorClass() {
-        return implementation;
-    }
+	private String printEnumValues(ArgumentImpl arg) {
+		String ret = "";
+		if (arg.type == Type.ENUM) {
+			ret += "(";
+			for (String s : arg.enumValues) {
+				ret += (ret.length() == 1 ? "" : ",") + s;
+			}
+			ret += ")";
+		}
+		return ret;
+	}
 
-    @Override
-    public boolean isDistributed() {
-        return distributed;
-    }
+	@Override
+	public Class<?> getExecutorClass() {
+		return implementation;
+	}
 
-    @Override
-    public Collection<String> getExtentParameters() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public boolean isDistributed() {
+		return distributed;
+	}
 
-    @Override
-    public Geometry getGeometry() {
-        return geometry;
-    }
+	@Override
+	public Collection<String> getExtentParameters() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public String getDescription() {
-        return description;
-    }
+	@Override
+	public Geometry getGeometry() {
+		return geometry;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	@Override
+	public String getDescription() {
+		return description;
+	}
 
-    @Override
-    public boolean isContextualizer() {
-        return contextualizer;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	@Override
+	public boolean isContextualizer() {
+		return contextualizer;
+	}
 
 }
