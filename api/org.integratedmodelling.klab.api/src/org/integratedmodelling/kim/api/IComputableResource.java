@@ -53,6 +53,8 @@ public interface IComputableResource extends IKimStatement, IDataflowNode {
 		private List<Double> range;
 		private int numericPrecision;
 		private String regexp;
+		private String sectionTitle;
+		private String sectionDescription;
 		// range, regexp & numeric precision
 
 		public String getDescription() {
@@ -140,6 +142,22 @@ public interface IComputableResource extends IKimStatement, IDataflowNode {
 			return "InteractiveParameter [id=" + id + ", functionId=" + functionId + ", description=" + description
 					+ ", label=" + label + ", type=" + type + ", initialValue=" + initialValue + ", values=" + values
 					+ "]";
+		}
+
+		public String getSectionTitle() {
+			return sectionTitle;
+		}
+
+		public void setSectionTitle(String sectionTitle) {
+			this.sectionTitle = sectionTitle;
+		}
+
+		public String getSectionDescription() {
+			return sectionDescription;
+		}
+
+		public void setSectionDescription(String sectionDescription) {
+			this.sectionDescription = sectionDescription;
 		}
 
 	}

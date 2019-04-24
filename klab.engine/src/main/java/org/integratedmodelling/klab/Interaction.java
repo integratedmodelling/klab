@@ -49,6 +49,8 @@ public enum Interaction implements IInteractionService {
 			p.setId(parameter);
 			p.setDescription(prototype.getArgument(parameter).getDescription());
 			p.setType(prototype.getArgument(parameter).getType());
+			p.setSectionTitle(prototype.getLabel());
+			p.setSectionDescription(prototype.getDescription());
 			if (call.getParameters().contains(parameter)) {
 				p.setInitialValue(call.getParameters().get(parameter).toString());
 			}
@@ -78,7 +80,10 @@ public enum Interaction implements IInteractionService {
 			p.setLabel(prototype.getArgument(parameter).getLabel() + " for "
 					+ StringUtils.capitalize(observable.getLocalName().replaceAll("_", " ")));
 			p.setType(prototype.getArgument(parameter).getType());
-
+			
+			p.setSectionTitle(prototype.getLabel());
+			p.setSectionDescription(prototype.getDescription());
+			
 			if (annotation.contains(parameter)) {
 				p.setInitialValue(annotation.get(parameter) == null ? "unknown" : annotation.get(parameter).toString());
 				if (p.getType() == Type.VALUE) {
@@ -143,7 +148,8 @@ public enum Interaction implements IInteractionService {
 		 * at the client side for a single response.
 		 */
 		request.setRequestId(session.getId());
-
+		request.setSectionTitle("Dataflow is about to run: modify any parameters below.");
+		
 		try {
 			request.setDescription(
 					"The following parameters admit user input in interactive mode. Please submit the desired values.");

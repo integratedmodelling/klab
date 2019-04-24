@@ -74,7 +74,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	private Collection<IObservation> configurationTargets;
 
 	class AnnotationParameterValue {
-		
+
 		String annotationId;
 		String parameterName;
 		String value;
@@ -116,12 +116,12 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 			 */
 			this.fields = new ArrayList<>();
 			this.resources = new ArrayList<>();
-			for (IActuator actuator : actuators) {
+			for (Actuator actuator : collectActuators()) {
 
 				// HERE process model annotations
-				if (((Actuator) actuator).getModel() != null) {
-					for (IObservable o : CollectionUtils.join(((Actuator) actuator).getModel().getObservables(),
-							((Actuator) actuator).getModel().getDependencies())) {
+				if (actuator.getModel() != null) {
+					for (IObservable o : CollectionUtils.join(actuator.getModel().getObservables(),
+							actuator.getModel().getDependencies())) {
 						List<String> parameterIds = null;
 						for (IAnnotation annotation : o.getAnnotations()) {
 							for (InteractiveParameter parameter : Interaction.INSTANCE
@@ -131,7 +131,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 								}
 								fields.add(parameter);
 								parameterIds.add(parameter.getId());
-								annotationParameters.add(new AnnotationParameterValue(((Annotation)annotation).getId(), parameter.getId(), parameter.getInitialValue(), parameter.getType()));
+								annotationParameters.add(new AnnotationParameterValue(((Annotation) annotation).getId(),
+										parameter.getId(), parameter.getInitialValue(), parameter.getType()));
 							}
 							if (parameterIds != null) {
 								this.annotations.add(new Pair<>(annotation, parameterIds));
@@ -162,7 +163,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 				 */
 				for (Triple<String, String, String> annotationValue : Interaction.INSTANCE
 						.submitParameters(this.resources, this.fields, session)) {
-					AnnotationParameterValue aval = getAnnotationValueFor(annotationValue.getFirst(), annotationValue.getSecond());
+					AnnotationParameterValue aval = getAnnotationValueFor(annotationValue.getFirst(),
+							annotationValue.getSecond());
 					if (aval != null /* should never happen but implementation may change */) {
 						aval.value = annotationValue.getThird();
 					}
@@ -195,21 +197,34 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 		return ret;
 	}
-	
+
+	private List<Actuator> collectActuators() {
+		List<Actuator> ret = new ArrayList<>();
+		_collectActuators(actuators, ret);
+		return ret;
+	}
+
+	private void _collectActuators(List<IActuator> actuators, List<Actuator> ret) {
+		for (IActuator actuator : actuators) {
+			ret.add((Actuator) actuator);
+			_collectActuators(actuator.getActuators(), ret);
+		}
+	}
+
 	/**
 	 * If the parameters in a specified annotation have been changed by the user,
 	 * return a new annotation with the new parameters.
 	 * 
-	 * Called by an observable's getAnnotations() when a runtime context is passed for
-	 * contextualization of parameter.
+	 * Called by an observable's getAnnotations() when a runtime context is passed
+	 * for contextualization of parameter.
 	 * 
 	 * @param annotation
 	 * @return a new annotation or the same if parameters haven't changed.
 	 */
 	public IAnnotation parameterizeAnnotation(IAnnotation annotation) {
 		boolean first = true;
-		Annotation ret = (Annotation)annotation;
-		for (AnnotationParameterValue av : getAnnotationValuesFor(((Annotation)annotation).getId())) {
+		Annotation ret = (Annotation) annotation;
+		for (AnnotationParameterValue av : getAnnotationValuesFor(((Annotation) annotation).getId())) {
 			if (first) {
 				ret = ret.copy();
 			}
@@ -217,7 +232,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		}
 		return ret;
 	}
-	
+
 	private Collection<AnnotationParameterValue> getAnnotationValuesFor(String annotationId) {
 		List<AnnotationParameterValue> ret = new ArrayList<>();
 		for (AnnotationParameterValue a : annotationParameters) {

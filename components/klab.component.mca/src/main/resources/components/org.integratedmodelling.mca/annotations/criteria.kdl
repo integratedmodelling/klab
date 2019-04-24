@@ -7,12 +7,13 @@
 @version 0.10.0
 
 annotation cost for dependencies
-	"Use to annotate a dependency as a cost criterion. The value, if passed, can be a single numeric weight or a map of 
-	 stakeholder type to weight."
+	"Cost criteria use a weight to express the relative negative impact of each criterion. The value, if passed, can be a single numeric 
+	 weight or a map of stakeholder type to weight. Values are only used for comparison compared and their absolute value is irrelevant."
+	 label "Cost criteria"
 {
 	optional value 'value'
-		""
-		label 'Cost weight'
+		"The weight of the criterion. Higher weight means this criterion has a more negative impact on the decision."
+		label 'Weight'
 	
 	optional number preference-threshold 
 		""
@@ -25,12 +26,13 @@ annotation cost for dependencies
 }
 
 annotation benefit for dependencies
-	"Use to annotate a dependency as a benefit criterion. The value, if passed, can be a single numeric weight or a map of 
-	 stakeholder type to weight."
+	"Benefit criteria use a weight to express the relative positive impact of each criterion. The value, if passed, can be a single numeric 
+	 weight or a map of stakeholder type to weight. Values are only used for comparison compared and their absolute value is irrelevant."
+	 label "Benefit criteria"
 {
 	optional value 'value'
-		""
-		label 'Benefit weight'
+		"The weight of the criterion. Higher weight means this criterion holds has a more positive impact on the decision."
+		label 'Weight'
 
 	optional number preference-threshold 
 		""
