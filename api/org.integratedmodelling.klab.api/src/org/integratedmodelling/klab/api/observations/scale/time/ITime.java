@@ -37,12 +37,13 @@ public interface ITime extends IExtent {
 
 			MILLENNIUM(0), CENTURY(1), DECADE(2), YEAR(3), MONTH(4), WEEK(5), DAY(6), HOUR(7), MINUTE(8), SECOND(
 					9), MILLISECOND(10), NANOSECOND(11);
-			
+
 			int rank;
 
 			Type(int rank) {
 				this.rank = rank;
 			}
+
 			public int getRank() {
 				return rank;
 			}
@@ -56,33 +57,33 @@ public interface ITime extends IExtent {
 	}
 
 	static public enum Type {
-		
-	    /**
-		 * Should be used rarely: generic focus on a period without temporally locating
-		 * it. In every respect like using 'during' semantics, but allowing fuzzy
-		 * matches by period (e.g. closer to certain months) for resolution.
+
+		/**
+		 * Generic focus on a period without temporally locating it but specifying the
+		 * length of the period of interest.
 		 */
 		GENERIC,
-		
+
 		/**
 		 * Specific time period of any lenght, single multiplicity
 		 */
 		SPECIFIC,
-		
+
 		/**
-		 * Time grid.
+		 * Time grid, multiplicity N.
 		 */
 		GRID,
-		
+
 		/**
-		 * Real time, which is necessarily a grid, potentially irregular.
+		 * Real time, which is necessarily a grid, potentially irregular, multiplicity
+		 * may be infinite if end is undefined.
 		 */
 		REAL
 	}
 
 	/**
 	 * The empty, non-descript initialization locator refers to the extent before
-	 * any extent exists.
+	 * any extent exists. Match with == only.
 	 */
 	ILocator INITIALIZATION = new ILocator() {
 

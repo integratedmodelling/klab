@@ -49,7 +49,6 @@ public class Time extends Extent implements ITime {
 		public double getMultiplier() {
 			return multiplier;
 		}
-
 	}
 
 	private Time() {
@@ -149,8 +148,7 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public boolean isRegular() {
-		// TODO Auto-generated method stub
-		return false;
+		return step != null;
 	}
 
 	@Override
@@ -168,7 +166,7 @@ public class Time extends Extent implements ITime {
 	@Override
 	public long[] shape() {
 		// TODO Auto-generated method stub
-		return null;
+		return new long[] { multiplicity };
 	}
 
 	@Override

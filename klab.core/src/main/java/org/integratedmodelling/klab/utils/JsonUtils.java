@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodelling.klab.rest.UserInputResponse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -40,7 +39,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
  */
 public class JsonUtils {
 
-	static ObjectMapper defaultMapper = new ObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+	static ObjectMapper defaultMapper = new ObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+			.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 
 	/**
 	 * Default conversion for a map object.
