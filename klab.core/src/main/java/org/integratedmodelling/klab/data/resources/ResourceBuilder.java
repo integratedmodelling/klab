@@ -55,6 +55,7 @@ public class ResourceBuilder implements IResource.Builder {
 	private List<ResourceReference> history = new ArrayList<>();
 	private List<INotification> notifications = new ArrayList<>();
 	private List<AttributeReference> attributes = new ArrayList<>();
+	private List<AttributeReference> dependencies = new ArrayList<>();
 	private long resourceTimestamp = System.currentTimeMillis();
 	private Version resourceVersion;
 	private boolean error = false;
@@ -67,7 +68,7 @@ public class ResourceBuilder implements IResource.Builder {
 	private String resourceId;
 	private List<File> importedFiles = new ArrayList<>();
 	private SpatialExtent spatialExtent;
-
+	
 	/** {@inheritDoc} */
 	@Override
 	public IResource build(String urn) {
@@ -247,5 +248,15 @@ public class ResourceBuilder implements IResource.Builder {
 	    this.attributes.add(attribute);
 	    return this;
 	}
-
+	
+	@Override
+	public Builder withDependency(String name, IArtifact.Type type, boolean key, boolean optional) {
+	    AttributeReference attribute = new AttributeReference();
+	    attribute.setName(name);
+	    attribute.setType(type);
+	    attribute.setKey(key);
+	    attribute.setOptional(optional);
+	    this.dependencies.add(attribute);
+	    return this;
+	}
 }

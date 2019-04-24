@@ -163,4 +163,9 @@ public class FutureResource implements IResource, Future<IResource> {
         return getDelegate(timeout).getAttributes();
     }
 
+	@Override
+	public Collection<Attribute> getDependencies() {
+		return  getDelegate(timeout).getDependencies();
+	}
+
 }

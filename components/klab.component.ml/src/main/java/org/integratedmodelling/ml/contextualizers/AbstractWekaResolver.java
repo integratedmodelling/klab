@@ -1,6 +1,7 @@
 package org.integratedmodelling.ml.contextualizers;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.annotation.Nullable;
 
@@ -10,14 +11,20 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.data.resources.StandaloneResourceBuilder;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.ml.context.WekaClassifier;
 import org.integratedmodelling.ml.context.WekaInstances;
@@ -36,6 +43,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 	protected int MIN_INSTANCES_FOR_TRAINING = 5;
 	protected boolean predictionIsProbabilistic;
 	private boolean admitsNodata;
+	private String resourceId = null;
 
 	protected AbstractWekaResolver() {
 	}
@@ -114,7 +122,54 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 		 * Export the resource if requested, including all discretization parameters to
 		 * reconstruct the filters.
 		 */
+		IResource resource = null;
+		if (context.getModel().isLearning() || resourceId != null) {
+			
+			String uuid = NameGenerator.shortUUID();
+			
+			if (resourceId == null) {
+				resourceId = NameGenerator.newName("weka");
+			}
+			
+			IProject project = context.getModel().getNamespace().getProject();
+			if (project == null) {
+				throw new IllegalStateException("Weka: cannot write a resource from a model that is not part of a project");
+			}
 
+			StandaloneResourceBuilder builder = new StandaloneResourceBuilder(project, resourceId);
+			
+			builder.withAdapterType("weka");
+			
+			try {
+					
+				// attributes must include: discretization cutoffs and any normalization (unsupervised), i.e. the discretizer class 
+				// and the options. Will apply to exactly the same input and discretization will be redone exactly the same.
+				// in other words, attributes must have metadata.
+				
+				// must also provide good info about the training and the ranges of all attributes in the documentation.
+				
+				context.getMonitor().info("exporting " + resourceId + " resource in project " + project.getName());
+			
+				File dataset = File.createTempFile("instances", ".arff");
+				File dataraw = File.createTempFile("rawinstances", ".arff");
+				File clmodel = File.createTempFile("classifier", ".model");
+
+				instances.export(dataset, false);
+				instances.export(dataraw, false);
+				classifier.export(clmodel);
+				
+				builder.addFile(dataset);
+				builder.addFile(dataraw);
+				builder.addFile(clmodel);
+
+			} catch (IOException e) {
+				throw new KlabIOException(e);
+			}
+						
+			
+			resource = builder.build(Resources.INSTANCE.createLocalResourceUrn(resourceId, project));
+		}
+		
 		/*
 		 * Produce the model if requested
 		 */

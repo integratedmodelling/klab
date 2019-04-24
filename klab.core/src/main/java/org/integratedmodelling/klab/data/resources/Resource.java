@@ -82,6 +82,7 @@ public class Resource implements IResource {
 	List<ResourceReference> history = new ArrayList<>();
 	List<INotification> notifications = new ArrayList<>();
 	List<Attribute> attributes = new ArrayList<>();
+	List<Attribute> dependencies = new ArrayList<>();
 	String projectName;
 	String localName;
 	// for display in resource descriptors
@@ -154,6 +155,8 @@ public class Resource implements IResource {
 					new Notification(notification.getMessage(), notification.getLevel(), notification.getTimestamp()));
 		}
 
+		// TODO dependencies
+		
 		for (Attribute attribute : attributes) {
 			ret.getAttributes().add((AttributeReference) attribute);
 		}
@@ -343,6 +346,12 @@ public class Resource implements IResource {
 	public Collection<Attribute> getAttributes() {
 		return attributes;
 	}
+	
+	@Override
+	public Collection<Attribute> getDependencies() {
+		return dependencies;
+	}
+
 
 	/**
 	 * If the passed parameters determine a type modification, copy

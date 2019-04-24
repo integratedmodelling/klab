@@ -1,13 +1,17 @@
 package org.integratedmodelling.ml.context;
 
+import java.io.File;
+
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.Path;
 
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Instance;
 import weka.core.OptionHandler;
+import weka.core.SerializationHelper;
 
 /**
  * TODO use text options and the Evaluation class to streamline access using
@@ -99,6 +103,14 @@ public class WekaClassifier {
 
 	public String toString() {
 		return "WEKA " + Path.getLast(classifier.getClass().getCanonicalName(), '.');
+	}
+
+	public void export(File clmodel) {
+		try {
+			SerializationHelper.write(clmodel.toString(), this.classifier);
+		} catch (Exception e) {
+			throw new KlabIOException(e);
+		}
 	}
 
 }

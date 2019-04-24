@@ -21,6 +21,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.api.auth.ICertificate;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -424,6 +425,22 @@ public enum Resources implements IResourceService {
 
 		return ret;
 
+	}
+
+	/**
+	 * Create a resource URN from an ID and a project. Must be running with an
+	 * authenticated user identity. Resource may or may not exist.
+	 * 
+	 * @param resourceId
+	 * @param project
+	 * @return
+	 */
+	public String createLocalResourceUrn(String resourceId, IProject project) {
+		IUserIdentity user = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class);
+		if (user == null) {
+			throw new KlabAuthorizationException("cannot establish current user: resources cannot be created");
+		}
+		return "local:" + user.getUsername() + ":" + project.getName() + ":" + resourceId;
 	}
 
 	@Override
