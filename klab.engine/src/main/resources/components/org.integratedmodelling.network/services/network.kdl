@@ -3,7 +3,7 @@
  */
 @klab 0.10.0
 @version 0.10.0
-@namespace klab.networks
+@namespace klab.network
 
 export object connect
 	"Connects subjects by building relationships using configurable deterministic or stochastic methods. Each 
