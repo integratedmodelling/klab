@@ -118,7 +118,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 			this.resources = new ArrayList<>();
 			for (Actuator actuator : collectActuators()) {
 
-				// HERE process model annotations
+				// ?= in observable annotations
 				if (actuator.getModel() != null) {
 					for (IObservable o : CollectionUtils.join(actuator.getModel().getObservables(),
 							actuator.getModel().getDependencies())) {
@@ -141,6 +141,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 					}
 				}
 
+				// interactive computations
 				for (IComputableResource computable : actuator.getComputation()) {
 					List<String> parameterIds = null;
 					for (InteractiveParameter parameter : Interaction.INSTANCE.getInteractiveParameters(computable)) {

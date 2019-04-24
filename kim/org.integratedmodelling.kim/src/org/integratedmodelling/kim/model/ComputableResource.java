@@ -602,6 +602,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 
     @Override
     public Collection<String> getInteractiveParameters() {
+    	
         List<String> ret = new ArrayList<>();
         if (serviceCall != null) {
             ret.addAll(serviceCall.getInteractiveParameters());
@@ -613,7 +614,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
          */
         if (externalParameters != null) {
             for (IAnnotation a : externalParameters) {
-                if (a.get("interact", Boolean.FALSE)) {
+                if (a.get("interact", Boolean.TRUE)) {
                     ret.add(a.get("name", String.class));
                 }
             }
