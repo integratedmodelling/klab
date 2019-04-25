@@ -62,6 +62,7 @@ public enum Interaction implements IInteractionService {
 		InteractiveParameter p = new InteractiveParameter();
 		p.setFunctionId(id + "/EXTERNAL");
 		p.setId(annotation.get("name", String.class));
+        p.setLabel(annotation.get("label", annotation.get("name", String.class)));
 		p.setDescription(annotation.get("description", String.class));
 		p.setSectionTitle(annotation.get("sectiontitle", String.class));
 		p.setSectionDescription(annotation.get("sectiondescription", String.class));
