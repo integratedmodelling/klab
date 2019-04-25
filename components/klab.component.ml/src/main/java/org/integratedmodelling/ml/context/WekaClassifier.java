@@ -24,11 +24,13 @@ import weka.core.SerializationHelper;
 public class WekaClassifier {
 
 	private Classifier classifier;
+	private WekaOptions options;
 	private boolean predictionIsProbabilistic;
 	private boolean errorWarning = false;
 
 	public WekaClassifier(Class<? extends Classifier> cls, WekaOptions options, boolean predictionIsProbabilistic) {
 		this.classifier = Extensions.INSTANCE.createDefaultInstance(cls, Classifier.class);
+		this.options = options;
 		this.predictionIsProbabilistic = predictionIsProbabilistic;
 		if (this.classifier instanceof OptionHandler) {
 			try {
@@ -113,4 +115,8 @@ public class WekaClassifier {
 		}
 	}
 
+	public WekaOptions getOptions() {
+		return this.options;
+	}
+	
 }

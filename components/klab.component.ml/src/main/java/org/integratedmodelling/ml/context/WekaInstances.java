@@ -37,6 +37,7 @@ import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.SerializationHelper;
 import weka.core.converters.ArffSaver;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Discretize;
@@ -65,11 +66,11 @@ public class WekaInstances {
 	 * @author ferdinando.villa
 	 *
 	 */
-	static class DiscretizerDescriptor {
+	static public class DiscretizerDescriptor {
 
-		String javaClass;
-		String options;
-		Filter discretizer;
+		private String javaClass;
+		private String options;
+		private Filter discretizer;
 
 		public DiscretizerDescriptor(String parameter) {
 			int n = parameter.indexOf('/');
@@ -79,6 +80,22 @@ public class WekaInstances {
 
 		public DiscretizerDescriptor(String javaClass, String options) {
 			this.javaClass = javaClass;
+			this.options = options;
+		}
+
+		public String getJavaClass() {
+			return javaClass;
+		}
+
+		public void setJavaClass(String javaClass) {
+			this.javaClass = javaClass;
+		}
+
+		public String getOptions() {
+			return options;
+		}
+
+		public void setOptions(String options) {
 			this.options = options;
 		}
 
@@ -97,6 +114,14 @@ public class WekaInstances {
 
 		public String toString() {
 			return javaClass + "/" + options;
+		}
+
+		public void export(File file) {
+			try {
+				SerializationHelper.write(file.toString(), this.discretizer);
+			} catch (Exception e) {
+				throw new KlabIOException(e);
+			}
 		}
 	}
 
@@ -199,6 +224,23 @@ public class WekaInstances {
 
 	public int size() {
 		return getInstances().size();
+	}
+
+	public DiscretizerDescriptor getDiscretization(String attribute) {
+		return discretizers.get(attribute);
+	}
+	
+	public IState getPredicted() {
+		return predicted;
+	}
+	
+	public IState getPredictor(String attributeName) {
+		for (IState state : predictors) {
+			if (state.getObservable().getLocalName().equals(attributeName)) {
+				return state;
+			}
+		}
+		return null;
 	}
 
 	private Attribute getAttribute(IState observable) {

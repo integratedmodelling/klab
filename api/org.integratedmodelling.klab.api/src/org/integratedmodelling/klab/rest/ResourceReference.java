@@ -9,29 +9,30 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 public class ResourceReference {
 
-    private String urn;
-    private String version;
-    private String adapterType;
-    private String localPath;
-    private String geometry;
-    // only set in local resources
-    private String projectName;
-    // only in local resources, the short name for k.IM
-    private String localName;
-    private IArtifact.Type type;
-    private long resourceTimestamp;
-    private Map<String, String> metadata = new HashMap<>();
-    private Map<String, String> parameters = new HashMap<>();
-    private List<String> localPaths = new ArrayList<>();
-    private List<ResourceReference> history = new ArrayList<>();
-    private List<Notification> notifications = new ArrayList<>();
-    private List<AttributeReference> attributes = new ArrayList<>();
-    private SpatialExtent spatialExtent;
-    
-    public ResourceReference() {
-    }
+	private String urn;
+	private String version;
+	private String adapterType;
+	private String localPath;
+	private String geometry;
+	// only set in local resources
+	private String projectName;
+	// only in local resources, the short name for k.IM
+	private String localName;
+	private IArtifact.Type type;
+	private long resourceTimestamp;
+	private Map<String, String> metadata = new HashMap<>();
+	private Map<String, String> parameters = new HashMap<>();
+	private List<String> localPaths = new ArrayList<>();
+	private List<ResourceReference> history = new ArrayList<>();
+	private List<Notification> notifications = new ArrayList<>();
+	private List<AttributeReference> attributes = new ArrayList<>();
+	private SpatialExtent spatialExtent;
+	private List<AttributeReference> dependencies = null;
 
-    public ResourceReference(ResourceReference other) {
+	public ResourceReference() {
+	}
+
+	public ResourceReference(ResourceReference other) {
 		this.urn = other.urn;
 		this.version = other.version;
 		this.adapterType = other.adapterType;
@@ -48,119 +49,120 @@ public class ResourceReference {
 		this.spatialExtent = other.spatialExtent;
 		this.notifications.addAll(other.notifications);
 		this.attributes.addAll(other.attributes);
+		this.dependencies = other.dependencies == null ? null : new ArrayList<>(other.dependencies);
 	}
 
 	public String getUrn() {
-        return urn;
-    }
+		return urn;
+	}
 
-    public void setUrn(String urn) {
-        this.urn = urn;
-    }
+	public void setUrn(String urn) {
+		this.urn = urn;
+	}
 
-    public String getVersion() {
-        return version;
-    }
+	public String getVersion() {
+		return version;
+	}
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
+	public void setVersion(String version) {
+		this.version = version;
+	}
 
-    public String getAdapterType() {
-        return adapterType;
-    }
+	public String getAdapterType() {
+		return adapterType;
+	}
 
-    public void setAdapterType(String adapterType) {
-        this.adapterType = adapterType;
-    }
+	public void setAdapterType(String adapterType) {
+		this.adapterType = adapterType;
+	}
 
-    public String getLocalPath() {
-        return localPath;
-    }
+	public String getLocalPath() {
+		return localPath;
+	}
 
-    public void setLocalPath(String localPath) {
-        this.localPath = localPath;
-    }
+	public void setLocalPath(String localPath) {
+		this.localPath = localPath;
+	}
 
-    public String getGeometry() {
-        return geometry;
-    }
+	public String getGeometry() {
+		return geometry;
+	}
 
-    public void setGeometry(String geometry) {
-        this.geometry = geometry;
-    }
+	public void setGeometry(String geometry) {
+		this.geometry = geometry;
+	}
 
-    public IArtifact.Type getType() {
-        return type;
-    }
+	public IArtifact.Type getType() {
+		return type;
+	}
 
-    public void setType(IArtifact.Type type) {
-        this.type = type;
-    }
+	public void setType(IArtifact.Type type) {
+		this.type = type;
+	}
 
-    public long getResourceTimestamp() {
-        return resourceTimestamp;
-    }
+	public long getResourceTimestamp() {
+		return resourceTimestamp;
+	}
 
-    public void setResourceTimestamp(long resourceTimestamp) {
-        this.resourceTimestamp = resourceTimestamp;
-    }
+	public void setResourceTimestamp(long resourceTimestamp) {
+		this.resourceTimestamp = resourceTimestamp;
+	}
 
-    public Map<String, String> getMetadata() {
-        return metadata;
-    }
+	public Map<String, String> getMetadata() {
+		return metadata;
+	}
 
-    public void setMetadata(Map<String, String> metadata) {
-        this.metadata = metadata;
-    }
+	public void setMetadata(Map<String, String> metadata) {
+		this.metadata = metadata;
+	}
 
-    public Map<String, String> getParameters() {
-        return parameters;
-    }
+	public Map<String, String> getParameters() {
+		return parameters;
+	}
 
-    public void setParameters(Map<String, String> parameters) {
-        this.parameters = parameters;
-    }
+	public void setParameters(Map<String, String> parameters) {
+		this.parameters = parameters;
+	}
 
-    public List<String> getLocalPaths() {
-        return localPaths;
-    }
+	public List<String> getLocalPaths() {
+		return localPaths;
+	}
 
-    public void setLocalPaths(List<String> localPaths) {
-        this.localPaths = localPaths;
-    }
+	public void setLocalPaths(List<String> localPaths) {
+		this.localPaths = localPaths;
+	}
 
-    public List<ResourceReference> getHistory() {
-        return history;
-    }
+	public List<ResourceReference> getHistory() {
+		return history;
+	}
 
-    public void setHistory(List<ResourceReference> history) {
-        this.history = history;
-    }
+	public void setHistory(List<ResourceReference> history) {
+		this.history = history;
+	}
 
-    public List<Notification> getNotifications() {
-        return notifications;
-    }
+	public List<Notification> getNotifications() {
+		return notifications;
+	}
 
-    public void setNotifications(List<Notification> notifications) {
-        this.notifications = notifications;
-    }
+	public void setNotifications(List<Notification> notifications) {
+		this.notifications = notifications;
+	}
 
-    public String getProjectName() {
-        return projectName;
-    }
+	public String getProjectName() {
+		return projectName;
+	}
 
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
-    }
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
+	}
 
-    public String getLocalName() {
-        return localName;
-    }
+	public String getLocalName() {
+		return localName;
+	}
 
-    public void setLocalName(String localName) {
-        this.localName = localName;
-    }
+	public void setLocalName(String localName) {
+		this.localName = localName;
+	}
 
 	public SpatialExtent getSpatialExtent() {
 		return spatialExtent;
@@ -170,12 +172,20 @@ public class ResourceReference {
 		this.spatialExtent = spatialExtent;
 	}
 
-    public List<AttributeReference> getAttributes() {
-        return attributes;
-    }
+	public List<AttributeReference> getAttributes() {
+		return attributes;
+	}
 
-    public void setAttributes(List<AttributeReference> attributes) {
-        this.attributes = attributes;
-    }
+	public void setAttributes(List<AttributeReference> attributes) {
+		this.attributes = attributes;
+	}
+
+	public List<AttributeReference> getDependencies() {
+		return dependencies;
+	}
+
+	public void setDependencies(List<AttributeReference> dependencies) {
+		this.dependencies = dependencies;
+	}
 
 }

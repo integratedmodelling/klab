@@ -79,7 +79,7 @@ public class TimeEditor extends Composite {
 		time_resolution.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				resolution = Resolution.Type.valueOf(time_resolution.getText().toUpperCase());
+				setResolution(time_resolution.getText().toUpperCase());
 			}
 		});
 		time_resolution.setEnabled(false);
@@ -154,6 +154,64 @@ public class TimeEditor extends Composite {
 		time_chooseStep.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
 	}
 
+	protected void setResolution(String res) {
+
+		resolution = Resolution.Type.valueOf(res.toUpperCase());
+		
+		// TODO constrain the unit for the step 
+		
+		switch (resolution) {
+		case CENTURY:
+			time_start.setMessage("III; 1000BC; 1990; ....");
+			time_end.setMessage("IV; 2000AD; 1992; ...");
+			break;
+		case DAY:
+			time_start.setMessage("29-1-2010; 29-1-2010 12:33; ...");
+			time_end.setMessage("29-1-2012; 29-1-2012 12:33");
+			break;
+		case DECADE:
+			time_start.setMessage("1990; 10-1990; 21-10-1990; 21-10-1990 12:23; ...");
+			time_end.setMessage("1990; 10-1990; 21-10-1990; 21-10-1990 12:23; ...");
+			break;
+		case HOUR:
+			time_start.setMessage("29-1-2010 12");
+			time_end.setMessage("29-1-2012 12");
+			break;
+		case MILLENNIUM:
+			time_start.setMessage("-1; 1000BC; 1990; ....");
+			time_end.setMessage("1; 2000AD; 1992; ...");
+			break;
+		case MILLISECOND:
+			time_start.setMessage("29-1-2010 12:33:25.000");
+			time_end.setMessage("29-1-2012 12:33:25.010");
+			break;
+		case MINUTE:
+			time_start.setMessage("e.g. 29-1-2010 12:33; ...");
+			time_end.setMessage("e.g. 29-1-2012 12:33; ...");
+			break;
+		case MONTH:
+			time_start.setMessage("10-1990; 21-10-1990; 21-10-1990 12:23; ...");
+			time_end.setMessage("10-1992; 21-10-1992; 21-10-1992 12:23; ...");
+			break;
+		case NANOSECOND:
+			time_start.setMessage("29-1-2010 12:33:25.859903");
+			time_end.setMessage("29-1-2012 12:33:25.334432");
+			break;
+		case SECOND:
+			time_start.setMessage("e.g. 29-1-2010 12:33:25; ...");
+			time_end.setMessage("e.g. 29-1-2012 12:33:25; ...");
+			break;
+//		case WEEK:
+//			break;
+		case YEAR:
+			time_start.setMessage("1990; 10-1990; 21-10-1990; 21-10-1990 12:23; ...");
+			time_end.setMessage("1990; 10-1990; 21-10-1990; 21-10-1990 12:23; ...");
+			break;
+		default:
+			break;
+		}
+	}
+
 	protected void setEnablements(String text) {
 		switch (text) {
 		case "None":
@@ -193,6 +251,13 @@ public class TimeEditor extends Composite {
 		}
 	}
 
+	public String getGeometry() {
+		if (isValid()) {
+			// TODO
+		}
+		return null;
+	}
+	
 	public void validate() {
 		if (isValid()) {
 			// TODO set error text and label

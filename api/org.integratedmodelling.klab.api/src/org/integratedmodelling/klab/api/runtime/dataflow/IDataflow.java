@@ -77,7 +77,7 @@ public interface IDataflow<T extends IArtifact> extends IActuator {
    *
    * @return the coverage of this dataflow.
    */
-  ICoverage getCoverage();
+	ICoverage getCoverage();
 
   /**
    * Run the dataflow in the passed scale using the configured or default {@link org.integratedmodelling.klab.api.runtime.IRuntimeProvider}

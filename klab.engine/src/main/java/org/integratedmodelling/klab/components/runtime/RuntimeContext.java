@@ -754,9 +754,11 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 						}
 
 						if (!done) {
-							IArtifact artifact = parent.findArtifactByObservableName(attr);
+							// look up in the first context that has the root subject as a target.
+							RuntimeContext p = getParentWithTarget(rootSubject);
+							IArtifact artifact = p.findArtifactByObservableName(attr);
 							if (artifact == null) {
-								artifact = parent
+								artifact = p
 										.findArtifact(
 												actuator.getDataflow().getModel().getAttributeObservables().get(attr))
 										.getSecond();
@@ -812,6 +814,13 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		this.target = this.catalog.get(actuator.getName());
 
 		return this.target;
+	}
+
+	private RuntimeContext getParentWithTarget(IDirectObservation subject) {
+		if (subject == null || subject.equals(this.target)) {
+			return this;
+		}
+		return parent == null ? null : parent.getParentWithTarget(subject);
 	}
 
 	@Override

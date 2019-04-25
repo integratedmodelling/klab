@@ -119,6 +119,9 @@ public class Resource implements IResource {
 			this.notifications.add(new KimNotification(notification.getMessage(), Level.parse(notification.getLevel()),
 					notification.getTimestamp()));
 		}
+		if (reference.getDependencies() != null) {
+			this.dependencies.addAll(reference.getDependencies());
+		}
 	}
 
 	public ResourceReference getReference() {
@@ -154,11 +157,14 @@ public class Resource implements IResource {
 			ret.getNotifications().add(
 					new Notification(notification.getMessage(), notification.getLevel(), notification.getTimestamp()));
 		}
-
-		// TODO dependencies
-		
 		for (Attribute attribute : attributes) {
 			ret.getAttributes().add((AttributeReference) attribute);
+		}
+		if (this.dependencies.size() > 0) {
+			ret.setDependencies(new ArrayList<AttributeReference>());
+			for (Attribute dependency : this.dependencies) {
+				ret.getDependencies().add((AttributeReference) dependency);
+			}
 		}
 
 		return ret;
@@ -346,16 +352,16 @@ public class Resource implements IResource {
 	public Collection<Attribute> getAttributes() {
 		return attributes;
 	}
-	
+
 	@Override
 	public Collection<Attribute> getDependencies() {
 		return dependencies;
 	}
 
-
 	/**
-	 * If the passed parameters determine a type modification, copy
-	 * the resource and return a new one with the modified type.
+	 * If the passed parameters determine a type modification, copy the resource and
+	 * return a new one with the modified type.
+	 * 
 	 * @param second
 	 * @return this or a new resource if different
 	 */
@@ -365,10 +371,10 @@ public class Resource implements IResource {
 		if (attribute != null) {
 			IArtifact.Type type = null;
 			for (Attribute attr : attributes) {
-			    if (attr.getName() == null) {
-			        Logging.INSTANCE.warn("Corrupted resource " + urn + ": null attributes");
-			        continue;
-			    }
+				if (attr.getName() == null) {
+					Logging.INSTANCE.warn("Corrupted resource " + urn + ": null attributes");
+					continue;
+				}
 				if (attr.getName().equalsIgnoreCase(attribute)) {
 					type = attr.getType();
 					break;

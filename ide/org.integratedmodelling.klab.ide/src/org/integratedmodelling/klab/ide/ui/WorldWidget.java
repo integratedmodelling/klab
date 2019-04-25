@@ -15,7 +15,9 @@ public class WorldWidget extends Canvas {
 	SpatialExtent geometry;
 
 	public void setExtent(SpatialExtent geometry) {
-		this.geometry = geometry.normalize();
+		if (geometry != null) {
+			this.geometry = geometry.normalize();
+		}
 		redraw();
 	}
 

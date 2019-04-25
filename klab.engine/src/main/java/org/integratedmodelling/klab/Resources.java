@@ -21,7 +21,6 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.api.auth.ICertificate;
-import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -50,6 +49,7 @@ import org.integratedmodelling.klab.api.services.IResourceService;
 import org.integratedmodelling.klab.common.SemanticType;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.data.encoding.LocalDataBuilder;
+import org.integratedmodelling.klab.data.encoding.StandaloneResourceBuilder;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
 import org.integratedmodelling.klab.data.storage.FutureResource;
@@ -1111,6 +1111,23 @@ public enum Resources implements IResourceService {
 
 		Logging.INSTANCE.info("moved resource " + originalUrn + " to project " + destinationProject.getName()
 				+ ": new URN is " + resource.getUrn());
+	}
+
+	/**
+	 * Validate, register and notify a resource that has been completely defined
+	 * outside of the service (not by a validator but most likely using the
+	 * {@link StandaloneResourceBuilder}).
+	 * 
+	 * @param ret
+	 * @return
+	 */
+	public IResource registerResource(IResource ret) {
+		((Resource)ret).validate(this);
+		if (getLocalResourceCatalog().containsKey(ret.getUrn())) {
+			((ResourceCatalog)getLocalResourceCatalog()).removeDefinition(ret.getUrn());
+		}
+		getLocalResourceCatalog().put(ret.getUrn(), ret);
+		return getLocalResourceCatalog().get(ret.getUrn());
 	}
 
 	/**

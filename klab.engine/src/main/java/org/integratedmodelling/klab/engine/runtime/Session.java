@@ -937,4 +937,23 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		return interactive.get();
 	}
 
+	/**
+	 * Call this one to validate and register a resource after it's been 
+	 * built by an external agent. NOTE: this resource is built without the 
+	 * involvement of an adapter, so it should not be used with user input or
+	 * anything not previously established as valid.
+	 * 
+	 * @param ret
+	 * @return
+	 */
+	public IResource registerResource(IResource ret) {
+		// invoke the service to validate, register and notify
+		ret = Resources.INSTANCE.registerResource(ret);	
+		if (ret != null) {
+			monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceCreated,
+					((Resource) ret).getReference());
+		}
+		return ret;
+	}
+
 }

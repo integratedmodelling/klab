@@ -337,7 +337,6 @@ public class NumberUtils {
 		return ret;
 	}
 
-	
 	/**
 	 * Index of largest number in double array
 	 * 
@@ -354,5 +353,31 @@ public class NumberUtils {
 			}
 		}
 		return index;
+	}
+
+	private static int[] decimal = new int[] { 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1 };
+	private static String[] roman = new String[] { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV",
+			"I" };
+
+	public static String toRoman(int num) {
+		String result = "";
+		for (int i = 0; i <= decimal.length; i++) {
+			while (num % decimal[i] < num) {
+				result += roman[i];
+				num -= decimal[i];
+			}
+		}
+		return result;
+	}
+
+	public static int fromRoman(String str) {
+		int result = 0;
+		for (int i = 0; i <= decimal.length; i++) {
+			while (str.indexOf(roman[i]) == 0) {
+				result += decimal[i];
+				str = str.replace(roman[i], "");
+			}
+		}
+		return result;
 	}
 }

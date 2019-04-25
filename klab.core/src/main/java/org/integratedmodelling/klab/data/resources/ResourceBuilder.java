@@ -90,6 +90,9 @@ public class ResourceBuilder implements IResource.Builder {
 		ret.localName = this.localName;
 		ret.spatialExtent = this.spatialExtent;
 		ret.attributes.addAll(this.attributes);
+		if (this.dependencies.size() > 0) {
+			ret.dependencies = new ArrayList<>(this.dependencies);
+		}
 
 		return ret;
 	}

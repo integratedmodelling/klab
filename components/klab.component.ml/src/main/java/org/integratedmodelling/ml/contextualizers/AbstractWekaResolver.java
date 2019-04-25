@@ -11,7 +11,8 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observables;
-import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -20,17 +21,23 @@ import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
-import org.integratedmodelling.klab.data.resources.StandaloneResourceBuilder;
+import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.data.encoding.StandaloneResourceBuilder;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.ml.context.WekaClassifier;
 import org.integratedmodelling.ml.context.WekaInstances;
+import org.integratedmodelling.ml.context.WekaInstances.DiscretizerDescriptor;
 import org.integratedmodelling.ml.context.WekaOptions;
 
 import weka.classifiers.Classifier;
+import weka.core.Attribute;
 import weka.core.Instance;
 
 public abstract class AbstractWekaResolver<T extends Classifier> implements IResolver<IState> {
@@ -56,6 +63,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 		this.instancesExport = parameters.get("instances", String.class);
 		this.rawInstancesExport = parameters.get("rawinstances", String.class);
 		this.admitsNodata = admitsNodata;
+		this.resourceId = parameters.get("resource", String.class);
 	}
 
 	@Override
@@ -124,64 +132,106 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 		 */
 		IResource resource = null;
 		if (context.getModel().isLearning() || resourceId != null) {
-			
-			String uuid = NameGenerator.shortUUID();
-			
-			if (resourceId == null) {
-				resourceId = NameGenerator.newName("weka");
-			}
-			
-			IProject project = context.getModel().getNamespace().getProject();
-			if (project == null) {
-				throw new IllegalStateException("Weka: cannot write a resource from a model that is not part of a project");
-			}
-
-			StandaloneResourceBuilder builder = new StandaloneResourceBuilder(project, resourceId);
-			
-			builder.withAdapterType("weka");
-			
-			try {
-					
-				// attributes must include: discretization cutoffs and any normalization (unsupervised), i.e. the discretizer class 
-				// and the options. Will apply to exactly the same input and discretization will be redone exactly the same.
-				// in other words, attributes must have metadata.
-				
-				// must also provide good info about the training and the ranges of all attributes in the documentation.
-				
-				context.getMonitor().info("exporting " + resourceId + " resource in project " + project.getName());
-			
-				File dataset = File.createTempFile("instances", ".arff");
-				File dataraw = File.createTempFile("rawinstances", ".arff");
-				File clmodel = File.createTempFile("classifier", ".model");
-
-				instances.export(dataset, false);
-				instances.export(dataraw, false);
-				classifier.export(clmodel);
-				
-				builder.addFile(dataset);
-				builder.addFile(dataraw);
-				builder.addFile(clmodel);
-
-			} catch (IOException e) {
-				throw new KlabIOException(e);
-			}
-						
-			
-			resource = builder.build(Resources.INSTANCE.createLocalResourceUrn(resourceId, project));
+			resource = buildResource(instances, context);
 		}
-		
+
 		/*
 		 * Produce the model if requested
 		 */
-		if (context.getModel().isLearning()) {
+		if (context.getModel().isLearning() && resource != null) {
 			// our main output is a model artifact
 		}
 
 		return ret;
 	}
 
+	private IResource buildResource(WekaInstances instances, IComputationContext context) {
+
+		if (resourceId == null) {
+			resourceId = NameGenerator.newName("weka");
+		}
+
+		IProject project = context.getModel().getNamespace().getProject();
+		if (project == null) {
+			throw new IllegalStateException("Weka: cannot write a resource from a model that is not part of a project");
+		}
+
+		/*
+		 * Geometry will be the coverage of the dataflow or, if global, S2T1 reflecting the extents
+		 * in the training context.
+		 */
+		Scale scale = ((Scale) ((IRuntimeContext) context).getDataflow().getCoverage());
+		Geometry geometry = scale == null ? Geometry.create(context.getScale().getTime() == null ? "S2" : "S2T1")
+				: scale.asGeometry();
+
+		StandaloneResourceBuilder builder = new StandaloneResourceBuilder(project, resourceId);
+		builder
+			.withResourceVersion(Version.create("0.0.1"))
+			.withGeometry(geometry)
+			.withAdapterType("weka")
+			.withType(instances.getPredicted().getType())
+			.withParameter("classifier", classifier.getClassifier().getClass().getCanonicalName())
+			.withParameter("classifier:options", classifier.getOptions().toString());
+
+		for (Attribute attribute : instances.getAttributes()) {
+
+			if (attribute.name().equals(instances.getPredicted().getObservable().getLocalName())) {
+				continue;
+			}
+
+			IState state = instances.getPredictor(attribute.name());
+			builder.withDependency(attribute.name(), state.getType(), true, true);
+			DiscretizerDescriptor descriptor = instances.getDiscretization(attribute.name());
+			if (descriptor != null) {
+				try {
+					File discretizer = File.createTempFile("d_" + attribute.name(), ".bin");
+					descriptor.export(discretizer);
+					builder.addFile(discretizer);
+					builder.withParameter("predictor:" + attribute.name() + ":discretizer", descriptor.getJavaClass())
+							.withParameter("predictor:" + attribute.name() + ":discretizer:file",
+									MiscUtilities.getFileName(discretizer))
+							.withParameter("predictor:" + attribute.name() + ":discretizer:options",
+									descriptor.getOptions());
+				} catch (IOException e) {
+					throw new KlabIOException(e);
+				}
+			}
+		}
+
+		try {
+
+			context.getMonitor().info("exporting " + resourceId + " resource in project " + project.getName());
+
+			File dataset = File.createTempFile("instances", ".arff");
+			File dataraw = File.createTempFile("rawinstances", ".arff");
+			File clmodel = File.createTempFile("classifier", ".bin");
+
+			instances.export(dataset, false);
+			instances.export(dataraw, false);
+			classifier.export(clmodel);
+
+			builder.addFile(dataset);
+			builder.addFile(dataraw);
+			builder.addFile(clmodel);
+
+			/*
+			 * TODO add all metadata including those about the training, execution,
+			 * validation etc.
+			 */
+
+		} catch (IOException e) {
+			throw new KlabIOException(e);
+		}
+
+		/*
+		 * build the resource using the session to notify clients.
+		 */
+		return builder.build(context.getMonitor().getIdentity().getParentIdentity(ISession.class));
+	}
+
 	private void setValue(WekaInstances instances, ILocator locator, Object prediction, IState target,
 			@Nullable IState uncertainty) {
+
 		if (prediction instanceof double[]) {
 
 			// predicted state must be discretized
@@ -202,17 +252,19 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 			}
 
 			if (uncertainty != null) {
-				// TODO categorical distribution should use Shannon - redo with original distribution
-				uncertainty.set(locator, Math.sqrt(distribution.getNumericalVariance())/distribution.getNumericalMean());
+				// TODO categorical distribution should use Shannon - redo with original
+				// distribution
+				uncertainty.set(locator,
+						Math.sqrt(distribution.getNumericalVariance()) / distribution.getNumericalMean());
 			}
 
 		} else {
 			if (target.getObservable().getArtifactType() == IArtifact.Type.NUMBER) {
 				target.set(locator, prediction);
 			} else if (target.getObservable().getArtifactType() == IArtifact.Type.BOOLEAN) {
-				target.set(locator, ((Number)prediction).intValue() == 0 ? Boolean.FALSE : Boolean.TRUE);
+				target.set(locator, ((Number) prediction).intValue() == 0 ? Boolean.FALSE : Boolean.TRUE);
 			} else if (target.getObservable().getArtifactType() == IArtifact.Type.CONCEPT) {
-				target.set(locator, target.getDataKey().lookup(((Number)prediction).intValue()));
+				target.set(locator, target.getDataKey().lookup(((Number) prediction).intValue()));
 			}
 
 		}
