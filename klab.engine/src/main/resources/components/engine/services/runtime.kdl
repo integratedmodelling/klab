@@ -30,6 +30,14 @@ annotation 'parameter' for models
 		"A label to use for display in the interactive form. Unused if interact=false. Default is built from the
 		 name using capitalization and other embellishments."
 
+	optional text 'sectiontitle'
+		"The title of the section where the parameter should appear in the interactive entry form. Parameters in
+		 the same section will be grouped."
+
+	optional text 'sectiondescription'
+		"The description for the section where the parameter should appear in the interactive entry form. If this
+		 appears in more than one annotation, the last one evaluated will be used."
+
 	value 'default'
 		"The default value for the parameter, which will be used silently if interactive mode is not engaged."
 		
@@ -66,6 +74,15 @@ annotation deprecated
 		"A string description of the reason for deprecation and the suggested
          alternatives."
 		default ""
+}
+
+/**
+ * Interactivity of complex computables (tables, classifications)
+ */
+annotation interactive for definitions, models
+	"Make a specific object editable by the user in interactive mode. Applies to lookup tables and classifications when
+	 used to annotate a model or a definition that contains them." 
+{
 }
 
 /**

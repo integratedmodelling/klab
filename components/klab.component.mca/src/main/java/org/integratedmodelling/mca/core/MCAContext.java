@@ -292,7 +292,7 @@ public class MCAContext {
 			Arrays.fill(cvals, Double.NaN);
 			int i = 0;
 			for (IAlternative da : alternatives) {
-				cvals[i++] = res.get(da.getId());
+				cvals[i++] = da.isValid() ? res.get(da.getId()) : Double.NaN;
 			}
 			classifier.distributeResults(ret, cvals);
 		} // TODO else...

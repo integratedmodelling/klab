@@ -61,6 +61,9 @@ public class ConcordanceResolver implements IResolver<IState>, IExpression {
 			}
 
 			for (IAlternative alternative : mcaContext.getAlternatives()) {
+				if (!alternative.isValid()) {
+					continue;
+				}
 				mCAAssessment.declareAlternative(alternative.getId());
 				for (ICriterion criterion : mcaContext.getCriteria()) {
 					mCAAssessment.setCriterionValue(alternative.getId(), criterion.getName(),

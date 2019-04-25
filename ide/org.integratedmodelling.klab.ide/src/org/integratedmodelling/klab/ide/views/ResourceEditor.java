@@ -416,7 +416,7 @@ public class ResourceEditor extends ViewPart {
 			localName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		}
 
-		SashForm sashForm = new SashForm(container, SWT.VERTICAL);
+		SashForm sashForm = new SashForm(container, SWT.BORDER | SWT.VERTICAL);
 		sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		{
 			Group grpGeometry = new Group(sashForm, SWT.NONE);
@@ -425,11 +425,24 @@ public class ResourceEditor extends ViewPart {
 			grpGeometry.setText("Geometry");
 
 			mapHolder = new Composite(grpGeometry, SWT.NONE);
+			mapHolder.setLayout(new GridLayout(1, false));
 			GridData gd_mapHolder = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
 			gd_mapHolder.heightHint = 181;
 			gd_mapHolder.widthHint = 360;
 			mapHolder.setLayoutData(gd_mapHolder);
 			this.worldWidget = new WorldWidget(mapHolder, SWT.NONE);
+			GridData gd_worldWidget = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
+			gd_worldWidget.heightHint = 181;
+			worldWidget.setLayoutData(gd_worldWidget);
+			
+						Group grpTime = new Group(mapHolder, SWT.NONE);
+						grpTime.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+						grpTime.setSize(238, 352);
+						grpTime.setLayout(new GridLayout(1, false));
+						grpTime.setText("Time");
+						
+									TimeEditor timeEditor = new TimeEditor(grpTime, SWT.NONE);
+									timeEditor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 			Composite composite_1 = new Composite(grpGeometry, SWT.NONE);
 			composite_1.setToolTipText("Help for operations appear here");
@@ -455,63 +468,57 @@ public class ResourceEditor extends ViewPart {
 			unpublishableReason = new Text(composite_1, SWT.BORDER);
 			unpublishableReason.setEnabled(false);
 			unpublishableReason.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-
-			Group grpTime = new Group(composite_1, SWT.NONE);
-			grpTime.setLayout(new GridLayout(1, false));
-			grpTime.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 2, 1));
-			grpTime.setText("Time");
-
-			TimeEditor timeEditor = new TimeEditor(grpTime, SWT.NONE);
-			timeEditor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-
-			Group grpAttributes = new Group(composite_1, SWT.NONE);
-			grpAttributes.setLayout(new GridLayout(1, false));
-			grpAttributes.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-			grpAttributes.setText("Attributes");
-
-			Composite composite = new Composite(grpAttributes, SWT.NONE);
-			composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-			TableColumnLayout tcl_composite = new TableColumnLayout();
-			composite.setLayout(tcl_composite);
-
-			attributeViewer = new TableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);
-			table = attributeViewer.getTable();
-			table.setLinesVisible(true);
-
-			tableViewerColumn_3 = new TableViewerColumn(attributeViewer, SWT.NONE);
-			TableColumn attributeName = tableViewerColumn_3.getColumn();
-			tcl_composite.setColumnData(attributeName, new ColumnPixelData(150, true, true));
-			attributeName.setText("New Column");
-
-			TableViewerColumn tableViewerColumn_1_1 = new TableViewerColumn(attributeViewer, SWT.NONE);
-			TableColumn attributeType = tableViewerColumn_1_1.getColumn();
-			tcl_composite.setColumnData(attributeType, new ColumnPixelData(150, true, true));
-			attributeType.setText("New Column");
-
-			TableViewerColumn tableViewerColumn_2 = new TableViewerColumn(attributeViewer, SWT.NONE);
-			TableColumn attributeExample = tableViewerColumn_2.getColumn();
-			tcl_composite.setColumnData(attributeExample, new ColumnPixelData(150, true, true));
-			attributeExample.setText("New Column");
-			attributeViewer.setLabelProvider(new AttributeLabelProvider());
-			attributeViewer.setContentProvider(new AttributeContentProvider());
-
-			Composite composite_3 = new Composite(grpAttributes, SWT.NONE);
-			composite_3.setLayout(new GridLayout(4, false));
-			composite_3.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-
-			Label lblOperations = new Label(composite_3, SWT.NONE);
-			lblOperations.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-			lblOperations.setText("Operations:");
-
-			Combo combo = new Combo(composite_3, SWT.READ_ONLY);
-			combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-
-			Button btnNewButton_3 = new Button(composite_3, SWT.NONE);
-			btnNewButton_3.setText("Execute");
-
-			Label lblNewLabel_4 = new Label(composite_3, SWT.NONE);
-			lblNewLabel_4
-					.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
+			
+						Group grpAttributes = new Group(composite_1, SWT.NONE);
+						grpAttributes.setLayout(new GridLayout(1, false));
+						grpAttributes.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
+						grpAttributes.setText("Attributes");
+						
+									Composite composite = new Composite(grpAttributes, SWT.NONE);
+									composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+									TableColumnLayout tcl_composite = new TableColumnLayout();
+									composite.setLayout(tcl_composite);
+									
+												attributeViewer = new TableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);
+												table = attributeViewer.getTable();
+												table.setLinesVisible(true);
+												
+															tableViewerColumn_3 = new TableViewerColumn(attributeViewer, SWT.NONE);
+															TableColumn attributeName = tableViewerColumn_3.getColumn();
+															tcl_composite.setColumnData(attributeName, new ColumnPixelData(150, true, true));
+															attributeName.setText("New Column");
+															
+																		TableViewerColumn tableViewerColumn_1_1 = new TableViewerColumn(attributeViewer, SWT.NONE);
+																		TableColumn attributeType = tableViewerColumn_1_1.getColumn();
+																		tcl_composite.setColumnData(attributeType, new ColumnPixelData(150, true, true));
+																		attributeType.setText("New Column");
+																		
+																					TableViewerColumn tableViewerColumn_2 = new TableViewerColumn(attributeViewer, SWT.NONE);
+																					TableColumn attributeExample = tableViewerColumn_2.getColumn();
+																					tcl_composite.setColumnData(attributeExample, new ColumnPixelData(150, true, true));
+																					attributeExample.setText("New Column");
+																					attributeViewer.setLabelProvider(new AttributeLabelProvider());
+																					attributeViewer.setContentProvider(new AttributeContentProvider());
+																					
+																								Composite composite_3 = new Composite(grpAttributes, SWT.NONE);
+																								composite_3.setLayout(new GridLayout(4, false));
+																								composite_3.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+																								
+																											Label lblOperations = new Label(composite_3, SWT.NONE);
+																											lblOperations.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+																											lblOperations.setText("Operations:");
+																											
+																														Combo combo = new Combo(composite_3, SWT.READ_ONLY);
+																														combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+																														
+																																	Button btnNewButton_3 = new Button(composite_3, SWT.NONE);
+																																	btnNewButton_3.setText("Execute");
+																																	
+																																				Label lblNewLabel_4 = new Label(composite_3, SWT.NONE);
+																																				lblNewLabel_4
+																																						.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
+//			new Label(composite_1, SWT.NONE);
+//			new Label(composite_1, SWT.NONE);
 			{
 				geometryDefinition = new Label(grpGeometry, SWT.NONE);
 				geometryDefinition.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));
@@ -568,7 +575,7 @@ public class ResourceEditor extends ViewPart {
 		// deleteProperty.setText("Delete parameter");
 		adapterPropertyViewer.setLabelProvider(new PropertyLabelProvider());
 		adapterPropertyViewer.setContentProvider(new PropertyContentProvider());
-		sashForm.setWeights(new int[] { 1, 1 });
+		sashForm.setWeights(new int[] {4, 2});
 
 		TabItem tbtmProvenanceData = new TabItem(tabFolder, SWT.NONE);
 		tbtmProvenanceData.setText("Documentation");

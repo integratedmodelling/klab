@@ -15,6 +15,7 @@ public class Alternative implements IAlternative {
 	private String observationId;
 	private Map<String, Double> values = new HashMap<>();
 	private double score;
+	boolean valid = true;
 	
 	public Alternative(IDirectObservation observation) {
 		this.observationId = observation.getId();
@@ -23,6 +24,7 @@ public class Alternative implements IAlternative {
 	public Alternative(MapClass mapClass) {
 		this.mapClass = mapClass;
 		this.id = this.mapClass.toString();
+//		this.valid = mapClass.isValid();
 	}
 
 	@Override
@@ -52,6 +54,9 @@ public class Alternative implements IAlternative {
     
     public void setValue(ICriterion criterion, double value) {
         values.put(criterion.getName(), value);
+//        if (Double.isNaN(value)) {
+//        	valid = false;
+//        }
     }
 
     @Override
@@ -62,5 +67,10 @@ public class Alternative implements IAlternative {
     public void setScore(double score) {
         this.score = score;
     }
+
+	@Override
+	public boolean isValid() {
+		return valid;
+	}
 
 }

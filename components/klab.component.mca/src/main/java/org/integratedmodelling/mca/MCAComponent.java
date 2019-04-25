@@ -92,9 +92,15 @@ public class MCAComponent {
 			assessment.declareCriterion(criterion.getName(), criterion.getDataType(), criterion.getType());
 		}
 		for (IAlternative alternative : alternatives) {
+			if (!alternative.isValid()) {
+				continue;
+			}
 			assessment.declareAlternative(alternative.getId());
 		}
 		for (IAlternative alternative : alternatives) {
+			if (!alternative.isValid()) {
+				continue;
+			}
 			for (ICriterion criterion : criteria) {
 				assessment.setCriterionValue(alternative.getId(), criterion.getName(), alternative.getValue(criterion));
 			}

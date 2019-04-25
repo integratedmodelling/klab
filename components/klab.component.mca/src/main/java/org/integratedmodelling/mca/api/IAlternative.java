@@ -28,5 +28,13 @@ public interface IAlternative {
      * @return
      */
     double getScore();
+    
+    /**
+     * This should return false if there is any unknown criterion or any constraints over
+     * the criteria values aren't met.
+     * 
+     * @return true if OK
+     */
+    boolean isValid();
 
 }

@@ -13,7 +13,6 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
-import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.data.classification.Discretization;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.utils.StringUtils;
@@ -52,6 +51,10 @@ public class MapClassifier {
 			}
 			return mds.getValue(classifiers.get(mds.index));
 		}
+		
+//		public boolean isValid() {
+//			return valid;
+//		}
 	}
 
 	class MapDescriptor {
@@ -229,7 +232,11 @@ public class MapClassifier {
 
 		int n = 0;
 		for (ILocator i : scale) {
-			state.set(i, values[classes.get(index[n]).index]);
+			if (index[n] == 0) {
+				state.set(i, null);
+			} else {
+				state.set(i, values[classes.get(index[n]).index]);
+			}
 			n++;
 		}
 	}
