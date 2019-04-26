@@ -12,8 +12,10 @@ import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
+import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.ISession;
@@ -58,14 +60,15 @@ public enum Interaction implements IInteractionService {
 		return p;
 	}
 
-	private InteractiveParameter getParameterDescriptor(String id, IAnnotation annotation) {
+	private InteractiveParameter getParameterDescriptor(String id, IAnnotation annotation, IModel model) {
 		InteractiveParameter p = new InteractiveParameter();
 		p.setFunctionId(id + "/EXTERNAL");
 		p.setId(annotation.get("name", String.class));
 		p.setLabel(annotation.get("label", annotation.get("name", String.class)));
 		p.setDescription(annotation.get("description", String.class));
 		p.setSectionTitle(annotation.get("sectiontitle", String.class));
-		p.setSectionDescription(annotation.get("sectiondescription", String.class));
+		p.setSectionDescription(
+				annotation.get("sectiondescription", model.getMetadata().get(IMetadata.DC_COMMENT, String.class)));
 		p.setType(Utils.getArtifactType(annotation.get("default", Object.class).getClass()));
 		p.setInitialValue(annotation.get("default", Object.class).toString());
 		return p;
@@ -102,7 +105,7 @@ public enum Interaction implements IInteractionService {
 	}
 
 	@Override
-	public Collection<InteractiveParameter> getInteractiveParameters(IComputableResource computable) {
+	public Collection<InteractiveParameter> getInteractiveParameters(IComputableResource computable, IModel model) {
 		List<InteractiveParameter> ret = new ArrayList<>();
 		if (computable.getServiceCall() != null) {
 			for (String id : computable.getServiceCall().getInteractiveParameters()) {
@@ -115,7 +118,7 @@ public enum Interaction implements IInteractionService {
 		}
 		if (((ComputableResource) computable).getExternalParameters() != null) {
 			for (IAnnotation parameter : ((ComputableResource) computable).getExternalParameters()) {
-				ret.add(getParameterDescriptor(((ComputableResource) computable).getId(), parameter));
+				ret.add(getParameterDescriptor(((ComputableResource) computable).getId(), parameter, model));
 			}
 		}
 		return ret;
@@ -166,7 +169,7 @@ public enum Interaction implements IInteractionService {
 					"The following parameters admit user input in interactive mode. Please inspect the default values and change them as required. "
 							+ " Press Submit Values to continue with the modified values, Use Defaults to proceed with the default values, or"
 							+ " Cancel Run to stop the computation.");
-			
+
 			request.getFields().addAll(fields);
 			IMessage resp = session.getMonitor()
 					.ask(IMessage.MessageClass.UserInterface, IMessage.Type.UserInputRequested, request).get();

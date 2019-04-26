@@ -47,10 +47,6 @@ public abstract class KimObject implements IKimObject {
 		this.statement = statement;
 	}
 
-	public void setMetadata(IMetadata metadata) {
-		this.metadata = metadata;
-	}
-
 	public IMetadata getMetadata() {
 		return metadata;
 	}

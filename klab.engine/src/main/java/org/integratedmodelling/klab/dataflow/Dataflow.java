@@ -139,20 +139,21 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 							}
 						}
 					}
-				}
 
-				// interactive computations
-				for (IComputableResource computable : actuator.getComputation()) {
-					List<String> parameterIds = null;
-					for (InteractiveParameter parameter : Interaction.INSTANCE.getInteractiveParameters(computable)) {
-						if (parameterIds == null) {
-							parameterIds = new ArrayList<>();
+					// interactive computations
+					for (IComputableResource computable : actuator.getComputation()) {
+						List<String> parameterIds = null;
+						for (InteractiveParameter parameter : Interaction.INSTANCE
+								.getInteractiveParameters(computable, actuator.getModel())) {
+							if (parameterIds == null) {
+								parameterIds = new ArrayList<>();
+							}
+							fields.add(parameter);
+							parameterIds.add(parameter.getId());
 						}
-						fields.add(parameter);
-						parameterIds.add(parameter.getId());
-					}
-					if (parameterIds != null) {
-						this.resources.add(new Pair<>(computable, parameterIds));
+						if (parameterIds != null) {
+							this.resources.add(new Pair<>(computable, parameterIds));
+						}
 					}
 				}
 			}
@@ -164,11 +165,11 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 				 */
 				Collection<Triple<String, String, String>> values = Interaction.INSTANCE
 						.submitParameters(this.resources, this.fields, session);
-				
+
 				if (values == null) {
 					return null;
 				}
-				
+
 				for (Triple<String, String, String> annotationValue : values) {
 					AnnotationParameterValue aval = getAnnotationValueFor(annotationValue.getFirst(),
 							annotationValue.getSecond());

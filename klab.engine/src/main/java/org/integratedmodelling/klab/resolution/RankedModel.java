@@ -85,10 +85,6 @@ public class RankedModel extends Model implements IRankedModel {
 		return getDelegate().getAnnotations();
 	}
 
-	public void setMetadata(IMetadata metadata) {
-		getDelegate().setMetadata(metadata);
-	}
-
 	public IMetadata getMetadata() {
 		return getDelegate().getMetadata();
 	}

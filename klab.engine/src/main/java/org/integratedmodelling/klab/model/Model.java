@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -162,8 +163,13 @@ public class Model extends KimObject implements IModel {
 		 */
 
 		if (model.getMetadata() != null) {
-			setMetadata(new Metadata(model.getMetadata()));
+			getMetadata().putAll(model.getMetadata().getData());
 		}
+
+		if (model.getDocstring() != null) {
+			getMetadata().put(IMetadata.DC_COMMENT, model.getDocstring());
+		}
+		
 
 	}
 

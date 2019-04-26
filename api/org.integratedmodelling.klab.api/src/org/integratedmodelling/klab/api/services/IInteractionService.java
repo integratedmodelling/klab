@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IComputableResource.InteractiveParameter;
+import org.integratedmodelling.klab.api.model.IModel;
 
 /**
  * All functionalities related to interacting with a human user, waiting for
@@ -14,6 +15,6 @@ import org.integratedmodelling.kim.api.IComputableResource.InteractiveParameter;
  */
 public interface IInteractionService {
 
-	Collection<InteractiveParameter> getInteractiveParameters(IComputableResource computable);
+	Collection<InteractiveParameter> getInteractiveParameters(IComputableResource computable, IModel model);
 
 }
