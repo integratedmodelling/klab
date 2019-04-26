@@ -12,8 +12,7 @@ public class WekaEncoder implements IResourceEncoder {
 
 	@Override
 	public boolean isOnline(IResource resource) {
-		// TODO Auto-generated method stub
-		return false;
+		return !resource.hasErrors();
 	}
 
 	@Override

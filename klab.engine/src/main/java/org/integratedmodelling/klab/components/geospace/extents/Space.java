@@ -90,7 +90,7 @@ public class Space extends Extent implements ISpace {
 
 		if (shapeSpec != null) {
 			shape = Shape.create(shapeSpec);
-		} else if (bbox != null) {
+		} else if (bbox != null && projection != null) {
 			shape = Shape.create(bbox[0], bbox[2], bbox[1], bbox[3], projection);
 		} else if (llat != null) {
 			shape = Shape.create(llat[0], llat[1], Projection.getLatLon());
@@ -98,15 +98,17 @@ public class Space extends Extent implements ISpace {
 			generic = true;
 		}
 
-		if (gridres != null) {
-			return create(shape,
-					org.integratedmodelling.klab.components.geospace.services.Space.parseResolution(gridres));
-		} else if (dims.length > 1) {
-			return create(shape, dims[0], dims[1]);
+		if (shape != null) {
+			if (gridres != null) {
+				return create(shape,
+						org.integratedmodelling.klab.components.geospace.services.Space.parseResolution(gridres));
+			} else if (dims.length > 1) {
+				return create(shape, dims[0], dims[1]);
+			}
 		}
 
 		Space ret = shape == null ? new Space() : create(shape);
-		
+
 		if ((ret.generic = generic)) {
 			if (ret.projection == null) {
 				// keep whatever info we have to use in a merge()

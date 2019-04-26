@@ -681,9 +681,9 @@ public class ModelKbox extends ObservableKbox {
 			scaleMultiplicity = scale.size();
 			if (scale.getSpace() != null) {
 				spaceExtent = (Shape) scale.getSpace().getShape();
-				spaceExtent = spaceExtent.transform(Projection.getLatLon());
 				// may be null when we just say 'over space'.
 				if (spaceExtent != null) {
+					spaceExtent = spaceExtent.transform(Projection.getLatLon());
 					spaceMultiplicity = scale.getSpace().size();
 				}
 				isSpatial = true;
