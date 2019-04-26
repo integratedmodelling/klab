@@ -54,6 +54,8 @@ public class Space extends Extent implements ISpace {
 	private ITessellation features;
 	private boolean consistent = false;
 	private String gridSpecs = null;
+	private boolean generic = false;
+	private Dimension originalSpecs = null;
 
 	private static Space EMPTY_SPACE = new Space(Shape.empty());
 
@@ -73,7 +75,7 @@ public class Space extends Extent implements ISpace {
 		String projectionSpec = dimension.getParameters().get(Geometry.PARAMETER_SPACE_PROJECTION, String.class);
 		String shapeSpec = dimension.getParameters().get(Geometry.PARAMETER_SPACE_SHAPE, String.class);
 		long[] dims = dimension.shape();
-		
+		boolean generic = false;
 
 		Projection projection = null;
 		Shape shape = null;
@@ -83,8 +85,7 @@ public class Space extends Extent implements ISpace {
 		} else if (llat != null) {
 			projection = Projection.getLatLon();
 		} else {
-			throw new IllegalArgumentException(
-					"not enough information in spatial dimension to build a space extent: projection");
+			generic = true;
 		}
 
 		if (shapeSpec != null) {
@@ -94,8 +95,7 @@ public class Space extends Extent implements ISpace {
 		} else if (llat != null) {
 			shape = Shape.create(llat[0], llat[1], Projection.getLatLon());
 		} else {
-			throw new IllegalArgumentException(
-					"not enough information in spatial dimension to build a space extent: shape or bounding box");
+			generic = true;
 		}
 
 		if (gridres != null) {
@@ -105,7 +105,18 @@ public class Space extends Extent implements ISpace {
 			return create(shape, dims[0], dims[1]);
 		}
 
-		return create(shape);
+		Space ret = shape == null ? new Space() : create(shape);
+		
+		if ((ret.generic = generic)) {
+			if (ret.projection == null) {
+				// keep whatever info we have to use in a merge()
+				ret.projection = projection;
+				ret.shape = shape;
+				ret.originalSpecs = dimension;
+			}
+		}
+
+		return ret;
 	}
 
 	public static Space create(Shape shape, double resolutionInMeters) {
@@ -201,7 +212,7 @@ public class Space extends Extent implements ISpace {
 		// } else if (oth.gridResolution > 0.0) {
 		// ret.setGridResolution(oth.gridResolution, force);
 		// }
-//		return ret;
+		// return ret;
 	}
 
 	@Override
@@ -571,8 +582,9 @@ public class Space extends Extent implements ISpace {
 				return this.grid.getOffset(((IndexLocator) index).getCoordinates()[0],
 						((IndexLocator) index).getCoordinates()[1]);
 			} else if (index instanceof ISpace && ((ISpace) index).getShape().getGeometryType() == IShape.Type.POINT) {
-				Shape shape = (Shape)((ISpace)index).getShape().transform(getProjection());
-				return this.grid.getOffsetFromWorldCoordinates(shape.getJTSGeometry().getCoordinates()[0].x, shape.getJTSGeometry().getCoordinates()[0].y);
+				Shape shape = (Shape) ((ISpace) index).getShape().transform(getProjection());
+				return this.grid.getOffsetFromWorldCoordinates(shape.getJTSGeometry().getCoordinates()[0].x,
+						shape.getJTSGeometry().getCoordinates()[0].y);
 			}
 		} else if (this.features != null) {
 			// TODO support direct indexing with IndexLocator and point indexing with latlon
@@ -645,12 +657,13 @@ public class Space extends Extent implements ISpace {
 			}
 		}
 
-		/*		 * if this == extent return identity; if this.grid != null && extent.grid !=
+		/*
+		 * * if this == extent return identity; if this.grid != null && extent.grid !=
 		 * null && this.grid isa subgrid && this.grid.originalgrid == extent.grid return
 		 * conformant offset remapper; if this.grid != null && extent.grid != null &&
 		 * extent.grid isa subgrid && extent.grid.originalgrid == this.grid return
 		 * inverse conformant offset remapper;
-
+		 * 
 		 */
 
 		return null;
@@ -724,11 +737,11 @@ public class Space extends Extent implements ISpace {
 	public double getStandardizedLength() {
 		return getShape().getStandardizedLength();
 	}
-	
+
 	public double getStandardizedDistance(ISpace space) {
-	    return getShape().getStandardizedDistance(space.getShape());
+		return getShape().getStandardizedDistance(space.getShape());
 	}
-	
+
 	public static Grid extractGrid(IObservation obs) {
 		ISpace ext = obs.getSpace();
 		if (!(ext instanceof Space && ((Space) ext).getGrid() != null)) {
@@ -739,7 +752,6 @@ public class Space extends Extent implements ISpace {
 
 	@Override
 	public boolean isGeneric() {
-		// TODO
-		return false;
+		return generic;
 	}
 }
