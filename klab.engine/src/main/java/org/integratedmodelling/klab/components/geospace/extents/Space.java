@@ -738,7 +738,8 @@ public class Space extends Extent implements ISpace {
 	}
 
 	@Override
-	public boolean isComplete() {
-		return true;
+	public boolean isGeneric() {
+		// TODO
+		return false;
 	}
 }

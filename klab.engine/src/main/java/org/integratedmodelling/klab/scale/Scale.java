@@ -1281,13 +1281,13 @@ public class Scale implements IScale {
 	}
 
 	@Override
-	public boolean isComplete() {
+	public boolean isGeneric() {
 		for (IExtent extent : getExtents()) {
-			if (!extent.isComplete()) {
-				return false;
+			if (!extent.isGeneric()) {
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	@Override

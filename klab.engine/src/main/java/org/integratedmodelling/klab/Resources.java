@@ -1123,9 +1123,6 @@ public enum Resources implements IResourceService {
 	 */
 	public IResource registerResource(IResource ret) {
 		((Resource)ret).validate(this);
-		if (getLocalResourceCatalog().containsKey(ret.getUrn())) {
-			((ResourceCatalog)getLocalResourceCatalog()).removeDefinition(ret.getUrn());
-		}
 		getLocalResourceCatalog().put(ret.getUrn(), ret);
 		return getLocalResourceCatalog().get(ret.getUrn());
 	}

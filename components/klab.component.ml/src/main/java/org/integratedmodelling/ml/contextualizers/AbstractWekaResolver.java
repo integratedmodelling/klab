@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.common.GeometryBuilder;
 import org.integratedmodelling.klab.data.encoding.StandaloneResourceBuilder;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -157,21 +158,31 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 		}
 
 		/*
-		 * Geometry will be the coverage of the dataflow or, if global, S2T1 reflecting the extents
-		 * in the training context.
+		 * Geometry will be the coverage of the dataflow or, if global, S2T1 reflecting
+		 * the extents in the training context.
 		 */
 		Scale scale = ((Scale) ((IRuntimeContext) context).getDataflow().getCoverage());
-		Geometry geometry = scale == null ? Geometry.create(context.getScale().getTime() == null ? "S2" : "S2T1")
-				: scale.asGeometry();
+		Geometry geometry = null;
+		if (scale != null) {
+			geometry = scale.asGeometry();
+		} else {
+			GeometryBuilder gb = Geometry.builder();
+			if (context.getScale().getSpace() != null) {
+				gb.space().generic();
+			}
+			if (context.getScale().getTime() != null) {
+				gb.time().generic();
+			}
+			geometry = gb.build();
+		}
 
 		StandaloneResourceBuilder builder = new StandaloneResourceBuilder(project, resourceId);
-		builder
-			.withResourceVersion(Version.create("0.0.1"))
-			.withGeometry(geometry)
-			.withAdapterType("weka")
-			.withType(instances.getPredicted().getType())
-			.withParameter("classifier", classifier.getClassifier().getClass().getCanonicalName())
-			.withParameter("classifier:options", classifier.getOptions().toString());
+		builder.withResourceVersion(Version.create("0.0.1")).withGeometry(geometry).withAdapterType("weka")
+				.withType(instances.getPredicted().getType())
+				.withParameter("wekaVersion", weka.core.Version.VERSION)
+				.withParameter("model", context.getModel().getName())
+				.withParameter("classifier", classifier.getClassifier().getClass().getCanonicalName())
+				.withParameter("classifier:options", classifier.getOptions().toString());
 
 		for (Attribute attribute : instances.getAttributes()) {
 

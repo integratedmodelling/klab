@@ -769,8 +769,8 @@ public class Shape extends AbstractExtent implements IShape {
     }
 
 	@Override
-	public boolean isComplete() {
-		return true;
+	public boolean isGeneric() {
+		return false;
 	}
 
 }

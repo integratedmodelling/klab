@@ -92,18 +92,10 @@ public interface IScale extends ILocator, Iterable<IScale>, IGeometry, ITopology
 	boolean isEmpty();
 
 	/**
-	 * A complete scale can be used to contextualize observations. An incomplete one
-	 * must be merged with others in a dataflow until the final scale is complete.
-	 * 
-	 * @return
-	 */
-	public boolean isComplete();
-
-	/**
 	 * Merge in another scale to complete what is incomplete in this one. This is
 	 * done recursively during resolution to establish the final scale for a
 	 * dataflow. Allows specifications with partially specified extents (where
-	 * {@link #isComplete()} returns false) to inform the scale of the final
+	 * {@link #isGeneric()} returns true) to inform the scale of the final
 	 * contextualization.
 	 * 
 	 * @param scale

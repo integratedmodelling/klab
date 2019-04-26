@@ -116,6 +116,13 @@ public interface IGeometry extends Serializable, ILocator {
         }
 
         /**
+         * Generic means 'not completely defined', i.e. not usable for contextualization. This corresponds
+         * to the Greek lowercase letter for the dimension in the string encoding.
+         * @return
+         */
+        boolean isGeneric();
+        
+        /**
          * Match against constants {@link Type#SPACE} and {@link Type#TIME}. If none of these, any other
          * user-defined dimension is possible - conventions must be established in worldview for those.
          * 
@@ -241,6 +248,13 @@ public interface IGeometry extends Serializable, ILocator {
      * @return true for a geometry that was not specified.
      */
     boolean isEmpty();
+    
+    /**
+     * Generic means 'not completely defined', i.e. not usable for contextualization. This corresponds
+     * to the Greek lowercase letter for the dimension in the string encoding.
+     * @return
+     */
+    boolean isGeneric();
 
     /**
      * A trivial geometry describes scalar values with no structure.

@@ -45,104 +45,101 @@ import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 
 public class KlabNavigatorActions {
 
-    public static void createProject() {
-        WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new NewProjectWizard());
-        dialog.create();
-        dialog.open();
-    }
-
-    public static void deleteProject(EProject project) {
-        if (MessageDialog.openConfirm(Eclipse.INSTANCE.getShell(), "Confirm deletion", "Delete project "
-                + project.getName() + "? This action cannot be recovered.")) {
-            Eclipse.INSTANCE.deleteProject(project);
-            if (Activator.engineMonitor().isRunning()) {
-            	Activator.post(IMessage.MessageClass.ProjectLifecycle, IMessage.Type.DeleteProject,
-					new ProjectModificationRequest(project.getName(), null));
-            }
-        }
-    }
-
-    public static void addNamespace(EProject project) {
-        WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE
-                .getShell(), new NewNamespaceWizard(project.getProject()));
-        dialog.create();
-        dialog.open();
-    }
-
-    public static void addScenario(EProject project) {
-
-    }
-
-    public static void deleteNamespace(ENamespace namespace, IWorkbenchPage page) {
-        if (MessageDialog.openConfirm(Eclipse.INSTANCE.getShell(), "Confirm deletion", "Delete namespace "
-                + namespace.getName() + "? This action cannot be recovered.")) {
-            Activator.post((message) -> {
-                File file = message.getPayload(ProjectModificationNotification.class).getFile();
-                Activator.loader().delete(file);
-                Eclipse.INSTANCE.closeEditor(file, page);
-                KlabNavigator.refresh();
-            }, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.DeleteNamespace, new ProjectModificationRequest(namespace
-                    .getProject().getName(), namespace.getName()));
-        }
-    }
-
-    public static void addScript(EScriptFolder folder) {
-        WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new NewScriptWizard(folder, folder
-                .getEParent(EProject.class).getProject(), Role.SCRIPT));
-        dialog.create();
-        dialog.open();
-    }
-
-    public static void deleteScript(EScript script, IWorkbenchPage page) {
-        if (MessageDialog.openConfirm(Eclipse.INSTANCE.getShell(), "Confirm deletion", "Delete script "
-                + script.getName() + "? This action cannot be recovered.")) {
-            Activator.post((message) -> {
-                File file = message.getPayload(ProjectModificationNotification.class).getFile();
-                Activator.loader().delete(file);
-                Eclipse.INSTANCE.closeEditor(file, page);
-                KlabNavigator.refresh();
-            }, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.DeleteScript, new ProjectModificationRequest(script
-                    .getProject().getName(), script.getName()));
-        }
-    }
-
-    public static void addTestCase(ETestFolder folder) {
-        WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new NewScriptWizard(folder, folder
-                .getEParent(EProject.class).getProject(), Role.TESTCASE));
-        dialog.create();
-        dialog.open();
-    }
-
-    public static void deleteTestCase(ETestCase testCase, IWorkbenchPage page) {
-        if (MessageDialog.openConfirm(Eclipse.INSTANCE.getShell(), "Confirm deletion", "Delete test case "
-                + testCase.getName() + "? This action cannot be recovered.")) {
-            Activator.post((message) -> {
-                File file = message.getPayload(ProjectModificationNotification.class).getFile();
-                Activator.loader().delete(file);
-                Eclipse.INSTANCE.closeEditor(file, page);
-                KlabNavigator.refresh();
-            }, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.DeleteTestCase, new ProjectModificationRequest(testCase
-                    .getProject().getName(), testCase.getName()));
-        }
-    }
-
-    public static void importResources(EResourceFolder folder) {
-        WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE
-                .getShell(), new BulkImportResourceWizard(folder));
-        dialog.create();
-        dialog.open();
-    }
-
-	public static void createResource(EResourceFolder folder) {
-        WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE
-                .getShell(), new NewResourceWizard(folder));
-        dialog.setPageSize(800, 550);
-        dialog.create();
-        dialog.open();
+	public static void createProject() {
+		WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new NewProjectWizard());
+		dialog.create();
+		dialog.open();
 	}
 
-    
-    public static void editResource(EResourceReference resource) {
+	public static void deleteProject(EProject project) {
+		if (MessageDialog.openConfirm(Eclipse.INSTANCE.getShell(), "Confirm deletion",
+				"Delete project " + project.getName() + "? This action cannot be recovered.")) {
+			Eclipse.INSTANCE.deleteProject(project);
+			if (Activator.engineMonitor().isRunning()) {
+				Activator.post(IMessage.MessageClass.ProjectLifecycle, IMessage.Type.DeleteProject,
+						new ProjectModificationRequest(project.getName(), null));
+			}
+		}
+	}
+
+	public static void addNamespace(EProject project) {
+		WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(),
+				new NewNamespaceWizard(project.getProject()));
+		dialog.create();
+		dialog.open();
+	}
+
+	public static void addScenario(EProject project) {
+
+	}
+
+	public static void deleteNamespace(ENamespace namespace, IWorkbenchPage page) {
+		if (MessageDialog.openConfirm(Eclipse.INSTANCE.getShell(), "Confirm deletion",
+				"Delete namespace " + namespace.getName() + "? This action cannot be recovered.")) {
+			Activator.post((message) -> {
+				File file = message.getPayload(ProjectModificationNotification.class).getFile();
+				Activator.loader().delete(file);
+				Eclipse.INSTANCE.closeEditor(file, page);
+				KlabNavigator.refresh();
+			}, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.DeleteNamespace,
+					new ProjectModificationRequest(namespace.getProject().getName(), namespace.getName()));
+		}
+	}
+
+	public static void addScript(EScriptFolder folder) {
+		WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(),
+				new NewScriptWizard(folder, folder.getEParent(EProject.class).getProject(), Role.SCRIPT));
+		dialog.create();
+		dialog.open();
+	}
+
+	public static void deleteScript(EScript script, IWorkbenchPage page) {
+		if (MessageDialog.openConfirm(Eclipse.INSTANCE.getShell(), "Confirm deletion",
+				"Delete script " + script.getName() + "? This action cannot be recovered.")) {
+			Activator.post((message) -> {
+				File file = message.getPayload(ProjectModificationNotification.class).getFile();
+				Activator.loader().delete(file);
+				Eclipse.INSTANCE.closeEditor(file, page);
+				KlabNavigator.refresh();
+			}, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.DeleteScript,
+					new ProjectModificationRequest(script.getProject().getName(), script.getName()));
+		}
+	}
+
+	public static void addTestCase(ETestFolder folder) {
+		WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(),
+				new NewScriptWizard(folder, folder.getEParent(EProject.class).getProject(), Role.TESTCASE));
+		dialog.create();
+		dialog.open();
+	}
+
+	public static void deleteTestCase(ETestCase testCase, IWorkbenchPage page) {
+		if (MessageDialog.openConfirm(Eclipse.INSTANCE.getShell(), "Confirm deletion",
+				"Delete test case " + testCase.getName() + "? This action cannot be recovered.")) {
+			Activator.post((message) -> {
+				File file = message.getPayload(ProjectModificationNotification.class).getFile();
+				Activator.loader().delete(file);
+				Eclipse.INSTANCE.closeEditor(file, page);
+				KlabNavigator.refresh();
+			}, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.DeleteTestCase,
+					new ProjectModificationRequest(testCase.getProject().getName(), testCase.getName()));
+		}
+	}
+
+	public static void importResources(EResourceFolder folder) {
+		WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new BulkImportResourceWizard(folder));
+		dialog.create();
+		dialog.open();
+	}
+
+	public static void createResource(EResourceFolder folder) {
+		WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new NewResourceWizard(folder));
+		dialog.setPageSize(800, 550);
+		dialog.create();
+		dialog.open();
+	}
+
+	public static void editResource(EResourceReference resource) {
 		try {
 			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 					.showView(ResourceEditor.ID);
@@ -152,54 +149,57 @@ public class KlabNavigatorActions {
 		} catch (Exception e) {
 			Eclipse.INSTANCE.handleException(e);
 		}
-    }
+	}
 
-    public static void deleteResource(EResource resource) {
-        ResourceCRUDRequest request = new ResourceCRUDRequest();
-        request.setOperation(CRUDOperation.DELETE);
-        request.getResourceUrns().add(resource.getResource().getUrn());
-        Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.DeleteLocalResource, request);
-    }
-    
-    public static void moveResource(EResource resource) {
-        WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new MoveResourceWizard(resource));
-        dialog.create();
-        dialog.open();
-    }
+	public static void deleteResource(EResource resource) {
+		if (MessageDialog.openConfirm(Eclipse.INSTANCE.getShell(), "Confirm deletion",
+				"Delete resource " + resource.getId() + "? This action cannot be recovered.")) {
+			ResourceCRUDRequest request = new ResourceCRUDRequest();
+			request.setOperation(CRUDOperation.DELETE);
+			request.getResourceUrns().add(resource.getResource().getUrn());
+			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.DeleteLocalResource, request);
+		}
+	}
 
-    public static void runScript(EScript script) {
+	public static void moveResource(EResource resource) {
+		WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new MoveResourceWizard(resource));
+		dialog.create();
+		dialog.open();
+	}
 
-    }
+	public static void runScript(EScript script) {
 
-    public static void runTestCase(ETestCase testCase) {
+	}
 
-    }
+	public static void runTestCase(ETestCase testCase) {
 
-    public static void runTestSuite(ETestFolder folder) {
+	}
 
-    }
+	public static void runTestSuite(ETestFolder folder) {
 
-    public static void viewTestReports(ETestFolder folder) {
+	}
 
-    }
+	public static void viewTestReports(ETestFolder folder) {
 
-    public static void copyResource(Collection<EResource> resources, EResourceFolder folder, boolean move) {
+	}
 
-        ResourceCRUDRequest request = new ResourceCRUDRequest();
-        request.setOperation(move ? CRUDOperation.MOVE : CRUDOperation.COPY);
-        EProject targetProject = folder.getEParent(EProject.class);
-        for (EResource resource : resources) {
-            EProject sourceProject = resource.getEParent(EProject.class);
-            if (!sourceProject.equals(targetProject)) {
-                request.getResourceUrns().add(resource.getId());
-            }
-        }
-        request.setDestinationProject(targetProject.getId());
-        Activator.post(IMessage.MessageClass.ResourceLifecycle, (move ? IMessage.Type.MoveResource
-                : IMessage.Type.CopyResource), request);
-    }
+	public static void copyResource(Collection<EResource> resources, EResourceFolder folder, boolean move) {
 
-    public static void editDocumentation(EDocumentable model) {
+		ResourceCRUDRequest request = new ResourceCRUDRequest();
+		request.setOperation(move ? CRUDOperation.MOVE : CRUDOperation.COPY);
+		EProject targetProject = folder.getEParent(EProject.class);
+		for (EResource resource : resources) {
+			EProject sourceProject = resource.getEParent(EProject.class);
+			if (!sourceProject.equals(targetProject)) {
+				request.getResourceUrns().add(resource.getId());
+			}
+		}
+		request.setDestinationProject(targetProject.getId());
+		Activator.post(IMessage.MessageClass.ResourceLifecycle,
+				(move ? IMessage.Type.MoveResource : IMessage.Type.CopyResource), request);
+	}
+
+	public static void editDocumentation(EDocumentable model) {
 		try {
 			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 					.showView(DocumentationEditor.ID);
@@ -209,9 +209,9 @@ public class KlabNavigatorActions {
 		} catch (PartInitException e) {
 			Eclipse.INSTANCE.handleException(e);
 		}
-    }
-    
-    public static void editReferences(EProject project) {
+	}
+
+	public static void editReferences(EProject project) {
 		try {
 			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 					.showView(ReferencesEditor.ID);
@@ -221,53 +221,54 @@ public class KlabNavigatorActions {
 		} catch (PartInitException e) {
 			Eclipse.INSTANCE.handleException(e);
 		}
-    }
-    
-    public static void editDocumentation(EDocumentationItem item) {
-        try {
-            IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-                    .showView(DocumentationEditor.ID);
-            if (view != null) {
-                ((DocumentationEditor) view).setTarget(item);
-            }
-        } catch (PartInitException e) {
-            Eclipse.INSTANCE.handleException(e);
-        }
-    }
-    
-    public static void editReference(EReference project) {
-        try {
-            IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-                    .showView(ReferencesEditor.ID);
-            if (view != null) {
-                ((ReferencesEditor) view).setTarget(project);
-            }
-        } catch (PartInitException e) {
-            Eclipse.INSTANCE.handleException(e);
-        }
-    }
+	}
+
+	public static void editDocumentation(EDocumentationItem item) {
+		try {
+			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+					.showView(DocumentationEditor.ID);
+			if (view != null) {
+				((DocumentationEditor) view).setTarget(item);
+			}
+		} catch (PartInitException e) {
+			Eclipse.INSTANCE.handleException(e);
+		}
+	}
+
+	public static void editReference(EReference project) {
+		try {
+			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+					.showView(ReferencesEditor.ID);
+			if (view != null) {
+				((ReferencesEditor) view).setTarget(project);
+			}
+		} catch (PartInitException e) {
+			Eclipse.INSTANCE.handleException(e);
+		}
+	}
 
 	public static void addDocumentationSection(EDocumentationPage item) {
-		// show wizard as below with ID disabled - choose section/trigger disabling those already present
-        WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new NewDocumentationSectionWizard(item));
-        dialog.create();
-        dialog.open();
+		// show wizard as below with ID disabled - choose section/trigger disabling
+		// those already present
+		WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new NewDocumentationSectionWizard(item));
+		dialog.create();
+		dialog.open();
 	}
 
 	public static void addDocumentationItem(EDocumentationFolder page) {
-		// show wizard - choose ID (path pre-fixed, single word, path allowed) + initial section/trigger
+		// show wizard - choose ID (path pre-fixed, single word, path allowed) + initial
+		// section/trigger
 		System.out.println("OHO " + page.getPath());
-        WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new NewDocumentationSectionWizard(page));
-        dialog.create();
-        dialog.open();
+		WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new NewDocumentationSectionWizard(page));
+		dialog.create();
+		dialog.open();
 	}
 
 	public static void addDocumentationSubsection(EDocumentationFolder page) {
 		// show wizard - choose single lowercase word, no path
-        WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new NewDocumentationFolderWizard(page));
-        dialog.create();
-        dialog.open();
+		WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new NewDocumentationFolderWizard(page));
+		dialog.create();
+		dialog.open();
 	}
-
 
 }

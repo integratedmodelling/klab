@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.ide.navigator.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -22,7 +23,10 @@ public class EResourceFolder extends ENavigatorItem {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		if (IResource.class.isAssignableFrom(adapter) && adapter != IProject.class) {
+		if (IFolder.class.isAssignableFrom(adapter) ) {
+            return (T) ResourcesPlugin.getWorkspace().getRoot().getProject(project.getName())
+					.getFolder(IKimProject.RESOURCE_FOLDER);
+        } else if (IResource.class.isAssignableFrom(adapter) && !IProject.class.isAssignableFrom(adapter)) {
 			return (T) ResourcesPlugin.getWorkspace().getRoot().getProject(project.getName())
 					.getFolder(IKimProject.RESOURCE_FOLDER);
 		}

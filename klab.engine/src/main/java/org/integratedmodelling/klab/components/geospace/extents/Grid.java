@@ -671,8 +671,8 @@ public class Grid extends Area implements IGrid {
 		}
 
 		@Override
-		public boolean isComplete() {
-			return true;
+		public boolean isGeneric() {
+			return false;
 		}
 	}
 

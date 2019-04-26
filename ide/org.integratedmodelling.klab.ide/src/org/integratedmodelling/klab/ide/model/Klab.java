@@ -12,6 +12,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.runtime.CoreException;
+import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.client.utils.JsonUtils;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
@@ -161,7 +164,14 @@ public class Klab {
 			list = new HashMap<>();
 			resourceCatalog.put(resource.getProjectName(), list);
 		}
-		list.put(resource.getUrn(), new EResourceReference(resource, true));
+		EResourceReference eref = new EResourceReference(resource, true);
+		list.put(resource.getUrn(), eref);
+		try {
+			Eclipse.INSTANCE.getProject(resource.getProjectName()).getFolder(IKimProject.RESOURCE_FOLDER)
+					.refreshLocal(IFolder.DEPTH_INFINITE, null);
+		} catch (CoreException e) {
+			// just continue; this execs in a pretty controlled sandbox so it shouldn't happen
+		}
 		KlabNavigator.refresh();
 		Eclipse.INSTANCE.notification("New resource imported",
 				"The resource with URN " + resource.getUrn()
@@ -171,11 +181,20 @@ public class Klab {
 
 	public void notifyResourceUpdated(ResourceReference resource) {
 		Map<String, EResourceReference> list = resourceCatalog.get(resource.getProjectName());
-		if (list == null) {
+		if (list != null) {
+			list.remove(resource.getUrn());
+		} else {
 			list = new HashMap<>();
 			resourceCatalog.put(resource.getProjectName(), list);
 		}
-		list.put(resource.getUrn(), new EResourceReference(resource, true));
+		EResourceReference eref = new EResourceReference(resource, true);
+		list.put(resource.getUrn(), eref);
+		try {
+			Eclipse.INSTANCE.getProject(resource.getProjectName()).getFolder(IKimProject.RESOURCE_FOLDER)
+					.refreshLocal(IFolder.DEPTH_INFINITE, null);
+		} catch (CoreException e) {
+			// just continue; this execs in a pretty controlled sandbox so it shouldn't happen
+		}
 		KlabNavigator.refresh();
 		Eclipse.INSTANCE.notification("Resource updated",
 				"The resource with URN " + resource.getUrn() + " was updated by the engine.");
@@ -183,9 +202,14 @@ public class Klab {
 
 	public void notifyResourceDeleted(ResourceReference resource) {
 		Map<String, EResourceReference> list = resourceCatalog.get(resource.getProjectName());
-		if (list == null) {
-			list = new HashMap<>();
-			resourceCatalog.remove(resource.getProjectName(), list);
+		if (list != null) {
+			list.remove(resource.getUrn());
+		}
+		try {
+			Eclipse.INSTANCE.getProject(resource.getProjectName()).getFolder(IKimProject.RESOURCE_FOLDER)
+					.refreshLocal(IFolder.DEPTH_INFINITE, null);
+		} catch (CoreException e) {
+			// just continue; this execs in a pretty controlled sandbox so it shouldn't happen
 		}
 		KlabNavigator.refresh();
 		Eclipse.INSTANCE.notification("Resource deleted", "The resource with URN " + resource.getUrn()

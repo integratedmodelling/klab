@@ -41,19 +41,10 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 public interface IExtent extends ILocator, ITopology<IExtent>, Iterable<IExtent>, IGeometry.Dimension {
 
 	/**
-	 * A complete extent can be used in a scale to contextualize observations. An
-	 * incomplete one must be merged with others in a dataflow until the final scale
-	 * is complete.
-	 * 
-	 * @return
-	 */
-	public boolean isComplete();
-
-	/**
 	 * Merge in another extent to complete what is incomplete in this one. This is
 	 * done recursively during resolution to establish the final scale for a
 	 * dataflow. Allows specifications with partially specified extents (where
-	 * {@link #isComplete()} returns false) to inform the scale of the final
+	 * {@link #isGeneric()} returns true) to inform the scale of the final
 	 * contextualization.
 	 * 
 	 * @param extent

@@ -296,9 +296,9 @@ public class Time extends Extent implements ITime {
 	}
 
 	@Override
-	public boolean isComplete() {
+	public boolean isGeneric() {
 		// TODO Auto-generated method stub
-		return true;
+		return false;
 	}
 
 }

@@ -76,6 +76,10 @@ public class Geometry implements IGeometry {
 		return makeGeometry(geometry, 0);
 	}
 
+	public static GeometryBuilder builder() {
+		return new GeometryBuilder();
+	}
+	
 	private static Geometry emptyGeometry = new Geometry();
 	private static Geometry scalarGeometry = makeGeometry("*", 0);
 
@@ -115,8 +119,8 @@ public class Geometry implements IGeometry {
 
 		String ret = granularity == Granularity.MULTIPLE ? "#" : "";
 		for (Dimension dim : dimensions) {
-			ret += dim.getType() == Type.SPACE ? (dim.isRegular() ? "S" : "s")
-					: (dim.getType() == Type.TIME ? (dim.isRegular() ? "T" : "t") : /* TODO others */ "");
+			ret += dim.getType() == Type.SPACE ? (dim.isGeneric() ? "\u03c3" : (dim.isRegular() ? "S" : "s"))
+					: (dim.getType() == Type.TIME ? (dim.isGeneric() ? "\u03c4" : (dim.isRegular() ? "T" : "t")) : /* TODO others */ "");
 			ret += dim.getDimensionality();
 			if (dim.shape() != null && !isUndefined(dim.shape())) {
 				ret += "(";
@@ -193,7 +197,8 @@ public class Geometry implements IGeometry {
 		private int dimensionality;
 		private long[] shape;
 		private Parameters<String> parameters = new Parameters<>();
-
+		private boolean generic;
+		
 		@Override
 		public Type getType() {
 			return type;
@@ -204,6 +209,11 @@ public class Geometry implements IGeometry {
 			return regular;
 		}
 
+		@Override 
+		public boolean isGeneric() {
+			return generic;
+		}
+		
 		@Override
 		public int getDimensionality() {
 			return dimensionality;
@@ -241,6 +251,31 @@ public class Geometry implements IGeometry {
 		public IParameters<String> getParameters() {
 			return parameters;
 		}
+
+		public long[] getShape() {
+			return shape;
+		}
+
+		public void setShape(long[] shape) {
+			this.shape = shape;
+		}
+
+		public void setType(Type type) {
+			this.type = type;
+		}
+
+		public void setRegular(boolean regular) {
+			this.regular = regular;
+		}
+
+		public void setDimensionality(int dimensionality) {
+			this.dimensionality = dimensionality;
+		}
+
+		public void setGeneric(boolean generic) {
+			this.generic = generic;
+		}
+		
 	}
 
 	private List<DimensionImpl> dimensions = new ArrayList<>();
@@ -266,6 +301,10 @@ public class Geometry implements IGeometry {
 		return ret;
 	}
 
+	void addDimension(DimensionImpl dimension) {
+		dimensions.add(dimension);
+	}
+	
 	@Override
 	public Granularity getGranularity() {
 		return granularity;
@@ -414,12 +453,18 @@ public class Geometry implements IGeometry {
 			char c = geometry.charAt(idx);
 			if (c == '#') {
 				ret.granularity = Granularity.MULTIPLE;
-			} else if (c >= 'A' && c <= 'z') {
+			} else if ((c >= 'A' && c <= 'z') || c == 0x03C3 || c == 0x03C4) {
 				DimensionImpl dimensionality = ret.newDimension();
-				if (c == 'S' || c == 's') {
+				if (c == 'S' || c == 's' || c == 0x03C3) {
 					dimensionality.type = Type.SPACE;
-				} else if (c == 'T' || c == 't') {
+					if (c == 0x03C3) {
+						dimensionality.generic = true;
+					}
+				} else if (c == 'T' || c == 't' || c == 0x03C4) {
 					dimensionality.type = Type.TIME;
+					if (c == 0x03C4) {
+						dimensionality.generic = true;
+					}
 				} else {
 					throw new IllegalArgumentException("unrecognized geometry dimension identifier " + c);
 					// if (dimDictionary.containsKey(Character.toLowerCase(c))) {
@@ -681,6 +726,16 @@ public class Geometry implements IGeometry {
 	public <T extends ILocator> T as(Class<T> cls) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean isGeneric() {
+		for (Dimension dimension : dimensions) {
+			if (dimension.isGeneric()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

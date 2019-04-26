@@ -514,9 +514,9 @@ public class ResourceEditor extends ViewPart {
 																																	Button btnNewButton_3 = new Button(composite_3, SWT.NONE);
 																																	btnNewButton_3.setText("Execute");
 																																	
-																																				Label lblNewLabel_4 = new Label(composite_3, SWT.NONE);
-																																				lblNewLabel_4
-																																						.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
+			Label lblNewLabel_4 = new Label(composite_3, SWT.NONE);
+			lblNewLabel_4
+					.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
 //			new Label(composite_1, SWT.NONE);
 //			new Label(composite_1, SWT.NONE);
 			{
