@@ -32,92 +32,120 @@ import org.integratedmodelling.klab.common.LogicalConnector;
  */
 public interface IScale extends ILocator, Iterable<IScale>, IGeometry, ITopology<IScale> {
 
-    /**
-     * We deal with space and time in all natural systems, so we expose these to ease API use.
-     *
-     * @return the space, or null
-     */
-    ISpace getSpace();
+	/**
+	 * We deal with space and time in all natural systems, so we expose these to
+	 * ease API use.
+	 *
+	 * @return the space, or null
+	 */
+	ISpace getSpace();
 
-    /**
-     * We deal with space and time in all natural systems, so we expose these to ease API use.
-     *
-     * @return the time, or null
-     */
-    ITime getTime();
+	/**
+	 * We deal with space and time in all natural systems, so we expose these to
+	 * ease API use.
+	 *
+	 * @return the time, or null
+	 */
+	ITime getTime();
 
-    /**
-     * True if we have time and the time topology determines more than a single state. It's also in
-     * IObservation, but it's convenient to duplicate it here too.
-     *
-     * @return true if distributed in time
-     */
-    boolean isTemporallyDistributed();
+	/**
+	 * True if we have time and the time topology determines more than a single
+	 * state. It's also in IObservation, but it's convenient to duplicate it here
+	 * too.
+	 *
+	 * @return true if distributed in time
+	 */
+	boolean isTemporallyDistributed();
 
-    /**
-     * True if we have space and the space topology determines more than a single state. It's also in
-     * IObservation, but it's convenient to duplicate it here too.
-     *
-     * @return true if distributed in space
-     */
-    boolean isSpatiallyDistributed();
+	/**
+	 * True if we have space and the space topology determines more than a single
+	 * state. It's also in IObservation, but it's convenient to duplicate it here
+	 * too.
+	 *
+	 * @return true if distributed in space
+	 */
+	boolean isSpatiallyDistributed();
 
-    /**
-     * Total number of extents available in this Scale. Note that in principle there may be more
-     * extents than just space and/or time, although this is not supported at the moment. Read the
-     * non-existing documentation.
-     *
-     * @return the number of extents for this topology
-     */
-    int getExtentCount();
+	/**
+	 * Total number of extents available in this Scale. Note that in principle there
+	 * may be more extents than just space and/or time, although this is not
+	 * supported at the moment. Read the non-existing documentation.
+	 *
+	 * @return the number of extents for this topology
+	 */
+	int getExtentCount();
 
-    /**
-     * Return the list of extents, ordered by contextualization priority (time, if present, will
-     * always be first).
-     *
-     * @return the extents
-     */
-    List<IExtent> getExtents();
+	/**
+	 * Return the list of extents, ordered by contextualization priority (time, if
+	 * present, will always be first).
+	 *
+	 * @return the extents
+	 */
+	List<IExtent> getExtents();
 
-    /**
-     * Return true only if he scale has > 0 extents and any of them is empty, so that the coverage of
-     * any other scale can only be 0.
-     *
-     * @return true if scale cannot be the context for any observation.
-     */
-    boolean isEmpty();
+	/**
+	 * Return true only if he scale has > 0 extents and any of them is empty, so
+	 * that the coverage of any other scale can only be 0.
+	 *
+	 * @return true if scale cannot be the context for any observation.
+	 */
+	boolean isEmpty();
 
-    /**
-     * {@inheritDoc}
-     *
-     * Return a new scale merging all extents from the passed parameter. The extents of the merged in scale
-     * are authoritative in terms of extent; granularity is negotiated as defined by each extent individually.
-     * <p>
-     * Extents in common are merged according to how the merge is implemented; any extents that are in one scale
-     * and not the other are left in the returned scale as they are.
-     * <p>
-     * Must not modify the original scales.
-     */
-    @Override
-    IScale merge(ITopologicallyComparable<?> other, LogicalConnector how);
+	/**
+	 * A complete scale can be used to contextualize observations. An incomplete one
+	 * must be merged with others in a dataflow until the final scale is complete.
+	 * 
+	 * @return
+	 */
+	public boolean isComplete();
 
-    /**
-     * {@inheritDoc}
-     *
-     * The scale implementation of {@link ILocator#at(ILocator)} always return a scale and can use an
-     * extent, other scale, or ITime.INITIALIZATION as locator.
-     */
-    @Override
-    IScale at(ILocator locator);
+	/**
+	 * Merge in another scale to complete what is incomplete in this one. This is
+	 * done recursively during resolution to establish the final scale for a
+	 * dataflow. Allows specifications with partially specified extents (where
+	 * {@link #isComplete()} returns false) to inform the scale of the final
+	 * contextualization.
+	 * 
+	 * @param scale
+	 */
+	public void merge(IScale scale);
 
-    /**
-     * Mimics {@link org.integratedmodelling.klab.api.data.IGeometry.Dimension#shape()} passing the
-     * type of the desired dimension.
-     *
-     * @param dimension the dimension we need the shape of
-     * @return the shape of the passed dimension
-     * @throws java.lang.IllegalArgumentException if the dimension is not known in this scale
-     */
-    public long[] shape(Type dimension);
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Return a new scale merging all extents from the passed parameter. The extents
+	 * of the merged in scale are authoritative in terms of extent; granularity is
+	 * negotiated as defined by each extent individually.
+	 * <p>
+	 * Extents in common are merged according to how the merge is implemented; any
+	 * extents that are in one scale and not the other are left in the returned
+	 * scale as they are.
+	 * <p>
+	 * Must not modify the original scales.
+	 */
+	@Override
+	IScale merge(ITopologicallyComparable<?> other, LogicalConnector how);
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * The scale implementation of {@link ILocator#at(ILocator)} always return a
+	 * scale and can use an extent, other scale, or ITime.INITIALIZATION as locator.
+	 */
+	@Override
+	IScale at(ILocator locator);
+
+	/**
+	 * Mimics
+	 * {@link org.integratedmodelling.klab.api.data.IGeometry.Dimension#shape()}
+	 * passing the type of the desired dimension.
+	 *
+	 * @param dimension
+	 *            the dimension we need the shape of
+	 * @return the shape of the passed dimension
+	 * @throws java.lang.IllegalArgumentException
+	 *             if the dimension is not known in this scale
+	 */
+	public long[] shape(Type dimension);
 
 }

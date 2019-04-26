@@ -89,9 +89,9 @@ public class Time extends Extent implements ITime {
 	}
 
 	@Override
-	public IExtent merge(IExtent extent) throws KlabException {
+	public void merge(IExtent extent) throws KlabException {
 		// TODO Auto-generated method stub
-		return null;
+//		return null;
 	}
 
 	@Override
@@ -293,6 +293,12 @@ public class Time extends Extent implements ITime {
 	public Resolution getResolution() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean isComplete() {
+		// TODO Auto-generated method stub
+		return true;
 	}
 
 }

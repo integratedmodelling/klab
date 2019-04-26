@@ -179,7 +179,7 @@ public class Space extends Extent implements ISpace {
 	}
 
 	@Override
-	public IExtent merge(IExtent extent) throws KlabException {
+	public void merge(IExtent extent) throws KlabException {
 
 		if (!(extent instanceof Space)) {
 			throw new KlabValidationException("space extent cannot merge non-space extent");
@@ -201,7 +201,7 @@ public class Space extends Extent implements ISpace {
 		// } else if (oth.gridResolution > 0.0) {
 		// ret.setGridResolution(oth.gridResolution, force);
 		// }
-		return ret;
+//		return ret;
 	}
 
 	@Override
@@ -735,5 +735,10 @@ public class Space extends Extent implements ISpace {
 			return null;
 		}
 		return ((Space) ext).grid;
+	}
+
+	@Override
+	public boolean isComplete() {
+		return true;
 	}
 }

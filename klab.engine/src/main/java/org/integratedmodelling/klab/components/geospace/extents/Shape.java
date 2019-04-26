@@ -369,9 +369,9 @@ public class Shape extends AbstractExtent implements IShape {
     }
 
     @Override
-    public IExtent merge(IExtent extent) throws KlabException {
+    public void merge(IExtent extent) throws KlabException {
         // TODO Auto-generated method stub
-        return null;
+//        return null;
     }
 
     @Override
@@ -767,5 +767,10 @@ public class Shape extends AbstractExtent implements IShape {
         Point centroid = standardized ? getStandardizedGeometry().getCentroid() : geometry.getCentroid();
         return new double[] { centroid.getCoordinate().x, centroid.getCoordinate().y };
     }
+
+	@Override
+	public boolean isComplete() {
+		return true;
+	}
 
 }

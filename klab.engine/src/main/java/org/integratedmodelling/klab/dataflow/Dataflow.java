@@ -162,8 +162,14 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 				 * Method returns all interactive observable annotation parameters for
 				 * recording.
 				 */
-				for (Triple<String, String, String> annotationValue : Interaction.INSTANCE
-						.submitParameters(this.resources, this.fields, session)) {
+				Collection<Triple<String, String, String>> values = Interaction.INSTANCE
+						.submitParameters(this.resources, this.fields, session);
+				
+				if (values == null) {
+					return null;
+				}
+				
+				for (Triple<String, String, String> annotationValue : values) {
 					AnnotationParameterValue aval = getAnnotationValueFor(annotationValue.getFirst(),
 							annotationValue.getSecond());
 					if (aval != null /* should never happen but implementation may change */) {

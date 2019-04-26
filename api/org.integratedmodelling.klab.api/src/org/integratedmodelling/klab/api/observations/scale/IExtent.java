@@ -16,92 +16,106 @@
 package org.integratedmodelling.klab.api.observations.scale;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
- * A {@code IExtent} is a semantically aware {@link Dimension geometry dimension} that represents an
- * observation of the topology it describes. {@code IExtent}s make up the dimensions of the
- * semantically aware {@link org.integratedmodelling.klab.api.data.IGeometry} represented by {@link org.integratedmodelling.klab.api.observations.scale.IScale}.
+ * A {@code IExtent} is a semantically aware {@link Dimension geometry
+ * dimension} that represents an observation of the topology it describes.
+ * {@code IExtent}s make up the dimensions of the semantically aware
+ * {@link org.integratedmodelling.klab.api.data.IGeometry} represented by
+ * {@link org.integratedmodelling.klab.api.observations.scale.IScale}.
  *
- * In a {@code IExtent}, the {{@link #size()} will never return {IGeometry#UNDEFINED} and the shape
- * returned by {{@link #shape()} will never contain undefined values.
+ * In a {@code IExtent}, the {{@link #size()} will never return
+ * {IGeometry#UNDEFINED} and the shape returned by {{@link #shape()} will never
+ * contain undefined values.
  *
- * {@code IExtent}s can be used as {@link ILocator locators} to address the value space of
- * observations.
+ * {@code IExtent}s can be used as {@link ILocator locators} to address the
+ * value space of observations.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface IExtent
-    extends ILocator, ITopology<IExtent>, Iterable<IExtent>, IGeometry.Dimension {
+public interface IExtent extends ILocator, ITopology<IExtent>, Iterable<IExtent>, IGeometry.Dimension {
 
-  /**
-   * Each extent must be able to return a worldview-dependent integer scale rank, usable to
-   * constrain model retrieval to specific scales. In spatial extents this corresponds to something
-   * like a "zoom level".
-   *
-   * The worldview defines this using numeric restrictions on the data property used to annotate
-   * scale constraints and establishes the range and granularity for the ranking.
-   *
-   * @return an integer summarizing the extent's size within the range covered by the worldview
-   */
-  int getScaleRank();
+	/**
+	 * A complete extent can be used in a scale to contextualize observations. An
+	 * incomplete one must be merged with others in a dataflow until the final scale
+	 * is complete.
+	 * 
+	 * @return
+	 */
+	public boolean isComplete();
 
-  /**
-   * Collapse the multiplicity and return the extent that represents the full extent of our topology
-   * in one single state. This extent may not be of the same class.
-   *
-   * @return a new extent with size() == 1.
-   */
-  IExtent collapse();
+	/**
+	 * Merge in another extent to complete what is incomplete in this one. This is
+	 * done recursively during resolution to establish the final scale for a
+	 * dataflow. Allows specifications with partially specified extents (where
+	 * {@link #isComplete()} returns false) to inform the scale of the final
+	 * contextualization.
+	 * 
+	 * @param extent
+	 */
+	public void merge(IExtent extent);
 
-  /**
-   * Return an extent of the same domainConcept that represents the merge of the two. The meaning of
-   * merging depends on the extent. It should accommodate partially specified extents, such as
-   * adding a grid resolution to a shape.
-   *
-   * TODO add LogicalConnector parameter and eliminate union/intersection.
-   *
-   * @param extent a {@link org.integratedmodelling.klab.api.observations.scale.IExtent} object.
-   * @return the merged extent
-   * @throws org.integratedmodelling.klab.exceptions.KlabException
-   */
-  IExtent merge(IExtent extent) throws KlabException;
+	/**
+	 * Each extent must be able to return a worldview-dependent integer scale rank,
+	 * usable to constrain model retrieval to specific scales. In spatial extents
+	 * this corresponds to something like a "zoom level".
+	 *
+	 * The worldview defines this using numeric restrictions on the data property
+	 * used to annotate scale constraints and establishes the range and granularity
+	 * for the ranking.
+	 *
+	 * @return an integer summarizing the extent's size within the range covered by
+	 *         the worldview
+	 */
+	int getScaleRank();
 
-  /**
-   * Return a double that describes the extent of this topological object. It should only be used to
-   * compare objects of the same type.
-   *
-   * @return the covered extent
-   */
-  double getCoveredExtent();
+	/**
+	 * Collapse the multiplicity and return the extent that represents the full
+	 * extent of our topology in one single state. This extent may not be of the
+	 * same class.
+	 *
+	 * @return a new extent with size() == 1.
+	 */
+	IExtent collapse();
 
-  /**
-   * If this extent specifies a larger portion of the topology than the modeled world contains,
-   * return a < 1.0 coverage. This can happen when the extent semantics constrains the
-   * representation - e.g. regular spatial grids covering more space than there actually is.
-   * Coverage = 0 should never happen as such extents should not be returned by any function.
-   *
-   * @return coverage in the range (0 1]
-   */
-  double getCoverage();
+	/**
+	 * Return a double that describes the extent of this topological object. It
+	 * should only be used to compare objects of the same type.
+	 *
+	 * @return the covered extent
+	 */
+	double getCoveredExtent();
 
-  /**
-   * Get a state mediator to the passed extent. If extent is incompatible return null; if no
-   * mediation is needed, return an identity mediator, which all implementations should provide.
-   * 
-   * @param extent the foreign extent to mediate to and from.
-   * @return the configured mediator or null
-   * @throw {@link IllegalArgumentException} if called improperly
-   */
-  public abstract IScaleMediator getMediator(IExtent extent);
+	/**
+	 * If this extent specifies a larger portion of the topology than the modeled
+	 * world contains, return a < 1.0 coverage. This can happen when the extent
+	 * semantics constrains the representation - e.g. regular spatial grids covering
+	 * more space than there actually is. Coverage = 0 should never happen as such
+	 * extents should not be returned by any function.
+	 *
+	 * @return coverage in the range (0 1]
+	 */
+	double getCoverage();
 
-  
-  /** {@inheritDoc} */
-  @Override
-  IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how);
+	/**
+	 * Get a state mediator to the passed extent. If extent is incompatible return
+	 * null; if no mediation is needed, return an identity mediator, which all
+	 * implementations should provide.
+	 * 
+	 * @param extent
+	 *            the foreign extent to mediate to and from.
+	 * @return the configured mediator or null
+	 * @throw {@link IllegalArgumentException} if called improperly
+	 */
+	public abstract IScaleMediator getMediator(IExtent extent);
+
+	/** {@inheritDoc} */
+	@Override
+	IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how);
 
 }

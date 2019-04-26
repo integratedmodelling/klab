@@ -62,7 +62,7 @@ public enum Interaction implements IInteractionService {
 		InteractiveParameter p = new InteractiveParameter();
 		p.setFunctionId(id + "/EXTERNAL");
 		p.setId(annotation.get("name", String.class));
-        p.setLabel(annotation.get("label", annotation.get("name", String.class)));
+		p.setLabel(annotation.get("label", annotation.get("name", String.class)));
 		p.setDescription(annotation.get("description", String.class));
 		p.setSectionTitle(annotation.get("sectiontitle", String.class));
 		p.setSectionDescription(annotation.get("sectiondescription", String.class));
@@ -83,10 +83,10 @@ public enum Interaction implements IInteractionService {
 			p.setLabel(prototype.getArgument(parameter).getLabel() + " for "
 					+ StringUtils.capitalize(observable.getLocalName().replaceAll("_", " ")));
 			p.setType(prototype.getArgument(parameter).getType());
-			
+
 			p.setSectionTitle(prototype.getLabel());
 			p.setSectionDescription(prototype.getDescription());
-			
+
 			if (annotation.contains(parameter)) {
 				p.setInitialValue(annotation.get(parameter) == null ? "unknown" : annotation.get(parameter).toString());
 				if (p.getType() == Type.VALUE) {
@@ -134,14 +134,22 @@ public enum Interaction implements IInteractionService {
 
 	/**
 	 * Submit the passed parameters, wait for a user's response which will directly
-	 * modify the the passed resources. Returns the annotation parameters, which cannot
-	 * be directly set into resources, as triples (annotationId, parameterId, value.toString).
+	 * modify the the passed resources. Returns the annotation parameters, which
+	 * cannot be directly set into resources, as triples (annotationId, parameterId,
+	 * value.toString).
+	 * 
+	 * This one <b>may return null</b> if the user has chosen to cancel the
+	 * computation. If instead the choice is to proceed with default, it will either
+	 * return an empty collection or all the field with their default values.
 	 * 
 	 * @param resources
 	 * @param fields
+	 * @return a collection of parameters, modified or their defaults. If null is
+	 *         returned, the user has asked to cancel the run.
 	 */
-	public Collection<Triple<String, String, String>> submitParameters(List<Pair<IComputableResource, List<String>>> resources,
-			List<InteractiveParameter> fields, ISession session) {
+	public Collection<Triple<String, String, String>> submitParameters(
+			List<Pair<IComputableResource, List<String>>> resources, List<InteractiveParameter> fields,
+			ISession session) {
 
 		UserInputRequest request = new UserInputRequest();
 		List<Triple<String, String, String>> ret = new ArrayList<>();
@@ -151,17 +159,25 @@ public enum Interaction implements IInteractionService {
 		 * at the client side for a single response.
 		 */
 		request.setRequestId(session.getId());
-		request.setSectionTitle("Dataflow is about to run: modify any parameters below.");
-		
+		request.setSectionTitle("Inspect and edit the dataflow user parameters before running");
+
 		try {
 			request.setDescription(
-					"The following parameters admit user input in interactive mode. Please submit the desired values.");
+					"The following parameters admit user input in interactive mode. Please inspect the default values and change them as required. "
+							+ " Press Submit Values to continue with the modified values, Use Defaults to proceed with the default values, or"
+							+ " Cancel Run to stop the computation.");
+			
 			request.getFields().addAll(fields);
 			IMessage resp = session.getMonitor()
 					.ask(IMessage.MessageClass.UserInterface, IMessage.Type.UserInputRequested, request).get();
 			Object payload = resp.getPayload(Object.class);
 			if (payload instanceof Map) {
 				UserInputResponse response = JsonUtils.convertMap((Map<?, ?>) payload, UserInputResponse.class);
+
+				if (response.isCancelRun()) {
+					return null;
+				}
+
 				for (String value : response.getValues().keySet()) {
 					String keys[] = value.split("/");
 					if (keys[0].startsWith("ann")) {
@@ -180,7 +196,7 @@ public enum Interaction implements IInteractionService {
 		} catch (Throwable e) {
 			session.getMonitor().error(e);
 		}
-		
+
 		return ret;
 	}
 

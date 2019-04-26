@@ -629,21 +629,22 @@ public class Scale implements IScale {
 	 */
 	public void mergeExtent(IExtent extent) {
 
-		IExtent merged = null;
-		int i = 0;
+		boolean merged = false;
+//		int i = 0;
 		for (IExtent e : extents) {
 			if (e.getType().equals(extent.getType())) {
-				merged = e.merge(extent);
+				merged = true;
+				e.merge(extent);
 				break;
 			}
-			i++;
+//			i++;
 		}
 
-		if (merged != null) {
-			extents.add(i, merged);
-			((AbstractExtent) merged).setScaleId(getScaleId());
-		} else {
-			extents.add(extent);
+		if (!merged) {
+//			extents.add(i, merged);
+//			((AbstractExtent) merged).setScaleId(getScaleId());
+//		} else {
+			extents.add((AbstractExtent)extent);
 			((AbstractExtent) extent).setScaleId(getScaleId());
 		}
 
@@ -1276,6 +1277,27 @@ public class Scale implements IScale {
 				return new SplIt(beginSplit + midOfs, end, monitor);
 			}
 			return null;
+		}
+	}
+
+	@Override
+	public boolean isComplete() {
+		for (IExtent extent : getExtents()) {
+			if (!extent.isComplete()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public void merge(IScale scale) {
+		for (IExtent extent : getExtents()) {
+			for (IExtent other : scale.getExtents()) {
+				if (extent.getType() == other.getType()) {
+					extent.merge(other);
+				}
+			}
 		}
 	}
 

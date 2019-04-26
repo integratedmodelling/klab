@@ -512,8 +512,8 @@ public class Grid extends Area implements IGrid {
 		}
 
 		@Override
-		public IExtent merge(IExtent extent) throws KlabException {
-			return getShape().merge(extent);
+		public void merge(IExtent extent) throws KlabException {
+			getShape().merge(extent);
 		}
 
 		@Override
@@ -668,6 +668,11 @@ public class Grid extends Area implements IGrid {
 		@Override
 		public double getStandardizedDistance(ISpace space) {
 		    return getShape().getStandardizedDistance(space.getShape());
+		}
+
+		@Override
+		public boolean isComplete() {
+			return true;
 		}
 	}
 
