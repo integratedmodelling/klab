@@ -39,8 +39,9 @@ public class StandaloneResourceBuilder extends ResourceBuilder {
 	 * 
 	 * @param dataset
 	 */
-	public void addFile(File dataset) {
+	public StandaloneResourceBuilder addFile(File dataset) {
 		getImportedFiles().add(dataset);
+		return this;
 	}
 
 	public IResource build(ISession session) {

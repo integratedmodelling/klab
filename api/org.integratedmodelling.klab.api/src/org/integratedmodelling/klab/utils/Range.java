@@ -23,6 +23,8 @@ public class Range implements IValueMediator {
     public Range() {
     }
 
+    
+    
     /**
      * Parse a range from the string representation.
      * 
@@ -377,6 +379,10 @@ public class Range implements IValueMediator {
         return new Range(start, end, false, rightOpen);
     }
 
+    public static Range create(String string) {
+        return new Range(string);
+    }
+    
     /**
      * Stretch one of the ends so that the passed value is the midpoint. If the midpoint
      * isn't in the range, return self.
@@ -405,9 +411,24 @@ public class Range implements IValueMediator {
         }
         
         return ret;
-
     }
 
+    public boolean contains(Range other) {
+        if (!lowerInfinite && !other.lowerInfinite && (lowerExclusive ? lowerBound >= other.lowerBound : lowerBound > other.lowerBound)) {
+            return false;
+        }
+        if (!upperInfinite && !other.upperInfinite && (upperExclusive ? upperBound <= other.upperBound : upperBound < other.upperBound)) {
+            return false;
+        }
+        if (!upperInfinite && other.upperInfinite) {
+            return false;
+        }
+        if (!lowerInfinite && other.lowerInfinite) {
+            return false;
+        }
+        return true;
+    }
+    
 	public boolean isWithin(double n) {
 		boolean left = lowerExclusive ? n > lowerBound : n >= lowerBound;
 		boolean right = upperExclusive ? n < upperBound : n <= upperBound;

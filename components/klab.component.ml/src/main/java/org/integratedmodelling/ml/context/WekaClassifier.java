@@ -42,7 +42,16 @@ public class WekaClassifier {
 		}
 	}
 
-	/**
+	public WekaClassifier(File localFile, boolean predictionIsProbabilistic) {
+	    try {
+            this.classifier = (Classifier) SerializationHelper.read(localFile.toString());
+            this.predictionIsProbabilistic = predictionIsProbabilistic;
+        } catch (Exception e) {
+            throw new KlabIOException(e);
+        }
+    }
+
+    /**
 	 * Train the model over a set of instances and evaluate the results. Set the
 	 * evaluation results into variables.
 	 * 
