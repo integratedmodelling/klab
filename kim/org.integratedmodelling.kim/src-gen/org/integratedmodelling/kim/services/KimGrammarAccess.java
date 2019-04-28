@@ -3964,6 +3964,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cModelReferenceAlternatives_1_0_0_0 = (Alternatives)cModelReferenceAssignment_1_0_0.eContents().get(0);
 		private final RuleCall cModelReferenceLOWERCASE_IDTerminalRuleCall_1_0_0_0_0 = (RuleCall)cModelReferenceAlternatives_1_0_0_0.eContents().get(0);
 		private final RuleCall cModelReferencePathNameParserRuleCall_1_0_0_0_1 = (RuleCall)cModelReferenceAlternatives_1_0_0_0.eContents().get(1);
+		private final RuleCall cModelReferenceUrnIdParserRuleCall_1_0_0_0_2 = (RuleCall)cModelReferenceAlternatives_1_0_0_0.eContents().get(2);
+		private final RuleCall cModelReferenceSTRINGTerminalRuleCall_1_0_0_0_3 = (RuleCall)cModelReferenceAlternatives_1_0_0_0.eContents().get(3);
 		private final Assignment cObservableAssignment_1_0_1 = (Assignment)cAlternatives_1_0.eContents().get(1);
 		private final RuleCall cObservableDependencyObservableSemanticsParserRuleCall_1_0_1_0 = (RuleCall)cObservableAssignment_1_0_1.eContents().get(0);
 		private final UnorderedGroup cUnorderedGroup_1_1 = (UnorderedGroup)cAlternatives_1.eContents().get(1);
@@ -3988,7 +3990,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cNameSTRINGTerminalRuleCall_1_1_1_1_0_1 = (RuleCall)cNameAlternatives_1_1_1_1_0.eContents().get(1);
 		
 		//Dependency:
-		//	annotations+=Annotation* ((modelReference=(LOWERCASE_ID | PathName) | observable=DependencyObservableSemantics) |
+		//	annotations+=Annotation* ((modelReference=(LOWERCASE_ID | PathName | UrnId | STRING) |
+		//	observable=DependencyObservableSemantics) |
 		//	'('
 		//	alternativeObservables+=AlternativeDependencyObservableSemantics (','
 		//	alternativeObservables+=AlternativeDependencyObservableSemantics)*
@@ -3996,8 +3999,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	'named' name=(LOWERCASE_ID | STRING));
 		@Override public ParserRule getRule() { return rule; }
 		
-		//annotations+=Annotation* ((modelReference=(LOWERCASE_ID | PathName) | observable=DependencyObservableSemantics) | '('
-		//alternativeObservables+=AlternativeDependencyObservableSemantics (','
+		//annotations+=Annotation* ((modelReference=(LOWERCASE_ID | PathName | UrnId | STRING) |
+		//observable=DependencyObservableSemantics) | '(' alternativeObservables+=AlternativeDependencyObservableSemantics (','
 		//alternativeObservables+=AlternativeDependencyObservableSemantics)* ')' (optional?='optional' | 'required')? & 'named'
 		//name=(LOWERCASE_ID | STRING))
 		public Group getGroup() { return cGroup; }
@@ -4008,19 +4011,19 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//Annotation
 		public RuleCall getAnnotationsAnnotationParserRuleCall_0_0() { return cAnnotationsAnnotationParserRuleCall_0_0; }
 		
-		//(modelReference=(LOWERCASE_ID | PathName) | observable=DependencyObservableSemantics) | '('
+		//(modelReference=(LOWERCASE_ID | PathName | UrnId | STRING) | observable=DependencyObservableSemantics) | '('
 		//alternativeObservables+=AlternativeDependencyObservableSemantics (','
 		//alternativeObservables+=AlternativeDependencyObservableSemantics)* ')' (optional?='optional' | 'required')? & 'named'
 		//name=(LOWERCASE_ID | STRING)
 		public Alternatives getAlternatives_1() { return cAlternatives_1; }
 		
-		//(modelReference=(LOWERCASE_ID | PathName) | observable=DependencyObservableSemantics)
+		//(modelReference=(LOWERCASE_ID | PathName | UrnId | STRING) | observable=DependencyObservableSemantics)
 		public Alternatives getAlternatives_1_0() { return cAlternatives_1_0; }
 		
-		//modelReference=(LOWERCASE_ID | PathName)
+		//modelReference=(LOWERCASE_ID | PathName | UrnId | STRING)
 		public Assignment getModelReferenceAssignment_1_0_0() { return cModelReferenceAssignment_1_0_0; }
 		
-		//(LOWERCASE_ID | PathName)
+		//(LOWERCASE_ID | PathName | UrnId | STRING)
 		public Alternatives getModelReferenceAlternatives_1_0_0_0() { return cModelReferenceAlternatives_1_0_0_0; }
 		
 		//LOWERCASE_ID
@@ -4028,6 +4031,12 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//PathName
 		public RuleCall getModelReferencePathNameParserRuleCall_1_0_0_0_1() { return cModelReferencePathNameParserRuleCall_1_0_0_0_1; }
+		
+		//UrnId
+		public RuleCall getModelReferenceUrnIdParserRuleCall_1_0_0_0_2() { return cModelReferenceUrnIdParserRuleCall_1_0_0_0_2; }
+		
+		//STRING
+		public RuleCall getModelReferenceSTRINGTerminalRuleCall_1_0_0_0_3() { return cModelReferenceSTRINGTerminalRuleCall_1_0_0_0_3; }
 		
 		//observable=DependencyObservableSemantics
 		public Assignment getObservableAssignment_1_0_1() { return cObservableAssignment_1_0_1; }
@@ -10676,7 +10685,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Dependency:
-	//	annotations+=Annotation* ((modelReference=(LOWERCASE_ID | PathName) | observable=DependencyObservableSemantics) |
+	//	annotations+=Annotation* ((modelReference=(LOWERCASE_ID | PathName | UrnId | STRING) |
+	//	observable=DependencyObservableSemantics) |
 	//	'('
 	//	alternativeObservables+=AlternativeDependencyObservableSemantics (','
 	//	alternativeObservables+=AlternativeDependencyObservableSemantics)*

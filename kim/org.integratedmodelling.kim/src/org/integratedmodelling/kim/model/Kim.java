@@ -77,6 +77,7 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.Range;
+import org.integratedmodelling.klab.utils.StringUtils;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -305,9 +306,18 @@ public enum Kim {
 
 		private int flags = 0;
 		private String documentation;
+        List<Pair<String, IArtifact.Type>> dependencies = new ArrayList<>();
 
 		public UrnDescriptor(int flags) {
 			this.flags = flags;
+		}
+		
+		public Collection<Pair<String, IArtifact.Type>> getDependencies() {
+		    return dependencies;
+		}
+		
+		public void addDependency(String name, IArtifact.Type type) {
+		    dependencies.add(new Pair<>(name, type));
 		}
 
 		public UrnDescriptor(int flags, String documentation) {
@@ -1315,6 +1325,9 @@ public enum Kim {
 		if (model == null && namespace.getSymbolTable().containsKey(string)
 				&& namespace.getSymbolTable().get(string) instanceof IKimModel) {
 			model = (IKimModel) namespace.getSymbolTable().get(string);
+		}
+		if (model == null && StringUtils.countMatches(string, ":") >= 3) {
+		    // URN - TODO support it: add a new KimModel that only observers the URN.
 		}
 		return model == null ? null : (KimObservable) model.getObservables().get(0);
 	}

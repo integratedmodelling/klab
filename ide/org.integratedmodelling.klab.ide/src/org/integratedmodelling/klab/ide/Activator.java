@@ -43,6 +43,7 @@ import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigatorActions;
 import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.rest.AttributeReference;
 import org.integratedmodelling.klab.rest.ProjectLoadRequest;
 import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -114,6 +115,11 @@ public class Activator extends AbstractUIPlugin {
 							ret.setError();
 						} else if (resource.isOnline()) {
 							ret.setOnline();
+						}
+						if (resource.getDependencies() != null) {
+						    for (AttributeReference dependency : resource.getDependencies()) {
+						        ret.addDependency(dependency.getName(), dependency.getType());
+						    }
 						}
 					}
 				}

@@ -340,7 +340,7 @@ AnnotatedObservableSemantics returns ObservableSemantics:
 Dependency:
 	annotations += Annotation*
 	((
-		modelReference=(LOWERCASE_ID|PathName) |
+		modelReference=(LOWERCASE_ID|PathName|UrnId|STRING) |
 		observable=DependencyObservableSemantics
 	) |
 	(

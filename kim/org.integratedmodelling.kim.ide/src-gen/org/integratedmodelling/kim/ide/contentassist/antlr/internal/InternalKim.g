@@ -4002,6 +4002,18 @@ rule__Dependency__ModelReferenceAlternatives_1_0_0_0
 		rulePathName
 		{ after(grammarAccess.getDependencyAccess().getModelReferencePathNameParserRuleCall_1_0_0_0_1()); }
 	)
+	|
+	(
+		{ before(grammarAccess.getDependencyAccess().getModelReferenceUrnIdParserRuleCall_1_0_0_0_2()); }
+		ruleUrnId
+		{ after(grammarAccess.getDependencyAccess().getModelReferenceUrnIdParserRuleCall_1_0_0_0_2()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getDependencyAccess().getModelReferenceSTRINGTerminalRuleCall_1_0_0_0_3()); }
+		RULE_STRING
+		{ after(grammarAccess.getDependencyAccess().getModelReferenceSTRINGTerminalRuleCall_1_0_0_0_3()); }
+	)
 ;
 finally {
 	restoreStackSize(stackSize);

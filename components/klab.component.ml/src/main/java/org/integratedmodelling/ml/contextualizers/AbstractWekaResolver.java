@@ -13,7 +13,6 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Version;
-import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -54,6 +53,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
     protected boolean        predictionIsProbabilistic;
     private boolean          admitsNodata;
     private String           resourceId                 = null;
+    private String           learnedGeometry            = null;
 
     protected AbstractWekaResolver() {
     }
@@ -68,6 +68,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
         this.rawInstancesExport = parameters.get("rawinstances", String.class);
         this.admitsNodata = admitsNodata;
         this.resourceId = parameters.get("resource", String.class);
+        this.learnedGeometry = parameters.get("geometry", String.class);
     }
 
     @Override
@@ -151,6 +152,46 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
         return ret;
     }
 
+    private void setValue(WekaInstances instances, ILocator locator, Object prediction, IState target, @Nullable IState uncertainty) {
+
+        if (prediction instanceof double[]) {
+
+            // predicted state must be discretized
+            // FIXME this could be a categorical state without discretization
+            EnumeratedRealDistribution distribution = new EnumeratedRealDistribution(instances
+                    .getPredictedDiscretization().getMidpoints(), (double[]) prediction);
+
+            if (target.getObservable().getArtifactType() == IArtifact.Type.NUMBER) {
+                target.set(locator, distribution.getNumericalMean());
+            } else {
+                // find the most likely class
+                int val = NumberUtils.indexOfLargest((double[]) prediction);
+                if (target.getObservable().getArtifactType() == IArtifact.Type.BOOLEAN) {
+                    target.set(locator, val == 0 ? Boolean.FALSE : Boolean.TRUE);
+                } else if (target.getObservable().getArtifactType() == IArtifact.Type.CONCEPT) {
+                    target.set(locator, target.getDataKey().lookup(val));
+                }
+            }
+
+            if (uncertainty != null) {
+                // TODO categorical distribution should use Shannon - redo with original
+                // distribution
+                uncertainty.set(locator, Math.sqrt(distribution.getNumericalVariance())
+                        / distribution.getNumericalMean());
+            }
+
+        } else {
+            if (target.getObservable().getArtifactType() == IArtifact.Type.NUMBER) {
+                target.set(locator, prediction);
+            } else if (target.getObservable().getArtifactType() == IArtifact.Type.BOOLEAN) {
+                target.set(locator, ((Number) prediction).intValue() == 0 ? Boolean.FALSE : Boolean.TRUE);
+            } else if (target.getObservable().getArtifactType() == IArtifact.Type.CONCEPT) {
+                target.set(locator, target.getDataKey().lookup(((Number) prediction).intValue()));
+            }
+
+        }
+    }
+
     private IResource buildResource(WekaInstances instances, IComputationContext context) {
 
         if (resourceId == null) {
@@ -168,17 +209,29 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
          */
         Scale scale = ((Scale) ((IRuntimeContext) context).getDataflow().getCoverage());
         Geometry geometry = null;
-        if (scale != null) {
-            geometry = scale.asGeometry();
+        if (learnedGeometry != null) {
+            if ("coverage".equals(learnedGeometry)) {
+                if (scale != null) {
+                    geometry = scale.asGeometry();
+                } else {
+                    GeometryBuilder gb = Geometry.builder();
+                    if (context.getScale().getSpace() != null) {
+                        gb.space().generic();
+                    }
+                    if (context.getScale().getTime() != null) {
+                        gb.time().generic();
+                    }
+                    geometry = gb.build();
+                }
+            } else {
+                geometry = Geometry.create(learnedGeometry);
+            }
         } else {
-            GeometryBuilder gb = Geometry.builder();
-            if (context.getScale().getSpace() != null) {
-                gb.space().generic();
-            }
-            if (context.getScale().getTime() != null) {
-                gb.time().generic();
-            }
-            geometry = gb.build();
+            /*
+             * default: cover the learning context, using same geometry minus resolution and shape if any.
+             */
+            geometry = ((Scale) context.getScale()).asGeometry().withGridResolution(null)
+                    .withTemporalResolution(null).withShape(null);
         }
 
         StandaloneResourceBuilder builder = new StandaloneResourceBuilder(project, resourceId);
@@ -204,9 +257,10 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
             StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
 
             builder
-                .withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name()
-                                        + ".range"), "[" + summary.getRange().get(0) + ","
-                    + summary.getRange().get(1) + "]");
+                    .withParameter(predicted ? "predicted.range"
+                            : ("predictor." + attribute.name()
+                                    + ".range"), "[" + summary.getRange().get(0) + ","
+                                            + summary.getRange().get(1) + "]");
 
             DiscretizerDescriptor descriptor = instances.getDiscretization(attribute.name());
             if (descriptor != null) {
@@ -273,46 +327,6 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
          * build the resource using the session to notify clients.
          */
         return builder.build(context.getMonitor().getIdentity().getParentIdentity(ISession.class));
-    }
-
-    private void setValue(WekaInstances instances, ILocator locator, Object prediction, IState target, @Nullable IState uncertainty) {
-
-        if (prediction instanceof double[]) {
-
-            // predicted state must be discretized
-            // FIXME this could be a categorical state without discretization
-            EnumeratedRealDistribution distribution = new EnumeratedRealDistribution(instances
-                    .getPredictedDiscretization().getMidpoints(), (double[]) prediction);
-
-            if (target.getObservable().getArtifactType() == IArtifact.Type.NUMBER) {
-                target.set(locator, distribution.getNumericalMean());
-            } else {
-                // find the most likely class
-                int val = NumberUtils.indexOfLargest((double[]) prediction);
-                if (target.getObservable().getArtifactType() == IArtifact.Type.BOOLEAN) {
-                    target.set(locator, val == 0 ? Boolean.FALSE : Boolean.TRUE);
-                } else if (target.getObservable().getArtifactType() == IArtifact.Type.CONCEPT) {
-                    target.set(locator, target.getDataKey().lookup(val));
-                }
-            }
-
-            if (uncertainty != null) {
-                // TODO categorical distribution should use Shannon - redo with original
-                // distribution
-                uncertainty.set(locator, Math.sqrt(distribution.getNumericalVariance())
-                        / distribution.getNumericalMean());
-            }
-
-        } else {
-            if (target.getObservable().getArtifactType() == IArtifact.Type.NUMBER) {
-                target.set(locator, prediction);
-            } else if (target.getObservable().getArtifactType() == IArtifact.Type.BOOLEAN) {
-                target.set(locator, ((Number) prediction).intValue() == 0 ? Boolean.FALSE : Boolean.TRUE);
-            } else if (target.getObservable().getArtifactType() == IArtifact.Type.CONCEPT) {
-                target.set(locator, target.getDataKey().lookup(((Number) prediction).intValue()));
-            }
-
-        }
     }
 
 }

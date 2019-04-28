@@ -27,9 +27,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Implemented WEKA "save to resource" behavior and encoder for WEKA resource.
+- Add a StandaloneResourceBuilder for easy programmatic construction of resources.
+- Model docstring is used to create default section descriptions with interactive model 
+  parameters provided through @parameter annotation. Also now available as rdfs:comment
+  in model metadata.
 ### Changed
+- Resources now can have dependencies as well as attributes.
+- Geometry admits 'generic' extents using Greek letters and has a GeometryBuilder to
+  ease creation.
+- Scale and extent have uniform merge() methods and isGeneric() to check for generic
+  definitions, which will be compounded to potentially redefine scales.
 ### Fixed
-
+- Resource deletion, addition and update now refresh the Eclipse environment correctly.
+- Improved resource editor (better time widget, support for dependencies, hierarchical
+  editing of properties).
+  
 ## [0.10.0.154] -- 2019/04/23
 ### Added
 - Add and support 'monetary' qualifier to 'value of' semantic operator also to enable validation 

@@ -21,6 +21,8 @@ import org.integratedmodelling.kim.kim.ComputableValue;
 import org.integratedmodelling.kim.kim.Table;
 import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.kim.ValueAssignment;
+import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
+import org.integratedmodelling.kim.model.Kim.Validator;
 import org.integratedmodelling.klab.Services;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
@@ -401,6 +403,12 @@ public class ComputableResource extends KimStatement implements IComputableResou
             } else if (getLookupTable() != null) {
                 for (String arg : lookupTable.getArguments()) {
                     requiredResourceNames.add(new Pair<>(arg, Type.VALUE));
+                }
+            } else if (getUrn() != null) {
+                Validator validator = Kim.INSTANCE.getValidator();
+                if (validator != null) {
+                    UrnDescriptor urnd = validator.classifyUrn(getUrn());
+                    requiredResourceNames.addAll(urnd.getDependencies());
                 }
             }
         }

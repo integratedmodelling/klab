@@ -6981,6 +6981,37 @@ ruleDependency returns [EObject current=null]
 									"org.integratedmodelling.kim.Kim.PathName");
 								afterParserOrEnumRuleCall();
 							}
+							    |
+							{
+								newCompositeNode(grammarAccess.getDependencyAccess().getModelReferenceUrnIdParserRuleCall_1_0_0_0_2());
+							}
+							lv_modelReference_1_3=ruleUrnId
+							{
+								if ($current==null) {
+									$current = createModelElementForParent(grammarAccess.getDependencyRule());
+								}
+								set(
+									$current,
+									"modelReference",
+									lv_modelReference_1_3,
+									"org.integratedmodelling.kim.Kim.UrnId");
+								afterParserOrEnumRuleCall();
+							}
+							    |
+							lv_modelReference_1_4=RULE_STRING
+							{
+								newLeafNode(lv_modelReference_1_4, grammarAccess.getDependencyAccess().getModelReferenceSTRINGTerminalRuleCall_1_0_0_0_3());
+							}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getDependencyRule());
+								}
+								setWithLastConsumed(
+									$current,
+									"modelReference",
+									lv_modelReference_1_4,
+									"org.eclipse.xtext.common.Terminals.STRING");
+							}
 						)
 					)
 				)
