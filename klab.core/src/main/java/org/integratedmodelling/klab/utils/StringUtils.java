@@ -617,4 +617,8 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
         return ret;
     }
 
+	public static String beautify(String predictor) {
+		return capitalize(predictor.replaceAll("_", " "));
+	}
+
 }

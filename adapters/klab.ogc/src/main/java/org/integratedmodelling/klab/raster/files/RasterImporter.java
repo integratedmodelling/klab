@@ -100,6 +100,7 @@ public class RasterImporter extends AbstractFilesetImporter {
     @Override
     public Map<String, String> getExportCapabilities(IResource resource) {
         Map<String, String> ret = new HashMap<>();
+        ret.put("tiff", "GeoTiff");
         return ret;
     }
 

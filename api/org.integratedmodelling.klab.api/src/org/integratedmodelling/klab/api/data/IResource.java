@@ -22,6 +22,7 @@ import java.util.Map;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
+import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -154,6 +155,17 @@ public interface IResource extends Serializable {
 	 * @return the type
 	 */
 	IArtifact.Type getType();
+
+	/**
+	 * Each resource may admit specific export formats within those supported by its
+	 * adapter, so the resource must be able to list them. The format is the same as
+	 * {@link IResourceImporter#getExportCapabilities(IResource)}. This is
+	 * replicated here to allow clients to provide export options without having to
+	 * consult the adapter's API.
+	 * 
+	 * @return
+	 */
+	Map<String,String> getExports();
 
 	/**
 	 * The descriptor for each attribute. Not much at the moment.

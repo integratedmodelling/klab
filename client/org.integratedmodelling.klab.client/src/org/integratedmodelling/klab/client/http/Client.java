@@ -294,7 +294,10 @@ public class Client extends RestTemplate {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM));
 		// headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
-
+		if (authToken != null) {
+			headers.set(HttpHeaders.WWW_AUTHENTICATE, authToken);
+		}
+		
 		HttpEntity<String> entity = new HttpEntity<String>(headers);
 
 		// HttpHeaders headers = new HttpHeaders();
@@ -308,6 +311,7 @@ public class Client extends RestTemplate {
 		case 403:
 			throw new KlabAuthorizationException("unauthorized request " + url + endpoint);
 		case 404:
+		case 406:
 			throw new IllegalStateException("internal: request " + url + endpoint + " was not accepted");
 		}
 

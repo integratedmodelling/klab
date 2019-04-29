@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.data.storage;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -166,6 +167,11 @@ public class FutureResource implements IResource, Future<IResource> {
 	@Override
 	public Collection<Attribute> getDependencies() {
 		return  getDelegate(timeout).getDependencies();
+	}
+
+	@Override
+	public Map<String, String> getExports() {
+		return getDelegate(timeout).getExports();
 	}
 
 }

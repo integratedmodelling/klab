@@ -173,6 +173,7 @@ public class Klab {
 			// just continue; this execs in a pretty controlled sandbox so it shouldn't happen
 		}
 		KlabNavigator.refresh();
+		Eclipse.INSTANCE.refreshOpenEditors();
 		Eclipse.INSTANCE.notification("New resource imported",
 				"The resource with URN " + resource.getUrn()
 						+ " is now available and online. It can be referenced within the " + resource.getProjectName()
@@ -196,6 +197,7 @@ public class Klab {
 			// just continue; this execs in a pretty controlled sandbox so it shouldn't happen
 		}
 		KlabNavigator.refresh();
+		Eclipse.INSTANCE.refreshOpenEditors();
 		Eclipse.INSTANCE.notification("Resource updated",
 				"The resource with URN " + resource.getUrn() + " was updated by the engine.");
 	}
@@ -212,6 +214,7 @@ public class Klab {
 			// just continue; this execs in a pretty controlled sandbox so it shouldn't happen
 		}
 		KlabNavigator.refresh();
+		Eclipse.INSTANCE.refreshOpenEditors();
 		Eclipse.INSTANCE.notification("Resource deleted", "The resource with URN " + resource.getUrn()
 				+ " was deleted from project " + resource.getProjectName());
 	}
@@ -282,6 +285,7 @@ public class Klab {
 
 	public void resetCompileNotifications(String namespaceId) {
 		compileInfo.put(namespaceId, new CompileInfo());
+		Eclipse.INSTANCE.refreshOpenEditors();
 	}
 
 	public void recordCompileNotification(CompileNotificationReference inot) {

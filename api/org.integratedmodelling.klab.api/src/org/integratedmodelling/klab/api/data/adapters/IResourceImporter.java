@@ -11,6 +11,12 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.utils.Triple;
 
+/**
+ * Handles import and export for a resource.
+ * 
+ * @author ferdinando.villa
+ *
+ */
 public interface IResourceImporter {
 
     /**
@@ -64,9 +70,11 @@ public interface IResourceImporter {
 
     /**
      * Return a map of ID/Description for all the formats of file export that
-     * this adapter supports for the passed resource.
+     * this adapter supports for the passed resource. Pass a null resource to
+     * obtain export formats that are valid for any (viable) resource for this
+     * adapter.
      * 
-     * @param observation
+     * @param observation or null. If null, this method must return all universal export formats.
      * @return
      */
     Map<String, String> getExportCapabilities(IResource resource);

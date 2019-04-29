@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.rest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +29,7 @@ public class ResourceReference {
 	private List<AttributeReference> attributes = new ArrayList<>();
 	private SpatialExtent spatialExtent;
 	private List<AttributeReference> dependencies = null;
+	private Map<String, String> exportFormats = new LinkedHashMap<>();
 
 	public ResourceReference() {
 	}
@@ -50,6 +52,7 @@ public class ResourceReference {
 		this.notifications.addAll(other.notifications);
 		this.attributes.addAll(other.attributes);
 		this.dependencies = other.dependencies == null ? null : new ArrayList<>(other.dependencies);
+		this.exportFormats.putAll(other.exportFormats);
 	}
 
 	public String getUrn() {
@@ -186,6 +189,14 @@ public class ResourceReference {
 
 	public void setDependencies(List<AttributeReference> dependencies) {
 		this.dependencies = dependencies;
+	}
+
+	public Map<String, String> getExportFormats() {
+		return exportFormats;
+	}
+
+	public void setExportFormats(Map<String, String> exportFormats) {
+		this.exportFormats = exportFormats;
 	}
 
 }

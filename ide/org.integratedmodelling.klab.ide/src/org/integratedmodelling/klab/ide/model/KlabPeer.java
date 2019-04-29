@@ -96,5 +96,9 @@ public class KlabPeer {
 			this.registration.unregister();
 		}
 	}
+	
+	public String getIdentity() {
+		return identity;
+	}
 
 }

@@ -18,6 +18,7 @@ package org.integratedmodelling.klab.data.resources;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -88,11 +89,14 @@ public class Resource implements IResource {
     List<Attribute>           dependencies     = new ArrayList<>();
     String                    projectName;
     String                    localName;
+    // copied from adapter at creation
+    private Map<String, String> exports = new LinkedHashMap<>();
     // for display in resource descriptors
     SpatialExtent             spatialExtent;
 
     // folder where all the resource files were uploaded, only for the publisher
     File                      uploadFolder     = null;
+
 
     public Resource(ResourceReference reference) {
 
@@ -108,7 +112,8 @@ public class Resource implements IResource {
         this.localName = reference.getLocalName();
         this.spatialExtent = reference.getSpatialExtent();
         this.attributes.addAll(reference.getAttributes());
-
+        this.exports.putAll(reference.getExportFormats());
+        
         for (ResourceReference ref : reference.getHistory()) {
             this.history.add(ref);
         }
@@ -143,7 +148,8 @@ public class Resource implements IResource {
         ret.setLocalName(getLocalName());
         ret.setType(this.type);
         ret.setSpatialExtent(spatialExtent);
-
+        ret.getExportFormats().putAll(this.getExports());
+        
         for (ResourceReference h : this.history) {
             ret.getHistory().add(h);
         }
@@ -425,5 +431,10 @@ public class Resource implements IResource {
         return null;
 
     }
+
+	@Override
+	public Map<String, String> getExports() {
+		return exports;
+	}
 
 }

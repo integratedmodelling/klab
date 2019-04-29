@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.rest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ResourceAdapterReference {
 
 	private String name;
@@ -7,6 +10,7 @@ public class ResourceAdapterReference {
 	private String label;
 	private ServicePrototype parameters;
 	private boolean fileBased;
+	private Map<String, String> exportCapabilities = new HashMap<>();
 
 	public ServicePrototype getParameters() {
 		return parameters;
@@ -46,5 +50,13 @@ public class ResourceAdapterReference {
 
 	public void setFileBased(boolean fileBased) {
 		this.fileBased = fileBased;
+	}
+
+	public Map<String, String> getExportCapabilities() {
+		return exportCapabilities;
+	}
+
+	public void setExportCapabilities(Map<String, String> exportCapabilities) {
+		this.exportCapabilities = exportCapabilities;
 	}
 }

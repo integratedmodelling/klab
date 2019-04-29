@@ -87,6 +87,10 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 				(resource) -> KlabNavigatorActions.moveResource(resource));
 		action("Delete resource", "Delete the selected resource", "resource.gif", EResource.class,
 				(resource) -> KlabNavigatorActions.deleteResource(resource));
+		action("Export resource", "Export the selected resource", "resource.gif", EResource.class,
+				(resource) -> KlabNavigatorActions.exportResource(resource)).activate((resource) -> {
+					return !((EResource) resource).getExportFormats().isEmpty();
+				});
 		action("Edit documentation", "Edit the documentation for this model", "documentation.gif", EModel.class,
 				(model) -> KlabNavigatorActions.editDocumentation(model)).activate((model) -> model.isDocumented());
 		action("Edit documentation", "Edit the documentation for this item", "documentation.gif", EDefinition.class,

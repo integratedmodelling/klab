@@ -12,9 +12,6 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.PlatformUI;
-import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
@@ -39,6 +36,11 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource resource = delta.getResource();
+
+			// TODO if it's a k.LAB resource, we must re-read the relevant resource list.
+			// This may happen at git pull for example. Some cases are taken care of by the 
+			// loader and installed callbacks, others aren't.
+
 			switch (delta.getKind()) {
 			case IResourceDelta.ADDED:
 				System.out.println("ADDED: " + delta);
@@ -80,46 +82,46 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 		}
 	}
 
-	class XMLErrorHandler extends DefaultHandler {
-
-		private IFile file;
-
-		public XMLErrorHandler(IFile file) {
-			this.file = file;
-		}
-
-		private void addMarker(SAXParseException e, int severity) {
-			KlabBuilder.this.addMarker(file, e.getMessage(), e.getLineNumber(), severity);
-		}
-
-		public void error(SAXParseException exception) throws SAXException {
-			addMarker(exception, IMarker.SEVERITY_ERROR);
-		}
-
-		public void fatalError(SAXParseException exception) throws SAXException {
-			addMarker(exception, IMarker.SEVERITY_ERROR);
-		}
-
-		public void warning(SAXParseException exception) throws SAXException {
-			addMarker(exception, IMarker.SEVERITY_WARNING);
-		}
-	}
-
+//	class XMLErrorHandler extends DefaultHandler {
+//
+//		private IFile file;
+//
+//		public XMLErrorHandler(IFile file) {
+//			this.file = file;
+//		}
+//
+//		private void addMarker(SAXParseException e, int severity) {
+//			KlabBuilder.this.addMarker(file, e.getMessage(), e.getLineNumber(), severity);
+//		}
+//
+//		public void error(SAXParseException exception) throws SAXException {
+//			addMarker(exception, IMarker.SEVERITY_ERROR);
+//		}
+//
+//		public void fatalError(SAXParseException exception) throws SAXException {
+//			addMarker(exception, IMarker.SEVERITY_ERROR);
+//		}
+//
+//		public void warning(SAXParseException exception) throws SAXException {
+//			addMarker(exception, IMarker.SEVERITY_WARNING);
+//		}
+//	}
+//
 	private static final String MARKER_TYPE = "org.integratedmodelling.klab.ide.builder.klabProblem";
-
-	private void addMarker(IFile file, String message, int lineNumber, int severity) {
-		try {
-			System.out.println("Adding custom marker: " + file + ":" + lineNumber + ":" + message);
-			IMarker marker = file.createMarker(MARKER_TYPE);
-			marker.setAttribute(IMarker.MESSAGE, message);
-			marker.setAttribute(IMarker.SEVERITY, severity);
-			if (lineNumber == -1) {
-				lineNumber = 1;
-			}
-			marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
-		} catch (CoreException e) {
-		}
-	}
+//
+//	private void addMarker(IFile file, String message, int lineNumber, int severity) {
+//		try {
+//			System.out.println("Adding custom marker: " + file + ":" + lineNumber + ":" + message);
+//			IMarker marker = file.createMarker(MARKER_TYPE);
+//			marker.setAttribute(IMarker.MESSAGE, message);
+//			marker.setAttribute(IMarker.SEVERITY, severity);
+//			if (lineNumber == -1) {
+//				lineNumber = 1;
+//			}
+//			marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
+//		} catch (CoreException e) {
+//		}
+//	}
 
 	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
@@ -141,7 +143,7 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 		// delete markers set and files created
 		getProject().deleteMarkers(MARKER_TYPE, true, IResource.DEPTH_INFINITE);
 	}
-	
+
 	protected void fullBuild(final IProgressMonitor monitor) throws CoreException {
 		try {
 			getProject().accept(new SampleResourceVisitor());

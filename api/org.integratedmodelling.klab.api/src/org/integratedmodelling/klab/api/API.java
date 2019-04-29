@@ -58,6 +58,23 @@ import org.integratedmodelling.klab.monitoring.Message;
  */
 public interface API {
 
+	/**
+	 * Use to simply substitute parameters in URLs.
+	 * 
+	 * @param template
+	 * @param kvp
+	 * @return
+	 */
+	public static String url(String template, String ... kvp) {
+		String ret = template;
+		if (kvp != null) {
+			for (int i = 0; i < kvp.length; i++) {
+				ret = template.replace(kvp[i], kvp[++i]);
+			}
+		}
+		return ret;
+	}
+	
 	/** Parameter: the URN being resolved in any endpoints that access resources. */
 	public static final String P_URN = "{urn}";
 
@@ -188,6 +205,15 @@ public interface API {
 			 * <b>Authentication:</b> session
 			 */
 			public static final String UPLOAD_URN = "/resource/put";
+			
+			/**
+			 * Export a resource.
+			 * <p>
+			 * <b>Protocol:</b> GET <br/>
+			 * <b>Response type:</b> No response <br/>
+			 * <b>Authentication:</b> session
+			 */
+			public static final String EXPORT_URN = "/resource/export/" + P_URN; 
 
 			/**
 			 * Get URN data for passed URN. Includes expiration to control cacheing.

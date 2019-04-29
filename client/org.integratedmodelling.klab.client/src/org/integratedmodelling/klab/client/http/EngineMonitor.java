@@ -207,4 +207,8 @@ public class EngineMonitor {
         return this.capabilities;
     }
 
+	public Client getClient() {
+		return this.client;
+	}
+
 }

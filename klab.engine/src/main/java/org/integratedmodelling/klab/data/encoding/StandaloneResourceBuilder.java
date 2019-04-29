@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
@@ -68,7 +69,7 @@ public class StandaloneResourceBuilder extends ResourceBuilder {
 			this.addLocalResourcePath(
 					project.getName() + "/resources/" + getResourceId() + "/" + MiscUtilities.getFileName(file));
 		}
-
+		
 		return ((Session) session).registerResource(super.build(resourceUrn));
 
 	}

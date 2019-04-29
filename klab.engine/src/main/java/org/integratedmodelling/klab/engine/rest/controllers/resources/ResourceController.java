@@ -1,11 +1,16 @@
 package org.integratedmodelling.klab.engine.rest.controllers.resources;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
@@ -18,7 +23,6 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
-import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.engine.rest.controllers.engine.EngineSessionController;
@@ -28,9 +32,11 @@ import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -114,15 +120,55 @@ public class ResourceController {
 							? (ISubject) ((ObservationGroup) data.getSecond()).iterator().next()
 							: (ISubject) data.getFirst();
 
-			Observer observer = Observations.INSTANCE.makeROIObserver((Shape)ret.getScale().getSpace().getShape(), null, session.getMonitor());
+			Observer observer = Observations.INSTANCE.makeROIObserver((Shape) ret.getScale().getSpace().getShape(),
+					null, session.getMonitor());
 			try {
-				new ObserveContextTask((Session)session, observer, new ArrayList<>()).get();
+				new ObserveContextTask((Session) session, observer, new ArrayList<>()).get();
 			} catch (InterruptedException | ExecutionException e) {
 				session.getMonitor().error(e);
 			}
 		}
 
 		return new ResponseEntity<HttpStatus>(HttpStatus.OK);
+	}
+
+	@RequestMapping(value = API.NODE.RESOURCE.EXPORT_URN, method = RequestMethod.GET)
+	public void getObservationData(Principal principal, @PathVariable String urn, @RequestParam String outputFormat,
+			HttpServletResponse response) throws Exception {
+
+		File output = File.createTempFile("klab", ".resource");
+		IResource resource = Resources.INSTANCE.resolveResource(urn);
+
+		if (resource == null) {
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Resource " + urn + " does not exist");
+		}
+
+		if (resource.hasErrors()) {
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+					"Resource " + urn + " has errors and cannot be exported");
+		}
+
+		IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
+
+		if (adapter == null) {
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+					"Resource " + urn + " cannot be exported: adapter type not found");
+		}
+
+		/*
+		 * go for it
+		 */
+		if (adapter.getImporter().exportResource(output, resource, outputFormat)) {
+
+			response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+			try (InputStream in = new FileInputStream(output)) {
+				IOUtils.copy(in, response.getOutputStream());
+			}
+		} else {
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+					"Export of resource " + urn + " failed.");
+		}
+
 	}
 
 }

@@ -300,7 +300,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
             File clmodel = File.createTempFile("classifier", ".bin");
 
             instances.export(dataset, false);
-            instances.export(dataraw, false);
+            instances.export(dataraw, true);
             classifier.export(clmodel);
 
             builder
@@ -309,7 +309,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
                     .addFile(clmodel)
                     .withParameter("classifier.file", MiscUtilities.getFileName(clmodel))
                     .withParameter("instances.file", MiscUtilities.getFileName(dataset))
-                    .withParameter("rawinstances.file", MiscUtilities.getFileName(dataraw));
+                    .withParameter("instances.file.raw", MiscUtilities.getFileName(dataraw));
 
             /*
              * TODO add all metadata including those about the training, execution,

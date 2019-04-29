@@ -1,8 +1,11 @@
 package org.integratedmodelling.klab.ide.navigator.model.beans;
 
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
+import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ResourceReference;
 
@@ -17,6 +20,7 @@ public class EResourceReference extends ResourceReference {
 	private boolean online;
 	private boolean error;
 	private boolean authorized;
+	private Map<String, String> formats = new LinkedHashMap<>();
 	
 	public EResourceReference() {
 	}
@@ -30,6 +34,7 @@ public class EResourceReference extends ResourceReference {
 		        error = true;
 		    }
 		}
+		this.formats.putAll(other.getExportFormats());
 	}
 	
 	public EResourceReference(ResourceReference other, boolean online) {
@@ -60,6 +65,14 @@ public class EResourceReference extends ResourceReference {
 		return !authorized;
 	}
 	
-	
+    public Map<String, String> getExportFormats() {
+    	Map<String, String> ret = new LinkedHashMap<>();
+    	if (formats.isEmpty()) {
+    		ret.putAll(Activator.klab().getResourceAdapter(getAdapterType()).getExportCapabilities());
+    	} else {
+    		ret.putAll(formats);
+    	}
+    	return ret;
+    }
 
 }

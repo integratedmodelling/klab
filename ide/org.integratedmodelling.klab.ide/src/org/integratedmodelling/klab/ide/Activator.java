@@ -30,7 +30,7 @@ import org.integratedmodelling.kim.ui.internal.KimActivator;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.services.IResourceService;
+import org.integratedmodelling.klab.client.http.Client;
 import org.integratedmodelling.klab.client.http.EngineMonitor;
 import org.integratedmodelling.klab.ide.kim.KimData;
 import org.integratedmodelling.klab.ide.model.Klab;
@@ -387,6 +387,10 @@ public class Activator extends AbstractUIPlugin {
 		return get().klab;
 	}
 
+	public static Client client() {
+		return engineMonitor().getClient();
+	}
+	
 	public static IKimLoader loader() {
 		return get().loader;
 	}
@@ -404,6 +408,13 @@ public class Activator extends AbstractUIPlugin {
 		return plugin;
 	}
 
+	public static void download(String url, File file) {
+		if (get().engineStatusMonitor.isRunning()) {
+			client().with(session().getIdentity()).download(url, file);
+		}
+		
+	}
+	
 	public static void post(Object... object) {
 		if (get().engineStatusMonitor.isRunning()) {
 			get().engineStatusMonitor.getBus().post(Message.create(get().engineStatusMonitor.getSessionId(), object));

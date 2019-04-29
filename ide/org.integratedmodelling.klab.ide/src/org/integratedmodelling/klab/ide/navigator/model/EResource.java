@@ -1,10 +1,14 @@
 package org.integratedmodelling.klab.ide.navigator.model;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.integratedmodelling.kim.api.IKimProject;
+import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
 import org.integratedmodelling.klab.utils.Path;
 
@@ -44,5 +48,19 @@ public class EResource extends ENavigatorItem {
 
     public EResourceReference getResource() {
         return resource;
+    }
+    
+    public String getUrn() {
+    	return resource.getUrn();
+    }
+    
+    public Map<String, String> getExportFormats() {
+    	Map<String, String> ret = new LinkedHashMap<>();
+    	if (resource.getExportFormats().isEmpty()) {
+    		ret.putAll(Activator.klab().getResourceAdapter(resource.getAdapterType()).getExportCapabilities());
+    	} else {
+    		ret.putAll(resource.getExportFormats());
+    	}
+    	return ret;
     }
 }

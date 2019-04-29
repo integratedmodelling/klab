@@ -591,6 +591,8 @@ public enum Resources implements IResourceService {
 				resource = builder.withResourceVersion(version).withProjectName(project.getName())
 						.withParameters(parameters).withAdapterType(adapterType)
 						.withLocalPath(project.getName() + "/resources/" + resourceDataDir).build(urn);
+				
+				resource.getExports().putAll(adapter.getImporter().getExportCapabilities(resource));
 
 			} else {
 				errors.add(new KlabValidationException("cannot find an adapter to process file " + file));
@@ -696,6 +698,7 @@ public enum Resources implements IResourceService {
 						.build(Urns.INSTANCE.getLocalUrn(builder.getResourceId(), project, owner));
 
 				if (resource != null && !resource.hasErrors()) {
+					resource.getExports().putAll(adapter.getImporter().getExportCapabilities(resource));
 					getLocalResourceCatalog().put(resource.getUrn(), resource);
 					ret.add(resource);
 				}
@@ -1123,6 +1126,8 @@ public enum Resources implements IResourceService {
 	 */
 	public IResource registerResource(IResource ret) {
 		((Resource)ret).validate(this);
+		IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(ret.getAdapterType());
+		ret.getExports().putAll(adapter.getImporter().getExportCapabilities(ret));
 		getLocalResourceCatalog().put(ret.getUrn(), ret);
 		return getLocalResourceCatalog().get(ret.getUrn());
 	}
@@ -1150,6 +1155,7 @@ public enum Resources implements IResourceService {
 			ref.setDescription(configuration.getDescription());
 			ref.setParameters(Extensions.INSTANCE.describePrototype(configuration));
 			ref.setFileBased(resourceAdapters.get(adapter) instanceof IFileResourceAdapter);
+			ref.getExportCapabilities().putAll(Resources.INSTANCE.getResourceAdapter(adapter).getImporter().getExportCapabilities((IResource)null));
 			ret.add(ref);
 		}
 		return ret;

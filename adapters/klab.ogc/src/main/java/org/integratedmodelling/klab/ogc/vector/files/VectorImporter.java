@@ -255,6 +255,7 @@ public class VectorImporter extends AbstractFilesetImporter {
     @Override
     public Map<String, String> getExportCapabilities(IResource resource) {
         Map<String, String> ret = new HashMap<>();
+        ret.put("shp", "ESRI shapefile");
         return ret;
     }
 

@@ -27,7 +27,8 @@
 package org.integratedmodelling.klab.ide.ui.wizards;
 
 import java.io.File;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Display;
@@ -64,6 +65,15 @@ public class NewNamespaceWizard extends Wizard {
 		final boolean isScenario = page.getCreateScenario().getSelection();
 
 		if (validate(nspc, target)) {
+			
+			ProjectModificationRequest request = new ProjectModificationRequest(page.getTargetProject().getText(), nspc);
+
+			if (page.getIsPrivate().getSelection()) {
+				Map<String,String> options = new HashMap<>();
+				options.put(ProjectModificationRequest.PRIVATE_OPTION, "true");
+				request.setParameters(options);
+			}
+			
 			Activator.post((message) -> {
 				File file = message.getPayload(ProjectModificationNotification.class).getFile();
 				Activator.loader().add(file);
@@ -75,7 +85,7 @@ public class NewNamespaceWizard extends Wizard {
 				});
 			}, IMessage.MessageClass.ProjectLifecycle,
 					isScenario ? IMessage.Type.CreateScenario : IMessage.Type.CreateNamespace,
-					new ProjectModificationRequest(page.getTargetProject().getText(), nspc));
+					request);
 			return true;
 		}
 

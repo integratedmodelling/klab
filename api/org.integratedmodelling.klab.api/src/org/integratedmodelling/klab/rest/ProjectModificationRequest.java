@@ -1,13 +1,20 @@
 package org.integratedmodelling.klab.rest;
 
+import java.util.Map;
+
 public class ProjectModificationRequest {
+
+	public static final String SCENARIO_OPTION = "scenario";
+	public static final String PRIVATE_OPTION = "private";
 
 	private String projectId;
 	private String assetId;
 	private String scriptName;
-    private String scriptPath;
-	
-	public ProjectModificationRequest() {}
+	private String scriptPath;
+	private Map<String, String> parameters;
+
+	public ProjectModificationRequest() {
+	}
 
 	public ProjectModificationRequest(String projectId, String assetId) {
 		this.projectId = projectId;
@@ -53,12 +60,20 @@ public class ProjectModificationRequest {
 		this.assetId = assetId;
 	}
 
-    public String getScriptPath() {
-        return scriptPath;
-    }
+	public String getScriptPath() {
+		return scriptPath;
+	}
 
-    public void setScriptPath(String scriptPath) {
-        this.scriptPath = scriptPath;
-    }
+	public void setScriptPath(String scriptPath) {
+		this.scriptPath = scriptPath;
+	}
+
+	public Map<String, String> getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(Map<String, String> parameters) {
+		this.parameters = parameters;
+	}
 
 }

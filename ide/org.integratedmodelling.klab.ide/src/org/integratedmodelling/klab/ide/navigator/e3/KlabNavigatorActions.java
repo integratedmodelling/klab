@@ -28,6 +28,7 @@ import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumenta
 import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumentationPage;
 import org.integratedmodelling.klab.ide.navigator.model.documentation.EReference;
 import org.integratedmodelling.klab.ide.ui.wizards.BulkImportResourceWizard;
+import org.integratedmodelling.klab.ide.ui.wizards.ExportResourceWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.MoveResourceWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.NewDocumentationFolderWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.NewDocumentationSectionWizard;
@@ -159,6 +160,13 @@ public class KlabNavigatorActions {
 			request.getResourceUrns().add(resource.getResource().getUrn());
 			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.DeleteLocalResource, request);
 		}
+	}
+	
+	public static void exportResource(EResource resource) {
+		WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new ExportResourceWizard(resource));
+		dialog.setPageSize(800, 550);
+		dialog.create();
+		dialog.open();
 	}
 
 	public static void moveResource(EResource resource) {

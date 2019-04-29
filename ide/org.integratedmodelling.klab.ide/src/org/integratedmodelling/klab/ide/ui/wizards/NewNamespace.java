@@ -48,6 +48,7 @@ public class NewNamespace extends WizardPage {
     private Combo   combo;
     private Button  btnCreateAScenario;
     private IKimProject targetProject;
+    private Button btnPrivateNamespace;
 
     public NewNamespace(IKimProject targetProject) {
         super("wizardPage");
@@ -114,6 +115,13 @@ public class NewNamespace extends WizardPage {
         fd_btnCreateAScenario.left = new FormAttachment(text, 0, SWT.LEFT);
         btnCreateAScenario.setLayoutData(fd_btnCreateAScenario);
         btnCreateAScenario.setText("Create a scenario");
+        
+        btnPrivateNamespace = new Button(container, SWT.CHECK);
+        FormData fd_btnPrivateNamespace = new FormData();
+        fd_btnPrivateNamespace.top = new FormAttachment(btnCreateAScenario, 16);
+        fd_btnPrivateNamespace.left = new FormAttachment(0, 160);
+        btnPrivateNamespace.setLayoutData(fd_btnPrivateNamespace);
+        btnPrivateNamespace.setText("Private namespace");
 
     }
 
@@ -127,5 +135,9 @@ public class NewNamespace extends WizardPage {
 
     public Button getCreateScenario() {
         return btnCreateAScenario;
+    }
+    
+    public Button getIsPrivate() {
+    	return btnPrivateNamespace;
     }
 }

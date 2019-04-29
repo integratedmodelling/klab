@@ -710,7 +710,8 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 				file = project.createScript(request.getAssetId(), request.getScriptName(), request.getScriptPath());
 				break;
 			case CreateNamespace:
-				file = project.createNamespace(request.getAssetId(), false);
+				file = project.createNamespace(request.getAssetId(), false, request.getParameters() != null
+						&& "true".equals(request.getParameters().get(ProjectModificationRequest.PRIVATE_OPTION)));
 				break;
 			default:
 				// can't happen when calibrations are implemented
@@ -739,7 +740,8 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 		case CreateScenario:
 
-			file = project.createNamespace(request.getAssetId(), true);
+			file = project.createNamespace(request.getAssetId(), true, request.getParameters() != null
+					&& "true".equals(request.getParameters().get(ProjectModificationRequest.PRIVATE_OPTION)));
 			monitor.send(Message
 					.create(token, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.CreateScenario,
 							new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION, file))
@@ -767,7 +769,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			break;
 
 		case DeleteProject:
-			Resources.INSTANCE.deleteProject(request.getProjectId()); 
+			Resources.INSTANCE.deleteProject(request.getProjectId());
 			break;
 		case DeleteResource:
 			break;
@@ -811,7 +813,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	private void handleRecontextualizationRequest(ContextualizationRequest request) {
 		System.out.println(request);
 	}
-	
+
 	@MessageHandler
 	private void handleDocumentationEvent(final DocumentationReference documentation, IMessage.Type type) {
 		IKimProject project = Kim.INSTANCE.getProject(documentation.getProjectName());
@@ -938,17 +940,17 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	}
 
 	/**
-	 * Call this one to validate and register a resource after it's been 
-	 * built by an external agent. NOTE: this resource is built without the 
-	 * involvement of an adapter, so it should not be used with user input or
-	 * anything not previously established as valid.
+	 * Call this one to validate and register a resource after it's been built by an
+	 * external agent. NOTE: this resource is built without the involvement of an
+	 * adapter, so it should not be used with user input or anything not previously
+	 * established as valid.
 	 * 
 	 * @param ret
 	 * @return
 	 */
 	public IResource registerResource(IResource ret) {
 		// invoke the service to validate, register and notify
-		ret = Resources.INSTANCE.registerResource(ret);	
+		ret = Resources.INSTANCE.registerResource(ret);
 		if (ret != null) {
 			monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceCreated,
 					((Resource) ret).getReference());
