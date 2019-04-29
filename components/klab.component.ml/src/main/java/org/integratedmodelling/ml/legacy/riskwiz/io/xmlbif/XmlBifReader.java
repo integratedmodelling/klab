@@ -477,7 +477,16 @@ public class XmlBifReader {
 
 			switch (node.getNodeType()) {
 			case Node.TEXT_NODE:
-				buf.append(node.getNodeValue());
+		        /*
+		         * mysterious choice in WEKA-generated BIF. Unsure why but I don't think this can
+		         * harm anything.
+		         */
+				String s = node.getNodeValue();
+		        if (s.startsWith("'\\'") && s.endsWith("\\''")) {
+		        	s = s.substring(3);
+		        	s = s.substring(0, s.length()-3);
+		        }
+				buf.append(s);
 				break;
 
 			case Node.ELEMENT_NODE:

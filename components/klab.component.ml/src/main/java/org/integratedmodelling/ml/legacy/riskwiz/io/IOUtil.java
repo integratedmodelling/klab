@@ -68,6 +68,7 @@ public class IOUtil {
      */
     public static String mangleXMLString(String s) {
         StringBuffer buf = new StringBuffer();
+        
         int max = s.length();
 
         for (int i = 0; i < max; i++) {
