@@ -282,7 +282,7 @@ public enum Observations implements IObservationService {
 			ret.setObservable("Quantity has no semantics associated");
 		}
 
-		ret.setChildrenCount(observation instanceof IDirectObservation
+		ret.setChildrenCount(observation instanceof IDirectObservation && !observation.isEmpty()
 				? ((IDirectObservation) observation).getChildren(IObservation.class).size()
 				: 0);
 		ret.setSiblingCount(observation.groupSize());
@@ -407,10 +407,10 @@ public enum Observations implements IObservationService {
 		}
 
 		if (observation instanceof IDirectObservation) {
-			ret.setChildCount(((IDirectObservation) observation).getChildren(IObservation.class).size());
+			ret.setChildCount(observation.isEmpty() ? 0 : ((IDirectObservation) observation).getChildren(IObservation.class).size());
 		}
 
-		if (observation instanceof IDirectObservation && (childLevel < 0 || childLevel > 0)) {
+		if (observation instanceof IDirectObservation && !observation.isEmpty() && (childLevel < 0 || childLevel > 0)) {
 			Set<ObservationGroup> groups = new HashSet<>();
 			for (IObservation child : ((IDirectObservation) observation).getChildren(IObservation.class)) {
 
