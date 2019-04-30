@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.data.classification.Discretization;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
@@ -135,6 +136,16 @@ public class WekaInstances {
 			return this.discretizer;
 		}
 
+		public double[] getDiscretizationBreakpoints() {
+			double[] ret = null;
+			if (this.discretizer instanceof Discretize) {
+				ret = ((Discretize) this.discretizer).getCutPoints(0);
+			} else if (this.discretizer instanceof weka.filters.supervised.attribute.Discretize) {
+				ret = ((weka.filters.supervised.attribute.Discretize) this.discretizer).getCutPoints(0);
+			} 
+			return ret;
+		}
+		
 		public String toString() {
 			return javaClass + "/" + options;
 		}
@@ -174,8 +185,8 @@ public class WekaInstances {
 	private double predictedMax = Double.NaN;
 
 	// for use in the encoder
-	public WekaInstances() {
-
+	public WekaInstances(IComputationContext context) {
+		this.context = (IRuntimeContext) context;
 	}
 
 	/**
@@ -628,11 +639,11 @@ public class WekaInstances {
 
 				double value = Double.NaN;
 
-				DiscretizerDescriptor filter = discretizers.get(predictor.getObservable().getLocalName());
-				Filter discretizer = null;
-				if (filter != null) {
-					discretizer = filter.getDiscretizer();
-				}
+//				DiscretizerDescriptor filter = discretizers.get(predictor.getObservable().getLocalName());
+//				Filter discretizer = null;
+//				if (filter != null) {
+//					discretizer = filter.getDiscretizer();
+//				}
 
 				if (predictor.getObservable().getArtifactType() == Type.NUMBER) {
 					value = o instanceof Number ? ((Number) o).doubleValue() : Double.NaN;
@@ -711,7 +722,7 @@ public class WekaInstances {
 			if (filter.getDiscretizer() instanceof Discretize) {
 				cutpoints = ((Discretize) filter.getDiscretizer()).getCutPoints(0);
 			} else if (filter.getDiscretizer() instanceof weka.filters.supervised.attribute.Discretize) {
-				cutpoints = ((Discretize) filter.getDiscretizer()).getCutPoints(0);
+				cutpoints = ((weka.filters.supervised.attribute.Discretize) filter.getDiscretizer()).getCutPoints(0);
 			} else {
 				throw new KlabUnimplementedException("Weka: cannot get cut points from discretizer of class "
 						+ filter.getDiscretizer().getClass().getCanonicalName() + ": please report to developers");

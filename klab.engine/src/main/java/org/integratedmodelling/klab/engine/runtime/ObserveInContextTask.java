@@ -11,10 +11,12 @@ import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -26,7 +28,6 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.klab.provenance.Activity;
 import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
@@ -121,11 +122,16 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 
 						// make a copy of the coverage so that we ensure it's a scale, behaving properly
 						// at merge.
-						ret = (IObservation) dataflow.run(scope.getCoverage().copy(), monitor);
+						IArtifact result = dataflow.run(scope.getCoverage().copy(), monitor);
+						if (result instanceof IObservation) {
+							ret = (IObservation) result;
+						} else {
+							ret = Observation.empty((IObservable) resolvable, ctx);
+						}
 
 						// task is done, record for provenance
 						getActivity().finished();
-						
+
 						/*
 						 * The actuator has sent this already, but we send the final artifact a second
 						 * time to bring it to the foreground for the listeners
@@ -138,15 +144,15 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 							// null on task interruption
 							if (notifiable != null) {
 								session.getMonitor()
-										.send(Message
-												.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
-														IMessage.Type.NewObservation,
-														Observations.INSTANCE
-																.createArtifactDescriptor(notifiable, context,
-																		ITime.INITIALIZATION, -1, false, true)
-																.withTaskId(token)));
+										.send(Message.create(session.getId(),
+												IMessage.MessageClass.ObservationLifecycle,
+												IMessage.Type.NewObservation,
+												Observations.INSTANCE
+														.createArtifactDescriptor(notifiable, context,
+																ITime.INITIALIZATION, -1, false, true)
+														.withTaskId(token)));
 
-								((Artifact)notifiable).setNotified(true);
+								((Artifact) notifiable).setNotified(true);
 
 							}
 							monitor.info("observation completed with "

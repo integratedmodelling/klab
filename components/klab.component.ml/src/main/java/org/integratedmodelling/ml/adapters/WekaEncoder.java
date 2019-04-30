@@ -46,7 +46,7 @@ public class WekaEncoder implements IResourceEncoder {
                 .getLocalFile("classifier.file"), resource.getParameters()
                         .get("classifier.probabilistic", "false").equals("true"));
 
-        this.instances = new WekaInstances();
+        this.instances = new WekaInstances(context);
         this.instances.admitNodata(resource.getParameters().get("submitNodata", "true").equals("true"));
 
         IState predictedState = null;
