@@ -19,6 +19,16 @@ annotation predictor for dependencies
 		
 	optional number weight
 		"A weight for the predictor. Effect depends on the Weka classifier selected and may be none."
+
+	optional input include 
+		"If specified, only values of the predictor inside the specified range will become valid
+		 training instances. This only works with numeric values."
+		 default 0 to 0
+		 
+	optional input exclude 
+		"If specified, values of the predictor inside the specified range will not become valid
+		 training instances. This only works with numeric values."
+		 default 0 to 0
 }
 
 annotation archetype for dependencies
@@ -37,4 +47,14 @@ annotation archetype for dependencies
 	optional concept weight
 		"If specified, defines an observable for a quality to use as weight for each instance created from
 		 the archetype. Instance weights are used by Weka in ways that depend on the classifier chosen."
+		 
+	optional input include 
+		"If specified, only values of the predicted variable inside the specified range will become valid
+		 training instances. This only works with numeric values."
+		 default 0 to 0
+		 
+	optional input exclude 
+		"If specified, values of the predicted variable inside the specified range will not become valid
+		 training instances. This only works with numeric values."
+		 default 0 to 0	
 }
