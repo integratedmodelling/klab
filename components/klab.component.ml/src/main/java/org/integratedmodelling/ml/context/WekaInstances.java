@@ -230,8 +230,10 @@ public class WekaInstances {
 		this.admitsNodata = admitsNodata;
 
 		for (IObservable dependency : model.getDependencies()) {
+			
 			IAnnotation predictor = KimUtils.findAnnotation(dependency.getAnnotations(),
 					MLComponent.PREDICTOR_ANNOTATION);
+			
 			if (predictor != null) {
 				IArtifact artifact = context.getArtifact(dependency.getLocalName());
 				if (!(artifact instanceof IState)) {
@@ -248,12 +250,16 @@ public class WekaInstances {
 				if (predictor.containsKey("exclude")) {
 					rng.exclude = predictor.get("exclude", Range.class);
 				}
-				ranges.put(((IState) artifact).getObservable().getLocalName(), rng);
+				
+				ranges.put(((IObservation) artifact).getObservable().getLocalName(), rng);
 
 			} else {
+				
 				IAnnotation arch = KimUtils.findAnnotation(dependency.getAnnotations(),
 						MLComponent.ARCHETYPE_ANNOTATION);
+				
 				if (arch != null) {
+					
 					IArtifact artifact = context.getArtifact(dependency.getLocalName());
 					if (!(artifact instanceof ObservationGroup)) {
 						throw new IllegalArgumentException("Weka: archetypes must be observations of objects");
@@ -277,9 +283,9 @@ public class WekaInstances {
 					if (arch.containsKey("exclude")) {
 						rng.exclude = arch.get("exclude", Range.class);
 					}
-					ranges.put(((IState) artifact).getObservable().getLocalName(), rng);
-
-				
+					
+					// the artifact range is for the predicted variable, not for the archetype observation
+					ranges.put(predicted.getObservable().getLocalName(), rng);				
 				}
 			}
 		}
