@@ -113,7 +113,7 @@ public class WekaEncoder implements IResourceEncoder {
         /*
          * Initialize the instances
          */
-        instances.initializeForPrediction();
+        instances.initializeForPrediction(((Resource)resource).getLocalFile("instances.file"));
         
         /*
          * proceed to inference

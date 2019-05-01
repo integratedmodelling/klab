@@ -14,9 +14,7 @@ import java.util.logging.Level;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.layout.TableColumnLayout;
-import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnPixelData;
-import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -24,7 +22,6 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.swt.SWT;
@@ -44,7 +41,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -126,6 +122,7 @@ public class ResourceEditor extends ViewPart {
     private StyledText               notes;
 
     private TableViewerColumn        tableViewerColumn_3D;
+    private Label messageLabel;
 
     public static class AttributeContentProvider implements IStructuredContentProvider {
 
@@ -302,93 +299,7 @@ public class ResourceEditor extends ViewPart {
 
         return known;
     }
-
-    public class ValueSupport extends EditingSupport {
-
-        private final CellEditor editor;
-
-        public ValueSupport(TableViewer viewer) {
-            super(viewer);
-            this.editor = new TextCellEditor(viewer.getTable());
-        }
-
-        @Override
-        protected CellEditor getCellEditor(Object element) {
-            return editor;
-        }
-
-        @Override
-        protected boolean canEdit(Object element) {
-            if (element instanceof ResourceParameter && ((ResourceParameter) element).nonexisting) {
-                return false;
-            }
-            // if (element instanceof Pair && Activator.engineMonitor().isRunning() &&
-            // adapter != null) {
-            // String parameter = ((Pair<?, ?>) element).getFirst().toString();
-            // Argument arg = adapter.getParameters().findArgument(parameter);
-            // if (arg == null || arg.isFinal()) {
-            // return false;
-            // }
-            // return true;
-            // }
-            return true;
-        }
-
-        @Override
-        protected Object getValue(Object element) {
-            Object ret = null;
-            if (element instanceof ResourceParameter) {
-                return ((ResourceParameter) element).value;
-            }
-            return null;
-        }
-
-        @Override
-        protected void setValue(Object element, Object value) {
-
-            if (element instanceof ResourceParameter) {
-
-                boolean changed = true;
-                Argument descriptor = ((ResourceParameter) element).descriptor;
-
-                String current = values.get(((ResourceParameter) element).parameter);
-                if (current != null && current.trim().isEmpty()) {
-                    current = null;
-                }
-                if (value != null && value.toString().isEmpty()) {
-                    value = null;
-                }
-                if ((value != null && current != null && value.equals(current))
-                        || (value == null && current == null)) {
-                    changed = false;
-                }
-
-                if (changed) {
-                    setErrorMessage(null);
-                    if (value != null && descriptor != null) {
-                        if (!Utils.validateAs(value, descriptor.getType())) {
-                            setErrorMessage("'" + value + "' is not a suitable value for type "
-                                    + descriptor.getType().name().toLowerCase());
-                        }
-                        if (((ResourceParameter) element).parameter.endsWith("Url")) {
-                            if (!UrlValidator.getInstance().isValid(value.toString())) {
-                                setErrorMessage("'" + value + "' is not a valid URL");
-                            }
-                        }
-                    }
-                    if (value == null) {
-                        values.remove(((ResourceParameter) element).parameter);
-                    } else {
-                        values.put(((ResourceParameter) element).parameter, value.toString());
-                    }
-                    setDirty(true);
-                }
-            }
-            getViewer().update(element, null);
-        }
-
-    }
-
+    
     class PropertyContentProvider implements ITreeContentProvider {
 
         @Override
@@ -468,9 +379,17 @@ public class ResourceEditor extends ViewPart {
     public ResourceEditor() {
     }
 
-    public void setErrorMessage(String string) {
-        this.isPublishable.setSelection(false);
-        this.unpublishableReason.setText(string == null ? "" : string);
+    public void setMessage(String string, Level level) {
+
+        if (level.equals(Level.SEVERE)) {
+            messageLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_RED));
+        } else if (level.equals(Level.WARNING)) {
+            messageLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_YELLOW));
+        } else {
+            messageLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
+        }
+        
+        messageLabel.setText(string == null ? "" : string);
     }
 
     public void loadResource(ResourceReference resource) {
@@ -485,6 +404,11 @@ public class ResourceEditor extends ViewPart {
                 }
             }
         }
+
+        // TODO errors! They are not contained in the resource.
+//        this.isPublishable.setSelection(false);
+//        this.unpublishableReason.setText(string == null ? "" : string);
+                
         this.metadata.clear();
         this.metadata.putAll(resource.getMetadata());
         this.urnLabel.setText(resource.getUrn());
@@ -835,23 +759,25 @@ public class ResourceEditor extends ViewPart {
                                     }
 
                                     if (changed) {
-                                        setErrorMessage(null);
+                                        setMessage(null, Level.INFO);
                                         if (value != null && descriptor != null) {
                                             if (!Utils.validateAs(value, descriptor.getType())) {
-                                                setErrorMessage("'" + value
+                                                setMessage("'" + value
                                                         + "' is not a suitable value for type "
-                                                        + descriptor.getType().name().toLowerCase());
+                                                        + descriptor.getType().name().toLowerCase(), Level.SEVERE);
                                             }
                                             if (data.parameter.endsWith("Url")) {
                                                 if (!UrlValidator.getInstance().isValid(value.toString())) {
-                                                    setErrorMessage("'" + value + "' is not a valid URL");
+                                                    setMessage("'" + value + "' is not a valid URL", Level.SEVERE);
                                                 }
                                             }
                                         }
                                         if (value == null) {
                                             values.remove(data.parameter);
+                                            data.value = null;
                                         } else {
-                                            values.put(data.parameter, value.toString());
+                                            values.put(data.parameter, value);
+                                            data.value = value;
                                         }
                                         setDirty(true);
                                     }
@@ -1103,29 +1029,39 @@ public class ResourceEditor extends ViewPart {
             }
         });
         Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false, 1, 1));
-        RowLayout rl_composite = new RowLayout(SWT.HORIZONTAL);
-        rl_composite.wrap = false;
-        composite.setLayout(rl_composite);
+        GridLayout gl_composite = new GridLayout(4, false);
+        gl_composite.marginLeft = 4;
+        composite.setLayout(gl_composite);
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        
+        messageLabel = new Label(composite, SWT.NONE);
+        messageLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
         publishButton = new Button(composite, SWT.NONE);
-        publishButton.setLayoutData(new RowData(90, SWT.DEFAULT));
+        GridData gd_publishButton = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+        gd_publishButton.widthHint = 72;
+        publishButton.setLayoutData(gd_publishButton);
         publishButton.setGrayed(true);
         publishButton.setText("Publish...");
         publishButton.setEnabled(false);
 
         saveButton = new Button(composite, SWT.NONE);
+        GridData gd_saveButton = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+        gd_saveButton.widthHint = 72;
+        saveButton.setLayoutData(gd_saveButton);
         saveButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseDown(MouseEvent e) {
                 save();
             }
         });
-        saveButton.setLayoutData(new RowData(90, SWT.DEFAULT));
         saveButton.setText("Save");
         saveButton.setEnabled(false);
 
         cancelButton = new Button(composite, SWT.NONE);
+        GridData gd_cancelButton = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+        gd_cancelButton.widthHint = 72;
+        cancelButton.setLayoutData(gd_cancelButton);
         cancelButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseDown(MouseEvent e) {
@@ -1135,7 +1071,6 @@ public class ResourceEditor extends ViewPart {
                 }
             }
         });
-        cancelButton.setLayoutData(new RowData(90, SWT.DEFAULT));
         cancelButton.setText("Cancel");
 
         createActions();
