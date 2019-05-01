@@ -141,4 +141,16 @@ public class WekaImporter implements IResourceImporter {
 		}
 	}
 
+    @Override
+    public IResource importIntoResource(String importLocation, IResource target, IMonitor monitor) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean resourceCanHandle(IResource resource, String importLocation) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }

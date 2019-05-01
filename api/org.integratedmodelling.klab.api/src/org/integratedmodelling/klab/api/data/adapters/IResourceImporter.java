@@ -32,6 +32,16 @@ public interface IResourceImporter {
     Collection<IResource.Builder> importResources(String importLocation, IParameters<String> userData, IMonitor monitor);
 
     /**
+     * Import the resources from the passed location into an existing resource.
+     * 
+     * @param importLocation
+     * @param target
+     * @param monitor
+     * @return
+     */
+    IResource importIntoResource(String importLocation, IResource target, IMonitor monitor);
+    
+    /**
      * Check if the passed location (file, URL or whatever) can be handled. In this
      * case 'unknown' is a possible response, in which case we can return true as
      * long as {@link #importResources(String, IParameters)} behaves gracefully.
@@ -43,6 +53,14 @@ public interface IResourceImporter {
      */
     boolean canHandle(String importLocation, IParameters<String> userData);
 
+    /**
+     * Check if the resource can handle the import of the passed string.
+     * 
+     * @param importLocation
+     * @return
+     */
+    boolean resourceCanHandle(IResource resource, String importLocation);
+    
     /**
      * Return a list of triples ID/Description/FileExtension for all the formats of file export that
      * this adapter supports for the passed observation.

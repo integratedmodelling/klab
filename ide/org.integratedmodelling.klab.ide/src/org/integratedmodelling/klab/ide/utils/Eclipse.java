@@ -468,7 +468,6 @@ public enum Eclipse {
     }
 
     public void refreshOpenEditors() {
-        // System.out.println("DIO POMPERO");
         Display.getDefault().asyncExec(() -> {
             for (IEditorReference editor : PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                     .getActivePage()
