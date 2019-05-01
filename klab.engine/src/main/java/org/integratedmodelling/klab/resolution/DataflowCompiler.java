@@ -745,6 +745,11 @@ public class DataflowCompiler {
 				ret.add(res);
 			}
 		}
+		
+		if (!graph.vertexSet().isEmpty() && ret.isEmpty()) {
+		   scope.getMonitor().warn("The resolution graph has no root node: review your model chain for circular dependencies.");
+		}
+		
 		return ret;
 	}
 
