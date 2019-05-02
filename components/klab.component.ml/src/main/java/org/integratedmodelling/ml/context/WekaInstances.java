@@ -226,7 +226,7 @@ public class WekaInstances {
      * the instances used for training, and ONLY in encoders when attributes are not
      * yet defined.
      */
-    public void addPredictor(String name, IState predictor, int index, @Nullable Filter discretizer) {
+    public void addPredictor(String name,  IState predictor, int index, @Nullable Filter discretizer) {
         this.predictors.add(index, predictor);
         this.attributes.add(index, getAttribute(predictor));
         if (discretizer != null) {
