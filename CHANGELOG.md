@@ -38,6 +38,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   ease creation.
 - Scale and extent have uniform merge() methods and isGeneric() to check for generic
   definitions, which will be compounded to potentially redefine scales.
+- Local resource catalog is now a simple in-memory hashmap.
+- Models are tested for online availability of the resources they use before they
+  are chosen by the resolver. If offline models prevent resolution a warning is
+  emitted, otherwise just an info message. Debug messages detail which models
+  were chosen but were offline in any case.
 ### Fixed
 - Resource deletion, addition and update now refresh the Eclipse environment correctly.
 - Improved resource editor (better time widget, support for dependencies, hierarchical
