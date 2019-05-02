@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.services.IExtensionService;
+import org.integratedmodelling.klab.api.services.IResourceService;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
@@ -658,6 +659,14 @@ public class ComputableResource extends KimStatement implements IComputableResou
 
 	public Collection<IAnnotation> getExternalParameters() {
 		return this.externalParameters;
+	}
+
+	@Override
+	public boolean isAvailable() {
+		if (this.urn != null) {
+			return Services.INSTANCE.getService(IResourceService.class).isResourceOnline(this.urn);
+		} // TODO anything else?
+		return true;
 	}
 
 }

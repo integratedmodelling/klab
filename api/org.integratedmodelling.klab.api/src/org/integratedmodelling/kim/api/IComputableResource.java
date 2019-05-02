@@ -331,4 +331,11 @@ public interface IComputableResource extends IKimStatement, IDataflowNode {
 	 */
 	boolean isMediation();
 
+	/**
+	 * This should QUICKLY find out if a resource is available for computation. 
+	 * 
+	 * @return
+	 */
+	boolean isAvailable();
+
 }

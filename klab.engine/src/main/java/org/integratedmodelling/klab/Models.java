@@ -16,12 +16,14 @@ import org.eclipse.xtext.util.CancelIndicator;
 import org.eclipse.xtext.validation.CheckMode;
 import org.eclipse.xtext.validation.IResourceValidator;
 import org.eclipse.xtext.validation.Issue;
+import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.Notifier;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -184,23 +186,23 @@ public enum Models implements IModelService {
 	 *         from a list.
 	 */
 	public IModel resolve(IConcept trait, IResolutionScope scope) {
-		List<IRankedModel> ret = kbox.query(Observable.promote(trait), (ResolutionScope)scope);
+		List<IRankedModel> ret = kbox.query(Observable.promote(trait), (ResolutionScope) scope);
 		return ret.isEmpty() ? null : ret.get(0);
 	}
 
-    public List<ModelReference> listModels(boolean sort) {
-        List<ModelReference> ret = kbox.retrieveAll(Klab.INSTANCE.getRootMonitor());
-        if (sort) {
-            ret.sort(new Comparator<ModelReference>() {
+	public List<ModelReference> listModels(boolean sort) {
+		List<ModelReference> ret = kbox.retrieveAll(Klab.INSTANCE.getRootMonitor());
+		if (sort) {
+			ret.sort(new Comparator<ModelReference>() {
 
-                @Override
-                public int compare(ModelReference o1, ModelReference o2) {
-                    return o1.getUrn().compareTo(o2.getUrn());
-                }
-            });
-        }
-        return ret;
-    }
+				@Override
+				public int compare(ModelReference o1, ModelReference o2) {
+					return o1.getUrn().compareTo(o2.getUrn());
+				}
+			});
+		}
+		return ret;
+	}
 
 	public ModelReference getModelReference(String string) {
 		return kbox.retrieveModel(string, Klab.INSTANCE.getRootMonitor());
@@ -208,6 +210,19 @@ public enum Models implements IModelService {
 
 	public ModelKbox getKbox() {
 		return kbox;
+	}
+
+	public boolean isAvailable(String modelName) {
+		IKimObject model = Resources.INSTANCE.getModelObject(modelName);
+		if (!(model instanceof IModel)) {
+			return false;
+		}
+		for (IComputableResource resource : ((IModel)model).getResources()) {
+			if (!resource.isAvailable()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }

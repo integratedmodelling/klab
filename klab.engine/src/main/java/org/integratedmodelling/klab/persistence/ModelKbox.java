@@ -154,12 +154,13 @@ public class ModelKbox extends ObservableKbox {
 
 		initialize(context.getMonitor());
 
-		// HERE is the place to contextualize the observable - which is also used to establish semantic distance in the matcher
+		// HERE is the place to contextualize the observable - which is also used to
+		// establish semantic distance in the matcher
 		if (context.getContext() != null) {
 			observable = Observables.INSTANCE.contextualizeTo(observable,
 					context.getContext().getObservable().getType(), context.getMonitor());
 		}
-		
+
 		Pair<Scale, Set<IRankedModel>> preResolved = context.isCaching() ? null
 				: context.getPreresolvedModels(observable);
 
@@ -212,6 +213,26 @@ public class ModelKbox extends ObservableKbox {
 			//
 			// KLAB.ENGINE.getNetwork().broadcast(ret, ((ResolutionScope)
 			// context).getMonitor());
+		}
+
+		/*
+		 * Warn and provide output if models were chosen but reported unavailability.
+		 * Message is a warning only if no other models were found.
+		 */
+		if (ret.getOfflineModels().size() > 0) {
+
+			String message = "warning: " + ret.getOfflineModels().size() + " model"
+					+ (ret.getOfflineModels().size() < 2 ? " was" : "s were") + " chosen but found offline";
+
+			if (ret.size() > 0) {
+				context.getMonitor().info(message);
+			} else {
+				context.getMonitor().warn(message);
+			}
+
+			for (ModelReference ref : ret.getOfflineModels()) {
+				context.getMonitor().debug("model " + ref.getName() + " is offline");
+			}
 		}
 
 		return ret;

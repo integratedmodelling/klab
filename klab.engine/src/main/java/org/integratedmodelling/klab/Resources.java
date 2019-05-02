@@ -951,12 +951,22 @@ public enum Resources implements IResourceService {
 		return resourceTaskExecutor;
 	}
 
+	@Override
+	public boolean isResourceOnline(String urn) {
+		IResource resource = resolveResource(urn);
+		return resource == null ? false : isResourceOnline(resource);
+	}
+	
 	public boolean isResourceOnline(IResource resource) {
 		return isResourceOnline(resource, false);
 	}
 
 	public boolean isResourceOnline(IResource resource, boolean forceUpdate) {
 
+		if (Configuration.INSTANCE.forceResourcesOnline()) {
+			return true;
+		}
+		
 		if (!forceUpdate) {
 			ResourceData cached = statusCache.get(resource.getUrn());
 			if (cached != null

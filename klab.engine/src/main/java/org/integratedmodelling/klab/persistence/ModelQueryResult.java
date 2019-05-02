@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.api.resolution.IPrioritizer;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
@@ -53,6 +54,7 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
 
 	IPrioritizer<ModelReference> comparator;
 	ArrayList<ModelReference> modelData = new ArrayList<>();
+	ArrayList<ModelReference> offline = new ArrayList<>();
 	boolean sorted = false;
 	IMonitor monitor;
 
@@ -80,9 +82,9 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
 							monitor.debug(describeRanks(md, 2, n++));
 						}
 						monitor.debug("------------------");
-					} /*else {
-						monitor.debug("No results" + (cached ? " (cached)" : ""));
-					}*/
+					} /*
+						 * else { monitor.debug("No results" + (cached ? " (cached)" : "")); }
+						 */
 				}
 			}
 			_it = modelData.iterator();
@@ -267,8 +269,12 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
 	// }
 
 	public void addModel(ModelReference md) {
-		modelData.add(md);
-		sorted = false;
+		if (Models.INSTANCE.isAvailable(md.getName())) {
+			modelData.add(md);
+			sorted = false;
+		} else {
+			offline.add(md);
+		}
 	}
 
 	/*
@@ -278,6 +284,15 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
 		modelData.add(md);
 		sorted = false;
 		cached = true;
+	}
+
+	/**
+	 * Return any models that were chosen but were found offline.
+	 * 
+	 * @return
+	 */
+	public List<ModelReference> getOfflineModels() {
+		return offline;
 	}
 
 	// public void setQuery(ModelQuery query) {

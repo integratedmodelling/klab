@@ -19,6 +19,7 @@ public class List implements ICommand {
 
 		String ret = "";
 		boolean verbose = call.getParameters().get("verbose", false);
+		boolean online = call.getParameters().get("online", false);
 
 		ArrayList<String> resourceIds = new ArrayList<>();
 		if (call.getParameters().get("arguments", java.util.List.class).size() > 0) {
@@ -32,16 +33,23 @@ public class List implements ICommand {
 
 		Collections.sort(resourceIds);
 		for (String urn : resourceIds) {
-			ret += (ret.isEmpty() ? "" : "\n") + describe(urn, verbose);
+			ret += (ret.isEmpty() ? "" : "\n") + describe(urn, verbose, online);
 		}
 		return ret;
 	}
 
-	private String describe(String urn, boolean verbose) {
+	private String describe(String urn, boolean verbose, boolean online) {
 		String ret = urn;
+		IResource resource = null;
+		if (online) {
+			resource = Resources.INSTANCE.getLocalResourceCatalog().get(urn);
+			ret += " [" + (Resources.INSTANCE.isResourceOnline(resource) ? "ONLINE" : "OFFLINE") + "]";
+		}
 		if (verbose) {
 			ret += ":";
-			IResource resource = Resources.INSTANCE.getLocalResourceCatalog().get(urn);
+			if (resource == null) {
+				resource = Resources.INSTANCE.getLocalResourceCatalog().get(urn);
+			}
 			if (resource == null) {
 				ret += " Error retrieving resource!";
 			} else {

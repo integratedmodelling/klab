@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -39,6 +40,9 @@ import org.integratedmodelling.klab.utils.Range;
  */
 public class WCSService {
 
+	private static int CONNECT_TIMEOUT_MS = 5000;
+	private static int READ_TIMEOUT_MS = 5000;
+	
 	public static final String WGS84_BOUNDING_BOX = "WGS84BoundingBox";
 	public static final String IDENTIFIER = "Identifier";
 	public static final String CRS = "crs";
@@ -388,7 +392,12 @@ public class WCSService {
 			this.parser = new Parser(new WCSConfiguration());
 			URL url = new URL(serviceUrl + "?service=WCS&request=getCapabilities&version=" + version);
 
-			try (InputStream input = (url.openStream())) {
+			URLConnection con = url.openConnection();
+			con.setConnectTimeout(CONNECT_TIMEOUT_MS);
+			con.setReadTimeout(READ_TIMEOUT_MS);
+
+			try (InputStream input = con.getInputStream()) {
+				
 				Map<?, ?> capabilitiesType = (Map<?, ?>) parser.parse(input);
 
 				JXPathContext context = JXPathContext.newContext(capabilitiesType);

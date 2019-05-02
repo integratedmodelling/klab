@@ -32,7 +32,11 @@ void 'list'
 	optional input verbose
 		"Verbose output: list resource details"
 		default false
-	
+
+	optional input online
+		"Check for online status"
+		default false
+
 	class org.integratedmodelling.klab.clitool.console.commands.resources.List
 }
 

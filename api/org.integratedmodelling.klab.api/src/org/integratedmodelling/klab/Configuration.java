@@ -280,4 +280,8 @@ public enum Configuration implements IConfigurationService {
 		}
 		return new File(export);
 	}
+	
+	public boolean forceResourcesOnline() {
+		return System.getProperty("forceResourcesOnline") != null;
+	}
 }

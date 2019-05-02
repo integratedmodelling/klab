@@ -49,7 +49,11 @@ public class WcsEncoder implements IResourceEncoder {
 		WCSService service = WcsAdapter.getService(resource.getParameters().get("serviceUrl", String.class),
 				Version.create(resource.getParameters().get("wcsVersion", String.class)));
 		WCSLayer layer = service.getLayer(resource.getParameters().get("wcsIdentifier", String.class));
-		encoder.encodeFromCoverage(resource, urnParameters, getCoverage(layer, resource, geometry), geometry, builder, context);
+		if (layer != null) {
+			encoder.encodeFromCoverage(resource, urnParameters, getCoverage(layer, resource, geometry), geometry, builder, context);
+		} else {
+			context.getMonitor().warn("Problems accessing WCS layer " + resource.getParameters().get("wcsIdentifier", String.class));
+		}
 	}
 
 	private GridCoverage getCoverage(WCSLayer layer, IResource resource, IGeometry geometry) {

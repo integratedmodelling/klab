@@ -471,12 +471,12 @@
 		<!-- GEOTOOLS mess ends -->
 
 		<!-- NO2 database (for local storage of file metadata and URN metadata 
-			caching) -->
+			caching) 
 		<dependency>
 			<groupId>org.dizitart</groupId>
 			<artifactId>nitrite</artifactId>
 			<version>3.0.0</version>
-		</dependency>
+		</dependency> -->
 
 		<!-- Actor system (for the default runtime provider) -->
 		<dependency>
