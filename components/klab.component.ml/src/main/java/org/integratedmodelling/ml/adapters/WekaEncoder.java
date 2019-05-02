@@ -69,11 +69,11 @@ public class WekaEncoder implements IResourceEncoder {
                 throw new KlabIOException(e);
             }
         }
-        
+
         Range prange = Range.create(resource.getParameters().get("predicted.range", String.class));
         instances.setPredicted(context.getTargetName(), predictedState, discretizer);
         instances.setPredictedRange(prange);
-        
+
         /*
          * Initialize the instances;
          * check ranges of learned instances and warn if our inputs are outside.
@@ -82,21 +82,28 @@ public class WekaEncoder implements IResourceEncoder {
 
             IState state = context.getArtifact(dependency.getName(), IState.class);
             if (state == null) {
-                throw new IllegalStateException("WEKA encoder: can't find required state "
-                        + dependency.getName() + " in context");
+                continue;
             }
 
             discretizer = null;
-            if (resource.getParameters().containsKey("predictor." + dependency.getName() + ".discretizer.file")) {
+            if (resource.getParameters()
+                    .containsKey("predictor." + dependency.getName() + ".discretizer.file")) {
                 try {
                     discretizer = (Filter) SerializationHelper.read(((Resource) resource)
-                            .getLocalFile("predictor." + dependency.getName() + ".discretizer.file").toString());
+                            .getLocalFile("predictor." + dependency.getName() + ".discretizer.file")
+                            .toString());
                 } catch (Exception e) {
                     throw new KlabIOException(e);
                 }
             }
+            /*
+             * we may have less predictors than during training, so we put them in the original place
+             * leaving any others as null.
+             */
+            int index = Integer.parseInt(resource.getParameters()
+                    .get("predictor." + dependency.getName() + ".index").toString()) - 2;
 
-            instances.addPredictor(dependency.getName(), state, discretizer);
+            instances.addPredictor(dependency.getName(), state, index, discretizer);
 
             StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
             Range original = Range.create(resource.getParameters()
@@ -113,8 +120,8 @@ public class WekaEncoder implements IResourceEncoder {
         /*
          * Initialize the instances
          */
-        instances.initializeForPrediction(((Resource)resource).getLocalFile("instances.file"));
-        
+        instances.initializeForPrediction(((Resource) resource).getLocalFile("instances.file"));
+
         /*
          * proceed to inference
          */
