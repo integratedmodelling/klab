@@ -46,7 +46,7 @@ public class WekaEncoder implements IResourceEncoder {
                 .getLocalFile("classifier.file"), resource.getParameters()
                         .get("classifier.probabilistic", "false").equals("true"));
 
-        this.instances = new WekaInstances(context);
+        this.instances = new WekaInstances(context, resource.getDependencies().size());
         this.instances.admitNodata(resource.getParameters().get("submitNodata", "true").equals("true"));
 
         IState predictedState = null;
@@ -98,7 +98,8 @@ public class WekaEncoder implements IResourceEncoder {
             }
             /*
              * we may have less predictors than during training, so we put them in the original place
-             * leaving any others as null.
+             * leaving any others as null. The index is the position in the instances, which starts at
+             * 1 for the class attribute, so we subtract 2 to obtain the predictor index.
              */
             int index = Integer.parseInt(resource.getParameters()
                     .get("predictor." + dependency.getName() + ".index").toString()) - 2;

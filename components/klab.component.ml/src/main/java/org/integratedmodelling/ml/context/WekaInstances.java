@@ -189,9 +189,17 @@ public class WekaInstances {
     private double           predictedMin = Double.NaN;
     private double           predictedMax = Double.NaN;
 
-    // for use in the encoder
-    public WekaInstances(IComputationContext context) {
+    // for use in the encoder. Presets the attribute and predictor arrays.
+    public WekaInstances(IComputationContext context, int nPredictors) {
         this.context = (IRuntimeContext) context;
+        this.attributes = new ArrayList<>();
+        // Add null predictors and attributes so we have the same number and order as in the original instance
+        for (int i = 0; i < nPredictors; i++) {
+        	predictors.add(null);
+        	attributes.add(null);
+        }
+        // one more to fit the predicted state
+    	attributes.add(null);
     }
 
     /**
@@ -208,9 +216,8 @@ public class WekaInstances {
      * Call ONLY first and ONLY in encoders when attributes are not defined.
      */
     public void setPredicted(String name, IState state, @Nullable Filter discretizer) {
-        this.attributes = new ArrayList<>();
         this.predicted = state;
-        this.attributes.add(getAttribute(state));
+        this.attributes.set(0, getAttribute(state));
         if (discretizer != null) {
             discretizers.put(name, new DiscretizerDescriptor(discretizer));
         }
@@ -227,8 +234,8 @@ public class WekaInstances {
      * yet defined.
      */
     public void addPredictor(String name,  IState predictor, int index, @Nullable Filter discretizer) {
-        this.predictors.add(index, predictor);
-        this.attributes.add(index, getAttribute(predictor));
+        this.predictors.set(index, predictor);
+        this.attributes.set(index + 1, getAttribute(predictor));
         if (discretizer != null) {
             this.discretizers.put(name, new DiscretizerDescriptor(discretizer));
         }
