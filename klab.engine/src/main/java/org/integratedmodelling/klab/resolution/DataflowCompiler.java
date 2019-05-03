@@ -236,7 +236,6 @@ public class DataflowCompiler {
 			}
 			return false;
 		}
-
 	}
 
 	/**
@@ -372,11 +371,11 @@ public class DataflowCompiler {
 					}
 					// rename and set the target name as partitioned. Number is the priority if
 					// known.
-					String name = modelDesc.model.getLocalNameFor(observable) + "_" + index;
+					String name = ret.getName() + "_" + index;
 					partial.setPartitionedTarget(modelDesc.model.getLocalNameFor(observable));
 
-					partial.setType(ret.getType());
 					partial.setObservable(observable);
+					partial.setType(ret.getType());
 					partial.setDefinesScale(true);
 					defineActuator(partial, name, modelDesc, generated);
 					partial.setCoverage(modelDesc.coverage);

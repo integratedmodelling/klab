@@ -23,3 +23,15 @@ void 'compatible'
 	
 	class org.integratedmodelling.klab.clitool.console.commands.kbox.Compatible
 }
+
+
+void 'coverage'
+	"List the coverage of either a model or all the models that resolve a concept."
+{
+	
+	optional input verbose
+		"Verbose output: list model details"
+		default false
+	
+	class org.integratedmodelling.klab.clitool.console.commands.kbox.Coverage
+}

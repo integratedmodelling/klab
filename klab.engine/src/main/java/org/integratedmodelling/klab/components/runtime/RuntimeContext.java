@@ -514,6 +514,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		}
 
 		// save existing target
+		// TODO if actuator is partial, must reuse parent state/group and adjust scale 
 		ret.target = ret.createTarget((Actuator) actuator, scale, scope, rootSubject);
 		if (ret.target != null && this.target != null) {
 			ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());

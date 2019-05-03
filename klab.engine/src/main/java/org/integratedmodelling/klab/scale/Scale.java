@@ -539,6 +539,7 @@ public class Scale implements IScale {
 		}
 		cursor.defineDimensions(dims);
 		extents = order;
+		geometry = null;
 	}
 
 	@Override
@@ -1299,6 +1300,7 @@ public class Scale implements IScale {
 				}
 			}
 		}
+		geometry = null;
 	}
 
 

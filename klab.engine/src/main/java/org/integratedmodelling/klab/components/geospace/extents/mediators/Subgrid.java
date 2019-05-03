@@ -33,7 +33,7 @@ public class Subgrid extends Grid {
 
 		Envelope genv = new Envelope(grid.getEast(), grid.getWest(), grid.getSouth(), grid.getNorth());
 		Envelope senv = shape.getEnvelope().getJTSEnvelope();
-
+		
 		if (!genv.covers(senv)) {
 			throw new IllegalArgumentException(
 					"cannot create subgrid: the passed shape does not cover the original grid");
@@ -215,8 +215,39 @@ public class Subgrid extends Grid {
 		return grid.getCellHeight();
 	}
 
+	@Override
 	public Shape getShape() {
 		return grid.getShape();
+	}
+	
+	@Override
+	public Shape getBoundingBox() {
+		return grid.getBoundingBox();
+	}
+
+	@Override
+	public double getEWExtent() {
+		return grid.getEWExtent();
+	}
+
+	@Override
+	public double getNSExtent() {
+		return grid.getNSExtent();
+	}
+
+	@Override
+	public Projection getProjection() {
+		return grid.getProjection();
+	}
+
+	@Override
+	public org.integratedmodelling.klab.components.geospace.extents.Envelope getEnvelope() {
+		return grid.getEnvelope();
+	}
+
+	@Override
+	public Shape getCentroid() {
+		return grid.getCentroid();
 	}
 
 	@Override

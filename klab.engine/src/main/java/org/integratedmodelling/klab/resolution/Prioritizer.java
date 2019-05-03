@@ -429,8 +429,8 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
             }
 
             idxss.put(model, new double[] {
-                    getMin(coverageS, coverageT),
-                    getMin(specificityS, specificityT),
+                    100 - getMin(coverageS, coverageT),
+                    100 - getMin(specificityS, specificityT),
                     getMin(resolutionS, resolutionT)
             });
         }
