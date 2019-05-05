@@ -100,7 +100,7 @@ public interface IScale extends ILocator, Iterable<IScale>, IGeometry, ITopology
 	 * 
 	 * @param scale
 	 */
-	public void merge(IScale scale);
+	public IScale merge(IScale scale);
 
 	/**
 	 * {@inheritDoc}

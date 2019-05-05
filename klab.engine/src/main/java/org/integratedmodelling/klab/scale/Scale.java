@@ -748,6 +748,21 @@ public class Scale implements IScale {
 		return true;
 	}
 
+    /*
+     * true if the passed scale has the same extents as we do.
+     */
+    boolean hasEqualExtents(IScale scale) {
+        if (!hasSameExtents(scale)) {
+            return false;
+        }
+        for (int i = 0; i < extents.size(); i++) {
+            if (!((Scale)scale).extents.get(i).equals(extents.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+	
 	public List<IExtent> getExtents() {
 		return extents;
 	}
@@ -1292,15 +1307,46 @@ public class Scale implements IScale {
 	}
 
 	@Override
-	public void merge(IScale scale) {
-		for (IExtent extent : getExtents()) {
-			for (IExtent other : scale.getExtents()) {
-				if (extent.getType() == other.getType()) {
-					extent.merge(other);
-				}
-			}
-		}
-		geometry = null;
+	public Scale merge(IScale scale) {
+
+	    if (scale == this || hasEqualExtents(scale)) {
+	        return this;
+	    }
+	    
+        if (scale instanceof Scale) {
+
+            Scale other = (Scale) scale;
+            Scale ret = new Scale();
+            ArrayList<IExtent> common = new ArrayList<>();
+            HashSet<Dimension.Type> commonConcepts = new HashSet<>();
+
+            for (IExtent e : extents) {
+                if (other.getDimension(e.getType()) != null) {
+                    common.add(e);
+                    commonConcepts.add(e.getType());
+                } else {
+                    ret.mergeExtent(e);
+                }
+            }
+
+            for (IExtent e : other.getExtents()) {
+                if (ret.getDimension(e.getType()) == null && !commonConcepts.contains(e.getType())) {
+                    ret.mergeExtent(e);
+                }
+            }
+
+            for (IExtent e : common) {
+                IExtent oext = other.getDimension(e.getType());
+                IExtent merged = (IExtent) e.merge(oext);
+                ret.mergeExtent(merged);
+            }
+
+            ret.scaleId = this.scaleId;
+            
+            return ret;
+        }
+
+        throw new IllegalArgumentException("Scale merge() called with a non-scale parameter");
 	}
 
 

@@ -147,6 +147,7 @@ public class RescalingState extends Observation implements IState {
 
 		Propagator propagator = new Propagator();
 		for (int i = 0; i < mediators.size(); i++) {
+		    
 			for (Pair<Long, Double> mapped : mediators.get(i).map(newScale.getOffset(locator))) {
 				propagator.add(i, mapped.getFirst(), mapped.getSecond());
 			}

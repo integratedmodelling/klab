@@ -93,4 +93,5 @@ public interface IActuator extends IDataflowNode {
      * @return a boolean.
      */
     boolean isComputed();
+
 }

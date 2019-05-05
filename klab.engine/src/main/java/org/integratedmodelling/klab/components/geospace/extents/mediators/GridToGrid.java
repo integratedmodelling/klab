@@ -25,7 +25,10 @@ public class GridToGrid implements IScaleMediator {
     	} else if (from instanceof Subgrid && ((Subgrid)from).ogrid.equals(to)) {
     		conformant = true;
     		// TODO
-    	}
+    	} else if (to instanceof Subgrid && ((Subgrid)to).ogrid.equals(from)) {
+            conformant = true;
+            // TODO
+        }
     	// TODO
 	}
 
@@ -44,6 +47,9 @@ public class GridToGrid implements IScaleMediator {
         	if (this.from instanceof Subgrid) {
         		return ((Subgrid)this.from).getOriginalOffset(offset);
         	}
+            if (this.to instanceof Subgrid) {
+                return ((Subgrid)this.to).getOriginalOffset(offset);
+            }
             throw new KlabInternalErrorException("grid2grid mediator: non-subgrid conformant grid: check usage");
         }
         throw new IllegalAccessError("cannot ask for a conformant offset in a non-conformant mediator");

@@ -21,7 +21,39 @@ public class Envelope implements IEnvelope {
 	IProjection projection;
 	Integer scaleRank = null;
 
-	public static Envelope create(com.vividsolutions.jts.geom.Envelope envelope, Projection projection) {
+	
+	@Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((envelope == null) ? 0 : envelope.hashCode());
+        result = prime * result + ((projection == null) ? 0 : projection.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Envelope other = (Envelope) obj;
+        if (envelope == null) {
+            if (other.envelope != null)
+                return false;
+        } else if (!envelope.equals(other.envelope))
+            return false;
+        if (projection == null) {
+            if (other.projection != null)
+                return false;
+        } else if (!projection.equals(other.projection))
+            return false;
+        return true;
+    }
+
+    public static Envelope create(com.vividsolutions.jts.geom.Envelope envelope, Projection projection) {
 		Envelope ret = new Envelope();
 		ret.envelope = new ReferencedEnvelope(envelope, projection.getCoordinateReferenceSystem());
 		ret.projection = projection;

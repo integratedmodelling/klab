@@ -512,8 +512,8 @@ public class Grid extends Area implements IGrid {
 		}
 
 		@Override
-		public void merge(IExtent extent) throws KlabException {
-			getShape().merge(extent);
+		public IExtent merge(IExtent extent) throws KlabException {
+		    return getShape().merge(extent);
 		}
 
 		@Override

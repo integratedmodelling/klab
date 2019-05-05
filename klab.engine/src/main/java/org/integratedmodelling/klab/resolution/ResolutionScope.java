@@ -52,6 +52,7 @@ public class ResolutionScope implements IResolutionScope {
 
 		ResolutionScope target;
 		List<IComputableResource> computation;
+		int order;
 
 		Link(ResolutionScope target) {
 			this.target = target;
@@ -73,7 +74,16 @@ public class ResolutionScope implements IResolutionScope {
 		public List<IComputableResource> getComputation() {
 			return computation;
 		}
+		
+		public Link withOrder(int order) {
+		    this.order = order;
+		    return this;
+		}
 
+		public int getOrder() {
+		    return order;
+		}
+		
 		@Override
 		public String toString() {
 			return getSource() + " <- " + target;
@@ -514,9 +524,11 @@ public class ResolutionScope implements IResolutionScope {
 	 * @param childScope
 	 * @param computation
 	 */
-	void link(ResolutionScope childScope, List<IComputableResource> computation) {
+	Link link(ResolutionScope childScope, List<IComputableResource> computation) {
+	    Link ret = null;
 		links.addAll(childScope.links);
-		links.add(new Link(childScope, computation));
+		links.add(ret = new Link(childScope, computation));
+		return ret;
 	}
 
 	/**

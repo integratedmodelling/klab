@@ -4,7 +4,6 @@ import javax.measure.unit.Unit;
 
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.CRS.AxisOrder;
-import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.components.geospace.utils.UTM;
 import org.integratedmodelling.klab.components.geospace.utils.WGS84;

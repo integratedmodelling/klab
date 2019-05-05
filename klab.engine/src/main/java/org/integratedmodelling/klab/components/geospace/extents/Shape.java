@@ -1,10 +1,16 @@
 package org.integratedmodelling.klab.components.geospace.extents;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import org.eclipse.xtext.util.Arrays;
 import org.geotools.geometry.jts.JTS;
@@ -36,6 +42,7 @@ import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.scale.AbstractExtent;
 
 import com.vividsolutions.jts.algorithm.ConvexHull;
+import com.vividsolutions.jts.awt.ShapeWriter;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
@@ -369,9 +376,11 @@ public class Shape extends AbstractExtent implements IShape {
     }
 
     @Override
-    public void merge(IExtent extent) throws KlabException {
-        // TODO Auto-generated method stub
-//        return null;
+    public IExtent merge(IExtent extent) throws KlabException {
+        if (extent instanceof ISpace) {
+            return Space.createMergedExtent(this, (ISpace)extent);
+        }
+        throw new IllegalArgumentException("a Shape cannot merge an extent of type " + extent.getType());
     }
 
     @Override
@@ -536,6 +545,9 @@ public class Shape extends AbstractExtent implements IShape {
         } else if (how == LogicalConnector.INTERSECTION) {
             return create(geometry
                     .intersection(shape.transform(this.projection).getJTSGeometry()), this.projection);
+        } else if (how == LogicalConnector.EXCLUSION) {
+            return create(geometry
+                    .difference(shape.transform(this.projection).getJTSGeometry()), this.projection);
         }
         throw new IllegalArgumentException("cannot merge a shape with " + other);
     }
@@ -658,7 +670,7 @@ public class Shape extends AbstractExtent implements IShape {
 
     @Override
     public double getStandardizedDistance(ISpace space) {
-        return getMeteredShape().distance(((Shape)space.getShape()).getMeteredShape());
+        return getMeteredShape().distance(((Shape) space.getShape()).getMeteredShape());
     }
 
     @Override
@@ -689,7 +701,7 @@ public class Shape extends AbstractExtent implements IShape {
     }
 
     @Override
-    public IShape difference(IShape shape) {
+    public Shape difference(IShape shape) {
         Geometry geom = this.geometry.difference(((Shape) shape).getJTSGeometry());
         return create(geom, projection);
     }
@@ -768,9 +780,27 @@ public class Shape extends AbstractExtent implements IShape {
         return new double[] { centroid.getCoordinate().x, centroid.getCoordinate().y };
     }
 
-	@Override
-	public boolean isGeneric() {
-		return false;
-	}
+    @Override
+    public boolean isGeneric() {
+        return false;
+    }
 
+    public void show() {
+        JFrame f = new JFrame();
+        f.getContentPane().add(new Paint());
+        f.setSize(700, 700);
+        f.setVisible(true);
+    }
+
+    class Paint extends JPanel{
+
+        private static final long serialVersionUID = 7826836352532417280L;
+
+        public void paint(Graphics g) {
+	        ShapeWriter sw = new ShapeWriter();
+	        g.setColor(Color.RED);
+	        java.awt.Shape polyShape = sw.toShape(geometry);
+	        ((Graphics2D) g).draw(polyShape);
+	    }
+    }
 }
