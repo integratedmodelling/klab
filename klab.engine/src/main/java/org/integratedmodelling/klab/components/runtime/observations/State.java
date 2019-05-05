@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -110,6 +109,10 @@ public class State extends Observation implements IState, IKeyHolder {
 
 	@Override
 	public IDataKey getDataKey() {
+	    if (dataKey == null && getObservable().getArtifactType() == IArtifact.Type.CONCEPT) {
+	        // may result from merging more states: build the datakey from the storage
+	        dataKey = storage.getDataKey();
+	    }
 		return dataKey;
 	}
 

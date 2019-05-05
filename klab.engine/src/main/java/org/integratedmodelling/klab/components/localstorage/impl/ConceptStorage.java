@@ -1,5 +1,10 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
@@ -8,6 +13,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Utils;
 
 import com.google.common.collect.BiMap;
@@ -88,10 +94,75 @@ public class ConceptStorage extends Storage implements IDataArtifact, IKeyHolder
 
 	@Override
 	public IDataKey getDataKey() {
+	    if (dataKey == null) {
+	        // build a de facto data key from concept key. This happens when the state is built by
+	        // aggregating multiple partitions, which may have different classification encodings.
+	        dataKey = buildDataKey();
+	    }
 		return dataKey;
 	}
 
-	@Override
+	private IDataKey buildDataKey() {
+	    
+	    return new IDataKey() {
+
+	        List<Integer> sortedKeys = null;
+	        
+            @Override
+            public int size() {
+                return conceptKey.size();
+            }
+
+            private List<Integer> getSortedKeys() {
+                if (sortedKeys == null) {
+                    sortedKeys = new ArrayList<>();
+                    sortedKeys.addAll(conceptKey.values());
+                    sortedKeys.sort(null);
+                }
+                return sortedKeys;
+            }
+            
+            @Override
+            public int reverseLookup(Object value) {
+                if (value instanceof IConcept) {
+                    return conceptKey.get((IConcept)value);
+                }
+                return -1;
+            }
+
+            @Override
+            public List<String> getLabels() {
+                List<String> ret = new ArrayList<>();
+                for (int key : getSortedKeys()) {
+                    ret.add(Concepts.INSTANCE.getDisplayName(conceptKey.inverse().get(key)));
+                }
+                return null;
+            }
+
+            @Override
+            public Object lookup(int index) {
+                return conceptKey.inverse().get(index);
+            }
+
+            @Override
+            public List<Pair<Integer, String>> getAllValues() {
+                List<Pair<Integer, String>> ret = new ArrayList<>();
+                for (int key : getSortedKeys()) {
+                    ret.add(new Pair<>(key, Concepts.INSTANCE.getDisplayName(conceptKey.inverse().get(key))));
+                }
+                return ret;
+            }
+
+            @Override
+            public boolean isOrdered() {
+                // TODO
+                return false;
+            }
+	        
+	    };
+    }
+
+    @Override
 	public void setDataKey(IDataKey key) {
 		this.dataKey = key;
 	}

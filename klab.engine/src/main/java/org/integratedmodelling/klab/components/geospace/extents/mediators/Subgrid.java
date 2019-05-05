@@ -261,8 +261,10 @@ public class Subgrid extends Grid {
 	}
 
 	public long getOriginalOffset(long offset) {
-		long[] xy = grid.getXYOffsets(offset);
-		return ogrid.getIndex(xy[0] + xofs, xy[1] + yofs);
+		Cell ocell = getOriginalCell(grid.getCell(offset));
+		return ocell.getOffsetInGrid();
+//        long[] xy = grid.getXYOffsets(offset);
+//		return ogrid.getIndex(xy[0] + xofs, xy[1] + yofs);
 	}
 
 	@Override
