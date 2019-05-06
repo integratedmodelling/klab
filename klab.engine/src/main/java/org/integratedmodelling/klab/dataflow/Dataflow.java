@@ -220,7 +220,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
         _definePartialScales(this, (Scale) scale);
     }
 
-    private void _definePartialScales(Actuator actuator, Scale current) {
+    private Scale _definePartialScales(Actuator actuator, Scale current) {
 
         if (actuator.getModel() != null
                 && (actuator.getModel().getBehavior().hasScale() || actuator.isPartition())) {
@@ -248,9 +248,10 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
         }
 
         for (IActuator child : actuator.getActuators()) {
-            _definePartialScales((Actuator) child, current);
+            current = _definePartialScales((Actuator) child, current);
         }
-
+        
+        return current;
     }
 
     private List<Actuator> collectActuators() {
@@ -476,4 +477,5 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
     public Collection<IObservation> getConfigurationTargets() {
         return this.configurationTargets;
     }
+
 }

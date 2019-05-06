@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class GridToGrid implements IScaleMediator {
@@ -21,7 +22,7 @@ public class GridToGrid implements IScaleMediator {
     	
     	if (from.equals(to)) {
     		identity = true;
-    		conformant = true;
+    		conformant = true; 
     	} else if (from instanceof Subgrid && ((Subgrid)from).ogrid.equals(to)) {
     		conformant = true;
     		// TODO
@@ -57,8 +58,7 @@ public class GridToGrid implements IScaleMediator {
 
     @Override
     public Collection<Pair<Long, Double>> map(long originalOffset) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new KlabUnimplementedException("grid2grid mediator: non-subgrid conformant grid: not implemented");
     }
 
 }

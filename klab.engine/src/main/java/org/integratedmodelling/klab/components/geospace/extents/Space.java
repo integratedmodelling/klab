@@ -241,8 +241,7 @@ public class Space extends Extent implements ISpace {
 
     @Override
     public boolean isCovered(long stateIndex) {
-        // TODO Auto-generated method stub
-        return true;
+        return grid != null ? grid.isCovered(stateIndex) : true;
     }
 
     @Override
@@ -398,14 +397,18 @@ public class Space extends Extent implements ISpace {
         }
         
         if (!hasGrid(other) && !hasFeatures(other)) {
-            if (grid != null) {
+        	Grid theGrid = grid;
+            if (theGrid != null) {
+            	while (theGrid instanceof Subgrid) {
+            		theGrid = ((Subgrid)theGrid).getOriginalGrid();
+            	}
                 // reset grid boundaries to merged shape
                 // review grid, using conformant (snap) if possible (error threshold?)
                 // error should be in terms of the max discrepancy compared to size of
                 // common shape
-                double error = Subgrid.getSubsettingError(grid, common);
+                double error = Subgrid.getSubsettingError(theGrid, common);
                 if (error <= Configuration.INSTANCE.getAcceptedSubsettingError()) {
-                    return new Space(common, Subgrid.create(grid, common));
+                    return new Space(common, Subgrid.create(theGrid, common));
                 } else {
                     throw new KlabUnsupportedFeatureException("Unsupported operation: non-conformant grid to grid (subsetting error = "
                             + error);

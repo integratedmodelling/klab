@@ -8,12 +8,11 @@ import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Mask;
 import org.integratedmodelling.klab.components.geospace.processing.Rasterizer;
 
-import com.vividsolutions.jts.geom.Coordinate;
-
 public class GridMask extends BitSet implements IGrid.Mask {
 
     private static final long serialVersionUID                = 1066602180194149853L;
-    private static final int  MAX_GRID_SIZE_FOR_RASTERIZATION = 1024 * 1024;
+    // disabled - prepared shape works OK with lots less memory footprint
+    private static final int  MAX_GRID_SIZE_FOR_RASTERIZATION = 0;
     private IGrid             grid;
     private IShape            shape;
     private boolean           useShape;
@@ -47,8 +46,9 @@ public class GridMask extends BitSet implements IGrid.Mask {
     public boolean isActive(long x, long y) {
         if (useShape) {
             double[] coords = grid.getCoordinates(grid.getOffset(x, y));
-            return ((Shape) shape).getJTSGeometry().contains(((Shape) shape).getJTSGeometry().getFactory()
-                    .createPoint(new Coordinate(coords[0], coords[1])));
+            return ((Shape)shape).containsPoint(coords);
+            //            return ((Shape) shape).getJTSGeometry().contains(((Shape) shape).getJTSGeometry().getFactory()
+//                    .createPoint(new Coordinate(coords[0], coords[1])));
         }
         return get((int) grid.getOffset(x, y));
     }

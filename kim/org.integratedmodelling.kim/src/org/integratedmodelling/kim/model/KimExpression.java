@@ -29,5 +29,10 @@ public class KimExpression implements IKimExpression {
 	public void setLanguage(String language) {
 		this.language = language;
 	}
+	
+	@Override
+	public String toString() {
+		return code;
+	}
 
 }

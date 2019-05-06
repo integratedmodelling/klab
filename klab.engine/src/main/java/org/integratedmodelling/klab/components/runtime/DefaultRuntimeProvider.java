@@ -143,7 +143,17 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
                 TopologicalOrderIterator<IActuator, DefaultEdge> sorter = new TopologicalOrderIterator<>(graph, new Comparator<IActuator>() {
                     @Override
                     public int compare(IActuator o1, IActuator o2) {
-                        return Integer.compare(((Actuator) o2).getPriority(), ((Actuator) o1).getPriority());
+                    	Actuator a1 = (Actuator)o1;
+                    	Actuator a2 = (Actuator)o2;
+//                    	if (a2.isPartition() && a2.getPartitionedTarget().equals(a1.getName())) {
+//                    		// a1 is the least
+//                    		return -1;
+//                    	}
+//                    	if (a1.isPartition() && a1.getPartitionedTarget().equals(a2.getName())) {
+//                    		// a2 is the least
+//                    		return 1;
+//                    	}
+                        return Integer.compare(a1.getPriority(), a2.getPriority());
                     }
                 });
 
@@ -199,7 +209,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
                  * otherwise children are computable in parallel - which this implementation
                  * does not support.
                  */
-                if (a.isComputed()) {
+                if (a.isComputed()/* && !((Actuator)a).isPartition()*/) {
                     graph.addVertex(a);
                     graph.addEdge(a, actuator);
                 }

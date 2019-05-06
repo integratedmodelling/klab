@@ -246,6 +246,11 @@ public class Subgrid extends Grid {
 	}
 
 	@Override
+	public boolean isCovered(long granule) {
+		return grid.isCovered(granule);
+	}
+
+	@Override
 	public Shape getCentroid() {
 		return grid.getCentroid();
 	}
@@ -265,6 +270,10 @@ public class Subgrid extends Grid {
 		return ocell.getOffsetInGrid();
 //        long[] xy = grid.getXYOffsets(offset);
 //		return ogrid.getIndex(xy[0] + xofs, xy[1] + yofs);
+	}
+	
+	public Grid getOriginalGrid() {
+		return ogrid;
 	}
 
 	@Override

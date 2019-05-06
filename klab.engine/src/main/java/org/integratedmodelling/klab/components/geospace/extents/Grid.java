@@ -726,7 +726,11 @@ public class Grid extends Area implements IGrid {
 					return getCell(n++);
 				}
 				Cell ret = getCell(n);
+//				long last = n;
 				n = mask.nextActiveOffset(n + 1);
+//				if (n > last + 1) {
+//					System.out.println("HOHOHOH");
+//				}
 				return ret;
 			}
 
@@ -753,7 +757,6 @@ public class Grid extends Area implements IGrid {
 	}
 
 	public Cell getCell(long index) {
-		// FIXME if we have a mask, should go to the next ACTIVE cell.
 		long[] xy = getXYOffsets(index);
 		return new CellImpl(xy[0], xy[1]);
 	}
@@ -928,7 +931,7 @@ public class Grid extends Area implements IGrid {
 
 	public boolean isCovered(long granule) {
 		long[] xy = getXYOffsets(granule);
-		return mask.isActive(xy[0], xy[1]);
+		return mask == null ? true : mask.isActive(xy[0], xy[1]);
 	}
 
 	@Override

@@ -92,7 +92,7 @@ public class RescalingState extends Observation implements IState {
 		return reduce(index, mediators);
 	}
 
-	private List<IScaleMediator> getMediators(Scale original, Scale target) {
+	private synchronized List<IScaleMediator> getMediators(Scale original, Scale target) {
 		List<IScaleMediator> mediators = new ArrayList<>();
 		conformant = true;
 		for (IExtent originalExtent : original.getExtents()) {

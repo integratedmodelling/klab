@@ -631,21 +631,21 @@ public class Scale implements IScale {
 	public void mergeExtent(IExtent extent) {
 
 		boolean merged = false;
-//		int i = 0;
+		// int i = 0;
 		for (IExtent e : extents) {
 			if (e.getType().equals(extent.getType())) {
 				merged = true;
 				e.merge(extent);
 				break;
 			}
-//			i++;
+			// i++;
 		}
 
 		if (!merged) {
-//			extents.add(i, merged);
-//			((AbstractExtent) merged).setScaleId(getScaleId());
-//		} else {
-			extents.add((AbstractExtent)extent);
+			// extents.add(i, merged);
+			// ((AbstractExtent) merged).setScaleId(getScaleId());
+			// } else {
+			extents.add((AbstractExtent) extent);
 			((AbstractExtent) extent).setScaleId(getScaleId());
 		}
 
@@ -748,21 +748,21 @@ public class Scale implements IScale {
 		return true;
 	}
 
-    /*
-     * true if the passed scale has the same extents as we do.
-     */
-    boolean hasEqualExtents(IScale scale) {
-        if (!hasSameExtents(scale)) {
-            return false;
-        }
-        for (int i = 0; i < extents.size(); i++) {
-            if (!((Scale)scale).extents.get(i).equals(extents.get(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-	
+	/*
+	 * true if the passed scale has the same extents as we do.
+	 */
+	boolean hasEqualExtents(IScale scale) {
+		if (!hasSameExtents(scale)) {
+			return false;
+		}
+		for (int i = 0; i < extents.size(); i++) {
+			if (!((Scale) scale).extents.get(i).equals(extents.get(i))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public List<IExtent> getExtents() {
 		return extents;
 	}
@@ -937,7 +937,6 @@ public class Scale implements IScale {
 		return create(exts.toArray(new IExtent[exts.size()]));
 	};
 
-	
 	/**
 	 * Return a new scale with the passed domains collapsed into a 1-multiplicity
 	 * extent.
@@ -1011,17 +1010,17 @@ public class Scale implements IScale {
 			if (((Scale) locator).getScaleId().equals(getScaleId())) {
 				return this;
 			}
-			if (((Scale)locator).hasSameExtents(this)) {
-			    List<IExtent> exts = new ArrayList<>();
-			    for (int i = 0; i < extents.size(); i++) {
-			        IExtent ours = extents.get(i);
-			        IExtent hers = ((Scale)locator).extents.get(i);
-			        if (!ours.contains(hers)) {
-			            return null;
-			        }
-			        exts.add(hers);
-			    }
-			    return new Scale(exts);
+			if (((Scale) locator).hasSameExtents(this)) {
+				List<IExtent> exts = new ArrayList<>();
+				for (int i = 0; i < extents.size(); i++) {
+					IExtent ours = extents.get(i);
+					IExtent hers = ((Scale) locator).extents.get(i);
+					if (!ours.contains(hers)) {
+						return null;
+					}
+					exts.add(hers);
+				}
+				return new Scale(exts);
 			}
 			// all-around mediation possible
 		} else {
@@ -1247,11 +1246,15 @@ public class Scale implements IScale {
 		long offset;
 		IMonitor monitor;
 		Scale locator;
-		
+
 		public SplIt(long begin, long end, IMonitor monitor) {
-			this.beginSplit = this.offset = begin;
+			this.beginSplit = begin;
 			this.endSplit = end;
 			this.monitor = monitor;
+			while (!isCovered(begin) && offset < endSplit) {
+				begin++;
+			}
+			this.offset = begin;
 			this.locator = new Scale(Scale.this, begin);
 		}
 
@@ -1275,6 +1278,9 @@ public class Scale implements IScale {
 				this.locator.setLocatorsTo(offset);
 				arg0.accept(locator);
 				offset++;
+				while (!isCovered(offset) && offset < endSplit) {
+					offset++;
+				}
 				return true;
 			}
 			return false;
@@ -1309,45 +1315,44 @@ public class Scale implements IScale {
 	@Override
 	public Scale merge(IScale scale) {
 
-	    if (scale == this || hasEqualExtents(scale)) {
-	        return this;
-	    }
-	    
-        if (scale instanceof Scale) {
+		if (scale == this || hasEqualExtents(scale)) {
+			return this;
+		}
 
-            Scale other = (Scale) scale;
-            Scale ret = new Scale();
-            ArrayList<IExtent> common = new ArrayList<>();
-            HashSet<Dimension.Type> commonConcepts = new HashSet<>();
+		if (scale instanceof Scale) {
 
-            for (IExtent e : extents) {
-                if (other.getDimension(e.getType()) != null) {
-                    common.add(e);
-                    commonConcepts.add(e.getType());
-                } else {
-                    ret.mergeExtent(e);
-                }
-            }
+			Scale other = (Scale) scale;
+			Scale ret = new Scale();
+			ArrayList<IExtent> common = new ArrayList<>();
+			HashSet<Dimension.Type> commonConcepts = new HashSet<>();
 
-            for (IExtent e : other.getExtents()) {
-                if (ret.getDimension(e.getType()) == null && !commonConcepts.contains(e.getType())) {
-                    ret.mergeExtent(e);
-                }
-            }
+			for (IExtent e : extents) {
+				if (other.getDimension(e.getType()) != null) {
+					common.add(e);
+					commonConcepts.add(e.getType());
+				} else {
+					ret.mergeExtent(e);
+				}
+			}
 
-            for (IExtent e : common) {
-                IExtent oext = other.getDimension(e.getType());
-                IExtent merged = (IExtent) e.merge(oext);
-                ret.mergeExtent(merged);
-            }
+			for (IExtent e : other.getExtents()) {
+				if (ret.getDimension(e.getType()) == null && !commonConcepts.contains(e.getType())) {
+					ret.mergeExtent(e);
+				}
+			}
 
-            ret.scaleId = this.scaleId;
-            
-            return ret;
-        }
+			for (IExtent e : common) {
+				IExtent oext = other.getDimension(e.getType());
+				IExtent merged = (IExtent) e.merge(oext);
+				ret.mergeExtent(merged);
+			}
 
-        throw new IllegalArgumentException("Scale merge() called with a non-scale parameter");
+			ret.scaleId = this.scaleId;
+
+			return ret;
+		}
+
+		throw new IllegalArgumentException("Scale merge() called with a non-scale parameter");
 	}
-
 
 }
