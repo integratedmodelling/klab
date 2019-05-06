@@ -153,7 +153,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 //                    		// a2 is the least
 //                    		return 1;
 //                    	}
-                        return Integer.compare(a1.getPriority(), a2.getPriority());
+                        return Integer.compare(a2.getPriority(), a1.getPriority());
                     }
                 });
 
