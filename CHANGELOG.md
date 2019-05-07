@@ -32,6 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Model docstring is used to create default section descriptions with interactive model 
   parameters provided through @parameter annotation. Also now available as rdfs:comment
   in model metadata.
+- New annotation @NonReentrant can be used to tag a state resolver that we don't want
+  the runtime system to parallelize.
 ### Changed
 - Resources now can have dependencies as well as attributes.
 - Geometry admits 'generic' extents using Greek letters and has a GeometryBuilder to
@@ -43,11 +45,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   are chosen by the resolver. If offline models prevent resolution a warning is
   emitted, otherwise just an info message. Debug messages detail which models
   were chosen but were offline in any case.
+- Contextualization logic handles partitions and masks differently, never touching
+  extents that aren't covered.
+- Topological sorting of actuators now uses custom logics to enable special treatment
+  of partitions and other situations.
+- Logics to compound and merge partially specified subscales now in place, still needing 
+  treatment of various situations at extent level.
 ### Fixed
 - Resource deletion, addition and update now refresh the Eclipse environment correctly.
 - Improved resource editor (better time widget, support for dependencies, hierarchical
   editing of properties).
-  
+- All examples with complex, intermingling partitions now working at least on spatial
+  extents.
+
 ## [0.10.0.154] -- 2019/04/23
 ### Added
 - Add and support 'monetary' qualifier to 'value of' semantic operator also to enable validation 

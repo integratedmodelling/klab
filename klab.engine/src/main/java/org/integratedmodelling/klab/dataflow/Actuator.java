@@ -1,15 +1,16 @@
 package org.integratedmodelling.klab.dataflow;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.integratedmodelling.kim.api.IComputableResource;
-import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.Concepts;
@@ -778,6 +779,15 @@ public class Actuator implements IActuator {
 		return computationStrategy.size() > 0;
 	}
 
+	private boolean isMerging() {
+		for (IActuator child : getActuators()) {
+			if (((Actuator)child).isPartition()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@Override
 	public List<IComputableResource> getComputation() {
 		return computedResources;
@@ -927,5 +937,77 @@ public class Actuator implements IActuator {
 			}
 		}
 		return null;
+	}
+
+	public List<Actuator> dependencyOrder() {
+		List<Actuator> ret = new ArrayList<>();
+		_dependencyOrder(this, ret, new HashSet<Actuator>(), buildCatalog());
+		return ret;
+	}
+
+	/*
+	 * build a catalog of all the non-reference actuators descending from this one
+	 */
+	private Map<String, Actuator> buildCatalog() {
+		Map<String, Actuator> catalog = new HashMap<>();
+		_buildCatalog(this, catalog);
+		return catalog;
+	}
+
+	private void _buildCatalog(Actuator actuator, Map<String, Actuator> catalog) {
+		
+		if (!actuator.isReference()) {
+			catalog.put(actuator.getName(), actuator);
+		}
+		for (IActuator child : actuator.getActuators()) {
+			_buildCatalog((Actuator)child, catalog);
+		}
+	}
+
+	private void _dependencyOrder(Actuator actuator, List<Actuator> ret, Set<Actuator> added, Map<String, Actuator> catalog) {
+
+		if (actuator.isReference()) {
+			actuator = catalog.get(actuator.getName());
+		}
+		
+		boolean add = !added.contains(actuator);
+		
+		for (IActuator child : getSortedChildren(actuator)) {
+			_dependencyOrder((Actuator)child, ret, added, catalog);
+		}
+		
+		if (add && !added.contains(actuator) && (actuator.isComputed() || actuator.isMerging())) {
+			ret.add(actuator);
+			added.add(actuator);
+		}
+	}
+
+	/*
+	 * Return our children in the original order; if they're partitions, sort them by increasing 
+	 * priority (the opposite of their natural order) so that the highest-priority computes last,
+	 * just in case overlaps happen.
+	 *  
+	 * @param actuator
+	 * @return
+	 */
+	private List<IActuator> getSortedChildren(Actuator actuator) {
+		List<IActuator> ret = new ArrayList<>();
+		int partitions = 0;
+		for (IActuator act : actuator.getActuators()) {
+			if (((Actuator)act).isPartition()) {
+				partitions ++;
+			}
+			ret.add(act);
+		}
+		if (partitions > 1) {
+			ret.sort(new Comparator<IActuator>() {
+				@Override
+				public int compare(IActuator o1, IActuator o2) {
+					return Integer.compare(((Actuator)o2).priority, ((Actuator)o1).priority);
+				}
+			});
+		}
+		
+		return ret;
 	}
 }
