@@ -48,8 +48,8 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
         rankingCriteria.add(NS.LEXICAL_SCOPE);
         rankingCriteria.add(NS.TRAIT_CONCORDANCE);
         rankingCriteria.add(NS.SEMANTIC_DISTANCE);
-        rankingCriteria.add(NS.SCALE_COVERAGE);
         rankingCriteria.add(NS.SCALE_SPECIFICITY);
+        rankingCriteria.add(NS.SCALE_COVERAGE);
         rankingCriteria.add(NS.INHERENCY);
         rankingCriteria.add(NS.EVIDENCE);
         rankingCriteria.add(NS.NETWORK_REMOTENESS);
@@ -417,7 +417,6 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
                             .getStandardizedGeometry()
                             .getArea());
                     coverageS = 100.0 * (intersection.getArea() / cspace.getArea());
-
                 }
             }
 
@@ -429,8 +428,8 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
             }
 
             idxss.put(model, new double[] {
-                    100 - getMin(coverageS, coverageT),
-                    100 - getMin(specificityS, specificityT),
+                    getMin(coverageS, coverageT),
+                    getMin(specificityS, specificityT),
                     getMin(resolutionS, resolutionT)
             });
         }

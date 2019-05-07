@@ -455,6 +455,7 @@ public class Model extends KimObject implements IModel {
 	 * @throws KlabException
 	 */
 	public Scale getCoverage(IMonitor monitor) throws KlabException {
+		
 		if (this.coverage == null) {
 			this.coverage = Scale.create(behavior.getExtents(monitor));
 			if (resourceCoverage != null) {

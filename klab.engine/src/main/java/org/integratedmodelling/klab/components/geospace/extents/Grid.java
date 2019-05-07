@@ -674,6 +674,12 @@ public class Grid extends Area implements IGrid {
 		public boolean isGeneric() {
 			return false;
 		}
+
+		@Override
+		public boolean isEmpty() {
+			// a cell is never an empty extent
+			return false;
+		}
 	}
 
 	Shape shape;

@@ -465,7 +465,7 @@ public class DataflowCompiler {
 					// as is.
 					for (IObservable mobs : mergedCatalog) {
 						if (observable.equals(mobs)) {
-							ret.setName(mobs.getLocalName()); 
+							ret.setName(mobs.getLocalName());
 						}
 					}
 				} else {
@@ -543,14 +543,11 @@ public class DataflowCompiler {
 
 			Scale myCov = null;
 			for (ModelD model : models) {
-				if (model.model.getBehavior().hasScale()) {
-					if (myCov == null) {
-						myCov = Scale.create(model.model.getBehavior().getExtents(scope.getMonitor())).collapse();
-					} else {
-						myCov = myCov.merge(
-								Scale.create(model.model.getBehavior().getExtents(scope.getMonitor())).collapse(),
-								LogicalConnector.UNION);
-					}
+				Scale scale = model.model.getCoverage(scope.getMonitor());
+				if (myCov == null) {
+					myCov = scale.collapse();
+				} else {
+					myCov = myCov.merge(scale.collapse(), LogicalConnector.UNION);
 				}
 			}
 			if (myCov != null) {
@@ -665,7 +662,7 @@ public class DataflowCompiler {
 
 				if (hasPartials) {
 					try {
-						md.coverage = Coverage.full(Scale.create(model.getBehavior().getExtents(monitor)));
+						md.coverage = Coverage.full(model.getCoverage(monitor));
 					} catch (KlabException e) {
 						monitor.error("error computing model coverage: " + e.getMessage());
 					}

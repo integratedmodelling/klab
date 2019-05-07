@@ -838,16 +838,11 @@ public class ModelReference {
 		// return urn;
 	}
 
-//	/**
-//	 * Sets the urn.
-//	 *
-//	 * @param urn
-//	 *            the new urn
-//	 */
-//	public void setUrn(String urn) {
-//		this.urn = urn;
-//	}
-
+	@Override
+	public String toString() {
+		return "[REF " + name + "]";
+	}
+	
 	public int getPriority() {
 		return priority;
 	}

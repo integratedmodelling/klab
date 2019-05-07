@@ -436,7 +436,7 @@ public class ResolutionScope implements IResolutionScope {
 			/*
 			 * ...and redefine it based on their own coverage if they have any.
 			 */
-			ret.coverage = Coverage.full(Scale.createLike(ret.coverage, model.getBehavior().getExtents(this.monitor)));
+			ret.coverage = Coverage.full(Scale.createLike(ret.coverage, model.getCoverage(this.monitor).getExtents()));
 		}
 		return ret;
 	}

@@ -257,7 +257,7 @@ public class Scale implements IScale {
 				}
 			}
 			if (add) {
-				exts.add(((Extent) existing).copy());
+				exts.add(((AbstractExtent) existing).copy());
 			}
 		}
 		return create(exts);
@@ -271,7 +271,7 @@ public class Scale implements IScale {
 	 * @return a new scale
 	 */
 	public static Scale createLike(IScale scale, Collection<IExtent> extents) {
-		return createLike(scale, extents.toArray(new Extent[extents.size()]));
+		return createLike(scale, extents.toArray(new IExtent[extents.size()]));
 	}
 
 	/**
@@ -842,7 +842,7 @@ public class Scale implements IScale {
 	public boolean isEmpty() {
 
 		for (IExtent e : extents) {
-			if (((Extent) e).isEmpty()) {
+			if (((AbstractExtent) e).isEmpty()) {
 				return true;
 			}
 		}

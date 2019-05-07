@@ -33,6 +33,8 @@ public abstract class AbstractExtent implements IExtent {
 		return scale.getScaleId().equals(scaleId);
 	}
 
+	public abstract boolean isEmpty();
+	
 	/**
 	 * Return the string rep for the {@link Dimension} this represents.
 	 * 

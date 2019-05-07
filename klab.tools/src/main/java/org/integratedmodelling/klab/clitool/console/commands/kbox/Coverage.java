@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.clitool.api.ICommand;
+import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.StringUtils;
@@ -36,8 +37,8 @@ public class Coverage implements ICommand {
 			// it's a model
 			IKimObject mob = Resources.INSTANCE.getModelObject(declaration);
 			if (mob instanceof IModel) {
-				Scale scale = Scale.create(((IModel)mob).getBehavior().getExtents(session.getMonitor()));
-				ret += scale.asGeometry();
+				Scale scale = ((Model)mob).getCoverage(session.getMonitor());
+				ret += scale.asGeometry().toString();
 			}
 			
 		} else {
