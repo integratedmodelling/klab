@@ -227,13 +227,15 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 				Scale coverage = mcoverage;
 				if (actuator.isPartition()) {
 					coverage = current.merge(mcoverage, LogicalConnector.INTERSECTION);
+
+					// TODO MOVE BELOW (OUTSIDE THE IF) WHEN MERGING IS OK
+					actuator.setMergedScale(coverage.merge(current));
 				}
 
 				/*
 				 * merge in the current scale. The coverage of the current actuator defines the
 				 * overall extents if any are set.
 				 */
-				actuator.setMergedScale(coverage.merge(current));
 
 				if (actuator.isPartition()) {
 					/*
