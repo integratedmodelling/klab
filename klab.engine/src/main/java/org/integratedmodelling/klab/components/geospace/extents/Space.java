@@ -837,6 +837,12 @@ public class Space extends Extent implements ISpace {
         // Space ret = new Space(this);
         // Space oth = (Space) extent;
 
+    	/*
+    	 * if destination has no extent and source does, add extent to destination
+    	 * if source has a grid and destination doesn't, add it to destination's extents
+    	 * recheck generic
+    	 */
+    	
         /*
          * TODO figure out mandatory vs. not. These are all false, which probably
          * shouldn't be - either pass to merge or be smarter.

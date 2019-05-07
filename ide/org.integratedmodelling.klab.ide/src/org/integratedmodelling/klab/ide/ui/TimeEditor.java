@@ -14,6 +14,7 @@ import org.eclipse.wb.swt.ResourceManager;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Type;
+import org.integratedmodelling.klab.common.Geometry;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormAttachment;
@@ -252,20 +253,38 @@ public class TimeEditor extends Composite {
 	}
 
 	public String getGeometry() {
-		if (isValid()) {
-			// TODO
-		}
-		return null;
+
+		String ret = null;
+ 
+		// TODO
+			switch (timeType) {
+			case GENERIC:
+				ret = "\u03C4";
+				break;
+			case GRID:
+			case REAL:
+				ret = "T";
+				break;
+			case SPECIFIC:
+				ret = "t";
+				break;
+			default:
+				break;
+			}
+			
+			String resolution = "1";
+			
+			if (time_resolution.isEnabled()) {
+				// compute step and n. of steps
+			}
+
+			return ret;
 	}
 	
 	public void validate() {
-		if (isValid()) {
-			// TODO set error text and label
-		}
 	}
 
 	public boolean isValid() {
-		// TODO check everything that matters
-		return true;
+		return getGeometry() != null;
 	}
 }
