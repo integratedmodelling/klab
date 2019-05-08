@@ -128,7 +128,7 @@ public class VectorEncoder implements IResourceEncoder {
         for (AttributeDescriptor ad : source.getSchema().getAttributeDescriptors()) {
             if (!ad.getLocalName().equals(geomName)) {
                 attributes.put(ad.getLocalName(), ad.getType().getBinding());
-                if (idRequested == null && urnParameters.containsKey(ad.getLocalName().toLowerCase())) {
+                if (idRequested == null && (urnParameters.containsKey(ad.getLocalName().toLowerCase()) || urnParameters.containsKey(ad.getLocalName().toUpperCase()))) {
                     try {
                         // FIXME this only matches strings - must use syntax dependent on attribute type
                         filter = ECQL.toFilter(ad.getLocalName() + " = '" + urnParameters.get(ad.getLocalName().toLowerCase()) + "'");

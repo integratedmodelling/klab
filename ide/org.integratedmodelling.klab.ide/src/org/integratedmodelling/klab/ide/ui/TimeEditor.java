@@ -1,26 +1,20 @@
 package org.integratedmodelling.klab.ide.ui;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.ResourceManager;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Type;
-import org.integratedmodelling.klab.common.Geometry;
-import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.events.MouseTrackAdapter;
-import org.eclipse.swt.events.MouseEvent;
 
 public class TimeEditor extends Composite {
 
@@ -31,9 +25,26 @@ public class TimeEditor extends Composite {
 	private Resolution.Type resolution = Resolution.Type.YEAR;
 	private ITime.Type timeType = null;
 	private Combo time_resolution;
-
+	private Listener listener = null;
+	
+	/**
+	 * Pass one to the constructor to be notified of any changes that result in 
+	 * a valid geometry.
+	 * 
+	 * @author ferdinando.villa
+	 *
+	 */
+	public interface Listener {
+		void onValidModification(String geometrySpecs);
+	}
+	
 	public TimeEditor(Composite parent, int style) {
+		this(parent, style, null);
+	}
+	
+	public TimeEditor(Composite parent, int style, Listener listener) {
 		super(parent, style);
+		this.listener = listener;
 		setLayout(new GridLayout(1, false));
 		Composite grpTime = new Composite(this, SWT.NONE);
 		grpTime.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
@@ -48,6 +59,7 @@ public class TimeEditor extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setEnablements(time_type.getText());
+				modified();
 			}
 		});
 		time_type.setItems(new String[] { "None", "Generic", "Specific", "Grid", "Real time" });
@@ -81,6 +93,7 @@ public class TimeEditor extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setResolution(time_resolution.getText().toUpperCase());
+				modified();
 			}
 		});
 		time_resolution.setEnabled(false);
@@ -153,6 +166,15 @@ public class TimeEditor extends Composite {
 
 		Label time_chooseStep = new Label(grpTime, SWT.NONE);
 		time_chooseStep.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
+	}
+
+	protected void modified() {
+		if (listener != null) {
+			String geometry = getGeometry();
+			if (geometry != null) {
+				listener.onValidModification(geometry);
+			}
+		}
 	}
 
 	protected void setResolution(String res) {
