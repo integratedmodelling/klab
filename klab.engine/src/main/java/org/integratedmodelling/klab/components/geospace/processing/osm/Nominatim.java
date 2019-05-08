@@ -30,7 +30,7 @@ public enum Nominatim {
                 ret = res.get("name").toString();
             } 
         } catch (Throwable t) {
-
+        	// shut up
         }
 
         return ret == null ? "Region of interest" : ret;

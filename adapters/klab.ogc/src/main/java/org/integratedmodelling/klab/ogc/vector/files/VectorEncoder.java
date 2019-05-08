@@ -114,7 +114,6 @@ public class VectorEncoder implements IResourceEncoder {
         Scale requestScale = geometry instanceof Scale ? (Scale)geometry : Scale.create(geometry);
         
         /*
-         * TODO
          * merge urn params with resource params: if attr=x, use filter, if just value=x and we have a 
          * nameAttribute filter, else add to parameters
          */
@@ -130,8 +129,12 @@ public class VectorEncoder implements IResourceEncoder {
                 attributes.put(ad.getLocalName(), ad.getType().getBinding());
                 if (idRequested == null && (urnParameters.containsKey(ad.getLocalName().toLowerCase()) || urnParameters.containsKey(ad.getLocalName().toUpperCase()))) {
                     try {
-                        // FIXME this only matches strings - must use syntax dependent on attribute type
-                        filter = ECQL.toFilter(ad.getLocalName() + " = '" + urnParameters.get(ad.getLocalName().toLowerCase()) + "'");
+                        // use syntax dependent on attribute type
+                    	if (ad.getType().getBinding() == String.class) {
+                    		filter = ECQL.toFilter(ad.getLocalName() + " = '" + urnParameters.get(ad.getLocalName().toLowerCase()) + "'");
+                    	} else {
+                    		filter = ECQL.toFilter(ad.getLocalName() + " = " + urnParameters.get(ad.getLocalName().toLowerCase()));
+                    	}
                     } catch (CQLException e) {
                         // shouldn't happen as filter was validated previously
                         throw new KlabValidationException(e);
