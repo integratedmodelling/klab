@@ -74,16 +74,16 @@ public class ResolutionScope implements IResolutionScope {
 		public List<IComputableResource> getComputation() {
 			return computation;
 		}
-		
+
 		public Link withOrder(int order) {
-		    this.order = order;
-		    return this;
+			this.order = order;
+			return this;
 		}
 
 		public int getOrder() {
-		    return order;
+			return order;
 		}
-		
+
 		@Override
 		public String toString() {
 			return getSource() + " <- " + target;
@@ -160,8 +160,8 @@ public class ResolutionScope implements IResolutionScope {
 	private IMonitor monitor;
 
 	/**
-	 * if not null, the observable has been resolved through a value specified inline and requires
-	 * no further resolution.
+	 * if not null, the observable has been resolved through a value specified
+	 * inline and requires no further resolution.
 	 */
 	private Object inlineValue;
 
@@ -378,7 +378,7 @@ public class ResolutionScope implements IResolutionScope {
 		if (previous != null) {
 			ret.coverage = previous.coverage;
 		}
-		
+
 		return ret;
 	}
 
@@ -432,11 +432,13 @@ public class ResolutionScope implements IResolutionScope {
 		ret.coverage = new Coverage(this.coverage);
 		ret.coverage.setCoverage(1.0);
 
-		if (model.getBehavior().hasScale()) {
+		if (!model.getCoverage(monitor).isEmpty()) {
 			/*
 			 * ...and redefine it based on their own coverage if they have any.
 			 */
-			ret.coverage = Coverage.full(Scale.createLike(ret.coverage, model.getCoverage(this.monitor).getExtents()));
+			ret.coverage = this.coverage.merge(
+					Scale.createLike(ret.coverage, model.getCoverage(this.monitor).getExtents()),
+					LogicalConnector.UNION);
 		}
 		return ret;
 	}
@@ -525,7 +527,7 @@ public class ResolutionScope implements IResolutionScope {
 	 * @param computation
 	 */
 	Link link(ResolutionScope childScope, List<IComputableResource> computation) {
-	    Link ret = null;
+		Link ret = null;
 		links.addAll(childScope.links);
 		links.add(ret = new Link(childScope, computation));
 		return ret;
@@ -609,8 +611,8 @@ public class ResolutionScope implements IResolutionScope {
 			int i = 0;
 			for (IObservable obs : this.model.getObservables()) {
 				/*
-				 * TODO/FIXME: observables beyond the first, if used, must be contextualized to the 
-				 * observable in instantiators
+				 * TODO/FIXME: observables beyond the first, if used, must be contextualized to
+				 * the observable in instantiators
 				 */
 				if (!obs.equals(toSkip) && i == 0) {
 					ret.add(obs);
@@ -932,8 +934,9 @@ public class ResolutionScope implements IResolutionScope {
 
 	public boolean isBeingResolved(IConcept observable, Mode mode) {
 		/*
-		 * TODO this should also apply to the dereifying versions of a model being resolved - or not? 
-		 * Probably not - as long as the context of resolution is appropriate.
+		 * TODO this should also apply to the dereifying versions of a model being
+		 * resolved - or not? Probably not - as long as the context of resolution is
+		 * appropriate.
 		 */
 		if (this.observable != null && this.observable.getType().equals(observable) && this.mode == mode) {
 			return true;
@@ -955,7 +958,7 @@ public class ResolutionScope implements IResolutionScope {
 		this.inlineValue = inlineValue;
 		this.coverage.setCoverage(1.0);
 	}
-	
+
 	public ISession getSession() {
 		return monitor.getIdentity().getParentIdentity(ISession.class);
 	}

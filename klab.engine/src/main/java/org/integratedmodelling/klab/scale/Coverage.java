@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.scale;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
@@ -54,6 +56,13 @@ public class Coverage extends Scale implements ICoverage {
 	List<Pair<IExtent, Double>> coverages = new ArrayList<>();
 	double coverage;
 	double gain = 0;
+
+	/*
+	 * Keep all the (collapsed) merged in subextents in their current situation. At
+	 * each merge, all the extents are combined again, any resulting empty extents
+	 * eliminated.
+	 */
+	Map<Dimension.Type, List<IExtent>> merged = new HashMap<>();
 
 	/**
 	 * Create a coverage with full coverage, which can be reduced by successive AND

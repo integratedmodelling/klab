@@ -76,12 +76,12 @@ public class RunoffResolver implements IResolver<IState>, IExpression {
 		double prec = precipitation.get(cell, Double.class);
 		double cn = curvenumber.get(cell, Double.class);
 		double mret = (25400 / cn) - 254;
-		double inflow = ((prec - (0.2 * mret))*(prec - (0.2 * mret)))/(prec + (0.8 * mret));
+		double outflow = ((prec - (0.2 * mret))*(prec - (0.2 * mret)))/(prec + (0.8 * mret));
 		for (Cell upstream : GeoprocessingComponent.getUpstreamCells(cell, flowdirection, null)) {
-			inflow += computeRunoff(upstream, flowdirection, precipitation, curvenumber, runoff);
+			outflow += computeRunoff(upstream, flowdirection, precipitation, curvenumber, runoff);
 		}
-		runoff.set(cell, inflow);
-		return inflow;
+		runoff.set(cell, outflow);
+		return outflow;
 	}
 
 	@Override
