@@ -58,11 +58,11 @@ public class Coverage extends Scale implements ICoverage {
 	double gain = 0;
 
 	/*
-	 * Keep all the (collapsed) merged in subextents in their current situation. At
-	 * each merge, all the extents are combined again, any resulting empty extents
-	 * eliminated.
+	 * Keep all the (collapsed) merge history in subextents in their current
+	 * situation. At each merge, all the extents are combined again, any resulting
+	 * empty extents eliminated.
 	 */
-	Map<Dimension.Type, List<IExtent>> merged = new HashMap<>();
+	Map<Dimension.Type, List<Pair<LogicalConnector, IExtent>>> merged = new HashMap<>();
 
 	/**
 	 * Create a coverage with full coverage, which can be reduced by successive AND
@@ -195,7 +195,8 @@ public class Coverage extends Scale implements ICoverage {
 			if (extents.get(i).getType() != coverage.getExtents().get(i).getType()) {
 				throw new IllegalArgumentException("cannot merge a coverage with a scale with different dimensions");
 			}
-			newcoverages.add(mergeExtent(i, coverage.getExtents().get(i), how));
+			// FIXME must use the MERGED extent - which are not kept. The extents array contains the full area to cover. 
+			newcoverages.add(mergeExtent(i, getCurrentExtent(coverage, i), how));
 		}
 
 		double gain = this.gain;
@@ -207,6 +208,16 @@ public class Coverage extends Scale implements ICoverage {
 		}
 
 		return new Coverage(this, newcoverages, gain);
+	}
+
+	/*
+	 * Get the currently merged extent
+	 */
+	private IExtent getCurrentExtent(Scale coverage, int i) {
+		if (coverage instanceof Coverage) {
+			return ((Coverage)coverage).coverages.get(i).getFirst();
+		} 
+		return coverage.getExtents().get(i);
 	}
 
 	@Override
@@ -299,7 +310,7 @@ public class Coverage extends Scale implements ICoverage {
 				this.gain = Double.isNaN(this.gain) ? gain : this.gain * gain;
 				return new Pair<>(newcover == 0 ? null : x, newcover / origcover);
 			}
-
+			
 		} else {
 			throw new IllegalArgumentException("cannot merge a coverage with another using operation: " + how);
 		}

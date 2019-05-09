@@ -436,9 +436,9 @@ public class ResolutionScope implements IResolutionScope {
 			/*
 			 * ...and redefine it based on their own coverage if they have any.
 			 */
-			ret.coverage = this.coverage.merge(
+			ret.coverage = ret.coverage.merge(
 					Scale.createLike(ret.coverage, model.getCoverage(this.monitor).getExtents()),
-					LogicalConnector.UNION);
+					LogicalConnector.INTERSECTION);
 		}
 		return ret;
 	}
