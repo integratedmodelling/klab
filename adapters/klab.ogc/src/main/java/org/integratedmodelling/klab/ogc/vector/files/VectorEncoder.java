@@ -131,9 +131,9 @@ public class VectorEncoder implements IResourceEncoder {
                     try {
                         // use syntax dependent on attribute type
                     	if (ad.getType().getBinding() == String.class) {
-                    		filter = ECQL.toFilter(ad.getLocalName() + " = '" + urnParameters.get(ad.getLocalName().toLowerCase()) + "'");
+                    		filter = ECQL.toFilter(ad.getLocalName() + " = '" + Utils.getIgnoreCase(urnParameters, ad.getLocalName()) + "'");
                     	} else {
-                    		filter = ECQL.toFilter(ad.getLocalName() + " = " + urnParameters.get(ad.getLocalName().toLowerCase()));
+                    		filter = ECQL.toFilter(ad.getLocalName() + " = " + Utils.getIgnoreCase(urnParameters, ad.getLocalName()));
                     	}
                     } catch (CQLException e) {
                         // shouldn't happen as filter was validated previously

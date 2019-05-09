@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.utils;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Map;
 
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -281,6 +282,15 @@ public class Utils {
 			string = string.substring(idx + 1);
 		}
 		return string;
+	}
+
+	public static Object getIgnoreCase(Map<String, ?> map, String key) {
+		for (String k : map.keySet()) {
+			if (key.compareToIgnoreCase(k) == 0) {
+				return map.get(k);
+			}
+		}
+		return null;
 	}
 
 }
