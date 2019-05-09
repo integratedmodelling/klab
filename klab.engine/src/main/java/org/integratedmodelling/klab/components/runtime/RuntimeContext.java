@@ -805,7 +805,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 						}
 
 						if (!done) {
-							// look up in the first context that has the root subject as a target.
+							// look up in the first context that has the root subject as a target, or get the parent if none does.
 							RuntimeContext p = getParentWithTarget(rootSubject);
 							IArtifact artifact = p.findArtifactByObservableName(attr);
 							if (artifact == null) {
@@ -870,7 +870,8 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		if (subject == null || subject.equals(this.target)) {
 			return this;
 		}
-		return parent == null ? null : parent.getParentWithTarget(subject);
+		RuntimeContext ret = parent == null ? null : parent.getParentWithTarget(subject);
+		return ret == null ? (parent == null ? this : parent) : ret;
 	}
 
 	@Override
