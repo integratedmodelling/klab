@@ -222,6 +222,10 @@ public class Grid extends Area implements IGrid {
 	public String toString() {
 		return "<GRID [" + xCells + "," + yCells + "] " + envelope + ">";
 	}
+	
+	public Grid copy() {
+		return create(getShape().copy(), getXCells(), getYCells());
+	}
 
 	public class CellImpl extends AbstractExtent implements Cell {
 

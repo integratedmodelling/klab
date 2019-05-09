@@ -563,9 +563,19 @@ public class Space extends Extent implements ISpace {
 
     @Override
     public Space copy() {
+    	
+    	Space ret = new Space();
+    	
+        ret.shape = this.shape.copy();
+        ret.grid = this.grid.copy();
+        ret.envelope = this.envelope.copy();
+        ret.projection = this.projection;
+        ret.gridSpecs = this.gridSpecs;
+        // TODO really?
+    	ret.setScaleId(this.getScaleId());
         // TODO Auto-generated method stub
         // TODO REMEMBER TO ALSO COPY THE SCALEID
-        return null;
+        return ret;
     }
 
     @Override

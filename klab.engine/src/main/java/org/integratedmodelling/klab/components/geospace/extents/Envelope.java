@@ -12,48 +12,47 @@ import org.opengis.referencing.operation.TransformException;
 public class Envelope implements IEnvelope {
 
 	/**
-	 * Default minimum resolution in meters when a ROI is created from a 
-	 * user interacting with a map.
+	 * Default minimum resolution in meters when a ROI is created from a user
+	 * interacting with a map.
 	 */
 	public static final int DEFAULT_MIN_RESOLUTION = 5;
-	
+
 	ReferencedEnvelope envelope;
 	IProjection projection;
 	Integer scaleRank = null;
 
-	
 	@Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((envelope == null) ? 0 : envelope.hashCode());
-        result = prime * result + ((projection == null) ? 0 : projection.hashCode());
-        return result;
-    }
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((envelope == null) ? 0 : envelope.hashCode());
+		result = prime * result + ((projection == null) ? 0 : projection.hashCode());
+		return result;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Envelope other = (Envelope) obj;
-        if (envelope == null) {
-            if (other.envelope != null)
-                return false;
-        } else if (!envelope.equals(other.envelope))
-            return false;
-        if (projection == null) {
-            if (other.projection != null)
-                return false;
-        } else if (!projection.equals(other.projection))
-            return false;
-        return true;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Envelope other = (Envelope) obj;
+		if (envelope == null) {
+			if (other.envelope != null)
+				return false;
+		} else if (!envelope.equals(other.envelope))
+			return false;
+		if (projection == null) {
+			if (other.projection != null)
+				return false;
+		} else if (!projection.equals(other.projection))
+			return false;
+		return true;
+	}
 
-    public static Envelope create(com.vividsolutions.jts.geom.Envelope envelope, Projection projection) {
+	public static Envelope create(com.vividsolutions.jts.geom.Envelope envelope, Projection projection) {
 		Envelope ret = new Envelope();
 		ret.envelope = new ReferencedEnvelope(envelope, projection.getCoordinateReferenceSystem());
 		ret.projection = projection;
@@ -74,6 +73,11 @@ public class Envelope implements IEnvelope {
 		return ret;
 	}
 
+	public Envelope copy() {
+		return create(new ReferencedEnvelope(envelope.getMinY(), envelope.getMaxY(), envelope.getMinX(),
+				envelope.getMaxX(), envelope.getCoordinateReferenceSystem()));
+	}
+
 	public static Envelope create(ReferencedEnvelope envelope, boolean swapXY) {
 		Envelope ret = new Envelope();
 		ret.envelope = swapXY
@@ -87,13 +91,13 @@ public class Envelope implements IEnvelope {
 	public String toString() {
 		return envelope.toString();
 	}
-	
+
 	@Override
 	public double metersToDistance(double metersDistance) {
 		if (getProjection().isMeters()) {
 			return metersDistance;
 		}
-		double cMeters = (getMaxX() - getMinX())/asShape().getStandardizedWidth();
+		double cMeters = (getMaxX() - getMinX()) / asShape().getStandardizedWidth();
 		return metersDistance * cMeters;
 	}
 
@@ -102,10 +106,10 @@ public class Envelope implements IEnvelope {
 		if (getProjection().isMeters()) {
 			return originalDistance;
 		}
-		double cMeters = (getMaxX() - getMinX())/asShape().getStandardizedWidth();
+		double cMeters = (getMaxX() - getMinX()) / asShape().getStandardizedWidth();
 		return originalDistance / cMeters;
 	}
-	
+
 	private Envelope() {
 		// TODO Auto-generated constructor stub
 	}

@@ -590,8 +590,8 @@ public class Shape extends AbstractExtent implements IShape {
     }
 
     @Override
-    public AbstractExtent copy() {
-        return create(geometry, projection);
+    public Shape copy() {
+        return create((Geometry)geometry.clone(), projection);
     }
 
     @Override

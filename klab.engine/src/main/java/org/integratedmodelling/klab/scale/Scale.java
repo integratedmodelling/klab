@@ -247,7 +247,10 @@ public class Scale implements IScale {
 	 * @return a new scale
 	 */
 	public static Scale createLike(IScale scale, IExtent... extents) {
-		List<IExtent> exts = Arrays.asList(extents);
+		List<IExtent> exts = new ArrayList<>();
+		for (IExtent e : extents) {
+			exts.add(e);
+		}
 		for (IExtent existing : scale.getExtents()) {
 			boolean add = true;
 			for (IExtent added : exts) {

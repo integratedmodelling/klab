@@ -25,8 +25,12 @@ public abstract class AbstractExtent implements IExtent {
 	private transient String scaleId;
 	protected transient Dimension baseDimension;
 
-	void setScaleId(String id) {
+	protected void setScaleId(String id) {
 		this.scaleId = id;
+	}
+	
+	protected String getScaleId() {
+		return this.scaleId;
 	}
 
 	boolean isOwnExtent(Scale scale) {

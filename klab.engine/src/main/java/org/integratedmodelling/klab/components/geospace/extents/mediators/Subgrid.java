@@ -139,6 +139,10 @@ public class Subgrid extends Grid {
 		this.projection = (Projection) originalGrid.getProjection();
 		this.grid.createMask(shape);
 	}
+	
+	public Subgrid copy() {
+		return new Subgrid(this.grid.copy(), this.ogrid, this.xofs, this.yofs, this.getShape().copy());
+	}
 
 	@Override
 	public String toString() {
