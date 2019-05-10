@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
+import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.api.services.IObservationService;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Dataflow;
@@ -234,6 +235,7 @@ public enum Resolver {
 	 *         mandatory, or the passed scope's coverage if it's optional.
 	 */
 	private ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Mode mode) {
+
 		ResolutionScope ret = parentScope.getChildScope(observable, mode);
 
 		/*
@@ -245,6 +247,12 @@ public enum Resolver {
 			parentScope.merge(ret);
 			return ret;
 		}
+
+		/*
+		 * detach a new coverage for partial matches, to be reset in the scope after
+		 * resolution.
+		 */
+		Coverage coverage = new Coverage(ret.getCoverage());
 
 		/**
 		 * If we're resolving something that has been resolved before (i.e. not
@@ -274,7 +282,7 @@ public enum Resolver {
 		} else {
 
 			// will be non-empty if this observable was resolved before, empty otherwise
-			if (ret.getCoverage().isEmpty()) {
+			if (coverage.isEmpty()) {
 
 				ObservableReasoner reasoner = new ObservableReasoner(observable, ret);
 				boolean done = false;
@@ -288,7 +296,7 @@ public enum Resolver {
 						// TODO ACHTUNG EMBED IN AND LOOP OVER ALL OBSERVABLES IN CANDIDATE
 
 						// candidate may switch resolution mode
-						double coverage = 0;
+						double percentCovered = 0;
 						for (IRankedModel model : Models.INSTANCE.resolve(candidate.observables.get(0),
 								ret.getChildScope(candidate.observables.get(0), candidate.mode))) {
 
@@ -299,14 +307,21 @@ public enum Resolver {
 									: ret.getChildScope(candidate.observables.get(0), candidate.mode,
 											(IObservation) previousArtifact.getSecond(), previousArtifact.getFirst());
 
-							if (mscope.getCoverage().isRelevant() && ret.or(mscope)) {
+							if (mscope.getCoverage().isRelevant()) {
+
+								Coverage newCoverage = coverage.merge(mscope.getCoverage(), LogicalConnector.UNION);
+								if (!newCoverage.isRelevant()) {
+									continue;
+								}
 
 								// for reporting
-								boolean wasZero = coverage == 0;
+								boolean wasZero = percentCovered == 0;
 								// percent covered by new model
-								double newCoverage = ret.getCoverage().getCoverage() - coverage;
+								double coverageDelta = newCoverage.getCoverage() - percentCovered;
 								// percent covered so far
-								coverage += ret.getCoverage().getCoverage();
+								percentCovered += newCoverage.getCoverage();
+
+								coverage = newCoverage;
 
 								/*
 								 * FIXME this is to reset the target ID in the computations after we have a
@@ -316,16 +331,18 @@ public enum Resolver {
 								candidate.accept(model);
 								mscope.getMonitor()
 										.debug("accepting " + model.getName() + " to resolve "
-												+ NumberFormat.getPercentInstance().format(newCoverage)
+												+ NumberFormat.getPercentInstance().format(coverageDelta)
 												+ (wasZero ? "" : " more") + " of " + observable);
 								/*
-								 * Link to dataflow and specify the order of computation. The actual scale of
-								 * computation for the model will be established by the dataflow compiler.
+								 * Link to dataflow and specify the order of computation and whether this is a
+								 * partition of the context. The actual scale of computation for the model will
+								 * be established by the dataflow compiler.
 								 */
-								ret.link(mscope, candidate.computation).withOrder(order++);
+								ret.link(mscope, candidate.computation).withOrder(order++)
+										.withPartition(coverageDelta < 1);
 							}
 
-							if (ret.getCoverage().isComplete()) {
+							if (coverage.isComplete()) {
 								done = true;
 								break;
 							}
@@ -339,7 +356,8 @@ public enum Resolver {
 			}
 		}
 
-		if (ret.getCoverage().isRelevant()) {
+		if (coverage.isRelevant()) {
+			ret.setCoverage(coverage);
 			parentScope.merge(ret);
 			if (ret.getCoverage().getCoverage() < 0.95) {
 				parentScope.getMonitor()
@@ -348,15 +366,14 @@ public enum Resolver {
 								+ " of the context");
 			}
 		} else if (observable.isOptional() || (observable.is(Type.SUBJECT) && mode == Mode.RESOLUTION)) {
-			
-			if (ret.getCoverage().getCoverage() > 0) {
+
+			if (coverage.getCoverage() > 0) {
 				parentScope.getMonitor()
 						.warn("models were found but the context coverage ("
 								+ NumberFormat.getPercentInstance().format(ret.getCoverage().getCoverage())
 								+ ") is insufficient to proceed");
 			}
 
-			
 			/*
 			 * empty strategy is OK for optional dependencies and resolved subjects. The
 			 * latter are never resolved unless there has been an implicit instantiation
@@ -386,7 +403,7 @@ public enum Resolver {
 			// ACHTUNG TODO OBSERVABLE CAN BE MULTIPLE (probably not here though)
 			ret.and(resolve(observable.observables.get(0), ret, observable.mode));
 			if (ret.getCoverage().isEmpty()) {
-				parentScope.getMonitor().info("discarding best choice " + model.getId() + " due to missing dependency "
+				parentScope.getMonitor().info("discarding first choice " + model.getId() + " due to missing dependency "
 						+ observable.observables.get(0).getLocalName());
 				break;
 			}

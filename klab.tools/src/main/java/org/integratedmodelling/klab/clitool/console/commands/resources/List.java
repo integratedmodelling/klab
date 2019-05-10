@@ -20,6 +20,7 @@ public class List implements ICommand {
 		String ret = "";
 		boolean verbose = call.getParameters().get("verbose", false);
 		boolean online = call.getParameters().get("online", false);
+		boolean forceUpdate = call.getParameters().get("force", false);
 
 		ArrayList<String> resourceIds = new ArrayList<>();
 		if (call.getParameters().get("arguments", java.util.List.class).size() > 0) {
@@ -33,17 +34,17 @@ public class List implements ICommand {
 
 		Collections.sort(resourceIds);
 		for (String urn : resourceIds) {
-			ret += (ret.isEmpty() ? "" : "\n") + describe(urn, verbose, online);
+			ret += (ret.isEmpty() ? "" : "\n") + describe(urn, verbose, online, forceUpdate);
 		}
 		return ret;
 	}
 
-	private String describe(String urn, boolean verbose, boolean online) {
+	private String describe(String urn, boolean verbose, boolean online, boolean forceUpdate) {
 		String ret = urn;
 		IResource resource = null;
 		if (online) {
 			resource = Resources.INSTANCE.getLocalResourceCatalog().get(urn);
-			ret += " [" + (Resources.INSTANCE.isResourceOnline(resource) ? "ONLINE" : "OFFLINE") + "]";
+			ret += " [" + (Resources.INSTANCE.isResourceOnline(resource, forceUpdate) ? "ONLINE" : "OFFLINE") + "]";
 		}
 		if (verbose) {
 			ret += ":";
@@ -53,7 +54,7 @@ public class List implements ICommand {
 			if (resource == null) {
 				ret += " Error retrieving resource!";
 			} else {
-				ret += "\n   " + StringUtils.leftIndent(JsonUtils.printAsJson(((Resource)resource).getReference()), 3);
+				ret += "\n   " + StringUtils.leftIndent(JsonUtils.printAsJson(((Resource) resource).getReference()), 3);
 			}
 		}
 		return ret;

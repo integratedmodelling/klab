@@ -182,9 +182,12 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		ret.monitor = monitor;
 		ret.semantics.put(ret.targetName, ret.targetSemantics);
 		/*
-		 * if appropriate, the target has been created by the upstream createChild(...
-		 * Actuator ...), so we just set it from the catalog.
+		 * if not within a partition, the target has been created by the upstream
+		 * createChild(... Actuator ...), so we just set it from the catalog.
 		 */
+		if (catalog.get(ret.targetName) == null) {
+			ret.target = createTarget(indirectTarget);
+		}
 		ret.target = catalog.get(ret.targetName);
 
 		return ret;
@@ -538,9 +541,9 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 					throw new IllegalStateException(
 							"internal: cannot find merging actuator named " + actuator.getPartitionedTarget());
 				}
-				
+
 				IArtifact merging = createTarget(mergingActuator, this.scale, scope, rootSubject);
-				
+
 				/*
 				 * partition sub-state does not go in the catalog
 				 */
@@ -550,7 +553,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 				} else {
 					ret.target = merging;
 				}
-				
+
 			}
 
 		} else {
@@ -720,7 +723,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		if (actuator.isPartition()) {
 			System.out.println("CIOCANNNEE");
 		}
-		
+
 		if (this.catalog.get(actuator.getName()) != null) {
 			return this.catalog.get(actuator.getName());
 		}
@@ -805,7 +808,8 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 						}
 
 						if (!done) {
-							// look up in the first context that has the root subject as a target, or get the parent if none does.
+							// look up in the first context that has the root subject as a target, or get
+							// the parent if none does.
 							RuntimeContext p = getParentWithTarget(rootSubject);
 							IArtifact artifact = p.findArtifactByObservableName(attr);
 							if (artifact == null) {
@@ -860,6 +864,42 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			for (IState state : predefinedStates) {
 				link(observation, state);
 			}
+		}
+
+		return this.catalog.get(actuator.getName());
+
+	}
+
+	public IArtifact createTarget(IObservable observable) {
+
+		IObservation observation = null;
+
+		if (observable.is(Type.COUNTABLE)) {
+			observation = new ObservationGroup((Observable)observable, (Scale) scale, this, IArtifact.Type.OBJECT);
+		} else {
+			observation = DefaultRuntimeProvider.createObservation(observable, scale, this);
+		}
+
+		if (getRootSubject() != null) {
+			((Observation) getRootSubject()).setLastUpdate(System.currentTimeMillis());
+		}
+
+		/*
+		 * register the obs and potentially the root subject
+		 */
+		this.observations.put(observation.getId(), observation);
+		if (this.rootSubject == null && observation instanceof ISubject) {
+			this.rootSubject = (ISubject) observation;
+		}
+		this.catalog.put(observable.getLocalName(), observation);
+		if (!(observation instanceof ObservationGroup)) {
+			this.structure.addVertex(observation);
+			if (contextSubject != null && !(contextSubject instanceof ObservationGroup)) {
+				this.structure.addEdge(observation, contextSubject);
+			}
+		}
+		if (observation instanceof ISubject) {
+			this.network.addVertex((ISubject) observation);
 		}
 
 		return this.catalog.get(actuator.getName());

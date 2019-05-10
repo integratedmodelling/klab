@@ -638,7 +638,10 @@ public class Actuator implements IActuator {
 	 */
 	protected String encode(int offset) {
 		String ofs = StringUtils.repeat(" ", offset);
-		String ret = ofs + "@semantics('" + getObservable().getDeclaration() + "')\n";
+		String ret = "";
+		if (!isPartition()) {
+			ret = ofs + "@semantics('" + getObservable().getDeclaration() + "')\n";
+		}
 		return ret + ofs + (input ? "import " : "") + (isPartition() ? "partition" : getType().name().toLowerCase())
 				+ " " + getName() + encodeBody(offset, ofs);
 	}
@@ -674,7 +677,7 @@ public class Actuator implements IActuator {
 
 			ret = " {\n";
 
-			for (IActuator actuator : actuators) {
+			for (IActuator actuator : getSortedChildren(this)) {
 				ret += ((Actuator) actuator).encode(offset + 3) + "\n";
 			}
 
@@ -704,7 +707,7 @@ public class Actuator implements IActuator {
 			ret += " as " + getAlias();
 		}
 
-		if (/* definesScale && */coverage != null && !coverage.isEmpty()) {
+		if (coverage != null && !coverage.isEmpty()) {
 			List<IServiceCall> scaleSpecs = ((Scale) coverage).getKimSpecification();
 			if (!scaleSpecs.isEmpty()) {
 				ret += " over";
@@ -781,7 +784,7 @@ public class Actuator implements IActuator {
 
 	private boolean isMerging() {
 		for (IActuator child : getActuators()) {
-			if (((Actuator)child).isPartition()) {
+			if (((Actuator) child).isPartition()) {
 				return true;
 			}
 		}
@@ -955,27 +958,28 @@ public class Actuator implements IActuator {
 	}
 
 	private void _buildCatalog(Actuator actuator, Map<String, Actuator> catalog) {
-		
+
 		if (!actuator.isReference()) {
 			catalog.put(actuator.getName(), actuator);
 		}
 		for (IActuator child : actuator.getActuators()) {
-			_buildCatalog((Actuator)child, catalog);
+			_buildCatalog((Actuator) child, catalog);
 		}
 	}
 
-	private void _dependencyOrder(Actuator actuator, List<Actuator> ret, Set<Actuator> added, Map<String, Actuator> catalog) {
+	private void _dependencyOrder(Actuator actuator, List<Actuator> ret, Set<Actuator> added,
+			Map<String, Actuator> catalog) {
 
 		if (actuator.isReference()) {
 			actuator = catalog.get(actuator.getName());
 		}
-		
+
 		boolean add = !added.contains(actuator);
-		
+
 		for (IActuator child : getSortedChildren(actuator)) {
-			_dependencyOrder((Actuator)child, ret, added, catalog);
+			_dependencyOrder((Actuator) child, ret, added, catalog);
 		}
-		
+
 		if (add && !added.contains(actuator) && (actuator.isComputed() || actuator.isMerging())) {
 			ret.add(actuator);
 			added.add(actuator);
@@ -983,31 +987,39 @@ public class Actuator implements IActuator {
 	}
 
 	/*
-	 * Return our children in the original order; if they're partitions, sort them by increasing 
-	 * priority (the opposite of their natural order) so that the highest-priority computes last,
-	 * just in case overlaps happen.
-	 *  
+	 * Return our children in the original order; if they're partitions, sort them
+	 * by increasing priority (the opposite of their natural order) so that the
+	 * highest-priority computes last, just in case overlaps happen.
+	 * 
+	 * Note: All partitions of the same observable must go after the dependencies
+	 * 
 	 * @param actuator
+	 * 
 	 * @return
 	 */
 	private List<IActuator> getSortedChildren(Actuator actuator) {
 		List<IActuator> ret = new ArrayList<>();
-		int partitions = 0;
+		List<IActuator> partitions = new ArrayList<>();
 		for (IActuator act : actuator.getActuators()) {
-			if (((Actuator)act).isPartition()) {
-				partitions ++;
+			if (((Actuator)act).observable.equals(actuator.observable)) {
+				partitions.add(act);
+			} else {
+				ret.add(act);
 			}
-			ret.add(act);
 		}
-		if (partitions > 1) {
-			ret.sort(new Comparator<IActuator>() {
+		if (partitions.size() > 1) {
+			partitions.sort(new Comparator<IActuator>() {
 				@Override
 				public int compare(IActuator o1, IActuator o2) {
-					return Integer.compare(((Actuator)o2).priority, ((Actuator)o1).priority);
+					int o1priority = ((Actuator)o1).priority;
+					int o2priority = ((Actuator)o2).priority;
+					return Integer.compare(o2priority, o1priority);
 				}
 			});
 		}
 		
+		ret.addAll(partitions);
+
 		return ret;
 	}
 }

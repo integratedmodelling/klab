@@ -36,6 +36,10 @@ void 'list'
 	optional input online
 		"Check for online status"
 		default false
+		
+	optional input force
+		"Force immediate re-check of all resources. Default false."
+		default false
 
 	class org.integratedmodelling.klab.clitool.console.commands.resources.List
 }

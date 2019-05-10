@@ -35,7 +35,6 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
-import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
@@ -55,36 +54,39 @@ public class DataflowCompiler {
 	private String name;
 	private DirectObservation context;
 	private IResolutionScope scope;
-	// keep the observables of each merged model to create proper references
+	
+	/*
+	 * keep the observables of each merged model to create proper references.
+	 */
 	private Set<IObservable> mergedCatalog = new HashSet<>();
 
 	Graph<IResolvable, ResolutionEdge> resolutionGraph = new DefaultDirectedGraph<>(ResolutionEdge.class);
 	Map<Model, List<ModelD>> modelCatalog = new HashMap<>();
-	// maps the original name on each non-reference actuator to the original
-	// observable coming out of the model. Used to set up mediators in models that
-	// depend on them.
+
+	/*
+	 * maps the original name on each non-reference actuator to the original
+	 * observable coming out of the model. Used to set up mediators in models that
+	 * depend on them.
+	 */
 	Map<String, Observable> observableCatalog = new HashMap<>();
 
 	static class ResolutionEdge {
 
 		Coverage coverage;
 		IResolutionScope.Mode mode;
-		// order of computation, relevant for scaling with partitioned resolvers
+		boolean isPartition = false;
+
+		/*
+		 * order of computation, relevant for scaling with partitioned resolvers
+		 */
 		int order;
+
 		/*
 		 * if not null, the computation will adapt the source to the target and they may
 		 * be of incompatible types. FIXME: there is only one Model per model, and it
 		 * may be used more than once with different transformations.
 		 */
 		List<IComputableResource> indirectAdapters;
-
-		// ResolutionEdge(Coverage coverage, IResolutionScope.Mode mode,
-		// List<IComputableResource>
-		// indirectAdapters) {
-		// this.coverage = coverage;
-		// this.mode = mode;
-		// this.indirectAdapters = indirectAdapters;
-		// }
 
 		ResolutionEdge() {
 		}
@@ -94,6 +96,7 @@ public class DataflowCompiler {
 			this.mode = link.getTarget().getMode();
 			this.indirectAdapters = link.getComputation();
 			this.order = link.getOrder();
+			this.isPartition = link.isPartition();
 		}
 
 		public String toString() {
@@ -122,18 +125,12 @@ public class DataflowCompiler {
 		for (IResolvable root : getRootResolvables(resolutionGraph)) {
 
 			modelCatalog.clear();
-			// boolean isResolver = root instanceof IObserver
-			// || !((Observable)
-			// root).is(org.integratedmodelling.kim.api.IKimConcept.Type.COUNTABLE);
-			Node node = compileActuator(root,
-					// isResolver ? IResolutionScope.Mode.RESOLUTION :
-					// IResolutionScope.Mode.INSTANTIATION,
-					scope.getMode(), resolutionGraph, this.context == null ? null : this.context.getScale(), monitor);
+			Node node = compileActuator(root, scope.getMode(), resolutionGraph,
+					this.context == null ? null : this.context.getScale(), monitor);
 			node.root = true;
 			node.initializer = ((ResolutionScope) scope).getContextModel();
 
 			Actuator actuator = node.getActuatorTree(ret, monitor, new HashSet<>());
-			// actuator.setCreateObservation(scope.getMode() == Mode.RESOLUTION);
 			ret.getActuators().add(actuator);
 
 			// compute coverage
@@ -175,7 +172,6 @@ public class DataflowCompiler {
 
 			Actuator actuator = Actuator.create(ret, Mode.RESOLUTION);
 			actuator.setObservable(((ResolutionScope) scope).getObservable());
-			// actuator.setCreateObservation(true);
 			actuator.setType(Type.OBJECT);
 			actuator.setNamespace(((ResolutionScope) scope).getResolutionNamespace());
 			actuator.setName(((ResolutionScope) scope).getObservable().getLocalName());
@@ -225,9 +221,12 @@ public class DataflowCompiler {
 		Coverage coverage;
 		// this is null unless the model resolves the observable indirectly
 		List<IComputableResource> indirectAdapters;
+		// if true, model is resolved by partitions, even if there is just one
+		boolean hasPartitions = false;
 
-		public ModelD(Model model) {
+		public ModelD(Model model, boolean hasPartitions) {
 			this.model = model;
+			this.hasPartitions = hasPartitions;
 		}
 
 		@Override
@@ -276,11 +275,11 @@ public class DataflowCompiler {
 		Set<ModelD> models = new LinkedHashSet<>();
 		List<Node> children = new ArrayList<>();
 		Scale scale;
-		// boolean definesScale;
 		String alias;
 		Object inlineValue;
 		ResolvedArtifact resolvedArtifact;
 		List<IComputableResource> artifactAdapters;
+		
 		/**
 		 * Initializer models are the instantiators that potentially carry states and/or
 		 * actions to be transferred to the resolved objects. Only the root node of a
@@ -288,6 +287,12 @@ public class DataflowCompiler {
 		 * each instance after instantiation.
 		 */
 		IModel initializer;
+		
+		/*
+		 * True if the children are partitions (even if there is just one child which
+		 * covers the context partially).
+		 */
+		boolean hasPartitions = false;
 
 		public Node(IResolvable resolvable, IResolutionScope.Mode mode) {
 
@@ -326,8 +331,6 @@ public class DataflowCompiler {
 			ret.setObservable(observable);
 			ret.setAlias(localName);
 
-			// ret.setDefinesScale(definesScale);
-
 			switch (observable.getObservationType()) {
 			case CLASSIFICATION:
 				ret.setType(Type.CONCEPT);
@@ -365,19 +368,21 @@ public class DataflowCompiler {
 				ret.setName(observable.getLocalName());
 			}
 
-			// if this is a reference to something that contains partials, the partials will
-			// be references and this won't, and it won't pass through defineActuator():
-			// we detect that situation and force a reference.
+			/*
+			 * if this is a reference to something that contains partials, the partials will
+			 * be references and this won't, and it won't pass through defineActuator(): we
+			 * detect that situation and force a reference.
+			 */
 			boolean reference = false;
 			boolean partials = false;
 
-			if (models.size() == 1) {
-
+			if (models.size() == 1 && !this.hasPartitions) {
+				
 				ModelD theModel = models.iterator().next();
 				defineActuator(ret, root ? observable.getLocalName() : theModel.model.getLocalNameFor(observable),
 						theModel, generated);
-
-			} else if (models.size() > 1) {
+				
+			} else if (this.hasPartitions) {
 
 				/*
 				 * output the independent actuators, detecting the situation where all children
@@ -403,7 +408,6 @@ public class DataflowCompiler {
 
 					partial.setObservable(observable);
 					partial.setType(ret.getType());
-					// partial.setDefinesScale(true);
 					defineActuator(partial, name, modelDesc, generated);
 
 					// no reference partials as our final result is the merged artifact
@@ -417,14 +421,8 @@ public class DataflowCompiler {
 					ret.getActuators().add(partial);
 
 				}
-			} else if (resolvedArtifact != null && artifactAdapters != null) {
 
-				// /*
-				// * check if any mediation is needed
-				// */
-				// List<IComputableResource> mediators = Observables.INSTANCE.computeMediators(
-				// resolvedArtifact.getArtifact().getObservable(),
-				// resolvedArtifact.getObservable());
+			} else if (resolvedArtifact != null && artifactAdapters != null) {
 
 				/*
 				 * we are adapting the resolved artifact, so we compile in the import and add
@@ -441,13 +439,6 @@ public class DataflowCompiler {
 						ret.addComputation(adapter);
 					}
 				}
-
-				/*
-				 * add any mediation needed
-				 */
-				// for (IComputableResource mediator : mediators) {
-				// ret.addMediation(mediator, ret);
-				// }
 
 				resolved.getAnnotations()
 						.addAll(Annotations.INSTANCE.collectAnnotations(observable, resolvedArtifact.getArtifact()));
@@ -513,8 +504,8 @@ public class DataflowCompiler {
 		}
 
 		/*
-		 * get the finished actuator with all the children and the mediation strategy
-		 * TODO must add any last mediation for the root observable if needed
+		 * get the finished actuator with all the children and the mediation strategy;
+		 * add any last mediation for the root observable if needed
 		 */
 		Actuator getActuatorTree(Dataflow dataflow, IMonitor monitor, Set<ModelD> generated) {
 
@@ -608,7 +599,6 @@ public class DataflowCompiler {
 
 		if (scale == null && resolvable instanceof Observer) {
 			scale = (Scale.create(((Observer) resolvable).getBehavior().getExtents(monitor)));
-			// ret.definesScale = true;
 		}
 
 		ret.scale = scale;
@@ -617,9 +607,12 @@ public class DataflowCompiler {
 		 * go through models
 		 */
 		List<ResolutionEdge> resolvers = getResolvers(graph, resolvable);
-		boolean hasPartials = resolvers.size() > 1;
 		for (ResolutionEdge d : resolvers) {
 
+			if (d.isPartition) {
+				ret.hasPartitions = true;
+			}
+			
 			IResolvable source = graph.getEdgeSource(d);
 
 			if (source instanceof IObservable) {
@@ -652,7 +645,7 @@ public class DataflowCompiler {
 				}
 				observableCatalog.put(compatibleOutput.getLocalName(), compatibleOutput);
 
-				ModelD md = compileModel(model, d.indirectAdapters);
+				ModelD md = compileModel(model, d.indirectAdapters, d.isPartition);
 				for (ResolutionEdge o : graph.incomingEdgesOf(model)) {
 					ret.children.add(compileActuator(graph.getEdgeSource(o), o.mode, graph,
 							o.coverage == null ? scale : o.coverage, monitor));
@@ -660,7 +653,7 @@ public class DataflowCompiler {
 
 				md.indirectAdapters = d.indirectAdapters;
 
-				if (hasPartials) {
+				if (md.hasPartitions) {
 					try {
 						md.coverage = Coverage.full(model.getCoverage(monitor));
 					} catch (KlabException e) {
@@ -762,14 +755,16 @@ public class DataflowCompiler {
 	 * @param indirectAdapters
 	 * @return
 	 */
-	ModelD compileModel(Model model, List<IComputableResource> indirectAdapters) {
+	ModelD compileModel(Model model, List<IComputableResource> indirectAdapters, boolean hasPartitions) {
 		ModelD ret = null;
 		List<ModelD> list = modelCatalog.get(model);
 		if (list == null) {
+			
 			list = new ArrayList<>();
-			ret = new ModelD(model);
+			ret = new ModelD(model, hasPartitions);
 			list.add(ret);
 			modelCatalog.put(model, list);
+			
 		} else {
 			for (ModelD md : modelCatalog.get(model)) {
 				if (md.hasSameAdapters(indirectAdapters)) {
@@ -778,34 +773,13 @@ public class DataflowCompiler {
 				}
 			}
 			if (ret == null) {
-				ret = new ModelD(model);
+				ret = new ModelD(model, hasPartitions);
 				list.add(ret);
 			}
 		}
 		ret.useCount++;
 		return ret;
 	}
-
-	// /**
-	// *
-	// * @param source
-	// * @param target
-	// * @param coverage
-	// * @param indirectAdapters
-	// * if not empty, the source is the result of an alternative
-	// * resolution of the target observable and its type will be
-	// * translated into the target's by the computation.
-	// * @return the compiler itself
-	// */
-	// public DataflowCompiler withResolution(IResolvable source, IResolvable
-	// target, ICoverage coverage,
-	// IResolutionScope.Mode mode, List<IComputableResource> computations) {
-	// resolutionGraph.addVertex(source);
-	// resolutionGraph.addVertex(target);
-	// resolutionGraph.addEdge(source, target, new ResolutionEdge((Coverage)
-	// coverage, mode, computations));
-	// return this;
-	// }
 
 	private List<IResolvable> getRootResolvables(Graph<IResolvable, ResolutionEdge> graph) {
 		List<IResolvable> ret = new ArrayList<>();

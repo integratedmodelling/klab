@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
+import org.integratedmodelling.klab.components.geospace.extents.mediators.Subgrid;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.scale.AbstractExtent;
@@ -91,8 +92,7 @@ public class Grid extends Area implements IGrid {
 
 		@Override
 		public long nextActiveOffset(long fromOffset) {
-			return delegate == null 
-					? (fromOffset >= Grid.this.getCellCount() ? -1 : fromOffset)
+			return delegate == null ? (fromOffset >= Grid.this.getCellCount() ? -1 : fromOffset)
 					: delegate.nextActiveOffset(fromOffset);
 		}
 
@@ -204,7 +204,7 @@ public class Grid extends Area implements IGrid {
 		this.setResolution(x, y);
 		mask = createMask(shape);
 	}
-	
+
 	private Grid(double x1, // lonLowerBound
 			double y1, // latLowerBound
 			double x2, // lonUpperBound
@@ -222,7 +222,7 @@ public class Grid extends Area implements IGrid {
 	public String toString() {
 		return "<GRID [" + xCells + "," + yCells + "] " + envelope + ">";
 	}
-	
+
 	public Grid copy() {
 		return create(getShape().copy(), getXCells(), getYCells());
 	}
@@ -318,7 +318,7 @@ public class Grid extends Area implements IGrid {
 			}
 			return null;
 		}
-		
+
 		@Override
 		public Cell getNeighbor(long xOfs, long yOfs) {
 			long tx = x + xOfs;
@@ -517,7 +517,7 @@ public class Grid extends Area implements IGrid {
 
 		@Override
 		public IExtent merge(IExtent extent) throws KlabException {
-		    return getShape().merge(extent);
+			return getShape().merge(extent);
 		}
 
 		@Override
@@ -633,8 +633,9 @@ public class Grid extends Area implements IGrid {
 		public <T extends ILocator> T as(Class<T> cls) {
 			if (ISpaceLocator.class.isAssignableFrom(cls)) {
 				SpaceLocator ret = new SpaceLocator(getX(), getY(), getOffsetInGrid());
-				ret.setWorldCoordinates(getEast() + (getEast() - getWest())/2., getSouth() + (getNorth() - getSouth())/2.);
-				return (T)ret;
+				ret.setWorldCoordinates(getEast() + (getEast() - getWest()) / 2.,
+						getSouth() + (getNorth() - getSouth()) / 2.);
+				return (T) ret;
 			}
 			return null;
 		}
@@ -668,10 +669,10 @@ public class Grid extends Area implements IGrid {
 		public double getStandardizedLength() {
 			return getFirstCell().getStandardizedLength();
 		}
-		
+
 		@Override
 		public double getStandardizedDistance(ISpace space) {
-		    return getShape().getStandardizedDistance(space.getShape());
+			return getShape().getStandardizedDistance(space.getShape());
 		}
 
 		@Override
@@ -700,10 +701,10 @@ public class Grid extends Area implements IGrid {
 	 */
 	long[] offsetInSupergrid = null;
 	String superGridId = null;
-	
+
 	// computed once on demand and used to efficiently return shape data in meters
 	private IShape firstCell;
-	
+
 	public Grid() {
 		// TODO Auto-generated constructor stub
 	}
@@ -714,7 +715,7 @@ public class Grid extends Area implements IGrid {
 		}
 		return firstCell;
 	}
-	
+
 	@Override
 	public Iterator<Cell> iterator() {
 
@@ -726,7 +727,7 @@ public class Grid extends Area implements IGrid {
 			public boolean hasNext() {
 				if (mask == null) {
 					return n < (getCellCount() - 1);
-				} 
+				}
 				return n >= 0;
 			}
 
@@ -736,11 +737,7 @@ public class Grid extends Area implements IGrid {
 					return getCell(n++);
 				}
 				Cell ret = getCell(n);
-//				long last = n;
 				n = mask.nextActiveOffset(n + 1);
-//				if (n > last + 1) {
-//					System.out.println("HOHOHOH");
-//				}
 				return ret;
 			}
 
@@ -1163,14 +1160,16 @@ public class Grid extends Area implements IGrid {
 	public long getOffset(Cell index) {
 		if (index instanceof CellImpl && ((CellImpl) index).getGrid().equals(this)) {
 			return ((CellImpl) index).getOffsetInGrid();
+		} else {
+			double[] wxy = ((CellImpl)index).getGrid().getWorldCoordinatesAt(index.getX(), index.getY());
+			return this.getOffsetFromWorldCoordinates(wxy[0], wxy[1]);
 		}
-		throw new IllegalArgumentException("grid: cannot use a cell from a different grid as a locator");
+//		throw new IllegalArgumentException("grid: cannot use a cell from a different grid as a locator");
 	}
-	
+
 	public Spliterator<Cell> spliterator(final IMonitor monitor) {
 		return new SplIt(0, getCellCount(), monitor);
 	}
-
 
 	class SplIt implements Spliterator<Cell> {
 

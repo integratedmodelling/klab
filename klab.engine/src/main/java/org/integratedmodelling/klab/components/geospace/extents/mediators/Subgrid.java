@@ -265,15 +265,12 @@ public class Subgrid extends Grid {
 	}
 
 	public Cell getOriginalCell(Cell cell) {
-		// TODO check why we need to adjust and invert where getOriginalOffset works as is below.
 		return ogrid.getCell(cell.getX() + xofs, ogrid.getYCells() - yofs - (getYCells() - cell.getY() - 1) - 1);
 	}
 
 	public long getOriginalOffset(long offset) {
 		Cell ocell = getOriginalCell(grid.getCell(offset));
 		return ocell.getOffsetInGrid();
-//        long[] xy = grid.getXYOffsets(offset);
-//		return ogrid.getIndex(xy[0] + xofs, xy[1] + yofs);
 	}
 	
 	public Grid getOriginalGrid() {

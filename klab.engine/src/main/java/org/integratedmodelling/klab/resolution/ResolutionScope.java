@@ -53,6 +53,7 @@ public class ResolutionScope implements IResolutionScope {
 		ResolutionScope target;
 		List<IComputableResource> computation;
 		int order;
+		boolean partition;
 
 		Link(ResolutionScope target) {
 			this.target = target;
@@ -104,6 +105,14 @@ public class ResolutionScope implements IResolutionScope {
 			return result;
 		}
 
+		public boolean isPartition() {
+			return partition;
+		}
+
+		public Link withPartition(boolean b) {
+			this.partition = b;
+			return this;
+		}
 	}
 
 	/*
@@ -961,6 +970,10 @@ public class ResolutionScope implements IResolutionScope {
 
 	public ISession getSession() {
 		return monitor.getIdentity().getParentIdentity(ISession.class);
+	}
+
+	public void setCoverage(Coverage coverage) {
+		this.coverage = coverage;
 	}
 
 }
