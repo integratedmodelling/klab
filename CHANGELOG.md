@@ -27,6 +27,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+### Changed
+### Fixed
+
+## [0.10.0.155] -- 2019/05/09
+### Added
 - Implemented WEKA "save to resource" behavior and encoder for WEKA resource.
 - Add a StandaloneResourceBuilder for easy programmatic construction of resources.
 - Model docstring is used to create default section descriptions with interactive model 
