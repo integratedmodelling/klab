@@ -14,5 +14,6 @@
   	<module>klab.component.hydrology</module>
   	<module>klab.component.ml</module>
   	<module>klab.component.geotrellis</module>
+  	<module>klab.component.alignment</module>
   </modules>
 </project>
