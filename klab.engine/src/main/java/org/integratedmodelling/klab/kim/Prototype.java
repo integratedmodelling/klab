@@ -49,6 +49,7 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
       a.optional = arg.isOptional();
       a.shortName = arg.getLabel();
       a.isFinal = arg.isFinal();
+      a.setParameter(arg.isParameter());
       a.enumValues.addAll(arg.getEnumValues());
       a.defaultValue = arg.getDefaultValue() == null ? null : arg.getDefaultValue().toString();
       a.artifact = arg.isImported();
@@ -57,7 +58,14 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
       } else {
     	  a.label = StringUtil.capitalize(a.name).replaceAll("_", " ").replaceAll("\\-", " ");
       }
-      arguments.put(a.name, a);
+      
+      if (arg.isImported()) {
+          this.imports.add(a);
+      } else if (arg.isExported()) {
+          this.exports.add(a);
+      } else {
+          arguments.put(a.name, a);
+      }
     }
 
     if (actuator.getJavaClass() != null) {
