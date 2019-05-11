@@ -78,6 +78,14 @@ public interface IExtent extends ILocator, ITopology<IExtent>, Iterable<IExtent>
      * @return a new extent with size() == 1.
      */
     IExtent collapse();
+    
+    /**
+     * Return a boundary that can be compared to another coming from an extent of
+     * the same type. 
+     * 
+     * @return the boundary.
+     */
+    IExtent getBoundary();
 
     /**
      * Return a double that describes the extent of this topological object. It

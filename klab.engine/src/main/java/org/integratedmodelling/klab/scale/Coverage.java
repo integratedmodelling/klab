@@ -340,4 +340,17 @@ public class Coverage extends Scale implements ICoverage {
 	public void setSufficientTotalCoverage(double d) {
 		this.minRequiredCoverage = d;
 	}
+
+    public boolean coversBoundaries(Scale scale) {
+        for (IExtent extent : scale.getExtents()) {
+            for (Pair<IExtent, Double> cov : coverages) {
+                if (cov.getFirst().getType() == extent.getType()) {
+                    if (!extent.getBoundary().contains(cov.getFirst().getBoundary())) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
 }

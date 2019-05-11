@@ -870,4 +870,9 @@ public class Space extends Extent implements ISpace {
 
         return destination;
     }
+
+    @Override
+    public IExtent getBoundary() {
+        return getEnvelope().asShape();
+    }
 }

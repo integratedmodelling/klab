@@ -685,6 +685,11 @@ public class Grid extends Area implements IGrid {
 			// a cell is never an empty extent
 			return false;
 		}
+
+        @Override
+        public IExtent getBoundary() {
+            return getShape();
+        }
 	}
 
 	Shape shape;
