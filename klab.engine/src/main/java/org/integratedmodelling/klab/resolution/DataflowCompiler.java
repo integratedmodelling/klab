@@ -421,9 +421,12 @@ public class DataflowCompiler {
                     reference = false;
                     partial.setCoverage(modelDesc.coverage);
                     modelIds.add(name);
+
                     ret.getActuators().add(partial);
 
                 }
+
+                ret.getAnnotations().addAll(Annotations.INSTANCE.collectAnnotations(observable));
 
             } else if (resolvedArtifact != null && artifactAdapters != null) {
 

@@ -38,7 +38,7 @@ public class KlabDropAssistant extends ResourceDropAdapterAssistant {
 
     @Override
     public IStatus validateDrop(Object target, int operation, TransferData transferType) {
-        if (target instanceof EResourceFolder) {
+        if (target instanceof EResourceFolder || target instanceof EResource) {
             return Status.OK_STATUS;
         }
         return Status.CANCEL_STATUS;
@@ -101,6 +101,27 @@ public class KlabDropAssistant extends ResourceDropAdapterAssistant {
                             } else {
                                 Eclipse.INSTANCE
                                         .alert("You must be connected to an engine to import resources.");
+                            }
+                        } else {
+                            /*
+                             * Check for URL - either
+                             */
+                        }
+                    }
+                } else if (target instanceof EResource && eventItem instanceof String) {
+
+                    if (StringUtil.containsAny(eventItem.toString(), StringUtil.WHITESPACE)) {
+                        Eclipse.INSTANCE.alert("Imported identifier " + eventItem
+                                + " contains whitespace: please correct names before trying importing again.");
+                    } else {
+
+                        File file = new File(eventItem.toString());
+                        if (file.exists() && file.isFile()) {
+                            if (Activator.engineMonitor().isRunning()) {
+                                Activator.session().importFileIntoResource(file, ((EResource) target));
+                            } else {
+                                Eclipse.INSTANCE
+                                        .alert("You must be connected to an engine to import into resources.");
                             }
                         } else {
                             /*

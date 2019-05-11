@@ -728,6 +728,12 @@ public enum Resources implements IResourceService {
 		return importer.finish();
 	}
 
+	public boolean importIntoResource(URL importUrl, IResource resource) {
+	    // TODO
+	    System.out.println("Importing " + importUrl + " into " + resource.getUrn());
+	    return false;
+	}
+	
 	/**
 	 * Extract the OWL assets in the classpath (under /knowledge/**) to the
 	 * specified filesystem directory.

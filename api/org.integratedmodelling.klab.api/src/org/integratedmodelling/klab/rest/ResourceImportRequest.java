@@ -5,6 +5,7 @@ import java.net.URL;
 public class ResourceImportRequest {
 
 	private URL importUrl;
+	private String targetResourceUrn;
 	private String adapter;
 	private String projectName;
 	private boolean bulkImport;
@@ -48,5 +49,13 @@ public class ResourceImportRequest {
 	public void setBulkImport(boolean bulkImport) {
 		this.bulkImport = bulkImport;
 	}
+
+    public String getTargetResourceUrn() {
+        return targetResourceUrn;
+    }
+
+    public void setTargetResourceUrn(String targetResourceUrn) {
+        this.targetResourceUrn = targetResourceUrn;
+    }
 
 }
