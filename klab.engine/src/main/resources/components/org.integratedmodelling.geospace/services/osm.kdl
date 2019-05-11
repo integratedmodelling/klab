@@ -8,52 +8,53 @@ export object query
      label 'Query OpenStreetMap'
 {
 	
-	optional input equal 
+	optional list equal 
 		"A list of simple query terms matched by equality, in the form <term>, <match>. Each match may be
 		 a list of terms, which are in OR. The single wildcard '*' is allowed as a match."
 		default ()
 		
-	optional input not-equal 
+	optional list not-equal 
 		"A list of simple query terms matched by inequality, in the form <term>, <match>. Each match may be
 		 a list of terms, which are in OR."
 		default ()
 	
-	optional input matching 
+	optional list matching 
 		"A list of query terms to match using wildcards, in the form <term>, <match>. Each match may be
 		 a list of terms, which are in OR."
 		default ()
 	
-	optional input not-matching 
+	optional list not-matching 
 		"A list of query terms to not match using wildcards, in the form <term>, <match>. Each match may be
 		 a list of terms, which are in OR."
 		default ()
 		
-	optional input timeout
+	optional number timeout
 		"Timeout in seconds before the request is considered failed. Default is operating system
 		 dependent."
 		 default -1
 	
-	optional input feature-type
+	optional enum feature-type
 		"The (OSM or geometric) type or types of the features to collect. Pass one or more of 
 	     node, way, relation, polygon, area, line or point, separating by commas if more 
          than one is desired."
+        values node, way, relation, polygon, area, line, point
 	    default ""
 	    
-	optional input filters
+	optional list filters
 		"Pass a list of specific Overpass queries. Use if the simpler operators are not enough to 
 	     describe the query." 
 	     default ()
 	     
-	optional input max-objects
+	optional number max-objects
 		"The maximum number of objects to retrieve. By default all the available objects are used."
 		default -1   
 	
-	optional input simplify 
+	optional boolean simplify 
 		"If true, polygons returned from OSM will be simplified after query. Does not reduce network 
          transfer time or size."
 		default false
 		
-	optional input temporal
+	optional boolean temporal
 		"If true, set the temporal extent for the retrieved features from the OSM metadata. If the
          metadata do not help, set to the temporal extent in the context."
          default false

@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.utils;
 
-public class StringUtils {
+public class StringUtil {
 
     public static final int WHITESPACE = 0x0001;
     public static final int NONLETTERS = 0x0002;
@@ -35,6 +35,23 @@ public class StringUtils {
         return false;
     }
 
+    /**
+     * Split into lines and indent each by the given amount.
+     *
+     * @param s the s
+     * @param indent the indent
+     * @return the string
+     */
+    public static String leftIndent(String s, int indent) {
+        String pad = spaces(indent);
+        String[] strings = s.split("\n");
+        StringBuffer buf = new StringBuffer(s.length() + (indent*strings.length));
+        for (String ss : strings) {
+            buf.append(pad + ss.trim() + "\n");
+        }
+        return buf.toString();
+    }
+    
     /**
      * Return the max line length and the number of lines in the passed paragraph.
      *

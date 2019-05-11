@@ -64,7 +64,7 @@ import org.integratedmodelling.klab.ide.navigator.model.EResourceFolder;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.integratedmodelling.klab.rest.ServicePrototype;
 import org.integratedmodelling.klab.rest.ServicePrototype.Argument;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.UrlValidator;
 import org.integratedmodelling.klab.utils.Utils;
 import org.eclipse.swt.events.VerifyListener;
@@ -174,7 +174,7 @@ public class NewResource extends WizardPage {
 				case 0:
 					return arg.getName();
 				case 1:
-					return StringUtils.capitalize(arg.getType().name().toLowerCase());
+					return StringUtil.capitalize(arg.getType().name().toLowerCase());
 				case 2:
 					Object ret = values.get(((ServicePrototype.Argument) element).getName());
 					return ret == null ? null : ret.toString();

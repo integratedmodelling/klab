@@ -35,7 +35,7 @@ import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.ProjectModificationNotification;
 import org.integratedmodelling.klab.rest.ProjectModificationRequest;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 public class NewProjectWizard extends Wizard implements INewWizard {
 
@@ -72,12 +72,12 @@ public class NewProjectWizard extends Wizard implements INewWizard {
 		if (src.isEmpty())
 			return false;
 
-		if (StringUtils.containsAny(src, StringUtils.UPPERCASE | StringUtils.WHITESPACE | StringUtils.NONLETTERS)) {
+		if (StringUtil.containsAny(src, StringUtil.UPPERCASE | StringUtil.WHITESPACE | StringUtil.NONLETTERS)) {
 			page.setErrorMessage("project names must contain only lowercase letters with no whitespace");
 			return false;
 		}
 
-		if (StringUtils.containsAny(src, StringUtils.UPPERCASE | StringUtils.WHITESPACE | StringUtils.NONLETTERS)) {
+		if (StringUtil.containsAny(src, StringUtil.UPPERCASE | StringUtil.WHITESPACE | StringUtil.NONLETTERS)) {
 			page.setErrorMessage("namespace identifiers must contain only lowercase letters with no whitespace");
 			return false;
 		}

@@ -32,6 +32,11 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 
+/**
+ * TODO this is identical to StreamInstantiator, but should instead produce the 
+ * StreamConnections and StreamJunctions, with a mandatory secondary output for
+ * the latter.
+ */
 public class StreamNetworkInstantiator implements IInstantiator, IExpression {
 
 	private static final double DEFAULT_TCA_THRESHOLD = 0.006;

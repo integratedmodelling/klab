@@ -412,6 +412,8 @@ public class ComputableResource extends KimStatement implements IComputableResou
 						requiredResourceNames.addAll(urnd.getDependencies());
 					}
 				}
+			} else if (getServiceCall() != null) {
+			    
 			}
 		}
 		return requiredResourceNames;

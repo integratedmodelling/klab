@@ -42,7 +42,7 @@ import org.integratedmodelling.klab.ide.navigator.model.EScriptFolder;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.ProjectModificationNotification;
 import org.integratedmodelling.klab.rest.ProjectModificationRequest;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 public class NewScriptWizard extends Wizard {
 
@@ -123,7 +123,7 @@ public class NewScriptWizard extends Wizard {
 			return false;
 		}
         
-        if (StringUtils.containsAny(nspc, StringUtils.UPPERCASE | StringUtils.WHITESPACE | StringUtils.NONLETTERS)) {
+        if (StringUtil.containsAny(nspc, StringUtil.UPPERCASE | StringUtil.WHITESPACE | StringUtil.NONLETTERS)) {
             page.setErrorMessage("namespace identifiers must contain only lowercase letters with no whitespace");
             return false;
         }

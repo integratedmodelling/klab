@@ -48,7 +48,7 @@ import org.integratedmodelling.klab.rest.ProjectLoadRequest;
 import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -177,7 +177,7 @@ public class Activator extends AbstractUIPlugin {
 
 			@Override
 			public void openLink(String text) {
-				int nc = StringUtils.countMatches(text, ":");
+				int nc = StringUtil.countMatches(text, ":");
 				if (nc > 1) {
 					// URN - open in editor
 					if (klab != null && klab.getResource(text) != null) {

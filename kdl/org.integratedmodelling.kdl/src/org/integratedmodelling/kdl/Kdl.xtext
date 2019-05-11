@@ -36,7 +36,8 @@ ActorDefinition:
 	// abstract only allowed at root level; only exists to be extended
 	(abstract?='abstract')?
 	(final?='final')? (optional?='optional')? 
-	// export and import are from a CONTEXT and refer to artifact. So 'export number' is a contextualizer that produces numbers.
+	// export and import are from a CONTEXT and refer to artifacts. So 'export number' is a contextualizer that produces numbers and
+	// if used internally to an actuator, it defines inputs to and outputs from that actuator besides the defaults.
 	((exported?='export' | (imported?='import') (multiple?='multiple' | arity=INT (minimum?='+')?)?))? 
 	// parameters denotes the ability of the implementation of accepting modified values during run
 	// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
@@ -45,34 +46,43 @@ ActorDefinition:
 		// extends only allowed at root level; must extend another upstream in same file
 		('extends' extended=(LOWERCASE_ID|LOWERCASE_DASHID|STRING))?
 		('for' targets+=TARGET (',' targets+=TARGET)*)? (docstring=STRING)? ('label' label=STRING)?
-	('default' default=Value)?
 	('{' body=DataflowBody '}')?
+	(
+		(	
+			('minimum' rangeMin=Number) |		
+			('maximum' rangeMax=Number) |		
+			('range' rangeMin=Number 'to' rangeMax=Number)
+		) |
+		('values' enumValues+=(UPPERCASE_ID|LOWERCASE_ID|CAMELCASE_ID) (',' enumValues+=(UPPERCASE_ID|LOWERCASE_ID|CAMELCASE_ID))*)		
+	)?
+	('default' default=Value)?
 	('as' localName=LOWERCASE_ID)?
 	('over' coverage+=Function (',' coverage+=Function)*)? 
 	
-	|
-
-	/*
-	 * This is the form to declare service prototypes - TODO probably overkill at this point
-	 */
-
-	// abstract only allowed at root level; only exists to be extended
-	(abstract?='abstract')?
-	// parameter for services - takes type from value if optional; default mandatory if optional; docstring is mandatory
-	((optional?='optional') | type=('number' | 'boolean' | 'text' | 'list' | 'enum')) 
-	// input = function parameter; import = artifact from context
-	(parameter?='input'|imported?='import') name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING)
-	// extends only allowed at root level; must extend another upstream in same file
-	('extends' extended=(LOWERCASE_ID|LOWERCASE_DASHID|STRING))?	// enum values, only for enum type
-	('values' enumValues+=UPPERCASE_ID (',' enumValues+=UPPERCASE_ID)*)?
-	(docstring=STRING) ('label' label=STRING)?
-	('default' default=Value)?
-	('{' body=DataflowBody '}')?
-	(	
-		('minimum' rangeMin=Number) |		
-		('maximum' rangeMax=Number) |		
-		('range' rangeMin=Number 'to' rangeMax=Number)
-	)?;
+//	|
+//
+//	/*
+//	 * This is the form to declare service prototypes - TODO probably overkill at this point
+//	 */
+//
+//	// abstract only allowed at root level; only exists to be extended
+//	(abstract?='abstract')?
+//	// parameter for services - takes type from value if optional; default mandatory if optional; docstring is mandatory
+//	((optional?='optional') | type=('number' | 'boolean' | 'text' | 'list' | 'enum')) 
+//	// input = function parameter; import = artifact from context
+//	(parameter?='input'|imported?='import') name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING)
+//	// extends only allowed at root level; must extend another upstream in same file
+//	('extends' extended=(LOWERCASE_ID|LOWERCASE_DASHID|STRING))?	// enum values, only for enum type
+//	('values' enumValues+=UPPERCASE_ID (',' enumValues+=UPPERCASE_ID)*)?
+//	(docstring=STRING) ('label' label=STRING)?
+//	('default' default=Value)?
+//	('{' body=DataflowBody '}')?
+//	(	
+//		('minimum' rangeMin=Number) |		
+//		('maximum' rangeMax=Number) |		
+//		('range' rangeMin=Number 'to' rangeMax=Number)
+//	)?
+;
 	
 DataflowBody:
 	{DataflowBody}
@@ -101,6 +111,10 @@ ACTOR:
 	'extent' | 'spatialextent' | 'temporalextent' |
 	// only contracts for annotations
 	'annotation' |
+	// enum parameter, for prototypes only
+	'enum' |
+	// range parameter, for prototypes only
+	'range' |
 	// only for command prototypes
 	'void' |
 	// partial contextualizers for their parents

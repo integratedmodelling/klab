@@ -27,6 +27,7 @@ import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.ModelReference;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.StringUtils;
 
 public class RankedModel extends Model implements IRankedModel {
@@ -192,7 +193,7 @@ public class RankedModel extends Model implements IRankedModel {
 	private String describeRanks(int indent, int offset) {
 
 		String ret = "";
-		String filler = StringUtils.spaces(indent);
+		String filler = StringUtil.spaces(indent);
 
 		ret += filler + StringUtils.rightPad(offset + ".", 4) + modelData.getName() + " ["
 				+ (modelData.getServerId() == null ? "local" : modelData.getServerId()) + "]\n";

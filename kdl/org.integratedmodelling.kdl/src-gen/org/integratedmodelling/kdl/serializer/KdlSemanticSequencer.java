@@ -158,44 +158,31 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *
 	 * Constraint:
 	 *     (
+	 *         annotations+=Annotation* 
+	 *         abstract?='abstract'? 
+	 *         final?='final'? 
+	 *         optional?='optional'? 
+	 *         (exported?='export' | (imported?='import' (multiple?='multiple' | (arity=INT minimum?='+'?))?))? 
+	 *         parameter?='parameter'? 
+	 *         type=ACTOR 
+	 *         (name=LOWERCASE_ID | name=LOWERCASE_DASHID | name=STRING) 
+	 *         (extended=LOWERCASE_ID | extended=LOWERCASE_DASHID | extended=STRING)? 
+	 *         (targets+=TARGET targets+=TARGET*)? 
+	 *         docstring=STRING? 
+	 *         label=STRING? 
+	 *         body=DataflowBody? 
 	 *         (
-	 *             annotations+=Annotation* 
-	 *             abstract?='abstract'? 
-	 *             final?='final'? 
-	 *             optional?='optional'? 
-	 *             (exported?='export' | (imported?='import' (multiple?='multiple' | (arity=INT minimum?='+'?))?))? 
-	 *             parameter?='parameter'? 
-	 *             type=ACTOR 
-	 *             (name=LOWERCASE_ID | name=LOWERCASE_DASHID | name=STRING) 
-	 *             (extended=LOWERCASE_ID | extended=LOWERCASE_DASHID | extended=STRING)? 
-	 *             (targets+=TARGET targets+=TARGET*)? 
-	 *             docstring=STRING? 
-	 *             label=STRING? 
-	 *             default=Value? 
-	 *             body=DataflowBody? 
-	 *             localName=LOWERCASE_ID? 
-	 *             (coverage+=Function coverage+=Function*)?
-	 *         ) | 
-	 *         (
-	 *             abstract?='abstract'? 
+	 *             rangeMin=Number | 
+	 *             rangeMax=Number | 
+	 *             (rangeMin=Number rangeMax=Number) | 
 	 *             (
-	 *                 optional?='optional' | 
-	 *                 type='number' | 
-	 *                 type='boolean' | 
-	 *                 type='text' | 
-	 *                 type='list' | 
-	 *                 type='enum'
-	 *             ) 
-	 *             (parameter?='input' | imported?='import') 
-	 *             (name=LOWERCASE_ID | name=LOWERCASE_DASHID | name=STRING) 
-	 *             (extended=LOWERCASE_ID | extended=LOWERCASE_DASHID | extended=STRING)? 
-	 *             (enumValues+=UPPERCASE_ID enumValues+=UPPERCASE_ID*)? 
-	 *             docstring=STRING 
-	 *             label=STRING? 
-	 *             default=Value? 
-	 *             body=DataflowBody? 
-	 *             (rangeMin=Number | rangeMax=Number | (rangeMin=Number rangeMax=Number))?
-	 *         )
+	 *                 (enumValues+=UPPERCASE_ID | enumValues+=LOWERCASE_ID | enumValues+=CAMELCASE_ID) 
+	 *                 (enumValues+=UPPERCASE_ID | enumValues+=LOWERCASE_ID | enumValues+=CAMELCASE_ID)*
+	 *             )
+	 *         )? 
+	 *         default=Value? 
+	 *         localName=LOWERCASE_ID? 
+	 *         (coverage+=Function coverage+=Function*)?
 	 *     )
 	 */
 	protected void sequence_ActorDefinition(ISerializationContext context, ActorDefinition semanticObject) {

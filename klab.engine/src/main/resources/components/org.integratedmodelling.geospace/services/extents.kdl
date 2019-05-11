@@ -6,28 +6,28 @@ spatialextent space
 	 enable the creation of single shapes using WKT and WKB notation, as well as regular grids and
 	 irregular spatial tessellations with shape masks."
 {
-	optional input shape
+	optional text shape
 		"A string containing the WKT or WKB definition of a geographical shape, optionally 
 		 prefixed with the EPSG projection code including the authority (the default projection
 		 is 'EPSG:4326')."
 	    default ""
 	
-	optional input grid 
+	optional text grid 
 		"A string specifying the linear resolution of the desired grid as a number with length
 		 units. Example: '1 km'."
 		default ""
 		
-	optional input urn
+	optional text urn
 		"A URN (or a string specifying one) that will return at least one spatial object, whose
 		 spatial context will be used as a return value."
 		default ""
 		
-	optional input projection
+	optional text projection
 		"A string that specify the EPSG code for a projection to use instead of the original
 		 one when shapes come from a URN."
 		default ""		
 		
-	optional input simplify
+	optional number simplify
 		"A distance in projection units that will force simplification of polygons and other shapes
 		 by assuming that points within that distance can be ignored."
 	   default 0.0

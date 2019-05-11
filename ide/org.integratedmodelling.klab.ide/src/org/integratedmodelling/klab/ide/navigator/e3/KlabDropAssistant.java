@@ -20,7 +20,7 @@ import org.integratedmodelling.klab.ide.navigator.model.EProject;
 import org.integratedmodelling.klab.ide.navigator.model.EResource;
 import org.integratedmodelling.klab.ide.navigator.model.EResourceFolder;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 public class KlabDropAssistant extends ResourceDropAdapterAssistant {
 
@@ -88,7 +88,7 @@ public class KlabDropAssistant extends ResourceDropAdapterAssistant {
 
                 } else if (target instanceof EResourceFolder && eventItem instanceof String) {
 
-                    if (StringUtils.containsAny(eventItem.toString(), StringUtils.WHITESPACE)) {
+                    if (StringUtil.containsAny(eventItem.toString(), StringUtil.WHITESPACE)) {
                         Eclipse.INSTANCE.alert("Imported identifier " + eventItem
                                 + " contains whitespace: please correct names before trying importing again.");
                     } else {

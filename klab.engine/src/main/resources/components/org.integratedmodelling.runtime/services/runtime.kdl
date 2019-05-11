@@ -17,15 +17,15 @@ export value exec
 	value arguments 
 		"The artifacts referred to in the code"	
 		
-	optional input ifcondition 
+	optional text ifcondition 
 		"A condition to check before executing the code" 
 		default ""
 
-	optional input unlesscondition 
+	optional text unlesscondition 
 		"A negative conditions to check before executing the code" 
 		default ""
 
-	optional input language 
+	optional text language 
 		"The language of the expression" 
 		default "groovy"
 		

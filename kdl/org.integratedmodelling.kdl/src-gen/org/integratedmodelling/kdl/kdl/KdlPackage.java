@@ -386,49 +386,13 @@ public interface KdlPackage extends EPackage
   int ACTOR_DEFINITION__LABEL = 15;
 
   /**
-   * The feature id for the '<em><b>Default</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ACTOR_DEFINITION__DEFAULT = 16;
-
-  /**
    * The feature id for the '<em><b>Body</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__BODY = 17;
-
-  /**
-   * The feature id for the '<em><b>Local Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ACTOR_DEFINITION__LOCAL_NAME = 18;
-
-  /**
-   * The feature id for the '<em><b>Coverage</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ACTOR_DEFINITION__COVERAGE = 19;
-
-  /**
-   * The feature id for the '<em><b>Enum Values</b></em>' attribute list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ACTOR_DEFINITION__ENUM_VALUES = 20;
+  int ACTOR_DEFINITION__BODY = 16;
 
   /**
    * The feature id for the '<em><b>Range Min</b></em>' containment reference.
@@ -437,7 +401,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__RANGE_MIN = 21;
+  int ACTOR_DEFINITION__RANGE_MIN = 17;
 
   /**
    * The feature id for the '<em><b>Range Max</b></em>' containment reference.
@@ -446,7 +410,43 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__RANGE_MAX = 22;
+  int ACTOR_DEFINITION__RANGE_MAX = 18;
+
+  /**
+   * The feature id for the '<em><b>Enum Values</b></em>' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTOR_DEFINITION__ENUM_VALUES = 19;
+
+  /**
+   * The feature id for the '<em><b>Default</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTOR_DEFINITION__DEFAULT = 20;
+
+  /**
+   * The feature id for the '<em><b>Local Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTOR_DEFINITION__LOCAL_NAME = 21;
+
+  /**
+   * The feature id for the '<em><b>Coverage</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTOR_DEFINITION__COVERAGE = 22;
 
   /**
    * The number of structural features of the '<em>Actor Definition</em>' class.
@@ -2032,17 +2032,6 @@ public interface KdlPackage extends EPackage
   EAttribute getActorDefinition_Label();
 
   /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getDefault <em>Default</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Default</em>'.
-   * @see org.integratedmodelling.kdl.kdl.ActorDefinition#getDefault()
-   * @see #getActorDefinition()
-   * @generated
-   */
-  EReference getActorDefinition_Default();
-
-  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getBody <em>Body</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2052,39 +2041,6 @@ public interface KdlPackage extends EPackage
    * @generated
    */
   EReference getActorDefinition_Body();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getLocalName <em>Local Name</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Local Name</em>'.
-   * @see org.integratedmodelling.kdl.kdl.ActorDefinition#getLocalName()
-   * @see #getActorDefinition()
-   * @generated
-   */
-  EAttribute getActorDefinition_LocalName();
-
-  /**
-   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getCoverage <em>Coverage</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Coverage</em>'.
-   * @see org.integratedmodelling.kdl.kdl.ActorDefinition#getCoverage()
-   * @see #getActorDefinition()
-   * @generated
-   */
-  EReference getActorDefinition_Coverage();
-
-  /**
-   * Returns the meta object for the attribute list '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getEnumValues <em>Enum Values</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute list '<em>Enum Values</em>'.
-   * @see org.integratedmodelling.kdl.kdl.ActorDefinition#getEnumValues()
-   * @see #getActorDefinition()
-   * @generated
-   */
-  EAttribute getActorDefinition_EnumValues();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getRangeMin <em>Range Min</em>}'.
@@ -2107,6 +2063,50 @@ public interface KdlPackage extends EPackage
    * @generated
    */
   EReference getActorDefinition_RangeMax();
+
+  /**
+   * Returns the meta object for the attribute list '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getEnumValues <em>Enum Values</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute list '<em>Enum Values</em>'.
+   * @see org.integratedmodelling.kdl.kdl.ActorDefinition#getEnumValues()
+   * @see #getActorDefinition()
+   * @generated
+   */
+  EAttribute getActorDefinition_EnumValues();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getDefault <em>Default</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Default</em>'.
+   * @see org.integratedmodelling.kdl.kdl.ActorDefinition#getDefault()
+   * @see #getActorDefinition()
+   * @generated
+   */
+  EReference getActorDefinition_Default();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getLocalName <em>Local Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Local Name</em>'.
+   * @see org.integratedmodelling.kdl.kdl.ActorDefinition#getLocalName()
+   * @see #getActorDefinition()
+   * @generated
+   */
+  EAttribute getActorDefinition_LocalName();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getCoverage <em>Coverage</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Coverage</em>'.
+   * @see org.integratedmodelling.kdl.kdl.ActorDefinition#getCoverage()
+   * @see #getActorDefinition()
+   * @generated
+   */
+  EReference getActorDefinition_Coverage();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kdl.kdl.DataflowBody <em>Dataflow Body</em>}'.
@@ -3586,44 +3586,12 @@ public interface KdlPackage extends EPackage
     EAttribute ACTOR_DEFINITION__LABEL = eINSTANCE.getActorDefinition_Label();
 
     /**
-     * The meta object literal for the '<em><b>Default</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference ACTOR_DEFINITION__DEFAULT = eINSTANCE.getActorDefinition_Default();
-
-    /**
      * The meta object literal for the '<em><b>Body</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     EReference ACTOR_DEFINITION__BODY = eINSTANCE.getActorDefinition_Body();
-
-    /**
-     * The meta object literal for the '<em><b>Local Name</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute ACTOR_DEFINITION__LOCAL_NAME = eINSTANCE.getActorDefinition_LocalName();
-
-    /**
-     * The meta object literal for the '<em><b>Coverage</b></em>' containment reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference ACTOR_DEFINITION__COVERAGE = eINSTANCE.getActorDefinition_Coverage();
-
-    /**
-     * The meta object literal for the '<em><b>Enum Values</b></em>' attribute list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute ACTOR_DEFINITION__ENUM_VALUES = eINSTANCE.getActorDefinition_EnumValues();
 
     /**
      * The meta object literal for the '<em><b>Range Min</b></em>' containment reference feature.
@@ -3640,6 +3608,38 @@ public interface KdlPackage extends EPackage
      * @generated
      */
     EReference ACTOR_DEFINITION__RANGE_MAX = eINSTANCE.getActorDefinition_RangeMax();
+
+    /**
+     * The meta object literal for the '<em><b>Enum Values</b></em>' attribute list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ACTOR_DEFINITION__ENUM_VALUES = eINSTANCE.getActorDefinition_EnumValues();
+
+    /**
+     * The meta object literal for the '<em><b>Default</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference ACTOR_DEFINITION__DEFAULT = eINSTANCE.getActorDefinition_Default();
+
+    /**
+     * The meta object literal for the '<em><b>Local Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ACTOR_DEFINITION__LOCAL_NAME = eINSTANCE.getActorDefinition_LocalName();
+
+    /**
+     * The meta object literal for the '<em><b>Coverage</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference ACTOR_DEFINITION__COVERAGE = eINSTANCE.getActorDefinition_Coverage();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kdl.kdl.impl.DataflowBodyImpl <em>Dataflow Body</em>}' class.

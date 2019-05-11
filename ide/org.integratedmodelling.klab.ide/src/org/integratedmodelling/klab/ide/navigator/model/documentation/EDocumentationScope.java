@@ -9,7 +9,7 @@ import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
 import org.integratedmodelling.klab.client.documentation.ProjectDocumentation;
 import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 public class EDocumentationScope extends ENavigatorItem {
 
@@ -56,7 +56,7 @@ public class EDocumentationScope extends ENavigatorItem {
 	}
 
 	public String getName() {
-		return StringUtils.capitalize(trigger.name().toLowerCase());
+		return StringUtil.capitalize(trigger.name().toLowerCase());
 	}
 
 }

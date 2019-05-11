@@ -20,7 +20,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.klab.ide.ui.PaletteItem.SelectListener;
 import org.integratedmodelling.klab.organizer.Folder;
 import org.integratedmodelling.klab.organizer.Item;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 public class PaletteFolder extends Composite {
 
@@ -100,7 +100,7 @@ public class PaletteFolder extends Composite {
 			};
 			descLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));
 			descLabel.setBackground(SWTResourceManager.getColor(SWT.COLOR_INFO_BACKGROUND));
-			descLabel.setText(StringUtils.justifyLeft(folder.getDescription(), 70));
+			descLabel.setText(StringUtil.justifyLeft(folder.getDescription(), 70));
 			descLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 		}
 

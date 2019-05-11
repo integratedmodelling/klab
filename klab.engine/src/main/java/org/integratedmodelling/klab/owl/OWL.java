@@ -55,7 +55,7 @@ import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.MiscUtilities;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.URLUtils;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
@@ -1017,7 +1017,7 @@ public enum OWL {
 
 	public Concept getNonsemanticPeer(String name, IArtifact.Type type) {
 
-		String conceptId = StringUtils.capitalize(type.name().toLowerCase()) + CamelCase.toUpperCamelCase(name, '.');
+		String conceptId = StringUtil.capitalize(type.name().toLowerCase()) + CamelCase.toUpperCamelCase(name, '.');
 		Type qualityType = null;
 		switch (type) {
 		case TEXT:

@@ -13,12 +13,12 @@ export concept classifier
 	import number elevation
 		"A DEM observation to classify"
 		
-	optional input threshold 
+	optional parameter number threshold 
 		"Flatness threshold in meters. If unspecified it is chosen to match the radius in a square 
 		 context." 
 		default 0.0
 		
-	optional input radius
+	optional parameter number radius
 		"Search radius in m. Represents the scaling of the point of view; large values can be used to
 		 mimic far points of view or for very flat areas. If unspecified, it is set to 1/100th of the
 		 diagonal of the bounding box."
@@ -41,28 +41,29 @@ export object findmaxima
 	optional import number chm
 		"A crown height grid state (pre-differentiated with minimum values starting at 0)."
 		
-	optional input threshold 
+	optional number threshold 
 		"Height threshold of relevance for any maximum found. If surface is passed, refers to the value in
 		 the map and will be subtracted the minimum value. This parameter also accepts an expression where
 		 the variable min and max will be substituted by the known minima and maxima in the surface." 
 		default 0.0
 		
-	optional input relative-threshold 
+	optional number relative-threshold 
 		"Height threshold of relevance for any maximum found, expressed as a proportion of the maximum 
 		 elevation over the baseline. If this is used, the 'threshold' parameter is used as a minimum
 		 height, to cut off local maxima that may be too low." 
 		default 0.0
 			
-	optional input radius
+	optional parameter number radius
 		"Search radius in m. Represents the scaling of the point of view; large values can be used to
 		 mimic far points of view or for very flat areas. If unspecified, it is set to 1/100th of the
 		 diagonal of the bounding box."
 		default 0.0
 		
-	optional input mode
+	optional enum mode
 		"The mode of extraction. The default 'custom' is for general purposes and should be used for anything
 		 but trees. If trees are being extracted, the modes 'conifer', 'deciduous' and 'mixed' will apply 
 		 specific heuristics to improve detection."
+		values custom, conifer, deciduous, mixed
 		default "custom"
 		
 	class org.integratedmodelling.geoprocessing.morphology.MaximaFinderInstantiator

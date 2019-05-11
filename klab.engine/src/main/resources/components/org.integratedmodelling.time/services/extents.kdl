@@ -6,24 +6,24 @@ temporalextent time
 	 enable the creation of single periods as well as regular and irregular time grids."
 {
 
-	optional input start 
+	optional value start 
 		"A string specifying the start of the temporal extent as a date in yyyy/mm/dd[:MM:SS] format."
 		default ""
 	
-	optional input end 
+	optional value end 
 		"A string specifying the end of the temporal extent as a date in yyyy/mm/dd[:MM:SS] format."
 		default ""
 
-	optional input step 
+	optional value step 
 		"A string specifying the linear resolution of the desired time grid as a number with duration
 		 units. Example: '1 day'."
 		default ""
 
-	optional input year
+	optional number year
 		"A year is an integer number, interpreted as the period covering the entire year."
 		default 0
 		
-	optional input realtime
+	optional boolean realtime
 		"If the realtime parameter is true, all time transition will be performed in real time from the 
          start of contextualization."
 		default false

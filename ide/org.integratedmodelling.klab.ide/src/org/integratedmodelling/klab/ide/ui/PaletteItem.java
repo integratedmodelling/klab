@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.klab.organizer.Item;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 public class PaletteItem extends Canvas {
 
@@ -148,7 +148,7 @@ public class PaletteItem extends Canvas {
 		 * TODO draw info and menu
 		 */
 
-		this.setToolTipText(StringUtils.justifyLeft(item.getDescription(), 60));
+		this.setToolTipText(StringUtil.justifyLeft(item.getDescription(), 60));
 
 		gc.drawString(item.getName(), 28, 4, true);
 

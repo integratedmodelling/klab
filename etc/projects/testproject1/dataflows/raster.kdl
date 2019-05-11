@@ -11,11 +11,11 @@
  	text 'fileUrl'
  		""
  		
- 	optional input band
+ 	optional number band
  		""
  		default 0
  
- 	optional input 'computeBoundary'
+ 	optional boolean 'computeBoundary'
  		""
  		default false
  }

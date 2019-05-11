@@ -1,6 +1,5 @@
 package org.integratedmodelling.kim.api;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -96,6 +95,16 @@ public interface IPrototype {
 		boolean isFinal();
 		
 		/**
+		 * Arguments with the status of parameter are modifiable by the
+		 * user in interactive workflows. The use of the modifiable 
+		 * assignment '?=' should be conditioned to the corresponding
+		 * argument being a parameter.
+		 * 
+		 * @return
+		 */
+		boolean isParameter();
+		
+		/**
 		 * A label for forms or other display. If not specified it should always be set 
 		 * from the parameter name.
 		 * 
@@ -155,6 +164,24 @@ public interface IPrototype {
 	List<Argument> listArguments();
 
 	/**
+	 * Imports are arguments that are declared as 'import'. In prototype calls, they are not expected
+	 * as parameters, but they are expected to be in the context (according to their optional
+	 * status) of the service specified by the call.
+	 * 
+	 * @return imports, or an empty list.
+	 */
+	List<Argument> listImports();
+	
+    /**
+     * Exports are arguments that are declared as 'export'. In prototype calls, they are not expected
+     * as parameters, but they are expected to be produced into the context (according to their optional
+     * status) by the service specified by the call.
+     * 
+     * @return exports, or an empty list.
+     */
+	List<Argument> listExports();
+	
+	/**
 	 * Ensure that the arguments passed reflect the required arguments.
 	 * 
 	 * @param function
@@ -210,15 +237,5 @@ public interface IPrototype {
 	 * @return the geometry, possibly empty, never null.
 	 */
 	IGeometry getGeometry();
-
-	/**
-	 * If this is not empty, the presence of any of the named parameter determines,
-	 * for a function returning an extent, the multiplicity of that extent. Used to
-	 * check extent dimensional correctness (e.g. in units) in calls at the client
-	 * side, when the actual extent cannot be created. This is used for, e.g.,
-	 * "grid" in spatial extents and "step" in temporal ones.
-	 * 
-	 * @return the extent parameters
-	 */
-	Collection<String> getExtentParameters();
+	
 }

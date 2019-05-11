@@ -12,17 +12,17 @@ export object buffer
 	number radius
 		"The distance to add to each spatial feature in meters"
 		
-	optional input artifact 
+	optional text artifact 
 		"The artifact to use to produce the objects. If not passed, the target artifact is modified." 
 		default ""
 		
-	optional input subtract 
+	optional boolean subtract 
 		"If passed, only the buffer area is retained in the final result, removing the original 
 		 feature to form a hole. It has no effect if the original feature is 0-dimensional (point
 		 or multipoint)." 
 		default false
 	
-	optional input simplify 
+	optional boolean simplify 
 		"If passed, the original shape is simplified by the passed factor before buffering." 
 		default 0
 	
@@ -40,29 +40,29 @@ export number kriging
 	concept state 
 		"The semantics for the state to use in the source points or features." 
 
-	optional input radius
+	optional number radius
 		"The distance in m at which the value of two points become spatially uncorrelated. Must be specified if mode is
 		 Gaussian."
 		default 0.0
 
-	optional input sill
+	optional number sill
 		"The semivariance when distance >= range. If not specified, the variance of the input values is used."
 		default 0.0
 		
-	optional input nugget
+	optional number nugget
 		"The initial semivariance at distance near 0. If not specified it is set to 0."
 		default 0.0
 		
-	optional input exponential
+	optional boolean exponential
 		"Use an exponential semivariogram instead of the default exponential one. If true , integral scale and
 		 variance parameters must be passed."
 		default false
 		
-	optional input includezero
+	optional boolean includezero
 		"Include zero values in the semivariogram computation. Default is true."
 		default true
 		
-	optional input logarithmic
+	optional boolean logarithmic
 		"Use log-transformed input data when computing the semivariogram. Default false."
 		default false
 		

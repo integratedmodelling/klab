@@ -70,7 +70,7 @@ annotation deprecated
      users of the need to prepare for their future removal."
 {
 	
-	optional input 'value'
+	optional text 'value'
 		"A string description of the reason for deprecation and the suggested
          alternatives."
 		default ""
@@ -91,20 +91,20 @@ annotation interactive for definitions, models
 annotation run for observers
 	"Mark a context for batch execution, specifying the observations to be made in it."
 {
-	optional input name 
+	optional text name 
 		"A name for this run. If given, the results will be saved in a subdirectory
          of the same name." 
 		default ""
 	
-	optional input description 
+	optional text description 
 		"A description for this run, its parameters and intended outputs."
 		default ""
 			
-	optional input observations
+	optional list observations
 		"A list of the concepts or objects to observe in the context after it is resolved."
 		default ()
 
-	optional input visualize
+	optional boolean visualize
 		"After resolving the observable, launch a suitable viewer for the context."
 		default false
 		
@@ -118,38 +118,38 @@ annotation test for observers
 	"Mark a context for execution as a test, specifying the observations to be made in it and
      any checks to apply on the results."
 {
-	text input name 
+	text name 
 		"A name for this test. If given, the test logs will include it." 
 
-	optional input repeat
+	optional number repeat
 		"Repeat the test the indicated number of times. Default is 1. Used to catch non-deterministic conditions."
 		default 1
 
-	optional input save 
+	optional boolean save 
 		"If given with a value of true, the result context will be saved in a directory
          with the test name, or a random name if a name is not given." 
 		default false
 	
-	optional input description 
+	optional text description 
 		"A description for this test, its purpose, parameters and intended outputs."
 		default ""
 			
-	optional input observations
+	optional list observations
 		"A list of the concepts or objects to observe in the context after it is resolved."
 		default ()
 		
-	optional input assertions
+	optional list assertions
 		"A list of functions or Groovy code fragments returning a boolean, to execute on the resulting
          context (identified by the 'context' variable) after all observations are made. Any
          fragment returning false or raising an exception causes the test to fail."
 		default ()
 
-	optional input resources
+	optional list resources
 		"A list of resource URNs that must be available in for the test to run. If the named resources
 		 are unavailable, a warning is emitted and the test terminates without failure."
 		default ()
 
-	optional input visualize
+	optional boolean visualize
 		"After resolving the observable, launch a suitable viewer for the context."
 		default false
 

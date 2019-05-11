@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.klab.ide.Activator;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 public class Badge extends Canvas {
 
@@ -184,16 +184,16 @@ public class Badge extends Canvas {
 
     public void setText(String text) {
     	
-        int[] pxy = StringUtils.getParagraphSize(text);
+        int[] pxy = StringUtil.getParagraphSize(text);
         textLabel = new CLabel(this, SWT.None);
         GC gc = new GC(textLabel);
-        Point size = gc.textExtent(StringUtils.repeat('M', pxy[0]));
+        Point size = gc.textExtent(StringUtil.repeat('M', pxy[0]));
         int wHint = size.x / 2 + 36;
         int hHint = size.y * (pxy[1] + 2);
 
         if (multiline && (text.length() * size.x) > (containerWidth + 36)) {
         	int just = (containerWidth - 36)/size.x;
-        	text = StringUtils.justifyLeft(text, just);
+        	text = StringUtil.justifyLeft(text, just);
         }
         
         textLabel.setForeground(getForeground());

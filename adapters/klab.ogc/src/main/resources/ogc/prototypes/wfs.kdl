@@ -18,15 +18,15 @@
  	optional text 'nameAttribute'
  		"The attribute that provides the name for objects built from this resource. If not provided, names will be built from the semantics."
  		
- 	optional input sanitize
+ 	optional boolean sanitize
  		""
  		default false
  	
- 	optional input 'computeHull'
+ 	optional boolean 'computeHull'
  		""
  		default false
 
- 	optional input 'computeUnion'
+ 	optional boolean 'computeUnion'
  		""
  		default false
  	

@@ -24,49 +24,50 @@ annotation colormap
 	"Create or define a color map to use to display the result of the annotated model or any observation of
 	 the annotated concept. Used primarily in visualization of spatial grids, but could have other uses."
 {
-	optional input 'value'
+	optional text 'value'
 		"The name of a color map defined externally (as a SLD file), a predefined (ColorBrewer) map, or a 
 		 define instruction." 
 		default ""
 		
-	optional input name
+	optional text name
 		"The name of a color map defined externally (as a SLD file), a predefined (ColorBrewer) map, or a 
 		 define instruction." 
 		default ""
 		
-	optional input 'values'
+	optional value 'values'
 		"Value breakpoints and the corresponding colors. Values can be concepts, ranges, numbers or any accepted value type."
 		default {}
 
-	optional input colors
+	optional list colors
 		"List of the desired colors"
 		default ()
 
-	optional input continuous
+	optional boolean continuous
 		"Force color interpolation"
 		default true
 		
-	optional input midpoint
+	optional number midpoint
 		"Midpoint for divergent colormaps"
 		default 0.0
 		
-	optional input opacity
+	optional number opacity
 		"Opacity of the colormap,  0 (transparent) to 1 (fully opaque)"
 		default 1.0
 		
-	optional input gamma
+	optional number gamma
 		"Gamma value for contrast enhancement. Default is 1.0."
 		default 1.0
 		
-	optional input contrast
+	optional enum contrast
 		"Contrast method: one of 'none' (default), 'normalize', 'histogram', 'logarithmic' or 'exponential'."
+		values none, normalize, histogram, logarithmic, exponential
 		default "none"
 		
-	optional input shading
+	optional number shading
 		"Relief shading value: default is system-dependent"
 		default 0
 		
-	optional input brighten
+	optional boolean brighten
 		"Apply shading to the brightness only. Ineffective if shading is not specified."
 		default false	
 }
@@ -75,19 +76,26 @@ annotation color
 	"Specify color parameters for features to be displayed. Used on boolean states, can use a single color
 	 value to specify how to render the 'present' state."
 {
-	optional input 'value'
+	optional text 'value'
 		"The name of a color to render areas where the observation is true."
 		default ""
 
-	optional input line 	
+	optional text line 	
 		"Color for the line delineating the boundary"
 		default 'white'
 	
-	optional input fill
+	optional text fill
 		"Color for the polygon fill"
 		default 'white'
 		
-	optional input opacity
+	optional number opacity
 		"Opacity of the fill color, 0 (transparent) to 1 (fully opaque)"
 		default 1.0
+}
+
+annotation icon
+	"Specify an icon with which to render a point feature of the annotated type or model."
+{
+	text 'value'
+		"SVG code for the desired icon"
 }

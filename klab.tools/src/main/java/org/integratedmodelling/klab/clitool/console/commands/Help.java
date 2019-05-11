@@ -5,7 +5,7 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.clitool.CliRuntime;
 import org.integratedmodelling.klab.clitool.api.ICommand;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 public class Help implements ICommand {
 
@@ -14,12 +14,12 @@ public class Help implements ICommand {
     String output = "";
     for (String pack : CliRuntime.INSTANCE.getCommandProcessor().getPackages()) {
       if (!pack.equals("main")) {
-        output += pack + ":\n" + StringUtils.repeat('-', pack.length() + 1) + "\n\n";
+        output += pack + ":\n" + StringUtil.repeat('-', pack.length() + 1) + "\n\n";
       }
       for (IPrototype prototype : CliRuntime.INSTANCE.getCommandProcessor().getPrototypes(pack)) {
         String synopsis = prototype.getSynopsis();
         if (!pack.equals("main")) {
-          synopsis = StringUtils.leftIndent(synopsis, 3);
+          synopsis = StringUtil.leftIndent(synopsis, 3);
         }
         output += "* " + synopsis + "\n";
       }

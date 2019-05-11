@@ -16,7 +16,7 @@
  		"The WCS version for the requests. Currently only 2.0.1 is supported as previous versions do not communicate enough information."
  	 	default "2.0.1"
  	 		
- 	optional input band
+ 	optional number band
  		"The band for a multi-band raster. Default is 0."
  		default 0
 

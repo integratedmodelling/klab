@@ -23,7 +23,7 @@ export number flowdirections
 	import number hydrologically_corrected_elevation
 		"A hydrologically corrected DEM with no areas where water can pool"
 		
-	optional input angles
+	optional boolean angles
 		"If true, angles are computed as output instead of integer flow direction codes per D8 conventions."
 		default false
 
@@ -38,7 +38,7 @@ export number flowaccumulation
 	import number flow_directions_d8
 		"The D8 numeric code for flow direction"
 
-	optional input cells
+	optional boolean cells
 		"If true, number of contributing cells is output instead of actual contributing area."
 		default false
 
@@ -53,7 +53,7 @@ export boolean streamnetwork
 	import number upstream_cell_count
 		"An observation of the number of cells draining into each cell"
 
-	optional input 'tca.threshold'
+	optional parameter number 'tca.threshold'
 		"The percent of the total basin drainage that makes a cell part of a stream. A default is chosen
 		 adaptively; defaults are unlikely to work in delta areas or any other difficult context."
 		default 0.0
@@ -75,12 +75,12 @@ export object tracestreams
 	import number flow_directions_d8
 		"The D8 numeric code for flow direction"
 
-	optional input 'tca.threshold'
+	optional parameter number 'tca.threshold'
 		"The percent of the total basin drainage that makes a cell part of a stream. A default is chosen
 		 adaptively; defaults are unlikely to work in delta areas or any other difficult context."
 		default 0.0
 
-	class org.integratedmodelling.geoprocessing.hydrology.StreamNetworkInstantiator
+	class org.integratedmodelling.geoprocessing.hydrology.StreamInstantiator
 }
 
 export object extractoutlets
@@ -95,11 +95,11 @@ export object extractoutlets
 	import number upstream_cell_count
 		"An observation of the number of cells draining into each cell"
 
-	optional input threshold
+	optional parameter number threshold
 		"The minimum percent of basin drainage reuired for an outlet to be created. Default is 0.05."
 		default 0.05
 
-	optional input extract
+	optional parameter number extract
 		"Number of outlets to create. Outlets are created in order of decreasing drainage
 		 area down to the drainage threshold.  Default is -1, i.e. all outlets down to the
 		 minimum drainage threshold will be extracted."
@@ -121,7 +121,7 @@ export object delineatewatersheds
 	import number upstream_cell_count
 		"An observation of the number of cells draining into each cell"
 
-	optional input whole
+	optional parameter boolean whole
 		"If whole = true, only entire watersheds will be extracted, rejecting those whose basin
 		 crosses the context's outline. Default is false. A warning is emitted in any case."
 		default false

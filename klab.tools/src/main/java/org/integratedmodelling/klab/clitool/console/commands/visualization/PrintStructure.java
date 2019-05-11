@@ -9,7 +9,7 @@ import org.integratedmodelling.klab.clitool.api.ICommand;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 public class PrintStructure implements ICommand {
 
@@ -31,7 +31,7 @@ public class PrintStructure implements ICommand {
 
 		IRuntimeContext context = ((Observation)obs).getRuntimeContext();
 		
-		String ret = StringUtils.repeat(' ', level) + obs;
+		String ret = StringUtil.repeat(' ', level) + obs;
 		for (IObservation child : context.getChildrenOf(obs)) {
 			ret += "\n" + printStructure(child, level + 3);
 		}

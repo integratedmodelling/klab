@@ -41,7 +41,7 @@ import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.ProjectModificationNotification;
 import org.integratedmodelling.klab.rest.ProjectModificationRequest;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 public class NewNamespaceWizard extends Wizard {
 
@@ -112,7 +112,7 @@ public class NewNamespaceWizard extends Wizard {
 			}
 		}
 
-		if (StringUtils.containsAny(nspc, StringUtils.UPPERCASE | StringUtils.WHITESPACE | StringUtils.NONLETTERS)) {
+		if (StringUtil.containsAny(nspc, StringUtil.UPPERCASE | StringUtil.WHITESPACE | StringUtil.NONLETTERS)) {
 			page.setErrorMessage("Namespace identifiers must contain only lowercase letters with no whitespace.");
 			return false;
 		}

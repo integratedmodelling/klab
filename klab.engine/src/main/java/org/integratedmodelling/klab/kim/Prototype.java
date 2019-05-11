@@ -5,7 +5,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 /**
  * The k.LAB prototype specializes {@link org.integratedmodelling.klab.common.Prototype} in the k.IM
@@ -31,7 +31,7 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
     this.contextualizer = actuator.isExported();
     
     if (actuator.getDescription() != null) {
-      this.description = StringUtils.pack(actuator.getDescription());
+      this.description = StringUtil.pack(actuator.getDescription());
     }
     
     this.label = actuator.getLabel();
@@ -44,7 +44,7 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
       ArgumentImpl a = new ArgumentImpl();
       a.name = arg.getName();
       a.description =
-          arg.getDescription() == null ? "" : StringUtils.pack(arg.getDescription()).trim();
+          arg.getDescription() == null ? "" : StringUtil.pack(arg.getDescription()).trim();
       a.type = arg.getType() == null ? null : Type.valueOf(arg.getType().name());
       a.optional = arg.isOptional();
       a.shortName = arg.getLabel();
@@ -55,7 +55,7 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
       if (arg.getLabel() != null) {
     	  a.label = arg.getLabel();
       } else {
-    	  a.label = StringUtils.capitalize(a.name).replaceAll("_", " ").replaceAll("\\-", " ");
+    	  a.label = StringUtil.capitalize(a.name).replaceAll("_", " ").replaceAll("\\-", " ");
       }
       arguments.put(a.name, a);
     }

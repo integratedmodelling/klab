@@ -8,7 +8,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException
 import org.integratedmodelling.klab.extensions.groovy.model.Concept
 import org.integratedmodelling.klab.extensions.groovy.model.Observation
 import org.integratedmodelling.klab.extensions.groovy.model.State
-import org.integratedmodelling.klab.utils.StringUtils
+import org.integratedmodelling.klab.utils.StringUtil
 
 
 /**
@@ -35,7 +35,7 @@ class ObservationSet extends AbstractObservationSet {
             if (match != null && obs instanceof IDirectObservation) {
                 boolean go = false;
                 for (String m : match) {
-                      if (StringUtils.matchWildcards(((IDirectObservation)obs).getName(), m)) {
+                      if (StringUtil.matchWildcards(((IDirectObservation)obs).getName(), m)) {
                           go = true;
                           break;
                       }
