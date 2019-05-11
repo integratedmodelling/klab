@@ -14,6 +14,11 @@
 			<artifactId>klab.modeler</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>org.integratedmodelling.klab.api</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
 		<!-- Command line tool dependencies -->
 		<dependency>
 			<groupId>net.sf.jopt-simple</groupId>

@@ -40,7 +40,7 @@ import org.integratedmodelling.klab.rest.RunScriptRequest;
 import org.integratedmodelling.klab.rest.SearchRequest;
 import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.TaskReference;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 /**
  * Front-end session proxy and receiver for session messages. Maintains and
@@ -456,7 +456,7 @@ public class KlabSession extends KlabPeer {
 
 	private void dumpHistoryObject(ERuntimeObject e, DisplayPriority priority, Level logLevel, int level) {
 
-		System.out.println(StringUtils.spaces(level * 3) + e);
+		System.out.println(StringUtil.spaces(level * 3) + e);
 		for (ERuntimeObject c : e.getEChildren(priority, logLevel)) {
 			dumpHistoryObject(c, priority, logLevel, level + 1);
 		}

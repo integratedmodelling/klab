@@ -6,22 +6,22 @@ export object extract
 	"Extract polygonal features from a raster map based on clumping of its values."
 	label 'Vectorize into features'
 {
-	optional input select
+	optional text select
 		"Pass an expression that will return true or false per each point in the spatial context, 
 		 producing a mask that will be vectorized into spatial contexts for the objects. Use quality
 		 dependency names to refer to their state in each point."
 	    default ""
 	    
-	optional input simplify
+	optional boolean simplify
 		"If true, the polygons resulting from vectorization will be simplified before they are
 	     returned to k.LAB."
 		default false
 		
-	optional input holes
+	optional boolean holes
 		"If true, generated polygons may have holes in them."
 		default false
 		
-	optional input points
+	optional boolean points
 		"If true, single points will be extracted as cell polygons."
 		default false
 	
@@ -38,7 +38,7 @@ export object concavehull
 	"Extract one polygonal feature from a raster map based on the concave hull of all matching points."
 	label 'Concave hull'
 {
-	optional input select
+	optional text select
 		"Pass an expression that will return true or false per each point in the spatial context, 
 		 producing a mask that will be vectorized into spatial contexts for the objects. Use quality
 		 dependency names to refer to their state in each point."
@@ -52,7 +52,7 @@ export object concavexhull
 	"Extract one polygonal feature from a raster map based on the convex hull of all matching points."
 	label 'Convex hull'
 {
-	optional input select
+	optional text select
 		"Pass an expression that will return true or false per each point in the spatial context, 
 		 producing a mask that will be vectorized into spatial contexts for the objects. Use quality
 		 dependency names to refer to their state in each point."
@@ -70,12 +70,12 @@ export object cluster
 		"The name of the artifact containing the features to be clustered. If the features are not points, the
 		 centroid will be used."
 	
-	optional input radius
+	optional number radius
 		"Radius in m of the neighborhood to consider. Default is defined in grid contexts to allow near-contiguous 
 		 cells to be clustered."
 		default 0.0
 		
-	optional input convex
+	optional boolean convex
 		"Use convex hull to build polygons after clustering. Default true. False will use a concave
 		 hull, which tends to give artifacts due to the non-exhausting nature of the clustering process."
 		default true

@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.rest.ModelReference;
+import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.StringUtils;
 import org.integratedmodelling.klab.utils.collections.ImmutableList;
 
@@ -188,7 +189,7 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
 	public String describeRanks(ModelReference md, int indent, int n) {
 
 		String ret = "";
-		String filler = StringUtils.spaces(indent);
+		String filler = StringUtil.spaces(indent);
 
 		ret += filler + StringUtils.rightPad(n + ".", 4) + md.getName() + " ["
 				+ (md.getServerId() == null ? "local" : md.getServerId()) + "]\n";

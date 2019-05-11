@@ -18,9 +18,10 @@ export value k2
 		label "P"
 		default 1
 		
-	optional text scoretype
+	optional enum scoretype
 		"Score type. One of BAYES|MDL|ENTROPY|AIC|CROSS_CLASSIC|CROSS_BAYES."
 		label "S"
+		values BAYES, MDL, ENTROPY, AIC, CROSS_CLASSIC, CROSS_BAYES
 		
 	optional boolean random
 		"Use random order. Default false."
@@ -51,9 +52,10 @@ export value k2global
   		label "N"
   		default false
 		
-	optional text scoretype
-		"Score type. One of LOO-CV, k-Fold-CV or Cumulative-CV."
+	optional enum scoretype
+		"Score type. One of LOO_CV, K_FOLD_CV or Cumulative-CV."
 		label "S"
+		values LooCv, KFoldCv, CumulativeCv
 		
 	optional boolean random
 		"Use random order. Default false."

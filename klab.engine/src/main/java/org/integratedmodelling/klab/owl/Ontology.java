@@ -48,7 +48,7 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 import org.semanticweb.owlapi.io.OWLXMLOntologyFormat;
 import org.semanticweb.owlapi.model.AddImport;
 import org.semanticweb.owlapi.model.IRI;
@@ -594,7 +594,7 @@ public class Ontology implements IOntology {
                     if (target != null) {
 
                         if (value instanceof String)
-                            literal = factory.getOWLLiteral(StringUtils.pack((String) value));
+                            literal = factory.getOWLLiteral(StringUtil.pack((String) value));
                         else if (value instanceof Integer)
                             literal = factory.getOWLLiteral((Integer) value);
                         else if (value instanceof Long)

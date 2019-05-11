@@ -9,23 +9,23 @@
 
  	text 'fileUrl'
  	
- 	optional input 'nameAttribute'
+ 	optional text 'nameAttribute'
  		""
  		default ""
  		
- 	optional input sanitize
+ 	optional boolean sanitize
  		""
  		default false
  	
- 	optional input 'computeHull'
+ 	optional boolean 'computeHull'
  		""
  		default false
 
- 	optional input 'computeUnion'
+ 	optional boolean 'computeUnion'
  		""
  		default false
  	
- 	optional input filter
+ 	optional text filter
  		""
  		default ""
  }

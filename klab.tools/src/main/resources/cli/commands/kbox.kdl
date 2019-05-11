@@ -6,7 +6,7 @@ void 'list'
 	"List the models in the local kbox."
 {
 	
-	optional input verbose
+	optional boolean verbose
 		"Verbose output: list model details"
 		default false
 	
@@ -17,7 +17,7 @@ void 'compatible'
 	"List the available observables that are compatible with the passed semantics."
 {
 	
-	optional input verbose
+	optional boolean verbose
 		"Verbose output: list model details"
 		default false
 	
@@ -29,7 +29,7 @@ void 'coverage'
 	"List the coverage of either a model or all the models that resolve a concept."
 {
 	
-	optional input verbose
+	optional boolean verbose
 		"Verbose output: list model details"
 		default false
 	

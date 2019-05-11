@@ -14,7 +14,7 @@ export object connect
 		"The parameter that defines the network being created. Its meaning changes according to the method. If the
 		selector expression is passed, this defaults to 1.0."	
 		
-	optional input select
+	optional text select
 		"An expression evaluated per each legitimate pair of objects to be connected, returning true or false. If
 		 false is returned, the relationship will not be created. The variables 'source' and 'target' are set to
 		 the objects to be linked."
@@ -28,17 +28,17 @@ export object connect
 		"Artifact providing the target for the relationships. By default all artifacts that incarnate the 
 		 relationship target type are used."
 
-	optional input space
+	optional enum space
 		"Type of spatial link to create if the vertices are spatial and distinct.
 	     Possible values are None, Line, LineCentroid, LineEdge, ConvexHull. Default is ConvexHull
 	     if the source and target are polygonal, Line if they are points, and None if they are 
 	     non-spatial."
-	     default "None"
+	     values None, Line, LineCentroid, LineEdge, ConvexHull
 	     
 	optional number seed
 		"The random number seed. By default each generation will use a different one."     
 	     
-	optional input selfconnections
+	optional boolean selfconnections
 		"If true, self-connections can be created. Default is false"
 		default false
 
@@ -46,11 +46,12 @@ export object connect
 		"If true, A->B does not prevent B->A from being created. Default false. Forced to false
 		 if the annotated concept is a bond."
 
-	optional input method 
+	optional enum method 
 		"The method to use to create the random network. Choose between OutDegree, BarabasiAlbert, EppsteinPowerLaw, 
 		 ErdosRenyi, Lattice2D and KleinbergSmallWorld (the last two restricted to grid space contexts).
 		 ## TODO Markdown documentation
 		" 
+		values OutDegree, BarabasiAlbert, EppsteinPowerLaw, ErdosRenyi, KleinbergSmallWorld
 		default "ErdosRenyi"
 		
 	class org.integratedmodelling.klab.components.network.services.ConfigurableRelationshipInstantiator

@@ -16,12 +16,12 @@
  	 example for counts or presences) from the context. The resulting states cannot
  	 be used as outputs, and are only visible to modelers using the IDE."
 {
-	optional input observable
+	optional concept observable
 		"The declaration of the concept to be probed. For example 'count of demography:HumanIndividual'.
 		 If absent, probe the main observable (assuming it is not the target of the computation)."
 		default ""
 		
-	optional input collapse
+	optional list collapse
 		"A list of the domain concepts corresponding to scale dimensions to collapse"
 		default ()
 		

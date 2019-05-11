@@ -57,7 +57,7 @@ import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumenta
 import org.integratedmodelling.klab.ide.ui.UndoRedoImpl;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.DocumentationReference;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 public class DocumentationEditor extends ViewPart {
 
@@ -164,7 +164,7 @@ public class DocumentationEditor extends ViewPart {
         this.project = item.getEParent(EProject.class);
         this.documentation = item.getDocumentation();
         this.references = new ProjectReferences(this.project.getProject());
-        this.currentTrigger = StringUtils.capitalize(item.getTrigger().name().toLowerCase());
+        this.currentTrigger = StringUtil.capitalize(item.getTrigger().name().toLowerCase());
         this.currentSection = item.getName();
         this.sourceCodeBar.setVisible(false);
         loadReferences();
@@ -173,7 +173,7 @@ public class DocumentationEditor extends ViewPart {
             ModelDocumentation template = documentation.get(getCurrentKey());
             editor.setText(template == null ? "" : template.getTemplate());
             sectionCombo.select(search(IDocumentation.sections, item.getName()));
-            triggerCombo.select(search(IDocumentation.triggers, StringUtils.capitalize(item.getTrigger().name().toLowerCase())));
+            triggerCombo.select(search(IDocumentation.triggers, StringUtil.capitalize(item.getTrigger().name().toLowerCase())));
         });
     }
 

@@ -17,7 +17,7 @@ import org.integratedmodelling.klab.data.classification.Classifier;
 import org.integratedmodelling.klab.documentation.Report.RefType;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Parameters;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 public class ReportSection extends Parameters<String> implements Section {
 
@@ -49,7 +49,7 @@ public class ReportSection extends Parameters<String> implements Section {
     }
 
     public String getName() {
-        return name == null ? StringUtils.capitalize(role.name()) : name;
+        return name == null ? StringUtil.capitalize(role.name()) : name;
     }
 
     @Override
@@ -317,7 +317,7 @@ public class ReportSection extends Parameters<String> implements Section {
         String ret = "";
 
         if (name != null) {
-        	ret += "\n" + StringUtils.repeat('#', level + 1) + (numbering == null ? " " : (" " + numbering + " ")) + name + "\n";
+        	ret += "\n" + StringUtil.repeat('#', level + 1) + (numbering == null ? " " : (" " + numbering + " ")) + name + "\n";
         }
 
         ret += body.toString();

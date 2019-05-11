@@ -77,7 +77,7 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.Range;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -1326,7 +1326,7 @@ public enum Kim {
 				&& namespace.getSymbolTable().get(string) instanceof IKimModel) {
 			model = (IKimModel) namespace.getSymbolTable().get(string);
 		}
-		if (model == null && StringUtils.countMatches(string, ":") >= 3) {
+		if (model == null && StringUtil.countMatches(string, ":") >= 3) {
 		    // URN - TODO support it: add a new KimModel that only observers the URN.
 		}
 		return model == null ? null : (KimObservable) model.getObservables().get(0);

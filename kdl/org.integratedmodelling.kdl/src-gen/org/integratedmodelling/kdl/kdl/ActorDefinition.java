@@ -32,13 +32,13 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getTargets <em>Targets</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getDocstring <em>Docstring</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getLabel <em>Label</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getDefault <em>Default</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getBody <em>Body</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getLocalName <em>Local Name</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getCoverage <em>Coverage</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getEnumValues <em>Enum Values</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getRangeMin <em>Range Min</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getRangeMax <em>Range Max</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getEnumValues <em>Enum Values</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getDefault <em>Default</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getLocalName <em>Local Name</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getCoverage <em>Coverage</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition()
@@ -444,32 +444,6 @@ public interface ActorDefinition extends EObject
   void setLabel(String value);
 
   /**
-   * Returns the value of the '<em><b>Default</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Default</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Default</em>' containment reference.
-   * @see #setDefault(Value)
-   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Default()
-   * @model containment="true"
-   * @generated
-   */
-  Value getDefault();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getDefault <em>Default</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Default</em>' containment reference.
-   * @see #getDefault()
-   * @generated
-   */
-  void setDefault(Value value);
-
-  /**
    * Returns the value of the '<em><b>Body</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <p>
@@ -494,64 +468,6 @@ public interface ActorDefinition extends EObject
    * @generated
    */
   void setBody(DataflowBody value);
-
-  /**
-   * Returns the value of the '<em><b>Local Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Local Name</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Local Name</em>' attribute.
-   * @see #setLocalName(String)
-   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_LocalName()
-   * @model
-   * @generated
-   */
-  String getLocalName();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getLocalName <em>Local Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Local Name</em>' attribute.
-   * @see #getLocalName()
-   * @generated
-   */
-  void setLocalName(String value);
-
-  /**
-   * Returns the value of the '<em><b>Coverage</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kdl.kdl.Function}.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Coverage</em>' containment reference list isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Coverage</em>' containment reference list.
-   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Coverage()
-   * @model containment="true"
-   * @generated
-   */
-  EList<Function> getCoverage();
-
-  /**
-   * Returns the value of the '<em><b>Enum Values</b></em>' attribute list.
-   * The list contents are of type {@link java.lang.String}.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Enum Values</em>' attribute list isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Enum Values</em>' attribute list.
-   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_EnumValues()
-   * @model unique="false"
-   * @generated
-   */
-  EList<String> getEnumValues();
 
   /**
    * Returns the value of the '<em><b>Range Min</b></em>' containment reference.
@@ -604,5 +520,89 @@ public interface ActorDefinition extends EObject
    * @generated
    */
   void setRangeMax(org.integratedmodelling.kdl.kdl.Number value);
+
+  /**
+   * Returns the value of the '<em><b>Enum Values</b></em>' attribute list.
+   * The list contents are of type {@link java.lang.String}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Enum Values</em>' attribute list isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Enum Values</em>' attribute list.
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_EnumValues()
+   * @model unique="false"
+   * @generated
+   */
+  EList<String> getEnumValues();
+
+  /**
+   * Returns the value of the '<em><b>Default</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Default</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Default</em>' containment reference.
+   * @see #setDefault(Value)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Default()
+   * @model containment="true"
+   * @generated
+   */
+  Value getDefault();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getDefault <em>Default</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Default</em>' containment reference.
+   * @see #getDefault()
+   * @generated
+   */
+  void setDefault(Value value);
+
+  /**
+   * Returns the value of the '<em><b>Local Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Local Name</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Local Name</em>' attribute.
+   * @see #setLocalName(String)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_LocalName()
+   * @model
+   * @generated
+   */
+  String getLocalName();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getLocalName <em>Local Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Local Name</em>' attribute.
+   * @see #getLocalName()
+   * @generated
+   */
+  void setLocalName(String value);
+
+  /**
+   * Returns the value of the '<em><b>Coverage</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kdl.kdl.Function}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Coverage</em>' containment reference list isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Coverage</em>' containment reference list.
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Coverage()
+   * @model containment="true"
+   * @generated
+   */
+  EList<Function> getCoverage();
 
 } // ActorDefinition

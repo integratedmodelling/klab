@@ -18,7 +18,6 @@ export number 'distance'
 		"The length unit in which we want the distance"
 				
 	class org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.DistanceResolver
-
 }
 
 export number 'presence'
@@ -29,7 +28,6 @@ export number 'presence'
 		"The artifact being dereified"
 	
 	class org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.PresenceResolver
-
 }
 
 export number density

@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.common;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,8 +14,9 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
+import org.integratedmodelling.klab.utils.CastUtils;
 import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 public class Prototype implements IPrototype {
 
@@ -30,6 +30,7 @@ public class Prototype implements IPrototype {
 		public boolean isFinal;
 		public Type type;
 		public boolean artifact;
+		private boolean parameter;
 		// storing as string for serialization, use artifact type to return as POD
 		public String defaultValue = null;
 		public Set<String> enumValues = new HashSet<>();
@@ -145,6 +146,15 @@ public class Prototype implements IPrototype {
 			this.label = label;
 		}
 
+		@Override
+        public boolean isParameter() {
+            return parameter;
+        }
+
+        public void setParameter(boolean parameter) {
+            this.parameter = parameter;
+        }
+
 	}
 
 	protected String name;
@@ -157,6 +167,8 @@ public class Prototype implements IPrototype {
 	protected boolean distributed;
 	protected boolean contextualizer;
 	protected String label = null;
+	protected List<ArgumentImpl> exports = new ArrayList<>();
+    protected List<ArgumentImpl> imports = new ArrayList<>();
 
 	public String getLabel() {
 		return label;
@@ -323,7 +335,7 @@ public class Prototype implements IPrototype {
 				}
 			}
 
-			String ret = StringUtils
+			String ret = StringUtil
 					.pack(description == null || description.isEmpty() ? "No description provided." : description)
 					+ (tags ? "<p>" : "\n\n");
 			if (tags) {
@@ -333,11 +345,11 @@ public class Prototype implements IPrototype {
 				Argument arg = arguments.get(argument);
 				ret += "  " + (tags ? "<dt>" : "") + (arg.isOptional() ? "" : "* ") + argument + (tags ? "</dt>" : "")
 						+ (tags ? "" : ":\n");
-				String description = StringUtils.pack(
+				String description = StringUtil.pack(
 						arg.getDescription() == null || arg.getDescription().isEmpty() ? "No description provided."
 								: arg.getDescription());
 				ret += tags ? ("<dd>" + description + "</dd>")
-						: StringUtils.indent(StringUtils.justifyLeft(description, 50), 5);
+						: StringUtil.indent(StringUtil.justifyLeft(description, 50), 5);
 				ret += (tags ? "" : "\n");
 			}
 			if (tags) {
@@ -389,12 +401,6 @@ public class Prototype implements IPrototype {
 	}
 
 	@Override
-	public Collection<String> getExtentParameters() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Geometry getGeometry() {
 		return geometry;
 	}
@@ -412,5 +418,15 @@ public class Prototype implements IPrototype {
 	public boolean isContextualizer() {
 		return contextualizer;
 	}
+
+    @Override
+    public List<Argument> listImports() {
+        return new CastUtils<ArgumentImpl, Argument>().cast(imports);
+    }
+
+    @Override
+    public List<Argument> listExports() {
+        return new CastUtils<ArgumentImpl, Argument>().cast(exports);
+    }
 
 }

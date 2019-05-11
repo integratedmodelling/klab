@@ -75,7 +75,7 @@ import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.ServicePrototype.Argument;
 import org.integratedmodelling.klab.utils.Path;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.UrlValidator;
 import org.integratedmodelling.klab.utils.Utils;
 
@@ -346,7 +346,7 @@ public class ResourceEditor extends ViewPart {
                     return arg.label;
                 case 1:
                     return arg.descriptor == null ? "Metadata"
-                            : StringUtils.capitalize(arg.descriptor.getType().name().toLowerCase());
+                            : StringUtil.capitalize(arg.descriptor.getType().name().toLowerCase());
                 case 2:
                     return arg.value;
                 }

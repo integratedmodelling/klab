@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.ide.navigator.model.documentation;
 import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
 import org.integratedmodelling.klab.client.documentation.ProjectDocumentation;
 import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 public class EDocumentationItem extends ENavigatorItem {
 
@@ -68,7 +68,7 @@ public class EDocumentationItem extends ENavigatorItem {
     }
     
     public String getName() {
-        return StringUtils.capitalize(section.toLowerCase());
+        return StringUtil.capitalize(section.toLowerCase());
     }
 
 }

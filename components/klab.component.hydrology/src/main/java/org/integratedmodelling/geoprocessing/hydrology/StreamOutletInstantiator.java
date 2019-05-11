@@ -33,7 +33,7 @@ import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 public class StreamOutletInstantiator implements IInstantiator, IExpression {
 
@@ -127,7 +127,7 @@ public class StreamOutletInstantiator implements IInstantiator, IExpression {
 		}
 
 		context.getMonitor().info("found " + outlets.size() + " outlets with basins covering "
-				+ StringUtils.percent(threshold) + " or more");
+				+ StringUtil.percent(threshold) + " or more");
 
 		Collections.sort(outlets, new Comparator<OutletData>() {
 

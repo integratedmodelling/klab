@@ -18,7 +18,7 @@ void 'import'
 	text project
 		"The project where to import the resource"
 
-	optional input adapter 
+	optional text adapter 
 		"The adapter to use for import. Leave unspecified to have k.LAB choose the most suitable."
 		default ""
 	
@@ -29,11 +29,11 @@ void 'list'
 	"List the projects in the local workspace."
 {
 	
-	optional input verbose
+	optional boolean verbose
 		"Verbose output: list resource details"
 		default false
 
-	optional input online
+	optional boolean online
 		"Check for online status"
 		default false
 

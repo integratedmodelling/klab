@@ -6,7 +6,7 @@ export object extract
 	"Extract polygonal features from a raster map based on clumping of its values."
 	label 'Vectorize into features'
 {
-	optional input select
+	optional text select
 		"Pass an expression that will return true or false per each point in the spatial context, 
 		 producing a mask that will be vectorized into spatial contexts for the objects. Use quality
 		 dependency names to refer to their state in each point."
@@ -28,21 +28,21 @@ export object cluster
 		 producing a mask that will be vectorized into spatial contexts for the objects. Use quality
 		 dependency names to refer to their state in each point."
 	
-	optional input radius
+	optional number radius
 		"Radius in m of the neighborhood to consider. Default is defined in grid contexts to allow near-contiguous 
 		 cells to be clustered."
 		default 0.0
 		
-	optional input cellradius
+	optional number cellradius
 		"Radius in cells of the neighborhood to consider. Default is defined in grid contexts to allow 
 		 near-contiguous cells to be clustered."
 		default 0
 	
-	optional input minpoints
+	optional number minpoints
 		"Minumum number of density-connected points that can form a cluster. Default is 10."
 		default 10
 		
-	optional input convex
+	optional boolean convex
 		"Use convex hull to build polygons after clustering. Default true. False will use a concave
 		 hull, which tends to give artifacts due to the non-exhausting nature of the clustering process."
 		default true
@@ -64,7 +64,7 @@ export number collect
          value of the focal cell will be available as 'self'. Note: using 'origin' will greatly
          increase the number of evaluations and consequently the run time."
 		
-	optional input select
+	optional text select
 		"An expression that will return true or false per each point in the selected neighborhood, 
 		 choosing whether the point should be considered in the aggregation or not. All dependencies
 		 will be available with their own name; the current cell will be available as 'space', the
@@ -72,37 +72,30 @@ export number collect
          increase the number of evaluations and consequently the run time."
 		default ""
 	
-	optional input radius
+	optional text radius
 		"Radius of the neighborhood to consider in meters. Default is the distance spanning one cell at the current
 		 resolution, producing a Moore neighborhood."
 		default 0.0
 		
-	optional input cellradius
+	optional number cellradius
 		"Radius in cells of the neighborhood to consider. Default is 1. Pass 0 for local operations."
 		default 1
 	
-	optional input aggregation
+	optional enum aggregation
 		"The type of aggregation requested for the values produced at each location. One of sum, mean, std, 
 		 max, min, count, dominant or any. Default is count if the value expression produces a boolean the 
 		 first time it's evaluated, dominant if it produces a concept, or mean if it produces a number."
-		default ""
+		values sum, mean, std, max, min, count, dominant, any
 		
-	optional input skipedges
+	optional boolean skipedges
 		"If true, the cells that do not have a complete neighborhood due to edge effects will be skipped. Default
 		 is false."
 		default false
 	
-	optional input circular
+	optional boolean circular
 		"If true, an approximately round neighborhood is used. Default is a square neighborhood."
 		default false
-	
-//	optional input update
-//		"An optional list containing (artifactname, expression [,....]) pairs, with the expressions producing 
-//		 a value to update the named artifact in the neighborhood cells after the value for the
-//		 focal cell has been computed. The value of the focal cell will be available as 'self' while the 
-//		 current values of all other states will be available as their own names."
-//		default ()
-	
+
 	geometry S2
 	
 	class org.integratedmodelling.klab.components.geospace.processing.NeighborhoodResolver

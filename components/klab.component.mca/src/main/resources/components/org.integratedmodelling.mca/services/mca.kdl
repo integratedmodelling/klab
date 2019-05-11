@@ -29,7 +29,7 @@ export object ranking
 		"The MCA method used to rank alternatives. One of Topsis|Electre{1|1s|1v|2|3|4|Tri|TriMe}. Only Electre3/4 can run
 		 without additional parameters. Default is Electre3. NOTE: currently forcing Evamix, others still unimplemented."
 		 
-	optional input normalize
+	optional boolean normalize
 		"If true, the scores will be normalized so that their range is 0-1. Default is true."
 		default true
 

@@ -21,7 +21,7 @@ void create
 void 'list'
 	"List the projects in the local workspace."
 {
-	optional input verbose
+	optional boolean verbose
 		"Verbose output: list resource details"
 		default false
 		

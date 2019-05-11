@@ -40,7 +40,7 @@ import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumenta
 import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumentationPage;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.ide.views.DocumentationEditor;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 public class NewDocumentationSectionWizard extends Wizard implements INewWizard {
 
@@ -93,7 +93,7 @@ public class NewDocumentationSectionWizard extends Wizard implements INewWizard 
 			if (src.isEmpty())
 				return false;
 
-			if (StringUtils.containsAny(src, StringUtils.UPPERCASE | StringUtils.WHITESPACE | StringUtils.NONLETTERS)) {
+			if (StringUtil.containsAny(src, StringUtil.UPPERCASE | StringUtil.WHITESPACE | StringUtil.NONLETTERS)) {
 				page.setErrorMessage("Page names must contain only lowercase letters with no whitespace");
 				return false;
 			}

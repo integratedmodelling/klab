@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.clitool.api.ICommand;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Concept;
+import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.StringUtils;
 
 public class ShowInfo implements ICommand {
@@ -70,7 +71,7 @@ public class ShowInfo implements ICommand {
 
     private String printImports(IOntology owlOntology, int i, Set<IOntology> done) {
         String ret = "";
-        String spaces = StringUtils.spaces(i);
+        String spaces = StringUtil.spaces(i);
         for (IOntology o : owlOntology.getImports(false)) {
             boolean added = done.add(o);
             ret += spaces + o + "\n"

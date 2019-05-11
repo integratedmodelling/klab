@@ -20,7 +20,7 @@ void run
      command will run the named demos after it, or list all available demos
      if no other argument is passed."
 {
-	optional input visualize
+	optional boolean visualize
 		"Visualize outputs using debug tools"
 		default false
 		 
@@ -36,14 +36,14 @@ void cd
 void ls
 	"List the files in the current work directory"
 {
-	optional input recursive
+	optional boolean recursive
 		"Recurse sub-directories"
 		default false
 		 
 	class org.integratedmodelling.klab.clitool.console.commands.Dir
 }
 
-void dependencies
+void 'dependencies'
 	"Show the namespace dependency graph"
 {
 	class org.integratedmodelling.klab.clitool.console.commands.visualization.ShowDependencies
@@ -55,7 +55,7 @@ void network
 	"Turn REST network services on and off"
 {
 	
-	optional input browser
+	optional boolean browser
 		"Start a session viewer on the local browser when the network services have booted"
 		default false
 	

@@ -12,10 +12,8 @@ import java.util.Properties;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
-import org.integratedmodelling.klab.engine.resources.AbstractWorkspace;
 import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStatusException;
 import org.integratedmodelling.klab.utils.FileUtils;

@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.clitool.utils;
 
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 public class TableUtils {
 
@@ -31,12 +31,12 @@ public class TableUtils {
         }
 
         for (int row = 0; row < rows.length; row++) {
-            ret += StringUtils.spaces(lead);
+            ret += StringUtil.spaces(lead);
             String[] its = rows[row].split("\\|");
             for (int i = 0; i < its.length; i++) {
                 String item = its[i].trim();
                 int missing = maxSizes[i] - item.length() + spacing;
-                ret += StringUtils.spaces(i == 0 ? lead : spacing) + item + StringUtils.spaces(missing)
+                ret += StringUtil.spaces(i == 0 ? lead : spacing) + item + StringUtil.spaces(missing)
                         + (i < its.length - 1 ? "|" : (row < rows.length - 1 ? ",\n" : "\n"));
             }
         }

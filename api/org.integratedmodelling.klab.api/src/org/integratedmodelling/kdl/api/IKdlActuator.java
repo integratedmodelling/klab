@@ -80,6 +80,13 @@ public interface IKdlActuator extends IKdlStatement {
    * @return the input actuators
    */
   Collection<IKdlActuator> getInputs();
+  
+  /**
+   * All actuators that are exported.
+   * 
+   * @return the input actuators
+   */
+  Collection<IKdlActuator> getOutputs();
 
   /**
    * Get all parameters declared in the actuator.
