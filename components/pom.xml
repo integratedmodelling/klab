@@ -15,5 +15,6 @@
   	<module>klab.component.ml</module>
   	<module>klab.component.geotrellis</module>
   	<module>klab.component.alignment</module>
+  	<module>klab.component.tables</module>
   </modules>
 </project>
