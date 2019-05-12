@@ -398,17 +398,25 @@ public enum Resolver {
 	private ResolutionScope resolve(Model model, ResolutionScope parentScope) throws KlabException {
 
 		ResolutionScope ret = parentScope.getChildScope(model);
+		
+		Coverage coverage = new Coverage(ret.getCoverage());
+		
 		// use the reasoner to infer any missing dependency from the semantics
 		ObservableReasoner reasoner = new ObservableReasoner(model, parentScope.getObservable(), ret);
 		for (CandidateObservable observable : reasoner.getObservables()) {
 			// ACHTUNG TODO OBSERVABLE CAN BE MULTIPLE (probably not here though)
-			ret.and(resolve(observable.observables.get(0), ret, observable.mode));
-			if (ret.getCoverage().isEmpty()) {
+			ResolutionScope mscope = resolve(observable.observables.get(0), ret, observable.mode);
+			Coverage newCoverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
+			if (newCoverage.isEmpty()) {
 				parentScope.getMonitor().info("discarding first choice " + model.getId() + " due to missing dependency "
 						+ observable.observables.get(0).getLocalName());
 				break;
 			}
+			coverage = newCoverage;
 		}
+		
+		ret.setCoverage(coverage);
+		
 		return ret;
 	}
 

@@ -122,8 +122,9 @@ public class ResourceEditor extends ViewPart {
     private StyledText               notes;
 
     private TableViewerColumn        tableViewerColumn_3D;
-    private Label messageLabel;
-    private Table outputTable;
+    private Label                    messageLabel;
+    private Table                    outputTable;
+    private TableViewer              outputViewer;
 
     public static class AttributeContentProvider implements IStructuredContentProvider {
 
@@ -300,7 +301,7 @@ public class ResourceEditor extends ViewPart {
 
         return known;
     }
-    
+
     class PropertyContentProvider implements ITreeContentProvider {
 
         @Override
@@ -389,7 +390,7 @@ public class ResourceEditor extends ViewPart {
         } else {
             messageLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
         }
-        
+
         messageLabel.setText(string == null ? "" : string);
     }
 
@@ -407,9 +408,9 @@ public class ResourceEditor extends ViewPart {
         }
 
         // TODO errors! They are not contained in the resource.
-//        this.isPublishable.setSelection(false);
-//        this.unpublishableReason.setText(string == null ? "" : string);
-                
+        // this.isPublishable.setSelection(false);
+        // this.unpublishableReason.setText(string == null ? "" : string);
+
         this.metadata.clear();
         this.metadata.putAll(resource.getMetadata());
         this.urnLabel.setText(resource.getUrn());
@@ -424,6 +425,10 @@ public class ResourceEditor extends ViewPart {
         this.dependencyViewer
                 .setInput(resource.getDependencies() == null ? new ArrayList<Attribute>()
                         : resource.getDependencies());
+        this.outputViewer
+                .setInput(resource.getOutputs() == null ? new ArrayList<Attribute>()
+                        : resource.getOutputs());
+
         this.title
                 .setText(this.metadata.containsKey(IMetadata.DC_TITLE) ? this.metadata.get(IMetadata.DC_TITLE)
                         : "");
@@ -617,22 +622,22 @@ public class ResourceEditor extends ViewPart {
 
             attributeViewer = new TableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);
             table = attributeViewer.getTable();
+            table.setHeaderVisible(true);
             table.setLinesVisible(true);
 
             tableViewerColumn_3 = new TableViewerColumn(attributeViewer, SWT.NONE);
             TableColumn attributeName = tableViewerColumn_3.getColumn();
             tcl_composite.setColumnData(attributeName, new ColumnPixelData(150, true, true));
-            attributeName.setText("New Column");
+            attributeName.setText("Name");
 
             TableViewerColumn tableViewerColumn_1_1 = new TableViewerColumn(attributeViewer, SWT.NONE);
             TableColumn attributeType = tableViewerColumn_1_1.getColumn();
             tcl_composite.setColumnData(attributeType, new ColumnPixelData(150, true, true));
-            attributeType.setText("New Column");
+            attributeType.setText("Type");
 
             TableViewerColumn tableViewerColumn_2 = new TableViewerColumn(attributeViewer, SWT.NONE);
             TableColumn attributeExample = tableViewerColumn_2.getColumn();
             tcl_composite.setColumnData(attributeExample, new ColumnPixelData(150, true, true));
-            attributeExample.setText("New Column");
 
             attributeViewer.setLabelProvider(new AttributeLabelProvider());
             attributeViewer.setContentProvider(new AttributeContentProvider());
@@ -648,48 +653,53 @@ public class ResourceEditor extends ViewPart {
             // ----------------------------------------
             dependencyViewer = new TableViewer(composite_4, SWT.BORDER | SWT.FULL_SELECTION);
             dependencyTable = dependencyViewer.getTable();
+            dependencyTable.setHeaderVisible(true);
             dependencyTable.setLinesVisible(true);
 
             tableViewerColumn_3D = new TableViewerColumn(dependencyViewer, SWT.NONE);
             TableColumn attributeNameD = tableViewerColumn_3D.getColumn();
             tcl_compositeD.setColumnData(attributeNameD, new ColumnPixelData(150, true, true));
-            attributeNameD.setText("New Column");
+            attributeNameD.setText("Name");
 
             TableViewerColumn tableViewerColumn_1_1D = new TableViewerColumn(dependencyViewer, SWT.NONE);
             TableColumn attributeTypeD = tableViewerColumn_1_1D.getColumn();
             tcl_compositeD.setColumnData(attributeTypeD, new ColumnPixelData(150, true, true));
-            attributeTypeD.setText("New Column");
+            attributeTypeD.setText("Type");
 
             TableViewerColumn tableViewerColumn_2D = new TableViewerColumn(dependencyViewer, SWT.NONE);
             TableColumn attributeExampleD = tableViewerColumn_2D.getColumn();
             tcl_compositeD.setColumnData(attributeExampleD, new ColumnPixelData(150, true, true));
-            attributeExampleD.setText("New Column");
-            
+            attributeExampleD.setText("Required");
+
             TabItem tbtmNewItem_1 = new TabItem(tabFolder_1, SWT.NONE);
             tbtmNewItem_1.setText("Outputs");
-            
-            TableViewer outputViewer = new TableViewer(tabFolder_1, SWT.BORDER | SWT.FULL_SELECTION);
+
+            outputViewer = new TableViewer(tabFolder_1, SWT.BORDER | SWT.FULL_SELECTION);
             outputTable = outputViewer.getTable();
+            outputTable.setHeaderVisible(true);
             outputTable.setLinesVisible(true);
             tbtmNewItem_1.setControl(outputTable);
-            
+
             TableViewerColumn tableViewerColumn = new TableViewerColumn(outputViewer, SWT.NONE);
             TableColumn tblclmnNewColumn = tableViewerColumn.getColumn();
             tblclmnNewColumn.setWidth(100);
-            tblclmnNewColumn.setText("New Column");
-            
+            tblclmnNewColumn.setText("Name");
+
             TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(outputViewer, SWT.NONE);
             TableColumn tblclmnNewColumn_1 = tableViewerColumn_1.getColumn();
             tblclmnNewColumn_1.setWidth(100);
-            tblclmnNewColumn_1.setText("New Column");
-            
+            tblclmnNewColumn_1.setText("Type");
+
             TableViewerColumn tableViewerColumn_4 = new TableViewerColumn(outputViewer, SWT.NONE);
             TableColumn tblclmnNewColumn_2 = tableViewerColumn_4.getColumn();
             tblclmnNewColumn_2.setWidth(100);
-            tblclmnNewColumn_2.setText("New Column");
+            tblclmnNewColumn_2.setText("Required");
 
             dependencyViewer.setLabelProvider(new AttributeLabelProvider());
             dependencyViewer.setContentProvider(new AttributeContentProvider());
+
+            outputViewer.setLabelProvider(new AttributeLabelProvider());
+            outputViewer.setContentProvider(new AttributeContentProvider());
 
             // ---------------------------
 
@@ -788,11 +798,13 @@ public class ResourceEditor extends ViewPart {
                                             if (!Utils.validateAs(value, descriptor.getType())) {
                                                 setMessage("'" + value
                                                         + "' is not a suitable value for type "
-                                                        + descriptor.getType().name().toLowerCase(), Level.SEVERE);
+                                                        + descriptor.getType().name()
+                                                                .toLowerCase(), Level.SEVERE);
                                             }
                                             if (data.parameter.endsWith("Url")) {
                                                 if (!UrlValidator.getInstance().isValid(value.toString())) {
-                                                    setMessage("'" + value + "' is not a valid URL", Level.SEVERE);
+                                                    setMessage("'" + value
+                                                            + "' is not a valid URL", Level.SEVERE);
                                                 }
                                             }
                                         }
@@ -1057,7 +1069,7 @@ public class ResourceEditor extends ViewPart {
         gl_composite.marginLeft = 4;
         composite.setLayout(gl_composite);
         composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        
+
         messageLabel = new Label(composite, SWT.NONE);
         messageLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 

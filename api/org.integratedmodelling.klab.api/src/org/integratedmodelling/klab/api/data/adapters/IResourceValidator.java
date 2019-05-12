@@ -58,7 +58,7 @@ public interface IResourceValidator {
          * 
          * @return
          */
-        boolean shouldConfirm();
+        boolean isShouldConfirm();
     }
 
 	/**

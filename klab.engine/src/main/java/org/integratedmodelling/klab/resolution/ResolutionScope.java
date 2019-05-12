@@ -651,16 +651,7 @@ public class ResolutionScope implements IResolutionScope {
 		this.coverage = (Coverage) this.coverage.merge(child.coverage, LogicalConnector.UNION);
 		return this.coverage.getGain() > 0;
 	}
-
-	/**
-	 * AND the passed child scope coverage.
-	 * 
-	 * @param child
-	 */
-	public void and(ResolutionScope child) {
-		this.coverage = (Coverage) this.coverage.merge(child.coverage, LogicalConnector.INTERSECTION);
-	}
-
+	
 	public Observable findObservable() {
 		if (observable != null) {
 			return observable;

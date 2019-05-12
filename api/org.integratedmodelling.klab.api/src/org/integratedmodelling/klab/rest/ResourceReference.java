@@ -6,197 +6,245 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.klab.api.data.adapters.IResourceValidator.Operation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 public class ResourceReference {
 
-	private String urn;
-	private String version;
-	private String adapterType;
-	private String localPath;
-	private String geometry;
-	// only set in local resources
-	private String projectName;
-	// only in local resources, the short name for k.IM
-	private String localName;
-	private IArtifact.Type type;
-	private long resourceTimestamp;
-	private Map<String, String> metadata = new HashMap<>();
-	private Map<String, String> parameters = new HashMap<>();
-	private List<String> localPaths = new ArrayList<>();
-	private List<ResourceReference> history = new ArrayList<>();
-	private List<Notification> notifications = new ArrayList<>();
-	private List<AttributeReference> attributes = new ArrayList<>();
-	private SpatialExtent spatialExtent;
-	private List<AttributeReference> dependencies = null;
-	private Map<String, String> exportFormats = new LinkedHashMap<>();
+    public static class OperationReference implements Operation {
+        
+        private String name;
+        private String description;
+        private boolean shouldConfirm;
+        
+        public OperationReference() {}
+        public OperationReference(String name, String description, boolean shouldConfirm) {
+            this.name = name;
+            this.description = description;
+            this.shouldConfirm = shouldConfirm;
+        }
+        
+        @Override
+        public boolean isShouldConfirm() {
+            return shouldConfirm;
+        }
+        
+        public void setShouldConfirm(boolean shouldConfirm) {
+            this.shouldConfirm = shouldConfirm;
+        }
+        
+        @Override
+        public String getDescription() {
+            return description;
+        }
+        
+        public void setDescription(String description) {
+            this.description = description;
+        }
+        
+        @Override
+        public String getName() {
+            return name;
+        }
+    }
+    
+    private String                   urn;
+    private String                   version;
+    private String                   adapterType;
+    private String                   localPath;
+    private String                   geometry;
+    // only set in local resources
+    private String                   projectName;
+    // only in local resources, the short name for k.IM
+    private String                   localName;
+    private IArtifact.Type           type;
+    private long                     resourceTimestamp;
+    private Map<String, String>      metadata      = new HashMap<>();
+    private Map<String, String>      parameters    = new HashMap<>();
+    private List<String>             localPaths    = new ArrayList<>();
+    private List<ResourceReference>  history       = new ArrayList<>();
+    private List<Notification>       notifications = new ArrayList<>();
+    private List<AttributeReference> attributes    = new ArrayList<>();
+    private SpatialExtent            spatialExtent;
+    private List<AttributeReference> dependencies  = null;
+    private List<AttributeReference> outputs       = null;
+    public List<AttributeReference> getOutputs() {
+        return outputs;
+    }
 
-	public ResourceReference() {
-	}
+    public void setOutputs(List<AttributeReference> outputs) {
+        this.outputs = outputs;
+    }
 
-	public ResourceReference(ResourceReference other) {
-		this.urn = other.urn;
-		this.version = other.version;
-		this.adapterType = other.adapterType;
-		this.localPath = other.localPath;
-		this.geometry = other.geometry;
-		this.projectName = other.projectName;
-		this.localName = other.localName;
-		this.type = other.type;
-		this.resourceTimestamp = other.resourceTimestamp;
-		this.metadata.putAll(other.metadata);
-		this.parameters.putAll(other.parameters);
-		this.localPaths.addAll(other.localPaths);
-		this.history.addAll(other.history);
-		this.spatialExtent = other.spatialExtent;
-		this.notifications.addAll(other.notifications);
-		this.attributes.addAll(other.attributes);
-		this.dependencies = other.dependencies == null ? null : new ArrayList<>(other.dependencies);
-		this.exportFormats.putAll(other.exportFormats);
-	}
+    private Map<String, String>      exportFormats = new LinkedHashMap<>();
 
-	public String getUrn() {
-		return urn;
-	}
+    public ResourceReference() {
+    }
 
-	public void setUrn(String urn) {
-		this.urn = urn;
-	}
+    public ResourceReference(ResourceReference other) {
+        this.urn = other.urn;
+        this.version = other.version;
+        this.adapterType = other.adapterType;
+        this.localPath = other.localPath;
+        this.geometry = other.geometry;
+        this.projectName = other.projectName;
+        this.localName = other.localName;
+        this.type = other.type;
+        this.resourceTimestamp = other.resourceTimestamp;
+        this.metadata.putAll(other.metadata);
+        this.parameters.putAll(other.parameters);
+        this.localPaths.addAll(other.localPaths);
+        this.history.addAll(other.history);
+        this.spatialExtent = other.spatialExtent;
+        this.notifications.addAll(other.notifications);
+        this.attributes.addAll(other.attributes);
+        this.dependencies = other.dependencies == null ? null : new ArrayList<>(other.dependencies);
+        this.outputs = other.outputs == null ? null : new ArrayList<>(other.outputs);
+        this.exportFormats.putAll(other.exportFormats);
+    }
 
-	public String getVersion() {
-		return version;
-	}
+    public String getUrn() {
+        return urn;
+    }
 
-	public void setVersion(String version) {
-		this.version = version;
-	}
+    public void setUrn(String urn) {
+        this.urn = urn;
+    }
 
-	public String getAdapterType() {
-		return adapterType;
-	}
+    public String getVersion() {
+        return version;
+    }
 
-	public void setAdapterType(String adapterType) {
-		this.adapterType = adapterType;
-	}
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
-	public String getLocalPath() {
-		return localPath;
-	}
+    public String getAdapterType() {
+        return adapterType;
+    }
 
-	public void setLocalPath(String localPath) {
-		this.localPath = localPath;
-	}
+    public void setAdapterType(String adapterType) {
+        this.adapterType = adapterType;
+    }
 
-	public String getGeometry() {
-		return geometry;
-	}
+    public String getLocalPath() {
+        return localPath;
+    }
 
-	public void setGeometry(String geometry) {
-		this.geometry = geometry;
-	}
+    public void setLocalPath(String localPath) {
+        this.localPath = localPath;
+    }
 
-	public IArtifact.Type getType() {
-		return type;
-	}
+    public String getGeometry() {
+        return geometry;
+    }
 
-	public void setType(IArtifact.Type type) {
-		this.type = type;
-	}
+    public void setGeometry(String geometry) {
+        this.geometry = geometry;
+    }
 
-	public long getResourceTimestamp() {
-		return resourceTimestamp;
-	}
+    public IArtifact.Type getType() {
+        return type;
+    }
 
-	public void setResourceTimestamp(long resourceTimestamp) {
-		this.resourceTimestamp = resourceTimestamp;
-	}
+    public void setType(IArtifact.Type type) {
+        this.type = type;
+    }
 
-	public Map<String, String> getMetadata() {
-		return metadata;
-	}
+    public long getResourceTimestamp() {
+        return resourceTimestamp;
+    }
 
-	public void setMetadata(Map<String, String> metadata) {
-		this.metadata = metadata;
-	}
+    public void setResourceTimestamp(long resourceTimestamp) {
+        this.resourceTimestamp = resourceTimestamp;
+    }
 
-	public Map<String, String> getParameters() {
-		return parameters;
-	}
+    public Map<String, String> getMetadata() {
+        return metadata;
+    }
 
-	public void setParameters(Map<String, String> parameters) {
-		this.parameters = parameters;
-	}
+    public void setMetadata(Map<String, String> metadata) {
+        this.metadata = metadata;
+    }
 
-	public List<String> getLocalPaths() {
-		return localPaths;
-	}
+    public Map<String, String> getParameters() {
+        return parameters;
+    }
 
-	public void setLocalPaths(List<String> localPaths) {
-		this.localPaths = localPaths;
-	}
+    public void setParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
+    }
 
-	public List<ResourceReference> getHistory() {
-		return history;
-	}
+    public List<String> getLocalPaths() {
+        return localPaths;
+    }
 
-	public void setHistory(List<ResourceReference> history) {
-		this.history = history;
-	}
+    public void setLocalPaths(List<String> localPaths) {
+        this.localPaths = localPaths;
+    }
 
-	public List<Notification> getNotifications() {
-		return notifications;
-	}
+    public List<ResourceReference> getHistory() {
+        return history;
+    }
 
-	public void setNotifications(List<Notification> notifications) {
-		this.notifications = notifications;
-	}
+    public void setHistory(List<ResourceReference> history) {
+        this.history = history;
+    }
 
-	public String getProjectName() {
-		return projectName;
-	}
+    public List<Notification> getNotifications() {
+        return notifications;
+    }
 
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
-	}
+    public void setNotifications(List<Notification> notifications) {
+        this.notifications = notifications;
+    }
 
-	public String getLocalName() {
-		return localName;
-	}
+    public String getProjectName() {
+        return projectName;
+    }
 
-	public void setLocalName(String localName) {
-		this.localName = localName;
-	}
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
 
-	public SpatialExtent getSpatialExtent() {
-		return spatialExtent;
-	}
+    public String getLocalName() {
+        return localName;
+    }
 
-	public void setSpatialExtent(SpatialExtent spatialExtent) {
-		this.spatialExtent = spatialExtent;
-	}
+    public void setLocalName(String localName) {
+        this.localName = localName;
+    }
 
-	public List<AttributeReference> getAttributes() {
-		return attributes;
-	}
+    public SpatialExtent getSpatialExtent() {
+        return spatialExtent;
+    }
 
-	public void setAttributes(List<AttributeReference> attributes) {
-		this.attributes = attributes;
-	}
+    public void setSpatialExtent(SpatialExtent spatialExtent) {
+        this.spatialExtent = spatialExtent;
+    }
 
-	public List<AttributeReference> getDependencies() {
-		return dependencies;
-	}
+    public List<AttributeReference> getAttributes() {
+        return attributes;
+    }
 
-	public void setDependencies(List<AttributeReference> dependencies) {
-		this.dependencies = dependencies;
-	}
+    public void setAttributes(List<AttributeReference> attributes) {
+        this.attributes = attributes;
+    }
 
-	public Map<String, String> getExportFormats() {
-		return exportFormats;
-	}
+    public List<AttributeReference> getDependencies() {
+        return dependencies;
+    }
 
-	public void setExportFormats(Map<String, String> exportFormats) {
-		this.exportFormats = exportFormats;
-	}
+    public void setDependencies(List<AttributeReference> dependencies) {
+        this.dependencies = dependencies;
+    }
+
+    public Map<String, String> getExportFormats() {
+        return exportFormats;
+    }
+
+    public void setExportFormats(Map<String, String> exportFormats) {
+        this.exportFormats = exportFormats;
+    }
 
 }

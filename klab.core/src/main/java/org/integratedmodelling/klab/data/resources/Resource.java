@@ -86,7 +86,8 @@ public class Resource implements IResource {
     List<ResourceReference>     history          = new ArrayList<>();
     List<INotification>         notifications    = new ArrayList<>();
     List<Attribute>             attributes       = new ArrayList<>();
-    List<Attribute>             dependencies     = new ArrayList<>();
+    List<Attribute>             inputs           = new ArrayList<>();
+    List<Attribute>             outputs          = new ArrayList<>();
     String                      projectName;
     String                      localName;
     // copied from adapter at creation
@@ -128,7 +129,7 @@ public class Resource implements IResource {
                     .parse(notification.getLevel()), notification.getTimestamp()));
         }
         if (reference.getDependencies() != null) {
-            this.dependencies.addAll(reference.getDependencies());
+            this.inputs.addAll(reference.getDependencies());
         }
     }
 
@@ -169,10 +170,16 @@ public class Resource implements IResource {
         for (Attribute attribute : attributes) {
             ret.getAttributes().add((AttributeReference) attribute);
         }
-        if (this.dependencies.size() > 0) {
+        if (this.inputs.size() > 0) {
             ret.setDependencies(new ArrayList<AttributeReference>());
-            for (Attribute dependency : this.dependencies) {
+            for (Attribute dependency : this.inputs) {
                 ret.getDependencies().add((AttributeReference) dependency);
+            }
+        }
+        if (this.outputs.size() > 0) {
+            ret.setOutputs(new ArrayList<AttributeReference>());
+            for (Attribute output : this.outputs) {
+                ret.getOutputs().add((AttributeReference) output);
             }
         }
 
@@ -366,8 +373,8 @@ public class Resource implements IResource {
     }
 
     @Override
-    public Collection<Attribute> getDependencies() {
-        return dependencies;
+    public Collection<Attribute> getInputs() {
+        return inputs;
     }
 
     /**
@@ -447,6 +454,11 @@ public class Resource implements IResource {
     @Override
     public Map<String, String> getExports() {
         return exports;
+    }
+
+    @Override
+    public Collection<Attribute> getOutputs() {
+        return outputs;
     }
 
 }

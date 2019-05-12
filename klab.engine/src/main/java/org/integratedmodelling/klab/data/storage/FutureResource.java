@@ -165,13 +165,18 @@ public class FutureResource implements IResource, Future<IResource> {
     }
 
 	@Override
-	public Collection<Attribute> getDependencies() {
-		return  getDelegate(timeout).getDependencies();
+	public Collection<Attribute> getInputs() {
+		return  getDelegate(timeout).getInputs();
 	}
 
 	@Override
 	public Map<String, String> getExports() {
 		return getDelegate(timeout).getExports();
 	}
+
+    @Override
+    public Collection<Attribute> getOutputs() {
+        return getDelegate(timeout).getOutputs();
+    }
 
 }

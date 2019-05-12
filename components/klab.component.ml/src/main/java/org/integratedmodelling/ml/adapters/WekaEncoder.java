@@ -54,7 +54,7 @@ public class WekaEncoder implements IResourceEncoder {
                 .getLocalFile("classifier.file"), resource.getParameters()
                         .get("classifier.probabilistic", "false").equals("true"));
 
-        this.instances = new WekaInstances(context, resource.getDependencies().size());
+        this.instances = new WekaInstances(context, resource.getInputs().size());
         this.instances.admitNodata(resource.getParameters().get("submitNodata", "true").equals("true"));
 
         IState predictedState = null;
@@ -86,7 +86,7 @@ public class WekaEncoder implements IResourceEncoder {
          * Initialize the instances;
          * check ranges of learned instances and warn if our inputs are outside.
          */
-        for (Attribute dependency : resource.getDependencies()) {
+        for (Attribute dependency : resource.getInputs()) {
 
             IState state = context.getArtifact(dependency.getName(), IState.class);
             if (state == null) {
