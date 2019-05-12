@@ -303,7 +303,7 @@ public class Time extends Extent implements ITime {
 	}
 
     @Override
-    public IExtent getBoundary() {
+    public IExtent getBoundingExtent() {
         // TODO Auto-generated method stub
         // TODO return a line Shape 
         return null;

@@ -100,7 +100,7 @@ public interface IShape extends IReferenced, ISpace {
      * Get the boundary for a polygon, the shape itself for points and lines.
      * @return the boundary
      */
-    IShape getBoundary();
+    IShape getBoundingExtent();
 
     /**
      * Get the interior holes for a polygon, the empty collection for points and lines.

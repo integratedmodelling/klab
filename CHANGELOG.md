@@ -29,12 +29,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Stubs for table component and alignment component.
 - Prototypes from KDL now expose imports and exports as well as parameters.
+- Resource can be now "dropped" INTO existing resources, for adapters to react
+  to.
+- Resource editor now has a table for "outputs" besides the main observable, used
+  by computations that provide additional observations.
+- Put a bit of color in the KDL editor just for fun.
 ### Changed
 - KDL actuator syntax cleaned up, now using a single set of rules. 
 ### Fixed
 - Partial context coverages and boundary-invariant partitions now handled correctly, with
   partitions being generated only if >1 models with different coverage boundaries exist.
 - Incremental coverages do not affect resolution until max coverage is reached.
+- Support collection of annotations from the observable of merged states (not from
+  the individual partition models).
 
 ## [0.10.0.155] -- 2019/05/09
 ### Added

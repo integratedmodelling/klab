@@ -36,9 +36,9 @@ public class CostSurface {
 	}
 	
 	public CostSurface withStart(IShape shape) {
-		startingPoints.addAll(rasterizer.getCoordinates(shape.getBoundary()));
+		startingPoints.addAll(rasterizer.getCoordinates(shape.getBoundingExtent()));
 		for (IShape hole : shape.getHoles()) {
-			startingPoints.addAll(rasterizer.getCoordinates(hole.getBoundary()));
+			startingPoints.addAll(rasterizer.getCoordinates(hole.getBoundingExtent()));
 		}
 		rasterizer.add(shape, null);
 		return this;

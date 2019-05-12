@@ -1,18 +1,21 @@
 package org.integratedmodelling.mca.services;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.engine.runtime.api.IDependencyCollector;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.mca.api.IAlternative;
 import org.integratedmodelling.mca.api.ICriterion;
 import org.integratedmodelling.mca.api.IStakeholder;
@@ -23,7 +26,7 @@ import org.integratedmodelling.mca.core.Results;
 import org.integratedmodelling.mca.model.Alternative;
 import org.integratedmodelling.mca.model.Stakeholder;
 
-public class ConcordanceResolver implements IResolver<IState>, IExpression {
+public class ConcordanceResolver implements IResolver<IState>, IExpression, IDependencyCollector {
 
 	int levels = 5;
 	MCAContext mcaContext;
@@ -115,5 +118,11 @@ public class ConcordanceResolver implements IResolver<IState>, IExpression {
 
 		return ret;
 	}
+	
+	@Override
+    public Collection<String> getDependencyNames() {
+        List<String> ret = new ArrayList<>();
+        return ret;
+    }
 
 }

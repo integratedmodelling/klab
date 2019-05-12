@@ -17,20 +17,6 @@ public interface IDocumentationProvider {
 	 */
 	List<String> getTags();
 
-//	/**
-//	 * 
-//	 * @param tag
-//	 * @return the trigger for the tag, or null
-//	 */
-//	Trigger getTagTrigger(String tag);
-//
-//	/**
-//	 * 
-//	 * @param tag
-//	 * @return the section for the tag, or null
-//	 */
-//	String getTagSection(String tag);
-
 	/**
 	 * 
 	 * @param tag

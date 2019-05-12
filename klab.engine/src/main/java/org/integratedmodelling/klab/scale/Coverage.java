@@ -345,7 +345,7 @@ public class Coverage extends Scale implements ICoverage {
         for (IExtent extent : scale.getExtents()) {
             for (Pair<IExtent, Double> cov : coverages) {
                 if (cov.getFirst().getType() == extent.getType()) {
-                    if (!extent.getBoundary().contains(cov.getFirst().getBoundary())) {
+                    if (!extent.getBoundingExtent().contains(cov.getFirst().getBoundingExtent())) {
                         return false;
                     }
                 }

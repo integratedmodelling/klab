@@ -872,7 +872,7 @@ public class Space extends Extent implements ISpace {
     }
 
     @Override
-    public IExtent getBoundary() {
+    public IExtent getBoundingExtent() {
         return getEnvelope().asShape();
     }
 }

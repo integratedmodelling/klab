@@ -603,7 +603,7 @@ public class Shape extends AbstractExtent implements IShape {
     }
 
     @Override
-    public IShape getBoundary() {
+    public IShape getBoundingExtent() {
         return create(geometry.getBoundary(), projection);
     }
 

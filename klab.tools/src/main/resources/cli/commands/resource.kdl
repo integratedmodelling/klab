@@ -26,7 +26,7 @@ void 'import'
 }
 
 void 'list'
-	"List the projects in the local workspace."
+	"List the resources in the local workspace. Optional check their online status, forcing update if requested."
 {
 	
 	optional boolean verbose
@@ -37,7 +37,7 @@ void 'list'
 		"Check for online status"
 		default false
 		
-	optional input force
+	optional boolean force
 		"Force immediate re-check of all resources. Default false."
 		default false
 

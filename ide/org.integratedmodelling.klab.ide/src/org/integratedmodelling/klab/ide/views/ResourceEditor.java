@@ -123,6 +123,7 @@ public class ResourceEditor extends ViewPart {
 
     private TableViewerColumn        tableViewerColumn_3D;
     private Label messageLabel;
+    private Table outputTable;
 
     public static class AttributeContentProvider implements IStructuredContentProvider {
 
@@ -637,7 +638,7 @@ public class ResourceEditor extends ViewPart {
             attributeViewer.setContentProvider(new AttributeContentProvider());
 
             TabItem tbtmNewItem = new TabItem(tabFolder_1, SWT.NONE);
-            tbtmNewItem.setText("Dependencies");
+            tbtmNewItem.setText("Inputs");
 
             Composite composite_4 = new Composite(tabFolder_1, SWT.NONE);
             tbtmNewItem.setControl(composite_4);
@@ -663,6 +664,29 @@ public class ResourceEditor extends ViewPart {
             TableColumn attributeExampleD = tableViewerColumn_2D.getColumn();
             tcl_compositeD.setColumnData(attributeExampleD, new ColumnPixelData(150, true, true));
             attributeExampleD.setText("New Column");
+            
+            TabItem tbtmNewItem_1 = new TabItem(tabFolder_1, SWT.NONE);
+            tbtmNewItem_1.setText("Outputs");
+            
+            TableViewer outputViewer = new TableViewer(tabFolder_1, SWT.BORDER | SWT.FULL_SELECTION);
+            outputTable = outputViewer.getTable();
+            outputTable.setLinesVisible(true);
+            tbtmNewItem_1.setControl(outputTable);
+            
+            TableViewerColumn tableViewerColumn = new TableViewerColumn(outputViewer, SWT.NONE);
+            TableColumn tblclmnNewColumn = tableViewerColumn.getColumn();
+            tblclmnNewColumn.setWidth(100);
+            tblclmnNewColumn.setText("New Column");
+            
+            TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(outputViewer, SWT.NONE);
+            TableColumn tblclmnNewColumn_1 = tableViewerColumn_1.getColumn();
+            tblclmnNewColumn_1.setWidth(100);
+            tblclmnNewColumn_1.setText("New Column");
+            
+            TableViewerColumn tableViewerColumn_4 = new TableViewerColumn(outputViewer, SWT.NONE);
+            TableColumn tblclmnNewColumn_2 = tableViewerColumn_4.getColumn();
+            tblclmnNewColumn_2.setWidth(100);
+            tblclmnNewColumn_2.setText("New Column");
 
             dependencyViewer.setLabelProvider(new AttributeLabelProvider());
             dependencyViewer.setContentProvider(new AttributeContentProvider());

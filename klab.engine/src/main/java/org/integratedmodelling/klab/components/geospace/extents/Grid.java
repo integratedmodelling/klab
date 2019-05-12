@@ -687,7 +687,7 @@ public class Grid extends Area implements IGrid {
 		}
 
         @Override
-        public IExtent getBoundary() {
+        public IExtent getBoundingExtent() {
             return getShape();
         }
 	}

@@ -4,11 +4,28 @@
 package org.integratedmodelling.kdl.ui
 
 import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
+import org.eclipse.xtext.ide.editor.syntaxcoloring.ISemanticHighlightingCalculator
+import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultAntlrTokenToAttributeIdMapper
+import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration
+import org.integratedmodelling.kdl.ui.labeling.KdlHighlightingCalculator
+import org.integratedmodelling.kdl.ui.labeling.KdlHighlightingConfiguration
+import org.integratedmodelling.kdl.ui.labeling.KdlSyntaxHighlighter
 
 /**
  * Use this class to register components to be used within the Eclipse IDE.
  */
 @FinalFieldsConstructor
 class KdlUiModule extends AbstractKdlUiModule {
+	
+	def Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
+		return typeof(KdlHighlightingConfiguration);
+	}
+	
+	def Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
+		return typeof(KdlHighlightingCalculator);
+	}
 
+	def Class<? extends DefaultAntlrTokenToAttributeIdMapper> bindAbstractAntlrTokenToAttributeIdMapper() {
+		return typeof(KdlSyntaxHighlighter)
+	}
 }

@@ -1,3 +1,38 @@
 @klab 0.10.0
 @version 0.10.0
 
+@xor(file, url)
+@and(latitude,longitude)
+@and(query, jdbc)
+annotation table 	
+	"The table adapter allows table data from CSV, Excel files and JDBC table-based databases. Each column is
+     annotated as an attribute if type == OBJECT, or an output if the type is a data type." 	
+ {
+
+	final optional text file
+		"The annotated file containing the data." 
+
+	final optional text url
+		"The annotated file containing the data." 
+
+	final optional boolean jdbc	
+		"If true, this resource is provided by the JDBC URL in the 'url' field."
+		
+	optional text query
+		""
+		
+ 	enum type
+ 		"The type of the resource result. One of object, number, text, boolean, concept. Types are 
+         fixed for a resource, so if this can produce more types they must be annotated separately."
+ 		values OBJECT, NUMBER, TEXT, BOOLEAN, CONCEPT
+
+ 	optional text 'time'
+ 		"The column ID providing a temporal index."
+ 
+ 	optional text 'latitude'
+ 		"The column ID providing latitude for observations."
+ 
+ 	optional text 'longitude'
+ 		"The column ID providing longitude for observations."
+ 	 	
+ }
