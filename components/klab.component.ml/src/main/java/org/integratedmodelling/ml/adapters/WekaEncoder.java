@@ -1,5 +1,6 @@
 package org.integratedmodelling.ml.adapters;
 
+import java.io.File;
 import java.util.Map;
 
 import org.apache.commons.math3.distribution.EnumeratedRealDistribution;
@@ -42,6 +43,13 @@ public class WekaEncoder implements IResourceEncoder {
         /*
          * load the classifier
          */
+        File imported = new File(((Resource) resource).getPath() + File.separator + "import.xml");
+        if (imported.exists()) {
+            this.classifier = new WekaClassifier(imported, resource.getParameters()
+                    .get("classifier", String.class), resource.getParameters()
+                            .get("classifier.probabilistic", "false").equals("true"));
+        }
+
         this.classifier = new WekaClassifier(((Resource) resource)
                 .getLocalFile("classifier.file"), resource.getParameters()
                         .get("classifier.probabilistic", "false").equals("true"));

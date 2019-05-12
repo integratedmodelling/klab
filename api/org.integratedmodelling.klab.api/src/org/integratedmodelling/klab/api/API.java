@@ -158,8 +158,8 @@ public interface API {
 		public static interface RESOURCE {
 
 			/**
-			 * Add a resource to the local catalog by uploading zipped contents from a valid
-			 * resource import. Return URN after validation.
+			 * Add a resource to the public catalog by uploading zipped contents from a valid
+			 * local resource. Return URN after validation.
 			 * 
 			 * PUT
 			 */

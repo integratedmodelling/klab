@@ -1,6 +1,7 @@
 package org.integratedmodelling.tables.adapter;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 
@@ -22,9 +23,9 @@ public class TableImporter implements IResourceImporter {
     }
 
     @Override
-    public IResource importIntoResource(String importLocation, IResource target, IMonitor monitor) {
+    public boolean importIntoResource(URL importLocation, IResource target, IMonitor monitor) {
         // TODO Auto-generated method stub
-        return null;
+        return false;
     }
 
     @Override

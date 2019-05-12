@@ -570,7 +570,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
                 new Thread() {
                     @Override
                     public void run() {
-                        if (Resources.INSTANCE.importIntoResource(request.getImportUrl(), resource)) {
+                        if (Resources.INSTANCE.importIntoResource(request.getImportUrl(), resource, getMonitor())) {
                             monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceUpdated, ((Resource) resource)
                                     .getReference());
                         } else {

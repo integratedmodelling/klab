@@ -2,6 +2,7 @@ package org.integratedmodelling.ml.adapters;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -12,8 +13,10 @@ import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.URLUtils;
+import org.integratedmodelling.ml.context.WekaClassifier;
 
 import weka.classifiers.bayes.BayesNet;
 
@@ -49,7 +52,6 @@ public class WekaValidator implements IResourceValidator {
 				
 			} else {
 				monitor.info("Importing WEKA classifier from " + file + " as a WEKA resource");
-				
 			}
 			
 			
@@ -141,8 +143,30 @@ public class WekaValidator implements IResourceValidator {
 
 	@Override
 	public List<Operation> getAllowedOperations(IResource resource) {
-		// TODO Auto-generated method stub
-		return null;
+	    
+	    List<Operation> ret = new ArrayList<>();
+	    boolean isBayes = BayesNet.class.getCanonicalName().equals(resource.getParameters().get("classifier"));
+	    File importFile = new File(resource.getLocalPath() + File.separator + "import.xml");
+	    if (isBayes && importFile.exists()) {
+	        ret.add(new Operation() {
+
+                @Override
+                public String getName() {
+                    return "Learn CPTs";
+                }
+
+                @Override
+                public String getDescription() {
+                    return "Learn the CPTs from the original instances. Perform this operation after making modifications to the"
+                            + " model, for example after importing a BIF file.";
+                }
+
+                @Override
+                public boolean shouldConfirm() {
+                    return true;
+                }});
+	    }
+		return ret;
 	}
 
 	@Override
@@ -171,5 +195,24 @@ public class WekaValidator implements IResourceValidator {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    public boolean validateImport(IResource resource, IMonitor monitor) {
+        
+        WekaClassifier classifier = null;
+        File imported = new File(((Resource) resource).getPath() + File.separator + "import.xml");
+        if (imported.exists()) {
+            try {
+                classifier = new WekaClassifier(imported, resource.getParameters()
+                    .get("classifier", String.class), resource.getParameters()
+                            .get("classifier.probabilistic", "false").equals("true"));
+            } catch (Throwable e) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+        
+        return classifier != null && classifier.getClassifier() != null;
+    }
 
 }

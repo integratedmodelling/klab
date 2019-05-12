@@ -115,9 +115,9 @@ public class WcsImporter implements IResourceImporter {
     }
 
     @Override
-    public IResource importIntoResource(String importLocation, IResource target, IMonitor monitor) {
+    public boolean importIntoResource(URL importLocation, IResource target, IMonitor monitor) {
         // TODO Auto-generated method stub
-        return null;
+        return false;
     }
 
     @Override

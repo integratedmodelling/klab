@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.api.data.adapters;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 
@@ -37,9 +38,9 @@ public interface IResourceImporter {
      * @param importLocation
      * @param target
      * @param monitor
-     * @return
+     * @return true if import was done and succeeded.
      */
-    IResource importIntoResource(String importLocation, IResource target, IMonitor monitor);
+    boolean importIntoResource(URL importLocation, IResource target, IMonitor monitor);
     
     /**
      * Check if the passed location (file, URL or whatever) can be handled. In this

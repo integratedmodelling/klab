@@ -115,7 +115,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 					// new context
 					runtimeContext = createRuntimeContext(actuator, scope, scale, monitor);
 				} else if (switchContext) {
-					// new catalog, new scale
+					// new catalog, new scale, context subject is in the scope
 					runtimeContext = ((Subject) context).getRuntimeContext().createContext(scale, actuator, scope,
 							monitor);
 				} else {

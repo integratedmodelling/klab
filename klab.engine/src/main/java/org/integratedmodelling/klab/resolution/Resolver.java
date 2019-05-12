@@ -277,6 +277,7 @@ public enum Resolver {
 			ResolutionScope mscope = resolve((Model) observable.getReferencedModel(), ret);
 			if (mscope.getCoverage().isRelevant() && ret.or(mscope)) {
 				ret.link(mscope, null);
+				coverage = mscope.getCoverage();
 			}
 
 		} else {

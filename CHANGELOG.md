@@ -33,7 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   to.
 - Resource editor now has a table for "outputs" besides the main observable, used
   by computations that provide additional observations.
-- Put a bit of color in the KDL editor just for fun.
+- Put a bit of color in the KDL editor, just for fun.
 ### Changed
 - KDL actuator syntax cleaned up, now using a single set of rules. 
 ### Fixed
@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Incremental coverages do not affect resolution until max coverage is reached.
 - Support collection of annotations from the observable of merged states (not from
   the individual partition models).
+- Attribution of links in observation hierarchy is back to sanity. 
 
 ## [0.10.0.155] -- 2019/05/09
 ### Added

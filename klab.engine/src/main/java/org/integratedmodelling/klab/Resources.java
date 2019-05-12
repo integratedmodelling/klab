@@ -728,9 +728,11 @@ public enum Resources implements IResourceService {
 		return importer.finish();
 	}
 
-	public boolean importIntoResource(URL importUrl, IResource resource) {
-	    // TODO
-	    System.out.println("Importing " + importUrl + " into " + resource.getUrn());
+	public boolean importIntoResource(URL importUrl, IResource resource, IMonitor monitor) {
+	    IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
+	    if (adapter != null) {
+	        return adapter.getImporter().importIntoResource(importUrl, resource, monitor);
+	    }
 	    return false;
 	}
 	

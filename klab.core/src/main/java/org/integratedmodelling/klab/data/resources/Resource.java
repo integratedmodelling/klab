@@ -71,32 +71,31 @@ import org.integratedmodelling.klab.utils.Utils;
  */
 public class Resource implements IResource {
 
-    private static final long serialVersionUID = -923039635832182164L;
+    private static final long   serialVersionUID = -923039635832182164L;
 
-    String                    urn;
-    Version                   version;
-    String                    adapterType;
-    String                    localPath;
-    IGeometry                 geometry;
-    IArtifact.Type            type;
-    long                      resourceTimestamp;
-    IMetadata                 metadata         = new Metadata();
-    Parameters<String>        parameters       = new Parameters<>();
-    List<String>              localPaths       = new ArrayList<>();
-    List<ResourceReference>   history          = new ArrayList<>();
-    List<INotification>       notifications    = new ArrayList<>();
-    List<Attribute>           attributes       = new ArrayList<>();
-    List<Attribute>           dependencies     = new ArrayList<>();
-    String                    projectName;
-    String                    localName;
+    String                      urn;
+    Version                     version;
+    String                      adapterType;
+    String                      localPath;
+    IGeometry                   geometry;
+    IArtifact.Type              type;
+    long                        resourceTimestamp;
+    IMetadata                   metadata         = new Metadata();
+    Parameters<String>          parameters       = new Parameters<>();
+    List<String>                localPaths       = new ArrayList<>();
+    List<ResourceReference>     history          = new ArrayList<>();
+    List<INotification>         notifications    = new ArrayList<>();
+    List<Attribute>             attributes       = new ArrayList<>();
+    List<Attribute>             dependencies     = new ArrayList<>();
+    String                      projectName;
+    String                      localName;
     // copied from adapter at creation
-    private Map<String, String> exports = new LinkedHashMap<>();
+    private Map<String, String> exports          = new LinkedHashMap<>();
     // for display in resource descriptors
-    SpatialExtent             spatialExtent;
+    SpatialExtent               spatialExtent;
 
     // folder where all the resource files were uploaded, only for the publisher
-    File                      uploadFolder     = null;
-
+    File                        uploadFolder     = null;
 
     public Resource(ResourceReference reference) {
 
@@ -113,7 +112,7 @@ public class Resource implements IResource {
         this.spatialExtent = reference.getSpatialExtent();
         this.attributes.addAll(reference.getAttributes());
         this.exports.putAll(reference.getExportFormats());
-        
+
         for (ResourceReference ref : reference.getHistory()) {
             this.history.add(ref);
         }
@@ -149,7 +148,7 @@ public class Resource implements IResource {
         ret.setType(this.type);
         ret.setSpatialExtent(spatialExtent);
         ret.getExportFormats().putAll(this.getExports());
-        
+
         for (ResourceReference h : this.history) {
             ret.getHistory().add(h);
         }
@@ -432,9 +431,22 @@ public class Resource implements IResource {
 
     }
 
-	@Override
-	public Map<String, String> getExports() {
-		return exports;
-	}
+    /**
+     * Return the file path that stores this resource's files (at minimum resource.json).
+     * @return
+     */
+    public File getPath() {
+        IProject project = Services.INSTANCE.getService(IResourceService.class).getProject(projectName);
+        if (project != null) {
+            return new File(project.getRoot() + File.separator + IKimProject.RESOURCE_FOLDER
+                    + File.separator + Path.getLast(urn, ':'));
+        }
+        return null;
+    }
+
+    @Override
+    public Map<String, String> getExports() {
+        return exports;
+    }
 
 }

@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.raster.files;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -111,9 +112,9 @@ public class RasterImporter extends AbstractFilesetImporter {
     }
 
     @Override
-    public IResource importIntoResource(String importLocation, IResource target, IMonitor monitor) {
+    public boolean importIntoResource(URL importLocation, IResource target, IMonitor monitor) {
         // TODO Auto-generated method stub
-        return null;
+        return false;
     }
 
     @Override
