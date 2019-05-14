@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [comment]: <>   ()
 [comment]: <>   (Next build: [0.10.0.151] -- ISO Date)
 
-## Unreleased
+## [0.10.0.157] -- 2019/05/14
 ### Added
 - Stubs for table component and alignment component.
 - Prototypes from KDL now expose imports and exports as well as parameters.
@@ -34,8 +34,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Resource editor now has a table for "outputs" besides the main observable, used
   by computations that provide additional observations.
 - Put a bit of color in the KDL editor, just for fun.
+- 'monetary value' now produces money instead of mere values, so that currencies
+  are accepted.
 ### Changed
 - KDL actuator syntax cleaned up, now using a single set of rules. 
+- Use indented JSON output for references and documentation to ease understanding and
+  merging in git.
 ### Fixed
 - Partial context coverages and boundary-invariant partitions now handled correctly, with
   partitions being generated only if >1 models with different coverage boundaries exist.
@@ -43,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support collection of annotations from the observable of merged states (not from
   the individual partition models).
 - Attribution of links in observation hierarchy is back to sanity. 
+- Completed logics for attribution of specific colors for categories in colormaps.
 
 ## [0.10.0.155] -- 2019/05/09
 ### Added
