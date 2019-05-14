@@ -25,6 +25,7 @@ public enum UnarySemanticOperator {
     UNCERTAINTY(new Type[] { Type.QUALITY }, "uncertainty of"),
     COUNT(new Type[] { Type.COUNTABLE }, "count of"),
     VALUE(new Type[] { Type.OBSERVABLE, Type.CONFIGURATION }, "value of", "over"),
+    MONETARY_VALUE(new Type[] { Type.OBSERVABLE, Type.CONFIGURATION }, "monetary value of"),
     OCCURRENCE(new Type[] { Type.COUNTABLE }, "occurrence of"),
     ASSESSMENT(new Type[] { Type.QUALITY }, "assessment of"),
     OBSERVABILITY(new Type[] { Type.OBSERVABLE }, "observability of"),
