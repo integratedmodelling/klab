@@ -47,7 +47,11 @@ public class KimValidator implements Kim.Validator {
 
 	private static Object compileLiteral(Object value) {
 		if (value instanceof IKimConcept) {
-			value = Concepts.INSTANCE.declare((IKimConcept) value);
+			IConcept concept = Concepts.INSTANCE.declare((IKimConcept) value);
+			if (concept != null) {
+				// forward references do this. Delay interpretation to moment of usage.
+				value = concept;
+			}
 		} else if (value instanceof IKimExpression) {
 			value = Extensions.INSTANCE.compileExpression(((IKimExpression) value).getCode(),
 					((IKimExpression) value).getLanguage());

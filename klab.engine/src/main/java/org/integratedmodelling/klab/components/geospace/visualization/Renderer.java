@@ -25,7 +25,6 @@ import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.renderer.lite.RendererUtilities;
 import org.geotools.renderer.lite.gridcoverage2d.GridCoverageRenderer;
 import org.geotools.styling.ColorMap;
-import org.geotools.styling.ColorMapEntry;
 import org.geotools.styling.ContrastEnhancement;
 import org.geotools.styling.RasterSymbolizer;
 import org.geotools.styling.ShadedRelief;
@@ -231,7 +230,7 @@ public enum Renderer {
 					}
 				} else if (annotation.containsKey("values")) {
 
-					Map<?, ?> vals = annotation.get("values", Map.class);
+					Map<?, ?> vals = annotation.getDeclared("values", Map.class);
 					List<Pair<Object, Color>> svals = new ArrayList<>();
 					Class<?> type = null;
 					for (Object o : vals.keySet()) {

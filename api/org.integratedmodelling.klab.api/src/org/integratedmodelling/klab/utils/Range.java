@@ -382,10 +382,10 @@ public class Range implements IValueMediator {
 		double left = midpoint - getLowerBound();
 		double right = getUpperBound() - midpoint;
 		Range ret = new Range(this);
-		if (left > right) {
-			ret.upperBound = midpoint + left;
-		} else if (right > left) {
-			ret.lowerBound = midpoint - right;
+		if (Math.abs(left) > Math.abs(right)) {
+			ret.upperBound = midpoint + Math.abs(left);
+		} else if (Math.abs(right) > Math.abs(left)) {
+			ret.lowerBound = midpoint - Math.abs(right);
 		}
 
 		return ret;
