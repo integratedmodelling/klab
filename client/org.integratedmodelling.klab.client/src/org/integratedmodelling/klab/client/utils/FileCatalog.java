@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -117,7 +118,7 @@ public class FileCatalog<T> extends LinkedHashMap<String, T> {
 				throw new KlabIOException(e);
 			}
 		}
-		
+
 		this.file = file;
 		this.cls = cls;
 		try (InputStream input = new FileInputStream(file)) {
@@ -153,6 +154,8 @@ public class FileCatalog<T> extends LinkedHashMap<String, T> {
 
 			ObjectMapper objectMapper = new ObjectMapper();
 			objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+					.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 
 			try {
 				JavaType type = objectMapper.getTypeFactory().constructMapLikeType(Map.class, String.class, cls);
@@ -182,6 +185,13 @@ public class FileCatalog<T> extends LinkedHashMap<String, T> {
 		if (this.file != null && this.file.exists()) {
 
 			ObjectMapper objectMapper = new ObjectMapper();
+			objectMapper.enable(SerializationFeature.INDENT_OUTPUT); // pretty print
+			objectMapper.enable(SerializationFeature.WRITE_NULL_MAP_VALUES); // pretty print
+			objectMapper.enable(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED); // pretty print
+			objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+					.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+			objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
 			Map<String, T> data = new HashMap<>();
 			data.putAll(this);
 			try {
@@ -192,9 +202,9 @@ public class FileCatalog<T> extends LinkedHashMap<String, T> {
 			this.timestamp = this.file.lastModified();
 		}
 	}
-	
+
 	public File getFile() {
-	    return file;
+		return file;
 	}
 
 }

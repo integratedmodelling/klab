@@ -234,13 +234,17 @@ public enum Renderer {
 					List<Pair<Object, Color>> svals = new ArrayList<>();
 					Class<?> type = null;
 					for (Object o : vals.keySet()) {
+
 						if (type == null) {
 							type = o.getClass();
 						} else if (!type.equals(o.getClass())) {
 							throw new IllegalArgumentException(
 									"color keys must be of the same type in a colormap specification");
 						}
-						svals.add(new Pair<>(o, parseColor(vals.get(o))));
+
+						if (state.getDataKey() != null && state.getDataKey().reverseLookup(o) >= 0) {
+							svals.add(new Pair<>(o, parseColor(vals.get(o))));
+						}
 					}
 
 					if (IConcept.class.isAssignableFrom(type)) {
@@ -381,25 +385,15 @@ public enum Renderer {
 				}
 
 			}
-		} else if (state.getDataKey() != null && colors != null) {
+		} else if (state.getDataKey() != null && colors != null && (values == null || labels == null)) {
 
-			if (values != null && labels != null) {
-				
-				// only keep the values that appear in the data and sort them according to datakey
-				for (int i = 0; i < values.length; i++) {
-					
-				}
-
-			} else {
-
-				values = new double[state.getDataKey().size()];
-				labels = new String[state.getDataKey().size()];
-				int i = 0;
-				for (Pair<Integer, String> pair : state.getDataKey().getAllValues()) {
-					values[i] = ((Number) pair.getFirst()).doubleValue();
-					labels[i] = pair.getSecond();
-					i++;
-				}
+			values = new double[state.getDataKey().size()];
+			labels = new String[state.getDataKey().size()];
+			int i = 0;
+			for (Pair<Integer, String> pair : state.getDataKey().getAllValues()) {
+				values[i] = ((Number) pair.getFirst()).doubleValue();
+				labels[i] = pair.getSecond();
+				i++;
 			}
 		}
 

@@ -124,7 +124,7 @@ public class ConceptStorage extends Storage implements IDataArtifact, IKeyHolder
             
             @Override
             public int reverseLookup(Object value) {
-                if (value instanceof IConcept) {
+                if (value instanceof IConcept && conceptKey.containsKey(value)) {
                     return conceptKey.get((IConcept)value);
                 }
                 return -1;
