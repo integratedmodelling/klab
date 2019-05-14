@@ -383,13 +383,23 @@ public enum Renderer {
 			}
 		} else if (state.getDataKey() != null && colors != null) {
 
-			values = new double[state.getDataKey().size()];
-			labels = new String[state.getDataKey().size()];
-			int i = 0;
-			for (Pair<Integer, String> pair : state.getDataKey().getAllValues()) {
-				values[i] = ((Number) pair.getFirst()).doubleValue();
-				labels[i] = pair.getSecond();
-				i++;
+			if (values != null && labels != null) {
+				
+				// only keep the values that appear in the data and sort them according to datakey
+				for (int i = 0; i < values.length; i++) {
+					
+				}
+
+			} else {
+
+				values = new double[state.getDataKey().size()];
+				labels = new String[state.getDataKey().size()];
+				int i = 0;
+				for (Pair<Integer, String> pair : state.getDataKey().getAllValues()) {
+					values[i] = ((Number) pair.getFirst()).doubleValue();
+					labels[i] = pair.getSecond();
+					i++;
+				}
 			}
 		}
 
@@ -428,16 +438,17 @@ public enum Renderer {
 			srl.setBrightnessOnly(shadedReliefBrightnessOnly);
 			ret.setShadedRelief(srl);
 		}
-		
+
 		/*
 		 * notify key and colors to state summary for further inquiries
 		 */
 		Colormap colormap = new Colormap();
-		colormap.setColors(new ArrayList<>());;
+		colormap.setColors(new ArrayList<>());
+		;
 		for (Color color : colors) {
 			colormap.getColors().add(ColorUtils.encodeRGB(color));
 		}
-		
+
 		colormap.setLabels(Arrays.asList(labels));
 
 		switch (colormapType) {
@@ -453,9 +464,9 @@ public enum Renderer {
 		default:
 			break;
 		}
-		
+
 		summary.setColormap(colormap);
-		
+
 		return new Pair<>(ret, null);
 	}
 
