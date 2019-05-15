@@ -4302,16 +4302,22 @@ ruleMODEL_TYPE returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToke
 			newLeafNode(kw, grammarAccess.getMODEL_TYPEAccess().getNumberKeyword_2());
 		}
 		    |
+		kw='object'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getMODEL_TYPEAccess().getObjectKeyword_3());
+		}
+		    |
 		kw='text'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getMODEL_TYPEAccess().getTextKeyword_3());
+			newLeafNode(kw, grammarAccess.getMODEL_TYPEAccess().getTextKeyword_4());
 		}
 		    |
 		kw='boolean'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getMODEL_TYPEAccess().getBooleanKeyword_4());
+			newLeafNode(kw, grammarAccess.getMODEL_TYPEAccess().getBooleanKeyword_5());
 		}
 	)
 ;

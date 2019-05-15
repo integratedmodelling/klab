@@ -2484,18 +2484,20 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cModelKeyword_0 = (Keyword)cAlternatives.eContents().get(0);
 		private final Keyword cLearnKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
 		private final Keyword cNumberKeyword_2 = (Keyword)cAlternatives.eContents().get(2);
-		private final Keyword cTextKeyword_3 = (Keyword)cAlternatives.eContents().get(3);
-		private final Keyword cBooleanKeyword_4 = (Keyword)cAlternatives.eContents().get(4);
+		private final Keyword cObjectKeyword_3 = (Keyword)cAlternatives.eContents().get(3);
+		private final Keyword cTextKeyword_4 = (Keyword)cAlternatives.eContents().get(4);
+		private final Keyword cBooleanKeyword_5 = (Keyword)cAlternatives.eContents().get(5);
 		
 		//MODEL_TYPE:
 		//	'model' |
 		//	'learn' |
 		//	'number' |
+		//	'object' |
 		//	'text' |
 		//	'boolean';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'model' | 'learn' | 'number' | 'text' | 'boolean'
+		//'model' | 'learn' | 'number' | 'object' | 'text' | 'boolean'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//'model'
@@ -2507,11 +2509,14 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'number'
 		public Keyword getNumberKeyword_2() { return cNumberKeyword_2; }
 		
+		//'object'
+		public Keyword getObjectKeyword_3() { return cObjectKeyword_3; }
+		
 		//'text'
-		public Keyword getTextKeyword_3() { return cTextKeyword_3; }
+		public Keyword getTextKeyword_4() { return cTextKeyword_4; }
 		
 		//'boolean'
-		public Keyword getBooleanKeyword_4() { return cBooleanKeyword_4; }
+		public Keyword getBooleanKeyword_5() { return cBooleanKeyword_5; }
 	}
 	public class NamespaceElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.Namespace");
@@ -10529,6 +10534,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	'model' |
 	//	'learn' |
 	//	'number' |
+	//	'object' |
 	//	'text' |
 	//	'boolean';
 	public MODEL_TYPEElements getMODEL_TYPEAccess() {

@@ -3542,15 +3542,21 @@ rule__MODEL_TYPE__Alternatives
 	)
 	|
 	(
-		{ before(grammarAccess.getMODEL_TYPEAccess().getTextKeyword_3()); }
-		'text'
-		{ after(grammarAccess.getMODEL_TYPEAccess().getTextKeyword_3()); }
+		{ before(grammarAccess.getMODEL_TYPEAccess().getObjectKeyword_3()); }
+		'object'
+		{ after(grammarAccess.getMODEL_TYPEAccess().getObjectKeyword_3()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getMODEL_TYPEAccess().getBooleanKeyword_4()); }
+		{ before(grammarAccess.getMODEL_TYPEAccess().getTextKeyword_4()); }
+		'text'
+		{ after(grammarAccess.getMODEL_TYPEAccess().getTextKeyword_4()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getMODEL_TYPEAccess().getBooleanKeyword_5()); }
 		'boolean'
-		{ after(grammarAccess.getMODEL_TYPEAccess().getBooleanKeyword_4()); }
+		{ after(grammarAccess.getMODEL_TYPEAccess().getBooleanKeyword_5()); }
 	)
 ;
 finally {

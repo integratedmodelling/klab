@@ -871,12 +871,8 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
     @MessageHandler
     private void handleObservationRequest(final ObservationRequest request) {
 
-        /*
-         * TODO if we have no context in the request but the URN is not an observer and
-         * we have a ROI, create the context from the ROI and block the thread until
-         * it's observed. This should probably go in observe().
-         */
-
+    	// TODO add observer to other observer (with parameter in request)
+    	// TODO substitute observer to existing context (not done at the moment)
         if (request.getSearchContextId() != null) {
             searchContexts.remove(request.getSearchContextId());
         }

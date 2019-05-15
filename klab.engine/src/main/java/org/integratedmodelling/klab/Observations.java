@@ -298,6 +298,7 @@ public enum Observations implements IObservationService {
 			ScaleReference scaleReference = new ScaleReference();
 			if (space != null) {
 				IEnvelope envelope = space.getEnvelope();
+				IGrid grid = space instanceof Space ? ((Space) space).getGrid() : null;
 				Pair<Integer, String> resolution = ((Envelope) envelope).getResolutionForZoomLevel();
 				Unit sunit = Unit.create(resolution.getSecond());
 				int scaleRank = envelope.getScaleRank();
@@ -305,14 +306,31 @@ public enum Observations implements IObservationService {
 				scaleReference.setWest(envelope.getMinX());
 				scaleReference.setNorth(envelope.getMaxY());
 				scaleReference.setSouth(envelope.getMinY());
-				scaleReference.setSpaceUnit(resolution.getSecond());
-				scaleReference.setSpaceResolution(resolution.getFirst());
-				scaleReference.setSpaceResolutionConverted(
-						sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS).doubleValue());
-				scaleReference.setSpaceResolutionDescription(
-						sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS) + " " + resolution.getSecond());
-				scaleReference.setResolutionDescription(
-						sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS) + " " + resolution.getSecond());
+
+				if (grid == null) {
+
+					scaleReference.setSpaceUnit(resolution.getSecond());
+					scaleReference.setSpaceResolution(resolution.getFirst());
+					scaleReference.setSpaceResolutionConverted(
+							sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS).doubleValue());
+					scaleReference.setSpaceResolutionDescription(
+							sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS) + " " + resolution.getSecond());
+					scaleReference.setResolutionDescription(
+							sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS) + " " + resolution.getSecond());
+
+				} else {
+
+					// TODO use the grid! This is the same as the above.
+					scaleReference.setSpaceUnit(resolution.getSecond());
+					scaleReference.setSpaceResolution(resolution.getFirst());
+					scaleReference.setSpaceResolutionConverted(
+							sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS).doubleValue());
+					scaleReference.setSpaceResolutionDescription(
+							sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS) + " " + resolution.getSecond());
+					scaleReference.setResolutionDescription(
+							sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS) + " " + resolution.getSecond());
+
+				}
 				scaleReference.setSpaceScale(scaleRank);
 			}
 			if (time != null) {
@@ -407,7 +425,8 @@ public enum Observations implements IObservationService {
 		}
 
 		if (observation instanceof IDirectObservation) {
-			ret.setChildCount(observation.isEmpty() ? 0 : ((IDirectObservation) observation).getChildren(IObservation.class).size());
+			ret.setChildCount(observation.isEmpty() ? 0
+					: ((IDirectObservation) observation).getChildren(IObservation.class).size());
 		}
 
 		if (observation instanceof IDirectObservation && !observation.isEmpty() && (childLevel < 0 || childLevel > 0)) {
@@ -590,6 +609,5 @@ public enum Observations implements IObservationService {
 	public boolean isNodata(Object o) {
 		return !isData(o);
 	}
-
 
 }
