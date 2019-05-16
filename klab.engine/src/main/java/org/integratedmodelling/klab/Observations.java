@@ -19,7 +19,6 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
-import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
@@ -47,6 +46,7 @@ import org.integratedmodelling.klab.api.services.IObservationService;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
+import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.processing.osm.Nominatim;
@@ -298,7 +298,7 @@ public enum Observations implements IObservationService {
 			ScaleReference scaleReference = new ScaleReference();
 			if (space != null) {
 				IEnvelope envelope = space.getEnvelope();
-				IGrid grid = space instanceof Space ? ((Space) space).getGrid() : null;
+				Grid grid = space instanceof Space ? (Grid) ((Space) space).getGrid() : null;
 				Pair<Integer, String> resolution = ((Envelope) envelope).getResolutionForZoomLevel();
 				Unit sunit = Unit.create(resolution.getSecond());
 				int scaleRank = envelope.getScaleRank();
@@ -321,14 +321,16 @@ public enum Observations implements IObservationService {
 				} else {
 
 					// TODO use the grid! This is the same as the above.
-					scaleReference.setSpaceUnit(resolution.getSecond());
-					scaleReference.setSpaceResolution(resolution.getFirst());
-					scaleReference.setSpaceResolutionConverted(
-							sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS).doubleValue());
+					Unit unit = Unit.create(resolution.getSecond());
+					double cw = unit.convert(grid.getCell(0).getStandardizedWidth(), Units.INSTANCE.METERS)
+							.doubleValue();
+					scaleReference.setSpaceUnit(unit.toString());
+					scaleReference.setSpaceResolution(grid.getCellWidth());
+					scaleReference.setSpaceResolutionConverted(cw);
 					scaleReference.setSpaceResolutionDescription(
-							sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS) + " " + resolution.getSecond());
+							NumberFormat.getInstance().format(cw) + " " + resolution.getSecond());
 					scaleReference.setResolutionDescription(
-							sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS) + " " + resolution.getSecond());
+							NumberFormat.getInstance().format(cw) + " " + resolution.getSecond());
 
 				}
 				scaleReference.setSpaceScale(scaleRank);
