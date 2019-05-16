@@ -537,8 +537,8 @@ public class KimConcept extends KimStatement implements IKimConcept {
             observationType = UnarySemanticOperator.RATIO;
             operator = Type.RATIO;
         } else if (declaration.isValue()) {
-            observationType = UnarySemanticOperator.VALUE;
-            operator = Type.VALUE;
+            observationType = declaration.isMonetary() ? UnarySemanticOperator.MONETARY_VALUE : UnarySemanticOperator.VALUE;
+            operator = declaration.isMonetary() ? Type.MONEY : Type.VALUE;
         } else if (declaration.isUncertainty()) {
             observationType = UnarySemanticOperator.UNCERTAINTY;
             operator = Type.UNCERTAINTY;

@@ -1,0 +1,7 @@
+/*
+ * Parameters for the CDM adapter
+ */
+ annotation cdm 	
+	"" 	
+ {
+ }
