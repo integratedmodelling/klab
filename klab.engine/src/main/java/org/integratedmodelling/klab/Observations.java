@@ -320,7 +320,7 @@ public enum Observations implements IObservationService {
 
 				} else {
 
-					// TODO use the grid! This is the same as the above.
+					// use the grid.
 					Unit unit = Unit.create(resolution.getSecond());
 					double cw = unit.convert(grid.getCell(0).getStandardizedWidth(), Units.INSTANCE.METERS)
 							.doubleValue();
