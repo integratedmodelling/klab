@@ -44,6 +44,10 @@ public class Currency implements ICurrency {
      */
     public Currency() {
     }
+    
+    public static Currency create(String s) {
+    	return new Currency(s);
+    }
 
     /**
      * Sets the monetary.

@@ -270,7 +270,7 @@ public enum KimKnowledgeProcessor {
 
 		if (concept.getCurrency() != null) {
 			try {
-				ret.setCurrency(Currencies.INSTANCE.getCurrency(concept.getUnit()));
+				ret.setCurrency(Currencies.INSTANCE.getCurrency(concept.getCurrency()));
 				declaration += " in " + ret.getCurrency();
 			} catch (Exception e) {
 				monitor.error(e, concept);
@@ -306,7 +306,7 @@ public enum KimKnowledgeProcessor {
 		/*
 		 * set default unit if any is appropriate
 		 */
-		if (ret.getUnit() == null) {
+		if (ret.getUnit() == null && ret.getCurrency() == null) {
 			ret.setUnit(Units.INSTANCE.getDefaultUnitFor(observable));
 			if (ret.getUnit() != null) {
 				declaration += " in " + ret.getUnit();

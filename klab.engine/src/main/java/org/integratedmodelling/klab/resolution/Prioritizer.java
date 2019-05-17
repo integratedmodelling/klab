@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.resolution.IPrioritizer;
@@ -272,40 +273,50 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
         if (model.isInScenario() && context.getScenarios().contains(model.getNamespaceId())) {
             return 100;
         }
-
+        
         INamespace ns = Namespaces.INSTANCE.getNamespace(model.getNamespaceId());
-
+        
         if (ns == null) {
           Logging.INSTANCE.warn("found model " + model.getName() + " referencing unknown namespace: ignoring");
             return 0;
         }
+        
+        IWorkspace ws = ns.getProject().getWorkspace();
 
         INamespace rns = context.getResolutionNamespace();
         if (rns != null && rns.getId().equals(ns.getId())) {
             return 75;
         }
+        IWorkspace wsc = rns == null ? null : rns.getProject().getWorkspace();
 
         /*
          * between 25 and 50 is attributed to namespace being traceable in dependency
          * chain.
          */
+        int ret = 0;
         int nsDistance = context.getNamespaceDistance(ns);
         if (nsDistance >= 0) {
-            return 50 - (nsDistance > 24 ? 24 : nsDistance);
+            ret = 50 - (nsDistance > 24 ? 24 : nsDistance);
         }
+        
+        boolean sameWorkspace = ws != null && wsc != null && wsc.getName().equals(ws.getName());
 
         /*
          * between 1 and 25 is attributed to project being traceable.
          */
         int prDistance = context.getProjectDistance(ns == null ? null : ns.getProject());
         if (prDistance >= 0) {
-            return 25 - (prDistance > 24 ? 24 : prDistance);
+            ret = 25 - (prDistance > 24 ? 24 : prDistance);
         }
 
         /*
-         * nothing in common.
+         * the criteria (now 0-50) above occupy 25 points on a partition decided by the workspace criterion
          */
-        return 0;
+        if (!sameWorkspace) {
+        	ret = (int)((double)ret/2.0);
+        }
+        
+        return ret;
     }
     
 

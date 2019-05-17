@@ -5,15 +5,15 @@ import org.integratedmodelling.klab.common.mediation.Currency;
 
 public enum Currencies implements ICurrencyService {
 
-    INSTANCE;
-    
+	INSTANCE;
+
 	private Currencies() {
 		Services.INSTANCE.registerService(this, ICurrencyService.class);
-    }
+	}
 
-    @Override
-    public Currency getCurrency(String string) {
-      return null;
-    }
-    
+	@Override
+	public Currency getCurrency(String string) {
+		return Currency.create(string);
+	}
+
 }

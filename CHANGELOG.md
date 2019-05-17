@@ -29,6 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 ### Changed
 ### Fixed
+- Correct grid size reported after context setting.
+- Completed logics for attribution of specific colors for categories in colormaps.
 
 ## [0.10.0.157] -- 2019/05/14
 ### Added
@@ -52,8 +54,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support collection of annotations from the observable of merged states (not from
   the individual partition models).
 - Attribution of links in observation hierarchy is back to sanity. 
-- Correct grid size reported after context setting.
-- Completed logics for attribution of specific colors for categories in colormaps.
 
 ## [0.10.0.155] -- 2019/05/09
 ### Added

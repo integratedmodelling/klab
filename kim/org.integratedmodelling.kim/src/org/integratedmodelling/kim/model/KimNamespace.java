@@ -21,6 +21,7 @@ import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.Namespace;
@@ -351,4 +352,5 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 	public IKimStatement getStatement(String id) {
 		return statementsByName.get(id);
 	}
+
 }
