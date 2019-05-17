@@ -27,7 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Basic support for currencies
 ### Changed
+- Same-workspace criterion added to lexical scoping; all else being equal, projects from the same workspace will 
+  be prioritized. Still must add overriding from user workspace.
 ### Fixed
 - Correct grid size reported after context setting.
 - Completed logics for attribution of specific colors for categories in colormaps.
