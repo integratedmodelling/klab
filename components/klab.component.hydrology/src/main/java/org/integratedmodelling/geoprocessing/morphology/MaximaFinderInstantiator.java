@@ -12,6 +12,7 @@ import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
@@ -197,7 +198,7 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 			if (feature.getDefaultGeometry() instanceof com.vividsolutions.jts.geom.Geometry) {
 				IScale instanceScale = Scale.substituteExtent(context.getScale(), Shape.create(
 						(com.vividsolutions.jts.geom.Geometry) feature.getDefaultGeometry(), grid.getProjection()));
-				ret.add(context.newObservation(semantics, semantics.getLocalName() + "_" + (i++), instanceScale,
+				ret.add(context.newObservation(semantics, Observables.INSTANCE.getDisplayName(semantics) + "_" + (i++), instanceScale,
 						/* TODO send useful metadata */null));
 			}
 		}
