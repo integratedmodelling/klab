@@ -16,6 +16,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Namespaces;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -34,16 +35,16 @@ import com.vividsolutions.jts.geom.Geometry;
 
 public class Prioritizer implements IPrioritizer<ModelReference> {
 
-    ResolutionScope                     scope;
-    ComparatorChain                     comparator         = null;
+    ResolutionScope                              scope;
+    ComparatorChain                              comparator         = null;
     HashMap<ModelReference, Map<String, Double>> ranks              = new HashMap<>();
     HashMap<ModelReference, double[]>            idxss              = new HashMap<>();
 
-    List<String>                        orderedCriteria      = new ArrayList<>();
-    List<String>                        subjectiveCriteria = new ArrayList<>();
+    List<String>                                 orderedCriteria    = new ArrayList<>();
+    List<String>                                 subjectiveCriteria = new ArrayList<>();
 
-    private static IMetadata            defaultStrategy     = null;
-    private static HashSet<String>      rankingCriteria     = new HashSet<>();
+    private static IMetadata                     defaultStrategy    = null;
+    private static HashSet<String>               rankingCriteria    = new HashSet<>();
 
     static {
         rankingCriteria.add(NS.LEXICAL_SCOPE);
@@ -66,7 +67,7 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
             _field = field;
         }
 
-        @SuppressWarnings({ "rawtypes"})
+        @SuppressWarnings({ "rawtypes" })
         @Override
         public int compare(Map<String, Object> o1, Map<String, Object> o2) {
             Comparable n1 = (Comparable) o1.get(_field);
@@ -229,14 +230,14 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
             if (cr.contains(",")) {
                 ret.put(cr, computeCustomAggregation(cr, (ModelReference) model, context));
             } else {
-                ret.put(cr, computeStandardCriterion(cr, (ModelReference) model, (ResolutionScope)context));
+                ret.put(cr, computeStandardCriterion(cr, (ModelReference) model, (ResolutionScope) context));
             }
         }
 
-//        ret.put(IPrioritizer.OBJECT_NAME, ((ModelReference) model).getName());
-//        ret.put(IPrioritizer.PROJECT_NAME, ((ModelReference) model).getProjectUrn());
-//        ret.put(IPrioritizer.NAMESPACE_ID, ((ModelReference) model).getNamespaceId());
-//        ret.put(IPrioritizer.SERVER_ID, ((ModelReference) model).getServerId());
+        // ret.put(IPrioritizer.OBJECT_NAME, ((ModelReference) model).getName());
+        // ret.put(IPrioritizer.PROJECT_NAME, ((ModelReference) model).getProjectUrn());
+        // ret.put(IPrioritizer.NAMESPACE_ID, ((ModelReference) model).getNamespaceId());
+        // ret.put(IPrioritizer.SERVER_ID, ((ModelReference) model).getServerId());
 
         ranks.put((ModelReference) model, ret);
 
@@ -273,14 +274,15 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
         if (model.isInScenario() && context.getScenarios().contains(model.getNamespaceId())) {
             return 100;
         }
-        
+
         INamespace ns = Namespaces.INSTANCE.getNamespace(model.getNamespaceId());
-        
+
         if (ns == null) {
-          Logging.INSTANCE.warn("found model " + model.getName() + " referencing unknown namespace: ignoring");
+            Logging.INSTANCE
+                    .warn("found model " + model.getName() + " referencing unknown namespace: ignoring");
             return 0;
         }
-        
+
         IWorkspace ws = ns.getProject().getWorkspace();
 
         INamespace rns = context.getResolutionNamespace();
@@ -298,8 +300,14 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
         if (nsDistance >= 0) {
             ret = 50 - (nsDistance > 24 ? 24 : nsDistance);
         }
-        
-        boolean sameWorkspace = ws != null && wsc != null && wsc.getName().equals(ws.getName());
+
+        /*
+         * Workspace priority exists if the model comes from the local workspace or from the
+         * same workspace as the resolution.
+         */
+        boolean workspaceHasPriority = ws != null
+                && (ws.getName().equals(Resources.INSTANCE.getLocalWorkspace().getName())
+                        || (wsc != null && wsc.getName().equals(ws.getName())));
 
         /*
          * between 1 and 25 is attributed to project being traceable.
@@ -312,13 +320,12 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
         /*
          * the criteria (now 0-50) above occupy 25 points on a partition decided by the workspace criterion
          */
-        if (!sameWorkspace) {
-        	ret = (int)((double)ret/2.0);
+        if (!workspaceHasPriority) {
+            ret = (int) ((double) ret / 2.0);
         }
-        
+
         return ret;
     }
-    
 
     /*
      * semantic distance. This makes sure that e.g. a matching abstract model is chosen
@@ -332,7 +339,7 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
          */
         try {
             IConcept provided = model.getObservableConcept();
-            IConcept wanted =  context.getObservable() == null ? null : context.getObservable().getType();
+            IConcept wanted = context.getObservable() == null ? null : context.getObservable().getType();
             if (provided == null || wanted == null) {
                 // TODO should not happen
                 return 100;
@@ -353,7 +360,7 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
         }
         return 50;
     }
-    
+
     /*
      * trait concordance wrt context n = # of traits shared / #. of traits possible,
      * normalized to 100 TODO REIMPLEMENT AS APPROPRIATE - a compatibility rank
@@ -368,7 +375,7 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
          */
         try {
             IConcept c = model.getObservableConcept(); // getWantedObservable(model,
-                                                         // context);
+                                                       // context);
             if (c == null) {
                 // TODO issues here - just a hack, should not happen
                 return 0;
@@ -422,9 +429,10 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
                  */
                 ISpace space = context.getCoverage().getSpace();
                 if (space != null) {
-                    Geometry cspace = ((Shape)space.getShape()).getStandardizedGeometry();
-                    Geometry intersection = cspace.intersection(((Shape)model.getShape()).getStandardizedGeometry());
-                    specificityS = 100.0 * (intersection.getArea() / ((Shape)model.getShape())
+                    Geometry cspace = ((Shape) space.getShape()).getStandardizedGeometry();
+                    Geometry intersection = cspace
+                            .intersection(((Shape) model.getShape()).getStandardizedGeometry());
+                    specificityS = 100.0 * (intersection.getArea() / ((Shape) model.getShape())
                             .getStandardizedGeometry()
                             .getArea());
                     coverageS = 100.0 * (intersection.getArea() / cspace.getArea());
@@ -509,18 +517,19 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
      */
     public double computeSubjectiveConcordance(ModelReference model, IResolutionScope context, List<String> subjectiveCriteria) {
 
-    	if (context.getResolutionNamespace() == null) {
-    		// happens in non-semantic queries where the context is a data resource
-    		return 0;
-    	}
-    	
-    	ArrayList<Pair<Integer, Integer>> vals = new ArrayList<>();
+        if (context.getResolutionNamespace() == null) {
+            // happens in non-semantic queries where the context is a data resource
+            return 0;
+        }
+
+        ArrayList<Pair<Integer, Integer>> vals = new ArrayList<>();
         IMetadata nm = context.getResolutionNamespace().getResolutionCriteria();
 
         for (String s : subjectiveCriteria) {
 
             int val = (model.getMetadata() != null && model.getMetadata().containsKey(s))
-                    ? Integer.parseInt(model.getMetadata().get(s)) : 50;
+                    ? Integer.parseInt(model.getMetadata().get(s))
+                    : 50;
             int wei = 100;
             if (nm != null && nm.get(s) != null) {
                 wei = context.getResolutionNamespace().getResolutionCriteria().get(s, Integer.class);

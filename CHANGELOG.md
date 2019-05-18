@@ -27,13 +27,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- Basic support for currencies
+- Basic support for currencies, without conversion.
 ### Changed
-- Same-workspace criterion added to lexical scoping; all else being equal, projects from the same workspace will 
-  be prioritized. Still must add overriding from user workspace.
+- Same-workspace criterion added to lexical scoping: models in local workspace are always 
+  prioritized. All else being equal, projects from the same workspace as the namespace of
+  resolution will be prioritized.
+- Concepts are compared by matching definitions if the string value comparison fails.
 ### Fixed
 - Correct grid size reported after context setting.
 - Completed logics for attribution of specific colors for categories in colormaps.
+- Observable names are now disambiguated before resolving them vs. artifacts already
+  present from previous observations, preventing conflicts when different observables
+  have the same name.
 
 ## [0.10.0.157] -- 2019/05/14
 ### Added

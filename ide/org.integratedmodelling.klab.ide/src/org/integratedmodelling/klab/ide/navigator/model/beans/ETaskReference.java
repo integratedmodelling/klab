@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.ide.navigator.model.beans;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -41,10 +42,10 @@ public class ETaskReference implements ITaskReference, ERuntimeObject {
 	}
 
 	private EDataflowReference dataflow = null;
-	private List<ENotification> notifications = new ArrayList<>();
+	private List<ENotification> notifications = Collections.synchronizedList(new ArrayList<>());
 	private IMessage.Type status = IMessage.Type.TaskStarted;
-	private List<String> observations = new ArrayList<>();
-	private List<ETaskReference> tasks = new ArrayList<>();
+	private List<String> observations = Collections.synchronizedList(new ArrayList<>());
+	private List<ETaskReference> tasks = Collections.synchronizedList(new ArrayList<>());
 	private String parentTaskId;
 	private String parentArtifactId;
 

@@ -328,9 +328,9 @@ public enum Observations implements IObservationService {
 					scaleReference.setSpaceResolution(grid.getCellWidth());
 					scaleReference.setSpaceResolutionConverted(cw);
 					scaleReference.setSpaceResolutionDescription(
-							NumberFormat.getInstance().format(cw) + " " + resolution.getSecond());
+							String.format("%.1f", cw) + " " + resolution.getSecond());
 					scaleReference.setResolutionDescription(
-							NumberFormat.getInstance().format(cw) + " " + resolution.getSecond());
+					        String.format("%.1f", cw) + " " + resolution.getSecond());
 
 				}
 				scaleReference.setSpaceScale(scaleRank);
