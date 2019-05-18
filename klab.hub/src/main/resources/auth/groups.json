@@ -181,7 +181,7 @@
 			{
 				"separator": false,
 				"label": "Combined value of ecosystem services supply",
-				"observable": "value of ses:EcosystemBenefitFlow im:Process",
+				"observable": "im:Potential value of ses:EcosystemBenefitFlow im:Process",
 				"description": "A user-prioritized multiple criteria ranking of the region of interest according to the provision of ecosystem services.",
 				"semantics": "QUALITY"
 			},

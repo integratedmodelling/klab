@@ -270,6 +270,7 @@ public enum Resolver {
 		if (previousArtifact != null) {
 
 			ret.acceptArtifact(observable, (IObservation) previousArtifact.getSecond(), previousArtifact.getFirst());
+			coverage = ret.getCoverage();
 
 		} else if (observable.getReferencedModel() != null) {
 
