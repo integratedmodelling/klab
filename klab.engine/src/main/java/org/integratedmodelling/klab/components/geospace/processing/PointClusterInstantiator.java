@@ -12,6 +12,7 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
@@ -189,7 +190,7 @@ public class PointClusterInstantiator implements IExpression, IInstantiator {
 				} else {
 					geom = new ConcaveHull().transform(shape);
 				}
-				ret.add(context.newObservation(semantics, semantics.getLocalName() + "_" + (nc + 1),
+				ret.add(context.newObservation(semantics, Observables.INSTANCE.getDisplayName(semantics) + "_" + (nc + 1),
 						Scale.substituteExtent(context.getScale(), Shape.create(geom, grid.getProjection())),
 						/* TODO send useful metadata */null));
 

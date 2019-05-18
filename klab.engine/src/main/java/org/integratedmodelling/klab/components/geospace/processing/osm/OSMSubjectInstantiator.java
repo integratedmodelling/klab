@@ -14,6 +14,7 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
@@ -349,7 +350,7 @@ public class OSMSubjectInstantiator implements IInstantiator, IExpression {
 
         Map<String, String> tags = OsmModelUtil.getTagsAsMap(node);
         String id = (tags.containsKey("name") ? tags.get("name")
-                : CamelCase.toLowerCase(Concepts.INSTANCE.getDisplayName(observable), '-') + "_"
+                : CamelCase.toLowerCase(Observables.INSTANCE.getDisplayName(observable), '-') + "_"
                         + this.nsubjs);
         
         /*

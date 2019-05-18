@@ -7,6 +7,7 @@ import org.apache.commons.math3.ml.clustering.Cluster;
 import org.apache.commons.math3.ml.clustering.DBSCANClusterer;
 import org.apache.commons.math3.ml.clustering.DoublePoint;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -102,7 +103,7 @@ public class FeatureClusterInstantiator implements IExpression, IInstantiator {
 				} else {
 					geom = new ConcaveHull().transform(shape);
 				}
-				ret.add(context.newObservation(semantics, semantics.getLocalName() + "_" + (nc + 1),
+				ret.add(context.newObservation(semantics, Observables.INSTANCE.getDisplayName(semantics) + "_" + (nc + 1),
 						Scale.substituteExtent(context.getScale(), Shape.create(geom, context.getScale().getSpace().getProjection())), /* TODO send useful metadata */null));
 
 				nc++;

@@ -208,7 +208,7 @@ public class ConvexHullInstantiator implements IExpression, IInstantiator {
 		 */
 		GeometryCollection geometryCollection = (GeometryCollection) Geospace.gFactory.buildGeometry(geometries);
 		ConvexHull hull = new ConvexHull(geometryCollection.union());
-		ret.add(context.newObservation(semantics, semantics.getLocalName() + "_0", Scale.substituteExtent(context.getScale(),
+		ret.add(context.newObservation(semantics, Observables.INSTANCE.getDisplayName(semantics) + "_0", Scale.substituteExtent(context.getScale(),
 				Shape.create(hull.getConvexHull(), grid.getProjection())), /* TODO send useful metadata */null));
 
 		return ret;

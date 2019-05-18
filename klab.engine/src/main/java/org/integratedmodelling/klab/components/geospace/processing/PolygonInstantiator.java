@@ -15,6 +15,7 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
@@ -184,7 +185,7 @@ public class PolygonInstantiator implements IExpression, IInstantiator {
 		}
 
 		// build blobs
-		String baseName = CamelCase.toLowerCase(semantics.getLocalName(), '-');
+		String baseName = Observables.INSTANCE.getDisplayName(semantics);
 		ManyBlobs blobs = new ManyBlobs(image);
 		blobs.findConnectedComponents();
 		int created = 0;

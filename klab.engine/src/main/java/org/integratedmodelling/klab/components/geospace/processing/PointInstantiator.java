@@ -9,6 +9,7 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
@@ -148,7 +149,7 @@ public class PointInstantiator implements IExpression, IInstantiator {
 		for (int i = 0; i < geometries.size(); i++) {
 			IScale instanceScale = Scale.substituteExtent(context.getScale(),
 					Shape.create(geometries.get(i), grid.getProjection()));
-			ret.add(context.newObservation(semantics, semantics.getLocalName() + "_" + (i + 1), instanceScale,
+			ret.add(context.newObservation(semantics, Observables.INSTANCE.getDisplayName(semantics) + "_" + (i + 1), instanceScale,
 					/* TODO send useful metadata */null));
 		}
 
