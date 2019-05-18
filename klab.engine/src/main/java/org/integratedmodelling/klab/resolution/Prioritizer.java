@@ -289,7 +289,7 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
         if (rns != null && rns.getId().equals(ns.getId())) {
             return 75;
         }
-        IWorkspace wsc = rns == null ? null : rns.getProject().getWorkspace();
+        IWorkspace wsc = (rns == null || rns.getProject() == null) ? null : rns.getProject().getWorkspace();
 
         /*
          * between 25 and 50 is attributed to namespace being traceable in dependency

@@ -82,12 +82,18 @@
 			},
 			{
 				"separator": false,
-				"label": "probability of Flood",
-				"observable": "probability of earth:Flood",
-				"description": "The probability that a flood event occurs in each point.",
+				"label": "Proportion of precipitation potentially causing flood",
+				"observable": "im:Potential proportion of earth:PrecipitationVolume causing earth:Flood",
+				"description": "The proportion of the precipitation volume that has a chance of causing a flood due to the morphological characteristics of the terrain.",
 				"semantics": "QUALITY"
 			},
-			{
+{
+				"separator": false,
+				"label": "Avoided precipitation runoff attributable to vegetation",
+				"observable": "im:Differential hydrology:RunoffWaterVolume caused by ecology:Vegetation",
+				"description": "The difference between the precipitation runoff that would be seen if vegetation was not present and the actual runoff.",
+				"semantics": "QUALITY"
+			},			{
 				"separator": false,
 				"label": "Potential value of FloodRegulation",
 				"observable": "im:Potential value of es:FloodRegulation",
@@ -103,9 +109,9 @@
 			},
 			{
 				"separator": false,
-				"label": "Net value of FloodRegulation",
-				"observable": "im:Net value of es:FloodRegulation",
-				"description": "The net value of flood regulation in each point, considering the demand and the offer by natural ecosystems upstream.",
+				"label": "Value of flood regulation",
+				"observable": "value of es:FloodRegulation",
+				"description": "The overall value of flood regulation in each point, combining the potential supply with the demand in the area.",
 				"semantics": "QUALITY"
 			},
 			{
@@ -166,7 +172,27 @@
 				"observable": "im:Potential (im:Removed soil:Soil im:Mass) in t/ha",
 				"description": "The result of applying the Revised Universal Soil Loss equation, representing total sediment loss.",
 				"semantics": "QUALITY"
+			},
+			{
+				"separator": true,
+				"description": "",
+				"label": "Total Ecosystem Services value"
+			},
+			{
+				"separator": false,
+				"label": "Combined value of ecosystem services supply",
+				"observable": "value of ses:EcosystemBenefitFlow im:Process",
+				"description": "A user-prioritized multiple criteria ranking of the region of interest according to the provision of ecosystem services.",
+				"semantics": "QUALITY"
+			},
+			{
+				"separator": false,
+				"label": "Ecosystem services hotspots",
+				"observable": "earth:Region with im:Relevant value of ses:EcosystemBenefitFlow im:Process",
+				"description": "Delineate regions with elevated combined value of ecosystem services provision, computed by clustering areas of high ES value.",
+				"semantics": "SUBJECT"
 			}
+
 		]
 	}
 }
