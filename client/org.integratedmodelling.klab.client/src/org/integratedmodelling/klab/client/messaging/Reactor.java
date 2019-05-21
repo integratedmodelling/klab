@@ -162,8 +162,8 @@ public class Reactor {
 
 		} catch (Throwable e) {
 			e.printStackTrace();
-			throw new RuntimeException("internal error: converting payload of message " + message.getId()
-					+ "  for payload type " + message.getPayloadClass());
+			
+			throw new RuntimeException("internal error: converting payload of message " + message);
 		}
 
 	}

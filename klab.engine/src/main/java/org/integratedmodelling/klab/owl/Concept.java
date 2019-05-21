@@ -810,7 +810,7 @@ public class Concept extends Knowledge implements IConcept {
         return ret > 100 ? 100 : ret;
     }
 
-    @Override
+/*    @Override
     public boolean equals(Object obj) {
         return obj instanceof Concept
                 ? toString().equals(obj.toString()) || getDefinition().equals(((Concept) obj).getDefinition())
@@ -820,6 +820,6 @@ public class Concept extends Knowledge implements IConcept {
     @Override
     public int hashCode() {
         return getDefinition().hashCode();
-    }
+    }*/
 
 }

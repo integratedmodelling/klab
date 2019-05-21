@@ -233,12 +233,12 @@ public enum Annotations implements IAnnotationService {
 			/*
 			 * collect from roles, traits and main in this order
 			 */
-			for (IConcept role : Roles.INSTANCE.getRoles(((IObservable) object).getType())) {
-				collectAnnotations(role, collection);
-			}
-			for (IConcept trait : Traits.INSTANCE.getTraits(((IObservable) object).getType())) {
-				collectAnnotations(trait, collection);
-			}
+//			for (IConcept role : Roles.INSTANCE.getRoles(((IObservable) object).getType())) {
+//				collectAnnotations(role, collection);
+//			}
+//			for (IConcept trait : Traits.INSTANCE.getTraits(((IObservable) object).getType())) {
+//				collectAnnotations(trait, collection);
+//			}
 
 			/*
 			 * if we are classifying 'by', we use the classifier, not the main type

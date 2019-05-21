@@ -127,7 +127,7 @@ public class Classifier implements IClassifier {
 	}
 
 	@Override
-	public boolean classify(Object o, IComputationContext context) {
+	public synchronized boolean classify(Object o, IComputationContext context) {
 
 		// if (this.conceptMatch != null &&
 		// this.conceptMatch.toString().endsWith("ArtificialSurface")) {
