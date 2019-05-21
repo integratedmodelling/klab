@@ -17,6 +17,7 @@
 		"worldview": false,
 		"projectUrls": [
 			"https://bitbucket.org/integratedmodelling/im.data.global.git",
+			"https://bitbucket.org/integratedmodelling/im.data.usa.git",
 			"https://bitbucket.org/integratedmodelling/im.data.operators.git",
 			"https://bitbucket.org/integratedmodelling/im.data.osm.git",
 			"https://bitbucket.org/integratedmodelling/im.aries.global.git",

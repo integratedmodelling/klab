@@ -71,8 +71,11 @@ public class RunoffResolver implements IResolver<IState>, IExpression {
 		return target;
 	}
 
+	/*
+	 * Computation of runoff accumulates the runoff from upstream cells, ending at the outlet
+	 * This function is called with the outlet cell as parameter. 
+	 */
 	private double computeRunoff(Cell cell, IState flowdirection, IState precipitation, IState curvenumber, IState runoff) {
-		
 		double prec = precipitation.get(cell, Double.class);
 		double cn = curvenumber.get(cell, Double.class);
 		double mret = (25400 / cn) - 254;

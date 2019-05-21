@@ -236,9 +236,13 @@ public enum Annotations implements IAnnotationService {
 //			for (IConcept role : Roles.INSTANCE.getRoles(((IObservable) object).getType())) {
 //				collectAnnotations(role, collection);
 //			}
-//			for (IConcept trait : Traits.INSTANCE.getTraits(((IObservable) object).getType())) {
-//				collectAnnotations(trait, collection);
-//			}
+			for (IConcept trait : Traits.INSTANCE.getTraits(((IObservable) object).getType())) {
+				// FIXME REMOVE ugly hack: landcover is a type, but it's used as an attribute in various places so the change
+				// is deep. This makes landcover colormaps end up in places they shouldn't be.
+				if (!trait.getNamespace().equals("landcover")) {
+					collectAnnotations(trait, collection);
+				}
+			}
 
 			/*
 			 * if we are classifying 'by', we use the classifier, not the main type
