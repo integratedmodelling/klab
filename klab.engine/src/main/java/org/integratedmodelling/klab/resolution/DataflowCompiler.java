@@ -844,7 +844,9 @@ public class DataflowCompiler {
 
     /*
      * This holds all resolvables that had the same names as those in the existing catalog but 
-     * different concepts.
+     * have different concepts.
+     * 
+     * TODO still issues observing e.g. geography:Slope -> presence of earth:Slope.
      */
     List<Pair<String, Observable>> ambiguous = new ArrayList<>();
 

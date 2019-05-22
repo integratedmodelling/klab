@@ -1,0 +1,7 @@
+/*
+ * Parameters for the WEATHER adapter
+ */
+ annotation weather 	
+	"" 	
+ {
+ }
