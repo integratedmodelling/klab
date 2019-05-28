@@ -1,0 +1,6 @@
+package org.integratedmodelling.ecology.biomass.lpjguess;
+
+public enum SOMPoolType {
+	SURFSTRUCT, SOILSTRUCT, SOILMICRO, SURFHUMUS, SURFMICRO, SURFMETA, SURFFWD, SURFCWD,
+	SOILMETA, SLOWSOM, PASSIVESOM, LEACHED, NSOMPOOL
+}

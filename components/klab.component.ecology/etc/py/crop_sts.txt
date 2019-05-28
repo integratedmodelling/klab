@@ -1,0 +1,326 @@
+group "common_stand" (
+
+!	stinclude 0
+!	hydrology "rainfed"
+	intercrop "nointercrop"
+	rotation 0
+	naturalveg "none"
+	restrictpfts 0
+)
+
+group "crop_stand" (
+
+!	stinclude 0
+	landcover "cropland"
+	rotation 1
+!	rottime 1
+	hydrology1 "rainfed"
+	intercrop "naturalgrass"
+	restrictpfts 1
+)
+
+st "Peatland" (
+
+	common_stand
+	stinclude 1
+	landcover "peatland"
+)
+
+st "Natural" (
+
+	common_stand
+	stinclude 1
+	landcover "natural"
+)
+
+st "Pasture" (
+
+	common_stand
+	stinclude 1
+	landcover "pasture"
+!	naturalveg "grassonly"
+
+)
+
+st "Forest" (
+
+	common_stand
+	stinclude 1
+	landcover "forest"
+	naturalveg "all"
+)
+
+st "Barren" (
+
+	common_stand
+	stinclude 1
+	landcover "barren"
+	naturalveg "none"
+)
+
+st "CC3G" (
+
+	crop_stand
+!	stinclude 1
+	intercrop "nointercrop"
+	crop1 "CC3G"
+)
+
+st "CC4G" (
+
+	crop_stand
+!	stinclude 1
+	intercrop "nointercrop"
+	crop1 "CC4G"
+)
+
+st "TeWW" (
+
+	crop_stand
+!	stinclude 1
+
+	rotation 1
+	rottime 1
+	firstrotyear 1901
+
+	crop1 "TeWW"
+	hydrology1 "rainfed"
+	nfert1 50
+!	sdate1 55
+!	hdate1 145
+	crop2 "TeCo"
+	hydrology2 "irrigated"
+	nfert2 0
+!	sdate2 160
+!	hdate2 300
+	crop3 "TeCo"
+	fallow3 1
+)
+
+st "TeWW_Nlim" (
+
+	crop_stand
+	stinclude 1
+	crop1 "TeWW_Nlim"
+)
+
+st "TrRi" (
+
+	crop_stand
+!	stinclude 1
+	crop1 "TrRi"
+)
+
+st "TeCo" (
+
+	crop_stand
+!	stinclude 1
+	crop1 "TeCo"
+)
+
+st "TeCo_Nlim" (
+
+	crop_stand
+!	stinclude 1
+	crop1 "TeCo_Nlim"
+)
+
+st "TrMi" (
+
+	crop_stand
+!	stinclude 1
+	crop1 "TrMi"
+)
+
+st "TePu" (
+
+	crop_stand
+!	stinclude 1
+	crop1 "TePu"
+)
+
+st "TeSb" (
+
+	crop_stand
+!	stinclude 1
+	crop1 "TeSb"
+)
+
+
+st "TrMa" (
+
+	crop_stand
+!	stinclude 1
+	crop1 "TrMa"
+)
+
+
+st "TeSf" (
+
+	crop_stand
+!	stinclude 1
+	crop1 "TeSf"
+)
+
+
+st "TeSo" (
+
+	crop_stand
+!	stinclude 1
+	crop1 "TeSo"
+)
+
+
+st "TrPe" (
+
+	crop_stand
+!	stinclude 1
+	crop1 "TrPe"
+)
+
+
+st "TeRa" (
+
+	crop_stand
+!	stinclude 1
+	crop1 "TeRa"
+)
+
+
+st "CC3Girr" (
+
+	crop_stand
+!	stinclude 1
+	intercrop "nointercrop"
+	crop1 "CC3Girr"
+	hydrology1 "irrigated"
+)
+
+st "CC4Girr" (
+
+	crop_stand
+!	stinclude 1
+	intercrop "nointercrop"
+	crop1 "CC4Girr"
+	hydrology1 "irrigated"
+)
+
+st "TeWWirr" (
+
+	crop_stand
+!	stinclude 1
+!	crop1 "TeWW"
+	crop1 "TeWWirr"
+	hydrology1 "irrigated"
+)
+
+st "TrRiirr" (
+
+	crop_stand
+	stinclude 1
+!	crop1 "TrRi"
+	crop1 "TrRiirr"
+	hydrology1 "irrigated"
+
+	rotation 1
+	rottime 1
+	multicrop 0
+	firstrotyear 1901
+
+	crop1 "TrRiirr"
+	hydrology1 "irrigated"
+	nfert1 50
+!	sdate1 50
+!	hdate1 155
+	crop2 "TrRiirr2"
+	hydrology2 "irrigated"
+	nfert2 0
+!	sdate2 160
+!	hdate2 300
+)
+
+st "TeCoirr" (
+
+	crop_stand
+!	stinclude 1
+!	crop1 "TeCo"
+	crop1 "TeCoirr"
+	hydrology1 "irrigated"
+)
+
+st "TrMiirr" (
+
+	crop_stand
+!	stinclude 1
+!	crop1 "TrMi"
+	crop1 "TrMiirr"
+	hydrology1 "irrigated"
+)
+
+st "TePuirr" (
+
+	crop_stand
+!	stinclude 1
+!	crop1 "TePu"
+	crop1 "TePuirr"
+	hydrology1 "irrigated"
+)
+
+st "TeSbirr" (
+
+	crop_stand
+!	stinclude 1
+!	crop1 "TeSb"
+	crop1 "TeSbirr"
+	hydrology1 "irrigated"
+)
+
+
+st "TrMairr" (
+
+	crop_stand
+!	stinclude 1
+!	crop1 "TrMa"
+	crop1 "TrMairr"
+	hydrology1 "irrigated"
+)
+
+
+st "TeSfirr" (
+
+	crop_stand
+!	stinclude 1
+!	crop1 "TeSf"
+	crop1 "TeSfirr"
+	hydrology1 "irrigated"
+)
+
+
+st "TeSoirr" (
+
+	crop_stand
+!	stinclude 1
+!	crop1 "TeSo"
+	crop1 "TeSoirr"
+	hydrology1 "irrigated"
+)
+
+
+st "TrPeirr" (
+
+	crop_stand
+!	stinclude 1
+!	crop1 "TrPe"
+	crop1 "TrPeirr"
+	hydrology1 "irrigated"
+)
+
+
+st "TeRairr" (
+
+	crop_stand
+!	stinclude 1
+!	crop1 "TeRa"
+	crop1 "TeRairr"
+	hydrology1 "irrigated"
+)

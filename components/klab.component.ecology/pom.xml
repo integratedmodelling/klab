@@ -7,27 +7,18 @@
 		<artifactId>components</artifactId>
 		<version>0.10.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>klab.component.hydrology</artifactId>
-	<name>klab.component.hydrology</name>
-	<description>Hydrology component for k.LAB</description>
+	<artifactId>klab.component.ecology</artifactId>
+
 	<dependencies>
-	
-		<!-- https://mvnrepository.com/artifact/org.hortonmachine/hm-hmachine -->
+
+		<!-- used by ENFA - if kept, we should switch to PCA from a respectable package -->
 		<dependency>
-			<groupId>org.hortonmachine</groupId>
-			<artifactId>hm-hmachine</artifactId>
-			<version>${hortonmachine.version}</version>
+			<groupId>gov.nist.math</groupId>
+			<artifactId>jama</artifactId>
+			<version>1.0.3</version>
 		</dependency>
-		<dependency>
-			<groupId>org.hortonmachine</groupId>
-			<artifactId>hm-lesto</artifactId>
-			<version>${hortonmachine.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.ucar</groupId>
-			<artifactId>netcdf</artifactId>
-			<version>4.3.22</version>
-		</dependency>
+
+
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.engine</artifactId>
@@ -39,4 +30,5 @@
 			<version>${klab.version}</version>
 		</dependency>
 	</dependencies>
+
 </project>

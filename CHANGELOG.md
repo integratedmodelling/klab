@@ -39,6 +39,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Observable names are now disambiguated before resolving them vs. artifacts already
   present from previous observations, preventing conflicts when different observables
   have the same name.
+- Colormaps for rasters that have the same value overall but also nodata values are now
+  generated correctly.
 
 ## [0.10.0.157] -- 2019/05/14
 ### Added

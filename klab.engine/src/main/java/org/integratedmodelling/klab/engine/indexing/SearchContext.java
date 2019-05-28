@@ -337,8 +337,6 @@ public class SearchContext implements IIndexingService.Context {
         if (match.getUnaryOperator() != null) {
             ret.constraints.add(Constraint.with(match.getUnaryOperator().getAllowedOperandTypes()));
             switch (match.getUnaryOperator()) {
-//            case ASSESSMENT:
-//                break;
             case COUNT:
                 break;
             case DISTANCE:
