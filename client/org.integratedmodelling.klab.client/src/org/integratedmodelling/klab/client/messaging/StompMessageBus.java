@@ -54,13 +54,12 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 
 	// private static final String URL = "ws://localhost:8283/modeler/message";
 	private static final Set<Object> emptySet = new HashSet<Object>();
-	
+
 	private ObjectMapper objectMapper = new ObjectMapper()
 			// I'll never understand why this shit isn't enabled by default
-			.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-			.disable(MapperFeature.DEFAULT_VIEW_INCLUSION)
+			.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY).disable(MapperFeature.DEFAULT_VIEW_INCLUSION)
 			.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-	
+
 	private StompSession session;
 	private Map<String, Consumer<IMessage>> responders = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, Set<Object>> receivers = Collections.synchronizedMap(new HashMap<>());
@@ -98,17 +97,17 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 			Throwable exception) {
 		throw new RuntimeException("STOMP exception: " + exception.getMessage());
 	}
-	
+
 	@Override
 	public void handleTransportError(StompSession session, Throwable throwable) {
 		if (throwable instanceof ConnectionLostException) {
-            // if connection lost, call this
-//			error("Connection lost.");
-		    System.out.println("Connection lost.");
-        } else {
-//			error("Unknown message transport error. Please report the error.");
-            System.out.println("Unknown message transport error.");
-        }
+			// if connection lost, call this
+			// error("Connection lost.");
+			System.out.println("Connection lost.");
+		} else {
+			// error("Unknown message transport error. Please report the error.");
+			System.out.println("Unknown message transport error.");
+		}
 		super.handleTransportError(session, throwable);
 	}
 
@@ -163,10 +162,11 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 				public synchronized void handleFrame(StompHeaders arg0, Object payload) {
 
 					try {
-						
-//						System.err.println("received payload of size " + (payload == null ? 0 : payload.toString().length()));
 
 						final Message message = (Message) payload;
+
+//						System.err.println("received payload of type " + message.getPayloadClass() + ", size="
+//								+ (payload == null ? 0 : payload.toString().length()) + " with mclass = " + message.getMessageClass());
 
 						/*
 						 * No automatic translation at the receiving end
@@ -198,7 +198,7 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 
 					} catch (Throwable e) {
 						error("Internal: websockets communication error: " + e);
-						throw new RuntimeException(e);
+						// throw new RuntimeException(e);
 					}
 				}
 
@@ -244,10 +244,10 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 		subscriptions.clear();
 	}
 
-    @Override
-    public Future<IMessage> ask(IMessage message) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Future<IMessage> ask(IMessage message) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
