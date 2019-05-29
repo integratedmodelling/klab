@@ -519,7 +519,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
                 } else if (request.getOperation() == CRUDOperation.UPDATE) {
 
-                    resource = Resources.INSTANCE.getLocalResourceCatalog().remove(urn);
+                    resource = Resources.INSTANCE.getLocalResourceCatalog().removeDefinition(urn);
                     ((Resource) resource).update(request);
                     Resources.INSTANCE.getLocalResourceCatalog().put(urn, resource);
                     monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceUpdated, ((Resource) resource)

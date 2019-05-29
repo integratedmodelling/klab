@@ -408,7 +408,8 @@ public class Resource implements IResource {
     }
 
     public void update(ResourceCRUDRequest request) {
-        for (String key : request.getParameters().keySet()) {
+
+    	for (String key : request.getParameters().keySet()) {
             this.parameters.put(key, Utils.asPOD(request.getParameters().get(key)));
         }
         for (String key : request.getMetadata().keySet()) {

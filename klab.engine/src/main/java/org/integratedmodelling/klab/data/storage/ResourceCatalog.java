@@ -175,12 +175,12 @@ public class ResourceCatalog implements IResourceCatalog {
 		return ret;
 	}
 
-//	public IResource removeDefinition(Object key) {
-//		IResource ret = get(key);
-//		resources.remove(urn);
-////		db.commit();
-//		return ret;
-//	}
+	public IResource removeDefinition(String key) {
+		IResource ret = get(key);
+		resources.remove(key);
+//		db.commit();
+		return ret;
+	}
 
 	@Override
 	public IResource remove(Object key) {

@@ -38,6 +38,15 @@ public interface IResourceCatalog extends Map<String, IResource> {
 	 */
     void clearOnly(Object... objects);
 
+    /**
+     * Remove only the definition from the catalog, not touching the 
+     * resource files.
+     * 
+     * @param urn
+     * @return
+     */
+    IResource removeDefinition(String urn);
+    
 	/**
 	 * Move resource to a different project. Return new resource.
 	 * 
