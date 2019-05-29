@@ -295,7 +295,7 @@ public class VectorEncoder implements IResourceEncoder {
 		File base = null;
 		if (Urns.INSTANCE.isLocal(resource.getUrn())) {
 			IProject project = Resources.INSTANCE.getProject(resource.getLocalProjectName());
-			base = project == null || project.getWorkspace() == null ? null : project.getWorkspace().getRoot();
+			base = project == null ? null : project.getRoot().getParentFile();
 		} else {
 			// TODO
 		}
