@@ -320,8 +320,8 @@ public enum Resources implements IResourceService {
 
 	public IWorkspace getWorkspaceFor(File projectRoot) {
 		for (IWorkspace workspace : workspaces.values()) {
-			for (File file = projectRoot; file != null; file = file.getParentFile()) {
-				if (workspace.getRoot().equals(file)) {
+			for (IProject project : workspace.getProjects()) {
+				if (project.getRoot().equals(projectRoot)) {
 					return workspace;
 				}
 			}

@@ -63,7 +63,6 @@ import org.integratedmodelling.klab.ogc.RasterAdapter;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.NumberUtils;
-import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -254,7 +253,7 @@ public class RasterEncoder implements IResourceEncoder {
 	private GridCoverage getOriginalCoverage(IResource resource) {
 
 		File mainFile = null;
-		File rootPath = Resources.INSTANCE.getProject(resource.getLocalProjectName()).getWorkspace().getRoot();
+		File rootPath = Resources.INSTANCE.getProject(resource.getLocalProjectName()).getRoot().getParentFile();
 
 		for (String path : resource.getLocalPaths()) {
 			if (RasterAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(path))) {

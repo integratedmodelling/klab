@@ -41,6 +41,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   have the same name.
 - Colormaps for rasters that have the same value overall but also nodata values are now
   generated correctly.
+- Fix messaging exception when notifying a resource import in IDE.
+- Fix deletion of resource just after importing when saving the resource data.
+- Fix workspace attribution logic for imported projects not in IDE workspace.
 
 ## [0.10.0.157] -- 2019/05/14
 ### Added

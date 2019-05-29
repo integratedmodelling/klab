@@ -77,7 +77,8 @@ public class VectorEncoder implements IResourceEncoder {
 
 		File mainFile = null;
 		IProject project = Resources.INSTANCE.getProject(((Resource)resource).getLocalProjectName());
-		File rootPath = project.getWorkspace().getRoot();
+		File rootPath = project.getRoot().getParentFile();
+		
 		for (String path : resource.getLocalPaths()) {
 			if (VectorAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(path))) {
 				mainFile = new File(rootPath + File.separator + path);
