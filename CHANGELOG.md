@@ -27,6 +27,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+### Changed
+### Fixed 
+
+## [0.10.0.159] -- 2019/05/29
+### Added
 - Basic support for currencies, without conversion.
 ### Changed
 - Same-workspace criterion added to lexical scoping: models in local workspace are always 
