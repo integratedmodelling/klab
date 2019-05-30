@@ -1122,7 +1122,7 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuilder result = new StringBuilder(super.toString());
+    StringBuffer result = new StringBuffer(super.toString());
     result.append(" (private: ");
     result.append(private_);
     result.append(", inactive: ");

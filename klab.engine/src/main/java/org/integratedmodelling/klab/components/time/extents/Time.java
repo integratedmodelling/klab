@@ -54,6 +54,51 @@ public class Time extends Extent implements ITime {
 	private Time() {
 	}
 
+	/**
+	 * Examples:
+	 * 
+	 *     create(ITime.GENERIC, 1, ITime.Resolution.Type.YEAR) -> generic 1-year
+	 *     create(ITime.GENERIC, 10, ITime.Resolution.Type.YEAR) -> generic 10-year
+	 *     create(1975, ITime.Resolution.Type.YEAR) -> specific 1-year period 1975
+	 *     create(1980, 2000) -> specific, 20 years period
+	 *     create(1980, 2000, 1, ITime.Resolution.Type.DAY)  -> 1-day Grid 
+	 *     create("ISOdate", "ISOdate", 102030L) -> date to date grid with ms resolution
+	 *     create(ITime.REALTIME, ITime.Resolution.Type.HOUR) -> realtime year-res, start now, end never
+	 *     
+	 * @param objects
+	 * @return
+	 */
+	public static Time create(Object... objects) {
+
+		Time ret = new Time();
+
+		int startYear = Integer.MIN_VALUE;;
+		int endYear = Integer.MIN_VALUE;
+		ITime.Type type = ITime.Type.SPECIFIC;
+		ITime.Resolution.Type resolutionType = null;
+		ITimeDuration step = null;
+		
+		if (objects != null) {
+			for (Object o : objects) {
+				if (o instanceof Integer) {
+					if (startYear == Integer.MIN_VALUE) {
+						startYear = (Integer)o;
+					} else if (endYear == Integer.MIN_VALUE) {
+						startYear = (Integer)o;
+					}
+				} else if (o instanceof ITime.Type) {
+					type = (ITime.Type)o;
+				} else if (o instanceof ITime.Resolution.Type) {
+					resolutionType = (ITime.Resolution.Type)o;
+				} else if (o instanceof ITimeDuration) {
+					step = (ITimeDuration)o;
+				}
+			}
+		}
+
+		return ret;
+	}
+
 	public static Time create(int year) {
 		Time ret = new Time();
 		ret.extentType = ITime.Type.SPECIFIC;
@@ -91,8 +136,8 @@ public class Time extends Extent implements ITime {
 	@Override
 	public IExtent merge(IExtent extent) throws KlabException {
 		// TODO Auto-generated method stub
-//		return null;
-	    return this;
+		// return null;
+		return this;
 	}
 
 	@Override
@@ -302,11 +347,11 @@ public class Time extends Extent implements ITime {
 		return false;
 	}
 
-    @Override
-    public IExtent getBoundingExtent() {
-        // TODO Auto-generated method stub
-        // TODO return a line Shape 
-        return null;
-    }
+	@Override
+	public IExtent getBoundingExtent() {
+		// TODO Auto-generated method stub
+		// TODO return a line Shape
+		return null;
+	}
 
 }

@@ -155,7 +155,7 @@ public class HeaderRowImpl extends MinimalEObjectImpl.Container implements Heade
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuilder result = new StringBuilder(super.toString());
+    StringBuffer result = new StringBuffer(super.toString());
     result.append(" (elements: ");
     result.append(elements);
     result.append(')');

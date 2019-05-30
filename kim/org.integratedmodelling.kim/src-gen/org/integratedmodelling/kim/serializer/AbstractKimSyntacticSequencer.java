@@ -39,7 +39,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	protected AbstractElementAlias match_Namespace_____OutsideKeyword_5_6_1_0_a_ResolveKeyword_5_6_0_0__p_FromKeyword_5_6_0_1_0__a;
 	protected AbstractElementAlias match_Namespace_____OutsideKeyword_5_6_1_0_a_ResolveKeyword_5_6_0_0__p_FromKeyword_5_6_0_1_0__p;
 	protected AbstractElementAlias match_Number_PlusSignKeyword_0_0_q;
-	protected AbstractElementAlias match_Number_PlusSignKeyword_3_0_1_0_q;
+	protected AbstractElementAlias match_Number_PlusSignKeyword_4_0_1_0_q;
 	protected AbstractElementAlias match_ObservableSemantics_RequiredKeyword_3_4_1_a;
 	protected AbstractElementAlias match_ObserveStatementBody_UsingKeyword_1_0_a;
 	protected AbstractElementAlias match_ObserveStatementBody_UsingKeyword_1_0_p;
@@ -67,7 +67,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 		match_Namespace_____OutsideKeyword_5_6_1_0_a_ResolveKeyword_5_6_0_0__p_FromKeyword_5_6_0_1_0__a = new GroupAlias(true, true, new GroupAlias(true, false, new TokenAlias(true, true, grammarAccess.getNamespaceAccess().getOutsideKeyword_5_6_1_0()), new TokenAlias(false, false, grammarAccess.getNamespaceAccess().getResolveKeyword_5_6_0_0())), new TokenAlias(false, false, grammarAccess.getNamespaceAccess().getFromKeyword_5_6_0_1_0()));
 		match_Namespace_____OutsideKeyword_5_6_1_0_a_ResolveKeyword_5_6_0_0__p_FromKeyword_5_6_0_1_0__p = new GroupAlias(true, false, new GroupAlias(true, false, new TokenAlias(true, true, grammarAccess.getNamespaceAccess().getOutsideKeyword_5_6_1_0()), new TokenAlias(false, false, grammarAccess.getNamespaceAccess().getResolveKeyword_5_6_0_0())), new TokenAlias(false, false, grammarAccess.getNamespaceAccess().getFromKeyword_5_6_0_1_0()));
 		match_Number_PlusSignKeyword_0_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_0_0());
-		match_Number_PlusSignKeyword_3_0_1_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_3_0_1_0());
+		match_Number_PlusSignKeyword_4_0_1_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_4_0_1_0());
 		match_ObservableSemantics_RequiredKeyword_3_4_1_a = new TokenAlias(true, true, grammarAccess.getObservableSemanticsAccess().getRequiredKeyword_3_4_1());
 		match_ObserveStatementBody_UsingKeyword_1_0_a = new TokenAlias(true, true, grammarAccess.getObserveStatementBodyAccess().getUsingKeyword_1_0());
 		match_ObserveStatementBody_UsingKeyword_1_0_p = new TokenAlias(true, false, grammarAccess.getObserveStatementBodyAccess().getUsingKeyword_1_0());
@@ -133,8 +133,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 				emit_Namespace_____OutsideKeyword_5_6_1_0_a_ResolveKeyword_5_6_0_0__p_FromKeyword_5_6_0_1_0__p(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Number_PlusSignKeyword_0_0_q.equals(syntax))
 				emit_Number_PlusSignKeyword_0_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_Number_PlusSignKeyword_3_0_1_0_q.equals(syntax))
-				emit_Number_PlusSignKeyword_3_0_1_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_Number_PlusSignKeyword_4_0_1_0_q.equals(syntax))
+				emit_Number_PlusSignKeyword_4_0_1_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_ObservableSemantics_RequiredKeyword_3_4_1_a.equals(syntax))
 				emit_ObservableSemantics_RequiredKeyword_3_4_1_a(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_ObserveStatementBody_UsingKeyword_1_0_a.equals(syntax))
@@ -722,7 +722,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     exponential?='E' (ambiguity) exp=INT
 	 *     exponential?='e' (ambiguity) exp=INT
 	 */
-	protected void emit_Number_PlusSignKeyword_3_0_1_0_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+	protected void emit_Number_PlusSignKeyword_4_0_1_0_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

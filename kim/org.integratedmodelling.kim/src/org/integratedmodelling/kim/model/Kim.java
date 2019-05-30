@@ -485,6 +485,11 @@ public enum Kim {
 		if (number.isExponential() || number.isDecimal()) {
 			return Double.parseDouble(node.getText().trim());
 		}
+		if (number.isLong()) {
+			String s = node.getText().trim();
+			int nl = s.indexOf('l');
+			return Long.parseLong(s.substring(0, nl));
+		}
 		return Integer.parseInt(node.getText().trim());
 	}
 

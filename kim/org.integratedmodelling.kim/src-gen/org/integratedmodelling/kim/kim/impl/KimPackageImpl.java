@@ -498,7 +498,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
   /**
    * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
-   *
+   * 
    * <p>This method is used to initialize {@link KimPackage#eINSTANCE} when that field is accessed.
    * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
    * <!-- begin-user-doc -->
@@ -513,8 +513,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     if (isInited) return (KimPackage)EPackage.Registry.INSTANCE.getEPackage(KimPackage.eNS_URI);
 
     // Obtain or create and register package
-    Object registeredKimPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
-    KimPackageImpl theKimPackage = registeredKimPackage instanceof KimPackageImpl ? (KimPackageImpl)registeredKimPackage : new KimPackageImpl();
+    KimPackageImpl theKimPackage = (KimPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof KimPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new KimPackageImpl());
 
     isInited = true;
 
@@ -527,6 +526,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     // Mark meta-data to indicate it can't be changed
     theKimPackage.freeze();
 
+  
     // Update the registry and return the package
     EPackage.Registry.INSTANCE.put(KimPackage.eNS_URI, theKimPackage);
     return theKimPackage;
@@ -4497,7 +4497,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getNumber_Decimal()
+  public EAttribute getNumber_Long()
   {
     return (EAttribute)numberEClass.getEStructuralFeatures().get(2);
   }
@@ -4507,7 +4507,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getNumber_DecimalPart()
+  public EAttribute getNumber_Decimal()
   {
     return (EAttribute)numberEClass.getEStructuralFeatures().get(3);
   }
@@ -4517,7 +4517,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getNumber_Exponential()
+  public EAttribute getNumber_DecimalPart()
   {
     return (EAttribute)numberEClass.getEStructuralFeatures().get(4);
   }
@@ -4527,7 +4527,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getNumber_ExpNegative()
+  public EAttribute getNumber_Exponential()
   {
     return (EAttribute)numberEClass.getEStructuralFeatures().get(5);
   }
@@ -4537,9 +4537,19 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getNumber_Exp()
+  public EAttribute getNumber_ExpNegative()
   {
     return (EAttribute)numberEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getNumber_Exp()
+  {
+    return (EAttribute)numberEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -5041,6 +5051,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     numberEClass = createEClass(NUMBER);
     createEAttribute(numberEClass, NUMBER__NEGATIVE);
     createEAttribute(numberEClass, NUMBER__REAL);
+    createEAttribute(numberEClass, NUMBER__LONG);
     createEAttribute(numberEClass, NUMBER__DECIMAL);
     createEAttribute(numberEClass, NUMBER__DECIMAL_PART);
     createEAttribute(numberEClass, NUMBER__EXPONENTIAL);
@@ -5533,6 +5544,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEClass(numberEClass, org.integratedmodelling.kim.kim.Number.class, "Number", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getNumber_Negative(), ecorePackage.getEBoolean(), "negative", null, 0, 1, org.integratedmodelling.kim.kim.Number.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getNumber_Real(), ecorePackage.getEInt(), "real", null, 0, 1, org.integratedmodelling.kim.kim.Number.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getNumber_Long(), ecorePackage.getEBoolean(), "long", null, 0, 1, org.integratedmodelling.kim.kim.Number.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getNumber_Decimal(), ecorePackage.getEBoolean(), "decimal", null, 0, 1, org.integratedmodelling.kim.kim.Number.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getNumber_DecimalPart(), ecorePackage.getEInt(), "decimalPart", null, 0, 1, org.integratedmodelling.kim.kim.Number.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getNumber_Exponential(), ecorePackage.getEBoolean(), "exponential", null, 0, 1, org.integratedmodelling.kim.kim.Number.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

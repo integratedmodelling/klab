@@ -23,6 +23,7 @@ import org.integratedmodelling.kim.kim.KimPackage;
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.NumberImpl#isNegative <em>Negative</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.NumberImpl#getReal <em>Real</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.NumberImpl#isLong <em>Long</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.NumberImpl#isDecimal <em>Decimal</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.NumberImpl#getDecimalPart <em>Decimal Part</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.NumberImpl#isExponential <em>Exponential</em>}</li>
@@ -73,6 +74,26 @@ public class NumberImpl extends MinimalEObjectImpl.Container implements org.inte
    * @ordered
    */
   protected int real = REAL_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isLong() <em>Long</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isLong()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean LONG_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isLong() <em>Long</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isLong()
+   * @generated
+   * @ordered
+   */
+  protected boolean long_ = LONG_EDEFAULT;
 
   /**
    * The default value of the '{@link #isDecimal() <em>Decimal</em>}' attribute.
@@ -246,6 +267,29 @@ public class NumberImpl extends MinimalEObjectImpl.Container implements org.inte
    * <!-- end-user-doc -->
    * @generated
    */
+  public boolean isLong()
+  {
+    return long_;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setLong(boolean newLong)
+  {
+    boolean oldLong = long_;
+    long_ = newLong;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.NUMBER__LONG, oldLong, long_));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public boolean isDecimal()
   {
     return decimal;
@@ -370,6 +414,8 @@ public class NumberImpl extends MinimalEObjectImpl.Container implements org.inte
         return isNegative();
       case KimPackage.NUMBER__REAL:
         return getReal();
+      case KimPackage.NUMBER__LONG:
+        return isLong();
       case KimPackage.NUMBER__DECIMAL:
         return isDecimal();
       case KimPackage.NUMBER__DECIMAL_PART:
@@ -399,6 +445,9 @@ public class NumberImpl extends MinimalEObjectImpl.Container implements org.inte
         return;
       case KimPackage.NUMBER__REAL:
         setReal((Integer)newValue);
+        return;
+      case KimPackage.NUMBER__LONG:
+        setLong((Boolean)newValue);
         return;
       case KimPackage.NUMBER__DECIMAL:
         setDecimal((Boolean)newValue);
@@ -435,6 +484,9 @@ public class NumberImpl extends MinimalEObjectImpl.Container implements org.inte
       case KimPackage.NUMBER__REAL:
         setReal(REAL_EDEFAULT);
         return;
+      case KimPackage.NUMBER__LONG:
+        setLong(LONG_EDEFAULT);
+        return;
       case KimPackage.NUMBER__DECIMAL:
         setDecimal(DECIMAL_EDEFAULT);
         return;
@@ -468,6 +520,8 @@ public class NumberImpl extends MinimalEObjectImpl.Container implements org.inte
         return negative != NEGATIVE_EDEFAULT;
       case KimPackage.NUMBER__REAL:
         return real != REAL_EDEFAULT;
+      case KimPackage.NUMBER__LONG:
+        return long_ != LONG_EDEFAULT;
       case KimPackage.NUMBER__DECIMAL:
         return decimal != DECIMAL_EDEFAULT;
       case KimPackage.NUMBER__DECIMAL_PART:
@@ -492,11 +546,13 @@ public class NumberImpl extends MinimalEObjectImpl.Container implements org.inte
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuilder result = new StringBuilder(super.toString());
+    StringBuffer result = new StringBuffer(super.toString());
     result.append(" (negative: ");
     result.append(negative);
     result.append(", real: ");
     result.append(real);
+    result.append(", long: ");
+    result.append(long_);
     result.append(", decimal: ");
     result.append(decimal);
     result.append(", decimalPart: ");

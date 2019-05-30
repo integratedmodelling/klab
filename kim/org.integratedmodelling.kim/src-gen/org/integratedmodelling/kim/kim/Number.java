@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.Number#isNegative <em>Negative</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Number#getReal <em>Real</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Number#isLong <em>Long</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Number#isDecimal <em>Decimal</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Number#getDecimalPart <em>Decimal Part</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Number#isExponential <em>Exponential</em>}</li>
@@ -81,6 +82,32 @@ public interface Number extends EObject
    * @generated
    */
   void setReal(int value);
+
+  /**
+   * Returns the value of the '<em><b>Long</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Long</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Long</em>' attribute.
+   * @see #setLong(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getNumber_Long()
+   * @model
+   * @generated
+   */
+  boolean isLong();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Number#isLong <em>Long</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Long</em>' attribute.
+   * @see #isLong()
+   * @generated
+   */
+  void setLong(boolean value);
 
   /**
    * Returns the value of the '<em><b>Decimal</b></em>' attribute.

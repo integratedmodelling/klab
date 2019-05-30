@@ -27,10 +27,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Enable trailing 'l' (lowercase only) to specify long integers. Used in time specs to discriminate
+  millisecond parameters.
 ### Changed
 ### Fixed 
 
-## [0.10.0.159] -- 2019/05/29
+## [0.10.0.162] -- 2019/05/29
 ### Added
 - Basic support for currencies, without conversion.
 ### Changed

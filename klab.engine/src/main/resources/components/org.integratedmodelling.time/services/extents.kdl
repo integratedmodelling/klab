@@ -19,6 +19,12 @@ temporalextent time
 		 units. Example: '1 day'."
 		default ""
 
+	optional value focus 
+		"A string specifying a period with an optional unit that will be the generic temporal focus
+		 for the observation. No specific time start or end is allowed if this is specified. Example:
+		 '5 year'."
+		default ""
+
 	optional number year
 		"A year is an integer number, interpreted as the period covering the entire year."
 		default 0

@@ -935,7 +935,7 @@ Currency:
 	concept=(CAMELCASE_ID | NamespaceId);
 
 Number:
-	('+' | negative?='-')? => real=INT => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+' | expNegative?='-')? exp=INT)?;
+	('+' | negative?='-')? => real=INT (=> long?='l')? => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+' | expNegative?='-')? exp=INT)?;
 
 terminal LOWERCASE_ID:
 	('a'..'z') ('a'..'z' | '0'..'9'| '_')*;

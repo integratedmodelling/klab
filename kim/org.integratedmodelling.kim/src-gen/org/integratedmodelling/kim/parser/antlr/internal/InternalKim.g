@@ -16826,6 +16826,24 @@ ruleNumber returns [EObject current=null]
 		)
 		(
 			((
+				'l'
+			)
+			)=>
+			(
+				lv_long_3_0='l'
+				{
+					newLeafNode(lv_long_3_0, grammarAccess.getNumberAccess().getLongLKeyword_2_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getNumberRule());
+					}
+					setWithLastConsumed($current, "long", true, "l");
+				}
+			)
+		)?
+		(
+			((
 				(
 					(
 						'.'
@@ -16841,9 +16859,9 @@ ruleNumber returns [EObject current=null]
 			(
 				(
 					(
-						lv_decimal_3_0='.'
+						lv_decimal_4_0='.'
 						{
-							newLeafNode(lv_decimal_3_0, grammarAccess.getNumberAccess().getDecimalFullStopKeyword_2_0_0_0());
+							newLeafNode(lv_decimal_4_0, grammarAccess.getNumberAccess().getDecimalFullStopKeyword_3_0_0_0());
 						}
 						{
 							if ($current==null) {
@@ -16855,9 +16873,9 @@ ruleNumber returns [EObject current=null]
 				)
 				(
 					(
-						lv_decimalPart_4_0=RULE_INT
+						lv_decimalPart_5_0=RULE_INT
 						{
-							newLeafNode(lv_decimalPart_4_0, grammarAccess.getNumberAccess().getDecimalPartINTTerminalRuleCall_2_0_1_0());
+							newLeafNode(lv_decimalPart_5_0, grammarAccess.getNumberAccess().getDecimalPartINTTerminalRuleCall_3_0_1_0());
 						}
 						{
 							if ($current==null) {
@@ -16866,7 +16884,7 @@ ruleNumber returns [EObject current=null]
 							setWithLastConsumed(
 								$current,
 								"decimalPart",
-								lv_decimalPart_4_0,
+								lv_decimalPart_5_0,
 								"org.eclipse.xtext.common.Terminals.INT");
 						}
 					)
@@ -16904,9 +16922,9 @@ ruleNumber returns [EObject current=null]
 				(
 					(
 						(
-							lv_exponential_5_1='e'
+							lv_exponential_6_1='e'
 							{
-								newLeafNode(lv_exponential_5_1, grammarAccess.getNumberAccess().getExponentialEKeyword_3_0_0_0_0());
+								newLeafNode(lv_exponential_6_1, grammarAccess.getNumberAccess().getExponentialEKeyword_4_0_0_0_0());
 							}
 							{
 								if ($current==null) {
@@ -16915,9 +16933,9 @@ ruleNumber returns [EObject current=null]
 								setWithLastConsumed($current, "exponential", true, null);
 							}
 							    |
-							lv_exponential_5_2='E'
+							lv_exponential_6_2='E'
 							{
-								newLeafNode(lv_exponential_5_2, grammarAccess.getNumberAccess().getExponentialEKeyword_3_0_0_0_1());
+								newLeafNode(lv_exponential_6_2, grammarAccess.getNumberAccess().getExponentialEKeyword_4_0_0_0_1());
 							}
 							{
 								if ($current==null) {
@@ -16929,16 +16947,16 @@ ruleNumber returns [EObject current=null]
 					)
 				)
 				(
-					otherlv_6='+'
+					otherlv_7='+'
 					{
-						newLeafNode(otherlv_6, grammarAccess.getNumberAccess().getPlusSignKeyword_3_0_1_0());
+						newLeafNode(otherlv_7, grammarAccess.getNumberAccess().getPlusSignKeyword_4_0_1_0());
 					}
 					    |
 					(
 						(
-							lv_expNegative_7_0='-'
+							lv_expNegative_8_0='-'
 							{
-								newLeafNode(lv_expNegative_7_0, grammarAccess.getNumberAccess().getExpNegativeHyphenMinusKeyword_3_0_1_1_0());
+								newLeafNode(lv_expNegative_8_0, grammarAccess.getNumberAccess().getExpNegativeHyphenMinusKeyword_4_0_1_1_0());
 							}
 							{
 								if ($current==null) {
@@ -16951,9 +16969,9 @@ ruleNumber returns [EObject current=null]
 				)?
 				(
 					(
-						lv_exp_8_0=RULE_INT
+						lv_exp_9_0=RULE_INT
 						{
-							newLeafNode(lv_exp_8_0, grammarAccess.getNumberAccess().getExpINTTerminalRuleCall_3_0_2_0());
+							newLeafNode(lv_exp_9_0, grammarAccess.getNumberAccess().getExpINTTerminalRuleCall_4_0_2_0());
 						}
 						{
 							if ($current==null) {
@@ -16962,7 +16980,7 @@ ruleNumber returns [EObject current=null]
 							setWithLastConsumed(
 								$current,
 								"exp",
-								lv_exp_8_0,
+								lv_exp_9_0,
 								"org.eclipse.xtext.common.Terminals.INT");
 						}
 					)

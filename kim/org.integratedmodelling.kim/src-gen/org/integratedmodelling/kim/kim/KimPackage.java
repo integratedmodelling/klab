@@ -4155,13 +4155,22 @@ public interface KimPackage extends EPackage
   int NUMBER__REAL = 1;
 
   /**
+   * The feature id for the '<em><b>Long</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int NUMBER__LONG = 2;
+
+  /**
    * The feature id for the '<em><b>Decimal</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int NUMBER__DECIMAL = 2;
+  int NUMBER__DECIMAL = 3;
 
   /**
    * The feature id for the '<em><b>Decimal Part</b></em>' attribute.
@@ -4170,7 +4179,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int NUMBER__DECIMAL_PART = 3;
+  int NUMBER__DECIMAL_PART = 4;
 
   /**
    * The feature id for the '<em><b>Exponential</b></em>' attribute.
@@ -4179,7 +4188,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int NUMBER__EXPONENTIAL = 4;
+  int NUMBER__EXPONENTIAL = 5;
 
   /**
    * The feature id for the '<em><b>Exp Negative</b></em>' attribute.
@@ -4188,7 +4197,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int NUMBER__EXP_NEGATIVE = 5;
+  int NUMBER__EXP_NEGATIVE = 6;
 
   /**
    * The feature id for the '<em><b>Exp</b></em>' attribute.
@@ -4197,7 +4206,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int NUMBER__EXP = 6;
+  int NUMBER__EXP = 7;
 
   /**
    * The number of structural features of the '<em>Number</em>' class.
@@ -4206,7 +4215,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int NUMBER_FEATURE_COUNT = 7;
+  int NUMBER_FEATURE_COUNT = 8;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.DataType <em>Data Type</em>}' enum.
@@ -8532,6 +8541,17 @@ public interface KimPackage extends EPackage
   EAttribute getNumber_Real();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Number#isLong <em>Long</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Long</em>'.
+   * @see org.integratedmodelling.kim.kim.Number#isLong()
+   * @see #getNumber()
+   * @generated
+   */
+  EAttribute getNumber_Long();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Number#isDecimal <em>Decimal</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -11904,6 +11924,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute NUMBER__REAL = eINSTANCE.getNumber_Real();
+
+    /**
+     * The meta object literal for the '<em><b>Long</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute NUMBER__LONG = eINSTANCE.getNumber_Long();
 
     /**
      * The meta object literal for the '<em><b>Decimal</b></em>' attribute feature.

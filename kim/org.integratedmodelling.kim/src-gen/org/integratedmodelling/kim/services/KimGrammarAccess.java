@@ -9605,31 +9605,33 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cNegativeHyphenMinusKeyword_0_1_0 = (Keyword)cNegativeAssignment_0_1.eContents().get(0);
 		private final Assignment cRealAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cRealINTTerminalRuleCall_1_0 = (RuleCall)cRealAssignment_1.eContents().get(0);
-		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
-		private final Group cGroup_2_0 = (Group)cGroup_2.eContents().get(0);
-		private final Assignment cDecimalAssignment_2_0_0 = (Assignment)cGroup_2_0.eContents().get(0);
-		private final Keyword cDecimalFullStopKeyword_2_0_0_0 = (Keyword)cDecimalAssignment_2_0_0.eContents().get(0);
-		private final Assignment cDecimalPartAssignment_2_0_1 = (Assignment)cGroup_2_0.eContents().get(1);
-		private final RuleCall cDecimalPartINTTerminalRuleCall_2_0_1_0 = (RuleCall)cDecimalPartAssignment_2_0_1.eContents().get(0);
+		private final Assignment cLongAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final Keyword cLongLKeyword_2_0 = (Keyword)cLongAssignment_2.eContents().get(0);
 		private final Group cGroup_3 = (Group)cGroup.eContents().get(3);
 		private final Group cGroup_3_0 = (Group)cGroup_3.eContents().get(0);
-		private final Assignment cExponentialAssignment_3_0_0 = (Assignment)cGroup_3_0.eContents().get(0);
-		private final Alternatives cExponentialAlternatives_3_0_0_0 = (Alternatives)cExponentialAssignment_3_0_0.eContents().get(0);
-		private final Keyword cExponentialEKeyword_3_0_0_0_0 = (Keyword)cExponentialAlternatives_3_0_0_0.eContents().get(0);
-		private final Keyword cExponentialEKeyword_3_0_0_0_1 = (Keyword)cExponentialAlternatives_3_0_0_0.eContents().get(1);
-		private final Alternatives cAlternatives_3_0_1 = (Alternatives)cGroup_3_0.eContents().get(1);
-		private final Keyword cPlusSignKeyword_3_0_1_0 = (Keyword)cAlternatives_3_0_1.eContents().get(0);
-		private final Assignment cExpNegativeAssignment_3_0_1_1 = (Assignment)cAlternatives_3_0_1.eContents().get(1);
-		private final Keyword cExpNegativeHyphenMinusKeyword_3_0_1_1_0 = (Keyword)cExpNegativeAssignment_3_0_1_1.eContents().get(0);
-		private final Assignment cExpAssignment_3_0_2 = (Assignment)cGroup_3_0.eContents().get(2);
-		private final RuleCall cExpINTTerminalRuleCall_3_0_2_0 = (RuleCall)cExpAssignment_3_0_2.eContents().get(0);
+		private final Assignment cDecimalAssignment_3_0_0 = (Assignment)cGroup_3_0.eContents().get(0);
+		private final Keyword cDecimalFullStopKeyword_3_0_0_0 = (Keyword)cDecimalAssignment_3_0_0.eContents().get(0);
+		private final Assignment cDecimalPartAssignment_3_0_1 = (Assignment)cGroup_3_0.eContents().get(1);
+		private final RuleCall cDecimalPartINTTerminalRuleCall_3_0_1_0 = (RuleCall)cDecimalPartAssignment_3_0_1.eContents().get(0);
+		private final Group cGroup_4 = (Group)cGroup.eContents().get(4);
+		private final Group cGroup_4_0 = (Group)cGroup_4.eContents().get(0);
+		private final Assignment cExponentialAssignment_4_0_0 = (Assignment)cGroup_4_0.eContents().get(0);
+		private final Alternatives cExponentialAlternatives_4_0_0_0 = (Alternatives)cExponentialAssignment_4_0_0.eContents().get(0);
+		private final Keyword cExponentialEKeyword_4_0_0_0_0 = (Keyword)cExponentialAlternatives_4_0_0_0.eContents().get(0);
+		private final Keyword cExponentialEKeyword_4_0_0_0_1 = (Keyword)cExponentialAlternatives_4_0_0_0.eContents().get(1);
+		private final Alternatives cAlternatives_4_0_1 = (Alternatives)cGroup_4_0.eContents().get(1);
+		private final Keyword cPlusSignKeyword_4_0_1_0 = (Keyword)cAlternatives_4_0_1.eContents().get(0);
+		private final Assignment cExpNegativeAssignment_4_0_1_1 = (Assignment)cAlternatives_4_0_1.eContents().get(1);
+		private final Keyword cExpNegativeHyphenMinusKeyword_4_0_1_1_0 = (Keyword)cExpNegativeAssignment_4_0_1_1.eContents().get(0);
+		private final Assignment cExpAssignment_4_0_2 = (Assignment)cGroup_4_0.eContents().get(2);
+		private final RuleCall cExpINTTerminalRuleCall_4_0_2_0 = (RuleCall)cExpAssignment_4_0_2.eContents().get(0);
 		
 		//Number:
-		//	('+' | negative?='-')? => real=INT => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+' |
-		//	expNegative?='-')? exp=INT)?;
+		//	('+' | negative?='-')? => real=INT => long?='l'? => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+'
+		//	| expNegative?='-')? exp=INT)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//('+' | negative?='-')? => real=INT => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+' |
+		//('+' | negative?='-')? => real=INT => long?='l'? => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+' |
 		//expNegative?='-')? exp=INT)?
 		public Group getGroup() { return cGroup; }
 		
@@ -9651,59 +9653,65 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//INT
 		public RuleCall getRealINTTerminalRuleCall_1_0() { return cRealINTTerminalRuleCall_1_0; }
 		
+		//=> long?='l'?
+		public Assignment getLongAssignment_2() { return cLongAssignment_2; }
+		
+		//'l'
+		public Keyword getLongLKeyword_2_0() { return cLongLKeyword_2_0; }
+		
 		//=> (decimal?='.' decimalPart=INT)?
-		public Group getGroup_2() { return cGroup_2; }
-		
-		//decimal?='.' decimalPart=INT
-		public Group getGroup_2_0() { return cGroup_2_0; }
-		
-		//decimal?='.'
-		public Assignment getDecimalAssignment_2_0_0() { return cDecimalAssignment_2_0_0; }
-		
-		//'.'
-		public Keyword getDecimalFullStopKeyword_2_0_0_0() { return cDecimalFullStopKeyword_2_0_0_0; }
-		
-		//decimalPart=INT
-		public Assignment getDecimalPartAssignment_2_0_1() { return cDecimalPartAssignment_2_0_1; }
-		
-		//INT
-		public RuleCall getDecimalPartINTTerminalRuleCall_2_0_1_0() { return cDecimalPartINTTerminalRuleCall_2_0_1_0; }
-		
-		//=> (exponential?=('e' | 'E') ('+' | expNegative?='-')? exp=INT)?
 		public Group getGroup_3() { return cGroup_3; }
 		
-		//exponential?=('e' | 'E') ('+' | expNegative?='-')? exp=INT
+		//decimal?='.' decimalPart=INT
 		public Group getGroup_3_0() { return cGroup_3_0; }
 		
-		//exponential?=('e' | 'E')
-		public Assignment getExponentialAssignment_3_0_0() { return cExponentialAssignment_3_0_0; }
+		//decimal?='.'
+		public Assignment getDecimalAssignment_3_0_0() { return cDecimalAssignment_3_0_0; }
 		
-		//('e' | 'E')
-		public Alternatives getExponentialAlternatives_3_0_0_0() { return cExponentialAlternatives_3_0_0_0; }
+		//'.'
+		public Keyword getDecimalFullStopKeyword_3_0_0_0() { return cDecimalFullStopKeyword_3_0_0_0; }
 		
-		//'e'
-		public Keyword getExponentialEKeyword_3_0_0_0_0() { return cExponentialEKeyword_3_0_0_0_0; }
-		
-		//'E'
-		public Keyword getExponentialEKeyword_3_0_0_0_1() { return cExponentialEKeyword_3_0_0_0_1; }
-		
-		//('+' | expNegative?='-')?
-		public Alternatives getAlternatives_3_0_1() { return cAlternatives_3_0_1; }
-		
-		//'+'
-		public Keyword getPlusSignKeyword_3_0_1_0() { return cPlusSignKeyword_3_0_1_0; }
-		
-		//expNegative?='-'
-		public Assignment getExpNegativeAssignment_3_0_1_1() { return cExpNegativeAssignment_3_0_1_1; }
-		
-		//'-'
-		public Keyword getExpNegativeHyphenMinusKeyword_3_0_1_1_0() { return cExpNegativeHyphenMinusKeyword_3_0_1_1_0; }
-		
-		//exp=INT
-		public Assignment getExpAssignment_3_0_2() { return cExpAssignment_3_0_2; }
+		//decimalPart=INT
+		public Assignment getDecimalPartAssignment_3_0_1() { return cDecimalPartAssignment_3_0_1; }
 		
 		//INT
-		public RuleCall getExpINTTerminalRuleCall_3_0_2_0() { return cExpINTTerminalRuleCall_3_0_2_0; }
+		public RuleCall getDecimalPartINTTerminalRuleCall_3_0_1_0() { return cDecimalPartINTTerminalRuleCall_3_0_1_0; }
+		
+		//=> (exponential?=('e' | 'E') ('+' | expNegative?='-')? exp=INT)?
+		public Group getGroup_4() { return cGroup_4; }
+		
+		//exponential?=('e' | 'E') ('+' | expNegative?='-')? exp=INT
+		public Group getGroup_4_0() { return cGroup_4_0; }
+		
+		//exponential?=('e' | 'E')
+		public Assignment getExponentialAssignment_4_0_0() { return cExponentialAssignment_4_0_0; }
+		
+		//('e' | 'E')
+		public Alternatives getExponentialAlternatives_4_0_0_0() { return cExponentialAlternatives_4_0_0_0; }
+		
+		//'e'
+		public Keyword getExponentialEKeyword_4_0_0_0_0() { return cExponentialEKeyword_4_0_0_0_0; }
+		
+		//'E'
+		public Keyword getExponentialEKeyword_4_0_0_0_1() { return cExponentialEKeyword_4_0_0_0_1; }
+		
+		//('+' | expNegative?='-')?
+		public Alternatives getAlternatives_4_0_1() { return cAlternatives_4_0_1; }
+		
+		//'+'
+		public Keyword getPlusSignKeyword_4_0_1_0() { return cPlusSignKeyword_4_0_1_0; }
+		
+		//expNegative?='-'
+		public Assignment getExpNegativeAssignment_4_0_1_1() { return cExpNegativeAssignment_4_0_1_1; }
+		
+		//'-'
+		public Keyword getExpNegativeHyphenMinusKeyword_4_0_1_1_0() { return cExpNegativeHyphenMinusKeyword_4_0_1_1_0; }
+		
+		//exp=INT
+		public Assignment getExpAssignment_4_0_2() { return cExpAssignment_4_0_2; }
+		
+		//INT
+		public RuleCall getExpINTTerminalRuleCall_4_0_2_0() { return cExpINTTerminalRuleCall_4_0_2_0; }
 	}
 	public class PathNameElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.PathName");
@@ -11389,8 +11397,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Number:
-	//	('+' | negative?='-')? => real=INT => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+' |
-	//	expNegative?='-')? exp=INT)?;
+	//	('+' | negative?='-')? => real=INT => long?='l'? => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+'
+	//	| expNegative?='-')? exp=INT)?;
 	public NumberElements getNumberAccess() {
 		return pNumber;
 	}
