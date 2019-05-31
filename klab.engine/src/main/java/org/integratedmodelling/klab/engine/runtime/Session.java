@@ -125,7 +125,6 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	long creation = System.currentTimeMillis();
 	long lastJoin = System.currentTimeMillis();
 	boolean isDefault = false;
-	boolean lockResolution = false;
 	Set<String> relayIdentities = new HashSet<>();
 	SpatialExtent regionOfInterest = null;
 
@@ -154,10 +153,23 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	private Map<String, Pair<IIndexingService.Context, List<Match>>> searchContexts = Collections
 			.synchronizedMap(new HashMap<>());
 
-	private double gridSize;
-	private String gridUnits;
+	/**
+	 * These are defined every time the ROI is set unless space or time are locked,
+	 * in which case they will only be set if null.
+	 */
+	private Double spatialGridSize = null;
+	private String spatialGridUnits = null;
+	private Double temporalGridSize = null;
+	private String temporalGridUnits = null;
 
 	private AtomicBoolean interactive = new AtomicBoolean(false);
+	/*
+	 * Space and time locking defines behavior at context reset: if context is reset
+	 * and resolution is locked, we keep the user-defined resolution (defining it
+	 * from the current at the moment of locking if the user res is null).
+	 */
+	private AtomicBoolean lockSpace = new AtomicBoolean(false);
+	private AtomicBoolean lockTime = new AtomicBoolean(false);
 
 	public interface Listener {
 		void onClose(ISession session);
@@ -242,9 +254,9 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 				INamespace namespace = object instanceof KimObject ? ((KimObject) object).getNamespace()
 						: Namespaces.INSTANCE.getNamespace(((IObservable) object).getNamespace());
 				SpatialExtent roi = new SpatialExtent(regionOfInterest);
-				if (lockResolution) {
-					roi.setGridResolution(this.gridSize);
-					roi.setGridUnit(this.gridUnits);
+				if (lockSpace.get()) {
+					roi.setGridResolution(this.spatialGridSize);
+					roi.setGridUnit(this.spatialGridUnits);
 				}
 				Observer observer = Observations.INSTANCE.makeROIObserver(roi, (Namespace) namespace, monitor);
 				try {
@@ -410,7 +422,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		// TODO dispose of the observation
 		// TODO send a notification through the session monitor that the obs is now out
 		// of scope.
-		Logging.INSTANCE.warn("Disposing of observation " + context.getRootSubject() + ": TODO");
+		Logging.INSTANCE.info("Disposing of observation " + context.getRootSubject() + ": TODO");
 	}
 
 	/*
@@ -425,6 +437,14 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		case InteractiveMode:
 			this.interactive.set(Boolean.parseBoolean(request.getNewValue()));
 			monitor.info("interactive mode set to " + (interactive.get() ? "on" : "off"));
+			break;
+		case LockSpace:
+			this.lockSpace.set(Boolean.parseBoolean(request.getNewValue()));
+			monitor.info("spatial resolution " + (lockSpace.get() ? "" : "un") + "locked");
+			break;
+		case LockTime:
+			this.lockTime.set(Boolean.parseBoolean(request.getNewValue()));
+			monitor.info("temporal resolution " + (lockSpace.get() ? "" : "un") + "locked");
 			break;
 		default:
 			break;
@@ -553,6 +573,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 				monitor.error("cannot import into resource: URN " + request.getTargetResourceUrn() + " is unknown");
 			} else {
 				new Thread() {
+
 					@Override
 					public void run() {
 						if (Resources.INSTANCE.importIntoResource(request.getImportUrl(), resource, getMonitor())) {
@@ -562,6 +583,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 							// TODO complain to client
 						}
 					}
+
 				}.start();
 			}
 
@@ -571,10 +593,18 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 	@MessageHandler
 	private void setRegionOfInterest(SpatialExtent extent) {
+
 		Envelope envelope = Envelope.create(extent.getEast(), extent.getWest(), extent.getSouth(), extent.getNorth(),
 				Projection.getLatLon());
 		ScaleReference scale = new ScaleReference();
-		Pair<Integer, String> resolution = envelope.getResolutionForZoomLevel();
+		
+		if (!lockSpace.get() || this.spatialGridSize == null) {
+			Pair<Integer, String> rres = envelope.getResolutionForZoomLevel();
+			this.spatialGridSize = (double)rres.getFirst();
+			this.spatialGridUnits = rres.getSecond();
+		}
+
+		Pair<Double, String> resolution = new Pair<>(this.spatialGridSize, this.spatialGridUnits);
 		Unit sunit = Unit.create(resolution.getSecond());
 		int scaleRank = envelope.getScaleRank();
 		scale.setEast(envelope.getMaxX());
@@ -801,6 +831,10 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 	@MessageHandler(type = IMessage.Type.ResetContext)
 	private void handleResetContextRequest(String dummy) {
+		if (!lockSpace.get()) {
+			this.spatialGridSize = null;
+			this.spatialGridUnits = null;
+		}
 		this.regionOfInterest = null;
 		monitor.send(IMessage.Type.ResetContext, IMessage.MessageClass.UserContextChange, "");
 	}
@@ -880,18 +914,8 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 	@MessageHandler(type = IMessage.Type.ScaleDefined)
 	private void handleScaleChangeRequest(ScaleReference scaleRef) {
-		// Temporary - revise from settings
-//		if (scaleRef.isUnlockSpace()) {
-//			this.lockResolution = false;
-//			if (this.regionOfInterest != null) {
-//				this.setRegionOfInterest(this.regionOfInterest);
-//			}
-//		} else {
-			this.gridSize = scaleRef.getSpaceResolutionConverted();
-			this.gridUnits = scaleRef.getSpaceUnit();
-			this.lockResolution = true;
-			// TODO time - may not have space one day
-//		}
+		this.spatialGridSize = scaleRef.getSpaceResolutionConverted();
+		this.spatialGridUnits = scaleRef.getSpaceUnit();
 	}
 
 	@MessageHandler
