@@ -36,8 +36,8 @@ public class ScaleReference {
 	private double timeResolution;
 	private String timeResolutionDescription;
 	private String timeUnit;
-	private boolean unlockSpace;
-	private boolean unlockTime;
+//	private boolean unlockSpace;
+//	private boolean unlockTime;
 	// FIXME REMOVE
     private String resolutionDescription;
 
@@ -61,33 +61,33 @@ public class ScaleReference {
 		this.timeUnit = timeUnit;
 	}
 
-	/**
-	 * Sent from front end when user wants to go back to automatic spatial scale
-	 * resolution.
-	 * 
-	 * @return
-	 */
-	public boolean isUnlockSpace() {
-		return unlockSpace;
-	}
-
-	/**
-	 * Sent from front end when user wants to go back to automatic spatial scale
-	 * resolution.
-	 * 
-	 * @return
-	 */
-	public void setUnlockSpace(boolean unlockSpace) {
-		this.unlockSpace = unlockSpace;
-	}
-
-	public boolean isUnlockTime() {
-		return unlockTime;
-	}
-
-	public void setUnlockTime(boolean unlockTime) {
-		this.unlockTime = unlockTime;
-	}
+//	/**
+//	 * Sent from front end when user wants to go back to automatic spatial scale
+//	 * resolution.
+//	 * 
+//	 * @return
+//	 */
+//	public boolean isUnlockSpace() {
+//		return unlockSpace;
+//	}
+//
+//	/**
+//	 * Sent from front end when user wants to go back to automatic spatial scale
+//	 * resolution.
+//	 * 
+//	 * @return
+//	 */
+//	public void setUnlockSpace(boolean unlockSpace) {
+//		this.unlockSpace = unlockSpace;
+//	}
+//
+//	public boolean isUnlockTime() {
+//		return unlockTime;
+//	}
+//
+//	public void setUnlockTime(boolean unlockTime) {
+//		this.unlockTime = unlockTime;
+//	}
 
 	public void setEast(double east) {
 		this.east = east;

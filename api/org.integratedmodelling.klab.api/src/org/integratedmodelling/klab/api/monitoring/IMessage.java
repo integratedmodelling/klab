@@ -204,7 +204,7 @@ public interface IMessage {
 		/*
 		 * F->B: ask engine to modify or delete projects or project assets
 		 */
-		CreateNamespace, CreateScenario, CreateCalibration, DeleteNamespace, DeleteLocalResource, CreateProject, DeleteProject, CreateScript, DeleteScript, CreateTestCase, DeleteTestCase,
+		CreateNamespace, CreateScenario, DeleteNamespace, DeleteLocalResource, CreateProject, DeleteProject, CreateScript, DeleteScript, CreateTestCase, DeleteTestCase,
 
 		/**
 		 * F->B: notification when files are explicitly changed, added or deleted;

@@ -3,7 +3,9 @@ package org.integratedmodelling.klab.rest;
 public class SettingChangeRequest {
 
 	public static enum Setting {
-		InteractiveMode
+		InteractiveMode,
+		LockSpace,
+		LockTime
 	}
 
 	private Setting setting;
