@@ -82,8 +82,8 @@ public class EngineViewController {
             throw new IllegalArgumentException("observation " + observation + " does not exist");
         }
 
-        return Observations.INSTANCE.createArtifactDescriptor(obs, obs
-                .getContext(), loc, childLevel == null ? -1 : childLevel, collapseSiblings, false);
+        return Observations.INSTANCE.createArtifactDescriptor(obs/*, obs
+                .getContext()*/, loc, childLevel == null ? -1 : childLevel, collapseSiblings, false);
     }
 
     /**
@@ -152,8 +152,8 @@ public class EngineViewController {
                 IArtifact artifact = it.next();
                 if (i >= offset) {
                     ObservationReference ref = Observations.INSTANCE
-                            .createArtifactDescriptor((IObservation) artifact, obs
-                                    .getContext(), loc, childLevel == null ? 0 : childLevel, false, false);
+                            .createArtifactDescriptor((IObservation) artifact/*, obs
+                                    .getContext()*/, loc, childLevel == null ? 0 : childLevel, false, false);
                     if (ret == null) {
                         ret = ref;
                     } else {

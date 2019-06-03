@@ -45,7 +45,6 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
-import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.table.LookupTable;
@@ -143,6 +142,12 @@ public class Actuator implements IActuator {
 	 * at end of computation
 	 */
 	private List<IDocumentation> documentation = new ArrayList<>();
+
+	/*
+	 * keep all computed observations here for notifyArtifact() to send on the
+	 * message bus
+	 */
+	private List<IObservation> products = new ArrayList<>();
 
 	// private boolean definesScale;
 
@@ -317,23 +322,6 @@ public class Actuator implements IActuator {
 			((Report) context.getReport()).include(contextualizer.getSecond());
 		}
 
-		IConfiguration configuration = null;
-		if (!ret.isEmpty() && (mode == Mode.INSTANTIATION || ret instanceof IState)) {
-			/*
-			 * check for configuration triggered, only if we just resolved a state or
-			 * instantiated 1+ objects
-			 */
-			Pair<IConcept, Set<IObservation>> confdesc = Observables.INSTANCE.detectConfigurations((IObservation) ret,
-					ctx.getContextObservation());
-
-			if (confdesc != null) {
-				ctx.getMonitor().info("emergent configuration " + Concepts.INSTANCE.getDisplayName(confdesc.getFirst())
-						+ " detected");
-				configuration = ctx.newConfiguration(confdesc.getFirst(), confdesc.getSecond(),
-						/* TODO metadata */ new Metadata());
-			}
-		}
-
 		if (runtimeContext.getMonitor().isInterrupted()) {
 			return ret;
 		}
@@ -348,97 +336,41 @@ public class Actuator implements IActuator {
 		// needs to store the full causal chain and any indirect observations.
 		ctx.getProvenance().addArtifact(ret);
 
-		if (Klab.INSTANCE.getMessageBus() != null && !isPartition()
-				&& !ctx.getMonitor().getIdentity().getParentIdentity(ITaskTree.class).isChildTask()) {
+		/*
+		 * If we're not importing a previously computed result, put outputs in product
+		 * list and create configurations if any.
+		 */
+		if (!input) {
 
-			/*
-			 * If we're not importing a previously computed result, send the artifact to the
-			 * session's channel, only for primary observations and with all children. TODO
-			 * ensure that @probe annotations are honored: send the probed artifacts, and
-			 * ensure they're not sent if not probed.
-			 */
-			if (!input) {
-
-				boolean isMain = false;
-				for (IAnnotation annotation : annotations) {
-					if (annotation.getName().equals("main")) {
-						isMain = true;
-						break;
+			if (model != null) {
+				for (int i = 0; i < model.getObservables().size(); i++) {
+					IArtifact artifact = ctx.getArtifact(model.getObservables().get(i).getLocalName());
+					if (artifact instanceof IObservation) {
+						this.products.add((IObservation) artifact);
 					}
 				}
+			}
 
-				// FIXME - just notify the group
-				IObservation notifiable = (IObservation) (ret instanceof ObservationGroup && ret.groupSize() > 0
-						? ret.iterator().next()
-						: ret);
-
-				List<IObservation> notifiables = new ArrayList<>();
-				if (model != null) {
-					for (int i = 0; i < model.getObservables().size(); i++) {
-						IArtifact artifact = ctx.getArtifact(model.getObservables().get(i).getLocalName());
-						// FIXME this is a hack - all the notification logics must be fixed
-						if (artifact instanceof IState) {
-							notifiables.add((IObservation) artifact);
-						}
-					}
-				}
-				notifiables.add(notifiable);
-
-				IObservation parent = ctx.getContextObservation().equals(notifiable) ? null
-						: ctx.getContextObservation();
-				ISession session = ctx.getMonitor().getIdentity().getParentIdentity(ISession.class);
-
+			IConfiguration configuration = null;
+			if (!ret.isEmpty() && (mode == Mode.INSTANTIATION || ret instanceof IState)) {
 				/*
-				 * If we're resolving the root context with a nontrivial dataflow and this is an
-				 * internal observation made by it, the parent observation wasn't notified
-				 * before, so we do this now.
+				 * check for configuration triggered, only if we just resolved a state or
+				 * instantiated 1+ objects
 				 */
-				if (parent != null && !dataflow.wasNotified(parent)) {
+				Pair<IConcept, Set<IObservation>> confdesc = Observables.INSTANCE
+						.detectConfigurations((IObservation) ret, ctx.getContextObservation());
 
-					IObservationReference parentReference = Observations.INSTANCE.createArtifactDescriptor(parent,
-							parent.getContext(), ITime.INITIALIZATION, 0, false, isMain)
-							.withTaskId(ctx.getMonitor().getIdentity().getId());
-
-					session.getMonitor().send(Message.create(session.getId(),
-							IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation, parentReference));
-
-					((Artifact) parent).setNotified(true);
-
-				}
-
-				for (int i = 0; i < notifiables.size(); i++) {
-
-					boolean last = i == notifiables.size() - 1;
-					IObservation obs = notifiables.get(i);
-
-					if (!dataflow.wasNotified(obs)) {
-
-						IObservationReference observation = Observations.INSTANCE
-								.createArtifactDescriptor(obs, parent, ITime.INITIALIZATION, 0, false, isMain && last)
-								.withTaskId(ctx.getMonitor().getIdentity().getId());
-
-						session.getMonitor().send(Message.create(session.getId(),
-								IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation, observation));
-
-						((Report) ctx.getReport()).include(observation);
-						((Artifact) obs).setNotified(true);
+				if (confdesc != null) {
+					
+					ctx.getMonitor().info("emergent configuration "
+							+ Concepts.INSTANCE.getDisplayName(confdesc.getFirst()) + " detected");
+					
+					configuration = ctx.newConfiguration(confdesc.getFirst(), confdesc.getSecond(),
+							/* TODO metadata */ new Metadata());
+					
+					if (configuration != null) {
+						this.products.add(configuration);
 					}
-				}
-
-				if (configuration != null) {
-
-					/*
-					 * notify the configuration.
-					 */
-					IObservationReference observation = Observations.INSTANCE
-							.createArtifactDescriptor(configuration, parent, ITime.INITIALIZATION, 0, false, false)
-							.withTaskId(ctx.getMonitor().getIdentity().getId());
-
-					session.getMonitor().send(Message.create(session.getId(),
-							IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation, observation));
-
-					((Report) ctx.getReport()).include(observation);
-					((Artifact) configuration).setNotified(true);
 				}
 			}
 		}
@@ -460,6 +392,10 @@ public class Actuator implements IActuator {
 				((Report) runtimeContext.getReport()).include(template, ctx);
 			}
 		}
+
+		/*
+		 * TO HERE
+		 */
 
 		return ret;
 	}
@@ -578,7 +514,6 @@ public class Actuator implements IActuator {
 			throws KlabException {
 
 		IRuntimeContext ret = runtimeContext.copy();
-		// IScale scale = ret.getScale().at(locator);
 
 		// compile mediators
 		List<Pair<IContextualizer, IComputableResource>> mediation = new ArrayList<>();
@@ -590,11 +525,6 @@ public class Actuator implements IActuator {
 			}
 			mediation.add(new Pair<>((IContextualizer) contextualizer, service.getSecond()));
 		}
-
-		// really?
-		// ret.setTarget(target);
-		// ret.setScale(this.getPartialScale() == null ? scale :
-		// this.getPartialScale());
 
 		for (IActuator input : getActuators()) {
 			if (ret.getArtifact(input.getName()) != null) {
@@ -782,7 +712,7 @@ public class Actuator implements IActuator {
 		return computationStrategy.size() > 0;
 	}
 
-	private boolean isMerging() {
+	public boolean isMerging() {
 		for (IActuator child : getActuators()) {
 			if (((Actuator) child).isPartition()) {
 				return true;
@@ -795,10 +725,6 @@ public class Actuator implements IActuator {
 	public List<IComputableResource> getComputation() {
 		return computedResources;
 	}
-
-	// public void setDefinesScale(boolean definesScale) {
-	// this.definesScale = definesScale;
-	// }
 
 	public boolean isExported() {
 		return exported;
@@ -980,7 +906,7 @@ public class Actuator implements IActuator {
 			_dependencyOrder((Actuator) child, ret, added, catalog);
 		}
 
-		if (add && !added.contains(actuator) && (actuator.isComputed() || actuator.isMerging())) {
+		if (add && !added.contains(actuator)) {
 			ret.add(actuator);
 			added.add(actuator);
 		}
@@ -1001,7 +927,7 @@ public class Actuator implements IActuator {
 		List<IActuator> ret = new ArrayList<>();
 		List<IActuator> partitions = new ArrayList<>();
 		for (IActuator act : actuator.getActuators()) {
-			if (((Actuator)act).observable.equals(actuator.observable)) {
+			if (((Actuator) act).observable.equals(actuator.observable)) {
 				partitions.add(act);
 			} else {
 				ret.add(act);
@@ -1011,15 +937,59 @@ public class Actuator implements IActuator {
 			partitions.sort(new Comparator<IActuator>() {
 				@Override
 				public int compare(IActuator o1, IActuator o2) {
-					int o1priority = ((Actuator)o1).priority;
-					int o2priority = ((Actuator)o2).priority;
+					int o1priority = ((Actuator) o1).priority;
+					int o2priority = ((Actuator) o2).priority;
 					return Integer.compare(o2priority, o1priority);
 				}
 			});
 		}
-		
+
 		ret.addAll(partitions);
 
 		return ret;
+	}
+
+	/*
+	 * Notify all computed artifacts on the message bus. Compute() may not have been
+	 * called if there is no computation, so if we have no artifacts check first if
+	 * we have a product with the same name (happens with countables when no
+	 * resolver was found).
+	 * 
+	 * TODO ensure that @probe annotations are honored.
+	 * 
+	 * @param isMainObservable
+	 */
+	public void notifyArtifacts(boolean isMainObservable, IRuntimeContext context) {
+
+		if (Klab.INSTANCE.getMessageBus() == null || isPartition()
+				|| context.getMonitor().getIdentity().getParentIdentity(ITaskTree.class).isChildTask()) {
+			return;
+		}
+
+		String taskId = context.getMonitor().getIdentity().getId();
+		ISession session = context.getMonitor().getIdentity().getParentIdentity(ISession.class);
+
+		if (this.products.isEmpty()) {
+			if (context.getArtifact(this.name) != null) {
+				this.products.add((IObservation) context.getArtifact(this.name));
+			}
+		}
+
+		boolean isMain = false;
+		for (IAnnotation annotation : annotations) {
+			if (annotation.getName().equals("main")) {
+				isMain = true;
+				break;
+			}
+		}
+
+		for (IObservation product : products) {
+			IObservationReference observation = Observations.INSTANCE
+					.createArtifactDescriptor(product, ITime.INITIALIZATION, 0, false, isMainObservable || isMain)
+					.withTaskId(taskId);
+			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+					IMessage.Type.NewObservation, observation));
+			((Report) context.getReport()).include(observation);
+		}
 	}
 }

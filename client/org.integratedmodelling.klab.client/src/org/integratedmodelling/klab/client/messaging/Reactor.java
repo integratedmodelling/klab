@@ -162,7 +162,6 @@ public class Reactor {
 
 		} catch (Throwable e) {
 			e.printStackTrace();
-			
 			throw new RuntimeException("internal error: converting payload of message " + message);
 		}
 

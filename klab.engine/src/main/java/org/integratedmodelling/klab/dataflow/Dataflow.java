@@ -63,7 +63,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	private DirectObservation context;
 	private ResolutionScope scope;
 	private boolean primary = true;
-	private Set<String> notified = new HashSet<>();
+	// private Set<String> notified = new HashSet<>();
 	IDirectObservation relationshipSource;
 	IDirectObservation relationshipTarget;
 
@@ -195,9 +195,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		for (IActuator actuator : actuators) {
 			try {
 
-				IArtifact data = Klab.INSTANCE.getRuntimeProvider().compute(actuator, scale, scope, context, monitor)
-						.get();
-
+				IArtifact data = Klab.INSTANCE.getRuntimeProvider().compute(actuator, scale, scope, context, monitor).get();
 				if (ret == null) {
 					ret = data;
 				} else {
@@ -431,13 +429,13 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		this.description = description;
 	}
 
-	public boolean wasNotified(IObservation parent) {
-		boolean ret = notified.contains(parent.getId());
-		if (!ret) {
-			notified.add(parent.getId());
-		}
-		return ret;
-	}
+	// public boolean wasNotified(IObservation parent) {
+	// boolean ret = notified.contains(parent.getId());
+	// if (!ret) {
+	// notified.add(parent.getId());
+	// }
+	// return ret;
+	// }
 
 	public Dataflow withMetadata(IMetadata metadata) {
 		this.metadata = metadata;

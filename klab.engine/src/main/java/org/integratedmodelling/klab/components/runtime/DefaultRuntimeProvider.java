@@ -124,12 +124,18 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 							monitor);
 				}
 
-				for (Actuator active : ((Actuator) actuator).dependencyOrder()) {
+				List<Actuator> order = ((Actuator) actuator).dependencyOrder();
+				int i = 0;
+				for (Actuator active : order) {
 					IRuntimeContext ctx = runtimeContext;
 					if (active != actuator) {
 						ctx = runtimeContext.createChild(scale, active, scope, monitor);
 					}
-					active.compute(ctx.getTargetArtifact(), ctx);
+					if (active.isComputed() || ((Actuator) active).isMerging()) {
+						active.compute(ctx.getTargetArtifact(), ctx);
+					}
+					((Actuator)actuator).notifyArtifacts(i == order.size() - 1, ctx);
+					i++;
 				}
 
 				return runtimeContext.getTargetArtifact();

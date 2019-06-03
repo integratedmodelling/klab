@@ -34,7 +34,7 @@ public abstract class Artifact implements IArtifact {
 
 	List<IAnnotation> annotations = new ArrayList<>();
 	private Activity generator;
-	private boolean notified = false;
+//	private boolean notified = false;
 	private Map<Class<?>, Object> peers = new HashMap<>();
 	
 	/*
@@ -194,13 +194,13 @@ public abstract class Artifact implements IArtifact {
 		this.generator = generator;
 	}
 
-	public boolean isNotified() {
-		return notified;
-	}
-
-	public void setNotified(boolean notified) {
-		this.notified = notified;
-	}
+//	public boolean isNotified() {
+//		return notified;
+//	}
+//
+//	public void setNotified(boolean notified) {
+//		this.notified = notified;
+//	}
 	
 	/**
 	 * Base implementation just looks for installed peers. Can be overridden to

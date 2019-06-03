@@ -63,6 +63,7 @@ import org.integratedmodelling.klab.ide.navigator.model.EScript;
 import org.integratedmodelling.klab.ide.navigator.model.ETestCase;
 import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.utils.BrowserUtils;
 
 public class ContextView extends ViewPart {
@@ -502,6 +503,7 @@ public class ContextView extends ViewPart {
 		case ModifiedObservation:
 			break;
 		case NewObservation:
+			System.out.println("ZOAZ: " + message.getPayload(ObservationReference.class).getLabel());
 			break;
 		case PeriodOfInterest:
 			break;

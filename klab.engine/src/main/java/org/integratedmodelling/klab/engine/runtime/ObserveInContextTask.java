@@ -138,23 +138,23 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 						 */
 						if (dataflow.isPrimary()) {
 
-							IObservation notifiable = (IObservation) (ret instanceof ObservationGroup
-									&& ret.groupSize() > 0 ? ret.iterator().next() : ret);
-
-							// null on task interruption
-							if (notifiable != null) {
-								session.getMonitor()
-										.send(Message.create(session.getId(),
-												IMessage.MessageClass.ObservationLifecycle,
-												IMessage.Type.NewObservation,
-												Observations.INSTANCE
-														.createArtifactDescriptor(notifiable, context,
-																ITime.INITIALIZATION, -1, false, true)
-														.withTaskId(token)));
-
-								((Artifact) notifiable).setNotified(true);
-
-							}
+//							IObservation notifiable = (IObservation) (ret instanceof ObservationGroup
+//									&& ret.groupSize() > 0 ? ret.iterator().next() : ret);
+//
+//							// null on task interruption
+//							if (notifiable != null) {
+//								session.getMonitor()
+//										.send(Message.create(session.getId(),
+//												IMessage.MessageClass.ObservationLifecycle,
+//												IMessage.Type.NewObservation,
+//												Observations.INSTANCE
+//														.createArtifactDescriptor(notifiable, context,
+//																ITime.INITIALIZATION, -1, false, true)
+//														.withTaskId(token)));
+//
+//								((Artifact) notifiable).setNotified(true);
+//
+//							}
 							monitor.info("observation completed with "
 									+ NumberFormat.getPercentInstance().format(scope.getCoverage().getCoverage())
 									+ " context coverage");
