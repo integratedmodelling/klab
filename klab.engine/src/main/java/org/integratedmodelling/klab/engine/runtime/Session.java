@@ -104,6 +104,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.ibm.icu.text.NumberFormat;
+
 /**
  * Engine session. Implements UserDetails to be directly usable as a principal
  * in Spring security.
@@ -253,11 +255,13 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 				INamespace namespace = object instanceof KimObject ? ((KimObject) object).getNamespace()
 						: Namespaces.INSTANCE.getNamespace(((IObservable) object).getNamespace());
+				/*
+				 * gridsize is defined if ROI is.
+				 */
 				SpatialExtent roi = new SpatialExtent(regionOfInterest);
-				if (lockSpace.get()) {
-					roi.setGridResolution(this.spatialGridSize);
-					roi.setGridUnit(this.spatialGridUnits);
-				}
+				roi.setGridResolution(this.spatialGridSize);
+				roi.setGridUnit(this.spatialGridUnits);
+
 				Observer observer = Observations.INSTANCE.makeROIObserver(roi, (Namespace) namespace, monitor);
 				try {
 					ISubject subject = new ObserveContextTask(this, observer, CollectionUtils.arrayToList(scenarios))
@@ -597,10 +601,10 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		Envelope envelope = Envelope.create(extent.getEast(), extent.getWest(), extent.getSouth(), extent.getNorth(),
 				Projection.getLatLon());
 		ScaleReference scale = new ScaleReference();
-		
+
 		if (!lockSpace.get() || this.spatialGridSize == null) {
 			Pair<Integer, String> rres = envelope.getResolutionForZoomLevel();
-			this.spatialGridSize = (double)rres.getFirst();
+			this.spatialGridSize = (double) rres.getFirst();
 			this.spatialGridUnits = rres.getSecond();
 		}
 
@@ -615,12 +619,13 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		scale.setSpaceResolution(resolution.getFirst());
 		scale.setSpaceResolutionConverted(sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS).doubleValue());
 		scale.setSpaceResolutionDescription(
-				sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS) + " " + resolution.getSecond());
+				NumberFormat.getInstance().format(scale.getSpaceResolutionConverted()) + " " + this.spatialGridUnits);
 		scale.setResolutionDescription(
-				sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS) + " " + resolution.getSecond());
+				NumberFormat.getInstance().format(scale.getSpaceResolutionConverted()) + " " + this.spatialGridUnits);
 		scale.setSpaceScale(scaleRank);
 
 		monitor.send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined, scale);
+
 		this.regionOfInterest = extent;
 	}
 
@@ -914,7 +919,8 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 	@MessageHandler(type = IMessage.Type.ScaleDefined)
 	private void handleScaleChangeRequest(ScaleReference scaleRef) {
-		this.spatialGridSize = scaleRef.getSpaceResolutionConverted();
+		this.spatialGridSize = Units.INSTANCE.METERS
+				.convert(scaleRef.getSpaceResolutionConverted(), Unit.create(scaleRef.getSpaceUnit())).doubleValue();
 		this.spatialGridUnits = scaleRef.getSpaceUnit();
 	}
 

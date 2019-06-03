@@ -78,8 +78,8 @@ public class Observer extends KimObject implements IObserver {
 
 				double resolution = regionOfInterest.getGridUnit() == null
 						? (double) envelope.getResolutionForZoomLevel().getFirst()
-						: Units.INSTANCE.METERS.convert(regionOfInterest.getGridResolution(),
-								Unit.create(regionOfInterest.getGridUnit())).doubleValue();
+						: /*Units.INSTANCE.METERS.convert(*/regionOfInterest.getGridResolution()/*,
+								Unit.create(regionOfInterest.getGridUnit())).doubleValue()*/;
 
 				return Collections.singletonList(Space.create(Shape.create(envelope), resolution));
 			}

@@ -216,7 +216,8 @@ public class Envelope implements IEnvelope {
 	 * @param multiplier
 	 *            multiplier for the literal resolution. A good value for modern
 	 *            screens is around 4.
-	 * @return resolution and the correspondent unit string.
+	 *            
+	 * @return resolution in meters and the natural unit to use in displaying it.
 	 */
 	public Pair<Integer, String> getResolutionForZoomLevel(int roundTo, double multiplier) {
 
