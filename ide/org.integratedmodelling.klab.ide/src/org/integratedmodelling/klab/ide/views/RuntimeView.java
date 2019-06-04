@@ -206,14 +206,14 @@ public class RuntimeView extends ViewPart {
 		public Image getImage(Object element) {
 			if (element instanceof ERuntimeObject) {
 				if (element instanceof EObservationReference) {
-					if (((EObservationReference) element).getSiblingCount() == 0) {
+					if (((EObservationReference) element).isEmpty()) {
 						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/emptycontent.gif");
 					} else if (((EObservationReference) element).getSemantics().contains(IKimConcept.Type.QUALITY)) {
 						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/datagrid.gif");
-					} else if (((EObservationReference) element).getSiblingCount() == 1) {
-						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/resource.gif");
-					} else if (((EObservationReference) element).getSiblingCount() > 1) {
+					} else if (((EObservationReference) element).getChildrenCount() > 1) {
 						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/resources.gif");
+					} else {
+						return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/resource.gif");
 					}
 				} else if (element instanceof ETaskReference) {
 					Image baseImage = ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/task.gif");

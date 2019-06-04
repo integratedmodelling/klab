@@ -157,13 +157,6 @@ public interface IRuntimeContext extends IComputationContext {
     void rename(String name, String alias);
 
     /**
-     * Export the network structure to a GEFX file.
-     * 
-     * @param outFile
-     */
-    void exportNetwork(String outFile);
-
-    /**
      * Set the main target of the computation being carried on by the actuator. Used
      * by Actuator.compute().
      * 

@@ -139,9 +139,9 @@ public class EObservationReference implements IObservationReference, ERuntimeObj
         return delegate.getShapeType();
     }
 
-    public int getSiblingCount() {
-        return delegate.getSiblingCount();
-    }
+//    public int getSiblingCount() {
+//        return delegate.getSiblingCount();
+//    }
 
     public String getUrn() {
         return delegate.getUrn();
@@ -159,13 +159,13 @@ public class EObservationReference implements IObservationReference, ERuntimeObj
         return delegate.getSpatialProjection();
     }
 
-    public String getFolderId() {
-        return delegate.getFolderId();
-    }
-
-    public String getFolderLabel() {
-        return delegate.getFolderLabel();
-    }
+//    public String getFolderId() {
+//        return delegate.getFolderId();
+//    }
+//
+//    public String getFolderLabel() {
+//        return delegate.getFolderLabel();
+//    }
 
     public List<ObservationReference> getChildren() {
         return delegate.getChildren();
@@ -175,9 +175,9 @@ public class EObservationReference implements IObservationReference, ERuntimeObj
         return delegate.getMetadata();
     }
 
-    public List<ObservationReference> getSiblings() {
-        return delegate.getSiblings();
-    }
+//    public List<ObservationReference> getSiblings() {
+//        return delegate.getSiblings();
+//    }
 
     public Set<Type> getSemantics() {
         return delegate.getSemantics();
@@ -247,6 +247,11 @@ public class EObservationReference implements IObservationReference, ERuntimeObj
 	@Override
 	public DataSummary getDataSummary() {
 		return delegate.getDataSummary();
+	}
+
+	@Override
+	public int getChildrenCount() {
+		return delegate.getChildrenCount();
 	}
 
 }

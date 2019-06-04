@@ -332,12 +332,6 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 	}
 
 	@Override
-	public void exportNetwork(String outFile) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void setTarget(IArtifact target) {
 		this.target = (IObservation) target;
 	}

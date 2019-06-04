@@ -40,7 +40,7 @@ public interface IObservationReference {
 
 	IShape.Type getShapeType();
 
-	int getSiblingCount();
+	int getChildrenCount();
 
 	String getUrn();
 
@@ -56,15 +56,15 @@ public interface IObservationReference {
 
 	String getSpatialProjection();
 
-	String getFolderId();
-
-	String getFolderLabel();
+//	String getFolderId();
+//
+//	String getFolderLabel();
 
 	List<ObservationReference> getChildren();
 
 	Map<String, String> getMetadata();
 
-	List<ObservationReference> getSiblings();
+//	List<ObservationReference> getSiblings();
 
 	Set<IKimConcept.Type> getSemantics();
 

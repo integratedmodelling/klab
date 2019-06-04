@@ -25,6 +25,30 @@ import java.util.Optional;
  */
 public interface IActivity extends IProvenance.Node {
 
+	enum Type {
+		/**
+		 * 
+		 */
+		Resolution,
+		/**
+		 * 
+		 */
+		Instantiation,
+		/**
+		 * 
+		 */
+		Acknowledgement,
+		/**
+		 * 
+		 */
+		Detection,
+		/**
+		 * Connects an activity to another that was inferred to be necessary in order to execute the
+		 * first. The agent will determine who made it.
+		 */
+		Inference
+	}
+	
   /**
    * <p>getStart.</p>
    *

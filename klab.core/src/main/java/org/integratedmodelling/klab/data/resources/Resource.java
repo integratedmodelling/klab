@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.api.services.IResourceService;
@@ -461,5 +462,27 @@ public class Resource implements IResource {
     public Collection<Attribute> getOutputs() {
         return outputs;
     }
+
+	@Override
+	public String getId() {
+		return getUrn();
+	}
+
+	@Override
+	public long getTimestamp() {
+		return getResourceTimestamp();
+	}
+
+	@Override
+	public IProvenance getProvenance() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }

@@ -70,7 +70,7 @@ public class ObservationReference implements IObservationReference {
 	}
 
 	public enum ObservationType {
-		PROCESS, STATE, SUBJECT, CONFIGURATION, EVENT, RELATIONSHIP
+		PROCESS, STATE, SUBJECT, CONFIGURATION, EVENT, RELATIONSHIP, GROUP
 	}
 
 	/**
@@ -197,12 +197,12 @@ public class ObservationReference implements IObservationReference {
 		this.dataSummary = dataSummary;
 	}
 
-	/**
-	 * The observation may have more sibling than are found in the sibling list.
-	 * This contains the number of children so it can be reported and lazy calls for
-	 * the full list are possible.
-	 */
-	private int siblingCount;
+//	/**
+//	 * The observation may have more sibling than are found in the sibling list.
+//	 * This contains the number of children so it can be reported and lazy calls for
+//	 * the full list are possible.
+//	 */
+//	private int siblingCount;
 
 	/**
 	 * Number of children, some or all of which may be in the children array
@@ -210,26 +210,26 @@ public class ObservationReference implements IObservationReference {
 	 */
 	private int childrenCount;
 
-	/**
-	 * If this observation is part of a group with >1 siblings, this will be set to
-	 * a unique ID for the group so that the siblings with the same ID can be
-	 * matched and a folder created.
-	 */
-	private String folderId;
+//	/**
+//	 * If this observation is part of a group with >1 siblings, this will be set to
+//	 * a unique ID for the group so that the siblings with the same ID can be
+//	 * matched and a folder created.
+//	 */
+//	private String folderId;
+//
+//	/**
+//	 * If this observation is part of a group with >1 siblings, each sibling will
+//	 * have the display label of the folder that should contain them. The folder
+//	 * will have been previously communicated as a group in case .
+//	 */
+//	private String folderLabel;
 
-	/**
-	 * If this observation is part of a group with >1 siblings, each sibling will
-	 * have the display label of the folder that should contain them. The folder
-	 * will have been previously communicated as a group in case .
-	 */
-	private String folderLabel;
-
-	/**
-	 * If the observation is part of a group, this will be the ID of the group. Note
-	 * that folderLabel will be the label of the group; on the other hand, not all
-	 * with folderLabel != null will be in a group.
-	 */
-	private String groupId;
+//	/**
+//	 * If the observation is part of a group, this will be the ID of the group. Note
+//	 * that folderLabel will be the label of the group; on the other hand, not all
+//	 * with folderLabel != null will be in a group.
+//	 */
+//	private String groupId;
 
 	/**
 	 * All roles adopted by this observation, either through the semantics or by
@@ -254,12 +254,12 @@ public class ObservationReference implements IObservationReference {
 	 */
 	private List<ObservationReference> children = new ArrayList<>();
 
-	/**
-	 * Sibling observations. This may be empty despite the existence of siblings, or
-	 * only partially filled, according to the type of call that generated the
-	 * object.
-	 */
-	private List<ObservationReference> siblings = new ArrayList<>();
+//	/**
+//	 * Sibling observations. This may be empty despite the existence of siblings, or
+//	 * only partially filled, according to the type of call that generated the
+//	 * object.
+//	 */
+//	private List<ObservationReference> siblings = new ArrayList<>();
 
 	/**
 	 * Actions connected with each observation
@@ -481,20 +481,20 @@ public class ObservationReference implements IObservationReference {
 		this.shapeType = shapeType;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.integratedmodelling.klab.rest.IObservationReference#getSiblingCount()
-	 */
-	@Override
-	public int getSiblingCount() {
-		return siblingCount;
-	}
-
-	public void setSiblingCount(int siblingCount) {
-		this.siblingCount = siblingCount;
-	}
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see
+//	 * org.integratedmodelling.klab.rest.IObservationReference#getSiblingCount()
+//	 */
+//	@Override
+//	public int getSiblingCount() {
+//		return siblingCount;
+//	}
+//
+//	public void setSiblingCount(int siblingCount) {
+//		this.siblingCount = siblingCount;
+//	}
 
 	public void setUrn(String urn) {
 		this.urn = urn;
@@ -555,33 +555,33 @@ public class ObservationReference implements IObservationReference {
 		this.encodedShape = encodedShape;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.integratedmodelling.klab.rest.IObservationReference#getFolderId()
-	 */
-	@Override
-	public String getFolderId() {
-		return folderId;
-	}
-
-	public void setFolderId(String folderId) {
-		this.folderId = folderId;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.integratedmodelling.klab.rest.IObservationReference#getFolderLabel()
-	 */
-	@Override
-	public String getFolderLabel() {
-		return folderLabel;
-	}
-
-	public void setFolderLabel(String folderLabel) {
-		this.folderLabel = folderLabel;
-	}
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see org.integratedmodelling.klab.rest.IObservationReference#getFolderId()
+//	 */
+//	@Override
+//	public String getFolderId() {
+//		return folderId;
+//	}
+//
+//	public void setFolderId(String folderId) {
+//		this.folderId = folderId;
+//	}
+//
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see org.integratedmodelling.klab.rest.IObservationReference#getFolderLabel()
+//	 */
+//	@Override
+//	public String getFolderLabel() {
+//		return folderLabel;
+//	}
+//
+//	public void setFolderLabel(String folderLabel) {
+//		this.folderLabel = folderLabel;
+//	}
 
 	/*
 	 * (non-Javadoc)
@@ -611,19 +611,19 @@ public class ObservationReference implements IObservationReference {
 		this.metadata = metadata;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.integratedmodelling.klab.rest.IObservationReference#getSiblings()
-	 */
-	@Override
-	public List<ObservationReference> getSiblings() {
-		return siblings;
-	}
-
-	public void setSiblings(List<ObservationReference> siblings) {
-		this.siblings = siblings;
-	}
+//	/*
+//	 * (non-Javadoc)
+//	 * 
+//	 * @see org.integratedmodelling.klab.rest.IObservationReference#getSiblings()
+//	 */
+//	@Override
+//	public List<ObservationReference> getSiblings() {
+//		return siblings;
+//	}
+//
+//	public void setSiblings(List<ObservationReference> siblings) {
+//		this.siblings = siblings;
+//	}
 
 	/*
 	 * (non-Javadoc)
@@ -656,8 +656,8 @@ public class ObservationReference implements IObservationReference {
 
 	@Override
 	public String toString() {
-		return "ObservationReference [id=" + id + ", observable=" + observable + ", semantics=" + semantics
-				+ ", siblingCount=" + siblingCount + "]";
+		return "ObservationReference [type =  " + observationType + ", id=" + id + ", observable=" + observable + ", semantics=" + semantics
+				+ ", childrenCount=" + childrenCount + ", parent = " + parentId + "]";
 	}
 
 	public void setValueCount(long size) {
@@ -810,14 +810,14 @@ public class ObservationReference implements IObservationReference {
 	public void setChildrenCount(int childrenCount) {
 		this.childrenCount = childrenCount;
 	}
-
-	public String getGroupId() {
-		return groupId;
-	}
-
-	public void setGroupId(String groupId) {
-		this.groupId = groupId;
-	}
+//
+//	public String getGroupId() {
+//		return groupId;
+//	}
+//
+//	public void setGroupId(String groupId) {
+//		this.groupId = groupId;
+//	}
 
 	public ScaleReference getScaleReference() {
 		return scaleReference;

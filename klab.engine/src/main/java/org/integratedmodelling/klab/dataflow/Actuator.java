@@ -225,6 +225,7 @@ public class Actuator implements IActuator {
 		 * service calls, so it can survive dataflow serialization/deserialization.
 		 */
 		List<Pair<IContextualizer, IComputableResource>> computation = new ArrayList<>();
+		Set<IArtifact> artifacts = new HashSet<>();
 
 		/*
 		 * this localizes the names in the context to those understood by this actuator
@@ -316,6 +317,13 @@ public class Actuator implements IActuator {
 				context.setData(indirectTarget.getLocalName(), artifactTable.get(targetId));
 			}
 
+			if (model != null && !input && !artifacts.contains(ret)) {
+				artifacts.add(ret);
+				if (ret instanceof IObservation) {
+					this.products.add((IObservation) ret);
+				}
+			}
+
 			/*
 			 * include the computed resource in the report
 			 */
@@ -342,15 +350,23 @@ public class Actuator implements IActuator {
 		 */
 		if (!input) {
 
-			if (model != null) {
-				for (int i = 0; i < model.getObservables().size(); i++) {
-					IArtifact artifact = ctx.getArtifact(model.getObservables().get(i).getLocalName());
-					if (artifact instanceof IObservation) {
-						this.products.add((IObservation) artifact);
-					}
+			// check out any that we escaped (built directly by actuators using the context)
+			List<IObservation> secondary = new ArrayList<>();
+			for (int i = 0; i < model.getObservables().size(); i++) {
+				IArtifact artifact = ctx.getArtifact(model.getObservables().get(i).getLocalName());
+				if (!artifacts.contains(artifact) && artifact instanceof IObservation) {
+					secondary.add((IObservation)artifact);
 				}
 			}
-
+			
+			// consolidate the lists, secondary first.
+			if (!secondary.isEmpty()) {
+				List<IObservation> primary = new ArrayList<>(this.products);
+				this.products.clear();
+				this.products.addAll(secondary);
+				this.products.addAll(primary);
+			}
+			
 			IConfiguration configuration = null;
 			if (!ret.isEmpty() && (mode == Mode.INSTANTIATION || ret instanceof IState)) {
 				/*
@@ -361,13 +377,13 @@ public class Actuator implements IActuator {
 						.detectConfigurations((IObservation) ret, ctx.getContextObservation());
 
 				if (confdesc != null) {
-					
+
 					ctx.getMonitor().info("emergent configuration "
 							+ Concepts.INSTANCE.getDisplayName(confdesc.getFirst()) + " detected");
-					
+
 					configuration = ctx.newConfiguration(confdesc.getFirst(), confdesc.getSecond(),
 							/* TODO metadata */ new Metadata());
-					
+
 					if (configuration != null) {
 						this.products.add(configuration);
 					}
@@ -987,6 +1003,9 @@ public class Actuator implements IActuator {
 			IObservationReference observation = Observations.INSTANCE
 					.createArtifactDescriptor(product, ITime.INITIALIZATION, 0, false, isMainObservable || isMain)
 					.withTaskId(taskId);
+			
+			System.out.println("NOTIFYING " + observation);
+			
 			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 					IMessage.Type.NewObservation, observation));
 			((Report) context.getReport()).include(observation);

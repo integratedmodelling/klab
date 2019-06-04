@@ -1,29 +1,22 @@
 package org.integratedmodelling.klab.provenance;
 
+import org.integratedmodelling.klab.api.provenance.IAssociation;
 import org.jgrapht.graph.DefaultEdge;
 
-public class ProvenanceEdge extends DefaultEdge {
+public class ProvenanceEdge extends DefaultEdge implements IAssociation {
 
 	private static final long serialVersionUID = 1013844289682153561L;
 
-	enum Type {
-		/**
-		 * Activity wasAssociatedWith Agent;
-		 *
-		 * Entity wasGeneratedBy Activity wasAssociatedWith Agent [if Agent = model,
-		 * then Activity = {resolution|instantiation}
-		 */
-		wasAssociatedWith,
-		/**
-		 * Entity wasAttributedTo Agent (implicit Activity, for remote provenance)
-		 */
-		wasAttributedTo,
-		/**
-		 * Entity wasGeneratedBy Activity
-		 */
-		wasGeneratedBy,
-
+	private long timestamp = System.currentTimeMillis();
+	private Type type;
+	
+	@Override
+	public long getTimestamp() {
+		return timestamp;
 	}
 
-	Type type;
+	@Override
+	public Type getType() {
+		return type;
+	}
 }

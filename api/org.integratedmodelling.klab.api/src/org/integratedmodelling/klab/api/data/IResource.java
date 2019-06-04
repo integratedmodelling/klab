@@ -27,6 +27,7 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
+import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.services.IResourceService;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 
@@ -68,7 +69,7 @@ import org.integratedmodelling.klab.rest.SpatialExtent;
  * @author Ferd
  * @version $Id: $Id
  */
-public interface IResource extends Serializable {
+public interface IResource extends IProvenance.Node, Serializable {
 
     /**
      * The URN that identifies this resource.

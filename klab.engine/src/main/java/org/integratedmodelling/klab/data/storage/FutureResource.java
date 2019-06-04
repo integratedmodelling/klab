@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
+import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -178,5 +179,25 @@ public class FutureResource implements IResource, Future<IResource> {
     public Collection<Attribute> getOutputs() {
         return getDelegate(timeout).getOutputs();
     }
+
+	@Override
+	public String getId() {
+		return getDelegate(timeout).getId();
+	}
+
+	@Override
+	public long getTimestamp() {
+		return getDelegate(timeout).getTimestamp();
+	}
+
+	@Override
+	public IProvenance getProvenance() {
+		return getDelegate(timeout).getProvenance();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return getDelegate(timeout).isEmpty();
+	}
 
 }

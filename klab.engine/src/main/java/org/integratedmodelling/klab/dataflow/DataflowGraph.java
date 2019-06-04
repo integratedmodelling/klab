@@ -100,11 +100,6 @@ public class DataflowGraph {
 				call.getLabels().add(
 						kelk.createLabel(Extensions.INSTANCE.getServiceLabel(actor.getFirst()), call.getIdentifier() + "l", call));
 
-
-				for (Object kp : actor.getFirst().getParameters().entrySet()) {
-					// TODO maybe not - leave parameters for detail pane
-				}
-				
 				// all computations have a main output
 				out = kelk.createPort(call.getIdentifier() + "_out", call, PortSide.EAST);
 

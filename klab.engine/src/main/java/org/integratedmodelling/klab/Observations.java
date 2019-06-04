@@ -240,6 +240,8 @@ public enum Observations implements IObservationService {
 			ret.setObservationType(ObservationReference.ObservationType.CONFIGURATION);
 		} else if (observation instanceof IRelationship) {
 			ret.setObservationType(ObservationReference.ObservationType.RELATIONSHIP);
+		} else if (observation instanceof ObservationGroup) {
+			ret.setObservationType(ObservationReference.ObservationType.GROUP);
 		}
 
 		ret.setMain(isMain);
@@ -286,7 +288,7 @@ public enum Observations implements IObservationService {
 		ret.setChildrenCount(observation instanceof IDirectObservation && !observation.isEmpty()
 				? ((IDirectObservation) observation).getChildren(IObservation.class).size()
 				: 0);
-		ret.setSiblingCount(observation.groupSize());
+//		ret.setSiblingCount(observation.groupSize());
 		ret.getSemantics().addAll(((Concept) observation.getObservable().getType()).getTypeSet());
 
 		ISpace space = ((IScale) observation.getGeometry()).getSpace();
@@ -358,7 +360,7 @@ public enum Observations implements IObservationService {
 			 * 
 			 * TODO these should also be optional settings.
 			 */
-			if (observation instanceof IDirectObservation) {
+			if (observation instanceof IDirectObservation && !(observation instanceof ObservationGroup)) {
 				String shape = ((Shape) space.getShape()).simplifyIfNecessary(1000, 2000).getJTSGeometry().toString();
 				ret.setEncodedShape(shape);
 				ret.setSpatialProjection(space.getProjection().getSimpleSRS());
