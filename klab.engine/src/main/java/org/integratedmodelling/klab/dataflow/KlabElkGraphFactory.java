@@ -10,12 +10,14 @@ import java.util.EnumSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.elk.alg.layered.options.LayeredMetaDataProvider;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.labels.ILabelManager;
 import org.eclipse.elk.core.labels.LabelManagementOptions;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
@@ -104,6 +106,7 @@ public class KlabElkGraphFactory {
 		ElkNode root = ElkGraphUtil.createGraph();
 		root.setIdentifier(identifier);
 		root.setProperty(LabelManagementOptions.LABEL_MANAGER, LABEL_MANAGER);
+		root.setProperty(LayeredOptions.HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN);
 		return root;
 	}
 	
