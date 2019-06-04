@@ -963,7 +963,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 		for (IRuntimeContext ctx : observationContexts) {
 			ret.getRootObservations().put(ctx.getRootSubject().getId(), Observations.INSTANCE
-					.createArtifactDescriptor(ctx.getRootSubject()/*, null*/, ITime.INITIALIZATION, 0, false, false));
+					.createArtifactDescriptor(ctx.getRootSubject(), null, ITime.INITIALIZATION, 0, false, false));
 		}
 
 		return ret;

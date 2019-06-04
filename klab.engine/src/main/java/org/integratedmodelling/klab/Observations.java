@@ -220,14 +220,16 @@ public enum Observations implements IObservationService {
 		return ret;
 	}
 
-	public ObservationReference createArtifactDescriptor(IObservation observation/*, IObservation parent*/,
+	public ObservationReference createArtifactDescriptor(IObservation observation, IObservation parent,
 			ILocator locator, int childLevel, boolean collapseSiblings, boolean isMain) {
 
-		IObservation parent = observation.getContext();
 		ObservationReference ret = new ObservationReference();
 
 		ret.setEmpty(observation.isEmpty());
-
+		
+		// for now
+		ret.setPrimary(true);
+		
 		if (observation instanceof ISubject) {
 			ret.setObservationType(ObservationReference.ObservationType.SUBJECT);
 		} else if (observation instanceof IState) {
@@ -435,6 +437,7 @@ public enum Observations implements IObservationService {
 		}
 
 		if (observation instanceof IDirectObservation && !observation.isEmpty() && (childLevel < 0 || childLevel > 0)) {
+
 			Set<ObservationGroup> groups = new HashSet<>();
 			for (IObservation child : ((IDirectObservation) observation).getChildren(IObservation.class)) {
 
@@ -449,7 +452,7 @@ public enum Observations implements IObservationService {
 					}
 				}
 
-				ret.getChildren().add(createArtifactDescriptor(child/*, observation*/, locator,
+				ret.getChildren().add(createArtifactDescriptor(child, observation, locator,
 						childLevel > 0 ? childLevel-- : childLevel, collapseSiblings, false));
 			}
 		}

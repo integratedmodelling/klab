@@ -186,6 +186,7 @@ public class ObservationReference implements IObservationReference {
 	private boolean empty;
 	private Style style;
 	private boolean main;
+	private boolean primary;
 	private DataSummary dataSummary;
 	private List<ExportFormat> exportFormats = new ArrayList<>();
 	/*
@@ -825,6 +826,14 @@ public class ObservationReference implements IObservationReference {
 
 	public void setScaleReference(ScaleReference scaleReference) {
 		this.scaleReference = scaleReference;
+	}
+
+	public boolean isPrimary() {
+		return primary;
+	}
+
+	public void setPrimary(boolean primary) {
+		this.primary = primary;
 	}
 
 }
