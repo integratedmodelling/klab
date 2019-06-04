@@ -10,12 +10,14 @@ import java.util.EnumSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.elk.alg.layered.options.LayeredMetaDataProvider;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.labels.ILabelManager;
 import org.eclipse.elk.core.labels.LabelManagementOptions;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
@@ -40,7 +42,7 @@ public class KlabElkGraphFactory {
 	public static KlabElkGraphFactory keINSTANCE = new KlabElkGraphFactory();
 	
 	private static final double PORT_SIZE = 5;
-	private static final ElkPadding ACTUATOR_PADDING = new ElkPadding(12, 0, 0, 5);
+	private static final ElkPadding ACTUATOR_PADDING = new ElkPadding(10, 0, 0, 5);
 	private static final KlabLabelManager LABEL_MANAGER;
 	
 	private static class KlabLabelManager implements ILabelManager {
@@ -104,6 +106,7 @@ public class KlabElkGraphFactory {
 		ElkNode root = ElkGraphUtil.createGraph();
 		root.setIdentifier(identifier);
 		root.setProperty(LabelManagementOptions.LABEL_MANAGER, LABEL_MANAGER);
+		root.setProperty(LayeredOptions.HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN);
 		return root;
 	}
 	
@@ -118,7 +121,7 @@ public class KlabElkGraphFactory {
 		node.setIdentifier(identifier);
 		node.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS, SizeConstraint.PORTS));
 		node.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.outsideTopLeft());
-		node.setProperty(CoreOptions.SPACING_LABEL_NODE, 0d);
+		// node.setProperty(CoreOptions.SPACING_LABEL_NODE, 0d);
 		node.setProperty(CoreOptions.NODE_LABELS_PADDING, ACTUATOR_PADDING);
 		node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.UNIFORM_PORT_SPACING)); 
 		return node;
@@ -135,7 +138,7 @@ public class KlabElkGraphFactory {
 		node.setIdentifier(identifier);
 		node.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS, SizeConstraint.PORTS));
 		node.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, EnumSet.of(NodeLabelPlacement.H_LEFT, NodeLabelPlacement.V_CENTER, NodeLabelPlacement.INSIDE));
-		node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.UNIFORM_PORT_SPACING, SizeOptions.COMPUTE_PADDING));
+		node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.UNIFORM_PORT_SPACING));
 		return node;
 	}
 	

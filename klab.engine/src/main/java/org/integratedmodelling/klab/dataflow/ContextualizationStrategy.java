@@ -68,10 +68,18 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 				ElkNode root = kelk.createGraph(id);
 
 				// new nodes
+				ElkNode contextNode = null;
 				for (Dataflow df : rootNodes) {
 					DataflowGraph graph = new DataflowGraph(df, nodes, kelk);
 					// TODO children - recurse
-					root.getChildren().add(graph.getRootNode());
+					ElkNode tgraph = graph.getRootNode();
+					root.getChildren().add(tgraph);
+					if (contextNode == null) {
+						contextNode = graph.getRootNode();
+					} else {
+						kelk.createSimpleEdge(tgraph, contextNode, "ctx" + df.getName());
+					}
+					
 				}
 
 				RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
