@@ -11,7 +11,10 @@ import java.util.EnumSet;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.elk.alg.layered.options.LayeredMetaDataProvider;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
+import org.eclipse.elk.core.labels.ILabelManager;
+import org.eclipse.elk.core.labels.LabelManagementOptions;
 import org.eclipse.elk.core.math.ElkPadding;
+import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
@@ -36,18 +39,52 @@ public class KlabElkGraphFactory {
 	
 	public static KlabElkGraphFactory keINSTANCE = new KlabElkGraphFactory();
 	
-	private Graphics2D graphics;
-	
-	private static final int FONT_SIZE = 8;
 	private static final double PORT_SIZE = 5;
-	private static final ElkPadding NODE_PADDING = new ElkPadding(12, 0, 0, 5);
-	private static final ElkPadding ROOT_PADDING = new ElkPadding(12, 0, 0, 5);
+	private static final ElkPadding ACTUATOR_PADDING = new ElkPadding(12, 0, 0, 5);
+	// private static final ElkPadding SERVICE_PADDING = new ElkPadding(12, 0, 0, 5);
+	private static final KlabLabelManager LABEL_MANAGER;
+	
+	private static class KlabLabelManager implements ILabelManager {
+	
+		private static final int FONT_SIZE = 8;
+		private Graphics2D graphics;
+		
+		KlabLabelManager() {
+			BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_BYTE_GRAY);
+			final String fontType = java.awt.Font.SANS_SERIF;
+			graphics = image.createGraphics();
+	        graphics.setFont(new java.awt.Font(fontType, java.awt.Font.PLAIN, FONT_SIZE));
+		}
+		
+		@Override
+		public KVector manageLabelSize(Object label, double targetWidth) {
+			ElkLabel l = (ElkLabel)label;
+			return computeLabelSize(l);
+		}
+
+		/**
+	     * Computes the size of a label if it doesn't already have one. The size is calculated by choosing a font and
+	     * calculating the space necessary to render the label's text with that font.
+	     * Code obtained from elk library: org.eclipse.elk.alg.test.framework.SomeBoxRunner
+		 * @param label the ElkLabel that need to be sized
+		 */
+	    private KVector computeLabelSize(final ElkLabel label) {
+	        // Check if we need to do anything
+	        if (label.getText() != null && !label.getText().equals("")) {
+	            Rectangle2D rect = graphics.getFontMetrics().getStringBounds(label.getText(), graphics);
+	            return new KVector(rect.getWidth(), rect.getHeight());
+	        } else {
+	        	return null;
+	        }
+	    }
+	}
 	
 	static LayoutMetaDataService service;
 
 	static {
 		service = LayoutMetaDataService.getInstance();
 		service.registerLayoutMetaDataProviders(new LayeredMetaDataProvider());
+		LABEL_MANAGER = new KlabElkGraphFactory.KlabLabelManager();
 	}
 	
 	
@@ -56,10 +93,6 @@ public class KlabElkGraphFactory {
 	 */
 	public KlabElkGraphFactory() {
 		// create graphic object to calculate label dimensions
-		BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-		final String fontType = java.awt.Font.MONOSPACED;
-		graphics = image.createGraphics();
-        graphics.setFont(new java.awt.Font(fontType, java.awt.Font.PLAIN, FONT_SIZE));
 	}
 	
 	
@@ -71,7 +104,8 @@ public class KlabElkGraphFactory {
 	public ElkNode createGraph(String identifier) {
 		ElkNode root = ElkGraphUtil.createGraph();
 		root.setIdentifier(identifier);
-		root.setProperty(CoreOptions.NODE_LABELS_PADDING, ROOT_PADDING);
+		// root.setProperty(CoreOptions.NODE_LABELS_PADDING, ROOT_PADDING);
+		root.setProperty(LabelManagementOptions.LABEL_MANAGER, LABEL_MANAGER);
 		return root;
 	}
 	
@@ -90,8 +124,9 @@ public class KlabElkGraphFactory {
 		}
 		*/
 		node.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS, SizeConstraint.PORTS));
-		node.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.insideTopLeft());
-		node.setProperty(CoreOptions.NODE_LABELS_PADDING, NODE_PADDING);
+		node.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.outsideTopLeft());
+		node.setProperty(CoreOptions.SPACING_LABEL_NODE, 0d);
+		node.setProperty(CoreOptions.NODE_LABELS_PADDING, ACTUATOR_PADDING);
 		node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.UNIFORM_PORT_SPACING));
 		// node.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
 		return node;
@@ -108,9 +143,8 @@ public class KlabElkGraphFactory {
 		node.setIdentifier(identifier);
 		node.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS, SizeConstraint.PORTS));
 		node.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, EnumSet.of(NodeLabelPlacement.H_LEFT, NodeLabelPlacement.V_CENTER, NodeLabelPlacement.INSIDE));
-		node.setProperty(CoreOptions.NODE_LABELS_PADDING, NODE_PADDING);
+		// node.setProperty(CoreOptions.NODE_LABELS_PADDING, SERVICE_PADDING);
 		node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.UNIFORM_PORT_SPACING, SizeOptions.COMPUTE_PADDING));
-		// node.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
 		return node;
 	}
 	
@@ -145,7 +179,7 @@ public class KlabElkGraphFactory {
 		ElkLabel label = ElkGraphUtil.createLabel(parent);
 		label.setText(text);
 		label.setIdentifier(identifier);
-		computeLabelSize(label);
+		// computeLabelSize(label);
 		return label;
 	}
 	
@@ -169,19 +203,4 @@ public class KlabElkGraphFactory {
 		}
 		return ret;
 	}
-	
-	/**
-     * Computes the size of a label if it doesn't already have one. The size is calculated by choosing a font and
-     * calculating the space necessary to render the label's text with that font.
-     * Code obtained from elk library: org.eclipse.elk.alg.test.framework.SomeBoxRunner
-	 * @param label the ElkLabel that need to be sized
-	 */
-    private void computeLabelSize(final ElkLabel label) {
-        // Check if we need to do anything
-        if (label.getHeight() == 0 && label.getWidth() == 0 && label.getText() != null && !label.getText().equals("")) {
-            Rectangle2D rect = graphics.getFontMetrics().getStringBounds(label.getText(), graphics);
-            label.setHeight(rect.getHeight());
-            label.setWidth(rect.getWidth());
-        }
-    }
 }
