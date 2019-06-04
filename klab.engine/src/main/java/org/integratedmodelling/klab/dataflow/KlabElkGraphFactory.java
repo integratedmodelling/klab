@@ -41,7 +41,6 @@ public class KlabElkGraphFactory {
 	
 	private static final double PORT_SIZE = 5;
 	private static final ElkPadding ACTUATOR_PADDING = new ElkPadding(12, 0, 0, 5);
-	// private static final ElkPadding SERVICE_PADDING = new ElkPadding(12, 0, 0, 5);
 	private static final KlabLabelManager LABEL_MANAGER;
 	
 	private static class KlabLabelManager implements ILabelManager {
@@ -104,7 +103,6 @@ public class KlabElkGraphFactory {
 	public ElkNode createGraph(String identifier) {
 		ElkNode root = ElkGraphUtil.createGraph();
 		root.setIdentifier(identifier);
-		// root.setProperty(CoreOptions.NODE_LABELS_PADDING, ROOT_PADDING);
 		root.setProperty(LabelManagementOptions.LABEL_MANAGER, LABEL_MANAGER);
 		return root;
 	}
@@ -118,17 +116,11 @@ public class KlabElkGraphFactory {
 	public ElkNode createActuatorNode(String identifier, ElkNode parent) {
 		ElkNode node = ElkGraphUtil.createNode(parent);
 		node.setIdentifier(identifier);
-		/*
-		for (IProperty<? super T> property: properties.keySet()) {
-			node.setProperty(property, properties.get(property));
-		}
-		*/
 		node.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS, SizeConstraint.PORTS));
 		node.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.outsideTopLeft());
 		node.setProperty(CoreOptions.SPACING_LABEL_NODE, 0d);
 		node.setProperty(CoreOptions.NODE_LABELS_PADDING, ACTUATOR_PADDING);
-		node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.UNIFORM_PORT_SPACING));
-		// node.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
+		node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.UNIFORM_PORT_SPACING)); 
 		return node;
 	}
 	
@@ -143,7 +135,6 @@ public class KlabElkGraphFactory {
 		node.setIdentifier(identifier);
 		node.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS, SizeConstraint.PORTS));
 		node.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, EnumSet.of(NodeLabelPlacement.H_LEFT, NodeLabelPlacement.V_CENTER, NodeLabelPlacement.INSIDE));
-		// node.setProperty(CoreOptions.NODE_LABELS_PADDING, SERVICE_PADDING);
 		node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.UNIFORM_PORT_SPACING, SizeOptions.COMPUTE_PADDING));
 		return node;
 	}
