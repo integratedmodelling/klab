@@ -37,6 +37,7 @@ public class DataflowGraph {
 	public DataflowGraph(Dataflow dataflow, Map<String, ElkNode> nodes, KlabElkGraphFactory kelk) {
 		this.nodes = nodes;
 		this.kelk = kelk;
+		Flowchart flowchart = Flowchart.create(dataflow);
 		compile(dataflow, null);
 	}
 
@@ -72,6 +73,7 @@ public class DataflowGraph {
 			ElkNode lastChild = null;
 			for (IActuator child : actuator.getActuators()) {
 				if (((Actuator) child).isReference() || actuator.isInput()) {
+					
 					ElkPort port = kelk.createPort(actuator.getDataflowId() + "_" + child.getName() + "_in", actuator.isInput() ? rootNode : root,
 							PortSide.WEST);
 					ElkLabel label = kelk.createLabel((child.getAlias() == null ? child.getName() : child.getAlias()),
@@ -80,6 +82,7 @@ public class DataflowGraph {
 					localNodes.put(child.getAlias() == null ? child.getName() : child.getAlias(), port);
 					ElkNode input = null; 
 					ElkPort extout = null;
+
 					if (actuator.isInput()) {
 						// create an import port on top of the root node and connect to it; tag it for
 						// the external
@@ -104,6 +107,7 @@ public class DataflowGraph {
 						}
 						kelk.createSimpleEdge(extout, port, null); // no identifier?
 					}
+					
 				} else {
 					// ACHTUNG references end up here - they should be connected to inside
 					lastChild = compile((Actuator) child, root);
@@ -112,7 +116,7 @@ public class DataflowGraph {
 			}
 
 			// mediators
-			for (Pair<IServiceCall, IComputableResource> mediator : actuator.getComputationStrategy()) {
+			for (Pair<IServiceCall, IComputableResource> mediator : actuator.getMediationStrategy()) {
 				/*
 				 * Compile each mediator and
 				 */
