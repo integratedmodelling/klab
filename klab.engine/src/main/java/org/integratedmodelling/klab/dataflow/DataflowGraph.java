@@ -139,7 +139,7 @@ public class DataflowGraph {
 				// literal arguments must go on top edge
 				for (Argument arg : prototype.listArguments()) {
 					if (arg.getName().equals("arguments")) {
-						for (Pair<String, Type> rp : actor.getSecond().getRequiredResourceNames()) {
+						for (Pair<String, Type> rp : actor.getSecond().getInputs()) {
 							ElkConnectableShape provider = localNodes.get(rp.getFirst());
 							if (provider != null) {
 								ElkPort pout = kelk.getOutputPort(provider);

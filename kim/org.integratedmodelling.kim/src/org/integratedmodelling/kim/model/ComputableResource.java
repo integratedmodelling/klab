@@ -384,7 +384,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	}
 
 	@Override
-	public Collection<Pair<String, Type>> getRequiredResourceNames() {
+	public Collection<Pair<String, Type>> getInputs() {
 
 		if (requiredResourceNames == null) {
 

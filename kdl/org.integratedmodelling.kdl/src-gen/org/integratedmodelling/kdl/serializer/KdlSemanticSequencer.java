@@ -335,6 +335,8 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *         boolean='true' | 
 	 *         boolean='false' | 
 	 *         id=ID | 
+	 *         id=LOWERCASE_ID | 
+	 *         id=UPPERCASE_ID | 
 	 *         comma?=','
 	 *     )
 	 */

@@ -151,8 +151,8 @@ public interface IResource extends Serializable {
 
     /**
     * Dependencies describe artifacts that must be available when the resource is
-    * used to produce data. They use the same structure as attributes and are
-    * necessary only in URNs that identify computations.
+    * used to produce data. They use the same structure as attributes and can only
+    * appear in URNs that identify computations.
     * 
     * @return dependencies
     */

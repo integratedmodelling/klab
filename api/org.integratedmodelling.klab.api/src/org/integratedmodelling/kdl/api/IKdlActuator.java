@@ -198,4 +198,11 @@ public interface IKdlActuator extends IKdlStatement {
    */
   List<IKdlContextualizer> getCoverage();
 
+  /**
+   * Any annotations added in the specification.
+   * 
+   * @return annotations in order of specification
+   */
+  List<IKdlAnnotation> getAnnotations();
+  
 }

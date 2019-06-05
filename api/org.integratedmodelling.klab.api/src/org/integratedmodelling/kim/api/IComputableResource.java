@@ -265,7 +265,7 @@ public interface IComputableResource extends IKimStatement, IDataflowNode {
 	 * 
 	 * @return the requirements as a collection of name and type pairs.
 	 */
-	Collection<Pair<String, IArtifact.Type>> getRequiredResourceNames();
+	Collection<Pair<String, IArtifact.Type>> getInputs();
 
 	/**
 	 * Any parameters set for the computation, e.g. in the case of a function call
