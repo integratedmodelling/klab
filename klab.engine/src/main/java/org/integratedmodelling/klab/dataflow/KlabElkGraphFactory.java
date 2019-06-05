@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.EnumSet;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.elk.alg.layered.options.LayeredMetaDataProvider;
@@ -156,7 +157,7 @@ public class KlabElkGraphFactory {
 		port.setDimensions(PORT_SIZE, PORT_SIZE);
 		return port;
 	}
-
+	
 	public ElkLabel createLabel(Actuator actuator, ElkGraphElement parent) {
 		String aname = actuator instanceof Dataflow ? ((Dataflow) actuator).getDescription()
 				: StringUtils.capitalize(actuator.getName().replaceAll("_", " "));
