@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.rest.StateSummary;
@@ -129,37 +130,27 @@ public class EngineViewController {
 		IObservation obs = session.getObservation(observation);
 		ILocator loc = ITime.INITIALIZATION; // TODO parse locator
 		if (obs == null) {
-//			throw new IllegalArgumentException("observation " + observation + " does not exist");
+			throw new IllegalArgumentException("observation " + observation + " does not exist");
 		}
 
 		List<IObservationReference> ret = new ArrayList<>();
-//
-//		if (offset != null || count != null) {
-//			if (offset == null) {
-//				offset = 0;
-//			}
-//			if (count == null) {
-//				count = 1;
-//			}
-//
-//			int nc = 0;
-//			for (IObservation child : obs) {
-//				IArtifact artifact = it.next();
-//				if (i >= offset) {
-//					ObservationReference ref = Observations.INSTANCE.createArtifactDescriptor((IObservation) artifact,
-//							obs.getContext(), loc, 0, false, false);
-//					if (ret == null) {
-//						ret = ref;
-//					} else {
-//						ret.getSiblings().add(ref);
-//					}
-//					nc++;
-//				}
-//				if (count > 0 && nc > count) {
-//					break;
-//				}
-//			}
-//		}
+		IRuntimeContext context = ((Observation) obs).getRuntimeContext();
+
+		int i = -1;
+		int n = 0;
+		for (IObservation child : context.getChildrenOf(obs)) {
+
+			i++;
+			if (offset != null && i < offset) {
+				continue;
+			}
+			if (count != null && n >= count) {
+				break;
+			}
+
+			ret.add(Observations.INSTANCE.createArtifactDescriptor(child, obs.getContext(), loc, 0, false, false));
+			n++;
+		}
 
 		return ret;
 	}
