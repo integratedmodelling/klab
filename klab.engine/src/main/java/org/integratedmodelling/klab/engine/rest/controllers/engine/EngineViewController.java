@@ -8,6 +8,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.security.Principal;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
@@ -109,69 +111,58 @@ public class EngineViewController {
 		return Observations.INSTANCE.getStateSummary((IState) obs, loc);
 	}
 
-	// /**
-	// * Get one or more siblings of an artifact, potentially with offsets and
-	// number.
-	// * The response will contain the first sibling requested containing all the
-	// * others as siblings. The optional childLevel parameter defines the level of
-	// * the children representation in each sibling. If the sibling count is 1
-	// * (default) the observation will return either the original observation or
-	// its
-	// * sibling at the offset.
-	// */
-	// @RequestMapping(
-	// value = API.ENGINE.OBSERVATION.VIEW.GET_SIBLINGS_OBSERVATION,
-	// method = RequestMethod.GET,
-	// produces = "application/json")
-	// @ResponseBody
-	// public IObservationReference getObservationSiblings(Principal principal,
-	// @PathVariable String observation, @RequestParam(
-	// required = false) Integer offset, @RequestParam(required = false) Integer
-	// count, @RequestParam(
-	// required = false) Integer childLevel, @RequestParam(required = false) String
-	// locator) {
-	//
-	// ISession session = EngineSessionController.getSession(principal);
-	// IObservation obs = session.getObservation(observation);
-	// ILocator loc = ITime.INITIALIZATION; // TODO parse locator
-	// if (obs == null) {
-	// throw new IllegalArgumentException("observation " + observation + " does not
-	// exist");
-	// }
-	//
-	// IObservationReference ret = null;
-	//
-	// if (offset != null || count != null) {
-	// if (offset == null) {
-	// offset = 0;
-	// }
-	// if (count == null) {
-	// count = 1;
-	// }
-	//
-	// int nc = 0;
-	// Iterator<IArtifact> it = obs.iterator();
-	// for (int i = 0; i < obs.groupSize(); i++) {
-	// IArtifact artifact = it.next();
-	// if (i >= offset) {
-	// ObservationReference ref = Observations.INSTANCE
-	// .createArtifactDescriptor((IObservation) artifact/*, obs
-	// .getContext()*/, loc, childLevel == null ? 0 : childLevel, false, false);
-	// if (ret == null) {
-	// ret = ref;
-	// } else {
-	// ret.getSiblings().add(ref);
-	// }
-	// nc++;
-	// }
-	// if (count > 0 && nc > count) {
-	// break;
-	// }
-	// }
-	// }
-	//
-	// return ret;
-	// }
+	/**
+	 * Get one or more siblings of an artifact, potentially with offsets and number.
+	 * The response will contain the first sibling requested containing all the
+	 * others as siblings. The optional childLevel parameter defines the level of
+	 * the children representation in each sibling. If the sibling count is 1
+	 * (default) the observation will return either the original observation or its
+	 * sibling at the offset.
+	 */
+	@RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.GET_CHILDREN_OBSERVATION, method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public List<IObservationReference> getObservationSiblings(Principal principal, @PathVariable String observation,
+			@RequestParam(required = false) Integer offset, @RequestParam(required = false) Integer count,
+			@RequestParam(required = false) String locator) {
+
+		ISession session = EngineSessionController.getSession(principal);
+		IObservation obs = session.getObservation(observation);
+		ILocator loc = ITime.INITIALIZATION; // TODO parse locator
+		if (obs == null) {
+//			throw new IllegalArgumentException("observation " + observation + " does not exist");
+		}
+
+		List<IObservationReference> ret = new ArrayList<>();
+//
+//		if (offset != null || count != null) {
+//			if (offset == null) {
+//				offset = 0;
+//			}
+//			if (count == null) {
+//				count = 1;
+//			}
+//
+//			int nc = 0;
+//			for (IObservation child : obs) {
+//				IArtifact artifact = it.next();
+//				if (i >= offset) {
+//					ObservationReference ref = Observations.INSTANCE.createArtifactDescriptor((IObservation) artifact,
+//							obs.getContext(), loc, 0, false, false);
+//					if (ret == null) {
+//						ret = ref;
+//					} else {
+//						ret.getSiblings().add(ref);
+//					}
+//					nc++;
+//				}
+//				if (count > 0 && nc > count) {
+//					break;
+//				}
+//			}
+//		}
+
+		return ret;
+	}
 
 	/**
 	 * Get the data for an observation in directly usable form, as values or images

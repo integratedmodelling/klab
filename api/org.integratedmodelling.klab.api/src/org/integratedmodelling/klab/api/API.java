@@ -525,10 +525,10 @@ public interface API {
 				 */
 				public static final String SUMMARIZE_OBSERVATION = "/engine/session/view/summary/" + P_OBSERVATION;
 
-//				/**
-//				 * Get one or more siblings of an artifact, potentially with offsets and number
-//				 */
-//				public static final String GET_SIBLINGS_OBSERVATION = "/engine/session/view/siblings/" + P_OBSERVATION;
+				/**
+				 * Get one or more siblings of an artifact, potentially with offsets and number
+				 */
+				public static final String GET_CHILDREN_OBSERVATION = "/engine/session/view/children/" + P_OBSERVATION;
 
 				/**
 				 * Get the data for a state in directly useable form, as values or images
