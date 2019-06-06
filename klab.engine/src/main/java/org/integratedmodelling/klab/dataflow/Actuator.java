@@ -352,13 +352,15 @@ public class Actuator implements IActuator {
 
 			// check out any that we escaped (built directly by actuators using the context)
 			List<IObservation> secondary = new ArrayList<>();
-			for (int i = 0; i < model.getObservables().size(); i++) {
-				IArtifact artifact = ctx.getArtifact(model.getObservables().get(i).getLocalName());
-				if (!artifacts.contains(artifact) && artifact instanceof IObservation) {
-					secondary.add((IObservation)artifact);
+			if (model != null) {
+				for (int i = 0; i < model.getObservables().size(); i++) {
+					IArtifact artifact = ctx.getArtifact(model.getObservables().get(i).getLocalName());
+					if (!artifacts.contains(artifact) && artifact instanceof IObservation) {
+						secondary.add((IObservation) artifact);
+					}
 				}
 			}
-			
+
 			// consolidate the lists, secondary first.
 			if (!secondary.isEmpty()) {
 				List<IObservation> primary = new ArrayList<>(this.products);
@@ -366,7 +368,7 @@ public class Actuator implements IActuator {
 				this.products.addAll(secondary);
 				this.products.addAll(primary);
 			}
-			
+
 			IConfiguration configuration = null;
 			if (!ret.isEmpty() && (mode == Mode.INSTANTIATION || ret instanceof IState)) {
 				/*
@@ -1001,11 +1003,12 @@ public class Actuator implements IActuator {
 
 		for (IObservation product : products) {
 
-			// parent is always getContext() because these notifications aren't sent beyond level 0
-			IObservationReference observation = Observations.INSTANCE
-					.createArtifactDescriptor(product, product.getContext(), ITime.INITIALIZATION, 0, false, isMainObservable || isMain)
+			// parent is always getContext() because these notifications aren't sent beyond
+			// level 0
+			IObservationReference observation = Observations.INSTANCE.createArtifactDescriptor(product,
+					product.getContext(), ITime.INITIALIZATION, 0, false, isMainObservable || isMain)
 					.withTaskId(taskId);
-			
+
 			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 					IMessage.Type.NewObservation, observation));
 			((Report) context.getReport()).include(observation);

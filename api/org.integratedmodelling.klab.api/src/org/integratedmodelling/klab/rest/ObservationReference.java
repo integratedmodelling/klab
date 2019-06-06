@@ -295,12 +295,6 @@ public class ObservationReference implements IObservationReference {
 	private long valueCount;
 
 	/**
-	 * Total number of children (independent of the contents of the children array,
-	 * which depends on the request).
-	 */
-	private int childCount;
-
-	/**
 	 * True <b>after</b> a notification was made of this observation.
 	 */
 	private boolean previouslyNotified;
@@ -778,14 +772,6 @@ public class ObservationReference implements IObservationReference {
 
 	public void setCreationTime(long creationTime) {
 		this.creationTime = creationTime;
-	}
-
-	public int getChildCount() {
-		return childCount;
-	}
-
-	public void setChildCount(int childCount) {
-		this.childCount = childCount;
 	}
 
 	public boolean isPreviouslyNotified() {

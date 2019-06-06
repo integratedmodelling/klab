@@ -64,7 +64,6 @@ import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.rest.ActionReference;
 import org.integratedmodelling.klab.rest.DataSummary;
@@ -248,7 +247,6 @@ public enum Observations implements IObservationService {
 
 		ret.setMain(isMain);
 		ret.setCreationTime(observation.getTimestamp());
-//		ret.setPreviouslyNotified(((Artifact) observation).isNotified());
 		ret.setLastUpdate(((Observation) observation).getLastUpdate());
 
 		if (isMain && observation instanceof Observation && !((Observation) observation).isMain()) {
@@ -290,7 +288,6 @@ public enum Observations implements IObservationService {
 		ret.setChildrenCount(observation instanceof IDirectObservation && !observation.isEmpty()
 				? ((IDirectObservation) observation).getChildren(IObservation.class).size()
 				: 0);
-//		ret.setSiblingCount(observation.groupSize());
 		ret.getSemantics().addAll(((Concept) observation.getObservable().getType()).getTypeSet());
 
 		ISpace space = ((IScale) observation.getGeometry()).getSpace();
@@ -429,11 +426,6 @@ public enum Observations implements IObservationService {
 
 		if (time != null) {
 			// TODO
-		}
-
-		if (observation instanceof IDirectObservation) {
-			ret.setChildCount(observation.isEmpty() ? 0
-					: ((IDirectObservation) observation).getChildren(IObservation.class).size());
 		}
 
 		if (observation instanceof IDirectObservation && !observation.isEmpty() && (childLevel < 0 || childLevel > 0)) {

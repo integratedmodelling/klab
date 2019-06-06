@@ -176,17 +176,12 @@ public class EngineViewController {
 	public void getObservationData(Principal principal, @PathVariable String observation,
 			@RequestParam(required = false) String viewport, @RequestParam(required = false) String locator,
 			@RequestParam ObservationReference.GeometryType format, @RequestParam(required = false) String outputFormat,
-			@RequestParam(required = false) boolean folder, @RequestParam(required = false) String adapter,
-			HttpServletResponse response) throws Exception {
+			@RequestParam(required = false) String adapter, HttpServletResponse response) throws Exception {
 
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
 		if (obs == null) {
 			throw new IllegalArgumentException("observation " + observation + " does not exist");
-		}
-
-		if (folder && !(obs instanceof ObservationGroup)) {
-			obs = ((Observation) obs).getGroup();
 		}
 
 		ILocator loc = ITime.INITIALIZATION;
