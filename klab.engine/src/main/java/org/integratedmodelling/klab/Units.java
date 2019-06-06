@@ -6,6 +6,7 @@ import java.util.Collection;
 import javax.measure.unit.Dimension;
 import javax.measure.unit.ProductUnit;
 
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
@@ -33,7 +34,7 @@ public enum Units implements IUnitService {
 	private Units() {
 		Services.INSTANCE.registerService(this, IUnitService.class);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -338,8 +339,11 @@ public enum Units implements IUnitService {
 	 */
 	@Override
 	public Unit getDefaultUnitFor(IConcept concept) {
-		Object unit = Concepts.INSTANCE.getMetadata(concept, NS.SI_UNIT_PROPERTY);
-		return unit == null ? null : getUnit(unit.toString());
+		if (concept.is(Type.EXTENSIVE_PROPERTY) || concept.is(Type.INTENSIVE_PROPERTY)) {
+			Object unit = Concepts.INSTANCE.getMetadata(concept, NS.SI_UNIT_PROPERTY);
+			return unit == null ? null : getUnit(unit.toString());
+		}
+		return null;
 	}
 
 	public ExtentDimension getExtentDimension(ISpace space) {
