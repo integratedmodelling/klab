@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -221,11 +222,18 @@ public class Flowchart {
 			 * fill in with actuator detail
 			 */
 			element.id = actuator.getDataflowId();
+			element.type = Element.Type.ACTUATOR;
 
 			/*
-			 * compile child actuators and record the local names if any. NOT like this: map
-			 * the local name to the input in this actuator if we translate, or to the
-			 * output in the producer if not.
+			 * Record for posterity, fill in later
+			 */
+			elements.put(actuator.getName(), element);
+			
+			/*
+			 * Child actuators are either inputs to our computations, references to
+			 * previously seen actuators, or external inputs. We map the local name for the
+			 * input in this actuator to the corresponding output of the actuator that
+			 * produces it, or to the external input where it will be available.
 			 */
 			Map<String, String> inputSources = new HashMap<>();
 			for (IActuator child : actuator.getActuators()) {
@@ -302,16 +310,18 @@ public class Flowchart {
 			Map<String, String> inputSources, Actuator context) {
 
 		IPrototype callPrototype = Extensions.INSTANCE.getPrototype(computation.getFirst().getName());
-		
+
 		Element ret = new Element();
-		parent.getChildren().add(ret);
 		
+		parent.getChildren().add(ret);
+
 		Set<String> outputs = new HashSet<>();
 
-		// TODO description
+		// TODO description, documentation (template with parameter substitution)
 		ret.id = computation.getSecond().getDataflowId();
 		ret.label = callPrototype.getLabel();
-
+		ret.type = Element.Type.RESOLVER;
+		
 		if (computation.getSecond().getServiceCall() != null) {
 
 			/*
@@ -333,6 +343,10 @@ public class Flowchart {
 						// lookup input tag
 					}
 				}
+				
+				if (prototype.getType() == IArtifact.Type.OBJECT) {
+					ret.type = Element.Type.INSTANTIATOR;
+				}
 			}
 
 		} else if (computation.getSecond().getExpression() != null) {
@@ -349,13 +363,15 @@ public class Flowchart {
 
 		} else if (computation.getSecond().getUrn() != null) {
 
+			ret.type = Element.Type.RESOURCE;
+
 			IResource resource = Resources.INSTANCE.resolveResource(computation.getSecond().getUrn());
 			if (resource != null) {
 
 				// personalize label and description
 				ret.label = resource.getAdapterType().toUpperCase() + " resource";
 				ret.setTooltip(resource.getUrn());
-				
+
 				/*
 				 * Resources: use inputs, check output map for additional outputs and add ret as
 				 * a producer if used.
@@ -379,6 +395,7 @@ public class Flowchart {
 			 * classifiers but we can probably ignore them (they're 'global' within the
 			 * actuator.
 			 */
+			ret.type = Element.Type.TABLE;
 
 		} else if (computation.getSecond().getLookupTable() != null) {
 
@@ -390,6 +407,7 @@ public class Flowchart {
 			for (String s : computation.getSecond().getLookupTable().getArguments()) {
 				//
 			}
+			ret.type = Element.Type.TABLE;
 
 		}
 

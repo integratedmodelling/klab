@@ -400,7 +400,7 @@ public enum Resolver {
 
 		ResolutionScope ret = parentScope.getChildScope(model);
 		
-		Coverage coverage = new Coverage(ret.getCoverage());
+		Coverage coverage = Coverage.full(ret.getCoverage());
 		
 		// use the reasoner to infer any missing dependency from the semantics
 		ObservableReasoner reasoner = new ObservableReasoner(model, parentScope.getObservable(), ret);

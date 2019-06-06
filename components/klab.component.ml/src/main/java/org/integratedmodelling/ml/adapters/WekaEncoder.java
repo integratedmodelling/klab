@@ -26,163 +26,162 @@ import org.integratedmodelling.ml.context.WekaInstances;
 import weka.core.Instance;
 import weka.core.SerializationHelper;
 import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.ReplaceMissingValues;
 
 public class WekaEncoder implements IResourceEncoder {
 
-    WekaClassifier classifier = null;
-    WekaInstances  instances  = null;
+	WekaClassifier classifier = null;
+	WekaInstances instances = null;
 
-    @Override
-    public boolean isOnline(IResource resource) {
-        return !resource.hasErrors();
-    }
+	@Override
+	public boolean isOnline(IResource resource) {
+		return !resource.hasErrors();
+	}
 
-    @Override
-    public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder, IComputationContext context) {
+	@Override
+	public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
+			Builder builder, IComputationContext context) {
 
-        /*
-         * load the classifier
-         */
-        File imported = new File(((Resource) resource).getPath() + File.separator + "import.xml");
-        if (imported.exists()) {
-            this.classifier = new WekaClassifier(imported, resource.getParameters()
-                    .get("classifier", String.class), resource.getParameters()
-                            .get("classifier.probabilistic", "false").equals("true"));
-        }
+		/*
+		 * load the classifier
+		 */
+		File imported = new File(((Resource) resource).getPath() + File.separator + "import.xml");
+		if (imported.exists()) {
+			this.classifier = new WekaClassifier(imported, resource.getParameters().get("classifier", String.class),
+					resource.getParameters().get("classifier.probabilistic", "false").equals("true"));
+		} else {
+			this.classifier = new WekaClassifier(((Resource) resource).getLocalFile("classifier.file"),
+					resource.getParameters().get("classifier.probabilistic", "false").equals("true"));
+		}
+		
+		this.instances = new WekaInstances(context, resource.getInputs().size());
+		this.instances.admitNodata(resource.getParameters().get("submitNodata", "true").equals("true"));
 
-        this.classifier = new WekaClassifier(((Resource) resource)
-                .getLocalFile("classifier.file"), resource.getParameters()
-                        .get("classifier.probabilistic", "false").equals("true"));
+		IState predictedState = null;
+		if (context.getTargetArtifact() instanceof IState) {
+			predictedState = ((IState) context.getTargetArtifact());
+		} else {
+			throw new IllegalStateException("Weka: the predicted observation is not a quality.");
+		}
 
-        this.instances = new WekaInstances(context, resource.getInputs().size());
-        this.instances.admitNodata(resource.getParameters().get("submitNodata", "true").equals("true"));
+		/*
+		 * Set the predicted state parameters and discretizer in the instances. This
+		 * must be done as the first step so that attributes are created in the correct
+		 * order.
+		 */
+		Filter discretizer = null;
+		if (resource.getParameters().containsKey("predicted.discretizer.file")) {
+			try {
+				discretizer = (Filter) SerializationHelper
+						.read(((Resource) resource).getLocalFile("predicted.discretizer.file").toString());
+			} catch (Exception e) {
+				throw new KlabIOException(e);
+			}
+		}
 
-        IState predictedState = null;
-        if (context.getTargetArtifact() instanceof IState) {
-            predictedState = ((IState) context.getTargetArtifact());
-        } else {
-            throw new IllegalStateException("Weka: the predicted observation is not a quality.");
-        }
+		Range prange = Range.create(resource.getParameters().get("predicted.range", String.class));
+		instances.setPredicted(context.getTargetName(), predictedState, discretizer);
+		instances.setPredictedRange(prange);
+		
+		/*
+		 * Initialize the instances; check ranges of learned instances and warn if our
+		 * inputs are outside.
+		 */
+		for (Attribute dependency : resource.getInputs()) {
 
-        /*
-         * Set the predicted state parameters and discretizer in the instances. This must be
-         * done as the first step so that attributes are created in the correct order.
-         */
-        Filter discretizer = null;
-        if (resource.getParameters().containsKey("predicted.discretizer.file")) {
-            try {
-                discretizer = (Filter) SerializationHelper.read(((Resource) resource)
-                        .getLocalFile("predicted.discretizer.file").toString());
-            } catch (Exception e) {
-                throw new KlabIOException(e);
-            }
-        }
+			IState state = context.getArtifact(dependency.getName(), IState.class);
+			if (state == null) {
+				continue;
+			}
 
-        Range prange = Range.create(resource.getParameters().get("predicted.range", String.class));
-        instances.setPredicted(context.getTargetName(), predictedState, discretizer);
-        instances.setPredictedRange(prange);
+			discretizer = null;
+			if (resource.getParameters().containsKey("predictor." + dependency.getName() + ".discretizer.file")) {
+				try {
+					discretizer = (Filter) SerializationHelper.read(((Resource) resource)
+							.getLocalFile("predictor." + dependency.getName() + ".discretizer.file").toString());
+				} catch (Exception e) {
+					throw new KlabIOException(e);
+				}
+			}
+			
+			/*
+			 * we may have less predictors than during training, so we put them in the
+			 * original place leaving any others as null. The index is the position in the
+			 * instances, which starts at 1 for the class attribute, so we subtract 2 to
+			 * obtain the predictor index.
+			 */
+			int index = Integer.parseInt(
+					resource.getParameters().get("predictor." + dependency.getName() + ".index").toString()) - 2;
 
-        /*
-         * Initialize the instances;
-         * check ranges of learned instances and warn if our inputs are outside.
-         */
-        for (Attribute dependency : resource.getInputs()) {
+			instances.addPredictor(dependency.getName(), state, index, discretizer);
 
-            IState state = context.getArtifact(dependency.getName(), IState.class);
-            if (state == null) {
-                continue;
-            }
+			StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
+			Range original = Range
+					.create(resource.getParameters().get("predictor." + dependency.getName() + ".range", String.class));
+			Range actual = Range.create(summary.getRange());
+			if (!original.contains(actual)) {
+				context.getMonitor().warn("predictor " + dependency.getName()
+						+ " has values outside the training range: original = " + original + ", predictor = " + actual);
+			}
+		}
 
-            discretizer = null;
-            if (resource.getParameters()
-                    .containsKey("predictor." + dependency.getName() + ".discretizer.file")) {
-                try {
-                    discretizer = (Filter) SerializationHelper.read(((Resource) resource)
-                            .getLocalFile("predictor." + dependency.getName() + ".discretizer.file")
-                            .toString());
-                } catch (Exception e) {
-                    throw new KlabIOException(e);
-                }
-            }
-            /*
-             * we may have less predictors than during training, so we put them in the original place
-             * leaving any others as null. The index is the position in the instances, which starts at
-             * 1 for the class attribute, so we subtract 2 to obtain the predictor index.
-             */
-            int index = Integer.parseInt(resource.getParameters()
-                    .get("predictor." + dependency.getName() + ".index").toString()) - 2;
+		/*
+		 * Initialize the instances and set up missing data filter
+		 */
+		instances.initializeForPrediction(((Resource) resource).getLocalFile("instances.file"));
+		classifier.setTrainingDataset(instances);
+		
+		/*
+		 * proceed to inference
+		 */
+		for (long offset = 0; offset < context.getScale().size(); offset++) {
+			ILocator locator = context.getScale().getLocator(offset);
+			Instance instance = instances.getInstance(locator);
+			if (instance != null) {
+				setValue(offset, classifier.predict(instance, context.getMonitor()), builder, resource,
+						/* ACHTUNG probably wrong - should serialize the data key? */predictedState.getDataKey());
+			}
+		}
+	}
 
-            instances.addPredictor(dependency.getName(), state, index, discretizer);
+	private void setValue(long offset, Object prediction, Builder target, IResource resource, IDataKey dataKey) {
 
-            StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
-            Range original = Range.create(resource.getParameters()
-                    .get("predictor." + dependency.getName() + ".range", String.class));
-            Range actual = Range.create(summary.getRange());
-            if (!original.contains(actual)) {
-                context.getMonitor()
-                        .warn("predictor " + dependency.getName()
-                                + " has values outside the training range: original = " + original
-                                + ", predictor = " + actual);
-            }
-        }
+		if (prediction instanceof double[]) {
 
-        /*
-         * Initialize the instances
-         */
-        instances.initializeForPrediction(((Resource) resource).getLocalFile("instances.file"));
+			// predicted state must be discretized
+			// FIXME this could be a categorical state without discretization
+			EnumeratedRealDistribution distribution = new EnumeratedRealDistribution(
+					instances.getPredictedDiscretization().getMidpoints(), (double[]) prediction);
 
-        /*
-         * proceed to inference
-         */
-        for (long offset = 0; offset < context.getScale().size(); offset++) {
-            ILocator locator = context.getScale().getLocator(offset);
-            Instance instance = instances.getInstance(locator);
-            if (instance != null) {
-                setValue(offset, classifier.predict(instance, context
-                        .getMonitor()), builder, resource, /* ACHTUNG probably wrong - should serialize the data key? */predictedState
-                                .getDataKey());
-            }
-        }
-    }
+			if (resource.getType() == IArtifact.Type.NUMBER) {
+				target.add(distribution.getNumericalMean(), offset);
+			} else {
+				// find the most likely class
+				int val = NumberUtils.indexOfLargest((double[]) prediction);
+				if (resource.getType() == IArtifact.Type.BOOLEAN) {
+					target.add(val == 0 ? Boolean.FALSE : Boolean.TRUE, offset);
+				} else if (resource.getType() == IArtifact.Type.CONCEPT) {
+					target.add(dataKey.lookup(val), offset);
+				}
+			}
 
-    private void setValue(long offset, Object prediction, Builder target, IResource resource, IDataKey dataKey) {
+			// if (uncertainty != null) {
+			// // TODO categorical distribution should use Shannon - redo with original
+			// // distribution
+			// uncertainty.set(locator, Math.sqrt(distribution.getNumericalVariance())
+			// / distribution.getNumericalMean());
+			// }
 
-        if (prediction instanceof double[]) {
+		} else {
+			if (resource.getType() == IArtifact.Type.NUMBER) {
+				target.add(prediction, offset);
+			} else if (resource.getType() == IArtifact.Type.BOOLEAN) {
+				target.add(((Number) prediction).intValue() == 0 ? Boolean.FALSE : Boolean.TRUE, offset);
+			} else if (resource.getType() == IArtifact.Type.CONCEPT) {
+				target.add(dataKey.lookup(((Number) prediction).intValue()), offset);
+			}
 
-            // predicted state must be discretized
-            // FIXME this could be a categorical state without discretization
-            EnumeratedRealDistribution distribution = new EnumeratedRealDistribution(instances
-                    .getPredictedDiscretization().getMidpoints(), (double[]) prediction);
-
-            if (resource.getType() == IArtifact.Type.NUMBER) {
-                target.add(distribution.getNumericalMean(), offset);
-            } else {
-                // find the most likely class
-                int val = NumberUtils.indexOfLargest((double[]) prediction);
-                if (resource.getType() == IArtifact.Type.BOOLEAN) {
-                    target.add(val == 0 ? Boolean.FALSE : Boolean.TRUE, offset);
-                } else if (resource.getType() == IArtifact.Type.CONCEPT) {
-                    target.add(dataKey.lookup(val), offset);
-                }
-            }
-
-            // if (uncertainty != null) {
-            // // TODO categorical distribution should use Shannon - redo with original
-            // // distribution
-            // uncertainty.set(locator, Math.sqrt(distribution.getNumericalVariance())
-            // / distribution.getNumericalMean());
-            // }
-
-        } else {
-            if (resource.getType() == IArtifact.Type.NUMBER) {
-                target.add(prediction, offset);
-            } else if (resource.getType() == IArtifact.Type.BOOLEAN) {
-                target.add(((Number) prediction).intValue() == 0 ? Boolean.FALSE : Boolean.TRUE, offset);
-            } else if (resource.getType() == IArtifact.Type.CONCEPT) {
-                target.add(dataKey.lookup(((Number) prediction).intValue()), offset);
-            }
-
-        }
-    }
+		}
+	}
 
 }
