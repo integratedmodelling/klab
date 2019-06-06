@@ -30,7 +30,11 @@ public enum Kdl {
         if (value.getLiteral() != null) {
             return parseLiteral(value.getLiteral());
         } else if (value.getFunction() != null) {
-          //  return new KimFunctionCall(value.getFunction());
+        	if (value.getFunction().getParameters() == null) {
+        		return value.getFunction().getName();
+        	} else {
+        		// TODO!
+        	}
         } else if (value.getList() != null) {
             List<Object> ret = new ArrayList<>();
             for (Value val : value.getList().getContents()) {

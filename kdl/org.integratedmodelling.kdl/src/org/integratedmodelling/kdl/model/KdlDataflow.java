@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kdl.api.IKdlActuator;
+import org.integratedmodelling.kdl.api.IKdlAnnotation;
 import org.integratedmodelling.kdl.api.IKdlContextualizer;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kdl.kdl.ActorDefinition;
@@ -35,7 +36,7 @@ public class KdlDataflow extends KdlStatement implements IKdlDataflow {
 		this.geometry = o.getGeometry();
 		this.endpoint = o.getEndpoint();
 		this.packageName = o.getPackage();
-
+		
 		Map<String, KdlActuator> previousActuators = new HashMap<>();
 
 		for (Function ctx : o.getScale()) {

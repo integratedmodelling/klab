@@ -31,13 +31,14 @@ public class DataflowGraph {
 
 	private ElkNode rootNode;
 	private KlabElkGraphFactory kelk;
-
+	private Map<String, ElkPort> inputs = new HashMap<>();
 	private Map<String, ElkNode> nodes;
 
 	public DataflowGraph(Dataflow dataflow, Map<String, ElkNode> nodes, KlabElkGraphFactory kelk) {
 		this.nodes = nodes;
 		this.kelk = kelk;
-		rootNode = compile(dataflow, null);
+		Flowchart flowchart = Flowchart.create(dataflow);
+		compile(dataflow, null);
 	}
 
 	public ElkNode getRootNode() {
@@ -48,55 +49,74 @@ public class DataflowGraph {
 
 		Map<String, ElkConnectableShape> localNodes = new HashMap<>();
 
-		boolean trivial = false;
 		if (actuator instanceof Dataflow && actuator.actuators.size() == 1 && !actuator.actuators.get(0).isComputed()
 				&& actuator.actuators.get(0).getActuators().size() == 0 && !actuator.isInput()) {
 			actuator = (Actuator) actuator.actuators.get(0);
-			trivial = true;
 		}
 
 		ElkNode root = nodes.get(actuator.getDataflowId());
 		if (root == null) {
 
 			root = kelk.createActuatorNode(actuator.getDataflowId(), parent);
+			if (rootNode == null) {
+				rootNode = root;
+			}
 			nodes.put(actuator.getName(), root);
 			root.getLabels().add(kelk.createLabel(actuator, root));
 
 			// main output
 			// property goes on east edge
 			// FIXME if there are no ports, nothing gets drawn
-			ElkPort mainOut = null;
-//			if (!trivial) {
-				mainOut = kelk.createPort(actuator.getDataflowId() + "_out1", root, PortSide.EAST);
-//			}
+			ElkPort mainOut = kelk.createPort(actuator.getDataflowId() + "_out1", root, PortSide.EAST);
 
-			// TODO handle references
-			// TODO handle varargs
-				
 			// imports
 			ElkNode lastChild = null;
 			for (IActuator child : actuator.getActuators()) {
-				if (((Actuator)child).isReference() || child.isInput()) {
-					ElkPort port = kelk.createPort(actuator.getDataflowId() + "_" + child.getName() + "_in", root,
+				if (((Actuator) child).isReference() || actuator.isInput()) {
+					
+					ElkPort port = kelk.createPort(actuator.getDataflowId() + "_" + child.getName() + "_in", actuator.isInput() ? rootNode : root,
 							PortSide.WEST);
 					ElkLabel label = kelk.createLabel((child.getAlias() == null ? child.getName() : child.getAlias()),
 							((Actuator) child).getId(), port);
 					port.getLabels().add(label);
 					localNodes.put(child.getAlias() == null ? child.getName() : child.getAlias(), port);
-					ElkNode input = nodes.get(child.getName());
-					if (input != null) {
-						ElkPort extout = kelk.getOutputPort(input);
-						ElkEdge impedge = kelk.createSimpleEdge(extout, port, null); // no identifier?
+					ElkNode input = null; 
+					ElkPort extout = null;
+
+					if (actuator.isInput()) {
+						// create an import port on top of the root node and connect to it; tag it for
+						// the external
+						// process to resolve and link
+						String importName = actuator.getDataflowId() + "_" + child.getName() + "_extin";
+						extout = inputs.get(importName);
+						if (extout == null) {
+							extout = kelk.createPort(importName, root, PortSide.NORTH);
+							ElkLabel lbl = kelk.createLabel(
+									(child.getAlias() == null ? child.getName() : child.getAlias()),
+									((Actuator) child).getId(), port);
+							port.getLabels().add(lbl);
+							inputs.put(importName, extout);
+						}
+						kelk.createSimpleEdge(extout, port, null);
+					} else {
+						input = nodes.get(child.getName());
 					}
+					if (input != null) {
+						if (extout == null) {
+							extout = kelk.getOutputPort(input);
+						}
+						kelk.createSimpleEdge(extout, port, null); // no identifier?
+					}
+					
 				} else {
-					// ACHTUNG references end up here - they should be connected to inside 
+					// ACHTUNG references end up here - they should be connected to inside
 					lastChild = compile((Actuator) child, root);
 					localNodes.put(child.getAlias() == null ? child.getName() : child.getAlias(), lastChild);
 				}
 			}
 
 			// mediators
-			for (Pair<IServiceCall, IComputableResource> mediator : actuator.getComputationStrategy()) {
+			for (Pair<IServiceCall, IComputableResource> mediator : actuator.getMediationStrategy()) {
 				/*
 				 * Compile each mediator and
 				 */
@@ -112,10 +132,6 @@ public class DataflowGraph {
 
 				IPrototype prototype = Extensions.INSTANCE.getPrototype(actor.getFirst().getName());
 				call = kelk.createServiceNode(actor.getSecond().getDataflowId(), root);
-				// HMMM this would be better for space utilization but the node won't resize to
-				// contain the label
-				// call.setProperty(CoreOptions.NODE_LABELS_PLACEMENT,
-				// NodeLabelPlacement.insideCenter());
 				call.getLabels().add(kelk.createLabel(Extensions.INSTANCE.getServiceLabel(actor.getFirst()),
 						call.getIdentifier() + "l", call));
 
@@ -127,7 +143,7 @@ public class DataflowGraph {
 				// literal arguments must go on top edge
 				for (Argument arg : prototype.listArguments()) {
 					if (arg.getName().equals("arguments")) {
-						for (Pair<String, Type> rp : actor.getSecond().getRequiredResourceNames()) {
+						for (Pair<String, Type> rp : actor.getSecond().getInputs()) {
 							ElkConnectableShape provider = localNodes.get(rp.getFirst());
 							if (provider != null) {
 								ElkPort pout = kelk.getOutputPort(provider);
@@ -182,11 +198,4 @@ public class DataflowGraph {
 		return root;
 	}
 
-	/*
-	 * public String asJson() { // TODO these options are copied from the docs
-	 * without thinking return
-	 * ElkGraphJson.forGraph(rootNode).omitLayout(true).omitZeroDimension(false).
-	 * omitZeroPositions(false)
-	 * .shortLayoutOptionKeys(false).prettyPrint(true).toJson(); }
-	 */
 }

@@ -15,8 +15,13 @@
  */
 package org.integratedmodelling.klab.api.data.general;
 
+import java.util.Collection;
+
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 /**
  * Simple execution interface for expressions. A new expression is generated per each call to the
@@ -27,6 +32,45 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
  */
 public interface IExpression {
 
+	/**
+	 * The context to evaluate an expression. If passed, it is used to establish the 
+	 * role of the identifiers, which may affect preprocessing.
+	 * 
+	 * @author ferdinando.villa
+	 *
+	 */
+	public interface Context {
+		
+		/**
+		 * All known identifiers at the time of evaluation.
+		 * 
+		 * @return
+		 */
+		Collection<String> getIdentifiers();
+		
+		/**
+		 * The type of the passed identifier.
+		 * 
+		 * @param identifier
+		 * @return
+		 */
+		IArtifact.Type getIdentifierType(String identifier);
+		
+		/**
+		 * The scale of evaluation, or null.
+		 * 
+		 * @return
+		 */
+		IScale getScale();
+		
+		/**
+		 * A monitor for notifications.
+		 * 
+		 * @return
+		 */
+		IMonitor getMonitor();
+	}
+	
     /**
      * Execute the expression
      *
@@ -38,6 +82,6 @@ public interface IExpression {
      * @return the result of evaluating the expression
      * @throws org.integratedmodelling.klab.exceptions.KlabException TODO
      */
-    Object eval(IParameters<String> parameters, IComputationContext context);
+    Object eval(IParameters<String> parameters, /* TODO make this a IExpression.Context */ IComputationContext context);
 
 }

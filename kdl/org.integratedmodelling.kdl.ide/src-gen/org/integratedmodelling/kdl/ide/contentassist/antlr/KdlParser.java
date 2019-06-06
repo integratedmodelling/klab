@@ -52,6 +52,7 @@ public class KdlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getLiteralAccess().getBooleanAlternatives_3_0(), "rule__Literal__BooleanAlternatives_3_0");
 					put(grammarAccess.getLiteralOrIdOrCommaAccess().getAlternatives(), "rule__LiteralOrIdOrComma__Alternatives");
 					put(grammarAccess.getLiteralOrIdOrCommaAccess().getBooleanAlternatives_3_0(), "rule__LiteralOrIdOrComma__BooleanAlternatives_3_0");
+					put(grammarAccess.getLiteralOrIdOrCommaAccess().getIdAlternatives_4_0(), "rule__LiteralOrIdOrComma__IdAlternatives_4_0");
 					put(grammarAccess.getLiteralOrIDAccess().getAlternatives(), "rule__LiteralOrID__Alternatives");
 					put(grammarAccess.getLiteralOrIDAccess().getBooleanAlternatives_2_0(), "rule__LiteralOrID__BooleanAlternatives_2_0");
 					put(grammarAccess.getMetadataAccess().getIdsAlternatives_2_0_0(), "rule__Metadata__IdsAlternatives_2_0_0");

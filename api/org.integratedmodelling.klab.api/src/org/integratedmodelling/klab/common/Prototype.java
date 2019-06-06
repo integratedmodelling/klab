@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.common;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -169,6 +170,7 @@ public class Prototype implements IPrototype {
 	protected String label = null;
 	protected List<ArgumentImpl> exports = new ArrayList<>();
     protected List<ArgumentImpl> imports = new ArrayList<>();
+	protected Set<String> inputTags = new HashSet<>();
 
 	public String getLabel() {
 		return label;
@@ -428,5 +430,10 @@ public class Prototype implements IPrototype {
     public List<Argument> listExports() {
         return new CastUtils<ArgumentImpl, Argument>().cast(exports);
     }
+
+	@Override
+	public Collection<String> listInputTags() {
+		return inputTags;
+	}
 
 }

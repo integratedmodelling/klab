@@ -333,7 +333,7 @@ public class Model extends KimObject implements IModel {
 
 		for (IComputableResource resource : resources) {
 			// TODO TODO this is a temp fix to make the tests run.
-			if (!resource.getRequiredResourceNames().isEmpty()) {
+			if (!resource.getInputs().isEmpty()) {
 				return false;
 			}
 		}

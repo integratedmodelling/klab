@@ -134,7 +134,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 					if (active.isComputed() || ((Actuator) active).isMerging()) {
 						active.compute(ctx.getTargetArtifact(), ctx);
 					}
-					((Actuator)actuator).notifyArtifacts(i == order.size() - 1, ctx);
+					((Actuator)active).notifyArtifacts(i == order.size() - 1, ctx);
 					i++;
 				}
 

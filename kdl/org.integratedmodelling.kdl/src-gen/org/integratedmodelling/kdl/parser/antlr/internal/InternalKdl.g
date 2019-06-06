@@ -2667,20 +2667,52 @@ ruleLiteralOrIdOrComma returns [EObject current=null]
 		    |
 		(
 			(
-				lv_id_6_0=RULE_ID
-				{
-					newLeafNode(lv_id_6_0, grammarAccess.getLiteralOrIdOrCommaAccess().getIdIDTerminalRuleCall_4_0());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getLiteralOrIdOrCommaRule());
+				(
+					lv_id_6_1=RULE_ID
+					{
+						newLeafNode(lv_id_6_1, grammarAccess.getLiteralOrIdOrCommaAccess().getIdIDTerminalRuleCall_4_0_0());
 					}
-					setWithLastConsumed(
-						$current,
-						"id",
-						lv_id_6_0,
-						"org.eclipse.xtext.common.Terminals.ID");
-				}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getLiteralOrIdOrCommaRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"id",
+							lv_id_6_1,
+							"org.eclipse.xtext.common.Terminals.ID");
+					}
+					    |
+					lv_id_6_2=RULE_LOWERCASE_ID
+					{
+						newLeafNode(lv_id_6_2, grammarAccess.getLiteralOrIdOrCommaAccess().getIdLOWERCASE_IDTerminalRuleCall_4_0_1());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getLiteralOrIdOrCommaRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"id",
+							lv_id_6_2,
+							"org.integratedmodelling.kdl.Kdl.LOWERCASE_ID");
+					}
+					    |
+					lv_id_6_3=RULE_UPPERCASE_ID
+					{
+						newLeafNode(lv_id_6_3, grammarAccess.getLiteralOrIdOrCommaAccess().getIdUPPERCASE_IDTerminalRuleCall_4_0_2());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getLiteralOrIdOrCommaRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"id",
+							lv_id_6_3,
+							"org.integratedmodelling.kdl.Kdl.UPPERCASE_ID");
+					}
+				)
 			)
 		)
 		    |

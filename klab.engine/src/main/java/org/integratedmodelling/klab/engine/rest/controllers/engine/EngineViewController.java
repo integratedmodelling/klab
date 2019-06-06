@@ -122,7 +122,7 @@ public class EngineViewController {
 	 */
 	@RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.GET_CHILDREN_OBSERVATION, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public List<IObservationReference> getObservationSiblings(Principal principal, @PathVariable String observation,
+	public List<IObservationReference> getObservationChildren(Principal principal, @PathVariable String observation,
 			@RequestParam(required = false) Integer offset, @RequestParam(required = false) Integer count,
 			@RequestParam(required = false) String locator) {
 

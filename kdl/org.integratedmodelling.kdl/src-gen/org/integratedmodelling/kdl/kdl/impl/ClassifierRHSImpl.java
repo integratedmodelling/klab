@@ -1105,7 +1105,7 @@ public class ClassifierRHSImpl extends MinimalEObjectImpl.Container implements C
   {
     if (eIsProxy()) return super.toString();
 
-    StringBuilder result = new StringBuilder(super.toString());
+    StringBuffer result = new StringBuffer(super.toString());
     result.append(" (boolean: ");
     result.append(boolean_);
     result.append(", leftLimit: ");
