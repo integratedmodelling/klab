@@ -144,7 +144,7 @@ public class EngineViewController {
 			if (offset != null && i < offset) {
 				continue;
 			}
-			if (count != null && n >= count) {
+			if (count != null && count >= 0 && n >= count) {
 				break;
 			}
 
