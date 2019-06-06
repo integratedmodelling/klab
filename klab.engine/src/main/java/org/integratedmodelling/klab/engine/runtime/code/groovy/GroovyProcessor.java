@@ -19,136 +19,127 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public enum GroovyProcessor implements ILanguageProcessor {
 
-    INSTANCE;
+	INSTANCE;
 
-    public static final String   ID           = "groovy";
+	public static final String ID = "groovy";
 
-    class GroovyDescriptor implements Descriptor {
+	class GroovyDescriptor implements Descriptor {
 
-        String                        processedCode;
-        Collection<String>            identifiers;
-        private Set<String>           scalarIds;
-        private Set<String>           objectIds;
-        private Set<String>           contextualizers;
+		String processedCode;
+		Collection<String> identifiers;
+		private Set<String> scalarIds;
+		private Set<String> objectIds;
+		private Set<String> contextualizers;
+		private List<KimNotification> errors;
 
-        private List<KimNotification> errors;
-        // private List<TokenDescriptor> tokens;
-        // private IRuntimeContext context;
+		GroovyDescriptor(String expression, IExpression.Context context, boolean contextual) {
 
-        GroovyDescriptor(String expression, IRuntimeContext context, boolean contextual) {
+			/*
+			 * Context should most definitely be nullable
+			 */
+			INamespace namespace = context == null ? null : context.getNamespace();
+			Set<String> knownIdentifiers = context == null ? new HashSet<>()
+					: new HashSet<>(context.getStateIdentifiers());
+			knownIdentifiers.add("self");
 
-            /*
-             * Context should most definitely be nullable
-             */
-            INamespace namespace = context == null ? null : context.getNamespace();
-            Set<String> knownIdentifiers = context == null ? new HashSet<>()
-                    : context.getArtifacts(IState.class).stream().map(data -> data.getFirst())
-                            .collect(Collectors.toSet());
-            knownIdentifiers.add("self");
+			IScale scale = context == null ? null : context.getScale();
 
-            IScale scale = context == null ? null : context.getScale();
+			GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace, knownIdentifiers,
+					scale, context, contextual);
 
-            GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace, knownIdentifiers, scale, context, contextual);
+			this.processedCode = processor.process(expression);
+			this.identifiers = processor.getIdentifiers();
+			this.scalarIds = processor.getScalarIdentifiers();
+			this.objectIds = processor.getObjectIdentifiers();
+			this.contextualizers = processor.getContextualizers();
+			this.errors = processor.getErrors();
+			// this.tokens = processor.tokens;
+			// this.context = context;
+		}
 
-            this.processedCode = processor.process(expression);
-            this.identifiers = processor.getIdentifiers();
-            this.scalarIds = processor.getScalarIdentifiers();
-            this.objectIds = processor.getObjectIdentifiers();
-            this.contextualizers = processor.getContextualizers();
-            this.errors = processor.getErrors();
-            // this.tokens = processor.tokens;
-            // this.context = context;
-        }
+		@Override
+		public Collection<String> getIdentifiers() {
+			return identifiers;
+		}
 
-        @Override
-        public Collection<String> getIdentifiers() {
-            return identifiers;
-        }
+		@Override
+		public boolean isScalar(Collection<String> stateIdentifiers) {
+			for (String id : stateIdentifiers) {
+				if (this.scalarIds.contains(id)) {
+					return true;
+				}
+			}
+			return false;
+		}
 
-        @Override
-        public boolean isScalar(Collection<String> stateIdentifiers) {
-            for (String id : stateIdentifiers) {
-                if (this.scalarIds.contains(id)) {
-                    return true;
-                }
-            }
-            return false;
-        }
+		public List<KimNotification> getNotifications() {
+			return errors;
+		}
 
-        public List<KimNotification> getNotifications() {
-            return errors;
-        }
+		public boolean hasErrors() {
+			return errors.size() > 0;
+		}
 
-        public boolean hasErrors() {
-            return errors.size() > 0;
-        }
+		@Override
+		public Collection<String> getIdentifiersInScalarScope() {
+			return this.scalarIds;
+		}
 
-        @Override
-        public Collection<String> getIdentifiersInScalarScope() {
-            return this.scalarIds;
-        }
+		@Override
+		public Collection<String> getIdentifiersInNonscalarScope() {
+			return this.objectIds;
+		}
 
-        @Override
-        public Collection<String> getIdentifiersInNonscalarScope() {
-            return this.objectIds;
-        }
+		@Override
+		public ILanguageExpression compile() {
+			return new GroovyExpression(processedCode, true, this);
+		}
 
-        @Override
-        public ILanguageExpression compile() {
-            // String ret = "";
-            // for (TokenDescriptor token : tokens) {
-            // ret += token.translate(context);
-            // }
-            return new GroovyExpression(processedCode, true, this);
-        }
+		@Override
+		public boolean isScalar(String identifier) {
+			return scalarIds.contains(identifier);
+		}
 
-        @Override
-        public boolean isScalar(String identifier) {
-            return scalarIds.contains(identifier);
-        }
+		@Override
+		public boolean isNonscalar(String identifier) {
+			return objectIds.contains(identifier);
+		}
 
-        @Override
-        public boolean isNonscalar(String identifier) {
-            return objectIds.contains(identifier);
-        }
+		@Override
+		public boolean isNonscalar(Collection<String> stateIdentifiers) {
+			for (String id : stateIdentifiers) {
+				if (this.objectIds.contains(id)) {
+					return true;
+				}
+			}
+			return false;
 
-        @Override
-        public boolean isNonscalar(Collection<String> stateIdentifiers) {
-            for (String id : stateIdentifiers) {
-                if (this.objectIds.contains(id)) {
-                    return true;
-                }
-            }
-            return false;
+		}
 
-        }
+		@Override
+		public Collection<String> getContextualizers() {
+			return contextualizers;
+		}
+	}
 
-        @Override
-        public Collection<String> getContextualizers() {
-            return contextualizers;
-        }
-    }
+	@Override
+	public IExpression compile(String expression, IExpression.Context context) throws KlabValidationException {
+		return new GroovyDescriptor(expression, context, true).compile();
+	}
 
-    @Override
-    public IExpression compile(String expression, IComputationContext context)
-            throws KlabValidationException {
-        return new GroovyDescriptor(expression, (IRuntimeContext) context, true).compile();
-    }
+	@Override
+	public Descriptor describe(String expression, IExpression.Context context) throws KlabValidationException {
+		return new GroovyDescriptor(expression, context, true);
+	}
 
-    @Override
-    public Descriptor describe(String expression, IComputationContext context)
-            throws KlabValidationException {
-        return new GroovyDescriptor(expression, (IRuntimeContext) context, true);
-    }
+	@Override
+	public Descriptor describe(String expression) throws KlabValidationException {
+		return new GroovyDescriptor(expression, null, false);
+	}
 
-    @Override
-    public Descriptor describe(String expression) throws KlabValidationException {
-        return new GroovyDescriptor(expression, null, false);
-    }
-
-    @Override
-    public String negate(String expression) {
-        return "!(" + expression + ")";
-    }
+	@Override
+	public String negate(String expression) {
+		return "!(" + expression + ")";
+	}
 
 }

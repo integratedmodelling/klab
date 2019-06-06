@@ -17,7 +17,9 @@ package org.integratedmodelling.klab.api.data.general;
 
 import java.util.Collection;
 
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
@@ -33,7 +35,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 public interface IExpression {
 
 	/**
-	 * The context to evaluate an expression. If passed, it is used to establish the 
+	 * The context to compile an expression. If passed, it is used to establish the 
 	 * role of the identifiers, which may affect preprocessing.
 	 * 
 	 * @author ferdinando.villa
@@ -42,19 +44,40 @@ public interface IExpression {
 	public interface Context {
 		
 		/**
+		 * The expected return type, if known.
+		 * 
+		 * @return
+		 */
+		IKimConcept.Type getReturnType();
+		
+		/**
+		 * Namespace of evaluation, if any.
+		 * 
+		 * @return
+		 */
+		INamespace getNamespace();
+		
+		/**
 		 * All known identifiers at the time of evaluation.
 		 * 
 		 * @return
 		 */
 		Collection<String> getIdentifiers();
-		
+
+		/**
+		 * All known identifiers of quality observations at the time of evaluation.
+		 * 
+		 * @return
+		 */
+		Collection<String> getStateIdentifiers();
+
 		/**
 		 * The type of the passed identifier.
 		 * 
 		 * @param identifier
 		 * @return
 		 */
-		IArtifact.Type getIdentifierType(String identifier);
+		IKimConcept.Type getIdentifierType(String identifier);
 		
 		/**
 		 * The scale of evaluation, or null.
@@ -82,6 +105,6 @@ public interface IExpression {
      * @return the result of evaluating the expression
      * @throws org.integratedmodelling.klab.exceptions.KlabException TODO
      */
-    Object eval(IParameters<String> parameters, /* TODO make this a IExpression.Context */ IComputationContext context);
+    Object eval(IParameters<String> parameters, IComputationContext context);
 
 }

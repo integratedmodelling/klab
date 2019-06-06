@@ -323,7 +323,7 @@ public class Flowchart {
 			if (prototype != null) {
 				for (String arg : computation.getSecond().getServiceCall().getParameters().keySet()) {
 					Argument argument = prototype.getArgument(arg);
-					if (argument.isArtifact()) {
+					if (argument != null && argument.isArtifact()) {
 						//
 					}
 				}
@@ -360,7 +360,8 @@ public class Flowchart {
 				 * Resources: use inputs, check output map for additional outputs and add ret as
 				 * a producer if used.
 				 */
-				for (Attribute output : resource.getInputs()) {
+				for (Attribute input : resource.getInputs()) {
+					//
 				}
 
 				for (Attribute output : resource.getOutputs()) {

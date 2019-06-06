@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
+import org.integratedmodelling.klab.api.data.general.IExpression.Context;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -54,6 +55,7 @@ import org.integratedmodelling.klab.engine.runtime.ConfigurationDetector;
 import org.integratedmodelling.klab.engine.runtime.EventBus;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
+import org.integratedmodelling.klab.engine.runtime.code.ExpressionContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
@@ -1108,5 +1110,10 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
     public IDataflow<?> getDataflow() {
         return actuator == null ? null : ((Actuator) actuator).getDataflow();
     }
+
+	@Override
+	public Context getExpressionContext() {
+		return ExpressionContext.create(this);
+	}
 
 }

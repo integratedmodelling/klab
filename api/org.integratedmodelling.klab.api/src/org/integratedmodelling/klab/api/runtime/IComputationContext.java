@@ -20,6 +20,7 @@ import java.util.Collection;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
+import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -359,5 +360,12 @@ public interface IComputationContext extends IParameters<String> {
      * @return the parent, or an empty collection if no children
      */
     Collection<IObservation> getChildrenOf(IObservation observation);
+    
+    /**
+     * Create a context to compile an expression.
+     * 
+     * @return
+     */
+    IExpression.Context getExpressionContext();
 
 }

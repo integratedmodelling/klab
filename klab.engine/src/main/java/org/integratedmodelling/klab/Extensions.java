@@ -258,7 +258,7 @@ public enum Extensions implements IExtensionService {
         return getLanguageProcessor(language).compile(expressionCode, null);
     }
 
-    public IExpression compileExpression(String expressionCode, IComputationContext context, String language) {
+    public IExpression compileExpression(String expressionCode, IExpression.Context context, String language) {
         return getLanguageProcessor(language).compile(expressionCode, context);
     }
 
@@ -288,7 +288,7 @@ public enum Extensions implements IExtensionService {
             }
         } else if (condition.getExpression() != null) {
             IExpression expression = getLanguageProcessor(DEFAULT_EXPRESSION_LANGUAGE)
-                    .compile(condition.getExpression(), context);
+                    .compile(condition.getExpression(), context.getExpressionContext());
             Object o = expression.eval(context, context);
             if (o instanceof Boolean) {
                 return (Boolean) o;
