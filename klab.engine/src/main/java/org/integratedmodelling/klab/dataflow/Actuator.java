@@ -46,6 +46,7 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
+import org.integratedmodelling.klab.components.runtime.observations.StateLayer;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.documentation.Report;
@@ -319,7 +320,7 @@ public class Actuator implements IActuator {
 
 			if (model != null && !input && !artifacts.contains(ret)) {
 				artifacts.add(ret);
-				if (ret instanceof IObservation) {
+				if (ret instanceof IObservation && !(ret instanceof StateLayer)) {
 					this.products.add((IObservation) ret);
 				}
 			}

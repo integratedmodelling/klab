@@ -45,5 +45,4 @@ public class StateLayer extends State implements IState {
         return (DirectObservation) getRuntimeContext().getParentOf(delegate);
     }
 
-
 }
