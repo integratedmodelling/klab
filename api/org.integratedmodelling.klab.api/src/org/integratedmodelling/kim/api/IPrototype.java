@@ -1,5 +1,6 @@
 package org.integratedmodelling.kim.api;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -180,6 +181,17 @@ public interface IPrototype {
      * @return exports, or an empty list.
      */
 	List<Argument> listExports();
+	
+	/**
+	 * In some instances, the inputs for the described computation cannot be assessed at declaration
+	 * time, but will be exposed through annotation tags in the containing model. These can be declared
+	 * using the KDL annotation 'taginput', whose value (corresponding to the name of each annotation
+	 * that can tag an input in the model) is returned in the collection.
+	 * 
+	 * @return names of any annotation that can be used to tag an input of the computation produced by
+	 *         the contextualizer specified with this prototype.
+	 */
+	Collection<String> listInputTags();
 	
 	/**
 	 * Ensure that the arguments passed reflect the required arguments.

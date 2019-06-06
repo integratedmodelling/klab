@@ -11,9 +11,11 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.integratedmodelling.kdl.api.IKdlActuator;
+import org.integratedmodelling.kdl.api.IKdlAnnotation;
 import org.integratedmodelling.kdl.api.IKdlComputation;
 import org.integratedmodelling.kdl.api.IKdlContextualizer;
 import org.integratedmodelling.kdl.kdl.ActorDefinition;
+import org.integratedmodelling.kdl.kdl.Annotation;
 import org.integratedmodelling.kdl.kdl.Function;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 
@@ -26,6 +28,7 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 	List<IKdlActuator> parameters = new ArrayList<>();
 	List<IKdlActuator> actors = new ArrayList<>();
 	List<IKdlComputation> computations = new ArrayList<>();
+	List<IKdlAnnotation> annotations = new ArrayList<>();
 
 	String name;
 	String alias;
@@ -62,6 +65,10 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 	public KdlActuator(ActorDefinition o, Map<String, KdlActuator> previousActuators) {
 
 		super(o);
+		
+		for (Annotation annotation : o.getAnnotations()) {
+			this.annotations.add(new KdlAnnotation(annotation));
+		}
 		
 		this.name = o.getName();
 		this.alias = o.getLocalName();
@@ -123,6 +130,10 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 				for (IKdlActuator actor : extended.getParameters()) {
 					this.parameters.add(actor);
 				}
+				for (IKdlAnnotation annotation : extended.getAnnotations()) {
+					this.annotations.add(annotation);
+				}
+
 			}
 		}
 		
@@ -427,6 +438,11 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 	@Override
 	public boolean isAbstract() {
 		return isAbstract;
+	}
+
+	@Override
+	public List<IKdlAnnotation> getAnnotations() {
+		return annotations;
 	}
 
 }

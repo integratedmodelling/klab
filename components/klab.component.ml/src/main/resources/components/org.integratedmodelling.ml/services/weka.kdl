@@ -5,6 +5,8 @@
 @version 0.10.0
 @namespace im.weka
 
+@taginput(predictor)
+@taginput(archetype)
 abstract value classifier {		
 	
 	optional text resource 

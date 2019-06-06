@@ -5,6 +5,8 @@
 @version 0.10.0
 @namespace im.mca
 
+@taginput(cost)
+@taginput(benefit)
 export number concordance
 	"Run a concordance analysis to compute the concordance of a set of criteria variables with corresponding values from
 	 observers in the context. Can turn quantitative distributed observations into alternatives for spatial and/or temporal 
@@ -18,6 +20,8 @@ export number concordance
 }
 
 // TODO constraints for attributes according to method
+@taginput(cost)
+@taginput(benefit)
 export object ranking
 	"Run a concordance analysis to rank the set of alternatives produced by a resource or a contextualizer. Acts as a filter
 	 that computes the concordance ranking and sorts the output set by decreasing concordance. The score will be added to the

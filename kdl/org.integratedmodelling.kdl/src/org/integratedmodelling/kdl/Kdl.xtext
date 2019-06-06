@@ -58,30 +58,6 @@ ActorDefinition:
 	('default' default=Value)?
 	('as' localName=LOWERCASE_ID)?
 	('over' coverage+=Function (',' coverage+=Function)*)? 
-	
-//	|
-//
-//	/*
-//	 * This is the form to declare service prototypes - TODO probably overkill at this point
-//	 */
-//
-//	// abstract only allowed at root level; only exists to be extended
-//	(abstract?='abstract')?
-//	// parameter for services - takes type from value if optional; default mandatory if optional; docstring is mandatory
-//	((optional?='optional') | type=('number' | 'boolean' | 'text' | 'list' | 'enum')) 
-//	// input = function parameter; import = artifact from context
-//	(parameter?='input'|imported?='import') name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING)
-//	// extends only allowed at root level; must extend another upstream in same file
-//	('extends' extended=(LOWERCASE_ID|LOWERCASE_DASHID|STRING))?	// enum values, only for enum type
-//	('values' enumValues+=UPPERCASE_ID (',' enumValues+=UPPERCASE_ID)*)?
-//	(docstring=STRING) ('label' label=STRING)?
-//	('default' default=Value)?
-//	('{' body=DataflowBody '}')?
-//	(	
-//		('minimum' rangeMin=Number) |		
-//		('maximum' rangeMax=Number) |		
-//		('range' rangeMin=Number 'to' rangeMax=Number)
-//	)?
 ;
 	
 DataflowBody:
@@ -140,7 +116,7 @@ List:
 Literal:
 	number=Number | from=Number 'to' to=Number | string=STRING | boolean=('true' | 'false');
 LiteralOrIdOrComma returns Literal:
-	from=Number => 'to' => to=Number | number=Number | string=STRING | boolean=('true' | 'false') | id=ID | comma?=',';
+	from=Number => 'to' => to=Number | number=Number | string=STRING | boolean=('true' | 'false') | id=(ID|LOWERCASE_ID|UPPERCASE_ID) | comma?=',';
 LiteralOrID returns Literal:
 	number=Number | string=STRING | boolean=('true' | 'false') | id=ID;
 Metadata:
@@ -148,7 +124,7 @@ Metadata:
 ParameterList:
 	values+=Value (',' values+=Value)* | pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)*;
 Value:
-	literal=LiteralOrIdOrComma | 
+	literal=LiteralOrIdOrComma |
 	function=Function | 
 	urn=Urn | 
 	list=List |
@@ -214,9 +190,8 @@ LocalFilePath:
 KeyValuePair:
 	name=(LOWERCASE_ID|LOWERCASE_DASHID) (interactive?='=?' | '=') value=Value;
 Function:
-	(mediated=LOWERCASE_ID '>>')?
-	((name=PathName '(' (parameters=ParameterList)? ')') | urn=Urn | value=Literal | expression=EXPR) ('as'
-	variable=LOWERCASE_ID)? |
+	(mediated=LOWERCASE_ID '>>')? ((name=PathName '(' (parameters=ParameterList)? ')') | urn=Urn | value=Literal | expression=EXPR) ('as' variable=LOWERCASE_ID)? 
+	|
 	'(' chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?;
 	/**
  * ---------------------------------------

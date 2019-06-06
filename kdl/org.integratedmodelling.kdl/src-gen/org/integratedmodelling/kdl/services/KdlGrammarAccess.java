@@ -440,31 +440,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//	body=DataflowBody '}')? (('minimum' rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to'
 		//	rangeMax=Number) | 'values' enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID) (',' enumValues+=(UPPERCASE_ID |
 		//	LOWERCASE_ID | CAMELCASE_ID))*)? ('default' default=Value)? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function
-		//	(',' coverage+=Function)*)?
-		//	//	|
-		//	//
-		//	//	/*
-		//	//	 * This is the form to declare service prototypes - TODO probably overkill at this point
-		//	//	 */
-		//	//
-		//	//	// abstract only allowed at root level; only exists to be extended
-		//	//	(abstract?='abstract')?
-		//	//	// parameter for services - takes type from value if optional; default mandatory if optional; docstring is mandatory
-		//	//	((optional?='optional') | type=('number' | 'boolean' | 'text' | 'list' | 'enum')) 
-		//	//	// input = function parameter; import = artifact from context
-		//	//	(parameter?='input'|imported?='import') name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING)
-		//	//	// extends only allowed at root level; must extend another upstream in same file
-		//	//	('extends' extended=(LOWERCASE_ID|LOWERCASE_DASHID|STRING))?	// enum values, only for enum type
-		//	//	('values' enumValues+=UPPERCASE_ID (',' enumValues+=UPPERCASE_ID)*)?
-		//	//	(docstring=STRING) ('label' label=STRING)?
-		//	//	('default' default=Value)?
-		//	//	('{' body=DataflowBody '}')?
-		//	//	(	
-		//	//		('minimum' rangeMin=Number) |		
-		//	//		('maximum' rangeMax=Number) |		
-		//	//		('range' rangeMin=Number 'to' rangeMax=Number)
-		//	//	)?
-		//;
+		//	(',' coverage+=Function)*)?;
 		@Override public ParserRule getRule() { return rule; }
 		
 		///*
@@ -1480,15 +1456,20 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cBooleanTrueKeyword_3_0_0 = (Keyword)cBooleanAlternatives_3_0.eContents().get(0);
 		private final Keyword cBooleanFalseKeyword_3_0_1 = (Keyword)cBooleanAlternatives_3_0.eContents().get(1);
 		private final Assignment cIdAssignment_4 = (Assignment)cAlternatives.eContents().get(4);
-		private final RuleCall cIdIDTerminalRuleCall_4_0 = (RuleCall)cIdAssignment_4.eContents().get(0);
+		private final Alternatives cIdAlternatives_4_0 = (Alternatives)cIdAssignment_4.eContents().get(0);
+		private final RuleCall cIdIDTerminalRuleCall_4_0_0 = (RuleCall)cIdAlternatives_4_0.eContents().get(0);
+		private final RuleCall cIdLOWERCASE_IDTerminalRuleCall_4_0_1 = (RuleCall)cIdAlternatives_4_0.eContents().get(1);
+		private final RuleCall cIdUPPERCASE_IDTerminalRuleCall_4_0_2 = (RuleCall)cIdAlternatives_4_0.eContents().get(2);
 		private final Assignment cCommaAssignment_5 = (Assignment)cAlternatives.eContents().get(5);
 		private final Keyword cCommaCommaKeyword_5_0 = (Keyword)cCommaAssignment_5.eContents().get(0);
 		
 		//LiteralOrIdOrComma Literal:
-		//	from=Number => 'to' => to=Number | number=Number | string=STRING | boolean=('true' | 'false') | id=ID | comma?=',';
+		//	from=Number => 'to' => to=Number | number=Number | string=STRING | boolean=('true' | 'false') | id=(ID | LOWERCASE_ID
+		//	| UPPERCASE_ID) | comma?=',';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//from=Number => 'to' => to=Number | number=Number | string=STRING | boolean=('true' | 'false') | id=ID | comma?=','
+		//from=Number => 'to' => to=Number | number=Number | string=STRING | boolean=('true' | 'false') | id=(ID | LOWERCASE_ID |
+		//UPPERCASE_ID) | comma?=','
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//from=Number => 'to' => to=Number
@@ -1533,11 +1514,20 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//'false'
 		public Keyword getBooleanFalseKeyword_3_0_1() { return cBooleanFalseKeyword_3_0_1; }
 		
-		//id=ID
+		//id=(ID | LOWERCASE_ID | UPPERCASE_ID)
 		public Assignment getIdAssignment_4() { return cIdAssignment_4; }
 		
+		//(ID | LOWERCASE_ID | UPPERCASE_ID)
+		public Alternatives getIdAlternatives_4_0() { return cIdAlternatives_4_0; }
+		
 		//ID
-		public RuleCall getIdIDTerminalRuleCall_4_0() { return cIdIDTerminalRuleCall_4_0; }
+		public RuleCall getIdIDTerminalRuleCall_4_0_0() { return cIdIDTerminalRuleCall_4_0_0; }
+		
+		//LOWERCASE_ID
+		public RuleCall getIdLOWERCASE_IDTerminalRuleCall_4_0_1() { return cIdLOWERCASE_IDTerminalRuleCall_4_0_1; }
+		
+		//UPPERCASE_ID
+		public RuleCall getIdUPPERCASE_IDTerminalRuleCall_4_0_2() { return cIdUPPERCASE_IDTerminalRuleCall_4_0_2; }
 		
 		//comma?=','
 		public Assignment getCommaAssignment_5() { return cCommaAssignment_5; }
@@ -2439,8 +2429,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//Function:
 		//	(mediated=LOWERCASE_ID '>>')? (name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal |
-		//	expression=EXPR) ('as'
-		//	variable=LOWERCASE_ID)? |
+		//	expression=EXPR) ('as' variable=LOWERCASE_ID)?
+		//	|
 		//	'(' chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?;
 		@Override public ParserRule getRule() { return rule; }
 		
@@ -3301,31 +3291,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	//	body=DataflowBody '}')? (('minimum' rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to'
 	//	rangeMax=Number) | 'values' enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID) (',' enumValues+=(UPPERCASE_ID |
 	//	LOWERCASE_ID | CAMELCASE_ID))*)? ('default' default=Value)? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function
-	//	(',' coverage+=Function)*)?
-	//	//	|
-	//	//
-	//	//	/*
-	//	//	 * This is the form to declare service prototypes - TODO probably overkill at this point
-	//	//	 */
-	//	//
-	//	//	// abstract only allowed at root level; only exists to be extended
-	//	//	(abstract?='abstract')?
-	//	//	// parameter for services - takes type from value if optional; default mandatory if optional; docstring is mandatory
-	//	//	((optional?='optional') | type=('number' | 'boolean' | 'text' | 'list' | 'enum')) 
-	//	//	// input = function parameter; import = artifact from context
-	//	//	(parameter?='input'|imported?='import') name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING)
-	//	//	// extends only allowed at root level; must extend another upstream in same file
-	//	//	('extends' extended=(LOWERCASE_ID|LOWERCASE_DASHID|STRING))?	// enum values, only for enum type
-	//	//	('values' enumValues+=UPPERCASE_ID (',' enumValues+=UPPERCASE_ID)*)?
-	//	//	(docstring=STRING) ('label' label=STRING)?
-	//	//	('default' default=Value)?
-	//	//	('{' body=DataflowBody '}')?
-	//	//	(	
-	//	//		('minimum' rangeMin=Number) |		
-	//	//		('maximum' rangeMax=Number) |		
-	//	//		('range' rangeMin=Number 'to' rangeMax=Number)
-	//	//	)?
-	//;
+	//	(',' coverage+=Function)*)?;
 	public ActorDefinitionElements getActorDefinitionAccess() {
 		return pActorDefinition;
 	}
@@ -3439,7 +3405,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//LiteralOrIdOrComma Literal:
-	//	from=Number => 'to' => to=Number | number=Number | string=STRING | boolean=('true' | 'false') | id=ID | comma?=',';
+	//	from=Number => 'to' => to=Number | number=Number | string=STRING | boolean=('true' | 'false') | id=(ID | LOWERCASE_ID
+	//	| UPPERCASE_ID) | comma?=',';
 	public LiteralOrIdOrCommaElements getLiteralOrIdOrCommaAccess() {
 		return pLiteralOrIdOrComma;
 	}
@@ -3609,8 +3576,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//Function:
 	//	(mediated=LOWERCASE_ID '>>')? (name=PathName '(' parameters=ParameterList? ')' | urn=Urn | value=Literal |
-	//	expression=EXPR) ('as'
-	//	variable=LOWERCASE_ID)? |
+	//	expression=EXPR) ('as' variable=LOWERCASE_ID)?
+	//	|
 	//	'(' chain+=Function (',' chain+=Function)* ')' ('as' variable=LOWERCASE_ID)?;
 	public FunctionElements getFunctionAccess() {
 		return pFunction;
