@@ -2,11 +2,21 @@ package org.integratedmodelling.klab.dataflow;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IResource.Attribute;
+import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
+import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -23,6 +33,8 @@ public class Flowchart {
 	private Element root;
 	private List<Pair<String, String>> connections = new ArrayList<>();
 	private Map<String, Element> elements = new HashMap<>();
+	private Set<String> knownSymbols = new HashSet<>();
+	private Set<String> externalInputs = new HashSet<>();
 
 	/*
 	 * If this is true (not default), each element replicates external inputs and
@@ -49,6 +61,7 @@ public class Flowchart {
 		private String label;
 		private String description;
 		private String documentation;
+		private String tooltip;
 		private Type type;
 
 		private List<String> inputs = new ArrayList<>();
@@ -136,7 +149,15 @@ public class Flowchart {
 		public void setChildren(List<Element> children) {
 			this.children = children;
 		}
-		
+
+		public String getTooltip() {
+			return tooltip;
+		}
+
+		public void setTooltip(String tooltip) {
+			this.tooltip = tooltip;
+		}
+
 	}
 
 	/**
@@ -153,14 +174,24 @@ public class Flowchart {
 	}
 
 	/*
-	 * Collect all symbols used in this workflow. Primarily meant to expose if an
-	 * optional output is being used downstream, so that a producer can be added for
-	 * it.
+	 * Collect all symbols produced in this workflow, using their formal names only.
+	 * Primarily meant to expose if an optional output is being used downstream, so
+	 * that the corresponding producer is recorded. Also create list of external
+	 * input symbols to simplify connections.
 	 * 
 	 * @param dataflow
 	 */
-	private void collectSymbols(Dataflow dataflow) {
-		// TODO Auto-generated method stub
+	private void collectSymbols(IActuator actuator) {
+		if (!(actuator instanceof Dataflow)) {
+			if (actuator.isInput()) {
+				externalInputs.add(actuator.getName());
+			} else if (!((Actuator) actuator).isReference()) {
+				knownSymbols.add(actuator.getName());
+			}
+		}
+		for (IActuator child : actuator.getActuators()) {
+			collectSymbols(child);
+		}
 	}
 
 	private Element compile(Actuator actuator, Element parent, Map<String, Element> producers) {
@@ -199,22 +230,27 @@ public class Flowchart {
 			Map<String, String> inputSources = new HashMap<>();
 			for (IActuator child : actuator.getActuators()) {
 
-				if (child.getAlias() != null) {
+				Element producer = producers.get(child.getName());
+
+				/*
+				 * Make this optional (if (separateInputs && ...))so we can also have all inputs
+				 * connect to the actuator if wanted.
+				 */
+				if (makeActuatorPorts || !(child.getAlias().equals(child.getName()) && makeRenamedPorts)) {
 					/*
-					 * Make this optional (if (separateInputs && ...))so we can also have all inputs
-					 * connect to the actuator if wanted.
+					 * Create an input into this element with the translated name and connect it to
+					 * the original producer, then set the input ID in the map for the aliased name.
 					 */
-					if (makeActuatorPorts || !(child.getAlias().equals(child.getName()) && makeRenamedPorts)) {
-						/*
-						 * TODO create an input with the translated name and connect it to the original
-						 * producer, then set the input ID in the map for the aliased name.
-						 */
-					} else {
-						/*
-						 * Find the producer, get the output ID and set it in the map for the aliased
-						 * (YES - same if not aliased) name.
-						 */
+					String localInput = element.getOrCreateInput(child.getName());
+					if (producer != null) {
+
 					}
+
+				} else {
+					/*
+					 * Find the producer, get the output ID and set it in the map for the aliased
+					 * (YES - same if not aliased) name.
+					 */
 				}
 
 				Element cel = compile((Actuator) child, element, producers);
@@ -235,7 +271,9 @@ public class Flowchart {
 			 * compile mediations for any of the inputs
 			 */
 			for (Pair<IServiceCall, IComputableResource> actor : actuator.getComputationStrategy()) {
-				for (String input : compileComputation(actor, element, inputSources).getInputs()) {
+				Element computation = compileComputation(actor, element, inputSources, actuator);
+				element.children.add(computation);
+				for (String input : computation.getInputs()) {
 					// create link to its inputs, follow track to next unless targetId is set
 				}
 			}
@@ -245,7 +283,9 @@ public class Flowchart {
 			 * targets and 'self' when the input is the same name as the actuator.
 			 */
 			for (Pair<IServiceCall, IComputableResource> actor : actuator.getComputationStrategy()) {
-				for (String input : compileComputation(actor, element, inputSources).getInputs()) {
+				Element computation = compileComputation(actor, element, inputSources, actuator);
+				element.children.add(computation);
+				for (String input : computation.getInputs()) {
 					// create link to its inputs, follow track to next unless targetId is set
 				}
 			}
@@ -259,28 +299,98 @@ public class Flowchart {
 	 * names imported in actuator and their current input.
 	 */
 	private Element compileComputation(Pair<IServiceCall, IComputableResource> computation, Element parent,
-			Map<String, String> localSources) {
+			Map<String, String> inputSources, Actuator context) {
 
+		IPrototype callPrototype = Extensions.INSTANCE.getPrototype(computation.getFirst().getName());
+		
 		Element ret = new Element();
 		parent.getChildren().add(ret);
+		
+		Set<String> outputs = new HashSet<>();
 
 		// TODO description
+		ret.id = computation.getSecond().getDataflowId();
+		ret.label = callPrototype.getLabel();
 
-		/*
-		 * for functions: check any parameters that identify artifacts against local
-		 * catalog and the taginput annotations. Use exports for additional outputs and
-		 * check with output map.
-		 */
+		if (computation.getSecond().getServiceCall() != null) {
 
-		/*
-		 * for expressions: must use context to decompile the identifiers and resolve
-		 * links
-		 */
+			/*
+			 * Functions: check any parameters that identify artifacts against local catalog
+			 * and the taginput annotations. Use exports for additional outputs and check
+			 * with output map.
+			 */
+			IPrototype prototype = Extensions.INSTANCE.getPrototype(computation.getSecond().getServiceCall().getName());
+			if (prototype != null) {
+				for (String arg : computation.getSecond().getServiceCall().getParameters().keySet()) {
+					Argument argument = prototype.getArgument(arg);
+					if (argument.isArtifact()) {
+						//
+					}
+				}
+				IModel model = context.getModel();
+				if (model != null) {
+					for (String s : prototype.listInputTags()) {
+						// lookup input tag
+					}
+				}
+			}
 
-		/*
-		 * for resources: use inputs, check output map for additional outputs and add
-		 * ret as a producer if used.
-		 */
+		} else if (computation.getSecond().getExpression() != null) {
+
+			/*
+			 * Expressions: must use local IDs to process identifiers that are inputs
+			 */
+			Descriptor descriptor = Extensions.INSTANCE.getLanguageProcessor(computation.getSecond().getLanguage())
+					.describe(computation.getSecond().getExpression(), /* TODO */ null);
+
+			for (String identifier : descriptor.getIdentifiers()) {
+				//
+			}
+
+		} else if (computation.getSecond().getUrn() != null) {
+
+			IResource resource = Resources.INSTANCE.resolveResource(computation.getSecond().getUrn());
+			if (resource != null) {
+
+				// personalize label and description
+				ret.label = resource.getAdapterType().toUpperCase() + " resource";
+				ret.setTooltip(resource.getUrn());
+				
+				/*
+				 * Resources: use inputs, check output map for additional outputs and add ret as
+				 * a producer if used.
+				 */
+				for (Attribute output : resource.getInputs()) {
+				}
+
+				for (Attribute output : resource.getOutputs()) {
+					if (knownSymbols.contains(output.getName())) {
+						// make output
+					}
+				}
+
+			}
+
+		} else if (computation.getSecond().getClassification() != null) {
+
+			/*
+			 * input is simply the target of the computation. May have expressions in the
+			 * classifiers but we can probably ignore them (they're 'global' within the
+			 * actuator.
+			 */
+
+		} else if (computation.getSecond().getLookupTable() != null) {
+
+			/*
+			 * Lookup tables need their inputs and if the result column contains
+			 * expressions, they will also need their expression inputs, but we ignore them
+			 * as in classifications.
+			 */
+			for (String s : computation.getSecond().getLookupTable().getArguments()) {
+				//
+			}
+
+		}
 
 		return ret;
 	}

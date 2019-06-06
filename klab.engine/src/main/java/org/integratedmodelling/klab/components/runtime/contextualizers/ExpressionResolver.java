@@ -48,7 +48,6 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 	IExpression expression = null;
 	IExpression condition = null;
 	Map<String, Object> additionalParameters = null;
-//	IGeometry geometry = null;
 	boolean isScalar;
 	IComputableResource resource = null;
 	private static Set<String> prototypeParameters;
