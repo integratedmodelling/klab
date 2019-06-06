@@ -73,13 +73,15 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 
 	private NeighborhoodResolver(IParameters<String> parameters, IComputationContext context) {
 
+		IExpression.Context expressionContext = context.getExpressionContext();
+
 		if (parameters.containsKey("select")) {
 			Object expression = parameters.get("select");
 			if (expression instanceof IKimExpression) {
 				expression = ((IKimExpression) expression).getCode();
 			}
 			this.selectDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-					.describe(expression.toString(), context);
+					.describe(expression.toString(), expressionContext);
 		}
 		if (parameters.containsKey("aggregate")) {
 			Object expression = parameters.get("aggregate");
@@ -87,7 +89,7 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 				expression = ((IKimExpression) expression).getCode();
 			}
 			this.valueDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-					.describe(expression.toString(), context);
+					.describe(expression.toString(), expressionContext);
 		}
 
 		this.radius = parameters.get("radius", 0.0);

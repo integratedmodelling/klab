@@ -90,14 +90,16 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 		ILanguageProcessor processor = Extensions.INSTANCE
 				.getLanguageProcessor(parameters.get("language", Extensions.DEFAULT_EXPRESSION_LANGUAGE));
 
-		Descriptor descriptor = processor.describe(parameters.get("code", String.class), context);
+		IExpression.Context expressionContext = context.getExpressionContext();
+		
+		Descriptor descriptor = processor.describe(parameters.get("code", String.class), expressionContext);
 		Descriptor condition = null;
 		if (parameters.get("ifcondition") != null || parameters.get("unlesscondition") != null) {
 			String condCode = parameters.get("ifcondition", String.class);
 			if (condCode == null) {
 				condCode = processor.negate(parameters.get("unlesscondition", String.class));
 			}
-			condition = processor.describe(condCode, context);
+			condition = processor.describe(condCode, expressionContext);
 		}
 
 		for (String key : parameters.keySet()) {

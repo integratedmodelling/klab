@@ -39,6 +39,7 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
+import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IKimObject;
@@ -146,7 +147,7 @@ public class GroovyExpressionPreprocessor {
 	private Set<String> scalarIds = new HashSet<>();
 	private Set<String> contextualizers = new HashSet<>();
 	List<TokenDescriptor> tokens = new ArrayList<>();
-	IRuntimeContext context;
+	IExpression.Context context;
 	private boolean contextual;
 	private List<IObservable> declarations = new ArrayList<>();
 
@@ -163,7 +164,7 @@ public class GroovyExpressionPreprocessor {
 	private static final String DECLARATION_ID_PREFIX = "___DECL_";
 
 	public GroovyExpressionPreprocessor(INamespace currentNamespace, Set<String> knownIdentifiers, IGeometry geometry,
-			IRuntimeContext context, boolean contextual) {
+			IExpression.Context context, boolean contextual) {
 		this.domains = geometry;
 		this.namespace = currentNamespace;
 		this.knownIdentifiers = knownIdentifiers;
@@ -216,7 +217,7 @@ public class GroovyExpressionPreprocessor {
 			return this.token;
 		}
 
-		public String translate(IRuntimeContext context) {
+		public String translate(IExpression.Context context) {
 			String ret = token;
 			switch (type) {
 			case KNOWLEDGE:
@@ -421,9 +422,9 @@ public class GroovyExpressionPreprocessor {
 					tokens.add(token.toString());
 					token.setLength(0);
 				}
-				tokens.add(c+"");
+				tokens.add(c + "");
 			} else {
-			    token.append(c);
+				token.append(c);
 			}
 		}
 		if (token.length() > 0) {
@@ -457,18 +458,18 @@ public class GroovyExpressionPreprocessor {
 
 	}
 
-	public IKimConcept.Type getIdentifierType(String ret, IRuntimeContext context) {
+	public IKimConcept.Type getIdentifierType(String identifier, IExpression.Context context) {
 
 		if (context == null) {
 			return IKimConcept.Type.VALUE;
 		}
 
-		if (ret.equals("self")) {
-			return context.getArtifactType();
+		if (identifier.equals("self")) {
+			return context.getReturnType();
 		}
-		IArtifact artifact = context.getArtifact(ret);
-		if (artifact instanceof IObservation) {
-			return Observables.INSTANCE.getObservableType(((IObservation) artifact).getObservable(), true);
+		IKimConcept.Type ret = context.getIdentifierType(identifier);
+		if (ret != null) {
+			return ret;
 		}
 		return IKimConcept.Type.OBSERVABLE;
 	}

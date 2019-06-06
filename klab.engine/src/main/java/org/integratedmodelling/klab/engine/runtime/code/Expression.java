@@ -198,6 +198,12 @@ public abstract class Expression implements IExpression {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public org.integratedmodelling.klab.api.data.general.IExpression.Context getExpressionContext() {
+		// TODO Auto-generated method stub
+		return null;
+	}
   }
   
   public static IComputationContext emptyContext(IMonitor monitor) {

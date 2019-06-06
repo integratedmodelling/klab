@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
@@ -249,7 +250,7 @@ public class Utils {
         }
         throw new IllegalArgumentException("type " + type + " has no Java class equivalent");
     }
-
+    
     /**
      * Binary root of integer.
      * 
