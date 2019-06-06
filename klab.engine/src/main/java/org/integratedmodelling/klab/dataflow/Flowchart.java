@@ -34,7 +34,6 @@ public class Flowchart {
 	private Element root;
 	private List<Pair<String, String>> connections = new ArrayList<>();
 	private Map<String, Element> elements = new HashMap<>();
-	private Set<String> knownSymbols = new HashSet<>();
 	private Set<String> externalInputs = new HashSet<>();
 
 	/*
@@ -62,6 +61,7 @@ public class Flowchart {
 		}
 
 		private String id;
+		private String name;
 		private String label;
 		private String description;
 		private String documentation;
@@ -170,6 +170,14 @@ public class Flowchart {
 			this.tooltip = tooltip;
 		}
 
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
 	}
 
 	/**
@@ -203,7 +211,6 @@ public class Flowchart {
 					this.root = element;
 				}
 				elements.put(actuator.getName(), element);
-				knownSymbols.add(actuator.getName());
 			}
 		}
 		for (IActuator child : actuator.getActuators()) {
@@ -215,6 +222,7 @@ public class Flowchart {
 		Element ret = new Element();
 		ret.id = actuator.getDataflowId();
 		ret.type = Element.Type.ACTUATOR;
+		ret.setName(actuator.getName());
 		return ret;
 	}
 
@@ -396,7 +404,7 @@ public class Flowchart {
 				}
 
 				for (Attribute output : resource.getOutputs()) {
-					if (knownSymbols.contains(output.getName())) {
+					if (elements.containsKey(output.getName())) {
 						// make output
 					}
 				}
