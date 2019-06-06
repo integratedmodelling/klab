@@ -83,16 +83,16 @@ public abstract class ObservedArtifact extends Artifact implements IArtifact {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof ObservedArtifact))
 			return false;
 		ObservedArtifact other = (ObservedArtifact) obj;
 		if (token == null) {
-			if (other.token != null)
+			if (other.token != null) {
 				return false;
-		} else if (!token.equals(other.token))
+			}
+		} else if (!token.equals(other.token)) {
 			return false;
+		}
 		return true;
 	}
 

@@ -1,7 +1,15 @@
 package org.integratedmodelling.klab.components.runtime;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.collections.IteratorUtils;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
@@ -60,6 +68,33 @@ public class Structure extends DefaultDirectedGraph<IArtifact, DefaultEdge> {
 		return null;
 	}
 
-	
+	/**
+	 * Reconstruct the artifact child hierarchy with the groups instead of the direct observations.
+	 * 
+	 * @param observation
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<IArtifact> getChildArtifacts(IObservation artifact) {
+		if (artifact instanceof ObservationGroup) {
+			return IteratorUtils.toList(((ObservationGroup)artifact).iterator());
+		}
+		List<IArtifact> ret = new ArrayList<>();
+		for (DefaultEdge edge : incomingEdgesOf(artifact)) {
+			Set<String> groupIds = new HashSet<>();
+			IArtifact source = getEdgeSource(edge);
+			if (source instanceof DirectObservation) {
+				ObservationGroup group = ((DirectObservation)source).getGroup();
+				if (group != null && !groupIds.contains(group.getId())) {
+					ret.add(group);
+					groupIds.add(group.getId());
+				}
+			} else if (source instanceof IObservation) {
+				ret.add((IObservation)source);
+			}
+		}
+
+		return ret;
+	}
 	
 }

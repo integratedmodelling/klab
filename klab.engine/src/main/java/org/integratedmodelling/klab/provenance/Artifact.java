@@ -227,5 +227,10 @@ public abstract class Artifact implements IArtifact {
 	public void addPeer(Object peer, Class<INetwork> class1) {
 		peers.put(class1, peer);
 	}
+	
+	public Collection<IArtifact> getChildArtifacts() {
+		List<IArtifact> ret = new ArrayList<>();
+		return ret;
+	}
 
 }

@@ -1103,4 +1103,9 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		return ExpressionContext.create(this);
 	}
 
+	@Override
+	public Collection<IArtifact> getChildArtifactsOf(DirectObservation directObservation) {
+		return structure.getChildArtifacts(directObservation);
+	}
+
 }

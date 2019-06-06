@@ -39,5 +39,11 @@ public class StateLayer extends State implements IState {
 		}
 		return delegate.as(type);
 	}
+	
+	@Override
+    public DirectObservation getContext() {
+        return (DirectObservation) getRuntimeContext().getParentOf(delegate);
+    }
+
 
 }

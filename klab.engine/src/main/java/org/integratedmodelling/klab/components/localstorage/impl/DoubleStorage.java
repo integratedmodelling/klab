@@ -1,12 +1,15 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.utils.Utils;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -109,4 +112,8 @@ public class DoubleStorage extends Storage implements IDataArtifact {
         return null;
     }
 
+	@Override
+	public Collection<IArtifact> getChildArtifacts() {
+		return new ArrayList<>();
+	}
 }

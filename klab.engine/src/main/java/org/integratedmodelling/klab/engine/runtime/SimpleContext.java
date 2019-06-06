@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.api.runtime.IScheduler;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Event;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.Process;
@@ -544,6 +545,12 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 
 	@Override
 	public Context getExpressionContext() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Collection<IArtifact> getChildArtifactsOf(DirectObservation directObservation) {
 		// TODO Auto-generated method stub
 		return null;
 	}

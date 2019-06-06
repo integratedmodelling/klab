@@ -1,11 +1,14 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
+import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Collection;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.utils.Utils;
 
@@ -83,5 +86,10 @@ public class BooleanStorage extends Storage implements IDataArtifact {
         }
         return null;
     }
+
+	@Override
+	public Collection<IArtifact> getChildArtifacts() {
+		return new ArrayList<>();
+	}
 	
 }

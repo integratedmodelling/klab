@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.provenance.Provenance;
@@ -279,5 +280,12 @@ public interface IRuntimeContext extends IComputationContext {
      * @return
      */
     IDataflow<?> getDataflow();
+
+    /**
+     * 
+     * @param directObservation
+     * @return
+     */
+	Collection<IArtifact> getChildArtifactsOf(DirectObservation directObservation);
 
 }

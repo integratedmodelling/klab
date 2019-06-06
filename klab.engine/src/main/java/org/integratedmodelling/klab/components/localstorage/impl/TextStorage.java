@@ -1,9 +1,13 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.utils.Utils;
@@ -60,7 +64,7 @@ public class TextStorage extends Storage implements IDataArtifact, IKeyHolder {
 				conceptKey.put(value.toString(), cValue);
 			}
 			data[(int) offset] = cValue;
-		} 
+		}
 
 		return offset;
 	}
@@ -94,13 +98,17 @@ public class TextStorage extends Storage implements IDataArtifact, IKeyHolder {
 	@Override
 	public void release() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-    @Override
-    public <T> T aggregate(IGeometry geometry, Class<? extends T> cls) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public <T> T aggregate(IGeometry geometry, Class<? extends T> cls) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
+	@Override
+	public Collection<IArtifact> getChildArtifacts() {
+		return new ArrayList<>();
+	}
 }

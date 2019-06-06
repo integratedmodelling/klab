@@ -286,7 +286,7 @@ public enum Observations implements IObservationService {
 		}
 
 		ret.setChildrenCount(observation instanceof IDirectObservation && !observation.isEmpty()
-				? ((IDirectObservation) observation).getChildren(IObservation.class).size()
+				? observation.getChildArtifacts().size()
 				: 0);
 		ret.getSemantics().addAll(((Concept) observation.getObservable().getType()).getTypeSet());
 
@@ -431,8 +431,10 @@ public enum Observations implements IObservationService {
 		if (observation instanceof IDirectObservation && !observation.isEmpty() && (childLevel < 0 || childLevel > 0)) {
 
 			Set<ObservationGroup> groups = new HashSet<>();
-			for (IObservation child : ((IDirectObservation) observation).getChildren(IObservation.class)) {
+			for (IArtifact child : observation.getChildArtifacts()) {
 
+				if (child instanceof IObservation) {
+				
 				/*
 				 * if collapseSiblings, only add one representative sibling per type.
 				 */
@@ -444,8 +446,9 @@ public enum Observations implements IObservationService {
 					}
 				}
 
-				ret.getChildren().add(createArtifactDescriptor(child, observation, locator,
+				ret.getChildren().add(createArtifactDescriptor((IObservation)child, observation, locator,
 						childLevel > 0 ? childLevel-- : childLevel, collapseSiblings, false));
+				}
 			}
 		}
 

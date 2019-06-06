@@ -317,6 +317,14 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 	 * @return the provenance record leading to this
 	 */
 	IProvenance getProvenance();
+	
+	/**
+	 * Some artifact may be connected into a hierarchical structure, which may or may
+	 * not be the same as the natural structure of the specific type of artifact.
+	 * 
+	 * @return the child artifacts or an empty list
+	 */
+	Collection<IArtifact> getChildArtifacts();
 
 	/**
 	 * The type of this artifact. Types are a small set meant to enable more

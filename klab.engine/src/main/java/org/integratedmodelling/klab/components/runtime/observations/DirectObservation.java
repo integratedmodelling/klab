@@ -66,6 +66,13 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 	public Collection<String> getSubjectiveObservationIds() {
 		return subjectivelyObserved;
 	}
+
+	@Override
+	public Collection<IArtifact> getChildArtifacts() {
+		return getRuntimeContext().getChildArtifactsOf(this);
+	}
+	
+	
 	
     
 }
