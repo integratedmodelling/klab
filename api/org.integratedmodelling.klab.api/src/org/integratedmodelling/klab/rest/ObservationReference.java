@@ -248,6 +248,12 @@ public class ObservationReference implements IObservationReference {
 	private String parentId;
 
 	/**
+	 * ID of physical parent artifact. Either the logical parentId or a group ID if
+	 * the observation is part of a group.
+	 */
+	private String parentArtifactId;
+
+	/**
 	 * Child observations. This may be empty despite the existence of children, or
 	 * only partially filled, according to the type of call that generated the
 	 * object.
@@ -825,6 +831,14 @@ public class ObservationReference implements IObservationReference {
 
 	public void setScaleReference(ScaleReference scaleReference) {
 		this.scaleReference = scaleReference;
+	}
+
+	public String getParentArtifactId() {
+		return parentArtifactId;
+	}
+
+	public void setParentArtifactId(String parentArtifactId) {
+		this.parentArtifactId = parentArtifactId;
 	}
 
 }

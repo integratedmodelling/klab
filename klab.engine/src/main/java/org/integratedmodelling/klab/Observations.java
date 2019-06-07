@@ -50,6 +50,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.processing.osm.Nominatim;
+import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.data.classification.Discretization;
@@ -327,10 +328,9 @@ public enum Observations implements IObservationService {
 					scaleReference.setSpaceUnit(unit.toString());
 					scaleReference.setSpaceResolution(grid.getCellWidth());
 					scaleReference.setSpaceResolutionConverted(cw);
-					scaleReference.setSpaceResolutionDescription(
-							String.format("%.1f", cw) + " " + resolution.getSecond());
-					scaleReference.setResolutionDescription(
-					        String.format("%.1f", cw) + " " + resolution.getSecond());
+					scaleReference
+							.setSpaceResolutionDescription(String.format("%.1f", cw) + " " + resolution.getSecond());
+					scaleReference.setResolutionDescription(String.format("%.1f", cw) + " " + resolution.getSecond());
 
 				}
 				scaleReference.setSpaceScale(scaleRank);
@@ -429,6 +429,14 @@ public enum Observations implements IObservationService {
 		if (observation instanceof IDirectObservation) {
 			ret.setChildCount(observation.isEmpty() ? 0
 					: ((IDirectObservation) observation).getChildren(IObservation.class).size());
+
+			/*
+			 * physical parent
+			 */
+			if (observation instanceof DirectObservation) {
+				ret.setParentArtifactId(((DirectObservation) observation).getGroup() == null ? ret.getParentId()
+						: ((DirectObservation) observation).getGroup().getId());
+			}
 		}
 
 		if (observation instanceof IDirectObservation && !observation.isEmpty() && (childLevel < 0 || childLevel > 0)) {
