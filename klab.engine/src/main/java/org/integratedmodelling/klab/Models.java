@@ -145,9 +145,15 @@ public enum Models implements IModelService {
 			return;
 		}
 
-		kbox.store(model, monitor);
-		if (!model.isPrivate()) {
-			Indexer.INSTANCE.index(model.getStatement(), model.getNamespace().getName());
+		try {
+			kbox.store(model, monitor);
+			if (!model.isPrivate()) {
+				Indexer.INSTANCE.index(model.getStatement(), model.getNamespace().getName());
+			}
+		} catch (Throwable e) {
+			// happens with URN resources in space specs
+			monitor.error("error indexing model " + model.getName() + ": " + e.getMessage());
+			((org.integratedmodelling.klab.model.Model)model).setInactive(true);
 		}
 	}
 
@@ -217,7 +223,7 @@ public enum Models implements IModelService {
 		if (!(model instanceof IModel)) {
 			return false;
 		}
-		for (IComputableResource resource : ((IModel)model).getResources()) {
+		for (IComputableResource resource : ((IModel) model).getResources()) {
 			if (!resource.isAvailable()) {
 				return false;
 			}

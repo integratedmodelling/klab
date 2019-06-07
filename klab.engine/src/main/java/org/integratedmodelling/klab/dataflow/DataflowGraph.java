@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.graph.ElkConnectableShape;
-import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
@@ -17,11 +16,13 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
+import org.integratedmodelling.klab.dataflow.Flowchart.Element;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Path;
 
 /**
- * Create an Elk graph starting from a Dataflow No information about
+ * Create an Elk graph starting from a Dataflow. No information about
  * visualisation are given. If is needed, extends this class and override
  * create[ElkObject] methods
  * 
@@ -37,12 +38,49 @@ public class DataflowGraph {
 	public DataflowGraph(Dataflow dataflow, Map<String, ElkNode> nodes, KlabElkGraphFactory kelk) {
 		this.nodes = nodes;
 		this.kelk = kelk;
-		Flowchart flowchart = Flowchart.create(dataflow);
+//		Flowchart flowchart = Flowchart.create(dataflow);
+//		rootNode = compile(flowchart);
 		compile(dataflow, null);
 	}
 
 	public ElkNode getRootNode() {
 		return rootNode;
+	}
+	
+	public ElkNode compile(Flowchart flowchart) {
+		Map<String, ElkConnectableShape> nodes = new HashMap<>();
+		ElkNode ret = compile(flowchart.getRoot(), null, nodes);
+		for (Pair<String, String> connection : flowchart.getConnections()) {
+			kelk.createSimpleEdge(nodes.get(connection.getFirst()), nodes.get(connection.getSecond()), null);
+		}
+		return ret;
+	}
+	
+	public ElkNode compile(Element element, ElkNode parentNode, Map<String, ElkConnectableShape> nodes) {
+		
+		ElkNode ret = kelk.createActuatorNode(element.getNodeId(), parentNode);
+		nodes.put(element.getId(), ret);
+		ret.getLabels().add(kelk.createLabel(element.getLabel(), element.getId(), ret));
+		
+		for (String input : element.getInputs()) {
+			ElkPort port = kelk.createPort(input, ret, parentNode == null ? PortSide.NORTH : PortSide.WEST);
+			ElkLabel label = kelk.createLabel(Path.getLast(input, '.'), input+".label", port);
+			port.getLabels().add(label);
+			nodes.put(input, port);
+		}
+
+		for (String output : element.getOutputs()) {
+			ElkPort port = kelk.createPort(output, ret, parentNode == null ? PortSide.SOUTH : PortSide.EAST);
+			ElkLabel label = kelk.createLabel(Path.getLast(output, '.'), output+".label", port);
+			port.getLabels().add(label);
+			nodes.put(output, port);
+		}
+
+		for (Element child : element.getChildren()) {
+			compile(child, ret, nodes);
+		}
+		
+		return ret;
 	}
 
 	public ElkNode compile(Actuator actuator, ElkNode parent) {
@@ -73,14 +111,14 @@ public class DataflowGraph {
 			ElkNode lastChild = null;
 			for (IActuator child : actuator.getActuators()) {
 				if (((Actuator) child).isReference() || actuator.isInput()) {
-					
-					ElkPort port = kelk.createPort(actuator.getDataflowId() + "_" + child.getName() + "_in", actuator.isInput() ? rootNode : root,
-							PortSide.WEST);
+
+					ElkPort port = kelk.createPort(actuator.getDataflowId() + "_" + child.getName() + "_in",
+							actuator.isInput() ? rootNode : root, PortSide.WEST);
 					ElkLabel label = kelk.createLabel((child.getAlias() == null ? child.getName() : child.getAlias()),
 							((Actuator) child).getId(), port);
 					port.getLabels().add(label);
 					localNodes.put(child.getAlias() == null ? child.getName() : child.getAlias(), port);
-					ElkNode input = null; 
+					ElkNode input = null;
 					ElkPort extout = null;
 
 					if (actuator.isInput()) {
@@ -107,7 +145,7 @@ public class DataflowGraph {
 						}
 						kelk.createSimpleEdge(extout, port, null); // no identifier?
 					}
-					
+
 				} else {
 					// ACHTUNG references end up here - they should be connected to inside
 					lastChild = compile((Actuator) child, root);

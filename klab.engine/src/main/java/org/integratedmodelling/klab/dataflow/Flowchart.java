@@ -11,11 +11,14 @@ import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
+import org.integratedmodelling.klab.api.data.general.IExpression.Context;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
@@ -178,6 +181,16 @@ public class Flowchart {
 			this.name = name;
 		}
 
+		@Override
+		public String toString() {
+			return "Element [id=" + id + ", name=" + name + ", type=" + type + ", inputs=" + inputs + ", outputs="
+					+ outputs + ", children=" + children + "]";
+		}
+
+		public String getNodeId() {
+			return type == null ? id : (type.name().toLowerCase() + "." + id);
+		}
+
 	}
 
 	/**
@@ -240,7 +253,7 @@ public class Flowchart {
 		 * input in this actuator to the corresponding output of the actuator that
 		 * produces it, or to the external input where it will be available.
 		 */
-		Map<String, String> inputSources = new HashMap<>();
+		Map<String, String> inputPathways = new HashMap<>();
 		for (IActuator child : actuator.getActuators()) {
 
 			/*
@@ -274,7 +287,7 @@ public class Flowchart {
 				}
 				if (output != null) {
 					connections.add(new Pair<>(output, localInput));
-					inputSources.put(child.getAlias(), localInput);
+					inputPathways.put(child.getAlias(), localInput);
 				}
 
 			} else {
@@ -285,7 +298,7 @@ public class Flowchart {
 				Element producer = elements.get(child.getName());
 				if (producer != null) {
 					output = producer.getOrCreateOutput(child.getName());
-					inputSources.put(child.getAlias(), output);
+					inputPathways.put(child.getAlias(), output);
 				}
 			}
 
@@ -303,7 +316,7 @@ public class Flowchart {
 		 * compile mediations for any of the inputs
 		 */
 		for (Pair<IServiceCall, IComputableResource> actor : actuator.getComputationStrategy()) {
-			Element computation = compileComputation(actor, element, inputSources, actuator);
+			Element computation = compileComputation(actor, element, inputPathways, actuator);
 			element.children.add(computation);
 			for (String input : computation.getInputs()) {
 				// create link to its inputs, follow track to next unless targetId is set
@@ -315,7 +328,7 @@ public class Flowchart {
 		 * targets and 'self' when the input is the same name as the actuator.
 		 */
 		for (Pair<IServiceCall, IComputableResource> actor : actuator.getComputationStrategy()) {
-			Element computation = compileComputation(actor, element, inputSources, actuator);
+			Element computation = compileComputation(actor, element, inputPathways, actuator);
 			element.children.add(computation);
 			for (String input : computation.getInputs()) {
 				// create link to its inputs, follow track to next unless targetId is set
@@ -330,7 +343,7 @@ public class Flowchart {
 	 * names imported in actuator and their current input.
 	 */
 	private Element compileComputation(Pair<IServiceCall, IComputableResource> computation, Element parent,
-			Map<String, String> inputSources, Actuator context) {
+			Map<String, String> inputPathways, Actuator context) {
 
 		IPrototype callPrototype = Extensions.INSTANCE.getPrototype(computation.getFirst().getName());
 
@@ -338,7 +351,11 @@ public class Flowchart {
 
 		parent.getChildren().add(ret);
 
-		Set<String> outputs = new HashSet<>();
+		String computationTarget = computation.getSecond().getTarget() == null ? context.getAlias()
+				: computation.getSecond().getTarget().getLocalName();
+		String mainOutput = parent.getName();
+		Set<String> additionalOutputs = new HashSet<>();
+		Set<String> computationInputs = new HashSet<>();
 
 		// TODO description, documentation (template with parameter substitution)
 		ret.id = computation.getSecond().getDataflowId();
@@ -357,13 +374,18 @@ public class Flowchart {
 				for (String arg : computation.getSecond().getServiceCall().getParameters().keySet()) {
 					Argument argument = prototype.getArgument(arg);
 					if (argument != null && argument.isArtifact()) {
-						//
+						computationInputs
+								.add(computation.getSecond().getServiceCall().getParameters().get(arg, String.class));
 					}
 				}
 				IModel model = context.getModel();
 				if (model != null) {
 					for (String s : prototype.listInputTags()) {
-						// lookup input tag
+						for (IObservable observable : model.getDependencies()) {
+							if (Annotations.INSTANCE.hasAnnotation(observable, s)) {
+								computationInputs.add(observable.getLocalName());
+							}
+						}
 					}
 				}
 
@@ -378,10 +400,12 @@ public class Flowchart {
 			 * Expressions: must use local IDs to process identifiers that are inputs
 			 */
 			Descriptor descriptor = Extensions.INSTANCE.getLanguageProcessor(computation.getSecond().getLanguage())
-					.describe(computation.getSecond().getExpression(), /* TODO */ null);
+					.describe(computation.getSecond().getExpression(), getExpressionContext(context));
 
 			for (String identifier : descriptor.getIdentifiers()) {
-				//
+				if (inputPathways.containsKey(identifier)) {
+					computationInputs.add(identifier);
+				}
 			}
 
 		} else if (computation.getSecond().getUrn() != null) {
@@ -400,12 +424,14 @@ public class Flowchart {
 				 * a producer if used.
 				 */
 				for (Attribute input : resource.getInputs()) {
-					//
+					if (inputPathways.containsKey(input.getName())) {
+						computationInputs.add(input.getName());
+					}
 				}
 
 				for (Attribute output : resource.getOutputs()) {
 					if (elements.containsKey(output.getName())) {
-						// make output
+						additionalOutputs.add(output.getName());
 					}
 				}
 
@@ -418,6 +444,7 @@ public class Flowchart {
 			 * classifiers but we can probably ignore them (they're 'global' within the
 			 * actuator.
 			 */
+			computationInputs.add(computationTarget);
 			ret.type = Element.Type.TABLE;
 
 		} else if (computation.getSecond().getLookupTable() != null) {
@@ -428,13 +455,32 @@ public class Flowchart {
 			 * as in classifications.
 			 */
 			for (String s : computation.getSecond().getLookupTable().getArguments()) {
-				//
+				if (!"?".equals(s) && !"*".equals(s)) {
+					computationInputs.add(s);
+				}
 			}
 			ret.type = Element.Type.TABLE;
 
 		}
 
+		/*
+		 * Create inputs and outputs and extend the pathway by one step. If there is an
+		 * output create it in the parent element; connect directly (?).
+		 */
+
 		return ret;
+	}
+
+	/**
+	 * Return an expression context that knows the inputs named in this actuator (by
+	 * local name).
+	 * 
+	 * @param inputPathways
+	 * @return
+	 */
+	private Context getExpressionContext(Actuator actuator) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/**

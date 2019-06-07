@@ -264,4 +264,22 @@ public enum Annotations implements IAnnotationService {
         prototypes.put(prototype.getName(), prototype);
     }
 
+	public boolean hasAnnotation(IObservable observable, String s) {
+		for (IAnnotation annotation : observable.getAnnotations()) {
+			if (annotation.getName().equals(s)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean hasAnnotation(IKimObject object, String s) {
+		for (IAnnotation annotation : object.getAnnotations()) {
+			if (annotation.getName().equals(s)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }
