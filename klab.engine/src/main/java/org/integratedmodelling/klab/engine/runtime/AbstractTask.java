@@ -18,6 +18,7 @@ public abstract class AbstractTask<T extends IObservation> implements ITaskTree<
 		this.session = parent.session;
 		this.scenarios = parent.scenarios;
 		this.parentTask = parent;
+		this.token = parent.getId() + "." + this.token;
 		this.activity = new Activity(token);
 	}
 	
