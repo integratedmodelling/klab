@@ -11,6 +11,7 @@ import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Resources;
@@ -21,6 +22,7 @@ import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -84,7 +86,7 @@ public class Flowchart {
 		}
 
 		public String getLabel() {
-			return label;
+			return label == null ? getName() : label;
 		}
 
 		public void setLabel(String label) {
@@ -223,7 +225,6 @@ public class Flowchart {
 				if (this.root == null) {
 					this.root = element;
 				}
-				elements.put(actuator.getName(), element);
 			}
 		}
 		for (IActuator child : actuator.getActuators()) {
@@ -233,6 +234,7 @@ public class Flowchart {
 
 	private Element compileElement(IActuator actuator) {
 		Element ret = new Element();
+		elements.put(actuator.getName(), ret);
 		ret.id = actuator.getDataflowId();
 		ret.type = Element.Type.ACTUATOR;
 		ret.setName(actuator.getName());
@@ -247,6 +249,11 @@ public class Flowchart {
 
 		Element element = elements.get(actuator.getName());
 
+		if (actuator.getObservable().is(Type.COUNTABLE) && actuator.getMode() == Mode.RESOLUTION) {
+			// add an output port representing the context this is, to link contextualizations
+			element.getOutputs().add(actuator.getId() + ".context");
+		}
+		
 		/*
 		 * Child actuators are either inputs to our computations, references to
 		 * previously seen actuators, or external inputs. We map the local name for the
@@ -463,6 +470,8 @@ public class Flowchart {
 
 		}
 
+		System.out.println(ret);
+		
 		/*
 		 * Create inputs and outputs and extend the pathway by one step. If there is an
 		 * output create it in the parent element; connect directly (?).

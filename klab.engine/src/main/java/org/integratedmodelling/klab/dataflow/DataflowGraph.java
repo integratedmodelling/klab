@@ -46,7 +46,7 @@ public class DataflowGraph {
 	public ElkNode getRootNode() {
 		return rootNode;
 	}
-	
+
 	public ElkNode compile(Flowchart flowchart) {
 		Map<String, ElkConnectableShape> nodes = new HashMap<>();
 		ElkNode ret = compile(flowchart.getRoot(), null, nodes);
@@ -55,23 +55,26 @@ public class DataflowGraph {
 		}
 		return ret;
 	}
-	
+
 	public ElkNode compile(Element element, ElkNode parentNode, Map<String, ElkConnectableShape> nodes) {
-		
-		ElkNode ret = kelk.createActuatorNode(element.getNodeId(), parentNode);
+
+		ElkNode ret = element.getType() == Element.Type.ACTUATOR
+				? kelk.createActuatorNode(element.getNodeId(), parentNode)
+				: kelk.createServiceNode(element.getNodeId(), parentNode);
+				
 		nodes.put(element.getId(), ret);
 		ret.getLabels().add(kelk.createLabel(element.getLabel(), element.getId(), ret));
-		
+
 		for (String input : element.getInputs()) {
 			ElkPort port = kelk.createPort(input, ret, parentNode == null ? PortSide.NORTH : PortSide.WEST);
-			ElkLabel label = kelk.createLabel(Path.getLast(input, '.'), input+".label", port);
+			ElkLabel label = kelk.createLabel(Path.getLast(input, '.'), input + ".label", port);
 			port.getLabels().add(label);
 			nodes.put(input, port);
 		}
 
 		for (String output : element.getOutputs()) {
 			ElkPort port = kelk.createPort(output, ret, parentNode == null ? PortSide.SOUTH : PortSide.EAST);
-			ElkLabel label = kelk.createLabel(Path.getLast(output, '.'), output+".label", port);
+			ElkLabel label = kelk.createLabel(Path.getLast(output, '.'), output + ".label", port);
 			port.getLabels().add(label);
 			nodes.put(output, port);
 		}
@@ -79,7 +82,7 @@ public class DataflowGraph {
 		for (Element child : element.getChildren()) {
 			compile(child, ret, nodes);
 		}
-		
+
 		return ret;
 	}
 

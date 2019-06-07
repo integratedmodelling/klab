@@ -79,7 +79,6 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 					} else {
 						kelk.createSimpleEdge(tgraph, contextNode, "ctx" + df.getName());
 					}
-					
 				}
 
 				RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
@@ -88,7 +87,7 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 				json = ElkGraphJson.forGraph(root).omitLayout(false).omitZeroDimension(true).omitZeroPositions(true)
 						.shortLayoutOptionKeys(true).prettyPrint(true).toJson();
 
-				// System.out.println(json);
+				System.out.println(json);
 			}
 		}
 
