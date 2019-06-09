@@ -46,6 +46,7 @@ import org.integratedmodelling.kdl.kdl.Value;
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isMinimum <em>Minimum</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isParameter <em>Parameter</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getType <em>Type</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getExtended <em>Extended</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getTargets <em>Targets</em>}</li>
@@ -273,6 +274,26 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
    * @ordered
    */
   protected String type = TYPE_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isExpression() <em>Expression</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isExpression()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean EXPRESSION_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isExpression() <em>Expression</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isExpression()
+   * @generated
+   * @ordered
+   */
+  protected boolean expression = EXPRESSION_EDEFAULT;
 
   /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -714,6 +735,29 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
    * <!-- end-user-doc -->
    * @generated
    */
+  public boolean isExpression()
+  {
+    return expression;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setExpression(boolean newExpression)
+  {
+    boolean oldExpression = expression;
+    expression = newExpression;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__EXPRESSION, oldExpression, expression));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public String getName()
   {
     return name;
@@ -1116,6 +1160,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return isParameter();
       case KdlPackage.ACTOR_DEFINITION__TYPE:
         return getType();
+      case KdlPackage.ACTOR_DEFINITION__EXPRESSION:
+        return isExpression();
       case KdlPackage.ACTOR_DEFINITION__NAME:
         return getName();
       case KdlPackage.ACTOR_DEFINITION__EXTENDED:
@@ -1188,6 +1234,9 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return;
       case KdlPackage.ACTOR_DEFINITION__TYPE:
         setType((String)newValue);
+        return;
+      case KdlPackage.ACTOR_DEFINITION__EXPRESSION:
+        setExpression((Boolean)newValue);
         return;
       case KdlPackage.ACTOR_DEFINITION__NAME:
         setName((String)newValue);
@@ -1275,6 +1324,9 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
       case KdlPackage.ACTOR_DEFINITION__TYPE:
         setType(TYPE_EDEFAULT);
         return;
+      case KdlPackage.ACTOR_DEFINITION__EXPRESSION:
+        setExpression(EXPRESSION_EDEFAULT);
+        return;
       case KdlPackage.ACTOR_DEFINITION__NAME:
         setName(NAME_EDEFAULT);
         return;
@@ -1347,6 +1399,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return parameter != PARAMETER_EDEFAULT;
       case KdlPackage.ACTOR_DEFINITION__TYPE:
         return TYPE_EDEFAULT == null ? type != null : !TYPE_EDEFAULT.equals(type);
+      case KdlPackage.ACTOR_DEFINITION__EXPRESSION:
+        return expression != EXPRESSION_EDEFAULT;
       case KdlPackage.ACTOR_DEFINITION__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case KdlPackage.ACTOR_DEFINITION__EXTENDED:
@@ -1406,6 +1460,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
     result.append(parameter);
     result.append(", type: ");
     result.append(type);
+    result.append(", expression: ");
+    result.append(expression);
     result.append(", name: ");
     result.append(name);
     result.append(", extended: ");

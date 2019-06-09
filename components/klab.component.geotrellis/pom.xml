@@ -10,28 +10,11 @@
 	<artifactId>klab.component.geotrellis</artifactId>
 	<build>
 		<plugins>
-			<!-- This plugin compiles Scala files 
-			<plugin>
-				<groupId>net.alchim31.maven</groupId>
-				<artifactId>scala-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>scala-compile-first</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>add-source</goal>
-							<goal>compile</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>scala-test-compile</id>
-						<phase>process-test-resources</phase>
-						<goals>
-							<goal>testCompile</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>-->
+			<!-- This plugin compiles Scala files <plugin> <groupId>net.alchim31.maven</groupId> 
+				<artifactId>scala-maven-plugin</artifactId> <executions> <execution> <id>scala-compile-first</id> 
+				<phase>process-resources</phase> <goals> <goal>add-source</goal> <goal>compile</goal> 
+				</goals> </execution> <execution> <id>scala-test-compile</id> <phase>process-test-resources</phase> 
+				<goals> <goal>testCompile</goal> </goals> </execution> </executions> </plugin> -->
 			<!-- This plugin compiles Java files -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -51,4 +34,20 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.locationtech.geotrellis/geotrellis-raster -->
+		<dependency>
+			<groupId>org.locationtech.geotrellis</groupId>
+			<artifactId>geotrellis-raster_2.12</artifactId>
+			<version>2.2.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.locationtech.geotrellis/geotrellis-vector -->
+		<dependency>
+			<groupId>org.locationtech.geotrellis</groupId>
+			<artifactId>geotrellis-vector_2.12</artifactId>
+			<version>2.2.0</version>
+		</dependency>
+
+	</dependencies>
 </project>

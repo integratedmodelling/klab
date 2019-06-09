@@ -12,7 +12,7 @@ export object buffer
 	number radius
 		"The distance to add to each spatial feature in meters"
 		
-	optional text artifact 
+	optional import object artifact 
 		"The artifact to use to produce the objects. If not passed, the target artifact is modified." 
 		default ""
 		
@@ -22,7 +22,7 @@ export object buffer
 		 or multipoint)." 
 		default false
 	
-	optional boolean simplify 
+	optional number simplify 
 		"If passed, the original shape is simplified by the passed factor before buffering." 
 		default 0
 	
@@ -33,7 +33,7 @@ export number kriging
 	"Interpolates values of point features using the semivariogram method."
 	 label 'Kriging'
 {
-	object artifact 
+	import object artifact 
 		"The object artifact to use to produce the source points. Should identify point features; if not points,
 		 the centroid will be used and the states will be aggregated."
 		

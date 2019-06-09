@@ -6,7 +6,7 @@ export object extract
 	"Extract polygonal features from a raster map based on clumping of its values."
 	label 'Vectorize into features'
 {
-	optional text select
+	optional boolean expression select
 		"Pass an expression that will return true or false per each point in the spatial context, 
 		 producing a mask that will be vectorized into spatial contexts for the objects. Use quality
 		 dependency names to refer to their state in each point."
@@ -23,7 +23,7 @@ export object cluster
 	 or (optionally) the convex hull of the points in each cluster. Uses the DBSCAN algorithm."
 	label 'Cluster points'
 {
-	text select
+	boolean expression select
 		"An expression that will return true or false per each point in the spatial context, 
 		 producing a mask that will be vectorized into spatial contexts for the objects. Use quality
 		 dependency names to refer to their state in each point."
@@ -58,13 +58,13 @@ export number collect
 	 based on the values in the neighborhood. Uses a moving window of configurable size and shape."
 	label 'Collect neighbors'
 {
-	text aggregate
+	value expression aggregate
 		"An expression producing the value to compute. The current cell in the neighborhood will be 
          available as 'space', the one being computed (focal) will be available as 'origin'. The 
          value of the focal cell will be available as 'self'. Note: using 'origin' will greatly
          increase the number of evaluations and consequently the run time."
 		
-	optional text select
+	optional boolean expression select
 		"An expression that will return true or false per each point in the selected neighborhood, 
 		 choosing whether the point should be considered in the aggregation or not. All dependencies
 		 will be available with their own name; the current cell will be available as 'space', the

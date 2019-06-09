@@ -33,12 +33,13 @@ public class DataflowGraph {
 	private ElkNode rootNode;
 	private KlabElkGraphFactory kelk;
 	private Map<String, ElkPort> inputs = new HashMap<>();
-	private Map<String, ElkNode> nodes;
+	private Map<String, ElkConnectableShape> nodes;
 
-	public DataflowGraph(Dataflow dataflow, Map<String, ElkNode> nodes, KlabElkGraphFactory kelk) {
+	public DataflowGraph(Dataflow dataflow, Map<String, ElkConnectableShape> nodes, KlabElkGraphFactory kelk) {
 		this.nodes = nodes;
 		this.kelk = kelk;
-//		Flowchart flowchart = Flowchart.create(dataflow);
+//		Flowchart flowchart = Flowchart.create(dataflow, null);
+//		System.out.println(flowchart.dump());
 //		rootNode = compile(flowchart);
 		compile(dataflow, null);
 	}
@@ -48,7 +49,6 @@ public class DataflowGraph {
 	}
 
 	public ElkNode compile(Flowchart flowchart) {
-		Map<String, ElkConnectableShape> nodes = new HashMap<>();
 		ElkNode ret = compile(flowchart.getRoot(), null, nodes);
 		for (Pair<String, String> connection : flowchart.getConnections()) {
 			kelk.createSimpleEdge(nodes.get(connection.getFirst()), nodes.get(connection.getSecond()), null);
@@ -95,7 +95,7 @@ public class DataflowGraph {
 			actuator = (Actuator) actuator.actuators.get(0);
 		}
 
-		ElkNode root = nodes.get(actuator.getDataflowId());
+		ElkNode root = (ElkNode) nodes.get(actuator.getDataflowId());
 		if (root == null) {
 
 			root = kelk.createActuatorNode(actuator.getDataflowId(), parent);
@@ -140,7 +140,7 @@ public class DataflowGraph {
 						}
 						kelk.createSimpleEdge(extout, port, null);
 					} else {
-						input = nodes.get(child.getName());
+						input = (ElkNode) nodes.get(child.getName());
 					}
 					if (input != null) {
 						if (extout == null) {

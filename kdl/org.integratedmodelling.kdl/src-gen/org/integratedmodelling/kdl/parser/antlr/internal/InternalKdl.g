@@ -843,10 +843,24 @@ ruleActorDefinition returns [EObject current=null]
 		)
 		(
 			(
+				lv_expression_11_0='expression'
+				{
+					newLeafNode(lv_expression_11_0, grammarAccess.getActorDefinitionAccess().getExpressionExpressionKeyword_7_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getActorDefinitionRule());
+					}
+					setWithLastConsumed($current, "expression", true, "expression");
+				}
+			)
+		)?
+		(
+			(
 				(
-					lv_name_11_1=RULE_LOWERCASE_ID
+					lv_name_12_1=RULE_LOWERCASE_ID
 					{
-						newLeafNode(lv_name_11_1, grammarAccess.getActorDefinitionAccess().getNameLOWERCASE_IDTerminalRuleCall_7_0_0());
+						newLeafNode(lv_name_12_1, grammarAccess.getActorDefinitionAccess().getNameLOWERCASE_IDTerminalRuleCall_8_0_0());
 					}
 					{
 						if ($current==null) {
@@ -855,13 +869,13 @@ ruleActorDefinition returns [EObject current=null]
 						setWithLastConsumed(
 							$current,
 							"name",
-							lv_name_11_1,
+							lv_name_12_1,
 							"org.integratedmodelling.kdl.Kdl.LOWERCASE_ID");
 					}
 					    |
-					lv_name_11_2=RULE_LOWERCASE_DASHID
+					lv_name_12_2=RULE_LOWERCASE_DASHID
 					{
-						newLeafNode(lv_name_11_2, grammarAccess.getActorDefinitionAccess().getNameLOWERCASE_DASHIDTerminalRuleCall_7_0_1());
+						newLeafNode(lv_name_12_2, grammarAccess.getActorDefinitionAccess().getNameLOWERCASE_DASHIDTerminalRuleCall_8_0_1());
 					}
 					{
 						if ($current==null) {
@@ -870,13 +884,13 @@ ruleActorDefinition returns [EObject current=null]
 						setWithLastConsumed(
 							$current,
 							"name",
-							lv_name_11_2,
+							lv_name_12_2,
 							"org.integratedmodelling.kdl.Kdl.LOWERCASE_DASHID");
 					}
 					    |
-					lv_name_11_3=RULE_STRING
+					lv_name_12_3=RULE_STRING
 					{
-						newLeafNode(lv_name_11_3, grammarAccess.getActorDefinitionAccess().getNameSTRINGTerminalRuleCall_7_0_2());
+						newLeafNode(lv_name_12_3, grammarAccess.getActorDefinitionAccess().getNameSTRINGTerminalRuleCall_8_0_2());
 					}
 					{
 						if ($current==null) {
@@ -885,23 +899,23 @@ ruleActorDefinition returns [EObject current=null]
 						setWithLastConsumed(
 							$current,
 							"name",
-							lv_name_11_3,
+							lv_name_12_3,
 							"org.eclipse.xtext.common.Terminals.STRING");
 					}
 				)
 			)
 		)
 		(
-			otherlv_12='extends'
+			otherlv_13='extends'
 			{
-				newLeafNode(otherlv_12, grammarAccess.getActorDefinitionAccess().getExtendsKeyword_8_0());
+				newLeafNode(otherlv_13, grammarAccess.getActorDefinitionAccess().getExtendsKeyword_9_0());
 			}
 			(
 				(
 					(
-						lv_extended_13_1=RULE_LOWERCASE_ID
+						lv_extended_14_1=RULE_LOWERCASE_ID
 						{
-							newLeafNode(lv_extended_13_1, grammarAccess.getActorDefinitionAccess().getExtendedLOWERCASE_IDTerminalRuleCall_8_1_0_0());
+							newLeafNode(lv_extended_14_1, grammarAccess.getActorDefinitionAccess().getExtendedLOWERCASE_IDTerminalRuleCall_9_1_0_0());
 						}
 						{
 							if ($current==null) {
@@ -910,13 +924,13 @@ ruleActorDefinition returns [EObject current=null]
 							setWithLastConsumed(
 								$current,
 								"extended",
-								lv_extended_13_1,
+								lv_extended_14_1,
 								"org.integratedmodelling.kdl.Kdl.LOWERCASE_ID");
 						}
 						    |
-						lv_extended_13_2=RULE_LOWERCASE_DASHID
+						lv_extended_14_2=RULE_LOWERCASE_DASHID
 						{
-							newLeafNode(lv_extended_13_2, grammarAccess.getActorDefinitionAccess().getExtendedLOWERCASE_DASHIDTerminalRuleCall_8_1_0_1());
+							newLeafNode(lv_extended_14_2, grammarAccess.getActorDefinitionAccess().getExtendedLOWERCASE_DASHIDTerminalRuleCall_9_1_0_1());
 						}
 						{
 							if ($current==null) {
@@ -925,13 +939,13 @@ ruleActorDefinition returns [EObject current=null]
 							setWithLastConsumed(
 								$current,
 								"extended",
-								lv_extended_13_2,
+								lv_extended_14_2,
 								"org.integratedmodelling.kdl.Kdl.LOWERCASE_DASHID");
 						}
 						    |
-						lv_extended_13_3=RULE_STRING
+						lv_extended_14_3=RULE_STRING
 						{
-							newLeafNode(lv_extended_13_3, grammarAccess.getActorDefinitionAccess().getExtendedSTRINGTerminalRuleCall_8_1_0_2());
+							newLeafNode(lv_extended_14_3, grammarAccess.getActorDefinitionAccess().getExtendedSTRINGTerminalRuleCall_9_1_0_2());
 						}
 						{
 							if ($current==null) {
@@ -940,7 +954,7 @@ ruleActorDefinition returns [EObject current=null]
 							setWithLastConsumed(
 								$current,
 								"extended",
-								lv_extended_13_3,
+								lv_extended_14_3,
 								"org.eclipse.xtext.common.Terminals.STRING");
 						}
 					)
@@ -948,16 +962,16 @@ ruleActorDefinition returns [EObject current=null]
 			)
 		)?
 		(
-			otherlv_14='for'
+			otherlv_15='for'
 			{
-				newLeafNode(otherlv_14, grammarAccess.getActorDefinitionAccess().getForKeyword_9_0());
+				newLeafNode(otherlv_15, grammarAccess.getActorDefinitionAccess().getForKeyword_10_0());
 			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getActorDefinitionAccess().getTargetsTARGETParserRuleCall_9_1_0());
+						newCompositeNode(grammarAccess.getActorDefinitionAccess().getTargetsTARGETParserRuleCall_10_1_0());
 					}
-					lv_targets_15_0=ruleTARGET
+					lv_targets_16_0=ruleTARGET
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getActorDefinitionRule());
@@ -965,23 +979,23 @@ ruleActorDefinition returns [EObject current=null]
 						add(
 							$current,
 							"targets",
-							lv_targets_15_0,
+							lv_targets_16_0,
 							"org.integratedmodelling.kdl.Kdl.TARGET");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
 			(
-				otherlv_16=','
+				otherlv_17=','
 				{
-					newLeafNode(otherlv_16, grammarAccess.getActorDefinitionAccess().getCommaKeyword_9_2_0());
+					newLeafNode(otherlv_17, grammarAccess.getActorDefinitionAccess().getCommaKeyword_10_2_0());
 				}
 				(
 					(
 						{
-							newCompositeNode(grammarAccess.getActorDefinitionAccess().getTargetsTARGETParserRuleCall_9_2_1_0());
+							newCompositeNode(grammarAccess.getActorDefinitionAccess().getTargetsTARGETParserRuleCall_10_2_1_0());
 						}
-						lv_targets_17_0=ruleTARGET
+						lv_targets_18_0=ruleTARGET
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getActorDefinitionRule());
@@ -989,7 +1003,7 @@ ruleActorDefinition returns [EObject current=null]
 							add(
 								$current,
 								"targets",
-								lv_targets_17_0,
+								lv_targets_18_0,
 								"org.integratedmodelling.kdl.Kdl.TARGET");
 							afterParserOrEnumRuleCall();
 						}
@@ -999,9 +1013,9 @@ ruleActorDefinition returns [EObject current=null]
 		)?
 		(
 			(
-				lv_docstring_18_0=RULE_STRING
+				lv_docstring_19_0=RULE_STRING
 				{
-					newLeafNode(lv_docstring_18_0, grammarAccess.getActorDefinitionAccess().getDocstringSTRINGTerminalRuleCall_10_0());
+					newLeafNode(lv_docstring_19_0, grammarAccess.getActorDefinitionAccess().getDocstringSTRINGTerminalRuleCall_11_0());
 				}
 				{
 					if ($current==null) {
@@ -1010,21 +1024,21 @@ ruleActorDefinition returns [EObject current=null]
 					setWithLastConsumed(
 						$current,
 						"docstring",
-						lv_docstring_18_0,
+						lv_docstring_19_0,
 						"org.eclipse.xtext.common.Terminals.STRING");
 				}
 			)
 		)?
 		(
-			otherlv_19='label'
+			otherlv_20='label'
 			{
-				newLeafNode(otherlv_19, grammarAccess.getActorDefinitionAccess().getLabelKeyword_11_0());
+				newLeafNode(otherlv_20, grammarAccess.getActorDefinitionAccess().getLabelKeyword_12_0());
 			}
 			(
 				(
-					lv_label_20_0=RULE_STRING
+					lv_label_21_0=RULE_STRING
 					{
-						newLeafNode(lv_label_20_0, grammarAccess.getActorDefinitionAccess().getLabelSTRINGTerminalRuleCall_11_1_0());
+						newLeafNode(lv_label_21_0, grammarAccess.getActorDefinitionAccess().getLabelSTRINGTerminalRuleCall_12_1_0());
 					}
 					{
 						if ($current==null) {
@@ -1033,23 +1047,23 @@ ruleActorDefinition returns [EObject current=null]
 						setWithLastConsumed(
 							$current,
 							"label",
-							lv_label_20_0,
+							lv_label_21_0,
 							"org.eclipse.xtext.common.Terminals.STRING");
 					}
 				)
 			)
 		)?
 		(
-			otherlv_21='{'
+			otherlv_22='{'
 			{
-				newLeafNode(otherlv_21, grammarAccess.getActorDefinitionAccess().getLeftCurlyBracketKeyword_12_0());
+				newLeafNode(otherlv_22, grammarAccess.getActorDefinitionAccess().getLeftCurlyBracketKeyword_13_0());
 			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getActorDefinitionAccess().getBodyDataflowBodyParserRuleCall_12_1_0());
+						newCompositeNode(grammarAccess.getActorDefinitionAccess().getBodyDataflowBodyParserRuleCall_13_1_0());
 					}
-					lv_body_22_0=ruleDataflowBody
+					lv_body_23_0=ruleDataflowBody
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getActorDefinitionRule());
@@ -1057,30 +1071,30 @@ ruleActorDefinition returns [EObject current=null]
 						set(
 							$current,
 							"body",
-							lv_body_22_0,
+							lv_body_23_0,
 							"org.integratedmodelling.kdl.Kdl.DataflowBody");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
-			otherlv_23='}'
+			otherlv_24='}'
 			{
-				newLeafNode(otherlv_23, grammarAccess.getActorDefinitionAccess().getRightCurlyBracketKeyword_12_2());
+				newLeafNode(otherlv_24, grammarAccess.getActorDefinitionAccess().getRightCurlyBracketKeyword_13_2());
 			}
 		)?
 		(
 			(
 				(
-					otherlv_24='minimum'
+					otherlv_25='minimum'
 					{
-						newLeafNode(otherlv_24, grammarAccess.getActorDefinitionAccess().getMinimumKeyword_13_0_0_0());
+						newLeafNode(otherlv_25, grammarAccess.getActorDefinitionAccess().getMinimumKeyword_14_0_0_0());
 					}
 					(
 						(
 							{
-								newCompositeNode(grammarAccess.getActorDefinitionAccess().getRangeMinNumberParserRuleCall_13_0_0_1_0());
+								newCompositeNode(grammarAccess.getActorDefinitionAccess().getRangeMinNumberParserRuleCall_14_0_0_1_0());
 							}
-							lv_rangeMin_25_0=ruleNumber
+							lv_rangeMin_26_0=ruleNumber
 							{
 								if ($current==null) {
 									$current = createModelElementForParent(grammarAccess.getActorDefinitionRule());
@@ -1088,7 +1102,7 @@ ruleActorDefinition returns [EObject current=null]
 								set(
 									$current,
 									"rangeMin",
-									lv_rangeMin_25_0,
+									lv_rangeMin_26_0,
 									"org.integratedmodelling.kdl.Kdl.Number");
 								afterParserOrEnumRuleCall();
 							}
@@ -1097,16 +1111,16 @@ ruleActorDefinition returns [EObject current=null]
 				)
 				    |
 				(
-					otherlv_26='maximum'
+					otherlv_27='maximum'
 					{
-						newLeafNode(otherlv_26, grammarAccess.getActorDefinitionAccess().getMaximumKeyword_13_0_1_0());
+						newLeafNode(otherlv_27, grammarAccess.getActorDefinitionAccess().getMaximumKeyword_14_0_1_0());
 					}
 					(
 						(
 							{
-								newCompositeNode(grammarAccess.getActorDefinitionAccess().getRangeMaxNumberParserRuleCall_13_0_1_1_0());
+								newCompositeNode(grammarAccess.getActorDefinitionAccess().getRangeMaxNumberParserRuleCall_14_0_1_1_0());
 							}
-							lv_rangeMax_27_0=ruleNumber
+							lv_rangeMax_28_0=ruleNumber
 							{
 								if ($current==null) {
 									$current = createModelElementForParent(grammarAccess.getActorDefinitionRule());
@@ -1114,7 +1128,7 @@ ruleActorDefinition returns [EObject current=null]
 								set(
 									$current,
 									"rangeMax",
-									lv_rangeMax_27_0,
+									lv_rangeMax_28_0,
 									"org.integratedmodelling.kdl.Kdl.Number");
 								afterParserOrEnumRuleCall();
 							}
@@ -1123,16 +1137,16 @@ ruleActorDefinition returns [EObject current=null]
 				)
 				    |
 				(
-					otherlv_28='range'
+					otherlv_29='range'
 					{
-						newLeafNode(otherlv_28, grammarAccess.getActorDefinitionAccess().getRangeKeyword_13_0_2_0());
+						newLeafNode(otherlv_29, grammarAccess.getActorDefinitionAccess().getRangeKeyword_14_0_2_0());
 					}
 					(
 						(
 							{
-								newCompositeNode(grammarAccess.getActorDefinitionAccess().getRangeMinNumberParserRuleCall_13_0_2_1_0());
+								newCompositeNode(grammarAccess.getActorDefinitionAccess().getRangeMinNumberParserRuleCall_14_0_2_1_0());
 							}
-							lv_rangeMin_29_0=ruleNumber
+							lv_rangeMin_30_0=ruleNumber
 							{
 								if ($current==null) {
 									$current = createModelElementForParent(grammarAccess.getActorDefinitionRule());
@@ -1140,22 +1154,22 @@ ruleActorDefinition returns [EObject current=null]
 								set(
 									$current,
 									"rangeMin",
-									lv_rangeMin_29_0,
+									lv_rangeMin_30_0,
 									"org.integratedmodelling.kdl.Kdl.Number");
 								afterParserOrEnumRuleCall();
 							}
 						)
 					)
-					otherlv_30='to'
+					otherlv_31='to'
 					{
-						newLeafNode(otherlv_30, grammarAccess.getActorDefinitionAccess().getToKeyword_13_0_2_2());
+						newLeafNode(otherlv_31, grammarAccess.getActorDefinitionAccess().getToKeyword_14_0_2_2());
 					}
 					(
 						(
 							{
-								newCompositeNode(grammarAccess.getActorDefinitionAccess().getRangeMaxNumberParserRuleCall_13_0_2_3_0());
+								newCompositeNode(grammarAccess.getActorDefinitionAccess().getRangeMaxNumberParserRuleCall_14_0_2_3_0());
 							}
-							lv_rangeMax_31_0=ruleNumber
+							lv_rangeMax_32_0=ruleNumber
 							{
 								if ($current==null) {
 									$current = createModelElementForParent(grammarAccess.getActorDefinitionRule());
@@ -1163,7 +1177,7 @@ ruleActorDefinition returns [EObject current=null]
 								set(
 									$current,
 									"rangeMax",
-									lv_rangeMax_31_0,
+									lv_rangeMax_32_0,
 									"org.integratedmodelling.kdl.Kdl.Number");
 								afterParserOrEnumRuleCall();
 							}
@@ -1173,16 +1187,16 @@ ruleActorDefinition returns [EObject current=null]
 			)
 			    |
 			(
-				otherlv_32='values'
+				otherlv_33='values'
 				{
-					newLeafNode(otherlv_32, grammarAccess.getActorDefinitionAccess().getValuesKeyword_13_1_0());
+					newLeafNode(otherlv_33, grammarAccess.getActorDefinitionAccess().getValuesKeyword_14_1_0());
 				}
 				(
 					(
 						(
-							lv_enumValues_33_1=RULE_UPPERCASE_ID
+							lv_enumValues_34_1=RULE_UPPERCASE_ID
 							{
-								newLeafNode(lv_enumValues_33_1, grammarAccess.getActorDefinitionAccess().getEnumValuesUPPERCASE_IDTerminalRuleCall_13_1_1_0_0());
+								newLeafNode(lv_enumValues_34_1, grammarAccess.getActorDefinitionAccess().getEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_1_0_0());
 							}
 							{
 								if ($current==null) {
@@ -1191,13 +1205,13 @@ ruleActorDefinition returns [EObject current=null]
 								addWithLastConsumed(
 									$current,
 									"enumValues",
-									lv_enumValues_33_1,
+									lv_enumValues_34_1,
 									"org.integratedmodelling.kdl.Kdl.UPPERCASE_ID");
 							}
 							    |
-							lv_enumValues_33_2=RULE_LOWERCASE_ID
+							lv_enumValues_34_2=RULE_LOWERCASE_ID
 							{
-								newLeafNode(lv_enumValues_33_2, grammarAccess.getActorDefinitionAccess().getEnumValuesLOWERCASE_IDTerminalRuleCall_13_1_1_0_1());
+								newLeafNode(lv_enumValues_34_2, grammarAccess.getActorDefinitionAccess().getEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_1_0_1());
 							}
 							{
 								if ($current==null) {
@@ -1206,13 +1220,13 @@ ruleActorDefinition returns [EObject current=null]
 								addWithLastConsumed(
 									$current,
 									"enumValues",
-									lv_enumValues_33_2,
+									lv_enumValues_34_2,
 									"org.integratedmodelling.kdl.Kdl.LOWERCASE_ID");
 							}
 							    |
-							lv_enumValues_33_3=RULE_CAMELCASE_ID
+							lv_enumValues_34_3=RULE_CAMELCASE_ID
 							{
-								newLeafNode(lv_enumValues_33_3, grammarAccess.getActorDefinitionAccess().getEnumValuesCAMELCASE_IDTerminalRuleCall_13_1_1_0_2());
+								newLeafNode(lv_enumValues_34_3, grammarAccess.getActorDefinitionAccess().getEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_1_0_2());
 							}
 							{
 								if ($current==null) {
@@ -1221,23 +1235,23 @@ ruleActorDefinition returns [EObject current=null]
 								addWithLastConsumed(
 									$current,
 									"enumValues",
-									lv_enumValues_33_3,
+									lv_enumValues_34_3,
 									"org.integratedmodelling.kdl.Kdl.CAMELCASE_ID");
 							}
 						)
 					)
 				)
 				(
-					otherlv_34=','
+					otherlv_35=','
 					{
-						newLeafNode(otherlv_34, grammarAccess.getActorDefinitionAccess().getCommaKeyword_13_1_2_0());
+						newLeafNode(otherlv_35, grammarAccess.getActorDefinitionAccess().getCommaKeyword_14_1_2_0());
 					}
 					(
 						(
 							(
-								lv_enumValues_35_1=RULE_UPPERCASE_ID
+								lv_enumValues_36_1=RULE_UPPERCASE_ID
 								{
-									newLeafNode(lv_enumValues_35_1, grammarAccess.getActorDefinitionAccess().getEnumValuesUPPERCASE_IDTerminalRuleCall_13_1_2_1_0_0());
+									newLeafNode(lv_enumValues_36_1, grammarAccess.getActorDefinitionAccess().getEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_2_1_0_0());
 								}
 								{
 									if ($current==null) {
@@ -1246,13 +1260,13 @@ ruleActorDefinition returns [EObject current=null]
 									addWithLastConsumed(
 										$current,
 										"enumValues",
-										lv_enumValues_35_1,
+										lv_enumValues_36_1,
 										"org.integratedmodelling.kdl.Kdl.UPPERCASE_ID");
 								}
 								    |
-								lv_enumValues_35_2=RULE_LOWERCASE_ID
+								lv_enumValues_36_2=RULE_LOWERCASE_ID
 								{
-									newLeafNode(lv_enumValues_35_2, grammarAccess.getActorDefinitionAccess().getEnumValuesLOWERCASE_IDTerminalRuleCall_13_1_2_1_0_1());
+									newLeafNode(lv_enumValues_36_2, grammarAccess.getActorDefinitionAccess().getEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_2_1_0_1());
 								}
 								{
 									if ($current==null) {
@@ -1261,13 +1275,13 @@ ruleActorDefinition returns [EObject current=null]
 									addWithLastConsumed(
 										$current,
 										"enumValues",
-										lv_enumValues_35_2,
+										lv_enumValues_36_2,
 										"org.integratedmodelling.kdl.Kdl.LOWERCASE_ID");
 								}
 								    |
-								lv_enumValues_35_3=RULE_CAMELCASE_ID
+								lv_enumValues_36_3=RULE_CAMELCASE_ID
 								{
-									newLeafNode(lv_enumValues_35_3, grammarAccess.getActorDefinitionAccess().getEnumValuesCAMELCASE_IDTerminalRuleCall_13_1_2_1_0_2());
+									newLeafNode(lv_enumValues_36_3, grammarAccess.getActorDefinitionAccess().getEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_2_1_0_2());
 								}
 								{
 									if ($current==null) {
@@ -1276,7 +1290,7 @@ ruleActorDefinition returns [EObject current=null]
 									addWithLastConsumed(
 										$current,
 										"enumValues",
-										lv_enumValues_35_3,
+										lv_enumValues_36_3,
 										"org.integratedmodelling.kdl.Kdl.CAMELCASE_ID");
 								}
 							)
@@ -1286,16 +1300,16 @@ ruleActorDefinition returns [EObject current=null]
 			)
 		)?
 		(
-			otherlv_36='default'
+			otherlv_37='default'
 			{
-				newLeafNode(otherlv_36, grammarAccess.getActorDefinitionAccess().getDefaultKeyword_14_0());
+				newLeafNode(otherlv_37, grammarAccess.getActorDefinitionAccess().getDefaultKeyword_15_0());
 			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getActorDefinitionAccess().getDefaultValueParserRuleCall_14_1_0());
+						newCompositeNode(grammarAccess.getActorDefinitionAccess().getDefaultValueParserRuleCall_15_1_0());
 					}
-					lv_default_37_0=ruleValue
+					lv_default_38_0=ruleValue
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getActorDefinitionRule());
@@ -1303,7 +1317,7 @@ ruleActorDefinition returns [EObject current=null]
 						set(
 							$current,
 							"default",
-							lv_default_37_0,
+							lv_default_38_0,
 							"org.integratedmodelling.kdl.Kdl.Value");
 						afterParserOrEnumRuleCall();
 					}
@@ -1311,15 +1325,15 @@ ruleActorDefinition returns [EObject current=null]
 			)
 		)?
 		(
-			otherlv_38='as'
+			otherlv_39='as'
 			{
-				newLeafNode(otherlv_38, grammarAccess.getActorDefinitionAccess().getAsKeyword_15_0());
+				newLeafNode(otherlv_39, grammarAccess.getActorDefinitionAccess().getAsKeyword_16_0());
 			}
 			(
 				(
-					lv_localName_39_0=RULE_LOWERCASE_ID
+					lv_localName_40_0=RULE_LOWERCASE_ID
 					{
-						newLeafNode(lv_localName_39_0, grammarAccess.getActorDefinitionAccess().getLocalNameLOWERCASE_IDTerminalRuleCall_15_1_0());
+						newLeafNode(lv_localName_40_0, grammarAccess.getActorDefinitionAccess().getLocalNameLOWERCASE_IDTerminalRuleCall_16_1_0());
 					}
 					{
 						if ($current==null) {
@@ -1328,23 +1342,23 @@ ruleActorDefinition returns [EObject current=null]
 						setWithLastConsumed(
 							$current,
 							"localName",
-							lv_localName_39_0,
+							lv_localName_40_0,
 							"org.integratedmodelling.kdl.Kdl.LOWERCASE_ID");
 					}
 				)
 			)
 		)?
 		(
-			otherlv_40='over'
+			otherlv_41='over'
 			{
-				newLeafNode(otherlv_40, grammarAccess.getActorDefinitionAccess().getOverKeyword_16_0());
+				newLeafNode(otherlv_41, grammarAccess.getActorDefinitionAccess().getOverKeyword_17_0());
 			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getActorDefinitionAccess().getCoverageFunctionParserRuleCall_16_1_0());
+						newCompositeNode(grammarAccess.getActorDefinitionAccess().getCoverageFunctionParserRuleCall_17_1_0());
 					}
-					lv_coverage_41_0=ruleFunction
+					lv_coverage_42_0=ruleFunction
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getActorDefinitionRule());
@@ -1352,23 +1366,23 @@ ruleActorDefinition returns [EObject current=null]
 						add(
 							$current,
 							"coverage",
-							lv_coverage_41_0,
+							lv_coverage_42_0,
 							"org.integratedmodelling.kdl.Kdl.Function");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
 			(
-				otherlv_42=','
+				otherlv_43=','
 				{
-					newLeafNode(otherlv_42, grammarAccess.getActorDefinitionAccess().getCommaKeyword_16_2_0());
+					newLeafNode(otherlv_43, grammarAccess.getActorDefinitionAccess().getCommaKeyword_17_2_0());
 				}
 				(
 					(
 						{
-							newCompositeNode(grammarAccess.getActorDefinitionAccess().getCoverageFunctionParserRuleCall_16_2_1_0());
+							newCompositeNode(grammarAccess.getActorDefinitionAccess().getCoverageFunctionParserRuleCall_17_2_1_0());
 						}
-						lv_coverage_43_0=ruleFunction
+						lv_coverage_44_0=ruleFunction
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getActorDefinitionRule());
@@ -1376,7 +1390,7 @@ ruleActorDefinition returns [EObject current=null]
 							add(
 								$current,
 								"coverage",
-								lv_coverage_43_0,
+								lv_coverage_44_0,
 								"org.integratedmodelling.kdl.Kdl.Function");
 							afterParserOrEnumRuleCall();
 						}

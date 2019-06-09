@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
+import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.json.ElkGraphJson;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -29,7 +30,7 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 
 	String id = NameGenerator.shortUUID();
 	private KlabElkGraphFactory kelk = KlabElkGraphFactory.keINSTANCE;
-	private Map<String, ElkNode> nodes = new HashMap<>();
+	private Map<String, ElkConnectableShape> nodes = new HashMap<>();
 	String json = null;
 
 	public ContextualizationStrategy() {
@@ -87,7 +88,7 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 				json = ElkGraphJson.forGraph(root).omitLayout(false).omitZeroDimension(true).omitZeroPositions(true)
 						.shortLayoutOptionKeys(true).prettyPrint(true).toJson();
 
-				System.out.println(json);
+//				System.out.println(json);
 			}
 		}
 

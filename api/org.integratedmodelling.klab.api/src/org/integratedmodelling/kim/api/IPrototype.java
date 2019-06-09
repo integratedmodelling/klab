@@ -66,6 +66,14 @@ public interface IPrototype {
 		 * @return true if optional
 		 */
 		boolean isOptional();
+		
+		/**
+		 * If true, the argument should be an expression returning the stated type rather
+		 * than a literal.
+		 * 
+		 * @return
+		 */
+		boolean isExpression();
 
 		/**
 		 * If the argument has a set of IDs as possible values (getType() == Type.ENUM),

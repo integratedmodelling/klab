@@ -347,84 +347,86 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cParameterParameterKeyword_5_0 = (Keyword)cParameterAssignment_5.eContents().get(0);
 		private final Assignment cTypeAssignment_6 = (Assignment)cGroup.eContents().get(6);
 		private final RuleCall cTypeACTORParserRuleCall_6_0 = (RuleCall)cTypeAssignment_6.eContents().get(0);
-		private final Assignment cNameAssignment_7 = (Assignment)cGroup.eContents().get(7);
-		private final Alternatives cNameAlternatives_7_0 = (Alternatives)cNameAssignment_7.eContents().get(0);
-		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_7_0_0 = (RuleCall)cNameAlternatives_7_0.eContents().get(0);
-		private final RuleCall cNameLOWERCASE_DASHIDTerminalRuleCall_7_0_1 = (RuleCall)cNameAlternatives_7_0.eContents().get(1);
-		private final RuleCall cNameSTRINGTerminalRuleCall_7_0_2 = (RuleCall)cNameAlternatives_7_0.eContents().get(2);
-		private final Group cGroup_8 = (Group)cGroup.eContents().get(8);
-		private final Keyword cExtendsKeyword_8_0 = (Keyword)cGroup_8.eContents().get(0);
-		private final Assignment cExtendedAssignment_8_1 = (Assignment)cGroup_8.eContents().get(1);
-		private final Alternatives cExtendedAlternatives_8_1_0 = (Alternatives)cExtendedAssignment_8_1.eContents().get(0);
-		private final RuleCall cExtendedLOWERCASE_IDTerminalRuleCall_8_1_0_0 = (RuleCall)cExtendedAlternatives_8_1_0.eContents().get(0);
-		private final RuleCall cExtendedLOWERCASE_DASHIDTerminalRuleCall_8_1_0_1 = (RuleCall)cExtendedAlternatives_8_1_0.eContents().get(1);
-		private final RuleCall cExtendedSTRINGTerminalRuleCall_8_1_0_2 = (RuleCall)cExtendedAlternatives_8_1_0.eContents().get(2);
+		private final Assignment cExpressionAssignment_7 = (Assignment)cGroup.eContents().get(7);
+		private final Keyword cExpressionExpressionKeyword_7_0 = (Keyword)cExpressionAssignment_7.eContents().get(0);
+		private final Assignment cNameAssignment_8 = (Assignment)cGroup.eContents().get(8);
+		private final Alternatives cNameAlternatives_8_0 = (Alternatives)cNameAssignment_8.eContents().get(0);
+		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_8_0_0 = (RuleCall)cNameAlternatives_8_0.eContents().get(0);
+		private final RuleCall cNameLOWERCASE_DASHIDTerminalRuleCall_8_0_1 = (RuleCall)cNameAlternatives_8_0.eContents().get(1);
+		private final RuleCall cNameSTRINGTerminalRuleCall_8_0_2 = (RuleCall)cNameAlternatives_8_0.eContents().get(2);
 		private final Group cGroup_9 = (Group)cGroup.eContents().get(9);
-		private final Keyword cForKeyword_9_0 = (Keyword)cGroup_9.eContents().get(0);
-		private final Assignment cTargetsAssignment_9_1 = (Assignment)cGroup_9.eContents().get(1);
-		private final RuleCall cTargetsTARGETParserRuleCall_9_1_0 = (RuleCall)cTargetsAssignment_9_1.eContents().get(0);
-		private final Group cGroup_9_2 = (Group)cGroup_9.eContents().get(2);
-		private final Keyword cCommaKeyword_9_2_0 = (Keyword)cGroup_9_2.eContents().get(0);
-		private final Assignment cTargetsAssignment_9_2_1 = (Assignment)cGroup_9_2.eContents().get(1);
-		private final RuleCall cTargetsTARGETParserRuleCall_9_2_1_0 = (RuleCall)cTargetsAssignment_9_2_1.eContents().get(0);
-		private final Assignment cDocstringAssignment_10 = (Assignment)cGroup.eContents().get(10);
-		private final RuleCall cDocstringSTRINGTerminalRuleCall_10_0 = (RuleCall)cDocstringAssignment_10.eContents().get(0);
-		private final Group cGroup_11 = (Group)cGroup.eContents().get(11);
-		private final Keyword cLabelKeyword_11_0 = (Keyword)cGroup_11.eContents().get(0);
-		private final Assignment cLabelAssignment_11_1 = (Assignment)cGroup_11.eContents().get(1);
-		private final RuleCall cLabelSTRINGTerminalRuleCall_11_1_0 = (RuleCall)cLabelAssignment_11_1.eContents().get(0);
+		private final Keyword cExtendsKeyword_9_0 = (Keyword)cGroup_9.eContents().get(0);
+		private final Assignment cExtendedAssignment_9_1 = (Assignment)cGroup_9.eContents().get(1);
+		private final Alternatives cExtendedAlternatives_9_1_0 = (Alternatives)cExtendedAssignment_9_1.eContents().get(0);
+		private final RuleCall cExtendedLOWERCASE_IDTerminalRuleCall_9_1_0_0 = (RuleCall)cExtendedAlternatives_9_1_0.eContents().get(0);
+		private final RuleCall cExtendedLOWERCASE_DASHIDTerminalRuleCall_9_1_0_1 = (RuleCall)cExtendedAlternatives_9_1_0.eContents().get(1);
+		private final RuleCall cExtendedSTRINGTerminalRuleCall_9_1_0_2 = (RuleCall)cExtendedAlternatives_9_1_0.eContents().get(2);
+		private final Group cGroup_10 = (Group)cGroup.eContents().get(10);
+		private final Keyword cForKeyword_10_0 = (Keyword)cGroup_10.eContents().get(0);
+		private final Assignment cTargetsAssignment_10_1 = (Assignment)cGroup_10.eContents().get(1);
+		private final RuleCall cTargetsTARGETParserRuleCall_10_1_0 = (RuleCall)cTargetsAssignment_10_1.eContents().get(0);
+		private final Group cGroup_10_2 = (Group)cGroup_10.eContents().get(2);
+		private final Keyword cCommaKeyword_10_2_0 = (Keyword)cGroup_10_2.eContents().get(0);
+		private final Assignment cTargetsAssignment_10_2_1 = (Assignment)cGroup_10_2.eContents().get(1);
+		private final RuleCall cTargetsTARGETParserRuleCall_10_2_1_0 = (RuleCall)cTargetsAssignment_10_2_1.eContents().get(0);
+		private final Assignment cDocstringAssignment_11 = (Assignment)cGroup.eContents().get(11);
+		private final RuleCall cDocstringSTRINGTerminalRuleCall_11_0 = (RuleCall)cDocstringAssignment_11.eContents().get(0);
 		private final Group cGroup_12 = (Group)cGroup.eContents().get(12);
-		private final Keyword cLeftCurlyBracketKeyword_12_0 = (Keyword)cGroup_12.eContents().get(0);
-		private final Assignment cBodyAssignment_12_1 = (Assignment)cGroup_12.eContents().get(1);
-		private final RuleCall cBodyDataflowBodyParserRuleCall_12_1_0 = (RuleCall)cBodyAssignment_12_1.eContents().get(0);
-		private final Keyword cRightCurlyBracketKeyword_12_2 = (Keyword)cGroup_12.eContents().get(2);
-		private final Alternatives cAlternatives_13 = (Alternatives)cGroup.eContents().get(13);
-		private final Alternatives cAlternatives_13_0 = (Alternatives)cAlternatives_13.eContents().get(0);
-		private final Group cGroup_13_0_0 = (Group)cAlternatives_13_0.eContents().get(0);
-		private final Keyword cMinimumKeyword_13_0_0_0 = (Keyword)cGroup_13_0_0.eContents().get(0);
-		private final Assignment cRangeMinAssignment_13_0_0_1 = (Assignment)cGroup_13_0_0.eContents().get(1);
-		private final RuleCall cRangeMinNumberParserRuleCall_13_0_0_1_0 = (RuleCall)cRangeMinAssignment_13_0_0_1.eContents().get(0);
-		private final Group cGroup_13_0_1 = (Group)cAlternatives_13_0.eContents().get(1);
-		private final Keyword cMaximumKeyword_13_0_1_0 = (Keyword)cGroup_13_0_1.eContents().get(0);
-		private final Assignment cRangeMaxAssignment_13_0_1_1 = (Assignment)cGroup_13_0_1.eContents().get(1);
-		private final RuleCall cRangeMaxNumberParserRuleCall_13_0_1_1_0 = (RuleCall)cRangeMaxAssignment_13_0_1_1.eContents().get(0);
-		private final Group cGroup_13_0_2 = (Group)cAlternatives_13_0.eContents().get(2);
-		private final Keyword cRangeKeyword_13_0_2_0 = (Keyword)cGroup_13_0_2.eContents().get(0);
-		private final Assignment cRangeMinAssignment_13_0_2_1 = (Assignment)cGroup_13_0_2.eContents().get(1);
-		private final RuleCall cRangeMinNumberParserRuleCall_13_0_2_1_0 = (RuleCall)cRangeMinAssignment_13_0_2_1.eContents().get(0);
-		private final Keyword cToKeyword_13_0_2_2 = (Keyword)cGroup_13_0_2.eContents().get(2);
-		private final Assignment cRangeMaxAssignment_13_0_2_3 = (Assignment)cGroup_13_0_2.eContents().get(3);
-		private final RuleCall cRangeMaxNumberParserRuleCall_13_0_2_3_0 = (RuleCall)cRangeMaxAssignment_13_0_2_3.eContents().get(0);
-		private final Group cGroup_13_1 = (Group)cAlternatives_13.eContents().get(1);
-		private final Keyword cValuesKeyword_13_1_0 = (Keyword)cGroup_13_1.eContents().get(0);
-		private final Assignment cEnumValuesAssignment_13_1_1 = (Assignment)cGroup_13_1.eContents().get(1);
-		private final Alternatives cEnumValuesAlternatives_13_1_1_0 = (Alternatives)cEnumValuesAssignment_13_1_1.eContents().get(0);
-		private final RuleCall cEnumValuesUPPERCASE_IDTerminalRuleCall_13_1_1_0_0 = (RuleCall)cEnumValuesAlternatives_13_1_1_0.eContents().get(0);
-		private final RuleCall cEnumValuesLOWERCASE_IDTerminalRuleCall_13_1_1_0_1 = (RuleCall)cEnumValuesAlternatives_13_1_1_0.eContents().get(1);
-		private final RuleCall cEnumValuesCAMELCASE_IDTerminalRuleCall_13_1_1_0_2 = (RuleCall)cEnumValuesAlternatives_13_1_1_0.eContents().get(2);
-		private final Group cGroup_13_1_2 = (Group)cGroup_13_1.eContents().get(2);
-		private final Keyword cCommaKeyword_13_1_2_0 = (Keyword)cGroup_13_1_2.eContents().get(0);
-		private final Assignment cEnumValuesAssignment_13_1_2_1 = (Assignment)cGroup_13_1_2.eContents().get(1);
-		private final Alternatives cEnumValuesAlternatives_13_1_2_1_0 = (Alternatives)cEnumValuesAssignment_13_1_2_1.eContents().get(0);
-		private final RuleCall cEnumValuesUPPERCASE_IDTerminalRuleCall_13_1_2_1_0_0 = (RuleCall)cEnumValuesAlternatives_13_1_2_1_0.eContents().get(0);
-		private final RuleCall cEnumValuesLOWERCASE_IDTerminalRuleCall_13_1_2_1_0_1 = (RuleCall)cEnumValuesAlternatives_13_1_2_1_0.eContents().get(1);
-		private final RuleCall cEnumValuesCAMELCASE_IDTerminalRuleCall_13_1_2_1_0_2 = (RuleCall)cEnumValuesAlternatives_13_1_2_1_0.eContents().get(2);
-		private final Group cGroup_14 = (Group)cGroup.eContents().get(14);
-		private final Keyword cDefaultKeyword_14_0 = (Keyword)cGroup_14.eContents().get(0);
-		private final Assignment cDefaultAssignment_14_1 = (Assignment)cGroup_14.eContents().get(1);
-		private final RuleCall cDefaultValueParserRuleCall_14_1_0 = (RuleCall)cDefaultAssignment_14_1.eContents().get(0);
+		private final Keyword cLabelKeyword_12_0 = (Keyword)cGroup_12.eContents().get(0);
+		private final Assignment cLabelAssignment_12_1 = (Assignment)cGroup_12.eContents().get(1);
+		private final RuleCall cLabelSTRINGTerminalRuleCall_12_1_0 = (RuleCall)cLabelAssignment_12_1.eContents().get(0);
+		private final Group cGroup_13 = (Group)cGroup.eContents().get(13);
+		private final Keyword cLeftCurlyBracketKeyword_13_0 = (Keyword)cGroup_13.eContents().get(0);
+		private final Assignment cBodyAssignment_13_1 = (Assignment)cGroup_13.eContents().get(1);
+		private final RuleCall cBodyDataflowBodyParserRuleCall_13_1_0 = (RuleCall)cBodyAssignment_13_1.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_13_2 = (Keyword)cGroup_13.eContents().get(2);
+		private final Alternatives cAlternatives_14 = (Alternatives)cGroup.eContents().get(14);
+		private final Alternatives cAlternatives_14_0 = (Alternatives)cAlternatives_14.eContents().get(0);
+		private final Group cGroup_14_0_0 = (Group)cAlternatives_14_0.eContents().get(0);
+		private final Keyword cMinimumKeyword_14_0_0_0 = (Keyword)cGroup_14_0_0.eContents().get(0);
+		private final Assignment cRangeMinAssignment_14_0_0_1 = (Assignment)cGroup_14_0_0.eContents().get(1);
+		private final RuleCall cRangeMinNumberParserRuleCall_14_0_0_1_0 = (RuleCall)cRangeMinAssignment_14_0_0_1.eContents().get(0);
+		private final Group cGroup_14_0_1 = (Group)cAlternatives_14_0.eContents().get(1);
+		private final Keyword cMaximumKeyword_14_0_1_0 = (Keyword)cGroup_14_0_1.eContents().get(0);
+		private final Assignment cRangeMaxAssignment_14_0_1_1 = (Assignment)cGroup_14_0_1.eContents().get(1);
+		private final RuleCall cRangeMaxNumberParserRuleCall_14_0_1_1_0 = (RuleCall)cRangeMaxAssignment_14_0_1_1.eContents().get(0);
+		private final Group cGroup_14_0_2 = (Group)cAlternatives_14_0.eContents().get(2);
+		private final Keyword cRangeKeyword_14_0_2_0 = (Keyword)cGroup_14_0_2.eContents().get(0);
+		private final Assignment cRangeMinAssignment_14_0_2_1 = (Assignment)cGroup_14_0_2.eContents().get(1);
+		private final RuleCall cRangeMinNumberParserRuleCall_14_0_2_1_0 = (RuleCall)cRangeMinAssignment_14_0_2_1.eContents().get(0);
+		private final Keyword cToKeyword_14_0_2_2 = (Keyword)cGroup_14_0_2.eContents().get(2);
+		private final Assignment cRangeMaxAssignment_14_0_2_3 = (Assignment)cGroup_14_0_2.eContents().get(3);
+		private final RuleCall cRangeMaxNumberParserRuleCall_14_0_2_3_0 = (RuleCall)cRangeMaxAssignment_14_0_2_3.eContents().get(0);
+		private final Group cGroup_14_1 = (Group)cAlternatives_14.eContents().get(1);
+		private final Keyword cValuesKeyword_14_1_0 = (Keyword)cGroup_14_1.eContents().get(0);
+		private final Assignment cEnumValuesAssignment_14_1_1 = (Assignment)cGroup_14_1.eContents().get(1);
+		private final Alternatives cEnumValuesAlternatives_14_1_1_0 = (Alternatives)cEnumValuesAssignment_14_1_1.eContents().get(0);
+		private final RuleCall cEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_1_0_0 = (RuleCall)cEnumValuesAlternatives_14_1_1_0.eContents().get(0);
+		private final RuleCall cEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_1_0_1 = (RuleCall)cEnumValuesAlternatives_14_1_1_0.eContents().get(1);
+		private final RuleCall cEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_1_0_2 = (RuleCall)cEnumValuesAlternatives_14_1_1_0.eContents().get(2);
+		private final Group cGroup_14_1_2 = (Group)cGroup_14_1.eContents().get(2);
+		private final Keyword cCommaKeyword_14_1_2_0 = (Keyword)cGroup_14_1_2.eContents().get(0);
+		private final Assignment cEnumValuesAssignment_14_1_2_1 = (Assignment)cGroup_14_1_2.eContents().get(1);
+		private final Alternatives cEnumValuesAlternatives_14_1_2_1_0 = (Alternatives)cEnumValuesAssignment_14_1_2_1.eContents().get(0);
+		private final RuleCall cEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_2_1_0_0 = (RuleCall)cEnumValuesAlternatives_14_1_2_1_0.eContents().get(0);
+		private final RuleCall cEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_2_1_0_1 = (RuleCall)cEnumValuesAlternatives_14_1_2_1_0.eContents().get(1);
+		private final RuleCall cEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_2_1_0_2 = (RuleCall)cEnumValuesAlternatives_14_1_2_1_0.eContents().get(2);
 		private final Group cGroup_15 = (Group)cGroup.eContents().get(15);
-		private final Keyword cAsKeyword_15_0 = (Keyword)cGroup_15.eContents().get(0);
-		private final Assignment cLocalNameAssignment_15_1 = (Assignment)cGroup_15.eContents().get(1);
-		private final RuleCall cLocalNameLOWERCASE_IDTerminalRuleCall_15_1_0 = (RuleCall)cLocalNameAssignment_15_1.eContents().get(0);
+		private final Keyword cDefaultKeyword_15_0 = (Keyword)cGroup_15.eContents().get(0);
+		private final Assignment cDefaultAssignment_15_1 = (Assignment)cGroup_15.eContents().get(1);
+		private final RuleCall cDefaultValueParserRuleCall_15_1_0 = (RuleCall)cDefaultAssignment_15_1.eContents().get(0);
 		private final Group cGroup_16 = (Group)cGroup.eContents().get(16);
-		private final Keyword cOverKeyword_16_0 = (Keyword)cGroup_16.eContents().get(0);
-		private final Assignment cCoverageAssignment_16_1 = (Assignment)cGroup_16.eContents().get(1);
-		private final RuleCall cCoverageFunctionParserRuleCall_16_1_0 = (RuleCall)cCoverageAssignment_16_1.eContents().get(0);
-		private final Group cGroup_16_2 = (Group)cGroup_16.eContents().get(2);
-		private final Keyword cCommaKeyword_16_2_0 = (Keyword)cGroup_16_2.eContents().get(0);
-		private final Assignment cCoverageAssignment_16_2_1 = (Assignment)cGroup_16_2.eContents().get(1);
-		private final RuleCall cCoverageFunctionParserRuleCall_16_2_1_0 = (RuleCall)cCoverageAssignment_16_2_1.eContents().get(0);
+		private final Keyword cAsKeyword_16_0 = (Keyword)cGroup_16.eContents().get(0);
+		private final Assignment cLocalNameAssignment_16_1 = (Assignment)cGroup_16.eContents().get(1);
+		private final RuleCall cLocalNameLOWERCASE_IDTerminalRuleCall_16_1_0 = (RuleCall)cLocalNameAssignment_16_1.eContents().get(0);
+		private final Group cGroup_17 = (Group)cGroup.eContents().get(17);
+		private final Keyword cOverKeyword_17_0 = (Keyword)cGroup_17.eContents().get(0);
+		private final Assignment cCoverageAssignment_17_1 = (Assignment)cGroup_17.eContents().get(1);
+		private final RuleCall cCoverageFunctionParserRuleCall_17_1_0 = (RuleCall)cCoverageAssignment_17_1.eContents().get(0);
+		private final Group cGroup_17_2 = (Group)cGroup_17.eContents().get(2);
+		private final Keyword cCommaKeyword_17_2_0 = (Keyword)cGroup_17_2.eContents().get(0);
+		private final Assignment cCoverageAssignment_17_2_1 = (Assignment)cGroup_17_2.eContents().get(1);
+		private final RuleCall cCoverageFunctionParserRuleCall_17_2_1_0 = (RuleCall)cCoverageAssignment_17_2_1.eContents().get(0);
 		
 		//ActorDefinition:
 		//	annotations+=Annotation*
@@ -435,12 +437,12 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//	// parameters denotes the ability of the implementation of accepting modified values during run
 		//	// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
 		//	parameter?='parameter'?
-		//	type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('extends' extended=(LOWERCASE_ID | LOWERCASE_DASHID |
-		//	STRING))? ('for' targets+=TARGET (',' targets+=TARGET)*)? docstring=STRING? ('label' label=STRING)? ('{'
-		//	body=DataflowBody '}')? (('minimum' rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to'
-		//	rangeMax=Number) | 'values' enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID) (',' enumValues+=(UPPERCASE_ID |
-		//	LOWERCASE_ID | CAMELCASE_ID))*)? ('default' default=Value)? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function
-		//	(',' coverage+=Function)*)?;
+		//	type=ACTOR expression?='expression'? name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('extends'
+		//	extended=(LOWERCASE_ID | LOWERCASE_DASHID | STRING))? ('for' targets+=TARGET (',' targets+=TARGET)*)?
+		//	docstring=STRING? ('label' label=STRING)? ('{' body=DataflowBody '}')? (('minimum' rangeMin=Number | 'maximum'
+		//	rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number) | 'values' enumValues+=(UPPERCASE_ID | LOWERCASE_ID |
+		//	CAMELCASE_ID) (',' enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID))*)? ('default' default=Value)? ('as'
+		//	localName=LOWERCASE_ID)? ('over' coverage+=Function (',' coverage+=Function)*)?;
 		@Override public ParserRule getRule() { return rule; }
 		
 		///*
@@ -449,12 +451,12 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//abstract?='abstract'? final?='final'? optional?='optional'? (exported?='export' | imported?='import'
 		//(multiple?='multiple' | arity=INT minimum?='+'?)?)? // parameters denotes the ability of the implementation of accepting modified values during run
 		//// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
-		//parameter?='parameter'? type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('extends' extended=(LOWERCASE_ID |
-		//LOWERCASE_DASHID | STRING))? ('for' targets+=TARGET (',' targets+=TARGET)*)? docstring=STRING? ('label' label=STRING)?
-		//('{' body=DataflowBody '}')? (('minimum' rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to'
-		//rangeMax=Number) | 'values' enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID) (',' enumValues+=(UPPERCASE_ID |
-		//LOWERCASE_ID | CAMELCASE_ID))*)? ('default' default=Value)? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function
-		//(',' coverage+=Function)*)?
+		//parameter?='parameter'? type=ACTOR expression?='expression'? name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('extends'
+		//extended=(LOWERCASE_ID | LOWERCASE_DASHID | STRING))? ('for' targets+=TARGET (',' targets+=TARGET)*)?
+		//docstring=STRING? ('label' label=STRING)? ('{' body=DataflowBody '}')? (('minimum' rangeMin=Number | 'maximum'
+		//rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number) | 'values' enumValues+=(UPPERCASE_ID | LOWERCASE_ID |
+		//CAMELCASE_ID) (',' enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID))*)? ('default' default=Value)? ('as'
+		//localName=LOWERCASE_ID)? ('over' coverage+=Function (',' coverage+=Function)*)?
 		public Group getGroup() { return cGroup; }
 		
 		///*
@@ -540,242 +542,248 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//ACTOR
 		public RuleCall getTypeACTORParserRuleCall_6_0() { return cTypeACTORParserRuleCall_6_0; }
 		
+		//expression?='expression'?
+		public Assignment getExpressionAssignment_7() { return cExpressionAssignment_7; }
+		
+		//'expression'
+		public Keyword getExpressionExpressionKeyword_7_0() { return cExpressionExpressionKeyword_7_0; }
+		
 		//name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING)
-		public Assignment getNameAssignment_7() { return cNameAssignment_7; }
+		public Assignment getNameAssignment_8() { return cNameAssignment_8; }
 		
 		//(LOWERCASE_ID | LOWERCASE_DASHID | STRING)
-		public Alternatives getNameAlternatives_7_0() { return cNameAlternatives_7_0; }
+		public Alternatives getNameAlternatives_8_0() { return cNameAlternatives_8_0; }
 		
 		//LOWERCASE_ID
-		public RuleCall getNameLOWERCASE_IDTerminalRuleCall_7_0_0() { return cNameLOWERCASE_IDTerminalRuleCall_7_0_0; }
+		public RuleCall getNameLOWERCASE_IDTerminalRuleCall_8_0_0() { return cNameLOWERCASE_IDTerminalRuleCall_8_0_0; }
 		
 		//LOWERCASE_DASHID
-		public RuleCall getNameLOWERCASE_DASHIDTerminalRuleCall_7_0_1() { return cNameLOWERCASE_DASHIDTerminalRuleCall_7_0_1; }
+		public RuleCall getNameLOWERCASE_DASHIDTerminalRuleCall_8_0_1() { return cNameLOWERCASE_DASHIDTerminalRuleCall_8_0_1; }
 		
 		//STRING
-		public RuleCall getNameSTRINGTerminalRuleCall_7_0_2() { return cNameSTRINGTerminalRuleCall_7_0_2; }
+		public RuleCall getNameSTRINGTerminalRuleCall_8_0_2() { return cNameSTRINGTerminalRuleCall_8_0_2; }
 		
 		//('extends' extended=(LOWERCASE_ID | LOWERCASE_DASHID | STRING))?
-		public Group getGroup_8() { return cGroup_8; }
-		
-		//'extends'
-		public Keyword getExtendsKeyword_8_0() { return cExtendsKeyword_8_0; }
-		
-		//extended=(LOWERCASE_ID | LOWERCASE_DASHID | STRING)
-		public Assignment getExtendedAssignment_8_1() { return cExtendedAssignment_8_1; }
-		
-		//(LOWERCASE_ID | LOWERCASE_DASHID | STRING)
-		public Alternatives getExtendedAlternatives_8_1_0() { return cExtendedAlternatives_8_1_0; }
-		
-		//LOWERCASE_ID
-		public RuleCall getExtendedLOWERCASE_IDTerminalRuleCall_8_1_0_0() { return cExtendedLOWERCASE_IDTerminalRuleCall_8_1_0_0; }
-		
-		//LOWERCASE_DASHID
-		public RuleCall getExtendedLOWERCASE_DASHIDTerminalRuleCall_8_1_0_1() { return cExtendedLOWERCASE_DASHIDTerminalRuleCall_8_1_0_1; }
-		
-		//STRING
-		public RuleCall getExtendedSTRINGTerminalRuleCall_8_1_0_2() { return cExtendedSTRINGTerminalRuleCall_8_1_0_2; }
-		
-		//('for' targets+=TARGET (',' targets+=TARGET)*)?
 		public Group getGroup_9() { return cGroup_9; }
 		
+		//'extends'
+		public Keyword getExtendsKeyword_9_0() { return cExtendsKeyword_9_0; }
+		
+		//extended=(LOWERCASE_ID | LOWERCASE_DASHID | STRING)
+		public Assignment getExtendedAssignment_9_1() { return cExtendedAssignment_9_1; }
+		
+		//(LOWERCASE_ID | LOWERCASE_DASHID | STRING)
+		public Alternatives getExtendedAlternatives_9_1_0() { return cExtendedAlternatives_9_1_0; }
+		
+		//LOWERCASE_ID
+		public RuleCall getExtendedLOWERCASE_IDTerminalRuleCall_9_1_0_0() { return cExtendedLOWERCASE_IDTerminalRuleCall_9_1_0_0; }
+		
+		//LOWERCASE_DASHID
+		public RuleCall getExtendedLOWERCASE_DASHIDTerminalRuleCall_9_1_0_1() { return cExtendedLOWERCASE_DASHIDTerminalRuleCall_9_1_0_1; }
+		
+		//STRING
+		public RuleCall getExtendedSTRINGTerminalRuleCall_9_1_0_2() { return cExtendedSTRINGTerminalRuleCall_9_1_0_2; }
+		
+		//('for' targets+=TARGET (',' targets+=TARGET)*)?
+		public Group getGroup_10() { return cGroup_10; }
+		
 		//'for'
-		public Keyword getForKeyword_9_0() { return cForKeyword_9_0; }
+		public Keyword getForKeyword_10_0() { return cForKeyword_10_0; }
 		
 		//targets+=TARGET
-		public Assignment getTargetsAssignment_9_1() { return cTargetsAssignment_9_1; }
+		public Assignment getTargetsAssignment_10_1() { return cTargetsAssignment_10_1; }
 		
 		//TARGET
-		public RuleCall getTargetsTARGETParserRuleCall_9_1_0() { return cTargetsTARGETParserRuleCall_9_1_0; }
+		public RuleCall getTargetsTARGETParserRuleCall_10_1_0() { return cTargetsTARGETParserRuleCall_10_1_0; }
 		
 		//(',' targets+=TARGET)*
-		public Group getGroup_9_2() { return cGroup_9_2; }
+		public Group getGroup_10_2() { return cGroup_10_2; }
 		
 		//','
-		public Keyword getCommaKeyword_9_2_0() { return cCommaKeyword_9_2_0; }
+		public Keyword getCommaKeyword_10_2_0() { return cCommaKeyword_10_2_0; }
 		
 		//targets+=TARGET
-		public Assignment getTargetsAssignment_9_2_1() { return cTargetsAssignment_9_2_1; }
+		public Assignment getTargetsAssignment_10_2_1() { return cTargetsAssignment_10_2_1; }
 		
 		//TARGET
-		public RuleCall getTargetsTARGETParserRuleCall_9_2_1_0() { return cTargetsTARGETParserRuleCall_9_2_1_0; }
+		public RuleCall getTargetsTARGETParserRuleCall_10_2_1_0() { return cTargetsTARGETParserRuleCall_10_2_1_0; }
 		
 		//docstring=STRING?
-		public Assignment getDocstringAssignment_10() { return cDocstringAssignment_10; }
+		public Assignment getDocstringAssignment_11() { return cDocstringAssignment_11; }
 		
 		//STRING
-		public RuleCall getDocstringSTRINGTerminalRuleCall_10_0() { return cDocstringSTRINGTerminalRuleCall_10_0; }
+		public RuleCall getDocstringSTRINGTerminalRuleCall_11_0() { return cDocstringSTRINGTerminalRuleCall_11_0; }
 		
 		//('label' label=STRING)?
-		public Group getGroup_11() { return cGroup_11; }
-		
-		//'label'
-		public Keyword getLabelKeyword_11_0() { return cLabelKeyword_11_0; }
-		
-		//label=STRING
-		public Assignment getLabelAssignment_11_1() { return cLabelAssignment_11_1; }
-		
-		//STRING
-		public RuleCall getLabelSTRINGTerminalRuleCall_11_1_0() { return cLabelSTRINGTerminalRuleCall_11_1_0; }
-		
-		//('{' body=DataflowBody '}')?
 		public Group getGroup_12() { return cGroup_12; }
 		
+		//'label'
+		public Keyword getLabelKeyword_12_0() { return cLabelKeyword_12_0; }
+		
+		//label=STRING
+		public Assignment getLabelAssignment_12_1() { return cLabelAssignment_12_1; }
+		
+		//STRING
+		public RuleCall getLabelSTRINGTerminalRuleCall_12_1_0() { return cLabelSTRINGTerminalRuleCall_12_1_0; }
+		
+		//('{' body=DataflowBody '}')?
+		public Group getGroup_13() { return cGroup_13; }
+		
 		//'{'
-		public Keyword getLeftCurlyBracketKeyword_12_0() { return cLeftCurlyBracketKeyword_12_0; }
+		public Keyword getLeftCurlyBracketKeyword_13_0() { return cLeftCurlyBracketKeyword_13_0; }
 		
 		//body=DataflowBody
-		public Assignment getBodyAssignment_12_1() { return cBodyAssignment_12_1; }
+		public Assignment getBodyAssignment_13_1() { return cBodyAssignment_13_1; }
 		
 		//DataflowBody
-		public RuleCall getBodyDataflowBodyParserRuleCall_12_1_0() { return cBodyDataflowBodyParserRuleCall_12_1_0; }
+		public RuleCall getBodyDataflowBodyParserRuleCall_13_1_0() { return cBodyDataflowBodyParserRuleCall_13_1_0; }
 		
 		//'}'
-		public Keyword getRightCurlyBracketKeyword_12_2() { return cRightCurlyBracketKeyword_12_2; }
+		public Keyword getRightCurlyBracketKeyword_13_2() { return cRightCurlyBracketKeyword_13_2; }
 		
 		//(('minimum' rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number) | 'values'
 		//enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID) (',' enumValues+=(UPPERCASE_ID | LOWERCASE_ID |
 		//CAMELCASE_ID))*)?
-		public Alternatives getAlternatives_13() { return cAlternatives_13; }
+		public Alternatives getAlternatives_14() { return cAlternatives_14; }
 		
 		//('minimum' rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number)
-		public Alternatives getAlternatives_13_0() { return cAlternatives_13_0; }
+		public Alternatives getAlternatives_14_0() { return cAlternatives_14_0; }
 		
 		//'minimum' rangeMin=Number
-		public Group getGroup_13_0_0() { return cGroup_13_0_0; }
+		public Group getGroup_14_0_0() { return cGroup_14_0_0; }
 		
 		//'minimum'
-		public Keyword getMinimumKeyword_13_0_0_0() { return cMinimumKeyword_13_0_0_0; }
+		public Keyword getMinimumKeyword_14_0_0_0() { return cMinimumKeyword_14_0_0_0; }
 		
 		//rangeMin=Number
-		public Assignment getRangeMinAssignment_13_0_0_1() { return cRangeMinAssignment_13_0_0_1; }
+		public Assignment getRangeMinAssignment_14_0_0_1() { return cRangeMinAssignment_14_0_0_1; }
 		
 		//Number
-		public RuleCall getRangeMinNumberParserRuleCall_13_0_0_1_0() { return cRangeMinNumberParserRuleCall_13_0_0_1_0; }
+		public RuleCall getRangeMinNumberParserRuleCall_14_0_0_1_0() { return cRangeMinNumberParserRuleCall_14_0_0_1_0; }
 		
 		//'maximum' rangeMax=Number
-		public Group getGroup_13_0_1() { return cGroup_13_0_1; }
+		public Group getGroup_14_0_1() { return cGroup_14_0_1; }
 		
 		//'maximum'
-		public Keyword getMaximumKeyword_13_0_1_0() { return cMaximumKeyword_13_0_1_0; }
+		public Keyword getMaximumKeyword_14_0_1_0() { return cMaximumKeyword_14_0_1_0; }
 		
 		//rangeMax=Number
-		public Assignment getRangeMaxAssignment_13_0_1_1() { return cRangeMaxAssignment_13_0_1_1; }
+		public Assignment getRangeMaxAssignment_14_0_1_1() { return cRangeMaxAssignment_14_0_1_1; }
 		
 		//Number
-		public RuleCall getRangeMaxNumberParserRuleCall_13_0_1_1_0() { return cRangeMaxNumberParserRuleCall_13_0_1_1_0; }
+		public RuleCall getRangeMaxNumberParserRuleCall_14_0_1_1_0() { return cRangeMaxNumberParserRuleCall_14_0_1_1_0; }
 		
 		//'range' rangeMin=Number 'to' rangeMax=Number
-		public Group getGroup_13_0_2() { return cGroup_13_0_2; }
+		public Group getGroup_14_0_2() { return cGroup_14_0_2; }
 		
 		//'range'
-		public Keyword getRangeKeyword_13_0_2_0() { return cRangeKeyword_13_0_2_0; }
+		public Keyword getRangeKeyword_14_0_2_0() { return cRangeKeyword_14_0_2_0; }
 		
 		//rangeMin=Number
-		public Assignment getRangeMinAssignment_13_0_2_1() { return cRangeMinAssignment_13_0_2_1; }
+		public Assignment getRangeMinAssignment_14_0_2_1() { return cRangeMinAssignment_14_0_2_1; }
 		
 		//Number
-		public RuleCall getRangeMinNumberParserRuleCall_13_0_2_1_0() { return cRangeMinNumberParserRuleCall_13_0_2_1_0; }
+		public RuleCall getRangeMinNumberParserRuleCall_14_0_2_1_0() { return cRangeMinNumberParserRuleCall_14_0_2_1_0; }
 		
 		//'to'
-		public Keyword getToKeyword_13_0_2_2() { return cToKeyword_13_0_2_2; }
+		public Keyword getToKeyword_14_0_2_2() { return cToKeyword_14_0_2_2; }
 		
 		//rangeMax=Number
-		public Assignment getRangeMaxAssignment_13_0_2_3() { return cRangeMaxAssignment_13_0_2_3; }
+		public Assignment getRangeMaxAssignment_14_0_2_3() { return cRangeMaxAssignment_14_0_2_3; }
 		
 		//Number
-		public RuleCall getRangeMaxNumberParserRuleCall_13_0_2_3_0() { return cRangeMaxNumberParserRuleCall_13_0_2_3_0; }
+		public RuleCall getRangeMaxNumberParserRuleCall_14_0_2_3_0() { return cRangeMaxNumberParserRuleCall_14_0_2_3_0; }
 		
 		//'values' enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID) (',' enumValues+=(UPPERCASE_ID | LOWERCASE_ID |
 		//CAMELCASE_ID))*
-		public Group getGroup_13_1() { return cGroup_13_1; }
+		public Group getGroup_14_1() { return cGroup_14_1; }
 		
 		//'values'
-		public Keyword getValuesKeyword_13_1_0() { return cValuesKeyword_13_1_0; }
+		public Keyword getValuesKeyword_14_1_0() { return cValuesKeyword_14_1_0; }
 		
 		//enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID)
-		public Assignment getEnumValuesAssignment_13_1_1() { return cEnumValuesAssignment_13_1_1; }
+		public Assignment getEnumValuesAssignment_14_1_1() { return cEnumValuesAssignment_14_1_1; }
 		
 		//(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID)
-		public Alternatives getEnumValuesAlternatives_13_1_1_0() { return cEnumValuesAlternatives_13_1_1_0; }
+		public Alternatives getEnumValuesAlternatives_14_1_1_0() { return cEnumValuesAlternatives_14_1_1_0; }
 		
 		//UPPERCASE_ID
-		public RuleCall getEnumValuesUPPERCASE_IDTerminalRuleCall_13_1_1_0_0() { return cEnumValuesUPPERCASE_IDTerminalRuleCall_13_1_1_0_0; }
+		public RuleCall getEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_1_0_0() { return cEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_1_0_0; }
 		
 		//LOWERCASE_ID
-		public RuleCall getEnumValuesLOWERCASE_IDTerminalRuleCall_13_1_1_0_1() { return cEnumValuesLOWERCASE_IDTerminalRuleCall_13_1_1_0_1; }
+		public RuleCall getEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_1_0_1() { return cEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_1_0_1; }
 		
 		//CAMELCASE_ID
-		public RuleCall getEnumValuesCAMELCASE_IDTerminalRuleCall_13_1_1_0_2() { return cEnumValuesCAMELCASE_IDTerminalRuleCall_13_1_1_0_2; }
+		public RuleCall getEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_1_0_2() { return cEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_1_0_2; }
 		
 		//(',' enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID))*
-		public Group getGroup_13_1_2() { return cGroup_13_1_2; }
+		public Group getGroup_14_1_2() { return cGroup_14_1_2; }
 		
 		//','
-		public Keyword getCommaKeyword_13_1_2_0() { return cCommaKeyword_13_1_2_0; }
+		public Keyword getCommaKeyword_14_1_2_0() { return cCommaKeyword_14_1_2_0; }
 		
 		//enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID)
-		public Assignment getEnumValuesAssignment_13_1_2_1() { return cEnumValuesAssignment_13_1_2_1; }
+		public Assignment getEnumValuesAssignment_14_1_2_1() { return cEnumValuesAssignment_14_1_2_1; }
 		
 		//(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID)
-		public Alternatives getEnumValuesAlternatives_13_1_2_1_0() { return cEnumValuesAlternatives_13_1_2_1_0; }
+		public Alternatives getEnumValuesAlternatives_14_1_2_1_0() { return cEnumValuesAlternatives_14_1_2_1_0; }
 		
 		//UPPERCASE_ID
-		public RuleCall getEnumValuesUPPERCASE_IDTerminalRuleCall_13_1_2_1_0_0() { return cEnumValuesUPPERCASE_IDTerminalRuleCall_13_1_2_1_0_0; }
+		public RuleCall getEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_2_1_0_0() { return cEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_2_1_0_0; }
 		
 		//LOWERCASE_ID
-		public RuleCall getEnumValuesLOWERCASE_IDTerminalRuleCall_13_1_2_1_0_1() { return cEnumValuesLOWERCASE_IDTerminalRuleCall_13_1_2_1_0_1; }
+		public RuleCall getEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_2_1_0_1() { return cEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_2_1_0_1; }
 		
 		//CAMELCASE_ID
-		public RuleCall getEnumValuesCAMELCASE_IDTerminalRuleCall_13_1_2_1_0_2() { return cEnumValuesCAMELCASE_IDTerminalRuleCall_13_1_2_1_0_2; }
+		public RuleCall getEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_2_1_0_2() { return cEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_2_1_0_2; }
 		
 		//('default' default=Value)?
-		public Group getGroup_14() { return cGroup_14; }
-		
-		//'default'
-		public Keyword getDefaultKeyword_14_0() { return cDefaultKeyword_14_0; }
-		
-		//default=Value
-		public Assignment getDefaultAssignment_14_1() { return cDefaultAssignment_14_1; }
-		
-		//Value
-		public RuleCall getDefaultValueParserRuleCall_14_1_0() { return cDefaultValueParserRuleCall_14_1_0; }
-		
-		//('as' localName=LOWERCASE_ID)?
 		public Group getGroup_15() { return cGroup_15; }
 		
-		//'as'
-		public Keyword getAsKeyword_15_0() { return cAsKeyword_15_0; }
+		//'default'
+		public Keyword getDefaultKeyword_15_0() { return cDefaultKeyword_15_0; }
 		
-		//localName=LOWERCASE_ID
-		public Assignment getLocalNameAssignment_15_1() { return cLocalNameAssignment_15_1; }
+		//default=Value
+		public Assignment getDefaultAssignment_15_1() { return cDefaultAssignment_15_1; }
 		
-		//LOWERCASE_ID
-		public RuleCall getLocalNameLOWERCASE_IDTerminalRuleCall_15_1_0() { return cLocalNameLOWERCASE_IDTerminalRuleCall_15_1_0; }
+		//Value
+		public RuleCall getDefaultValueParserRuleCall_15_1_0() { return cDefaultValueParserRuleCall_15_1_0; }
 		
-		//('over' coverage+=Function (',' coverage+=Function)*)?
+		//('as' localName=LOWERCASE_ID)?
 		public Group getGroup_16() { return cGroup_16; }
 		
+		//'as'
+		public Keyword getAsKeyword_16_0() { return cAsKeyword_16_0; }
+		
+		//localName=LOWERCASE_ID
+		public Assignment getLocalNameAssignment_16_1() { return cLocalNameAssignment_16_1; }
+		
+		//LOWERCASE_ID
+		public RuleCall getLocalNameLOWERCASE_IDTerminalRuleCall_16_1_0() { return cLocalNameLOWERCASE_IDTerminalRuleCall_16_1_0; }
+		
+		//('over' coverage+=Function (',' coverage+=Function)*)?
+		public Group getGroup_17() { return cGroup_17; }
+		
 		//'over'
-		public Keyword getOverKeyword_16_0() { return cOverKeyword_16_0; }
+		public Keyword getOverKeyword_17_0() { return cOverKeyword_17_0; }
 		
 		//coverage+=Function
-		public Assignment getCoverageAssignment_16_1() { return cCoverageAssignment_16_1; }
+		public Assignment getCoverageAssignment_17_1() { return cCoverageAssignment_17_1; }
 		
 		//Function
-		public RuleCall getCoverageFunctionParserRuleCall_16_1_0() { return cCoverageFunctionParserRuleCall_16_1_0; }
+		public RuleCall getCoverageFunctionParserRuleCall_17_1_0() { return cCoverageFunctionParserRuleCall_17_1_0; }
 		
 		//(',' coverage+=Function)*
-		public Group getGroup_16_2() { return cGroup_16_2; }
+		public Group getGroup_17_2() { return cGroup_17_2; }
 		
 		//','
-		public Keyword getCommaKeyword_16_2_0() { return cCommaKeyword_16_2_0; }
+		public Keyword getCommaKeyword_17_2_0() { return cCommaKeyword_17_2_0; }
 		
 		//coverage+=Function
-		public Assignment getCoverageAssignment_16_2_1() { return cCoverageAssignment_16_2_1; }
+		public Assignment getCoverageAssignment_17_2_1() { return cCoverageAssignment_17_2_1; }
 		
 		//Function
-		public RuleCall getCoverageFunctionParserRuleCall_16_2_1_0() { return cCoverageFunctionParserRuleCall_16_2_1_0; }
+		public RuleCall getCoverageFunctionParserRuleCall_17_2_1_0() { return cCoverageFunctionParserRuleCall_17_2_1_0; }
 	}
 	public class DataflowBodyElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.DataflowBody");
@@ -3286,12 +3294,12 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	//	// parameters denotes the ability of the implementation of accepting modified values during run
 	//	// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
 	//	parameter?='parameter'?
-	//	type=ACTOR name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('extends' extended=(LOWERCASE_ID | LOWERCASE_DASHID |
-	//	STRING))? ('for' targets+=TARGET (',' targets+=TARGET)*)? docstring=STRING? ('label' label=STRING)? ('{'
-	//	body=DataflowBody '}')? (('minimum' rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to'
-	//	rangeMax=Number) | 'values' enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID) (',' enumValues+=(UPPERCASE_ID |
-	//	LOWERCASE_ID | CAMELCASE_ID))*)? ('default' default=Value)? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function
-	//	(',' coverage+=Function)*)?;
+	//	type=ACTOR expression?='expression'? name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('extends'
+	//	extended=(LOWERCASE_ID | LOWERCASE_DASHID | STRING))? ('for' targets+=TARGET (',' targets+=TARGET)*)?
+	//	docstring=STRING? ('label' label=STRING)? ('{' body=DataflowBody '}')? (('minimum' rangeMin=Number | 'maximum'
+	//	rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number) | 'values' enumValues+=(UPPERCASE_ID | LOWERCASE_ID |
+	//	CAMELCASE_ID) (',' enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID))*)? ('default' default=Value)? ('as'
+	//	localName=LOWERCASE_ID)? ('over' coverage+=Function (',' coverage+=Function)*)?;
 	public ActorDefinitionElements getActorDefinitionAccess() {
 		return pActorDefinition;
 	}
