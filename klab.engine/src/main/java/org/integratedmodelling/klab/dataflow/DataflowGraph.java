@@ -45,7 +45,6 @@ public class DataflowGraph {
 		this.flowchart = Flowchart.create(dataflow, output);
 		System.out.println(flowchart.dump());
 		rootNode = compile(flowchart);
-//		compile(dataflow, null);
 	}
 
 	public ElkNode getRootNode() {
