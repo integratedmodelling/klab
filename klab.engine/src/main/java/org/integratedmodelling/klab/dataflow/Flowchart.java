@@ -256,7 +256,7 @@ public class Flowchart {
      */
     public static Flowchart create(Dataflow dataflow, String... outputs) {
         Flowchart ret = new Flowchart();
-        Element root = ret.compile((Actuator) dataflow.getActuators().get(0), null);
+        Element root = ret.compileActuator((Actuator) dataflow.getActuators().get(0), null);
         if (outputs != null) {
             for (String output : outputs) {
                 if (output != null) {
@@ -267,7 +267,7 @@ public class Flowchart {
         return ret;
     }
 
-    private Element compile(Actuator actuator, Element parent) {
+    private Element compileActuator(Actuator actuator, Element parent) {
 
         if (actuator.isReference() || actuator.isInput()) {
             return null;
@@ -277,7 +277,7 @@ public class Flowchart {
 
         for (IActuator child : actuator.getActuators()) {
 
-            Element cel = compile((Actuator) child, element);
+            Element cel = compileActuator((Actuator) child, element);
             if (cel != null) {
                 element.addChild(cel);
             } else if (child.isInput()) {
@@ -514,6 +514,9 @@ public class Flowchart {
     private String formalNameOf(String input, Actuator context) {
         if (input.equals(context.getName())) {
             return input;
+        }
+        if ("self".equals(input)) {
+            return context.getName();
         }
         for (IActuator child : context.getActuators()) {
             if (child.getAlias().equals(input)) {
