@@ -17,7 +17,7 @@ export number standardize
 	label "Standardize"
 {
 	optional import number artifact 
-		"The artifact to standardize"
+		"The artifact to standardize. Defaults to the target artifact."
 		
 	class org.integratedmodelling.klab.data.transformations.StandardizingTransformation
 }

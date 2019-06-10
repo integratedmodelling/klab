@@ -63,6 +63,12 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 
 	public String getElkGraph() {
 
+		/*
+		 * TODO store the Flowcharts, not the nodes foreach (df) get flowchart; resolve
+		 * external ins/outs; create flowchart graph; create contextualization edge;
+		 * 
+		 */
+
 		if (json == null) {
 			synchronized (this) {
 
@@ -71,14 +77,18 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 				// new nodes
 				ElkNode contextNode = null;
 				for (Dataflow df : rootNodes) {
-					DataflowGraph graph = new DataflowGraph(df, nodes, kelk);
+					DataflowGraph graph = new DataflowGraph(df, nodes, kelk, contextNode == null ? null
+							: ((Actuator) df.actuators.get(0)).getObservable().getLocalName());
 					// TODO children - recurse
 					ElkNode tgraph = graph.getRootNode();
 					root.getChildren().add(tgraph);
 					if (contextNode == null) {
 						contextNode = graph.getRootNode();
 					} else {
-						kelk.createSimpleEdge(tgraph, contextNode, "ctx" + df.getName());
+						int i = 0; // TODO use names
+						for (ElkConnectableShape outPort : graph.getOutputs()) {
+							kelk.createSimpleEdge(outPort, contextNode, "ctx" + outPort.getIdentifier() + "_" + i);
+						}
 					}
 				}
 
@@ -88,7 +98,7 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 				json = ElkGraphJson.forGraph(root).omitLayout(false).omitZeroDimension(true).omitZeroPositions(true)
 						.shortLayoutOptionKeys(true).prettyPrint(true).toJson();
 
-//				System.out.println(json);
+				// System.out.println(json);
 			}
 		}
 

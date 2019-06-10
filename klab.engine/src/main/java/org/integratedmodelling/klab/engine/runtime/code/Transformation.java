@@ -22,6 +22,7 @@ public class Transformation extends ComputableResource {
 				resource.getServiceCall().getParameters());
 		call.getParameters().put("artifact", transformedObservable.getLocalName());
 		setServiceCall(call);
+		setType(Type.SERVICE);
 	}
 
 }

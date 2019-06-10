@@ -24,13 +24,14 @@ import org.integratedmodelling.kim.kim.ValueAssignment;
 import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
 import org.integratedmodelling.kim.model.Kim.Validator;
 import org.integratedmodelling.klab.Services;
+import org.integratedmodelling.klab.api.data.classification.IClassification;
+import org.integratedmodelling.klab.api.data.classification.ILookupTable;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.services.IExtensionService;
@@ -62,7 +63,8 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	private Pair<IValueMediator, IValueMediator> conversion;
 	private Collection<Pair<String, IArtifact.Type>> requiredResourceNames = null;
 	private Map<String, Object> interactiveParameters;
-
+	private Type type;
+	
 	/**
 	 * Slot to save a validated resource so that it won't need to be validated
 	 * twice. Shouldn't be serialized.
@@ -165,7 +167,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		this.negated = negated;
 	}
 
-	public void setRequiredResourceNames(Collection<Pair<String, Type>> requiredResourceNames) {
+	public void setRequiredResourceNames(Collection<Pair<String, IArtifact.Type>> requiredResourceNames) {
 		this.requiredResourceNames = requiredResourceNames;
 	}
 
@@ -187,11 +189,13 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		} else if (inlineComputable instanceof IKimExpression) {
 			ComputableResource ret = new ComputableResource();
 			ret.resolutionMode = Mode.RESOLUTION;
+			ret.type = Type.EXPRESSION;
 			ret.expression = ((IKimExpression) inlineComputable).getCode();
 			ret.language = ((IKimExpression) inlineComputable).getLanguage();
 			return ret;
 		} else if (inlineComputable instanceof KimServiceCall) {
 			ComputableResource ret = new ComputableResource();
+			ret.type = Type.SERVICE;
 			ret.serviceCall = (KimServiceCall) inlineComputable;
 			ret.resolutionMode = Mode.RESOLUTION;
 			return ret;
@@ -209,6 +213,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		super(statement, parent);
 		setCode(statement);
 		this.classification = new KimClassification(statement, isDiscretization, parent);
+		this.type = Type.CLASSIFICATION;
 		this.resolutionMode = Mode.RESOLUTION;
 		this.setPostProcessor(true);
 	}
@@ -217,6 +222,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 
 		super(null, parent);
 		this.accordingTo = classificationProperty;
+		this.type = Type.CLASSIFICATION;
 		this.resolutionMode = Mode.RESOLUTION;
 		this.setPostProcessor(true);
 	}
@@ -226,6 +232,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		super(lookupTable, parent);
 		setCode(lookupTable);
 		this.resolutionMode = Mode.RESOLUTION;
+		this.type = Type.LOOKUP_TABLE;
 		this.lookupTable = new KimLookupTable(new KimTable(lookupTable, parent), lookupTableArgs, parent);
 		this.setPostProcessor(true);
 	}
@@ -233,6 +240,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	public ComputableResource(KimLookupTable table, IKimStatement parent) {
 		super(((KimStatement) table).getEObject(), parent);
 		this.lookupTable = table;
+		this.type = Type.LOOKUP_TABLE;
 		this.resolutionMode = Mode.RESOLUTION;
 		this.setPostProcessor(true);
 	}
@@ -241,9 +249,12 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		super(value, parent);
 		if (value.getFunction() != null) {
 			this.serviceCall = new KimServiceCall(value.getFunction(), parent);
+			this.type = Type.SERVICE;
 		} else if (value.getExpr() != null) {
 			this.expression = removeDelimiters(value.getExpr());
+			this.type = Type.EXPRESSION;
 		} else if (value.getLiteral() != null) {
+			this.type = Type.LITERAL;
 			this.literal = Kim.INSTANCE.parseLiteral(value.getLiteral(), Kim.INSTANCE.getNamespace(value));
 		}
 		this.resolutionMode = Mode.RESOLUTION;
@@ -251,6 +262,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 
 	public ComputableResource(IValueMediator from, IValueMediator to) {
 		this.conversion = new Pair<>(from, to);
+		this.type = Type.CONVERSION;
 		this.resolutionMode = Mode.RESOLUTION;
 	}
 
@@ -258,16 +270,19 @@ public class ComputableResource extends KimStatement implements IComputableResou
 			IKimStatement parent) {
 		super(statement, parent);
 		setFrom(statement, resolutionMode);
+		this.type = Type.CONDITION;
 		this.condition = condition;
 	}
 
 	public ComputableResource(String urn, Mode resolutionMode) {
 		this.urn = urn;
+		this.type = Type.RESOURCE;
 		this.resolutionMode = resolutionMode;
 	}
 
 	public ComputableResource(IServiceCall serviceCall, Mode resolutionMode) {
 		this.serviceCall = (KimServiceCall) serviceCall;
+		this.type = Type.SERVICE;
 		this.resolutionMode = resolutionMode;
 	}
 
@@ -275,6 +290,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	// fuss.
 	public ComputableResource(Optional<Object> value) {
 		this.literal = value.get();
+		this.type = Type.LITERAL;
 		this.resolutionMode = Mode.RESOLUTION;
 	}
 
@@ -298,19 +314,24 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		if (value.getCondition() != null) {
 			this.condition = new ComputableResource(value.getCondition(), this);
 			this.negated = value.isConditionNegated();
+			this.type = Type.CONDITION;
 		}
 
 		if (value.getUrn() != null) {
 			this.urn = value.getUrn();
+			this.type = Type.RESOURCE;
 			// TODO find a way to establish type
 		} else if (value.getFunction() != null) {
 			this.serviceCall = new KimServiceCall(value.getFunction(), getParent());
+			this.type = Type.SERVICE;
 			// this.type = this.serviceCall.getType();
 		} else if (value.getExpr() != null) {
 			this.expression = removeDelimiters(value.getExpr());
-			// this.type = IArtifact.Type.VALUE;
+			this.type = Type.EXPRESSION;
+		// this.type = IArtifact.Type.VALUE;
 		} else if (value.getLiteral() != null) {
 			this.literal = Kim.INSTANCE.parseLiteral(value.getLiteral(), Kim.INSTANCE.getNamespace(value));
+			this.type = Type.LITERAL;
 			// this.type = Utils.getArtifactType(this.literal.getClass());
 		}
 
@@ -384,7 +405,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	}
 
 	@Override
-	public Collection<Pair<String, Type>> getInputs() {
+	public Collection<Pair<String, IArtifact.Type>> getInputs() {
 
 		if (requiredResourceNames == null) {
 
@@ -397,12 +418,12 @@ public class ComputableResource extends KimStatement implements IComputableResou
 							language == null ? IExtensionService.DEFAULT_EXPRESSION_LANGUAGE : language);
 					Descriptor descriptor = processor.describe(expression);
 					for (String var : descriptor.getIdentifiers()) {
-						requiredResourceNames.add(new Pair<>(var, Type.VALUE));
+						requiredResourceNames.add(new Pair<>(var, IArtifact.Type.VALUE));
 					}
 				}
 			} else if (getLookupTable() != null) {
 				for (String arg : lookupTable.getArguments()) {
-					requiredResourceNames.add(new Pair<>(arg, Type.VALUE));
+					requiredResourceNames.add(new Pair<>(arg, IArtifact.Type.VALUE));
 				}
 			} else if (getUrn() != null) {
 				Validator validator = Kim.INSTANCE.getValidator();
@@ -467,6 +488,11 @@ public class ComputableResource extends KimStatement implements IComputableResou
 
 	public void setValidatedResource(Object validatedResource) {
 		this.validatedResource = validatedResource;
+		if (validatedResource instanceof IClassification) {
+			this.type = Type.CLASSIFICATION;
+		} else if (validatedResource instanceof ILookupTable) {
+			this.type = Type.LOOKUP_TABLE;
+		}
 	}
 
 	/**
@@ -671,4 +697,34 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		return true;
 	}
 
+	@Override
+	public Type getType() {
+		if (type == null) {
+			// FIXME this shouldn't be necessary but I can't find a way to fix it
+			if (this.accordingTo != null || this.classification != null || this.validatedResource instanceof IClassification) {
+				type = Type.CLASSIFICATION;
+			} else if (this.lookupTable != null) {
+				type = Type.LOOKUP_TABLE;
+			} else if (this.expression != null) {
+				type = Type.EXPRESSION;
+			} else if (this.conversion != null) {
+				type = Type.CONVERSION;
+			} else if (this.literal != null) {
+				type = Type.LITERAL;
+			} else if (this.serviceCall != null) {
+				type = Type.SERVICE;
+			} else if (this.condition != null) {
+				type = Type.CONDITION;
+			}
+		}
+		
+		if (type /* still */ == null) {
+			throw new KlabInternalErrorException("internal: resource type is null!");
+		}
+		return type;
+	}
+
+	protected void setType(Type type) {
+		this.type = type;
+	}
 }
