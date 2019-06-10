@@ -494,9 +494,6 @@ public class Flowchart {
                     parent.datapaths.put(input, externalInputs.get(actualName));
                 }
             }
-            if (parent.datapaths.get(input) == null) {
-                System.out.println("ICIOI ");
-            }
             connections.add(new Pair<>(parent.datapaths.get(input), inport));
         }
 
