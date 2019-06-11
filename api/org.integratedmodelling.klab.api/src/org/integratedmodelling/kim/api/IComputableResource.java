@@ -33,6 +33,17 @@ import org.integratedmodelling.klab.utils.Pair;
  */
 public interface IComputableResource extends IKimStatement, IDataflowNode {
 
+	public static enum Type {
+		CLASSIFICATION,
+		SERVICE,
+		LOOKUP_TABLE,
+		RESOURCE,
+		EXPRESSION,
+		CONVERSION,
+		LITERAL,
+		CONDITION
+	}
+	
 	/**
 	 * The data structure describing interactive parameters. It's a javabean with
 	 * only string for values so that it can be easily serialized for communication.
@@ -162,6 +173,8 @@ public interface IComputableResource extends IKimStatement, IDataflowNode {
 
 	}
 
+	Type getType();
+	
 	/**
 	 * The target observable for this computation; null if the target is the main
 	 * observable in the correspondent actuator. Otherwise the computation affects

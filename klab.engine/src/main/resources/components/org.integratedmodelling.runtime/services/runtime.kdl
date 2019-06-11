@@ -11,17 +11,14 @@ export value exec
 	label 'Evaluate'
 {
 	
-	text code
+	value expression code
 		"The code to be executed"
 		
-	value arguments 
-		"The artifacts referred to in the code"	
-		
-	optional text ifcondition 
+	optional boolean expression ifcondition 
 		"A condition to check before executing the code" 
 		default ""
 
-	optional text unlesscondition 
+	optional boolean expression unlesscondition 
 		"A negative conditions to check before executing the code" 
 		default ""
 
@@ -38,7 +35,6 @@ export value literal
 	 different value semantics"
 	 label '$val'
 {
-	
 	object val
 		"The value to be contextualized"
 				
@@ -51,11 +47,14 @@ export number convert
 	label 'Convert $from to $to'
 {
 	
-	object 'from'
+	value 'from'
 		"The value mediator (unit, range, currency) describing the source values"
 
-	object 'to'
+	value 'to'
 		"The value mediator (unit, range, currency) describing the target values"
+
+	optional import number artifact 
+		"The artifact to convert. Defaults to the target artifact."
 				
 	class org.integratedmodelling.klab.components.runtime.contextualizers.ConversionResolver
 
@@ -66,7 +65,7 @@ export concept classify
 	label 'Classify input'
 {
 	
-	object classification
+	value classification
 		"A classification stated in k.IM or built from a trait, class or metadata property"
 
 	class org.integratedmodelling.klab.components.runtime.contextualizers.ClassifyingStateResolver
@@ -78,7 +77,7 @@ export value lookup
 	label 'Look up in table'
 {
 	
-	object table
+	value table
 		"A table stated in k.IM"
 
 	value arguments 
@@ -115,6 +114,8 @@ export value cast
 	"Return a state resolver that will convert a value from a type to another"
 	label 'Transform $source to $destination'
 {
+	optional import number artifact 
+		"The artifact to cast. Defaults to the target artifact."
 	
 	// TODO make this an enum
 	text source
@@ -131,7 +132,7 @@ export value conditional
 	"Wrap a function call that produces a contextualizer, created only if the passed condition evaluates to true."
 {
 	
-	text condition
+	boolean expression condition
 		"The condition for the contextualizer to be returned."
 				
 	class org.integratedmodelling.klab.components.runtime.contextualizers.wrappers.ConditionalContextualizer

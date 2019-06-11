@@ -43,6 +43,5 @@ public class Folder extends TypedContainer {
 	public void setClosed(boolean closed) {
 		this.closed = closed;
 	}
-	
-	
+		
 }

@@ -34,7 +34,6 @@ public abstract class Artifact implements IArtifact {
 
 	List<IAnnotation> annotations = new ArrayList<>();
 	private Activity generator;
-//	private boolean notified = false;
 	private Map<Class<?>, Object> peers = new HashMap<>();
 	
 	/*
@@ -44,6 +43,7 @@ public abstract class Artifact implements IArtifact {
 	 */
 	boolean empty;
 	long timestamp = System.currentTimeMillis();
+	private String generatorActivityId;
 
 
 	public void chain(IArtifact data) {
@@ -192,16 +192,9 @@ public abstract class Artifact implements IArtifact {
 
 	public void setGenerator(Activity generator) {
 		this.generator = generator;
+		this.generatorActivityId = generator.getId();
 	}
 
-//	public boolean isNotified() {
-//		return notified;
-//	}
-//
-//	public void setNotified(boolean notified) {
-//		this.notified = notified;
-//	}
-	
 	/**
 	 * Base implementation just looks for installed peers. Can be overridden to
 	 * support translation to PODs or other objects.
@@ -231,6 +224,10 @@ public abstract class Artifact implements IArtifact {
 	public Collection<IArtifact> getChildArtifacts() {
 		List<IArtifact> ret = new ArrayList<>();
 		return ret;
+	}
+
+	public String getGeneratorActivityId() {
+		return this.generatorActivityId;
 	}
 
 }

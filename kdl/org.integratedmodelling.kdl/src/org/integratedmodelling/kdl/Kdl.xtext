@@ -42,7 +42,10 @@ ActorDefinition:
 	// parameters denotes the ability of the implementation of accepting modified values during run
 	// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
 	(parameter?='parameter')?
-	type=ACTOR name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING) 
+	type=ACTOR 
+		// expressions must return the type; they are evaluated in the context and the artifacts named in them are imports
+		(expression?='expression')? 
+		name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING) 
 		// extends only allowed at root level; must extend another upstream in same file
 		('extends' extended=(LOWERCASE_ID|LOWERCASE_DASHID|STRING))?
 		('for' targets+=TARGET (',' targets+=TARGET)*)? (docstring=STRING)? ('label' label=STRING)?

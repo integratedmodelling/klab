@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
+import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.json.ElkGraphJson;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -29,7 +30,7 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 
 	String id = NameGenerator.shortUUID();
 	private KlabElkGraphFactory kelk = KlabElkGraphFactory.keINSTANCE;
-	private Map<String, ElkNode> nodes = new HashMap<>();
+	private Map<String, ElkConnectableShape> nodes = new HashMap<>();
 	String json = null;
 
 	public ContextualizationStrategy() {
@@ -62,6 +63,12 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 
 	public String getElkGraph() {
 
+		/*
+		 * TODO store the Flowcharts, not the nodes foreach (df) get flowchart; resolve
+		 * external ins/outs; create flowchart graph; create contextualization edge;
+		 * 
+		 */
+
 		if (json == null) {
 			synchronized (this) {
 
@@ -70,16 +77,19 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 				// new nodes
 				ElkNode contextNode = null;
 				for (Dataflow df : rootNodes) {
-					DataflowGraph graph = new DataflowGraph(df, nodes, kelk);
+					DataflowGraph graph = new DataflowGraph(df, nodes, kelk, contextNode == null ? null
+							: ((Actuator) df.actuators.get(0)).getObservable().getLocalName());
 					// TODO children - recurse
 					ElkNode tgraph = graph.getRootNode();
 					root.getChildren().add(tgraph);
 					if (contextNode == null) {
 						contextNode = graph.getRootNode();
 					} else {
-						kelk.createSimpleEdge(tgraph, contextNode, "ctx" + df.getName());
+						int i = 0; // TODO use names
+						for (ElkConnectableShape outPort : graph.getOutputs()) {
+							kelk.createSimpleEdge(outPort, contextNode, "ctx" + outPort.getIdentifier() + "_" + i);
+						}
 					}
-					
 				}
 
 				RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();

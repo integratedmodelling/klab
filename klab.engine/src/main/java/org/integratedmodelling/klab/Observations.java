@@ -4,11 +4,9 @@ import java.io.File;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -65,6 +63,7 @@ import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.rest.ActionReference;
 import org.integratedmodelling.klab.rest.DataSummary;
@@ -221,15 +220,15 @@ public enum Observations implements IObservationService {
 	}
 
 	public ObservationReference createArtifactDescriptor(IObservation observation, IObservation parent,
-			ILocator locator, int childLevel, boolean collapseSiblings, boolean isMain) {
+			ILocator locator, int childLevel, /* boolean collapseSiblings, */ boolean isMain) {
 
 		ObservationReference ret = new ObservationReference();
 
 		ret.setEmpty(observation.isEmpty());
-		
+
 		// for now
 		ret.setPrimary(true);
-		
+
 		if (observation instanceof ISubject) {
 			ret.setObservationType(ObservationReference.ObservationType.SUBJECT);
 		} else if (observation instanceof IState) {
@@ -439,24 +438,10 @@ public enum Observations implements IObservationService {
 		}
 		if (observation instanceof IDirectObservation && !observation.isEmpty() && (childLevel < 0 || childLevel > 0)) {
 
-			Set<ObservationGroup> groups = new HashSet<>();
 			for (IArtifact child : observation.getChildArtifacts()) {
-
 				if (child instanceof IObservation) {
-				
-				/*
-				 * if collapseSiblings, only add one representative sibling per type.
-				 */
-				if (collapseSiblings && ((Observation) child).getGroup() != null) {
-					if (groups.contains(((Observation) child).getGroup())) {
-						continue;
-					} else {
-						groups.add(((Observation) child).getGroup());
-					}
-				}
-
-				ret.getChildren().add(createArtifactDescriptor((IObservation)child, observation, locator,
-						childLevel > 0 ? childLevel-- : childLevel, collapseSiblings, false));
+					ret.getChildren().add(createArtifactDescriptor((IObservation) child, observation, locator,
+							childLevel > 0 ? childLevel-- : childLevel, /* collapseSiblings, */ false));
 				}
 			}
 		}
@@ -505,13 +490,10 @@ public enum Observations implements IObservationService {
 		/*
 		 * activity that generated us.
 		 */
-		if (observation.getGenerator() != null) {
-			ret.setTaskId(observation.getGenerator().getId());
-		}
+			ret.setTaskId(((Artifact)observation).getGeneratorActivityId());
 
 		ret.getActions().add(ActionReference.separator());
-		// ACTIONS diocan
-		// ret.getActions().add(new ActionReference("Show metadata", "ShowMetadata"));
+		ret.getActions().add(new ActionReference("Add to cache", "AddToCache"));
 
 		return ret;
 	}

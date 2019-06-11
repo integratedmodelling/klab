@@ -48,6 +48,7 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 	boolean parameter = false;
 	boolean isFinal = false;
 	boolean isAbstract = false;
+    boolean isExpression = false;
 	boolean multipleInstances;
 	boolean moreInstancesAllowed;
 	int instanceCount;
@@ -79,6 +80,7 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 		this.isFinal = o.isFinal();
 		this.isAbstract = o.isAbstract();
 		this.label = o.getLabel();
+		this.isExpression = o.isExpression();
 
 		for (String s : o.getEnumValues()) {
 			this.enumValues.add(s);
@@ -439,6 +441,11 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 	public boolean isAbstract() {
 		return isAbstract;
 	}
+
+    @Override
+    public boolean isExpression() {
+        return isExpression;
+    }
 
 	@Override
 	public List<IKdlAnnotation> getAnnotations() {

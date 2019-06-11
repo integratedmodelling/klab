@@ -134,7 +134,7 @@ public class Palette extends Composite {
 
 	public void draw() {
 
-    	int width = getSize().x;  //computeSize(SWT.DEFAULT, SWT.DEFAULT).x; 
+    	int width = computeSize(SWT.DEFAULT, SWT.DEFAULT).x; 
 		
 		/*
 		 * remove everything
@@ -192,7 +192,7 @@ public class Palette extends Composite {
 			};
 			descLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));
 			descLabel.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
-			descLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+			descLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 			descLabel.setText(organizer.getDescription());
 		}
 

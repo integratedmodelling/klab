@@ -5,10 +5,12 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
@@ -27,11 +29,14 @@ public class ObservationGroup extends CountableObservation implements ISubjectiv
 	private List<IArtifact> artifacts = new ArrayList<>();
 	boolean sorted = false;
 	private Comparator<IArtifact> comparator = null;
-	
 
 	public ObservationGroup(Observable observable, Scale scale, IRuntimeContext context, IArtifact.Type type) {
 		super(observable.getName(), observable, scale, context);
 		this.atype = type;
+		IIdentity identity = context.getMonitor().getIdentity();
+		if (identity instanceof AbstractTask) {
+			setGenerator(((AbstractTask<?>) identity).getActivity());
+		}
 	}
 
 	@Override

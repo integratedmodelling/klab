@@ -1007,7 +1007,7 @@ public class Actuator implements IActuator {
 			// parent is always getContext() because these notifications aren't sent beyond
 			// level 0
 			IObservationReference observation = Observations.INSTANCE.createArtifactDescriptor(product,
-					product.getContext(), ITime.INITIALIZATION, 0, false, isMainObservable || isMain)
+					product.getContext(), ITime.INITIALIZATION, 0, /*false,*/ isMainObservable || isMain)
 					.withTaskId(taskId);
 
 			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,

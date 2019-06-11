@@ -72,7 +72,7 @@ public class EngineViewController {
 	@ResponseBody
 	public IObservationReference describeObservation(Principal principal, @PathVariable String observation,
 			@RequestParam(required = false) Integer childLevel,
-			@RequestParam(required = false) boolean collapseSiblings, @RequestParam(required = false) String locator) {
+			/*@RequestParam(required = false) boolean collapseSiblings,*/ @RequestParam(required = false) String locator) {
 
 		ISession session = EngineSessionController.getSession(principal);
 		IObservation obs = session.getObservation(observation);
@@ -86,7 +86,7 @@ public class EngineViewController {
 				: obs.getContext();
 
 		return Observations.INSTANCE.createArtifactDescriptor(obs, parent, loc, childLevel == null ? -1 : childLevel,
-				collapseSiblings, false);
+				/*collapseSiblings,*/ false);
 	}
 
 	/**
@@ -148,7 +148,7 @@ public class EngineViewController {
 				break;
 			}
 
-			ret.add(Observations.INSTANCE.createArtifactDescriptor(child, obs.getContext(), loc, 0, false, false));
+			ret.add(Observations.INSTANCE.createArtifactDescriptor(child, obs.getContext(), loc, 0, /*false,*/ false));
 			n++;
 		}
 

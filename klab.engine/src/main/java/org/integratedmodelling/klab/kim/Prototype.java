@@ -57,6 +57,8 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
 			a.enumValues.addAll(arg.getEnumValues());
 			a.defaultValue = arg.getDefaultValue() == null ? null : arg.getDefaultValue().toString();
 			a.artifact = arg.isImported();
+			a.setExpression(arg.isExpression());
+			
 			if (arg.getLabel() != null) {
 				a.label = arg.getLabel();
 			} else {

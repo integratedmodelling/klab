@@ -31,6 +31,7 @@ public class Prototype implements IPrototype {
 		public boolean isFinal;
 		public Type type;
 		public boolean artifact;
+		private boolean expression;
 		private boolean parameter;
 		// storing as string for serialization, use artifact type to return as POD
 		public String defaultValue = null;
@@ -154,6 +155,15 @@ public class Prototype implements IPrototype {
 
         public void setParameter(boolean parameter) {
             this.parameter = parameter;
+        }
+
+        @Override
+        public boolean isExpression() {
+            return expression;
+        }
+
+        public void setExpression(boolean expression) {
+            this.expression = expression;
         }
 
 	}

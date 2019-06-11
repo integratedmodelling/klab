@@ -6,9 +6,8 @@ export number normalize
 	"" 
 	label "Normalize to [0,1]"
 {
-	
 	optional import number artifact 
-		"The artifact to normalize"
+		"The artifact to normalize. Defaults to the target artifact."
 		
 	class org.integratedmodelling.klab.data.transformations.NormalizingTransformation
 }
@@ -17,9 +16,8 @@ export number standardize
 	"" 
 	label "Standardize"
 {
-	
 	optional import number artifact 
-		"The artifact to standardize"
+		"The artifact to standardize. Defaults to the target artifact."
 		
 	class org.integratedmodelling.klab.data.transformations.StandardizingTransformation
 }

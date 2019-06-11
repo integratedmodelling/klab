@@ -6,7 +6,7 @@ export object extract
 	"Extract polygonal features from a raster map based on clumping of its values."
 	label 'Vectorize into features'
 {
-	optional text select
+	optional boolean expression select
 		"Pass an expression that will return true or false per each point in the spatial context, 
 		 producing a mask that will be vectorized into spatial contexts for the objects. Use quality
 		 dependency names to refer to their state in each point."
@@ -38,7 +38,7 @@ export object concavehull
 	"Extract one polygonal feature from a raster map based on the concave hull of all matching points."
 	label 'Concave hull'
 {
-	optional text select
+	optional boolean expression select
 		"Pass an expression that will return true or false per each point in the spatial context, 
 		 producing a mask that will be vectorized into spatial contexts for the objects. Use quality
 		 dependency names to refer to their state in each point."
@@ -52,7 +52,7 @@ export object concavexhull
 	"Extract one polygonal feature from a raster map based on the convex hull of all matching points."
 	label 'Convex hull'
 {
-	optional text select
+	optional boolean expression select
 		"Pass an expression that will return true or false per each point in the spatial context, 
 		 producing a mask that will be vectorized into spatial contexts for the objects. Use quality
 		 dependency names to refer to their state in each point."
@@ -66,7 +66,7 @@ export object cluster
 	"Cluster point features into polygons, using the DBSCAN algorithm."
 	label 'Cluster features'
 {
-	text artifact
+	import object artifact
 		"The name of the artifact containing the features to be clustered. If the features are not points, the
 		 centroid will be used."
 	

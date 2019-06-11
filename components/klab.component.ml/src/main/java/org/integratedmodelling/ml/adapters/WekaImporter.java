@@ -50,7 +50,8 @@ public class WekaImporter implements IResourceImporter {
     }
 
     @Override
-    public File exportObservation(File file, IObservation observation, ILocator locator, String format, IMonitor monitor) {
+    public File exportObservation(File file, IObservation observation, ILocator locator, String format,
+            IMonitor monitor) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -61,8 +62,7 @@ public class WekaImporter implements IResourceImporter {
         Map<String, String> ret = new LinkedHashMap<>();
 
         if (resource != null) {
-            if (BayesNet.class.getCanonicalName()
-                    .equals(resource.getParameters().get("classifier", String.class))) {
+            if (BayesNet.class.getCanonicalName().equals(resource.getParameters().get("classifier", String.class))) {
                 ret.put("bif", "BIF bayesian network (.bif)");
                 ret.put("xdsl", "GENIE bayesian network (.xdsl)");
             }
@@ -84,8 +84,8 @@ public class WekaImporter implements IResourceImporter {
             for (String key : resource.getParameters().keySet()) {
                 if (WildcardMatcher.matches(key, "predictor.*.discretizer.file")) {
                     String predictor = key.split("\\.")[1];
-                    ret.put("model#" + predictor, "WEKA Discretizer for " + StringUtils.beautify(predictor)
-                            + " (.model)");
+                    ret.put("model#" + predictor,
+                            "WEKA Discretizer for " + StringUtils.beautify(predictor) + " (.model)");
                 }
             }
         }
@@ -117,8 +117,8 @@ public class WekaImporter implements IResourceImporter {
                 if (format.startsWith("model#")) {
                     int pound = format.lastIndexOf('#');
                     String id = format.substring(pound + 1);
-                    FileUtils.copyFile(((Resource) resource)
-                            .getLocalFile("predictor." + id + ".discretizer.file"), file);
+                    FileUtils.copyFile(((Resource) resource).getLocalFile("predictor." + id + ".discretizer.file"),
+                            file);
                 }
             }
 
@@ -130,12 +130,17 @@ public class WekaImporter implements IResourceImporter {
     }
 
     private void exportBN(IResource resource, String format, File output) throws IOException {
-
-        WekaClassifier classifier = new WekaClassifier(((Resource) resource)
-                .getLocalFile("classifier.file"), resource.getParameters()
-                        .get("classifier.probabilistic", "false").equals("true"));
-        BayesNet bn = (BayesNet) classifier.getClassifier();
-        String bif = bn.toXMLBIF03();
+        
+        String bif = null;
+        File imported = new File(((Resource) resource).getPath() + File.separator + "import.xml");
+        if (imported.exists()) {
+            bif = FileUtils.readFileToString(imported);
+        } else {
+            WekaClassifier classifier = new WekaClassifier(((Resource) resource).getLocalFile("classifier.file"),
+                    resource.getParameters().get("classifier.probabilistic", "false").equals("true"));
+            BayesNet bn = (BayesNet) classifier.getClassifier();
+            bif = bn.toXMLBIF03();
+        }
         if ("bif".equals(format)) {
             FileUtils.writeStringToFile(output, bif);
         } else if ("xdsl".equals(format)) {
@@ -143,6 +148,7 @@ public class WekaImporter implements IResourceImporter {
             FileUtils.writeStringToFile(temp, bif);
             Converter.bifToGenie(temp.toString(), output.toString());
         }
+        
     }
 
     @Override
@@ -151,8 +157,7 @@ public class WekaImporter implements IResourceImporter {
         /*
          * BIF, XML, XDSL imports only allowed for BayesNet as far as I know.
          */
-        if (BayesNet.class.getCanonicalName()
-                .equals(target.getParameters().get("classifier", String.class))) {
+        if (BayesNet.class.getCanonicalName().equals(target.getParameters().get("classifier", String.class))) {
 
             String format = MiscUtilities.getFileExtension(importLocation.toString());
             File originalFile = null;
@@ -166,7 +171,7 @@ public class WekaImporter implements IResourceImporter {
                 originalFile = new File(importLocation.getFile());
             }
 
-            File bifFile = new File(((Resource)target).getPath() + File.separator + "import.xml");
+            File bifFile = new File(((Resource) target).getPath() + File.separator + "import.xml");
 
             if ("xdsl".equals(format)) {
                 Converter.genieToBif(originalFile.toString(), bifFile.toString());

@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isMinimum <em>Minimum</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isParameter <em>Parameter</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getType <em>Type</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getExtended <em>Extended</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getTargets <em>Targets</em>}</li>
@@ -322,6 +323,32 @@ public interface ActorDefinition extends EObject
    * @generated
    */
   void setType(String value);
+
+  /**
+   * Returns the value of the '<em><b>Expression</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Expression</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Expression</em>' attribute.
+   * @see #setExpression(boolean)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Expression()
+   * @model
+   * @generated
+   */
+  boolean isExpression();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isExpression <em>Expression</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Expression</em>' attribute.
+   * @see #isExpression()
+   * @generated
+   */
+  void setExpression(boolean value);
 
   /**
    * Returns the value of the '<em><b>Name</b></em>' attribute.
