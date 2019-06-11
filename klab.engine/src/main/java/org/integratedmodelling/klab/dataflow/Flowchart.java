@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -101,6 +100,7 @@ public class Flowchart {
             this.id = actuator.getDataflowId();
             this.type = ElementType.ACTUATOR;
             this.name = actuator.getName();
+            this.label = StringUtils.capitalize(actuator.getName().replaceAll("_", " "));
 
             elementsByName.put(actuator.getName(), this);
             elementsById.put(this.id, this);
@@ -109,9 +109,11 @@ public class Flowchart {
             }
         }
 
-        Element(IComputableResource resource) {
-            this.id = resource.getDataflowId();
+        Element(Pair<IServiceCall, IComputableResource> resource) {
+            this.id = resource.getSecond().getDataflowId();
             this.type = ElementType.RESOLVER;
+            this.label = Extensions.INSTANCE.getServiceLabel(resource.getFirst());
+            this.name = resource.getFirst().getName();
             elementsById.put(this.id, this);
         }
 
@@ -309,7 +311,7 @@ public class Flowchart {
 
         IPrototype callPrototype = Extensions.INSTANCE.getPrototype(computation.getFirst().getName());
 
-        Element ret = new Element(computation.getSecond());
+        Element ret = new Element(computation);
 
         // TODO description, documentation (template with parameter substitution)
         ret.label = callPrototype.getLabel();
