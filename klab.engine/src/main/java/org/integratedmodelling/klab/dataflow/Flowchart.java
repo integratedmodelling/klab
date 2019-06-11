@@ -486,6 +486,8 @@ public class Flowchart {
             }
             ret.type = ElementType.TABLE;
 
+        } else {
+        	System.out.println("ZIOCA");
         }
 
         for (String input : computationInputs) {

@@ -715,6 +715,8 @@ public class ComputableResource extends KimStatement implements IComputableResou
 				type = Type.SERVICE;
 			} else if (this.condition != null) {
 				type = Type.CONDITION;
+			} else if (this.urn != null) {
+				type = Type.RESOURCE;
 			}
 		}
 		

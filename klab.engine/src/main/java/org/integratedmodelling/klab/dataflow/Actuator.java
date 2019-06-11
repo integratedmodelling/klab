@@ -429,7 +429,7 @@ public class Actuator implements IActuator {
 
 		ISession session = ctx.getMonitor().getIdentity().getParentIdentity(ISession.class);
 		DataflowState state = new DataflowState();
-		state.setNodeId(resource.getDataflowId());
+		state.setNodeId(ctx.getContextualizationStrategy().getNode2dataflowId().get(resource.getDataflowId()));
 		state.setStatus(Status.STARTED);
 		state.setMonitorable(false); // for now
 		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
@@ -1004,8 +1004,12 @@ public class Actuator implements IActuator {
 
 		for (IObservation product : products) {
 
-			// parent is always getContext() because these notifications aren't sent beyond
-			// level 0
+			if (!((Artifact)product).getGeneratorActivityId().equals(context.getMonitor().getIdentity().getId())) {
+				// comes from a previous task, already reported
+				continue;
+			}
+						
+			// parent is always getContext() because these notifications aren't sent beyond level 0
 			IObservationReference observation = Observations.INSTANCE.createArtifactDescriptor(product,
 					product.getContext(), ITime.INITIALIZATION, 0, /*false,*/ isMainObservable || isMain)
 					.withTaskId(taskId);

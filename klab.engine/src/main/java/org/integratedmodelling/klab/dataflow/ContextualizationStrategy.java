@@ -31,6 +31,7 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 	String id = NameGenerator.shortUUID();
 	private KlabElkGraphFactory kelk = KlabElkGraphFactory.keINSTANCE;
 	private Map<String, ElkConnectableShape> nodes = new HashMap<>();
+	private Map<String, String> node2dataflowId = new HashMap<>();
 	String json = null;
 
 	public ContextualizationStrategy() {
@@ -63,11 +64,8 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 
 	public String getElkGraph() {
 
-		/*
-		 * TODO store the Flowcharts, not the nodes foreach (df) get flowchart; resolve
-		 * external ins/outs; create flowchart graph; create contextualization edge;
-		 * 
-		 */
+		nodes.clear();
+		node2dataflowId.clear();
 
 		if (json == null) {
 			synchronized (this) {
@@ -77,7 +75,7 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 				// new nodes
 				ElkNode contextNode = null;
 				for (Dataflow df : rootNodes) {
-					DataflowGraph graph = new DataflowGraph(df, nodes, kelk, contextNode == null ? null
+					DataflowGraph graph = new DataflowGraph(df, this, kelk, contextNode == null ? null
 							: ((Actuator) df.actuators.get(0)).getObservable().getLocalName());
 					// TODO children - recurse
 					ElkNode tgraph = graph.getRootNode();
@@ -104,4 +102,13 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 
 		return json;
 	}
+
+	public Map<String, ElkConnectableShape> getNodes() {
+		return nodes;
+	}
+
+	public Map<String, String> getNode2dataflowId() {
+		return node2dataflowId;
+	}
+
 }
