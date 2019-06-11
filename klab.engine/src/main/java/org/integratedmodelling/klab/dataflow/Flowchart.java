@@ -177,6 +177,9 @@ public class Flowchart {
                     // if this comes from an internal computation, connect it to the output port
                 	boolean done = false;
                 	String provider = this.datapaths.get(inputId);
+                	if (provider == null && this.datapaths.size() == 1) {
+                		provider = this.datapaths.get(this.datapaths.keySet().iterator().next());
+                	}
                     if (provider != null && !provider.contains(".")) {
                         Element element = elementsById.get(provider);
                         if (element != null) {
@@ -184,10 +187,6 @@ public class Flowchart {
                         }
                         done = true;
                         connections.add(new Pair<>(provider, ret));
-                    }
-                    if (!done && this.datapaths.size() == 1) {
-                    	// FIXME catches some use cases that are complex to handle
-                    	
                     }
                 }
             }

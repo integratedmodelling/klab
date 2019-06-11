@@ -441,7 +441,7 @@ public enum Observations implements IObservationService {
 			for (IArtifact child : observation.getChildArtifacts()) {
 				if (child instanceof IObservation) {
 					ret.getChildren().add(createArtifactDescriptor((IObservation) child, observation, locator,
-							childLevel > 0 ? childLevel-- : childLevel, /* collapseSiblings, */ false));
+							childLevel > 0 ? (childLevel - 1) : childLevel, /* collapseSiblings, */ false));
 				}
 			}
 		}

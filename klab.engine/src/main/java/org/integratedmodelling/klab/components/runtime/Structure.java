@@ -80,8 +80,8 @@ public class Structure extends DefaultDirectedGraph<IArtifact, DefaultEdge> {
 			return IteratorUtils.toList(((ObservationGroup)artifact).iterator());
 		}
 		List<IArtifact> ret = new ArrayList<>();
+		Set<String> groupIds = new HashSet<>();
 		for (DefaultEdge edge : incomingEdgesOf(artifact)) {
-			Set<String> groupIds = new HashSet<>();
 			IArtifact source = getEdgeSource(edge);
 			if (source instanceof DirectObservation) {
 				ObservationGroup group = ((DirectObservation)source).getGroup();
@@ -93,7 +93,6 @@ public class Structure extends DefaultDirectedGraph<IArtifact, DefaultEdge> {
 				ret.add((IObservation)source);
 			}
 		}
-
 		return ret;
 	}
 	

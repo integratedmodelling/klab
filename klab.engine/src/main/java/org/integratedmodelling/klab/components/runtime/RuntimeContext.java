@@ -232,7 +232,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	@Override
 	public IDirectObservation getParentOf(IObservation observation) {
 		if (observation instanceof ObservationGroup) {
-			return structure.getGroupParent((ObservationGroup)observation);
+			return structure.getGroupParent((ObservationGroup) observation);
 		}
 		for (DefaultEdge edge : this.structure.outgoingEdgesOf(observation)) {
 			IArtifact source = this.structure.getEdgeTarget(edge);
@@ -627,7 +627,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	public <T extends IArtifact> Collection<T> getChildren(IArtifact artifact, Class<T> cls) {
 		List<T> ret = new ArrayList<>();
 		if (artifact instanceof ObservationGroup) {
-			return IteratorUtils.toList(((ObservationGroup)artifact).iterator());
+			return IteratorUtils.toList(((ObservationGroup) artifact).iterator());
 		}
 		for (DefaultEdge edge : this.structure.incomingEdgesOf(artifact)) {
 			IArtifact source = this.structure.getEdgeSource(edge);
@@ -693,7 +693,9 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		if (state != null && !structure.vertexSet().contains(state) && parent != null
 				&& parent.target instanceof IDirectObservation) {
 			structure.addVertex(state);
-			structure.addEdge(state, parent.target);
+			structure.addEdge(state,
+					parent.target instanceof ObservationGroup ? ((ObservationGroup) parent.target).getContext()
+							: parent.target);
 		}
 
 	}
@@ -721,7 +723,8 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	@Override
 	public void link(IArtifact parent, IArtifact child) {
 		this.structure.addVertex(child);
-		this.structure.addEdge(child, parent);
+		this.structure.addEdge(child,
+				parent instanceof ObservationGroup ? ((ObservationGroup) parent).getContext() : parent);
 	}
 
 	/**
@@ -855,7 +858,8 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			this.catalog.put(name, observation);
 			this.structure.addVertex(observation);
 			if (contextSubject != null) {
-				this.structure.addEdge(observation, contextSubject);
+				this.structure.addEdge(observation,
+						contextSubject instanceof ObservationGroup ? contextSubject.getContext() : contextSubject);
 			}
 			if (observation instanceof ISubject) {
 				this.network.addVertex((ISubject) observation);
@@ -904,7 +908,8 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		this.catalog.put(observable.getLocalName(), observation);
 		this.structure.addVertex(observation);
 		if (contextSubject != null) {
-			this.structure.addEdge(observation, contextSubject);
+			this.structure.addEdge(observation,
+					contextSubject instanceof ObservationGroup ? contextSubject.getContext() : contextSubject);
 		}
 		if (observation instanceof ISubject) {
 			this.network.addVertex((ISubject) observation);
