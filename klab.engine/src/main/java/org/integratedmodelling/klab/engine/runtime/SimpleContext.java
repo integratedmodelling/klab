@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Klab;
@@ -554,5 +555,11 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    @Override
+    public Set<String> getNotifiedObservations() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

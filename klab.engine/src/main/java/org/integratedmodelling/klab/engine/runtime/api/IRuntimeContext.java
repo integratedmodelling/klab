@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.engine.runtime.api;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -287,5 +288,9 @@ public interface IRuntimeContext extends IComputationContext {
      * @return
      */
 	Collection<IArtifact> getChildArtifactsOf(DirectObservation directObservation);
-
+	
+	/*
+	 * OK, I declare failure for now. No better way to record what has been notified or not.
+	 */
+	Set<String> getNotifiedObservations();
 }

@@ -1004,11 +1004,12 @@ public class Actuator implements IActuator {
 
 		for (IObservation product : products) {
 
-			if (!((Artifact)product).getGeneratorActivityId().equals(context.getMonitor().getIdentity().getId())) {
-				// comes from a previous task, already reported
+			if (context.getNotifiedObservations().contains(product.getId())) {
 				continue;
 			}
-						
+
+			context.getNotifiedObservations().add(product.getId());
+			
 			// parent is always getContext() because these notifications aren't sent beyond level 0
 			IObservationReference observation = Observations.INSTANCE.createArtifactDescriptor(product,
 					product.getContext(), ITime.INITIALIZATION, 0, /*false,*/ isMainObservable || isMain)

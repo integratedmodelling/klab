@@ -3,8 +3,10 @@ package org.integratedmodelling.klab.components.runtime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.IteratorUtils;
 import org.integratedmodelling.kim.api.IComputableResource;
@@ -104,6 +106,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	ContextualizationStrategy contextualizationStrategy;
 	// set only by the actuator, relevant only in instantiators with attributes
 	IModel model;
+	Set<String> notifiedObservations;
 
 	// root scope of the entire dataflow, unchanging, for downstream resolutions
 	ResolutionScope resolutionScope;
@@ -120,6 +123,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		this.network = new DefaultDirectedGraph<>(IRelationship.class);
 		this.structure = new Structure();
 		this.provenance = new Provenance();
+		this.notifiedObservations = new HashSet<>();
 		this.monitor = monitor;
 		this.namespace = actuator.getNamespace();
 		this.scale = scale;
@@ -171,6 +175,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		this.dataflowCache.putAll(context.dataflowCache);
 		this.actuator = context.actuator;
 		this.target = context.target;
+		this.notifiedObservations = context.notifiedObservations;
 	}
 
 	@Override
@@ -1112,5 +1117,10 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	public Collection<IArtifact> getChildArtifactsOf(DirectObservation directObservation) {
 		return structure.getChildArtifacts(directObservation);
 	}
+
+    @Override
+    public Set<String> getNotifiedObservations() {
+        return notifiedObservations;
+    }
 
 }
