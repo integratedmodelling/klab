@@ -10,6 +10,7 @@ import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.dataflow.Flowchart.Element;
 import org.integratedmodelling.klab.dataflow.Flowchart.ElementType;
 import org.integratedmodelling.klab.utils.Pair;
@@ -65,7 +66,14 @@ public class DataflowGraph {
 
 		ElkNode ret = compile(flowchart.getRoot(), null, nodes);
 		for (Pair<String, String> connection : flowchart.getConnections()) {
-			kelk.createSimpleEdge(nodes.get(connection.getFirst()), nodes.get(connection.getSecond()), null);
+			ElkConnectableShape source = nodes.get(connection.getFirst());
+			ElkConnectableShape target = nodes.get(connection.getSecond());
+			if (source != null && target != null) {
+				kelk.createSimpleEdge(source, target, null);
+			} else {
+				Logging.INSTANCE.warn("INTERNAL: no ports for connection: (" + connection.getFirst() + " = " + source
+						+ ") -> (" + connection.getSecond() + " = " + target + ")");
+			}
 		}
 
 		for (String s : flowchart.getExternalInputs().keySet()) {
@@ -73,6 +81,9 @@ public class DataflowGraph {
 			ElkConnectableShape target = nodes.get(flowchart.getExternalInputs().get(s));
 			if (source != null && target != null) {
 				kelk.createSimpleEdge(source, target, null);
+			} else {
+				Logging.INSTANCE.warn("INTERNAL: no ports for connection: (" + s + " = " + source
+						+ ") -> (" + flowchart.getExternalInputs().get(s) + " = " + target + ")");
 			}
 		}
 

@@ -1,12 +1,14 @@
 package org.integratedmodelling.klab.data.table;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimLookupTable;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Concepts;
@@ -126,6 +128,10 @@ public class LookupTable implements ILookupTable {
 	@Override
 	public Object lookup(int index) {
 		return (IConcept) table.getRow(index)[searchIndex].asValue(null);
+	}
+
+	public Collection<IKimExpression> getUniqueExpressions() {
+		return table.getExpressions();
 	}
 
 }

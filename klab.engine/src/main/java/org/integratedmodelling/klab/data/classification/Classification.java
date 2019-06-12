@@ -5,14 +5,17 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimClassification;
 import org.integratedmodelling.kim.api.IKimClassifier;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
@@ -34,6 +37,9 @@ public class Classification implements IClassification {
 	private double[] distributionBreakpoints;
     private Map<IConcept, Double>     numCodes         = null;
     private Map<IConcept, Integer>    conceptIndexes;
+    
+    // this is for reporting to the dataflow 
+	private Set<IKimExpression> expressions = new HashSet<>();
 
 	public Classification(IKimClassification classification) {
 
@@ -41,6 +47,9 @@ public class Classification implements IClassification {
 		for (Pair<IKimConcept, IKimClassifier> classifier : classification) {
 			IConcept concept = Concepts.INSTANCE.declare(classifier.getFirst());
 			IClassifier clsf = new Classifier(classifier.getSecond());
+			if (classifier.getSecond().getExpressionMatch() != null) {
+				this.expressions.add(classifier.getSecond().getExpressionMatch());
+			}
 			if (concept == null) {
 				throw new KlabValidationException(
 						"classification: concept declaration is illegal: " + classifier.getFirst());
@@ -378,5 +387,10 @@ public class Classification implements IClassification {
 	public Object lookup(int index) {
 		return conceptOrder.get(index);
 	}
+	
+	public Collection<IKimExpression> getUniqueExpressions() {
+		return this.expressions;
+	}
+
 
 }

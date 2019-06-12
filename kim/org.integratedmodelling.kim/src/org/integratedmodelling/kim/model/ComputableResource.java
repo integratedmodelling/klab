@@ -729,4 +729,9 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	protected void setType(Type type) {
 		this.type = type;
 	}
+	
+	@Override
+	public String toString() {
+		return "<" + getType() + " -> " + (target == null ? "default" : target) + " [" + dataflowId + "]>";
+	}
 }

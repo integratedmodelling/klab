@@ -1,10 +1,13 @@
 package org.integratedmodelling.klab.data.table;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimClassifier;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimTable;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.general.ITable;
@@ -16,26 +19,33 @@ public class Table<T> implements ITable<T> {
 	private List<String> columnHeaders = new ArrayList<>();
 	private List<String> rowHeaders = null;
 	private String name;
+	private Set<IKimExpression> expressions;
 	
 	public static Table<IClassifier> create(IKimTable table) {
 
 		List<String> headers = table.getHeaders();
 		List<IClassifier[]> rows = new ArrayList<>();
+		Set<IKimExpression> exprs = new HashSet<>();
 
 		for (int i = 0; i < table.getRowCount(); i++) {
 			IClassifier[] row = new IClassifier[table.getColumnCount()];
 			int y = 0;
 			for (IKimClassifier element : table.getRow(i)) {
 				row[y] = new Classifier(element);
+				if (element.getExpressionMatch() != null) {
+					exprs.add(element.getExpressionMatch());
+				}
 				y++;
 			}
 			rows.add(row);
 		}
 		
-		return new Table<>(rows, headers);
+		Table<IClassifier> ret = new Table<>(rows, headers);
+		ret.expressions = exprs;
+		return ret;
 	}
 	
-	public Table(List<T[]> rows, List<String> headers) {
+	private Table(List<T[]> rows, List<String> headers) {
 		this.rows = rows;
 		if (this.columnHeaders == null) {
 			for (int i = 0; i < (rows.size() == 0 ? 0 : rows.get(i).length); i++) {
@@ -116,4 +126,9 @@ public class Table<T> implements ITable<T> {
 		}
 		return rowHeaders;
 	}
+
+	public Set<IKimExpression> getExpressions() {
+		return expressions;
+	}
+	
 }
