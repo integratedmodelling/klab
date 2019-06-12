@@ -278,10 +278,6 @@ public class Flowchart {
 			return null;
 		}
 
-		if (actuator.getName().equals("precipitation_volume_proportion_from_atmospheric_temperature")) {
-			System.out.println("ZOZOZO");
-		}
-
 		Element element = new Element(actuator);
 
 		for (IActuator child : actuator.getActuators()) {
@@ -325,6 +321,9 @@ public class Flowchart {
 
 		String computationTarget = computation.getSecond().getTarget() == null ? context.getName()
 				: computation.getSecond().getTarget().getLocalName();
+		if (computation.getSecond().isMediation()) {
+			computationTarget = formalNameOf(computation.getSecond().getMediationTargetId(), context);
+		}
 
 		Set<String> computationOutputs = new HashSet<>();
 		Set<String> computationInputs = new HashSet<>();

@@ -76,6 +76,13 @@
 	</build>
 	<dependencies>
 
+		<!-- velocity-engine-core for dataflow doc templates -->
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity-engine-core</artifactId>
+			<version>2.1</version>
+		</dependency>
+
 		<!-- gexf4j to export networks as GEXF -->
 		<dependency>
 			<groupId>it.uniroma1.dis.wsngroup.gexf4j</groupId>
@@ -471,12 +478,8 @@
 		<!-- GEOTOOLS mess ends -->
 
 		<!-- NO2 database (for local storage of file metadata and URN metadata 
-			caching) 
-		<dependency>
-			<groupId>org.dizitart</groupId>
-			<artifactId>nitrite</artifactId>
-			<version>3.0.0</version>
-		</dependency> -->
+			caching) <dependency> <groupId>org.dizitart</groupId> <artifactId>nitrite</artifactId> 
+			<version>3.0.0</version> </dependency> -->
 
 		<!-- Actor system (for the default runtime provider) -->
 		<dependency>

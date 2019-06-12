@@ -44,13 +44,12 @@ export value literal
 
 export number convert
 	"Return a contextualizer for a literal value"
-	label 'Convert $from to $to'
+	label 'Convert $original to $target'
 {
-	
-	value 'from'
+	value 'original'
 		"The value mediator (unit, range, currency) describing the source values"
 
-	value 'to'
+	value 'target'
 		"The value mediator (unit, range, currency) describing the target values"
 
 	optional import number artifact 

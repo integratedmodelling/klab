@@ -10,6 +10,8 @@ import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.json.ElkGraphJson;
+import org.integratedmodelling.klab.documentation.DataflowDocumentation;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -32,6 +34,7 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 	private KlabElkGraphFactory kelk = KlabElkGraphFactory.keINSTANCE;
 	private Map<String, ElkConnectableShape> nodes = new HashMap<>();
 	private Map<String, String> node2dataflowId = new HashMap<>();
+	private DataflowDocumentation documentation;
 	String json = null;
 
 	public ContextualizationStrategy() {
