@@ -7,7 +7,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.EnumSet;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.elk.alg.layered.options.LayeredMetaDataProvider;
@@ -20,6 +19,7 @@ import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
+import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.options.SizeConstraint;
 import org.eclipse.elk.core.options.SizeOptions;
@@ -108,6 +108,8 @@ public class KlabElkGraphFactory {
 		root.setIdentifier(identifier);
 		root.setProperty(LabelManagementOptions.LABEL_MANAGER, LABEL_MANAGER);
 		root.setProperty(LayeredOptions.HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN);
+		root.setProperty(LayeredMetaDataProvider.NORTH_OR_SOUTH_PORT, true);
+		root.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
 		return root;
 	}
 	

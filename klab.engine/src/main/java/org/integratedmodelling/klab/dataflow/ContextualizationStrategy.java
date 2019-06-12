@@ -110,7 +110,7 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 		return nodes;
 	}
 
-	public Map<String, String> getNode2dataflowId() {
+	public Map<String, String> getComputationToNodeIdTable() {
 		return node2dataflowId;
 	}
 

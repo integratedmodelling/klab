@@ -402,20 +402,6 @@ public class Actuator implements IActuator {
 			ctx.processAnnotation(annotation);
 		}
 
-		/*
-		 * when all is computed, reuse the context to render the documentation
-		 * templates.
-		 */
-		for (IDocumentation doc : documentation) {
-			for (IDocumentation.Template template : doc.get(Trigger.DEFINITION)) {
-				((Report) runtimeContext.getReport()).include(template, ctx);
-			}
-		}
-
-		/*
-		 * TO HERE
-		 */
-
 		return ret;
 	}
 
@@ -429,7 +415,7 @@ public class Actuator implements IActuator {
 
 		ISession session = ctx.getMonitor().getIdentity().getParentIdentity(ISession.class);
 		DataflowState state = new DataflowState();
-		state.setNodeId(ctx.getContextualizationStrategy().getNode2dataflowId().get(resource.getDataflowId()));
+		state.setNodeId(ctx.getContextualizationStrategy().getComputationToNodeIdTable().get(resource.getDataflowId()));
 		state.setStatus(Status.STARTED);
 		state.setMonitorable(false); // for now
 		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
@@ -1017,7 +1003,19 @@ public class Actuator implements IActuator {
 
 			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 					IMessage.Type.NewObservation, observation));
+			
 			((Report) context.getReport()).include(observation);
 		}
+		
+		/*
+		 * when all is computed, reuse the context to render the documentation
+		 * templates.
+		 */
+		for (IDocumentation doc : documentation) {
+			for (IDocumentation.Template template : doc.get(Trigger.DEFINITION)) {
+				((Report) context.getReport()).include(template, context);
+			}
+		}
+
 	}
 }

@@ -27,10 +27,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- Enable trailing 'l' (lowercase only) to specify long integers. Used in time specs to discriminate
+- Enable trailing 'l' (lowercase only) to specify long integers in k.IM. Used in time specs to discriminate
   millisecond parameters.
+- Add 'expression' modifier to tag inputs that accept expressions in k.DL.
+- Better behavior and proper loading of imported BIF files in WEKA resources.
 ### Changed
+- Overhaul the dataflow visualization, with better and complete representation of all links within and 
+  across components and computations. System now carries types for computations, enabling forthcoming
+  customization of graph, and discovers 'hidden' links from expressions in parameters and tables.
+- Overhaul the reporting of observations during contextualization to use the physical structure of the
+  artifacts instead of the logical structure of the observation tree.
 ### Fixed 
+- Dependency resolution bug that would mask out legitimate candidate models under some circumstances.
 
 ## [0.10.0.162] -- 2019/05/29
 ### Added
