@@ -1,11 +1,24 @@
 package org.integratedmodelling.klab.documentation;
 
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
-public class DataflowDocumentation {
+import org.integratedmodelling.klab.dataflow.Flowchart;
+
+public enum DataflowDocumentation {
 	
-	public DataflowDocumentation(IRuntimeContext context) {
-		
+	INSTANCE;
+	
+	Map<String, String> templates = new HashMap<>();
+	
+	public String getDocumentation(Flowchart.Element element) {
+		return null;
 	}
 
+	public void addTemplate(URL url) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }

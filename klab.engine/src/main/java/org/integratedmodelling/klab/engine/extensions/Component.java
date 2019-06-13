@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.engine.extensions;
 import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.documentation.DataflowDocumentation;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -41,7 +43,7 @@ public class Component implements IComponent {
 	boolean initialized;
 	Version version;
 	Map<String, IPrototype> services = new HashMap<>();
-    Map<String, IPrototype> annotations = new HashMap<>();
+	Map<String, IPrototype> annotations = new HashMap<>();
 
 	private String initMethod = null;
 	private String setupMethod = null;
@@ -130,22 +132,27 @@ public class Component implements IComponent {
 					}
 				}
 			}
-	         for (Resource res : patternResolver.getResources("components/" + name + "/annotations/*.kdl")) {
-	                try (InputStream input = res.getInputStream()) {
-	                    IKdlDataflow declaration = Dataflows.INSTANCE.declare(input);
-	                    String namespace = declaration.getPackageName();
-	                    for (IKdlActuator actuator : declaration.getActuators()) {
-	                        Prototype prototype = new Prototype(actuator, namespace);
-	                        Annotations.INSTANCE.register(prototype);
-	                        annotations.put(prototype.getName(), prototype);
-	                    }
-	                }
-	            }
+			for (Resource res : patternResolver.getResources("components/" + name + "/annotations/*.kdl")) {
+				try (InputStream input = res.getInputStream()) {
+					IKdlDataflow declaration = Dataflows.INSTANCE.declare(input);
+					String namespace = declaration.getPackageName();
+					for (IKdlActuator actuator : declaration.getActuators()) {
+						Prototype prototype = new Prototype(actuator, namespace);
+						Annotations.INSTANCE.register(prototype);
+						annotations.put(prototype.getName(), prototype);
+					}
+				}
+			}
+			for (Resource res : patternResolver.getResources("components/" + name + "/doc/*.*")) {
+				DataflowDocumentation.INSTANCE.addTemplate(res.getURL());
+			}
 		} catch (KlabException e) {
 			throw new KlabValidationException(e);
 		} catch (Throwable e) {
-			// ignore others - means resource path isn't there. These are inside the components so
-			// should be safe enough, although it would be nicer to have a simple way to test for the
+			// ignore others - means resource path isn't there. These are inside the
+			// components so
+			// should be safe enough, although it would be nicer to have a simple way to
+			// test for the
 			// existence of the path without having to fail first.
 		}
 

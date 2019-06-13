@@ -52,6 +52,7 @@ import org.integratedmodelling.klab.auth.AnonymousEngineCertificate;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.UserIdentity;
+import org.integratedmodelling.klab.documentation.DataflowDocumentation;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
 import org.integratedmodelling.klab.engine.rest.SchemaExtractor;
 import org.integratedmodelling.klab.engine.runtime.Script;
@@ -451,6 +452,9 @@ public class Engine extends Server implements IEngine, UserDetails {
 		try {
 			for (Resource res : patternResolver.getResources("components/engine/services/*.kdl")) {
 				Annotations.INSTANCE.declareServices(res.getURL());
+			}
+			for (Resource res : patternResolver.getResources("components/engine/doc/*.*")) {
+				DataflowDocumentation.INSTANCE.addTemplate(res.getURL());
 			}
 		} catch (Exception e) {
 			Logging.INSTANCE.error(e);
