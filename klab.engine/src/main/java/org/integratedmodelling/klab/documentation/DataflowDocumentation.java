@@ -1,28 +1,36 @@
 package org.integratedmodelling.klab.documentation;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.model.ComputableResource;
+import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.classification.IClassification;
+import org.integratedmodelling.klab.api.data.classification.ILookupTable;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Flowchart;
 import org.integratedmodelling.klab.dataflow.Flowchart.Element;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
-import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
 
 public enum DataflowDocumentation {
 
 	INSTANCE;
+
+	VelocityEngine engine;
 
 	public static final String ACTUATOR_TEMPLATE = "actuator";
 	public static final String FUNCTION_TEMPLATE = "function";
@@ -34,10 +42,19 @@ public enum DataflowDocumentation {
 
 	class Template {
 		String type;
-		String contents;
+		org.apache.velocity.Template template;
+	}
+
+	private DataflowDocumentation() {
+		engine = new VelocityEngine();
+		engine.setProperty(RuntimeConstants.RESOURCE_LOADERS, "classpath");
+		engine.setProperty("resource.loader.classpath.cache", true);
+		engine.setProperty("resource.loader.classpath.class", ClasspathResourceLoader.class.getName());
+		engine.init();
 	}
 
 	Map<String, Template> templates = new HashMap<>();
+	VelocityContext rootContext = new VelocityContext();
 
 	/**
 	 * Build documentation for flowchart element after the dataflow has executed.
@@ -53,17 +70,18 @@ public enum DataflowDocumentation {
 		return element.getDocumentation();
 	}
 
-	public void addTemplate(URL url) {
-		String name = MiscUtilities.getURLBaseName(url.toString());
-		String form = MiscUtilities.getFileExtension(url.getPath());
-		try (InputStream input = url.openStream()) {
-			Template template = new Template();
-			template.contents = IOUtils.toString(input, "UTF-8");
-			template.type = form;
-			templates.put(name, template);
-		} catch (IOException e) {
-			throw new KlabIOException(e);
-		}
+	/**
+	 * Add a template from the classpath.
+	 * 
+	 * @param path the classpath for the template resource.
+	 */
+	public void addTemplate(String path) {
+		String name = MiscUtilities.getURLBaseName(path);
+		String form = MiscUtilities.getFileExtension(path);
+		Template template = new Template();
+		template.template = engine.getTemplate(path);
+		template.type = form;
+		templates.put(name, template);
 	}
 
 	/**
@@ -77,16 +95,7 @@ public enum DataflowDocumentation {
 	 */
 	public String getDocumentation(Element element, Actuator actuator) {
 
-		String ret = null;
-		if (actuator.getModel() != null) {
-			for (IDocumentation doc : actuator.getModel().getDocumentation()) {
-				for (IDocumentation.Template template : doc.get(Trigger.DOCUMENTATION)) {
-					// TODO render the template and return
-				}
-			}
-		}
-
-		if (ret == null && templates.containsKey(ACTUATOR_TEMPLATE)) {
+		if (templates.containsKey(ACTUATOR_TEMPLATE)) {
 			return render(templates.get(ACTUATOR_TEMPLATE), getContext(actuator));
 		}
 
@@ -97,9 +106,9 @@ public enum DataflowDocumentation {
 	}
 
 	private String render(Template template, VelocityContext context) {
-		String ret = template.contents;
-		// TODO
-		return ret;
+		StringWriter sw = new StringWriter();
+		template.template.merge(context, sw);
+		return sw.toString();
 	}
 
 	/**
@@ -113,33 +122,33 @@ public enum DataflowDocumentation {
 	public String getDocumentation(Element element, Pair<IServiceCall, IComputableResource> resource) {
 
 		String templateId = null;
+		Object content = ((ComputableResource) resource.getSecond()).getValidatedResource(Object.class);
 
-		switch (resource.getSecond().getType()) {
-		case CLASSIFICATION:
-			templateId = CLASSIFICATION_TEMPLATE;
-			break;
-		case CONVERSION:
+		if (resource.getSecond().getServiceCall() != null) {
 			templateId = FUNCTION_TEMPLATE;
-			break;
-		case EXPRESSION:
-			templateId = EXPRESSION_TEMPLATE;
-			break;
-		case LITERAL:
-			templateId = LITERAL_TEMPLATE;
-			break;
-		case LOOKUP_TABLE:
-			templateId = TABLE_TEMPLATE;
-			break;
-		case RESOURCE:
+			if (templates.containsKey(resource.getSecond().getServiceCall().getName())) {
+				templateId = resource.getSecond().getServiceCall().getName();
+			}
+		} else if (resource.getSecond().getUrn() != null) {
 			templateId = RESOURCE_TEMPLATE;
-			break;
-		case SERVICE:
-			templateId = FUNCTION_TEMPLATE;
-			break;
-		default:
-			break;
+			IResource res = Resources.INSTANCE.resolveResource(resource.getSecond().getUrn());
+			if (res != null && templates.containsKey(res.getAdapterType())) {
+				templateId = res.getAdapterType();
+			}
+		} else if (resource.getSecond().getExpression() != null) {
+			templateId = EXPRESSION_TEMPLATE;
+			String lang = resource.getSecond().getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE : resource.getSecond().getLanguage();
+			if (templates.containsKey(lang)) {
+				templateId = lang;
+			}
+		} else if (resource.getSecond().getLiteral() != null) {
+			templateId = LITERAL_TEMPLATE;
+		} else if (content instanceof IClassification) {
+			templateId = CLASSIFICATION_TEMPLATE;
+		} else if (content instanceof ILookupTable) {
+			templateId = TABLE_TEMPLATE;
 		}
-
+		
 		Template template = templates.get(templateId);
 
 		if (template != null) {
@@ -150,13 +159,57 @@ public enum DataflowDocumentation {
 	}
 
 	private VelocityContext getContext(Pair<IServiceCall, IComputableResource> resource) {
-		// TODO Auto-generated method stub
-		return null;
+
+		Object content = ((ComputableResource) resource.getSecond()).getValidatedResource(Object.class);
+
+		VelocityContext ret = new VelocityContext(rootContext);
+		if (resource.getSecond().getServiceCall() != null) {
+			ret.put("call", resource.getSecond().getServiceCall());
+			IPrototype prototype = Extensions.INSTANCE.getPrototype(resource.getSecond().getServiceCall().getName());
+			if (prototype != null) {
+				ret.put("function", prototype);
+			}
+		} else if (resource.getSecond().getUrn() != null) {
+			IResource res = Resources.INSTANCE.resolveResource(resource.getSecond().getUrn());
+			if (res != null) {
+				ret.put("resource", res);
+			}
+		} else if (resource.getSecond().getExpression() != null) {
+			ret.put("code", resource.getSecond().getExpression());
+			ret.put("language", resource.getSecond().getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE
+					: resource.getSecond().getLanguage());
+			ret.put("condition", resource.getSecond().getCondition());
+		} else if (resource.getSecond().getLiteral() != null) {
+			ret.put("value", resource.getSecond().getLiteral());
+		} else if (content instanceof IClassification) {
+			ret.put("classification", content);
+		} else if (content instanceof ILookupTable) {
+			ret.put("table", content);
+		}
+
+		return ret;
 	}
 
 	private VelocityContext getContext(Actuator actuator) {
-		// TODO Auto-generated method stub
-		return null;
+
+		VelocityContext ret = new VelocityContext(rootContext);
+		/*
+		 * Render the template if any and put it in a variable for merging
+		 */
+		String documentation = null;
+		if (actuator.getModel() != null) {
+			for (IDocumentation doc : actuator.getModel().getDocumentation()) {
+				for (IDocumentation.Template ktemp : doc.get(Trigger.DOCUMENTATION)) {
+					// TODO render the template and set it into "documentation" variable
+				}
+			}
+		}
+
+		ret.put("documentation", documentation);
+		ret.put("model", actuator.getModel());
+		ret.put("actuator", actuator);
+
+		return ret;
 	}
 
 }

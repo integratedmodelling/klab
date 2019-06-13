@@ -144,7 +144,7 @@ public class Component implements IComponent {
 				}
 			}
 			for (Resource res : patternResolver.getResources("components/" + name + "/doc/*.*")) {
-				DataflowDocumentation.INSTANCE.addTemplate(res.getURL());
+				DataflowDocumentation.INSTANCE.addTemplate("components/" + name + "/doc/" + res.getFilename());
 			}
 		} catch (KlabException e) {
 			throw new KlabValidationException(e);

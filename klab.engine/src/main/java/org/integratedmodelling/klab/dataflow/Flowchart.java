@@ -176,7 +176,6 @@ public class Flowchart {
 				outputs.add(ret);
 				if (this.type == ElementType.ACTUATOR) {
 					// if this comes from an internal computation, connect it to the output port
-					boolean done = false;
 					String provider = this.datapaths.get(inputId);
 					if (provider == null && this.datapaths.size() == 1) {
 						provider = this.datapaths.get(this.datapaths.keySet().iterator().next());
@@ -186,7 +185,8 @@ public class Flowchart {
 						if (element != null) {
 							provider = element.getOrCreateOutput(inputId);
 						}
-						done = true;
+					}
+					if (provider != null) {
 						connections.add(new Pair<>(provider, ret));
 					}
 				}

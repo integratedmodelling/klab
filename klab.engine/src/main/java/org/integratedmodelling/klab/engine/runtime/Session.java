@@ -655,11 +655,18 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		IRuntimeContext context = findContext(state.getContextId());
 		if (context != null) {
 			Flowchart.Element element = context.getContextualizationStrategy().findDataflowElement(state.getNodeId());
-			String documentation = DataflowDocumentation.INSTANCE.getDocumentation(element, context);
-			if (documentation != null) {
-				monitor.send(IMessage.MessageClass.UserInterface, IMessage.Type.DataflowDocumentation,
-						new DataflowDetail(state.getNodeId(), documentation));
+			if (element != null) {
+				String documentation = DataflowDocumentation.INSTANCE.getDocumentation(element, context);
+				if (documentation != null) {
+					System.out.println(documentation);
+					monitor.send(IMessage.MessageClass.UserInterface, IMessage.Type.DataflowDocumentation,
+							new DataflowDetail(state.getNodeId(), documentation));
+				}
+			} else {
+				System.out.println("FOCK element not found: " + state.getNodeId());
 			}
+		} else {
+			System.out.println("FOCK context not found: " + state.getContextId());
 		}
 	}
 

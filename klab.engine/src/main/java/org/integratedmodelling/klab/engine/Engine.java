@@ -454,7 +454,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 				Annotations.INSTANCE.declareServices(res.getURL());
 			}
 			for (Resource res : patternResolver.getResources("components/engine/doc/*.*")) {
-				DataflowDocumentation.INSTANCE.addTemplate(res.getURL());
+				DataflowDocumentation.INSTANCE.addTemplate("components/engine/doc/" + res.getFilename());
 			}
 		} catch (Exception e) {
 			Logging.INSTANCE.error(e);
