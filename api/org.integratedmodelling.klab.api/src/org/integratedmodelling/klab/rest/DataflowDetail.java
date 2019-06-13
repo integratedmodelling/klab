@@ -11,6 +11,13 @@ public class DataflowDetail {
 	private String dataflowId;
 	private String htmlDescription;
 
+	public DataflowDetail() {}
+	
+	public DataflowDetail(String dataflowId, String htmlDescription) {
+		this.dataflowId = dataflowId;
+		this.htmlDescription = htmlDescription;
+	}
+	
 	public String getDataflowId() {
 		return dataflowId;
 	}

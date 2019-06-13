@@ -153,6 +153,7 @@ public class Documentation implements IDocumentation {
 			this.trigger = trigger;
 		}
 
+		@Override
 		public IReport.Section.Type getSectionType() {
 			return sectionType;
 		}

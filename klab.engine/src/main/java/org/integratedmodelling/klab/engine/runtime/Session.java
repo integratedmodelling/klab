@@ -62,19 +62,21 @@ import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.data.resources.Resource;
+import org.integratedmodelling.klab.dataflow.Flowchart;
+import org.integratedmodelling.klab.documentation.DataflowDocumentation;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.resources.Project;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.model.KimObject;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.rest.ContextualizationRequest;
+import org.integratedmodelling.klab.rest.DataflowDetail;
 import org.integratedmodelling.klab.rest.DataflowState;
 import org.integratedmodelling.klab.rest.DocumentationReference;
 import org.integratedmodelling.klab.rest.InterruptTask;
@@ -649,7 +651,25 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 	@MessageHandler(type = IMessage.Type.DataflowNodeDetail)
 	private void handleMatchAction(DataflowState state) {
-		System.out.println("Document node " + state.getNodeId());
+
+		IRuntimeContext context = findContext(state.getContextId());
+		if (context != null) {
+			Flowchart.Element element = context.getContextualizationStrategy().findDataflowElement(state.getNodeId());
+			String documentation = DataflowDocumentation.INSTANCE.getDocumentation(element, context);
+			if (documentation != null) {
+				monitor.send(IMessage.MessageClass.UserInterface, IMessage.Type.DataflowDocumentation,
+						new DataflowDetail(state.getNodeId(), documentation));
+			}
+		}
+	}
+
+	private IRuntimeContext findContext(String contextId) {
+		for (IRuntimeContext ctx : observationContexts) {
+			if (ctx.getRootSubject().getId().equals(contextId)) {
+				return ctx;
+			}
+		}
+		return null;
 	}
 
 	@MessageHandler
@@ -963,7 +983,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 		for (IRuntimeContext ctx : observationContexts) {
 			ret.getRootObservations().put(ctx.getRootSubject().getId(), Observations.INSTANCE
-					.createArtifactDescriptor(ctx.getRootSubject(), null, ITime.INITIALIZATION, 0, /*false,*/ false));
+					.createArtifactDescriptor(ctx.getRootSubject(), null, ITime.INITIALIZATION, 0, /* false, */ false));
 		}
 
 		return ret;

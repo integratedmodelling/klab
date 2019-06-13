@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.data.table.LookupTable;
+import org.integratedmodelling.klab.documentation.DataflowDocumentation;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtils;
@@ -99,7 +100,8 @@ public class Flowchart {
 			this.type = ElementType.ACTUATOR;
 			this.name = actuator.getName();
 			this.label = StringUtils.capitalize(actuator.getName().replaceAll("_", " "));
-
+			this.documentation = DataflowDocumentation.INSTANCE.getDocumentation(this, actuator);
+			
 			elementsByName.put(actuator.getName(), this);
 			elementsById.put(this.id, this);
 			if (root == null) {
@@ -112,6 +114,7 @@ public class Flowchart {
 			this.type = ElementType.RESOLVER;
 			this.label = Extensions.INSTANCE.getServiceLabel(resource.getFirst());
 			this.name = resource.getFirst().getName();
+			this.documentation = DataflowDocumentation.INSTANCE.getDocumentation(this, resource);
 			elementsById.put(this.id, this);
 		}
 
@@ -703,6 +706,10 @@ public class Flowchart {
 
 	public Map<String, String> getExternalOutputs() {
 		return externalOutputs;
+	}
+
+	public Element getElementById(String nodeId) {
+		return elementsById.get(nodeId);
 	}
 
 }

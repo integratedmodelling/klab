@@ -6,6 +6,7 @@ import java.util.Collection;
 import org.integratedmodelling.kim.api.IKimAction;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.klab.api.documentation.IReport.Section.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 
 /**
@@ -57,7 +58,9 @@ public interface IDocumentation {
     /**
      * Specifies when a particular template is triggered. Linked to
      * contextualization triggers but separate for ease of extension and
-     * flexibility.
+     * flexibility. Some types are for interactive/UI use and are not
+     * linked to contextualization but to user actions, having the 
+     * trigger == null.
      * 
      * @author Ferd
      *
@@ -76,7 +79,13 @@ public interface IDocumentation {
                 IKimAction.Trigger.TRANSITION),
         TERMINATION(
                 "Termination",
-                IKimAction.Trigger.TERMINATION);
+                IKimAction.Trigger.TERMINATION),
+        INTERACTIVE(
+                "Interactive",
+                null),
+        DOCUMENTATION(
+                "Documentation",
+                null);
 
         String             key;
         IKimAction.Trigger trigger;
@@ -134,6 +143,7 @@ public interface IDocumentation {
         }
 
         /**
+         * The event triggering the template.
          * 
          * @return
          */
@@ -146,6 +156,13 @@ public interface IDocumentation {
          * @return
          */
         void compile(IReport.Section section, IComputationContext context);
+
+        /**
+         * Return the section type that this applies to.
+         * 
+         * @return
+         */
+		Type getSectionType();
     }
 
     /**

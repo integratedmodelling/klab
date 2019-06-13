@@ -19,7 +19,7 @@ import org.integratedmodelling.klab.utils.Path;
  * Create an Elk graph starting from a Dataflow. Uses node list from current
  * contextualization strategy to resolve links to previously computed
  * observations, and incrementally builds the catalog of node IDs -> computation
- * IDs in it. No information about visualisation are added.
+ * IDs and elements in it. No information about visualisation are added.
  * 
  * @author Ferdinando Villa
  */
@@ -30,14 +30,17 @@ public class DataflowGraph {
 	private Map<String, ElkConnectableShape> nodes;
 	private Flowchart flowchart;
 	private Map<String, String> computationToNodeId;
+	private Map<String, Element> elements;
 
 	public DataflowGraph(Dataflow dataflow, ContextualizationStrategy strategy, KlabElkGraphFactory kelk,
 			String output) {
 		this.nodes = strategy.getNodes();
+		this.elements = strategy.getElements();
 		this.computationToNodeId = strategy.getComputationToNodeIdTable();
 		this.kelk = kelk;
 		this.flowchart = Flowchart.create(dataflow, output);
 		rootNode = compile(flowchart);
+		strategy.getFlowcharts().add(flowchart);
 	}
 
 	public ElkNode getRootNode() {
@@ -64,7 +67,7 @@ public class DataflowGraph {
 
 	public ElkNode compile(Flowchart flowchart) {
 
-		ElkNode ret = compile(flowchart.getRoot(), null, nodes);
+		ElkNode ret = compile(flowchart.getRoot(), null);
 		for (Pair<String, String> connection : flowchart.getConnections()) {
 			ElkConnectableShape source = nodes.get(connection.getFirst());
 			ElkConnectableShape target = nodes.get(connection.getSecond());
@@ -84,7 +87,7 @@ public class DataflowGraph {
 		return ret;
 	}
 
-	public ElkNode compile(Element element, ElkNode parentNode, Map<String, ElkConnectableShape> nodes) {
+	public ElkNode compile(Element element, ElkNode parentNode) {
 
 		ElkNode ret = element.getType() == ElementType.ACTUATOR
 				? kelk.createActuatorNode(element.getNodeId(), parentNode)
@@ -93,6 +96,8 @@ public class DataflowGraph {
 		computationToNodeId.put(element.getId(), ret.getIdentifier());
 
 		nodes.put(element.getId(), ret);
+		elements.put(ret.getIdentifier(), element);
+
 		ret.getLabels().add(kelk.createLabel(element.getLabel(), element.getId(), ret));
 
 		for (String input : element.getInputs()) {
@@ -110,7 +115,7 @@ public class DataflowGraph {
 		}
 
 		for (Element child : element.getChildren()) {
-			compile(child, ret, nodes);
+			compile(child, ret);
 		}
 
 		return ret;

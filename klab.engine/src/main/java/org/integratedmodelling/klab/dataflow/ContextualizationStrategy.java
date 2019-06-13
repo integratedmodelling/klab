@@ -10,6 +10,7 @@ import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.json.ElkGraphJson;
+import org.integratedmodelling.klab.dataflow.Flowchart.Element;
 import org.integratedmodelling.klab.documentation.DataflowDocumentation;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -33,8 +34,13 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 	String id = NameGenerator.shortUUID();
 	private KlabElkGraphFactory kelk = KlabElkGraphFactory.keINSTANCE;
 	private Map<String, ElkConnectableShape> nodes = new HashMap<>();
+	private Map<String, Element> elements = new HashMap<>();
 	private Map<String, String> node2dataflowId = new HashMap<>();
-	private DataflowDocumentation documentation;
+	private List<Flowchart> flowcharts = new ArrayList<>();
+	public List<Flowchart> getFlowcharts() {
+		return flowcharts;
+	}
+
 	String json = null;
 
 	public ContextualizationStrategy() {
@@ -67,8 +73,10 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 
 	public String getElkGraph() {
 
+		elements.clear();
 		nodes.clear();
 		node2dataflowId.clear();
+		flowcharts.clear();
 
 		if (json == null) {
 			synchronized (this) {
@@ -110,8 +118,16 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 		return nodes;
 	}
 
+	public Map<String, Element> getElements() {
+		return elements;
+	}
+	
 	public Map<String, String> getComputationToNodeIdTable() {
 		return node2dataflowId;
+	}
+
+	public Element findDataflowElement(String nodeId) {
+		return elements.get(nodeId);
 	}
 
 }
