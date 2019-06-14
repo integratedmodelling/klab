@@ -52,4 +52,11 @@ public interface ILookupTable extends IDataKey {
 	 */
 	Type getResultType();
 
+	/**
+	 * Column providing the results.
+	 * 
+	 * @return
+	 */
+	int getResultColumn();
+
 }

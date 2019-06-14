@@ -1,4 +1,23 @@
 <details>
-	<h1>Hola!</h1>
-	<p>I'm a wonderful k.LAB documentation template.</p>
+	<h1>Classification</h1>
+	<p>A classification maps an input value to an output value.</p>
+	<table>
+		<tr>
+			<th>Input</th>
+			<th>Output</th>
+		</tr>
+		#foreach( $entry in $classification )
+		<tr>
+			<td>${entry.Second.SourceCode}</td>
+			<td>${entry.First}</td>
+		</tr>
+		#end
+	</table>
+
+	<p>Each input is matched from the top: the value corresponding to
+		the first match is returned. If the input is a concept, it will be
+		matched using the reasoner, so that more generic concepts will match a
+		more specific one. A star (*) matches any input value but not no-data;
+		a pound (#) will match anything including no-data.</p>
+
 </details>

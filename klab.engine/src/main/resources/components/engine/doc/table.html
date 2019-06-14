@@ -1,4 +1,23 @@
 <details>
-	<h1>Hola!</h1>
-	<p>I'm a wonderful k.LAB documentation template.</p>
+	<h1>Lookup table</h1>
+	<p>The inputs are matched to column ${table.ResultColumn}, which
+		provides the result of the first match.</p>
+	<table>
+		<tr>
+			#foreach( $header in $table.Table.ColumnHeaders )
+			<th>$header</th> #end
+		</tr>
+		#foreach( $row in $table.Table.Rows )
+		<tr>
+			#foreach( $item in $row )
+			<td>${item.SourceCode}</td> #end
+		</tr>
+		#end
+	</table>
+
+	<p>Each row in the table is matched from the top: the value
+		corresponding to the first matching row is returned. A star (*)
+		matches any input value but not no-data; a pound (#) will match
+		anything including no-data.</p>
+
 </details>

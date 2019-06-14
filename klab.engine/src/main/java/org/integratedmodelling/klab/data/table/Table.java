@@ -89,6 +89,7 @@ public class Table<T> implements ITable<T> {
 		return rows.size() == 0 ? 0 : rows.get(0).length;
 	}
 
+	@Override
 	public List<T[]> getRows() {
 		return rows;
 	}

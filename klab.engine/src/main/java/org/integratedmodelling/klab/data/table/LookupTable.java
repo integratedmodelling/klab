@@ -69,6 +69,11 @@ public class LookupTable implements ILookupTable {
 	public int size() {
 		return table.getRowCount();
 	}
+	
+	@Override
+	public int getResultColumn() {
+		return searchIndex;
+	}
 
 	@Override
 	public List<String> getLabels() {

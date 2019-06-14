@@ -113,4 +113,11 @@ public interface ITable<T> {
 	 */
 	List<String> getRowHeaders();
 
+	/**
+	 * Return all rows as a list.
+	 * 
+	 * @return
+	 */
+	List<T[]> getRows();
+
 }

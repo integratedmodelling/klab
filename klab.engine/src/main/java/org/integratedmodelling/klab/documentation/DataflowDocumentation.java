@@ -33,7 +33,7 @@ public enum DataflowDocumentation {
 	VelocityEngine engine;
 
 	public static final String ACTUATOR_TEMPLATE = "actuator";
-	public static final String FUNCTION_TEMPLATE = "function";
+	public static final String FUNCTION_TEMPLATE = "service";
 	public static final String RESOURCE_TEMPLATE = "resource";
 	public static final String TABLE_TEMPLATE = "table";
 	public static final String CLASSIFICATION_TEMPLATE = "classification";
@@ -147,6 +147,11 @@ public enum DataflowDocumentation {
 			templateId = CLASSIFICATION_TEMPLATE;
 		} else if (content instanceof ILookupTable) {
 			templateId = TABLE_TEMPLATE;
+		} else {
+			templateId = FUNCTION_TEMPLATE;
+			if (templates.containsKey(resource.getFirst().getName())) {
+				templateId = resource.getFirst().getName();
+			}
 		}
 		
 		Template template = templates.get(templateId);
@@ -167,7 +172,7 @@ public enum DataflowDocumentation {
 			ret.put("call", resource.getSecond().getServiceCall());
 			IPrototype prototype = Extensions.INSTANCE.getPrototype(resource.getSecond().getServiceCall().getName());
 			if (prototype != null) {
-				ret.put("function", prototype);
+				ret.put("prototype", prototype);
 			}
 		} else if (resource.getSecond().getUrn() != null) {
 			IResource res = Resources.INSTANCE.resolveResource(resource.getSecond().getUrn());
@@ -185,6 +190,12 @@ public enum DataflowDocumentation {
 			ret.put("classification", content);
 		} else if (content instanceof ILookupTable) {
 			ret.put("table", content);
+		}  else {
+			ret.put("call", resource.getFirst());
+			IPrototype prototype = Extensions.INSTANCE.getPrototype(resource.getFirst().getName());
+			if (prototype != null) {
+				ret.put("function", prototype);
+			}
 		}
 
 		return ret;
