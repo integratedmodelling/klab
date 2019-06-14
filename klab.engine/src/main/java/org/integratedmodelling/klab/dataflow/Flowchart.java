@@ -101,7 +101,7 @@ public class Flowchart {
 			this.name = actuator.getName();
 			this.label = StringUtils.capitalize(actuator.getName().replaceAll("_", " "));
 			this.documentation = DataflowDocumentation.INSTANCE.getDocumentation(this, actuator);
-			
+
 			elementsByName.put(actuator.getName(), this);
 			elementsById.put(this.id, this);
 			if (root == null) {
@@ -283,6 +283,10 @@ public class Flowchart {
 
 		Element element = new Element(actuator);
 
+		if (actuator.getName().equals("theoretical_recreation_supply")) {
+			System.out.println("FAFAFA");
+		}
+
 		for (IActuator child : actuator.getActuators()) {
 
 			Element cel = compileActuator((Actuator) child, element);
@@ -322,8 +326,10 @@ public class Flowchart {
 
 		parent.addChild(ret);
 
-		String computationTarget = computation.getSecond().getTarget() == null ? context.getName()
-				: computation.getSecond().getTarget().getLocalName();
+		String computationTarget = (computation.getSecond().getTarget() == null
+				|| computation.getSecond().getTarget().equals(context.getObservable())) 
+					? context.getName()
+					: computation.getSecond().getTarget().getLocalName();
 		if (computation.getSecond().isMediation()) {
 			computationTarget = formalNameOf(computation.getSecond().getMediationTargetId(), context);
 		}

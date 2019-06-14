@@ -629,8 +629,10 @@ public class Actuator implements IActuator {
 			for (int i = 0; i < computationStrategy.size(); i++) {
 				ret += (nout == 0 ? (ofs + "   compute" + (cout < 2 ? " " : ("\n" + ofs + "     "))) : ofs + "     ")
 						+ computationStrategy.get(i).getFirst().getSourceCode()
-						+ (computationStrategy.get(i).getSecond().getTarget() == null ? ""
-								: (" as " + computationStrategy.get(i).getSecond().getTarget().getLocalName()))
+						+ ((computationStrategy.get(i).getSecond().getTarget() == null
+								|| computationStrategy.get(i).getSecond().getTarget().equals(observable)) 
+									? ""
+									: (" as " + computationStrategy.get(i).getSecond().getTarget().getLocalName()))
 						+ (nout < computationStrategy.size() - 1 ? "," : "") + "\n";
 				nout++;
 			}
@@ -995,18 +997,19 @@ public class Actuator implements IActuator {
 			}
 
 			context.getNotifiedObservations().add(product.getId());
-			
-			// parent is always getContext() because these notifications aren't sent beyond level 0
+
+			// parent is always getContext() because these notifications aren't sent beyond
+			// level 0
 			IObservationReference observation = Observations.INSTANCE.createArtifactDescriptor(product,
-					product.getContext(), ITime.INITIALIZATION, 0, /*false,*/ isMainObservable || isMain)
+					product.getContext(), ITime.INITIALIZATION, 0, /* false, */ isMainObservable || isMain)
 					.withTaskId(taskId);
 
 			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 					IMessage.Type.NewObservation, observation));
-			
+
 			((Report) context.getReport()).include(observation);
 		}
-		
+
 		/*
 		 * when all is computed, reuse the context to render the documentation
 		 * templates.

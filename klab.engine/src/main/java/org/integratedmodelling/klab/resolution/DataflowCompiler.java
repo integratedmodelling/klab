@@ -767,7 +767,11 @@ public class DataflowCompiler {
     }
 
     /**
-     * Must create different descriptor for different indirect usages
+     * Must create different descriptor for different indirect usages. 
+     * 
+     * FIXME: if there are indirect adapters, MUST create a child actuator
+     * for the untransformed resource, then link the computation to its
+     * output.
      * 
      * @param model
      * @param indirectAdapters
