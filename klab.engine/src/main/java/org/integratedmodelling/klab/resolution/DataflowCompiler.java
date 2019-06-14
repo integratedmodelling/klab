@@ -115,9 +115,9 @@ public class DataflowCompiler {
 
     public Dataflow compile(IMonitor monitor) {
 
-        if (!System.getProperty("visualize", "false").equals("false") && resolutionGraph.vertexSet().size() > 1) {
+//        if (!System.getProperty("visualize", "false").equals("false") && resolutionGraph.vertexSet().size() > 1) {
             Graphs.show(resolutionGraph, "Resolution graph");
-        }
+//        }
 
         Dataflow ret = new Dataflow(monitor.getIdentity().getParentIdentity(ISession.class));
 

@@ -98,22 +98,22 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 			this.inGroup = inGroup;
 		}
 
-		/**
-		 * Inform all the computables that this model is the one that provides the
-		 * observable to transform, so that the IDs referenced for the observable can be
-		 * established.
-		 * 
-		 * @param model
-		 */
-		public void accept(IRankedModel model) {
-			// TODO this is ugly - revise
-			if (this.computation != null) {
-				for (IComputableResource computable : computation) {
-					Klab.INSTANCE.getRuntimeProvider().setComputationTargetId(computable,
-							model.getObservables().get(0).getLocalName());
-				}
-			}
-		}
+//		/**
+//		 * Inform all the computables that this model is the one that provides the
+//		 * observable to transform, so that the IDs referenced for the observable can be
+//		 * established.
+//		 * 
+//		 * @param model
+//		 */
+//		public void accept(IRankedModel model) {
+//			// TODO this is ugly - revise
+//			if (this.computation != null) {
+//				for (IComputableResource computable : computation) {
+//					Klab.INSTANCE.getRuntimeProvider().setComputationTargetId(computable,
+//							model.getObservables().get(0).getLocalName());
+//				}
+//			}
+//		}
 
 	}
 

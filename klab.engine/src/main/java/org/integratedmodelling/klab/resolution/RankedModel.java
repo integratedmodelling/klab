@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.resolution;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +40,12 @@ public class RankedModel extends Model implements IRankedModel {
 
 	private transient ModelReference modelData;
 
+	public RankedModel(Model model) {
+	    this.delegate = model;
+	    this.modelUrn = model.getName();
+	    this.ranks = new HashMap<>();
+	}
+	
 	public RankedModel(ModelReference model, Map<String, Double> ranks, int priority) {
 		this.modelUrn = model.getUrn();
 		this.modelData = model;

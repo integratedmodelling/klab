@@ -20,71 +20,73 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public class Behavior implements IBehavior {
 
-	List<IAction> actions = new ArrayList<>();
-	List<IExtent> extents;
-	IKimBehavior statement;
+    List<IAction> actions = new ArrayList<>();
+    List<IExtent> extents;
+    IKimBehavior statement;
 
-	public Behavior(IKimBehavior behavior, IActiveKimObject model) {
-		// TODO Auto-generated constructor stub
-		this.statement = behavior;
-		if (behavior != null) {
-			for (IKimAction action : behavior) {
-				actions.add(new Action(action));
-			}
-		}
-	}
+    public Behavior(IKimBehavior behavior, IActiveKimObject model) {
+        // TODO Auto-generated constructor stub
+        this.statement = behavior;
+        if (behavior != null) {
+            for (IKimAction action : behavior) {
+                actions.add(new Action(action));
+            }
+        }
+    }
 
-	@Override
-	public Iterator<IAction> iterator() {
-		return actions.iterator();
-	}
+    @Override
+    public Iterator<IAction> iterator() {
+        return actions.iterator();
+    }
 
-	/**
-	 * True if the behavior defines a scale for the containing object. Used during
-	 * resolution.
-	 * 
-	 * @return true if scale is defined
-	 */
-	public boolean hasScale() {
-		return this.extents != null && !this.extents.isEmpty();
-	}
+    /**
+     * True if the behavior defines a scale for the containing object. Used during
+     * resolution.
+     * 
+     * @return true if scale is defined
+     */
+    public boolean hasScale() {
+        return this.extents != null && !this.extents.isEmpty();
+    }
 
-	@Override
-	public Collection<IExtent> getExtents(IMonitor monitor) throws KlabException {
-		if (this.extents == null) {
-			this.extents = new ArrayList<>();
-			for (IServiceCall extentFunction : statement.getExtentFunctions()) {
-				Object extent = Extensions.INSTANCE.callFunction(extentFunction, monitor);
-				if (!(extent instanceof IExtent)) {
-					throw new KlabValidationException(
-							"function " + extentFunction + " does not produce a valid extent");
-				}
-				this.extents.add((IExtent) extent);
-			}
-		}
-		return this.extents;
-	}
+    @Override
+    public Collection<IExtent> getExtents(IMonitor monitor) throws KlabException {
+        if (this.extents == null) {
+            this.extents = new ArrayList<>();
+            if (statement != null) {
+                for (IServiceCall extentFunction : statement.getExtentFunctions()) {
+                    Object extent = Extensions.INSTANCE.callFunction(extentFunction, monitor);
+                    if (!(extent instanceof IExtent)) {
+                        throw new KlabValidationException(
+                                "function " + extentFunction + " does not produce a valid extent");
+                    }
+                    this.extents.add((IExtent) extent);
+                }
+            }
+        }
+        return this.extents;
+    }
 
-	@Override
-	public List<IAction> getActions(Trigger trigger) {
-		List<IAction> ret = new ArrayList<>();
-		for (IAction action : actions) {
-			if (action.getTrigger() == trigger) {
-				ret.add(action);
-			}
-		}
-		return ret;
-	}
+    @Override
+    public List<IAction> getActions(Trigger trigger) {
+        List<IAction> ret = new ArrayList<>();
+        for (IAction action : actions) {
+            if (action.getTrigger() == trigger) {
+                ret.add(action);
+            }
+        }
+        return ret;
+    }
 
-	@Override
-	public boolean respondsTo(IConcept eventType) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean respondsTo(IConcept eventType) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
-	@Override
-	public boolean isEmpty() {
-		return actions.isEmpty();
-	}
+    @Override
+    public boolean isEmpty() {
+        return actions.isEmpty();
+    }
 
 }
