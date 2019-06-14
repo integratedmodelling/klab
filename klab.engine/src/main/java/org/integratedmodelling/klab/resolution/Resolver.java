@@ -24,11 +24,12 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
-import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.api.services.IObservationService;
+import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Observable;
@@ -299,49 +300,62 @@ public enum Resolver {
 
 						// candidate may switch resolution mode
 						double percentCovered = 0;
-						for (IRankedModel model : Models.INSTANCE.resolve(candidate.observables.get(0),
-								ret.getChildScope(candidate.observables.get(0), candidate.mode))) {
 
-							previousArtifact = tryPrevious ? ((Subject) ret.getContext()).getRuntimeContext()
-									.findArtifact(candidate.observables.get(0)) : null;
+						for (Observable candidateObservable : candidate.observables) {
 
-							ResolutionScope mscope = previousArtifact == null ? resolve((RankedModel) model, ret)
-									: ret.getChildScope(candidate.observables.get(0), candidate.mode,
-											(IObservation) previousArtifact.getSecond(), previousArtifact.getFirst());
+							if (candidate.observables.size() == 1 && candidate.computation.isEmpty()) {
 
-							if (mscope.getCoverage().isRelevant()) {
+								for (IRankedModel model : Models.INSTANCE.resolve(candidateObservable,
+										ret.getChildScope(candidateObservable, candidate.mode))) {
 
-								Coverage newCoverage = coverage.merge(mscope.getCoverage(), LogicalConnector.UNION);
-								if (!newCoverage.isRelevant()) {
-									continue;
+									previousArtifact = tryPrevious ? ((Subject) ret.getContext()).getRuntimeContext()
+											.findArtifact(candidate.observables.get(0)) : null;
+
+									ResolutionScope mscope = previousArtifact == null
+											? resolve((RankedModel) model, ret)
+											: ret.getChildScope(candidate.observables.get(0), candidate.mode,
+													(IObservation) previousArtifact.getSecond(),
+													previousArtifact.getFirst());
+
+									if (mscope.getCoverage().isRelevant()) {
+
+										Coverage newCoverage = coverage.merge(mscope.getCoverage(),
+												LogicalConnector.UNION);
+										if (!newCoverage.isRelevant()) {
+											continue;
+										}
+
+										// for reporting
+										boolean wasZero = percentCovered == 0;
+										// percent covered by new model
+										double coverageDelta = newCoverage.getCoverage() - percentCovered;
+										// percent covered so far
+										percentCovered += newCoverage.getCoverage();
+
+										coverage = newCoverage;
+
+										/*
+										 * FIXME this is to reset the target ID in the computations after we have a
+										 * model that produces the untransformed one. It sucks and requires specialized
+										 * logics in the runtime provider that shouldn't be needed.
+										 */
+										candidate.accept(model);
+										mscope.getMonitor()
+												.debug("accepting " + model.getName() + " to resolve "
+														+ NumberFormat.getPercentInstance().format(coverageDelta)
+														+ (wasZero ? "" : " more") + " of " + observable);
+										/*
+										 * Link to dataflow and specify the order of computation and whether this is a
+										 * partition of the context. The actual scale of computation for the model will
+										 * be established by the dataflow compiler.
+										 */
+										ret.link(mscope, candidate.computation).withOrder(order++)
+												.withPartition(coverageDelta < 1);
+									}
 								}
-
-								// for reporting
-								boolean wasZero = percentCovered == 0;
-								// percent covered by new model
-								double coverageDelta = newCoverage.getCoverage() - percentCovered;
-								// percent covered so far
-								percentCovered += newCoverage.getCoverage();
-
-								coverage = newCoverage;
-
-								/*
-								 * FIXME this is to reset the target ID in the computations after we have a
-								 * model that produces the untransformed one. It sucks and requires specialized
-								 * logics in the runtime provider that shouldn't be needed.
-								 */
-								candidate.accept(model);
-								mscope.getMonitor()
-										.debug("accepting " + model.getName() + " to resolve "
-												+ NumberFormat.getPercentInstance().format(coverageDelta)
-												+ (wasZero ? "" : " more") + " of " + observable);
-								/*
-								 * Link to dataflow and specify the order of computation and whether this is a
-								 * partition of the context. The actual scale of computation for the model will
-								 * be established by the dataflow compiler.
-								 */
-								ret.link(mscope, candidate.computation).withOrder(order++)
-										.withPartition(coverageDelta < 1);
+							} else {
+								// resolve the observable calling self recursively, link
+								throw new KlabUnimplementedException("SHIT!!!!!!!!! RESOLVE ME");
 							}
 
 							if (coverage.isComplete()) {
@@ -399,9 +413,9 @@ public enum Resolver {
 	private ResolutionScope resolve(Model model, ResolutionScope parentScope) throws KlabException {
 
 		ResolutionScope ret = parentScope.getChildScope(model);
-		
+
 		Coverage coverage = Coverage.full(ret.getCoverage());
-		
+
 		// use the reasoner to infer any missing dependency from the semantics
 		ObservableReasoner reasoner = new ObservableReasoner(model, parentScope.getObservable(), ret);
 		for (CandidateObservable observable : reasoner.getObservables()) {
@@ -415,9 +429,9 @@ public enum Resolver {
 			}
 			coverage = newCoverage;
 		}
-		
+
 		ret.setCoverage(coverage);
-		
+
 		return ret;
 	}
 
