@@ -51,18 +51,12 @@ public class ResolutionScope implements IResolutionScope {
     public class Link {
 
         ResolutionScope target;
-//        List<IComputableResource> computation;
         int order;
         boolean partition;
 
         Link(ResolutionScope target) {
             this.target = target;
         }
-
-//        Link(ResolutionScope target, List<IComputableResource> computation) {
-//            this.target = target;
-//            this.computation = computation;
-//        }
 
         public ResolutionScope getSource() {
             return ResolutionScope.this;
@@ -71,10 +65,6 @@ public class ResolutionScope implements IResolutionScope {
         public ResolutionScope getTarget() {
             return target;
         }
-
-//        public List<IComputableResource> getComputation() {
-//            return computation;
-//        }
 
         public Link withOrder(int order) {
             this.order = order;
@@ -249,15 +239,6 @@ public class ResolutionScope implements IResolutionScope {
         this.scenarios.addAll(scenarios);
         this.resolutionNamespace = observer.getNamespace();
         this.monitor = monitor;
-
-        /*
-         * TODO pre-existing observables do not need any resolution: they can be just
-         * referred to by name, so they don't go in resolvedObservables, which is a
-         * cache for the current resolution only. At worst they may be called a
-         * different name, so we should preset paths for naming them differently in the
-         * dataflow. Those are simply INPUT PORTS - 'import' statements - with 'as' if
-         * necessary.
-         */
     }
 
     private ResolutionScope(Observer observer, IMonitor monitor, Collection<String> scenarios) throws KlabException {
@@ -266,10 +247,6 @@ public class ResolutionScope implements IResolutionScope {
         this.resolutionNamespace = observer.getNamespace();
         this.observer = observer;
         this.monitor = monitor;
-        /*
-         * TODO instantiate all pre-existing states mentioned in the observer and any
-         * metadata.
-         */
     }
 
     /**
@@ -541,22 +518,6 @@ public class ResolutionScope implements IResolutionScope {
         links.add(ret = new Link(childScope));
         return ret;
     }
-
-//    /**
-//     * Link a scope but leave the definition of the resolution (including the
-//     * coverage and the catalog update) to an upstream resolver. Used when models
-//     * are accepted but we still don't know if their contribution finalizes the
-//     * needed coverage.
-//     * 
-//     * @param childScope
-//     * @param computation
-//     */
-//    Link link(ResolutionScope childScope, List<IComputableResource> computation) {
-//        Link ret = null;
-//        links.addAll(childScope.links);
-//        links.add(ret = new Link(childScope, computation));
-//        return ret;
-//    }
 
     /**
      * Merge an accepted child scope (which has, in turn, been merged before this is
@@ -949,11 +910,6 @@ public class ResolutionScope implements IResolutionScope {
     }
 
     public boolean isBeingResolved(IConcept observable, Mode mode) {
-        /*
-         * TODO this should also apply to the dereifying versions of a model being
-         * resolved - or not? Probably not - as long as the context of resolution is
-         * appropriate.
-         */
         if (this.observable != null && this.observable.getType().equals(observable) && this.mode == mode) {
             return true;
         }

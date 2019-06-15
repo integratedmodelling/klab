@@ -334,13 +334,6 @@ public enum Resolver {
                                 percentCovered += newCoverage.getCoverage();
 
                                 coverage = newCoverage;
-
-                                //                                /*
-                                //                                 * FIXME this is to reset the target ID in the computations after we have a
-                                //                                 * model that produces the untransformed one. It sucks and requires specialized
-                                //                                 * logics in the runtime provider that shouldn't be needed.
-                                //                                 */
-                                //                                candidate.accept(model);
                                 mscope.getMonitor()
                                         .debug("accepting " + model.getName() + " to resolve "
                                                 + NumberFormat.getPercentInstance().format(coverageDelta)

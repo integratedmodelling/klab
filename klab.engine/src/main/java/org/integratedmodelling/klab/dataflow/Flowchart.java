@@ -62,22 +62,7 @@ public class Flowchart {
 		// link types
 		FLOW, CONTEXTUALIZATION
 	}
-
-	/*
-	 * If this is true (not default), each element replicates external inputs and
-	 * connects its computation to the input port. Otherwise links are created
-	 * directly to the actuator output that produces the artifact. With false the
-	 * diagram is cleaner, with true it's more respectful of the modularity in the
-	 * dataflow.
-	 * 
-	 * Actuators that rename the inputs to internal names have the inputs anyway...
-	 */
-	private boolean makeActuatorPorts = false;
-	/*
-	 * ...unless this is set to false.
-	 */
-	private boolean makeRenamedPorts = true;
-
+	
 	public class Element {
 
 		private String id;
@@ -283,10 +268,6 @@ public class Flowchart {
 
 		Element element = new Element(actuator);
 
-		if (actuator.getName().equals("theoretical_recreation_supply")) {
-			System.out.println("FAFAFA");
-		}
-
 		for (IActuator child : actuator.getActuators()) {
 
 			Element cel = compileActuator((Actuator) child, element);
@@ -442,7 +423,7 @@ public class Flowchart {
 			computationOutputs.add(computationTarget);
 			for (String input : getExpressionInputs(computation.getSecond().getExpression(),
 					computation.getSecond().getLanguage(), context)) {
-				computationInputs.add(input);
+				computationInputs.add("self".equals(input) ? computationTarget : input);
 			}
 
 		} else if (computation.getSecond().getUrn() != null) {
