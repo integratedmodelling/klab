@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.resolution;
 
 import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.owl.Observable;
 

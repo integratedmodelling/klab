@@ -981,7 +981,15 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 	@Override
 	public Pair<String, IArtifact> findArtifact(IObservable observable) {
+	    
+	    if (observable.getLocalName().contains("population")) {
+	        System.out.println("ZOZO");
+	    }
+	    
 		for (String key : catalog.keySet()) {
+	        if (key.contains("human_individual")) {
+	            System.out.println("ZOZO");
+	        }
 			IArtifact artifact = catalog.get(key);
 			if (artifact != null && artifact instanceof IObservation
 					&& ((Observable) ((IObservation) artifact).getObservable()).canResolve((Observable) observable)) {

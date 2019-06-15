@@ -312,12 +312,7 @@ public enum Resolver {
 
                         for (IRankedModel model : candidateModels) {
 
-                            previousArtifact = tryPrevious ? ((Subject) ret.getContext()).getRuntimeContext()
-                                    .findArtifact(candidate.observables.get(0)) : null;
-
-                            ResolutionScope mscope = previousArtifact == null ? resolve((RankedModel) model, ret)
-                                    : ret.getChildScope(candidate.observables.get(0), candidate.mode,
-                                            (IObservation) previousArtifact.getSecond(), previousArtifact.getFirst());
+                            ResolutionScope mscope = resolve((RankedModel) model, ret);
 
                             if (mscope.getCoverage().isRelevant()) {
 

@@ -183,7 +183,7 @@ public class Model extends KimObject implements IModel {
      */
     public Model(Observable mainObservable, CandidateObservable candidateObservable, ResolutionScope scope) {
         super(null);
-        this.id = mainObservable.getLocalName() + "-derived";
+        this.id = mainObservable.getLocalName() + "_derived";
         this.namespace = scope.getResolutionNamespace();
         this.behavior = new Behavior(null, this);
         this.observables.add(mainObservable);

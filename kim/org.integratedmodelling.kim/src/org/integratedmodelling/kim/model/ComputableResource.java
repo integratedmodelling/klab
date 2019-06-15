@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.emf.ecore.EObject;
 import org.integratedmodelling.kim.api.IComputableResource;
@@ -70,7 +72,11 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	 * twice. Shouldn't be serialized.
 	 */
 	private transient Object validatedResource;
-	// private transient Type type;
+	
+    private transient AtomicInteger status = new AtomicInteger(0);
+    private transient AtomicLong startComputation = new AtomicLong(0);
+    private transient AtomicLong endComputation = new AtomicLong(0);
+
 
 	// all that follows can only be set on a copy as they are runtime-dependent.
 	private String targetId;
