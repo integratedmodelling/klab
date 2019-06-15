@@ -4,7 +4,7 @@
 
 export number normalize 
 	"" 
-	label "Normalize to [0,1]"
+	label "Normalize"
 {
 	optional import number artifact 
 		"The artifact to normalize. Defaults to the target artifact."

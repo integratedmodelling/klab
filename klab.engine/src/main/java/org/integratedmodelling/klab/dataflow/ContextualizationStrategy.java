@@ -11,9 +11,9 @@ import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.json.ElkGraphJson;
 import org.integratedmodelling.klab.dataflow.Flowchart.Element;
-import org.integratedmodelling.klab.documentation.DataflowDocumentation;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.utils.NameGenerator;
+import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Triple;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
@@ -31,103 +31,138 @@ import org.jgrapht.graph.DefaultEdge;
  */
 public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, DefaultEdge> {
 
-	String id = NameGenerator.shortUUID();
-	private KlabElkGraphFactory kelk = KlabElkGraphFactory.keINSTANCE;
-	private Map<String, ElkConnectableShape> nodes = new HashMap<>();
-	private Map<String, Element> elements = new HashMap<>();
-	private Map<String, String> node2dataflowId = new HashMap<>();
-	private List<Flowchart> flowcharts = new ArrayList<>();
-	public List<Flowchart> getFlowcharts() {
-		return flowcharts;
-	}
+    String id = NameGenerator.shortUUID();
+    private KlabElkGraphFactory kelk = KlabElkGraphFactory.keINSTANCE;
+    private Map<String, ElkConnectableShape> nodes = new HashMap<>();
+    private Map<String, Element> elements = new HashMap<>();
+    private Map<String, String> node2dataflowId = new HashMap<>();
 
-	String json = null;
+//    public List<Flowchart> getFlowcharts() {
+//        return flowcharts;
+//    }
 
-	public ContextualizationStrategy() {
-		super(DefaultEdge.class);
-	}
+    //	String json = null;
 
-	List<Dataflow> rootNodes = new ArrayList<>();
+    public ContextualizationStrategy() {
+        super(DefaultEdge.class);
+    }
 
-	private static final long serialVersionUID = 1L;
+    List<Dataflow> rootNodes = new ArrayList<>();
 
-	List<Dataflow> getRootNodes() {
-		return rootNodes;
-	}
+    private static final long serialVersionUID = 1L;
 
-	public void add(Dataflow dataflow) {
-		synchronized (this) {
-			addVertex(dataflow);
-			rootNodes.add(dataflow);
-			json = null;
-		}
-	}
+    //    List<Dataflow> getRootNodes() {
+    //        return rootNodes;
+    //    }
 
-	public void add(Dataflow dataflow, Dataflow parent) {
-		synchronized (this) {
-			addVertex(dataflow);
-			addEdge(parent, dataflow);
-			json = null;
-		}
-	}
+    public void add(Dataflow dataflow) {
+        synchronized (rootNodes) {
+            addVertex(dataflow);
+            rootNodes.add(dataflow);
+        }
+    }
 
-	public String getElkGraph() {
+    public void add(Dataflow dataflow, Dataflow parent) {
+        synchronized (this) {
+            addVertex(dataflow);
+            addEdge(parent, dataflow);
+        }
+    }
 
-		elements.clear();
-		nodes.clear();
-		node2dataflowId.clear();
-		flowcharts.clear();
+    public String getElkGraph() {
 
-		if (json == null) {
-			synchronized (this) {
+        List<Flowchart> flowcharts = new ArrayList<>();
 
-				ElkNode root = kelk.createGraph(id);
+        
+        //		if (json == null) {
+        synchronized (this) {
 
-				// new nodes
-				ElkNode contextNode = null;
-				for (Dataflow df : rootNodes) {
-					DataflowGraph graph = new DataflowGraph(df, this, kelk, contextNode == null ? null
-							: ((Actuator) df.actuators.get(0)).getObservable().getLocalName());
-					// TODO children - recurse
-					ElkNode tgraph = graph.getRootNode();
-					root.getChildren().add(tgraph);
-					if (contextNode == null) {
-						contextNode = graph.getRootNode();
-					} else {
-						int i = 0; // TODO use names
-						for (ElkConnectableShape outPort : graph.getOutputs()) {
-							kelk.createSimpleEdge(outPort, contextNode, "ctx" + outPort.getIdentifier() + "_" + i);
-						}
-					}
-				}
+            elements.clear();
+            nodes.clear();
+            node2dataflowId.clear();
+            flowcharts.clear();
 
-				RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
-				engine.layout(root, new BasicProgressMonitor());
+            ElkNode root = kelk.createGraph(id);
 
-				json = ElkGraphJson.forGraph(root).omitLayout(false).omitZeroDimension(true).omitZeroPositions(true)
-						.shortLayoutOptionKeys(true).prettyPrint(true).toJson();
+            /*
+             * first create the flowcharts and link them, creating outputs for any exported
+             * observation. Then make the graph from the linked flowcharts.
+             */
+            List<Triple<String, String, String>> connections = new ArrayList<>();
+            for (Dataflow df : rootNodes) {
 
-				// System.out.println(json);
-			}
-		}
+                Flowchart current = Flowchart.create(df);
 
-		return json;
-	}
+                for (String input : current.getExternalInputs().keySet()) {
+                    for (Flowchart previous : flowcharts) {
+                        String output = previous.pullOutput(input);
+                        if (output != null) {
+                            connections.add(new Triple<>(input, output, current.getExternalInputs().get(input)));
+                        }
+                    }
+                }
 
-	public Map<String, ElkConnectableShape> getNodes() {
-		return nodes;
-	}
+                flowcharts.add(current);
+            }
 
-	public Map<String, Element> getElements() {
-		return elements;
-	}
-	
-	public Map<String, String> getComputationToNodeIdTable() {
-		return node2dataflowId;
-	}
+            // new nodes
+            ElkNode contextNode = null;
+            for (Flowchart flowchart : flowcharts) {
+                DataflowGraph graph = new DataflowGraph(flowchart, this, kelk);
+                // TODO children - recurse on secondary contextualizations
+                ElkNode tgraph = graph.getRootNode();
+                root.getChildren().add(tgraph);
+                if (contextNode == null) {
+                    contextNode = tgraph;
+                } else {
+                    int i = 0;
+                    for (ElkConnectableShape outPort : graph.getOutputs()) {
+                        kelk.createSimpleEdge(outPort, contextNode, "ctx" + outPort.getIdentifier() + "_" + i);
+                    }
+                }
+            }
 
-	public Element findDataflowElement(String nodeId) {
-		return elements.get(nodeId);
-	}
+            for (Triple<String, String, String> connection : connections) {
+                kelk.createSimpleEdge(nodes.get(connection.getSecond()), nodes.get(connection.getThird()), "external."
+                        + connection.getSecond() + "." + connection.getThird() + "." + connection.getFirst());
+            }
+
+            RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
+            engine.layout(root, new BasicProgressMonitor());
+
+            String json = ElkGraphJson.forGraph(root).omitLayout(false).omitZeroDimension(true).omitZeroPositions(true)
+                    .shortLayoutOptionKeys(true).prettyPrint(true).toJson();
+
+            // System.out.println(json);
+            return json;
+        }
+        //        }
+
+        //		return null;
+    }
+
+    public Map<String, ElkConnectableShape> getNodes() {
+        synchronized (rootNodes) {
+            return nodes;
+        }
+    }
+
+    public Map<String, Element> getElements() {
+        synchronized (rootNodes) {
+            return elements;
+        }
+    }
+
+    public Map<String, String> getComputationToNodeIdTable() {
+        synchronized (rootNodes) {
+            return node2dataflowId;
+        }
+    }
+
+    public Element findDataflowElement(String nodeId) {
+        synchronized (rootNodes) {
+            return elements.get(nodeId);
+        }
+    }
 
 }

@@ -127,7 +127,7 @@ public class KlabElkGraphFactory {
 		node.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS, SizeConstraint.PORTS));
 		node.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.outsideTopLeft());
 		node.setProperty(LayeredMetaDataProvider.NORTH_OR_SOUTH_PORT, true);
-//		node.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+		node.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
 		// node.setProperty(CoreOptions.SPACING_LABEL_NODE, 0d);
 		node.setProperty(CoreOptions.NODE_LABELS_PADDING, ACTUATOR_PADDING);
 		node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.UNIFORM_PORT_SPACING)); 

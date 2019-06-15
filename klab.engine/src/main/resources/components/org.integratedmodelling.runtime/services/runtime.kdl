@@ -44,7 +44,7 @@ export value literal
 
 export number convert
 	"Return a contextualizer for a literal value"
-	label 'Convert $original to $target'
+	label '$original to $target'
 {
 	value 'original'
 		"The value mediator (unit, range, currency) describing the source values"
@@ -61,7 +61,7 @@ export number convert
 
 export concept classify
 	"Return a state contextualizer that classifies its input into a concept"
-	label 'Classify input'
+	label 'Classify'
 {
 	
 	value classification
@@ -73,7 +73,7 @@ export concept classify
 
 export value lookup
 	"Return a state contextualizer that classifies its inputs using a lookup table"
-	label 'Look up in table'
+	label 'Lookup table'
 {
 	
 	value table
@@ -111,7 +111,7 @@ export object instantiate
 
 export value cast
 	"Return a state resolver that will convert a value from a type to another"
-	label 'Transform $source to $destination'
+	label '$source to $destination'
 {
 	optional import number artifact 
 		"The artifact to cast. Defaults to the target artifact."
