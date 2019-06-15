@@ -39,6 +39,9 @@ public class WfsEncoder extends VectorEncoder {
 	    
 		WFSDataStore dataStore = WfsAdapter.getDatastore(resource.getParameters().get("serviceUrl", String.class),
 				Version.create(resource.getParameters().get("wfsVersion", "1.0.0")));
+		if (dataStore == null) {
+            throw new KlabIOException("datastore " + resource.getParameters().get("serviceUrl", String.class) + " is unreachable");
+		}
 		try {
 			return dataStore.getFeatureSource(resource.getParameters().get("wfsIdentifier", String.class));
 		} catch (IOException e) {

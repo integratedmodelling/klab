@@ -64,7 +64,7 @@ public class DataflowCompiler {
     private Set<IObservable> mergedCatalog = new HashSet<>();
 
     Graph<IResolvable, ResolutionEdge> resolutionGraph = new DefaultDirectedGraph<>(ResolutionEdge.class);
-    Map<Model, List<ModelD>> modelCatalog = new HashMap<>();
+    Map<Model, /*List<*/ModelD/*>*/> modelCatalog = new HashMap<>();
 
     /*
      * maps the original name on each non-reference actuator to the original
@@ -84,12 +84,12 @@ public class DataflowCompiler {
          */
         int order;
 
-        /*
-         * if not null, the computation will adapt the source to the target and they may
-         * be of incompatible types. FIXME: there is only one Model per model, and it
-         * may be used more than once with different transformations.
-         */
-        List<IComputableResource> indirectAdapters;
+        //        /*
+        //         * if not null, the computation will adapt the source to the target and they may
+        //         * be of incompatible types. FIXME: there is only one Model per model, and it
+        //         * may be used more than once with different transformations.
+        //         */
+        //        List<IComputableResource> indirectAdapters;
 
         ResolutionEdge() {
         }
@@ -97,13 +97,13 @@ public class DataflowCompiler {
         public ResolutionEdge(Link link) {
             this.coverage = link.getTarget().getCoverage();
             this.mode = link.getTarget().getMode();
-            this.indirectAdapters = link.getComputation();
+            //            this.indirectAdapters = link.getComputation();
             this.order = link.getOrder();
             this.isPartition = link.isPartition();
         }
 
         public String toString() {
-            return "resolves" + (indirectAdapters == null ? "" : " indirectly");
+            return "resolves" /*+ (indirectAdapters == null ? "" : " indirectly")*/;
         }
     }
 
@@ -222,8 +222,8 @@ public class DataflowCompiler {
         int useCount;
         // this is null unless the model covers only a part of the context
         Coverage coverage;
-        // this is null unless the model resolves the observable indirectly
-        List<IComputableResource> indirectAdapters;
+        //        // this is null unless the model resolves the observable indirectly
+        //        List<IComputableResource> indirectAdapters;
         // if true, model is resolved by partitions, even if there is just one
         boolean hasPartitions = false;
 
@@ -239,19 +239,20 @@ public class DataflowCompiler {
 
         @Override
         public boolean equals(Object obj) {
-            return obj instanceof ModelD && model.equals(((ModelD) obj).model)
-                    && hasSameAdapters(((ModelD) obj).indirectAdapters);
+            return obj instanceof ModelD
+                    && model.equals(((ModelD) obj).model)/*
+                                                         && hasSameAdapters(((ModelD) obj).indirectAdapters)*/;
         }
 
-        public boolean hasSameAdapters(List<IComputableResource> adapters) {
-            if (adapters == null) {
-                return this.indirectAdapters == null;
-            }
-            if (this.indirectAdapters != null) {
-                return this.indirectAdapters.equals(adapters);
-            }
-            return false;
-        }
+        //        public boolean hasSameAdapters(List<IComputableResource> adapters) {
+        //            if (adapters == null) {
+        //                return this.indirectAdapters == null;
+        //            }
+        //            if (this.indirectAdapters != null) {
+        //                return this.indirectAdapters.equals(adapters);
+        //            }
+        //            return false;
+        //        }
     }
 
     /**
@@ -281,7 +282,7 @@ public class DataflowCompiler {
         String alias;
         Object inlineValue;
         ResolvedArtifact resolvedArtifact;
-        List<IComputableResource> artifactAdapters;
+        //        List<IComputableResource> artifactAdapters;
 
         /**
          * Initializer models are the instantiators that potentially carry states and/or
@@ -358,7 +359,7 @@ public class DataflowCompiler {
                 ret.setNamespace(observer.getNamespace());
                 ret.setName(observer.getId());
 
-            } else if (resolvedArtifact != null && artifactAdapters == null) {
+            } else if (resolvedArtifact != null /*&& artifactAdapters == null*/) {
                 /*
                  * Different situations if we ARE the artifact or we USE it for something. If we
                  * have artifact adapters, we must compile an import as a child and use our own
@@ -428,30 +429,30 @@ public class DataflowCompiler {
 
                 ret.getAnnotations().addAll(Annotations.INSTANCE.collectAnnotations(observable));
 
-            } else if (resolvedArtifact != null && artifactAdapters != null) {
-
-                /*
+            } /*else if (resolvedArtifact != null && artifactAdapters != null) {
+              
+                
                  * we are adapting the resolved artifact, so we compile in the import and add
                  * the adapters to our own computation
-                 */
+                 
                 Actuator resolved = Actuator.create(dataflow, mode);
                 resolved.setObservable(resolvedArtifact.getObservable());
                 resolved.setInput(true);
                 resolved.setAlias(resolvedArtifact.getArtifactId());
                 resolved.setName(resolvedArtifact.getArtifactId());
                 resolved.setType(resolvedArtifact.getObservable().getArtifactType());
-                if (artifactAdapters != null) {
-                    for (IComputableResource adapter : artifactAdapters) {
-                        ret.addComputation(adapter);
-                    }
-                }
-
+              //                if (artifactAdapters != null) {
+              //                    for (IComputableResource adapter : artifactAdapters) {
+              //                        ret.addComputation(adapter);
+              //                    }
+              //                }
+              
                 resolved.getAnnotations()
                         .addAll(Annotations.INSTANCE.collectAnnotations(observable, resolvedArtifact.getArtifact()));
-
+              
                 ret.getActuators().add(resolved);
-
-            } else if (inlineValue != null) {
+              
+              }*/ else if (inlineValue != null) {
                 ret.addComputation(ComputableResource.create(inlineValue));
             }
 
@@ -476,7 +477,7 @@ public class DataflowCompiler {
         private void defineActuator(Actuator ret, String name, ModelD theModel, Set<ModelD> generated) {
 
             Model model = theModel.model;
-            List<IComputableResource> indirectAdapters = theModel.indirectAdapters;
+            //            List<IComputableResource> indirectAdapters = theModel.indirectAdapters;
             ret.setName(name);
             ret.setModel(model);
 
@@ -484,18 +485,18 @@ public class DataflowCompiler {
                 generated.add(theModel);
                 for (IComputableResource resource : getModelComputation(model, ret.getType(), ITime.INITIALIZATION)) {
                     ret.addComputation(resource);
-                    if (indirectAdapters != null && resource.getTarget() == null) {
-                        /*
-                         * redirect the computation to compute the indirect target artifact
-                         */
-                        ((ComputableResource) resource).setTarget(model.getObservables().get(0));
-                    }
+                    //                    if (indirectAdapters != null && resource.getTarget() == null) {
+                    //                        /*
+                    //                         * redirect the computation to compute the indirect target artifact
+                    //                         */
+                    //                        ((ComputableResource) resource).setTarget(model.getObservables().get(0));
+                    //                    }
                 }
-                if (indirectAdapters != null) {
-                    for (IComputableResource adapter : indirectAdapters) {
-                        ret.addComputation(adapter);
-                    }
-                }
+                //                if (indirectAdapters != null) {
+                //                    for (IComputableResource adapter : indirectAdapters) {
+                //                        ret.addComputation(adapter);
+                //                    }
+                //                }
                 ret.getAnnotations().addAll(Annotations.INSTANCE.collectAnnotations(observable, model));
                 for (IDocumentation documentation : model.getDocumentation()) {
                     ret.addDocumentation(documentation);
@@ -644,7 +645,7 @@ public class DataflowCompiler {
                 ret.resolvedArtifact = (ResolvedArtifact) source;
                 observableCatalog.put(ret.resolvedArtifact.getArtifactId(),
                         (Observable) ret.resolvedArtifact.getArtifact().getObservable());
-                ret.artifactAdapters = d.indirectAdapters;
+                //                ret.artifactAdapters = d.indirectAdapters;
 
                 for (ResolutionEdge o : graph.incomingEdgesOf(source)) {
                     ret.children.add(compileActuator(graph.getEdgeSource(o), o.mode, graph,
@@ -662,13 +663,13 @@ public class DataflowCompiler {
                 }
                 observableCatalog.put(compatibleOutput.getLocalName(), compatibleOutput);
 
-                ModelD md = compileModel(model, d.indirectAdapters, d.isPartition && honorPartitions);
+                ModelD md = compileModel(model, /*d.indirectAdapters,*/ d.isPartition && honorPartitions);
                 for (ResolutionEdge o : graph.incomingEdgesOf(model)) {
                     ret.children.add(compileActuator(graph.getEdgeSource(o), o.mode, graph,
                             o.coverage == null ? scale : o.coverage, monitor));
                 }
 
-                md.indirectAdapters = d.indirectAdapters;
+                //                md.indirectAdapters = d.indirectAdapters;
 
                 if (md.hasPartitions) {
                     try {
@@ -769,36 +770,35 @@ public class DataflowCompiler {
     /**
      * Must create different descriptor for different indirect usages. 
      * 
-     * FIXME: if there are indirect adapters, MUST create a child actuator
-     * for the untransformed resource, then link the computation to its
-     * output.
-     * 
      * @param model
      * @param indirectAdapters
      * @return
      */
-    ModelD compileModel(Model model, List<IComputableResource> indirectAdapters, boolean hasPartitions) {
-        ModelD ret = null;
-        List<ModelD> list = modelCatalog.get(model);
-        if (list == null) {
-
-            list = new ArrayList<>();
+    ModelD compileModel(Model model/*, List<IComputableResource> indirectAdapters*/, boolean hasPartitions) {
+        ModelD ret = /*null;
+                     List<ModelD> list =*/ modelCatalog.get(model);
+        //        if (list == null) {
+        //
+        //            list = new ArrayList<>();
+        //            ret = new ModelD(model, hasPartitions);
+        //            list.add(ret);
+        //            modelCatalog.put(model, list);
+        //
+        //        } else {
+        // FIXME the catalog should contain a single modeld
+        //            ret = list.isEmpty() ? null : list.get(0);
+        //            for (ModelD md : modelCatalog.get(model)) {
+        //                if (md.hasSameAdapters(indirectAdapters)) {
+        //                    ret = md;
+        //                    break;
+        //                }
+        //            }
+        if (ret == null) {
             ret = new ModelD(model, hasPartitions);
-            list.add(ret);
-            modelCatalog.put(model, list);
-
-        } else {
-            for (ModelD md : modelCatalog.get(model)) {
-                if (md.hasSameAdapters(indirectAdapters)) {
-                    ret = md;
-                    break;
-                }
-            }
-            if (ret == null) {
-                ret = new ModelD(model, hasPartitions);
-                list.add(ret);
-            }
+            modelCatalog.put(model, ret);
+            //                list.add(ret);
         }
+        //        }
         ret.useCount++;
         return ret;
     }
@@ -858,11 +858,11 @@ public class DataflowCompiler {
         IResolvable ret = resolvable;
         if (context != null && ret instanceof Observable) {
             IRuntimeContext ctx = context.getRuntimeContext();
-            IArtifact existing = ctx.getArtifact(((Observable)ret).getLocalName());
+            IArtifact existing = ctx.getArtifact(((Observable) ret).getLocalName());
             if (existing instanceof IObservation) {
-                IObservable existingObservable = ((IObservation)existing).getObservable();
+                IObservable existingObservable = ((IObservation) existing).getObservable();
                 if (!existingObservable.equals(ret)) {
-                    
+
                     // must substitute
                     int nexisting = 0;
                     for (Pair<String, Observable> a : ambiguous) {
@@ -870,15 +870,15 @@ public class DataflowCompiler {
                         if (a.getSecond().equals(ret)) {
                             return a.getSecond();
                         }
-                        if (a.getFirst().equals(((Observable)ret).getLocalName())) {
-                            nexisting ++;
+                        if (a.getFirst().equals(((Observable) ret).getLocalName())) {
+                            nexisting++;
                         }
                     }
-                    
-                    String newName = ((Observable)ret).getLocalName() + "$" + (nexisting + 1);
-                    Observable newObservable = new Observable((Observable)ret);
+
+                    String newName = ((Observable) ret).getLocalName() + "$" + (nexisting + 1);
+                    Observable newObservable = new Observable((Observable) ret);
                     newObservable.setName(newName);
-                    ambiguous.add(new Pair<>(((Observable)ret).getLocalName(), newObservable));
+                    ambiguous.add(new Pair<>(((Observable) ret).getLocalName(), newObservable));
                     ret = newObservable;
                 }
             }

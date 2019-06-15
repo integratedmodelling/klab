@@ -30,7 +30,6 @@ import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Observable;
@@ -279,7 +278,7 @@ public enum Resolver {
             // observable comes complete with model, semantic or not
             ResolutionScope mscope = resolve((Model) observable.getReferencedModel(), ret);
             if (mscope.getCoverage().isRelevant() && ret.or(mscope)) {
-                ret.link(mscope, null);
+                ret.link(mscope);
                 coverage = mscope.getCoverage();
             }
 
@@ -336,12 +335,12 @@ public enum Resolver {
 
                                 coverage = newCoverage;
 
-//                                /*
-//                                 * FIXME this is to reset the target ID in the computations after we have a
-//                                 * model that produces the untransformed one. It sucks and requires specialized
-//                                 * logics in the runtime provider that shouldn't be needed.
-//                                 */
-//                                candidate.accept(model);
+                                //                                /*
+                                //                                 * FIXME this is to reset the target ID in the computations after we have a
+                                //                                 * model that produces the untransformed one. It sucks and requires specialized
+                                //                                 * logics in the runtime provider that shouldn't be needed.
+                                //                                 */
+                                //                                candidate.accept(model);
                                 mscope.getMonitor()
                                         .debug("accepting " + model.getName() + " to resolve "
                                                 + NumberFormat.getPercentInstance().format(coverageDelta)
@@ -353,12 +352,14 @@ public enum Resolver {
                                  */
                                 ret.link(mscope).withOrder(order++).withPartition(coverageDelta < 1);
                             }
+
+                            if (coverage.isComplete()) {
+                                done = true;
+                                break;
+                            }
+                            
                         }
 
-                        if (coverage.isComplete()) {
-                            done = true;
-                            break;
-                        }
                     } catch (KlabException e) {
                         parentScope.getMonitor()
                                 .error("error during resolution of " + candidate + ": " + e.getMessage());
@@ -415,7 +416,7 @@ public enum Resolver {
         // use the reasoner to infer any missing dependency from the semantics
         ObservableReasoner reasoner = new ObservableReasoner(model, parentScope.getObservable(), ret);
         for (CandidateObservable observable : reasoner.getObservables()) {
-            // ACHTUNG TODO OBSERVABLE CAN BE MULTIPLE (probably not here though)
+            // ACHTUNG TODO OBSERVABLE CAN BE MULTIPLE (probably not here though) - still, should be resolving a CandidateObservable
             ResolutionScope mscope = resolve(observable.observables.get(0), ret, observable.mode);
             Coverage newCoverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
             if (newCoverage.isEmpty()) {

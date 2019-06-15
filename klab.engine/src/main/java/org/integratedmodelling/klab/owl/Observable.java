@@ -132,6 +132,10 @@ public class Observable extends Concept implements IObservable {
     }
 
     public static Observable promote(IConcept concept) {
+        return promote(concept, true);
+    }
+
+    public static Observable promote(IConcept concept, boolean setUnits) {
         if (concept instanceof Observable) {
             return (Observable) concept;
         }
@@ -141,9 +145,11 @@ public class Observable extends Concept implements IObservable {
         ret.declaration = concept.getDefinition().trim();
         ret.isAbstract = concept.isAbstract();
         ret.generic = concept.isAbstract();
-        ret.unit = (Unit) Units.INSTANCE.getDefaultUnitFor(concept);
-        if (ret.unit != null) {
-            ret.declaration += " in " + ret.unit;
+        if (setUnits) {
+            ret.unit = (Unit) Units.INSTANCE.getDefaultUnitFor(concept);
+            if (ret.unit != null) {
+                ret.declaration += " in " + ret.unit;
+            }
         }
         return ret;
     }

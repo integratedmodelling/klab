@@ -502,10 +502,6 @@ public class Model extends KimObject implements IModel {
     @Override
     public List<IComputableResource> getComputation(ILocator transition) {
 
-        if (this.getName().equals("theoretical-value-of-outdoor-recreation-resolver")) {
-            System.out.println("ZOZOO");
-        }
-
         List<IAnnotation> parameters = new ArrayList<>();
         for (IAnnotation annotation : getAnnotations()) {
             if (annotation.getName().equals("parameter")) {

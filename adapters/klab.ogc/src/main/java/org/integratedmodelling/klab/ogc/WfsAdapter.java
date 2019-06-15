@@ -17,8 +17,10 @@ package org.integratedmodelling.klab.ogc;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.geotools.data.wfs.WFSDataStore;
 import org.geotools.data.wfs.WFSDataStoreFactory;
@@ -42,85 +44,105 @@ import org.integratedmodelling.klab.ogc.vector.wfs.WfsValidator;
 /**
  * The Class WfsAdapter.
  */
-@ResourceAdapter(type = "wfs", version = Version.CURRENT, requires = { "serviceUrl", "wfsIdentifier" }, optional = {
-		// TODO check out
-		// http://docs.geotools.org/latest/userguide/library/data/wfs-ng.html
-		// TODO find a way to provide documentation for all these options
-		"wfsVersion", "bufferSize", "serverType", "timeoutSeconds", "filter", "computeShape", "sanitize" })
+@ResourceAdapter(
+        type = "wfs",
+        version = Version.CURRENT,
+        requires = { "serviceUrl", "wfsIdentifier" },
+        optional = {
+                // TODO check out
+                // http://docs.geotools.org/latest/userguide/library/data/wfs-ng.html
+                // TODO find a way to provide documentation for all these options
+                "wfsVersion", "bufferSize", "serverType", "timeoutSeconds", "filter", "computeShape", "sanitize" })
 public class WfsAdapter implements IResourceAdapter {
 
-	static Map<String, WFSDataStore> dataStores = new HashMap<>();
+    static Map<String, WFSDataStore> dataStores = new HashMap<>();
 
-	public static final int TIMEOUT = 100000;
-	public static final int BUFFER_SIZE = 512;
+    public static final int TIMEOUT = 100000;
+    public static final int BUFFER_SIZE = 512;
 
-	@Override
-	public String getName() {
-		return "wfs";
-	}
+    /*
+     * retry failing datastores every 5 minutes
+     */
+    private static final long RETRY_INTERVAL_MS = 5 * 60 * 1000;
 
-	@Override
-	public IResourceValidator getValidator() {
-		return new WfsValidator();
-	}
+    private static Map<String, AtomicLong> lastTry = Collections.synchronizedMap(new HashMap<>());
 
-	@Override
-	public IResourcePublisher getPublisher() {
-		return new WfsPublisher();
-	}
+    @Override
+    public String getName() {
+        return "wfs";
+    }
 
-	@Override
-	public IResourceEncoder getEncoder() {
-		return new WfsEncoder();
-	}
+    @Override
+    public IResourceValidator getValidator() {
+        return new WfsValidator();
+    }
 
-	public static WFSDataStore getDatastore(String serverUrl, Version version) {
+    @Override
+    public IResourcePublisher getPublisher() {
+        return new WfsPublisher();
+    }
 
-		WFSDataStore ret = dataStores.get(serverUrl);
+    @Override
+    public IResourceEncoder getEncoder() {
+        return new WfsEncoder();
+    }
 
-		if (ret == null) {
+    public static WFSDataStore getDatastore(String serverUrl, Version version) {
 
-			Integer wfsTimeout = TIMEOUT;
-			Integer wfsBufsize = BUFFER_SIZE;
+        WFSDataStore ret = dataStores.get(serverUrl);
 
-			final Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
-			ReferencingFactoryFinder.getCRSAuthorityFactory("EPSG", hints);
+        if (ret == null) {
 
-			String getCapabilities = serverUrl + "?SERVICE=wfs&REQUEST=getCapabilities&version=" + version;
-			WFSDataStoreFactory dsf = new WFSDataStoreFactory();
-			try {
+            if (lastTry.get(serverUrl) != null
+                    && (System.currentTimeMillis() - lastTry.get(serverUrl).get()) < RETRY_INTERVAL_MS) {
+                return null;
+            }
 
-				Map<String, Serializable> connectionParameters = new HashMap<>();
-				connectionParameters.put(WFSDataStoreFactory.URL.key, getCapabilities);
-				connectionParameters.put(WFSDataStoreFactory.TIMEOUT.key, wfsTimeout);
-				connectionParameters.put(WFSDataStoreFactory.BUFFER_SIZE.key, wfsBufsize);
+            if (lastTry.get(serverUrl) == null) {
+                lastTry.put(serverUrl, new AtomicLong());
+            }
+            lastTry.get(serverUrl).set(System.currentTimeMillis());
 
-				/*
-				 * TODO all other parameters
-				 */
+            Integer wfsTimeout = TIMEOUT;
+            Integer wfsBufsize = BUFFER_SIZE;
 
-				ret = dsf.createDataStore(connectionParameters);
-				
-				dataStores.put(serverUrl, ret);
+            final Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
+            ReferencingFactoryFinder.getCRSAuthorityFactory("EPSG", hints);
 
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
+            String getCapabilities = serverUrl + "?SERVICE=wfs&REQUEST=getCapabilities&version=" + version;
+            WFSDataStoreFactory dsf = new WFSDataStoreFactory();
 
-		}
-		return ret;
-	}
+            Map<String, Serializable> connectionParameters = new HashMap<>();
+            connectionParameters.put(WFSDataStoreFactory.URL.key, getCapabilities);
+            connectionParameters.put(WFSDataStoreFactory.TIMEOUT.key, wfsTimeout);
+            connectionParameters.put(WFSDataStoreFactory.BUFFER_SIZE.key, wfsBufsize);
 
-	@Override
-	public IResourceImporter getImporter() {
-		return new WfsImporter();
-	}
+            /*
+             * TODO all other parameters
+             */
+            try {
+                ret = dsf.createDataStore(connectionParameters);
+            } catch (Throwable t) {
+                return null;
+            }
+            
+            dataStores.put(serverUrl, ret);
+        }
 
-	@Override
-	public IPrototype getResourceConfiguration() {
-		return new Prototype(
-				Dataflows.INSTANCE.declare(getClass().getClassLoader().getResource("ogc/prototypes/wfs.kdl"))
-						.getActuators().iterator().next(),
-				null);
-	}
+        return ret;
+
+    }
+
+    @Override
+    public IResourceImporter getImporter() {
+        return new WfsImporter();
+    }
+
+    @Override
+    public IPrototype getResourceConfiguration() {
+        return new Prototype(
+                Dataflows.INSTANCE.declare(getClass().getClassLoader().getResource("ogc/prototypes/wfs.kdl"))
+                        .getActuators().iterator().next(),
+                null);
+    }
 }

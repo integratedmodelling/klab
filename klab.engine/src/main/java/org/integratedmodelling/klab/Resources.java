@@ -840,9 +840,12 @@ public enum Resources implements IResourceService {
 			}
 
 			IKlabData.Builder builder = new LocalDataBuilder((IRuntimeContext) context);
-			adapter.getEncoder().getEncodedData(resource, urnParameters, geometry, builder, context);
-			return builder.build();
-
+			try {
+			    adapter.getEncoder().getEncodedData(resource, urnParameters, geometry, builder, context);
+			    return builder.build();
+			} catch (Throwable t) {
+			    context.getMonitor().error("cannot access resource data for " + resource.getUrn());
+			}
 		} else {
 
 			/*

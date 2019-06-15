@@ -102,15 +102,15 @@ public class DataflowGraph {
 
 		for (String input : element.getInputs()) {
 			ElkPort port = kelk.createPort(input, ret, parentNode == null ? PortSide.NORTH : PortSide.WEST);
-			ElkLabel label = kelk.createLabel(Path.getLast(input, '.'), input + ".label", port);
-			port.getLabels().add(label);
+//			ElkLabel label = kelk.createLabel(Path.getLast(input, '.'), input + ".label", port);
+//			port.getLabels().add(label);
 			nodes.put(input, port);
 		}
 
 		for (String output : element.getOutputs()) {
 			ElkPort port = kelk.createPort(output, ret, parentNode == null ? PortSide.SOUTH : PortSide.EAST);
-			ElkLabel label = kelk.createLabel(Path.getLast(output, '.'), output + ".label", port);
-			port.getLabels().add(label);
+//			ElkLabel label = kelk.createLabel(Path.getLast(output, '.'), output + ".label", port);
+//			port.getLabels().add(label);
 			nodes.put(output, port);
 		}
 
