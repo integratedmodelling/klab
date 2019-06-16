@@ -242,13 +242,18 @@ public enum Models implements IModelService {
      * that resolution is currently happening into, wrapped into a ranked model
      * with maximum rank.
      * 
+     * When the whole thing becomes more intelligent, this may return a number of ranked alternative
+     * strategies, e.g. depending on previous paths taken and/or reasoning to find more complex pathways
+     * to the observation.
+     * 
      * @param candidateObservable
      * @param ret
      * @return
      */
-    public List<IRankedModel> createDerivedModel(Observable mainObservable, CandidateObservable candidateObservable, ResolutionScope scope) {
-        return Collections.singletonList(
-                new RankedModel(new org.integratedmodelling.klab.model.Model(mainObservable, candidateObservable, scope)));
+    public List<IRankedModel> createDerivedModel(Observable mainObservable, CandidateObservable candidateObservable,
+            ResolutionScope scope) {
+        return Collections.singletonList(new RankedModel(
+                new org.integratedmodelling.klab.model.Model(mainObservable, candidateObservable, scope)));
     }
 
 }

@@ -156,7 +156,8 @@ public class ResolutionScope implements IResolutionScope {
     private Collection<String> scenarios = new ArrayList<>();
     private boolean interactive;
     private IMonitor monitor;
-
+    private Scope originalScope;
+    
     /**
      * if not null, the observable has been resolved through a value specified
      * inline and requires no further resolution.
@@ -288,6 +289,7 @@ public class ResolutionScope implements IResolutionScope {
         this.coverage = other.coverage;
         this.beingResolved.addAll(other.beingResolved);
         this.contextModel = other.contextModel;
+        this.originalScope = other.originalScope;
         if (copyResolution) {
             this.observable = other.observable;
             this.model = other.model;
@@ -414,8 +416,7 @@ public class ResolutionScope implements IResolutionScope {
         /*
          * models start with full coverage...
          */
-        ret.coverage = new Coverage(this.coverage);
-        ret.coverage.setCoverage(1.0);
+        ret.coverage = Coverage.full(this.coverage);
 
         if (!model.getCoverage(monitor).isEmpty()) {
             /*
@@ -425,6 +426,7 @@ public class ResolutionScope implements IResolutionScope {
                     Scale.createLike(ret.coverage, model.getCoverage(this.monitor).getExtents()),
                     LogicalConnector.INTERSECTION);
         }
+
         return ret;
     }
 
@@ -936,6 +938,15 @@ public class ResolutionScope implements IResolutionScope {
 
     public void setCoverage(Coverage coverage) {
         this.coverage = coverage;
+    }
+
+    @Override
+    public Scope getOriginalScope() {
+        return originalScope;
+    }
+
+    public void setOriginalScope(Scope originalScope) {
+        this.originalScope = originalScope;
     }
 
 }

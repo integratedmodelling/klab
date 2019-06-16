@@ -43,99 +43,117 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
  */
 public interface IResolutionScope {
 
-	/**
-	 * The Enum Mode.
-	 */
-	public enum Mode {
-		/**
-		 * this context is resolving a model for a single instance that may already
-		 * exist (if a countable created by an instantiator) or will be created upon
-		 * successful resolution (a non-countable).
-		 */
-		RESOLUTION,
-		/**
-		 * this context is trying to resolve an observable for direct observations that
-		 * have not been instantiated, i.e. it will be resolved by models that
-		 * instantiate them ('model each' models).
-		 */
-		INSTANTIATION
-	}
+    /**
+     * The Enum Mode.
+     */
+    public enum Mode {
+        /**
+         * this context is resolving a model for a single instance that may already
+         * exist (if a countable created by an instantiator) or will be created upon
+         * successful resolution (a non-countable).
+         */
+        RESOLUTION,
+        /**
+         * this context is trying to resolve an observable for direct observations that
+         * have not been instantiated, i.e. it will be resolved by models that
+         * instantiate them ('model each' models).
+         */
+        INSTANTIATION
+    }
 
-	/**
-	 * IDs of any scenarios we're resolving into. These are set in the root scope
-	 * and inherited by all child scopes.
-	 *
-	 * @return the scenarios of resolution
-	 */
-	Collection<String> getScenarios();
+    /**
+     * Scope of resolution. For now only used to report the unchanging original scope.
+     * 
+     * @author Ferd
+     *
+     */
+    public enum Scope {
+        OBSERVABLE,
+        OBSERVER,
+        MODEL
+    }
 
-	/**
-	 * Return the namespace of reference for this context. It should never be null;
-	 * if we're resolving a model's dependency, it should be the model's namespace,
-	 * otherwise it should be that of the subject or concept we're resolving. The
-	 * namespace provides semantic distance, ranking criteria, white/blacklist for
-	 * resolution, etc.
-	 *
-	 * @return the resolution namespace
-	 */
-	INamespace getResolutionNamespace();
+    /**
+     * IDs of any scenarios we're resolving into. These are set in the root scope
+     * and inherited by all child scopes.
+     *
+     * @return the scenarios of resolution
+     */
+    Collection<String> getScenarios();
 
-	/**
-	 * Return the mode of resolution - whether we're looking for an instantiator or
-	 * a resolver.
-	 *
-	 * @return the mode of resolution
-	 */
-	Mode getMode();
+    /**
+     * Return the namespace of reference for this context. It should never be null;
+     * if we're resolving a model's dependency, it should be the model's namespace,
+     * otherwise it should be that of the subject or concept we're resolving. The
+     * namespace provides semantic distance, ranking criteria, white/blacklist for
+     * resolution, etc.
+     *
+     * @return the resolution namespace
+     */
+    INamespace getResolutionNamespace();
 
-	/**
-	 * If true, we're resolving interactively, which implies giving the user a
-	 * choice over values of editable parameters and optional outputs. Whenever
-	 * these are available, the resolver will stop and ask the user for input
-	 * through the engine notification bus.
-	 *
-	 * @return whether the resolution is interactive
-	 */
-	boolean isInteractive();
+    /**
+     * Return the mode of resolution - whether we're looking for an instantiator or
+     * a resolver.
+     *
+     * @return the mode of resolution
+     */
+    Mode getMode();
 
-	/**
-	 * Resolution is controlled by a task or script monitor.
-	 *
-	 * @return the monitor
-	 */
-	IMonitor getMonitor();
+    /**
+     * If true, we're resolving interactively, which implies giving the user a
+     * choice over values of editable parameters and optional outputs. Whenever
+     * these are available, the resolver will stop and ask the user for input
+     * through the engine notification bus.
+     *
+     * @return whether the resolution is interactive
+     */
+    boolean isInteractive();
 
-	/**
-	 * Return the context in which this resolution is happening. Null for scopes
-	 * that resolve a root context.
-	 *
-	 * @return the context, or null
-	 */
-	IDirectObservation getContext();
+    /**
+     * Resolution is controlled by a task or script monitor.
+     *
+     * @return the monitor
+     */
+    IMonitor getMonitor();
 
-	/**
-	 * The scale of the resolution, including how much the resolution process
-	 * managed to cover it.
-	 *
-	 * @return the coverage
-	 */
-	ICoverage getCoverage();
+    /**
+     * Return the context in which this resolution is happening. Null for scopes
+     * that resolve a root context.
+     *
+     * @return the context, or null
+     */
+    IDirectObservation getContext();
 
-	/**
-	 * If this scope is resolving a relationship, it must know the source and target subject 
-	 * for it.
-	 * 
-	 * @return the source subject for the relationship being resolved
-	 */
-	ISubject getRelationshipSource();
+    /**
+     * The scale of the resolution, including how much the resolution process
+     * managed to cover it.
+     *
+     * @return the coverage
+     */
+    ICoverage getCoverage();
 
-	/**
-	 * If this scope is resolving a relationship, it must know the source and target subject 
-	 * for it.
-	 * 
-	 * @return the target subject for the relationship being resolved
-	 */
-	ISubject getRelationshipTarget();
+    /**
+     * If this scope is resolving a relationship, it must know the source and target subject 
+     * for it.
+     * 
+     * @return the source subject for the relationship being resolved
+     */
+    ISubject getRelationshipSource();
 
+    /**
+     * If this scope is resolving a relationship, it must know the source and target subject 
+     * for it.
+     * 
+     * @return the target subject for the relationship being resolved
+     */
+    ISubject getRelationshipTarget();
+
+    /**
+     * The scope this resolution was started into. Doesn't change across the resolution graph.
+     * 
+     * @return the original scope
+     */
+    Scope getOriginalScope();
 
 }

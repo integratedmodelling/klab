@@ -18,6 +18,7 @@ import org.eclipse.elk.core.labels.LabelManagementOptions;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.PortConstraints;
@@ -109,9 +110,10 @@ public class KlabElkGraphFactory {
 		root.setIdentifier(identifier);
 		root.setProperty(LabelManagementOptions.LABEL_MANAGER, LABEL_MANAGER);
 		root.setProperty(LayeredOptions.HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN);
-		root.setProperty(LayeredMetaDataProvider.NORTH_OR_SOUTH_PORT, true);
-		root.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+//		root.setProperty(LayeredMetaDataProvider.NORTH_OR_SOUTH_PORT, true);
+//		root.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
 		root.setProperty(LayeredOptions.WRAPPING_STRATEGY, WrappingStrategy.MULTI_EDGE);
+//        root.setProperty(CoreOptions.DIRECTION, Direction.DOWN);
 		return root;
 	}
 	
@@ -126,10 +128,11 @@ public class KlabElkGraphFactory {
 		node.setIdentifier(identifier);
 		node.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS, SizeConstraint.PORTS));
 		node.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.outsideTopLeft());
-		node.setProperty(LayeredMetaDataProvider.NORTH_OR_SOUTH_PORT, true);
-		node.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+//		node.setProperty(LayeredMetaDataProvider.NORTH_OR_SOUTH_PORT, true);
+//		node.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
 		// node.setProperty(CoreOptions.SPACING_LABEL_NODE, 0d);
 		node.setProperty(CoreOptions.NODE_LABELS_PADDING, ACTUATOR_PADDING);
+//        node.setProperty(CoreOptions.DIRECTION, Direction.RIGHT);
 		node.setProperty(CoreOptions.NODE_SIZE_OPTIONS, EnumSet.of(SizeOptions.UNIFORM_PORT_SPACING)); 
 		return node;
 	}

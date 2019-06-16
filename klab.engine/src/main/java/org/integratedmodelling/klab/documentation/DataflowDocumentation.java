@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
+import org.integratedmodelling.klab.api.documentation.IReport.Encoding;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Flowchart;
 import org.integratedmodelling.klab.dataflow.Flowchart.Element;
@@ -209,10 +210,17 @@ public enum DataflowDocumentation {
 		 */
 		String documentation = null;
 		if (actuator.getModel() != null) {
+		    Report report = null;
 			for (IDocumentation doc : actuator.getModel().getDocumentation()) {
+			    if (report == null) { 
+			        report = new Report();
+			    }
 				for (IDocumentation.Template ktemp : doc.get(Trigger.DOCUMENTATION)) {
-					// TODO render the template and set it into "documentation" variable
+				    report.include(ktemp, actuator.getCurrentContext());
 				}
+			}
+			if (report != null) {
+			    documentation = report.render(Encoding.HTML);
 			}
 		}
 

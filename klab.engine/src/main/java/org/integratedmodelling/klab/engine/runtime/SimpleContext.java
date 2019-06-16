@@ -44,6 +44,7 @@ import org.integratedmodelling.klab.components.runtime.observations.Process;
 import org.integratedmodelling.klab.components.runtime.observations.Relationship;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
+import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -87,6 +88,17 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 	ISubject rootSubject;
 	Map<String, IObservable> semantics;
 
+	public SimpleContext(Actuator actuator) {
+	    this.observable = actuator.getObservable();
+	    this.scale = actuator.getDataflow().getScale();
+        this.structure = new DefaultDirectedGraph<>(DefaultEdge.class);
+        this.network = new DefaultDirectedGraph<>(Relationship.class);
+        this.artifacts = new HashMap<>();
+        this.observations = new HashMap<>();
+        this.semantics = new HashMap<>();
+        this.namespace = Namespaces.INSTANCE.getNamespace(observable.getType().getNamespace());
+	}
+	
 	/**
 	 * Root context. Don't use this to build a child.
 	 * 

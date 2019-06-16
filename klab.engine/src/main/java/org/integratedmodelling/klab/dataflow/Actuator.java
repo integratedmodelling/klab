@@ -43,6 +43,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
+import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
@@ -52,6 +53,7 @@ import org.integratedmodelling.klab.components.runtime.observations.StateLayer;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.documentation.Report;
+import org.integratedmodelling.klab.engine.runtime.SimpleContext;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
@@ -119,6 +121,10 @@ public class Actuator implements IActuator {
     // non-semantic options
     private List<IAnnotation> annotations = new ArrayList<>();
 
+    // this is for documentation templates, not saved
+    private transient IRuntimeContext currentContext;
+
+    
     public void addComputation(IComputableResource resource) {
         computedResources.add(resource);
         IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource, this);
@@ -232,6 +238,8 @@ public class Actuator implements IActuator {
      */
     public IArtifact compute(IArtifact target, IRuntimeContext runtimeContext) throws KlabException {
 
+        
+        this.currentContext = runtimeContext;
         this.status.set(1);
         this.startComputation.set(System.currentTimeMillis());
 
@@ -347,6 +355,7 @@ public class Actuator implements IActuator {
 
         if (runtimeContext.getMonitor().isInterrupted()) {
             this.status.set(3);
+            this.currentContext = null;
             this.endComputation.set(System.currentTimeMillis());
             return ret;
         }
@@ -418,6 +427,7 @@ public class Actuator implements IActuator {
             ctx.processAnnotation(annotation);
         }
 
+        this.currentContext = null;
         this.endComputation.set(System.currentTimeMillis());
         this.status.set(2);
         
@@ -987,6 +997,8 @@ public class Actuator implements IActuator {
      */
     public void notifyArtifacts(boolean isMainObservable, IRuntimeContext context) {
 
+        this.currentContext = context;
+        
         if (Klab.INSTANCE.getMessageBus() == null || isPartition()
                 || context.getMonitor().getIdentity().getParentIdentity(ITaskTree.class).isChildTask()) {
             return;
@@ -1038,6 +1050,14 @@ public class Actuator implements IActuator {
                 ((Report) context.getReport()).include(template, context);
             }
         }
+        
+        this.currentContext = null;
+    }
 
+    public IComputationContext getCurrentContext() {
+        if (currentContext == null) {
+            return new SimpleContext(this);
+        }
+        return currentContext;
     }
 }

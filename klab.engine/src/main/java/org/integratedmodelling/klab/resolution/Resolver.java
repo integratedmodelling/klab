@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IPrioritizer;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope.Scope;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
@@ -30,6 +31,7 @@ import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Observable;
@@ -126,11 +128,15 @@ public enum Resolver {
     public ResolutionScope resolve(IResolvable resolvable, ResolutionScope parentScope) throws KlabException {
 
         if (resolvable instanceof Observable) {
+            parentScope.setOriginalScope(
+                    ((Observable) resolvable).getReferencedModel() == null ? Scope.OBSERVABLE : Scope.MODEL);
             return resolve((Observable) resolvable, parentScope,
                     ((Observable) resolvable).is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
         } else if (resolvable instanceof Model) {
+            parentScope.setOriginalScope(Scope.MODEL);
             return resolve((Model) resolvable, parentScope);
         } else if (resolvable instanceof Observer) {
+            parentScope.setOriginalScope(Scope.OBSERVER);
             return resolve((Observer) resolvable, parentScope);
         }
 
@@ -304,11 +310,10 @@ public enum Resolver {
                          * branching through a forest of possibilities. Otherwise search the kbox and network
                          * for candidates.
                          */
-                        List<IRankedModel> candidateModels = (candidate.observables.size() == 1
-                                && (candidate.computation == null || candidate.computation.isEmpty()))
-                                        ? Models.INSTANCE.resolve(candidate.observables.get(0),
-                                                ret.getChildScope(candidate.observables.get(0), candidate.mode))
-                                        : Models.INSTANCE.createDerivedModel(observable, candidate, ret);
+                        List<IRankedModel> candidateModels = candidate.isTrivial()
+                                ? Models.INSTANCE.resolve(candidate.observables.get(0),
+                                        ret.getChildScope(candidate.observables.get(0), candidate.mode))
+                                : Models.INSTANCE.createDerivedModel(observable, candidate, ret);
 
                         for (IRankedModel model : candidateModels) {
 
@@ -345,7 +350,7 @@ public enum Resolver {
                                 done = true;
                                 break;
                             }
-                            
+
                         }
 
                     } catch (KlabException e) {
@@ -399,7 +404,25 @@ public enum Resolver {
 
         ResolutionScope ret = parentScope.getChildScope(model);
 
-        Coverage coverage = Coverage.full(ret.getCoverage());
+        Coverage coverage = new Coverage(ret.getCoverage());
+
+        /*
+         * this can only happen if the model doesn't come from a kbox.
+         */
+        if (coverage.getCoverage() == 0) {
+            if (parentScope.getOriginalScope() == Scope.MODEL) {
+                /* we have explicitly asked to resolve a model outside of the coverage, which can only happen 
+                 * if a model is observed directly as the kbox won't return it. In this case, warn and force the
+                 * coverage to full so that resolution can continue at the modeler's risk. 
+                 */
+                parentScope.getMonitor().warn(
+                        "Model " + model.getName() + " is being observed outside of its coverage! Expect problems.");
+                coverage.setCoverage(1.0);
+            } else {
+                parentScope.getMonitor().error(new KlabInternalErrorException(
+                        "coverage before resolution of dependencies is 0: this should never happen"));
+            }
+        }
 
         // use the reasoner to infer any missing dependency from the semantics
         ObservableReasoner reasoner = new ObservableReasoner(model, parentScope.getObservable(), ret);
