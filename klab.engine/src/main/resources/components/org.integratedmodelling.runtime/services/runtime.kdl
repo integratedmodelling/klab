@@ -42,8 +42,8 @@ export value literal
 
 }
 
-export number convert
-	"Return a contextualizer for a literal value"
+process number convert
+	"Convert a numeric state from a unit, range or currency to a compatible other."
 	label '$original to $target'
 {
 	value 'original'
@@ -59,7 +59,7 @@ export number convert
 
 }
 
-export concept classify
+process concept classify
 	"Return a state contextualizer that classifies its input into a concept"
 	label 'Classify'
 {
@@ -71,7 +71,7 @@ export concept classify
 
 }
 
-export value lookup
+process value lookup
 	"Return a state contextualizer that classifies its inputs using a lookup table"
 	label 'Lookup table'
 {
@@ -109,7 +109,7 @@ export object instantiate
 
 }
 
-export value cast
+process value cast
 	"Return a state resolver that will convert a value from a type to another"
 	label '$source to $destination'
 {

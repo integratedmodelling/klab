@@ -5,6 +5,7 @@ import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
@@ -14,7 +15,7 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.rest.StateSummary;
 
-public class StandardizingTransformation implements IResolver<IState>, IExpression {
+public class StandardizingTransformation implements IResolver<IState>, IProcessor, IExpression {
 
 	IState state;
 

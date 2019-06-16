@@ -2,7 +2,7 @@
 @version 0.10.0
 @namespace klab.data
 
-export number normalize 
+process number normalize 
 	"" 
 	label "Normalize"
 {
@@ -12,7 +12,7 @@ export number normalize
 	class org.integratedmodelling.klab.data.transformations.NormalizingTransformation
 }
 
-export number standardize 
+process number standardize 
 	"" 
 	label "Standardize"
 {

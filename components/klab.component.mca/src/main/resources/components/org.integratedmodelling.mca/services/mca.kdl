@@ -22,7 +22,7 @@ export number concordance
 // TODO constraints for attributes according to method
 @taginput(cost)
 @taginput(benefit)
-export object ranking
+process object ranking
 	"Run a concordance analysis to rank the set of alternatives produced by a resource or a contextualizer. Acts as a filter
 	 that computes the concordance ranking and sorts the output set by decreasing concordance. The score will be added to the
 	 metadata and, if provided, to an output tagged with the @concordance annotation. Uses the annotations @cost and @benefit 

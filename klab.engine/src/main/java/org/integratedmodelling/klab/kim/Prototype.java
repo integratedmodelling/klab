@@ -34,6 +34,7 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
 		this.name = (namespace == null ? "" : (namespace + ".")) + actuator.getName();
 		this.type = IArtifact.Type.valueOf(actuator.getType().name());
 		this.contextualizer = actuator.isExported();
+		this.processor = actuator.isProcessor();
 
 		if (actuator.getDescription() != null) {
 			this.description = StringUtil.pack(actuator.getDescription());

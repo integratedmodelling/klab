@@ -45,6 +45,16 @@ public class KdlValidator extends AbstractKdlValidator {
       }
       this.error("abstract actors and extensions are only allowed at top level", actor, _xifexpression);
     }
+    if ((actor.isProcessor() && (!(actor.eContainer() instanceof Model)))) {
+      EAttribute _xifexpression_1 = null;
+      boolean _isAbstract_1 = actor.isAbstract();
+      if (_isAbstract_1) {
+        _xifexpression_1 = KdlPackage.Literals.ACTOR_DEFINITION__ABSTRACT;
+      } else {
+        _xifexpression_1 = KdlPackage.Literals.ACTOR_DEFINITION__EXTENDED;
+      }
+      this.error("processing actors and extensions are only allowed at top level", actor, _xifexpression_1);
+    }
     if ((((actor.getType() != null) && (actor.getType() == "enum")) && actor.getEnumValues().isEmpty())) {
       this.error("Enum parameters must specify all enum values with \'values\'", actor, 
         KdlPackage.Literals.ACTOR_DEFINITION__TYPE);

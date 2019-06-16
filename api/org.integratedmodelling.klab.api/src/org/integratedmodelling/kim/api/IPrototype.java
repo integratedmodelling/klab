@@ -249,6 +249,14 @@ public interface IPrototype {
 	 * @return
 	 */
 	boolean isContextualizer();
+	
+	/**
+	 * True if the prototype specifies a service that modifies an existing artifact
+	 * (with 'process' instead of 'export')
+	 * 
+	 * @return
+	 */
+	boolean isProcessor();
 
 	/**
 	 * If the service specifications include a geometry for the result, return it

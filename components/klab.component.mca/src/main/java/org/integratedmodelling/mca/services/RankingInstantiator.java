@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
+import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
@@ -25,7 +26,7 @@ import org.integratedmodelling.mca.api.IAlternative;
 import org.integratedmodelling.mca.api.ICriterion;
 import org.integratedmodelling.mca.api.IStakeholder;
 
-public class RankingInstantiator implements IInstantiator, IExpression {
+public class RankingInstantiator implements IInstantiator, IProcessor, IExpression {
 
 	String targetArtifact = null;
 	Method method = Method.EVAMIX;

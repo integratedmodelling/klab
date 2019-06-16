@@ -33,7 +33,7 @@ public class KdlParser extends AbstractContentAssistParser {
 				{
 					put(grammarAccess.getModelAccess().getNameAlternatives_0_0_1_0(), "rule__Model__NameAlternatives_0_0_1_0");
 					put(grammarAccess.getActorDefinitionAccess().getAlternatives_4(), "rule__ActorDefinition__Alternatives_4");
-					put(grammarAccess.getActorDefinitionAccess().getAlternatives_4_1_1(), "rule__ActorDefinition__Alternatives_4_1_1");
+					put(grammarAccess.getActorDefinitionAccess().getAlternatives_4_2_1(), "rule__ActorDefinition__Alternatives_4_2_1");
 					put(grammarAccess.getActorDefinitionAccess().getNameAlternatives_8_0(), "rule__ActorDefinition__NameAlternatives_8_0");
 					put(grammarAccess.getActorDefinitionAccess().getExtendedAlternatives_9_1_0(), "rule__ActorDefinition__ExtendedAlternatives_9_1_0");
 					put(grammarAccess.getActorDefinitionAccess().getAlternatives_14(), "rule__ActorDefinition__Alternatives_14");
@@ -99,8 +99,8 @@ public class KdlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getAnnotationAccess().getGroup(), "rule__Annotation__Group__0");
 					put(grammarAccess.getAnnotationAccess().getGroup_1(), "rule__Annotation__Group_1__0");
 					put(grammarAccess.getActorDefinitionAccess().getGroup(), "rule__ActorDefinition__Group__0");
-					put(grammarAccess.getActorDefinitionAccess().getGroup_4_1(), "rule__ActorDefinition__Group_4_1__0");
-					put(grammarAccess.getActorDefinitionAccess().getGroup_4_1_1_1(), "rule__ActorDefinition__Group_4_1_1_1__0");
+					put(grammarAccess.getActorDefinitionAccess().getGroup_4_2(), "rule__ActorDefinition__Group_4_2__0");
+					put(grammarAccess.getActorDefinitionAccess().getGroup_4_2_1_1(), "rule__ActorDefinition__Group_4_2_1_1__0");
 					put(grammarAccess.getActorDefinitionAccess().getGroup_9(), "rule__ActorDefinition__Group_9__0");
 					put(grammarAccess.getActorDefinitionAccess().getGroup_10(), "rule__ActorDefinition__Group_10__0");
 					put(grammarAccess.getActorDefinitionAccess().getGroup_10_2(), "rule__ActorDefinition__Group_10_2__0");
@@ -210,10 +210,11 @@ public class KdlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getActorDefinitionAccess().getFinalAssignment_2(), "rule__ActorDefinition__FinalAssignment_2");
 					put(grammarAccess.getActorDefinitionAccess().getOptionalAssignment_3(), "rule__ActorDefinition__OptionalAssignment_3");
 					put(grammarAccess.getActorDefinitionAccess().getExportedAssignment_4_0(), "rule__ActorDefinition__ExportedAssignment_4_0");
-					put(grammarAccess.getActorDefinitionAccess().getImportedAssignment_4_1_0(), "rule__ActorDefinition__ImportedAssignment_4_1_0");
-					put(grammarAccess.getActorDefinitionAccess().getMultipleAssignment_4_1_1_0(), "rule__ActorDefinition__MultipleAssignment_4_1_1_0");
-					put(grammarAccess.getActorDefinitionAccess().getArityAssignment_4_1_1_1_0(), "rule__ActorDefinition__ArityAssignment_4_1_1_1_0");
-					put(grammarAccess.getActorDefinitionAccess().getMinimumAssignment_4_1_1_1_1(), "rule__ActorDefinition__MinimumAssignment_4_1_1_1_1");
+					put(grammarAccess.getActorDefinitionAccess().getProcessorAssignment_4_1(), "rule__ActorDefinition__ProcessorAssignment_4_1");
+					put(grammarAccess.getActorDefinitionAccess().getImportedAssignment_4_2_0(), "rule__ActorDefinition__ImportedAssignment_4_2_0");
+					put(grammarAccess.getActorDefinitionAccess().getMultipleAssignment_4_2_1_0(), "rule__ActorDefinition__MultipleAssignment_4_2_1_0");
+					put(grammarAccess.getActorDefinitionAccess().getArityAssignment_4_2_1_1_0(), "rule__ActorDefinition__ArityAssignment_4_2_1_1_0");
+					put(grammarAccess.getActorDefinitionAccess().getMinimumAssignment_4_2_1_1_1(), "rule__ActorDefinition__MinimumAssignment_4_2_1_1_1");
 					put(grammarAccess.getActorDefinitionAccess().getParameterAssignment_5(), "rule__ActorDefinition__ParameterAssignment_5");
 					put(grammarAccess.getActorDefinitionAccess().getTypeAssignment_6(), "rule__ActorDefinition__TypeAssignment_6");
 					put(grammarAccess.getActorDefinitionAccess().getExpressionAssignment_7(), "rule__ActorDefinition__ExpressionAssignment_7");

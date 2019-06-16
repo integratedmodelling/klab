@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isFinal <em>Final</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isOptional <em>Optional</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isExported <em>Exported</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isProcessor <em>Processor</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isImported <em>Imported</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isMultiple <em>Multiple</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getArity <em>Arity</em>}</li>
@@ -167,6 +168,32 @@ public interface ActorDefinition extends EObject
    * @generated
    */
   void setExported(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Processor</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Processor</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Processor</em>' attribute.
+   * @see #setProcessor(boolean)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Processor()
+   * @model
+   * @generated
+   */
+  boolean isProcessor();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isProcessor <em>Processor</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Processor</em>' attribute.
+   * @see #isProcessor()
+   * @generated
+   */
+  void setProcessor(boolean value);
 
   /**
    * Returns the value of the '<em><b>Imported</b></em>' attribute.

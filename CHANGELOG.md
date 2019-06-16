@@ -32,6 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add 'expression' modifier to tag inputs that accept expressions in k.DL.
 - Better behavior and proper loading of imported BIF files in WEKA resources.
 - Template-based system to document all nodes in the dataflow.
+- Add 'process' modifier to specify filter services in KDL, used to validate role contextualizers. Expose
+  as isProcessor() in both actuator and prototype API. Produce tag interface for contextualizers.
 ### Changed
 - Overhaul the dataflow visualization, with better and complete representation of all links within and 
   across components and computations. System now carries types for computations, enabling forthcoming

@@ -1,5 +1,7 @@
 package org.integratedmodelling.kdl.ui.labeling;
 
+import java.util.List;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.AbstractRule;
 import org.eclipse.xtext.Assignment;
@@ -8,8 +10,11 @@ import org.eclipse.xtext.ide.editor.syntaxcoloring.DefaultSemanticHighlightingCa
 import org.eclipse.xtext.ide.editor.syntaxcoloring.IHighlightedPositionAcceptor;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.INode;
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.util.CancelIndicator;
+import org.integratedmodelling.kdl.kdl.ActorDefinition;
+import org.integratedmodelling.kdl.kdl.KdlPackage;
 import org.integratedmodelling.kdl.kdl.Urn;
 import org.integratedmodelling.kdl.services.KdlGrammarAccess;
 
@@ -69,7 +74,17 @@ public class KdlHighlightingCalculator extends DefaultSemanticHighlightingCalcul
                                     .getLength(), KdlHighlightingConfiguration.UNKNOWN_URN_ID);
                         }
                     }
-                }
+                } else if (node.getSemanticElement() instanceof ActorDefinition
+                        && ((ActorDefinition) node.getSemanticElement()).getName() != null) {
+
+                    List<INode> nodes = NodeModelUtils.findNodesForFeature(node.getSemanticElement(),
+                            KdlPackage.Literals.ACTOR_DEFINITION__NAME);
+                    if (nodes.size() == 1 && nodes.get(0).getOffset() > start) {
+                        acceptor.addPosition(start = nodes.get(0).getOffset(), nodes.get(0).getLength(),
+                                KdlHighlightingConfiguration.DEFINITION_ID);
+                    }
+
+                } 
             }
         }
         super.provideHighlightingFor(resource, acceptor, cancelIndicator);

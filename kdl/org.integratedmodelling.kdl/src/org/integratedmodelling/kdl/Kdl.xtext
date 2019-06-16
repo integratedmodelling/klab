@@ -38,7 +38,9 @@ ActorDefinition:
 	(final?='final')? (optional?='optional')? 
 	// export and import are from a CONTEXT and refer to artifacts. So 'export number' is a contextualizer that produces numbers and
 	// if used internally to an actuator, it defines inputs to and outputs from that actuator besides the defaults.
-	((exported?='export' | (imported?='import') (multiple?='multiple' | arity=INT (minimum?='+')?)?))? 
+	// A processor is a filter for something that was created before. Used to declare roles among other contextualizers that expect 
+	// their observation already computed.
+	((exported?='export' | processor?='process' | (imported?='import') (multiple?='multiple' | arity=INT (minimum?='+')?)?))? 
 	// parameters denotes the ability of the implementation of accepting modified values during run
 	// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
 	(parameter?='parameter')?
@@ -78,10 +80,8 @@ Geometry:
 Parameter:
 	name=LOWERCASE_ID value=Value (docstring=STRING)?;
 ACTOR:
-// countable, so always a dataflow for direct object instantiation
+	// countable, so always a dataflow for direct object instantiation. Resolvers for single objects or processes are void.
 	'object' |
-	// non-countable, so one object only
-	'process' |
 	// any acceptable quality type, for declarations only
 	'value' |
 	// all the next are in quality scope; number type is handled internally

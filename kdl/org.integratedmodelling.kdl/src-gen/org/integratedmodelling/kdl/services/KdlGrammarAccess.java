@@ -332,17 +332,19 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cAlternatives_4 = (Alternatives)cGroup.eContents().get(4);
 		private final Assignment cExportedAssignment_4_0 = (Assignment)cAlternatives_4.eContents().get(0);
 		private final Keyword cExportedExportKeyword_4_0_0 = (Keyword)cExportedAssignment_4_0.eContents().get(0);
-		private final Group cGroup_4_1 = (Group)cAlternatives_4.eContents().get(1);
-		private final Assignment cImportedAssignment_4_1_0 = (Assignment)cGroup_4_1.eContents().get(0);
-		private final Keyword cImportedImportKeyword_4_1_0_0 = (Keyword)cImportedAssignment_4_1_0.eContents().get(0);
-		private final Alternatives cAlternatives_4_1_1 = (Alternatives)cGroup_4_1.eContents().get(1);
-		private final Assignment cMultipleAssignment_4_1_1_0 = (Assignment)cAlternatives_4_1_1.eContents().get(0);
-		private final Keyword cMultipleMultipleKeyword_4_1_1_0_0 = (Keyword)cMultipleAssignment_4_1_1_0.eContents().get(0);
-		private final Group cGroup_4_1_1_1 = (Group)cAlternatives_4_1_1.eContents().get(1);
-		private final Assignment cArityAssignment_4_1_1_1_0 = (Assignment)cGroup_4_1_1_1.eContents().get(0);
-		private final RuleCall cArityINTTerminalRuleCall_4_1_1_1_0_0 = (RuleCall)cArityAssignment_4_1_1_1_0.eContents().get(0);
-		private final Assignment cMinimumAssignment_4_1_1_1_1 = (Assignment)cGroup_4_1_1_1.eContents().get(1);
-		private final Keyword cMinimumPlusSignKeyword_4_1_1_1_1_0 = (Keyword)cMinimumAssignment_4_1_1_1_1.eContents().get(0);
+		private final Assignment cProcessorAssignment_4_1 = (Assignment)cAlternatives_4.eContents().get(1);
+		private final Keyword cProcessorProcessKeyword_4_1_0 = (Keyword)cProcessorAssignment_4_1.eContents().get(0);
+		private final Group cGroup_4_2 = (Group)cAlternatives_4.eContents().get(2);
+		private final Assignment cImportedAssignment_4_2_0 = (Assignment)cGroup_4_2.eContents().get(0);
+		private final Keyword cImportedImportKeyword_4_2_0_0 = (Keyword)cImportedAssignment_4_2_0.eContents().get(0);
+		private final Alternatives cAlternatives_4_2_1 = (Alternatives)cGroup_4_2.eContents().get(1);
+		private final Assignment cMultipleAssignment_4_2_1_0 = (Assignment)cAlternatives_4_2_1.eContents().get(0);
+		private final Keyword cMultipleMultipleKeyword_4_2_1_0_0 = (Keyword)cMultipleAssignment_4_2_1_0.eContents().get(0);
+		private final Group cGroup_4_2_1_1 = (Group)cAlternatives_4_2_1.eContents().get(1);
+		private final Assignment cArityAssignment_4_2_1_1_0 = (Assignment)cGroup_4_2_1_1.eContents().get(0);
+		private final RuleCall cArityINTTerminalRuleCall_4_2_1_1_0_0 = (RuleCall)cArityAssignment_4_2_1_1_0.eContents().get(0);
+		private final Assignment cMinimumAssignment_4_2_1_1_1 = (Assignment)cGroup_4_2_1_1.eContents().get(1);
+		private final Keyword cMinimumPlusSignKeyword_4_2_1_1_1_0 = (Keyword)cMinimumAssignment_4_2_1_1_1.eContents().get(0);
 		private final Assignment cParameterAssignment_5 = (Assignment)cGroup.eContents().get(5);
 		private final Keyword cParameterParameterKeyword_5_0 = (Keyword)cParameterAssignment_5.eContents().get(0);
 		private final Assignment cTypeAssignment_6 = (Assignment)cGroup.eContents().get(6);
@@ -432,31 +434,35 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//	annotations+=Annotation*
 		//	// abstract only allowed at root level; only exists to be extended
 		//	abstract?='abstract'?
-		//	final?='final'? optional?='optional'? (exported?='export' | imported?='import' (multiple?='multiple' | arity=INT
-		//	minimum?='+'?)?)?
+		//	final?='final'? optional?='optional'? (exported?='export' | processor?='process' | imported?='import'
+		//	(multiple?='multiple' | arity=INT minimum?='+'?)?)?
 		//	// parameters denotes the ability of the implementation of accepting modified values during run
 		//	// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
 		//	parameter?='parameter'?
-		//	type=ACTOR expression?='expression'? name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('extends'
-		//	extended=(LOWERCASE_ID | LOWERCASE_DASHID | STRING))? ('for' targets+=TARGET (',' targets+=TARGET)*)?
-		//	docstring=STRING? ('label' label=STRING)? ('{' body=DataflowBody '}')? (('minimum' rangeMin=Number | 'maximum'
-		//	rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number) | 'values' enumValues+=(UPPERCASE_ID | LOWERCASE_ID |
-		//	CAMELCASE_ID) (',' enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID))*)? ('default' default=Value)? ('as'
-		//	localName=LOWERCASE_ID)? ('over' coverage+=Function (',' coverage+=Function)*)?;
+		//	type=ACTOR
+		//	// expressions must return the type; they are evaluated in the context and the artifacts named in them are imports
+		//	expression?='expression'?
+		//	name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('extends' extended=(LOWERCASE_ID | LOWERCASE_DASHID | STRING))?
+		//	('for' targets+=TARGET (',' targets+=TARGET)*)? docstring=STRING? ('label' label=STRING)? ('{' body=DataflowBody
+		//	'}')? (('minimum' rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number) |
+		//	'values' enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID) (',' enumValues+=(UPPERCASE_ID | LOWERCASE_ID |
+		//	CAMELCASE_ID))*)? ('default' default=Value)? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function (','
+		//	coverage+=Function)*)?;
 		@Override public ParserRule getRule() { return rule; }
 		
 		///*
 		//	 * This is the form that specifies dataflows
 		//	 */ annotations+=Annotation* // abstract only allowed at root level; only exists to be extended
-		//abstract?='abstract'? final?='final'? optional?='optional'? (exported?='export' | imported?='import'
-		//(multiple?='multiple' | arity=INT minimum?='+'?)?)? // parameters denotes the ability of the implementation of accepting modified values during run
+		//abstract?='abstract'? final?='final'? optional?='optional'? (exported?='export' | processor?='process' |
+		//imported?='import' (multiple?='multiple' | arity=INT minimum?='+'?)?)? // parameters denotes the ability of the implementation of accepting modified values during run
 		//// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
-		//parameter?='parameter'? type=ACTOR expression?='expression'? name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('extends'
-		//extended=(LOWERCASE_ID | LOWERCASE_DASHID | STRING))? ('for' targets+=TARGET (',' targets+=TARGET)*)?
-		//docstring=STRING? ('label' label=STRING)? ('{' body=DataflowBody '}')? (('minimum' rangeMin=Number | 'maximum'
-		//rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number) | 'values' enumValues+=(UPPERCASE_ID | LOWERCASE_ID |
-		//CAMELCASE_ID) (',' enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID))*)? ('default' default=Value)? ('as'
-		//localName=LOWERCASE_ID)? ('over' coverage+=Function (',' coverage+=Function)*)?
+		//parameter?='parameter'? type=ACTOR // expressions must return the type; they are evaluated in the context and the artifacts named in them are imports
+		//expression?='expression'? name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('extends' extended=(LOWERCASE_ID |
+		//LOWERCASE_DASHID | STRING))? ('for' targets+=TARGET (',' targets+=TARGET)*)? docstring=STRING? ('label' label=STRING)?
+		//('{' body=DataflowBody '}')? (('minimum' rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to'
+		//rangeMax=Number) | 'values' enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID) (',' enumValues+=(UPPERCASE_ID |
+		//LOWERCASE_ID | CAMELCASE_ID))*)? ('default' default=Value)? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function
+		//(',' coverage+=Function)*)?
 		public Group getGroup() { return cGroup; }
 		
 		///*
@@ -486,7 +492,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//'optional'
 		public Keyword getOptionalOptionalKeyword_3_0() { return cOptionalOptionalKeyword_3_0; }
 		
-		//(exported?='export' | imported?='import' (multiple?='multiple' | arity=INT minimum?='+'?)?)?
+		//(exported?='export' | processor?='process' | imported?='import' (multiple?='multiple' | arity=INT minimum?='+'?)?)?
 		public Alternatives getAlternatives_4() { return cAlternatives_4; }
 		
 		//exported?='export'
@@ -495,38 +501,44 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//'export'
 		public Keyword getExportedExportKeyword_4_0_0() { return cExportedExportKeyword_4_0_0; }
 		
+		//processor?='process'
+		public Assignment getProcessorAssignment_4_1() { return cProcessorAssignment_4_1; }
+		
+		//'process'
+		public Keyword getProcessorProcessKeyword_4_1_0() { return cProcessorProcessKeyword_4_1_0; }
+		
 		//imported?='import' (multiple?='multiple' | arity=INT minimum?='+'?)?
-		public Group getGroup_4_1() { return cGroup_4_1; }
+		public Group getGroup_4_2() { return cGroup_4_2; }
 		
 		//imported?='import'
-		public Assignment getImportedAssignment_4_1_0() { return cImportedAssignment_4_1_0; }
+		public Assignment getImportedAssignment_4_2_0() { return cImportedAssignment_4_2_0; }
 		
 		//'import'
-		public Keyword getImportedImportKeyword_4_1_0_0() { return cImportedImportKeyword_4_1_0_0; }
+		public Keyword getImportedImportKeyword_4_2_0_0() { return cImportedImportKeyword_4_2_0_0; }
 		
 		//(multiple?='multiple' | arity=INT minimum?='+'?)?
-		public Alternatives getAlternatives_4_1_1() { return cAlternatives_4_1_1; }
+		public Alternatives getAlternatives_4_2_1() { return cAlternatives_4_2_1; }
 		
 		//multiple?='multiple'
-		public Assignment getMultipleAssignment_4_1_1_0() { return cMultipleAssignment_4_1_1_0; }
+		public Assignment getMultipleAssignment_4_2_1_0() { return cMultipleAssignment_4_2_1_0; }
 		
 		//'multiple'
-		public Keyword getMultipleMultipleKeyword_4_1_1_0_0() { return cMultipleMultipleKeyword_4_1_1_0_0; }
+		public Keyword getMultipleMultipleKeyword_4_2_1_0_0() { return cMultipleMultipleKeyword_4_2_1_0_0; }
 		
 		//arity=INT minimum?='+'?
-		public Group getGroup_4_1_1_1() { return cGroup_4_1_1_1; }
+		public Group getGroup_4_2_1_1() { return cGroup_4_2_1_1; }
 		
 		//arity=INT
-		public Assignment getArityAssignment_4_1_1_1_0() { return cArityAssignment_4_1_1_1_0; }
+		public Assignment getArityAssignment_4_2_1_1_0() { return cArityAssignment_4_2_1_1_0; }
 		
 		//INT
-		public RuleCall getArityINTTerminalRuleCall_4_1_1_1_0_0() { return cArityINTTerminalRuleCall_4_1_1_1_0_0; }
+		public RuleCall getArityINTTerminalRuleCall_4_2_1_1_0_0() { return cArityINTTerminalRuleCall_4_2_1_1_0_0; }
 		
 		//minimum?='+'?
-		public Assignment getMinimumAssignment_4_1_1_1_1() { return cMinimumAssignment_4_1_1_1_1; }
+		public Assignment getMinimumAssignment_4_2_1_1_1() { return cMinimumAssignment_4_2_1_1_1; }
 		
 		//'+'
-		public Keyword getMinimumPlusSignKeyword_4_1_1_1_1_0() { return cMinimumPlusSignKeyword_4_1_1_1_1_0; }
+		public Keyword getMinimumPlusSignKeyword_4_2_1_1_1_0() { return cMinimumPlusSignKeyword_4_2_1_1_1_0; }
 		
 		//// parameters denotes the ability of the implementation of accepting modified values during run
 		//// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
@@ -542,6 +554,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//ACTOR
 		public RuleCall getTypeACTORParserRuleCall_6_0() { return cTypeACTORParserRuleCall_6_0; }
 		
+		//// expressions must return the type; they are evaluated in the context and the artifacts named in them are imports
 		//expression?='expression'?
 		public Assignment getExpressionAssignment_7() { return cExpressionAssignment_7; }
 		
@@ -1012,25 +1025,23 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.ACTOR");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Keyword cObjectKeyword_0 = (Keyword)cAlternatives.eContents().get(0);
-		private final Keyword cProcessKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
-		private final Keyword cValueKeyword_2 = (Keyword)cAlternatives.eContents().get(2);
-		private final Keyword cNumberKeyword_3 = (Keyword)cAlternatives.eContents().get(3);
-		private final Keyword cConceptKeyword_4 = (Keyword)cAlternatives.eContents().get(4);
-		private final Keyword cBooleanKeyword_5 = (Keyword)cAlternatives.eContents().get(5);
-		private final Keyword cTextKeyword_6 = (Keyword)cAlternatives.eContents().get(6);
-		private final Keyword cListKeyword_7 = (Keyword)cAlternatives.eContents().get(7);
-		private final Keyword cExtentKeyword_8 = (Keyword)cAlternatives.eContents().get(8);
-		private final Keyword cSpatialextentKeyword_9 = (Keyword)cAlternatives.eContents().get(9);
-		private final Keyword cTemporalextentKeyword_10 = (Keyword)cAlternatives.eContents().get(10);
-		private final Keyword cAnnotationKeyword_11 = (Keyword)cAlternatives.eContents().get(11);
-		private final Keyword cEnumKeyword_12 = (Keyword)cAlternatives.eContents().get(12);
-		private final Keyword cRangeKeyword_13 = (Keyword)cAlternatives.eContents().get(13);
-		private final Keyword cVoidKeyword_14 = (Keyword)cAlternatives.eContents().get(14);
-		private final Keyword cPartitionKeyword_15 = (Keyword)cAlternatives.eContents().get(15);
+		private final Keyword cValueKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
+		private final Keyword cNumberKeyword_2 = (Keyword)cAlternatives.eContents().get(2);
+		private final Keyword cConceptKeyword_3 = (Keyword)cAlternatives.eContents().get(3);
+		private final Keyword cBooleanKeyword_4 = (Keyword)cAlternatives.eContents().get(4);
+		private final Keyword cTextKeyword_5 = (Keyword)cAlternatives.eContents().get(5);
+		private final Keyword cListKeyword_6 = (Keyword)cAlternatives.eContents().get(6);
+		private final Keyword cExtentKeyword_7 = (Keyword)cAlternatives.eContents().get(7);
+		private final Keyword cSpatialextentKeyword_8 = (Keyword)cAlternatives.eContents().get(8);
+		private final Keyword cTemporalextentKeyword_9 = (Keyword)cAlternatives.eContents().get(9);
+		private final Keyword cAnnotationKeyword_10 = (Keyword)cAlternatives.eContents().get(10);
+		private final Keyword cEnumKeyword_11 = (Keyword)cAlternatives.eContents().get(11);
+		private final Keyword cRangeKeyword_12 = (Keyword)cAlternatives.eContents().get(12);
+		private final Keyword cVoidKeyword_13 = (Keyword)cAlternatives.eContents().get(13);
+		private final Keyword cPartitionKeyword_14 = (Keyword)cAlternatives.eContents().get(14);
 		
-		//ACTOR: // countable, so always a dataflow for direct object instantiation
-		//	'object' | // non-countable, so one object only
-		//	'process' | // any acceptable quality type, for declarations only
+		//ACTOR: // countable, so always a dataflow for direct object instantiation. Resolvers for single objects or processes are void.
+		//	'object' | // any acceptable quality type, for declarations only
 		//	'value' | // all the next are in quality scope; number type is handled internally
 		//	'number' | 'concept' | 'boolean' | 'text' | 'list' | // specialized functions that produce extents
 		//	'extent' | 'spatialextent' | 'temporalextent' | // only contracts for annotations
@@ -1041,9 +1052,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//	'partition';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//// countable, so always a dataflow for direct object instantiation
-		//'object' | // non-countable, so one object only
-		//'process' | // any acceptable quality type, for declarations only
+		//// countable, so always a dataflow for direct object instantiation. Resolvers for single objects or processes are void.
+		//'object' | // any acceptable quality type, for declarations only
 		//'value' | // all the next are in quality scope; number type is handled internally
 		//'number' | 'concept' | 'boolean' | 'text' | 'list' | // specialized functions that produce extents
 		//'extent' | 'spatialextent' | 'temporalextent' | // only contracts for annotations
@@ -1054,63 +1064,59 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//'partition'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//// countable, so always a dataflow for direct object instantiation
+		//// countable, so always a dataflow for direct object instantiation. Resolvers for single objects or processes are void.
 		//'object'
 		public Keyword getObjectKeyword_0() { return cObjectKeyword_0; }
 		
-		//// non-countable, so one object only
-		//'process'
-		public Keyword getProcessKeyword_1() { return cProcessKeyword_1; }
-		
 		//// any acceptable quality type, for declarations only
 		//'value'
-		public Keyword getValueKeyword_2() { return cValueKeyword_2; }
+		public Keyword getValueKeyword_1() { return cValueKeyword_1; }
 		
 		//// all the next are in quality scope; number type is handled internally
 		//'number'
-		public Keyword getNumberKeyword_3() { return cNumberKeyword_3; }
+		public Keyword getNumberKeyword_2() { return cNumberKeyword_2; }
 		
 		//'concept'
-		public Keyword getConceptKeyword_4() { return cConceptKeyword_4; }
+		public Keyword getConceptKeyword_3() { return cConceptKeyword_3; }
 		
 		//'boolean'
-		public Keyword getBooleanKeyword_5() { return cBooleanKeyword_5; }
+		public Keyword getBooleanKeyword_4() { return cBooleanKeyword_4; }
 		
 		//'text'
-		public Keyword getTextKeyword_6() { return cTextKeyword_6; }
+		public Keyword getTextKeyword_5() { return cTextKeyword_5; }
 		
 		//'list'
-		public Keyword getListKeyword_7() { return cListKeyword_7; }
+		public Keyword getListKeyword_6() { return cListKeyword_6; }
 		
 		//// specialized functions that produce extents
 		//'extent'
-		public Keyword getExtentKeyword_8() { return cExtentKeyword_8; }
+		public Keyword getExtentKeyword_7() { return cExtentKeyword_7; }
 		
 		//'spatialextent'
-		public Keyword getSpatialextentKeyword_9() { return cSpatialextentKeyword_9; }
+		public Keyword getSpatialextentKeyword_8() { return cSpatialextentKeyword_8; }
 		
 		//'temporalextent'
-		public Keyword getTemporalextentKeyword_10() { return cTemporalextentKeyword_10; }
+		public Keyword getTemporalextentKeyword_9() { return cTemporalextentKeyword_9; }
 		
 		//// only contracts for annotations
 		//'annotation'
-		public Keyword getAnnotationKeyword_11() { return cAnnotationKeyword_11; }
+		public Keyword getAnnotationKeyword_10() { return cAnnotationKeyword_10; }
 		
 		//// enum parameter, for prototypes only
 		//'enum'
-		public Keyword getEnumKeyword_12() { return cEnumKeyword_12; }
+		public Keyword getEnumKeyword_11() { return cEnumKeyword_11; }
 		
 		//// range parameter, for prototypes only
 		//'range'
-		public Keyword getRangeKeyword_13() { return cRangeKeyword_13; }
+		public Keyword getRangeKeyword_12() { return cRangeKeyword_12; }
 		
 		//// only for command prototypes
 		//'void'
-		public Keyword getVoidKeyword_14() { return cVoidKeyword_14; }
+		public Keyword getVoidKeyword_13() { return cVoidKeyword_13; }
 		
 		//// partial contextualizers for their parents
 		//'partition'
-		public Keyword getPartitionKeyword_15() { return cPartitionKeyword_15; }
+		public Keyword getPartitionKeyword_14() { return cPartitionKeyword_14; }
 	}
 	public class TARGETElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.TARGET");
@@ -3289,17 +3295,20 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	//	annotations+=Annotation*
 	//	// abstract only allowed at root level; only exists to be extended
 	//	abstract?='abstract'?
-	//	final?='final'? optional?='optional'? (exported?='export' | imported?='import' (multiple?='multiple' | arity=INT
-	//	minimum?='+'?)?)?
+	//	final?='final'? optional?='optional'? (exported?='export' | processor?='process' | imported?='import'
+	//	(multiple?='multiple' | arity=INT minimum?='+'?)?)?
 	//	// parameters denotes the ability of the implementation of accepting modified values during run
 	//	// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
 	//	parameter?='parameter'?
-	//	type=ACTOR expression?='expression'? name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('extends'
-	//	extended=(LOWERCASE_ID | LOWERCASE_DASHID | STRING))? ('for' targets+=TARGET (',' targets+=TARGET)*)?
-	//	docstring=STRING? ('label' label=STRING)? ('{' body=DataflowBody '}')? (('minimum' rangeMin=Number | 'maximum'
-	//	rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number) | 'values' enumValues+=(UPPERCASE_ID | LOWERCASE_ID |
-	//	CAMELCASE_ID) (',' enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID))*)? ('default' default=Value)? ('as'
-	//	localName=LOWERCASE_ID)? ('over' coverage+=Function (',' coverage+=Function)*)?;
+	//	type=ACTOR
+	//	// expressions must return the type; they are evaluated in the context and the artifacts named in them are imports
+	//	expression?='expression'?
+	//	name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('extends' extended=(LOWERCASE_ID | LOWERCASE_DASHID | STRING))?
+	//	('for' targets+=TARGET (',' targets+=TARGET)*)? docstring=STRING? ('label' label=STRING)? ('{' body=DataflowBody
+	//	'}')? (('minimum' rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number) |
+	//	'values' enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID) (',' enumValues+=(UPPERCASE_ID | LOWERCASE_ID |
+	//	CAMELCASE_ID))*)? ('default' default=Value)? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function (','
+	//	coverage+=Function)*)?;
 	public ActorDefinitionElements getActorDefinitionAccess() {
 		return pActorDefinition;
 	}
@@ -3349,9 +3358,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		return getParameterAccess().getRule();
 	}
 	
-	//ACTOR: // countable, so always a dataflow for direct object instantiation
-	//	'object' | // non-countable, so one object only
-	//	'process' | // any acceptable quality type, for declarations only
+	//ACTOR: // countable, so always a dataflow for direct object instantiation. Resolvers for single objects or processes are void.
+	//	'object' | // any acceptable quality type, for declarations only
 	//	'value' | // all the next are in quality scope; number type is handled internally
 	//	'number' | 'concept' | 'boolean' | 'text' | 'list' | // specialized functions that produce extents
 	//	'extent' | 'spatialextent' | 'temporalextent' | // only contracts for annotations

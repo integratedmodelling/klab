@@ -6,6 +6,7 @@ import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
@@ -15,7 +16,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.NumberUtils;
 
-public class CastingStateResolver implements IStateResolver, IExpression {
+public class CastingStateResolver implements IStateResolver, IProcessor, IExpression {
 
 	static final public String FUNCTION_ID = "klab.runtime.cast";
 

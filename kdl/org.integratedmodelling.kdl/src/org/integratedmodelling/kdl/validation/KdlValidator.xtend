@@ -47,6 +47,10 @@ class KdlValidator extends AbstractKdlValidator {
 				error("abstract actors and extensions are only allowed at top level", actor,
 					if (actor.isAbstract) KdlPackage.Literals.ACTOR_DEFINITION__ABSTRACT else KdlPackage.Literals.ACTOR_DEFINITION__EXTENDED);
 		}
+		if ((actor.isProcessor) && !(actor.eContainer instanceof Model)) {
+				error("processing actors and extensions are only allowed at top level", actor,
+					if (actor.isAbstract) KdlPackage.Literals.ACTOR_DEFINITION__ABSTRACT else KdlPackage.Literals.ACTOR_DEFINITION__EXTENDED);
+		}
 		if (actor.type !== null && actor.type === 'enum' && actor.enumValues.isEmpty) {
 				error("Enum parameters must specify all enum values with 'values'", actor,
 					KdlPackage.Literals.ACTOR_DEFINITION__TYPE);

@@ -159,6 +159,14 @@ public interface IKdlActuator extends IKdlStatement {
     boolean isExpression();
 
     /**
+     * Processors are computations that modify a pre-contextualized observation.
+     * 
+     * @return
+     */
+    boolean isProcessor();
+
+
+    /**
      * If both {@link #isParameter()} and {@link #isOptional()} return true, this should return the
      * value to use as a default.
      * 
