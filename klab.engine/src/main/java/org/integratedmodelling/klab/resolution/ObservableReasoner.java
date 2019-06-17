@@ -217,9 +217,9 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 		}
 
 		if (!this.transformationsComputed) {
-			for (CandidateObservable candidate : this.alternatives) {
-				computeTransformations(observable, candidate);
-			}
+//			for (CandidateObservable candidate : this.alternatives) {
+//				computeTransformations(observable, candidate);
+//			}
 			this.transformationsComputed = true;
 		}
 
