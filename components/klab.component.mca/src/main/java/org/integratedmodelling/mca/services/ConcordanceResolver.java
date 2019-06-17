@@ -13,7 +13,6 @@ import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
-import org.integratedmodelling.klab.engine.runtime.api.IDependencyCollector;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.mca.api.IAlternative;
@@ -26,7 +25,7 @@ import org.integratedmodelling.mca.core.Results;
 import org.integratedmodelling.mca.model.Alternative;
 import org.integratedmodelling.mca.model.Stakeholder;
 
-public class ConcordanceResolver implements IResolver<IState>, IExpression, IDependencyCollector {
+public class ConcordanceResolver implements IResolver<IState>, IExpression {
 
 	int levels = 5;
 	MCAContext mcaContext;
@@ -118,11 +117,5 @@ public class ConcordanceResolver implements IResolver<IState>, IExpression, IDep
 
 		return ret;
 	}
-	
-	@Override
-    public Collection<String> getDependencyNames() {
-        List<String> ret = new ArrayList<>();
-        return ret;
-    }
 
 }

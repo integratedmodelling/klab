@@ -27,27 +27,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Template-based system documents all nodes in the dataflow, accessible through single-clicking each
+  node.
 - Enable trailing 'l' (lowercase only) to specify long integers in k.IM. Used in time specs to discriminate
   millisecond parameters.
 - Add 'expression' modifier to tag inputs that accept expressions in k.DL.
-- Better behavior and proper loading of imported BIF files in WEKA resources.
-- Template-based system to document all nodes in the dataflow.
-- Add 'process' modifier to specify filter services in KDL, used to validate role contextualizers. Expose
+- Add 'process' modifier to specify filter services in k.DL, used to validate role contextualizers. Expose
   as isProcessor() in both actuator and prototype API. Produce tag interface for contextualizers.
+- Better behavior and proper loading of imported BIF files in WEKA resources.
 ### Changed
 - Overhaul the dataflow visualization, with better and complete representation of all links within and 
   across components and computations. System now carries types for computations, enabling forthcoming
   customization of graph, and discovers 'hidden' links from expressions in parameters and tables.
 - Overhaul the reporting of observations during contextualization to use the physical structure of the
   artifacts instead of the logical structure of the observation tree.
+- Additional caching in lookup tables greatly speeds up computations using them.
 ### Fixed 
-- Dependency resolution bug that would mask out legitimate candidate models under some circumstances.
 - Clean up resolution of derived observables using a convenience model, enabling fully recursive 
   resolution and removing previous error with transformed + non-transformed dependencies in the same
   model.
 - General cleanup of dataflow compiler due to above improvement.
 - Transformed observables no longer carry the units of the non-transformed equivalents. This may require
-  revision on an ad-hoc basis.
+  revision on an ad-hoc basis (should probably check the transformation declaration to see if it preserves
+  observation semantics).
 
 ## [0.10.0.162] -- 2019/05/29
 ### Added

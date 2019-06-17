@@ -134,7 +134,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 					if (active.isComputed() || ((Actuator) active).isMerging()) {
 						active.compute(ctx.getTargetArtifact(), ctx);
 					}
-					((Actuator)active).notifyArtifacts(i == order.size() - 1, ctx);
+					((Actuator) active).notifyArtifacts(i == order.size() - 1, ctx);
 					i++;
 				}
 
@@ -425,6 +425,13 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		if (sourceType == IArtifact.Type.NUMBER && targetType == IArtifact.Type.BOOLEAN) {
 			return new ComputableResource(CastingStateResolver.getServiceCall(sourceType, targetType), Mode.RESOLUTION);
 		}
+		return null;
+	}
+
+	@Override
+	public IComputableResource getAggregatingResolver(IObservable classifiedResolvable, IObservable aggregatorObservable) {
+		// <quality> by <concept|boolean|text> : return an aggregation contextualizer
+		// <quality> by <object>: return a coverage aggregator
 		return null;
 	}
 }

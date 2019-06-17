@@ -2,10 +2,12 @@ package org.integratedmodelling.klab.data.table;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimExpression;
@@ -29,6 +31,7 @@ public class LookupTable implements ILookupTable {
 	int searchIndex;
 
 	Map<IConcept, Integer> key;
+	Map<String, Object> cache = new HashMap<>();
 
 	public LookupTable(IKimLookupTable lookupTable) {
 
@@ -69,7 +72,7 @@ public class LookupTable implements ILookupTable {
 	public int size() {
 		return table.getRowCount();
 	}
-	
+
 	@Override
 	public int getResultColumn() {
 		return searchIndex;
@@ -106,23 +109,46 @@ public class LookupTable implements ILookupTable {
 	@Override
 	public Object lookup(IParameters<String> parameters, IComputationContext context) {
 
-		for (IClassifier[] row : table.getRows()) {
-			boolean ok = true;
-			for (int i = 0; i < variables.size(); i++) {
-				if (i == searchIndex || variables.get(i).charAt(0) == '*') {
-					continue;
+		StringBuffer s = new StringBuffer(1024);
+		Object[] values = new Object[variables.size()];
+		
+		for (int i = 0; i < variables.size(); i++) {
+			if (i == searchIndex || variables.get(i).charAt(0) == '*') {
+				continue;
+			}
+			values[i] = parameters.get(variables.get(i));
+			s.append("|");
+			s.append(values[i] == null ? "null" : values[i].toString());
+		}
+		String key = s.toString();
+
+		Object ret = cache.get(key);
+		if (ret == null) {
+
+			for (IClassifier[] row : table.getRows()) {
+				boolean ok = true;
+				for (int i = 0; i < variables.size(); i++) {
+					if (i == searchIndex || variables.get(i).charAt(0) == '*') {
+						continue;
+					}
+					if (!row[i].classify(values[i], context)) {
+						ok = false;
+						break;
+					}
 				}
-				if (!row[i].classify(parameters.get(variables.get(i)), context)) {
-					ok = false;
+				if (ok) {
+					ret = row[searchIndex].asValue(context);
 					break;
 				}
 			}
-			if (ok) {
-				return row[searchIndex].asValue(context);
-			}
+			
+			cache.put(key, ret == null ? Optional.empty() : ret);
+			
+		} else {
+			ret = ret instanceof Optional ? null : ret;
 		}
-
-		return null;
+		
+		return ret;
 	}
 
 	@Override

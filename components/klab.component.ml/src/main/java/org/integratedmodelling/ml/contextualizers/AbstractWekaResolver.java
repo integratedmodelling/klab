@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -30,7 +29,6 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.GeometryBuilder;
 import org.integratedmodelling.klab.data.encoding.StandaloneResourceBuilder;
-import org.integratedmodelling.klab.engine.runtime.api.IDependencyCollector;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -49,7 +47,7 @@ import weka.core.Attribute;
 import weka.core.Instance;
 
 public abstract class AbstractWekaResolver<T extends Classifier>
-        implements IResolver<IState>, IDocumentationProvider, IDependencyCollector {
+        implements IResolver<IState>, IDocumentationProvider {
 
     protected WekaClassifier classifier                 = null;
     protected WekaOptions    options;
@@ -374,10 +372,4 @@ public abstract class AbstractWekaResolver<T extends Classifier>
         return "";
     }
     
-    @Override
-    public Collection<String> getDependencyNames() {
-        List<String> ret = new ArrayList<>();
-        return ret;
-    }
-
 }

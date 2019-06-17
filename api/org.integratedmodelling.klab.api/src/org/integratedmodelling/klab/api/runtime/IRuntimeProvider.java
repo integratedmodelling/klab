@@ -204,6 +204,18 @@ public interface IRuntimeProvider {
 	 */
 	IComputableResource getCastingResolver(IArtifact.Type sourceType, IArtifact.Type targetType);
 
+	/**
+	 * Return a computation that will aggregate the source by the classifier.
+	 * 
+	 * @param classifiedObservable
+	 *            the original observable (including the 'by')
+	 * @param aggregatorObservable
+	 *            the actual observable for the aggregator from the model's
+	 *            dependencies, with its local name.
+	 * @return a resolver or null
+	 */
+	IComputableResource getAggregatingResolver(IObservable classifiedObservable, IObservable aggregatorObservable);
+
 	/*
 	 * Called on a computation returned by getComputation() to change the target ID
 	 * after creation. FIXME this is ugly and unstable - needs a different logic and

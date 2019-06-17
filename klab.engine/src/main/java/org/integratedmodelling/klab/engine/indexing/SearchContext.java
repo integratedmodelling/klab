@@ -380,7 +380,7 @@ public class SearchContext implements IIndexingService.Context {
                 ret.constraints.add(Constraint.with(getSemantics()));
                 ret.constraints.add(Constraint.allTraits(false).applyingTo(getSemantics()));
                 break;
-            case NONE:
+            case BY:
                 break;
             default:
                 break;
