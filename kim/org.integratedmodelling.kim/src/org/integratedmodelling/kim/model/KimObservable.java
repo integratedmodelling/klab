@@ -148,9 +148,9 @@ public class KimObservable extends KimStatement implements IKimObservable {
 			ret.downTo = KimConcept.normalize(declaration.getDownTo(), parent);
 		}
 
-		if (ret.formalName == null) {
-			ret.formalName = ret.getCodeName();
-		}
+//		if (ret.formalName == null) {
+//			ret.formalName = ret.getCodeName();
+//		}
 		
 		return ret;
 	}
