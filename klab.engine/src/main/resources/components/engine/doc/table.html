@@ -3,16 +3,20 @@
 	<p>The inputs are matched to column ${table.ResultColumn}, which
 		provides the result of the first match.</p>
 	<table>
-		<tr>
-			#foreach( $header in $table.Table.ColumnHeaders )
-			<th>$header</th> #end
-		</tr>
-		#foreach( $row in $table.Table.Rows )
-		<tr>
-			#foreach( $item in $row )
-			<td>${item.SourceCode}</td> #end
-		</tr>
-		#end
+		<thead>
+			<tr>
+				#foreach( $header in $table.Table.ColumnHeaders )
+				<th>$header</th> #end
+			</tr>
+		</thead>
+		<tbody>
+			#foreach( $row in $table.Table.Rows )
+			<tr>
+				#foreach( $item in $row )
+				<td>${item.SourceCode}</td> #end
+			</tr>
+			#end
+		<tbody>
 	</table>
 
 	<p>Each row in the table is matched from the top: the value

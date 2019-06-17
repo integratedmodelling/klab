@@ -2,16 +2,20 @@
 	<h1>Classification</h1>
 	<p>A classification maps an input value to an output value.</p>
 	<table>
-		<tr>
-			<th>Input</th>
-			<th>Output</th>
-		</tr>
+		<thead>
+			<tr>
+				<th>Input</th>
+				<th>Output</th>
+			</tr>
+		</thead>
+		<tbody>
 		#foreach( $entry in $classification )
 		<tr>
 			<td>${entry.Second.SourceCode}</td>
 			<td>${entry.First}</td>
 		</tr>
 		#end
+		</tbody>
 	</table>
 
 	<p>Each input is matched from the top: the value corresponding to
