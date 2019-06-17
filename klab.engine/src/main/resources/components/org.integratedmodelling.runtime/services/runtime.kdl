@@ -71,6 +71,35 @@ process concept classify
 
 }
 
+process value categorize 
+	"Aggregate values of one state when they correspond to the same value of another."
+	label "Aggregate by $classifier"
+{
+	optional import value artifact
+		"The artifact to categorize" 
+		
+	import value classifier
+		"The artifact to categorize by" 
+
+	class org.integratedmodelling.klab.components.runtime.contextualizers.CategoryClassificationResolver
+
+}
+
+process value aggregate 
+	"Aggregate values of one state when they overlap the same object. Should be used with non-overlapping
+	 spatial aggregators."
+	label "Aggregate by $classifier"
+{
+	optional import value artifact
+		"The artifact to categorize" 
+		
+	import object classifier
+		"The artifact providing the coverage for classification." 
+
+	class org.integratedmodelling.klab.components.runtime.contextualizers.ObjectClassificationResolver
+
+}
+
 process value lookup
 	"Return a state contextualizer that classifies its inputs using a lookup table"
 	label 'Lookup table'

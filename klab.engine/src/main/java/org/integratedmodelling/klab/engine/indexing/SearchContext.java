@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.services.IIndexingService.Context;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match.Type;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 public class SearchContext implements IIndexingService.Context {
 
@@ -513,6 +514,23 @@ public class SearchContext implements IIndexingService.Context {
 
     public List<Constraint> getConstraints() {
         return constraints;
+    }
+    
+    public String dump() {
+        return findRoot().dump(0);
+    }
+    
+    private SearchContext findRoot() {
+        SearchContext ret = this;
+        if (parent != null) {
+            ret = parent.findRoot();
+        }
+        return ret;
+    }
+
+    private String dump(int offset) {
+        String prefix = StringUtil.spaces(offset);
+        return "";
     }
 
 }
