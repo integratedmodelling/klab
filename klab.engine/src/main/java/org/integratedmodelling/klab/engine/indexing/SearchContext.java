@@ -33,6 +33,9 @@ public class SearchContext implements IIndexingService.Context {
 	private SearchContext parent = null;
 	private SearchMatch acceptedMatch;
 
+	// parenthesization level - must be 0 when accepting.
+	private int depth = 0; 
+
 	public static Context createNew() {
 		SearchContext ret = new SearchContext();
 		// first context can select operators, non-abstract traits or non-abstract

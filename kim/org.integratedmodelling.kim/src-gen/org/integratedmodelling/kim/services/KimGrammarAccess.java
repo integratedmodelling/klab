@@ -3542,12 +3542,15 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cOperatorGreaterThanSignEqualsSignKeyword_3_4_0_0_1 = (Keyword)cOperatorAlternatives_3_4_0_0.eContents().get(1);
 		private final Keyword cOperatorLessThanSignEqualsSignKeyword_3_4_0_0_2 = (Keyword)cOperatorAlternatives_3_4_0_0.eContents().get(2);
 		private final Keyword cOperatorLessThanSignKeyword_3_4_0_0_3 = (Keyword)cOperatorAlternatives_3_4_0_0.eContents().get(3);
-		private final Keyword cOperatorAtKeyword_3_4_0_0_4 = (Keyword)cOperatorAlternatives_3_4_0_0.eContents().get(4);
+		private final Keyword cOperatorWhereKeyword_3_4_0_0_4 = (Keyword)cOperatorAlternatives_3_4_0_0.eContents().get(4);
 		private final Keyword cOperatorEqualsSignEqualsSignKeyword_3_4_0_0_5 = (Keyword)cOperatorAlternatives_3_4_0_0.eContents().get(5);
 		private final Keyword cOperatorEqualsSignKeyword_3_4_0_0_6 = (Keyword)cOperatorAlternatives_3_4_0_0.eContents().get(6);
-		private final Keyword cOperatorExclamationMarkEqualsSignKeyword_3_4_0_0_7 = (Keyword)cOperatorAlternatives_3_4_0_0.eContents().get(7);
-		private final Keyword cOperatorPlusSignKeyword_3_4_0_0_8 = (Keyword)cOperatorAlternatives_3_4_0_0.eContents().get(8);
-		private final Keyword cOperatorHyphenMinusKeyword_3_4_0_0_9 = (Keyword)cOperatorAlternatives_3_4_0_0.eContents().get(9);
+		private final Keyword cOperatorWithoutKeyword_3_4_0_0_7 = (Keyword)cOperatorAlternatives_3_4_0_0.eContents().get(7);
+		private final Keyword cOperatorExclamationMarkEqualsSignKeyword_3_4_0_0_8 = (Keyword)cOperatorAlternatives_3_4_0_0.eContents().get(8);
+		private final Keyword cOperatorPlusKeyword_3_4_0_0_9 = (Keyword)cOperatorAlternatives_3_4_0_0.eContents().get(9);
+		private final Keyword cOperatorMinusKeyword_3_4_0_0_10 = (Keyword)cOperatorAlternatives_3_4_0_0.eContents().get(10);
+		private final Keyword cOperatorTimesKeyword_3_4_0_0_11 = (Keyword)cOperatorAlternatives_3_4_0_0.eContents().get(11);
+		private final Keyword cOperatorOverKeyword_3_4_0_0_12 = (Keyword)cOperatorAlternatives_3_4_0_0.eContents().get(12);
 		private final Alternatives cAlternatives_3_4_1 = (Alternatives)cGroup_3_4.eContents().get(1);
 		private final Assignment cComparisonValueAssignment_3_4_1_0 = (Assignment)cAlternatives_3_4_1.eContents().get(0);
 		private final RuleCall cComparisonValueNumberParserRuleCall_3_4_1_0_0 = (RuleCall)cComparisonValueAssignment_3_4_1_0.eContents().get(0);
@@ -3582,16 +3585,17 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	generic?='any'?
 		//	declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
 		//	accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (operator=('>' | '>=' | '<=' |
-		//	'<' | 'at' | '==' | '=' | '!=' | '+' | '-') (comparisonValue=Number | comparisonConcept=ConceptDeclaration | '('
-		//	comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' | 'required')? & (from=Number 'to'
-		//	to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?);
+		//	'<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over') (comparisonValue=Number |
+		//	comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' |
+		//	'required')? & (from=Number 'to' to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?);
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(value=Value 'as')? generic?='any'? declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to'
 		//downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per'
-		//unit=Unit)? & (operator=('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' | '+' | '-') (comparisonValue=Number |
-		//comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' |
-		//'required')? & (from=Number 'to' to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?)
+		//unit=Unit)? & (operator=('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' |
+		//'times' | 'over') (comparisonValue=Number | comparisonConcept=ConceptDeclaration | '('
+		//comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' | 'required')? & (from=Number 'to' to=Number)?
+		//& ('named' name=(LOWERCASE_ID | STRING))?)
 		public Group getGroup() { return cGroup; }
 		
 		//(value=Value 'as')?
@@ -3619,10 +3623,10 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getDeclarationConceptDeclarationParserRuleCall_2_0() { return cDeclarationConceptDeclarationParserRuleCall_2_0; }
 		
 		//('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in'
-		//(unit=Unit | currency=Currency) | 'per' unit=Unit)? & (operator=('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' |
-		//'+' | '-') (comparisonValue=Number | comparisonConcept=ConceptDeclaration | '('
-		//comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' | 'required')? & (from=Number 'to' to=Number)?
-		//& ('named' name=(LOWERCASE_ID | STRING))?
+		//(unit=Unit | currency=Currency) | 'per' unit=Unit)? & (operator=('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' |
+		//'without' | '!=' | 'plus' | 'minus' | 'times' | 'over') (comparisonValue=Number | comparisonConcept=ConceptDeclaration
+		//| '(' comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' | 'required')? & (from=Number 'to'
+		//to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?
 		public UnorderedGroup getUnorderedGroup_3() { return cUnorderedGroup_3; }
 		
 		//('by' by=ConceptDeclaration)?
@@ -3703,14 +3707,14 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//Unit
 		public RuleCall getUnitUnitParserRuleCall_3_3_1_1_0() { return cUnitUnitParserRuleCall_3_3_1_1_0; }
 		
-		//(operator=('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' | '+' | '-') (comparisonValue=Number |
-		//comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))?
+		//(operator=('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over')
+		//(comparisonValue=Number | comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))?
 		public Group getGroup_3_4() { return cGroup_3_4; }
 		
-		//operator=('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' | '+' | '-')
+		//operator=('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over')
 		public Assignment getOperatorAssignment_3_4_0() { return cOperatorAssignment_3_4_0; }
 		
-		//('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' | '+' | '-')
+		//('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over')
 		public Alternatives getOperatorAlternatives_3_4_0_0() { return cOperatorAlternatives_3_4_0_0; }
 		
 		//'>'
@@ -3725,8 +3729,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'<'
 		public Keyword getOperatorLessThanSignKeyword_3_4_0_0_3() { return cOperatorLessThanSignKeyword_3_4_0_0_3; }
 		
-		//'at'
-		public Keyword getOperatorAtKeyword_3_4_0_0_4() { return cOperatorAtKeyword_3_4_0_0_4; }
+		//'where'
+		public Keyword getOperatorWhereKeyword_3_4_0_0_4() { return cOperatorWhereKeyword_3_4_0_0_4; }
 		
 		//'=='
 		public Keyword getOperatorEqualsSignEqualsSignKeyword_3_4_0_0_5() { return cOperatorEqualsSignEqualsSignKeyword_3_4_0_0_5; }
@@ -3734,14 +3738,23 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'='
 		public Keyword getOperatorEqualsSignKeyword_3_4_0_0_6() { return cOperatorEqualsSignKeyword_3_4_0_0_6; }
 		
+		//'without'
+		public Keyword getOperatorWithoutKeyword_3_4_0_0_7() { return cOperatorWithoutKeyword_3_4_0_0_7; }
+		
 		//'!='
-		public Keyword getOperatorExclamationMarkEqualsSignKeyword_3_4_0_0_7() { return cOperatorExclamationMarkEqualsSignKeyword_3_4_0_0_7; }
+		public Keyword getOperatorExclamationMarkEqualsSignKeyword_3_4_0_0_8() { return cOperatorExclamationMarkEqualsSignKeyword_3_4_0_0_8; }
 		
-		//'+'
-		public Keyword getOperatorPlusSignKeyword_3_4_0_0_8() { return cOperatorPlusSignKeyword_3_4_0_0_8; }
+		//'plus'
+		public Keyword getOperatorPlusKeyword_3_4_0_0_9() { return cOperatorPlusKeyword_3_4_0_0_9; }
 		
-		//'-'
-		public Keyword getOperatorHyphenMinusKeyword_3_4_0_0_9() { return cOperatorHyphenMinusKeyword_3_4_0_0_9; }
+		//'minus'
+		public Keyword getOperatorMinusKeyword_3_4_0_0_10() { return cOperatorMinusKeyword_3_4_0_0_10; }
+		
+		//'times'
+		public Keyword getOperatorTimesKeyword_3_4_0_0_11() { return cOperatorTimesKeyword_3_4_0_0_11; }
+		
+		//'over'
+		public Keyword getOperatorOverKeyword_3_4_0_0_12() { return cOperatorOverKeyword_3_4_0_0_12; }
 		
 		//comparisonValue=Number | comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'
 		public Alternatives getAlternatives_3_4_1() { return cAlternatives_3_4_1; }
@@ -3868,12 +3881,15 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cOperatorGreaterThanSignEqualsSignKeyword_4_4_0_0_1 = (Keyword)cOperatorAlternatives_4_4_0_0.eContents().get(1);
 		private final Keyword cOperatorLessThanSignEqualsSignKeyword_4_4_0_0_2 = (Keyword)cOperatorAlternatives_4_4_0_0.eContents().get(2);
 		private final Keyword cOperatorLessThanSignKeyword_4_4_0_0_3 = (Keyword)cOperatorAlternatives_4_4_0_0.eContents().get(3);
-		private final Keyword cOperatorAtKeyword_4_4_0_0_4 = (Keyword)cOperatorAlternatives_4_4_0_0.eContents().get(4);
+		private final Keyword cOperatorWhereKeyword_4_4_0_0_4 = (Keyword)cOperatorAlternatives_4_4_0_0.eContents().get(4);
 		private final Keyword cOperatorEqualsSignEqualsSignKeyword_4_4_0_0_5 = (Keyword)cOperatorAlternatives_4_4_0_0.eContents().get(5);
 		private final Keyword cOperatorEqualsSignKeyword_4_4_0_0_6 = (Keyword)cOperatorAlternatives_4_4_0_0.eContents().get(6);
-		private final Keyword cOperatorExclamationMarkEqualsSignKeyword_4_4_0_0_7 = (Keyword)cOperatorAlternatives_4_4_0_0.eContents().get(7);
-		private final Keyword cOperatorPlusSignKeyword_4_4_0_0_8 = (Keyword)cOperatorAlternatives_4_4_0_0.eContents().get(8);
-		private final Keyword cOperatorHyphenMinusKeyword_4_4_0_0_9 = (Keyword)cOperatorAlternatives_4_4_0_0.eContents().get(9);
+		private final Keyword cOperatorWithoutKeyword_4_4_0_0_7 = (Keyword)cOperatorAlternatives_4_4_0_0.eContents().get(7);
+		private final Keyword cOperatorExclamationMarkEqualsSignKeyword_4_4_0_0_8 = (Keyword)cOperatorAlternatives_4_4_0_0.eContents().get(8);
+		private final Keyword cOperatorPlusKeyword_4_4_0_0_9 = (Keyword)cOperatorAlternatives_4_4_0_0.eContents().get(9);
+		private final Keyword cOperatorMinusKeyword_4_4_0_0_10 = (Keyword)cOperatorAlternatives_4_4_0_0.eContents().get(10);
+		private final Keyword cOperatorTimesKeyword_4_4_0_0_11 = (Keyword)cOperatorAlternatives_4_4_0_0.eContents().get(11);
+		private final Keyword cOperatorOverKeyword_4_4_0_0_12 = (Keyword)cOperatorAlternatives_4_4_0_0.eContents().get(12);
 		private final Alternatives cAlternatives_4_4_1 = (Alternatives)cGroup_4_4.eContents().get(1);
 		private final Assignment cComparisonValueAssignment_4_4_1_0 = (Assignment)cAlternatives_4_4_1.eContents().get(0);
 		private final RuleCall cComparisonValueNumberParserRuleCall_4_4_1_0_0 = (RuleCall)cComparisonValueAssignment_4_4_1_0.eContents().get(0);
@@ -3909,17 +3925,17 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	generic?='any'?
 		//	declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
 		//	accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (operator=('>' | '>=' | '<=' |
-		//	'<' | 'at' | '==' | '=' | '!=' | '+' | '-') (comparisonValue=Number | comparisonConcept=ConceptDeclaration | '('
-		//	comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' | 'required')? & (from=Number 'to'
-		//	to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?);
+		//	'<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over') (comparisonValue=Number |
+		//	comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' |
+		//	'required')? & (from=Number 'to' to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?);
 		@Override public ParserRule getRule() { return rule; }
 		
 		//annotations+=Annotation* (value=Value 'as')? generic?='any'? declaration=ConceptDeclaration (('by'
 		//by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in'
-		//(unit=Unit | currency=Currency) | 'per' unit=Unit)? & (operator=('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' |
-		//'+' | '-') (comparisonValue=Number | comparisonConcept=ConceptDeclaration | '('
-		//comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' | 'required')? & (from=Number 'to' to=Number)?
-		//& ('named' name=(LOWERCASE_ID | STRING))?)
+		//(unit=Unit | currency=Currency) | 'per' unit=Unit)? & (operator=('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' |
+		//'without' | '!=' | 'plus' | 'minus' | 'times' | 'over') (comparisonValue=Number | comparisonConcept=ConceptDeclaration
+		//| '(' comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' | 'required')? & (from=Number 'to'
+		//to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?)
 		public Group getGroup() { return cGroup; }
 		
 		//annotations+=Annotation*
@@ -3953,10 +3969,10 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getDeclarationConceptDeclarationParserRuleCall_3_0() { return cDeclarationConceptDeclarationParserRuleCall_3_0; }
 		
 		//('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in'
-		//(unit=Unit | currency=Currency) | 'per' unit=Unit)? & (operator=('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' |
-		//'+' | '-') (comparisonValue=Number | comparisonConcept=ConceptDeclaration | '('
-		//comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' | 'required')? & (from=Number 'to' to=Number)?
-		//& ('named' name=(LOWERCASE_ID | STRING))?
+		//(unit=Unit | currency=Currency) | 'per' unit=Unit)? & (operator=('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' |
+		//'without' | '!=' | 'plus' | 'minus' | 'times' | 'over') (comparisonValue=Number | comparisonConcept=ConceptDeclaration
+		//| '(' comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' | 'required')? & (from=Number 'to'
+		//to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?
 		public UnorderedGroup getUnorderedGroup_4() { return cUnorderedGroup_4; }
 		
 		//('by' by=ConceptDeclaration)?
@@ -4037,14 +4053,14 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//Unit
 		public RuleCall getUnitUnitParserRuleCall_4_3_1_1_0() { return cUnitUnitParserRuleCall_4_3_1_1_0; }
 		
-		//(operator=('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' | '+' | '-') (comparisonValue=Number |
-		//comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))?
+		//(operator=('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over')
+		//(comparisonValue=Number | comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))?
 		public Group getGroup_4_4() { return cGroup_4_4; }
 		
-		//operator=('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' | '+' | '-')
+		//operator=('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over')
 		public Assignment getOperatorAssignment_4_4_0() { return cOperatorAssignment_4_4_0; }
 		
-		//('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' | '+' | '-')
+		//('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over')
 		public Alternatives getOperatorAlternatives_4_4_0_0() { return cOperatorAlternatives_4_4_0_0; }
 		
 		//'>'
@@ -4059,8 +4075,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'<'
 		public Keyword getOperatorLessThanSignKeyword_4_4_0_0_3() { return cOperatorLessThanSignKeyword_4_4_0_0_3; }
 		
-		//'at'
-		public Keyword getOperatorAtKeyword_4_4_0_0_4() { return cOperatorAtKeyword_4_4_0_0_4; }
+		//'where'
+		public Keyword getOperatorWhereKeyword_4_4_0_0_4() { return cOperatorWhereKeyword_4_4_0_0_4; }
 		
 		//'=='
 		public Keyword getOperatorEqualsSignEqualsSignKeyword_4_4_0_0_5() { return cOperatorEqualsSignEqualsSignKeyword_4_4_0_0_5; }
@@ -4068,14 +4084,23 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'='
 		public Keyword getOperatorEqualsSignKeyword_4_4_0_0_6() { return cOperatorEqualsSignKeyword_4_4_0_0_6; }
 		
+		//'without'
+		public Keyword getOperatorWithoutKeyword_4_4_0_0_7() { return cOperatorWithoutKeyword_4_4_0_0_7; }
+		
 		//'!='
-		public Keyword getOperatorExclamationMarkEqualsSignKeyword_4_4_0_0_7() { return cOperatorExclamationMarkEqualsSignKeyword_4_4_0_0_7; }
+		public Keyword getOperatorExclamationMarkEqualsSignKeyword_4_4_0_0_8() { return cOperatorExclamationMarkEqualsSignKeyword_4_4_0_0_8; }
 		
-		//'+'
-		public Keyword getOperatorPlusSignKeyword_4_4_0_0_8() { return cOperatorPlusSignKeyword_4_4_0_0_8; }
+		//'plus'
+		public Keyword getOperatorPlusKeyword_4_4_0_0_9() { return cOperatorPlusKeyword_4_4_0_0_9; }
 		
-		//'-'
-		public Keyword getOperatorHyphenMinusKeyword_4_4_0_0_9() { return cOperatorHyphenMinusKeyword_4_4_0_0_9; }
+		//'minus'
+		public Keyword getOperatorMinusKeyword_4_4_0_0_10() { return cOperatorMinusKeyword_4_4_0_0_10; }
+		
+		//'times'
+		public Keyword getOperatorTimesKeyword_4_4_0_0_11() { return cOperatorTimesKeyword_4_4_0_0_11; }
+		
+		//'over'
+		public Keyword getOperatorOverKeyword_4_4_0_0_12() { return cOperatorOverKeyword_4_4_0_0_12; }
 		
 		//comparisonValue=Number | comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'
 		public Alternatives getAlternatives_4_4_1() { return cAlternatives_4_4_1; }
@@ -8943,12 +8968,15 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cOperatorGreaterThanSignEqualsSignKeyword_1_5_0_0_1 = (Keyword)cOperatorAlternatives_1_5_0_0.eContents().get(1);
 		private final Keyword cOperatorLessThanSignEqualsSignKeyword_1_5_0_0_2 = (Keyword)cOperatorAlternatives_1_5_0_0.eContents().get(2);
 		private final Keyword cOperatorLessThanSignKeyword_1_5_0_0_3 = (Keyword)cOperatorAlternatives_1_5_0_0.eContents().get(3);
-		private final Keyword cOperatorAtKeyword_1_5_0_0_4 = (Keyword)cOperatorAlternatives_1_5_0_0.eContents().get(4);
+		private final Keyword cOperatorWhereKeyword_1_5_0_0_4 = (Keyword)cOperatorAlternatives_1_5_0_0.eContents().get(4);
 		private final Keyword cOperatorEqualsSignEqualsSignKeyword_1_5_0_0_5 = (Keyword)cOperatorAlternatives_1_5_0_0.eContents().get(5);
 		private final Keyword cOperatorEqualsSignKeyword_1_5_0_0_6 = (Keyword)cOperatorAlternatives_1_5_0_0.eContents().get(6);
-		private final Keyword cOperatorExclamationMarkEqualsSignKeyword_1_5_0_0_7 = (Keyword)cOperatorAlternatives_1_5_0_0.eContents().get(7);
-		private final Keyword cOperatorPlusSignKeyword_1_5_0_0_8 = (Keyword)cOperatorAlternatives_1_5_0_0.eContents().get(8);
-		private final Keyword cOperatorHyphenMinusKeyword_1_5_0_0_9 = (Keyword)cOperatorAlternatives_1_5_0_0.eContents().get(9);
+		private final Keyword cOperatorWithoutKeyword_1_5_0_0_7 = (Keyword)cOperatorAlternatives_1_5_0_0.eContents().get(7);
+		private final Keyword cOperatorExclamationMarkEqualsSignKeyword_1_5_0_0_8 = (Keyword)cOperatorAlternatives_1_5_0_0.eContents().get(8);
+		private final Keyword cOperatorPlusKeyword_1_5_0_0_9 = (Keyword)cOperatorAlternatives_1_5_0_0.eContents().get(9);
+		private final Keyword cOperatorMinusKeyword_1_5_0_0_10 = (Keyword)cOperatorAlternatives_1_5_0_0.eContents().get(10);
+		private final Keyword cOperatorTimesKeyword_1_5_0_0_11 = (Keyword)cOperatorAlternatives_1_5_0_0.eContents().get(11);
+		private final Keyword cOperatorOverKeyword_1_5_0_0_12 = (Keyword)cOperatorAlternatives_1_5_0_0.eContents().get(12);
 		private final Alternatives cAlternatives_1_5_1 = (Alternatives)cGroup_1_5.eContents().get(1);
 		private final Assignment cComparisonValueAssignment_1_5_1_0 = (Assignment)cAlternatives_1_5_1.eContents().get(0);
 		private final RuleCall cComparisonValueNumberParserRuleCall_1_5_1_0_0 = (RuleCall)cComparisonValueAssignment_1_5_1_0.eContents().get(0);
@@ -8976,16 +9004,16 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		// */ SimpleObservableSemantics ObservableSemantics:
 		//	declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
 		//	accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)?
-		//	& (operator=('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' | '+' | '-') (comparisonValue=Number |
-		//	comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' |
-		//	'required')? & ('named' name=(LOWERCASE_ID | STRING))?);
+		//	& (operator=('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over')
+		//	(comparisonValue=Number | comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))?
+		//	& (optional?='optional' | 'required')? & ('named' name=(LOWERCASE_ID | STRING))?);
 		@Override public ParserRule getRule() { return rule; }
 		
 		//declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
 		//accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)? &
-		//(operator=('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' | '+' | '-') (comparisonValue=Number |
-		//comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' |
-		//'required')? & ('named' name=(LOWERCASE_ID | STRING))?)
+		//(operator=('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over')
+		//(comparisonValue=Number | comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))? &
+		//(optional?='optional' | 'required')? & ('named' name=(LOWERCASE_ID | STRING))?)
 		public Group getGroup() { return cGroup; }
 		
 		//declaration=ConceptDeclaration
@@ -8996,9 +9024,9 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in'
 		//(unit=Unit | currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)? & (operator=('>' | '>=' | '<=' |
-		//'<' | 'at' | '==' | '=' | '!=' | '+' | '-') (comparisonValue=Number | comparisonConcept=ConceptDeclaration | '('
-		//comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' | 'required')? & ('named' name=(LOWERCASE_ID |
-		//STRING))?
+		//'<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over') (comparisonValue=Number |
+		//comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' |
+		//'required')? & ('named' name=(LOWERCASE_ID | STRING))?
 		public UnorderedGroup getUnorderedGroup_1() { return cUnorderedGroup_1; }
 		
 		//('by' by=ConceptDeclaration)?
@@ -9097,14 +9125,14 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//Number
 		public RuleCall getToNumberParserRuleCall_1_4_2_0() { return cToNumberParserRuleCall_1_4_2_0; }
 		
-		//(operator=('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' | '+' | '-') (comparisonValue=Number |
-		//comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))?
+		//(operator=('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over')
+		//(comparisonValue=Number | comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))?
 		public Group getGroup_1_5() { return cGroup_1_5; }
 		
-		//operator=('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' | '+' | '-')
+		//operator=('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over')
 		public Assignment getOperatorAssignment_1_5_0() { return cOperatorAssignment_1_5_0; }
 		
-		//('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' | '+' | '-')
+		//('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over')
 		public Alternatives getOperatorAlternatives_1_5_0_0() { return cOperatorAlternatives_1_5_0_0; }
 		
 		//'>'
@@ -9119,8 +9147,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'<'
 		public Keyword getOperatorLessThanSignKeyword_1_5_0_0_3() { return cOperatorLessThanSignKeyword_1_5_0_0_3; }
 		
-		//'at'
-		public Keyword getOperatorAtKeyword_1_5_0_0_4() { return cOperatorAtKeyword_1_5_0_0_4; }
+		//'where'
+		public Keyword getOperatorWhereKeyword_1_5_0_0_4() { return cOperatorWhereKeyword_1_5_0_0_4; }
 		
 		//'=='
 		public Keyword getOperatorEqualsSignEqualsSignKeyword_1_5_0_0_5() { return cOperatorEqualsSignEqualsSignKeyword_1_5_0_0_5; }
@@ -9128,14 +9156,23 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'='
 		public Keyword getOperatorEqualsSignKeyword_1_5_0_0_6() { return cOperatorEqualsSignKeyword_1_5_0_0_6; }
 		
+		//'without'
+		public Keyword getOperatorWithoutKeyword_1_5_0_0_7() { return cOperatorWithoutKeyword_1_5_0_0_7; }
+		
 		//'!='
-		public Keyword getOperatorExclamationMarkEqualsSignKeyword_1_5_0_0_7() { return cOperatorExclamationMarkEqualsSignKeyword_1_5_0_0_7; }
+		public Keyword getOperatorExclamationMarkEqualsSignKeyword_1_5_0_0_8() { return cOperatorExclamationMarkEqualsSignKeyword_1_5_0_0_8; }
 		
-		//'+'
-		public Keyword getOperatorPlusSignKeyword_1_5_0_0_8() { return cOperatorPlusSignKeyword_1_5_0_0_8; }
+		//'plus'
+		public Keyword getOperatorPlusKeyword_1_5_0_0_9() { return cOperatorPlusKeyword_1_5_0_0_9; }
 		
-		//'-'
-		public Keyword getOperatorHyphenMinusKeyword_1_5_0_0_9() { return cOperatorHyphenMinusKeyword_1_5_0_0_9; }
+		//'minus'
+		public Keyword getOperatorMinusKeyword_1_5_0_0_10() { return cOperatorMinusKeyword_1_5_0_0_10; }
+		
+		//'times'
+		public Keyword getOperatorTimesKeyword_1_5_0_0_11() { return cOperatorTimesKeyword_1_5_0_0_11; }
+		
+		//'over'
+		public Keyword getOperatorOverKeyword_1_5_0_0_12() { return cOperatorOverKeyword_1_5_0_0_12; }
 		
 		//comparisonValue=Number | comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'
 		public Alternatives getAlternatives_1_5_1() { return cAlternatives_1_5_1; }
@@ -9248,12 +9285,15 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cOperatorGreaterThanSignEqualsSignKeyword_3_5_0_0_1 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(1);
 		private final Keyword cOperatorLessThanSignEqualsSignKeyword_3_5_0_0_2 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(2);
 		private final Keyword cOperatorLessThanSignKeyword_3_5_0_0_3 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(3);
-		private final Keyword cOperatorAtKeyword_3_5_0_0_4 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(4);
+		private final Keyword cOperatorWhereKeyword_3_5_0_0_4 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(4);
 		private final Keyword cOperatorEqualsSignEqualsSignKeyword_3_5_0_0_5 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(5);
 		private final Keyword cOperatorEqualsSignKeyword_3_5_0_0_6 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(6);
-		private final Keyword cOperatorExclamationMarkEqualsSignKeyword_3_5_0_0_7 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(7);
-		private final Keyword cOperatorPlusSignKeyword_3_5_0_0_8 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(8);
-		private final Keyword cOperatorHyphenMinusKeyword_3_5_0_0_9 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(9);
+		private final Keyword cOperatorWithoutKeyword_3_5_0_0_7 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(7);
+		private final Keyword cOperatorExclamationMarkEqualsSignKeyword_3_5_0_0_8 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(8);
+		private final Keyword cOperatorPlusKeyword_3_5_0_0_9 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(9);
+		private final Keyword cOperatorMinusKeyword_3_5_0_0_10 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(10);
+		private final Keyword cOperatorTimesKeyword_3_5_0_0_11 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(11);
+		private final Keyword cOperatorOverKeyword_3_5_0_0_12 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(12);
 		private final Alternatives cAlternatives_3_5_1 = (Alternatives)cGroup_3_5.eContents().get(1);
 		private final Assignment cComparisonValueAssignment_3_5_1_0 = (Assignment)cAlternatives_3_5_1.eContents().get(0);
 		private final RuleCall cComparisonValueNumberParserRuleCall_3_5_1_0_0 = (RuleCall)cComparisonValueAssignment_3_5_1_0.eContents().get(0);
@@ -9282,17 +9322,17 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	generic?='any'?
 		//	declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
 		//	accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)?
-		//	& (operator=('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' | '+' | '-') (comparisonValue=Number |
-		//	comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' |
-		//	'required')? & ('named' name=(LOWERCASE_ID | STRING))?);
+		//	& (operator=('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over')
+		//	(comparisonValue=Number | comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))?
+		//	& (optional?='optional' | 'required')? & ('named' name=(LOWERCASE_ID | STRING))?);
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(value=LiteralValueWithConcept 'as')? generic?='any'? declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? &
 		//('down' 'to' downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) |
-		//'per' unit=Unit)? & (from=Number 'to' to=Number)? & (operator=('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' |
-		//'+' | '-') (comparisonValue=Number | comparisonConcept=ConceptDeclaration | '('
-		//comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' | 'required')? & ('named' name=(LOWERCASE_ID |
-		//STRING))?)
+		//'per' unit=Unit)? & (from=Number 'to' to=Number)? & (operator=('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' |
+		//'without' | '!=' | 'plus' | 'minus' | 'times' | 'over') (comparisonValue=Number | comparisonConcept=ConceptDeclaration
+		//| '(' comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' | 'required')? & ('named'
+		//name=(LOWERCASE_ID | STRING))?)
 		public Group getGroup() { return cGroup; }
 		
 		//(value=LiteralValueWithConcept 'as')?
@@ -9321,9 +9361,9 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in'
 		//(unit=Unit | currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)? & (operator=('>' | '>=' | '<=' |
-		//'<' | 'at' | '==' | '=' | '!=' | '+' | '-') (comparisonValue=Number | comparisonConcept=ConceptDeclaration | '('
-		//comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' | 'required')? & ('named' name=(LOWERCASE_ID |
-		//STRING))?
+		//'<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over') (comparisonValue=Number |
+		//comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' |
+		//'required')? & ('named' name=(LOWERCASE_ID | STRING))?
 		public UnorderedGroup getUnorderedGroup_3() { return cUnorderedGroup_3; }
 		
 		//('by' by=ConceptDeclaration)?
@@ -9422,14 +9462,14 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//Number
 		public RuleCall getToNumberParserRuleCall_3_4_2_0() { return cToNumberParserRuleCall_3_4_2_0; }
 		
-		//(operator=('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' | '+' | '-') (comparisonValue=Number |
-		//comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))?
+		//(operator=('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over')
+		//(comparisonValue=Number | comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))?
 		public Group getGroup_3_5() { return cGroup_3_5; }
 		
-		//operator=('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' | '+' | '-')
+		//operator=('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over')
 		public Assignment getOperatorAssignment_3_5_0() { return cOperatorAssignment_3_5_0; }
 		
-		//('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' | '+' | '-')
+		//('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over')
 		public Alternatives getOperatorAlternatives_3_5_0_0() { return cOperatorAlternatives_3_5_0_0; }
 		
 		//'>'
@@ -9444,8 +9484,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'<'
 		public Keyword getOperatorLessThanSignKeyword_3_5_0_0_3() { return cOperatorLessThanSignKeyword_3_5_0_0_3; }
 		
-		//'at'
-		public Keyword getOperatorAtKeyword_3_5_0_0_4() { return cOperatorAtKeyword_3_5_0_0_4; }
+		//'where'
+		public Keyword getOperatorWhereKeyword_3_5_0_0_4() { return cOperatorWhereKeyword_3_5_0_0_4; }
 		
 		//'=='
 		public Keyword getOperatorEqualsSignEqualsSignKeyword_3_5_0_0_5() { return cOperatorEqualsSignEqualsSignKeyword_3_5_0_0_5; }
@@ -9453,14 +9493,23 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'='
 		public Keyword getOperatorEqualsSignKeyword_3_5_0_0_6() { return cOperatorEqualsSignKeyword_3_5_0_0_6; }
 		
+		//'without'
+		public Keyword getOperatorWithoutKeyword_3_5_0_0_7() { return cOperatorWithoutKeyword_3_5_0_0_7; }
+		
 		//'!='
-		public Keyword getOperatorExclamationMarkEqualsSignKeyword_3_5_0_0_7() { return cOperatorExclamationMarkEqualsSignKeyword_3_5_0_0_7; }
+		public Keyword getOperatorExclamationMarkEqualsSignKeyword_3_5_0_0_8() { return cOperatorExclamationMarkEqualsSignKeyword_3_5_0_0_8; }
 		
-		//'+'
-		public Keyword getOperatorPlusSignKeyword_3_5_0_0_8() { return cOperatorPlusSignKeyword_3_5_0_0_8; }
+		//'plus'
+		public Keyword getOperatorPlusKeyword_3_5_0_0_9() { return cOperatorPlusKeyword_3_5_0_0_9; }
 		
-		//'-'
-		public Keyword getOperatorHyphenMinusKeyword_3_5_0_0_9() { return cOperatorHyphenMinusKeyword_3_5_0_0_9; }
+		//'minus'
+		public Keyword getOperatorMinusKeyword_3_5_0_0_10() { return cOperatorMinusKeyword_3_5_0_0_10; }
+		
+		//'times'
+		public Keyword getOperatorTimesKeyword_3_5_0_0_11() { return cOperatorTimesKeyword_3_5_0_0_11; }
+		
+		//'over'
+		public Keyword getOperatorOverKeyword_3_5_0_0_12() { return cOperatorOverKeyword_3_5_0_0_12; }
 		
 		//comparisonValue=Number | comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'
 		public Alternatives getAlternatives_3_5_1() { return cAlternatives_3_5_1; }
@@ -9573,12 +9622,15 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cOperatorGreaterThanSignEqualsSignKeyword_3_5_0_0_1 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(1);
 		private final Keyword cOperatorLessThanSignEqualsSignKeyword_3_5_0_0_2 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(2);
 		private final Keyword cOperatorLessThanSignKeyword_3_5_0_0_3 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(3);
-		private final Keyword cOperatorAtKeyword_3_5_0_0_4 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(4);
+		private final Keyword cOperatorWhereKeyword_3_5_0_0_4 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(4);
 		private final Keyword cOperatorEqualsSignEqualsSignKeyword_3_5_0_0_5 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(5);
 		private final Keyword cOperatorEqualsSignKeyword_3_5_0_0_6 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(6);
-		private final Keyword cOperatorExclamationMarkEqualsSignKeyword_3_5_0_0_7 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(7);
-		private final Keyword cOperatorPlusSignKeyword_3_5_0_0_8 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(8);
-		private final Keyword cOperatorHyphenMinusKeyword_3_5_0_0_9 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(9);
+		private final Keyword cOperatorWithoutKeyword_3_5_0_0_7 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(7);
+		private final Keyword cOperatorExclamationMarkEqualsSignKeyword_3_5_0_0_8 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(8);
+		private final Keyword cOperatorPlusKeyword_3_5_0_0_9 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(9);
+		private final Keyword cOperatorMinusKeyword_3_5_0_0_10 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(10);
+		private final Keyword cOperatorTimesKeyword_3_5_0_0_11 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(11);
+		private final Keyword cOperatorOverKeyword_3_5_0_0_12 = (Keyword)cOperatorAlternatives_3_5_0_0.eContents().get(12);
 		private final Alternatives cAlternatives_3_5_1 = (Alternatives)cGroup_3_5.eContents().get(1);
 		private final Assignment cComparisonValueAssignment_3_5_1_0 = (Assignment)cAlternatives_3_5_1.eContents().get(0);
 		private final RuleCall cComparisonValueNumberParserRuleCall_3_5_1_0_0 = (RuleCall)cComparisonValueAssignment_3_5_1_0.eContents().get(0);
@@ -9602,15 +9654,16 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	generic?='any'?
 		//	declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
 		//	accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)?
-		//	& (operator=('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' | '+' | '-') (comparisonValue=Number |
-		//	comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))?) ('if' condition=EXPR)?;
+		//	& (operator=('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over')
+		//	(comparisonValue=Number | comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))?)
+		//	('if' condition=EXPR)?;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(value=LiteralValueWithConcept 'as')? generic?='any'? declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? &
 		//('down' 'to' downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) |
-		//'per' unit=Unit)? & (from=Number 'to' to=Number)? & (operator=('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' |
-		//'+' | '-') (comparisonValue=Number | comparisonConcept=ConceptDeclaration | '('
-		//comparisonObservable=ObservableSemantics ')'))?) ('if' condition=EXPR)?
+		//'per' unit=Unit)? & (from=Number 'to' to=Number)? & (operator=('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' |
+		//'without' | '!=' | 'plus' | 'minus' | 'times' | 'over') (comparisonValue=Number | comparisonConcept=ConceptDeclaration
+		//| '(' comparisonObservable=ObservableSemantics ')'))?) ('if' condition=EXPR)?
 		public Group getGroup() { return cGroup; }
 		
 		//(value=LiteralValueWithConcept 'as')?
@@ -9639,8 +9692,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in'
 		//(unit=Unit | currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)? & (operator=('>' | '>=' | '<=' |
-		//'<' | 'at' | '==' | '=' | '!=' | '+' | '-') (comparisonValue=Number | comparisonConcept=ConceptDeclaration | '('
-		//comparisonObservable=ObservableSemantics ')'))?
+		//'<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over') (comparisonValue=Number |
+		//comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))?
 		public UnorderedGroup getUnorderedGroup_3() { return cUnorderedGroup_3; }
 		
 		//('by' by=ConceptDeclaration)?
@@ -9739,14 +9792,14 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//Number
 		public RuleCall getToNumberParserRuleCall_3_4_2_0() { return cToNumberParserRuleCall_3_4_2_0; }
 		
-		//(operator=('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' | '+' | '-') (comparisonValue=Number |
-		//comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))?
+		//(operator=('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over')
+		//(comparisonValue=Number | comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))?
 		public Group getGroup_3_5() { return cGroup_3_5; }
 		
-		//operator=('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' | '+' | '-')
+		//operator=('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over')
 		public Assignment getOperatorAssignment_3_5_0() { return cOperatorAssignment_3_5_0; }
 		
-		//('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' | '+' | '-')
+		//('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over')
 		public Alternatives getOperatorAlternatives_3_5_0_0() { return cOperatorAlternatives_3_5_0_0; }
 		
 		//'>'
@@ -9761,8 +9814,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'<'
 		public Keyword getOperatorLessThanSignKeyword_3_5_0_0_3() { return cOperatorLessThanSignKeyword_3_5_0_0_3; }
 		
-		//'at'
-		public Keyword getOperatorAtKeyword_3_5_0_0_4() { return cOperatorAtKeyword_3_5_0_0_4; }
+		//'where'
+		public Keyword getOperatorWhereKeyword_3_5_0_0_4() { return cOperatorWhereKeyword_3_5_0_0_4; }
 		
 		//'=='
 		public Keyword getOperatorEqualsSignEqualsSignKeyword_3_5_0_0_5() { return cOperatorEqualsSignEqualsSignKeyword_3_5_0_0_5; }
@@ -9770,14 +9823,23 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'='
 		public Keyword getOperatorEqualsSignKeyword_3_5_0_0_6() { return cOperatorEqualsSignKeyword_3_5_0_0_6; }
 		
+		//'without'
+		public Keyword getOperatorWithoutKeyword_3_5_0_0_7() { return cOperatorWithoutKeyword_3_5_0_0_7; }
+		
 		//'!='
-		public Keyword getOperatorExclamationMarkEqualsSignKeyword_3_5_0_0_7() { return cOperatorExclamationMarkEqualsSignKeyword_3_5_0_0_7; }
+		public Keyword getOperatorExclamationMarkEqualsSignKeyword_3_5_0_0_8() { return cOperatorExclamationMarkEqualsSignKeyword_3_5_0_0_8; }
 		
-		//'+'
-		public Keyword getOperatorPlusSignKeyword_3_5_0_0_8() { return cOperatorPlusSignKeyword_3_5_0_0_8; }
+		//'plus'
+		public Keyword getOperatorPlusKeyword_3_5_0_0_9() { return cOperatorPlusKeyword_3_5_0_0_9; }
 		
-		//'-'
-		public Keyword getOperatorHyphenMinusKeyword_3_5_0_0_9() { return cOperatorHyphenMinusKeyword_3_5_0_0_9; }
+		//'minus'
+		public Keyword getOperatorMinusKeyword_3_5_0_0_10() { return cOperatorMinusKeyword_3_5_0_0_10; }
+		
+		//'times'
+		public Keyword getOperatorTimesKeyword_3_5_0_0_11() { return cOperatorTimesKeyword_3_5_0_0_11; }
+		
+		//'over'
+		public Keyword getOperatorOverKeyword_3_5_0_0_12() { return cOperatorOverKeyword_3_5_0_0_12; }
 		
 		//comparisonValue=Number | comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'
 		public Alternatives getAlternatives_3_5_1() { return cAlternatives_3_5_1; }
@@ -11164,9 +11226,9 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	generic?='any'?
 	//	declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
 	//	accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (operator=('>' | '>=' | '<=' |
-	//	'<' | 'at' | '==' | '=' | '!=' | '+' | '-') (comparisonValue=Number | comparisonConcept=ConceptDeclaration | '('
-	//	comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' | 'required')? & (from=Number 'to'
-	//	to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?);
+	//	'<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over') (comparisonValue=Number |
+	//	comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' |
+	//	'required')? & (from=Number 'to' to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?);
 	public ObservableSemanticsElements getObservableSemanticsAccess() {
 		return pObservableSemantics;
 	}
@@ -11183,9 +11245,9 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	generic?='any'?
 	//	declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
 	//	accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (operator=('>' | '>=' | '<=' |
-	//	'<' | 'at' | '==' | '=' | '!=' | '+' | '-') (comparisonValue=Number | comparisonConcept=ConceptDeclaration | '('
-	//	comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' | 'required')? & (from=Number 'to'
-	//	to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?);
+	//	'<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over') (comparisonValue=Number |
+	//	comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' |
+	//	'required')? & (from=Number 'to' to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?);
 	public AnnotatedObservableSemanticsElements getAnnotatedObservableSemanticsAccess() {
 		return pAnnotatedObservableSemantics;
 	}
@@ -11782,9 +11844,9 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	// */ SimpleObservableSemantics ObservableSemantics:
 	//	declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
 	//	accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)?
-	//	& (operator=('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' | '+' | '-') (comparisonValue=Number |
-	//	comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' |
-	//	'required')? & ('named' name=(LOWERCASE_ID | STRING))?);
+	//	& (operator=('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over')
+	//	(comparisonValue=Number | comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))?
+	//	& (optional?='optional' | 'required')? & ('named' name=(LOWERCASE_ID | STRING))?);
 	public SimpleObservableSemanticsElements getSimpleObservableSemanticsAccess() {
 		return pSimpleObservableSemantics;
 	}
@@ -11800,9 +11862,9 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	generic?='any'?
 	//	declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
 	//	accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)?
-	//	& (operator=('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' | '+' | '-') (comparisonValue=Number |
-	//	comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' |
-	//	'required')? & ('named' name=(LOWERCASE_ID | STRING))?);
+	//	& (operator=('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over')
+	//	(comparisonValue=Number | comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))?
+	//	& (optional?='optional' | 'required')? & ('named' name=(LOWERCASE_ID | STRING))?);
 	public DependencyObservableSemanticsElements getDependencyObservableSemanticsAccess() {
 		return pDependencyObservableSemantics;
 	}
@@ -11819,8 +11881,9 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	generic?='any'?
 	//	declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
 	//	accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (from=Number 'to' to=Number)?
-	//	& (operator=('>' | '>=' | '<=' | '<' | 'at' | '==' | '=' | '!=' | '+' | '-') (comparisonValue=Number |
-	//	comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))?) ('if' condition=EXPR)?;
+	//	& (operator=('>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over')
+	//	(comparisonValue=Number | comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')'))?)
+	//	('if' condition=EXPR)?;
 	public AlternativeDependencyObservableSemanticsElements getAlternativeDependencyObservableSemanticsAccess() {
 		return pAlternativeDependencyObservableSemantics;
 	}
