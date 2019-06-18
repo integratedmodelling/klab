@@ -226,6 +226,10 @@ public enum Indexer {
         SearchContext context = (SearchContext) searchContext;
         List<Match> ret = new ArrayList<>();
 
+
+        
+        System.out.println("QUERYING context: ================\n" + ((SearchContext)context).dump());
+
         
         for (Constraint constraint : context.getConstraints()) {
 
@@ -304,6 +308,12 @@ public enum Indexer {
 
         }
 
+		System.out.println("MATCHES: ==============================\n");
+		int i = 0;
+        for (Match match : ret) {
+        	System.out.println(++i + "] " + match);
+        }
+        
         return ret;
     }
 

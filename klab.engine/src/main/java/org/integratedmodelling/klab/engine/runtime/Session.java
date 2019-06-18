@@ -66,6 +66,7 @@ import org.integratedmodelling.klab.dataflow.Flowchart;
 import org.integratedmodelling.klab.documentation.DataflowDocumentation;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.engine.indexing.SearchContext;
 import org.integratedmodelling.klab.engine.resources.Project;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
@@ -644,9 +645,9 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		if (ctx == null) {
 			throw new IllegalStateException("match action has invalid context ID");
 		}
-		Context newContext = action.getMatchIndex() < 0 ? ctx.getFirst().previous()
-				: ctx.getFirst().accept(ctx.getSecond().get(action.getMatchIndex()));
-		searchContexts.put(contextId, new Pair<>(newContext, new ArrayList<>()));
+//		Context newContext = action.getMatchIndex() < 0 ? ctx.getFirst().previous()
+//				: ctx.getFirst().accept(ctx.getSecond().get(action.getMatchIndex()));
+//		searchContexts.put(contextId, new Pair<>(newContext, new ArrayList<>()));
 	}
 
 	@MessageHandler(type = IMessage.Type.DataflowNodeDetail)

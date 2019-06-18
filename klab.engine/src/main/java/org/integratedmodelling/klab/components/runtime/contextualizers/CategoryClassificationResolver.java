@@ -2,51 +2,45 @@ package org.integratedmodelling.klab.components.runtime.contextualizers;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.common.Geometry;
-import org.integratedmodelling.klab.components.runtime.RuntimeContext;
-import org.integratedmodelling.klab.data.storage.MediatingState;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.utils.Pair;
 
 public class CategoryClassificationResolver implements IResolver<IState>, IProcessor, IExpression {
 
 	static final public String FUNCTION_ID = "klab.runtime.categorize";
 
-	IValueMediator from;
-	IValueMediator to;
+	IArtifact classified;
+	IArtifact classifier;
 
 	// don't remove - only used as expression
 	public CategoryClassificationResolver() {
 	}
 
-	public CategoryClassificationResolver(IValueMediator from, IValueMediator to) {
-		this.from = from;
-		this.to = to;
+	public CategoryClassificationResolver(IArtifact classified, IArtifact classifier) {
+		this.classified = classified;
+		this.classifier = classifier;
 	}
 
-	public static IServiceCall getServiceCall(Pair<IValueMediator, IValueMediator> literal)
+	public static IServiceCall getServiceCall(IObservable classified, IObservable classifier)
 			throws KlabValidationException {
-		if (!literal.getSecond().isCompatible(literal.getFirst())) {
-			throw new KlabValidationException(
-					"mediator '" + literal.getFirst() + "' cannot be converted to '" + literal.getSecond() + "'");
-		}
-		return KimServiceCall.create(FUNCTION_ID, "original", literal.getFirst(), "target", literal.getSecond());
+		return KimServiceCall.create(FUNCTION_ID, "artifact", classified.getLocalName(), "classifier",
+				classifier.getLocalName());
 	}
 
 	@Override
 	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
-		return new CategoryClassificationResolver((IValueMediator) parameters.get("original"),
-				(IValueMediator) parameters.get("target"));
+		return new CategoryClassificationResolver(context.getArtifact(parameters.get("artifact", String.class)),
+				context.getArtifact(parameters.get("classifier", String.class)));
 	}
 
 	@Override
@@ -56,12 +50,12 @@ public class CategoryClassificationResolver implements IResolver<IState>, IProce
 
 	@Override
 	public IState resolve(IState ret, IComputationContext context) throws KlabException {
-		return new MediatingState(ret, (RuntimeContext) context, from, to);
+		return ret;
 	}
 
 	@Override
 	public IArtifact.Type getType() {
-		return IArtifact.Type.NUMBER;
+		return classified.getType();
 	}
 
 }

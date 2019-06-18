@@ -10,6 +10,7 @@ import java.util.concurrent.Future;
 import java.util.stream.StreamSupport;
 
 import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
@@ -43,11 +44,13 @@ import org.integratedmodelling.klab.api.runtime.NonReentrant;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.contextualizers.CastingStateResolver;
+import org.integratedmodelling.klab.components.runtime.contextualizers.CategoryClassificationResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ClassifyingStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ConversionResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ExpressionResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LookupStateResolver;
+import org.integratedmodelling.klab.components.runtime.contextualizers.ObjectClassificationResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.UrnInstantiator;
 import org.integratedmodelling.klab.components.runtime.contextualizers.UrnResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.DensityResolver;
@@ -430,8 +433,15 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 	@Override
 	public IComputableResource getAggregatingResolver(IObservable classifiedResolvable, IObservable aggregatorObservable) {
-		// <quality> by <concept|boolean|text> : return an aggregation contextualizer
-		// <quality> by <object>: return a coverage aggregator
+			
+		if (classifiedResolvable.getType().is(IKimConcept.Type.QUALITY)) {
+			IArtifact.Type atype = aggregatorObservable.getArtifactType();
+			if (atype == IArtifact.Type.CONCEPT || atype == IArtifact.Type.BOOLEAN || atype == IArtifact.Type.TEXT) {
+				return new ComputableResource(CategoryClassificationResolver.getServiceCall(classifiedResolvable, aggregatorObservable), Mode.RESOLUTION);
+			} else if (atype == IArtifact.Type.OBJECT) {
+				return new ComputableResource(ObjectClassificationResolver.getServiceCall(classifiedResolvable, aggregatorObservable), Mode.RESOLUTION);
+			}
+		}
 		return null;
 	}
 }

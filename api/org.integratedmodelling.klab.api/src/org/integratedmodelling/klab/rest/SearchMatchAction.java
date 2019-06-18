@@ -10,21 +10,36 @@ package org.integratedmodelling.klab.rest;
  *
  */
 public class SearchMatchAction {
-	
+
 	private String contextId;
-	private int matchIndex;
-	
+	private String matchName;
+	private boolean added;
+
 	public String getContextId() {
 		return contextId;
 	}
+
 	public void setContextId(String contextId) {
 		this.contextId = contextId;
 	}
-	public int getMatchIndex() {
-		return matchIndex;
+
+	public String getMatchIndex() {
+		return matchName;
 	}
-	public void setMatchIndex(int matchIndex) {
-		this.matchIndex = matchIndex;
+
+	public void setMatchIndex(String matchIndex) {
+		this.matchName = matchIndex;
 	}
-	
+
+	/**
+	 * If true, it's a new match, otherwise it's the previous being deleted.
+	 */
+	public boolean isAdded() {
+		return added;
+	}
+
+	public void setAdded(boolean added) {
+		this.added = added;
+	}
+
 }
