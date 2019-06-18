@@ -40,7 +40,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	protected AbstractElementAlias match_Namespace_____OutsideKeyword_5_6_1_0_a_ResolveKeyword_5_6_0_0__p_FromKeyword_5_6_0_1_0__p;
 	protected AbstractElementAlias match_Number_PlusSignKeyword_0_0_q;
 	protected AbstractElementAlias match_Number_PlusSignKeyword_4_0_1_0_q;
-	protected AbstractElementAlias match_ObservableSemantics_RequiredKeyword_3_4_1_a;
+	protected AbstractElementAlias match_ObservableSemantics_RequiredKeyword_3_5_1_a;
 	protected AbstractElementAlias match_ObserveStatementBody_UsingKeyword_1_0_a;
 	protected AbstractElementAlias match_ObserveStatementBody_UsingKeyword_1_0_p;
 	protected AbstractElementAlias match_SimpleObservableSemantics_RequiredKeyword_1_5_1_a;
@@ -68,7 +68,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 		match_Namespace_____OutsideKeyword_5_6_1_0_a_ResolveKeyword_5_6_0_0__p_FromKeyword_5_6_0_1_0__p = new GroupAlias(true, false, new GroupAlias(true, false, new TokenAlias(true, true, grammarAccess.getNamespaceAccess().getOutsideKeyword_5_6_1_0()), new TokenAlias(false, false, grammarAccess.getNamespaceAccess().getResolveKeyword_5_6_0_0())), new TokenAlias(false, false, grammarAccess.getNamespaceAccess().getFromKeyword_5_6_0_1_0()));
 		match_Number_PlusSignKeyword_0_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_0_0());
 		match_Number_PlusSignKeyword_4_0_1_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_4_0_1_0());
-		match_ObservableSemantics_RequiredKeyword_3_4_1_a = new TokenAlias(true, true, grammarAccess.getObservableSemanticsAccess().getRequiredKeyword_3_4_1());
+		match_ObservableSemantics_RequiredKeyword_3_5_1_a = new TokenAlias(true, true, grammarAccess.getObservableSemanticsAccess().getRequiredKeyword_3_5_1());
 		match_ObserveStatementBody_UsingKeyword_1_0_a = new TokenAlias(true, true, grammarAccess.getObserveStatementBodyAccess().getUsingKeyword_1_0());
 		match_ObserveStatementBody_UsingKeyword_1_0_p = new TokenAlias(true, false, grammarAccess.getObserveStatementBodyAccess().getUsingKeyword_1_0());
 		match_SimpleObservableSemantics_RequiredKeyword_1_5_1_a = new TokenAlias(true, true, grammarAccess.getSimpleObservableSemanticsAccess().getRequiredKeyword_1_5_1());
@@ -135,8 +135,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 				emit_Number_PlusSignKeyword_0_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Number_PlusSignKeyword_4_0_1_0_q.equals(syntax))
 				emit_Number_PlusSignKeyword_4_0_1_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_ObservableSemantics_RequiredKeyword_3_4_1_a.equals(syntax))
-				emit_ObservableSemantics_RequiredKeyword_3_4_1_a(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_ObservableSemantics_RequiredKeyword_3_5_1_a.equals(syntax))
+				emit_ObservableSemantics_RequiredKeyword_3_5_1_a(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_ObserveStatementBody_UsingKeyword_1_0_a.equals(syntax))
 				emit_ObserveStatementBody_UsingKeyword_1_0_a(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_ObserveStatementBody_UsingKeyword_1_0_p.equals(syntax))
@@ -741,6 +741,11 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     accordingTo=PropertyId (ambiguity) 'per' unit=Unit
 	 *     accordingTo=PropertyId (ambiguity) (rule end)
 	 *     accordingTo=PropertyId (ambiguity) from=Number
+	 *     accordingTo=PropertyId (ambiguity) operator='<='
+	 *     accordingTo=PropertyId (ambiguity) operator='='
+	 *     accordingTo=PropertyId (ambiguity) operator='>'
+	 *     accordingTo=PropertyId (ambiguity) operator='>='
+	 *     accordingTo=PropertyId (ambiguity) operator='@'
 	 *     accordingTo=PropertyId (ambiguity) optional?='optional'
 	 *     by=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     by=ConceptDeclaration (ambiguity) 'by' by=ConceptDeclaration
@@ -752,7 +757,44 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     by=ConceptDeclaration (ambiguity) 'per' unit=Unit
 	 *     by=ConceptDeclaration (ambiguity) (rule end)
 	 *     by=ConceptDeclaration (ambiguity) from=Number
+	 *     by=ConceptDeclaration (ambiguity) operator='<='
+	 *     by=ConceptDeclaration (ambiguity) operator='='
+	 *     by=ConceptDeclaration (ambiguity) operator='>'
+	 *     by=ConceptDeclaration (ambiguity) operator='>='
+	 *     by=ConceptDeclaration (ambiguity) operator='@'
 	 *     by=ConceptDeclaration (ambiguity) optional?='optional'
+	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) 'by' by=ConceptDeclaration
+	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) 'down' 'to' downTo=Concept
+	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) 'in' currency=Currency
+	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) 'in' unit=Unit
+	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) 'named' name=LOWERCASE_ID
+	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) 'named' name=STRING
+	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) 'per' unit=Unit
+	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) (rule end)
+	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) from=Number
+	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='<='
+	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='='
+	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='>'
+	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='>='
+	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='@'
+	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) optional?='optional'
+	 *     comparisonValue=Value (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     comparisonValue=Value (ambiguity) 'by' by=ConceptDeclaration
+	 *     comparisonValue=Value (ambiguity) 'down' 'to' downTo=Concept
+	 *     comparisonValue=Value (ambiguity) 'in' currency=Currency
+	 *     comparisonValue=Value (ambiguity) 'in' unit=Unit
+	 *     comparisonValue=Value (ambiguity) 'named' name=LOWERCASE_ID
+	 *     comparisonValue=Value (ambiguity) 'named' name=STRING
+	 *     comparisonValue=Value (ambiguity) 'per' unit=Unit
+	 *     comparisonValue=Value (ambiguity) (rule end)
+	 *     comparisonValue=Value (ambiguity) from=Number
+	 *     comparisonValue=Value (ambiguity) operator='<='
+	 *     comparisonValue=Value (ambiguity) operator='='
+	 *     comparisonValue=Value (ambiguity) operator='>'
+	 *     comparisonValue=Value (ambiguity) operator='>='
+	 *     comparisonValue=Value (ambiguity) operator='@'
+	 *     comparisonValue=Value (ambiguity) optional?='optional'
 	 *     currency=Currency (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     currency=Currency (ambiguity) 'by' by=ConceptDeclaration
 	 *     currency=Currency (ambiguity) 'down' 'to' downTo=Concept
@@ -763,6 +805,11 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     currency=Currency (ambiguity) 'per' unit=Unit
 	 *     currency=Currency (ambiguity) (rule end)
 	 *     currency=Currency (ambiguity) from=Number
+	 *     currency=Currency (ambiguity) operator='<='
+	 *     currency=Currency (ambiguity) operator='='
+	 *     currency=Currency (ambiguity) operator='>'
+	 *     currency=Currency (ambiguity) operator='>='
+	 *     currency=Currency (ambiguity) operator='@'
 	 *     currency=Currency (ambiguity) optional?='optional'
 	 *     declaration=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     declaration=ConceptDeclaration (ambiguity) 'by' by=ConceptDeclaration
@@ -774,6 +821,11 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     declaration=ConceptDeclaration (ambiguity) 'per' unit=Unit
 	 *     declaration=ConceptDeclaration (ambiguity) (rule end)
 	 *     declaration=ConceptDeclaration (ambiguity) from=Number
+	 *     declaration=ConceptDeclaration (ambiguity) operator='<='
+	 *     declaration=ConceptDeclaration (ambiguity) operator='='
+	 *     declaration=ConceptDeclaration (ambiguity) operator='>'
+	 *     declaration=ConceptDeclaration (ambiguity) operator='>='
+	 *     declaration=ConceptDeclaration (ambiguity) operator='@'
 	 *     declaration=ConceptDeclaration (ambiguity) optional?='optional'
 	 *     downTo=Concept (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     downTo=Concept (ambiguity) 'by' by=ConceptDeclaration
@@ -785,6 +837,11 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     downTo=Concept (ambiguity) 'per' unit=Unit
 	 *     downTo=Concept (ambiguity) (rule end)
 	 *     downTo=Concept (ambiguity) from=Number
+	 *     downTo=Concept (ambiguity) operator='<='
+	 *     downTo=Concept (ambiguity) operator='='
+	 *     downTo=Concept (ambiguity) operator='>'
+	 *     downTo=Concept (ambiguity) operator='>='
+	 *     downTo=Concept (ambiguity) operator='@'
 	 *     downTo=Concept (ambiguity) optional?='optional'
 	 *     name=LOWERCASE_ID (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     name=LOWERCASE_ID (ambiguity) 'by' by=ConceptDeclaration
@@ -796,6 +853,11 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=LOWERCASE_ID (ambiguity) 'per' unit=Unit
 	 *     name=LOWERCASE_ID (ambiguity) (rule end)
 	 *     name=LOWERCASE_ID (ambiguity) from=Number
+	 *     name=LOWERCASE_ID (ambiguity) operator='<='
+	 *     name=LOWERCASE_ID (ambiguity) operator='='
+	 *     name=LOWERCASE_ID (ambiguity) operator='>'
+	 *     name=LOWERCASE_ID (ambiguity) operator='>='
+	 *     name=LOWERCASE_ID (ambiguity) operator='@'
 	 *     name=LOWERCASE_ID (ambiguity) optional?='optional'
 	 *     name=STRING (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     name=STRING (ambiguity) 'by' by=ConceptDeclaration
@@ -807,6 +869,11 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=STRING (ambiguity) 'per' unit=Unit
 	 *     name=STRING (ambiguity) (rule end)
 	 *     name=STRING (ambiguity) from=Number
+	 *     name=STRING (ambiguity) operator='<='
+	 *     name=STRING (ambiguity) operator='='
+	 *     name=STRING (ambiguity) operator='>'
+	 *     name=STRING (ambiguity) operator='>='
+	 *     name=STRING (ambiguity) operator='@'
 	 *     name=STRING (ambiguity) optional?='optional'
 	 *     optional?='optional' (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     optional?='optional' (ambiguity) 'by' by=ConceptDeclaration
@@ -818,6 +885,11 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     optional?='optional' (ambiguity) 'per' unit=Unit
 	 *     optional?='optional' (ambiguity) (rule end)
 	 *     optional?='optional' (ambiguity) from=Number
+	 *     optional?='optional' (ambiguity) operator='<='
+	 *     optional?='optional' (ambiguity) operator='='
+	 *     optional?='optional' (ambiguity) operator='>'
+	 *     optional?='optional' (ambiguity) operator='>='
+	 *     optional?='optional' (ambiguity) operator='@'
 	 *     optional?='optional' (ambiguity) optional?='optional'
 	 *     to=Number (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     to=Number (ambiguity) 'by' by=ConceptDeclaration
@@ -829,6 +901,11 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     to=Number (ambiguity) 'per' unit=Unit
 	 *     to=Number (ambiguity) (rule end)
 	 *     to=Number (ambiguity) from=Number
+	 *     to=Number (ambiguity) operator='<='
+	 *     to=Number (ambiguity) operator='='
+	 *     to=Number (ambiguity) operator='>'
+	 *     to=Number (ambiguity) operator='>='
+	 *     to=Number (ambiguity) operator='@'
 	 *     to=Number (ambiguity) optional?='optional'
 	 *     unit=Unit (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     unit=Unit (ambiguity) 'by' by=ConceptDeclaration
@@ -840,9 +917,14 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     unit=Unit (ambiguity) 'per' unit=Unit
 	 *     unit=Unit (ambiguity) (rule end)
 	 *     unit=Unit (ambiguity) from=Number
+	 *     unit=Unit (ambiguity) operator='<='
+	 *     unit=Unit (ambiguity) operator='='
+	 *     unit=Unit (ambiguity) operator='>'
+	 *     unit=Unit (ambiguity) operator='>='
+	 *     unit=Unit (ambiguity) operator='@'
 	 *     unit=Unit (ambiguity) optional?='optional'
 	 */
-	protected void emit_ObservableSemantics_RequiredKeyword_3_4_1_a(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+	protected void emit_ObservableSemantics_RequiredKeyword_3_5_1_a(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

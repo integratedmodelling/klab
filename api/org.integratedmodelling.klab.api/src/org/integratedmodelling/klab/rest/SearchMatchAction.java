@@ -12,7 +12,8 @@ package org.integratedmodelling.klab.rest;
 public class SearchMatchAction {
 
 	private String contextId;
-	private String matchName;
+	private String matchId;
+	private int matchIndex;
 	private boolean added;
 
 	public String getContextId() {
@@ -23,12 +24,12 @@ public class SearchMatchAction {
 		this.contextId = contextId;
 	}
 
-	public String getMatchIndex() {
-		return matchName;
+	public String getMatchId() {
+		return matchId;
 	}
 
-	public void setMatchIndex(String matchIndex) {
-		this.matchName = matchIndex;
+	public void setMatchId(String matchIndex) {
+		this.matchId = matchIndex;
 	}
 
 	/**
@@ -40,6 +41,14 @@ public class SearchMatchAction {
 
 	public void setAdded(boolean added) {
 		this.added = added;
+	}
+
+	public int getMatchIndex() {
+		return matchIndex;
+	}
+
+	public void setMatchIndex(int matchIndex) {
+		this.matchIndex = matchIndex;
 	}
 
 }

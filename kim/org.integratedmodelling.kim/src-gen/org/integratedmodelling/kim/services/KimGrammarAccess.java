@@ -3535,22 +3535,38 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cPerKeyword_3_3_1_0 = (Keyword)cGroup_3_3_1.eContents().get(0);
 		private final Assignment cUnitAssignment_3_3_1_1 = (Assignment)cGroup_3_3_1.eContents().get(1);
 		private final RuleCall cUnitUnitParserRuleCall_3_3_1_1_0 = (RuleCall)cUnitAssignment_3_3_1_1.eContents().get(0);
-		private final Alternatives cAlternatives_3_4 = (Alternatives)cUnorderedGroup_3.eContents().get(4);
-		private final Assignment cOptionalAssignment_3_4_0 = (Assignment)cAlternatives_3_4.eContents().get(0);
-		private final Keyword cOptionalOptionalKeyword_3_4_0_0 = (Keyword)cOptionalAssignment_3_4_0.eContents().get(0);
-		private final Keyword cRequiredKeyword_3_4_1 = (Keyword)cAlternatives_3_4.eContents().get(1);
-		private final Group cGroup_3_5 = (Group)cUnorderedGroup_3.eContents().get(5);
-		private final Assignment cFromAssignment_3_5_0 = (Assignment)cGroup_3_5.eContents().get(0);
-		private final RuleCall cFromNumberParserRuleCall_3_5_0_0 = (RuleCall)cFromAssignment_3_5_0.eContents().get(0);
-		private final Keyword cToKeyword_3_5_1 = (Keyword)cGroup_3_5.eContents().get(1);
-		private final Assignment cToAssignment_3_5_2 = (Assignment)cGroup_3_5.eContents().get(2);
-		private final RuleCall cToNumberParserRuleCall_3_5_2_0 = (RuleCall)cToAssignment_3_5_2.eContents().get(0);
+		private final Group cGroup_3_4 = (Group)cUnorderedGroup_3.eContents().get(4);
+		private final Assignment cOperatorAssignment_3_4_0 = (Assignment)cGroup_3_4.eContents().get(0);
+		private final Alternatives cOperatorAlternatives_3_4_0_0 = (Alternatives)cOperatorAssignment_3_4_0.eContents().get(0);
+		private final Keyword cOperatorGreaterThanSignKeyword_3_4_0_0_0 = (Keyword)cOperatorAlternatives_3_4_0_0.eContents().get(0);
+		private final Keyword cOperatorEqualsSignKeyword_3_4_0_0_1 = (Keyword)cOperatorAlternatives_3_4_0_0.eContents().get(1);
+		private final Keyword cOperatorGreaterThanSignEqualsSignKeyword_3_4_0_0_2 = (Keyword)cOperatorAlternatives_3_4_0_0.eContents().get(2);
+		private final Keyword cOperatorLessThanSignEqualsSignKeyword_3_4_0_0_3 = (Keyword)cOperatorAlternatives_3_4_0_0.eContents().get(3);
+		private final Keyword cOperatorCommercialAtKeyword_3_4_0_0_4 = (Keyword)cOperatorAlternatives_3_4_0_0.eContents().get(4);
+		private final Alternatives cAlternatives_3_4_1 = (Alternatives)cGroup_3_4.eContents().get(1);
+		private final Assignment cComparisonValueAssignment_3_4_1_0 = (Assignment)cAlternatives_3_4_1.eContents().get(0);
+		private final RuleCall cComparisonValueValueParserRuleCall_3_4_1_0_0 = (RuleCall)cComparisonValueAssignment_3_4_1_0.eContents().get(0);
+		private final Group cGroup_3_4_1_1 = (Group)cAlternatives_3_4_1.eContents().get(1);
+		private final Keyword cLeftParenthesisKeyword_3_4_1_1_0 = (Keyword)cGroup_3_4_1_1.eContents().get(0);
+		private final Assignment cComparisonObservableAssignment_3_4_1_1_1 = (Assignment)cGroup_3_4_1_1.eContents().get(1);
+		private final RuleCall cComparisonObservableObservableSemanticsParserRuleCall_3_4_1_1_1_0 = (RuleCall)cComparisonObservableAssignment_3_4_1_1_1.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_3_4_1_1_2 = (Keyword)cGroup_3_4_1_1.eContents().get(2);
+		private final Alternatives cAlternatives_3_5 = (Alternatives)cUnorderedGroup_3.eContents().get(5);
+		private final Assignment cOptionalAssignment_3_5_0 = (Assignment)cAlternatives_3_5.eContents().get(0);
+		private final Keyword cOptionalOptionalKeyword_3_5_0_0 = (Keyword)cOptionalAssignment_3_5_0.eContents().get(0);
+		private final Keyword cRequiredKeyword_3_5_1 = (Keyword)cAlternatives_3_5.eContents().get(1);
 		private final Group cGroup_3_6 = (Group)cUnorderedGroup_3.eContents().get(6);
-		private final Keyword cNamedKeyword_3_6_0 = (Keyword)cGroup_3_6.eContents().get(0);
-		private final Assignment cNameAssignment_3_6_1 = (Assignment)cGroup_3_6.eContents().get(1);
-		private final Alternatives cNameAlternatives_3_6_1_0 = (Alternatives)cNameAssignment_3_6_1.eContents().get(0);
-		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_3_6_1_0_0 = (RuleCall)cNameAlternatives_3_6_1_0.eContents().get(0);
-		private final RuleCall cNameSTRINGTerminalRuleCall_3_6_1_0_1 = (RuleCall)cNameAlternatives_3_6_1_0.eContents().get(1);
+		private final Assignment cFromAssignment_3_6_0 = (Assignment)cGroup_3_6.eContents().get(0);
+		private final RuleCall cFromNumberParserRuleCall_3_6_0_0 = (RuleCall)cFromAssignment_3_6_0.eContents().get(0);
+		private final Keyword cToKeyword_3_6_1 = (Keyword)cGroup_3_6.eContents().get(1);
+		private final Assignment cToAssignment_3_6_2 = (Assignment)cGroup_3_6.eContents().get(2);
+		private final RuleCall cToNumberParserRuleCall_3_6_2_0 = (RuleCall)cToAssignment_3_6_2.eContents().get(0);
+		private final Group cGroup_3_7 = (Group)cUnorderedGroup_3.eContents().get(7);
+		private final Keyword cNamedKeyword_3_7_0 = (Keyword)cGroup_3_7.eContents().get(0);
+		private final Assignment cNameAssignment_3_7_1 = (Assignment)cGroup_3_7.eContents().get(1);
+		private final Alternatives cNameAlternatives_3_7_1_0 = (Alternatives)cNameAssignment_3_7_1.eContents().get(0);
+		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_3_7_1_0_0 = (RuleCall)cNameAlternatives_3_7_1_0.eContents().get(0);
+		private final RuleCall cNameSTRINGTerminalRuleCall_3_7_1_0_1 = (RuleCall)cNameAlternatives_3_7_1_0.eContents().get(1);
 		
 		///**
 		// * Observable semantics is a concept declaration with optional observation semantics and formal name.
@@ -3558,14 +3574,16 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	(value=Value 'as')?
 		//	generic?='any'?
 		//	declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
-		//	accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (optional?='optional' |
+		//	accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (operator=('>' | '=' | '>=' |
+		//	'<=' | '@') (comparisonValue=Value | '(' comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' |
 		//	'required')? & (from=Number 'to' to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?);
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(value=Value 'as')? generic?='any'? declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to'
 		//downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per'
-		//unit=Unit)? & (optional?='optional' | 'required')? & (from=Number 'to' to=Number)? & ('named' name=(LOWERCASE_ID |
-		//STRING))?)
+		//unit=Unit)? & (operator=('>' | '=' | '>=' | '<=' | '@') (comparisonValue=Value | '('
+		//comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' | 'required')? & (from=Number 'to' to=Number)?
+		//& ('named' name=(LOWERCASE_ID | STRING))?)
 		public Group getGroup() { return cGroup; }
 		
 		//(value=Value 'as')?
@@ -3593,7 +3611,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getDeclarationConceptDeclarationParserRuleCall_2_0() { return cDeclarationConceptDeclarationParserRuleCall_2_0; }
 		
 		//('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to' accordingTo=PropertyId)? & ('in'
-		//(unit=Unit | currency=Currency) | 'per' unit=Unit)? & (optional?='optional' | 'required')? & (from=Number 'to'
+		//(unit=Unit | currency=Currency) | 'per' unit=Unit)? & (operator=('>' | '=' | '>=' | '<=' | '@') (comparisonValue=Value
+		//| '(' comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' | 'required')? & (from=Number 'to'
 		//to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?
 		public UnorderedGroup getUnorderedGroup_3() { return cUnorderedGroup_3; }
 		
@@ -3675,53 +3694,101 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//Unit
 		public RuleCall getUnitUnitParserRuleCall_3_3_1_1_0() { return cUnitUnitParserRuleCall_3_3_1_1_0; }
 		
+		//(operator=('>' | '=' | '>=' | '<=' | '@') (comparisonValue=Value | '(' comparisonObservable=ObservableSemantics ')'))?
+		public Group getGroup_3_4() { return cGroup_3_4; }
+		
+		//operator=('>' | '=' | '>=' | '<=' | '@')
+		public Assignment getOperatorAssignment_3_4_0() { return cOperatorAssignment_3_4_0; }
+		
+		//('>' | '=' | '>=' | '<=' | '@')
+		public Alternatives getOperatorAlternatives_3_4_0_0() { return cOperatorAlternatives_3_4_0_0; }
+		
+		//'>'
+		public Keyword getOperatorGreaterThanSignKeyword_3_4_0_0_0() { return cOperatorGreaterThanSignKeyword_3_4_0_0_0; }
+		
+		//'='
+		public Keyword getOperatorEqualsSignKeyword_3_4_0_0_1() { return cOperatorEqualsSignKeyword_3_4_0_0_1; }
+		
+		//'>='
+		public Keyword getOperatorGreaterThanSignEqualsSignKeyword_3_4_0_0_2() { return cOperatorGreaterThanSignEqualsSignKeyword_3_4_0_0_2; }
+		
+		//'<='
+		public Keyword getOperatorLessThanSignEqualsSignKeyword_3_4_0_0_3() { return cOperatorLessThanSignEqualsSignKeyword_3_4_0_0_3; }
+		
+		//'@'
+		public Keyword getOperatorCommercialAtKeyword_3_4_0_0_4() { return cOperatorCommercialAtKeyword_3_4_0_0_4; }
+		
+		//comparisonValue=Value | '(' comparisonObservable=ObservableSemantics ')'
+		public Alternatives getAlternatives_3_4_1() { return cAlternatives_3_4_1; }
+		
+		//comparisonValue=Value
+		public Assignment getComparisonValueAssignment_3_4_1_0() { return cComparisonValueAssignment_3_4_1_0; }
+		
+		//Value
+		public RuleCall getComparisonValueValueParserRuleCall_3_4_1_0_0() { return cComparisonValueValueParserRuleCall_3_4_1_0_0; }
+		
+		//'(' comparisonObservable=ObservableSemantics ')'
+		public Group getGroup_3_4_1_1() { return cGroup_3_4_1_1; }
+		
+		//'('
+		public Keyword getLeftParenthesisKeyword_3_4_1_1_0() { return cLeftParenthesisKeyword_3_4_1_1_0; }
+		
+		//comparisonObservable=ObservableSemantics
+		public Assignment getComparisonObservableAssignment_3_4_1_1_1() { return cComparisonObservableAssignment_3_4_1_1_1; }
+		
+		//ObservableSemantics
+		public RuleCall getComparisonObservableObservableSemanticsParserRuleCall_3_4_1_1_1_0() { return cComparisonObservableObservableSemanticsParserRuleCall_3_4_1_1_1_0; }
+		
+		//')'
+		public Keyword getRightParenthesisKeyword_3_4_1_1_2() { return cRightParenthesisKeyword_3_4_1_1_2; }
+		
 		//(optional?='optional' | 'required')?
-		public Alternatives getAlternatives_3_4() { return cAlternatives_3_4; }
+		public Alternatives getAlternatives_3_5() { return cAlternatives_3_5; }
 		
 		//optional?='optional'
-		public Assignment getOptionalAssignment_3_4_0() { return cOptionalAssignment_3_4_0; }
+		public Assignment getOptionalAssignment_3_5_0() { return cOptionalAssignment_3_5_0; }
 		
 		//'optional'
-		public Keyword getOptionalOptionalKeyword_3_4_0_0() { return cOptionalOptionalKeyword_3_4_0_0; }
+		public Keyword getOptionalOptionalKeyword_3_5_0_0() { return cOptionalOptionalKeyword_3_5_0_0; }
 		
 		//'required'
-		public Keyword getRequiredKeyword_3_4_1() { return cRequiredKeyword_3_4_1; }
+		public Keyword getRequiredKeyword_3_5_1() { return cRequiredKeyword_3_5_1; }
 		
 		//(from=Number 'to' to=Number)?
-		public Group getGroup_3_5() { return cGroup_3_5; }
-		
-		//from=Number
-		public Assignment getFromAssignment_3_5_0() { return cFromAssignment_3_5_0; }
-		
-		//Number
-		public RuleCall getFromNumberParserRuleCall_3_5_0_0() { return cFromNumberParserRuleCall_3_5_0_0; }
-		
-		//'to'
-		public Keyword getToKeyword_3_5_1() { return cToKeyword_3_5_1; }
-		
-		//to=Number
-		public Assignment getToAssignment_3_5_2() { return cToAssignment_3_5_2; }
-		
-		//Number
-		public RuleCall getToNumberParserRuleCall_3_5_2_0() { return cToNumberParserRuleCall_3_5_2_0; }
-		
-		//('named' name=(LOWERCASE_ID | STRING))?
 		public Group getGroup_3_6() { return cGroup_3_6; }
 		
+		//from=Number
+		public Assignment getFromAssignment_3_6_0() { return cFromAssignment_3_6_0; }
+		
+		//Number
+		public RuleCall getFromNumberParserRuleCall_3_6_0_0() { return cFromNumberParserRuleCall_3_6_0_0; }
+		
+		//'to'
+		public Keyword getToKeyword_3_6_1() { return cToKeyword_3_6_1; }
+		
+		//to=Number
+		public Assignment getToAssignment_3_6_2() { return cToAssignment_3_6_2; }
+		
+		//Number
+		public RuleCall getToNumberParserRuleCall_3_6_2_0() { return cToNumberParserRuleCall_3_6_2_0; }
+		
+		//('named' name=(LOWERCASE_ID | STRING))?
+		public Group getGroup_3_7() { return cGroup_3_7; }
+		
 		//'named'
-		public Keyword getNamedKeyword_3_6_0() { return cNamedKeyword_3_6_0; }
+		public Keyword getNamedKeyword_3_7_0() { return cNamedKeyword_3_7_0; }
 		
 		//name=(LOWERCASE_ID | STRING)
-		public Assignment getNameAssignment_3_6_1() { return cNameAssignment_3_6_1; }
+		public Assignment getNameAssignment_3_7_1() { return cNameAssignment_3_7_1; }
 		
 		//(LOWERCASE_ID | STRING)
-		public Alternatives getNameAlternatives_3_6_1_0() { return cNameAlternatives_3_6_1_0; }
+		public Alternatives getNameAlternatives_3_7_1_0() { return cNameAlternatives_3_7_1_0; }
 		
 		//LOWERCASE_ID
-		public RuleCall getNameLOWERCASE_IDTerminalRuleCall_3_6_1_0_0() { return cNameLOWERCASE_IDTerminalRuleCall_3_6_1_0_0; }
+		public RuleCall getNameLOWERCASE_IDTerminalRuleCall_3_7_1_0_0() { return cNameLOWERCASE_IDTerminalRuleCall_3_7_1_0_0; }
 		
 		//STRING
-		public RuleCall getNameSTRINGTerminalRuleCall_3_6_1_0_1() { return cNameSTRINGTerminalRuleCall_3_6_1_0_1; }
+		public RuleCall getNameSTRINGTerminalRuleCall_3_7_1_0_1() { return cNameSTRINGTerminalRuleCall_3_7_1_0_1; }
 	}
 	public class AnnotatedObservableSemanticsElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.AnnotatedObservableSemantics");
@@ -4178,16 +4245,15 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		///* (name=STRING)? */ main+=Concept+ (('of' inherency=SimpleConceptDeclaration)? & ('for'
-		//motivation=SimpleConceptDeclaration)? & ('with' compresent=SimpleConceptDeclaration)? & ('caused' 'by'
-		//causant=SimpleConceptDeclaration)? & ('adjacent' 'to' adjacent=SimpleConceptDeclaration)? & ('contained' 'in'
-		//container=SimpleConceptDeclaration)? & ('containing' contained=SimpleConceptDeclaration)? & ('causing'
-		//caused=SimpleConceptDeclaration)? & ('during' during=SimpleConceptDeclaration)? & ('within'
-		//context=SimpleConceptDeclaration)? & ('linking' relationshipSource=SimpleConceptDeclaration 'to'
-		//relationshipTarget=SimpleConceptDeclaration)?)?
+		//main+=Concept+ (('of' inherency=SimpleConceptDeclaration)? & ('for' motivation=SimpleConceptDeclaration)? & ('with'
+		//compresent=SimpleConceptDeclaration)? & ('caused' 'by' causant=SimpleConceptDeclaration)? & ('adjacent' 'to'
+		//adjacent=SimpleConceptDeclaration)? & ('contained' 'in' container=SimpleConceptDeclaration)? & ('containing'
+		//contained=SimpleConceptDeclaration)? & ('causing' caused=SimpleConceptDeclaration)? & ('during'
+		//during=SimpleConceptDeclaration)? & ('within' context=SimpleConceptDeclaration)? & ('linking'
+		//relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?)?
 		public Group getGroup() { return cGroup; }
 		
-		///* (name=STRING)? */ main+=Concept+
+		//main+=Concept+
 		public Assignment getMainAssignment_0() { return cMainAssignment_0; }
 		
 		//Concept
@@ -10671,7 +10737,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	(value=Value 'as')?
 	//	generic?='any'?
 	//	declaration=ConceptDeclaration (('by' by=ConceptDeclaration)? & ('down' 'to' downTo=Concept)? & ('according' 'to'
-	//	accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (optional?='optional' |
+	//	accordingTo=PropertyId)? & ('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? & (operator=('>' | '=' | '>=' |
+	//	'<=' | '@') (comparisonValue=Value | '(' comparisonObservable=ObservableSemantics ')'))? & (optional?='optional' |
 	//	'required')? & (from=Number 'to' to=Number)? & ('named' name=(LOWERCASE_ID | STRING))?);
 	public ObservableSemanticsElements getObservableSemanticsAccess() {
 		return pObservableSemantics;

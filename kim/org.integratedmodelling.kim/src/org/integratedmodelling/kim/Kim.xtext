@@ -304,11 +304,13 @@ ObservableSemantics:
 	(
 		('by' by=ConceptDeclaration)? &
 		('down' 'to' downTo=Concept)? &
-//		('as' role=Concept)? &
 		('according' 'to' accordingTo=PropertyId)? &
 		(
 			('in' (unit=Unit | currency=Currency)) |
 			('per' unit=Unit)
+		)? &
+		(operator=('>'|'='|'>='|'<='|'<'|'@')  
+			(comparisonValue=Number | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')'))
 		)? &
 		(optional?='optional' | 'required')? &
 		(from=Number 'to' to=Number)? &
@@ -354,7 +356,7 @@ Dependency:
 ;
 
 ConceptDeclaration:
-	/* (name=STRING)? */ main+=Concept+ 
+	main+=Concept+ 
 		// binary semantic operators; also 'as', 'by' and 'follows' handled in other rules
 		(
 			// primary inherency (when secondary is given using 'within')

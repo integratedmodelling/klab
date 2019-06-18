@@ -45,6 +45,9 @@ import org.integratedmodelling.kim.kim.Value;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getAccordingTo <em>According To</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getUnit <em>Unit</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getCurrency <em>Currency</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getOperator <em>Operator</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getComparisonValue <em>Comparison Value</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getComparisonObservable <em>Comparison Observable</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#isOptional <em>Optional</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getFrom <em>From</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getTo <em>To</em>}</li>
@@ -156,6 +159,46 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * @ordered
    */
   protected Currency currency;
+
+  /**
+   * The default value of the '{@link #getOperator() <em>Operator</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getOperator()
+   * @generated
+   * @ordered
+   */
+  protected static final String OPERATOR_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getOperator() <em>Operator</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getOperator()
+   * @generated
+   * @ordered
+   */
+  protected String operator = OPERATOR_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getComparisonValue() <em>Comparison Value</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getComparisonValue()
+   * @generated
+   * @ordered
+   */
+  protected Value comparisonValue;
+
+  /**
+   * The cached value of the '{@link #getComparisonObservable() <em>Comparison Observable</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getComparisonObservable()
+   * @generated
+   * @ordered
+   */
+  protected ObservableSemantics comparisonObservable;
 
   /**
    * The default value of the '{@link #isOptional() <em>Optional</em>}' attribute.
@@ -607,6 +650,125 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getOperator()
+  {
+    return operator;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setOperator(String newOperator)
+  {
+    String oldOperator = operator;
+    operator = newOperator;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__OPERATOR, oldOperator, operator));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Value getComparisonValue()
+  {
+    return comparisonValue;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetComparisonValue(Value newComparisonValue, NotificationChain msgs)
+  {
+    Value oldComparisonValue = comparisonValue;
+    comparisonValue = newComparisonValue;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE, oldComparisonValue, newComparisonValue);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setComparisonValue(Value newComparisonValue)
+  {
+    if (newComparisonValue != comparisonValue)
+    {
+      NotificationChain msgs = null;
+      if (comparisonValue != null)
+        msgs = ((InternalEObject)comparisonValue).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE, null, msgs);
+      if (newComparisonValue != null)
+        msgs = ((InternalEObject)newComparisonValue).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE, null, msgs);
+      msgs = basicSetComparisonValue(newComparisonValue, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE, newComparisonValue, newComparisonValue));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ObservableSemantics getComparisonObservable()
+  {
+    return comparisonObservable;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetComparisonObservable(ObservableSemantics newComparisonObservable, NotificationChain msgs)
+  {
+    ObservableSemantics oldComparisonObservable = comparisonObservable;
+    comparisonObservable = newComparisonObservable;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE, oldComparisonObservable, newComparisonObservable);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setComparisonObservable(ObservableSemantics newComparisonObservable)
+  {
+    if (newComparisonObservable != comparisonObservable)
+    {
+      NotificationChain msgs = null;
+      if (comparisonObservable != null)
+        msgs = ((InternalEObject)comparisonObservable).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE, null, msgs);
+      if (newComparisonObservable != null)
+        msgs = ((InternalEObject)newComparisonObservable).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE, null, msgs);
+      msgs = basicSetComparisonObservable(newComparisonObservable, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE, newComparisonObservable, newComparisonObservable));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public boolean isOptional()
   {
     return optional;
@@ -803,6 +965,10 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return basicSetUnit(null, msgs);
       case KimPackage.OBSERVABLE_SEMANTICS__CURRENCY:
         return basicSetCurrency(null, msgs);
+      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE:
+        return basicSetComparisonValue(null, msgs);
+      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE:
+        return basicSetComparisonObservable(null, msgs);
       case KimPackage.OBSERVABLE_SEMANTICS__FROM:
         return basicSetFrom(null, msgs);
       case KimPackage.OBSERVABLE_SEMANTICS__TO:
@@ -839,6 +1005,12 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return getUnit();
       case KimPackage.OBSERVABLE_SEMANTICS__CURRENCY:
         return getCurrency();
+      case KimPackage.OBSERVABLE_SEMANTICS__OPERATOR:
+        return getOperator();
+      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE:
+        return getComparisonValue();
+      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE:
+        return getComparisonObservable();
       case KimPackage.OBSERVABLE_SEMANTICS__OPTIONAL:
         return isOptional();
       case KimPackage.OBSERVABLE_SEMANTICS__FROM:
@@ -889,6 +1061,15 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__CURRENCY:
         setCurrency((Currency)newValue);
+        return;
+      case KimPackage.OBSERVABLE_SEMANTICS__OPERATOR:
+        setOperator((String)newValue);
+        return;
+      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE:
+        setComparisonValue((Value)newValue);
+        return;
+      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE:
+        setComparisonObservable((ObservableSemantics)newValue);
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__OPTIONAL:
         setOptional((Boolean)newValue);
@@ -947,6 +1128,15 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
       case KimPackage.OBSERVABLE_SEMANTICS__CURRENCY:
         setCurrency((Currency)null);
         return;
+      case KimPackage.OBSERVABLE_SEMANTICS__OPERATOR:
+        setOperator(OPERATOR_EDEFAULT);
+        return;
+      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE:
+        setComparisonValue((Value)null);
+        return;
+      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE:
+        setComparisonObservable((ObservableSemantics)null);
+        return;
       case KimPackage.OBSERVABLE_SEMANTICS__OPTIONAL:
         setOptional(OPTIONAL_EDEFAULT);
         return;
@@ -995,6 +1185,12 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return unit != null;
       case KimPackage.OBSERVABLE_SEMANTICS__CURRENCY:
         return currency != null;
+      case KimPackage.OBSERVABLE_SEMANTICS__OPERATOR:
+        return OPERATOR_EDEFAULT == null ? operator != null : !OPERATOR_EDEFAULT.equals(operator);
+      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE:
+        return comparisonValue != null;
+      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE:
+        return comparisonObservable != null;
       case KimPackage.OBSERVABLE_SEMANTICS__OPTIONAL:
         return optional != OPTIONAL_EDEFAULT;
       case KimPackage.OBSERVABLE_SEMANTICS__FROM:
@@ -1026,6 +1222,8 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
     result.append(generic);
     result.append(", accordingTo: ");
     result.append(accordingTo);
+    result.append(", operator: ");
+    result.append(operator);
     result.append(", optional: ");
     result.append(optional);
     result.append(", name: ");

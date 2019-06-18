@@ -25,6 +25,9 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getAccordingTo <em>According To</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getUnit <em>Unit</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getCurrency <em>Currency</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getOperator <em>Operator</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonValue <em>Comparison Value</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonObservable <em>Comparison Observable</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#isOptional <em>Optional</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getFrom <em>From</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getTo <em>To</em>}</li>
@@ -246,6 +249,84 @@ public interface ObservableSemantics extends EObject
    * @generated
    */
   void setCurrency(Currency value);
+
+  /**
+   * Returns the value of the '<em><b>Operator</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Operator</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Operator</em>' attribute.
+   * @see #setOperator(String)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics_Operator()
+   * @model
+   * @generated
+   */
+  String getOperator();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getOperator <em>Operator</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Operator</em>' attribute.
+   * @see #getOperator()
+   * @generated
+   */
+  void setOperator(String value);
+
+  /**
+   * Returns the value of the '<em><b>Comparison Value</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Comparison Value</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Comparison Value</em>' containment reference.
+   * @see #setComparisonValue(Value)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics_ComparisonValue()
+   * @model containment="true"
+   * @generated
+   */
+  Value getComparisonValue();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonValue <em>Comparison Value</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Comparison Value</em>' containment reference.
+   * @see #getComparisonValue()
+   * @generated
+   */
+  void setComparisonValue(Value value);
+
+  /**
+   * Returns the value of the '<em><b>Comparison Observable</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Comparison Observable</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Comparison Observable</em>' containment reference.
+   * @see #setComparisonObservable(ObservableSemantics)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics_ComparisonObservable()
+   * @model containment="true"
+   * @generated
+   */
+  ObservableSemantics getComparisonObservable();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonObservable <em>Comparison Observable</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Comparison Observable</em>' containment reference.
+   * @see #getComparisonObservable()
+   * @generated
+   */
+  void setComparisonObservable(ObservableSemantics value);
 
   /**
    * Returns the value of the '<em><b>Optional</b></em>' attribute.
