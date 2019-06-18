@@ -412,7 +412,22 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 currency=Currency | 
 	 *                 unit=Unit
 	 *             )? 
-	 *             (from=Number to=Number)?
+	 *             (from=Number to=Number)? 
+	 *             (
+	 *                 (
+	 *                     operator='>' | 
+	 *                     operator='>=' | 
+	 *                     operator='<=' | 
+	 *                     operator='<' | 
+	 *                     operator='at' | 
+	 *                     operator='==' | 
+	 *                     operator='=' | 
+	 *                     operator='!=' | 
+	 *                     operator='+' | 
+	 *                     operator='-'
+	 *                 ) 
+	 *                 (comparisonValue=Number | comparisonConcept=ConceptDeclaration | comparisonObservable=ObservableSemantics)
+	 *             )?
 	 *         )+ 
 	 *         condition=EXPR?
 	 *     )
@@ -444,7 +459,22 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 name=LOWERCASE_ID | 
 	 *                 name=STRING
 	 *             )? 
-	 *             (from=Number to=Number)?
+	 *             (from=Number to=Number)? 
+	 *             (
+	 *                 (
+	 *                     operator='>' | 
+	 *                     operator='>=' | 
+	 *                     operator='<=' | 
+	 *                     operator='<' | 
+	 *                     operator='at' | 
+	 *                     operator='==' | 
+	 *                     operator='=' | 
+	 *                     operator='!=' | 
+	 *                     operator='+' | 
+	 *                     operator='-'
+	 *                 ) 
+	 *                 (comparisonValue=Number | comparisonConcept=ConceptDeclaration | comparisonObservable=ObservableSemantics)
+	 *             )?
 	 *         )+
 	 *     )
 	 */
@@ -519,13 +549,13 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         restrictions+=RestrictionStatement | 
 	 *                         metadata=Metadata
 	 *                     )? 
-	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
-	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
-	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
 	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
-	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
-	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
 	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
+	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
+	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
+	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
+	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
+	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
 	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
 	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
@@ -924,7 +954,22 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 name=LOWERCASE_ID | 
 	 *                 name=STRING
 	 *             )? 
-	 *             (from=Number to=Number)?
+	 *             (from=Number to=Number)? 
+	 *             (
+	 *                 (
+	 *                     operator='>' | 
+	 *                     operator='>=' | 
+	 *                     operator='<=' | 
+	 *                     operator='<' | 
+	 *                     operator='at' | 
+	 *                     operator='==' | 
+	 *                     operator='=' | 
+	 *                     operator='!=' | 
+	 *                     operator='+' | 
+	 *                     operator='-'
+	 *                 ) 
+	 *                 (comparisonValue=Number | comparisonConcept=ConceptDeclaration | comparisonObservable=ObservableSemantics)
+	 *             )?
 	 *         )+
 	 *     )
 	 */
@@ -1348,8 +1393,19 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *             )? 
 	 *             (from=Number to=Number)? 
 	 *             (
-	 *                 (operator='>' | operator='=' | operator='>=' | operator='<=' | operator='@') 
-	 *                 (comparisonValue=Value | comparisonObservable=ObservableSemantics)
+	 *                 (
+	 *                     operator='>' | 
+	 *                     operator='>=' | 
+	 *                     operator='<=' | 
+	 *                     operator='<' | 
+	 *                     operator='at' | 
+	 *                     operator='==' | 
+	 *                     operator='=' | 
+	 *                     operator='!=' | 
+	 *                     operator='+' | 
+	 *                     operator='-'
+	 *                 ) 
+	 *                 (comparisonValue=Number | comparisonConcept=ConceptDeclaration | comparisonObservable=ObservableSemantics)
 	 *             )?
 	 *         )+
 	 *     )
@@ -1517,7 +1573,22 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 name=LOWERCASE_ID | 
 	 *                 name=STRING
 	 *             )? 
-	 *             (from=Number to=Number)?
+	 *             (from=Number to=Number)? 
+	 *             (
+	 *                 (
+	 *                     operator='>' | 
+	 *                     operator='>=' | 
+	 *                     operator='<=' | 
+	 *                     operator='<' | 
+	 *                     operator='at' | 
+	 *                     operator='==' | 
+	 *                     operator='=' | 
+	 *                     operator='!=' | 
+	 *                     operator='+' | 
+	 *                     operator='-'
+	 *                 ) 
+	 *                 (comparisonValue=Number | comparisonConcept=ConceptDeclaration | comparisonObservable=ObservableSemantics)
+	 *             )?
 	 *         )+
 	 *     )
 	 */

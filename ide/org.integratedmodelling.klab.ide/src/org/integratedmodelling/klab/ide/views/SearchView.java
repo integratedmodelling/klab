@@ -442,7 +442,7 @@ public class SearchView extends ViewPart {
 		clearMatches();
 		SearchMatchAction action = new SearchMatchAction();
 		action.setContextId(contextId);
-//		action.setMatchIndex(matchIndex);(matchIndex);
+		action.setMatchIndex(matchIndex);
 		Activator.post(IMessage.MessageClass.Search, IMessage.Type.MatchAction, action);
 	}
 

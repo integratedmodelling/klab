@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getCurrency <em>Currency</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getOperator <em>Operator</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonValue <em>Comparison Value</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonConcept <em>Comparison Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonObservable <em>Comparison Observable</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#isOptional <em>Optional</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getFrom <em>From</em>}</li>
@@ -285,12 +286,12 @@ public interface ObservableSemantics extends EObject
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Comparison Value</em>' containment reference.
-   * @see #setComparisonValue(Value)
+   * @see #setComparisonValue(org.integratedmodelling.kim.kim.Number)
    * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics_ComparisonValue()
    * @model containment="true"
    * @generated
    */
-  Value getComparisonValue();
+  org.integratedmodelling.kim.kim.Number getComparisonValue();
 
   /**
    * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonValue <em>Comparison Value</em>}' containment reference.
@@ -300,7 +301,33 @@ public interface ObservableSemantics extends EObject
    * @see #getComparisonValue()
    * @generated
    */
-  void setComparisonValue(Value value);
+  void setComparisonValue(org.integratedmodelling.kim.kim.Number value);
+
+  /**
+   * Returns the value of the '<em><b>Comparison Concept</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Comparison Concept</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Comparison Concept</em>' containment reference.
+   * @see #setComparisonConcept(ConceptDeclaration)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics_ComparisonConcept()
+   * @model containment="true"
+   * @generated
+   */
+  ConceptDeclaration getComparisonConcept();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonConcept <em>Comparison Concept</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Comparison Concept</em>' containment reference.
+   * @see #getComparisonConcept()
+   * @generated
+   */
+  void setComparisonConcept(ConceptDeclaration value);
 
   /**
    * Returns the value of the '<em><b>Comparison Observable</b></em>' containment reference.

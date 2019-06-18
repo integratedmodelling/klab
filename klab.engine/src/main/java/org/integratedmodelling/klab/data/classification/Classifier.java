@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Range;
@@ -449,6 +450,13 @@ public class Classifier implements IClassifier {
 	@Override
 	public String getSourceCode() {
 		return sourceCode;
+	}
+	
+	public String getHtmlSourceCode() {
+		if (conceptMatch != null) {
+			return ((Concept)conceptMatch).getHtmlDeclaration();
+		}
+		return getSourceCode();
 	}
 
 	@Override

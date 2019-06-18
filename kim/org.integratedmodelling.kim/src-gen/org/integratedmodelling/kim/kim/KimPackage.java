@@ -1922,13 +1922,22 @@ public interface KimPackage extends EPackage
   int OBSERVABLE_SEMANTICS__COMPARISON_VALUE = 9;
 
   /**
+   * The feature id for the '<em><b>Comparison Concept</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT = 10;
+
+  /**
    * The feature id for the '<em><b>Comparison Observable</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE = 10;
+  int OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE = 11;
 
   /**
    * The feature id for the '<em><b>Optional</b></em>' attribute.
@@ -1937,7 +1946,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__OPTIONAL = 11;
+  int OBSERVABLE_SEMANTICS__OPTIONAL = 12;
 
   /**
    * The feature id for the '<em><b>From</b></em>' containment reference.
@@ -1946,7 +1955,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__FROM = 12;
+  int OBSERVABLE_SEMANTICS__FROM = 13;
 
   /**
    * The feature id for the '<em><b>To</b></em>' containment reference.
@@ -1955,7 +1964,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__TO = 13;
+  int OBSERVABLE_SEMANTICS__TO = 14;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1964,7 +1973,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__NAME = 14;
+  int OBSERVABLE_SEMANTICS__NAME = 15;
 
   /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
@@ -1973,7 +1982,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__ANNOTATIONS = 15;
+  int OBSERVABLE_SEMANTICS__ANNOTATIONS = 16;
 
   /**
    * The feature id for the '<em><b>Condition</b></em>' attribute.
@@ -1982,7 +1991,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__CONDITION = 16;
+  int OBSERVABLE_SEMANTICS__CONDITION = 17;
 
   /**
    * The number of structural features of the '<em>Observable Semantics</em>' class.
@@ -1991,7 +2000,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS_FEATURE_COUNT = 17;
+  int OBSERVABLE_SEMANTICS_FEATURE_COUNT = 18;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.DependencyImpl <em>Dependency</em>}' class.
@@ -6209,6 +6218,17 @@ public interface KimPackage extends EPackage
   EReference getObservableSemantics_ComparisonValue();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonConcept <em>Comparison Concept</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Comparison Concept</em>'.
+   * @see org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonConcept()
+   * @see #getObservableSemantics()
+   * @generated
+   */
+  EReference getObservableSemantics_ComparisonConcept();
+
+  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonObservable <em>Comparison Observable</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -10192,6 +10212,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EReference OBSERVABLE_SEMANTICS__COMPARISON_VALUE = eINSTANCE.getObservableSemantics_ComparisonValue();
+
+    /**
+     * The meta object literal for the '<em><b>Comparison Concept</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT = eINSTANCE.getObservableSemantics_ComparisonConcept();
 
     /**
      * The meta object literal for the '<em><b>Comparison Observable</b></em>' containment reference feature.

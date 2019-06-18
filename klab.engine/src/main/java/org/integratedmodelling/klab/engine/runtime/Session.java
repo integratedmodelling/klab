@@ -645,9 +645,10 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		if (ctx == null) {
 			throw new IllegalStateException("match action has invalid context ID");
 		}
-//		Context newContext = action.getMatchIndex() < 0 ? ctx.getFirst().previous()
-//				: ctx.getFirst().accept(ctx.getSecond().get(action.getMatchIndex()));
-//		searchContexts.put(contextId, new Pair<>(newContext, new ArrayList<>()));
+		Context newContext = action.isAdded() 
+				? ctx.getFirst().accept(ctx.getSecond().get(action.getMatchIndex()))
+				: ctx.getFirst().previous();
+		searchContexts.put(contextId, new Pair<>(newContext, new ArrayList<>()));
 	}
 
 	@MessageHandler(type = IMessage.Type.DataflowNodeDetail)
@@ -664,10 +665,10 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 							new DataflowDetail(state.getNodeId(), documentation));
 				}
 			} else {
-				System.out.println("FOCK element not found: " + state.getNodeId());
+				System.out.println("F'OCK element not found: " + state.getNodeId());
 			}
 		} else {
-			System.out.println("FOCK context not found: " + state.getContextId());
+			System.out.println("F'OCK context not found: " + state.getContextId());
 		}
 	}
 

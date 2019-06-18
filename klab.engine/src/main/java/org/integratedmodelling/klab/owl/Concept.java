@@ -810,6 +810,10 @@ public class Concept extends Knowledge implements IConcept {
         return ret > 100 ? 100 : ret;
     }
 
+    public String getHtmlDeclaration() {
+    	return "<span class=\"" + Concepts.INSTANCE.getCssClass(this) + "\">" + getDefinition()  + "</span>";
+    }
+    
 /*    @Override
     public boolean equals(Object obj) {
         return obj instanceof Concept
