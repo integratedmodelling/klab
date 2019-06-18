@@ -1,0 +1,132 @@
+// variables
+
+$sem-quality = rgb(0, 204, 0);
+$sem-subject = rgb(153, 76, 0);
+$sem-identity = rgb(0, 102, 204);
+$sem-attribute = rgb(0, 102, 204);
+$sem-realm = rgb(0, 102, 204);
+$sem-trait = rgb(0, 102, 204);
+$sem-event = rgb(153, 153, 0);
+$sem-relationship = rgb(210, 170, 0);
+$sem-process = rgb(204, 0, 0);
+$sem-role = rgb(0, 86, 163);
+$sem-configuration = rgb(98, 98, 98);
+$sem-domain = rgb(240, 240, 240);
+$sem-types = rgb(38, 50, 56);
+$sem-preset-observable = rgb(17, 170, 187);
+$sem-separator = rgb(10, 10, 10);
+
+
+.text-sem-quality
+  color $sem-quality
+
+.text-sem-subject
+  color $sem-subject
+
+.text-sem-identity
+  color $sem-identity
+
+.text-sem-attribute
+  color $sem-attribute
+
+.text-sem-realm
+  color $sem-realm
+
+.text-sem-trait
+  color $sem-trait
+
+.text-sem-event
+  color $sem-event
+
+.text-sem-relationship
+  color $sem-relationship
+
+.text-sem-process
+  color $sem-process
+
+.text-sem-role
+  color $sem-role
+
+.text-sem-configuration
+  color $sem-configuration
+
+.text-sem-domain
+  color $sem-domain
+
+.text-sem-types
+  color $sem-types
+
+.text-preset-observable
+  color $sem-preset-observable
+
+.text-separator
+  color $sem-separator
+
+.text-mc-main
+  color $main-control-main-color
+
+.text-mc-main-light
+  color lightness($main-control-main-color, 90%)
+
+.text-mc-yellow
+  color $main-control-yellow
+
+.text-mc-red
+  color $main-control-red
+
+.bg-sem-quality
+  background $sem-quality
+
+.bg-sem-subject
+  background $sem-subject
+
+.bg-sem-identity
+  background $sem-identity
+
+.bg-sem-attribute
+  background $sem-attribute
+
+.bg-sem-realm
+  background $sem-realm
+
+.bg-sem-trait
+  background $sem-trait
+
+.bg-sem-event
+  background $sem-event
+
+.bg-sem-relationship
+  background $sem-relationship
+
+.bg-sem-process
+  background $sem-process
+
+.bg-sem-role
+  background $sem-role
+
+.bg-sem-configuration
+  background $sem-configuration
+
+.bg-sem-domain
+  background $sem-domain
+
+.bg-sem-types
+  background $sem-types
+
+.bg-preset-observable
+  background $sem-preset-observable
+
+.bg-separator
+  background $sem-separator
+
+.bg-mc-main
+  background $main-control-main-color
+
+.bg-mc-main-light
+  background lightness($main-control-main-color, 80%)
+
+.bg-mc-yellow
+  background $main-control-yellow
+
+.bg-mc-red
+  background $main-control-red

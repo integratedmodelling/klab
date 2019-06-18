@@ -47,6 +47,7 @@ import org.integratedmodelling.kim.kim.Value;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getCurrency <em>Currency</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getOperator <em>Operator</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getComparisonValue <em>Comparison Value</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getComparisonConcept <em>Comparison Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getComparisonObservable <em>Comparison Observable</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#isOptional <em>Optional</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getFrom <em>From</em>}</li>
@@ -188,7 +189,17 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * @generated
    * @ordered
    */
-  protected Value comparisonValue;
+  protected org.integratedmodelling.kim.kim.Number comparisonValue;
+
+  /**
+   * The cached value of the '{@link #getComparisonConcept() <em>Comparison Concept</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getComparisonConcept()
+   * @generated
+   * @ordered
+   */
+  protected ConceptDeclaration comparisonConcept;
 
   /**
    * The cached value of the '{@link #getComparisonObservable() <em>Comparison Observable</em>}' containment reference.
@@ -673,7 +684,7 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * <!-- end-user-doc -->
    * @generated
    */
-  public Value getComparisonValue()
+  public org.integratedmodelling.kim.kim.Number getComparisonValue()
   {
     return comparisonValue;
   }
@@ -683,9 +694,9 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetComparisonValue(Value newComparisonValue, NotificationChain msgs)
+  public NotificationChain basicSetComparisonValue(org.integratedmodelling.kim.kim.Number newComparisonValue, NotificationChain msgs)
   {
-    Value oldComparisonValue = comparisonValue;
+    org.integratedmodelling.kim.kim.Number oldComparisonValue = comparisonValue;
     comparisonValue = newComparisonValue;
     if (eNotificationRequired())
     {
@@ -700,7 +711,7 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setComparisonValue(Value newComparisonValue)
+  public void setComparisonValue(org.integratedmodelling.kim.kim.Number newComparisonValue)
   {
     if (newComparisonValue != comparisonValue)
     {
@@ -714,6 +725,54 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
     }
     else if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE, newComparisonValue, newComparisonValue));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ConceptDeclaration getComparisonConcept()
+  {
+    return comparisonConcept;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetComparisonConcept(ConceptDeclaration newComparisonConcept, NotificationChain msgs)
+  {
+    ConceptDeclaration oldComparisonConcept = comparisonConcept;
+    comparisonConcept = newComparisonConcept;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT, oldComparisonConcept, newComparisonConcept);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setComparisonConcept(ConceptDeclaration newComparisonConcept)
+  {
+    if (newComparisonConcept != comparisonConcept)
+    {
+      NotificationChain msgs = null;
+      if (comparisonConcept != null)
+        msgs = ((InternalEObject)comparisonConcept).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT, null, msgs);
+      if (newComparisonConcept != null)
+        msgs = ((InternalEObject)newComparisonConcept).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT, null, msgs);
+      msgs = basicSetComparisonConcept(newComparisonConcept, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT, newComparisonConcept, newComparisonConcept));
   }
 
   /**
@@ -967,6 +1026,8 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return basicSetCurrency(null, msgs);
       case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE:
         return basicSetComparisonValue(null, msgs);
+      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT:
+        return basicSetComparisonConcept(null, msgs);
       case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE:
         return basicSetComparisonObservable(null, msgs);
       case KimPackage.OBSERVABLE_SEMANTICS__FROM:
@@ -1009,6 +1070,8 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return getOperator();
       case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE:
         return getComparisonValue();
+      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT:
+        return getComparisonConcept();
       case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE:
         return getComparisonObservable();
       case KimPackage.OBSERVABLE_SEMANTICS__OPTIONAL:
@@ -1066,7 +1129,10 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         setOperator((String)newValue);
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE:
-        setComparisonValue((Value)newValue);
+        setComparisonValue((org.integratedmodelling.kim.kim.Number)newValue);
+        return;
+      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT:
+        setComparisonConcept((ConceptDeclaration)newValue);
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE:
         setComparisonObservable((ObservableSemantics)newValue);
@@ -1132,7 +1198,10 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         setOperator(OPERATOR_EDEFAULT);
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE:
-        setComparisonValue((Value)null);
+        setComparisonValue((org.integratedmodelling.kim.kim.Number)null);
+        return;
+      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT:
+        setComparisonConcept((ConceptDeclaration)null);
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE:
         setComparisonObservable((ObservableSemantics)null);
@@ -1189,6 +1258,8 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return OPERATOR_EDEFAULT == null ? operator != null : !OPERATOR_EDEFAULT.equals(operator);
       case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE:
         return comparisonValue != null;
+      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT:
+        return comparisonConcept != null;
       case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE:
         return comparisonObservable != null;
       case KimPackage.OBSERVABLE_SEMANTICS__OPTIONAL:

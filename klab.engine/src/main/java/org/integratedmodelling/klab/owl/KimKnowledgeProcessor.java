@@ -238,7 +238,6 @@ public enum KimKnowledgeProcessor {
 
 	public @Nullable Observable declare(final IKimObservable concept, IOntology declarationOntology,
 			final IMonitor monitor) {
-
 		if (concept.getNonSemanticType() != null) {
 			Concept nsmain = OWL.INSTANCE.getNonsemanticPeer(concept.getModelReference(), concept.getNonSemanticType());
 			Observable observable = new Observable(nsmain);
@@ -258,20 +257,27 @@ public enum KimKnowledgeProcessor {
 		Observable ret = new Observable(observable);
 
 		String declaration = concept.getDefinition();
+		
+		String unit = concept.getUnit();
+		String currency = concept.getCurrency();
+//		if (unit != null && unit.contains("@")) {
+//			currency = unit;
+//			unit = null;
+//		}
 
-		if (concept.getUnit() != null) {
+		if (unit != null) {
 			try {
-				ret.setUnit(Units.INSTANCE.getUnit(concept.getUnit()));
-				declaration += " in " + ret.getUnit();
+				ret.setUnit(Units.INSTANCE.getUnit(unit));
+				declaration += " in " + unit;
 			} catch (Exception e) {
 				monitor.error(e, concept);
 			}
 		}
 
-		if (concept.getCurrency() != null) {
+		if (currency != null) {
 			try {
-				ret.setCurrency(Currencies.INSTANCE.getCurrency(concept.getCurrency()));
-				declaration += " in " + ret.getCurrency();
+				ret.setCurrency(Currencies.INSTANCE.getCurrency(currency));
+				declaration += " in " + currency;
 			} catch (Exception e) {
 				monitor.error(e, concept);
 			}

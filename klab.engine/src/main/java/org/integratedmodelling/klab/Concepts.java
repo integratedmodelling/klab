@@ -23,6 +23,7 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimConcept;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -51,7 +52,7 @@ public enum Concepts implements IConceptService {
 	private Concepts() {
 		Services.INSTANCE.registerService(this, IConceptService.class);
 	}
-	
+
 	@Override
 	public IProperty getProperty(String propertyId) {
 		return OWL.INSTANCE.getProperty(propertyId);
@@ -66,15 +67,16 @@ public enum Concepts implements IConceptService {
 	public KimConcept getDeclaration(IConcept concept) {
 		return declare(concept.getDefinition());
 	}
-	
+
 	@Override
 	public KimConcept declare(String declaration) {
-		return (KimConcept)Observables.INSTANCE.parseDeclaration(declaration).getMain();
+		return (KimConcept) Observables.INSTANCE.parseDeclaration(declaration).getMain();
 	}
-	
+
 	@Override
 	public IConcept declare(IKimConcept conceptDefinition) {
-		return KimKnowledgeProcessor.INSTANCE.declare(conceptDefinition, Reasoner.INSTANCE.getOntology(), Klab.INSTANCE.getRootMonitor());
+		return KimKnowledgeProcessor.INSTANCE.declare(conceptDefinition, Reasoner.INSTANCE.getOntology(),
+				Klab.INSTANCE.getRootMonitor());
 	}
 
 	@Override
@@ -160,7 +162,7 @@ public enum Concepts implements IConceptService {
 	}
 
 	/**
-	 * Get the best display name and turn any camel case into something more 
+	 * Get the best display name and turn any camel case into something more
 	 * text-like if it does not contain spaces.
 	 *
 	 * @param t
@@ -174,7 +176,7 @@ public enum Concepts implements IConceptService {
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * Arrange a set of concepts into the collection of the most specific members of
 	 * each concept hierarchy therein. Return one concept or null.
@@ -376,6 +378,40 @@ public enum Concepts implements IConceptService {
 			}
 		}
 		return new Pair<>(ret, rem);
+	}
+
+	public String getCssClass(IConcept concept) {
+		
+		switch (Kim.INSTANCE.getFundamentalType(((Concept) concept).getTypeSet())) {
+		case QUALITY:
+			return "text-sem-quality";
+		case SUBJECT:
+		case AGENT:
+			return "text-sem-subject";
+		case EVENT:
+			return "text-sem-event";
+		case CONFIGURATION:
+			return "text-sem-configuration";
+		case DOMAIN:
+			return "text-sem-domain";
+		case RELATIONSHIP:
+			return "text-sem-relationship";
+		case EXTENT:
+			return "text-sem-extent";
+		case PROCESS:
+			return "text-sem-process";
+		case ATTRIBUTE:
+			return "text-sem-attribute";
+		case REALM:
+			return "text-sem-realm";
+		case IDENTITY:
+			return "text-sem-identity";
+		case ROLE:
+			return "text-sem-role";
+		default:
+			break;
+		}
+		return null;
 	}
 
 }

@@ -309,7 +309,7 @@ ObservableSemantics:
 			('in' (unit=Unit | currency=Currency)) |
 			('per' unit=Unit)
 		)? &
-		(operator=('>'|'='|'>='|'<='|'<'|'@')  
+		(operator=('>'|'>='|'<='|'<'|'at'|'=='|'='|'!='|'+'|'-')
 			(comparisonValue=Number | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')'))
 		)? &
 		(optional?='optional' | 'required')? &
@@ -334,6 +334,9 @@ AnnotatedObservableSemantics returns ObservableSemantics:
 		(
 			('in' (unit=Unit | currency=Currency)) |
 			('per' unit=Unit)
+		)? &
+		(operator=('>'|'>='|'<='|'<'|'at'|'=='|'='|'!='|'+'|'-')
+			(comparisonValue=Number | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')'))
 		)? &
 		(optional?='optional' | 'required')? &
 		(from=Number 'to' to=Number)? &
@@ -856,6 +859,9 @@ SimpleObservableSemantics returns ObservableSemantics:
 			('per' unit=Unit)
 		)? &
 		(from=Number 'to' to=Number)? &
+		(operator=('>'|'>='|'<='|'<'|'at'|'=='|'='|'!='|'+'|'-')
+			(comparisonValue=Number | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')'))
+		)? &
 		(optional?='optional' | 'required')? &
 		('named' name=(LOWERCASE_ID|STRING))?
 	);
@@ -877,6 +883,9 @@ DependencyObservableSemantics returns ObservableSemantics:
 			('per' unit=Unit)
 		)? &
 		(from=Number 'to' to=Number)? &
+		(operator=('>'|'>='|'<='|'<'|'at'|'=='|'='|'!='|'+'|'-')
+			(comparisonValue=Number | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')'))
+		)? &
 		(optional?='optional' | 'required')? &
 		('named' name=(LOWERCASE_ID|STRING))?
 	);
@@ -898,7 +907,10 @@ AlternativeDependencyObservableSemantics returns ObservableSemantics:
 			('in' (unit=Unit | currency=Currency)) |
 			('per' unit=Unit)
 		)? &
-		(from=Number 'to' to=Number)? 
+		(from=Number 'to' to=Number)? &
+		(operator=('>'|'>='|'<='|'<'|'at'|'=='|'='|'!='|'+'|'-')
+			(comparisonValue=Number | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')'))
+		)? 
 	)
 	('if' condition=EXPR)?;
 	
