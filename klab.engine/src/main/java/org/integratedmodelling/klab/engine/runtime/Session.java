@@ -649,6 +649,8 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 				? ctx.getFirst().accept(ctx.getSecond().get(action.getMatchIndex()))
 				: ctx.getFirst().previous();
 		searchContexts.put(contextId, new Pair<>(newContext, new ArrayList<>()));
+		
+		System.out.println(((SearchContext)newContext).dump());
 	}
 
 	@MessageHandler(type = IMessage.Type.DataflowNodeDetail)
@@ -730,6 +732,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 						List<Match> matches = Indexing.INSTANCE.query(request.getQueryString(), context.getFirst());
 
+						int i = 0;
 						for (Match match : matches) {
 							SearchMatch m = new SearchMatch();
 							m.getSemanticType().addAll(match.getConceptType());
@@ -738,6 +741,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 							m.setName(match.getName());
 							m.setId(match.getId());
 							m.setDescription(match.getDescription());
+							m.setIndex(i++);
 							response.getMatches().add(m);
 						}
 						searchContexts.put(contextId, new Pair<Context, List<Match>>(context.getFirst(), matches));

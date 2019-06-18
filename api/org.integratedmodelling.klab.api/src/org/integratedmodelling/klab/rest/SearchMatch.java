@@ -20,6 +20,7 @@ public class SearchMatch {
 	private String name;
 	private String id;
 	private String description;
+	private int index;
 	private IKimConcept.Type mainSemanticType;
 	private Set<IKimConcept.Type> semanticType = EnumSet.noneOf(IKimConcept.Type.class);
 	private IIndexingService.Match.Type matchType;
@@ -139,6 +140,14 @@ public class SearchMatch {
 
 	public void setCloseGroup(boolean closeGroup) {
 		this.closeGroup = closeGroup;
+	}
+
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
 	}
 
 }

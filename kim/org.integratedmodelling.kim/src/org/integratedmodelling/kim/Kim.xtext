@@ -309,7 +309,7 @@ ObservableSemantics:
 			('in' (unit=Unit | currency=Currency)) |
 			('per' unit=Unit)
 		)? &
-		(operator=('>'|'>='|'<='|'<'|'at'|'=='|'='|'!='|'+'|'-')
+		(operator=('>'|'>='|'<='|'<'|'where'|'=='|'='|'!='|'plus'|'minus'|'times'|'over')
 			(comparisonValue=Number | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')'))
 		)? &
 		(optional?='optional' | 'required')? &
@@ -335,7 +335,7 @@ AnnotatedObservableSemantics returns ObservableSemantics:
 			('in' (unit=Unit | currency=Currency)) |
 			('per' unit=Unit)
 		)? &
-		(operator=('>'|'>='|'<='|'<'|'at'|'=='|'='|'!='|'+'|'-')
+		(operator=('>'|'>='|'<='|'<'|'where'|'=='|'='|'!='|'plus'|'minus'|'times'|'over')
 			(comparisonValue=Number | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')'))
 		)? &
 		(optional?='optional' | 'required')? &
@@ -859,7 +859,7 @@ SimpleObservableSemantics returns ObservableSemantics:
 			('per' unit=Unit)
 		)? &
 		(from=Number 'to' to=Number)? &
-		(operator=('>'|'>='|'<='|'<'|'at'|'=='|'='|'!='|'+'|'-')
+		(operator=('>'|'>='|'<='|'<'|'where'|'=='|'='|'!='|'plus'|'minus'|'times'|'over')
 			(comparisonValue=Number | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')'))
 		)? &
 		(optional?='optional' | 'required')? &
@@ -883,7 +883,7 @@ DependencyObservableSemantics returns ObservableSemantics:
 			('per' unit=Unit)
 		)? &
 		(from=Number 'to' to=Number)? &
-		(operator=('>'|'>='|'<='|'<'|'at'|'=='|'='|'!='|'+'|'-')
+		(operator=('>'|'>='|'<='|'<'|'where'|'=='|'='|'!='|'plus'|'minus'|'times'|'over')
 			(comparisonValue=Number | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')'))
 		)? &
 		(optional?='optional' | 'required')? &
@@ -908,7 +908,7 @@ AlternativeDependencyObservableSemantics returns ObservableSemantics:
 			('per' unit=Unit)
 		)? &
 		(from=Number 'to' to=Number)? &
-		(operator=('>'|'>='|'<='|'<'|'at'|'=='|'='|'!='|'+'|'-')
+		(operator=('>'|'>='|'<='|'<'|'where'|'=='|'='|'!='|'plus'|'minus'|'times'|'over')
 			(comparisonValue=Number | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')'))
 		)? 
 	)
