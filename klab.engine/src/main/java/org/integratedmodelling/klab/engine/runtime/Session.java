@@ -645,12 +645,18 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 		if (ctx == null) {
 			throw new IllegalStateException("match action has invalid context ID");
 		}
+		if (action.getMatchIndex() >= ctx.getSecond().size()) {
+//			Logging.INSTANCE.error("MATCH INDEX NOT IN SYNC WITH CURRENT MATCHES!");
+			return;
+		}
 		Context newContext = action.isAdded() 
 				? ctx.getFirst().accept(ctx.getSecond().get(action.getMatchIndex()))
 				: ctx.getFirst().previous();
 		searchContexts.put(contextId, new Pair<>(newContext, new ArrayList<>()));
 		
-		System.out.println(((SearchContext)newContext).dump());
+		if (newContext != null) {
+			System.out.println(((SearchContext)newContext).dump());
+		}
 	}
 
 	@MessageHandler(type = IMessage.Type.DataflowNodeDetail)

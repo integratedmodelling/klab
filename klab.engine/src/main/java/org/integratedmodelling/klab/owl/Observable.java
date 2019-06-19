@@ -61,7 +61,7 @@ public class Observable extends Concept implements IObservable {
     private Unit               unit;
     private Currency           currency;
     private Concept            classifier;
-    private Concept            aggregator;
+//    private Concept            aggregator;
     private Concept            downTo;
     private Object             value;
     private ObservationType    observationType;
@@ -165,7 +165,7 @@ public class Observable extends Concept implements IObservable {
         this.unit = observable.unit;
         this.currency = observable.currency;
         this.classifier = observable.classifier;
-        this.aggregator = observable.aggregator;
+//        this.aggregator = observable.aggregator;
         this.downTo = observable.downTo;
         this.value = observable.value;
         this.observationType = observable.observationType;
@@ -202,10 +202,10 @@ public class Observable extends Concept implements IObservable {
         return classifier;
     }
 
-    @Override
-    public IConcept getAggregator() {
-        return aggregator;
-    }
+//    @Override
+//    public IConcept getAggregator() {
+//        return aggregator;
+//    }
 
     @Override
     public Range getRange() {
@@ -653,9 +653,9 @@ public class Observable extends Concept implements IObservable {
         throw new KlabUnimplementedException("copy semantics from other observable");
     }
 
-    public void setAggregator(Concept by) {
-        this.aggregator = by;
-    }
+//    public void setAggregator(Concept by) {
+//        this.aggregator = by;
+//    }
 
     @Override
     public IDirectObservation getObserver() {

@@ -257,13 +257,13 @@ public enum KimKnowledgeProcessor {
 		Observable ret = new Observable(observable);
 
 		String declaration = concept.getDefinition();
-		
+
 		String unit = concept.getUnit();
 		String currency = concept.getCurrency();
-//		if (unit != null && unit.contains("@")) {
-//			currency = unit;
-//			unit = null;
-//		}
+		// if (unit != null && unit.contains("@")) {
+		// currency = unit;
+		// unit = null;
+		// }
 
 		if (unit != null) {
 			try {
@@ -321,34 +321,28 @@ public enum KimKnowledgeProcessor {
 
 		ret.setDeclaration(declaration);
 
-		if (concept.getClassifier() != null || concept.getAggregator() != null) {
+		if (concept.getClassifier() != null) {
 
-			IKimConcept modifier = concept.getAggregator() == null ? concept.getClassifier() : concept.getAggregator();
+			IKimConcept modifier = concept.getClassifier();
 
 			Concept by = declareInternal(modifier, (Ontology) declarationOntology, monitor);
 			declaration += " by " + by;
 
-			if (concept.getAggregator() != null) {
-				ret.setAggregator(by);
-			} else {
+			Concept downTo = null;
 
-				Concept downTo = null;
-
-				if (concept.getDownTo() != null) {
-					downTo = declareInternal(concept.getDownTo(), (Ontology) declarationOntology, monitor);
-					declaration += " down to " + by;
-				}
-
-				IConcept classifiedType = Types.INSTANCE.getTypeByTrait(ret, by, downTo,
-						(Ontology) declarationOntology);
-
-				ret.setObservable((Concept) classifiedType);
-				ret.setClassifier(by);
-				// force re-creation of name
-				ret.setName(null);
-				ret.setDownTo(downTo);
-				ret.setDeclaration(classifiedType.getDefinition());
+			if (concept.getDownTo() != null) {
+				downTo = declareInternal(concept.getDownTo(), (Ontology) declarationOntology, monitor);
+				declaration += " down to " + by;
 			}
+
+			IConcept classifiedType = Types.INSTANCE.getTypeByTrait(ret, by, downTo, (Ontology) declarationOntology);
+
+			ret.setObservable((Concept) classifiedType);
+			ret.setClassifier(by);
+			// force re-creation of name
+			ret.setName(null);
+			ret.setDownTo(downTo);
+			ret.setDeclaration(classifiedType.getDefinition());
 		}
 
 		for (IKimAnnotation annotation : concept.getAnnotations()) {
@@ -441,12 +435,12 @@ public enum KimKnowledgeProcessor {
 			}
 		}
 		if (concept.getRelationshipSource() != null) {
-            IConcept source = declareInternal(concept.getRelationshipSource(), ontology, monitor);
-            IConcept target = declareInternal(concept.getRelationshipTarget(), ontology, monitor);
-            if (source != null && target != null) {
-                builder.linking(source, target);
-            }
-		    
+			IConcept source = declareInternal(concept.getRelationshipSource(), ontology, monitor);
+			IConcept target = declareInternal(concept.getRelationshipTarget(), ontology, monitor);
+			if (source != null && target != null) {
+				builder.linking(source, target);
+			}
+
 		}
 
 		for (IKimConcept c : concept.getTraits()) {

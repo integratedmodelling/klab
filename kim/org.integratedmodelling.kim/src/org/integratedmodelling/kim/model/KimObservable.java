@@ -39,7 +39,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 	private boolean optional;
 	private IKimConcept classifier = null;
 	private IKimConcept downTo = null;
-	private IKimConcept aggregator = null;
+//	private IKimConcept aggregator = null;
 	private String modelReference;
 	private IArtifact.Type nonSemanticType = null;
 
@@ -136,22 +136,17 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		}
 
 		if (declaration.getBy() != null) {
-			KimConcept by = KimConcept.normalize(declaration.getBy(), parent);
-			if (by.is(Type.ORDERING)) {
-				ret.classifier = by;
-			} else {
-				ret.aggregator = by;
-			}
+			ret.classifier = KimConcept.normalize(declaration.getBy(), parent);
 		}
 
 		if (declaration.getDownTo() != null) {
 			ret.downTo = KimConcept.normalize(declaration.getDownTo(), parent);
 		}
 
-//		if (ret.formalName == null) {
-//			ret.formalName = ret.getCodeName();
-//		}
-		
+		// if (ret.formalName == null) {
+		// ret.formalName = ret.getCodeName();
+		// }
+
 		return ret;
 	}
 
@@ -289,38 +284,38 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		}
 	}
 
-	@Override
-	public IKimConcept getAggregator() {
-		return aggregator;
-	}
+//	@Override
+//	public IKimConcept getAggregator() {
+//		return aggregator;
+//	}
+//
+//	public void setAggregator(IKimConcept aggregator) {
+//		this.aggregator = aggregator;
+//	}
 
-	public void setAggregator(IKimConcept aggregator) {
-		this.aggregator = aggregator;
-	}
-	
 	public String validateValue() {
-		
-	  // any errors on main should be reported elsewhere
-	  if (main == null || value == null) {
-		  return null;
-	  }
-		
-	  if (main.is(Type.COUNTABLE)) {
-		  return "A countable observable cannot have pre-defined values: only qualities and traits can";
-	  }
-	  if (value instanceof Number && !main.is(Type.QUANTIFIABLE) || classifier != null) {
-		  return value + " is not an acceptable value for this observable";
-	  }
-	  if (value instanceof String) {
-		  return "A string is not an acceptable value for any observable";
-	  }
-	  if (value instanceof IKimConcept && !(main.is(Type.CLASS) || main.is(Type.TRAIT) || classifier != null)) {
-		  return "A concept is not an acceptable value for this observable";
-	  }
-	  if (value instanceof IKimConcept && !main.is(((IKimConcept)value).getFundamentalType())) {
-		  return value + " is not an acceptable concept for this observable";
-	  }
-	  return null;
+
+		// any errors on main should be reported elsewhere
+		if (main == null || value == null) {
+			return null;
+		}
+
+		if (main.is(Type.COUNTABLE)) {
+			return "A countable observable cannot have pre-defined values: only qualities and traits can";
+		}
+		if (value instanceof Number && !main.is(Type.QUANTIFIABLE) || classifier != null) {
+			return value + " is not an acceptable value for this observable";
+		}
+		if (value instanceof String) {
+			return "A string is not an acceptable value for any observable";
+		}
+		if (value instanceof IKimConcept && !(main.is(Type.CLASS) || main.is(Type.TRAIT) || classifier != null)) {
+			return "A concept is not an acceptable value for this observable";
+		}
+		if (value instanceof IKimConcept && !main.is(((IKimConcept) value).getFundamentalType())) {
+			return value + " is not an acceptable concept for this observable";
+		}
+		return null;
 	}
 
 	@Override
@@ -336,6 +331,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		if (downTo != null) {
 			ret = ret + "-to-" + downTo.getCodeName();
 		}
-		return ret; //CamelCase.toLowerCase(new SemanticType(main.getObservable().getName()).getName(), '-');
+		return ret; // CamelCase.toLowerCase(new
+					// SemanticType(main.getObservable().getName()).getName(), '-');
 	}
 }

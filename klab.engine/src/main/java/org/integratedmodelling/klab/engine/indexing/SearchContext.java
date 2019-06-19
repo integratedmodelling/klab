@@ -374,9 +374,9 @@ public class SearchContext implements IIndexingService.Context {
 
 				ret.modifiers.add(Modifier.BY);
 				ret.modifiers.add(Modifier.WHERE);
-				ret.modifiers.add(Modifier.WITHOUT);
 				ret.modifiers.add(Modifier.IS);
 				ret.modifiers.add(Modifier.SAMEAS);
+				ret.modifiers.add(Modifier.WITHOUT);
 
 				if (Kim.INSTANCE.isNumeric(semantics)) {
 
@@ -398,8 +398,8 @@ public class SearchContext implements IIndexingService.Context {
 						ret.modifiers.add(Modifier.PER);
 					}
 
-				}
-
+				} 
+				
 			}
 			ret.modifiers.add(Modifier.ADJACENT_TO);
 			ret.modifiers.add(Modifier.CAUSED_BY);

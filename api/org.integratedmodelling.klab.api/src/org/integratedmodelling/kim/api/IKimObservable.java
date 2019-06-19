@@ -25,11 +25,11 @@ public interface IKimObservable extends IKimStatement {
 	 */
 	IKimConcept getClassifier();
 
-	/**
-	 * 
-	 * @return the 'by' aggregator object
-	 */
-	IKimConcept getAggregator();
+//	/**
+//	 * 
+//	 * @return the 'by' aggregator object
+//	 */
+//	IKimConcept getAggregator();
 
 	/**
 	 * 

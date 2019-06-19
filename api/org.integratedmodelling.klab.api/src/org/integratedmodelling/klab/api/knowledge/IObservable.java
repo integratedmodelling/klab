@@ -139,7 +139,7 @@ public interface IObservable extends IConcept, IResolvable {
          * @return the same builder this was called on, for chaining calls
          */
         Builder withRole(IConcept role);
-
+        
         /**
          * Transform the original concept into its equivalent filtered by the passed
          * semantic operator. For example, transform an original event into its
@@ -337,10 +337,10 @@ public interface IObservable extends IConcept, IResolvable {
      */
     IConcept getClassifier();
 
-    /**
-     * @return the 'by' aggregator concept, if any was specified.
-     */
-    IConcept getAggregator();
+//    /**
+//     * @return the 'by' aggregator concept, if any was specified.
+//     */
+//    IConcept getAggregator();
 
     /**
      * <p>

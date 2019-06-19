@@ -1,10 +1,14 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
@@ -15,7 +19,7 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
-public class ObjectClassificationResolver implements IResolver<IState>, IProcessor, IExpression {
+public class ObjectClassificationResolver implements IResolver<IState>, IProcessor, IExpression, IDocumentationProvider {
 
 	static final public String FUNCTION_ID = "klab.runtime.aggregate";
 
@@ -56,6 +60,18 @@ public class ObjectClassificationResolver implements IResolver<IState>, IProcess
 	@Override
 	public IArtifact.Type getType() {
 		return classified.getType();
+	}
+
+	@Override
+	public List<String> getTags() {
+		List<String> ret = new ArrayList<>();
+		return ret;
+	}
+
+	@Override
+	public String getDocumentation(String tag) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -136,6 +136,7 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 	public ObservableReasoner(Model model, Observable observable, ResolutionScope scope) {
 		this.model = model;
 		this.observable = observable;
+		this.scope = scope;
 	}
 
 	/**
@@ -146,9 +147,9 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 	 * @param mode
 	 */
 	public ObservableReasoner(Observable original, Mode mode, ResolutionScope scope) {
-		this.alternatives.add(getDefaultCandidate(original, mode));
 		this.mode = mode;
 		this.scope = scope;
+		this.alternatives.add(getDefaultCandidate(original, mode));
 	}
 
 	/**
@@ -159,9 +160,10 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 	 * @param scope
 	 */
 	public ObservableReasoner(Observable original, ResolutionScope scope) {
-		this.alternatives.add(getDefaultCandidate(original, scope.getMode()));
+		this.observable = original;
 		this.scope = scope;
 		this.mode = scope.getMode();
+		this.alternatives.add(getDefaultCandidate(original, scope.getMode()));
 	}
 
 	private CandidateObservable getDefaultCandidate(Observable original, Mode mode) {
@@ -171,12 +173,8 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 		 * separate the two. Transformations computed after will add the dependency and
 		 * the aggregator.
 		 */
-		if (original.getAggregator() != null) {
-			// original becomes the unaggregated; we put back the aggregated in all
-			// computations after strategies are computed.
-			Observable stripped = new Observable(original);
-			stripped.setAggregator(null);
-			original = stripped;
+		if (original.getClassifier() != null) {
+			original = (Observable) original.getBuilder(scope.getMonitor()).by(null).buildObservable();
 		}
 
 		/*
@@ -217,9 +215,9 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 		}
 
 		if (!this.transformationsComputed) {
-//			for (CandidateObservable candidate : this.alternatives) {
-//				computeTransformations(observable, candidate);
-//			}
+			for (int i = 0; i < this.alternatives.size(); i++) {
+				computeTransformations(observable, this.alternatives.get(i));
+			}
 			this.transformationsComputed = true;
 		}
 
@@ -234,8 +232,10 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 	 */
 	private void computeTransformations(Observable observable, CandidateObservable candidate) {
 
-		if (observable.getAggregator() != null) {
+		if (observable.getClassifier() != null) {
 
+			// candidate.observables[0] is already stripped of the classifier
+			
 			if (mode == Mode.INSTANTIATION || !observable.is(Type.QUALITY)) {
 				throw new KlabUnimplementedException(
 						"classifiers are currently not usable with non-qualities or with instantiating observations");
@@ -243,24 +243,28 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 
 			Observable aggregatorObservable = null;
 			boolean addAggregator = model == null
-					|| (aggregatorObservable = (Observable) model.findDependency(observable.getAggregator())) == null;
+					|| (aggregatorObservable = (Observable) model.findDependency(observable.getClassifier())) == null;
 
 			if (aggregatorObservable == null) {
-				aggregatorObservable = Observable.promote(observable.getAggregator());
+				aggregatorObservable = Observable.promote(observable.getClassifier());
 			}
 
 			if (addAggregator) {
 				candidate.observables.add(aggregatorObservable);
 			}
 
-			IComputableResource computation = Klab.INSTANCE.getRuntimeProvider().getAggregatingResolver(observable,
+			IComputableResource computation = Klab.INSTANCE.getRuntimeProvider().getAggregatingResolver(candidate.observables.get(0),
 					aggregatorObservable);
 
 			if (computation == null) {
 				throw new KlabUnimplementedException("the runtime system does not support classification of "
-						+ observable.getType() + " by " + observable.getAggregator());
+						+ candidate.observables.get(0).getType() + " by " + observable.getClassifier());
 			}
 
+			if (candidate.computation == null) {
+				candidate.computation = new ArrayList<>();
+			}
+			
 			candidate.computation.add(computation);
 		}
 
@@ -291,6 +295,10 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 	private List<CandidateObservable> inferAlternativeObservables(Observable observable) {
 
 		List<CandidateObservable> ret = new ArrayList<>();
+
+		if (observable.getClassifier() != null) {
+			observable = (Observable) observable.getBuilder(scope.getMonitor()).by(null).buildObservable();
+		}
 
 		/*
 		 * if we get here, we already know that the original observable isn't available.
