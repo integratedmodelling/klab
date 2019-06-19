@@ -17,6 +17,16 @@ import org.integratedmodelling.klab.api.services.IIndexingService.Match.Type;
  */
 public class SearchMatch {
 
+	public static enum TokenClass {
+		TOKEN,
+		TEXT,
+		INTEGER,
+		DOUBLE,
+		BOOLEAN,
+		UNIT,
+		CURRENCY
+	};
+	
 	private String name;
 	private String id;
 	private String description;
@@ -24,7 +34,8 @@ public class SearchMatch {
 	private IKimConcept.Type mainSemanticType;
 	private Set<IKimConcept.Type> semanticType = EnumSet.noneOf(IKimConcept.Type.class);
 	private IIndexingService.Match.Type matchType;
-
+	private TokenClass nextTokenClass = TokenClass.TOKEN;
+	
 	// these correspond to beginning and end of concept definition in parenthesis.
 	private boolean openGroup;
 	private boolean closeGroup;
@@ -148,6 +159,14 @@ public class SearchMatch {
 
 	public void setIndex(int index) {
 		this.index = index;
+	}
+
+	public TokenClass getNextTokenClass() {
+		return nextTokenClass;
+	}
+
+	public void setNextTokenClass(TokenClass nextTokenClass) {
+		this.nextTokenClass = nextTokenClass;
 	}
 
 }

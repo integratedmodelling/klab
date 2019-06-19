@@ -34,7 +34,7 @@ public class SearchContext implements IIndexingService.Context {
 	private SearchMatch acceptedMatch;
 
 	// parenthesization level - must be 0 when accepting.
-	private int depth = 0; 
+	private int depth = 0;
 
 	public static Context createNew() {
 		SearchContext ret = new SearchContext();
@@ -85,8 +85,8 @@ public class SearchContext implements IIndexingService.Context {
 
 		@Override
 		public String toString() {
-			return "[CONDITION " + type + " " + (semantics == null ? "" : semantics.toString()) + (c1 == null ? "" : (" C1: " + c1))
-					+ (c2 == null ? "" : (" C2: " + c2)) + "]";
+			return "[CONDITION " + type + " " + (semantics == null ? "" : semantics.toString())
+					+ (c1 == null ? "" : (" C1: " + c1)) + (c2 == null ? "" : (" C2: " + c2)) + "]";
 		}
 	}
 
@@ -103,10 +103,19 @@ public class SearchContext implements IIndexingService.Context {
 
 		// if not empty, these are in AND and filter is true
 		private List<Condition> conditions = new ArrayList<>();
+		private static Set<Modifier> allModifiers;
+
+		static {
+			allModifiers = new HashSet<>();
+			for (Modifier modifier : Modifier.values()) {
+				allModifiers.add(modifier);
+			}
+		}
 
 		boolean filter;
 		boolean query;
 		boolean matcher;
+		Set<Modifier> modifiers = null;
 
 		// if set, all matches must have at least minMatches of the types in here
 		Set<IKimConcept.Type> semantics;
@@ -193,7 +202,7 @@ public class SearchContext implements IIndexingService.Context {
 					}
 					break;
 				case MODIFIER:
-					for (Modifier op : Modifier.values()) {
+					for (Modifier op : (modifiers == null ? allModifiers : modifiers)) {
 						if (op.declaration[0].startsWith(queryTerm)) {
 							ret.add(new SearchMatch(op));
 						}
@@ -327,8 +336,56 @@ public class SearchContext implements IIndexingService.Context {
 			return this;
 		}
 
+		/**
+		 * We get here when we have an observable.
+		 * 
+		 * @param semantics
+		 * @return
+		 */
 		public static Constraint modifiersFor(Set<IKimConcept.Type> semantics) {
-			// TODO Auto-generated method stub
+
+			Constraint ret = new Constraint(Type.MODIFIER);
+			ret.modifiers = new HashSet<>();
+			if (Kim.INSTANCE.is(semantics, IKimConcept.Type.QUALITY)) {
+				ret.modifiers.add(Modifier.ADJACENT_TO);
+				ret.modifiers.add(Modifier.BY);
+				ret.modifiers.add(Modifier.CAUSED_BY);
+				ret.modifiers.add(Modifier.CAUSING);
+				ret.modifiers.add(Modifier.CONTAINED_IN);
+				ret.modifiers.add(Modifier.CONTAINING);
+				ret.modifiers.add(Modifier.DOWN_TO);
+				ret.modifiers.add(Modifier.DURING);
+				ret.modifiers.add(Modifier.FOR);
+				ret.modifiers.add(Modifier.IS);
+				ret.modifiers.add(Modifier.OF);
+				ret.modifiers.add(Modifier.OVER);
+				ret.modifiers.add(Modifier.PER);
+				ret.modifiers.add(Modifier.SAMEAS);
+				ret.modifiers.add(Modifier.WHERE);
+				ret.modifiers.add(Modifier.WITH);
+				ret.modifiers.add(Modifier.WITHIN);
+				ret.modifiers.add(Modifier.WITHOUT);
+
+				if (Kim.INSTANCE.isNumeric(semantics)) {
+
+					ret.modifiers.add(Modifier.PLUS);
+					ret.modifiers.add(Modifier.TIMES);
+					ret.modifiers.add(Modifier.GREATER);
+					ret.modifiers.add(Modifier.GREATEREQUAL);
+					ret.modifiers.add(Modifier.LESS);
+					ret.modifiers.add(Modifier.LESSEQUAL);
+					ret.modifiers.add(Modifier.MINUS);
+
+					if (Kim.INSTANCE.is(semantics, IKimConcept.Type.EXTENSIVE_PROPERTY)
+							|| Kim.INSTANCE.is(semantics, IKimConcept.Type.EXTENSIVE_PROPERTY)) {
+						ret.modifiers.add(Modifier.IN);
+					}
+				}
+
+			} else if (Kim.INSTANCE.is(semantics, IKimConcept.Type.EVENT)) {
+
+			}
+
 			return null;
 		}
 
@@ -360,21 +417,28 @@ public class SearchContext implements IIndexingService.Context {
 			ret.constraints.add(Constraint.with(match.getUnaryOperator().getAllowedOperandTypes()));
 			switch (match.getUnaryOperator()) {
 			case COUNT:
+				ret.constraints.add(Constraint.allTraits(false).applyingTo(IKimConcept.Type.COUNTABLE));
 				break;
 			case DISTANCE:
 				ret.constraints.add(Constraint.allTraits(false).applyingTo(IKimConcept.Type.DISTANCE));
 				break;
 			case MAGNITUDE:
+				ret.constraints.add(Constraint.allTraits(false).applyingTo(IKimConcept.Type.QUALITY));
 				break;
 			case NOT:
+				ret.constraints.add(Constraint.allTraits(false).applyingTo(IKimConcept.Type.ATTRIBUTE)
+						.applyingTo(IKimConcept.Type.DENIABLE));
 				break;
 			case OBSERVABILITY:
 				break;
 			case OCCURRENCE:
+				ret.constraints.add(Constraint.allTraits(false).applyingTo(IKimConcept.Type.COUNTABLE));
 				break;
 			case PRESENCE:
+				ret.constraints.add(Constraint.allTraits(false).applyingTo(IKimConcept.Type.COUNTABLE));
 				break;
 			case PROBABILITY:
+				ret.constraints.add(Constraint.allTraits(false).applyingTo(IKimConcept.Type.EVENT));
 				break;
 			case PROPORTION:
 				break;
@@ -383,6 +447,7 @@ public class SearchContext implements IIndexingService.Context {
 			case TYPE:
 				break;
 			case UNCERTAINTY:
+				ret.constraints.add(Constraint.allTraits(false).applyingTo(IKimConcept.Type.QUALITY));
 				break;
 			case VALUE:
 				break;
@@ -413,8 +478,6 @@ public class SearchContext implements IIndexingService.Context {
 			switch (match.getModifier()) {
 			case ADJACENT_TO:
 				break;
-			case AS:
-				break;
 			case BY:
 				break;
 			case CAUSED_BY:
@@ -441,9 +504,32 @@ public class SearchContext implements IIndexingService.Context {
 				break;
 			case WITHIN:
 				break;
+			case GREATER:
+				break;
+			case GREATEREQUAL:
+				break;
+			case IS:
+				break;
+			case LESS:
+				break;
+			case LESSEQUAL:
+				break;
+			case MINUS:
+				break;
+			case OVER:
+				break;
+			case PLUS:
+				break;
+			case SAMEAS:
+				break;
+			case TIMES:
+				break;
+			case WHERE:
+				break;
+			case WITHOUT:
+				break;
 			default:
 				break;
-
 			}
 
 		} else {
@@ -481,11 +567,21 @@ public class SearchContext implements IIndexingService.Context {
 
 	private boolean haveObservable() {
 
+		// TODO must check for observable at the current depth, not all depths. Depths
+		// are changed by parentheses
+		// and interrupted by modifiers.
+
 		if (acceptedMatch.semantics != null && acceptedMatch.semantics.contains(IKimConcept.Type.OBSERVABLE)) {
 			return true;
 		}
 
-		return parent == null ? false : parent.haveObservable();
+		return parent == null || parent.isScopeStart() ? false : parent.haveObservable();
+	}
+
+	private boolean isScopeStart() {
+		// TODO parenthesized blocks require children
+		return acceptedMatch != null && (acceptedMatch.getMatchType() == Type.MODIFIER
+				|| acceptedMatch.getMatchType() == Type.OPEN_PARENTHESIS);
 	}
 
 	public boolean isAllowed(Type type) {

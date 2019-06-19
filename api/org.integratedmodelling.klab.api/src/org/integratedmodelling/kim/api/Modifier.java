@@ -2,6 +2,7 @@ package org.integratedmodelling.kim.api;
 
 public enum Modifier {
 
+	// Concept modifiers
 	WITHIN("within"),
 	OF("of"),
 	FOR("for"),
@@ -12,11 +13,25 @@ public enum Modifier {
 	CONTAINING("containing"),
 	CAUSING("causing"),
 	DURING("during"),
+//	AS("as"),
+	IN("in"),
+	PER("per"),
+	
+	// Observable modifiers
 	BY("by"),
 	DOWN_TO("down to"),
-	AS("as"),
-	IN("in"),
-	PER("per");
+	GREATER(">"),
+	LESS("<"),
+	GREATEREQUAL(">="),
+	LESSEQUAL("<="),
+	IS("="),
+	SAMEAS("=="),
+	WITHOUT("without"),
+	WHERE("where"),
+	PLUS("plus"),
+	MINUS("minus"),
+	TIMES("times"),
+	OVER("over");
 	
     public String[] declaration;
 

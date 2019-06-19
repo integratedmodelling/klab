@@ -80,7 +80,9 @@ public interface IIndexingService {
             MODEL,
             MODIFIER,
             PRESET_OBSERVABLE,
-            SEPARATOR
+            SEPARATOR,
+            OPEN_PARENTHESIS,
+            CLOSED_PARENTHESIS
         }
 
         /**

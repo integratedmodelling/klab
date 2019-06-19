@@ -1392,6 +1392,31 @@ public enum Kim {
 	}
 
 	/**
+	 * Commodity for better semantics when dealing directly with typesets \
+	 * 
+	 * @param semantics
+	 * @param type
+	 * @return
+	 */
+	public boolean is(Set<IKimConcept.Type> semantics, IKimConcept.Type type) {
+		return semantics.contains(type);
+	}
+
+	/**
+	 * Quickly check if a typeset specifies a numeric quality.
+	 * 
+	 * @param semantics
+	 * @param type
+	 * @return
+	 */
+	public boolean isNumeric(Set<IKimConcept.Type> semantics) {
+		EnumSet<IKimConcept.Type> set = EnumSet.copyOf(semantics);
+		set.retainAll(IKimConcept.CONTINUOUS_QUALITY_TYPES);
+		return !set.isEmpty();
+	}
+
+	
+	/**
 	 * Return the system name for the namespace. This will be the stated name for
 	 * "regular" namespaces, adding "|" and a normalized, stable transformation of
 	 * the resource URI if it's an anonymous/sidecar file/script/test. The

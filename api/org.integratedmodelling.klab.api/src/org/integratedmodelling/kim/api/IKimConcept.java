@@ -322,7 +322,12 @@ public interface IKimConcept extends IKimStatement {
 		/**
 		 * Specifier for values; affects validation of currencies
 		 */
-		MONETARY
+		MONETARY;
+		
+		boolean isNumeric() {
+			return IKimConcept.CONTINUOUS_QUALITY_TYPES.contains(this);
+		}
+
 	}
 
 	/**
