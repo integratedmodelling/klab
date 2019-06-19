@@ -413,14 +413,14 @@ public enum Types implements ITypeService {
 		String definition = observable.getType().getDefinition();
 		Set<IConcept> allowedDetail = new HashSet<>();
 
-		if (!by.is(Type.TRAIT)) {
-			throw new KlabValidationException(by + ": the concept in a 'by' clause must be a base abstract trait");
-		}
+//		if (!by.is(Type.TRAIT)) {
+//			throw new KlabValidationException(by + ": the concept in a 'by' clause must be a base abstract trait");
+//		}
 
 		/*
 		 * TODO trait must be a base trait and abstract.
 		 */
-		if (!Concepts.INSTANCE.isBaseDeclaration(by) || !by.isAbstract()) {
+		if (by.is(Type.TRAIT) && !(Concepts.INSTANCE.isBaseDeclaration(by) && by.isAbstract())) {
 			throw new KlabValidationException(by + 
 					": traits used in a 'by' clause must be abstract and declared at root level");
 		}

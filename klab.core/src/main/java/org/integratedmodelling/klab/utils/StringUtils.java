@@ -621,4 +621,25 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
 		return capitalize(predictor.replaceAll("_", " "));
 	}
 
+	public static String stripLeadingWhitespace(String string) {
+		String lines[] = string.split("\\r?\\n");
+		int ofs = 10000;
+		for (String line : lines) {
+			int n = getLeadingWhitespace(line).length();
+			if (n < ofs) {
+				ofs = n;
+			}
+		}
+		
+		if (ofs == 0) {
+			return string;
+		}
+		
+		StringBuffer ret = new StringBuffer(string.length());
+		for (String line : lines) {
+			ret.append(line.substring(ofs) + "\n");
+		}
+		return ret.toString();
+	}
+
 }

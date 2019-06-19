@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.dataflow.Flowchart.Element;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.StringUtils;
 
 public enum DataflowDocumentation {
 
@@ -74,7 +75,8 @@ public enum DataflowDocumentation {
 	/**
 	 * Add a template from the classpath.
 	 * 
-	 * @param path the classpath for the template resource.
+	 * @param path
+	 *            the classpath for the template resource.
 	 */
 	public void addTemplate(String path) {
 		String name = MiscUtilities.getURLBaseName(path);
@@ -138,7 +140,8 @@ public enum DataflowDocumentation {
 			}
 		} else if (resource.getSecond().getExpression() != null) {
 			templateId = EXPRESSION_TEMPLATE;
-			String lang = resource.getSecond().getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE : resource.getSecond().getLanguage();
+			String lang = resource.getSecond().getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE
+					: resource.getSecond().getLanguage();
 			if (templates.containsKey(lang)) {
 				templateId = lang;
 			}
@@ -154,7 +157,7 @@ public enum DataflowDocumentation {
 				templateId = resource.getFirst().getName();
 			}
 		}
-		
+
 		Template template = templates.get(templateId);
 
 		if (template != null) {
@@ -181,9 +184,11 @@ public enum DataflowDocumentation {
 				ret.put("resource", res);
 			}
 		} else if (resource.getSecond().getExpression() != null) {
-			ret.put("code", resource.getSecond().getExpression());
-			ret.put("language", resource.getSecond().getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE
-					: resource.getSecond().getLanguage());
+			ret.put("code", StringUtils.stripLeadingWhitespace(resource.getSecond().getExpression()));
+			ret.put("language",
+					StringUtils.capitalize(
+							resource.getSecond().getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE
+									: resource.getSecond().getLanguage()));
 			ret.put("condition", resource.getSecond().getCondition());
 		} else if (resource.getSecond().getLiteral() != null) {
 			ret.put("value", resource.getSecond().getLiteral());
@@ -191,7 +196,7 @@ public enum DataflowDocumentation {
 			ret.put("classification", content);
 		} else if (content instanceof ILookupTable) {
 			ret.put("table", content);
-		}  else {
+		} else {
 			ret.put("call", resource.getFirst());
 			IPrototype prototype = Extensions.INSTANCE.getPrototype(resource.getFirst().getName());
 			if (prototype != null) {
@@ -210,17 +215,17 @@ public enum DataflowDocumentation {
 		 */
 		String documentation = null;
 		if (actuator.getModel() != null) {
-		    Report report = null;
+			Report report = null;
 			for (IDocumentation doc : actuator.getModel().getDocumentation()) {
-			    if (report == null) { 
-			        report = new Report();
-			    }
+				if (report == null) {
+					report = new Report();
+				}
 				for (IDocumentation.Template ktemp : doc.get(Trigger.DOCUMENTATION)) {
-				    report.include(ktemp, actuator.getCurrentContext());
+					report.include(ktemp, actuator.getCurrentContext());
 				}
 			}
 			if (report != null) {
-			    documentation = report.render(Encoding.HTML);
+				documentation = report.render(Encoding.HTML);
 			}
 		}
 

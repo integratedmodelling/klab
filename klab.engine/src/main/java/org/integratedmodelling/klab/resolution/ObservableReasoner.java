@@ -137,6 +137,9 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 		this.model = model;
 		this.observable = observable;
 		this.scope = scope;
+		if (model.isDerived()) {
+			this.transformationsComputed = true;
+		}
 	}
 
 	/**

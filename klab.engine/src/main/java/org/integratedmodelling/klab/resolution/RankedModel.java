@@ -256,5 +256,10 @@ public class RankedModel extends Model implements IRankedModel {
 	public int getPriority() {
 		return priority;
 	}
+	
+	@Override
+	public boolean isDerived() {
+		return delegate.isDerived();
+	}
 
 }
