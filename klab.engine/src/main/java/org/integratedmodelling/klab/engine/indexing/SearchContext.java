@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.engine.indexing;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.integratedmodelling.klab.api.services.IIndexingService.Context;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match.Type;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.StringUtil;
 
 public class SearchContext implements IIndexingService.Context {
@@ -33,7 +35,8 @@ public class SearchContext implements IIndexingService.Context {
 	private SearchContext parent = null;
 	private SearchMatch acceptedMatch;
 
-	// parenthesization level - must be 0 when accepting.
+	// parenthesization level - must be 0 when accepting. NAH we'll need a tree
+	// here, not a list
 	private int depth = 0;
 
 	public static Context createNew() {
@@ -135,8 +138,9 @@ public class SearchContext implements IIndexingService.Context {
 			String ret = "" + this.type;
 			ret += filter ? " FILTER" : "";
 			ret += query ? " QUERY" : "";
-			ret += matcher ? " MATCH" : "";
-			ret += semantics == null ? "" : (" " + semantics);
+			ret += matcher ? " MATCH"
+					: "" + (type == Type.MODIFIER ? (modifiers == null ? "[ALL]" : modifiers.toString()) : "");
+			ret += semantics == null || semantics.isEmpty() ? "" : (" " + semantics);
 			ret += " " + conditions;
 			return ret;
 		}
@@ -298,6 +302,24 @@ public class SearchContext implements IIndexingService.Context {
 		}
 
 		/**
+		 * Call only after with() to remove any of the types already accepted.
+		 * 
+		 * @param types
+		 * @return
+		 */
+		public Constraint without(Set<IKimConcept.Type> types) {
+			EnumSet<IKimConcept.Type> set = EnumSet.copyOf(this.semantics);
+			set.removeAll(types);
+			this.semantics = set;
+			return this;
+		}
+
+		public Constraint plus(IKimConcept.Type... types) {
+			this.semantics.addAll(CollectionUtils.arrayToList(types));
+			return this;
+		}
+
+		/**
 		 * Match the types and ensure the match have at least matchCount of them. Pass
 		 * -1 for all of them.
 		 * 
@@ -337,7 +359,8 @@ public class SearchContext implements IIndexingService.Context {
 		}
 
 		/**
-		 * We get here when we have an observable.
+		 * We get here when we have an observable. TODO there also should be no
+		 * modifiers within the same scope.
 		 * 
 		 * @param semantics
 		 * @return
@@ -345,26 +368,15 @@ public class SearchContext implements IIndexingService.Context {
 		public static Constraint modifiersFor(Set<IKimConcept.Type> semantics) {
 
 			Constraint ret = new Constraint(Type.MODIFIER);
+			ret.matcher = true;
 			ret.modifiers = new HashSet<>();
 			if (Kim.INSTANCE.is(semantics, IKimConcept.Type.QUALITY)) {
-				ret.modifiers.add(Modifier.ADJACENT_TO);
+
 				ret.modifiers.add(Modifier.BY);
-				ret.modifiers.add(Modifier.CAUSED_BY);
-				ret.modifiers.add(Modifier.CAUSING);
-				ret.modifiers.add(Modifier.CONTAINED_IN);
-				ret.modifiers.add(Modifier.CONTAINING);
-				ret.modifiers.add(Modifier.DOWN_TO);
-				ret.modifiers.add(Modifier.DURING);
-				ret.modifiers.add(Modifier.FOR);
-				ret.modifiers.add(Modifier.IS);
-				ret.modifiers.add(Modifier.OF);
-				ret.modifiers.add(Modifier.OVER);
-				ret.modifiers.add(Modifier.PER);
-				ret.modifiers.add(Modifier.SAMEAS);
 				ret.modifiers.add(Modifier.WHERE);
-				ret.modifiers.add(Modifier.WITH);
-				ret.modifiers.add(Modifier.WITHIN);
 				ret.modifiers.add(Modifier.WITHOUT);
+				ret.modifiers.add(Modifier.IS);
+				ret.modifiers.add(Modifier.SAMEAS);
 
 				if (Kim.INSTANCE.isNumeric(semantics)) {
 
@@ -375,18 +387,33 @@ public class SearchContext implements IIndexingService.Context {
 					ret.modifiers.add(Modifier.LESS);
 					ret.modifiers.add(Modifier.LESSEQUAL);
 					ret.modifiers.add(Modifier.MINUS);
+					ret.modifiers.add(Modifier.OVER);
 
 					if (Kim.INSTANCE.is(semantics, IKimConcept.Type.EXTENSIVE_PROPERTY)
 							|| Kim.INSTANCE.is(semantics, IKimConcept.Type.EXTENSIVE_PROPERTY)) {
 						ret.modifiers.add(Modifier.IN);
 					}
+
+					if (Kim.INSTANCE.is(semantics, IKimConcept.Type.NUMEROSITY)) {
+						ret.modifiers.add(Modifier.PER);
+					}
+
 				}
 
-			} else if (Kim.INSTANCE.is(semantics, IKimConcept.Type.EVENT)) {
-
 			}
+			ret.modifiers.add(Modifier.ADJACENT_TO);
+			ret.modifiers.add(Modifier.CAUSED_BY);
+			ret.modifiers.add(Modifier.CAUSING);
+			ret.modifiers.add(Modifier.CONTAINED_IN);
+			ret.modifiers.add(Modifier.CONTAINING);
+			ret.modifiers.add(Modifier.DOWN_TO);
+			ret.modifiers.add(Modifier.DURING);
+			ret.modifiers.add(Modifier.FOR);
+			ret.modifiers.add(Modifier.OF);
+			ret.modifiers.add(Modifier.WITH);
+			ret.modifiers.add(Modifier.WITHIN);
 
-			return null;
+			return ret;
 		}
 
 		public Constraint applicableTo(Collection<IConcept> collectTraits) {
@@ -394,13 +421,35 @@ public class SearchContext implements IIndexingService.Context {
 			return this;
 		}
 
-		public static Constraint with(IKimConcept.Type type) {
-			return with(EnumSet.of(type));
+		// Unit or currency
+		public static Constraint unit(Set<IKimConcept.Type> semantics) {
+			return null;
 		}
+		
+//		public static Constraint with(IKimConcept.Type type) {
+//			return with(EnumSet.of(type));
+//		}
+
+		public static Constraint with(IKimConcept.Type... types) {
+			return with(EnumSet.copyOf(CollectionUtils.arrayToList(types)));
+		}
+
 
 		public Constraint applyingTo(Set<IKimConcept.Type> semantics) {
 			// TODO Auto-generated method stub
 			return this;
+		}
+
+		/**
+		 * Literal value matching the passed semantics. Either a concept or
+		 * a literal.
+		 * 
+		 * @param semantics
+		 * @return
+		 */
+		public static Constraint value(Set<IKimConcept.Type> semantics) {
+			// TODO Auto-generated method stub
+			return null;
 		}
 
 	}
@@ -477,50 +526,72 @@ public class SearchContext implements IIndexingService.Context {
 
 			switch (match.getModifier()) {
 			case ADJACENT_TO:
+				ret.constraints.add(Constraint.with(IKimConcept.Type.COUNTABLE));
 				break;
 			case BY:
+				ret.constraints.add(Constraint.with(IKimConcept.QUALITY_TYPES).plus(IKimConcept.Type.COUNTABLE, IKimConcept.Type.TRAIT)
+						.without(IKimConcept.CONTINUOUS_QUALITY_TYPES));
 				break;
 			case CAUSED_BY:
+				ret.constraints.add(Constraint.with(IKimConcept.Type.PROCESS, IKimConcept.Type.EVENT));
 				break;
 			case CAUSING:
+				ret.constraints.add(Constraint.with(IKimConcept.Type.PROCESS, IKimConcept.Type.EVENT));
 				break;
 			case CONTAINED_IN:
+				ret.constraints.add(Constraint.with(IKimConcept.Type.COUNTABLE));
 				break;
 			case CONTAINING:
+				ret.constraints.add(Constraint.with(IKimConcept.Type.COUNTABLE));
 				break;
 			case DOWN_TO:
+				ret.constraints.add(Constraint.with(IKimConcept.Type.CLASS, IKimConcept.Type.TRAIT));
 				break;
 			case DURING:
+				ret.constraints.add(Constraint.with(IKimConcept.Type.EVENT));
 				break;
 			case FOR:
+				ret.constraints.add(Constraint.with(IKimConcept.Type.COUNTABLE));
 				break;
 			case IN:
+				ret.constraints.add(Constraint.unit(getSemantics()));
 				break;
 			case OF:
 				break;
 			case PER:
+				ret.constraints.add(Constraint.unit(getSemantics()));
 				break;
 			case WITH:
 				break;
 			case WITHIN:
+				ret.constraints.add(Constraint.with(IKimConcept.Type.COUNTABLE));
 				break;
 			case GREATER:
+				ret.constraints.add(Constraint.with(IKimConcept.CONTINUOUS_QUALITY_TYPES));
 				break;
 			case GREATEREQUAL:
+				ret.constraints.add(Constraint.with(IKimConcept.CONTINUOUS_QUALITY_TYPES));
 				break;
 			case IS:
 				break;
 			case LESS:
+				ret.constraints.add(Constraint.with(IKimConcept.CONTINUOUS_QUALITY_TYPES));
 				break;
 			case LESSEQUAL:
+				ret.constraints.add(Constraint.with(IKimConcept.CONTINUOUS_QUALITY_TYPES));
 				break;
 			case MINUS:
+				ret.constraints.add(Constraint.with(IKimConcept.CONTINUOUS_QUALITY_TYPES));
 				break;
 			case OVER:
+				ret.constraints.add(Constraint.with(IKimConcept.CONTINUOUS_QUALITY_TYPES));
 				break;
 			case PLUS:
+				ret.constraints.add(Constraint.with(IKimConcept.CONTINUOUS_QUALITY_TYPES));
 				break;
 			case SAMEAS:
+				ret.constraints.add(Constraint.with(getSemantics()));
+				ret.constraints.add(Constraint.value(getSemantics()));
 				break;
 			case TIMES:
 				break;
