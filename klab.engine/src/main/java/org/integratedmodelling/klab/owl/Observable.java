@@ -407,7 +407,7 @@ public class Observable extends Concept implements IObservable {
     @Override
     public ObservationType getObservationType() {
         if (observationType == null && observable != null) {
-            if (classifier != null || observable.is(Type.CLASS) || observable.is(Type.TRAIT)) {
+            if (/*classifier != null || */observable.is(Type.CLASS) || observable.is(Type.TRAIT)) {
                 observationType = ObservationType.CLASSIFICATION;
             } else if (observable.is(Type.PRESENCE)) {
                 observationType = ObservationType.VERIFICATION;
@@ -625,7 +625,7 @@ public class Observable extends Concept implements IObservable {
     public IArtifact.Type getArtifactType() {
 
         if (observable != null) {
-            if (classifier != null || observable.is(Type.CLASS) || observable.is(Type.TRAIT)) {
+            if (/*classifier != null ||*/ observable.is(Type.CLASS) || observable.is(Type.TRAIT)) {
                 return IArtifact.Type.CONCEPT;
             } else if (observable.is(Type.PRESENCE)) {
                 return IArtifact.Type.BOOLEAN;

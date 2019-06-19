@@ -622,9 +622,13 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
 	}
 
 	public static String stripLeadingWhitespace(String string) {
+		
 		String lines[] = string.split("\\r?\\n");
 		int ofs = 10000;
 		for (String line : lines) {
+			if (line.trim().isEmpty()) {
+				continue;
+			}
 			int n = getLeadingWhitespace(line).length();
 			if (n < ofs) {
 				ofs = n;
@@ -637,7 +641,11 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
 		
 		StringBuffer ret = new StringBuffer(string.length());
 		for (String line : lines) {
-			ret.append(line.substring(ofs) + "\n");
+			if (line.trim().isEmpty()) {
+				ret.append(line);
+			} else {
+				ret.append(line.substring(ofs) + "\n");
+			}
 		}
 		return ret.toString();
 	}

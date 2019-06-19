@@ -13,7 +13,6 @@ import org.integratedmodelling.kim.validation.KimValidator;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Range;
-import org.integratedmodelling.klab.utils.SemanticType;
 
 public class KimObservable extends KimStatement implements IKimObservable {
 
@@ -303,13 +302,13 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		if (main.is(Type.COUNTABLE)) {
 			return "A countable observable cannot have pre-defined values: only qualities and traits can";
 		}
-		if (value instanceof Number && !main.is(Type.QUANTIFIABLE) || classifier != null) {
+		if (value instanceof Number && !main.is(Type.QUANTIFIABLE) /*|| classifier != null*/) {
 			return value + " is not an acceptable value for this observable";
 		}
 		if (value instanceof String) {
 			return "A string is not an acceptable value for any observable";
 		}
-		if (value instanceof IKimConcept && !(main.is(Type.CLASS) || main.is(Type.TRAIT) || classifier != null)) {
+		if (value instanceof IKimConcept && !(main.is(Type.CLASS) || main.is(Type.TRAIT) /*|| classifier != null*/)) {
 			return "A concept is not an acceptable value for this observable";
 		}
 		if (value instanceof IKimConcept && !main.is(((IKimConcept) value).getFundamentalType())) {

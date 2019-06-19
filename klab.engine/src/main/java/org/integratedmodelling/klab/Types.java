@@ -2,12 +2,12 @@ package org.integratedmodelling.klab;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -438,18 +438,19 @@ public enum Types implements ITypeService {
 
 		if (ret == null) {
 			
-			/*
-			 * CHECK - this produces a trait, not a class. Do we still need that
-			 * distinction?
-			 */
-			Set<Type> type = Kim.INSTANCE.getType("class");
-			if (observable.isAbstract()) {
-				type.add(Type.ABSTRACT);
-			}
+//			/*
+//			 * CHECK - this produces a trait, not a class. Do we still need that
+//			 * distinction?
+//			 */
+//			Set<Type> type = Kim.INSTANCE.getType("class");
+//			if (observable.isAbstract()) {
+//				type.add(Type.ABSTRACT);
+//			}
 
 			List<IAxiom> axioms = new ArrayList<>();
 			// FIXME this needs to use IDs and labels like the rest
-			axioms.add(Axiom.ClassAssertion(id, type));
+			
+			axioms.add(Axiom.ClassAssertion(id, EnumSet.copyOf(((Concept)observable.getType()).getTypeSet())));
 			axioms.add(Axiom.SubClass(NS.CORE_TYPE, id));
 			axioms.add(Axiom.AnnotationAssertion(id, NS.BASE_DECLARATION, "true"));
 	        axioms.add(Axiom.AnnotationAssertion(id, NS.DISPLAY_LABEL_PROPERTY, id));

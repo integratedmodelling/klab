@@ -5,12 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
@@ -71,10 +74,29 @@ public class CategoryClassificationResolver
 		IState values = (IState) classified;
 		IState classf = (IState) classifier;
 
+		/*
+		 * TODO some values are extensive. others aren't
+		 */
+		boolean isExtensive = values.getObservable().is(Type.EXTENSIVE_PROPERTY)
+				|| values.getObservable().is(Type.VALUE);
+
+		IUnit propagateSpace = (ret.getScale().getSpace() != null
+				&& Units.INSTANCE.isArealDensity(values.getObservable().getUnit()))
+						? Units.INSTANCE.getArealExtentUnit(values.getObservable().getUnit())
+						: null;
+		IUnit propagateTime = (ret.getScale().getTime() != null
+				&& Units.INSTANCE.isRate(values.getObservable().getUnit()))
+						? Units.INSTANCE.getTimeExtentUnit(values.getObservable().getUnit())
+						: null;
+
 		for (ILocator locator : ret.getScale()) {
 
 			Number value = values.get(locator, Number.class);
 			Object sclas = classf.get(locator);
+
+//			if (propagateSpace || propagateTime) {
+//				// Observations.INSTANCE.getSpaceAndTimeExtents(locator);
+//			}
 
 			if (value == null || (value instanceof Number && Double.isNaN(((Number) value).byteValue()))
 					|| sclas == null) {
@@ -85,8 +107,15 @@ public class CategoryClassificationResolver
 			aggregated += aggregateValue(value, values.getObservable(), ret.getScale());
 			cache.put(sclas, aggregated);
 			long cnt = count.containsKey(sclas) ? count.get(sclas) : 0;
-			count.put(sclas, cnt+1);
+			count.put(sclas, cnt + 1);
 		}
+		
+		if (!isExtensive) {
+			for (Object key : cache.keySet()) {
+				cache.put(key, cache.get(key)/count.get(key));
+			}
+		}
+		
 
 		for (ILocator locator : ret.getScale()) {
 
