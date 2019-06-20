@@ -328,6 +328,11 @@ public enum KimKnowledgeProcessor {
 			Concept by = declareInternal(modifier, (Ontology) declarationOntology, monitor);
 			declaration += " by " + by;
 
+			if (by == null) {
+			    monitor.error("unknown concept in 'by' clause: " + modifier.getDefinition());
+			    return null;
+			}
+			
 			Concept downTo = null;
 
 			if (concept.getDownTo() != null) {

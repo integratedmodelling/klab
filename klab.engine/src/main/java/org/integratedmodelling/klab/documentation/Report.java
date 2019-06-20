@@ -69,223 +69,250 @@ import com.vladsch.flexmark.util.options.MutableDataSet;
  */
 public class Report implements IReport {
 
-	enum RefType {
-		REF, FIG, TABLE, FOOTNOTE, DATAFLOW
-	}
+    enum RefType {
+        REF,
+        FIG,
+        TABLE,
+        FOOTNOTE,
+        DATAFLOW
+    }
 
-	private Map<SectionRole, ReportSection> mainSections = new HashMap<>();
+    private Map<SectionRole, ReportSection> mainSections = new HashMap<>();
 
-	private List<IResource> resources = new ArrayList<>();
-	private List<IKimTable> tables = new ArrayList<>();
-	private List<IModel> models = new ArrayList<>();
-	private List<IPrototype> services = new ArrayList<>();
-	private List<IDataflow<?>> dataflows = new ArrayList<>();
-	private Map<String, IObservationReference> observations = new HashMap<>();
-	Map<String, ReportSection> referencesCited = new HashMap<>();
-	Map<String, ReportSection> tablesCited = new HashMap<>();
-	Map<String, ReportSection> modelsCited = new HashMap<>();
-	Map<String, ReportSection> observationsCited = new HashMap<>();
-	Map<String, ReportSection> dataflowsCited = new HashMap<>();
+    private List<IResource> resources = new ArrayList<>();
+    private List<IKimTable> tables = new ArrayList<>();
+    private List<IModel> models = new ArrayList<>();
+    private List<IPrototype> services = new ArrayList<>();
+    private List<IDataflow<?>> dataflows = new ArrayList<>();
+    private Map<String, IObservationReference> observations = new HashMap<>();
+    Map<String, ReportSection> referencesCited = new HashMap<>();
+    Map<String, ReportSection> tablesCited = new HashMap<>();
+    Map<String, ReportSection> modelsCited = new HashMap<>();
+    Map<String, ReportSection> observationsCited = new HashMap<>();
+    Map<String, ReportSection> dataflowsCited = new HashMap<>();
+    Map<String, String> taggedText = new HashMap<>();
+    
+    Map<RefType, Set<String>> refTypes = new HashMap<>();
+    Set<String> observationDescribed = new HashSet<>();
+    Set<String> inserted = new HashSet<>();
+    
+    public RefType getReferenceType(String reference) {
+        RefType ret = null;
+        for (RefType type : RefType.values()) {
+            if (refTypes.containsKey(type) && refTypes.get(type).contains(reference)) {
+                return type;
+            }
+        }
+        return ret;
+    }
 
-	Map<RefType, Set<String>> refTypes = new HashMap<>();
-	Set<String> observationDescribed = new HashSet<>();
-	Set<String> inserted = new HashSet<>();
-	
-	public RefType getReferenceType(String reference) {
-		RefType ret = null;
-		for (RefType type : RefType.values()) {
-			if (refTypes.containsKey(type) && refTypes.get(type).contains(reference)) {
-				return type;
-			}
-		}
-		return ret;
-	}
+    public void setReferenceType(String reference, RefType type) {
+        Set<String> set = refTypes.get(type);
+        if (set == null) {
+            set = new HashSet<>();
+            refTypes.put(type, set);
+        }
+        set.add(reference);
+    }
 
-	public void setReferenceType(String reference, RefType type) {
-		Set<String> set = refTypes.get(type);
-		if (set == null) {
-			set = new HashSet<>();
-			refTypes.put(type, set);
-		}
-		set.add(reference);
-	}
+    public void addTaggedText(String tag, String contents) {
+        this.taggedText.put(tag, contents);
+    }
 
-	// @Override
-	public void include(IDocumentation.Template template, IComputationContext context) {
-		ReportSection section = getMainSection(((TemplateImpl) template).getRole());
-		template.compile(section, context);
-	}
+    public String getTaggedText(String tag) {
+        return this.taggedText.get(tag);
+    }
 
-	// @Override
-	public void include(IComputableResource resource) {
+    // @Override
+    public void include(IDocumentation.Template template, IComputationContext context) {
+        ReportSection section = getMainSection(((TemplateImpl) template).getRole());
+        template.compile(section, context);
+    }
 
-		if (resource.getUrn() != null) {
-			resources.add(Resources.INSTANCE.resolveResource(resource.getUrn()));
-		} else if (resource.getLookupTable() != null) {
-			tables.add(resource.getLookupTable().getTable());
-		} else if (resource.getClassification() != null) {
-			// classification
-		} else if (resource.getServiceCall() != null) {
-			Prototype prototype = Extensions.INSTANCE.getPrototype(resource.getServiceCall().getName());
-			if (prototype != null) {
-				services.add(prototype);
-			}
-		}
-	}
+    // @Override
+    public void include(IComputableResource resource) {
 
-	public IObservationReference getObservation(String id) {
-		return observations.get(id);
-	}
+        if (resource.getUrn() != null) {
+            resources.add(Resources.INSTANCE.resolveResource(resource.getUrn()));
+        } else if (resource.getLookupTable() != null) {
+            tables.add(resource.getLookupTable().getTable());
+        } else if (resource.getClassification() != null) {
+            // classification
+        } else if (resource.getServiceCall() != null) {
+            Prototype prototype = Extensions.INSTANCE.getPrototype(resource.getServiceCall().getName());
+            if (prototype != null) {
+                services.add(prototype);
+            }
+        }
+    }
 
-	// @Override
-	public void include(IModel model) {
-		models.add(model);
-	}
+    public IObservationReference getObservation(String id) {
+        return observations.get(id);
+    }
 
-	// @Override
-	public void include(IDataflow<?> dataflow) {
-		dataflows.add(dataflow);
-	}
+    // @Override
+    public void include(IModel model) {
+        models.add(model);
+    }
 
-	public void include(IObservationReference output) {
-		observations.put(output.getId(), output);
-	}
+    // @Override
+    public void include(IDataflow<?> dataflow) {
+        dataflows.add(dataflow);
+    }
 
-	public void addSection(Section section) {
-		ReportSection main = getMainSection(section.getRole());
-		main.children.add((ReportSection) section);
-	}
+    public void include(IObservationReference output) {
+        observations.put(output.getId(), output);
+    }
 
-	public void include(ITask<?> task) {
-		// notify task start, finish, abort
-	}
+    public void addSection(Section section) {
+        ReportSection main = getMainSection(section.getRole());
+        main.children.add((ReportSection) section);
+    }
 
-	/**
-	 * Require the contents of a passed project-level template into the section
-	 * named in the second argument.
-	 * 
-	 * @param processArguments
-	 * @param context
-	 */
-	public void require(Object[] args, IDocumentation documentation, IComputationContext context) {
-		
-		if (inserted.contains(args[0] + "|" + args[1])) {
-			return;
-		}
-		
-		Reference template = ((Documentation)documentation).getReference(args[0].toString());
-		if (template != null) {
-			String srole = Path.getFirst(args[1].toString(), "/");
-			SectionRole role = SectionRole.valueOf(srole.toUpperCase());
-			if (role != null) {
-				ReportSection main = getMainSection(role);
-				if (args[1].toString().contains("/")) {
-					// TODO!
-//					main = main.getChild(parent, titlePath)
-				}
-				main.body.append("\n\n" + template.get(BibTexFields.EXAMPLE_CITATION) + "\n\n");
-			}
-		}
-		
-		inserted.add(args[0] + "|" + args[1]);
-	}
+    public void include(ITask<?> task) {
+        // notify task start, finish, abort
+    }
 
-	/*
-	 * get or create the main section for a section.
-	 */
-	ReportSection getMainSection(SectionRole role) {
-		ReportSection ret = mainSections.get(role);
-		if (ret == null) {
-			ret = new ReportSection(this, role);
-			mainSections.put(role, ret);
-			ret.name = StringUtils.capitalize(role.name().toLowerCase());
-		}
-		return ret;
-	}
+    /**
+     * Require the contents of a passed project-level template into the section
+     * named in the second argument.
+     * 
+     * @param processArguments
+     * @param context
+     */
+    public void require(Object[] args, IDocumentation documentation, IComputationContext context) {
 
-	@Override
-	public List<Section> getSections() {
-		List<Section> ret = new ArrayList<>();
-		for (SectionRole role : SectionRole.values()) {
-			if (mainSections.containsKey(role)) {
-				ret.add(mainSections.get(role));
-			}
-		}
-		return ret;
-	}
+        if (inserted.contains(args[0] + "|" + args[1])) {
+            return;
+        }
 
-	public static final String SEPARATOR = "\n\n----\n\n";
+        Reference template = ((Documentation) documentation).getReference(args[0].toString());
+        if (template != null) {
+            String srole = Path.getFirst(args[1].toString(), "/");
+            SectionRole role = SectionRole.valueOf(srole.toUpperCase());
+            if (role != null) {
+                ReportSection main = getMainSection(role);
+                if (args[1].toString().contains("/")) {
+                    // TODO!
+                    //					main = main.getChild(parent, titlePath)
+                }
+                main.body.append("\n\n" + template.get(BibTexFields.EXAMPLE_CITATION) + "\n\n");
+            }
+        }
 
-	IRuntimeContext context = null;
-	private String sessionId;
+        inserted.add(args[0] + "|" + args[1]);
+    }
 
-	public Report() {
-	}
+    /*
+     * get or create the main section for a section.
+     */
+    ReportSection getMainSection(SectionRole role) {
+        ReportSection ret = mainSections.get(role);
+        if (ret == null) {
+            ret = new ReportSection(this, role);
+            mainSections.put(role, ret);
+            ret.name = StringUtils.capitalize(role.name().toLowerCase());
+        }
+        return ret;
+    }
 
-	public Report(IRuntimeContext context, String sessionId) {
-		this.context = context;
-		this.sessionId = sessionId;
-	}
+    @Override
+    public List<Section> getSections() {
+        List<Section> ret = new ArrayList<>();
+        for (SectionRole role : SectionRole.values()) {
+            if (mainSections.containsKey(role)) {
+                ret.add(mainSections.get(role));
+            }
+        }
+        return ret;
+    }
 
-	public String asHTML(String markdown) {
+    public static final String SEPARATOR = "\n\n----\n\n";
 
-		MutableDataSet options = new MutableDataSet().set(Parser.EXTENSIONS,
-				Arrays.asList(FootnoteExtension.create(), AttributesExtension.create(),
-						EnumeratedReferenceExtension.create(), MediaTagsExtension.create(),
-						DefinitionExtension.create(), TablesExtension.create()));
+    IRuntimeContext context = null;
+    private String sessionId;
 
-		Parser parser = Parser.builder(options).build();
-		HtmlRenderer renderer = HtmlRenderer.builder(options).build();
-		Node document = parser.parse(markdown);
-		return renderer.render(document);
-	}
+    public Report() {
+    }
 
-	@Override
-	public String render(Encoding encoding) {
+    public Report(IRuntimeContext context, String sessionId) {
+        this.context = context;
+        this.sessionId = sessionId;
+    }
 
-		StringBuffer ret = new StringBuffer(16 * 1024);
+    public String asHTML(String markdown) {
 
-		ret.append(getTitleSection());
+        MutableDataSet options = new MutableDataSet().set(Parser.EXTENSIONS,
+                Arrays.asList(FootnoteExtension.create(), AttributesExtension.create(),
+                        EnumeratedReferenceExtension.create(), MediaTagsExtension.create(),
+                        DefinitionExtension.create(), TablesExtension.create()));
 
-		/*
-		 * TODO add anything not explicitly described according to settings; make
-		 * appendices and references
-		 */
-		
-		int n = 0;
-		for (Section s : getSections()) {
-			ret.append(((ReportSection)s).render(0, (++n) + ""));
-		}
+        Parser parser = Parser.builder(options).build();
+        HtmlRenderer renderer = HtmlRenderer.builder(options).build();
+        Node document = parser.parse(markdown);
+        return renderer.render(document);
+    }
 
-		// TODO these should be configurable
-		ret.append("\n\n" + "[@ref]: Reference [#]\n" + "[@fig]: Figure [#]\n" + "[@table]: Table [#]\n"
-				+ "[@footnote]: Footnote [#]\n" + "[@user]: [#]\n" + "[@dataflow]: Dataflow [#]\n");
+    @Override
+    public String render(Encoding encoding) {
 
-//		System.out.println(ret.toString());
+        StringBuffer ret = new StringBuffer(16 * 1024);
 
-		switch (encoding) {
-		case HTML:
-			return asHTML(ret.toString());
-		case MARKDOWN:
-			return ret.toString();
-		case LATEX:
-		case PDF:
-			break;
-		}
+        ret.append(getTitleSection());
 
-		return "<html><body><p>Unsupported encoding " + encoding + " </p></body></html>";
-	}
+        /*
+         * TODO add anything not explicitly described according to settings; make
+         * appendices and references
+         */
 
-	private String getTitleSection() {
-		String ret = "# ![Integrated Modelling Partnership](../logos/im64.png){float=left} k.LAB Contextualization report\n\n";
-		ret += "---\n";
-		ret += "Computed at " + new Date();
-		ret += "\n\n";
-		return ret;
-	}
+        int n = 0;
+        for (Section s : getSections()) {
+            ret.append(((ReportSection) s).render(0, (++n) + ""));
+        }
 
-	public String getSessionId() {
-		return sessionId;
-	}
+        /**
+         * If we have tagged content and no sections that may have used it,
+         * at least show that.
+         * 
+         * TODO this should go in the appendix as "Supplemental material" using
+         * a label provided by the actuators, skipping each tag if it was used at least
+         * once.
+         */
+        if (n == 0) {
+            for (String tag : taggedText.keySet()) {
+                ret.append(taggedText.get(tag) + "\n\n---");
+            }
+        }
+
+        // TODO these should be configurable
+        ret.append("\n\n" + "[@ref]: Reference [#]\n" + "[@fig]: Figure [#]\n" + "[@table]: Table [#]\n"
+                + "[@footnote]: Footnote [#]\n" + "[@user]: [#]\n" + "[@dataflow]: Dataflow [#]\n");
+
+        //		System.out.println(ret.toString());
+
+        switch (encoding) {
+        case HTML:
+            return asHTML(ret.toString());
+        case MARKDOWN:
+            return ret.toString();
+        case LATEX:
+        case PDF:
+            break;
+        }
+
+        return "<html><body><p>Unsupported encoding " + encoding + " </p></body></html>";
+    }
+
+    private String getTitleSection() {
+        String ret = "# ![Integrated Modelling Partnership](../logos/im64.png){float=left} k.LAB Contextualization report\n\n";
+        ret += "---\n";
+        ret += "Computed at " + new Date();
+        ret += "\n\n";
+        return ret;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
 
 }

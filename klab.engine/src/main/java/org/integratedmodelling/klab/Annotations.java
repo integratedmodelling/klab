@@ -37,249 +37,243 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public enum Annotations implements IAnnotationService {
 
-	/**
-	 * The global instance singleton.
-	 */
-	INSTANCE;
-	
-	private Annotations() {
-		Services.INSTANCE.registerService(this, IAnnotationService.class);
-	}
+    /**
+     * The global instance singleton.
+     */
+    INSTANCE;
 
-	/**
-	 * To be implemented by the handlers of annotations mentioned in the
-	 * corresponding prototypes. These are executed on the corresponding objects
-	 * after the entire namespace is loaded, in order of declaration.
-	 * 
-	 * @author ferdinando.villa
-	 *
-	 */
-	public interface Handler {
+    private Annotations() {
+        Services.INSTANCE.registerService(this, IAnnotationService.class);
+    }
 
-		/**
-		 * Handle the passed object with the passed annotation arguments. Do not throw
-		 * exceptions but use the monitor for notifications.
-		 * 
-		 * @param target
-		 * @param arguments
-		 * @param monitor
-		 * @return any value deemed necessary. The return value is ignored for now,
-		 *         reserved for future applications.
-		 * @throws Exception
-		 */
-		Object process(IKimObject target, IParameters<Object> arguments, IMonitor monitor) throws Exception;
-	}
+    /**
+     * To be implemented by the handlers of annotations mentioned in the
+     * corresponding prototypes. These are executed on the corresponding objects
+     * after the entire namespace is loaded, in order of declaration.
+     * 
+     * @author ferdinando.villa
+     *
+     */
+    public interface Handler {
 
-	Map<String, Handler> handlers = Collections.synchronizedMap(new HashMap<>());
-	Map<String, IPrototype> prototypes = Collections.synchronizedMap(new HashMap<>());
+        /**
+         * Handle the passed object with the passed annotation arguments. Do not throw
+         * exceptions but use the monitor for notifications.
+         * 
+         * @param target
+         * @param arguments
+         * @param monitor
+         * @return any value deemed necessary. The return value is ignored for now,
+         *         reserved for future applications.
+         * @throws Exception
+         */
+        Object process(IKimObject target, IParameters<Object> arguments, IMonitor monitor) throws Exception;
+    }
 
-	@Override
-	public IPrototype getPrototype(String annotation) {
-		return prototypes.get(annotation);
-	}
+    Map<String, Handler> handlers = Collections.synchronizedMap(new HashMap<>());
+    Map<String, IPrototype> prototypes = Collections.synchronizedMap(new HashMap<>());
 
-	@Override
-	public Object process(IAnnotation annotation, IKimObject object, IMonitor monitor) {
+    @Override
+    public IPrototype getPrototype(String annotation) {
+        return prototypes.get(annotation);
+    }
 
-		Handler handler = handlers.get(annotation.getName());
-		if (handler != null) {
-			try {
-				return handler.process(object, annotation, monitor);
-			} catch (Exception e) {
-				monitor.error(e);
-			}
-		}
-		return null;
-	}
-	
-	   public void declareServices(InputStream manifest) throws KlabException {
+    @Override
+    public Object process(IAnnotation annotation, IKimObject object, IMonitor monitor) {
 
-	        IKdlDataflow declaration = Dataflows.INSTANCE.declare(manifest);
+        Handler handler = handlers.get(annotation.getName());
+        if (handler != null) {
+            try {
+                return handler.process(object, annotation, monitor);
+            } catch (Exception e) {
+                monitor.error(e);
+            }
+        }
+        return null;
+    }
 
-	        String namespace = declaration.getPackageName();
-	        for (IKdlActuator actuator : declaration.getActuators()) {
-	            IPrototype prototype = new Prototype(actuator, namespace);
-	            prototypes.put(prototype.getName(), prototype);
-	            if (prototype.getType() != IArtifact.Type.ANNOTATION) {
-	                throw new KlabInternalErrorException(
-	                        "annotation prototype for " + prototype.getName() + " does not specify an annotation");
-	            } else if (prototype.getExecutorClass() != null) {
-	                try {
-	                    Object handler = prototype.getExecutorClass().getDeclaredConstructor().newInstance();
-	                    if (handler instanceof Handler) {
-	                        handlers.put(prototype.getName(), (Handler) handler);
-	                    } else {
-	                        throw new KlabInternalErrorException("error creating handler for " + prototype.getName()
-	                                + ": handler is not an instance of Annotations.Handler");
-	                    }
-	                } catch (Exception e) {
-	                    throw new KlabInternalErrorException(e);
-	                }
-	            }
-	        }
-	    }
+    public void declareServices(InputStream manifest) throws KlabException {
 
-	public void declareServices(URL manifest) throws KlabException {
+        IKdlDataflow declaration = Dataflows.INSTANCE.declare(manifest);
 
-		IKdlDataflow declaration = Dataflows.INSTANCE.declare(manifest);
+        String namespace = declaration.getPackageName();
+        for (IKdlActuator actuator : declaration.getActuators()) {
+            IPrototype prototype = new Prototype(actuator, namespace);
+            prototypes.put(prototype.getName(), prototype);
+            if (prototype.getType() != IArtifact.Type.ANNOTATION) {
+                throw new KlabInternalErrorException(
+                        "annotation prototype for " + prototype.getName() + " does not specify an annotation");
+            } else if (prototype.getExecutorClass() != null) {
+                try {
+                    Object handler = prototype.getExecutorClass().getDeclaredConstructor().newInstance();
+                    if (handler instanceof Handler) {
+                        handlers.put(prototype.getName(), (Handler) handler);
+                    } else {
+                        throw new KlabInternalErrorException("error creating handler for " + prototype.getName()
+                                + ": handler is not an instance of Annotations.Handler");
+                    }
+                } catch (Exception e) {
+                    throw new KlabInternalErrorException(e);
+                }
+            }
+        }
+    }
 
-		String namespace = declaration.getPackageName();
-		for (IKdlActuator actuator : declaration.getActuators()) {
-			IPrototype prototype = new Prototype(actuator, namespace);
-			prototypes.put(prototype.getName(), prototype);
-			if (prototype.getType() != IArtifact.Type.ANNOTATION) {
-				throw new KlabInternalErrorException(
-						"annotation prototype for " + prototype.getName() + " does not specify an annotation");
-			} else if (prototype.getExecutorClass() != null) {
-				try {
-					Object handler = prototype.getExecutorClass().getDeclaredConstructor().newInstance();
-					if (handler instanceof Handler) {
-						handlers.put(prototype.getName(), (Handler) handler);
-					} else {
-						throw new KlabInternalErrorException("error creating handler for " + prototype.getName()
-								+ ": handler is not an instance of Annotations.Handler");
-					}
-				} catch (Exception e) {
-					throw new KlabInternalErrorException(e);
-				}
-			}
-		}
-	}
+    public void declareServices(URL manifest) throws KlabException {
 
-	public void exportPrototypes(File file) {
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			JavaType type = mapper.getTypeFactory().constructMapLikeType(Map.class, String.class, Prototype.class);
-			mapper.writerFor(type).writeValue(file, this.prototypes);
-		} catch (IOException e) {
-			Logging.INSTANCE.error(e);
-		}
-	}
+        IKdlDataflow declaration = Dataflows.INSTANCE.declare(manifest);
 
-	/**
-	 * Collect the annotations from an k.IM object and its semantic lineage,
-	 * ensuring that downstream annotations of the same name override those
-	 * upstream.
-	 * 
-	 * @param object
-	 * @return all annotations from upstream
-	 */
-	public Collection<IAnnotation> collectAnnotations(Object... objects) {
-		Map<String, IAnnotation> ret = new HashMap<>();
-		for (Object object : objects) {
-			if (object instanceof IKimObject) {
-				collectAnnotations((IKimObject) object, ret);
-			} else if (object instanceof ISemantic) {
-				collectAnnotations((ISemantic) object, ret);
-			} else if (object instanceof Artifact) {
-				for (IAnnotation annotation : ((Artifact)object).getAnnotations()) {
-					if (!ret.containsKey(annotation.getName())) {
-						ret.put(annotation.getName(), annotation);
-					}
-				}
-			}
-		}
-		return ret.values();
-	}
+        String namespace = declaration.getPackageName();
+        for (IKdlActuator actuator : declaration.getActuators()) {
+            IPrototype prototype = new Prototype(actuator, namespace);
+            prototypes.put(prototype.getName(), prototype);
+            if (prototype.getType() != IArtifact.Type.ANNOTATION) {
+                throw new KlabInternalErrorException(
+                        "annotation prototype for " + prototype.getName() + " does not specify an annotation");
+            } else if (prototype.getExecutorClass() != null) {
+                try {
+                    Object handler = prototype.getExecutorClass().getDeclaredConstructor().newInstance();
+                    if (handler instanceof Handler) {
+                        handlers.put(prototype.getName(), (Handler) handler);
+                    } else {
+                        throw new KlabInternalErrorException("error creating handler for " + prototype.getName()
+                                + ": handler is not an instance of Annotations.Handler");
+                    }
+                } catch (Exception e) {
+                    throw new KlabInternalErrorException(e);
+                }
+            }
+        }
+    }
 
-	/**
-	 * Collect the annotations from anything semantic lineage, ensuring that
-	 * downstream annotations of the same name override those upstream.
-	 * 
-	 * @param object
-	 * @return all annotations from upstream
-	 */
-	public Collection<IAnnotation> collectAnnotations(ISemantic object) {
-		Map<String, IAnnotation> ret = new HashMap<>();
-		collectAnnotations(object, ret);
-		return ret.values();
-	}
+    public void exportPrototypes(File file) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JavaType type = mapper.getTypeFactory().constructMapLikeType(Map.class, String.class, Prototype.class);
+            mapper.writerFor(type).writeValue(file, this.prototypes);
+        } catch (IOException e) {
+            Logging.INSTANCE.error(e);
+        }
+    }
 
-	private void collectAnnotations(IKimStatement object, Map<String, IAnnotation> collection) {
+    /**
+     * Collect the annotations from an k.IM object and its semantic lineage,
+     * ensuring that downstream annotations of the same name override those
+     * upstream.
+     * 
+     * @param object
+     * @return all annotations from upstream
+     */
+    public Collection<IAnnotation> collectAnnotations(Object... objects) {
+        Map<String, IAnnotation> ret = new HashMap<>();
+        for (Object object : objects) {
+            if (object instanceof IKimObject) {
+                collectAnnotations((IKimObject) object, ret);
+            } else if (object instanceof ISemantic) {
+                collectAnnotations((ISemantic) object, ret);
+            } else if (object instanceof Artifact) {
+                for (IAnnotation annotation : ((Artifact) object).getAnnotations()) {
+                    if (!ret.containsKey(annotation.getName())) {
+                        ret.put(annotation.getName(), annotation);
+                    }
+                }
+            }
+        }
+        return ret.values();
+    }
 
-		for (IKimAnnotation annotation : object.getAnnotations()) {
-			if (!collection.containsKey(annotation.getName())) {
-				Annotation a = new Annotation(annotation);
-				collection.put(a.getName(), a);
-			}
-		}
+    /**
+     * Collect the annotations from anything semantic lineage, ensuring that
+     * downstream annotations of the same name override those upstream.
+     * 
+     * @param object
+     * @return all annotations from upstream
+     */
+    public Collection<IAnnotation> collectAnnotations(ISemantic object) {
+        Map<String, IAnnotation> ret = new HashMap<>();
+        collectAnnotations(object, ret);
+        return ret.values();
+    }
 
-		if (object.getParent() != null) {
-			collectAnnotations(object.getParent(), collection);
-		}
-	}
+    private void collectAnnotations(IKimStatement object, Map<String, IAnnotation> collection) {
 
-	private void collectAnnotations(IKimObject object, Map<String, IAnnotation> collection) {
+        for (IKimAnnotation annotation : object.getAnnotations()) {
+            if (!collection.containsKey(annotation.getName())) {
+                Annotation a = new Annotation(annotation);
+                collection.put(a.getName(), a);
+            }
+        }
 
-		for (IAnnotation annotation : object.getAnnotations()) {
-			if (!collection.containsKey(annotation.getName())) {
-				collection.put(annotation.getName(), annotation);
-			}
-		}
+        if (object.getParent() != null) {
+            collectAnnotations(object.getParent(), collection);
+        }
+    }
 
-		if (object instanceof IModel) {
-			collectAnnotations(((IModel) object).getObservables().get(0), collection);
-		} else if (object instanceof IObserver) {
-			collectAnnotations(((IModel) object).getObservables().get(0), collection);
-		} else if (object instanceof IConceptDefinition) {
-			collectAnnotations(((IConceptDefinition) object).getStatement(), collection);
-		}
-	}
+    private void collectAnnotations(IKimObject object, Map<String, IAnnotation> collection) {
 
-	private void collectAnnotations(ISemantic object, Map<String, IAnnotation> collection) {
+        for (IAnnotation annotation : object.getAnnotations()) {
+            if (!collection.containsKey(annotation.getName())) {
+                collection.put(annotation.getName(), annotation);
+            }
+        }
 
-		if (object instanceof IObservable) {
+        if (object instanceof IModel) {
+            collectAnnotations(((IModel) object).getObservables().get(0), collection);
+        } else if (object instanceof IObserver) {
+            collectAnnotations(((IModel) object).getObservables().get(0), collection);
+        } else if (object instanceof IConceptDefinition) {
+            collectAnnotations(((IConceptDefinition) object).getStatement(), collection);
+        }
+    }
 
-			/*
-			 * collect from roles, traits and main in this order
-			 */
-//			for (IConcept role : Roles.INSTANCE.getRoles(((IObservable) object).getType())) {
-//				collectAnnotations(role, collection);
-//			}
-			for (IConcept trait : Traits.INSTANCE.getTraits(((IObservable) object).getType())) {
-				// FIXME REMOVE ugly hack: landcover is a type, but it's used as an attribute in various places so the change
-				// is deep. This makes landcover colormaps end up in places they shouldn't be.
-				if (!trait.getNamespace().equals("landcover")) {
-					collectAnnotations(trait, collection);
-				}
-			}
+    private void collectAnnotations(ISemantic object, Map<String, IAnnotation> collection) {
 
-			/*
-			 * if we are classifying 'by', we use the classifier, not the main type
-			 */
-			IConcept mainType = ((IObservable) object).getClassifier() != null ? ((IObservable) object).getClassifier()
-					: ((IObservable) object).getMain();
-			
-			collectAnnotations(mainType, collection);
+        if (object instanceof IObservable) {
 
-		} else if (object instanceof IConcept) {
-			IKimObject mobject = Resources.INSTANCE.getModelObject(object.toString());
-			if (mobject != null) {
-				collectAnnotations(mobject, collection);
-			}
-		}
-	}
+            /*
+             * collect from roles, traits and main in this order
+             */
+            //			for (IConcept role : Roles.INSTANCE.getRoles(((IObservable) object).getType())) {
+            //				collectAnnotations(role, collection);
+            //			}
+            for (IConcept trait : Traits.INSTANCE.getTraits(((IObservable) object).getType())) {
+                // FIXME REMOVE ugly hack: landcover is a type, but it's used as an attribute in various places so the change
+                // is deep. This makes landcover colormaps end up in places they shouldn't be.
+                if (!trait.getNamespace().equals("landcover")) {
+                    collectAnnotations(trait, collection);
+                }
+            }
+
+            collectAnnotations(((IObservable) object).getMain(), collection);
+
+        } else if (object instanceof IConcept) {
+            IKimObject mobject = Resources.INSTANCE.getModelObject(object.toString());
+            if (mobject != null) {
+                collectAnnotations(mobject, collection);
+            }
+        }
+    }
 
     public void register(Prototype prototype) {
         prototypes.put(prototype.getName(), prototype);
     }
 
-	public boolean hasAnnotation(IObservable observable, String s) {
-		for (IAnnotation annotation : observable.getAnnotations()) {
-			if (annotation.getName().equals(s)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    public boolean hasAnnotation(IObservable observable, String s) {
+        for (IAnnotation annotation : observable.getAnnotations()) {
+            if (annotation.getName().equals(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	public boolean hasAnnotation(IKimObject object, String s) {
-		for (IAnnotation annotation : object.getAnnotations()) {
-			if (annotation.getName().equals(s)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    public boolean hasAnnotation(IKimObject object, String s) {
+        for (IAnnotation annotation : object.getAnnotations()) {
+            if (annotation.getName().equals(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

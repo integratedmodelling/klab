@@ -145,6 +145,7 @@ public class Observable extends Concept implements IObservable {
         ret.declaration = concept.getDefinition().trim();
         ret.isAbstract = concept.isAbstract();
         ret.generic = concept.isAbstract();
+        
         if (setUnits) {
             ret.unit = (Unit) Units.INSTANCE.getDefaultUnitFor(concept);
             if (ret.unit != null) {
@@ -182,7 +183,10 @@ public class Observable extends Concept implements IObservable {
     @Override
     public String getLocalName() {
         if (name == null) {
-            name = CamelCase.toLowerCase(observable.getName(), '_');
+            name = CamelCase.toLowerCase(Concepts.INSTANCE.getDisplayName(observable/*.getName()*/), '_');
+            if (name.contains("000")) {
+                System.out.println("ZIOOAO");
+            }
         }
         return name;
     }

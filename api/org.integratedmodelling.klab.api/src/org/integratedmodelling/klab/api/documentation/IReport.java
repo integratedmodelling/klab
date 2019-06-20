@@ -96,6 +96,7 @@ public interface IReport {
             TABLE,
             REFERENCE,
             LINK,
+            TAGSECTION,
             CUSTOM
         }
 

@@ -173,5 +173,12 @@ public class State extends Observation implements IState, IKeyHolder {
         }
         throw new KlabUnimplementedException("aggregation of rescaled states is unimplemented - please submit a request");
     }
+
+    @Override
+    public void fill(Object value) {
+        for (ILocator locator : getScale()) {
+            set(locator, value);
+        }
+    }
 	
 }

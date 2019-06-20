@@ -211,6 +211,12 @@ public class Documentation implements IDocumentation {
                     case "require":
                         current.getReport().require(processArguments(section.body, 2), Documentation.this, context);
                         break;	
+                    case "import":
+                        String arg = current.getReport().getTaggedText(processArguments(section.body, 1).toString());
+                        if (arg != null) {
+                            current.body.append(arg);
+                        }
+                        break;  
                     // next for later, allow unsupported use. Need scopes for these to work.
                     case "if":
                     	// open conditional scope, set active to result of expression

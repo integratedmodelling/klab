@@ -106,5 +106,13 @@ public interface IState extends IObservation, IDataArtifact {
     *         covered by the original geometry.
     */
     Object aggregate(ILocator... locators);
+
+    /**
+     * Fill all states with the passed value.
+     * 
+     * @param value
+     * @param locators
+     */
+    void fill(Object value);
 	
 }

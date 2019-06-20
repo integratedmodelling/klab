@@ -39,224 +39,228 @@ import org.integratedmodelling.klab.scale.Scale;
  */
 public class SubjectiveState extends Observation implements ISubjectiveState {
 
-	IState current;
-	Map<String, IState> cache = new HashMap<>();
+    IState current;
+    Map<String, IState> cache = new HashMap<>();
 
-	transient IDirectObservation observer;
+    transient IDirectObservation observer;
 
-	@Override
-	public void setObserver(IDirectObservation observer) {
-		if (!observer.equals(this.observer)) {
-			IState state = cache.get(observer.getId());
-			if (state == null) {
-				state = Klab.INSTANCE.getRuntimeProvider().createState(
-						((Observable) current.getObservable()).subjectify(observer), current.getType(),
-						current.getScale(), ((Observation) current).getRuntimeContext());
-				cache.put(observer.getId(), state);
-			}
-			this.current = state;
-			this.observer = observer;
-			((DirectObservation)observer).addSubjectiveObservation(this);
-		}
-	}
+    @Override
+    public void setObserver(IDirectObservation observer) {
+        if (!observer.equals(this.observer)) {
+            IState state = cache.get(observer.getId());
+            if (state == null) {
+                state = Klab.INSTANCE.getRuntimeProvider().createState(
+                        ((Observable) current.getObservable()).subjectify(observer), current.getType(),
+                        current.getScale(), ((Observation) current).getRuntimeContext());
+                cache.put(observer.getId(), state);
+            }
+            this.current = state;
+            this.observer = observer;
+            ((DirectObservation) observer).addSubjectiveObservation(this);
+        }
+    }
 
-	public SubjectiveState(IState state, IDirectObservation observer) {
-		super((Observable)state.getObservable(), (Scale)state.getScale(), ((Observation)state).getRuntimeContext());
-		this.current = state;
-		this.observer = observer;
-		this.cache.put(this.observer.getId(), state);
-	}
+    public SubjectiveState(IState state, IDirectObservation observer) {
+        super((Observable) state.getObservable(), (Scale) state.getScale(), ((Observation) state).getRuntimeContext());
+        this.current = state;
+        this.observer = observer;
+        this.cache.put(this.observer.getId(), state);
+    }
 
-	public Iterator<IArtifact> iterator() {
-		return current.iterator();
-	}
+    public Iterator<IArtifact> iterator() {
+        return current.iterator();
+    }
 
-	public Monitor getMonitor() {
-		return (Monitor) current.getMonitor();
-	}
+    public Monitor getMonitor() {
+        return (Monitor) current.getMonitor();
+    }
 
-	public IEngineSessionIdentity getParentIdentity() {
-		return current.getParentIdentity();
-	}
+    public IEngineSessionIdentity getParentIdentity() {
+        return current.getParentIdentity();
+    }
 
-	public boolean isConstant() {
-		return current.isConstant();
-	}
+    public boolean isConstant() {
+        return current.isConstant();
+    }
 
-	public IState as(IArtifact.Type type) {
-		return current.as(type);
-	}
+    public IState as(IArtifact.Type type) {
+        return current.as(type);
+    }
 
-	public Object get(ILocator index) {
-		return current.get(index);
-	}
+    public Object get(ILocator index) {
+        return current.get(index);
+    }
 
-	public Observable getObservable() {
-		return (Observable)current.getObservable();
-	}
+    public Observable getObservable() {
+        return (Observable) current.getObservable();
+    }
 
-	public Scale getScale() {
-		return (Scale)current.getScale();
-	}
+    public Scale getScale() {
+        return (Scale) current.getScale();
+    }
 
-	public <T> Iterator<T> iterator(ILocator index, Class<? extends T> cls) {
-		return current.iterator(index, cls);
-	}
+    public <T> Iterator<T> iterator(ILocator index, Class<? extends T> cls) {
+        return current.iterator(index, cls);
+    }
 
-	public <T> T get(ILocator index, Class<T> cls) {
-		return current.get(index, cls);
-	}
+    public <T> T get(ILocator index, Class<T> cls) {
+        return current.get(index, cls);
+    }
 
-	public IState in(IValueMediator mediator) {
-		return current.in(mediator);
-	}
+    public IState in(IValueMediator mediator) {
+        return current.in(mediator);
+    }
 
-	public IState at(ILocator locator) {
-		return current.at(locator);
-	}
+    public IState at(ILocator locator) {
+        return current.at(locator);
+    }
 
-	public ITable<Number> getTable() {
-		return current.getTable();
-	}
+    public ITable<Number> getTable() {
+        return current.getTable();
+    }
 
-	public DirectObservation getContext() {
-		return (DirectObservation)current.getContext();
-	}
+    public DirectObservation getContext() {
+        return (DirectObservation) current.getContext();
+    }
 
-	public long set(ILocator index, Object value) {
-		return current.set(index, value);
-	}
+    public long set(ILocator index, Object value) {
+        return current.set(index, value);
+    }
 
-	public ISubjectiveState reinterpret(IDirectObservation observer) {
-		setObserver(observer);
-		return this;
-	}
+    public ISubjectiveState reinterpret(IDirectObservation observer) {
+        setObserver(observer);
+        return this;
+    }
 
-	public boolean isSpatiallyDistributed() {
-		return current.isSpatiallyDistributed();
-	}
+    public boolean isSpatiallyDistributed() {
+        return current.isSpatiallyDistributed();
+    }
 
-	public boolean isTemporallyDistributed() {
-		return current.isTemporallyDistributed();
-	}
+    public boolean isTemporallyDistributed() {
+        return current.isTemporallyDistributed();
+    }
 
-	public boolean isTemporal() {
-		return current.isTemporal();
-	}
+    public boolean isTemporal() {
+        return current.isTemporal();
+    }
 
-	public boolean isSpatial() {
-		return current.isSpatial();
-	}
+    public boolean isSpatial() {
+        return current.isSpatial();
+    }
 
-	public long size() {
-		return current.size();
-	}
+    public long size() {
+        return current.size();
+    }
 
-	public ISpace getSpace() {
-		return current.getSpace();
-	}
+    public ISpace getSpace() {
+        return current.getSpace();
+    }
 
-	public IDataKey getDataKey() {
-		return current.getDataKey();
-	}
+    public IDataKey getDataKey() {
+        return current.getDataKey();
+    }
 
-	public long getTimestamp() {
-		return current.getTimestamp();
-	}
+    public long getTimestamp() {
+        return current.getTimestamp();
+    }
 
-	public String getId() {
-		return current.getId();
-	}
+    public String getId() {
+        return current.getId();
+    }
 
-	public IGeometry getGeometry() {
-		return current.getGeometry();
-	}
+    public IGeometry getGeometry() {
+        return current.getGeometry();
+    }
 
-	public boolean isEmpty() {
-		return current.isEmpty();
-	}
+    public boolean isEmpty() {
+        return current.isEmpty();
+    }
 
-	public IMetadata getMetadata() {
-		return current.getMetadata();
-	}
+    public IMetadata getMetadata() {
+        return current.getMetadata();
+    }
 
-	public String getUrn() {
-		return current.getUrn();
-	}
+    public String getUrn() {
+        return current.getUrn();
+    }
 
-	public Collection<IAnnotation> getAnnotations() {
-		return current.getAnnotations();
-	}
+    public Collection<IAnnotation> getAnnotations() {
+        return current.getAnnotations();
+    }
 
-	public boolean is(org.integratedmodelling.klab.api.auth.IIdentity.Type type) {
-		return current.is(type);
-	}
+    public boolean is(org.integratedmodelling.klab.api.auth.IIdentity.Type type) {
+        return current.is(type);
+    }
 
-	public <T extends IIdentity> T getParentIdentity(Class<T> type) {
-		return current.getParentIdentity(type);
-	}
+    public <T extends IIdentity> T getParentIdentity(Class<T> type) {
+        return current.getParentIdentity(type);
+    }
 
-	public IAgent getConsumer() {
-		return current.getConsumer();
-	}
+    public IAgent getConsumer() {
+        return current.getConsumer();
+    }
 
-	public IAgent getOwner() {
-		return current.getOwner();
-	}
+    public IAgent getOwner() {
+        return current.getOwner();
+    }
 
-	public Collection<IArtifact> getAntecedents() {
-		return current.getAntecedents();
-	}
+    public Collection<IArtifact> getAntecedents() {
+        return current.getAntecedents();
+    }
 
-	public Collection<IArtifact> getConsequents() {
-		return current.getConsequents();
-	}
+    public Collection<IArtifact> getConsequents() {
+        return current.getConsequents();
+    }
 
-	public IArtifact trace(IConcept concept) {
-		return current.trace(concept);
-	}
+    public IArtifact trace(IConcept concept) {
+        return current.trace(concept);
+    }
 
-	public Collection<IArtifact> collect(IConcept concept) {
-		return current.collect(concept);
-	}
+    public Collection<IArtifact> collect(IConcept concept) {
+        return current.collect(concept);
+    }
 
-	public IArtifact trace(IConcept role, IDirectObservation roleContext) {
-		return current.trace(role, roleContext);
-	}
+    public IArtifact trace(IConcept role, IDirectObservation roleContext) {
+        return current.trace(role, roleContext);
+    }
 
-	public Collection<IArtifact> collect(IConcept role, IDirectObservation roleContext) {
-		return current.collect(role, roleContext);
-	}
+    public Collection<IArtifact> collect(IConcept role, IDirectObservation roleContext) {
+        return current.collect(role, roleContext);
+    }
 
-	public int groupSize() {
-		return current.groupSize();
-	}
+    public int groupSize() {
+        return current.groupSize();
+    }
 
-	public IProvenance getProvenance() {
-		return current.getProvenance();
-	}
+    public IProvenance getProvenance() {
+        return current.getProvenance();
+    }
 
-	public IArtifact.Type getType() {
-		return current.getType();
-	}
+    public IArtifact.Type getType() {
+        return current.getType();
+    }
 
-	public void release() {
-		current.release();
-	}
+    public void release() {
+        current.release();
+    }
 
     @Override
     public <T> T aggregate(IGeometry geometry, Class<? extends T> cls) {
         return current.aggregate(geometry, cls);
     }
 
-	@Override
-	public IDirectObservation getObserver() {
-		return observer;
-	}
+    @Override
+    public IDirectObservation getObserver() {
+        return observer;
+    }
 
     @Override
     public Object aggregate(ILocator... locators) {
         return current.aggregate(locators);
     }
 
+    @Override
+    public void fill(Object value) {
+        current.fill(value);
+    }
 }

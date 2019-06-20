@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.engine.indexing;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +16,7 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.Modifier;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.services.IIndexingService;
 import org.integratedmodelling.klab.api.services.IIndexingService.Context;
@@ -26,6 +26,17 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.StringUtil;
 
+
+/**
+ * Better API for this:
+ * 
+ * 
+ *  context.allow(...)
+ *  context.filter(...)
+ *  // BASTA
+ * @author Ferd
+ *
+ */
 public class SearchContext implements IIndexingService.Context {
 
 	// these are in OR - anything matching any of these is acceptable. No
@@ -119,6 +130,7 @@ public class SearchContext implements IIndexingService.Context {
 		boolean query;
 		boolean matcher;
 		Set<Modifier> modifiers = null;
+		Set<IConcept> baseTraitBlacklist;
 
 		// if set, all matches must have at least minMatches of the types in here
 		Set<IKimConcept.Type> semantics;
@@ -286,6 +298,22 @@ public class SearchContext implements IIndexingService.Context {
 			ret.allowAbstract = allowAbstract;
 			return ret;
 		}
+		
+	      public static Constraint otherTraits(Collection<IConcept> traits) {
+	            Constraint ret = new Constraint(Type.CONCEPT);
+	            ret.semantics = EnumSet.of(IKimConcept.Type.TRAIT);
+	            ret.query = true;
+	            ret.filter = true;
+	            ret.allowAbstract = true;
+	            ret.baseTraitBlacklist = new HashSet<>();
+	            for (IConcept trait : traits) {
+	                IConcept base = Traits.INSTANCE.getBaseParentTrait(trait);
+	                if (base != null) {
+	                    ret.baseTraitBlacklist.add(base);
+	                }
+	            }
+	            return ret;
+	        }
 
 		/**
 		 * Match the types and ensure one or more is in the matched object.
@@ -527,31 +555,40 @@ public class SearchContext implements IIndexingService.Context {
 			switch (match.getModifier()) {
 			case ADJACENT_TO:
 				ret.constraints.add(Constraint.with(IKimConcept.Type.COUNTABLE));
+                ret.constraints.add(Constraint.allTraits(false)/*.applyingTo(IKimConcept.Type.EVENT)*/);
 				break;
 			case BY:
 				ret.constraints.add(Constraint.with(IKimConcept.QUALITY_TYPES).plus(IKimConcept.Type.COUNTABLE, IKimConcept.Type.TRAIT)
 						.without(IKimConcept.CONTINUOUS_QUALITY_TYPES));
+                ret.constraints.add(Constraint.allTraits(false)/*.applyingTo(IKimConcept.Type.EVENT)*/);
 				break;
 			case CAUSED_BY:
 				ret.constraints.add(Constraint.with(IKimConcept.Type.PROCESS, IKimConcept.Type.EVENT));
+                ret.constraints.add(Constraint.allTraits(false)/*.applyingTo(IKimConcept.Type.EVENT)*/);
 				break;
 			case CAUSING:
 				ret.constraints.add(Constraint.with(IKimConcept.Type.PROCESS, IKimConcept.Type.EVENT));
+                ret.constraints.add(Constraint.allTraits(false)/*.applyingTo(IKimConcept.Type.EVENT)*/);
 				break;
 			case CONTAINED_IN:
 				ret.constraints.add(Constraint.with(IKimConcept.Type.COUNTABLE));
+                ret.constraints.add(Constraint.allTraits(false)/*.applyingTo(IKimConcept.Type.EVENT)*/);
 				break;
 			case CONTAINING:
 				ret.constraints.add(Constraint.with(IKimConcept.Type.COUNTABLE));
+                ret.constraints.add(Constraint.allTraits(false)/*.applyingTo(IKimConcept.Type.EVENT)*/);
 				break;
 			case DOWN_TO:
 				ret.constraints.add(Constraint.with(IKimConcept.Type.CLASS, IKimConcept.Type.TRAIT));
+                ret.constraints.add(Constraint.allTraits(false)/*.applyingTo(IKimConcept.Type.EVENT)*/);
 				break;
 			case DURING:
 				ret.constraints.add(Constraint.with(IKimConcept.Type.EVENT));
+                ret.constraints.add(Constraint.allTraits(false)/*.applyingTo(IKimConcept.Type.EVENT)*/);
 				break;
 			case FOR:
 				ret.constraints.add(Constraint.with(IKimConcept.Type.COUNTABLE));
+                ret.constraints.add(Constraint.allTraits(false)/*.applyingTo(IKimConcept.Type.EVENT)*/);
 				break;
 			case IN:
 				ret.constraints.add(Constraint.unit(getSemantics()));
@@ -565,6 +602,7 @@ public class SearchContext implements IIndexingService.Context {
 				break;
 			case WITHIN:
 				ret.constraints.add(Constraint.with(IKimConcept.Type.COUNTABLE));
+                ret.constraints.add(Constraint.allTraits(false)/*.applyingTo(IKimConcept.Type.EVENT)*/);
 				break;
 			case GREATER:
 				ret.constraints.add(Constraint.with(IKimConcept.CONTINUOUS_QUALITY_TYPES));
@@ -610,7 +648,9 @@ public class SearchContext implements IIndexingService.Context {
 			if (haveObservable()) {
 				ret.constraints.add(Constraint.modifiersFor(getSemantics()));
 			} else {
-				ret.constraints.add(Constraint.allObservables(false).applicableTo(collectTraits()));
+			    // add traits with another base trait
+                ret.constraints.add(Constraint.otherTraits(collectTraits()).applyingTo(getSemantics()));
+			    ret.constraints.add(Constraint.allObservables(false).applicableTo(collectTraits()));
 			}
 
 			/*
@@ -618,6 +658,8 @@ public class SearchContext implements IIndexingService.Context {
 			 * in the front only and inhibit trait definition after the observable is set.
 			 * Probably good design discipline although it may be annoying.
 			 */
+			
+			System.out.println("ACCEPTED: " + ret.dump());
 
 		}
 
@@ -646,7 +688,7 @@ public class SearchContext implements IIndexingService.Context {
 			return true;
 		}
 
-		return parent == null || parent.isScopeStart() ? false : parent.haveObservable();
+		return parent == null /*|| parent.isScopeStart()*/ ? false : parent.haveObservable();
 	}
 
 	private boolean isScopeStart() {

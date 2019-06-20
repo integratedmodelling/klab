@@ -154,6 +154,11 @@ public class MediatingState extends Observation implements IState {
 		return null;
 	}
 
-
+    @Override
+    public void fill(Object value) {
+        for (ILocator locator : getScale()) {
+            set(locator, value);
+        }
+    }
 
 }

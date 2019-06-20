@@ -62,11 +62,11 @@ export object route
 	"Connects subjects through routes computed along a specified spatial configuration. Relationships are only
 	 created if a route exists."
 {
-	optional input source
+	optional concept source
 		"Semantics for the type of the subjects used as source for the relationships"
 		default ""
 
-	optional input target
+	optional concept target
 		"Semantics for the type of the subjects used as target for the relationships"
 		default ""
 

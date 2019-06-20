@@ -585,7 +585,7 @@ public enum Observables implements IObservableService {
         if (inherent != null) {
             OWL.INSTANCE.restrictSome(target, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), inherent, ontology);
         }
-        if (context == null) {
+        if (context != null) {
             OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context, ontology);
         }
         if (caused != null) {

@@ -74,5 +74,26 @@ public class Metadata extends Parameters<String> implements IMetadata {
 	  
 	  return null;
   }
+  
+  public String getTitle() {
+      return get(DC_TITLE, "No title");
+  }
 
+  public String getOriginator() {
+      return get(DC_ORIGINATOR, "No originator");
+  }
+
+  public String getKeywords() {
+      return get(IM_KEYWORDS, "No keyword list");
+  }
+  
+  public String getDescription() {
+      return get(DC_COMMENT, "No descriptionr");
+  }
+  
+  public String getUrl() {
+      return get(DC_URL, "No URL");
+  }
+
+  
 }

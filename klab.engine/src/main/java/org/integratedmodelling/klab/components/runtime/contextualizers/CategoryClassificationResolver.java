@@ -9,6 +9,7 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -27,130 +28,162 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 public class CategoryClassificationResolver
-		implements IResolver<IState>, IProcessor, IExpression, IDocumentationProvider {
+        implements IResolver<IState>, IProcessor, IExpression, IDocumentationProvider {
 
-	static final public String FUNCTION_ID = "klab.runtime.categorize";
+    static final public String FUNCTION_ID = "klab.runtime.categorize";
 
-	IArtifact classified;
-	IArtifact classifier;
+    public static final String TABLE_ID = "aggregated.value.table";
 
-	// don't remove - only used as expression
-	public CategoryClassificationResolver() {
-	}
+    IArtifact classified;
+    IArtifact classifier;
+    Map<String, String> docTags = new HashMap<>();
 
-	public CategoryClassificationResolver(IArtifact classified, IArtifact classifier) {
-		this.classified = classified;
-		this.classifier = classifier;
-	}
+    // don't remove - only used as expression
+    public CategoryClassificationResolver() {
+    }
 
-	public static IServiceCall getServiceCall(IObservable classified, IObservable classifier)
-			throws KlabValidationException {
-		return KimServiceCall.create(FUNCTION_ID, "artifact", classified.getLocalName(), "classifier",
-				classifier.getLocalName());
-	}
+    public CategoryClassificationResolver(IArtifact classified, IArtifact classifier) {
+        this.classified = classified;
+        this.classifier = classifier;
+    }
 
-	@Override
-	public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
-		return new CategoryClassificationResolver(context.getArtifact(parameters.get("artifact", String.class)),
-				context.getArtifact(parameters.get("classifier", String.class)));
-	}
+    public static IServiceCall getServiceCall(IObservable classified, IObservable classifier)
+            throws KlabValidationException {
+        return KimServiceCall.create(FUNCTION_ID, "artifact", classified.getLocalName(), "classifier",
+                classifier.getLocalName());
+    }
 
-	@Override
-	public IGeometry getGeometry() {
-		return Geometry.scalar();
-	}
+    @Override
+    public Object eval(IParameters<String> parameters, IComputationContext context) throws KlabException {
+        return new CategoryClassificationResolver(context.getArtifact(parameters.get("artifact", String.class)),
+                context.getArtifact(parameters.get("classifier", String.class)));
+    }
 
-	@Override
-	public IState resolve(IState ret, IComputationContext context) throws KlabException {
+    @Override
+    public IGeometry getGeometry() {
+        return Geometry.scalar();
+    }
 
-		Map<Object, Double> cache = new HashMap<>();
-		Map<Object, Long> count = new HashMap<>();
+    @Override
+    public IState resolve(IState ret, IComputationContext context) throws KlabException {
 
-		if (!(classified instanceof IState) || !(classifier instanceof IState)) {
-			throw new IllegalArgumentException(
-					"Category classification is not possible unless all arguments are states");
-		}
+        Map<Object, Double> cache = new HashMap<>();
+        Map<Object, Long> count = new HashMap<>();
 
-		IState values = (IState) classified;
-		IState classf = (IState) classifier;
+        if (!(classified instanceof IState) || !(classifier instanceof IState)) {
+            throw new IllegalArgumentException(
+                    "Category classification is not possible unless all arguments are states");
+        }
 
-		/*
-		 * TODO some values are extensive. others aren't
-		 */
-		boolean isExtensive = values.getObservable().is(Type.EXTENSIVE_PROPERTY)
-				|| values.getObservable().is(Type.VALUE);
+        IState values = (IState) classified;
+        IState classf = (IState) classifier;
 
-		IUnit propagateSpace = (ret.getScale().getSpace() != null
-				&& Units.INSTANCE.isArealDensity(values.getObservable().getUnit()))
-						? Units.INSTANCE.getArealExtentUnit(values.getObservable().getUnit())
-						: null;
-		IUnit propagateTime = (ret.getScale().getTime() != null
-				&& Units.INSTANCE.isRate(values.getObservable().getUnit()))
-						? Units.INSTANCE.getTimeExtentUnit(values.getObservable().getUnit())
-						: null;
+        /*
+         * TODO some values are extensive. others aren't
+         */
+        boolean isExtensive = values.getObservable().is(Type.EXTENSIVE_PROPERTY)
+                || values.getObservable().is(Type.VALUE);
 
-		for (ILocator locator : ret.getScale()) {
+        IUnit propagateSpace = (ret.getScale().getSpace() != null
+                && Units.INSTANCE.isArealDensity(values.getObservable().getUnit()))
+                        ? Units.INSTANCE.getArealExtentUnit(values.getObservable().getUnit())
+                        : null;
+        IUnit propagateTime = (ret.getScale().getTime() != null
+                && Units.INSTANCE.isRate(values.getObservable().getUnit()))
+                        ? Units.INSTANCE.getTimeExtentUnit(values.getObservable().getUnit())
+                        : null;
 
-			Number value = values.get(locator, Number.class);
-			Object sclas = classf.get(locator);
+        for (ILocator locator : ret.getScale()) {
 
-//			if (propagateSpace || propagateTime) {
-//				// Observations.INSTANCE.getSpaceAndTimeExtents(locator);
-//			}
+            Number value = values.get(locator, Number.class);
+            Object sclas = classf.get(locator);
 
-			if (value == null || (value instanceof Number && Double.isNaN(((Number) value).byteValue()))
-					|| sclas == null) {
-				continue;
-			}
+            //			if (propagateSpace || propagateTime) {
+            //				// Observations.INSTANCE.getSpaceAndTimeExtents(locator);
+            //			}
 
-			double aggregated = cache.containsKey(sclas) ? cache.get(sclas).doubleValue() : 0;
-			aggregated += aggregateValue(value, values.getObservable(), ret.getScale());
-			cache.put(sclas, aggregated);
-			long cnt = count.containsKey(sclas) ? count.get(sclas) : 0;
-			count.put(sclas, cnt + 1);
-		}
-		
-		if (!isExtensive) {
-			for (Object key : cache.keySet()) {
-				cache.put(key, cache.get(key)/count.get(key));
-			}
-		}
-		
+            if (value == null || (value instanceof Number && Double.isNaN(((Number) value).byteValue()))
+                    || sclas == null) {
+                continue;
+            }
 
-		for (ILocator locator : ret.getScale()) {
+            double aggregated = cache.containsKey(sclas) ? cache.get(sclas).doubleValue() : 0;
+            aggregated += aggregateValue(value, values.getObservable(), ret.getScale());
+            cache.put(sclas, aggregated);
+            long cnt = count.containsKey(sclas) ? count.get(sclas) : 0;
+            count.put(sclas, cnt + 1);
+        }
 
-			Object sclas = classf.get(locator);
-			if (cache.containsKey(sclas)) {
-				ret.set(locator, cache.get(sclas));
-			}
-		}
+        if (!isExtensive) {
+            for (Object key : cache.keySet()) {
+                cache.put(key, cache.get(key) / count.get(key));
+            }
+        }
 
-		/*
-		 * TODO set the table into the documentation outputs
-		 */
+        for (ILocator locator : ret.getScale()) {
 
-		return ret;
-	}
+            Object sclas = classf.get(locator);
+            if (cache.containsKey(sclas)) {
+                ret.set(locator, cache.get(sclas));
+            }
+        }
 
-	private double aggregateValue(Number value, IObservable observable, IScale scale) {
-		return value.doubleValue();
-	}
+        /*
+         * TODO set the table into the documentation outputs
+         */
+        addDocumentationTags(cache);
 
-	@Override
-	public IArtifact.Type getType() {
-		return classified.getType();
-	}
+        return ret;
+    }
 
-	@Override
-	public List<String> getTags() {
-		List<String> ret = new ArrayList<>();
-		return ret;
-	}
+    private void addDocumentationTags(Map<Object, Double> cache) {
 
-	@Override
-	public String getDocumentation(String tag) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+        StringBuffer body = new StringBuffer(1024);
+        String separator = "";
+        for (String h : new String[] { Concepts.INSTANCE.getDisplayName(((IState) classifier).getObservable()),
+                Concepts.INSTANCE.getDisplayName(((IState) classified).getObservable()) }) {
+            body.append((separator.isEmpty() ? "" : "|") + h);
+            separator += ((separator.isEmpty() ? "" : "|") + ":---");
+        }
+        body.append("\n");
+        body.append(separator + "\n");
+
+        for (Object key : cache.keySet()) {
+            boolean first = true;
+            for (Object item : new Object[] { key, cache.get(key) }) {
+                body.append((first ? "" : "|") + item.toString());
+                first = false;
+            }
+            body.append("\n");
+        }
+        body.append("[[#" + TABLE_ID + "] " + " Aggregation of "
+                + Concepts.INSTANCE.getDisplayName(((IState) classified).getObservable()) + " values by "
+                + Concepts.INSTANCE.getDisplayName(((IState) classifier).getObservable()) + "  ]");
+        body.append("{#" + TABLE_ID + " text-align: center}\n\n");
+
+        docTags.put(TABLE_ID, body.toString());
+
+    }
+
+    private double aggregateValue(Number value, IObservable observable, IScale scale) {
+        return value.doubleValue();
+    }
+
+    @Override
+    public IArtifact.Type getType() {
+        return classified.getType();
+    }
+
+    @Override
+    public List<String> getTags() {
+        List<String> ret = new ArrayList<>();
+        ret.add(TABLE_ID);
+        return ret;
+    }
+
+    @Override
+    public String getDocumentation(String tag) {
+        return docTags.get(tag);
+    }
 
 }

@@ -1271,7 +1271,7 @@ public class ObservableBuilder implements IObservable.Builder {
         if (conceptId != null) {
             return this.ontology.getConcept(conceptId);
         }
-
+        
         // System.out.println("building " + declaration + " in " + ontology);
 
         conceptId = this.ontology.createIdForDefinition(declaration.getDefinition());

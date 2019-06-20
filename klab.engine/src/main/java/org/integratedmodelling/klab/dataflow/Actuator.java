@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
+import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -510,6 +511,15 @@ public class Actuator implements IActuator {
                     // group is created.
                     ctx.link(ctx.getContextObservation(), ret);
                 }
+            }
+        }
+        
+        /**
+         * Insert any text part that the contextualizer makes available for the documentation.
+         */
+        if (contextualizer instanceof IDocumentationProvider) {
+            for (String tag : ((IDocumentationProvider)contextualizer).getTags()) {
+                ((Report)ctx.getReport()).addTaggedText(tag, ((IDocumentationProvider)contextualizer).getDocumentation(tag));
             }
         }
 
