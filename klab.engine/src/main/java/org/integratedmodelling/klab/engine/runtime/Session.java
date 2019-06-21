@@ -257,7 +257,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 			if (regionOfInterest != null && (object instanceof KimObject || object instanceof IObservable)) {
 
 				INamespace namespace = object instanceof KimObject ? ((KimObject) object).getNamespace()
-						: Namespaces.INSTANCE.getNamespace(((IObservable) object).getNamespace());
+						: Namespaces.INSTANCE.getNamespace(((IObservable) object).getType().getNamespace());
 				/*
 				 * gridsize is defined if ROI is.
 				 */

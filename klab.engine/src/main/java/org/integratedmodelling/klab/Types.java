@@ -407,66 +407,66 @@ public enum Types implements ITypeService {
 //        return ret;
 //    }
 	
-	public IConcept getTypeByTrait(Observable observable, Concept by, Concept downTo, Ontology ontology) {
-
-		String id = observable.getName();
-		String definition = observable.getType().getDefinition();
-		Set<IConcept> allowedDetail = new HashSet<>();
-
-//		if (!by.is(Type.TRAIT)) {
-//			throw new KlabValidationException(by + ": the concept in a 'by' clause must be a base abstract trait");
+//	public IConcept getTypeByTrait(Observable observable, Concept by, Concept downTo, Ontology ontology) {
+//
+//		String id = observable.getName();
+//		String definition = observable.getType().getDefinition();
+//		Set<IConcept> allowedDetail = new HashSet<>();
+//
+////		if (!by.is(Type.TRAIT)) {
+////			throw new KlabValidationException(by + ": the concept in a 'by' clause must be a base abstract trait");
+////		}
+//
+//		/*
+//		 * TODO trait must be a base trait and abstract.
+//		 */
+//		if (by.is(Type.TRAIT) && !(Concepts.INSTANCE.isBaseDeclaration(by) && by.isAbstract())) {
+//			throw new KlabValidationException(by + 
+//					": traits used in a 'by' clause must be abstract and declared at root level");
 //		}
-
-		/*
-		 * TODO trait must be a base trait and abstract.
-		 */
-		if (by.is(Type.TRAIT) && !(Concepts.INSTANCE.isBaseDeclaration(by) && by.isAbstract())) {
-			throw new KlabValidationException(by + 
-					": traits used in a 'by' clause must be abstract and declared at root level");
-		}
-
-		id += "By" + ObservableBuilder.getCleanId(by);
-		definition += " by " + by.getDefinition();
-
-		if (downTo != null) {
-			allowedDetail.addAll(Types.INSTANCE.getChildrenAtLevel(by, Types.INSTANCE.getDetailLevel(by, downTo)));
-			id += "DownTo" + ObservableBuilder.getCleanId(downTo);
-			definition += " down to " + downTo.getDefinition();
-		}
-
-		IConcept ret = ontology.getConcept(id);
-
-		if (ret == null) {
-			
-//			/*
-//			 * CHECK - this produces a trait, not a class. Do we still need that
-//			 * distinction?
-//			 */
-//			Set<Type> type = Kim.INSTANCE.getType("class");
-//			if (observable.isAbstract()) {
-//				type.add(Type.ABSTRACT);
+//
+//		id += "By" + ObservableBuilder.getCleanId(by);
+//		definition += " by " + by.getDefinition();
+//
+//		if (downTo != null) {
+//			allowedDetail.addAll(Types.INSTANCE.getChildrenAtLevel(by, Types.INSTANCE.getDetailLevel(by, downTo)));
+//			id += "DownTo" + ObservableBuilder.getCleanId(downTo);
+//			definition += " down to " + downTo.getDefinition();
+//		}
+//
+//		IConcept ret = ontology.getConcept(id);
+//
+//		if (ret == null) {
+//			
+////			/*
+////			 * CHECK - this produces a trait, not a class. Do we still need that
+////			 * distinction?
+////			 */
+////			Set<Type> type = Kim.INSTANCE.getType("class");
+////			if (observable.isAbstract()) {
+////				type.add(Type.ABSTRACT);
+////			}
+//
+//			List<IAxiom> axioms = new ArrayList<>();
+//			// FIXME this needs to use IDs and labels like the rest
+//			
+//			axioms.add(Axiom.ClassAssertion(id, EnumSet.copyOf(((Concept)observable.getType()).getTypeSet())));
+//			axioms.add(Axiom.SubClass(NS.CORE_TYPE, id));
+//			axioms.add(Axiom.AnnotationAssertion(id, NS.BASE_DECLARATION, "true"));
+//	        axioms.add(Axiom.AnnotationAssertion(id, NS.DISPLAY_LABEL_PROPERTY, id));
+//	        axioms.add(Axiom.AnnotationAssertion(id, NS.CONCEPT_DEFINITION_PROPERTY, definition));
+//	        axioms.add(Axiom.AnnotationAssertion(id, "rdfs:label", id));
+//			ontology.define(axioms);
+//			ret = ontology.getConcept(id);
+//			
+//			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.REPRESENTED_BY_PROPERTY), by, ontology);
+//			if (downTo != null) {
+//				OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.LIMITED_BY_PROPERTY), LogicalConnector.UNION, allowedDetail, ontology);
 //			}
-
-			List<IAxiom> axioms = new ArrayList<>();
-			// FIXME this needs to use IDs and labels like the rest
-			
-			axioms.add(Axiom.ClassAssertion(id, EnumSet.copyOf(((Concept)observable.getType()).getTypeSet())));
-			axioms.add(Axiom.SubClass(NS.CORE_TYPE, id));
-			axioms.add(Axiom.AnnotationAssertion(id, NS.BASE_DECLARATION, "true"));
-	        axioms.add(Axiom.AnnotationAssertion(id, NS.DISPLAY_LABEL_PROPERTY, id));
-	        axioms.add(Axiom.AnnotationAssertion(id, NS.CONCEPT_DEFINITION_PROPERTY, definition));
-	        axioms.add(Axiom.AnnotationAssertion(id, "rdfs:label", id));
-			ontology.define(axioms);
-			ret = ontology.getConcept(id);
-			
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.REPRESENTED_BY_PROPERTY), by, ontology);
-			if (downTo != null) {
-				OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.LIMITED_BY_PROPERTY), LogicalConnector.UNION, allowedDetail, ontology);
-			}
-			Observables.INSTANCE.copyContext(observable.getType(), ret, ontology);
-		}
-
-		return ret;
-	}
+//			Observables.INSTANCE.copyContext(observable.getType(), ret, ontology);
+//		}
+//
+//		return ret;
+//	}
 
 }

@@ -226,7 +226,7 @@ public class Model extends KimObject implements IModel {
 
 		} else if (resource.getAccordingTo() != null) {
 
-			IClassification classification = Types.INSTANCE.createClassificationFromMetadata(observables.get(0),
+			IClassification classification = Types.INSTANCE.createClassificationFromMetadata(observables.get(0).getType(),
 					resource.getAccordingTo());
 			resource.setValidatedResource(classification);
 

@@ -425,7 +425,7 @@ public class ModelKbox extends ObservableKbox {
 
 					ret.setName(srs.getString(4));
 
-					IConcept mtype = getType(tyid);
+					IConcept mtype = getType(tyid).getType();
 
 					ret.setObservableConcept(mtype);
 					ret.setObservable(getTypeDefinition(tyid));

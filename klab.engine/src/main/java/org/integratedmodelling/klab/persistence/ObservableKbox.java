@@ -92,7 +92,7 @@ public abstract class ObservableKbox extends H2Kbox {
         return this.database;
     }
 
-    public IConcept getType(long id) {
+    public IObservable getType(long id) {
         if (typeHash.containsKey(id)) {
         	if (typeHash.get(id).startsWith("nonsemantic:")) {
         		return Observable.promote(Concepts.c(typeHash.get(id)));

@@ -31,7 +31,7 @@ public class ObservationGroup extends CountableObservation implements ISubjectiv
 	private Comparator<IArtifact> comparator = null;
 
 	public ObservationGroup(Observable observable, Scale scale, IRuntimeContext context, IArtifact.Type type) {
-		super(observable.getName(), observable, scale, context);
+		super(observable.getLocalName(), observable, scale, context);
 		this.atype = type;
 		IIdentity identity = context.getMonitor().getIdentity();
 		if (identity instanceof AbstractTask) {

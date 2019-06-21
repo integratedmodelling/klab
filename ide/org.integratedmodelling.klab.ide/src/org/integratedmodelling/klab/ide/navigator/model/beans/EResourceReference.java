@@ -27,11 +27,7 @@ public class EResourceReference extends ResourceReference {
 
 	public EResourceReference(ResourceReference other) {
 		super(other);
-		
-		if (other.getUrn().equals("local:stefano.balbi:im.data.global:ariesteam-eu-landcover_Corine2018")) {
-			System.out.println("PSPOP");
-		}
-		
+
 		// TODO
 		this.authorized = true;
 		for (Notification notification : other.getNotifications()) {

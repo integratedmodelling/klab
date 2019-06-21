@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.clitool.api.ICommand;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -22,17 +23,22 @@ public class Compatible implements ICommand {
 		String ret = "";
 		String declaration = StringUtils.join((List<?>) call.getParameters().get("arguments"), ' ').trim();
 
-		IConcept concept = declaration.startsWith("k:")
-				? Reasoner.INSTANCE.getOntology().getConcept(declaration.substring(2))
-				: Observables.INSTANCE.declare(declaration);
+		IConcept concept = null;
+		if (declaration.startsWith("k:")) {
+			concept = Reasoner.INSTANCE.getOntology().getConcept(declaration.substring(2));
+		}
+		if (concept == null) {
+			IObservable observable = Observables.INSTANCE.declare(declaration);
+			concept = observable.getType();
+		}
+		
+		Set<Long> ids = Models.INSTANCE.getKbox().getCompatibleTypeIds(Observable.promote(concept));
 
-		Set<Long> ids = Models.INSTANCE.getKbox().getCompatibleTypeIds(Observable.promote(concept));		
-				
 		for (long id : ids) {
 			String idst = "[" + id + "]";
 			ret += StringUtils.rightPad(idst, 8) + Models.INSTANCE.getKbox().getTypeDefinition(id) + "\n";
 		}
-		
+
 		return ret;
 	}
 

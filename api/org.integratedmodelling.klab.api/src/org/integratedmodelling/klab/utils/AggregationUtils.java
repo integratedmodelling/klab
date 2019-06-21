@@ -200,7 +200,7 @@ public class AggregationUtils {
         case VERIFICATION:
             return Aggregation.MAJORITY;
         case QUANTIFICATION:
-            return observable.is(Type.EXTENSIVE_PROPERTY) ? Aggregation.SUM : Aggregation.MEAN;
+            return observable.getType().is(Type.EXTENSIVE_PROPERTY) ? Aggregation.SUM : Aggregation.MEAN;
         case DETECTION:
         case INSTANTIATION:
         case SIMULATION:

@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.owl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,9 +16,7 @@ import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
@@ -37,7 +34,6 @@ import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
-import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.Annotation;
@@ -50,7 +46,7 @@ import org.integratedmodelling.klab.utils.Range;
  * @author ferdinando.villa
  *
  */
-public class Observable extends Concept implements IObservable {
+public class Observable implements IObservable {
 
     protected Concept          observable;
     protected Concept          main;
@@ -61,7 +57,6 @@ public class Observable extends Concept implements IObservable {
     private Unit               unit;
     private Currency           currency;
     private Concept            classifier;
-//    private Concept            aggregator;
     private Concept            downTo;
     private Object             value;
     private ObservationType    observationType;
@@ -84,7 +79,6 @@ public class Observable extends Concept implements IObservable {
     private List<IAnnotation>  annotations = new ArrayList<>();
 
     Observable(Concept concept) {
-        super(concept);
         this.observable = this.main = concept;
     }
 
@@ -103,7 +97,7 @@ public class Observable extends Concept implements IObservable {
      */
     public Observable contextualizeUnits(IScale scale) {
 
-        if (this.is(Type.EXTENSIVE_PROPERTY)) {
+        if (this.getType().is(Type.EXTENSIVE_PROPERTY)) {
             IUnit unit = this.getUnit();
             if (unit != null) {
                 Set<ExtentDimension> toAdd = new HashSet<>();
@@ -156,7 +150,6 @@ public class Observable extends Concept implements IObservable {
     }
 
     public Observable(Observable observable) {
-        super(observable);
         this.observable = observable.observable;
         this.main = observable.main;
         this.name = observable.name;
@@ -166,7 +159,6 @@ public class Observable extends Concept implements IObservable {
         this.unit = observable.unit;
         this.currency = observable.currency;
         this.classifier = observable.classifier;
-//        this.aggregator = observable.aggregator;
         this.downTo = observable.downTo;
         this.value = observable.value;
         this.observationType = observable.observationType;
@@ -205,11 +197,6 @@ public class Observable extends Concept implements IObservable {
     public IConcept getClassifier() {
         return classifier;
     }
-
-//    @Override
-//    public IConcept getAggregator() {
-//        return aggregator;
-//    }
 
     @Override
     public Range getRange() {
@@ -276,118 +263,8 @@ public class Observable extends Concept implements IObservable {
     }
 
     @Override
-    public boolean is(Type type) {
-        return observable.is(type);
-    }
-
-    @Override
-    public Collection<IConcept> getParents() {
-        return observable.getParents();
-    }
-
-    @Override
-    public Collection<IConcept> getAllParents() {
-        return observable.getAllParents();
-    }
-
-    @Override
-    public Collection<IConcept> getChildren() {
-        return observable.getChildren();
-    }
-
-    @Override
-    public Collection<IProperty> getProperties() {
-        return observable.getProperties();
-    }
-
-    @Override
-    public Collection<IProperty> getAllProperties() {
-        return observable.getAllProperties();
-    }
-
-    @Override
-    public Collection<IConcept> getPropertyRange(IProperty property) throws KlabException {
-        return observable.getPropertyRange(property);
-    }
-
-    @Override
-    public Object getValueOf(IProperty property) throws KlabException {
-        return observable.getValueOf(property);
-    }
-
-    @Override
-    public IConcept getParent() {
-        return observable.getParent();
-    }
-
-    @Override
-    public int getPropertiesCount(String property) {
-        return observable.getPropertiesCount(property);
-    }
-
-    @Override
-    public IConcept getLeastGeneralCommonConcept(IConcept c) {
-        return observable.getLeastGeneralCommonConcept(c);
-    }
-
-    @Override
-    public Set<IConcept> getSemanticClosure() {
-        return observable.getSemanticClosure();
-    }
-
-    @Override
-    public int[] getCardinality(IProperty property) {
-        return observable.getCardinality(property);
-    }
-
-    @Override
-    public Collection<IConcept> getDisjointConcreteChildren() {
-        return observable.getDisjointConcreteChildren();
-    }
-
-    @Override
-    public Collection<IProperty> findRestrictingProperty(IConcept target) {
-        return observable.findRestrictingProperty(target);
-    }
-
-    @Override
     public String getDefinition() {
         return declaration;
-    }
-
-    @Override
-    public String getUrn() {
-        return observable.getUrn();
-    }
-
-    @Override
-    public String getURI() {
-        return observable.getURI();
-    }
-
-    @Override
-    public String getNamespace() {
-        return observable.getNamespace();
-    }
-
-    @Override
-    public boolean is(ISemantic concept) {
-        return observable.is(concept);
-    }
-
-    @Override
-    public IConcept getDomain() {
-        return observable.getDomain();
-    }
-
-    @Override
-    public Ontology getOntology() {
-        return observable.getOntology();
-    }
-
-    @Override
-    public IMetadata getMetadata() {
-        return observable.getMetadata();
     }
 
     @Override
@@ -401,11 +278,6 @@ public class Observable extends Concept implements IObservable {
 
     public void setValue(Object value) {
         this.value = value;
-    }
-
-    @Override
-    public String getName() {
-        return observable.getName();
     }
 
     @Override
@@ -657,10 +529,6 @@ public class Observable extends Concept implements IObservable {
         throw new KlabUnimplementedException("copy semantics from other observable");
     }
 
-//    public void setAggregator(Concept by) {
-//        this.aggregator = by;
-//    }
-
     @Override
     public IDirectObservation getObserver() {
         if (observer == null && observerId != null && sessionId != null) {
@@ -747,4 +615,29 @@ public class Observable extends Concept implements IObservable {
         return value instanceof Number || value instanceof Boolean || value instanceof IConcept
                 || value instanceof IKimExpression || value instanceof IServiceCall;
     }
+
+	@Override
+	public boolean is(ISemantic semantics) {
+		IConcept c = semantics.getType();
+		boolean ret = getType() == null ? false : getType().is(c);
+		if (ret && semantics instanceof IObservable) {
+			if (((IObservable)semantics).getClassifier() != null) {
+				ret = getClassifier() == null || getClassifier().is(((IObservable)semantics).getClassifier());
+			}
+			if (ret && ((IObservable)semantics).getDownTo() != null) {
+				ret = getDownTo() == null || getDownTo().is(((IObservable)semantics).getDownTo());
+			}
+		}
+		return ret;
+	}
+
+	public String getNamespace() {
+		// TODO if we come from a declaration in a given namespace, use that
+		return getType().getNamespace();
+	}
+
+	@Override
+	public boolean is(Type type) {
+		return getType() == null ? false : getType().is(type);
+	}
 }

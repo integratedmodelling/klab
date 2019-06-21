@@ -242,7 +242,7 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
             IDirectObservation source = (IDirectObservation) graph.getEdgeSource(edge);
             IDirectObservation target = (IDirectObservation) graph.getEdgeTarget(edge);
             IScale scale = getScale(source, target);
-            ret.add(context.newRelationship(observable, observable.getName() + "_"
+            ret.add(context.newRelationship(observable, observable.getLocalName() + "_"
                     + i, scale, source, target, null));
             i++;
         }

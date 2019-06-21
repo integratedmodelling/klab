@@ -27,6 +27,7 @@ import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimConcept;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -162,6 +163,25 @@ public enum Concepts implements IConceptService {
 	}
 
 	/**
+	 * Get the best display name for a concept.
+	 *
+	 * @param t
+	 *            the t
+	 * @return a name for display
+	 */
+	public String getDisplayName(IObservable o) {
+
+		String ret = getDisplayName(o.getType());
+		if (o.getClassifier() != null) {
+			ret += "By" + getDisplayName(o.getClassifier());
+		}
+		if (o.getDownTo() != null) {
+			ret += "DownTo" + getDisplayName(o.getDownTo());
+		}
+		return ret;
+	}
+	
+	/**
 	 * Get the best display name and turn any camel case into something more
 	 * text-like if it does not contain spaces.
 	 *
@@ -177,6 +197,14 @@ public enum Concepts implements IConceptService {
 		return ret;
 	}
 
+	public String getDisplayLabel(IObservable t) {
+		String ret = getDisplayName(t);
+		if (!ret.contains(" ")) {
+			ret = StringUtils.capitalize(CamelCase.toLowerCase(ret, ' '));
+		}
+		return ret;
+	}
+	
 	/**
 	 * Arrange a set of concepts into the collection of the most specific members of
 	 * each concept hierarchy therein. Return one concept or null.

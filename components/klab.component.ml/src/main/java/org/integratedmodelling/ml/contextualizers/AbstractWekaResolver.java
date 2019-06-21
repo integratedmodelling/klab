@@ -85,8 +85,8 @@ public abstract class AbstractWekaResolver<T extends Classifier>
         IState uncertainty = null;
         for (int i = 1; i < context.getModel().getObservables().size(); i++) {
             IObservable obs = context.getModel().getObservables().get(i);
-            if (obs.is(Type.UNCERTAINTY)
-                    && ret.getObservable().getType().is(Observables.INSTANCE.getInherentType(obs))) {
+            if (obs.getType().is(Type.UNCERTAINTY)
+                    && ret.getObservable().getType().is(Observables.INSTANCE.getInherentType(obs.getType()))) {
                 uncertainty = context.getArtifact(obs.getLocalName(), IState.class);
             }
         }

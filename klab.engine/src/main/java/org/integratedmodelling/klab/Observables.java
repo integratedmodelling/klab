@@ -510,7 +510,7 @@ public enum Observables implements IObservableService {
 
     @Override
     public Type getObservableType(IObservable observable, boolean acceptTraits) {
-        EnumSet<Type> type = EnumSet.copyOf(((Observable) observable).getTypeSet());
+        EnumSet<Type> type = EnumSet.copyOf(((Concept) observable.getType()).getTypeSet());
         if (type.contains(Type.TRAIT) && acceptTraits) {
             return Type.CLASS;
         }

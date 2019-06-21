@@ -101,10 +101,6 @@ public class Resource implements IResource {
 
     public Resource(ResourceReference reference) {
 
-        if (reference.getUrn().equals("local:stefano.balbi:im.data.global:ariesteam-eu-landcover_Corine2018")) {
-            System.out.println("ZOP");
-        }
-        
         this.urn = reference.getUrn();
         this.version = Version.create(reference.getVersion());
         this.adapterType = reference.getAdapterType();

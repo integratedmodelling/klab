@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.runtime.ISession;
@@ -46,9 +47,14 @@ public class Coverage implements ICommand {
 			// it's a concept
 			// TODO compute union of coverage of all models resolving it.
 			
-			IConcept concept = declaration.startsWith("k:")
-					? Reasoner.INSTANCE.getOntology().getConcept(declaration.substring(2))
-					: Observables.INSTANCE.declare(declaration);
+			IConcept concept = null;
+			if (declaration.startsWith("k:")) {
+				concept = Reasoner.INSTANCE.getOntology().getConcept(declaration.substring(2));
+			}
+			if (concept == null) {
+				IObservable observable = Observables.INSTANCE.declare(declaration);
+				concept = observable.getType();
+			}
 
 			Set<Long> ids = Models.INSTANCE.getKbox().getCompatibleTypeIds(Observable.promote(concept));
 

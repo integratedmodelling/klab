@@ -31,9 +31,9 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
+import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
@@ -591,7 +591,7 @@ public enum Resources implements IResourceService {
 				resource = builder.withResourceVersion(version).withProjectName(project.getName())
 						.withParameters(parameters).withAdapterType(adapterType)
 						.withLocalPath(project.getName() + "/resources/" + resourceDataDir).build(urn);
-				
+
 				resource.getExports().putAll(adapter.getImporter().getExportCapabilities(resource));
 
 			} else {
@@ -729,13 +729,13 @@ public enum Resources implements IResourceService {
 	}
 
 	public boolean importIntoResource(URL importUrl, IResource resource, IMonitor monitor) {
-	    IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
-	    if (adapter != null) {
-	        return adapter.getImporter().importIntoResource(importUrl, resource, monitor);
-	    }
-	    return false;
+		IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
+		if (adapter != null) {
+			return adapter.getImporter().importIntoResource(importUrl, resource, monitor);
+		}
+		return false;
 	}
-	
+
 	/**
 	 * Extract the OWL assets in the classpath (under /knowledge/**) to the
 	 * specified filesystem directory.
@@ -780,7 +780,12 @@ public enum Resources implements IResourceService {
 
 	// @Override
 	public Pair<IArtifact, IArtifact> resolveResourceToArtifact(String urn, IMonitor monitor, boolean forceGrid,
-			IConcept observable, IConcept contextObservable) {
+			ISemantic observableSemantics, ISemantic contextObservableSemantics) {
+
+		IObservable observable = observableSemantics instanceof IObservable ? (IObservable) observableSemantics
+				: Observable.promote(observableSemantics.getType());
+		IObservable contextObservable = contextObservableSemantics instanceof IObservable ? (IObservable) contextObservableSemantics
+				: Observable.promote(contextObservableSemantics.getType());;
 
 		Pair<String, Map<String, String>> urnp = Urns.INSTANCE.resolveParameters(urn);
 		IResource resource = resolveResource(urn);
@@ -792,17 +797,15 @@ public enum Resources implements IResourceService {
 
 		if (contextObservable == null) {
 			contextObservable = Observable.promote(OWL.INSTANCE.getNonsemanticPeer("Context", IArtifact.Type.OBJECT));
-		} else {
-			contextObservable = Observable.promote(contextObservable);
 		}
+
 		SimpleContext context = new SimpleContext((Observable) contextObservable, scale, monitor);
 		IArtifact ctxArtifact = context.getTargetArtifact();
 
 		if (observable == null) {
 			observable = Observable.promote(OWL.INSTANCE.getNonsemanticPeer("Artifact", resource.getType()));
-		} else {
-			observable = Observable.promote(observable);
 		}
+
 		IKlabData data = getResourceData(resource, urnp.getSecond(), scale,
 				context.getChild((Observable) observable, resource));
 
@@ -841,10 +844,10 @@ public enum Resources implements IResourceService {
 
 			IKlabData.Builder builder = new LocalDataBuilder((IRuntimeContext) context);
 			try {
-			    adapter.getEncoder().getEncodedData(resource, urnParameters, geometry, builder, context);
-			    return builder.build();
+				adapter.getEncoder().getEncodedData(resource, urnParameters, geometry, builder, context);
+				return builder.build();
 			} catch (Throwable t) {
-			    context.getMonitor().error("cannot access resource data for " + resource.getUrn());
+				context.getMonitor().error("cannot access resource data for " + resource.getUrn());
 			}
 		} else {
 
@@ -967,7 +970,7 @@ public enum Resources implements IResourceService {
 		IResource resource = resolveResource(urn);
 		return resource == null ? false : isResourceOnline(resource);
 	}
-	
+
 	public boolean isResourceOnline(IResource resource) {
 		return isResourceOnline(resource, false);
 	}
@@ -977,7 +980,7 @@ public enum Resources implements IResourceService {
 		if (Configuration.INSTANCE.forceResourcesOnline()) {
 			return true;
 		}
-		
+
 		if (!forceUpdate) {
 			ResourceData cached = statusCache.get(resource.getUrn());
 			if (cached != null
@@ -1146,7 +1149,7 @@ public enum Resources implements IResourceService {
 	 * @return
 	 */
 	public IResource registerResource(IResource ret) {
-		((Resource)ret).validate(this);
+		((Resource) ret).validate(this);
 		IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(ret.getAdapterType());
 		ret.getExports().putAll(adapter.getImporter().getExportCapabilities(ret));
 		getLocalResourceCatalog().put(ret.getUrn(), ret);
@@ -1176,7 +1179,8 @@ public enum Resources implements IResourceService {
 			ref.setDescription(configuration.getDescription());
 			ref.setParameters(Extensions.INSTANCE.describePrototype(configuration));
 			ref.setFileBased(resourceAdapters.get(adapter) instanceof IFileResourceAdapter);
-			ref.getExportCapabilities().putAll(Resources.INSTANCE.getResourceAdapter(adapter).getImporter().getExportCapabilities((IResource)null));
+			ref.getExportCapabilities().putAll(Resources.INSTANCE.getResourceAdapter(adapter).getImporter()
+					.getExportCapabilities((IResource) null));
 			ret.add(ref);
 		}
 		return ret;
