@@ -26,7 +26,7 @@ import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
- * The Nitrite database storing resource data. Resource data are automatically
+ * The database storing resource data. Resource data are automatically
  * replicated to a local directory if that is passed in the constructor.
  * 
  * @author ferdinando.villa
@@ -34,14 +34,13 @@ import org.integratedmodelling.klab.utils.Pair;
  */
 public class ResourceCatalog implements IResourceCatalog {
 
-	// Nitrite db;
-	// ObjectRepository<ResourceReference> resources;
-
+	String name;
+	
 	/**
 	 * TODO use MapDB as a persistent option (for the public catalog). Nitrite is
 	 * more of a mess than an advantage.
 	 */
-	Map<String, ResourceReference> resources = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, ResourceReference> resources = Collections.synchronizedMap(new HashMap<>());
 
 	/**
 	 * Create a new resource catalog.
@@ -50,12 +49,7 @@ public class ResourceCatalog implements IResourceCatalog {
 	 * @param localPath
 	 */
 	public ResourceCatalog(String name) {
-		// this.db = Nitrite.builder()
-		// // .compressed() TODO may reintegrate in production
-		// // .filePath(Configuration.INSTANCE.getDataPath() + File.separator + name +
-		// ".db")
-		// .openOrCreate("user", "password");
-		// this.resources = db.getRepository(ResourceReference.class);
+		this.name = name;
 	}
 
 	@Override
@@ -152,9 +146,9 @@ public class ResourceCatalog implements IResourceCatalog {
 		((Resource) value).validate(Resources.INSTANCE);
 
 		IResource ret = get(value.getUrn());
-//		if (ret != null) {
-//			remove(value.getUrn());
-//		}
+		// if (ret != null) {
+		// remove(value.getUrn());
+		// }
 
 		ResourceReference ref = ((Resource) value).getReference();
 		resources.put(value.getUrn(), ref);
@@ -170,7 +164,7 @@ public class ResourceCatalog implements IResourceCatalog {
 			}
 		}
 
-//		db.commit();
+		// db.commit();
 
 		return ret;
 	}
@@ -178,14 +172,14 @@ public class ResourceCatalog implements IResourceCatalog {
 	public IResource removeDefinition(String key) {
 		IResource ret = get(key);
 		resources.remove(key);
-//		db.commit();
+		// db.commit();
 		return ret;
 	}
 
 	@Override
 	public IResource remove(Object key) {
 		IResource ret = get(key);
-//		resources.remove(eq("urn", key));
+		// resources.remove(eq("urn", key));
 		File resourcePath = getResourcePath(ret);
 		if (resourcePath != null) {
 			try {
@@ -194,7 +188,7 @@ public class ResourceCatalog implements IResourceCatalog {
 				throw new KlabIOException(e);
 			}
 		}
-//		db.commit();
+		// db.commit();
 		resources.remove(key);
 		return ret;
 	}
@@ -219,15 +213,16 @@ public class ResourceCatalog implements IResourceCatalog {
 			}
 		}
 		resources.clear();
-//		db.commit();
+		// db.commit();
 	}
 
 	@Override
 	public Set<String> keySet() {
-//		Set<String> ret = new HashSet<>();
-//		for (Iterator<ResourceReference> r = resources.find().iterator(); r.hasNext();) {
-//			ret.add(r.next().getUrn());
-//		}
+		// Set<String> ret = new HashSet<>();
+		// for (Iterator<ResourceReference> r = resources.find().iterator();
+		// r.hasNext();) {
+		// ret.add(r.next().getUrn());
+		// }
 		return resources.keySet();
 	}
 
@@ -267,26 +262,26 @@ public class ResourceCatalog implements IResourceCatalog {
 
 	@Override
 	public void clearOnly(Object... objects) {
-		
+
 		Set<String> urns = new HashSet<>();
-		
+
 		if (objects != null) {
 			for (Object object : objects) {
 				if (object instanceof IProject) {
 
 					for (ResourceReference r : resources.values()) {
-						if (r.getProjectName().equals(((IProject)object).getName())) {
+						if (r.getProjectName().equals(((IProject) object).getName())) {
 							urns.add(r.getUrn());
 						}
 					}
-					
-//					resources.remove(eq("projectName", ((IProject) object).getName()));
+
+					// resources.remove(eq("projectName", ((IProject) object).getName()));
 				} else if (object instanceof IResource) {
 					urns.add(((IResource) object).getUrn());
-//					resources.remove(eq("urn", ((IResource) object).getUrn()));
+					// resources.remove(eq("urn", ((IResource) object).getUrn()));
 				} else if (object instanceof String) {
-					urns.add((String)object);
-//					resources.remove(eq("urn", (String) object));
+					urns.add((String) object);
+					// resources.remove(eq("urn", (String) object));
 				} else {
 					throw new IllegalArgumentException("cannot remove resources corresponding to selector " + object);
 				}
@@ -313,7 +308,7 @@ public class ResourceCatalog implements IResourceCatalog {
 				FileUtils.deleteDirectory(previousDir);
 				resources.remove(resource.getUrn());
 				resources.put(resource.getUrn(), newData.getSecond());
-//				db.commit();
+				// db.commit();
 			} catch (IOException e) {
 				throw new KlabIOException(e);
 			}

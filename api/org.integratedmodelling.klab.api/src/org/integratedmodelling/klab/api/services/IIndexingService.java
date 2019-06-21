@@ -14,130 +14,140 @@ import org.integratedmodelling.kim.api.IKimConcept;
  */
 public interface IIndexingService {
 
-    /**
-     * The context of the search, starting empty and built as new matches
-     * are accepted.
-     * 
-     * @author Ferd
-     *
-     */
-    public interface Context {
+	/**
+	 * The context of a semantic search, starting empty and built as new matches are
+	 * accepted. The current context is the pointer to the tail of a double-linked
+	 * list of Context objects, containing all the tokens so far. A context may
+	 * stand in for a sub-context corresponding to a parenthesized expression.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public interface Context {
 
-        boolean isEmpty();
+		boolean isEmpty();
 
-        /**
-         * Notify the choice of a match and return a new search context that can match anything after it.
-         * 
-         * @param match
-         * @return the next context after accepting the choice. 
-         */
-        Context accept(Match match);
+		/**
+		 * Notify the choice of a match and return a new search context that can match
+		 * anything after it.
+		 * 
+		 * @param match
+		 * @return the next context after accepting the choice.
+		 */
+		Context accept(Match match);
 
-        /**
-         * Pop the current context (which becomes invalid) and return the previous one, which becomes
-         * current.
-         * 
-         * @return
-         */
-        Context previous();
+		/**
+		 * Pop the current context (which becomes invalid) and return the previous one,
+		 * which becomes current.
+		 * 
+		 * @return
+		 */
+		Context previous();
 
-        /**
-         * Return true if the current context does not admit further search.
-         * 
-         * @return true if we cannot take more matches.
-         */
-        boolean isEnd();
+		/**
+		 * Return true if the current context does not admit further search.
+		 * 
+		 * @return true if we cannot take more matches.
+		 */
+		boolean isEnd();
 
-        /**
-         * Return the URN of the choice, another string that will enable its
-         * reconstruction (such as a concept declaration), or null.
-         * 
-         * @return the chosen URN.
-         */
-        String getUrn();
+		/**
+		 * Return the URN of the choice, another string that will enable its
+		 * reconstruction (such as a concept declaration), or null.
+		 * 
+		 * @return the chosen URN.
+		 */
+		String getUrn();
 
-        /**
-         * True if context is not in error, i.e. can produce a valid match.
-         * 
-         * @return true if consistent
-         */
-        boolean isConsistent();
-    }
+		/**
+		 * True if context is not in error, i.e. can produce a valid match.
+		 * 
+		 * @return true if consistent
+		 */
+		boolean isConsistent();
+		
+		/**
+		 * If true, this is a composite that stands in for a sub-context returned
+		 * by getChildContext().
+		 * 
+		 * @return true if composite
+		 */
+		boolean isComposite();
+		
+		/**
+		 * Return the child context if any. Will only return a non-null object if 
+		 * getChildContext() is true.
+		 * 
+		 * @return the child context.
+		 */
+		Context getChildContext();
+	}
 
-    /**
-     * Match from query.
-     * 
-     * @author Ferd
-     *
-     */
-    public interface Match {
+	/**
+	 * Match from query.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public interface Match {
 
-        public enum Type {
-            CONCEPT,
-            PREFIX_OPERATOR,
-            INFIX_OPERATOR,
-            OBSERVATION,
-            MODEL,
-            MODIFIER,
-            PRESET_OBSERVABLE,
-            SEPARATOR,
-            OPEN_PARENTHESIS,
-            CLOSED_PARENTHESIS
-        }
+		public enum Type {
+			CONCEPT, PREFIX_OPERATOR, INFIX_OPERATOR, OBSERVATION, MODEL, MODIFIER, PRESET_OBSERVABLE, SEPARATOR, OPEN_PARENTHESIS, CLOSED_PARENTHESIS
+		}
 
-        /**
-         * 
-         * @return
-         */
-        String getId();
+		/**
+		 * 
+		 * @return
+		 */
+		String getId();
 
-        /**
-         * 
-         * @return
-         */
-        String getName();
+		/**
+		 * 
+		 * @return
+		 */
+		String getName();
 
-        /**
-         * 
-         * @return
-         */
-        String getDescription();
+		/**
+		 * 
+		 * @return
+		 */
+		String getDescription();
 
-        /**
-         * 
-         * @return
-         */
-        float getScore();
+		/**
+		 * 
+		 * @return
+		 */
+		float getScore();
 
-        /**
-         * 
-         * @return
-         */
-        Type getMatchType();
+		/**
+		 * 
+		 * @return
+		 */
+		Type getMatchType();
 
-        /**
-         * If {@link #getMatchType()} returned {@link Type#CONCEPT}, return the full type of
-         * the concept.
-         * 
-         * @return
-         */
-        Set<IKimConcept.Type> getConceptType();
+		/**
+		 * If {@link #getMatchType()} returned {@link Type#CONCEPT}, return the full
+		 * type of the concept.
+		 * 
+		 * @return
+		 */
+		Set<IKimConcept.Type> getConceptType();
 
-        /**
-         * Named indexable fields besides name and description.
-         * 
-         * @return
-         */
-        Map<String, String> getIndexableFields();
-    }
+		/**
+		 * Named indexable fields besides name and description.
+		 * 
+		 * @return
+		 */
+		Map<String, String> getIndexableFields();
+	}
 
-    /**
-     * Pass a search string and a context to define the possible matches.
-     * 
-     * @param currentTerm
-     * @param context
-     * @return a valid iterator for matches that will return the best matches first.
-     *         Never null.
-     */
-    public Iterable<Match> query(String currentTerm, Context context);
+	/**
+	 * Pass a search string and a context to define the possible matches.
+	 * 
+	 * @param currentTerm
+	 * @param context
+	 * @return a valid iterator for matches that will return the best matches first.
+	 *         Never null.
+	 */
+	public Iterable<Match> query(String currentTerm, Context context);
 }

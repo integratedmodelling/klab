@@ -1,24 +1,25 @@
 <article>
 	<h4>Corine Land Cover, 2018</h4>
-	<p>This processing step retrieves the contents of a data or model resource from the semantic web. 
-	Resources can be data files, data services (using protocols such as OGC or OpenDAP), or may 
-	interface to more complex computations or running simulations.</p>
-	<p>Resources are identified by a uniqye Uniform Resource Name (URN) which is used along
-	   with the scale of observation to retrieve data or trigger computation. Metadata and 
-	   provenance records associated with this resource are shown below.
-	</p>
+	<p>This processing step retrieves the contents of a data or model
+		resource from the semantic web. Resources can be data files, data
+		services (using protocols such as OGC or OpenDAP), or may interface to
+		more complex computations or running simulations.</p>
+	<p>Resources are identified by a unique Uniform Resource Name (URN)
+		used together with the scale of observation to retrieve data or
+		trigger computation. Metadata and provenance records associated with
+		this resource are shown below.</p>
 	<hr></hr>
 	<dl>
-	<dt>Title</dt>
-	<dd>Corine Land Cover (CLC) 2018, Version 20</dd>
-	<dt>Originator</dt>
-	<dd>European Environment Agency (EEA) under the framework of the Copernicus programme - copernicus@eea.europa.eu</dd>
-	<dt>Description</dt>
-	<dd>CLC2018 is one of the datasets produced within the frame the Corine Land Cover programme referring to land cover / land use status of year 2018. The Corine Land Cover (CLC) is an European programme, coordinated by the European Environment Agency (EEA), providing consistent information on land cover and land cover changes across Europe. CLC products are based on the photointerpretation of satellite images by the national teams of the participating countries - the EEA member or cooperating countries. The resulting national land cover inventories are further integrated into a seamless land cover map of Europe. The resulting European database is based on standard methodology and nomenclature with following base parameters: - 44 classes in the hierarchical 3-level Corine nomenclature - minimum mapping unit (MMU) for status layers is 25 hectares - minimum width of linear elements is 100 metres - minimum mapping unit (MMU) for Land Cover Changes (LCC) for change layers is 5 hectares CLC programme provides important data sets supporting the implementation of key priority areas of the Environment Action Programmes of the European Community as protecting ecosystems, halting the loss of biological diversity, tracking the impacts of climate change, assessing developments in agriculture and implementing the EU Water Framework Directive etc.. CLC programme is also a part of the Copernicus Land Monitoring Service (https://land.copernicus.eu/) initiative, run by the European Commission and the European Environment Agency, which will provide environmental information from a combination of air- and space-based observation systems and in-situ monitoring. More about the Corine Land Cover (CLC) programme and datasets can be found at https://land.copernicus.eu/pan-european.</dd>
-	<dt>URL</dt>
-	<dd>https://land.copernicus.eu/pan-european/corine-land-cover/clc2018</dd>
-	<dt>Keywords</dt>
-	<dd>Copernicus, Land, Satellite Image Interpretation, 2018, Corine, Corine Land Cover</dd>
+		<dt>Title</dt>
+		<dd>${resource.Metadata.Title}</dd>
+		<dt>Originator</dt>
+		<dd>${resource.Metadata.Originator}</dd>
+		<dt>Description</dt>
+		<dd>${resource.Metadata.Description}</dd>
+		<dt>URL</dt>
+		<dd>${resource.Metadata.Url}</dd>
+		<dt>Keywords</dt>
+		<dd>${resource.Metadata.Keywords}</dd>
 	</dl>
 	<hr></hr>
 </article>

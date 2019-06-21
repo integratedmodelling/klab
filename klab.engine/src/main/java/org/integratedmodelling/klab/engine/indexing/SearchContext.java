@@ -23,17 +23,16 @@ import org.integratedmodelling.klab.api.services.IIndexingService.Context;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match.Type;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.rest.SearchMatch.TokenClass;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.StringUtil;
-
 
 /**
  * Better API for this:
  * 
  * 
- *  context.allow(...)
- *  context.filter(...)
- *  // BASTA
+ * context.allow(...) context.filter(...) // BASTA
+ * 
  * @author Ferd
  *
  */
@@ -43,12 +42,13 @@ public class SearchContext implements IIndexingService.Context {
 	// constraints means everything is acceptable.
 	private List<Constraint> constraints = new ArrayList<>();
 	private Set<Type> constrainttypes = EnumSet.noneOf(Type.class);
+	// previous in list, containing the preceding meaning.
+	private SearchContext previous = null;
+	// non-null in children of previous context. Must have parent == null to be complete.
 	private SearchContext parent = null;
 	private SearchMatch acceptedMatch;
-
-	// parenthesization level - must be 0 when accepting. NAH we'll need a tree
-	// here, not a list
-	private int depth = 0;
+	private TokenClass nextTokenType = TokenClass.TOKEN;
+	private SearchContext childContext;
 
 	public static Context createNew() {
 		SearchContext ret = new SearchContext();
@@ -69,7 +69,7 @@ public class SearchContext implements IIndexingService.Context {
 	}
 
 	private SearchContext(SearchContext parent) {
-		this.parent = parent;
+		this.previous = parent;
 	}
 
 	static class Condition {
@@ -298,22 +298,22 @@ public class SearchContext implements IIndexingService.Context {
 			ret.allowAbstract = allowAbstract;
 			return ret;
 		}
-		
-	      public static Constraint otherTraits(Collection<IConcept> traits) {
-	            Constraint ret = new Constraint(Type.CONCEPT);
-	            ret.semantics = EnumSet.of(IKimConcept.Type.TRAIT);
-	            ret.query = true;
-	            ret.filter = true;
-	            ret.allowAbstract = true;
-	            ret.baseTraitBlacklist = new HashSet<>();
-	            for (IConcept trait : traits) {
-	                IConcept base = Traits.INSTANCE.getBaseParentTrait(trait);
-	                if (base != null) {
-	                    ret.baseTraitBlacklist.add(base);
-	                }
-	            }
-	            return ret;
-	        }
+
+		public static Constraint otherTraits(Collection<IConcept> traits) {
+			Constraint ret = new Constraint(Type.CONCEPT);
+			ret.semantics = EnumSet.of(IKimConcept.Type.TRAIT);
+			ret.query = true;
+			ret.filter = true;
+			ret.allowAbstract = true;
+			ret.baseTraitBlacklist = new HashSet<>();
+			for (IConcept trait : traits) {
+				IConcept base = Traits.INSTANCE.getBaseParentTrait(trait);
+				if (base != null) {
+					ret.baseTraitBlacklist.add(base);
+				}
+			}
+			return ret;
+		}
 
 		/**
 		 * Match the types and ensure one or more is in the matched object.
@@ -418,7 +418,7 @@ public class SearchContext implements IIndexingService.Context {
 					ret.modifiers.add(Modifier.OVER);
 
 					if (Kim.INSTANCE.is(semantics, IKimConcept.Type.EXTENSIVE_PROPERTY)
-							|| Kim.INSTANCE.is(semantics, IKimConcept.Type.EXTENSIVE_PROPERTY)) {
+							|| Kim.INSTANCE.is(semantics, IKimConcept.Type.INTENSIVE_PROPERTY)) {
 						ret.modifiers.add(Modifier.IN);
 					}
 
@@ -426,8 +426,8 @@ public class SearchContext implements IIndexingService.Context {
 						ret.modifiers.add(Modifier.PER);
 					}
 
-				} 
-				
+				}
+
 			}
 			ret.modifiers.add(Modifier.ADJACENT_TO);
 			ret.modifiers.add(Modifier.CAUSED_BY);
@@ -453,15 +453,14 @@ public class SearchContext implements IIndexingService.Context {
 		public static Constraint unit(Set<IKimConcept.Type> semantics) {
 			return null;
 		}
-		
-//		public static Constraint with(IKimConcept.Type type) {
-//			return with(EnumSet.of(type));
-//		}
+
+		// public static Constraint with(IKimConcept.Type type) {
+		// return with(EnumSet.of(type));
+		// }
 
 		public static Constraint with(IKimConcept.Type... types) {
 			return with(EnumSet.copyOf(CollectionUtils.arrayToList(types)));
 		}
-
 
 		public Constraint applyingTo(Set<IKimConcept.Type> semantics) {
 			// TODO Auto-generated method stub
@@ -469,8 +468,7 @@ public class SearchContext implements IIndexingService.Context {
 		}
 
 		/**
-		 * Literal value matching the passed semantics. Either a concept or
-		 * a literal.
+		 * Literal value matching the passed semantics. Either a concept or a literal.
 		 * 
 		 * @param semantics
 		 * @return
@@ -486,8 +484,30 @@ public class SearchContext implements IIndexingService.Context {
 	public SearchContext accept(Match m) {
 
 		SearchMatch match = (SearchMatch) m;
-		this.acceptedMatch = match;
 
+		switch (nextTokenType) {
+		case BOOLEAN:
+			break;
+		case DOUBLE:
+			break;
+		case INTEGER:
+			break;
+		case TEXT:
+			break;
+		case TOKEN:
+			return acceptToken(match);
+		case CURRENCY:
+		case UNIT:
+			break;
+		}
+
+		return null;
+
+	}
+
+	private SearchContext acceptToken(SearchMatch match) {
+
+		this.acceptedMatch = match;
 		SearchContext ret = new SearchContext(this);
 
 		if (match.getUnaryOperator() != null) {
@@ -555,54 +575,60 @@ public class SearchContext implements IIndexingService.Context {
 			switch (match.getModifier()) {
 			case ADJACENT_TO:
 				ret.constraints.add(Constraint.with(IKimConcept.Type.COUNTABLE));
-                ret.constraints.add(Constraint.allTraits(false)/*.applyingTo(IKimConcept.Type.EVENT)*/);
+				ret.constraints.add(Constraint.allTraits(false)/* .applyingTo(IKimConcept.Type.EVENT) */);
 				break;
 			case BY:
-				ret.constraints.add(Constraint.with(IKimConcept.QUALITY_TYPES).plus(IKimConcept.Type.COUNTABLE, IKimConcept.Type.TRAIT)
+				ret.constraints.add(Constraint.with(IKimConcept.QUALITY_TYPES)
+						.plus(IKimConcept.Type.COUNTABLE, IKimConcept.Type.TRAIT)
 						.without(IKimConcept.CONTINUOUS_QUALITY_TYPES));
-                ret.constraints.add(Constraint.allTraits(false)/*.applyingTo(IKimConcept.Type.EVENT)*/);
+				ret.constraints.add(Constraint.allTraits(false)/* .applyingTo(IKimConcept.Type.EVENT) */);
 				break;
 			case CAUSED_BY:
 				ret.constraints.add(Constraint.with(IKimConcept.Type.PROCESS, IKimConcept.Type.EVENT));
-                ret.constraints.add(Constraint.allTraits(false)/*.applyingTo(IKimConcept.Type.EVENT)*/);
+				ret.constraints.add(Constraint.allTraits(false)/* .applyingTo(IKimConcept.Type.EVENT) */);
 				break;
 			case CAUSING:
 				ret.constraints.add(Constraint.with(IKimConcept.Type.PROCESS, IKimConcept.Type.EVENT));
-                ret.constraints.add(Constraint.allTraits(false)/*.applyingTo(IKimConcept.Type.EVENT)*/);
+				ret.constraints.add(Constraint.allTraits(false)/* .applyingTo(IKimConcept.Type.EVENT) */);
 				break;
 			case CONTAINED_IN:
 				ret.constraints.add(Constraint.with(IKimConcept.Type.COUNTABLE));
-                ret.constraints.add(Constraint.allTraits(false)/*.applyingTo(IKimConcept.Type.EVENT)*/);
+				ret.constraints.add(Constraint.allTraits(false)/* .applyingTo(IKimConcept.Type.EVENT) */);
 				break;
 			case CONTAINING:
 				ret.constraints.add(Constraint.with(IKimConcept.Type.COUNTABLE));
-                ret.constraints.add(Constraint.allTraits(false)/*.applyingTo(IKimConcept.Type.EVENT)*/);
+				ret.constraints.add(Constraint.allTraits(false)/* .applyingTo(IKimConcept.Type.EVENT) */);
 				break;
 			case DOWN_TO:
 				ret.constraints.add(Constraint.with(IKimConcept.Type.CLASS, IKimConcept.Type.TRAIT));
-                ret.constraints.add(Constraint.allTraits(false)/*.applyingTo(IKimConcept.Type.EVENT)*/);
+				ret.constraints.add(Constraint.allTraits(false)/* .applyingTo(IKimConcept.Type.EVENT) */);
 				break;
 			case DURING:
 				ret.constraints.add(Constraint.with(IKimConcept.Type.EVENT));
-                ret.constraints.add(Constraint.allTraits(false)/*.applyingTo(IKimConcept.Type.EVENT)*/);
+				ret.constraints.add(Constraint.allTraits(false)/* .applyingTo(IKimConcept.Type.EVENT) */);
 				break;
 			case FOR:
 				ret.constraints.add(Constraint.with(IKimConcept.Type.COUNTABLE));
-                ret.constraints.add(Constraint.allTraits(false)/*.applyingTo(IKimConcept.Type.EVENT)*/);
+				ret.constraints.add(Constraint.allTraits(false)/* .applyingTo(IKimConcept.Type.EVENT) */);
 				break;
 			case IN:
+				ret.nextTokenType = getSemantics().contains(IKimConcept.Type.MONEY) ? TokenClass.CURRENCY
+						: TokenClass.UNIT;
 				ret.constraints.add(Constraint.unit(getSemantics()));
 				break;
 			case OF:
 				break;
 			case PER:
+				ret.nextTokenType = TokenClass.UNIT;
 				ret.constraints.add(Constraint.unit(getSemantics()));
 				break;
 			case WITH:
+				ret.constraints.add(Constraint.with(IKimConcept.Type.OBSERVABLE));
+				ret.constraints.add(Constraint.allTraits(false)/* .applyingTo(IKimConcept.Type.EVENT) */);
 				break;
 			case WITHIN:
 				ret.constraints.add(Constraint.with(IKimConcept.Type.COUNTABLE));
-                ret.constraints.add(Constraint.allTraits(false)/*.applyingTo(IKimConcept.Type.EVENT)*/);
+				ret.constraints.add(Constraint.allTraits(false)/* .applyingTo(IKimConcept.Type.EVENT) */);
 				break;
 			case GREATER:
 				ret.constraints.add(Constraint.with(IKimConcept.CONTINUOUS_QUALITY_TYPES));
@@ -611,31 +637,46 @@ public class SearchContext implements IIndexingService.Context {
 				ret.constraints.add(Constraint.with(IKimConcept.CONTINUOUS_QUALITY_TYPES));
 				break;
 			case IS:
+				if (Kim.INSTANCE.isNumeric(getSemantics())) {
+					ret.nextTokenType = TokenClass.DOUBLE;
+				}
 				break;
 			case LESS:
+				ret.nextTokenType = TokenClass.DOUBLE;
 				ret.constraints.add(Constraint.with(IKimConcept.CONTINUOUS_QUALITY_TYPES));
 				break;
 			case LESSEQUAL:
+				ret.nextTokenType = TokenClass.DOUBLE;
 				ret.constraints.add(Constraint.with(IKimConcept.CONTINUOUS_QUALITY_TYPES));
 				break;
 			case MINUS:
+				ret.nextTokenType = TokenClass.DOUBLE;
 				ret.constraints.add(Constraint.with(IKimConcept.CONTINUOUS_QUALITY_TYPES));
 				break;
 			case OVER:
+				ret.nextTokenType = TokenClass.DOUBLE;
 				ret.constraints.add(Constraint.with(IKimConcept.CONTINUOUS_QUALITY_TYPES));
 				break;
 			case PLUS:
+				ret.nextTokenType = TokenClass.DOUBLE;
 				ret.constraints.add(Constraint.with(IKimConcept.CONTINUOUS_QUALITY_TYPES));
 				break;
 			case SAMEAS:
+				if (Kim.INSTANCE.isNumeric(getSemantics())) {
+					ret.nextTokenType = TokenClass.DOUBLE;
+				}
 				ret.constraints.add(Constraint.with(getSemantics()));
 				ret.constraints.add(Constraint.value(getSemantics()));
 				break;
 			case TIMES:
+				ret.nextTokenType = TokenClass.DOUBLE;
 				break;
 			case WHERE:
 				break;
 			case WITHOUT:
+				if (Kim.INSTANCE.isNumeric(getSemantics())) {
+					ret.nextTokenType = TokenClass.DOUBLE;
+				}
 				break;
 			default:
 				break;
@@ -648,9 +689,9 @@ public class SearchContext implements IIndexingService.Context {
 			if (haveObservable()) {
 				ret.constraints.add(Constraint.modifiersFor(getSemantics()));
 			} else {
-			    // add traits with another base trait
-                ret.constraints.add(Constraint.otherTraits(collectTraits()).applyingTo(getSemantics()));
-			    ret.constraints.add(Constraint.allObservables(false).applicableTo(collectTraits()));
+				// add traits with another base trait
+				ret.constraints.add(Constraint.otherTraits(collectTraits()).applyingTo(getSemantics()));
+				ret.constraints.add(Constraint.allObservables(false).applicableTo(collectTraits()));
 			}
 
 			/*
@@ -658,7 +699,7 @@ public class SearchContext implements IIndexingService.Context {
 			 * in the front only and inhibit trait definition after the observable is set.
 			 * Probably good design discipline although it may be annoying.
 			 */
-			
+
 			System.out.println("ACCEPTED: " + ret.dump());
 
 		}
@@ -675,7 +716,7 @@ public class SearchContext implements IIndexingService.Context {
 		if (acceptedMatch.semantics != null) {
 			return acceptedMatch.semantics;
 		}
-		return parent == null ? EnumSet.noneOf(IKimConcept.Type.class) : parent.getSemantics();
+		return previous == null ? EnumSet.noneOf(IKimConcept.Type.class) : previous.getSemantics();
 	}
 
 	private boolean haveObservable() {
@@ -688,7 +729,7 @@ public class SearchContext implements IIndexingService.Context {
 			return true;
 		}
 
-		return parent == null /*|| parent.isScopeStart()*/ ? false : parent.haveObservable();
+		return previous == null /* || parent.isScopeStart() */ ? false : previous.haveObservable();
 	}
 
 	private boolean isScopeStart() {
@@ -720,12 +761,12 @@ public class SearchContext implements IIndexingService.Context {
 	@Override
 	public boolean isEmpty() {
 		// root context is empty
-		return parent == null;
+		return previous == null;
 	}
 
 	@Override
 	public Context previous() {
-		return parent;
+		return previous;
 	}
 
 	public static Context createNew(Set<Type> matchTypes,
@@ -763,10 +804,28 @@ public class SearchContext implements IIndexingService.Context {
 				ret += prefix + "  " + c + "\n";
 			}
 		}
-		if (parent != null) {
-			parent.dump(offset + 3);
+		if (previous != null) {
+			previous.dump(offset + 3);
 		}
 		return ret;
+	}
+
+	public TokenClass getNextTokenType() {
+		return nextTokenType;
+	}
+
+	public void setNextTokenType(TokenClass nextTokenType) {
+		this.nextTokenType = nextTokenType;
+	}
+
+	@Override
+	public boolean isComposite() {
+		return childContext != null;
+	}
+
+	@Override
+	public Context getChildContext() {
+		return childContext;
 	}
 
 }

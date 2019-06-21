@@ -649,9 +649,11 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 //			Logging.INSTANCE.error("MATCH INDEX NOT IN SYNC WITH CURRENT MATCHES!");
 			return;
 		}
+		
 		Context newContext = action.isAdded() 
 				? ctx.getFirst().accept(ctx.getSecond().get(action.getMatchIndex()))
 				: ctx.getFirst().previous();
+				
 		searchContexts.put(contextId, new Pair<>(newContext, new ArrayList<>()));
 		
 		if (newContext != null) {
@@ -660,7 +662,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 	}
 
 	@MessageHandler(type = IMessage.Type.DataflowNodeDetail)
-	private void handleMatchAction(DataflowState state) {
+	private void handleDataflowAction(DataflowState state) {
 
 		IRuntimeContext context = findContext(state.getContextId());
 		if (context != null) {
