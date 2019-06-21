@@ -783,9 +783,10 @@ public enum Resources implements IResourceService {
 			ISemantic observableSemantics, ISemantic contextObservableSemantics) {
 
 		IObservable observable = observableSemantics instanceof IObservable ? (IObservable) observableSemantics
-				: Observable.promote(observableSemantics.getType());
-		IObservable contextObservable = contextObservableSemantics instanceof IObservable ? (IObservable) contextObservableSemantics
-				: Observable.promote(contextObservableSemantics.getType());;
+				: (observableSemantics == null ? null : Observable.promote(observableSemantics.getType()));
+		IObservable contextObservable = contextObservableSemantics instanceof IObservable 
+				? (IObservable) contextObservableSemantics
+				: (contextObservableSemantics == null ? null : Observable.promote(contextObservableSemantics.getType()));
 
 		Pair<String, Map<String, String>> urnp = Urns.INSTANCE.resolveParameters(urn);
 		IResource resource = resolveResource(urn);

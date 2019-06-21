@@ -339,7 +339,7 @@ public enum Units implements IUnitService {
 	 */
 	@Override
 	public Unit getDefaultUnitFor(IConcept concept) {
-		if (concept.is(Type.EXTENSIVE_PROPERTY) || concept.is(Type.INTENSIVE_PROPERTY)) {
+		if (!concept.is(Type.MONEY) && (concept.is(Type.EXTENSIVE_PROPERTY) || concept.is(Type.INTENSIVE_PROPERTY))) {
 			Object unit = Concepts.INSTANCE.getMetadata(concept, NS.SI_UNIT_PROPERTY);
 			return unit == null ? null : getUnit(unit.toString());
 		}
