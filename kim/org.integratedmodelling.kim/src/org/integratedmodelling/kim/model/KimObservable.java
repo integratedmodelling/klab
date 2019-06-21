@@ -38,10 +38,11 @@ public class KimObservable extends KimStatement implements IKimObservable {
 	private boolean optional;
 	private IKimConcept classifier = null;
 	private IKimConcept downTo = null;
-//	private IKimConcept aggregator = null;
 	private String modelReference;
 	private IArtifact.Type nonSemanticType = null;
-
+	private Modifier modifier;
+	private Object modifierOperand;
+	
 	@Override
 	public IArtifact.Type getNonSemanticType() {
 		return nonSemanticType;
@@ -332,5 +333,15 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		}
 		return ret; // CamelCase.toLowerCase(new
 					// SemanticType(main.getObservable().getName()).getName(), '-');
+	}
+
+	@Override
+	public Modifier getModifier() {
+		return modifier;
+	}
+
+	@Override
+	public Object getOperandModifier() {
+		return modifierOperand;
 	}
 }

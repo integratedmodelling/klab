@@ -1,12 +1,26 @@
 package org.integratedmodelling.kim.api;
 
-import java.util.Collection;
-
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.utils.Range;
 
 public interface IKimObservable extends IKimStatement {
 
+	public enum Modifier {
+		LESS,
+		GREATER,
+		LESS_EQUALN,
+		GREATER_EQUAL,
+		SAME_AS,
+		EQUAL,
+		NOT_EQUAL,
+		WITHOUT,
+		PLUS,
+		MINUS,
+		TIMES,
+		OVER,
+		WHERE
+	}
+	
 	/**
 	 * 
 	 * @return the main concept
@@ -24,12 +38,6 @@ public interface IKimObservable extends IKimStatement {
 	 * @return the 'by' classifier trait
 	 */
 	IKimConcept getClassifier();
-
-//	/**
-//	 * 
-//	 * @return the 'by' aggregator object
-//	 */
-//	IKimConcept getAggregator();
 
 	/**
 	 * 
@@ -120,5 +128,20 @@ public interface IKimObservable extends IKimStatement {
 	 * @return the name for k.IM code
 	 */
 	String getCodeName();
+	
+	/**
+	 * If a modifier was specified, return it.
+	 * 
+	 * @return the modifier or null
+	 */
+	Modifier getModifier();
+	
+	/**
+	 * If a modifier was specified, the operand to it is returned here. It may be 
+	 * a POD value, a concept, list thereof (not yet), or another IKimObservable.
+	 * 
+	 * @return the modifier operand.
+	 */
+	Object getOperandModifier();
 	
 }
