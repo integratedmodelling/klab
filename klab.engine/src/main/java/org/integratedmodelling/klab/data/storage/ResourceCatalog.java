@@ -146,10 +146,6 @@ public class ResourceCatalog implements IResourceCatalog {
 		((Resource) value).validate(Resources.INSTANCE);
 
 		IResource ret = get(value.getUrn());
-		// if (ret != null) {
-		// remove(value.getUrn());
-		// }
-
 		ResourceReference ref = ((Resource) value).getReference();
 		resources.put(value.getUrn(), ref);
 		File resourcePath = getResourcePath(value);
@@ -163,16 +159,12 @@ public class ResourceCatalog implements IResourceCatalog {
 				throw new KlabIOException(e);
 			}
 		}
-
-		// db.commit();
-
 		return ret;
 	}
 
 	public IResource removeDefinition(String key) {
 		IResource ret = get(key);
 		resources.remove(key);
-		// db.commit();
 		return ret;
 	}
 
@@ -188,7 +180,6 @@ public class ResourceCatalog implements IResourceCatalog {
 				throw new KlabIOException(e);
 			}
 		}
-		// db.commit();
 		resources.remove(key);
 		return ret;
 	}
@@ -213,16 +204,10 @@ public class ResourceCatalog implements IResourceCatalog {
 			}
 		}
 		resources.clear();
-		// db.commit();
 	}
 
 	@Override
 	public Set<String> keySet() {
-		// Set<String> ret = new HashSet<>();
-		// for (Iterator<ResourceReference> r = resources.find().iterator();
-		// r.hasNext();) {
-		// ret.add(r.next().getUrn());
-		// }
 		return resources.keySet();
 	}
 
