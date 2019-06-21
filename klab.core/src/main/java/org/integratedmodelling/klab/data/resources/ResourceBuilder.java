@@ -68,15 +68,15 @@ public class ResourceBuilder implements IResource.Builder {
 	private String resourceId;
 	private List<File> importedFiles = new ArrayList<>();
 	private SpatialExtent spatialExtent;
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public IResource build(String urn) {
 
 		Resource ret = new Resource();
 		ret.urn = urn;
-		ret.parameters = this.parameters;
-		ret.metadata = this.metadata;
+		ret.parameters.putAll(this.parameters);
+		ret.metadata.putAll(metadata);
 		ret.geometry = this.geometry;
 		ret.notifications.addAll(this.notifications);
 		ret.history.addAll(this.history);
@@ -90,9 +90,7 @@ public class ResourceBuilder implements IResource.Builder {
 		ret.localName = this.localName;
 		ret.spatialExtent = this.spatialExtent;
 		ret.attributes.addAll(this.attributes);
-		if (this.dependencies.size() > 0) {
-			ret.inputs = new ArrayList<>(this.dependencies);
-		}
+		ret.inputs.addAll(this.dependencies);
 
 		return ret;
 	}
@@ -239,27 +237,27 @@ public class ResourceBuilder implements IResource.Builder {
 		this.spatialExtent = extent;
 		return this;
 	}
-	
+
 	@Override
 	public Builder withAttribute(String name, IArtifact.Type type, boolean key, boolean optional) {
-	    AttributeReference attribute = new AttributeReference();
-	    attribute.setName(name);
-	    attribute.setType(type);
-	    attribute.setKey(key);
-	    attribute.setOptional(optional);
-	    // TODO example
-	    this.attributes.add(attribute);
-	    return this;
+		AttributeReference attribute = new AttributeReference();
+		attribute.setName(name);
+		attribute.setType(type);
+		attribute.setKey(key);
+		attribute.setOptional(optional);
+		// TODO example
+		this.attributes.add(attribute);
+		return this;
 	}
-	
+
 	@Override
 	public Builder withDependency(String name, IArtifact.Type type, boolean key, boolean optional) {
-	    AttributeReference attribute = new AttributeReference();
-	    attribute.setName(name);
-	    attribute.setType(type);
-	    attribute.setKey(key);
-	    attribute.setOptional(optional);
-	    this.dependencies.add(attribute);
-	    return this;
+		AttributeReference attribute = new AttributeReference();
+		attribute.setName(name);
+		attribute.setType(type);
+		attribute.setKey(key);
+		attribute.setOptional(optional);
+		this.dependencies.add(attribute);
+		return this;
 	}
 }

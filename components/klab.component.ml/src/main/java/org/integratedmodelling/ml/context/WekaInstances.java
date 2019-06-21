@@ -544,6 +544,13 @@ public class WekaInstances {
 			}
 			i++;
 		}
+		
+		try {
+			missingValuesFilter.setInputFormat(instances);
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+		
 	}
 
 	private Filter buildDiscretization(IServiceCall specification, IState predictor, int fieldIndex) {
