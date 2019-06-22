@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.api.documentation;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * A contextualizer that is also a IDocumentationProvider can provide special
@@ -11,17 +11,20 @@ import java.util.List;
  */
 public interface IDocumentationProvider {
 
-	/**
-	 * 
-	 * @return the tags provided
-	 */
-	List<String> getTags();
+    interface Item {
 
-	/**
-	 * 
-	 * @param tag
-	 * @return the documentation corresponding to the tag
-	 */
-	String getDocumentation(String tag);
+        String getId();
+
+        String getTitle();
+
+        String getMarkdownContents();
+    }
+
+    /**
+     * 
+     * @param tag
+     * @return the documentation corresponding to the tag
+     */
+    Collection<Item> getDocumentation();
 
 }

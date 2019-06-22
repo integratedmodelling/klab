@@ -38,12 +38,15 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
+import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
+import org.integratedmodelling.klab.api.documentation.IDocumentationProvider.Item;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
+import org.integratedmodelling.klab.documentation.Documentation.SectionImpl;
 import org.integratedmodelling.klab.documentation.Documentation.TemplateImpl;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.kim.Prototype;
@@ -90,12 +93,13 @@ public class Report implements IReport {
     Map<String, ReportSection> modelsCited = new HashMap<>();
     Map<String, ReportSection> observationsCited = new HashMap<>();
     Map<String, ReportSection> dataflowsCited = new HashMap<>();
-    Map<String, String> taggedText = new HashMap<>();
-    
+    Map<String, IDocumentationProvider.Item> taggedText = new HashMap<>();
+
     Map<RefType, Set<String>> refTypes = new HashMap<>();
     Set<String> observationDescribed = new HashSet<>();
     Set<String> inserted = new HashSet<>();
-    
+    Set<String> usedTags = new HashSet<>();
+
     public RefType getReferenceType(String reference) {
         RefType ret = null;
         for (RefType type : RefType.values()) {
@@ -115,11 +119,11 @@ public class Report implements IReport {
         set.add(reference);
     }
 
-    public void addTaggedText(String tag, String contents) {
-        this.taggedText.put(tag, contents);
+    public void addTaggedText(IDocumentationProvider.Item item) {
+        this.taggedText.put(item.getId(), item);
     }
 
-    public String getTaggedText(String tag) {
+    public IDocumentationProvider.Item getTaggedText(String tag) {
         return this.taggedText.get(tag);
     }
 
@@ -260,27 +264,44 @@ public class Report implements IReport {
 
         ret.append(getTitleSection());
 
+        Section appendix = mainSections.get(SectionRole.APPENDIX);
+
         /*
-         * TODO add anything not explicitly described according to settings; make
+         * If we have an appendix, add any tagged documentation coming from contextualizers that has not
+         * been used in the report.
+         */
+        if (appendix != null) {
+            for (String tag : taggedText.keySet()) {
+                if (!usedTags.contains(tag)) {
+                    Item item = taggedText.get(tag);
+                    ((SectionImpl) appendix).body += "\n\n## " + item.getTitle() + "\n\n" + item.getMarkdownContents()
+                            + "\n\n";
+                }
+            }
+        }
+
+        /*
+         * Add anything not explicitly described according to settings; make
          * appendices and references
          */
-
         int n = 0;
         for (Section s : getSections()) {
             ret.append(((ReportSection) s).render(0, (++n) + ""));
         }
 
-        /**
-         * If we have tagged content and no sections that may have used it,
-         * at least show that.
-         * 
-         * TODO this should go in the appendix as "Supplemental material" using
-         * a label provided by the actuators, skipping each tag if it was used at least
-         * once.
+        /*
+         * If we have tagged content, no appendix and no sections that may have used it,
+         * make an appendix and add to it.
          */
-        if (n == 0) {
+        if (appendix == null && (taggedText.size() - usedTags.size()) > 0) {
+
+            ret.append("\n\n# Appendix\n\n");
+
             for (String tag : taggedText.keySet()) {
-                ret.append(taggedText.get(tag) + "\n\n---");
+                if (!usedTags.contains(tag)) {
+                    Item item = taggedText.get(tag);
+                    ret.append("\n\n## " + item.getTitle() + "\n\n" + item.getMarkdownContents() + "\n\n");
+                }
             }
         }
 
@@ -313,6 +334,10 @@ public class Report implements IReport {
 
     public String getSessionId() {
         return sessionId;
+    }
+
+    public void notifyUsedTag(String id) {
+        this.usedTags.add(id);
     }
 
 }

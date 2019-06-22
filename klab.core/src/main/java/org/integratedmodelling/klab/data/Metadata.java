@@ -88,7 +88,7 @@ public class Metadata extends Parameters<String> implements IMetadata {
   }
   
   public String getDescription() {
-      return get(DC_COMMENT, "No descriptionr");
+      return get(DC_COMMENT, "No description");
   }
   
   public String getUrl() {

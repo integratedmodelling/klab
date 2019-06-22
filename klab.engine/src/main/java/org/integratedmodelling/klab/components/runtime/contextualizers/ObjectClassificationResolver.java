@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,8 @@ public class ObjectClassificationResolver
 
     IArtifact classified;
     IArtifact classifier;
-
+    List<IDocumentationProvider.Item> documentation = new ArrayList<>();
+    
     // don't remove - only used as expression
     public ObjectClassificationResolver() {
     }
@@ -129,15 +131,9 @@ public class ObjectClassificationResolver
     }
 
     @Override
-    public List<String> getTags() {
-        List<String> ret = new ArrayList<>();
-        return ret;
+    public Collection<Item> getDocumentation() {
+        return documentation;
     }
 
-    @Override
-    public String getDocumentation(String tag) {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
 }

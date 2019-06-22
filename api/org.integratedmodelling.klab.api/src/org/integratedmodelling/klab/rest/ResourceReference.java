@@ -12,62 +12,65 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 public class ResourceReference {
 
     public static class OperationReference implements Operation {
-        
+
         private String name;
         private String description;
         private boolean shouldConfirm;
-        
-        public OperationReference() {}
+
+        public OperationReference() {
+        }
+
         public OperationReference(String name, String description, boolean shouldConfirm) {
             this.name = name;
             this.description = description;
             this.shouldConfirm = shouldConfirm;
         }
-        
+
         @Override
         public boolean isShouldConfirm() {
             return shouldConfirm;
         }
-        
+
         public void setShouldConfirm(boolean shouldConfirm) {
             this.shouldConfirm = shouldConfirm;
         }
-        
+
         @Override
         public String getDescription() {
             return description;
         }
-        
+
         public void setDescription(String description) {
             this.description = description;
         }
-        
+
         @Override
         public String getName() {
             return name;
         }
     }
-    
-    private String                   urn;
-    private String                   version;
-    private String                   adapterType;
-    private String                   localPath;
-    private String                   geometry;
+
+    private String urn;
+    private String version;
+    private String adapterType;
+    private String localPath;
+    private String geometry;
     // only set in local resources
-    private String                   projectName;
+    private String projectName;
     // only in local resources, the short name for k.IM
-    private String                   localName;
-    private IArtifact.Type           type;
-    private long                     resourceTimestamp;
-    private Map<String, String>      metadata      = new HashMap<>();
-    private Map<String, String>      parameters    = new HashMap<>();
-    private List<String>             localPaths    = new ArrayList<>();
-    private List<ResourceReference>  history       = new ArrayList<>();
-    private List<Notification>       notifications = new ArrayList<>();
-    private List<AttributeReference> attributes    = new ArrayList<>();
-    private SpatialExtent            spatialExtent;
-    private List<AttributeReference> dependencies  = null;
-    private List<AttributeReference> outputs       = null;
+    private String localName;
+    private IArtifact.Type type;
+    private long resourceTimestamp;
+    private Map<String, String> metadata = new HashMap<>();
+    private Map<String, String> parameters = new HashMap<>();
+    private List<String> localPaths = new ArrayList<>();
+    private List<ResourceReference> history = new ArrayList<>();
+    private List<Notification> notifications = new ArrayList<>();
+    private List<AttributeReference> attributes = new ArrayList<>();
+    private SpatialExtent spatialExtent;
+    private List<AttributeReference> dependencies = null;
+    private List<AttributeReference> outputs = null;
+
     public List<AttributeReference> getOutputs() {
         return outputs;
     }
@@ -76,7 +79,7 @@ public class ResourceReference {
         this.outputs = outputs;
     }
 
-    private Map<String, String>      exportFormats = new LinkedHashMap<>();
+    private Map<String, String> exportFormats = new LinkedHashMap<>();
 
     public ResourceReference() {
     }

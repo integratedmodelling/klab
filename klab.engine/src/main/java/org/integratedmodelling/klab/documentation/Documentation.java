@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
+import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.documentation.IReport.Section;
 import org.integratedmodelling.klab.api.documentation.IReport.SectionRole;
@@ -212,9 +213,11 @@ public class Documentation implements IDocumentation {
                         current.getReport().require(processArguments(section.body, 2), Documentation.this, context);
                         break;	
                     case "import":
-                        String arg = current.getReport().getTaggedText(processArguments(section.body, 1).toString());
+                        String id = processArguments(section.body, 1).toString();
+                        IDocumentationProvider.Item arg = current.getReport().getTaggedText(id);
                         if (arg != null) {
-                            current.body.append(arg);
+                            current.getReport().notifyUsedTag(id);
+                            current.body.append(arg.getMarkdownContents());
                         }
                         break;  
                     // next for later, allow unsupported use. Need scopes for these to work.

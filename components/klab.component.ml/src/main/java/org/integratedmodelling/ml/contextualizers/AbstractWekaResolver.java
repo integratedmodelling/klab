@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -46,26 +47,28 @@ import weka.classifiers.Classifier;
 import weka.core.Attribute;
 import weka.core.Instance;
 
-public abstract class AbstractWekaResolver<T extends Classifier>
-        implements IResolver<IState>, IDocumentationProvider {
+public abstract class AbstractWekaResolver<T extends Classifier> implements IResolver<IState>, IDocumentationProvider {
 
-    protected WekaClassifier classifier                 = null;
-    protected WekaOptions    options;
-    private IServiceCall     classDiscretizer;
-    String                   instancesExport            = null;
-    String                   rawInstancesExport         = null;
-    protected int            MIN_INSTANCES_FOR_TRAINING = 5;
-    protected boolean        predictionIsProbabilistic;
-    private boolean          admitsNodata;
-    private String           resourceId                 = null;
-    private String           learnedGeometry            = null;
+    protected WekaClassifier classifier = null;
+    protected WekaOptions options;
+    private IServiceCall classDiscretizer;
+    String instancesExport = null;
+    String rawInstancesExport = null;
+    protected int MIN_INSTANCES_FOR_TRAINING = 5;
+    protected boolean predictionIsProbabilistic;
+    private boolean admitsNodata;
+    private String resourceId = null;
+    private String learnedGeometry = null;
+    private List<IDocumentationProvider.Item> documentation = new ArrayList<>();
 
     protected AbstractWekaResolver() {
     }
 
-    protected AbstractWekaResolver(Class<T> cls, IParameters<String> parameters,
+    protected AbstractWekaResolver(Class<T> cls,
+            IParameters<String> parameters,
             boolean requiresDiscretization,
-            boolean predictionIsProbabilistic, boolean admitsNodata) {
+            boolean predictionIsProbabilistic,
+            boolean admitsNodata) {
         this.options = new WekaOptions(cls, parameters);
         this.classifier = new WekaClassifier(cls, this.options, predictionIsProbabilistic);
         this.classDiscretizer = parameters.get("discretization", IServiceCall.class);
@@ -91,8 +94,8 @@ public abstract class AbstractWekaResolver<T extends Classifier>
             }
         }
 
-        WekaInstances instances = new WekaInstances(ret, context
-                .getModel(), (IRuntimeContext) context, true, admitsNodata, classDiscretizer);
+        WekaInstances instances = new WekaInstances(ret, context.getModel(), (IRuntimeContext) context, true,
+                admitsNodata, classDiscretizer);
 
         if (instances.getInstances().isEmpty()) {
             context.getMonitor().warn("No instances in training set: cannot train Weka classifier");
@@ -121,9 +124,8 @@ public abstract class AbstractWekaResolver<T extends Classifier>
         /*
          * Do the training
          */
-        context.getMonitor()
-                .info("Start training " + classifier + " classifier on " + instances.size() + " instances");
-        classifier.train(instances);
+        context.getMonitor().info("Start training " + classifier + " classifier on " + instances.size() + " instances");
+        documentation.addAll(classifier.train(instances));
         context.getMonitor().info("Training completed successfully.");
 
         /*
@@ -133,8 +135,7 @@ public abstract class AbstractWekaResolver<T extends Classifier>
 
             Instance instance = instances.getInstance(locator);
             if (instance != null) {
-                setValue(instances, locator, classifier
-                        .predict(instance, context.getMonitor()), ret, uncertainty);
+                setValue(instances, locator, classifier.predict(instance, context.getMonitor()), ret, uncertainty);
             }
         }
 
@@ -157,14 +158,15 @@ public abstract class AbstractWekaResolver<T extends Classifier>
         return ret;
     }
 
-    private void setValue(WekaInstances instances, ILocator locator, Object prediction, IState target, @Nullable IState uncertainty) {
+    private void setValue(WekaInstances instances, ILocator locator, Object prediction, IState target,
+            @Nullable IState uncertainty) {
 
         if (prediction instanceof double[]) {
 
             // predicted state must be discretized
             // FIXME this could be a categorical state without discretization
-            EnumeratedRealDistribution distribution = new EnumeratedRealDistribution(instances
-                    .getPredictedDiscretization().getMidpoints(), (double[]) prediction);
+            EnumeratedRealDistribution distribution = new EnumeratedRealDistribution(
+                    instances.getPredictedDiscretization().getMidpoints(), (double[]) prediction);
 
             if (target.getObservable().getArtifactType() == IArtifact.Type.NUMBER) {
                 target.set(locator, distribution.getNumericalMean());
@@ -181,8 +183,8 @@ public abstract class AbstractWekaResolver<T extends Classifier>
             if (uncertainty != null) {
                 // TODO categorical distribution should use Shannon - redo with original
                 // distribution
-                uncertainty.set(locator, Math.sqrt(distribution.getNumericalVariance())
-                        / distribution.getNumericalMean());
+                uncertainty.set(locator,
+                        Math.sqrt(distribution.getNumericalVariance()) / distribution.getNumericalMean());
             }
 
         } else {
@@ -236,20 +238,17 @@ public abstract class AbstractWekaResolver<T extends Classifier>
              * default: cover the learning context, using same geometry minus resolution and
              * shape if any.
              */
-            geometry = ((Scale) context.getScale()).asGeometry().withGridResolution(null)
-                    .withTemporalResolution(null)
+            geometry = ((Scale) context.getScale()).asGeometry().withGridResolution(null).withTemporalResolution(null)
                     .withShape(null);
         }
 
         StandaloneResourceBuilder builder = new StandaloneResourceBuilder(project, resourceId);
         builder.withResourceVersion(Version.create("0.0.1")).withGeometry(geometry).withAdapterType("weka")
-                .withType(instances.getPredicted().getType())
-                .withParameter("wekaVersion", weka.core.Version.VERSION)
+                .withType(instances.getPredicted().getType()).withParameter("wekaVersion", weka.core.Version.VERSION)
                 .withParameter("model", context.getModel().getName()).withParameter("submitNodata", "true")
                 .withParameter("classifier", classifier.getClassifier().getClass().getCanonicalName())
                 .withParameter("classifier.options", classifier.getOptions().toString())
-                .withParameter("classifier.probabilistic", classifier.isPredictionProbabilistic() ? "true"
-                        : "false");
+                .withParameter("classifier.probabilistic", classifier.isPredictionProbabilistic() ? "true" : "false");
 
         int i = 1;
         for (Attribute attribute : instances.getAttributes()) {
@@ -263,16 +262,14 @@ public abstract class AbstractWekaResolver<T extends Classifier>
             IState state = predicted ? instances.getPredicted() : instances.getPredictor(attribute.name());
             StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
             if (!predicted) {
-                builder
-                        .withParameter("predictor." + attribute.name() + ".index", i)
-                        .withDependency(attribute.name(), state.getType(), true, true);
+                builder.withParameter("predictor." + attribute.name() + ".index", i).withDependency(attribute.name(),
+                        state.getType(), true, true);
             } else {
                 builder.withParameter("predicted.index", i);
             }
 
-            builder.withParameter(predicted ? "predicted.range"
-                    : ("predictor." + attribute.name() + ".range"), "[" + summary.getRange().get(0) + ","
-                            + summary.getRange().get(1) + "]");
+            builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
+                    "[" + summary.getRange().get(0) + "," + summary.getRange().get(1) + "]");
 
             DiscretizerDescriptor descriptor = instances.getDiscretization(attribute.name());
             if (descriptor != null) {
@@ -285,30 +282,28 @@ public abstract class AbstractWekaResolver<T extends Classifier>
 
                     if (predicted) {
                         builder.withParameter("predicted.discretizer", descriptor.getJavaClass())
-                                .withParameter("predicted.discretizer.file", MiscUtilities
-                                        .getFileName(discretizer))
+                                .withParameter("predicted.discretizer.file", MiscUtilities.getFileName(discretizer))
                                 .withParameter("predicted.name", attribute.name())
                                 .withParameter("predicted.discretizer.options", descriptor.getOptions());
 
                         if (cutpoints != null) {
-                            builder.withParameter("predicted.discretizer.cutpoints", Arrays
-                                    .toString(cutpoints));
+                            builder.withParameter("predicted.discretizer.cutpoints", Arrays.toString(cutpoints));
                         }
 
                         // TODO encode data key
 
                     } else {
 
-                        builder.withParameter("predictor." + attribute.name() + ".discretizer", descriptor
-                                .getJavaClass())
-                                .withParameter("predictor." + attribute.name()
-                                        + ".discretizer.file", MiscUtilities.getFileName(discretizer))
-                                .withParameter("predictor." + attribute.name()
-                                        + ".discretizer.options", descriptor.getOptions());
+                        builder.withParameter("predictor." + attribute.name() + ".discretizer",
+                                descriptor.getJavaClass())
+                                .withParameter("predictor." + attribute.name() + ".discretizer.file",
+                                        MiscUtilities.getFileName(discretizer))
+                                .withParameter("predictor." + attribute.name() + ".discretizer.options",
+                                        descriptor.getOptions());
 
                         if (cutpoints != null) {
-                            builder.withParameter("predictor." + attribute.name()
-                                    + ".discretizer.cutpoints", Arrays.toString(cutpoints));
+                            builder.withParameter("predictor." + attribute.name() + ".discretizer.cutpoints",
+                                    Arrays.toString(cutpoints));
                         }
 
                         // TODO encode data key
@@ -327,8 +322,7 @@ public abstract class AbstractWekaResolver<T extends Classifier>
 
         {
 
-            context.getMonitor()
-                    .info("exporting " + resourceId + " resource in project " + project.getName());
+            context.getMonitor().info("exporting " + resourceId + " resource in project " + project.getName());
 
             File dataset = File.createTempFile("instances", ".arff");
             File dataraw = File.createTempFile("rawinstances", ".arff");
@@ -362,14 +356,8 @@ public abstract class AbstractWekaResolver<T extends Classifier>
     }
 
     @Override
-    public List<String> getTags() {
-        List<String> ret = new ArrayList<>();
-        return ret;
+    public Collection<Item> getDocumentation() {
+        return documentation;
     }
 
-    @Override
-    public String getDocumentation(String tag) {
-        return "";
-    }
-    
 }

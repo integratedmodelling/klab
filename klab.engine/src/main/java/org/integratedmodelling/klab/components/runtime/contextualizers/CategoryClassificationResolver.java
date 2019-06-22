@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +18,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
@@ -36,7 +39,7 @@ public class CategoryClassificationResolver
 
     IArtifact classified;
     IArtifact classifier;
-    Map<String, String> docTags = new HashMap<>();
+    List<IDocumentationProvider.Item> docTags = new ArrayList<>();
 
     // don't remove - only used as expression
     public CategoryClassificationResolver() {
@@ -138,30 +141,45 @@ public class CategoryClassificationResolver
 
     private void addDocumentationTags(Map<Object, Double> cache) {
 
-        StringBuffer body = new StringBuffer(1024);
+        final StringBuffer body = new StringBuffer(1024);
         String separator = "";
-        for (String h : new String[] { Concepts.INSTANCE.getDisplayName(((IState) classifier).getObservable()),
-                Concepts.INSTANCE.getDisplayName(((IState) classified).getObservable()) }) {
+        for (String h : new String[] { Concepts.INSTANCE.getDisplayLabel(((IState) classifier).getObservable()),
+                Concepts.INSTANCE.getDisplayLabel(((IState) classified).getObservable()) }) {
             body.append((separator.isEmpty() ? "" : "|") + h);
-            separator += ((separator.isEmpty() ? "" : "|") + ":---");
+            separator += ((separator.isEmpty() ? "" : " |") + " :---");
         }
         body.append("\n");
         body.append(separator + "\n");
 
         for (Object key : cache.keySet()) {
             boolean first = true;
-            for (Object item : new Object[] { key, cache.get(key) }) {
-                body.append((first ? "" : "|") + item.toString());
+            for (Object item : new Object[] {
+                    key instanceof IConcept ? Concepts.INSTANCE.getDisplayLabel((IConcept) key) : key.toString(),
+                    NumberFormat.getInstance().format(cache.get(key)) }) {
+                body.append((first ? "" : "|") + item);
                 first = false;
             }
             body.append("\n");
         }
-        body.append("[[#" + TABLE_ID + "] " + " Aggregation of "
-                + Concepts.INSTANCE.getDisplayName(((IState) classified).getObservable()) + " values by "
-                + Concepts.INSTANCE.getDisplayName(((IState) classifier).getObservable()) + "  ]");
-        body.append("{#" + TABLE_ID + " text-align: center}\n\n");
 
-        docTags.put(TABLE_ID, body.toString());
+        docTags.add(new IDocumentationProvider.Item() {
+
+            @Override
+            public String getTitle() {
+                return Concepts.INSTANCE.getDisplayName(((IState) classified).getObservable()) + " aggregated by "
+                        + Concepts.INSTANCE.getDisplayLabel(((IState) classifier).getObservable());
+            }
+
+            @Override
+            public String getMarkdownContents() {
+                return body.toString();
+            }
+
+            @Override
+            public String getId() {
+                return TABLE_ID;
+            }
+        });
 
     }
 
@@ -175,15 +193,8 @@ public class CategoryClassificationResolver
     }
 
     @Override
-    public List<String> getTags() {
-        List<String> ret = new ArrayList<>();
-        ret.add(TABLE_ID);
-        return ret;
-    }
-
-    @Override
-    public String getDocumentation(String tag) {
-        return docTags.get(tag);
+    public Collection<Item> getDocumentation() {
+        return docTags;
     }
 
 }

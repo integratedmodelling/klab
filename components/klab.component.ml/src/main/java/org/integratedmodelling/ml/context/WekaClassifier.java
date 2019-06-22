@@ -1,10 +1,12 @@
 package org.integratedmodelling.ml.context;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.api.documentation.IDocumentationProvider.Item;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -30,144 +32,167 @@ import weka.core.SerializationHelper;
  */
 public class WekaClassifier {
 
-	private Classifier classifier;
-	private WekaOptions options;
-	private boolean predictionIsProbabilistic;
-	private boolean errorWarning = false;
-	private boolean imported = false;
-	private Map<String, Object> docs = new HashMap<>();
+    private Classifier classifier;
+    private WekaOptions options;
+    private boolean predictionIsProbabilistic;
+    private boolean errorWarning = false;
+    private boolean imported = false;
 
-	public WekaClassifier(Class<? extends Classifier> cls, WekaOptions options, boolean predictionIsProbabilistic) {
-		this.classifier = Extensions.INSTANCE.createDefaultInstance(cls, Classifier.class);
-		this.options = options;
-		this.predictionIsProbabilistic = predictionIsProbabilistic;
-		if (this.classifier instanceof OptionHandler) {
-			try {
-				((OptionHandler) this.classifier).setOptions(options.getWekaOptions());
-			} catch (Exception e) {
-				throw new IllegalStateException(
-						"Weka: error setting options for " + cls + ": '" + options + "': " + e.getMessage());
-			}
-		}
-	}
+    public WekaClassifier(Class<? extends Classifier> cls, WekaOptions options, boolean predictionIsProbabilistic) {
+        this.classifier = Extensions.INSTANCE.createDefaultInstance(cls, Classifier.class);
+        this.options = options;
+        this.predictionIsProbabilistic = predictionIsProbabilistic;
+        if (this.classifier instanceof OptionHandler) {
+            try {
+                ((OptionHandler) this.classifier).setOptions(options.getWekaOptions());
+            } catch (Exception e) {
+                throw new IllegalStateException(
+                        "Weka: error setting options for " + cls + ": '" + options + "': " + e.getMessage());
+            }
+        }
+    }
 
-	public WekaClassifier(File localFile, boolean predictionIsProbabilistic) {
-		try {
-			this.classifier = (Classifier) SerializationHelper.read(localFile.toString());
-			this.predictionIsProbabilistic = predictionIsProbabilistic;
-		} catch (Exception e) {
-			throw new KlabIOException(e);
-		}
-	}
+    public WekaClassifier(File localFile, boolean predictionIsProbabilistic) {
+        try {
+            this.classifier = (Classifier) SerializationHelper.read(localFile.toString());
+            this.predictionIsProbabilistic = predictionIsProbabilistic;
+        } catch (Exception e) {
+            throw new KlabIOException(e);
+        }
+    }
 
-	public WekaClassifier(File importFile, String classifierClass, boolean predictionIsProbabilistic) {
-		try {
-			if (BayesNet.class.getCanonicalName().equals(classifierClass)) {
-				BIFReader bifReader = new BIFReader();
-				bifReader.processString(FileUtils.readFileToString(importFile));
-				this.classifier = new EditableBayesNet(bifReader);
-				this.imported = true;
-			} else {
-				throw new KlabIOException("Weka: don't know what to do with import file: " + importFile);
-			}
-			this.predictionIsProbabilistic = predictionIsProbabilistic;
-		} catch (Exception e) {
-			throw new KlabIOException(e);
-		}
-	}
+    public WekaClassifier(File importFile, String classifierClass, boolean predictionIsProbabilistic) {
+        try {
+            if (BayesNet.class.getCanonicalName().equals(classifierClass)) {
+                BIFReader bifReader = new BIFReader();
+                bifReader.processString(FileUtils.readFileToString(importFile));
+                this.classifier = new EditableBayesNet(bifReader);
+                this.imported = true;
+            } else {
+                throw new KlabIOException("Weka: don't know what to do with import file: " + importFile);
+            }
+            this.predictionIsProbabilistic = predictionIsProbabilistic;
+        } catch (Exception e) {
+            throw new KlabIOException(e);
+        }
+    }
 
-	/**
-	 * Train the model over a set of instances and evaluate the results. Set the
-	 * evaluation results into variables.
-	 * 
-	 * @param instances
-	 */
-	public void train(WekaInstances instances) {
+    /**
+     * Train the model over a set of instances and evaluate the results. Set the
+     * evaluation results into variables.
+     * 
+     * @param instances
+     * @return the documentation items for the training
+     */
+    public Collection<Item> train(WekaInstances instances) {
 
-		try {
+        List<Item> ret = new ArrayList<>();
 
-			instances.getInstances().setClassIndex(0);
-			classifier.buildClassifier(instances.getInstances());
-			Evaluation eval = new Evaluation(instances.getInstances());
-			eval.evaluateModel(classifier, instances.getInstances());
+        try {
 
-			docs.put("weka.summary", eval.toSummaryString());
-			docs.put("weka.details", eval.toClassDetailsString());
-			docs.put("weka.matrix", eval.toMatrixString());
-			docs.put("weka.rmsq", eval.rootMeanSquaredError());
-			docs.put("weka.rmpsq", eval.rootMeanPriorSquaredError());
-			docs.put("weka.rrsq", eval.rootRelativeSquaredError());
+            instances.getInstances().setClassIndex(0);
+            classifier.buildClassifier(instances.getInstances());
+            Evaluation eval = new Evaluation(instances.getInstances());
+            eval.evaluateModel(classifier, instances.getInstances());
 
-			System.out.println(eval.toSummaryString());
-			System.out.println(eval.toClassDetailsString());
-			System.out.println(eval.toMatrixString());
+            document("weka.summary",
+                    "Weka " + Path.getLast(classifier.getClass().getCanonicalName(), '.') + " training results summary",
+                    eval.toSummaryString(), ret);
+            document("weka.details",
+                    "Weka " + Path.getLast(classifier.getClass().getCanonicalName(), '.') + " training results details",
+                    eval.toClassDetailsString(), ret);
+            document("weka.matrix",
+                    "Weka " + Path.getLast(classifier.getClass().getCanonicalName(), '.') + " confusion matrix",
+                    eval.toMatrixString(), ret);
 
-		} catch (Exception e) {
-			throw new IllegalStateException("Weka: training failed with error: " + e.getMessage());
-		}
-	}
+        } catch (Exception e) {
+            throw new IllegalStateException("Weka: training failed with error: " + e.getMessage());
+        }
 
-	/**
-	 * Produce the predicted class value for the passed instance (which can be
-	 * obtained through
-	 * {@link WekaInstances#getInstance(org.integratedmodelling.klab.api.data.ILocator)}).
-	 * The object returned may be a double or a double[] (according to the return
-	 * value of {@link #isPredictionProbabilistic()}, to be matched to the predicted
-	 * state's semantics.
-	 * 
-	 * @param instance
-	 * @return
-	 */
-	public Object predict(Instance instance, IMonitor monitor) {
+        return ret;
+    }
 
-		try {
-			if (isPredictionProbabilistic()) {
-				return classifier.distributionForInstance(instance);
-			} else {
-				return classifier.classifyInstance(instance);
-			}
-		} catch (Exception e) {
-			if (!errorWarning) {
-				errorWarning = true;
-				monitor.warn("Classification of instance generated an error (further errors will not be reported): "
-						+ e.getMessage());
-			}
-		}
-		return null;
-	}
+    private void document(final String id, final String title, final String contents, List<Item> ret) {
+        ret.add(new Item() {
+            
+            @Override
+            public String getTitle() {
+                return title;
+            }
+            
+            @Override
+            public String getMarkdownContents() {
+                return "```\n" + contents.trim() + "\n```\n";
+            }
+            
+            @Override
+            public String getId() {
+                return id;
+            }
+        });
+    }
 
-	public boolean isPredictionProbabilistic() {
-		return predictionIsProbabilistic;
-	}
+    /**
+     * Produce the predicted class value for the passed instance (which can be
+     * obtained through
+     * {@link WekaInstances#getInstance(org.integratedmodelling.klab.api.data.ILocator)}).
+     * The object returned may be a double or a double[] (according to the return
+     * value of {@link #isPredictionProbabilistic()}, to be matched to the predicted
+     * state's semantics.
+     * 
+     * @param instance
+     * @return
+     */
+    public Object predict(Instance instance, IMonitor monitor) {
 
-	public Classifier getClassifier() {
-		return classifier;
-	}
+        try {
+            if (isPredictionProbabilistic()) {
+                return classifier.distributionForInstance(instance);
+            } else {
+                return classifier.classifyInstance(instance);
+            }
+        } catch (Exception e) {
+            if (!errorWarning) {
+                errorWarning = true;
+                monitor.warn("Classification of instance generated an error (further errors will not be reported): "
+                        + e.getMessage());
+            }
+        }
+        return null;
+    }
 
-	public String toString() {
-		return "WEKA " + Path.getLast(classifier.getClass().getCanonicalName(), '.');
-	}
+    public boolean isPredictionProbabilistic() {
+        return predictionIsProbabilistic;
+    }
 
-	public void export(File clmodel) {
-		try {
-			SerializationHelper.write(clmodel.toString(), this.classifier);
-		} catch (Exception e) {
-			throw new KlabIOException(e);
-		}
-	}
+    public Classifier getClassifier() {
+        return classifier;
+    }
 
-	public WekaOptions getOptions() {
-		return this.options;
-	}
+    public String toString() {
+        return "WEKA " + Path.getLast(classifier.getClass().getCanonicalName(), '.');
+    }
 
-	public void setTrainingDataset(WekaInstances instances) {
-		if (classifier instanceof EditableBayesNet && this.imported) {
-			try {
-				((EditableBayesNet) classifier).setData(instances.getInstances());
-			} catch (Exception e) {
-				throw new KlabException(e);
-			}
-		}
-	}
+    public void export(File clmodel) {
+        try {
+            SerializationHelper.write(clmodel.toString(), this.classifier);
+        } catch (Exception e) {
+            throw new KlabIOException(e);
+        }
+    }
+
+    public WekaOptions getOptions() {
+        return this.options;
+    }
+
+    public void setTrainingDataset(WekaInstances instances) {
+        if (classifier instanceof EditableBayesNet && this.imported) {
+            try {
+                ((EditableBayesNet) classifier).setData(instances.getInstances());
+            } catch (Exception e) {
+                throw new KlabException(e);
+            }
+        }
+    }
 
 }

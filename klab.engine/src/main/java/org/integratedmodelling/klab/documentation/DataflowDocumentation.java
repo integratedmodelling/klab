@@ -20,10 +20,12 @@ import org.integratedmodelling.klab.api.data.classification.ILookupTable;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
 import org.integratedmodelling.klab.api.documentation.IReport.Encoding;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Flowchart;
 import org.integratedmodelling.klab.dataflow.Flowchart.Element;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
+import org.integratedmodelling.klab.utils.MarkdownUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtils;
@@ -181,6 +183,14 @@ public enum DataflowDocumentation {
 		} else if (resource.getSecond().getUrn() != null) {
 			IResource res = Resources.INSTANCE.resolveResource(resource.getSecond().getUrn());
 			if (res != null) {
+			    String description = res.getMetadata().get(IMetadata.DC_COMMENT, String.class);
+			    // format from Markdown
+			    if (description == null) {
+			        description = "No description";
+			    } else {
+			        description = MarkdownUtils.INSTANCE.format(description.trim());
+			    }
+			    ret.put("description", description);
 				ret.put("resource", res);
 			}
 		} else if (resource.getSecond().getExpression() != null) {

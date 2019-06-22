@@ -518,8 +518,8 @@ public class Actuator implements IActuator {
          * Insert any text part that the contextualizer makes available for the documentation.
          */
         if (contextualizer instanceof IDocumentationProvider) {
-            for (String tag : ((IDocumentationProvider)contextualizer).getTags()) {
-                ((Report)ctx.getReport()).addTaggedText(tag, ((IDocumentationProvider)contextualizer).getDocumentation(tag));
+            for (IDocumentationProvider.Item item : ((IDocumentationProvider)contextualizer).getDocumentation()) {
+                ((Report)ctx.getReport()).addTaggedText(item);
             }
         }
 
