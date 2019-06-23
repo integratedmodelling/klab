@@ -27,6 +27,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+### Changed
+### Fixed
+
+## [0.10.0.163] -- 2019/06/23
+### Added
 - Added value operators to observable syntax, allowing expressions as observables and as dependencies.
   Quantitative aggregation using 'by' is already working.
 - Template-based system documents all nodes in the dataflow, accessible through single-clicking each
