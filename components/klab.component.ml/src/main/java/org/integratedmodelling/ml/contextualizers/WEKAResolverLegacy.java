@@ -487,7 +487,7 @@ public class WEKAResolverLegacy {
 
 			ret = new Var();
 			ret.state = o;
-			ret.attribute = new Attribute(sanitizeName(o.getObservable().getLocalName()));
+			ret.attribute = new Attribute(sanitizeName(o.getObservable().getName()));
 			break;
 
 		case CONCEPT:
@@ -498,7 +498,7 @@ public class WEKAResolverLegacy {
 //			for (IConcept c : o.getDataKey().getConceptOrder()) {
 //				nominalValues.add(c.toString());
 //			}
-			ret.attribute = new Attribute(sanitizeName(o.getObservable().getLocalName()), nominalValues);
+			ret.attribute = new Attribute(sanitizeName(o.getObservable().getName()), nominalValues);
 			ret.legend = new HashMap<>();
 			for (int i = 0; i < nominalValues.size(); i++) {
 				ret.legend.put(nominalValues.get(i), i);
@@ -511,7 +511,7 @@ public class WEKAResolverLegacy {
 			nominalValues = new ArrayList<>();
 			nominalValues.add("true");
 			nominalValues.add("false");
-			ret.attribute = new Attribute(sanitizeName(o.getObservable().getLocalName()), nominalValues);
+			ret.attribute = new Attribute(sanitizeName(o.getObservable().getName()), nominalValues);
 			ret.legend = new HashMap<>();
 			for (int i = 0; i < nominalValues.size(); i++) {
 				ret.legend.put(nominalValues.get(i), i);

@@ -29,7 +29,15 @@ public class SearchMatch implements IIndexingService.Match {
 
     public SearchMatch() {
     }
-
+    
+    public SearchMatch(org.integratedmodelling.klab.rest.SearchMatch descriptor) {
+        this.id = descriptor.getId();
+        this.description = descriptor.getDescription();
+        this.score = 1;
+        this.semantics.addAll(descriptor.getSemanticType());
+        this.matchType = descriptor.getMatchType();
+    }
+ 
     public SearchMatch(Type matchType, Set<org.integratedmodelling.kim.api.IKimConcept.Type> conceptType) {
         this.matchType = matchType;
         this.conceptType.addAll(conceptType);

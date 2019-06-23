@@ -48,7 +48,7 @@ public class Criterion implements ICriterion {
 
     @Override
     public String getName() {
-        return observable.getLocalName();
+        return observable.getName();
     }
 
     @Override

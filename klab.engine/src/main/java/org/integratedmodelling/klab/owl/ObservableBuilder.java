@@ -1161,13 +1161,20 @@ public class ObservableBuilder implements IObservable.Builder {
 		return ontology.getConcept(conceptId);
 	}
 
-	// TODO USE FULL DEFINITION AND CODE WHEN CREATING ALL THE make() CONCEPTS!
 
+	/**
+	 * type of <trait> makes a CLASS that incarnates the trait as a quality and whose values
+	 * are the concrete children of the trait.
+	 * 
+	 * @param classified
+	 * @param addDefinition
+	 * @return
+	 */
 	public Concept makeType(IConcept classified, boolean addDefinition) {
 
-		if (classified.is(Type.TRAIT)) {
-			monitor.error("Traits cannot be further classified", declaration);
-		}
+//		if (classified.is(Type.TRAIT)) {
+//			monitor.error("Traits cannot be further classified", declaration);
+//		}
 
 		String traitID = getCleanId(classified) + "Type";
 		String definition = UnarySemanticOperator.TYPE.declaration[0] + " " + classified.getDefinition();
@@ -1192,7 +1199,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			ontology.define(axioms);
 			IConcept ret = ontology.getConcept(conceptId);
 
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.EXPOSES_TRAIT_PROPERTY), classified, ontology);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.INCARNATES_TRAIT_PROPERTY), classified, ontology);
 
 			/*
 			 * types inherit the context from their trait

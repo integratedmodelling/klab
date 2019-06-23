@@ -12,6 +12,7 @@ import java.util.Map;
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kim.api.IKimAnnotation;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IPrototype;
@@ -250,6 +251,13 @@ public enum Annotations implements IAnnotationService {
             IKimObject mobject = Resources.INSTANCE.getModelObject(object.toString());
             if (mobject != null) {
                 collectAnnotations(mobject, collection);
+            }
+            if (((IConcept)object).is(Type.CLASS)) {
+                // collect annotations from what is classified
+                IConcept classified = Types.INSTANCE.getIncarnatedType((IConcept)object);
+                if (classified != null) {
+                    collectAnnotations(classified, collection);
+                }
             }
         }
     }

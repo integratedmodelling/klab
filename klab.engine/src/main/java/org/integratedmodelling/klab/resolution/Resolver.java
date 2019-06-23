@@ -432,7 +432,7 @@ public enum Resolver {
             Coverage newCoverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
             if (newCoverage.isEmpty()) {
                 parentScope.getMonitor().info("discarding first choice " + model.getId() + " due to missing dependency "
-                        + observable.observables.get(0).getLocalName());
+                        + observable.observables.get(0).getName());
                 break;
             }
             coverage = newCoverage;

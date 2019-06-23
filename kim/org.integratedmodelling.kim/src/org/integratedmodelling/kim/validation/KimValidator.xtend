@@ -1400,6 +1400,19 @@ class KimValidator extends AbstractKimValidator {
 					}
 					operator.add(Type.MAGNITUDE)
 					operator.add(Type.SUBJECTIVE)
+				} else if (concept.isType) {
+					if (flags.contains(Type.TRAIT)) {
+					   if (!flags.contains(Type.ABSTRACT)) {
+						error("Types of traits can only be referenced for abstract traits", concept.concept, null,
+							KimPackage.CONCEPT__CONCEPT)
+					   }
+					} else if (flags.contains(Type.QUALITY)) {
+						error("Qualities cannot be further categorized", concept.concept, null,
+							KimPackage.CONCEPT__CONCEPT)
+					}
+					operator.add(Type.CLASS)
+				} else if (concept.isObservability) {
+					operator.add(Type.OBSERVABILITY)
 				} else if (concept.isOccurrence || concept.isPresence) {
 					if (!flags.contains(Type.DIRECT_OBSERVABLE)) {
 						error((if(concept.isOccurrence) 'Occurrence' else 'Presence') +
@@ -1442,7 +1455,8 @@ class KimValidator extends AbstractKimValidator {
 							concept.concept, null, KimPackage.CONCEPT__CONCEPT)
 					}
 					operator.add(Type.UNCERTAINTY)
-				} // TODO add observability and type
+				} 
+				
 				if (!operator.isEmpty) {
 					ret = Kim.INSTANCE.makeQuality(ret, operator.toArray(newArrayOfSize(operator.size())))
 					if (flags.contains(Type.MACRO)) {

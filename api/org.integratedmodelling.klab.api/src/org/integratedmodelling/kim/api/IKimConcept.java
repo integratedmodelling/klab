@@ -290,10 +290,6 @@ public interface IKimConcept extends IKimStatement {
 		 * 
 		 */
 		AMOUNT,
-		// /**
-		// *
-		// */
-		// ASSESSMENT,
 		/**
 		 * 
 		 */

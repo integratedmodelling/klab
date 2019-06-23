@@ -57,6 +57,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.kim.ClassifierRHS;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.Literal;
@@ -772,10 +773,6 @@ public enum Kim {
 		return map == null ? null : map.get(st.getName());
 	}
 
-	// public void setUrnDescriptor(String urn, UrnDescriptor descriptor) {
-	// urnDescriptors.put(urn, descriptor);
-	// }
-
 	public void setConceptDescriptor(String conceptId, ConceptDescriptor descriptor) {
 		setConceptDescriptor(conceptId, descriptor, false);
 	}
@@ -799,35 +796,6 @@ public enum Kim {
 		return ret;
 	}
 
-	// public boolean isLibraryInitialized() {
-	// return libraryInitialized;
-	// }
-	//
-	// public void setLibraryInitialized(boolean b) {
-	// libraryInitialized = b;
-	// }
-
-	// /**
-	// * Get the workspace containing the worldview and any library.
-	// *
-	// * @param libname
-	// * the libname
-	// * @param overridingProjects
-	// * the overriding projects
-	// * @return the workspace
-	// */
-	// public KimWorkspace getLibrary(String libname, File... overridingProjects) {
-	//
-	// if (!workspaceInited) {
-	// // TODO substitute with callback
-	// libWorkspace = new KimWorkspace(
-	// new File(System.getProperty("user.home") + File.separator + ".klab" +
-	// File.separator + libname));
-	// workspaceInited = true;
-	// }
-	// return libWorkspace;
-	// }
-
 	public boolean hasErrors(EObject object) {
 		ICompositeNode node = NodeModelUtils.getNode(object);
 		return node == null || checkNodeForErrors(node);
@@ -848,6 +816,7 @@ public enum Kim {
 	}
 
 	public EnumSet<Type> makeQuality(EnumSet<Type> original, Type... quality) {
+	    
 		// remove any direct observable flags, add the one specified and quality
 		EnumSet<Type> ret = EnumSet.copyOf(original);
 		ret.removeAll(IKimConcept.DIRECT_OBSERVABLE_TYPES);
@@ -871,6 +840,48 @@ public enum Kim {
 	public void reportLibraryError(Issue issue) {
 		// TODO use callback
 		System.out.println(issue.toString());
+	}
+	
+	public EnumSet<Type> getType(UnarySemanticOperator operator) {
+	    
+	    switch (operator) {
+        case ASSESSMENT:
+            // won't happen
+            break;
+        case COUNT:
+            return getType("count");
+        case DISTANCE:
+            return getType("distance");
+        case MAGNITUDE:
+            return getType("magnitude");
+        case MONETARY_VALUE:
+            return getType("money");
+        case OBSERVABILITY:
+            return getType("observability");
+        case OCCURRENCE:
+            return getType("occurrence");
+        case PERCENTAGE:
+            return getType("percentage");
+        case PRESENCE:
+            return getType("presence");
+        case PROBABILITY:
+            return getType("probability");
+        case PROPORTION:
+            return getType("proportion");
+        case RATIO:
+            return getType("ratio");
+        case TYPE:
+            return getType("class");
+        case UNCERTAINTY:
+            return getType("uncertainty");
+        case VALUE:
+            return getType("value");
+        case NOT:
+        default:
+            break;
+	    }
+	    
+	    return null;
 	}
 
 	public EnumSet<Type> getType(String string) {
@@ -972,9 +983,6 @@ public enum Kim {
 			return EnumSet.of(Type.DISTANCE, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "process":
 			return EnumSet.of(Type.PROCESS, Type.DIRECT_OBSERVABLE, Type.OBSERVABLE);
-		// case "assessment":
-		// return EnumSet.of(Type.ASSESSMENT, Type.PROCESS, Type.DIRECT_OBSERVABLE,
-		// Type.OBSERVABLE);
 		case "agent":
 			return EnumSet.of(Type.AGENT, Type.DIRECT_OBSERVABLE, Type.COUNTABLE, Type.OBSERVABLE);
 		case "event":

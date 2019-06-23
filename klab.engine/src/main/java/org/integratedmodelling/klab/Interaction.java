@@ -84,7 +84,7 @@ public enum Interaction implements IInteractionService {
 			p.setId(parameter);
 			p.setDescription(prototype.getArgument(parameter).getDescription());
 			p.setLabel(prototype.getArgument(parameter).getLabel() + " for "
-					+ StringUtils.capitalize(observable.getLocalName().replaceAll("_", " ")));
+					+ StringUtils.capitalize(observable.getName().replaceAll("_", " ")));
 			p.setType(prototype.getArgument(parameter).getType());
 
 			p.setSectionTitle(prototype.getLabel());

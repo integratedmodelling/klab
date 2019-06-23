@@ -169,7 +169,7 @@ public class DataflowCompiler {
             actuator.setObservable(((ResolutionScope) scope).getObservable());
             actuator.setType(Type.OBJECT);
             actuator.setNamespace(((ResolutionScope) scope).getResolutionNamespace());
-            actuator.setName(((ResolutionScope) scope).getObservable().getLocalName());
+            actuator.setName(((ResolutionScope) scope).getObservable().getName());
             setModelContext(((ResolutionScope) scope).getContextModel(), actuator, ret);
             ret.getActuators().add(actuator);
             ret.setNamespace(actuator.getNamespace());
@@ -189,7 +189,7 @@ public class DataflowCompiler {
                 if (((Observable) contextModel.getObservables().get(i)).isResolved()) {
                     Actuator child = Actuator.create(dataflow, Mode.RESOLUTION);
                     child.setObservable(new Observable((Observable) contextModel.getObservables().get(i)));
-                    child.setName(contextModel.getObservables().get(i).getLocalName());
+                    child.setName(contextModel.getObservables().get(i).getName());
                     child.setType(contextModel.getObservables().get(i).getArtifactType());
                     child.addComputation(ComputableResource.create(contextModel.getObservables().get(i).getValue()));
                     actuator.getActuators().add(child);
@@ -308,7 +308,7 @@ public class DataflowCompiler {
              */
             Actuator ret = Actuator.create(dataflow, mode);
 
-            String localName = observable.getLocalName();
+            String localName = observable.getName();
             ret.setObservable(observable);
             ret.setAlias(localName);
 
@@ -346,7 +346,7 @@ public class DataflowCompiler {
                 ret.setInput(true);
 
             } else {
-                ret.setName(observable.getLocalName());
+                ret.setName(observable.getName());
             }
 
             /*
@@ -360,7 +360,7 @@ public class DataflowCompiler {
             if (models.size() == 1 && !this.hasPartitions) {
 
                 ModelD theModel = models.iterator().next();
-                defineActuator(ret, root ? observable.getLocalName() : theModel.model.getLocalNameFor(observable),
+                defineActuator(ret, root ? observable.getName() : theModel.model.getLocalNameFor(observable),
                         theModel, generated);
 
             } else if (this.hasPartitions) {
@@ -385,7 +385,7 @@ public class DataflowCompiler {
                     // rename and set the target name as partitioned. Number is the priority if
                     // known.
                     String name = modelDesc.model.getLocalNameFor(observable) + "_" + index;
-                    partial.setPartitionedTarget(observable.getLocalName());
+                    partial.setPartitionedTarget(observable.getName());
 
                     partial.setObservable(observable);
                     partial.setType(ret.getType());
@@ -417,7 +417,7 @@ public class DataflowCompiler {
                     // as is.
                     for (IObservable mobs : mergedCatalog) {
                         if (observable.equals(mobs)) {
-                            ret.setName(mobs.getLocalName());
+                            ret.setName(mobs.getName());
                         }
                     }
                 } else {
@@ -604,7 +604,7 @@ public class DataflowCompiler {
                     // only happens when the observable is resolved indirectly
                     compatibleOutput = ret.observable;
                 }
-                observableCatalog.put(compatibleOutput.getLocalName(), compatibleOutput);
+                observableCatalog.put(compatibleOutput.getName(), compatibleOutput);
 
                 ModelD md = compileModel(model, /*d.indirectAdapters,*/ d.isPartition && honorPartitions);
                 for (ResolutionEdge o : graph.incomingEdgesOf(model)) {
@@ -780,7 +780,7 @@ public class DataflowCompiler {
         IResolvable ret = resolvable;
         if (context != null && ret instanceof Observable) {
             IRuntimeContext ctx = context.getRuntimeContext();
-            IArtifact existing = ctx.getArtifact(((Observable) ret).getLocalName());
+            IArtifact existing = ctx.getArtifact(((Observable) ret).getName());
             if (existing instanceof IObservation) {
                 IObservable existingObservable = ((IObservation) existing).getObservable();
                 if (!existingObservable.equals(ret)) {
@@ -792,15 +792,15 @@ public class DataflowCompiler {
                         if (a.getSecond().equals(ret)) {
                             return a.getSecond();
                         }
-                        if (a.getFirst().equals(((Observable) ret).getLocalName())) {
+                        if (a.getFirst().equals(((Observable) ret).getName())) {
                             nexisting++;
                         }
                     }
 
-                    String newName = ((Observable) ret).getLocalName() + "$" + (nexisting + 1);
+                    String newName = ((Observable) ret).getName() + "$" + (nexisting + 1);
                     Observable newObservable = new Observable((Observable) ret);
                     newObservable.setName(newName);
-                    ambiguous.add(new Pair<>(((Observable) ret).getLocalName(), newObservable));
+                    ambiguous.add(new Pair<>(((Observable) ret).getName(), newObservable));
                     ret = newObservable;
                 }
             }

@@ -171,7 +171,7 @@ public class MCAContext {
 			// get the alternatives and ensure enough of them contain values for ranking. If
 			// not and the criteria
 			// are distributed, give them states based on views.
-			final IArtifact alternativesArtifact = context.getArtifact(alternativeObservable.getLocalName());
+			final IArtifact alternativesArtifact = context.getArtifact(alternativeObservable.getName());
 			if (!(alternativesArtifact instanceof IObjectArtifact)) {
 				throw new KlabValidationException("mca: alternatives are not suitable for ranking");
 			}
@@ -228,7 +228,7 @@ public class MCAContext {
 	private ICriterion buildCriterion(IObservable observable, IRuntimeContext context) {
 
 		ICriterion ret = null;
-		IArtifact crit = context.getArtifact(observable.getLocalName());
+		IArtifact crit = context.getArtifact(observable.getName());
 		if (crit != null) {
 			if (!(crit instanceof IState)) {
 				throw new KlabValidationException("mca: criteria must be qualities");
@@ -259,7 +259,7 @@ public class MCAContext {
 
 			final Stakeholder stakeholder = getOrCreate(Concepts.INSTANCE.getDisplayName(oobs));
 			stakeholder.setObservable(oobs);
-			stakeholder.setWeight(observable.getLocalName(), ((Number) value.get(o)).doubleValue());
+			stakeholder.setWeight(observable.getName(), ((Number) value.get(o)).doubleValue());
 		}
 
 	}

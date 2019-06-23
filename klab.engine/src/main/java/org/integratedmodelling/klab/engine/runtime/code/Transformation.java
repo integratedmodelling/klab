@@ -20,7 +20,7 @@ public class Transformation extends ComputableResource {
 	public Transformation(IComputableResource resource, IObservable transformedObservable) {
 		KimServiceCall call = new KimServiceCall(resource.getServiceCall().getName(),
 				resource.getServiceCall().getParameters());
-		call.getParameters().put("artifact", transformedObservable.getLocalName());
+		call.getParameters().put("artifact", transformedObservable.getName());
 		setServiceCall(call);
 		setType(Type.SERVICE);
 	}

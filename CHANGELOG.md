@@ -27,17 +27,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Added value operators to observable syntax, allowing expressions as observables and as dependencies.
+  Quantitative aggregation using 'by' is already working.
 - Template-based system documents all nodes in the dataflow, accessible through single-clicking each
-  node.
+  node. Contextualizer can now add documentation items by implementing IDocumentationProvider.
+- Reporting engine collects tags for contextualizer-provided docs and inserts those not used in templates
+  in the appendix.
 - Enable trailing 'l' (lowercase only) to specify long integers in k.IM. Used in time specs to discriminate
   millisecond parameters.
 - Add 'expression' modifier to tag inputs that accept expressions in k.DL.
 - Add 'process' modifier to specify filter services in k.DL, used to validate role contextualizers. Expose
   as isProcessor() in both actuator and prototype API. Produce tag interface for contextualizers.
 - Better behavior and proper loading of imported BIF files in WEKA resources.
-- Enable much more functionality in search bar completion, including modifiers.
-- Start implementing modified observables. Quantitative aggregation using 'by' now works.
+- Enable much more functionality in search bar completion, including modifiers in preparation for
+  the full set of value operators.
 ### Changed
+- Interpret 'type of <trait>' as the quality that incarnates that trait in a context. This makes it
+  possible to stop using traits as observables (e.g. LandCoverType is type of LandCover).
 - Overhaul the dataflow visualization, with better and complete representation of all links within and 
   across components and computations. System now carries types for computations, enabling forthcoming
   customization of graph, and discovers 'hidden' links from expressions in parameters and tables.

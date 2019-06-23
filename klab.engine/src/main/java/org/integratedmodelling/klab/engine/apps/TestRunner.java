@@ -200,7 +200,7 @@ public class TestRunner implements Annotations.Handler {
 												if (layerName == null) {
 													int gsize = a.groupSize();
 													layerName = gsize == 1
-															? (((IDirectObservation) a).getObservable().getLocalName())
+															? (((IDirectObservation) a).getObservable().getName())
 															: (Concepts.INSTANCE.getDisplayName(
 																	((IDirectObservation) a).getObservable().getType())
 																	+ " [" + gsize + "]");

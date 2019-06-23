@@ -640,7 +640,7 @@ public class ModelKbox extends ObservableKbox {
 				m.setObservableConcept(type.getType());
 				m.setObservationType(attr.getObservationType().name());
 				// m.setObservationConcept(attr.getObservationType());
-				m.setDereifyingAttribute(attr.getLocalName());
+				m.setDereifyingAttribute(attr.getName());
 				m.setMediation(Mediation.DEREIFY_QUALITY);
 				ret.add(m);
 			}

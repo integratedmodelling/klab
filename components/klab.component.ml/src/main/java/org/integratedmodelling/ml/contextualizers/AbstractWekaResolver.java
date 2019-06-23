@@ -90,7 +90,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
             IObservable obs = context.getModel().getObservables().get(i);
             if (obs.getType().is(Type.UNCERTAINTY)
                     && ret.getObservable().getType().is(Observables.INSTANCE.getInherentType(obs.getType()))) {
-                uncertainty = context.getArtifact(obs.getLocalName(), IState.class);
+                uncertainty = context.getArtifact(obs.getName(), IState.class);
             }
         }
 
@@ -255,7 +255,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 
             boolean predicted = false;
 
-            if (attribute.name().equals(instances.getPredicted().getObservable().getLocalName())) {
+            if (attribute.name().equals(instances.getPredicted().getObservable().getName())) {
                 predicted = true;
             }
 

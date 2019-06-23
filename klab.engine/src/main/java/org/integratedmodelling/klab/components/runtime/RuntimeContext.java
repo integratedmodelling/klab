@@ -184,7 +184,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		RuntimeContext ret = new RuntimeContext(this);
 
 		ret.parent = this;
-		ret.targetName = indirectTarget.getLocalName();
+		ret.targetName = indirectTarget.getName();
 		ret.artifactType = Observables.INSTANCE.getObservableType(indirectTarget, true);
 		ret.semantics = new HashMap<>();
 		ret.targetSemantics = indirectTarget;
@@ -759,7 +759,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		if (actuator.getModel() != null) {
 			for (int i = 1; i < actuator.getModel().getObservables().size(); i++) {
 				IObservable output = actuator.getModel().getObservables().get(i);
-				targetObservables.put(output.getLocalName(), new Pair<>((Observable) output,
+				targetObservables.put(output.getName(), new Pair<>((Observable) output,
 						output.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
 			}
 		}
@@ -768,8 +768,8 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		 * add any target of indirect computations
 		 */
 		for (IComputableResource computation : actuator.getComputation()) {
-			if (computation.getTarget() != null && this.catalog.get(computation.getTarget().getLocalName()) == null) {
-				targetObservables.put(computation.getTarget().getLocalName(),
+			if (computation.getTarget() != null && this.catalog.get(computation.getTarget().getName()) == null) {
+				targetObservables.put(computation.getTarget().getName(),
 						new Pair<>((Observable) computation.getTarget(), computation.getComputationMode()));
 			}
 		}
@@ -910,7 +910,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		if (this.rootSubject == null && observation instanceof ISubject) {
 			this.rootSubject = (ISubject) observation;
 		}
-		this.catalog.put(observable.getLocalName(), observation);
+		this.catalog.put(observable.getName(), observation);
 		this.structure.addVertex(observation);
 		if (contextSubject != null) {
 			this.structure.addEdge(observation,
@@ -982,14 +982,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	@Override
 	public Pair<String, IArtifact> findArtifact(IObservable observable) {
 	    
-	    if (observable.getLocalName().contains("population")) {
-	        System.out.println("ZOZO");
-	    }
-	    
 		for (String key : catalog.keySet()) {
-	        if (key.contains("human_individual")) {
-	            System.out.println("ZOZO");
-	        }
 			IArtifact artifact = catalog.get(key);
 			if (artifact != null && artifact instanceof IObservation
 					&& ((Observable) ((IObservation) artifact).getObservable()).canResolve((Observable) observable)) {
@@ -1003,7 +996,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		for (String key : catalog.keySet()) {
 			IArtifact artifact = catalog.get(key);
 			if (artifact != null && artifact instanceof IObservation
-					&& ((Observable) ((IObservation) artifact).getObservable()).getLocalName().equals(name)) {
+					&& ((Observable) ((IObservation) artifact).getObservable()).getName().equals(name)) {
 				return artifact;
 			}
 		}

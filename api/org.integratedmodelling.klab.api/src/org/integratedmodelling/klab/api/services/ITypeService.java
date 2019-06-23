@@ -25,6 +25,6 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
  */
 public interface ITypeService {
 
-	IConcept getByType(IConcept concept);
+//	IConcept getByType(IConcept concept);
 
 }

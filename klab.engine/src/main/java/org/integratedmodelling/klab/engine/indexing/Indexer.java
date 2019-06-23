@@ -47,14 +47,14 @@ public enum Indexer {
 
     INSTANCE;
 
-    private Directory                                     index;
-    private IndexWriter                                   writer;
-    private StandardAnalyzer                              analyzer;
-    private ReferenceManager<IndexSearcher>               searcherManager;
+    private Directory index;
+    private IndexWriter writer;
+    private StandardAnalyzer analyzer;
+    private ReferenceManager<IndexSearcher> searcherManager;
     private ControlledRealTimeReopenThread<IndexSearcher> nrtReopenThread;
     // private QueryParser namespaceRemover;
 
-    public static final int                               MAX_RESULT_COUNT = 9;
+    public static final int MAX_RESULT_COUNT = 9;
 
     private Indexer() {
         try {
@@ -70,8 +70,7 @@ public enum Indexer {
              */
             nrtReopenThread = new ControlledRealTimeReopenThread<IndexSearcher>(writer, searcherManager, 1.0, 0.1);
             nrtReopenThread.setName("NRT Reopen Thread");
-            nrtReopenThread
-                    .setPriority(Math.min(Thread.currentThread().getPriority() + 2, Thread.MAX_PRIORITY));
+            nrtReopenThread.setPriority(Math.min(Thread.currentThread().getPriority() + 2, Thread.MAX_PRIORITY));
             nrtReopenThread.setDaemon(true);
             nrtReopenThread.start();
 
@@ -110,8 +109,7 @@ public enum Indexer {
 
         } else if (object instanceof IKimModel && ((IKimModel) object).isSemantic()) {
 
-            ret = new SearchMatch(Match.Type.MODEL, ((IKimModel) object).getObservables().get(0).getMain()
-                    .getType());
+            ret = new SearchMatch(Match.Type.MODEL, ((IKimModel) object).getObservables().get(0).getMain().getType());
             ret.setDescription(((IKimModel) object).getDocstring());
             ret.setName(((IKimModel) object).getName());
             ret.setId(((IKimModel) object).getName());
@@ -119,8 +117,7 @@ public enum Indexer {
 
         } else if (object instanceof IKimObserver) {
 
-            ret = new SearchMatch(Match.Type.OBSERVATION, ((IKimObserver) object).getObservable().getMain()
-                    .getType());
+            ret = new SearchMatch(Match.Type.OBSERVATION, ((IKimObserver) object).getObservable().getMain().getType());
             ret.setDescription(((IKimObserver) object).getDocstring());
             ret.setName(((IKimObserver) object).getName());
             ret.setId(((IKimObserver) object).getName());
@@ -142,13 +139,11 @@ public enum Indexer {
                 }
 
                 // index type and concepttype as ints
-                document.add(new IntPoint("ctype", Kim.INSTANCE.getFundamentalType(ret.conceptType)
-                        .ordinal()));
+                document.add(new IntPoint("ctype", Kim.INSTANCE.getFundamentalType(ret.conceptType).ordinal()));
                 document.add(new IntPoint("mtype", ret.getMatchType().ordinal()));
                 document.add(new IntPoint("abstract", ret.isAbstract() ? 1 : 0));
                 // ..store them
-                document.add(new StoredField("vctype", Kim.INSTANCE.getFundamentalType(ret.conceptType)
-                        .ordinal()));
+                document.add(new StoredField("vctype", Kim.INSTANCE.getFundamentalType(ret.conceptType).ordinal()));
                 document.add(new StoredField("vmtype", ret.getMatchType().ordinal()));
                 document.add(new StoredField("smtype", encodeType(semanticType)));
 
@@ -226,11 +221,10 @@ public enum Indexer {
         SearchContext context = (SearchContext) searchContext;
         List<Match> ret = new ArrayList<>();
 
-//
-//        
-//        System.out.println("QUERYING context: ================\n" + ((SearchContext)context).dump());
+        //
+        //        
+        //        System.out.println("QUERYING context: ================\n" + ((SearchContext)context).dump());
 
-        
         for (Constraint constraint : context.getConstraints()) {
 
             List<Match> cret = new ArrayList<>();
@@ -240,7 +234,12 @@ public enum Indexer {
             Set<String> ids = new HashSet<>();
 
             if (constraint.isMatcher()) {
-                cret.addAll(constraint.getMatches(currentTerm));
+                for (Match match : constraint.getMatches(currentTerm)) {
+                    if (!ids.contains(match.getId())) {
+                        cret.add(match);
+                        ids.add(match.getId());
+                    }
+                }
             }
 
             if (constraint.isQuery()) {
@@ -254,8 +253,7 @@ public enum Indexer {
                 }
 
                 try {
-                    TopDocs docs = searcher
-                            .search(constraint.buildQuery(currentTerm, this.analyzer), maxResults);
+                    TopDocs docs = searcher.search(constraint.buildQuery(currentTerm, this.analyzer), maxResults);
                     ScoreDoc[] hits = docs.scoreDocs;
 
                     for (ScoreDoc hit : hits) {
@@ -280,7 +278,7 @@ public enum Indexer {
                             ids.add(document.get("id"));
                         }
                     }
-                    
+
                 } catch (Exception e) {
                     throw new KlabIOException(e);
                 } finally {
@@ -301,19 +299,24 @@ public enum Indexer {
                     }
                 }
                 cret.clear();
-                cret.addAll(fret);
+                for (Match match : fret) {
+                    if (!ids.contains(match.getId())) {
+                        cret.add(match);
+                        ids.add(match.getId());
+                    }
+                }
             }
 
             ret.addAll(cret);
 
         }
 
-//		System.out.println("MATCHES: ==============================\n");
-//		int i = 0;
-//        for (Match match : ret) {
-//        	System.out.println(++i + "] " + match);
-//        }
-        
+        //		System.out.println("MATCHES: ==============================\n");
+        //		int i = 0;
+        //        for (Match match : ret) {
+        //        	System.out.println(++i + "] " + match);
+        //        }
+
         return ret;
     }
 

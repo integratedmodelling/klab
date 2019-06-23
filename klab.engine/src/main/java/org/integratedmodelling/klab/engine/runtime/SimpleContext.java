@@ -116,7 +116,7 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 		this.semantics = new HashMap<>();
 		this.namespace = Namespaces.INSTANCE.getNamespace(observable.getType().getNamespace());
 		this.monitor = monitor;
-		this.target = this.rootSubject = new Subject(observable.getLocalName(), (Observable) observable, (Scale) scale,
+		this.target = this.rootSubject = new Subject(observable.getName(), (Observable) observable, (Scale) scale,
 				this);
 		this.structure.addVertex(this.target);
 		this.artifacts.put(this.getTargetName(), this.target);
@@ -273,7 +273,7 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 			return targetName;
 		}
 		return target instanceof IDirectObservation ? ((IDirectObservation) target).getName()
-				: target.getObservable().getLocalName();
+				: target.getObservable().getName();
 	}
 
 	@Override
@@ -418,13 +418,13 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 		}
 
 		this.observable = observable;
-		semantics.put(observable.getLocalName(), observable);
+		semantics.put(observable.getName(), observable);
 
 		structure.addVertex(ret.target);
 		structure.addEdge(ret.target, this.target);
-		artifacts.put(observable.getLocalName(), ret.target);
+		artifacts.put(observable.getName(), ret.target);
 		observations.put(ret.target.getId(), ret.target);
-		ret.targetName = observable.getLocalName();
+		ret.targetName = observable.getName();
 		ret.parent = this;
 
 		return ret;
@@ -461,7 +461,7 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 	public IRuntimeContext createChild(IObservable indirectTarget) {
 		SimpleContext ret = new SimpleContext(this);
 		ret.observable = indirectTarget;
-		ret.targetName = indirectTarget.getLocalName();
+		ret.targetName = indirectTarget.getName();
 		ret.target = (IObservation) getArtifact(ret.targetName);
 		ret.setSemantics(ret.targetName, indirectTarget);
 		return ret;

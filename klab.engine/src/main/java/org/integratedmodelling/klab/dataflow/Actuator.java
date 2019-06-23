@@ -310,7 +310,7 @@ public class Actuator implements IActuator {
             IRuntimeContext context = ctx;
 
             if (indirectTarget != null) {
-                targetId = indirectTarget.getLocalName();
+                targetId = indirectTarget.getName();
                 /*
                  * TODO check if we should do this even for the normal target, so we don't carry
                  * previous parameters around.
@@ -338,7 +338,7 @@ public class Actuator implements IActuator {
             if (indirectTarget == null) {
                 ret = artifactTable.get(targetId);
             } else if (!runtimeContext.getMonitor().isInterrupted()) {
-                context.setData(indirectTarget.getLocalName(), artifactTable.get(targetId));
+                context.setData(indirectTarget.getName(), artifactTable.get(targetId));
             }
 
             if (model != null && !input && !artifacts.contains(ret)) {
@@ -381,7 +381,7 @@ public class Actuator implements IActuator {
             List<IObservation> secondary = new ArrayList<>();
             if (model != null) {
                 for (int i = 0; i < model.getObservables().size(); i++) {
-                    IArtifact artifact = ctx.getArtifact(model.getObservables().get(i).getLocalName());
+                    IArtifact artifact = ctx.getArtifact(model.getObservables().get(i).getName());
                     if (!artifacts.contains(artifact) && artifact instanceof IObservation) {
                         secondary.add((IObservation) artifact);
                     }
@@ -670,7 +670,7 @@ public class Actuator implements IActuator {
                         + computationStrategy.get(i).getFirst().getSourceCode()
                         + ((computationStrategy.get(i).getSecond().getTarget() == null
                                 || computationStrategy.get(i).getSecond().getTarget().equals(observable)) ? ""
-                                        : (" as " + computationStrategy.get(i).getSecond().getTarget().getLocalName()))
+                                        : (" as " + computationStrategy.get(i).getSecond().getTarget().getName()))
                         + (nout < computationStrategy.size() - 1 ? "," : "") + "\n";
                 nout++;
             }

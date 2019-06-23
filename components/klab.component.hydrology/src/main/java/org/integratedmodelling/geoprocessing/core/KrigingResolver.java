@@ -129,11 +129,11 @@ public class KrigingResolver implements IResolver<IState>, IExpression {
 				if (stateId == null) {
 					if (state.getObservable().getType().equals(this.observable)) {
 						svalue = state;
-						stateId = state.getObservable().getLocalName();
+						stateId = state.getObservable().getName();
 						break;
 					}
 				} else {
-					if (state.getObservable().getLocalName().equals(stateId)) {
+					if (state.getObservable().getName().equals(stateId)) {
 						svalue = state;
 						break;
 					}

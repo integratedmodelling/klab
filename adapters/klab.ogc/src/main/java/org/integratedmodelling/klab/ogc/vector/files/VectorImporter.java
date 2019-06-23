@@ -151,13 +151,13 @@ public class VectorImporter extends AbstractFilesetImporter {
                     if (!Utils.isPOD(type)) {
                         type = String.class;
                     }
-                    String attr = state.getObservable().getLocalName();
+                    String attr = state.getObservable().getName();
                     if (attr.length() > 10) {
                         attr = attr.substring(0, 10);
                         monitor.warn("shapefile export: shortening attribute name "
-                                + state.getObservable().getLocalName() + " to " + attr);
+                                + state.getObservable().getName() + " to " + attr);
                     }
-                    stateId.add(new Pair<>(state.getObservable().getLocalName(), attr));
+                    stateId.add(new Pair<>(state.getObservable().getName(), attr));
                     builder.add(attr, type);
                 }
             }
@@ -190,7 +190,7 @@ public class VectorImporter extends AbstractFilesetImporter {
                         Object value = null;
                         boolean found = false;
                         for (IState state : ((IDirectObservation) obs).getStates()) {
-                            if (state.getObservable().getLocalName().equals(s.getFirst())) {
+                            if (state.getObservable().getName().equals(s.getFirst())) {
                                 value = state.aggregate(((IDirectObservation) obs).getScale()
                                         .at(locator), Utils
                                                 .getClassForType(state.getObservable().getArtifactType()));

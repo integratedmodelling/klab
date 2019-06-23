@@ -340,17 +340,13 @@ public enum KimKnowledgeProcessor {
 				declaration += " down to " + by;
 			}
 
-//			IConcept classifiedType = Types.INSTANCE.getTypeByTrait(ret, by, downTo, (Ontology) declarationOntology);
-
-//			ret.setObservable((Concept) classifiedType);
 			ret.setClassifier(by);
 			// force re-creation of name
-			ret.setName(ret.getLocalName() + "_by_" + modifier.getCodeName().replaceAll("\\-", "_"));
+			ret.setName(ret.getName() + "_by_" + modifier.getCodeName().replaceAll("\\-", "_"));
 			ret.setDownTo(downTo);
 			if (downTo != null) {
-				ret.setName(ret.getLocalName() + "_down_to_" + concept.getDownTo().getCodeName().replaceAll("\\-", "_"));
+				ret.setName(ret.getName() + "_down_to_" + concept.getDownTo().getCodeName().replaceAll("\\-", "_"));
 			}
-//			ret.setDeclaration(classifiedType.getDefinition());
 		}
 
 		for (IKimAnnotation annotation : concept.getAnnotations()) {

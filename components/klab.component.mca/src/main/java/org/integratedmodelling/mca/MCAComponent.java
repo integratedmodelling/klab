@@ -179,7 +179,7 @@ public class MCAComponent {
 
 		for (IObservable observable : context.getModel().getDependencies()) {
 			if (getAnnotation(observable, ALTERNATIVE_ANNOTATION_ID) != null) {
-				alternativesArtifact = context.getArtifact(observable.getLocalName());
+				alternativesArtifact = context.getArtifact(observable.getName());
 				if (alternativesArtifact == null || !(alternativesArtifact instanceof ObservationGroup)
 						|| alternativesArtifact.groupSize() < 2) {
 					context.getMonitor()
@@ -188,7 +188,7 @@ public class MCAComponent {
 
 				}
 			} else if (getAnnotation(observable, STAKEHOLDER_ANNOTATION_ID) != null) {
-				stakeholdersArtifact = context.getArtifact(observable.getLocalName());
+				stakeholdersArtifact = context.getArtifact(observable.getName());
 				if (stakeholdersArtifact == null || !(stakeholdersArtifact instanceof ObservationGroup)
 						|| alternativesArtifact.groupSize() < 1) {
 					context.getMonitor()
@@ -386,7 +386,7 @@ public class MCAComponent {
 						// TODO set from a view of the distributed criteria
 					} else {
 						for (IState state : ((IDirectObservation) alt).getStates()) {
-							if (state.getObservable().getLocalName().equals(criterion.getName())) {
+							if (state.getObservable().getName().equals(criterion.getName())) {
 								alternative.setValue(criterion, state.aggregate(context.getScale(), Double.class));
 							}
 						}
@@ -424,8 +424,7 @@ public class MCAComponent {
 		Map<IConcept, Double> weights = new HashMap<>();
 
 		public String getName() {
-			// TODO Auto-generated method stub
-			return observable.getLocalName();
+			return observable.getName();
 		}
 
 		public IConcept getCriterionType() {

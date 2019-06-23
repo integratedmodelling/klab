@@ -762,7 +762,7 @@ public enum Observables implements IObservableService {
     }
 
     public String getDisplayName(IObservable observable) {
-        String ret = observable.getLocalName();
+        String ret = observable.getName();
         int dollar = ret.indexOf('$');
         if (dollar >= 0) {
             // results from disambiguation; revert to original name

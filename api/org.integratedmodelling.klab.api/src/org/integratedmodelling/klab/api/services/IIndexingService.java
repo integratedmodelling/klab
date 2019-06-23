@@ -91,7 +91,7 @@ public interface IIndexingService {
 	 */
 	public interface Match {
 
-		public enum Type {
+        public enum Type {
 			CONCEPT, PREFIX_OPERATOR, INFIX_OPERATOR, OBSERVATION, MODEL, MODIFIER, PRESET_OBSERVABLE, SEPARATOR, OPEN_PARENTHESIS, CLOSED_PARENTHESIS
 		}
 

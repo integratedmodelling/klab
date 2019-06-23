@@ -49,8 +49,8 @@ public class ObjectClassificationResolver
 
     public static IServiceCall getServiceCall(IObservable classified, IObservable classifier)
             throws KlabValidationException {
-        return KimServiceCall.create(FUNCTION_ID, "artifact", classified.getLocalName(), "classifier",
-                classifier.getLocalName());
+        return KimServiceCall.create(FUNCTION_ID, "artifact", classified.getName(), "classifier",
+                classifier.getName());
     }
 
     @Override

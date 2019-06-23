@@ -328,7 +328,7 @@ public class Flowchart {
 
         String computationTarget = (computation.getSecond().getTarget() == null
                 || computation.getSecond().getTarget().equals(context.getObservable())) ? context.getName()
-                        : computation.getSecond().getTarget().getLocalName();
+                        : computation.getSecond().getTarget().getName();
         if (computation.getSecond().isMediation()) {
             computationTarget = formalNameOf(computation.getSecond().getMediationTargetId(), context);
         }
@@ -397,7 +397,7 @@ public class Flowchart {
                     for (String s : prototype.listInputTags()) {
                         for (IObservable observable : model.getDependencies()) {
                             if (Annotations.INSTANCE.hasAnnotation(observable, s)) {
-                                computationInputs.add(observable.getLocalName());
+                                computationInputs.add(observable.getName());
                             }
                         }
                     }

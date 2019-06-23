@@ -269,7 +269,7 @@ public enum Observations implements IObservationService {
 		ret.setParentId(parent == null ? null : parent.getId());
 
 		ret.setLabel(observation instanceof IDirectObservation ? ((IDirectObservation) observation).getName()
-				: observation.getObservable().getLocalName());
+				: observation.getObservable().getName());
 		ret.setLabel(StringUtils.capitalize(ret.getLabel().replaceAll("_", " ")));
 		if (observation.getObservable().getUnit() != null) {
 			ret.setLabel(ret.getLabel() + " [" + ((Unit) observation.getObservable().getUnit()).toUTFString() + "]");
@@ -506,7 +506,7 @@ public enum Observations implements IObservationService {
 			object = NumberFormat.getNumberInstance().format(((Number) object).doubleValue());
 		}
 
-		String ret = observable.getLocalName() + ": " + object;
+		String ret = observable.getName() + ": " + object;
 
 		if (observable.getUnit() != null) {
 			ret += " " + observable.getUnit();

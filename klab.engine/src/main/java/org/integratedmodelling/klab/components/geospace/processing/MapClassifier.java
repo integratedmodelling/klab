@@ -148,7 +148,7 @@ public class MapClassifier {
 			MapDescriptor md = new MapDescriptor(s, locator);
 			if (md.discretization != null || md.useRanks) {
 				this.states.add(md);
-				stateIndex.put(s.getObservable().getLocalName(), md);
+				stateIndex.put(s.getObservable().getName(), md);
 				md.index = i++;
 			} else {
 				context.getMonitor()

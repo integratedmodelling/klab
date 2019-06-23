@@ -301,7 +301,7 @@ public enum Renderer {
 							labels[i] = "" + values[i];
 						} else if (pair.getFirst() instanceof Boolean) {
 							values[i] = ((Boolean) pair.getFirst()) ? 1 : 0;
-							labels[i] = state.getObservable().getLocalName() + " "
+							labels[i] = state.getObservable().getName() + " "
 									+ ((Boolean) pair.getFirst() ? "present" : "absent");
 						}
 

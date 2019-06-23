@@ -251,7 +251,7 @@ public class WekaInstances {
 			boolean admitsNodata, IServiceCall classDiscretizer) {
 
 		this.predicted = predicted;
-		this.name = predicted.getObservable().getLocalName();
+		this.name = predicted.getObservable().getName();
 		this.context = context;
 		this.requiresDiscretization = mustDiscretize;
 		this.classDiscretizer = classDiscretizer;
@@ -263,13 +263,13 @@ public class WekaInstances {
 					MLComponent.PREDICTOR_ANNOTATION);
 
 			if (predictor != null) {
-				IArtifact artifact = context.getArtifact(dependency.getLocalName());
+				IArtifact artifact = context.getArtifact(dependency.getName());
 				if (!(artifact instanceof IState)) {
 					throw new IllegalArgumentException("Weka: predictors must be observations of qualities");
 				}
 				predictors.add((IState) artifact);
-				annotations.put(((IState) artifact).getObservable().getLocalName(), predictor);
-				attributeWeights.put(((IState) artifact).getObservable().getLocalName(), predictor.get("weight", 1.0));
+				annotations.put(((IState) artifact).getObservable().getName(), predictor);
+				attributeWeights.put(((IState) artifact).getObservable().getName(), predictor.get("weight", 1.0));
 
 				Ranges rng = new Ranges();
 				if (predictor.containsKey("include")) {
@@ -279,7 +279,7 @@ public class WekaInstances {
 					rng.exclude = predictor.get("exclude", Range.class);
 				}
 
-				ranges.put(((IObservation) artifact).getObservable().getLocalName(), rng);
+				ranges.put(((IObservation) artifact).getObservable().getName(), rng);
 
 			} else {
 
@@ -288,7 +288,7 @@ public class WekaInstances {
 
 				if (arch != null) {
 
-					IArtifact artifact = context.getArtifact(dependency.getLocalName());
+					IArtifact artifact = context.getArtifact(dependency.getName());
 					if (!(artifact instanceof ObservationGroup)) {
 						throw new IllegalArgumentException("Weka: archetypes must be observations of objects");
 					}
@@ -301,7 +301,7 @@ public class WekaInstances {
 					this.archetypes.add((ObservationGroup) artifact);
 					if (arch.containsKey("weight")) {
 						this.weightObservable = arch.get("weight", IConcept.class);
-						attributeWeights.put(((ObservationGroup) artifact).getObservable().getLocalName(), 1.0);
+						attributeWeights.put(((ObservationGroup) artifact).getObservable().getName(), 1.0);
 					}
 
 					Ranges rng = new Ranges();
@@ -314,7 +314,7 @@ public class WekaInstances {
 
 					// the artifact range is for the predicted variable, not for the archetype
 					// observation
-					ranges.put(predicted.getObservable().getLocalName(), rng);
+					ranges.put(predicted.getObservable().getName(), rng);
 				}
 			}
 		}
@@ -378,7 +378,7 @@ public class WekaInstances {
 
 	public IState getPredictor(String attributeName) {
 		for (IState state : predictors) {
-			if (state.getObservable().getLocalName().equals(attributeName)) {
+			if (state.getObservable().getName().equals(attributeName)) {
 				return state;
 			}
 		}
@@ -390,14 +390,14 @@ public class WekaInstances {
 		Attribute ret = null;
 		switch (observable.getObservable().getArtifactType()) {
 		case NUMBER:
-			ret = new Attribute(observable.getObservable().getLocalName());
+			ret = new Attribute(observable.getObservable().getName());
 			break;
 		case CONCEPT:
-			ret = new Attribute(observable.getObservable().getLocalName(),
+			ret = new Attribute(observable.getObservable().getName(),
 					new ArrayList<>(observable.getDataKey().getLabels()));
 			break;
 		case BOOLEAN:
-			ret = new Attribute(observable.getObservable().getLocalName(), Lists.newArrayList("false", "true"));
+			ret = new Attribute(observable.getObservable().getName(), Lists.newArrayList("false", "true"));
 			break;
 		default:
 			// shouldn't happen.
@@ -406,7 +406,7 @@ public class WekaInstances {
 		}
 
 		// attribute weight from predictor annotation. The archetype has always 1.
-		Double weight = attributeWeights.get(observable.getObservable().getLocalName());
+		Double weight = attributeWeights.get(observable.getObservable().getName());
 		ret.setWeight(weight == null ? 1.0 : weight);
 
 		return ret;
@@ -440,12 +440,12 @@ public class WekaInstances {
 
 					for (IState state : ((IDirectObservation) object).getStates()) {
 						if (state.getObservable().equals(predicted.getObservable())) {
-							stateIndex.put(state.getObservable().getLocalName(), 0);
+							stateIndex.put(state.getObservable().getName(), 0);
 						} else {
 							int i = 1;
 							for (IState predictor : predictors) {
 								if (state.getObservable().equals(predictor.getObservable())) {
-									stateIndex.put(state.getObservable().getLocalName(), i);
+									stateIndex.put(state.getObservable().getName(), i);
 								} else if (weightObservable != null && state.getObservable().is(weightObservable)) {
 									instanceWeight = state.aggregate(((IObservation) object).getScale(), Double.class);
 								}
@@ -464,7 +464,7 @@ public class WekaInstances {
 
 				boolean ignore = false;
 				for (IState state : ((IDirectObservation) object).getStates()) {
-					if (stateIndex.containsKey(state.getObservable().getLocalName())) {
+					if (stateIndex.containsKey(state.getObservable().getName())) {
 						Object o = state.aggregate(((IObservation) object).getScale(),
 								Utils.getClassForType(state.getObservable().getArtifactType()));
 						if (Observations.INSTANCE.isNodata(o)) {
@@ -474,7 +474,7 @@ public class WekaInstances {
 						} else {
 
 							if (o instanceof Number) {
-								Ranges rng = ranges.get(state.getObservable().getLocalName());
+								Ranges rng = ranges.get(state.getObservable().getName());
 								if (rng.include != null && !rng.include.contains(((Number) o).doubleValue())) {
 									ignore = true;
 									break;
@@ -485,7 +485,7 @@ public class WekaInstances {
 								}
 							}
 
-							instanceValues[stateIndex.get(state.getObservable().getLocalName())] = o;
+							instanceValues[stateIndex.get(state.getObservable().getName())] = o;
 						}
 					}
 				}
@@ -523,7 +523,7 @@ public class WekaInstances {
 
 		int i = 2;
 		for (IState predictor : predictors) {
-			IAnnotation annotation = annotations.get(predictor.getObservable().getLocalName());
+			IAnnotation annotation = annotations.get(predictor.getObservable().getName());
 			if (predictor.getObservable().getArtifactType() == Type.NUMBER) {
 				try {
 					if (annotation.containsKey("discretization")) {
@@ -536,10 +536,10 @@ public class WekaInstances {
 					}
 				} catch (Exception e) {
 					throw new IllegalStateException("Weka: error during discretization of "
-							+ predictor.getObservable().getLocalName() + ": " + e.getMessage());
+							+ predictor.getObservable().getName() + ": " + e.getMessage());
 				}
 			} else if (annotation.containsKey("discretization")) {
-				throw new IllegalArgumentException("Weka: " + predictor.getObservable().getLocalName()
+				throw new IllegalArgumentException("Weka: " + predictor.getObservable().getName()
 						+ ": cannot specify discretization for non-numeric predictors");
 			}
 			i++;
@@ -574,7 +574,7 @@ public class WekaInstances {
 				fieldIndex);
 		try {
 			descriptor.getDiscretizer().setInputFormat(this.instances);
-			discretizers.put(predictor.getObservable().getLocalName(), descriptor);
+			discretizers.put(predictor.getObservable().getName(), descriptor);
 		} catch (Exception e) {
 			throw new IllegalStateException(
 					"Error during WEKA option parsing for " + filterClass + " + : " + e.getMessage());
@@ -717,7 +717,7 @@ public class WekaInstances {
 
 		// go through the discretizers
 		for (String obs : discretizers.keySet()) {
-			if (!obs.equals(predicted.getObservable().getLocalName())) {
+			if (!obs.equals(predicted.getObservable().getName())) {
 				try {
 					Filter discretizer = discretizers.get(obs).getDiscretizer();
 					if (!discretizer.input(ret)) {
@@ -756,7 +756,7 @@ public class WekaInstances {
 	public Discretization getPredictedDiscretization() {
 
 		if (this.predictedDiscretization == null) {
-			DiscretizerDescriptor filter = discretizers.get(predicted.getObservable().getLocalName());
+			DiscretizerDescriptor filter = discretizers.get(predicted.getObservable().getName());
 			if (filter == null) {
 				throw new IllegalStateException(
 						"Weka: cannot interpret a distribution if the predicted variable is not discretized.");

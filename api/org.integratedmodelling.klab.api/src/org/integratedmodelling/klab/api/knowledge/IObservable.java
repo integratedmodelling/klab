@@ -314,7 +314,7 @@ public interface IObservable extends ISemantic, IResolvable {
 	 *
 	 * @return the formal name of this observable
 	 */
-	String getLocalName();
+	String getName();
 
 	/**
 	 * Return the untransformed concept, which will be identical to the type

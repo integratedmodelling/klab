@@ -307,11 +307,11 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 		Observation ret = null;
 		if (observable.is(Type.SUBJECT) || observable.is(Type.AGENT)) {
-			ret = new Subject(observable.getLocalName(), (Observable) observable, (Scale) scale, context);
+			ret = new Subject(observable.getName(), (Observable) observable, (Scale) scale, context);
 		} else if (observable.is(Type.EVENT)) {
-			ret = new Event(observable.getLocalName(), (Observable) observable, (Scale) scale, context);
+			ret = new Event(observable.getName(), (Observable) observable, (Scale) scale, context);
 		} else if (observable.is(Type.PROCESS)) {
-			ret = new Process(observable.getLocalName(), (Observable) observable, (Scale) scale, context);
+			ret = new Process(observable.getName(), (Observable) observable, (Scale) scale, context);
 		} else if (observable.is(Type.RELATIONSHIP)) {
 			throw new KlabInternalErrorException(
 					"createObservation() does not create relationships: use createRelationship()");
@@ -343,7 +343,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		} else if (observable.is(Type.CONFIGURATION)) {
 
 			ret = new org.integratedmodelling.klab.components.runtime.observations.Configuration(
-					observable.getLocalName(), (Observable) observable, (Scale) scale, context);
+					observable.getName(), (Observable) observable, (Scale) scale, context);
 		}
 
 		ret.setGenerator(activity);
@@ -364,7 +364,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			activity = ((AbstractTask<?>) identity).getActivity();
 		}
 
-		IRelationship ret = new Relationship(observable.getLocalName(), (Observable) observable, (Scale) scale,
+		IRelationship ret = new Relationship(observable.getName(), (Observable) observable, (Scale) scale,
 				runtimeContext);
 
 		runtimeContext.network.addEdge(relationshipSource, relationshipTarget, ret);

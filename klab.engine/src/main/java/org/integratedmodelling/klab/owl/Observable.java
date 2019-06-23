@@ -173,12 +173,9 @@ public class Observable implements IObservable {
     }
 
     @Override
-    public String getLocalName() {
+    public String getName() {
         if (name == null) {
             name = CamelCase.toLowerCase(Concepts.INSTANCE.getDisplayName(observable/*.getName()*/), '_');
-            if (name.contains("000")) {
-                System.out.println("ZIOOAO");
-            }
         }
         return name;
     }
@@ -327,7 +324,7 @@ public class Observable implements IObservable {
     }
 
     public String toString() {
-        return "[" + getLocalName() + " = " + this.declaration + "]";
+        return "[" + getName() + " = " + this.declaration + "]";
     }
 
     @Override

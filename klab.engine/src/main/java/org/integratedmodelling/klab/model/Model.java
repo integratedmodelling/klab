@@ -192,7 +192,7 @@ public class Model extends KimObject implements IModel {
 	public Model(Observable mainObservable, CandidateObservable candidateObservable, ResolutionScope scope) {
 		super(null);
 		this.derived = true;
-		this.id = mainObservable.getLocalName() + "_derived";
+		this.id = mainObservable.getName() + "_derived";
 		this.namespace = scope.getResolutionNamespace();
 		this.behavior = new Behavior(null, this);
 		this.observables.add(mainObservable);
@@ -287,7 +287,7 @@ public class Model extends KimObject implements IModel {
 	 */
 	public IObservable findDependency(String name) {
 		for (IObservable dependency : dependencies) {
-			if (dependency.getLocalName().equals(name)) {
+			if (dependency.getName().equals(name)) {
 				return dependency;
 			}
 		}
@@ -337,7 +337,7 @@ public class Model extends KimObject implements IModel {
 	public String getLocalNameFor(IObservable observable) {
 		IObservable obs = getCompatibleOutput((Observable) observable);
 		if (obs != null) {
-			return obs.getLocalName();
+			return obs.getName();
 		}
 		obs = getCompatibleInput((Observable) observable);
 		/**
@@ -345,7 +345,7 @@ public class Model extends KimObject implements IModel {
 		 * happens when an indirect observable is used to resolve a different one. If we
 		 * returned null here, the resulting actuator will have a null name.
 		 */
-		return obs == null ? observable.getLocalName() : obs.getLocalName();
+		return obs == null ? observable.getName() : obs.getName();
 	}
 
 	@Override
