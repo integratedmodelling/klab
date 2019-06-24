@@ -93,7 +93,7 @@ public class PolygonInstantiator implements IExpression, IInstantiator {
 				expression = ((IKimExpression) expression).getCode();
 			}
 			this.exprDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-					.describe(expression.toString(), context.getExpressionContext());
+					.describe(expression.toString(), context.getExpressionContext(), false);
 		}
 
 		IScale scale = context.getScale();

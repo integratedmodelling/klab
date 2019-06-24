@@ -54,7 +54,7 @@ public class KimValidator implements Kim.Validator {
 			}
 		} else if (value instanceof IKimExpression) {
 			value = Extensions.INSTANCE.compileExpression(((IKimExpression) value).getCode(),
-					((IKimExpression) value).getLanguage());
+					((IKimExpression) value).getLanguage(), ((IKimExpression)value).isForcedScalar());
 		} else if (value instanceof IKimLookupTable) {
 			// TODO table
 		} else if (value instanceof Map) {

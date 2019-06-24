@@ -168,20 +168,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     accordingTo=PropertyId (ambiguity) 'per' unit=Unit
 	 *     accordingTo=PropertyId (ambiguity) (rule end)
 	 *     accordingTo=PropertyId (ambiguity) from=Number
-	 *     accordingTo=PropertyId (ambiguity) operator='!='
-	 *     accordingTo=PropertyId (ambiguity) operator='<'
-	 *     accordingTo=PropertyId (ambiguity) operator='<='
-	 *     accordingTo=PropertyId (ambiguity) operator='='
-	 *     accordingTo=PropertyId (ambiguity) operator='=='
-	 *     accordingTo=PropertyId (ambiguity) operator='>'
-	 *     accordingTo=PropertyId (ambiguity) operator='>='
-	 *     accordingTo=PropertyId (ambiguity) operator='minus'
-	 *     accordingTo=PropertyId (ambiguity) operator='over'
-	 *     accordingTo=PropertyId (ambiguity) operator='plus'
-	 *     accordingTo=PropertyId (ambiguity) operator='times'
-	 *     accordingTo=PropertyId (ambiguity) operator='where'
-	 *     accordingTo=PropertyId (ambiguity) operator='without'
 	 *     accordingTo=PropertyId (ambiguity) optional?='optional'
+	 *     accordingTo=PropertyId (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     by=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     by=ConceptDeclaration (ambiguity) 'by' by=ConceptDeclaration
 	 *     by=ConceptDeclaration (ambiguity) 'down' 'to' downTo=Concept
@@ -192,20 +180,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     by=ConceptDeclaration (ambiguity) 'per' unit=Unit
 	 *     by=ConceptDeclaration (ambiguity) (rule end)
 	 *     by=ConceptDeclaration (ambiguity) from=Number
-	 *     by=ConceptDeclaration (ambiguity) operator='!='
-	 *     by=ConceptDeclaration (ambiguity) operator='<'
-	 *     by=ConceptDeclaration (ambiguity) operator='<='
-	 *     by=ConceptDeclaration (ambiguity) operator='='
-	 *     by=ConceptDeclaration (ambiguity) operator='=='
-	 *     by=ConceptDeclaration (ambiguity) operator='>'
-	 *     by=ConceptDeclaration (ambiguity) operator='>='
-	 *     by=ConceptDeclaration (ambiguity) operator='minus'
-	 *     by=ConceptDeclaration (ambiguity) operator='over'
-	 *     by=ConceptDeclaration (ambiguity) operator='plus'
-	 *     by=ConceptDeclaration (ambiguity) operator='times'
-	 *     by=ConceptDeclaration (ambiguity) operator='where'
-	 *     by=ConceptDeclaration (ambiguity) operator='without'
 	 *     by=ConceptDeclaration (ambiguity) optional?='optional'
+	 *     by=ConceptDeclaration (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) 'by' by=ConceptDeclaration
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) 'down' 'to' downTo=Concept
@@ -216,20 +192,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) 'per' unit=Unit
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) (rule end)
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) from=Number
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='!='
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='<'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='<='
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='='
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='=='
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='>'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='>='
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='minus'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='over'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='plus'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='times'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='where'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='without'
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) optional?='optional'
+	 *     comparisonConcept=ConceptDeclaration (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) 'by' by=ConceptDeclaration
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) 'down' 'to' downTo=Concept
@@ -240,20 +204,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) 'per' unit=Unit
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) (rule end)
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) from=Number
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='!='
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='<'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='<='
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='='
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='=='
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='>'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='>='
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='minus'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='over'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='plus'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='times'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='where'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='without'
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) optional?='optional'
+	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     comparisonValue=Number (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     comparisonValue=Number (ambiguity) 'by' by=ConceptDeclaration
 	 *     comparisonValue=Number (ambiguity) 'down' 'to' downTo=Concept
@@ -264,20 +216,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     comparisonValue=Number (ambiguity) 'per' unit=Unit
 	 *     comparisonValue=Number (ambiguity) (rule end)
 	 *     comparisonValue=Number (ambiguity) from=Number
-	 *     comparisonValue=Number (ambiguity) operator='!='
-	 *     comparisonValue=Number (ambiguity) operator='<'
-	 *     comparisonValue=Number (ambiguity) operator='<='
-	 *     comparisonValue=Number (ambiguity) operator='='
-	 *     comparisonValue=Number (ambiguity) operator='=='
-	 *     comparisonValue=Number (ambiguity) operator='>'
-	 *     comparisonValue=Number (ambiguity) operator='>='
-	 *     comparisonValue=Number (ambiguity) operator='minus'
-	 *     comparisonValue=Number (ambiguity) operator='over'
-	 *     comparisonValue=Number (ambiguity) operator='plus'
-	 *     comparisonValue=Number (ambiguity) operator='times'
-	 *     comparisonValue=Number (ambiguity) operator='where'
-	 *     comparisonValue=Number (ambiguity) operator='without'
 	 *     comparisonValue=Number (ambiguity) optional?='optional'
+	 *     comparisonValue=Number (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     currency=Currency (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     currency=Currency (ambiguity) 'by' by=ConceptDeclaration
 	 *     currency=Currency (ambiguity) 'down' 'to' downTo=Concept
@@ -288,20 +228,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     currency=Currency (ambiguity) 'per' unit=Unit
 	 *     currency=Currency (ambiguity) (rule end)
 	 *     currency=Currency (ambiguity) from=Number
-	 *     currency=Currency (ambiguity) operator='!='
-	 *     currency=Currency (ambiguity) operator='<'
-	 *     currency=Currency (ambiguity) operator='<='
-	 *     currency=Currency (ambiguity) operator='='
-	 *     currency=Currency (ambiguity) operator='=='
-	 *     currency=Currency (ambiguity) operator='>'
-	 *     currency=Currency (ambiguity) operator='>='
-	 *     currency=Currency (ambiguity) operator='minus'
-	 *     currency=Currency (ambiguity) operator='over'
-	 *     currency=Currency (ambiguity) operator='plus'
-	 *     currency=Currency (ambiguity) operator='times'
-	 *     currency=Currency (ambiguity) operator='where'
-	 *     currency=Currency (ambiguity) operator='without'
 	 *     currency=Currency (ambiguity) optional?='optional'
+	 *     currency=Currency (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     declaration=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     declaration=ConceptDeclaration (ambiguity) 'by' by=ConceptDeclaration
 	 *     declaration=ConceptDeclaration (ambiguity) 'down' 'to' downTo=Concept
@@ -312,20 +240,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     declaration=ConceptDeclaration (ambiguity) 'per' unit=Unit
 	 *     declaration=ConceptDeclaration (ambiguity) (rule end)
 	 *     declaration=ConceptDeclaration (ambiguity) from=Number
-	 *     declaration=ConceptDeclaration (ambiguity) operator='!='
-	 *     declaration=ConceptDeclaration (ambiguity) operator='<'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='<='
-	 *     declaration=ConceptDeclaration (ambiguity) operator='='
-	 *     declaration=ConceptDeclaration (ambiguity) operator='=='
-	 *     declaration=ConceptDeclaration (ambiguity) operator='>'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='>='
-	 *     declaration=ConceptDeclaration (ambiguity) operator='minus'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='over'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='plus'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='times'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='where'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='without'
 	 *     declaration=ConceptDeclaration (ambiguity) optional?='optional'
+	 *     declaration=ConceptDeclaration (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     downTo=Concept (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     downTo=Concept (ambiguity) 'by' by=ConceptDeclaration
 	 *     downTo=Concept (ambiguity) 'down' 'to' downTo=Concept
@@ -336,20 +252,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     downTo=Concept (ambiguity) 'per' unit=Unit
 	 *     downTo=Concept (ambiguity) (rule end)
 	 *     downTo=Concept (ambiguity) from=Number
-	 *     downTo=Concept (ambiguity) operator='!='
-	 *     downTo=Concept (ambiguity) operator='<'
-	 *     downTo=Concept (ambiguity) operator='<='
-	 *     downTo=Concept (ambiguity) operator='='
-	 *     downTo=Concept (ambiguity) operator='=='
-	 *     downTo=Concept (ambiguity) operator='>'
-	 *     downTo=Concept (ambiguity) operator='>='
-	 *     downTo=Concept (ambiguity) operator='minus'
-	 *     downTo=Concept (ambiguity) operator='over'
-	 *     downTo=Concept (ambiguity) operator='plus'
-	 *     downTo=Concept (ambiguity) operator='times'
-	 *     downTo=Concept (ambiguity) operator='where'
-	 *     downTo=Concept (ambiguity) operator='without'
 	 *     downTo=Concept (ambiguity) optional?='optional'
+	 *     downTo=Concept (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     name=LOWERCASE_ID (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     name=LOWERCASE_ID (ambiguity) 'by' by=ConceptDeclaration
 	 *     name=LOWERCASE_ID (ambiguity) 'down' 'to' downTo=Concept
@@ -360,20 +264,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=LOWERCASE_ID (ambiguity) 'per' unit=Unit
 	 *     name=LOWERCASE_ID (ambiguity) (rule end)
 	 *     name=LOWERCASE_ID (ambiguity) from=Number
-	 *     name=LOWERCASE_ID (ambiguity) operator='!='
-	 *     name=LOWERCASE_ID (ambiguity) operator='<'
-	 *     name=LOWERCASE_ID (ambiguity) operator='<='
-	 *     name=LOWERCASE_ID (ambiguity) operator='='
-	 *     name=LOWERCASE_ID (ambiguity) operator='=='
-	 *     name=LOWERCASE_ID (ambiguity) operator='>'
-	 *     name=LOWERCASE_ID (ambiguity) operator='>='
-	 *     name=LOWERCASE_ID (ambiguity) operator='minus'
-	 *     name=LOWERCASE_ID (ambiguity) operator='over'
-	 *     name=LOWERCASE_ID (ambiguity) operator='plus'
-	 *     name=LOWERCASE_ID (ambiguity) operator='times'
-	 *     name=LOWERCASE_ID (ambiguity) operator='where'
-	 *     name=LOWERCASE_ID (ambiguity) operator='without'
 	 *     name=LOWERCASE_ID (ambiguity) optional?='optional'
+	 *     name=LOWERCASE_ID (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     name=STRING (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     name=STRING (ambiguity) 'by' by=ConceptDeclaration
 	 *     name=STRING (ambiguity) 'down' 'to' downTo=Concept
@@ -384,20 +276,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=STRING (ambiguity) 'per' unit=Unit
 	 *     name=STRING (ambiguity) (rule end)
 	 *     name=STRING (ambiguity) from=Number
-	 *     name=STRING (ambiguity) operator='!='
-	 *     name=STRING (ambiguity) operator='<'
-	 *     name=STRING (ambiguity) operator='<='
-	 *     name=STRING (ambiguity) operator='='
-	 *     name=STRING (ambiguity) operator='=='
-	 *     name=STRING (ambiguity) operator='>'
-	 *     name=STRING (ambiguity) operator='>='
-	 *     name=STRING (ambiguity) operator='minus'
-	 *     name=STRING (ambiguity) operator='over'
-	 *     name=STRING (ambiguity) operator='plus'
-	 *     name=STRING (ambiguity) operator='times'
-	 *     name=STRING (ambiguity) operator='where'
-	 *     name=STRING (ambiguity) operator='without'
 	 *     name=STRING (ambiguity) optional?='optional'
+	 *     name=STRING (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     optional?='optional' (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     optional?='optional' (ambiguity) 'by' by=ConceptDeclaration
 	 *     optional?='optional' (ambiguity) 'down' 'to' downTo=Concept
@@ -408,20 +288,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     optional?='optional' (ambiguity) 'per' unit=Unit
 	 *     optional?='optional' (ambiguity) (rule end)
 	 *     optional?='optional' (ambiguity) from=Number
-	 *     optional?='optional' (ambiguity) operator='!='
-	 *     optional?='optional' (ambiguity) operator='<'
-	 *     optional?='optional' (ambiguity) operator='<='
-	 *     optional?='optional' (ambiguity) operator='='
-	 *     optional?='optional' (ambiguity) operator='=='
-	 *     optional?='optional' (ambiguity) operator='>'
-	 *     optional?='optional' (ambiguity) operator='>='
-	 *     optional?='optional' (ambiguity) operator='minus'
-	 *     optional?='optional' (ambiguity) operator='over'
-	 *     optional?='optional' (ambiguity) operator='plus'
-	 *     optional?='optional' (ambiguity) operator='times'
-	 *     optional?='optional' (ambiguity) operator='where'
-	 *     optional?='optional' (ambiguity) operator='without'
 	 *     optional?='optional' (ambiguity) optional?='optional'
+	 *     optional?='optional' (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     to=Number (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     to=Number (ambiguity) 'by' by=ConceptDeclaration
 	 *     to=Number (ambiguity) 'down' 'to' downTo=Concept
@@ -432,20 +300,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     to=Number (ambiguity) 'per' unit=Unit
 	 *     to=Number (ambiguity) (rule end)
 	 *     to=Number (ambiguity) from=Number
-	 *     to=Number (ambiguity) operator='!='
-	 *     to=Number (ambiguity) operator='<'
-	 *     to=Number (ambiguity) operator='<='
-	 *     to=Number (ambiguity) operator='='
-	 *     to=Number (ambiguity) operator='=='
-	 *     to=Number (ambiguity) operator='>'
-	 *     to=Number (ambiguity) operator='>='
-	 *     to=Number (ambiguity) operator='minus'
-	 *     to=Number (ambiguity) operator='over'
-	 *     to=Number (ambiguity) operator='plus'
-	 *     to=Number (ambiguity) operator='times'
-	 *     to=Number (ambiguity) operator='where'
-	 *     to=Number (ambiguity) operator='without'
 	 *     to=Number (ambiguity) optional?='optional'
+	 *     to=Number (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     unit=Unit (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     unit=Unit (ambiguity) 'by' by=ConceptDeclaration
 	 *     unit=Unit (ambiguity) 'down' 'to' downTo=Concept
@@ -456,20 +312,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     unit=Unit (ambiguity) 'per' unit=Unit
 	 *     unit=Unit (ambiguity) (rule end)
 	 *     unit=Unit (ambiguity) from=Number
-	 *     unit=Unit (ambiguity) operator='!='
-	 *     unit=Unit (ambiguity) operator='<'
-	 *     unit=Unit (ambiguity) operator='<='
-	 *     unit=Unit (ambiguity) operator='='
-	 *     unit=Unit (ambiguity) operator='=='
-	 *     unit=Unit (ambiguity) operator='>'
-	 *     unit=Unit (ambiguity) operator='>='
-	 *     unit=Unit (ambiguity) operator='minus'
-	 *     unit=Unit (ambiguity) operator='over'
-	 *     unit=Unit (ambiguity) operator='plus'
-	 *     unit=Unit (ambiguity) operator='times'
-	 *     unit=Unit (ambiguity) operator='where'
-	 *     unit=Unit (ambiguity) operator='without'
 	 *     unit=Unit (ambiguity) optional?='optional'
+	 *     unit=Unit (ambiguity) valueModifier=VALUE_MODIFIER
 	 */
 	protected void emit_AnnotatedObservableSemantics_RequiredKeyword_4_5_1_a(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
@@ -556,20 +400,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     accordingTo=PropertyId (ambiguity) 'per' unit=Unit
 	 *     accordingTo=PropertyId (ambiguity) (rule end)
 	 *     accordingTo=PropertyId (ambiguity) from=Number
-	 *     accordingTo=PropertyId (ambiguity) operator='!='
-	 *     accordingTo=PropertyId (ambiguity) operator='<'
-	 *     accordingTo=PropertyId (ambiguity) operator='<='
-	 *     accordingTo=PropertyId (ambiguity) operator='='
-	 *     accordingTo=PropertyId (ambiguity) operator='=='
-	 *     accordingTo=PropertyId (ambiguity) operator='>'
-	 *     accordingTo=PropertyId (ambiguity) operator='>='
-	 *     accordingTo=PropertyId (ambiguity) operator='minus'
-	 *     accordingTo=PropertyId (ambiguity) operator='over'
-	 *     accordingTo=PropertyId (ambiguity) operator='plus'
-	 *     accordingTo=PropertyId (ambiguity) operator='times'
-	 *     accordingTo=PropertyId (ambiguity) operator='where'
-	 *     accordingTo=PropertyId (ambiguity) operator='without'
 	 *     accordingTo=PropertyId (ambiguity) optional?='optional'
+	 *     accordingTo=PropertyId (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     by=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     by=ConceptDeclaration (ambiguity) 'by' by=ConceptDeclaration
 	 *     by=ConceptDeclaration (ambiguity) 'down' 'to' downTo=Concept
@@ -580,20 +412,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     by=ConceptDeclaration (ambiguity) 'per' unit=Unit
 	 *     by=ConceptDeclaration (ambiguity) (rule end)
 	 *     by=ConceptDeclaration (ambiguity) from=Number
-	 *     by=ConceptDeclaration (ambiguity) operator='!='
-	 *     by=ConceptDeclaration (ambiguity) operator='<'
-	 *     by=ConceptDeclaration (ambiguity) operator='<='
-	 *     by=ConceptDeclaration (ambiguity) operator='='
-	 *     by=ConceptDeclaration (ambiguity) operator='=='
-	 *     by=ConceptDeclaration (ambiguity) operator='>'
-	 *     by=ConceptDeclaration (ambiguity) operator='>='
-	 *     by=ConceptDeclaration (ambiguity) operator='minus'
-	 *     by=ConceptDeclaration (ambiguity) operator='over'
-	 *     by=ConceptDeclaration (ambiguity) operator='plus'
-	 *     by=ConceptDeclaration (ambiguity) operator='times'
-	 *     by=ConceptDeclaration (ambiguity) operator='where'
-	 *     by=ConceptDeclaration (ambiguity) operator='without'
 	 *     by=ConceptDeclaration (ambiguity) optional?='optional'
+	 *     by=ConceptDeclaration (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) 'by' by=ConceptDeclaration
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) 'down' 'to' downTo=Concept
@@ -604,20 +424,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) 'per' unit=Unit
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) (rule end)
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) from=Number
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='!='
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='<'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='<='
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='='
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='=='
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='>'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='>='
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='minus'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='over'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='plus'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='times'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='where'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='without'
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) optional?='optional'
+	 *     comparisonConcept=ConceptDeclaration (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) 'by' by=ConceptDeclaration
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) 'down' 'to' downTo=Concept
@@ -628,20 +436,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) 'per' unit=Unit
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) (rule end)
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) from=Number
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='!='
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='<'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='<='
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='='
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='=='
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='>'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='>='
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='minus'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='over'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='plus'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='times'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='where'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='without'
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) optional?='optional'
+	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     comparisonValue=Number (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     comparisonValue=Number (ambiguity) 'by' by=ConceptDeclaration
 	 *     comparisonValue=Number (ambiguity) 'down' 'to' downTo=Concept
@@ -652,20 +448,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     comparisonValue=Number (ambiguity) 'per' unit=Unit
 	 *     comparisonValue=Number (ambiguity) (rule end)
 	 *     comparisonValue=Number (ambiguity) from=Number
-	 *     comparisonValue=Number (ambiguity) operator='!='
-	 *     comparisonValue=Number (ambiguity) operator='<'
-	 *     comparisonValue=Number (ambiguity) operator='<='
-	 *     comparisonValue=Number (ambiguity) operator='='
-	 *     comparisonValue=Number (ambiguity) operator='=='
-	 *     comparisonValue=Number (ambiguity) operator='>'
-	 *     comparisonValue=Number (ambiguity) operator='>='
-	 *     comparisonValue=Number (ambiguity) operator='minus'
-	 *     comparisonValue=Number (ambiguity) operator='over'
-	 *     comparisonValue=Number (ambiguity) operator='plus'
-	 *     comparisonValue=Number (ambiguity) operator='times'
-	 *     comparisonValue=Number (ambiguity) operator='where'
-	 *     comparisonValue=Number (ambiguity) operator='without'
 	 *     comparisonValue=Number (ambiguity) optional?='optional'
+	 *     comparisonValue=Number (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     currency=Currency (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     currency=Currency (ambiguity) 'by' by=ConceptDeclaration
 	 *     currency=Currency (ambiguity) 'down' 'to' downTo=Concept
@@ -676,20 +460,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     currency=Currency (ambiguity) 'per' unit=Unit
 	 *     currency=Currency (ambiguity) (rule end)
 	 *     currency=Currency (ambiguity) from=Number
-	 *     currency=Currency (ambiguity) operator='!='
-	 *     currency=Currency (ambiguity) operator='<'
-	 *     currency=Currency (ambiguity) operator='<='
-	 *     currency=Currency (ambiguity) operator='='
-	 *     currency=Currency (ambiguity) operator='=='
-	 *     currency=Currency (ambiguity) operator='>'
-	 *     currency=Currency (ambiguity) operator='>='
-	 *     currency=Currency (ambiguity) operator='minus'
-	 *     currency=Currency (ambiguity) operator='over'
-	 *     currency=Currency (ambiguity) operator='plus'
-	 *     currency=Currency (ambiguity) operator='times'
-	 *     currency=Currency (ambiguity) operator='where'
-	 *     currency=Currency (ambiguity) operator='without'
 	 *     currency=Currency (ambiguity) optional?='optional'
+	 *     currency=Currency (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     declaration=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     declaration=ConceptDeclaration (ambiguity) 'by' by=ConceptDeclaration
 	 *     declaration=ConceptDeclaration (ambiguity) 'down' 'to' downTo=Concept
@@ -700,20 +472,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     declaration=ConceptDeclaration (ambiguity) 'per' unit=Unit
 	 *     declaration=ConceptDeclaration (ambiguity) (rule end)
 	 *     declaration=ConceptDeclaration (ambiguity) from=Number
-	 *     declaration=ConceptDeclaration (ambiguity) operator='!='
-	 *     declaration=ConceptDeclaration (ambiguity) operator='<'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='<='
-	 *     declaration=ConceptDeclaration (ambiguity) operator='='
-	 *     declaration=ConceptDeclaration (ambiguity) operator='=='
-	 *     declaration=ConceptDeclaration (ambiguity) operator='>'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='>='
-	 *     declaration=ConceptDeclaration (ambiguity) operator='minus'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='over'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='plus'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='times'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='where'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='without'
 	 *     declaration=ConceptDeclaration (ambiguity) optional?='optional'
+	 *     declaration=ConceptDeclaration (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     downTo=Concept (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     downTo=Concept (ambiguity) 'by' by=ConceptDeclaration
 	 *     downTo=Concept (ambiguity) 'down' 'to' downTo=Concept
@@ -724,20 +484,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     downTo=Concept (ambiguity) 'per' unit=Unit
 	 *     downTo=Concept (ambiguity) (rule end)
 	 *     downTo=Concept (ambiguity) from=Number
-	 *     downTo=Concept (ambiguity) operator='!='
-	 *     downTo=Concept (ambiguity) operator='<'
-	 *     downTo=Concept (ambiguity) operator='<='
-	 *     downTo=Concept (ambiguity) operator='='
-	 *     downTo=Concept (ambiguity) operator='=='
-	 *     downTo=Concept (ambiguity) operator='>'
-	 *     downTo=Concept (ambiguity) operator='>='
-	 *     downTo=Concept (ambiguity) operator='minus'
-	 *     downTo=Concept (ambiguity) operator='over'
-	 *     downTo=Concept (ambiguity) operator='plus'
-	 *     downTo=Concept (ambiguity) operator='times'
-	 *     downTo=Concept (ambiguity) operator='where'
-	 *     downTo=Concept (ambiguity) operator='without'
 	 *     downTo=Concept (ambiguity) optional?='optional'
+	 *     downTo=Concept (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     name=LOWERCASE_ID (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     name=LOWERCASE_ID (ambiguity) 'by' by=ConceptDeclaration
 	 *     name=LOWERCASE_ID (ambiguity) 'down' 'to' downTo=Concept
@@ -748,20 +496,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=LOWERCASE_ID (ambiguity) 'per' unit=Unit
 	 *     name=LOWERCASE_ID (ambiguity) (rule end)
 	 *     name=LOWERCASE_ID (ambiguity) from=Number
-	 *     name=LOWERCASE_ID (ambiguity) operator='!='
-	 *     name=LOWERCASE_ID (ambiguity) operator='<'
-	 *     name=LOWERCASE_ID (ambiguity) operator='<='
-	 *     name=LOWERCASE_ID (ambiguity) operator='='
-	 *     name=LOWERCASE_ID (ambiguity) operator='=='
-	 *     name=LOWERCASE_ID (ambiguity) operator='>'
-	 *     name=LOWERCASE_ID (ambiguity) operator='>='
-	 *     name=LOWERCASE_ID (ambiguity) operator='minus'
-	 *     name=LOWERCASE_ID (ambiguity) operator='over'
-	 *     name=LOWERCASE_ID (ambiguity) operator='plus'
-	 *     name=LOWERCASE_ID (ambiguity) operator='times'
-	 *     name=LOWERCASE_ID (ambiguity) operator='where'
-	 *     name=LOWERCASE_ID (ambiguity) operator='without'
 	 *     name=LOWERCASE_ID (ambiguity) optional?='optional'
+	 *     name=LOWERCASE_ID (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     name=STRING (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     name=STRING (ambiguity) 'by' by=ConceptDeclaration
 	 *     name=STRING (ambiguity) 'down' 'to' downTo=Concept
@@ -772,20 +508,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=STRING (ambiguity) 'per' unit=Unit
 	 *     name=STRING (ambiguity) (rule end)
 	 *     name=STRING (ambiguity) from=Number
-	 *     name=STRING (ambiguity) operator='!='
-	 *     name=STRING (ambiguity) operator='<'
-	 *     name=STRING (ambiguity) operator='<='
-	 *     name=STRING (ambiguity) operator='='
-	 *     name=STRING (ambiguity) operator='=='
-	 *     name=STRING (ambiguity) operator='>'
-	 *     name=STRING (ambiguity) operator='>='
-	 *     name=STRING (ambiguity) operator='minus'
-	 *     name=STRING (ambiguity) operator='over'
-	 *     name=STRING (ambiguity) operator='plus'
-	 *     name=STRING (ambiguity) operator='times'
-	 *     name=STRING (ambiguity) operator='where'
-	 *     name=STRING (ambiguity) operator='without'
 	 *     name=STRING (ambiguity) optional?='optional'
+	 *     name=STRING (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     optional?='optional' (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     optional?='optional' (ambiguity) 'by' by=ConceptDeclaration
 	 *     optional?='optional' (ambiguity) 'down' 'to' downTo=Concept
@@ -796,20 +520,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     optional?='optional' (ambiguity) 'per' unit=Unit
 	 *     optional?='optional' (ambiguity) (rule end)
 	 *     optional?='optional' (ambiguity) from=Number
-	 *     optional?='optional' (ambiguity) operator='!='
-	 *     optional?='optional' (ambiguity) operator='<'
-	 *     optional?='optional' (ambiguity) operator='<='
-	 *     optional?='optional' (ambiguity) operator='='
-	 *     optional?='optional' (ambiguity) operator='=='
-	 *     optional?='optional' (ambiguity) operator='>'
-	 *     optional?='optional' (ambiguity) operator='>='
-	 *     optional?='optional' (ambiguity) operator='minus'
-	 *     optional?='optional' (ambiguity) operator='over'
-	 *     optional?='optional' (ambiguity) operator='plus'
-	 *     optional?='optional' (ambiguity) operator='times'
-	 *     optional?='optional' (ambiguity) operator='where'
-	 *     optional?='optional' (ambiguity) operator='without'
 	 *     optional?='optional' (ambiguity) optional?='optional'
+	 *     optional?='optional' (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     to=Number (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     to=Number (ambiguity) 'by' by=ConceptDeclaration
 	 *     to=Number (ambiguity) 'down' 'to' downTo=Concept
@@ -820,20 +532,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     to=Number (ambiguity) 'per' unit=Unit
 	 *     to=Number (ambiguity) (rule end)
 	 *     to=Number (ambiguity) from=Number
-	 *     to=Number (ambiguity) operator='!='
-	 *     to=Number (ambiguity) operator='<'
-	 *     to=Number (ambiguity) operator='<='
-	 *     to=Number (ambiguity) operator='='
-	 *     to=Number (ambiguity) operator='=='
-	 *     to=Number (ambiguity) operator='>'
-	 *     to=Number (ambiguity) operator='>='
-	 *     to=Number (ambiguity) operator='minus'
-	 *     to=Number (ambiguity) operator='over'
-	 *     to=Number (ambiguity) operator='plus'
-	 *     to=Number (ambiguity) operator='times'
-	 *     to=Number (ambiguity) operator='where'
-	 *     to=Number (ambiguity) operator='without'
 	 *     to=Number (ambiguity) optional?='optional'
+	 *     to=Number (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     unit=Unit (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     unit=Unit (ambiguity) 'by' by=ConceptDeclaration
 	 *     unit=Unit (ambiguity) 'down' 'to' downTo=Concept
@@ -844,20 +544,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     unit=Unit (ambiguity) 'per' unit=Unit
 	 *     unit=Unit (ambiguity) (rule end)
 	 *     unit=Unit (ambiguity) from=Number
-	 *     unit=Unit (ambiguity) operator='!='
-	 *     unit=Unit (ambiguity) operator='<'
-	 *     unit=Unit (ambiguity) operator='<='
-	 *     unit=Unit (ambiguity) operator='='
-	 *     unit=Unit (ambiguity) operator='=='
-	 *     unit=Unit (ambiguity) operator='>'
-	 *     unit=Unit (ambiguity) operator='>='
-	 *     unit=Unit (ambiguity) operator='minus'
-	 *     unit=Unit (ambiguity) operator='over'
-	 *     unit=Unit (ambiguity) operator='plus'
-	 *     unit=Unit (ambiguity) operator='times'
-	 *     unit=Unit (ambiguity) operator='where'
-	 *     unit=Unit (ambiguity) operator='without'
 	 *     unit=Unit (ambiguity) optional?='optional'
+	 *     unit=Unit (ambiguity) valueModifier=VALUE_MODIFIER
 	 */
 	protected void emit_DependencyObservableSemantics_RequiredKeyword_3_6_1_a(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
@@ -1145,20 +833,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     accordingTo=PropertyId (ambiguity) 'per' unit=Unit
 	 *     accordingTo=PropertyId (ambiguity) (rule end)
 	 *     accordingTo=PropertyId (ambiguity) from=Number
-	 *     accordingTo=PropertyId (ambiguity) operator='!='
-	 *     accordingTo=PropertyId (ambiguity) operator='<'
-	 *     accordingTo=PropertyId (ambiguity) operator='<='
-	 *     accordingTo=PropertyId (ambiguity) operator='='
-	 *     accordingTo=PropertyId (ambiguity) operator='=='
-	 *     accordingTo=PropertyId (ambiguity) operator='>'
-	 *     accordingTo=PropertyId (ambiguity) operator='>='
-	 *     accordingTo=PropertyId (ambiguity) operator='minus'
-	 *     accordingTo=PropertyId (ambiguity) operator='over'
-	 *     accordingTo=PropertyId (ambiguity) operator='plus'
-	 *     accordingTo=PropertyId (ambiguity) operator='times'
-	 *     accordingTo=PropertyId (ambiguity) operator='where'
-	 *     accordingTo=PropertyId (ambiguity) operator='without'
 	 *     accordingTo=PropertyId (ambiguity) optional?='optional'
+	 *     accordingTo=PropertyId (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     by=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     by=ConceptDeclaration (ambiguity) 'by' by=ConceptDeclaration
 	 *     by=ConceptDeclaration (ambiguity) 'down' 'to' downTo=Concept
@@ -1169,20 +845,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     by=ConceptDeclaration (ambiguity) 'per' unit=Unit
 	 *     by=ConceptDeclaration (ambiguity) (rule end)
 	 *     by=ConceptDeclaration (ambiguity) from=Number
-	 *     by=ConceptDeclaration (ambiguity) operator='!='
-	 *     by=ConceptDeclaration (ambiguity) operator='<'
-	 *     by=ConceptDeclaration (ambiguity) operator='<='
-	 *     by=ConceptDeclaration (ambiguity) operator='='
-	 *     by=ConceptDeclaration (ambiguity) operator='=='
-	 *     by=ConceptDeclaration (ambiguity) operator='>'
-	 *     by=ConceptDeclaration (ambiguity) operator='>='
-	 *     by=ConceptDeclaration (ambiguity) operator='minus'
-	 *     by=ConceptDeclaration (ambiguity) operator='over'
-	 *     by=ConceptDeclaration (ambiguity) operator='plus'
-	 *     by=ConceptDeclaration (ambiguity) operator='times'
-	 *     by=ConceptDeclaration (ambiguity) operator='where'
-	 *     by=ConceptDeclaration (ambiguity) operator='without'
 	 *     by=ConceptDeclaration (ambiguity) optional?='optional'
+	 *     by=ConceptDeclaration (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) 'by' by=ConceptDeclaration
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) 'down' 'to' downTo=Concept
@@ -1193,20 +857,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) 'per' unit=Unit
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) (rule end)
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) from=Number
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='!='
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='<'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='<='
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='='
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='=='
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='>'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='>='
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='minus'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='over'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='plus'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='times'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='where'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='without'
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) optional?='optional'
+	 *     comparisonConcept=ConceptDeclaration (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) 'by' by=ConceptDeclaration
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) 'down' 'to' downTo=Concept
@@ -1217,20 +869,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) 'per' unit=Unit
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) (rule end)
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) from=Number
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='!='
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='<'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='<='
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='='
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='=='
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='>'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='>='
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='minus'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='over'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='plus'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='times'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='where'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='without'
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) optional?='optional'
+	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     comparisonValue=Number (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     comparisonValue=Number (ambiguity) 'by' by=ConceptDeclaration
 	 *     comparisonValue=Number (ambiguity) 'down' 'to' downTo=Concept
@@ -1241,20 +881,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     comparisonValue=Number (ambiguity) 'per' unit=Unit
 	 *     comparisonValue=Number (ambiguity) (rule end)
 	 *     comparisonValue=Number (ambiguity) from=Number
-	 *     comparisonValue=Number (ambiguity) operator='!='
-	 *     comparisonValue=Number (ambiguity) operator='<'
-	 *     comparisonValue=Number (ambiguity) operator='<='
-	 *     comparisonValue=Number (ambiguity) operator='='
-	 *     comparisonValue=Number (ambiguity) operator='=='
-	 *     comparisonValue=Number (ambiguity) operator='>'
-	 *     comparisonValue=Number (ambiguity) operator='>='
-	 *     comparisonValue=Number (ambiguity) operator='minus'
-	 *     comparisonValue=Number (ambiguity) operator='over'
-	 *     comparisonValue=Number (ambiguity) operator='plus'
-	 *     comparisonValue=Number (ambiguity) operator='times'
-	 *     comparisonValue=Number (ambiguity) operator='where'
-	 *     comparisonValue=Number (ambiguity) operator='without'
 	 *     comparisonValue=Number (ambiguity) optional?='optional'
+	 *     comparisonValue=Number (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     currency=Currency (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     currency=Currency (ambiguity) 'by' by=ConceptDeclaration
 	 *     currency=Currency (ambiguity) 'down' 'to' downTo=Concept
@@ -1265,20 +893,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     currency=Currency (ambiguity) 'per' unit=Unit
 	 *     currency=Currency (ambiguity) (rule end)
 	 *     currency=Currency (ambiguity) from=Number
-	 *     currency=Currency (ambiguity) operator='!='
-	 *     currency=Currency (ambiguity) operator='<'
-	 *     currency=Currency (ambiguity) operator='<='
-	 *     currency=Currency (ambiguity) operator='='
-	 *     currency=Currency (ambiguity) operator='=='
-	 *     currency=Currency (ambiguity) operator='>'
-	 *     currency=Currency (ambiguity) operator='>='
-	 *     currency=Currency (ambiguity) operator='minus'
-	 *     currency=Currency (ambiguity) operator='over'
-	 *     currency=Currency (ambiguity) operator='plus'
-	 *     currency=Currency (ambiguity) operator='times'
-	 *     currency=Currency (ambiguity) operator='where'
-	 *     currency=Currency (ambiguity) operator='without'
 	 *     currency=Currency (ambiguity) optional?='optional'
+	 *     currency=Currency (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     declaration=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     declaration=ConceptDeclaration (ambiguity) 'by' by=ConceptDeclaration
 	 *     declaration=ConceptDeclaration (ambiguity) 'down' 'to' downTo=Concept
@@ -1289,20 +905,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     declaration=ConceptDeclaration (ambiguity) 'per' unit=Unit
 	 *     declaration=ConceptDeclaration (ambiguity) (rule end)
 	 *     declaration=ConceptDeclaration (ambiguity) from=Number
-	 *     declaration=ConceptDeclaration (ambiguity) operator='!='
-	 *     declaration=ConceptDeclaration (ambiguity) operator='<'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='<='
-	 *     declaration=ConceptDeclaration (ambiguity) operator='='
-	 *     declaration=ConceptDeclaration (ambiguity) operator='=='
-	 *     declaration=ConceptDeclaration (ambiguity) operator='>'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='>='
-	 *     declaration=ConceptDeclaration (ambiguity) operator='minus'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='over'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='plus'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='times'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='where'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='without'
 	 *     declaration=ConceptDeclaration (ambiguity) optional?='optional'
+	 *     declaration=ConceptDeclaration (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     downTo=Concept (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     downTo=Concept (ambiguity) 'by' by=ConceptDeclaration
 	 *     downTo=Concept (ambiguity) 'down' 'to' downTo=Concept
@@ -1313,20 +917,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     downTo=Concept (ambiguity) 'per' unit=Unit
 	 *     downTo=Concept (ambiguity) (rule end)
 	 *     downTo=Concept (ambiguity) from=Number
-	 *     downTo=Concept (ambiguity) operator='!='
-	 *     downTo=Concept (ambiguity) operator='<'
-	 *     downTo=Concept (ambiguity) operator='<='
-	 *     downTo=Concept (ambiguity) operator='='
-	 *     downTo=Concept (ambiguity) operator='=='
-	 *     downTo=Concept (ambiguity) operator='>'
-	 *     downTo=Concept (ambiguity) operator='>='
-	 *     downTo=Concept (ambiguity) operator='minus'
-	 *     downTo=Concept (ambiguity) operator='over'
-	 *     downTo=Concept (ambiguity) operator='plus'
-	 *     downTo=Concept (ambiguity) operator='times'
-	 *     downTo=Concept (ambiguity) operator='where'
-	 *     downTo=Concept (ambiguity) operator='without'
 	 *     downTo=Concept (ambiguity) optional?='optional'
+	 *     downTo=Concept (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     name=LOWERCASE_ID (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     name=LOWERCASE_ID (ambiguity) 'by' by=ConceptDeclaration
 	 *     name=LOWERCASE_ID (ambiguity) 'down' 'to' downTo=Concept
@@ -1337,20 +929,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=LOWERCASE_ID (ambiguity) 'per' unit=Unit
 	 *     name=LOWERCASE_ID (ambiguity) (rule end)
 	 *     name=LOWERCASE_ID (ambiguity) from=Number
-	 *     name=LOWERCASE_ID (ambiguity) operator='!='
-	 *     name=LOWERCASE_ID (ambiguity) operator='<'
-	 *     name=LOWERCASE_ID (ambiguity) operator='<='
-	 *     name=LOWERCASE_ID (ambiguity) operator='='
-	 *     name=LOWERCASE_ID (ambiguity) operator='=='
-	 *     name=LOWERCASE_ID (ambiguity) operator='>'
-	 *     name=LOWERCASE_ID (ambiguity) operator='>='
-	 *     name=LOWERCASE_ID (ambiguity) operator='minus'
-	 *     name=LOWERCASE_ID (ambiguity) operator='over'
-	 *     name=LOWERCASE_ID (ambiguity) operator='plus'
-	 *     name=LOWERCASE_ID (ambiguity) operator='times'
-	 *     name=LOWERCASE_ID (ambiguity) operator='where'
-	 *     name=LOWERCASE_ID (ambiguity) operator='without'
 	 *     name=LOWERCASE_ID (ambiguity) optional?='optional'
+	 *     name=LOWERCASE_ID (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     name=STRING (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     name=STRING (ambiguity) 'by' by=ConceptDeclaration
 	 *     name=STRING (ambiguity) 'down' 'to' downTo=Concept
@@ -1361,20 +941,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=STRING (ambiguity) 'per' unit=Unit
 	 *     name=STRING (ambiguity) (rule end)
 	 *     name=STRING (ambiguity) from=Number
-	 *     name=STRING (ambiguity) operator='!='
-	 *     name=STRING (ambiguity) operator='<'
-	 *     name=STRING (ambiguity) operator='<='
-	 *     name=STRING (ambiguity) operator='='
-	 *     name=STRING (ambiguity) operator='=='
-	 *     name=STRING (ambiguity) operator='>'
-	 *     name=STRING (ambiguity) operator='>='
-	 *     name=STRING (ambiguity) operator='minus'
-	 *     name=STRING (ambiguity) operator='over'
-	 *     name=STRING (ambiguity) operator='plus'
-	 *     name=STRING (ambiguity) operator='times'
-	 *     name=STRING (ambiguity) operator='where'
-	 *     name=STRING (ambiguity) operator='without'
 	 *     name=STRING (ambiguity) optional?='optional'
+	 *     name=STRING (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     optional?='optional' (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     optional?='optional' (ambiguity) 'by' by=ConceptDeclaration
 	 *     optional?='optional' (ambiguity) 'down' 'to' downTo=Concept
@@ -1385,20 +953,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     optional?='optional' (ambiguity) 'per' unit=Unit
 	 *     optional?='optional' (ambiguity) (rule end)
 	 *     optional?='optional' (ambiguity) from=Number
-	 *     optional?='optional' (ambiguity) operator='!='
-	 *     optional?='optional' (ambiguity) operator='<'
-	 *     optional?='optional' (ambiguity) operator='<='
-	 *     optional?='optional' (ambiguity) operator='='
-	 *     optional?='optional' (ambiguity) operator='=='
-	 *     optional?='optional' (ambiguity) operator='>'
-	 *     optional?='optional' (ambiguity) operator='>='
-	 *     optional?='optional' (ambiguity) operator='minus'
-	 *     optional?='optional' (ambiguity) operator='over'
-	 *     optional?='optional' (ambiguity) operator='plus'
-	 *     optional?='optional' (ambiguity) operator='times'
-	 *     optional?='optional' (ambiguity) operator='where'
-	 *     optional?='optional' (ambiguity) operator='without'
 	 *     optional?='optional' (ambiguity) optional?='optional'
+	 *     optional?='optional' (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     to=Number (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     to=Number (ambiguity) 'by' by=ConceptDeclaration
 	 *     to=Number (ambiguity) 'down' 'to' downTo=Concept
@@ -1409,20 +965,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     to=Number (ambiguity) 'per' unit=Unit
 	 *     to=Number (ambiguity) (rule end)
 	 *     to=Number (ambiguity) from=Number
-	 *     to=Number (ambiguity) operator='!='
-	 *     to=Number (ambiguity) operator='<'
-	 *     to=Number (ambiguity) operator='<='
-	 *     to=Number (ambiguity) operator='='
-	 *     to=Number (ambiguity) operator='=='
-	 *     to=Number (ambiguity) operator='>'
-	 *     to=Number (ambiguity) operator='>='
-	 *     to=Number (ambiguity) operator='minus'
-	 *     to=Number (ambiguity) operator='over'
-	 *     to=Number (ambiguity) operator='plus'
-	 *     to=Number (ambiguity) operator='times'
-	 *     to=Number (ambiguity) operator='where'
-	 *     to=Number (ambiguity) operator='without'
 	 *     to=Number (ambiguity) optional?='optional'
+	 *     to=Number (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     unit=Unit (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     unit=Unit (ambiguity) 'by' by=ConceptDeclaration
 	 *     unit=Unit (ambiguity) 'down' 'to' downTo=Concept
@@ -1433,20 +977,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     unit=Unit (ambiguity) 'per' unit=Unit
 	 *     unit=Unit (ambiguity) (rule end)
 	 *     unit=Unit (ambiguity) from=Number
-	 *     unit=Unit (ambiguity) operator='!='
-	 *     unit=Unit (ambiguity) operator='<'
-	 *     unit=Unit (ambiguity) operator='<='
-	 *     unit=Unit (ambiguity) operator='='
-	 *     unit=Unit (ambiguity) operator='=='
-	 *     unit=Unit (ambiguity) operator='>'
-	 *     unit=Unit (ambiguity) operator='>='
-	 *     unit=Unit (ambiguity) operator='minus'
-	 *     unit=Unit (ambiguity) operator='over'
-	 *     unit=Unit (ambiguity) operator='plus'
-	 *     unit=Unit (ambiguity) operator='times'
-	 *     unit=Unit (ambiguity) operator='where'
-	 *     unit=Unit (ambiguity) operator='without'
 	 *     unit=Unit (ambiguity) optional?='optional'
+	 *     unit=Unit (ambiguity) valueModifier=VALUE_MODIFIER
 	 */
 	protected void emit_ObservableSemantics_RequiredKeyword_3_5_1_a(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
@@ -1533,20 +1065,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     accordingTo=PropertyId (ambiguity) 'per' unit=Unit
 	 *     accordingTo=PropertyId (ambiguity) (rule end)
 	 *     accordingTo=PropertyId (ambiguity) from=Number
-	 *     accordingTo=PropertyId (ambiguity) operator='!='
-	 *     accordingTo=PropertyId (ambiguity) operator='<'
-	 *     accordingTo=PropertyId (ambiguity) operator='<='
-	 *     accordingTo=PropertyId (ambiguity) operator='='
-	 *     accordingTo=PropertyId (ambiguity) operator='=='
-	 *     accordingTo=PropertyId (ambiguity) operator='>'
-	 *     accordingTo=PropertyId (ambiguity) operator='>='
-	 *     accordingTo=PropertyId (ambiguity) operator='minus'
-	 *     accordingTo=PropertyId (ambiguity) operator='over'
-	 *     accordingTo=PropertyId (ambiguity) operator='plus'
-	 *     accordingTo=PropertyId (ambiguity) operator='times'
-	 *     accordingTo=PropertyId (ambiguity) operator='where'
-	 *     accordingTo=PropertyId (ambiguity) operator='without'
 	 *     accordingTo=PropertyId (ambiguity) optional?='optional'
+	 *     accordingTo=PropertyId (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     by=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     by=ConceptDeclaration (ambiguity) 'by' by=ConceptDeclaration
 	 *     by=ConceptDeclaration (ambiguity) 'down' 'to' downTo=Concept
@@ -1557,20 +1077,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     by=ConceptDeclaration (ambiguity) 'per' unit=Unit
 	 *     by=ConceptDeclaration (ambiguity) (rule end)
 	 *     by=ConceptDeclaration (ambiguity) from=Number
-	 *     by=ConceptDeclaration (ambiguity) operator='!='
-	 *     by=ConceptDeclaration (ambiguity) operator='<'
-	 *     by=ConceptDeclaration (ambiguity) operator='<='
-	 *     by=ConceptDeclaration (ambiguity) operator='='
-	 *     by=ConceptDeclaration (ambiguity) operator='=='
-	 *     by=ConceptDeclaration (ambiguity) operator='>'
-	 *     by=ConceptDeclaration (ambiguity) operator='>='
-	 *     by=ConceptDeclaration (ambiguity) operator='minus'
-	 *     by=ConceptDeclaration (ambiguity) operator='over'
-	 *     by=ConceptDeclaration (ambiguity) operator='plus'
-	 *     by=ConceptDeclaration (ambiguity) operator='times'
-	 *     by=ConceptDeclaration (ambiguity) operator='where'
-	 *     by=ConceptDeclaration (ambiguity) operator='without'
 	 *     by=ConceptDeclaration (ambiguity) optional?='optional'
+	 *     by=ConceptDeclaration (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) 'by' by=ConceptDeclaration
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) 'down' 'to' downTo=Concept
@@ -1581,20 +1089,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) 'per' unit=Unit
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) (rule end)
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) from=Number
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='!='
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='<'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='<='
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='='
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='=='
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='>'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='>='
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='minus'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='over'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='plus'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='times'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='where'
-	 *     comparisonConcept=ConceptDeclaration (ambiguity) operator='without'
 	 *     comparisonConcept=ConceptDeclaration (ambiguity) optional?='optional'
+	 *     comparisonConcept=ConceptDeclaration (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) 'by' by=ConceptDeclaration
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) 'down' 'to' downTo=Concept
@@ -1605,20 +1101,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) 'per' unit=Unit
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) (rule end)
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) from=Number
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='!='
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='<'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='<='
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='='
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='=='
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='>'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='>='
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='minus'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='over'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='plus'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='times'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='where'
-	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) operator='without'
 	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) optional?='optional'
+	 *     comparisonObservable=ObservableSemantics ')' (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     comparisonValue=Number (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     comparisonValue=Number (ambiguity) 'by' by=ConceptDeclaration
 	 *     comparisonValue=Number (ambiguity) 'down' 'to' downTo=Concept
@@ -1629,20 +1113,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     comparisonValue=Number (ambiguity) 'per' unit=Unit
 	 *     comparisonValue=Number (ambiguity) (rule end)
 	 *     comparisonValue=Number (ambiguity) from=Number
-	 *     comparisonValue=Number (ambiguity) operator='!='
-	 *     comparisonValue=Number (ambiguity) operator='<'
-	 *     comparisonValue=Number (ambiguity) operator='<='
-	 *     comparisonValue=Number (ambiguity) operator='='
-	 *     comparisonValue=Number (ambiguity) operator='=='
-	 *     comparisonValue=Number (ambiguity) operator='>'
-	 *     comparisonValue=Number (ambiguity) operator='>='
-	 *     comparisonValue=Number (ambiguity) operator='minus'
-	 *     comparisonValue=Number (ambiguity) operator='over'
-	 *     comparisonValue=Number (ambiguity) operator='plus'
-	 *     comparisonValue=Number (ambiguity) operator='times'
-	 *     comparisonValue=Number (ambiguity) operator='where'
-	 *     comparisonValue=Number (ambiguity) operator='without'
 	 *     comparisonValue=Number (ambiguity) optional?='optional'
+	 *     comparisonValue=Number (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     currency=Currency (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     currency=Currency (ambiguity) 'by' by=ConceptDeclaration
 	 *     currency=Currency (ambiguity) 'down' 'to' downTo=Concept
@@ -1653,20 +1125,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     currency=Currency (ambiguity) 'per' unit=Unit
 	 *     currency=Currency (ambiguity) (rule end)
 	 *     currency=Currency (ambiguity) from=Number
-	 *     currency=Currency (ambiguity) operator='!='
-	 *     currency=Currency (ambiguity) operator='<'
-	 *     currency=Currency (ambiguity) operator='<='
-	 *     currency=Currency (ambiguity) operator='='
-	 *     currency=Currency (ambiguity) operator='=='
-	 *     currency=Currency (ambiguity) operator='>'
-	 *     currency=Currency (ambiguity) operator='>='
-	 *     currency=Currency (ambiguity) operator='minus'
-	 *     currency=Currency (ambiguity) operator='over'
-	 *     currency=Currency (ambiguity) operator='plus'
-	 *     currency=Currency (ambiguity) operator='times'
-	 *     currency=Currency (ambiguity) operator='where'
-	 *     currency=Currency (ambiguity) operator='without'
 	 *     currency=Currency (ambiguity) optional?='optional'
+	 *     currency=Currency (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     declaration=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     declaration=ConceptDeclaration (ambiguity) 'by' by=ConceptDeclaration
 	 *     declaration=ConceptDeclaration (ambiguity) 'down' 'to' downTo=Concept
@@ -1677,20 +1137,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     declaration=ConceptDeclaration (ambiguity) 'per' unit=Unit
 	 *     declaration=ConceptDeclaration (ambiguity) (rule end)
 	 *     declaration=ConceptDeclaration (ambiguity) from=Number
-	 *     declaration=ConceptDeclaration (ambiguity) operator='!='
-	 *     declaration=ConceptDeclaration (ambiguity) operator='<'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='<='
-	 *     declaration=ConceptDeclaration (ambiguity) operator='='
-	 *     declaration=ConceptDeclaration (ambiguity) operator='=='
-	 *     declaration=ConceptDeclaration (ambiguity) operator='>'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='>='
-	 *     declaration=ConceptDeclaration (ambiguity) operator='minus'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='over'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='plus'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='times'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='where'
-	 *     declaration=ConceptDeclaration (ambiguity) operator='without'
 	 *     declaration=ConceptDeclaration (ambiguity) optional?='optional'
+	 *     declaration=ConceptDeclaration (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     downTo=Concept (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     downTo=Concept (ambiguity) 'by' by=ConceptDeclaration
 	 *     downTo=Concept (ambiguity) 'down' 'to' downTo=Concept
@@ -1701,20 +1149,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     downTo=Concept (ambiguity) 'per' unit=Unit
 	 *     downTo=Concept (ambiguity) (rule end)
 	 *     downTo=Concept (ambiguity) from=Number
-	 *     downTo=Concept (ambiguity) operator='!='
-	 *     downTo=Concept (ambiguity) operator='<'
-	 *     downTo=Concept (ambiguity) operator='<='
-	 *     downTo=Concept (ambiguity) operator='='
-	 *     downTo=Concept (ambiguity) operator='=='
-	 *     downTo=Concept (ambiguity) operator='>'
-	 *     downTo=Concept (ambiguity) operator='>='
-	 *     downTo=Concept (ambiguity) operator='minus'
-	 *     downTo=Concept (ambiguity) operator='over'
-	 *     downTo=Concept (ambiguity) operator='plus'
-	 *     downTo=Concept (ambiguity) operator='times'
-	 *     downTo=Concept (ambiguity) operator='where'
-	 *     downTo=Concept (ambiguity) operator='without'
 	 *     downTo=Concept (ambiguity) optional?='optional'
+	 *     downTo=Concept (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     name=LOWERCASE_ID (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     name=LOWERCASE_ID (ambiguity) 'by' by=ConceptDeclaration
 	 *     name=LOWERCASE_ID (ambiguity) 'down' 'to' downTo=Concept
@@ -1725,20 +1161,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=LOWERCASE_ID (ambiguity) 'per' unit=Unit
 	 *     name=LOWERCASE_ID (ambiguity) (rule end)
 	 *     name=LOWERCASE_ID (ambiguity) from=Number
-	 *     name=LOWERCASE_ID (ambiguity) operator='!='
-	 *     name=LOWERCASE_ID (ambiguity) operator='<'
-	 *     name=LOWERCASE_ID (ambiguity) operator='<='
-	 *     name=LOWERCASE_ID (ambiguity) operator='='
-	 *     name=LOWERCASE_ID (ambiguity) operator='=='
-	 *     name=LOWERCASE_ID (ambiguity) operator='>'
-	 *     name=LOWERCASE_ID (ambiguity) operator='>='
-	 *     name=LOWERCASE_ID (ambiguity) operator='minus'
-	 *     name=LOWERCASE_ID (ambiguity) operator='over'
-	 *     name=LOWERCASE_ID (ambiguity) operator='plus'
-	 *     name=LOWERCASE_ID (ambiguity) operator='times'
-	 *     name=LOWERCASE_ID (ambiguity) operator='where'
-	 *     name=LOWERCASE_ID (ambiguity) operator='without'
 	 *     name=LOWERCASE_ID (ambiguity) optional?='optional'
+	 *     name=LOWERCASE_ID (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     name=STRING (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     name=STRING (ambiguity) 'by' by=ConceptDeclaration
 	 *     name=STRING (ambiguity) 'down' 'to' downTo=Concept
@@ -1749,20 +1173,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=STRING (ambiguity) 'per' unit=Unit
 	 *     name=STRING (ambiguity) (rule end)
 	 *     name=STRING (ambiguity) from=Number
-	 *     name=STRING (ambiguity) operator='!='
-	 *     name=STRING (ambiguity) operator='<'
-	 *     name=STRING (ambiguity) operator='<='
-	 *     name=STRING (ambiguity) operator='='
-	 *     name=STRING (ambiguity) operator='=='
-	 *     name=STRING (ambiguity) operator='>'
-	 *     name=STRING (ambiguity) operator='>='
-	 *     name=STRING (ambiguity) operator='minus'
-	 *     name=STRING (ambiguity) operator='over'
-	 *     name=STRING (ambiguity) operator='plus'
-	 *     name=STRING (ambiguity) operator='times'
-	 *     name=STRING (ambiguity) operator='where'
-	 *     name=STRING (ambiguity) operator='without'
 	 *     name=STRING (ambiguity) optional?='optional'
+	 *     name=STRING (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     optional?='optional' (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     optional?='optional' (ambiguity) 'by' by=ConceptDeclaration
 	 *     optional?='optional' (ambiguity) 'down' 'to' downTo=Concept
@@ -1773,20 +1185,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     optional?='optional' (ambiguity) 'per' unit=Unit
 	 *     optional?='optional' (ambiguity) (rule end)
 	 *     optional?='optional' (ambiguity) from=Number
-	 *     optional?='optional' (ambiguity) operator='!='
-	 *     optional?='optional' (ambiguity) operator='<'
-	 *     optional?='optional' (ambiguity) operator='<='
-	 *     optional?='optional' (ambiguity) operator='='
-	 *     optional?='optional' (ambiguity) operator='=='
-	 *     optional?='optional' (ambiguity) operator='>'
-	 *     optional?='optional' (ambiguity) operator='>='
-	 *     optional?='optional' (ambiguity) operator='minus'
-	 *     optional?='optional' (ambiguity) operator='over'
-	 *     optional?='optional' (ambiguity) operator='plus'
-	 *     optional?='optional' (ambiguity) operator='times'
-	 *     optional?='optional' (ambiguity) operator='where'
-	 *     optional?='optional' (ambiguity) operator='without'
 	 *     optional?='optional' (ambiguity) optional?='optional'
+	 *     optional?='optional' (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     to=Number (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     to=Number (ambiguity) 'by' by=ConceptDeclaration
 	 *     to=Number (ambiguity) 'down' 'to' downTo=Concept
@@ -1797,20 +1197,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     to=Number (ambiguity) 'per' unit=Unit
 	 *     to=Number (ambiguity) (rule end)
 	 *     to=Number (ambiguity) from=Number
-	 *     to=Number (ambiguity) operator='!='
-	 *     to=Number (ambiguity) operator='<'
-	 *     to=Number (ambiguity) operator='<='
-	 *     to=Number (ambiguity) operator='='
-	 *     to=Number (ambiguity) operator='=='
-	 *     to=Number (ambiguity) operator='>'
-	 *     to=Number (ambiguity) operator='>='
-	 *     to=Number (ambiguity) operator='minus'
-	 *     to=Number (ambiguity) operator='over'
-	 *     to=Number (ambiguity) operator='plus'
-	 *     to=Number (ambiguity) operator='times'
-	 *     to=Number (ambiguity) operator='where'
-	 *     to=Number (ambiguity) operator='without'
 	 *     to=Number (ambiguity) optional?='optional'
+	 *     to=Number (ambiguity) valueModifier=VALUE_MODIFIER
 	 *     unit=Unit (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     unit=Unit (ambiguity) 'by' by=ConceptDeclaration
 	 *     unit=Unit (ambiguity) 'down' 'to' downTo=Concept
@@ -1821,20 +1209,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     unit=Unit (ambiguity) 'per' unit=Unit
 	 *     unit=Unit (ambiguity) (rule end)
 	 *     unit=Unit (ambiguity) from=Number
-	 *     unit=Unit (ambiguity) operator='!='
-	 *     unit=Unit (ambiguity) operator='<'
-	 *     unit=Unit (ambiguity) operator='<='
-	 *     unit=Unit (ambiguity) operator='='
-	 *     unit=Unit (ambiguity) operator='=='
-	 *     unit=Unit (ambiguity) operator='>'
-	 *     unit=Unit (ambiguity) operator='>='
-	 *     unit=Unit (ambiguity) operator='minus'
-	 *     unit=Unit (ambiguity) operator='over'
-	 *     unit=Unit (ambiguity) operator='plus'
-	 *     unit=Unit (ambiguity) operator='times'
-	 *     unit=Unit (ambiguity) operator='where'
-	 *     unit=Unit (ambiguity) operator='without'
 	 *     unit=Unit (ambiguity) optional?='optional'
+	 *     unit=Unit (ambiguity) valueModifier=VALUE_MODIFIER
 	 */
 	protected void emit_SimpleObservableSemantics_RequiredKeyword_1_6_1_a(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);

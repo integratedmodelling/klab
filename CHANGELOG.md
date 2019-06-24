@@ -27,6 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- k.IM expressions can be forced to evaluate in scalar context by prefixing them with 
+  a pound sign. This can be used e.g. in an area evaluator that wants the area of each
+  subdivision for further aggregation.
+- Value operators are now recognized and stored in observables.
 ### Changed
 ### Fixed
 

@@ -78,6 +78,9 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 		
 		IServiceCall ret = KimServiceCall.create(FUNCTION_ID);
 		ret.getParameters().put("code", resource.getExpression());
+		if (resource.getExpression().isForcedScalar()) {
+			ret.getParameters().put("scalar", Boolean.TRUE);
+		}
 		if (resource.getCondition() != null) {
 			ret.getParameters().put(resource.isNegated() ? "unlesscondition" : "ifcondition", resource.getCondition());
 		}
@@ -91,15 +94,15 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 				.getLanguageProcessor(parameters.get("language", Extensions.DEFAULT_EXPRESSION_LANGUAGE));
 
 		IExpression.Context expressionContext = context.getExpressionContext();
-		
-		Descriptor descriptor = processor.describe(parameters.get("code", String.class), expressionContext);
+		Boolean forceScalar = parameters.get("scalar", Boolean.FALSE);
+		Descriptor descriptor = processor.describe(parameters.get("code", String.class), expressionContext, false);
 		Descriptor condition = null;
 		if (parameters.get("ifcondition") != null || parameters.get("unlesscondition") != null) {
 			String condCode = parameters.get("ifcondition", String.class);
 			if (condCode == null) {
 				condCode = processor.negate(parameters.get("unlesscondition", String.class));
 			}
-			condition = processor.describe(condCode, expressionContext);
+			condition = processor.describe(condCode, expressionContext, false);
 		}
 
 		for (String key : parameters.keySet()) {
@@ -114,6 +117,7 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 		/**
 		 * If we're computing a quality and there is any scalar usage of the known
 		 * non-scalar quantities, create a distributed state resolver.
+		 * Do the analysis even if scalar evaluation has been forced.
 		 */
 		boolean scalar = false;
 		if (context.getArtifactType() == Type.QUALITY) {
@@ -125,7 +129,7 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 			}
 		}
 
-		if (scalar) {
+		if (scalar || forceScalar) {
 			return new ExpressionStateResolver(descriptor, condition, parameters, context, additionalParameters);
 		}
 

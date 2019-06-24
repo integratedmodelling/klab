@@ -77,19 +77,23 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 
 		if (parameters.containsKey("select")) {
 			Object expression = parameters.get("select");
+			boolean forceScalar = false;
 			if (expression instanceof IKimExpression) {
 				expression = ((IKimExpression) expression).getCode();
+				forceScalar = ((IKimExpression)expression).isForcedScalar();
 			}
 			this.selectDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-					.describe(expression.toString(), expressionContext);
+					.describe(expression.toString(), expressionContext, forceScalar);
 		}
 		if (parameters.containsKey("aggregate")) {
 			Object expression = parameters.get("aggregate");
+			boolean forceScalar = false;
 			if (expression instanceof IKimExpression) {
 				expression = ((IKimExpression) expression).getCode();
+				forceScalar = ((IKimExpression)expression).isForcedScalar();
 			}
 			this.valueDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-					.describe(expression.toString(), expressionContext);
+					.describe(expression.toString(), expressionContext, forceScalar);
 		}
 
 		this.radius = parameters.get("radius", 0.0);

@@ -6,6 +6,8 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.Modifier;
+import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.kim.Annotation;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
@@ -40,8 +42,8 @@ public class KimObservable extends KimStatement implements IKimObservable {
 	private IKimConcept downTo = null;
 	private String modelReference;
 	private IArtifact.Type nonSemanticType = null;
-	private Modifier modifier;
-	private Object modifierOperand;
+	private ValueOperator valueOperator;
+	private Object valueOperand;
 	
 	@Override
 	public IArtifact.Type getNonSemanticType() {
@@ -113,6 +115,17 @@ public class KimObservable extends KimStatement implements IKimObservable {
 					Kim.INSTANCE.getNamespace(KimValidator.getNamespace(declaration)));
 			if (id != null && ret.value instanceof String && id.equals(ret.value)) {
 				ret.hasAttribute = true;
+			}
+		}
+		
+		if (declaration.getValueModifier() != null) {
+			ret.valueOperator = ValueOperator.getOperator(declaration.getValueModifier());
+			if (declaration.getComparisonConcept() != null) {
+				ret.valueOperand = Kim.INSTANCE.declareConcept(declaration.getComparisonConcept());
+			} else if (declaration.getComparisonObservable() != null) {
+				ret.valueOperand = Kim.INSTANCE.declareObservable(declaration.getComparisonObservable());
+			} else if (declaration.getComparisonValue() != null) {
+				ret.valueOperand = Kim.INSTANCE.parseNumber(declaration.getComparisonValue());
 			}
 		}
 
@@ -336,12 +349,12 @@ public class KimObservable extends KimStatement implements IKimObservable {
 	}
 
 	@Override
-	public Modifier getModifier() {
-		return modifier;
+	public ValueOperator getValueOperator() {
+		return valueOperator;
 	}
 
 	@Override
-	public Object getOperandModifier() {
-		return modifierOperand;
+	public Object getValueOperand() {
+		return valueOperand;
 	}
 }

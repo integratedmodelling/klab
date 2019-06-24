@@ -232,7 +232,7 @@ public interface IComputableResource extends IKimStatement, IDataflowNode {
 	 * 
 	 * @return the expression
 	 */
-	String getExpression();
+	IKimExpression getExpression();
 
 	/**
 	 * A classification of the input. Only one among getLiteral(), getServiceCall(),

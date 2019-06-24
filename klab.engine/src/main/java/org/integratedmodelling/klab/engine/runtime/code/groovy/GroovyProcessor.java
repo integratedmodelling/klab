@@ -31,8 +31,9 @@ public enum GroovyProcessor implements ILanguageProcessor {
 		private Set<String> objectIds;
 		private Set<String> contextualizers;
 		private List<KimNotification> errors;
+		private boolean forcedScalar;
 
-		GroovyDescriptor(String expression, IExpression.Context context, boolean contextual) {
+		GroovyDescriptor(String expression, IExpression.Context context, boolean contextual, boolean forcedScalar) {
 
 			/*
 			 * Context should most definitely be nullable
@@ -53,6 +54,7 @@ public enum GroovyProcessor implements ILanguageProcessor {
 			this.objectIds = processor.getObjectIdentifiers();
 			this.contextualizers = processor.getContextualizers();
 			this.errors = processor.getErrors();
+			this.forcedScalar = forcedScalar;
 			// this.tokens = processor.tokens;
 			// this.context = context;
 		}
@@ -64,6 +66,7 @@ public enum GroovyProcessor implements ILanguageProcessor {
 
 		@Override
 		public boolean isScalar(Collection<String> stateIdentifiers) {
+			
 			for (String id : stateIdentifiers) {
 				if (this.scalarIds.contains(id)) {
 					return true;
@@ -120,26 +123,31 @@ public enum GroovyProcessor implements ILanguageProcessor {
 		public Collection<String> getContextualizers() {
 			return contextualizers;
 		}
+
+		@Override
+		public boolean isForcedScalar() {
+			return forcedScalar;
+		}
 	}
 
 	@Override
-	public IExpression compile(String expression, IExpression.Context context) throws KlabValidationException {
-		return new GroovyDescriptor(expression, context, true).compile();
+	public IExpression compile(String expression, IExpression.Context context, boolean forcedScalar) throws KlabValidationException {
+		return new GroovyDescriptor(expression, context, true, forcedScalar).compile();
 	}
 
 	@Override
-	public Descriptor describe(String expression, IExpression.Context context) throws KlabValidationException {
-		return new GroovyDescriptor(expression, context, true);
+	public Descriptor describe(String expression, IExpression.Context context, boolean forcedScalar) throws KlabValidationException {
+		return new GroovyDescriptor(expression, context, true, forcedScalar);
 	}
 
 	@Override
-	public Descriptor describe(String expression) throws KlabValidationException {
-		return new GroovyDescriptor(expression, null, false);
+	public Descriptor describe(String expression, boolean forcedScalar) throws KlabValidationException {
+		return new GroovyDescriptor(expression, null, false, forcedScalar);
 	}
 
 	@Override
 	public String negate(String expression) {
 		return "!(" + expression + ")";
 	}
-
+	
 }

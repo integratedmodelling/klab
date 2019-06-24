@@ -45,7 +45,7 @@ import org.integratedmodelling.kim.kim.Value;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getAccordingTo <em>According To</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getUnit <em>Unit</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getCurrency <em>Currency</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getOperator <em>Operator</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getValueModifier <em>Value Modifier</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getComparisonValue <em>Comparison Value</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getComparisonConcept <em>Comparison Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getComparisonObservable <em>Comparison Observable</em>}</li>
@@ -162,24 +162,24 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
   protected Currency currency;
 
   /**
-   * The default value of the '{@link #getOperator() <em>Operator</em>}' attribute.
+   * The default value of the '{@link #getValueModifier() <em>Value Modifier</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getOperator()
+   * @see #getValueModifier()
    * @generated
    * @ordered
    */
-  protected static final String OPERATOR_EDEFAULT = null;
+  protected static final String VALUE_MODIFIER_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getOperator() <em>Operator</em>}' attribute.
+   * The cached value of the '{@link #getValueModifier() <em>Value Modifier</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getOperator()
+   * @see #getValueModifier()
    * @generated
    * @ordered
    */
-  protected String operator = OPERATOR_EDEFAULT;
+  protected String valueModifier = VALUE_MODIFIER_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getComparisonValue() <em>Comparison Value</em>}' containment reference.
@@ -661,9 +661,9 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getOperator()
+  public String getValueModifier()
   {
-    return operator;
+    return valueModifier;
   }
 
   /**
@@ -671,12 +671,12 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setOperator(String newOperator)
+  public void setValueModifier(String newValueModifier)
   {
-    String oldOperator = operator;
-    operator = newOperator;
+    String oldValueModifier = valueModifier;
+    valueModifier = newValueModifier;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__OPERATOR, oldOperator, operator));
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__VALUE_MODIFIER, oldValueModifier, valueModifier));
   }
 
   /**
@@ -1066,8 +1066,8 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return getUnit();
       case KimPackage.OBSERVABLE_SEMANTICS__CURRENCY:
         return getCurrency();
-      case KimPackage.OBSERVABLE_SEMANTICS__OPERATOR:
-        return getOperator();
+      case KimPackage.OBSERVABLE_SEMANTICS__VALUE_MODIFIER:
+        return getValueModifier();
       case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE:
         return getComparisonValue();
       case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT:
@@ -1125,8 +1125,8 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
       case KimPackage.OBSERVABLE_SEMANTICS__CURRENCY:
         setCurrency((Currency)newValue);
         return;
-      case KimPackage.OBSERVABLE_SEMANTICS__OPERATOR:
-        setOperator((String)newValue);
+      case KimPackage.OBSERVABLE_SEMANTICS__VALUE_MODIFIER:
+        setValueModifier((String)newValue);
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE:
         setComparisonValue((org.integratedmodelling.kim.kim.Number)newValue);
@@ -1194,8 +1194,8 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
       case KimPackage.OBSERVABLE_SEMANTICS__CURRENCY:
         setCurrency((Currency)null);
         return;
-      case KimPackage.OBSERVABLE_SEMANTICS__OPERATOR:
-        setOperator(OPERATOR_EDEFAULT);
+      case KimPackage.OBSERVABLE_SEMANTICS__VALUE_MODIFIER:
+        setValueModifier(VALUE_MODIFIER_EDEFAULT);
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE:
         setComparisonValue((org.integratedmodelling.kim.kim.Number)null);
@@ -1254,8 +1254,8 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return unit != null;
       case KimPackage.OBSERVABLE_SEMANTICS__CURRENCY:
         return currency != null;
-      case KimPackage.OBSERVABLE_SEMANTICS__OPERATOR:
-        return OPERATOR_EDEFAULT == null ? operator != null : !OPERATOR_EDEFAULT.equals(operator);
+      case KimPackage.OBSERVABLE_SEMANTICS__VALUE_MODIFIER:
+        return VALUE_MODIFIER_EDEFAULT == null ? valueModifier != null : !VALUE_MODIFIER_EDEFAULT.equals(valueModifier);
       case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE:
         return comparisonValue != null;
       case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT:
@@ -1293,8 +1293,8 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
     result.append(generic);
     result.append(", accordingTo: ");
     result.append(accordingTo);
-    result.append(", operator: ");
-    result.append(operator);
+    result.append(", valueModifier: ");
+    result.append(valueModifier);
     result.append(", optional: ");
     result.append(optional);
     result.append(", name: ");

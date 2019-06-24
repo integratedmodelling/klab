@@ -81,10 +81,11 @@ public class CategoryClassificationResolver
         IState classf = (IState) classifier;
 
         /*
-         * TODO some values are extensive. others aren't
+         * TODO some values are extensive. Others aren't. Put this check under Observables after it's all
+         * understood.
          */
         boolean isExtensive = values.getObservable().is(Type.EXTENSIVE_PROPERTY)
-                || values.getObservable().is(Type.VALUE);
+                || values.getObservable().is(Type.VALUE) || values.getObservable().is(Type.MONEY);
 
         IUnit propagateSpace = values.getObservable().getUnit() != null && (ret.getScale().getSpace() != null
                 && Units.INSTANCE.isArealDensity(values.getObservable().getUnit()))

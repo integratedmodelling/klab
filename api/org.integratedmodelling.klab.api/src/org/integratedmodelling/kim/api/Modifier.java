@@ -39,4 +39,13 @@ public enum Modifier {
         this.declaration = decl;
     }
 
+	public static Modifier getModifier(String valueModifier) {
+		for (Modifier m : Modifier.values()) {
+			if (m.declaration[0].equals(valueModifier)) {
+				return m;
+			}
+		}
+		return null;
+	}
+
 }

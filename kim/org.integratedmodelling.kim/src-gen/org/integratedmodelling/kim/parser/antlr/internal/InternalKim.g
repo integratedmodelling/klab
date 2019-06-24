@@ -4322,6 +4322,102 @@ ruleMODEL_TYPE returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToke
 	)
 ;
 
+// Entry rule entryRuleVALUE_MODIFIER
+entryRuleVALUE_MODIFIER returns [String current=null]:
+	{ newCompositeNode(grammarAccess.getVALUE_MODIFIERRule()); }
+	iv_ruleVALUE_MODIFIER=ruleVALUE_MODIFIER
+	{ $current=$iv_ruleVALUE_MODIFIER.current.getText(); }
+	EOF;
+
+// Rule VALUE_MODIFIER
+ruleVALUE_MODIFIER returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		kw='>'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_MODIFIERAccess().getGreaterThanSignKeyword_0());
+		}
+		    |
+		kw='>='
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_MODIFIERAccess().getGreaterThanSignEqualsSignKeyword_1());
+		}
+		    |
+		kw='<='
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_MODIFIERAccess().getLessThanSignEqualsSignKeyword_2());
+		}
+		    |
+		kw='<'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_MODIFIERAccess().getLessThanSignKeyword_3());
+		}
+		    |
+		kw='where'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_MODIFIERAccess().getWhereKeyword_4());
+		}
+		    |
+		kw='=='
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_MODIFIERAccess().getEqualsSignEqualsSignKeyword_5());
+		}
+		    |
+		kw='='
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_MODIFIERAccess().getEqualsSignKeyword_6());
+		}
+		    |
+		kw='without'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_MODIFIERAccess().getWithoutKeyword_7());
+		}
+		    |
+		kw='!='
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_MODIFIERAccess().getExclamationMarkEqualsSignKeyword_8());
+		}
+		    |
+		kw='plus'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_MODIFIERAccess().getPlusKeyword_9());
+		}
+		    |
+		kw='minus'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_MODIFIERAccess().getMinusKeyword_10());
+		}
+		    |
+		kw='times'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_MODIFIERAccess().getTimesKeyword_11());
+		}
+		    |
+		kw='over'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_MODIFIERAccess().getOverKeyword_12());
+		}
+	)
+;
+
 // Entry rule entryRuleNamespace
 entryRuleNamespace returns [EObject current=null]@init {
 	UnorderedGroupState myUnorderedGroupState = getUnorderedGroupHelper().snapShot(
@@ -6318,150 +6414,21 @@ ruleObservableSemantics returns [EObject current=null]
 					}
 								({true}?=>((
 									(
-										(
-											lv_operator_18_1='>'
-											{
-												newLeafNode(lv_operator_18_1, grammarAccess.getObservableSemanticsAccess().getOperatorGreaterThanSignKeyword_3_4_0_0_0());
+										{
+											newCompositeNode(grammarAccess.getObservableSemanticsAccess().getValueModifierVALUE_MODIFIERParserRuleCall_3_4_0_0());
+										}
+										lv_valueModifier_18_0=ruleVALUE_MODIFIER
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
 											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_1, null);
-											}
-											    |
-											lv_operator_18_2='>='
-											{
-												newLeafNode(lv_operator_18_2, grammarAccess.getObservableSemanticsAccess().getOperatorGreaterThanSignEqualsSignKeyword_3_4_0_0_1());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_2, null);
-											}
-											    |
-											lv_operator_18_3='<='
-											{
-												newLeafNode(lv_operator_18_3, grammarAccess.getObservableSemanticsAccess().getOperatorLessThanSignEqualsSignKeyword_3_4_0_0_2());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_3, null);
-											}
-											    |
-											lv_operator_18_4='<'
-											{
-												newLeafNode(lv_operator_18_4, grammarAccess.getObservableSemanticsAccess().getOperatorLessThanSignKeyword_3_4_0_0_3());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_4, null);
-											}
-											    |
-											lv_operator_18_5='where'
-											{
-												newLeafNode(lv_operator_18_5, grammarAccess.getObservableSemanticsAccess().getOperatorWhereKeyword_3_4_0_0_4());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_5, null);
-											}
-											    |
-											lv_operator_18_6='=='
-											{
-												newLeafNode(lv_operator_18_6, grammarAccess.getObservableSemanticsAccess().getOperatorEqualsSignEqualsSignKeyword_3_4_0_0_5());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_6, null);
-											}
-											    |
-											lv_operator_18_7='='
-											{
-												newLeafNode(lv_operator_18_7, grammarAccess.getObservableSemanticsAccess().getOperatorEqualsSignKeyword_3_4_0_0_6());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_7, null);
-											}
-											    |
-											lv_operator_18_8='without'
-											{
-												newLeafNode(lv_operator_18_8, grammarAccess.getObservableSemanticsAccess().getOperatorWithoutKeyword_3_4_0_0_7());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_8, null);
-											}
-											    |
-											lv_operator_18_9='!='
-											{
-												newLeafNode(lv_operator_18_9, grammarAccess.getObservableSemanticsAccess().getOperatorExclamationMarkEqualsSignKeyword_3_4_0_0_8());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_9, null);
-											}
-											    |
-											lv_operator_18_10='plus'
-											{
-												newLeafNode(lv_operator_18_10, grammarAccess.getObservableSemanticsAccess().getOperatorPlusKeyword_3_4_0_0_9());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_10, null);
-											}
-											    |
-											lv_operator_18_11='minus'
-											{
-												newLeafNode(lv_operator_18_11, grammarAccess.getObservableSemanticsAccess().getOperatorMinusKeyword_3_4_0_0_10());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_11, null);
-											}
-											    |
-											lv_operator_18_12='times'
-											{
-												newLeafNode(lv_operator_18_12, grammarAccess.getObservableSemanticsAccess().getOperatorTimesKeyword_3_4_0_0_11());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_12, null);
-											}
-											    |
-											lv_operator_18_13='over'
-											{
-												newLeafNode(lv_operator_18_13, grammarAccess.getObservableSemanticsAccess().getOperatorOverKeyword_3_4_0_0_12());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_13, null);
-											}
-										)
+											set(
+												$current,
+												"valueModifier",
+												lv_valueModifier_18_0,
+												"org.integratedmodelling.kim.Kim.VALUE_MODIFIER");
+											afterParserOrEnumRuleCall();
+										}
 									)
 								)
 								(
@@ -6998,150 +6965,21 @@ ruleAnnotatedObservableSemantics returns [EObject current=null]
 					}
 								({true}?=>((
 									(
-										(
-											lv_operator_19_1='>'
-											{
-												newLeafNode(lv_operator_19_1, grammarAccess.getAnnotatedObservableSemanticsAccess().getOperatorGreaterThanSignKeyword_4_4_0_0_0());
+										{
+											newCompositeNode(grammarAccess.getAnnotatedObservableSemanticsAccess().getValueModifierVALUE_MODIFIERParserRuleCall_4_4_0_0());
+										}
+										lv_valueModifier_19_0=ruleVALUE_MODIFIER
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getAnnotatedObservableSemanticsRule());
 											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAnnotatedObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_19_1, null);
-											}
-											    |
-											lv_operator_19_2='>='
-											{
-												newLeafNode(lv_operator_19_2, grammarAccess.getAnnotatedObservableSemanticsAccess().getOperatorGreaterThanSignEqualsSignKeyword_4_4_0_0_1());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAnnotatedObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_19_2, null);
-											}
-											    |
-											lv_operator_19_3='<='
-											{
-												newLeafNode(lv_operator_19_3, grammarAccess.getAnnotatedObservableSemanticsAccess().getOperatorLessThanSignEqualsSignKeyword_4_4_0_0_2());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAnnotatedObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_19_3, null);
-											}
-											    |
-											lv_operator_19_4='<'
-											{
-												newLeafNode(lv_operator_19_4, grammarAccess.getAnnotatedObservableSemanticsAccess().getOperatorLessThanSignKeyword_4_4_0_0_3());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAnnotatedObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_19_4, null);
-											}
-											    |
-											lv_operator_19_5='where'
-											{
-												newLeafNode(lv_operator_19_5, grammarAccess.getAnnotatedObservableSemanticsAccess().getOperatorWhereKeyword_4_4_0_0_4());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAnnotatedObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_19_5, null);
-											}
-											    |
-											lv_operator_19_6='=='
-											{
-												newLeafNode(lv_operator_19_6, grammarAccess.getAnnotatedObservableSemanticsAccess().getOperatorEqualsSignEqualsSignKeyword_4_4_0_0_5());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAnnotatedObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_19_6, null);
-											}
-											    |
-											lv_operator_19_7='='
-											{
-												newLeafNode(lv_operator_19_7, grammarAccess.getAnnotatedObservableSemanticsAccess().getOperatorEqualsSignKeyword_4_4_0_0_6());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAnnotatedObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_19_7, null);
-											}
-											    |
-											lv_operator_19_8='without'
-											{
-												newLeafNode(lv_operator_19_8, grammarAccess.getAnnotatedObservableSemanticsAccess().getOperatorWithoutKeyword_4_4_0_0_7());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAnnotatedObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_19_8, null);
-											}
-											    |
-											lv_operator_19_9='!='
-											{
-												newLeafNode(lv_operator_19_9, grammarAccess.getAnnotatedObservableSemanticsAccess().getOperatorExclamationMarkEqualsSignKeyword_4_4_0_0_8());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAnnotatedObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_19_9, null);
-											}
-											    |
-											lv_operator_19_10='plus'
-											{
-												newLeafNode(lv_operator_19_10, grammarAccess.getAnnotatedObservableSemanticsAccess().getOperatorPlusKeyword_4_4_0_0_9());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAnnotatedObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_19_10, null);
-											}
-											    |
-											lv_operator_19_11='minus'
-											{
-												newLeafNode(lv_operator_19_11, grammarAccess.getAnnotatedObservableSemanticsAccess().getOperatorMinusKeyword_4_4_0_0_10());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAnnotatedObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_19_11, null);
-											}
-											    |
-											lv_operator_19_12='times'
-											{
-												newLeafNode(lv_operator_19_12, grammarAccess.getAnnotatedObservableSemanticsAccess().getOperatorTimesKeyword_4_4_0_0_11());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAnnotatedObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_19_12, null);
-											}
-											    |
-											lv_operator_19_13='over'
-											{
-												newLeafNode(lv_operator_19_13, grammarAccess.getAnnotatedObservableSemanticsAccess().getOperatorOverKeyword_4_4_0_0_12());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAnnotatedObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_19_13, null);
-											}
-										)
+											set(
+												$current,
+												"valueModifier",
+												lv_valueModifier_19_0,
+												"org.integratedmodelling.kim.Kim.VALUE_MODIFIER");
+											afterParserOrEnumRuleCall();
+										}
 									)
 								)
 								(
@@ -15823,150 +15661,21 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 					}
 								({true}?=>((
 									(
-										(
-											lv_operator_18_1='>'
-											{
-												newLeafNode(lv_operator_18_1, grammarAccess.getSimpleObservableSemanticsAccess().getOperatorGreaterThanSignKeyword_1_5_0_0_0());
+										{
+											newCompositeNode(grammarAccess.getSimpleObservableSemanticsAccess().getValueModifierVALUE_MODIFIERParserRuleCall_1_5_0_0());
+										}
+										lv_valueModifier_18_0=ruleVALUE_MODIFIER
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getSimpleObservableSemanticsRule());
 											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getSimpleObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_1, null);
-											}
-											    |
-											lv_operator_18_2='>='
-											{
-												newLeafNode(lv_operator_18_2, grammarAccess.getSimpleObservableSemanticsAccess().getOperatorGreaterThanSignEqualsSignKeyword_1_5_0_0_1());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getSimpleObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_2, null);
-											}
-											    |
-											lv_operator_18_3='<='
-											{
-												newLeafNode(lv_operator_18_3, grammarAccess.getSimpleObservableSemanticsAccess().getOperatorLessThanSignEqualsSignKeyword_1_5_0_0_2());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getSimpleObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_3, null);
-											}
-											    |
-											lv_operator_18_4='<'
-											{
-												newLeafNode(lv_operator_18_4, grammarAccess.getSimpleObservableSemanticsAccess().getOperatorLessThanSignKeyword_1_5_0_0_3());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getSimpleObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_4, null);
-											}
-											    |
-											lv_operator_18_5='where'
-											{
-												newLeafNode(lv_operator_18_5, grammarAccess.getSimpleObservableSemanticsAccess().getOperatorWhereKeyword_1_5_0_0_4());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getSimpleObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_5, null);
-											}
-											    |
-											lv_operator_18_6='=='
-											{
-												newLeafNode(lv_operator_18_6, grammarAccess.getSimpleObservableSemanticsAccess().getOperatorEqualsSignEqualsSignKeyword_1_5_0_0_5());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getSimpleObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_6, null);
-											}
-											    |
-											lv_operator_18_7='='
-											{
-												newLeafNode(lv_operator_18_7, grammarAccess.getSimpleObservableSemanticsAccess().getOperatorEqualsSignKeyword_1_5_0_0_6());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getSimpleObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_7, null);
-											}
-											    |
-											lv_operator_18_8='without'
-											{
-												newLeafNode(lv_operator_18_8, grammarAccess.getSimpleObservableSemanticsAccess().getOperatorWithoutKeyword_1_5_0_0_7());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getSimpleObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_8, null);
-											}
-											    |
-											lv_operator_18_9='!='
-											{
-												newLeafNode(lv_operator_18_9, grammarAccess.getSimpleObservableSemanticsAccess().getOperatorExclamationMarkEqualsSignKeyword_1_5_0_0_8());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getSimpleObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_9, null);
-											}
-											    |
-											lv_operator_18_10='plus'
-											{
-												newLeafNode(lv_operator_18_10, grammarAccess.getSimpleObservableSemanticsAccess().getOperatorPlusKeyword_1_5_0_0_9());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getSimpleObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_10, null);
-											}
-											    |
-											lv_operator_18_11='minus'
-											{
-												newLeafNode(lv_operator_18_11, grammarAccess.getSimpleObservableSemanticsAccess().getOperatorMinusKeyword_1_5_0_0_10());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getSimpleObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_11, null);
-											}
-											    |
-											lv_operator_18_12='times'
-											{
-												newLeafNode(lv_operator_18_12, grammarAccess.getSimpleObservableSemanticsAccess().getOperatorTimesKeyword_1_5_0_0_11());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getSimpleObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_12, null);
-											}
-											    |
-											lv_operator_18_13='over'
-											{
-												newLeafNode(lv_operator_18_13, grammarAccess.getSimpleObservableSemanticsAccess().getOperatorOverKeyword_1_5_0_0_12());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getSimpleObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_18_13, null);
-											}
-										)
+											set(
+												$current,
+												"valueModifier",
+												lv_valueModifier_18_0,
+												"org.integratedmodelling.kim.Kim.VALUE_MODIFIER");
+											afterParserOrEnumRuleCall();
+										}
 									)
 								)
 								(
@@ -16484,150 +16193,21 @@ ruleDependencyObservableSemantics returns [EObject current=null]
 					}
 								({true}?=>((
 									(
-										(
-											lv_operator_21_1='>'
-											{
-												newLeafNode(lv_operator_21_1, grammarAccess.getDependencyObservableSemanticsAccess().getOperatorGreaterThanSignKeyword_3_5_0_0_0());
+										{
+											newCompositeNode(grammarAccess.getDependencyObservableSemanticsAccess().getValueModifierVALUE_MODIFIERParserRuleCall_3_5_0_0());
+										}
+										lv_valueModifier_21_0=ruleVALUE_MODIFIER
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getDependencyObservableSemanticsRule());
 											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_1, null);
-											}
-											    |
-											lv_operator_21_2='>='
-											{
-												newLeafNode(lv_operator_21_2, grammarAccess.getDependencyObservableSemanticsAccess().getOperatorGreaterThanSignEqualsSignKeyword_3_5_0_0_1());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_2, null);
-											}
-											    |
-											lv_operator_21_3='<='
-											{
-												newLeafNode(lv_operator_21_3, grammarAccess.getDependencyObservableSemanticsAccess().getOperatorLessThanSignEqualsSignKeyword_3_5_0_0_2());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_3, null);
-											}
-											    |
-											lv_operator_21_4='<'
-											{
-												newLeafNode(lv_operator_21_4, grammarAccess.getDependencyObservableSemanticsAccess().getOperatorLessThanSignKeyword_3_5_0_0_3());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_4, null);
-											}
-											    |
-											lv_operator_21_5='where'
-											{
-												newLeafNode(lv_operator_21_5, grammarAccess.getDependencyObservableSemanticsAccess().getOperatorWhereKeyword_3_5_0_0_4());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_5, null);
-											}
-											    |
-											lv_operator_21_6='=='
-											{
-												newLeafNode(lv_operator_21_6, grammarAccess.getDependencyObservableSemanticsAccess().getOperatorEqualsSignEqualsSignKeyword_3_5_0_0_5());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_6, null);
-											}
-											    |
-											lv_operator_21_7='='
-											{
-												newLeafNode(lv_operator_21_7, grammarAccess.getDependencyObservableSemanticsAccess().getOperatorEqualsSignKeyword_3_5_0_0_6());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_7, null);
-											}
-											    |
-											lv_operator_21_8='without'
-											{
-												newLeafNode(lv_operator_21_8, grammarAccess.getDependencyObservableSemanticsAccess().getOperatorWithoutKeyword_3_5_0_0_7());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_8, null);
-											}
-											    |
-											lv_operator_21_9='!='
-											{
-												newLeafNode(lv_operator_21_9, grammarAccess.getDependencyObservableSemanticsAccess().getOperatorExclamationMarkEqualsSignKeyword_3_5_0_0_8());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_9, null);
-											}
-											    |
-											lv_operator_21_10='plus'
-											{
-												newLeafNode(lv_operator_21_10, grammarAccess.getDependencyObservableSemanticsAccess().getOperatorPlusKeyword_3_5_0_0_9());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_10, null);
-											}
-											    |
-											lv_operator_21_11='minus'
-											{
-												newLeafNode(lv_operator_21_11, grammarAccess.getDependencyObservableSemanticsAccess().getOperatorMinusKeyword_3_5_0_0_10());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_11, null);
-											}
-											    |
-											lv_operator_21_12='times'
-											{
-												newLeafNode(lv_operator_21_12, grammarAccess.getDependencyObservableSemanticsAccess().getOperatorTimesKeyword_3_5_0_0_11());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_12, null);
-											}
-											    |
-											lv_operator_21_13='over'
-											{
-												newLeafNode(lv_operator_21_13, grammarAccess.getDependencyObservableSemanticsAccess().getOperatorOverKeyword_3_5_0_0_12());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_13, null);
-											}
-										)
+											set(
+												$current,
+												"valueModifier",
+												lv_valueModifier_21_0,
+												"org.integratedmodelling.kim.Kim.VALUE_MODIFIER");
+											afterParserOrEnumRuleCall();
+										}
 									)
 								)
 								(
@@ -17145,150 +16725,21 @@ ruleAlternativeDependencyObservableSemantics returns [EObject current=null]
 					}
 								({true}?=>((
 									(
-										(
-											lv_operator_21_1='>'
-											{
-												newLeafNode(lv_operator_21_1, grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getOperatorGreaterThanSignKeyword_3_5_0_0_0());
+										{
+											newCompositeNode(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getValueModifierVALUE_MODIFIERParserRuleCall_3_5_0_0());
+										}
+										lv_valueModifier_21_0=ruleVALUE_MODIFIER
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getAlternativeDependencyObservableSemanticsRule());
 											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAlternativeDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_1, null);
-											}
-											    |
-											lv_operator_21_2='>='
-											{
-												newLeafNode(lv_operator_21_2, grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getOperatorGreaterThanSignEqualsSignKeyword_3_5_0_0_1());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAlternativeDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_2, null);
-											}
-											    |
-											lv_operator_21_3='<='
-											{
-												newLeafNode(lv_operator_21_3, grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getOperatorLessThanSignEqualsSignKeyword_3_5_0_0_2());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAlternativeDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_3, null);
-											}
-											    |
-											lv_operator_21_4='<'
-											{
-												newLeafNode(lv_operator_21_4, grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getOperatorLessThanSignKeyword_3_5_0_0_3());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAlternativeDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_4, null);
-											}
-											    |
-											lv_operator_21_5='where'
-											{
-												newLeafNode(lv_operator_21_5, grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getOperatorWhereKeyword_3_5_0_0_4());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAlternativeDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_5, null);
-											}
-											    |
-											lv_operator_21_6='=='
-											{
-												newLeafNode(lv_operator_21_6, grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getOperatorEqualsSignEqualsSignKeyword_3_5_0_0_5());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAlternativeDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_6, null);
-											}
-											    |
-											lv_operator_21_7='='
-											{
-												newLeafNode(lv_operator_21_7, grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getOperatorEqualsSignKeyword_3_5_0_0_6());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAlternativeDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_7, null);
-											}
-											    |
-											lv_operator_21_8='without'
-											{
-												newLeafNode(lv_operator_21_8, grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getOperatorWithoutKeyword_3_5_0_0_7());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAlternativeDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_8, null);
-											}
-											    |
-											lv_operator_21_9='!='
-											{
-												newLeafNode(lv_operator_21_9, grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getOperatorExclamationMarkEqualsSignKeyword_3_5_0_0_8());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAlternativeDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_9, null);
-											}
-											    |
-											lv_operator_21_10='plus'
-											{
-												newLeafNode(lv_operator_21_10, grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getOperatorPlusKeyword_3_5_0_0_9());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAlternativeDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_10, null);
-											}
-											    |
-											lv_operator_21_11='minus'
-											{
-												newLeafNode(lv_operator_21_11, grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getOperatorMinusKeyword_3_5_0_0_10());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAlternativeDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_11, null);
-											}
-											    |
-											lv_operator_21_12='times'
-											{
-												newLeafNode(lv_operator_21_12, grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getOperatorTimesKeyword_3_5_0_0_11());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAlternativeDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_12, null);
-											}
-											    |
-											lv_operator_21_13='over'
-											{
-												newLeafNode(lv_operator_21_13, grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getOperatorOverKeyword_3_5_0_0_12());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getAlternativeDependencyObservableSemanticsRule());
-												}
-												setWithLastConsumed($current, "operator", lv_operator_21_13, null);
-											}
-										)
+											set(
+												$current,
+												"valueModifier",
+												lv_valueModifier_21_0,
+												"org.integratedmodelling.kim.Kim.VALUE_MODIFIER");
+											afterParserOrEnumRuleCall();
+										}
 									)
 								)
 								(
@@ -18534,7 +17985,7 @@ ruleUnitOp returns [Enumerator current=null]
 	)
 ;
 
-RULE_EXPR : '[' ('\\' ('b'|'t'|'n'|'f'|'r'|'u'|']'|'\\')|~(('\\'|']')))* ']';
+RULE_EXPR : ('['|'#[') ('\\' ('b'|'t'|'n'|'f'|'r'|'u'|']'|'\\')|~(('\\'|']')))* ']';
 
 RULE_ANNOTATION_ID : '@' RULE_LOWERCASE_ID;
 

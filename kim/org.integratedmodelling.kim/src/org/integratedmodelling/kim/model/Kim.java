@@ -926,11 +926,11 @@ public enum Kim {
 		case "magnitude":
 			return EnumSet.of(Type.MAGNITUDE, Type.QUALITY, Type.OBSERVABLE, Type.SUBJECTIVE, Type.QUANTIFIABLE);
 		case "money":
-			return EnumSet.of(Type.MONEY, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
+			return EnumSet.of(Type.MONEY, Type.QUALITY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "duration":
-			return EnumSet.of(Type.DURATION, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
+			return EnumSet.of(Type.DURATION, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "area":
-			return EnumSet.of(Type.AREA, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
+			return EnumSet.of(Type.AREA, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "presence":
 			return EnumSet.of(Type.PRESENCE, Type.QUALITY, Type.OBSERVABLE);
 		case "proportion":

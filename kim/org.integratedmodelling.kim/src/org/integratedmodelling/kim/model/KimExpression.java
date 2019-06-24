@@ -6,9 +6,12 @@ public class KimExpression implements IKimExpression {
 
 	private String code;
 	private String language;
+	private boolean forcedScalar;
 
 	public KimExpression(String code, String language) {
-		this.code = code.substring(1, code.length() - 1);
+		int n = code.indexOf('[');
+		this.forcedScalar = code.startsWith("#");
+		this.code = code.substring(n+1, code.length() - 1);
 		this.language = language;
 	}
 	
@@ -64,6 +67,15 @@ public class KimExpression implements IKimExpression {
 		} else if (!language.equals(other.language))
 			return false;
 		return true;
+	}
+
+	@Override
+	public boolean isForcedScalar() {
+		return forcedScalar;
+	}
+
+	public void setForcedScalar(boolean forcedScalar) {
+		this.forcedScalar = forcedScalar;
 	}
 	
 }

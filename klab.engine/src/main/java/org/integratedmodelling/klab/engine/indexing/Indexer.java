@@ -221,10 +221,6 @@ public enum Indexer {
         SearchContext context = (SearchContext) searchContext;
         List<Match> ret = new ArrayList<>();
 
-        //
-        //        
-        //        System.out.println("QUERYING context: ================\n" + ((SearchContext)context).dump());
-
         for (Constraint constraint : context.getConstraints()) {
 
             List<Match> cret = new ArrayList<>();
@@ -291,6 +287,9 @@ public enum Indexer {
                 }
             }
 
+            /*
+             * filter matches if the constraint requires it.
+             */
             if (constraint.isFilter()) {
                 List<Match> fret = new ArrayList<>();
                 for (Match match : cret) {
@@ -298,25 +297,11 @@ public enum Indexer {
                         fret.add(match);
                     }
                 }
-                cret.clear();
-                for (Match match : fret) {
-                    if (!ids.contains(match.getId())) {
-                        cret.add(match);
-                        ids.add(match.getId());
-                    }
-                }
+                cret = fret;
             }
-
             ret.addAll(cret);
-
         }
-
-        //		System.out.println("MATCHES: ==============================\n");
-        //		int i = 0;
-        //        for (Match match : ret) {
-        //        	System.out.println(++i + "] " + match);
-        //        }
-
+        
         return ret;
     }
 

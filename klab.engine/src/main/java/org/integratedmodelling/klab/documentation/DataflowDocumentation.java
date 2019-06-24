@@ -194,7 +194,7 @@ public enum DataflowDocumentation {
 				ret.put("resource", res);
 			}
 		} else if (resource.getSecond().getExpression() != null) {
-			ret.put("code", StringUtils.stripLeadingWhitespace(resource.getSecond().getExpression()));
+			ret.put("code", StringUtils.stripLeadingWhitespace(resource.getSecond().getExpression().getCode()));
 			ret.put("language",
 					StringUtils.capitalize(
 							resource.getSecond().getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE

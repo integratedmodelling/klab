@@ -439,7 +439,7 @@ public class Flowchart {
         } else if (computation.getSecond().getExpression() != null) {
 
             computationOutputs.add(computationTarget);
-            for (String input : getExpressionInputs(computation.getSecond().getExpression(),
+            for (String input : getExpressionInputs(computation.getSecond().getExpression().getCode(),
                     computation.getSecond().getLanguage(), context)) {
                 computationInputs.add("self".equals(input) ? computationTarget : input);
             }
@@ -658,7 +658,7 @@ public class Flowchart {
             public Type getIdentifierType(String identifier) {
                 return types.get(identifier);
             }
-        });
+        }, false);
 
         return descriptor.getIdentifiers();
     }

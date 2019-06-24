@@ -90,7 +90,7 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
             }
             this.selectorDescriptor = Extensions.INSTANCE
                     .getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-                    .describe(expression.toString(), context.getExpressionContext());
+                    .describe(expression.toString(), context.getExpressionContext(), false);
         }
 
         if (parameters.contains("seed")) {

@@ -1904,13 +1904,13 @@ public interface KimPackage extends EPackage
   int OBSERVABLE_SEMANTICS__CURRENCY = 7;
 
   /**
-   * The feature id for the '<em><b>Operator</b></em>' attribute.
+   * The feature id for the '<em><b>Value Modifier</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__OPERATOR = 8;
+  int OBSERVABLE_SEMANTICS__VALUE_MODIFIER = 8;
 
   /**
    * The feature id for the '<em><b>Comparison Value</b></em>' containment reference.
@@ -6196,15 +6196,15 @@ public interface KimPackage extends EPackage
   EReference getObservableSemantics_Currency();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getOperator <em>Operator</em>}'.
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getValueModifier <em>Value Modifier</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Operator</em>'.
-   * @see org.integratedmodelling.kim.kim.ObservableSemantics#getOperator()
+   * @return the meta object for the attribute '<em>Value Modifier</em>'.
+   * @see org.integratedmodelling.kim.kim.ObservableSemantics#getValueModifier()
    * @see #getObservableSemantics()
    * @generated
    */
-  EAttribute getObservableSemantics_Operator();
+  EAttribute getObservableSemantics_ValueModifier();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonValue <em>Comparison Value</em>}'.
@@ -10198,12 +10198,12 @@ public interface KimPackage extends EPackage
     EReference OBSERVABLE_SEMANTICS__CURRENCY = eINSTANCE.getObservableSemantics_Currency();
 
     /**
-     * The meta object literal for the '<em><b>Operator</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Value Modifier</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute OBSERVABLE_SEMANTICS__OPERATOR = eINSTANCE.getObservableSemantics_Operator();
+    EAttribute OBSERVABLE_SEMANTICS__VALUE_MODIFIER = eINSTANCE.getObservableSemantics_ValueModifier();
 
     /**
      * The meta object literal for the '<em><b>Comparison Value</b></em>' containment reference feature.

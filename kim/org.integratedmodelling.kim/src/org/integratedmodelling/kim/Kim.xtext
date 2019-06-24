@@ -210,6 +210,22 @@ MODEL_TYPE:
 	'boolean' 
 ;
 
+VALUE_MODIFIER:
+	'>'  |
+	'>=' |
+	'<='|
+	'<'|
+	'where'|
+	'=='|
+	'='|
+	'without'|
+	'!='|
+	'plus'|
+	'minus'|
+	'times'|
+	'over'
+;
+
 /*
  * Namespace - entry point of all files. Only interactive sessions may start without this statement.
  * A namespace may be a scenario - if so, nothing changes except its models will never be used from
@@ -309,7 +325,7 @@ ObservableSemantics:
 			('in' (unit=Unit | currency=Currency)) |
 			('per' unit=Unit)
 		)? &
-		(operator=('>'|'>='|'<='|'<'|'where'|'=='|'='|'without'|'!='|'plus'|'minus'|'times'|'over')
+		(valueModifier=VALUE_MODIFIER
 			(comparisonValue=Number | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')'))
 		)? &
 		(optional?='optional' | 'required')? &
@@ -335,7 +351,7 @@ AnnotatedObservableSemantics returns ObservableSemantics:
 			('in' (unit=Unit | currency=Currency)) |
 			('per' unit=Unit)
 		)? &
-		(operator=('>'|'>='|'<='|'<'|'where'|'=='|'='|'without'|'!='|'plus'|'minus'|'times'|'over')
+		(valueModifier=VALUE_MODIFIER
 			(comparisonValue=Number | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')'))
 		)? &
 		(optional?='optional' | 'required')? &
@@ -764,8 +780,9 @@ LiteralValueWithConcept returns Value:
 Function:
 	name=PathName '(' parameters=ParameterList? ')';
 	
+// expression starting with # forces scalar evaluation
 terminal EXPR:
-	'[' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\') | !('\\' | ']'))* ']';
+	('['|'#[') ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\') | !('\\' | ']'))* ']';
 	
 enum DataType:
 	TEXT='text' |
@@ -859,7 +876,7 @@ SimpleObservableSemantics returns ObservableSemantics:
 			('per' unit=Unit)
 		)? &
 		(from=Number 'to' to=Number)? &
-		(operator=('>'|'>='|'<='|'<'|'where'|'=='|'='|'without'|'!='|'plus'|'minus'|'times'|'over')
+		(valueModifier=VALUE_MODIFIER
 			(comparisonValue=Number | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')'))
 		)? &
 		(optional?='optional' | 'required')? &
@@ -883,7 +900,7 @@ DependencyObservableSemantics returns ObservableSemantics:
 			('per' unit=Unit)
 		)? &
 		(from=Number 'to' to=Number)? &
-		(operator=('>'|'>='|'<='|'<'|'where'|'=='|'='|'without'|'!='|'plus'|'minus'|'times'|'over')
+		(valueModifier=VALUE_MODIFIER
 			(comparisonValue=Number | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')'))
 		)? &
 		(optional?='optional' | 'required')? &
@@ -908,9 +925,9 @@ AlternativeDependencyObservableSemantics returns ObservableSemantics:
 			('per' unit=Unit)
 		)? &
 		(from=Number 'to' to=Number)? &
-		(operator=('>'|'>='|'<='|'<'|'where'|'=='|'='|'without'|'!='|'plus'|'minus'|'times'|'over')
+		(valueModifier=VALUE_MODIFIER
 			(comparisonValue=Number | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')'))
-		)? 
+		)?
 	)
 	('if' condition=EXPR)?;
 	

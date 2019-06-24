@@ -137,6 +137,22 @@ public enum Units implements IUnitService {
 		return getPrimaryUnit(((Unit) unit).getUnit());
 	}
 
+	public boolean isArea(IUnit unit) {
+		boolean ret = false;
+		if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
+			ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
+			for (int i = 0; i < pu.getUnitCount(); i++) {
+				javax.measure.unit.Unit<?> su = pu.getUnit(i);
+				int power = pu.getUnitPow(i);
+				if ((su.getDimension().equals(Dimension.LENGTH) && power == 2)) {
+					ret = true;
+					break;
+				}
+			}
+		}
+		return ret;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -13,4 +13,12 @@ public interface IKimExpression {
 	String getCode();
 	
 	String getLanguage();
+
+	/**
+	 * If true, this has been parsed from an expression introduced by #, which forces the
+	 * evaluation to scalar.
+	 * 
+	 * @return
+	 */
+	boolean isForcedScalar();
 }

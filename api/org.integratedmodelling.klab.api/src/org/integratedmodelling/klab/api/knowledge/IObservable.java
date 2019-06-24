@@ -22,7 +22,9 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.Modifier;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
+import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -265,6 +267,8 @@ public interface IObservable extends ISemantic, IResolvable {
 		Builder downTo(IConcept detail);
 
 		Builder by(IConcept classifier);
+		
+		Builder withValueOperator(ValueOperator operator, Object valueOperand);
 
 		/**
 		 * After any of the "without" functions get called, this can be checked on the
@@ -493,10 +497,42 @@ public interface IObservable extends ISemantic, IResolvable {
 	 */
 	List<IAnnotation> getAnnotations();
 
+	/**
+	 * String definition of this observable, re-parseable in a compatible one.
+	 * 
+	 * @return
+	 */
 	String getDefinition();
 
+	/**
+	 * Abstract status of an observable may be more involved than just the abstract status of
+	 * the main type, although in most cases that will be the result.
+	 * 
+	 * @return
+	 */
 	boolean isAbstract();
 
+	/**
+	 * True if the main observable has the passed semantics.
+	 * 
+	 * @param type
+	 * @return
+	 */
 	boolean is(Type type);
+	
+	/**
+	 * If the observable has a value operator (e.g. "> 0") return it here.
+	 * 
+	 * @return
+	 */
+	ValueOperator getValueOperator();
+	
+	/**
+	 * If the observable has a value modifier, then it will also have an operand for it, which
+	 * can be another IObservable, a IConcept, or a literal value (currently a number only).
+	 * 
+	 * @return the operand. Will be null unless {@link #getValueOperator()} returns not null.
+	 */
+	Object getValueOperand();
 
 }

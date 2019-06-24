@@ -21,6 +21,10 @@ export value exec
 	optional boolean expression unlesscondition 
 		"A negative conditions to check before executing the code" 
 		default ""
+		
+	optional boolean scalar
+		"Run the expression in a scalar context independent of the result of code analysis."
+		default false
 
 	optional text language 
 		"The language of the expression" 

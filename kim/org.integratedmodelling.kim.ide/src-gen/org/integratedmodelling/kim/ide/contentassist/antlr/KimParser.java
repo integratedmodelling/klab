@@ -81,6 +81,7 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getExecutableValueAccess().getLanguageAlternatives_0_1_1_1_0(), "rule__ExecutableValue__LanguageAlternatives_0_1_1_1_0");
 					put(grammarAccess.getExecutableValueAccess().getAlternatives_1_0(), "rule__ExecutableValue__Alternatives_1_0");
 					put(grammarAccess.getMODEL_TYPEAccess().getAlternatives(), "rule__MODEL_TYPE__Alternatives");
+					put(grammarAccess.getVALUE_MODIFIERAccess().getAlternatives(), "rule__VALUE_MODIFIER__Alternatives");
 					put(grammarAccess.getNamespaceAccess().getAlternatives_2(), "rule__Namespace__Alternatives_2");
 					put(grammarAccess.getNamespaceAccess().getAlternatives_5_3_2(), "rule__Namespace__Alternatives_5_3_2");
 					put(grammarAccess.getImportAccess().getAlternatives_0_0(), "rule__Import__Alternatives_0_0");
@@ -92,13 +93,11 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getLocalFilePathAccess().getAlternatives_1_1(), "rule__LocalFilePath__Alternatives_1_1");
 					put(grammarAccess.getObservableSemanticsAccess().getAlternatives_3_3(), "rule__ObservableSemantics__Alternatives_3_3");
 					put(grammarAccess.getObservableSemanticsAccess().getAlternatives_3_3_0_1(), "rule__ObservableSemantics__Alternatives_3_3_0_1");
-					put(grammarAccess.getObservableSemanticsAccess().getOperatorAlternatives_3_4_0_0(), "rule__ObservableSemantics__OperatorAlternatives_3_4_0_0");
 					put(grammarAccess.getObservableSemanticsAccess().getAlternatives_3_4_1(), "rule__ObservableSemantics__Alternatives_3_4_1");
 					put(grammarAccess.getObservableSemanticsAccess().getAlternatives_3_5(), "rule__ObservableSemantics__Alternatives_3_5");
 					put(grammarAccess.getObservableSemanticsAccess().getNameAlternatives_3_7_1_0(), "rule__ObservableSemantics__NameAlternatives_3_7_1_0");
 					put(grammarAccess.getAnnotatedObservableSemanticsAccess().getAlternatives_4_3(), "rule__AnnotatedObservableSemantics__Alternatives_4_3");
 					put(grammarAccess.getAnnotatedObservableSemanticsAccess().getAlternatives_4_3_0_1(), "rule__AnnotatedObservableSemantics__Alternatives_4_3_0_1");
-					put(grammarAccess.getAnnotatedObservableSemanticsAccess().getOperatorAlternatives_4_4_0_0(), "rule__AnnotatedObservableSemantics__OperatorAlternatives_4_4_0_0");
 					put(grammarAccess.getAnnotatedObservableSemanticsAccess().getAlternatives_4_4_1(), "rule__AnnotatedObservableSemantics__Alternatives_4_4_1");
 					put(grammarAccess.getAnnotatedObservableSemanticsAccess().getAlternatives_4_5(), "rule__AnnotatedObservableSemantics__Alternatives_4_5");
 					put(grammarAccess.getAnnotatedObservableSemanticsAccess().getNameAlternatives_4_7_1_0(), "rule__AnnotatedObservableSemantics__NameAlternatives_4_7_1_0");
@@ -188,19 +187,16 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getPROPERTY_TYPEAccess().getAlternatives(), "rule__PROPERTY_TYPE__Alternatives");
 					put(grammarAccess.getSimpleObservableSemanticsAccess().getAlternatives_1_3(), "rule__SimpleObservableSemantics__Alternatives_1_3");
 					put(grammarAccess.getSimpleObservableSemanticsAccess().getAlternatives_1_3_0_1(), "rule__SimpleObservableSemantics__Alternatives_1_3_0_1");
-					put(grammarAccess.getSimpleObservableSemanticsAccess().getOperatorAlternatives_1_5_0_0(), "rule__SimpleObservableSemantics__OperatorAlternatives_1_5_0_0");
 					put(grammarAccess.getSimpleObservableSemanticsAccess().getAlternatives_1_5_1(), "rule__SimpleObservableSemantics__Alternatives_1_5_1");
 					put(grammarAccess.getSimpleObservableSemanticsAccess().getAlternatives_1_6(), "rule__SimpleObservableSemantics__Alternatives_1_6");
 					put(grammarAccess.getSimpleObservableSemanticsAccess().getNameAlternatives_1_7_1_0(), "rule__SimpleObservableSemantics__NameAlternatives_1_7_1_0");
 					put(grammarAccess.getDependencyObservableSemanticsAccess().getAlternatives_3_3(), "rule__DependencyObservableSemantics__Alternatives_3_3");
 					put(grammarAccess.getDependencyObservableSemanticsAccess().getAlternatives_3_3_0_1(), "rule__DependencyObservableSemantics__Alternatives_3_3_0_1");
-					put(grammarAccess.getDependencyObservableSemanticsAccess().getOperatorAlternatives_3_5_0_0(), "rule__DependencyObservableSemantics__OperatorAlternatives_3_5_0_0");
 					put(grammarAccess.getDependencyObservableSemanticsAccess().getAlternatives_3_5_1(), "rule__DependencyObservableSemantics__Alternatives_3_5_1");
 					put(grammarAccess.getDependencyObservableSemanticsAccess().getAlternatives_3_6(), "rule__DependencyObservableSemantics__Alternatives_3_6");
 					put(grammarAccess.getDependencyObservableSemanticsAccess().getNameAlternatives_3_7_1_0(), "rule__DependencyObservableSemantics__NameAlternatives_3_7_1_0");
 					put(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getAlternatives_3_3(), "rule__AlternativeDependencyObservableSemantics__Alternatives_3_3");
 					put(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getAlternatives_3_3_0_1(), "rule__AlternativeDependencyObservableSemantics__Alternatives_3_3_0_1");
-					put(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getOperatorAlternatives_3_5_0_0(), "rule__AlternativeDependencyObservableSemantics__OperatorAlternatives_3_5_0_0");
 					put(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getAlternatives_3_5_1(), "rule__AlternativeDependencyObservableSemantics__Alternatives_3_5_1");
 					put(grammarAccess.getNamedObservableSemanticsAccess().getNameAlternatives_2_0(), "rule__NamedObservableSemantics__NameAlternatives_2_0");
 					put(grammarAccess.getUnitElementAccess().getAlternatives(), "rule__UnitElement__Alternatives");
@@ -796,7 +792,7 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getObservableSemanticsAccess().getUnitAssignment_3_3_0_1_0(), "rule__ObservableSemantics__UnitAssignment_3_3_0_1_0");
 					put(grammarAccess.getObservableSemanticsAccess().getCurrencyAssignment_3_3_0_1_1(), "rule__ObservableSemantics__CurrencyAssignment_3_3_0_1_1");
 					put(grammarAccess.getObservableSemanticsAccess().getUnitAssignment_3_3_1_1(), "rule__ObservableSemantics__UnitAssignment_3_3_1_1");
-					put(grammarAccess.getObservableSemanticsAccess().getOperatorAssignment_3_4_0(), "rule__ObservableSemantics__OperatorAssignment_3_4_0");
+					put(grammarAccess.getObservableSemanticsAccess().getValueModifierAssignment_3_4_0(), "rule__ObservableSemantics__ValueModifierAssignment_3_4_0");
 					put(grammarAccess.getObservableSemanticsAccess().getComparisonValueAssignment_3_4_1_0(), "rule__ObservableSemantics__ComparisonValueAssignment_3_4_1_0");
 					put(grammarAccess.getObservableSemanticsAccess().getComparisonConceptAssignment_3_4_1_1(), "rule__ObservableSemantics__ComparisonConceptAssignment_3_4_1_1");
 					put(grammarAccess.getObservableSemanticsAccess().getComparisonObservableAssignment_3_4_1_2_1(), "rule__ObservableSemantics__ComparisonObservableAssignment_3_4_1_2_1");
@@ -814,7 +810,7 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getAnnotatedObservableSemanticsAccess().getUnitAssignment_4_3_0_1_0(), "rule__AnnotatedObservableSemantics__UnitAssignment_4_3_0_1_0");
 					put(grammarAccess.getAnnotatedObservableSemanticsAccess().getCurrencyAssignment_4_3_0_1_1(), "rule__AnnotatedObservableSemantics__CurrencyAssignment_4_3_0_1_1");
 					put(grammarAccess.getAnnotatedObservableSemanticsAccess().getUnitAssignment_4_3_1_1(), "rule__AnnotatedObservableSemantics__UnitAssignment_4_3_1_1");
-					put(grammarAccess.getAnnotatedObservableSemanticsAccess().getOperatorAssignment_4_4_0(), "rule__AnnotatedObservableSemantics__OperatorAssignment_4_4_0");
+					put(grammarAccess.getAnnotatedObservableSemanticsAccess().getValueModifierAssignment_4_4_0(), "rule__AnnotatedObservableSemantics__ValueModifierAssignment_4_4_0");
 					put(grammarAccess.getAnnotatedObservableSemanticsAccess().getComparisonValueAssignment_4_4_1_0(), "rule__AnnotatedObservableSemantics__ComparisonValueAssignment_4_4_1_0");
 					put(grammarAccess.getAnnotatedObservableSemanticsAccess().getComparisonConceptAssignment_4_4_1_1(), "rule__AnnotatedObservableSemantics__ComparisonConceptAssignment_4_4_1_1");
 					put(grammarAccess.getAnnotatedObservableSemanticsAccess().getComparisonObservableAssignment_4_4_1_2_1(), "rule__AnnotatedObservableSemantics__ComparisonObservableAssignment_4_4_1_2_1");
@@ -1102,7 +1098,7 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getSimpleObservableSemanticsAccess().getUnitAssignment_1_3_1_1(), "rule__SimpleObservableSemantics__UnitAssignment_1_3_1_1");
 					put(grammarAccess.getSimpleObservableSemanticsAccess().getFromAssignment_1_4_0(), "rule__SimpleObservableSemantics__FromAssignment_1_4_0");
 					put(grammarAccess.getSimpleObservableSemanticsAccess().getToAssignment_1_4_2(), "rule__SimpleObservableSemantics__ToAssignment_1_4_2");
-					put(grammarAccess.getSimpleObservableSemanticsAccess().getOperatorAssignment_1_5_0(), "rule__SimpleObservableSemantics__OperatorAssignment_1_5_0");
+					put(grammarAccess.getSimpleObservableSemanticsAccess().getValueModifierAssignment_1_5_0(), "rule__SimpleObservableSemantics__ValueModifierAssignment_1_5_0");
 					put(grammarAccess.getSimpleObservableSemanticsAccess().getComparisonValueAssignment_1_5_1_0(), "rule__SimpleObservableSemantics__ComparisonValueAssignment_1_5_1_0");
 					put(grammarAccess.getSimpleObservableSemanticsAccess().getComparisonConceptAssignment_1_5_1_1(), "rule__SimpleObservableSemantics__ComparisonConceptAssignment_1_5_1_1");
 					put(grammarAccess.getSimpleObservableSemanticsAccess().getComparisonObservableAssignment_1_5_1_2_1(), "rule__SimpleObservableSemantics__ComparisonObservableAssignment_1_5_1_2_1");
@@ -1119,7 +1115,7 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getDependencyObservableSemanticsAccess().getUnitAssignment_3_3_1_1(), "rule__DependencyObservableSemantics__UnitAssignment_3_3_1_1");
 					put(grammarAccess.getDependencyObservableSemanticsAccess().getFromAssignment_3_4_0(), "rule__DependencyObservableSemantics__FromAssignment_3_4_0");
 					put(grammarAccess.getDependencyObservableSemanticsAccess().getToAssignment_3_4_2(), "rule__DependencyObservableSemantics__ToAssignment_3_4_2");
-					put(grammarAccess.getDependencyObservableSemanticsAccess().getOperatorAssignment_3_5_0(), "rule__DependencyObservableSemantics__OperatorAssignment_3_5_0");
+					put(grammarAccess.getDependencyObservableSemanticsAccess().getValueModifierAssignment_3_5_0(), "rule__DependencyObservableSemantics__ValueModifierAssignment_3_5_0");
 					put(grammarAccess.getDependencyObservableSemanticsAccess().getComparisonValueAssignment_3_5_1_0(), "rule__DependencyObservableSemantics__ComparisonValueAssignment_3_5_1_0");
 					put(grammarAccess.getDependencyObservableSemanticsAccess().getComparisonConceptAssignment_3_5_1_1(), "rule__DependencyObservableSemantics__ComparisonConceptAssignment_3_5_1_1");
 					put(grammarAccess.getDependencyObservableSemanticsAccess().getComparisonObservableAssignment_3_5_1_2_1(), "rule__DependencyObservableSemantics__ComparisonObservableAssignment_3_5_1_2_1");
@@ -1136,7 +1132,7 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getUnitAssignment_3_3_1_1(), "rule__AlternativeDependencyObservableSemantics__UnitAssignment_3_3_1_1");
 					put(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getFromAssignment_3_4_0(), "rule__AlternativeDependencyObservableSemantics__FromAssignment_3_4_0");
 					put(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getToAssignment_3_4_2(), "rule__AlternativeDependencyObservableSemantics__ToAssignment_3_4_2");
-					put(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getOperatorAssignment_3_5_0(), "rule__AlternativeDependencyObservableSemantics__OperatorAssignment_3_5_0");
+					put(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getValueModifierAssignment_3_5_0(), "rule__AlternativeDependencyObservableSemantics__ValueModifierAssignment_3_5_0");
 					put(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getComparisonValueAssignment_3_5_1_0(), "rule__AlternativeDependencyObservableSemantics__ComparisonValueAssignment_3_5_1_0");
 					put(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getComparisonConceptAssignment_3_5_1_1(), "rule__AlternativeDependencyObservableSemantics__ComparisonConceptAssignment_3_5_1_1");
 					put(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getComparisonObservableAssignment_3_5_1_2_1(), "rule__AlternativeDependencyObservableSemantics__ComparisonObservableAssignment_3_5_1_2_1");

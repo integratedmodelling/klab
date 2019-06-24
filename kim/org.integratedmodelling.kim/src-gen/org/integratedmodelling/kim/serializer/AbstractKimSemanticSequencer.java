@@ -413,24 +413,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 unit=Unit
 	 *             )? 
 	 *             (from=Number to=Number)? 
-	 *             (
-	 *                 (
-	 *                     operator='>' | 
-	 *                     operator='>=' | 
-	 *                     operator='<=' | 
-	 *                     operator='<' | 
-	 *                     operator='where' | 
-	 *                     operator='==' | 
-	 *                     operator='=' | 
-	 *                     operator='without' | 
-	 *                     operator='!=' | 
-	 *                     operator='plus' | 
-	 *                     operator='minus' | 
-	 *                     operator='times' | 
-	 *                     operator='over'
-	 *                 ) 
-	 *                 (comparisonValue=Number | comparisonConcept=ConceptDeclaration | comparisonObservable=ObservableSemantics)
-	 *             )?
+	 *             (valueModifier=VALUE_MODIFIER (comparisonValue=Number | comparisonConcept=ConceptDeclaration | comparisonObservable=ObservableSemantics))?
 	 *         )+ 
 	 *         condition=EXPR?
 	 *     )
@@ -463,24 +446,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 name=STRING
 	 *             )? 
 	 *             (from=Number to=Number)? 
-	 *             (
-	 *                 (
-	 *                     operator='>' | 
-	 *                     operator='>=' | 
-	 *                     operator='<=' | 
-	 *                     operator='<' | 
-	 *                     operator='where' | 
-	 *                     operator='==' | 
-	 *                     operator='=' | 
-	 *                     operator='without' | 
-	 *                     operator='!=' | 
-	 *                     operator='plus' | 
-	 *                     operator='minus' | 
-	 *                     operator='times' | 
-	 *                     operator='over'
-	 *                 ) 
-	 *                 (comparisonValue=Number | comparisonConcept=ConceptDeclaration | comparisonObservable=ObservableSemantics)
-	 *             )?
+	 *             (valueModifier=VALUE_MODIFIER (comparisonValue=Number | comparisonConcept=ConceptDeclaration | comparisonObservable=ObservableSemantics))?
 	 *         )+
 	 *     )
 	 */
@@ -555,13 +521,13 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         restrictions+=RestrictionStatement | 
 	 *                         metadata=Metadata
 	 *                     )? 
-	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
-	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
-	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
-	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
 	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
 	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
+	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
 	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
+	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
+	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
+	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
 	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
 	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
@@ -961,24 +927,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 name=STRING
 	 *             )? 
 	 *             (from=Number to=Number)? 
-	 *             (
-	 *                 (
-	 *                     operator='>' | 
-	 *                     operator='>=' | 
-	 *                     operator='<=' | 
-	 *                     operator='<' | 
-	 *                     operator='where' | 
-	 *                     operator='==' | 
-	 *                     operator='=' | 
-	 *                     operator='without' | 
-	 *                     operator='!=' | 
-	 *                     operator='plus' | 
-	 *                     operator='minus' | 
-	 *                     operator='times' | 
-	 *                     operator='over'
-	 *                 ) 
-	 *                 (comparisonValue=Number | comparisonConcept=ConceptDeclaration | comparisonObservable=ObservableSemantics)
-	 *             )?
+	 *             (valueModifier=VALUE_MODIFIER (comparisonValue=Number | comparisonConcept=ConceptDeclaration | comparisonObservable=ObservableSemantics))?
 	 *         )+
 	 *     )
 	 */
@@ -1401,24 +1350,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 name=STRING
 	 *             )? 
 	 *             (from=Number to=Number)? 
-	 *             (
-	 *                 (
-	 *                     operator='>' | 
-	 *                     operator='>=' | 
-	 *                     operator='<=' | 
-	 *                     operator='<' | 
-	 *                     operator='where' | 
-	 *                     operator='==' | 
-	 *                     operator='=' | 
-	 *                     operator='without' | 
-	 *                     operator='!=' | 
-	 *                     operator='plus' | 
-	 *                     operator='minus' | 
-	 *                     operator='times' | 
-	 *                     operator='over'
-	 *                 ) 
-	 *                 (comparisonValue=Number | comparisonConcept=ConceptDeclaration | comparisonObservable=ObservableSemantics)
-	 *             )?
+	 *             (valueModifier=VALUE_MODIFIER (comparisonValue=Number | comparisonConcept=ConceptDeclaration | comparisonObservable=ObservableSemantics))?
 	 *         )+
 	 *     )
 	 */
@@ -1586,24 +1518,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 name=STRING
 	 *             )? 
 	 *             (from=Number to=Number)? 
-	 *             (
-	 *                 (
-	 *                     operator='>' | 
-	 *                     operator='>=' | 
-	 *                     operator='<=' | 
-	 *                     operator='<' | 
-	 *                     operator='where' | 
-	 *                     operator='==' | 
-	 *                     operator='=' | 
-	 *                     operator='without' | 
-	 *                     operator='!=' | 
-	 *                     operator='plus' | 
-	 *                     operator='minus' | 
-	 *                     operator='times' | 
-	 *                     operator='over'
-	 *                 ) 
-	 *                 (comparisonValue=Number | comparisonConcept=ConceptDeclaration | comparisonObservable=ObservableSemantics)
-	 *             )?
+	 *             (valueModifier=VALUE_MODIFIER (comparisonValue=Number | comparisonConcept=ConceptDeclaration | comparisonObservable=ObservableSemantics))?
 	 *         )+
 	 *     )
 	 */

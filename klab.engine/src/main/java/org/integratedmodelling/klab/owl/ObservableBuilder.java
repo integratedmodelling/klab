@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
+import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimConcept;
 import org.integratedmodelling.kim.model.KimConcept.ComponentRole;
@@ -62,6 +63,8 @@ public class ObservableBuilder implements IObservable.Builder {
 	private IConcept relationshipSource;
 	private IConcept relationshipTarget;
 	private boolean optional;
+	private ValueOperator valueOperator;
+	private Object valueOperand;
 
 	private List<IConcept> traits = new ArrayList<>();
 	private List<IConcept> roles = new ArrayList<>();
@@ -1675,6 +1678,10 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (downTo != null) {
 			ret.setDownTo((Concept) downTo);
 		}
+		if (valueOperator != null) {
+			ret.setValueOperator(valueOperator);
+			ret.setValueOperand(valueOperand);
+		}
 
 		return ret;
 	}
@@ -1700,6 +1707,13 @@ public class ObservableBuilder implements IObservable.Builder {
 	@Override
 	public Builder by(IConcept classifier) {
 		this.classifier = classifier;
+		return this;
+	}
+
+	@Override
+	public Builder withValueOperator(ValueOperator operator, Object valueOperand) {
+		this.valueOperator = operator;
+		this.valueOperand = valueOperand;
 		return this;
 	}
 

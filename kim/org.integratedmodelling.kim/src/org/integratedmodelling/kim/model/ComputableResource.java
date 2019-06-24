@@ -52,7 +52,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	private Object literal;
 	private KimServiceCall serviceCall;
 	private KimLookupTable lookupTable;
-	private String expression;
+	private IKimExpression expression;
 	private KimClassification classification;
 	private String urn;
 	private String accordingTo;
@@ -151,7 +151,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		// this.type = lookupTable.getLookupType();
 	}
 
-	public void setExpression(String expression) {
+	public void setExpression(IKimExpression expression) {
 		this.expression = expression;
 		// this.type = IArtifact.Type.VALUE;
 	}
@@ -196,7 +196,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 			ComputableResource ret = new ComputableResource();
 			ret.resolutionMode = Mode.RESOLUTION;
 			ret.type = Type.EXPRESSION;
-			ret.expression = ((IKimExpression) inlineComputable).getCode();
+			ret.expression = (IKimExpression) inlineComputable;
 			ret.language = ((IKimExpression) inlineComputable).getLanguage();
 			return ret;
 		} else if (inlineComputable instanceof KimServiceCall) {
@@ -257,7 +257,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 			this.serviceCall = new KimServiceCall(value.getFunction(), parent);
 			this.type = Type.SERVICE;
 		} else if (value.getExpr() != null) {
-			this.expression = removeDelimiters(value.getExpr());
+			this.expression = new KimExpression(value.getExpr(), null);
 			this.type = Type.EXPRESSION;
 		} else if (value.getLiteral() != null) {
 			this.type = Type.LITERAL;
@@ -332,7 +332,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 			this.type = Type.SERVICE;
 			// this.type = this.serviceCall.getType();
 		} else if (value.getExpr() != null) {
-			this.expression = removeDelimiters(value.getExpr());
+			this.expression = new KimExpression(value.getExpr(), null);
 			this.type = Type.EXPRESSION;
 		// this.type = IArtifact.Type.VALUE;
 		} else if (value.getLiteral() != null) {
@@ -344,16 +344,16 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		this.language = value.getLanguage();
 	}
 
-	private String removeDelimiters(String string) {
-		String expr = string.trim();
-		if (expr.startsWith("[")) {
-			expr = expr.substring(1);
-		}
-		if (expr.endsWith("]")) {
-			expr = expr.substring(0, expr.length() - 1);
-		}
-		return expr;
-	}
+//	private String removeDelimiters(String string) {
+//		String expr = string.trim();
+//		if (expr.startsWith("[")) {
+//			expr = expr.substring(1);
+//		}
+//		if (expr.endsWith("]")) {
+//			expr = expr.substring(0, expr.length() - 1);
+//		}
+//		return expr;
+//	}
 
 	@Override
 	public IObservable getTarget() {
@@ -381,7 +381,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	}
 
 	@Override
-	public String getExpression() {
+	public IKimExpression getExpression() {
 		return this.expression;
 	}
 
@@ -422,7 +422,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 				if (ext != null) {
 					ILanguageProcessor processor = ext.getLanguageProcessor(
 							language == null ? IExtensionService.DEFAULT_EXPRESSION_LANGUAGE : language);
-					Descriptor descriptor = processor.describe(expression);
+					Descriptor descriptor = processor.describe(expression.getCode(), getExpression().isForcedScalar());
 					for (String var : descriptor.getIdentifiers()) {
 						requiredResourceNames.add(new Pair<>(var, IArtifact.Type.VALUE));
 					}

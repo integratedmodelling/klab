@@ -33,148 +33,157 @@ import org.integratedmodelling.klab.utils.MiscUtilities;
  */
 public class Unit implements IUnit {
 
-  javax.measure.unit.Unit<?> _unit;
-  int _startLine;
-  int _endLine;
-  String statement;
+	javax.measure.unit.Unit<?> _unit;
+	int _startLine;
+	int _endLine;
+	String statement;
 
-  /**
-   * Create a unit from a string.
-   *
-   * @param string the string
-   * @return the unit
-   */
-  public static Unit create(String string) {
+	/**
+	 * Create a unit from a string.
+	 *
+	 * @param string
+	 *            the string
+	 * @return the unit
+	 */
+	public static Unit create(String string) {
 
-    Pair<Double, String> pd = MiscUtilities.splitNumberFromString(string);
-    javax.measure.unit.Unit<?> unit = null;
+		if (string.trim().isEmpty()) {
+			return null;
+		}
 
-    double factor = 1.0;
-    if (pd.getFirst() != null) {
-      factor = pd.getFirst();
-    }
+		Pair<Double, String> pd = MiscUtilities.splitNumberFromString(string);
+		javax.measure.unit.Unit<?> unit = null;
 
-    try {
-      unit = (javax.measure.unit.Unit<?>) UnitFormat.getUCUMInstance().parseObject(string);
-    } catch (Throwable e) {
-      throw new KlabValidationException("Invalid unit: " + string);
-    }
-    if (factor != 1.0) {
-      unit = unit.times(factor);
-    }
+		double factor = 1.0;
+		if (pd.getFirst() != null) {
+			factor = pd.getFirst();
+		}
 
-    return new Unit(unit, string);
-  }
+		try {
+			unit = (javax.measure.unit.Unit<?>) UnitFormat.getUCUMInstance().parseObject(string);
+		} catch (Throwable e) {
+			throw new KlabValidationException("Invalid unit: " + string);
+		}
+		if (factor != 1.0) {
+			unit = unit.times(factor);
+		}
 
-  /**
-   * Convert a quantity from a unit to another.
-   *
-   * @param value the value
-   * @param unitFrom the unit from
-   * @param unitTo the unit to
-   * @return the double
-   */
-  public static double convert(double value, String unitFrom, String unitTo) {
-    return unitFrom.equals(unitTo) ? value
-        : create(unitTo).convert(value, create(unitFrom)).doubleValue();
-  }
+		return new Unit(unit, string);
+	}
 
+	/**
+	 * Convert a quantity from a unit to another.
+	 *
+	 * @param value
+	 *            the value
+	 * @param unitFrom
+	 *            the unit from
+	 * @param unitTo
+	 *            the unit to
+	 * @return the double
+	 */
+	public static double convert(double value, String unitFrom, String unitTo) {
+		return unitFrom.equals(unitTo) ? value : create(unitTo).convert(value, create(unitFrom)).doubleValue();
+	}
 
-  /** {@inheritDoc} */
-  @Override
-  public boolean isCompatible(IValueMediator other) {
-    return other instanceof Unit && ((Unit) other)._unit.isCompatible(_unit);
-  }
+	/** {@inheritDoc} */
+	@Override
+	public boolean isCompatible(IValueMediator other) {
+		return other instanceof Unit && ((Unit) other)._unit.isCompatible(_unit);
+	}
 
-  /** {@inheritDoc} */
-  @Override
-  public boolean equals(Object o) {
-    return o instanceof Unit && toString().equals(((Unit) o).toString());
-  }
+	/** {@inheritDoc} */
+	@Override
+	public boolean equals(Object o) {
+		return o instanceof Unit && toString().equals(((Unit) o).toString());
+	}
 
-  /** {@inheritDoc} */
-  @Override
-  public int hashCode() {
-    return toString().hashCode();
-  }
+	/** {@inheritDoc} */
+	@Override
+	public int hashCode() {
+		return toString().hashCode();
+	}
 
-  /**
-   * Instantiates a new unit.
-   *
-   * @param unit the unit
-   * @param statement the statement
-   */
-  public Unit(javax.measure.unit.Unit<?> unit, String statement) {
-    this._unit = unit;
-    this.statement = statement;
-  }
+	/**
+	 * Instantiates a new unit.
+	 *
+	 * @param unit
+	 *            the unit
+	 * @param statement
+	 *            the statement
+	 */
+	public Unit(javax.measure.unit.Unit<?> unit, String statement) {
+		this._unit = unit;
+		this.statement = statement;
+	}
 
-  /**
-   * Instantiates a new unit.
-   *
-   * @param unit the unit
-   */
-  public Unit(javax.measure.unit.Unit<?> unit) {
-    this._unit = unit;
-    this.statement = unit.toString();
-  }
+	/**
+	 * Instantiates a new unit.
+	 *
+	 * @param unit
+	 *            the unit
+	 */
+	public Unit(javax.measure.unit.Unit<?> unit) {
+		this._unit = unit;
+		this.statement = unit.toString();
+	}
 
+	/**
+	 * The main method.
+	 *
+	 * @param a
+	 *            the arguments
+	 */
+	static public void main(String[] a) {
+		System.out.println(convert(120, "m", "mm"));
+	}
 
-  /**
-   * The main method.
-   *
-   * @param a the arguments
-   */
-  static public void main(String[] a) {
-    System.out.println(convert(120, "m", "mm"));
-  }
+	/** {@inheritDoc} */
+	@Override
+	public Number convert(Number value, IValueMediator unit) {
 
-  /** {@inheritDoc} */
-  @Override
-  public Number convert(Number value, IValueMediator unit) {
+		if (!(unit instanceof Unit)) {
+			throw new IllegalArgumentException("illegal conversion " + this + " to " + unit);
+		}
 
-    if (!(unit instanceof Unit)) {
-      throw new IllegalArgumentException("illegal conversion " + this + " to " + unit);
-    }
+		UnitConverter converter = ((Unit) unit).getUnit().getConverterTo(_unit);
+		return converter.convert(value.doubleValue());
+	}
 
-    UnitConverter converter = ((Unit) unit).getUnit().getConverterTo(_unit);
-    return converter.convert(value.doubleValue());
-  }
+	/**
+	 * Gets the unit.
+	 *
+	 * @return the unit
+	 */
+	public javax.measure.unit.Unit<?> getUnit() {
+		return _unit;
+	}
 
-  /**
-   * Gets the unit.
-   *
-   * @return the unit
-   */
-  public javax.measure.unit.Unit<?> getUnit() {
-    return _unit;
-  }
-  
-  public String toUTFString() {
-	  return _unit.toString();
-  }
+	public String toUTFString() {
+		return _unit.toString();
+	}
 
-  /** {@inheritDoc} */
-  @Override
-  public String toString() {
-    return statement;
-  }
+	/** {@inheritDoc} */
+	@Override
+	public String toString() {
+		return statement;
+	}
 
-  /** {@inheritDoc} */
-  @Override
-  public IUnit multiply(IUnit unit) {
-    return new Unit(_unit.times(((Unit) unit)._unit));
-  }
+	/** {@inheritDoc} */
+	@Override
+	public IUnit multiply(IUnit unit) {
+		return new Unit(_unit.times(((Unit) unit)._unit));
+	}
 
-  /** {@inheritDoc} */
-  @Override
-  public IUnit divide(IUnit unit) {
-    return new Unit(_unit.divide(((Unit) unit)._unit));
-  }
+	/** {@inheritDoc} */
+	@Override
+	public IUnit divide(IUnit unit) {
+		return new Unit(_unit.divide(((Unit) unit)._unit));
+	}
 
-  /** {@inheritDoc} */
-  @Override
-  public IUnit scale(double scale) {
-    return new Unit(_unit.times(scale));
-  }
+	/** {@inheritDoc} */
+	@Override
+	public IUnit scale(double scale) {
+		return new Unit(_unit.times(scale));
+	}
 }

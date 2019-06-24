@@ -31,159 +31,180 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
  */
 public interface ILanguageProcessor {
 
-    /**
-     * 
-     * @author Ferd
+	/**
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	interface Descriptor {
+
+		/**
+		 * Return all identifiers detected.
+		 * 
+		 * @return set of identifiers
+		 */
+		Collection<String> getIdentifiers();
+
+		/**
+		 * Return all contextualizers encountered (in expressions such as
+		 * "elevation@nw")
+		 * 
+		 * @return set of contextualizers
+		 */
+		Collection<String> getContextualizers();
+
+		/**
+		 * Return true if the expression contains scalar usage for the passed
+		 * identifiers within a transition (i.e. used alone or with locator semantics
+		 * for space or other non-temporal domain).
+		 * 
+		 * @param identifier
+		 *            identifiers representing states
+		 * 
+		 * @return true if the identifier is used in a scalar context.
+		 */
+		boolean isScalar(String identifier);
+
+		/**
+		 * Return true if the expression contains non-scalar usage for the passed
+		 * identifiers within a transition (i.e. used as an object, with methods called
+		 * on it).
+		 * 
+		 * @param identifier
+		 *            identifiers representing states
+		 * 
+		 * @return true if the identifier is used in a scalar context.
+		 */
+		boolean isNonscalar(String identifier);
+
+		/**
+		 * Return true if the expression contains scalar usage for any of the passed
+		 * identifiers within a transition (i.e. used alone or with locator semantics
+		 * for space or other non-temporal domain).
+		 * 
+		 * @param stateIdentifiers
+		 *            identifiers representing states
+		 * 
+		 * @return true if any of the identifiers is used in a scalar context.
+		 */
+		boolean isScalar(Collection<String> stateIdentifiers);
+
+		/**
+		 * Return true if the expression contains non-scalar usage for any of the passed
+		 * identifiers within a transition (i.e. used as an object, with methods called
+		 * on it).
+		 * 
+		 * @param stateIdentifiers
+		 *            identifiers representing states
+		 * 
+		 * @return true if any of the identifiers is used in a scalar context.
+		 */
+		boolean isNonscalar(Collection<String> stateIdentifiers);
+
+		/**
+		 * In order to avoid duplicated action, the descriptor alone must be enough to
+		 * compile the expression. If we have a valid descriptor the returned expression
+		 * must be valid so no exceptions are thrown unless the descriptor has errors,
+		 * which causes an IllegalArgumentException.
+		 * 
+		 * @return a compiled expression ready for execution in the context that
+		 *         produced the descriptor
+		 * @throws IllegalArgumentException
+		 *             if the descriptor has errors
+		 */
+		ILanguageExpression compile();
+
+		/**
+		 * 
+		 * @return
+		 */
+		Collection<String> getIdentifiersInScalarScope();
+
+		/**
+		 * 
+		 * @return
+		 */
+		Collection<String> getIdentifiersInNonscalarScope();
+
+		/**
+		 * Expressions that would be non-scalar from the analysis of the code may be
+		 * forced to be scalar through language constructs or API.
+		 * 
+		 * @return
+		 */
+		boolean isForcedScalar();
+	}
+
+	/**
+	 * Compile the expression in the passed context, which may be null.
+	 *
+	 * @param expression
+	 *            a {@link java.lang.String} object.
+	 * @param context
+	 *            a
+	 *            {@link org.integratedmodelling.klab.api.runtime.IComputationContext}
+	 *            object.
+	 * @return the compiled expression
+	 * @throws org.integratedmodelling.klab.exceptions.KlabValidationException
+	 *             if compilation produces any errors
+	 */
+	IExpression compile(String expression, IExpression.Context context, boolean forcedScalar)
+			throws KlabValidationException;
+
+	/**
+	 * Preprocess an expression and return the descriptor. The context may be null,
+	 * but the expression is still assumed to be in k.LAB contextualization scope -
+	 * i.e. no identifiers will be recognized as known if the context is null.
+	 *
+	 * @param expression
+	 *            a {@link java.lang.String} object.
+	 * @param context
+	 *            a
+	 *            {@link org.integratedmodelling.klab.api.runtime.IComputationContext}
+	 *            object.
+	 * @param forcedScalar
+	 *            if true, the expression will be forced to evaluate in scalar
+	 *            context independent of its content.
+	 * 
+	 * @return a preprocessed descriptor, which must be enough to produce an
+	 *         IExpression on request.
+	 * @throws org.integratedmodelling.klab.exceptions.KlabValidationException
+	 *             if the expression contains syntax of logical errors
+	 */
+	Descriptor describe(String expression, IExpression.Context context, boolean forcedScalar)
+			throws KlabValidationException;
+
+	/**
+	 * Preprocess an expression and return the descriptor. Not passing a context
+	 * means the expression will be preprocessed outside of contextualization scope;
+	 * all identifiers in the expression will be recognized as "known", assuming
+	 * values will be supplied at evaluation.
+	 *
+	 * @param expression
+	 *            a {@link java.lang.String} object.
+	 * @param forcedScalar
+	 *            if true, the expression will be forced to evaluate in scalar
+	 *            context independent of its content.
+	 *
+	 * @return a preprocessed descriptor, which must be enough to produce an
+	 *         IExpression on request.
+	 * @throws org.integratedmodelling.klab.exceptions.KlabValidationException
+	 *             if the expression contains syntax of logical errors
+	 */
+	Descriptor describe(String expression, boolean forcedScalar) throws KlabValidationException;
+
+	/**
+	 * Assume that the passed expression evaluates to a boolean and produce the
+	 * language equivalent of its negation.
+	 *
+	 * @param expression
+	 *            a {@link java.lang.String} object.
+	 * @param forcedScalar
+	 *            if true, the expression will be forced to evaluate in scalar
+	 *            context independent of its content.
      *
-     */
-    interface Descriptor {
-
-        /**
-         * Return all identifiers detected.
-         * 
-         * @return set of identifiers
-         */
-        Collection<String> getIdentifiers();
-
-        /**
-         * Return all contextualizers encountered (in expressions such as "elevation@nw")
-         * 
-         * @return set of contextualizers
-         */
-        Collection<String> getContextualizers();
-
-        /**
-         * Return true if the expression contains scalar usage for the passed
-         * identifiers within a transition (i.e. used alone or with locator semantics
-         * for space or other non-temporal domain).
-         * 
-         * @param identifier
-         *            identifiers representing states
-         * 
-         * @return true if the identifier is used in a scalar context.
-         */
-        boolean isScalar(String identifier);
-
-        /**
-         * Return true if the expression contains non-scalar usage for the passed
-         * identifiers within a transition (i.e. used as an object, with methods called
-         * on it).
-         * 
-         * @param identifier
-         *            identifiers representing states
-         * 
-         * @return true if the identifier is used in a scalar context.
-         */
-        boolean isNonscalar(String identifier);
-
-        /**
-         * Return true if the expression contains scalar usage for any of the passed
-         * identifiers within a transition (i.e. used alone or with locator semantics
-         * for space or other non-temporal domain).
-         * 
-         * @param stateIdentifiers
-         *            identifiers representing states
-         * 
-         * @return true if any of the identifiers is used in a scalar context.
-         */
-        boolean isScalar(Collection<String> stateIdentifiers);
-
-        /**
-         * Return true if the expression contains non-scalar usage for any of the passed
-         * identifiers within a transition (i.e. used as an object, with methods called
-         * on it).
-         * 
-         * @param stateIdentifiers
-         *            identifiers representing states
-         * 
-         * @return true if any of the identifiers is used in a scalar context.
-         */
-        boolean isNonscalar(Collection<String> stateIdentifiers);
-
-        /**
-         * In order to avoid duplicated action, the descriptor alone must be enough to
-         * compile the expression. If we have a valid descriptor the returned expression
-         * must be valid so no exceptions are thrown unless the descriptor has errors,
-         * which causes an IllegalArgumentException.
-         * 
-         * @return a compiled expression ready for execution in the context that
-         *         produced the descriptor
-         * @throws IllegalArgumentException
-         *             if the descriptor has errors
-         */
-        ILanguageExpression compile();
-
-        /**
-         * 
-         * @return
-         */
-        Collection<String> getIdentifiersInScalarScope();
-
-        /**
-         * 
-         * @return
-         */
-        Collection<String> getIdentifiersInNonscalarScope();
-    }
-
-    /**
-     * Compile the expression in the passed context, which may be null.
-     *
-     * @param expression
-     *            a {@link java.lang.String} object.
-     * @param context
-     *            a
-     *            {@link org.integratedmodelling.klab.api.runtime.IComputationContext}
-     *            object.
-     * @return the compiled expression
-     * @throws org.integratedmodelling.klab.exceptions.KlabValidationException
-     *             if compilation produces any errors
-     */
-    IExpression compile(String expression, IExpression.Context context) throws KlabValidationException;
-
-    /**
-     * Preprocess an expression and return the descriptor. The context may be null,
-     * but the expression is still assumed to be in k.LAB contextualization scope -
-     * i.e. no identifiers will be recognized as known if the context is null.
-     *
-     * @param expression
-     *            a {@link java.lang.String} object.
-     * @param context
-     *            a
-     *            {@link org.integratedmodelling.klab.api.runtime.IComputationContext}
-     *            object.
-     *
-     * @return a preprocessed descriptor, which must be enough to produce an
-     *         IExpression on request.
-     * @throws org.integratedmodelling.klab.exceptions.KlabValidationException
-     *             if the expression contains syntax of logical errors
-     */
-    Descriptor describe(String expression, IExpression.Context context) throws KlabValidationException;
-
-    /**
-     * Preprocess an expression and return the descriptor. Not passing a context
-     * means the expression will be preprocessed outside of contextualization scope;
-     * all identifiers in the expression will be recognized as "known", assuming
-     * values will be supplied at evaluation.
-     *
-     * @param expression
-     *            a {@link java.lang.String} object.
-     *
-     * @return a preprocessed descriptor, which must be enough to produce an
-     *         IExpression on request.
-     * @throws org.integratedmodelling.klab.exceptions.KlabValidationException
-     *             if the expression contains syntax of logical errors
-     */
-    Descriptor describe(String expression) throws KlabValidationException;
-
-    /**
-     * Assume that the passed expression evaluates to a boolean and produce the
-     * language equivalent of its negation.
-     *
-     * @param expression
-     *            a {@link java.lang.String} object.
-     * @return another expression producing the opposite truth value as the original
-     */
-    String negate(String expression);
+	 * @return another expression producing the opposite truth value as the original
+	 */
+	String negate(String expression);
 
 }

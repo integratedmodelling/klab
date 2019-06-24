@@ -5,22 +5,6 @@ import org.integratedmodelling.klab.utils.Range;
 
 public interface IKimObservable extends IKimStatement {
 
-	public enum Modifier {
-		LESS,
-		GREATER,
-		LESS_EQUALN,
-		GREATER_EQUAL,
-		SAME_AS,
-		EQUAL,
-		NOT_EQUAL,
-		WITHOUT,
-		PLUS,
-		MINUS,
-		TIMES,
-		OVER,
-		WHERE
-	}
-	
 	/**
 	 * 
 	 * @return the main concept
@@ -130,18 +114,19 @@ public interface IKimObservable extends IKimStatement {
 	String getCodeName();
 	
 	/**
-	 * If a modifier was specified, return it.
+	 * If a value operator was specified, return it. This will be the value
+	 * subset of the Modifier enum - TODO separate the two.
 	 * 
 	 * @return the modifier or null
 	 */
-	Modifier getModifier();
+	ValueOperator getValueOperator();
 	
 	/**
-	 * If a modifier was specified, the operand to it is returned here. It may be 
+	 * If a value operator was specified, the operand to it is returned here. It may be 
 	 * a POD value, a concept, list thereof (not yet), or another IKimObservable.
 	 * 
 	 * @return the modifier operand.
 	 */
-	Object getOperandModifier();
+	Object getValueOperand();
 	
 }

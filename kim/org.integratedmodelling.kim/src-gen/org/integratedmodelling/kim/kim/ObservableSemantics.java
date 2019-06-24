@@ -25,7 +25,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getAccordingTo <em>According To</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getUnit <em>Unit</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getCurrency <em>Currency</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getOperator <em>Operator</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getValueModifier <em>Value Modifier</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonValue <em>Comparison Value</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonConcept <em>Comparison Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonObservable <em>Comparison Observable</em>}</li>
@@ -252,30 +252,30 @@ public interface ObservableSemantics extends EObject
   void setCurrency(Currency value);
 
   /**
-   * Returns the value of the '<em><b>Operator</b></em>' attribute.
+   * Returns the value of the '<em><b>Value Modifier</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Operator</em>' attribute isn't clear,
+   * If the meaning of the '<em>Value Modifier</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Operator</em>' attribute.
-   * @see #setOperator(String)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics_Operator()
+   * @return the value of the '<em>Value Modifier</em>' attribute.
+   * @see #setValueModifier(String)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics_ValueModifier()
    * @model
    * @generated
    */
-  String getOperator();
+  String getValueModifier();
 
   /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getOperator <em>Operator</em>}' attribute.
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getValueModifier <em>Value Modifier</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Operator</em>' attribute.
-   * @see #getOperator()
+   * @param value the new value of the '<em>Value Modifier</em>' attribute.
+   * @see #getValueModifier()
    * @generated
    */
-  void setOperator(String value);
+  void setValueModifier(String value);
 
   /**
    * Returns the value of the '<em><b>Comparison Value</b></em>' containment reference.
