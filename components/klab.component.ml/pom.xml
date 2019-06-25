@@ -37,11 +37,12 @@
 		</dependency>
 
 		<!-- for legacy Riskwiz -->
+		<!-- https://mvnrepository.com/artifact/org.nfunk/jep 
 		<dependency>
 			<groupId>org.nfunk</groupId>
 			<artifactId>jep</artifactId>
-			<version>2.4.0</version>
-		</dependency>
+			<version>2.4.1</version>
+		</dependency>-->
 		<!-- https://mvnrepository.com/artifact/org.mvel/mvel -->
 		<dependency>
 			<groupId>org.mvel</groupId>
@@ -64,5 +65,4 @@
 			<url>http://java.freehep.org/maven2/</url>
 		</repository>
 	</repositories>
-
 </project>
