@@ -58,11 +58,11 @@
 
 	</dependencies>
 
-	<repositories>
+<!-- 	<repositories>
 		<repository>
 			<id>freehep</id>
 			<name>FreeHep Repository</name>
 			<url>http://java.freehep.org/maven2/</url>
 		</repository>
-	</repositories>
+	</repositories> -->
 </project>
