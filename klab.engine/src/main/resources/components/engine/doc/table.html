@@ -1,7 +1,11 @@
-<article>
+<article class="dfe-table">
 	<h1>Lookup table</h1>
-	<p>The inputs are matched to column ${table.ResultColumn}, which
-		provides the result of the first match.</p>
+	<div class="dfe-fixed">
+		<p>The inputs are matched to column ${table.ResultColumn}, which
+			provides the result of the first match.</p>
+	</div>
+	<hr/>
+	<div class="dfe-content">
 	<table>
 		<thead>
 			<tr>
@@ -18,10 +22,12 @@
 			#end
 		<tbody>
 	</table>
-
-	<p>Each row in the table is matched from the top: the value
-		corresponding to the first matching row is returned. A star (*)
-		matches any input value but not no-data; a pound (#) will match
-		anything including no-data.</p>
-
+	</div>
+	<hr/>
+	<div class="dfe-fixed">
+		<p>Each row in the table is matched from the top: the value
+			corresponding to the first matching row is returned. A star (*)
+			matches any input value but not no-data; a pound (#) will match
+			anything including no-data.</p>
+	</div>
 </article>

@@ -1,27 +1,31 @@
-<article>
+<article class="dfe-classification">
 	<h1>Classification</h1>
-	<p>A classification maps an input value to an output value.</p>
-	<table>
-		<thead>
+	<div class="dfe-fixed">
+		<p>A classification maps an input value to an output value.</p>
+	</div>
+	<div class="dfe-content">
+		<table>
+			<thead>
+				<tr>
+					<th>Input</th>
+					<th>Output</th>
+				</tr>
+			</thead>
+			<tbody>
+			#foreach( $entry in $classification )
 			<tr>
-				<th>Input</th>
-				<th>Output</th>
+				<td>${entry.Second.HtmlSourceCode}</td>
+				<td>${entry.First.HtmlDeclaration}</td>
 			</tr>
-		</thead>
-		<tbody>
-		#foreach( $entry in $classification )
-		<tr>
-			<td>${entry.Second.HtmlSourceCode}</td>
-			<td>${entry.First.HtmlDeclaration}</td>
-		</tr>
-		#end
-		</tbody>
-	</table>
-
-	<p>Each input is matched from the top: the value corresponding to
-		the first match is returned. If the input is a concept, it will be
-		matched using the reasoner, so that more generic concepts will match a
-		more specific one. A star (*) matches any input value but not no-data;
-		a pound (#) will match anything including no-data.</p>
-
+			#end
+			</tbody>
+		</table>
+	</div>
+	<div class="dfe-fixed">
+		<p>Each input is matched from the top: the value corresponding to
+			the first match is returned. If the input is a concept, it will be
+			matched using the reasoner, so that more generic concepts will match a
+			more specific one. A star (*) matches any input value but not no-data;
+			a pound (#) will match anything including no-data.</p>
+	</div>
 </article>

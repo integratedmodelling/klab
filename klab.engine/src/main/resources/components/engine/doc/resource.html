@@ -1,18 +1,22 @@
-<article>
+<article class="dfe-resource">
 	<h1>${resource.LocalName}</h1>
-	<p>This processing step retrieves the contents of a data or model
-		resource from the semantic web. Resources can be data files, data
-		services (using protocols such as OGC or OpenDAP), or may interface to
-		more complex computations or running simulations.</p>
-	<p>Resources are identified by a unique Uniform Resource Name (URN)
-		used together with the scale of observation to retrieve data or
-		trigger computation. Metadata and provenance records associated with
-		this resource are shown below.</p>
-	<hr></hr>
-	<p><mark>Title</mark><br/>${resource.Metadata.Title}</p>
-	<p><mark>Originator</mark><br/>${resource.Metadata.Originator}</p>
-	<p><mark>Description</mark><br/>$description</p>
-	<p><mark>URL</mark><br/>${resource.Metadata.Url}</p>
-	<p><mark>Keywords</mark><br/>${resource.Metadata.Keywords}</p>
-	<hr></hr>
+	<div class="dfe-fixed">
+		<p>This processing step retrieves the contents of a data or model
+			resource from the semantic web. Resources can be data files, data
+			services (using protocols such as OGC or OpenDAP), or may interface to
+			more complex computations or running simulations.</p>
+		<p>Resources are identified by a unique Uniform Resource Name (URN)
+			used together with the scale of observation to retrieve data or
+			trigger computation. Metadata and provenance records associated with
+			this resource are shown below.</p>
+	</div>	
+	<hr/>
+	<div class="dfe-content">
+		<mark>Title</mark><div>${resource.Metadata.Title}</div>
+		<mark>Originator</mark><div>${resource.Metadata.Originator}</div>
+		<mark>Description</mark><div>$description</div>
+		<mark>URL</mark><div>${resource.Metadata.Url}</div>
+		<mark>Keywords</mark><div>${resource.Metadata.Keywords}</div>
+	</div>
+	<hr/>
 </article>
