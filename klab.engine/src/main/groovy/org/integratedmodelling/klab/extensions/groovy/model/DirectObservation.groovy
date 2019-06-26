@@ -316,7 +316,7 @@ class DirectObservation<T extends IDirectObservation> extends Observation<IDirec
 //        if (model != null) {
 //            return model.getNameFor(observation.getObservable().getLo);
 //        }
-        return observation.getObservable().getLocalName();
+        return observation.getObservable().getName();
     }
     
     def distanceTo (Observation observation) {

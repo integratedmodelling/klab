@@ -330,7 +330,7 @@ abstract class ActionBase extends Script {
 
     def resolveFromContext(String name, IDirectObservation ctx) {
         for (IState state : ctx.getStates()) {
-            if (state.getObservable().getLocalName().equals(name)) {
+            if (state.getObservable().getName().equals(name)) {
                 return state.aggregate(ctx.getScale(), Utils.getClassForType(state.getObservable().getArtifactType()));
             }
         }
