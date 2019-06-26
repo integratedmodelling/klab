@@ -65,7 +65,7 @@ public interface API {
 	 * @param kvp
 	 * @return
 	 */
-	public static String url(String template, String ... kvp) {
+	public static String url(String template, String... kvp) {
 		String ret = template;
 		if (kvp != null) {
 			for (int i = 0; i < kvp.length; i++) {
@@ -74,7 +74,7 @@ public interface API {
 		}
 		return ret;
 	}
-	
+
 	/** Parameter: the URN being resolved in any endpoints that access resources. */
 	public static final String P_URN = "{urn}";
 
@@ -151,6 +151,28 @@ public interface API {
 		 */
 		public static final String AUTHENTICATE_NODE = "/authenticate/node";
 
+		public static interface INDEXING {
+
+			/**
+			 * Submit anonymized successful query data including its context, time elapsed
+			 * in resolution and contextualization, groups, computation and load metrics for
+			 * indexing and analysis.
+			 * 
+			 * PUT
+			 */
+			public static final String SUBMIT = "/indexing/submit";
+
+			/**
+			 * Request suggestions for queries in context matching a query string and 
+			 * user permissions, sorted by match score and (increasing) computational
+			 * load.
+			 * 
+			 * POST
+			 */
+			public static final String SUGGESTIONS = "/indexing/suggestions";
+			
+		}
+
 	}
 
 	public static interface NODE {
@@ -158,8 +180,8 @@ public interface API {
 		public static interface RESOURCE {
 
 			/**
-			 * Add a resource to the public catalog by uploading zipped contents from a valid
-			 * local resource. Return URN after validation.
+			 * Add a resource to the public catalog by uploading zipped contents from a
+			 * valid local resource. Return URN after validation.
 			 * 
 			 * PUT
 			 */
@@ -196,7 +218,7 @@ public interface API {
 			 * GET
 			 */
 			public static final String GET_URN = "/resource/get/" + P_URN;
-			
+
 			/**
 			 * Upload a resource.
 			 * <p>
@@ -205,7 +227,7 @@ public interface API {
 			 * <b>Authentication:</b> session
 			 */
 			public static final String UPLOAD_URN = "/resource/put";
-			
+
 			/**
 			 * Export a resource.
 			 * <p>
@@ -213,7 +235,7 @@ public interface API {
 			 * <b>Response type:</b> No response <br/>
 			 * <b>Authentication:</b> session
 			 */
-			public static final String EXPORT_URN = "/resource/export/" + P_URN; 
+			public static final String EXPORT_URN = "/resource/export/" + P_URN;
 
 			/**
 			 * Get URN data for passed URN. Includes expiration to control cacheing.

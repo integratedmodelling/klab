@@ -1,0 +1,14 @@
+package org.integratedmodelling.klab.hub.controllers;
+
+import org.integratedmodelling.klab.hub.authentication.GroupManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class IndexingController {
+
+	@Autowired
+	GroupManager groupManager;
+
+
+}

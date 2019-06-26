@@ -386,6 +386,12 @@ public interface IKimConcept extends IKimStatement {
 			Type.PROCESS, Type.QUALITY, Type.AGENT);
 
 	/**
+	 * Everything we can write a model for
+	 */
+	public final static EnumSet<Type> BASE_MODELABLE_TYPES = EnumSet.of(Type.SUBJECT, Type.EVENT, Type.RELATIONSHIP,
+			Type.PROCESS, Type.QUALITY, Type.AGENT, Type.TRAIT, Type.CONFIGURATION);
+
+	/**
 	 * All trait type bits set (not TRAIT itself). Each trait AND this must yield a
 	 * set of size 1.
 	 */
