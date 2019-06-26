@@ -448,6 +448,7 @@ public class WekaInstances {
 				double instanceWeight = 1;
 
 				if (stateIndex == null) {
+					
 					// build map of predicted/observable name to index in instance. We use one
 					// artifact so the observable names are stable.
 					stateIndex = new HashMap<>();

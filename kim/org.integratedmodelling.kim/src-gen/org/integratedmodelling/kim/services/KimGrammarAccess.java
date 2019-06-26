@@ -4307,12 +4307,22 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final UnorderedGroup cUnorderedGroup_1 = (UnorderedGroup)cGroup.eContents().get(1);
 		private final Group cGroup_1_0 = (Group)cUnorderedGroup_1.eContents().get(0);
 		private final Keyword cOfKeyword_1_0_0 = (Keyword)cGroup_1_0.eContents().get(0);
-		private final Assignment cInherencyAssignment_1_0_1 = (Assignment)cGroup_1_0.eContents().get(1);
-		private final RuleCall cInherencySimpleConceptDeclarationParserRuleCall_1_0_1_0 = (RuleCall)cInherencyAssignment_1_0_1.eContents().get(0);
+		private final Alternatives cAlternatives_1_0_1 = (Alternatives)cGroup_1_0.eContents().get(1);
+		private final Group cGroup_1_0_1_0 = (Group)cAlternatives_1_0_1.eContents().get(0);
+		private final Keyword cEachKeyword_1_0_1_0_0 = (Keyword)cGroup_1_0_1_0.eContents().get(0);
+		private final Assignment cDistributedTraitInherencyAssignment_1_0_1_0_1 = (Assignment)cGroup_1_0_1_0.eContents().get(1);
+		private final RuleCall cDistributedTraitInherencySimpleConceptDeclarationParserRuleCall_1_0_1_0_1_0 = (RuleCall)cDistributedTraitInherencyAssignment_1_0_1_0_1.eContents().get(0);
+		private final Assignment cInherencyAssignment_1_0_1_1 = (Assignment)cAlternatives_1_0_1.eContents().get(1);
+		private final RuleCall cInherencySimpleConceptDeclarationParserRuleCall_1_0_1_1_0 = (RuleCall)cInherencyAssignment_1_0_1_1.eContents().get(0);
 		private final Group cGroup_1_1 = (Group)cUnorderedGroup_1.eContents().get(1);
 		private final Keyword cForKeyword_1_1_0 = (Keyword)cGroup_1_1.eContents().get(0);
-		private final Assignment cMotivationAssignment_1_1_1 = (Assignment)cGroup_1_1.eContents().get(1);
-		private final RuleCall cMotivationSimpleConceptDeclarationParserRuleCall_1_1_1_0 = (RuleCall)cMotivationAssignment_1_1_1.eContents().get(0);
+		private final Alternatives cAlternatives_1_1_1 = (Alternatives)cGroup_1_1.eContents().get(1);
+		private final Group cGroup_1_1_1_0 = (Group)cAlternatives_1_1_1.eContents().get(0);
+		private final Keyword cEachKeyword_1_1_1_0_0 = (Keyword)cGroup_1_1_1_0.eContents().get(0);
+		private final Assignment cDistributedRoleInherencyAssignment_1_1_1_0_1 = (Assignment)cGroup_1_1_1_0.eContents().get(1);
+		private final RuleCall cDistributedRoleInherencySimpleConceptDeclarationParserRuleCall_1_1_1_0_1_0 = (RuleCall)cDistributedRoleInherencyAssignment_1_1_1_0_1.eContents().get(0);
+		private final Assignment cMotivationAssignment_1_1_1_1 = (Assignment)cAlternatives_1_1_1.eContents().get(1);
+		private final RuleCall cMotivationSimpleConceptDeclarationParserRuleCall_1_1_1_1_0 = (RuleCall)cMotivationAssignment_1_1_1_1.eContents().get(0);
 		private final Group cGroup_1_2 = (Group)cUnorderedGroup_1.eContents().get(2);
 		private final Keyword cWithKeyword_1_2_0 = (Keyword)cGroup_1_2.eContents().get(0);
 		private final Assignment cCompresentAssignment_1_2_1 = (Assignment)cGroup_1_2.eContents().get(1);
@@ -4346,8 +4356,13 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cDuringSimpleConceptDeclarationParserRuleCall_1_8_1_0 = (RuleCall)cDuringAssignment_1_8_1.eContents().get(0);
 		private final Group cGroup_1_9 = (Group)cUnorderedGroup_1.eContents().get(9);
 		private final Keyword cWithinKeyword_1_9_0 = (Keyword)cGroup_1_9.eContents().get(0);
-		private final Assignment cContextAssignment_1_9_1 = (Assignment)cGroup_1_9.eContents().get(1);
-		private final RuleCall cContextSimpleConceptDeclarationParserRuleCall_1_9_1_0 = (RuleCall)cContextAssignment_1_9_1.eContents().get(0);
+		private final Alternatives cAlternatives_1_9_1 = (Alternatives)cGroup_1_9.eContents().get(1);
+		private final Group cGroup_1_9_1_0 = (Group)cAlternatives_1_9_1.eContents().get(0);
+		private final Keyword cEachKeyword_1_9_1_0_0 = (Keyword)cGroup_1_9_1_0.eContents().get(0);
+		private final Assignment cDistributedTraitContextAssignment_1_9_1_0_1 = (Assignment)cGroup_1_9_1_0.eContents().get(1);
+		private final RuleCall cDistributedTraitContextSimpleConceptDeclarationParserRuleCall_1_9_1_0_1_0 = (RuleCall)cDistributedTraitContextAssignment_1_9_1_0_1.eContents().get(0);
+		private final Assignment cContextAssignment_1_9_1_1 = (Assignment)cAlternatives_1_9_1.eContents().get(1);
+		private final RuleCall cContextSimpleConceptDeclarationParserRuleCall_1_9_1_1_0 = (RuleCall)cContextAssignment_1_9_1_1.eContents().get(0);
 		private final Group cGroup_1_10 = (Group)cUnorderedGroup_1.eContents().get(10);
 		private final Keyword cLinkingKeyword_1_10_0 = (Keyword)cGroup_1_10.eContents().get(0);
 		private final Assignment cRelationshipSourceAssignment_1_10_1 = (Assignment)cGroup_1_10.eContents().get(1);
@@ -4357,20 +4372,24 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cRelationshipTargetSimpleConceptDeclarationParserRuleCall_1_10_3_0 = (RuleCall)cRelationshipTargetAssignment_1_10_3.eContents().get(0);
 		
 		//ConceptDeclaration:
-		//	main+=Concept+ (('of' inherency=SimpleConceptDeclaration)? & ('for' motivation=SimpleConceptDeclaration)? & ('with'
-		//	compresent=SimpleConceptDeclaration)? & ('caused' 'by' causant=SimpleConceptDeclaration)? & ('adjacent' 'to'
-		//	adjacent=SimpleConceptDeclaration)? & ('contained' 'in' container=SimpleConceptDeclaration)? & ('containing'
-		//	contained=SimpleConceptDeclaration)? & ('causing' caused=SimpleConceptDeclaration)? & ('during'
-		//	during=SimpleConceptDeclaration)? & ('within' context=SimpleConceptDeclaration)? & ('linking'
+		//	main+=Concept+ (('of' ('each' distributedTraitInherency=SimpleConceptDeclaration |
+		//	inherency=SimpleConceptDeclaration))? & ('for' ('each' distributedRoleInherency=SimpleConceptDeclaration |
+		//	motivation=SimpleConceptDeclaration))? & ('with' compresent=SimpleConceptDeclaration)? & ('caused' 'by'
+		//	causant=SimpleConceptDeclaration)? & ('adjacent' 'to' adjacent=SimpleConceptDeclaration)? & ('contained' 'in'
+		//	container=SimpleConceptDeclaration)? & ('containing' contained=SimpleConceptDeclaration)? & ('causing'
+		//	caused=SimpleConceptDeclaration)? & ('during' during=SimpleConceptDeclaration)? & ('within' ('each'
+		//	distributedTraitContext=SimpleConceptDeclaration | context=SimpleConceptDeclaration))? & ('linking'
 		//	relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//main+=Concept+ (('of' inherency=SimpleConceptDeclaration)? & ('for' motivation=SimpleConceptDeclaration)? & ('with'
+		//main+=Concept+ (('of' ('each' distributedTraitInherency=SimpleConceptDeclaration | inherency=SimpleConceptDeclaration))?
+		//& ('for' ('each' distributedRoleInherency=SimpleConceptDeclaration | motivation=SimpleConceptDeclaration))? & ('with'
 		//compresent=SimpleConceptDeclaration)? & ('caused' 'by' causant=SimpleConceptDeclaration)? & ('adjacent' 'to'
 		//adjacent=SimpleConceptDeclaration)? & ('contained' 'in' container=SimpleConceptDeclaration)? & ('containing'
 		//contained=SimpleConceptDeclaration)? & ('causing' caused=SimpleConceptDeclaration)? & ('during'
-		//during=SimpleConceptDeclaration)? & ('within' context=SimpleConceptDeclaration)? & ('linking'
-		//relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?)?
+		//during=SimpleConceptDeclaration)? & ('within' ('each' distributedTraitContext=SimpleConceptDeclaration |
+		//context=SimpleConceptDeclaration))? & ('linking' relationshipSource=SimpleConceptDeclaration 'to'
+		//relationshipTarget=SimpleConceptDeclaration)?)?
 		public Group getGroup() { return cGroup; }
 		
 		//main+=Concept+
@@ -4379,37 +4398,69 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//Concept
 		public RuleCall getMainConceptParserRuleCall_0_0() { return cMainConceptParserRuleCall_0_0; }
 		
-		//(('of' inherency=SimpleConceptDeclaration)? & ('for' motivation=SimpleConceptDeclaration)? & ('with'
+		//(('of' ('each' distributedTraitInherency=SimpleConceptDeclaration | inherency=SimpleConceptDeclaration))? & ('for'
+		//('each' distributedRoleInherency=SimpleConceptDeclaration | motivation=SimpleConceptDeclaration))? & ('with'
 		//compresent=SimpleConceptDeclaration)? & ('caused' 'by' causant=SimpleConceptDeclaration)? & ('adjacent' 'to'
 		//adjacent=SimpleConceptDeclaration)? & ('contained' 'in' container=SimpleConceptDeclaration)? & ('containing'
 		//contained=SimpleConceptDeclaration)? & ('causing' caused=SimpleConceptDeclaration)? & ('during'
-		//during=SimpleConceptDeclaration)? & ('within' context=SimpleConceptDeclaration)? & ('linking'
-		//relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?)?
+		//during=SimpleConceptDeclaration)? & ('within' ('each' distributedTraitContext=SimpleConceptDeclaration |
+		//context=SimpleConceptDeclaration))? & ('linking' relationshipSource=SimpleConceptDeclaration 'to'
+		//relationshipTarget=SimpleConceptDeclaration)?)?
 		public UnorderedGroup getUnorderedGroup_1() { return cUnorderedGroup_1; }
 		
-		//('of' inherency=SimpleConceptDeclaration)?
+		//('of' ('each' distributedTraitInherency=SimpleConceptDeclaration | inherency=SimpleConceptDeclaration))?
 		public Group getGroup_1_0() { return cGroup_1_0; }
 		
 		//'of'
 		public Keyword getOfKeyword_1_0_0() { return cOfKeyword_1_0_0; }
 		
-		//inherency=SimpleConceptDeclaration
-		public Assignment getInherencyAssignment_1_0_1() { return cInherencyAssignment_1_0_1; }
+		//'each' distributedTraitInherency=SimpleConceptDeclaration | inherency=SimpleConceptDeclaration
+		public Alternatives getAlternatives_1_0_1() { return cAlternatives_1_0_1; }
+		
+		//'each' distributedTraitInherency=SimpleConceptDeclaration
+		public Group getGroup_1_0_1_0() { return cGroup_1_0_1_0; }
+		
+		//'each'
+		public Keyword getEachKeyword_1_0_1_0_0() { return cEachKeyword_1_0_1_0_0; }
+		
+		//distributedTraitInherency=SimpleConceptDeclaration
+		public Assignment getDistributedTraitInherencyAssignment_1_0_1_0_1() { return cDistributedTraitInherencyAssignment_1_0_1_0_1; }
 		
 		//SimpleConceptDeclaration
-		public RuleCall getInherencySimpleConceptDeclarationParserRuleCall_1_0_1_0() { return cInherencySimpleConceptDeclarationParserRuleCall_1_0_1_0; }
+		public RuleCall getDistributedTraitInherencySimpleConceptDeclarationParserRuleCall_1_0_1_0_1_0() { return cDistributedTraitInherencySimpleConceptDeclarationParserRuleCall_1_0_1_0_1_0; }
 		
-		//('for' motivation=SimpleConceptDeclaration)?
+		//inherency=SimpleConceptDeclaration
+		public Assignment getInherencyAssignment_1_0_1_1() { return cInherencyAssignment_1_0_1_1; }
+		
+		//SimpleConceptDeclaration
+		public RuleCall getInherencySimpleConceptDeclarationParserRuleCall_1_0_1_1_0() { return cInherencySimpleConceptDeclarationParserRuleCall_1_0_1_1_0; }
+		
+		//('for' ('each' distributedRoleInherency=SimpleConceptDeclaration | motivation=SimpleConceptDeclaration))?
 		public Group getGroup_1_1() { return cGroup_1_1; }
 		
 		//'for'
 		public Keyword getForKeyword_1_1_0() { return cForKeyword_1_1_0; }
 		
-		//motivation=SimpleConceptDeclaration
-		public Assignment getMotivationAssignment_1_1_1() { return cMotivationAssignment_1_1_1; }
+		//'each' distributedRoleInherency=SimpleConceptDeclaration | motivation=SimpleConceptDeclaration
+		public Alternatives getAlternatives_1_1_1() { return cAlternatives_1_1_1; }
+		
+		//'each' distributedRoleInherency=SimpleConceptDeclaration
+		public Group getGroup_1_1_1_0() { return cGroup_1_1_1_0; }
+		
+		//'each'
+		public Keyword getEachKeyword_1_1_1_0_0() { return cEachKeyword_1_1_1_0_0; }
+		
+		//distributedRoleInherency=SimpleConceptDeclaration
+		public Assignment getDistributedRoleInherencyAssignment_1_1_1_0_1() { return cDistributedRoleInherencyAssignment_1_1_1_0_1; }
 		
 		//SimpleConceptDeclaration
-		public RuleCall getMotivationSimpleConceptDeclarationParserRuleCall_1_1_1_0() { return cMotivationSimpleConceptDeclarationParserRuleCall_1_1_1_0; }
+		public RuleCall getDistributedRoleInherencySimpleConceptDeclarationParserRuleCall_1_1_1_0_1_0() { return cDistributedRoleInherencySimpleConceptDeclarationParserRuleCall_1_1_1_0_1_0; }
+		
+		//motivation=SimpleConceptDeclaration
+		public Assignment getMotivationAssignment_1_1_1_1() { return cMotivationAssignment_1_1_1_1; }
+		
+		//SimpleConceptDeclaration
+		public RuleCall getMotivationSimpleConceptDeclarationParserRuleCall_1_1_1_1_0() { return cMotivationSimpleConceptDeclarationParserRuleCall_1_1_1_1_0; }
 		
 		//('with' compresent=SimpleConceptDeclaration)?
 		public Group getGroup_1_2() { return cGroup_1_2; }
@@ -4504,17 +4555,32 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//SimpleConceptDeclaration
 		public RuleCall getDuringSimpleConceptDeclarationParserRuleCall_1_8_1_0() { return cDuringSimpleConceptDeclarationParserRuleCall_1_8_1_0; }
 		
-		//('within' context=SimpleConceptDeclaration)?
+		//('within' ('each' distributedTraitContext=SimpleConceptDeclaration | context=SimpleConceptDeclaration))?
 		public Group getGroup_1_9() { return cGroup_1_9; }
 		
 		//'within'
 		public Keyword getWithinKeyword_1_9_0() { return cWithinKeyword_1_9_0; }
 		
-		//context=SimpleConceptDeclaration
-		public Assignment getContextAssignment_1_9_1() { return cContextAssignment_1_9_1; }
+		//'each' distributedTraitContext=SimpleConceptDeclaration | context=SimpleConceptDeclaration
+		public Alternatives getAlternatives_1_9_1() { return cAlternatives_1_9_1; }
+		
+		//'each' distributedTraitContext=SimpleConceptDeclaration
+		public Group getGroup_1_9_1_0() { return cGroup_1_9_1_0; }
+		
+		//'each'
+		public Keyword getEachKeyword_1_9_1_0_0() { return cEachKeyword_1_9_1_0_0; }
+		
+		//distributedTraitContext=SimpleConceptDeclaration
+		public Assignment getDistributedTraitContextAssignment_1_9_1_0_1() { return cDistributedTraitContextAssignment_1_9_1_0_1; }
 		
 		//SimpleConceptDeclaration
-		public RuleCall getContextSimpleConceptDeclarationParserRuleCall_1_9_1_0() { return cContextSimpleConceptDeclarationParserRuleCall_1_9_1_0; }
+		public RuleCall getDistributedTraitContextSimpleConceptDeclarationParserRuleCall_1_9_1_0_1_0() { return cDistributedTraitContextSimpleConceptDeclarationParserRuleCall_1_9_1_0_1_0; }
+		
+		//context=SimpleConceptDeclaration
+		public Assignment getContextAssignment_1_9_1_1() { return cContextAssignment_1_9_1_1; }
+		
+		//SimpleConceptDeclaration
+		public RuleCall getContextSimpleConceptDeclarationParserRuleCall_1_9_1_1_0() { return cContextSimpleConceptDeclarationParserRuleCall_1_9_1_1_0; }
 		
 		//('linking' relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?
 		public Group getGroup_1_10() { return cGroup_1_10; }
@@ -11098,11 +11164,13 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//ConceptDeclaration:
-	//	main+=Concept+ (('of' inherency=SimpleConceptDeclaration)? & ('for' motivation=SimpleConceptDeclaration)? & ('with'
-	//	compresent=SimpleConceptDeclaration)? & ('caused' 'by' causant=SimpleConceptDeclaration)? & ('adjacent' 'to'
-	//	adjacent=SimpleConceptDeclaration)? & ('contained' 'in' container=SimpleConceptDeclaration)? & ('containing'
-	//	contained=SimpleConceptDeclaration)? & ('causing' caused=SimpleConceptDeclaration)? & ('during'
-	//	during=SimpleConceptDeclaration)? & ('within' context=SimpleConceptDeclaration)? & ('linking'
+	//	main+=Concept+ (('of' ('each' distributedTraitInherency=SimpleConceptDeclaration |
+	//	inherency=SimpleConceptDeclaration))? & ('for' ('each' distributedRoleInherency=SimpleConceptDeclaration |
+	//	motivation=SimpleConceptDeclaration))? & ('with' compresent=SimpleConceptDeclaration)? & ('caused' 'by'
+	//	causant=SimpleConceptDeclaration)? & ('adjacent' 'to' adjacent=SimpleConceptDeclaration)? & ('contained' 'in'
+	//	container=SimpleConceptDeclaration)? & ('containing' contained=SimpleConceptDeclaration)? & ('causing'
+	//	caused=SimpleConceptDeclaration)? & ('during' during=SimpleConceptDeclaration)? & ('within' ('each'
+	//	distributedTraitContext=SimpleConceptDeclaration | context=SimpleConceptDeclaration))? & ('linking'
 	//	relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?)?;
 	public ConceptDeclarationElements getConceptDeclarationAccess() {
 		return pConceptDeclaration;

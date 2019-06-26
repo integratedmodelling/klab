@@ -2497,7 +2497,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getConceptDeclaration_Inherency()
+  public EReference getConceptDeclaration_DistributedTraitInherency()
   {
     return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(1);
   }
@@ -2507,7 +2507,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getConceptDeclaration_Motivation()
+  public EReference getConceptDeclaration_Inherency()
   {
     return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(2);
   }
@@ -2517,7 +2517,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getConceptDeclaration_Compresent()
+  public EReference getConceptDeclaration_DistributedRoleInherency()
   {
     return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(3);
   }
@@ -2527,7 +2527,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getConceptDeclaration_Causant()
+  public EReference getConceptDeclaration_Motivation()
   {
     return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(4);
   }
@@ -2537,7 +2537,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getConceptDeclaration_Adjacent()
+  public EReference getConceptDeclaration_Compresent()
   {
     return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(5);
   }
@@ -2547,7 +2547,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getConceptDeclaration_Container()
+  public EReference getConceptDeclaration_Causant()
   {
     return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(6);
   }
@@ -2557,7 +2557,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getConceptDeclaration_Contained()
+  public EReference getConceptDeclaration_Adjacent()
   {
     return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(7);
   }
@@ -2567,7 +2567,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getConceptDeclaration_Caused()
+  public EReference getConceptDeclaration_Container()
   {
     return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(8);
   }
@@ -2577,7 +2577,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getConceptDeclaration_During()
+  public EReference getConceptDeclaration_Contained()
   {
     return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(9);
   }
@@ -2587,7 +2587,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getConceptDeclaration_Context()
+  public EReference getConceptDeclaration_Caused()
   {
     return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(10);
   }
@@ -2597,7 +2597,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getConceptDeclaration_RelationshipSource()
+  public EReference getConceptDeclaration_During()
   {
     return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(11);
   }
@@ -2607,7 +2607,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getConceptDeclaration_RelationshipTarget()
+  public EReference getConceptDeclaration_DistributedTraitContext()
   {
     return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(12);
   }
@@ -2617,9 +2617,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getConceptDeclaration_Operators()
+  public EReference getConceptDeclaration_Context()
   {
-    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(13);
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(13);
   }
 
   /**
@@ -2627,7 +2627,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getConceptDeclaration_Operands()
+  public EReference getConceptDeclaration_RelationshipSource()
   {
     return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(14);
   }
@@ -2637,9 +2637,39 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EReference getConceptDeclaration_RelationshipTarget()
+  {
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(15);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getConceptDeclaration_Operators()
+  {
+    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(16);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getConceptDeclaration_Operands()
+  {
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(17);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EAttribute getConceptDeclaration_Name()
   {
-    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(15);
+    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(18);
   }
 
   /**
@@ -4865,7 +4895,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
     conceptDeclarationEClass = createEClass(CONCEPT_DECLARATION);
     createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__MAIN);
+    createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__DISTRIBUTED_TRAIT_INHERENCY);
     createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__INHERENCY);
+    createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__DISTRIBUTED_ROLE_INHERENCY);
     createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__MOTIVATION);
     createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__COMPRESENT);
     createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__CAUSANT);
@@ -4874,6 +4906,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__CONTAINED);
     createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__CAUSED);
     createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__DURING);
+    createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__DISTRIBUTED_TRAIT_CONTEXT);
     createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__CONTEXT);
     createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__RELATIONSHIP_SOURCE);
     createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__RELATIONSHIP_TARGET);
@@ -5362,7 +5395,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
     initEClass(conceptDeclarationEClass, ConceptDeclaration.class, "ConceptDeclaration", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getConceptDeclaration_Main(), this.getConcept(), null, "main", null, 0, -1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getConceptDeclaration_DistributedTraitInherency(), this.getConceptDeclaration(), null, "distributedTraitInherency", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptDeclaration_Inherency(), this.getConceptDeclaration(), null, "inherency", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getConceptDeclaration_DistributedRoleInherency(), this.getConceptDeclaration(), null, "distributedRoleInherency", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptDeclaration_Motivation(), this.getConceptDeclaration(), null, "motivation", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptDeclaration_Compresent(), this.getConceptDeclaration(), null, "compresent", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptDeclaration_Causant(), this.getConceptDeclaration(), null, "causant", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -5371,6 +5406,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getConceptDeclaration_Contained(), this.getConceptDeclaration(), null, "contained", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptDeclaration_Caused(), this.getConceptDeclaration(), null, "caused", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptDeclaration_During(), this.getConceptDeclaration(), null, "during", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getConceptDeclaration_DistributedTraitContext(), this.getConceptDeclaration(), null, "distributedTraitContext", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptDeclaration_Context(), this.getConceptDeclaration(), null, "context", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptDeclaration_RelationshipSource(), this.getConceptDeclaration(), null, "relationshipSource", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptDeclaration_RelationshipTarget(), this.getConceptDeclaration(), null, "relationshipTarget", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
