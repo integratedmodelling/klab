@@ -518,4 +518,8 @@ public interface IKimConcept extends IKimStatement {
 	 */
 	String getCodeName();
 
+	boolean isDistributedInherency();
+
+	boolean isTraitObservable();
+
 }

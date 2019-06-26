@@ -289,26 +289,25 @@ class KimValidator extends AbstractKimValidator {
 				Kim.INSTANCE.declareObservable(model.observables.get(0))
 			}
 
-		var KimObservable interpretedRole = null
-
-		if (firstObservable?.descriptor !== null && firstObservable.descriptor.is(Type.ROLE)) {
-
-			if (model.concept === null) {
-				error(
-					"Models that specify a role to interpret their observable must declare a valid observable concept before 'as'",
-					KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, 0, INVALID_NONSEMANTIC_MODEL)
-				ok = false
-			} else {
-				interpretedRole = firstObservable
-				firstObservable = Kim.INSTANCE.declareObservable(model.concept)
-
-				if (firstObservable.descriptor.isUndefined) {
-					error('Observable has undefined semantics', KimPackage.Literals.MODEL_BODY_STATEMENT__CONCEPT,
-						BAD_OBSERVABLE)
-					ok = false
-				}
-			}
-		}
+//		var KimObservable interpretedRole = null
+//
+//		if (firstObservable?.descriptor !== null && firstObservable.descriptor.is(Type.ROLE)) {
+//
+//			firstObservable = Kim.INSTANCE.declareObservable(model.concept)
+//			if (model.concept === null && !firstObservable.main.traitObservable) {
+//				error(
+//					"Models that specify a role to interpret their observable must declare a valid observable concept before 'as'",
+//					KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, 0, INVALID_NONSEMANTIC_MODEL)
+//				ok = false
+//			} else {
+//				interpretedRole = firstObservable
+//				if (firstObservable.descriptor.isUndefined) {
+//					error('Observable has undefined semantics', KimPackage.Literals.MODEL_BODY_STATEMENT__CONCEPT,
+//						BAD_OBSERVABLE)
+//					ok = false
+//				}
+//			}
+//		}
 
 		if (firstObservable !== null && nonSemanticModels.contains(statement.model)) {
 			observables.add(firstObservable)
@@ -331,16 +330,21 @@ class KimValidator extends AbstractKimValidator {
 
 				var definition = observable.descriptor
 				if (definition !== null) {
-					if (definition.isUndefined && (obsIdx > 0 || interpretedRole === null)) {
+					if (definition.isUndefined && (obsIdx > 0)) {
 						error('Observable has undefined semantics',
 							KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, BAD_OBSERVABLE)
 						ok = false
-					} else if (!definition.is(Type.OBSERVABLE) && !definition.is(Type.TRAIT) &&
+					} else if (observable.main.distributedInherency && obsIdx > 0) {
+						error(
+							"Distributed inherency (of each, for each, within each) are only allowed as main observables",
+							KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, BAD_OBSERVABLE)
+						ok = false
+					} /* else if (!definition.is(Type.OBSERVABLE) && !definition.is(Type.TRAIT) &&
 						!definition.is(Type.CONFIGURATION)) {
 						error('Models can only describe observables, configurations or traits',
 							KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, BAD_OBSERVABLE)
 						ok = false
-					} else if (obsIdx == 0 && statement !== null && model.isInstantiator &&
+					} */ else if (obsIdx == 0 && statement !== null && model.isInstantiator &&
 						!definition.is(Type.COUNTABLE)) {
 						error(
 							"The first observable in an instantiator model ('model each') must be countable: subject, event or relationship",
@@ -360,6 +364,9 @@ class KimValidator extends AbstractKimValidator {
 
 		var i = 0
 		for (cd : model.dependencies) {
+			
+			// TODO check for 'model each'
+			
 			// context consistency left to reasoner
 			var observable = if (cd.observable !== null)
 					Kim.INSTANCE.declareObservable(cd.observable)
@@ -385,7 +392,7 @@ class KimValidator extends AbstractKimValidator {
 						"Attributes IDs are not allowed in dependencies (<attribute> 'as' ...): only values, expressions or functions",
 						KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, BAD_OBSERVABLE)
 				}
-
+				
 				if (observable.value !== null) {
 					val error = observable.validateValue();
 					if (error !== null) {
@@ -400,6 +407,10 @@ class KimValidator extends AbstractKimValidator {
 					ok = false
 				} else if (!definition.is(Type.OBSERVABLE) && !definition.is(Type.TRAIT)) {
 					error('Models can only describe observables or traits',
+						KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, BAD_OBSERVABLE)
+					ok = false
+				} else if (observable.main.distributedInherency) {
+					error("Distributed inherency (of each, for each, within each) are only allowed as main observables",
 						KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, BAD_OBSERVABLE)
 					ok = false
 				} else {
@@ -544,10 +555,10 @@ class KimValidator extends AbstractKimValidator {
 				descriptor.dependencies.addAll(dependencies)
 				descriptor.instantiator = model.isInstantiator
 				descriptor.docstring = model.docstring
-				if (interpretedRole !== null) {
-					descriptor.interpreter = true
-					descriptor.reinterpretingRole = interpretedRole.main
-				}
+//				if (interpretedRole !== null) {
+//					descriptor.interpreter = true
+//					descriptor.reinterpretingRole = interpretedRole.main
+//				}
 
 				// data source - function or literal/remote URN
 				for (urn : model.urns) {
@@ -867,7 +878,14 @@ class KimValidator extends AbstractKimValidator {
 		var subjective = false
 		var template = false
 		var KimMacro macro = null;
-
+		
+		// this tracks those concepts that contain attributes or roles with inherency and 
+		// are only legal when used within specific usages of observables. This happens when
+		// a trait or role is followed by of/for/within. 
+		var traitObservable = false;
+		// as above, with the addition of a 'each' after the of, within or for
+		var distributedInherency = false;
+		
 		for (main : declaration.main) {
 
 			var mmacro = new KimMacro();
@@ -1007,8 +1025,12 @@ class KimValidator extends AbstractKimValidator {
 		}
 
 		if (declaration.inherency !== null) {
+			
 			if (flags.contains(Type.EXTENT)) {
 				// TODO restrict to worldviews as this is pretty fundamental
+			} else if (flags.contains(Type.TRAIT) || flags.contains(Type.ROLE)) {
+				// TODO this is only usable within observables and dependencies
+				traitObservable = true;
 			} else if (!flags.contains(Type.OBSERVABLE) && !flags.contains(Type.CONFIGURATION)) {
 				error("Only observables and configurations can have inherency", declaration.inherency, null,
 					KimPackage.CONCEPT_DECLARATION__INHERENCY)
@@ -1049,8 +1071,46 @@ class KimValidator extends AbstractKimValidator {
 			copyInheritableFlags(flags, type);
 		}
 
+		/*
+		 * this is the 'of each' form (can also be 'for each' and 'within each').
+		 */		
+		if (declaration.distributedRoleInherency !== null || declaration.distributedTraitContext !== null || declaration.distributedTraitInherency !== null) {
+			
+			traitObservable = true;
+			distributedInherency = true;
+
+			/*
+			 * TODO must disallow more than one of these and their use with an actual inherency
+			 */
+			var inherency = declaration.distributedRoleInherency;
+			if (inherency === null) {
+				inherency = declaration.distributedTraitInherency;
+			} 
+			if (inherency === null) {
+				inherency = declaration.distributedTraitContext;
+			}
+
+			flags = checkDeclaration(inherency)
+			if (flags.isEmpty) {
+				type.clear
+			} else  {
+				// this cannot happen in definitions, so it will never be in a macro without error
+				if (!flags.contains(Type.DIRECT_OBSERVABLE) && !flags.contains(Type.CONFIGURATION)) {
+					error(
+						"The inherent type (of) must be a direct observable (process, subject, event or relationship) or a configuration",
+						inherency, null, KimPackage.CONCEPT_DECLARATION__INHERENCY)
+					error = true
+				}
+			}
+			copyInheritableFlags(flags, type);
+			
+		}
+
 		if (declaration.context !== null) {
-			if (!type.contains(Type.OBSERVABLE) && !flags.contains(Type.CONFIGURATION)) {
+			if (flags.contains(Type.TRAIT) || flags.contains(Type.ROLE)) {
+				// TODO this is only usable within observables and dependencies
+				traitObservable = true;
+			} else if (!type.contains(Type.OBSERVABLE) && !flags.contains(Type.CONFIGURATION)) {
 				error("Only observables and configurations can have context", declaration.context, null,
 					KimPackage.CONCEPT_DECLARATION__INHERENCY)
 			}
