@@ -375,13 +375,14 @@ Dependency:
 ;
 
 ConceptDeclaration:
+	
 	main+=Concept+ 
 		// binary semantic operators; also 'as', 'by' and 'follows' handled in other rules
 		(
 			// primary inherency (when secondary is given using 'within')
-			('of'   inherency=SimpleConceptDeclaration)? &
+			('of' (('each' distributedTraitInherency=SimpleConceptDeclaration) | inherency=SimpleConceptDeclaration))? &
 			// purpose (achievement event created from target)
-			('for' motivation=SimpleConceptDeclaration)? &
+			('for' (('each' distributedRoleInherency=SimpleConceptDeclaration) | motivation=SimpleConceptDeclaration))? &
 			// compresence (subject, process, event, presence or partitioned quality)
 			('with' compresent=SimpleConceptDeclaration)? &
 			// cause towards self - causant can be anything (?)
@@ -397,7 +398,7 @@ ConceptDeclaration:
 			// concomitant with event (?)
 			('during'   during=SimpleConceptDeclaration)? &
 			// context or secondary inherency
-			('within' context=SimpleConceptDeclaration)? &
+			('within' (('each' distributedTraitContext=SimpleConceptDeclaration) |  context=SimpleConceptDeclaration))? &
 			// for relationships: specialize source and target types
 			('linking' relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?
 		)?

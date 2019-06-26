@@ -2095,13 +2095,31 @@ public interface KimPackage extends EPackage
   int CONCEPT_DECLARATION__MAIN = 0;
 
   /**
+   * The feature id for the '<em><b>Distributed Trait Inherency</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__DISTRIBUTED_TRAIT_INHERENCY = 1;
+
+  /**
    * The feature id for the '<em><b>Inherency</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__INHERENCY = 1;
+  int CONCEPT_DECLARATION__INHERENCY = 2;
+
+  /**
+   * The feature id for the '<em><b>Distributed Role Inherency</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__DISTRIBUTED_ROLE_INHERENCY = 3;
 
   /**
    * The feature id for the '<em><b>Motivation</b></em>' containment reference.
@@ -2110,7 +2128,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__MOTIVATION = 2;
+  int CONCEPT_DECLARATION__MOTIVATION = 4;
 
   /**
    * The feature id for the '<em><b>Compresent</b></em>' containment reference.
@@ -2119,7 +2137,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__COMPRESENT = 3;
+  int CONCEPT_DECLARATION__COMPRESENT = 5;
 
   /**
    * The feature id for the '<em><b>Causant</b></em>' containment reference.
@@ -2128,7 +2146,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__CAUSANT = 4;
+  int CONCEPT_DECLARATION__CAUSANT = 6;
 
   /**
    * The feature id for the '<em><b>Adjacent</b></em>' containment reference.
@@ -2137,7 +2155,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__ADJACENT = 5;
+  int CONCEPT_DECLARATION__ADJACENT = 7;
 
   /**
    * The feature id for the '<em><b>Container</b></em>' containment reference.
@@ -2146,7 +2164,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__CONTAINER = 6;
+  int CONCEPT_DECLARATION__CONTAINER = 8;
 
   /**
    * The feature id for the '<em><b>Contained</b></em>' containment reference.
@@ -2155,7 +2173,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__CONTAINED = 7;
+  int CONCEPT_DECLARATION__CONTAINED = 9;
 
   /**
    * The feature id for the '<em><b>Caused</b></em>' containment reference.
@@ -2164,7 +2182,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__CAUSED = 8;
+  int CONCEPT_DECLARATION__CAUSED = 10;
 
   /**
    * The feature id for the '<em><b>During</b></em>' containment reference.
@@ -2173,7 +2191,16 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__DURING = 9;
+  int CONCEPT_DECLARATION__DURING = 11;
+
+  /**
+   * The feature id for the '<em><b>Distributed Trait Context</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__DISTRIBUTED_TRAIT_CONTEXT = 12;
 
   /**
    * The feature id for the '<em><b>Context</b></em>' containment reference.
@@ -2182,7 +2209,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__CONTEXT = 10;
+  int CONCEPT_DECLARATION__CONTEXT = 13;
 
   /**
    * The feature id for the '<em><b>Relationship Source</b></em>' containment reference.
@@ -2191,7 +2218,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__RELATIONSHIP_SOURCE = 11;
+  int CONCEPT_DECLARATION__RELATIONSHIP_SOURCE = 14;
 
   /**
    * The feature id for the '<em><b>Relationship Target</b></em>' containment reference.
@@ -2200,7 +2227,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__RELATIONSHIP_TARGET = 12;
+  int CONCEPT_DECLARATION__RELATIONSHIP_TARGET = 15;
 
   /**
    * The feature id for the '<em><b>Operators</b></em>' attribute list.
@@ -2209,7 +2236,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__OPERATORS = 13;
+  int CONCEPT_DECLARATION__OPERATORS = 16;
 
   /**
    * The feature id for the '<em><b>Operands</b></em>' containment reference list.
@@ -2218,7 +2245,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__OPERANDS = 14;
+  int CONCEPT_DECLARATION__OPERANDS = 17;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2227,7 +2254,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__NAME = 15;
+  int CONCEPT_DECLARATION__NAME = 18;
 
   /**
    * The number of structural features of the '<em>Concept Declaration</em>' class.
@@ -2236,7 +2263,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION_FEATURE_COUNT = 16;
+  int CONCEPT_DECLARATION_FEATURE_COUNT = 19;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ConceptReferenceImpl <em>Concept Reference</em>}' class.
@@ -6403,6 +6430,17 @@ public interface KimPackage extends EPackage
   EReference getConceptDeclaration_Main();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getDistributedTraitInherency <em>Distributed Trait Inherency</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Distributed Trait Inherency</em>'.
+   * @see org.integratedmodelling.kim.kim.ConceptDeclaration#getDistributedTraitInherency()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EReference getConceptDeclaration_DistributedTraitInherency();
+
+  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getInherency <em>Inherency</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -6412,6 +6450,17 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EReference getConceptDeclaration_Inherency();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getDistributedRoleInherency <em>Distributed Role Inherency</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Distributed Role Inherency</em>'.
+   * @see org.integratedmodelling.kim.kim.ConceptDeclaration#getDistributedRoleInherency()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EReference getConceptDeclaration_DistributedRoleInherency();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getMotivation <em>Motivation</em>}'.
@@ -6500,6 +6549,17 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EReference getConceptDeclaration_During();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getDistributedTraitContext <em>Distributed Trait Context</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Distributed Trait Context</em>'.
+   * @see org.integratedmodelling.kim.kim.ConceptDeclaration#getDistributedTraitContext()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EReference getConceptDeclaration_DistributedTraitContext();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getContext <em>Context</em>}'.
@@ -10354,12 +10414,28 @@ public interface KimPackage extends EPackage
     EReference CONCEPT_DECLARATION__MAIN = eINSTANCE.getConceptDeclaration_Main();
 
     /**
+     * The meta object literal for the '<em><b>Distributed Trait Inherency</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT_DECLARATION__DISTRIBUTED_TRAIT_INHERENCY = eINSTANCE.getConceptDeclaration_DistributedTraitInherency();
+
+    /**
      * The meta object literal for the '<em><b>Inherency</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     EReference CONCEPT_DECLARATION__INHERENCY = eINSTANCE.getConceptDeclaration_Inherency();
+
+    /**
+     * The meta object literal for the '<em><b>Distributed Role Inherency</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT_DECLARATION__DISTRIBUTED_ROLE_INHERENCY = eINSTANCE.getConceptDeclaration_DistributedRoleInherency();
 
     /**
      * The meta object literal for the '<em><b>Motivation</b></em>' containment reference feature.
@@ -10424,6 +10500,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EReference CONCEPT_DECLARATION__DURING = eINSTANCE.getConceptDeclaration_During();
+
+    /**
+     * The meta object literal for the '<em><b>Distributed Trait Context</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT_DECLARATION__DISTRIBUTED_TRAIT_CONTEXT = eINSTANCE.getConceptDeclaration_DistributedTraitContext();
 
     /**
      * The meta object literal for the '<em><b>Context</b></em>' containment reference feature.

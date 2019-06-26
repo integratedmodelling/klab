@@ -7560,21 +7560,49 @@ ruleConceptDeclaration returns [EObject current=null]
 								}
 								(
 									(
+										otherlv_3='each'
 										{
-											newCompositeNode(grammarAccess.getConceptDeclarationAccess().getInherencySimpleConceptDeclarationParserRuleCall_1_0_1_0());
+											newLeafNode(otherlv_3, grammarAccess.getConceptDeclarationAccess().getEachKeyword_1_0_1_0_0());
 										}
-										lv_inherency_3_0=ruleSimpleConceptDeclaration
-										{
-											if ($current==null) {
-												$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+										(
+											(
+												{
+													newCompositeNode(grammarAccess.getConceptDeclarationAccess().getDistributedTraitInherencySimpleConceptDeclarationParserRuleCall_1_0_1_0_1_0());
+												}
+												lv_distributedTraitInherency_4_0=ruleSimpleConceptDeclaration
+												{
+													if ($current==null) {
+														$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+													}
+													set(
+														$current,
+														"distributedTraitInherency",
+														lv_distributedTraitInherency_4_0,
+														"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
+													afterParserOrEnumRuleCall();
+												}
+											)
+										)
+									)
+									    |
+									(
+										(
+											{
+												newCompositeNode(grammarAccess.getConceptDeclarationAccess().getInherencySimpleConceptDeclarationParserRuleCall_1_0_1_1_0());
 											}
-											set(
-												$current,
-												"inherency",
-												lv_inherency_3_0,
-												"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
-											afterParserOrEnumRuleCall();
-										}
+											lv_inherency_5_0=ruleSimpleConceptDeclaration
+											{
+												if ($current==null) {
+													$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+												}
+												set(
+													$current,
+													"inherency",
+													lv_inherency_5_0,
+													"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
+												afterParserOrEnumRuleCall();
+											}
+										)
 									)
 								)
 								))
@@ -7588,27 +7616,55 @@ ruleConceptDeclaration returns [EObject current=null]
 					{
 						getUnorderedGroupHelper().select(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 1);
 					}
-								({true}?=>(otherlv_4='for'
+								({true}?=>(otherlv_6='for'
 								{
-									newLeafNode(otherlv_4, grammarAccess.getConceptDeclarationAccess().getForKeyword_1_1_0());
+									newLeafNode(otherlv_6, grammarAccess.getConceptDeclarationAccess().getForKeyword_1_1_0());
 								}
 								(
 									(
+										otherlv_7='each'
 										{
-											newCompositeNode(grammarAccess.getConceptDeclarationAccess().getMotivationSimpleConceptDeclarationParserRuleCall_1_1_1_0());
+											newLeafNode(otherlv_7, grammarAccess.getConceptDeclarationAccess().getEachKeyword_1_1_1_0_0());
 										}
-										lv_motivation_5_0=ruleSimpleConceptDeclaration
-										{
-											if ($current==null) {
-												$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+										(
+											(
+												{
+													newCompositeNode(grammarAccess.getConceptDeclarationAccess().getDistributedRoleInherencySimpleConceptDeclarationParserRuleCall_1_1_1_0_1_0());
+												}
+												lv_distributedRoleInherency_8_0=ruleSimpleConceptDeclaration
+												{
+													if ($current==null) {
+														$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+													}
+													set(
+														$current,
+														"distributedRoleInherency",
+														lv_distributedRoleInherency_8_0,
+														"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
+													afterParserOrEnumRuleCall();
+												}
+											)
+										)
+									)
+									    |
+									(
+										(
+											{
+												newCompositeNode(grammarAccess.getConceptDeclarationAccess().getMotivationSimpleConceptDeclarationParserRuleCall_1_1_1_1_0());
 											}
-											set(
-												$current,
-												"motivation",
-												lv_motivation_5_0,
-												"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
-											afterParserOrEnumRuleCall();
-										}
+											lv_motivation_9_0=ruleSimpleConceptDeclaration
+											{
+												if ($current==null) {
+													$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+												}
+												set(
+													$current,
+													"motivation",
+													lv_motivation_9_0,
+													"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
+												afterParserOrEnumRuleCall();
+											}
+										)
 									)
 								)
 								))
@@ -7622,16 +7678,16 @@ ruleConceptDeclaration returns [EObject current=null]
 					{
 						getUnorderedGroupHelper().select(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 2);
 					}
-								({true}?=>(otherlv_6='with'
+								({true}?=>(otherlv_10='with'
 								{
-									newLeafNode(otherlv_6, grammarAccess.getConceptDeclarationAccess().getWithKeyword_1_2_0());
+									newLeafNode(otherlv_10, grammarAccess.getConceptDeclarationAccess().getWithKeyword_1_2_0());
 								}
 								(
 									(
 										{
 											newCompositeNode(grammarAccess.getConceptDeclarationAccess().getCompresentSimpleConceptDeclarationParserRuleCall_1_2_1_0());
 										}
-										lv_compresent_7_0=ruleSimpleConceptDeclaration
+										lv_compresent_11_0=ruleSimpleConceptDeclaration
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
@@ -7639,7 +7695,7 @@ ruleConceptDeclaration returns [EObject current=null]
 											set(
 												$current,
 												"compresent",
-												lv_compresent_7_0,
+												lv_compresent_11_0,
 												"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
@@ -7656,20 +7712,20 @@ ruleConceptDeclaration returns [EObject current=null]
 					{
 						getUnorderedGroupHelper().select(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 3);
 					}
-								({true}?=>(otherlv_8='caused'
+								({true}?=>(otherlv_12='caused'
 								{
-									newLeafNode(otherlv_8, grammarAccess.getConceptDeclarationAccess().getCausedKeyword_1_3_0());
+									newLeafNode(otherlv_12, grammarAccess.getConceptDeclarationAccess().getCausedKeyword_1_3_0());
 								}
-								otherlv_9='by'
+								otherlv_13='by'
 								{
-									newLeafNode(otherlv_9, grammarAccess.getConceptDeclarationAccess().getByKeyword_1_3_1());
+									newLeafNode(otherlv_13, grammarAccess.getConceptDeclarationAccess().getByKeyword_1_3_1());
 								}
 								(
 									(
 										{
 											newCompositeNode(grammarAccess.getConceptDeclarationAccess().getCausantSimpleConceptDeclarationParserRuleCall_1_3_2_0());
 										}
-										lv_causant_10_0=ruleSimpleConceptDeclaration
+										lv_causant_14_0=ruleSimpleConceptDeclaration
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
@@ -7677,7 +7733,7 @@ ruleConceptDeclaration returns [EObject current=null]
 											set(
 												$current,
 												"causant",
-												lv_causant_10_0,
+												lv_causant_14_0,
 												"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
@@ -7694,20 +7750,20 @@ ruleConceptDeclaration returns [EObject current=null]
 					{
 						getUnorderedGroupHelper().select(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 4);
 					}
-								({true}?=>(otherlv_11='adjacent'
+								({true}?=>(otherlv_15='adjacent'
 								{
-									newLeafNode(otherlv_11, grammarAccess.getConceptDeclarationAccess().getAdjacentKeyword_1_4_0());
+									newLeafNode(otherlv_15, grammarAccess.getConceptDeclarationAccess().getAdjacentKeyword_1_4_0());
 								}
-								otherlv_12='to'
+								otherlv_16='to'
 								{
-									newLeafNode(otherlv_12, grammarAccess.getConceptDeclarationAccess().getToKeyword_1_4_1());
+									newLeafNode(otherlv_16, grammarAccess.getConceptDeclarationAccess().getToKeyword_1_4_1());
 								}
 								(
 									(
 										{
 											newCompositeNode(grammarAccess.getConceptDeclarationAccess().getAdjacentSimpleConceptDeclarationParserRuleCall_1_4_2_0());
 										}
-										lv_adjacent_13_0=ruleSimpleConceptDeclaration
+										lv_adjacent_17_0=ruleSimpleConceptDeclaration
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
@@ -7715,7 +7771,7 @@ ruleConceptDeclaration returns [EObject current=null]
 											set(
 												$current,
 												"adjacent",
-												lv_adjacent_13_0,
+												lv_adjacent_17_0,
 												"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
@@ -7732,20 +7788,20 @@ ruleConceptDeclaration returns [EObject current=null]
 					{
 						getUnorderedGroupHelper().select(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 5);
 					}
-								({true}?=>(otherlv_14='contained'
+								({true}?=>(otherlv_18='contained'
 								{
-									newLeafNode(otherlv_14, grammarAccess.getConceptDeclarationAccess().getContainedKeyword_1_5_0());
+									newLeafNode(otherlv_18, grammarAccess.getConceptDeclarationAccess().getContainedKeyword_1_5_0());
 								}
-								otherlv_15='in'
+								otherlv_19='in'
 								{
-									newLeafNode(otherlv_15, grammarAccess.getConceptDeclarationAccess().getInKeyword_1_5_1());
+									newLeafNode(otherlv_19, grammarAccess.getConceptDeclarationAccess().getInKeyword_1_5_1());
 								}
 								(
 									(
 										{
 											newCompositeNode(grammarAccess.getConceptDeclarationAccess().getContainerSimpleConceptDeclarationParserRuleCall_1_5_2_0());
 										}
-										lv_container_16_0=ruleSimpleConceptDeclaration
+										lv_container_20_0=ruleSimpleConceptDeclaration
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
@@ -7753,7 +7809,7 @@ ruleConceptDeclaration returns [EObject current=null]
 											set(
 												$current,
 												"container",
-												lv_container_16_0,
+												lv_container_20_0,
 												"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
@@ -7770,16 +7826,16 @@ ruleConceptDeclaration returns [EObject current=null]
 					{
 						getUnorderedGroupHelper().select(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 6);
 					}
-								({true}?=>(otherlv_17='containing'
+								({true}?=>(otherlv_21='containing'
 								{
-									newLeafNode(otherlv_17, grammarAccess.getConceptDeclarationAccess().getContainingKeyword_1_6_0());
+									newLeafNode(otherlv_21, grammarAccess.getConceptDeclarationAccess().getContainingKeyword_1_6_0());
 								}
 								(
 									(
 										{
 											newCompositeNode(grammarAccess.getConceptDeclarationAccess().getContainedSimpleConceptDeclarationParserRuleCall_1_6_1_0());
 										}
-										lv_contained_18_0=ruleSimpleConceptDeclaration
+										lv_contained_22_0=ruleSimpleConceptDeclaration
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
@@ -7787,7 +7843,7 @@ ruleConceptDeclaration returns [EObject current=null]
 											set(
 												$current,
 												"contained",
-												lv_contained_18_0,
+												lv_contained_22_0,
 												"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
@@ -7804,16 +7860,16 @@ ruleConceptDeclaration returns [EObject current=null]
 					{
 						getUnorderedGroupHelper().select(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 7);
 					}
-								({true}?=>(otherlv_19='causing'
+								({true}?=>(otherlv_23='causing'
 								{
-									newLeafNode(otherlv_19, grammarAccess.getConceptDeclarationAccess().getCausingKeyword_1_7_0());
+									newLeafNode(otherlv_23, grammarAccess.getConceptDeclarationAccess().getCausingKeyword_1_7_0());
 								}
 								(
 									(
 										{
 											newCompositeNode(grammarAccess.getConceptDeclarationAccess().getCausedSimpleConceptDeclarationParserRuleCall_1_7_1_0());
 										}
-										lv_caused_20_0=ruleSimpleConceptDeclaration
+										lv_caused_24_0=ruleSimpleConceptDeclaration
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
@@ -7821,7 +7877,7 @@ ruleConceptDeclaration returns [EObject current=null]
 											set(
 												$current,
 												"caused",
-												lv_caused_20_0,
+												lv_caused_24_0,
 												"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
@@ -7838,16 +7894,16 @@ ruleConceptDeclaration returns [EObject current=null]
 					{
 						getUnorderedGroupHelper().select(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 8);
 					}
-								({true}?=>(otherlv_21='during'
+								({true}?=>(otherlv_25='during'
 								{
-									newLeafNode(otherlv_21, grammarAccess.getConceptDeclarationAccess().getDuringKeyword_1_8_0());
+									newLeafNode(otherlv_25, grammarAccess.getConceptDeclarationAccess().getDuringKeyword_1_8_0());
 								}
 								(
 									(
 										{
 											newCompositeNode(grammarAccess.getConceptDeclarationAccess().getDuringSimpleConceptDeclarationParserRuleCall_1_8_1_0());
 										}
-										lv_during_22_0=ruleSimpleConceptDeclaration
+										lv_during_26_0=ruleSimpleConceptDeclaration
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
@@ -7855,7 +7911,7 @@ ruleConceptDeclaration returns [EObject current=null]
 											set(
 												$current,
 												"during",
-												lv_during_22_0,
+												lv_during_26_0,
 												"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
@@ -7872,27 +7928,55 @@ ruleConceptDeclaration returns [EObject current=null]
 					{
 						getUnorderedGroupHelper().select(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 9);
 					}
-								({true}?=>(otherlv_23='within'
+								({true}?=>(otherlv_27='within'
 								{
-									newLeafNode(otherlv_23, grammarAccess.getConceptDeclarationAccess().getWithinKeyword_1_9_0());
+									newLeafNode(otherlv_27, grammarAccess.getConceptDeclarationAccess().getWithinKeyword_1_9_0());
 								}
 								(
 									(
+										otherlv_28='each'
 										{
-											newCompositeNode(grammarAccess.getConceptDeclarationAccess().getContextSimpleConceptDeclarationParserRuleCall_1_9_1_0());
+											newLeafNode(otherlv_28, grammarAccess.getConceptDeclarationAccess().getEachKeyword_1_9_1_0_0());
 										}
-										lv_context_24_0=ruleSimpleConceptDeclaration
-										{
-											if ($current==null) {
-												$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+										(
+											(
+												{
+													newCompositeNode(grammarAccess.getConceptDeclarationAccess().getDistributedTraitContextSimpleConceptDeclarationParserRuleCall_1_9_1_0_1_0());
+												}
+												lv_distributedTraitContext_29_0=ruleSimpleConceptDeclaration
+												{
+													if ($current==null) {
+														$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+													}
+													set(
+														$current,
+														"distributedTraitContext",
+														lv_distributedTraitContext_29_0,
+														"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
+													afterParserOrEnumRuleCall();
+												}
+											)
+										)
+									)
+									    |
+									(
+										(
+											{
+												newCompositeNode(grammarAccess.getConceptDeclarationAccess().getContextSimpleConceptDeclarationParserRuleCall_1_9_1_1_0());
 											}
-											set(
-												$current,
-												"context",
-												lv_context_24_0,
-												"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
-											afterParserOrEnumRuleCall();
-										}
+											lv_context_30_0=ruleSimpleConceptDeclaration
+											{
+												if ($current==null) {
+													$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+												}
+												set(
+													$current,
+													"context",
+													lv_context_30_0,
+													"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
+												afterParserOrEnumRuleCall();
+											}
+										)
 									)
 								)
 								))
@@ -7906,16 +7990,16 @@ ruleConceptDeclaration returns [EObject current=null]
 					{
 						getUnorderedGroupHelper().select(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 10);
 					}
-								({true}?=>(otherlv_25='linking'
+								({true}?=>(otherlv_31='linking'
 								{
-									newLeafNode(otherlv_25, grammarAccess.getConceptDeclarationAccess().getLinkingKeyword_1_10_0());
+									newLeafNode(otherlv_31, grammarAccess.getConceptDeclarationAccess().getLinkingKeyword_1_10_0());
 								}
 								(
 									(
 										{
 											newCompositeNode(grammarAccess.getConceptDeclarationAccess().getRelationshipSourceSimpleConceptDeclarationParserRuleCall_1_10_1_0());
 										}
-										lv_relationshipSource_26_0=ruleSimpleConceptDeclaration
+										lv_relationshipSource_32_0=ruleSimpleConceptDeclaration
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
@@ -7923,22 +8007,22 @@ ruleConceptDeclaration returns [EObject current=null]
 											set(
 												$current,
 												"relationshipSource",
-												lv_relationshipSource_26_0,
+												lv_relationshipSource_32_0,
 												"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}
 									)
 								)
-								otherlv_27='to'
+								otherlv_33='to'
 								{
-									newLeafNode(otherlv_27, grammarAccess.getConceptDeclarationAccess().getToKeyword_1_10_2());
+									newLeafNode(otherlv_33, grammarAccess.getConceptDeclarationAccess().getToKeyword_1_10_2());
 								}
 								(
 									(
 										{
 											newCompositeNode(grammarAccess.getConceptDeclarationAccess().getRelationshipTargetSimpleConceptDeclarationParserRuleCall_1_10_3_0());
 										}
-										lv_relationshipTarget_28_0=ruleSimpleConceptDeclaration
+										lv_relationshipTarget_34_0=ruleSimpleConceptDeclaration
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
@@ -7946,7 +8030,7 @@ ruleConceptDeclaration returns [EObject current=null]
 											set(
 												$current,
 												"relationshipTarget",
-												lv_relationshipTarget_28_0,
+												lv_relationshipTarget_34_0,
 												"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 											afterParserOrEnumRuleCall();
 										}

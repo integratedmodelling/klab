@@ -94,6 +94,9 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 							ContextualizationStrategy contextualizationStrategy = new ContextualizationStrategy();
 							contextualizationStrategy.add(dataflow);
 
+							// context will take it from the task identity when it's created
+							setContextualizationStrategy(contextualizationStrategy);
+							
 							session.getMonitor()
 									.send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 											IMessage.Type.DataflowCompiled, new DataflowReference(token,
@@ -106,12 +109,6 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 
 							getActivity().finished();
 							
-							/*
-							 * save the initial contextualization strategy with the context
-							 */
-							((Observation) ret).getRuntimeContext()
-									.setContextualizationStrategy(contextualizationStrategy);
-
 							/*
 							 * Register the observation context with the session. It will be disposed of
 							 * and/or persisted by the session itself.
@@ -151,6 +148,7 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 					}
 					return ret;
 				}
+
 			});
 
 			engine.getTaskExecutor().execute(delegate);

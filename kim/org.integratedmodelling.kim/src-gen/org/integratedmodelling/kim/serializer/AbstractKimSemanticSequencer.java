@@ -521,12 +521,12 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         restrictions+=RestrictionStatement | 
 	 *                         metadata=Metadata
 	 *                     )? 
-	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
-	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
 	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
 	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
-	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
+	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
 	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
+	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
+	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
 	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
 	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
@@ -657,7 +657,9 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *         main+=Concept+ 
 	 *         (
 	 *             (
+	 *                 distributedTraitInherency=SimpleConceptDeclaration | 
 	 *                 inherency=SimpleConceptDeclaration | 
+	 *                 distributedRoleInherency=SimpleConceptDeclaration | 
 	 *                 motivation=SimpleConceptDeclaration | 
 	 *                 compresent=SimpleConceptDeclaration | 
 	 *                 causant=SimpleConceptDeclaration | 
@@ -666,6 +668,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration | 
 	 *                 during=SimpleConceptDeclaration | 
+	 *                 distributedTraitContext=SimpleConceptDeclaration | 
 	 *                 context=SimpleConceptDeclaration
 	 *             )? 
 	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
@@ -686,7 +689,9 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *         main+=Concept+ 
 	 *         (
 	 *             (
+	 *                 distributedTraitInherency=SimpleConceptDeclaration | 
 	 *                 inherency=SimpleConceptDeclaration | 
+	 *                 distributedRoleInherency=SimpleConceptDeclaration | 
 	 *                 motivation=SimpleConceptDeclaration | 
 	 *                 compresent=SimpleConceptDeclaration | 
 	 *                 causant=SimpleConceptDeclaration | 
@@ -695,6 +700,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration | 
 	 *                 during=SimpleConceptDeclaration | 
+	 *                 distributedTraitContext=SimpleConceptDeclaration | 
 	 *                 context=SimpleConceptDeclaration
 	 *             )? 
 	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
@@ -717,7 +723,9 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *         main+=Concept+ 
 	 *         (
 	 *             (
+	 *                 distributedTraitInherency=SimpleConceptDeclaration | 
 	 *                 inherency=SimpleConceptDeclaration | 
+	 *                 distributedRoleInherency=SimpleConceptDeclaration | 
 	 *                 motivation=SimpleConceptDeclaration | 
 	 *                 compresent=SimpleConceptDeclaration | 
 	 *                 causant=SimpleConceptDeclaration | 
@@ -726,6 +734,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration | 
 	 *                 during=SimpleConceptDeclaration | 
+	 *                 distributedTraitContext=SimpleConceptDeclaration | 
 	 *                 context=SimpleConceptDeclaration
 	 *             )? 
 	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?

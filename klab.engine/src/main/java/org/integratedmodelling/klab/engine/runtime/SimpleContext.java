@@ -498,12 +498,6 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 	}
 
 	@Override
-	public void setContextualizationStrategy(ContextualizationStrategy contextualizationStrategy) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void setModel(Model model) {
 		// TODO Auto-generated method stub
 

@@ -10,6 +10,8 @@ import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.api.data.mediation.ICurrency;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -17,6 +19,8 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.services.IObservableService;
+import org.integratedmodelling.klab.common.mediation.Currency;
+import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.runtime.code.Transformation;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
@@ -177,7 +181,20 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 		 * the aggregator.
 		 */
 		if (original.getClassifier() != null) {
+
+			// preserve units/currencies to avoid conversions to another
+			IUnit unit = original.getUnit();
+			ICurrency currency = original.getCurrency();
+			
+			// original w/o classifier
 			original = (Observable) original.getBuilder(scope.getMonitor()).by(null).buildObservable();
+
+			// restore unit/currency
+			if (unit != null) {
+				original.setUnit((Unit) unit);
+			} else if (currency != null) {
+				original.setCurrency((Currency) currency);
+			}
 		}
 
 		/*
