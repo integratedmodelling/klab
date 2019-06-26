@@ -246,10 +246,7 @@ public interface IRuntimeContext extends IComputationContext {
      */
     ContextualizationStrategy getContextualizationStrategy();
 
-    // ugly but we don't have a context when we create the first dataflow.
-    void setContextualizationStrategy(ContextualizationStrategy contextualizationStrategy);
-
-    // same
+    // ugly but we don't have a model when we create the first dataflow.
     void setModel(Model model);
 
     /**

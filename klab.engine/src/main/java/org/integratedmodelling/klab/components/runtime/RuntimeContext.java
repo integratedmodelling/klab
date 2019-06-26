@@ -54,6 +54,7 @@ import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.documentation.Report;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.ConfigurationDetector;
 import org.integratedmodelling.klab.engine.runtime.EventBus;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
@@ -131,6 +132,13 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		this.actuator = actuator;
 		this.targetSemantics = actuator.getObservable();
 		this.artifactType = Observables.INSTANCE.getObservableType(actuator.getObservable(), true);
+
+		/*
+		 * Complex and convoluted, but there is no other way to get this which must be created by the
+		 * task for the first context. Successive contextualizations will add to it.
+		 */
+		this.contextualizationStrategy = monitor.getIdentity().getParentIdentity(AbstractTask.class)
+				.getContextualizationStrategy();
 
 		// store and set up for further resolutions
 		this.resolutionScope = (ResolutionScope) scope;
@@ -981,7 +989,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 	@Override
 	public Pair<String, IArtifact> findArtifact(IObservable observable) {
-	    
+
 		for (String key : catalog.keySet()) {
 			IArtifact artifact = catalog.get(key);
 			if (artifact != null && artifact instanceof IObservation
@@ -1011,11 +1019,6 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	@Override
 	public ContextualizationStrategy getContextualizationStrategy() {
 		return contextualizationStrategy;
-	}
-
-	@Override
-	public void setContextualizationStrategy(ContextualizationStrategy contextualizationStrategy) {
-		this.contextualizationStrategy = contextualizationStrategy;
 	}
 
 	@Override
@@ -1119,9 +1122,9 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		return structure.getChildArtifacts(directObservation);
 	}
 
-    @Override
-    public Set<String> getNotifiedObservations() {
-        return notifiedObservations;
-    }
+	@Override
+	public Set<String> getNotifiedObservations() {
+		return notifiedObservations;
+	}
 
 }
