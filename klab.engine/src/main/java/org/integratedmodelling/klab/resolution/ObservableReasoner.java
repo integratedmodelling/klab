@@ -181,20 +181,7 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 		 * the aggregator.
 		 */
 		if (original.getClassifier() != null) {
-
-			// preserve units/currencies to avoid conversions to another
-			IUnit unit = original.getUnit();
-			ICurrency currency = original.getCurrency();
-			
-			// original w/o classifier
 			original = (Observable) original.getBuilder(scope.getMonitor()).by(null).buildObservable();
-
-			// restore unit/currency
-			if (unit != null) {
-				original.setUnit((Unit) unit);
-			} else if (currency != null) {
-				original.setCurrency((Currency) currency);
-			}
 		}
 
 		/*
