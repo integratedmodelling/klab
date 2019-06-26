@@ -601,7 +601,7 @@ public enum Eclipse {
         }
 
         if (ret == null) {
-            System.out.println("ZIOCAN IFILE IS NULL " + file);
+            System.out.println("IFILE IS NULL " + file);
         }
         return ret;
     }

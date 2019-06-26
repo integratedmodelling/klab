@@ -5,9 +5,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -426,9 +429,20 @@ public class WekaInstances {
 		Map<String, Integer> stateIndex = null;
 
 		int skipped = 0;
+
+		// for later reporting
+		Set<String> pnames = new HashSet<>();
+		pnames.add(predicted.getObservable().getName());
+		for (IState predictor : predictors) {
+			pnames.add(predictor.getObservable().getName());
+		}
+
 		for (ObservationGroup archetype : archetypes) {
 
 			for (IArtifact object : archetype) {
+
+				// this is for reporting what's missing - bit of a pain
+				Set<String> missing = new HashSet<>(pnames);
 
 				Object[] instanceValues = new Object[predictors.size() + 1];
 				double instanceWeight = 1;
@@ -441,13 +455,16 @@ public class WekaInstances {
 					for (IState state : ((IDirectObservation) object).getStates()) {
 						if (state.getObservable().equals(predicted.getObservable())) {
 							stateIndex.put(state.getObservable().getName(), 0);
+							missing.remove(predicted.getObservable().getName());
 						} else {
 							int i = 1;
 							for (IState predictor : predictors) {
 								if (state.getObservable().equals(predictor.getObservable())) {
 									stateIndex.put(state.getObservable().getName(), i);
+									missing.remove(predicted.getObservable().getName());
 								} else if (weightObservable != null && state.getObservable().is(weightObservable)) {
 									instanceWeight = state.aggregate(((IObservation) object).getScale(), Double.class);
+									missing.remove(predicted.getObservable().getName());
 								}
 								i++;
 							}
@@ -456,7 +473,8 @@ public class WekaInstances {
 
 					if (stateIndex.size() != predictors.size() + 1) {
 						throw new IllegalStateException(
-								"Weka: the archetype observations do not contain values for the learned quality and all predictors");
+								"Weka: the archetype observations do not contain values for the learned quality and all predictors: missing "
+										+ Arrays.toString(missing.toArray()));
 					}
 				}
 
@@ -544,13 +562,13 @@ public class WekaInstances {
 			}
 			i++;
 		}
-		
+
 		try {
 			missingValuesFilter.setInputFormat(instances);
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
-		
+
 	}
 
 	private Filter buildDiscretization(IServiceCall specification, IState predictor, int fieldIndex) {
@@ -787,7 +805,7 @@ public class WekaInstances {
 			this.instances.setClassIndex(0);
 			this.missingValuesFilter.setInputFormat(this.instances);
 			this.missingValuesFilter.batchFinished();
-			
+
 		} catch (Exception e) {
 			throw new KlabIOException(e);
 		}
