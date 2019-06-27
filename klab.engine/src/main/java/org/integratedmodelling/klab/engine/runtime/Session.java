@@ -826,7 +826,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 							literalMatch = true;
 
 						} else if (lastMatch.getTokenClass() == TokenClass.CURRENCY) {
-
+							
 							try {
 								Currencies.INSTANCE.getCurrency(request.getQueryString());
 							} catch (Throwable t) {
@@ -839,6 +839,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 						}
 
 						if (literalMatch) {
+							List<Match> matches = new ArrayList<>();
 							SearchMatch m = new SearchMatch();
 							m.getSemanticType().addAll(lastMatch.getConceptType());
 							m.setMainSemanticType(Kim.INSTANCE.getFundamentalType(lastMatch.getConceptType()));
@@ -849,6 +850,8 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 							m.setIndex(0);
 							m.setNextTokenClass(TokenClass.TOKEN);
 							response.getMatches().add(m);
+							matches.add(new org.integratedmodelling.klab.engine.indexing.SearchMatch(m));
+							searchContexts.put(contextId, new Pair<Context, List<Match>>(context.getFirst(), matches));
 						}
 					}
 
