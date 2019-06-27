@@ -155,6 +155,7 @@ public class SearchContext implements IIndexingService.Context {
 	private SearchMatch acceptedMatch;
 	private TokenClass nextTokenType = TokenClass.TOKEN;
 	private SearchContext childContext;
+	private int parenthesisDepth;
 
 	public static Context createNew() {
 		SearchContext ret = new SearchContext();
@@ -958,6 +959,16 @@ public class SearchContext implements IIndexingService.Context {
 			current = current.previous;
 		}
 		return meaning;
+	}
+
+	@Override
+	public Match getAcceptedMatch() {
+		return acceptedMatch;
+	}
+
+	@Override
+	public int getDepth() {
+		return parenthesisDepth;
 	}
 
 }

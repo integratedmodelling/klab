@@ -132,32 +132,32 @@ public class KimHighlightingCalculator extends DefaultSemanticHighlightingCalcul
 								} else if (cdesc.is(Type.OBSERVABLE)) {
 									if (cdesc.is(Type.QUALITY)) {
 										acceptor.addPosition((start = node.getOffset()), node.getLength(),
-												KimHighlightingConfiguration.QUALITY_ID);
+												cdesc.is(Type.ABSTRACT) ? KimHighlightingConfiguration.ABSTRACT_QUALITY_ID : KimHighlightingConfiguration.QUALITY_ID);
 									} else if (cdesc.is(Type.SUBJECT) || cdesc.is(Type.AGENT)) {
 										acceptor.addPosition((start = node.getOffset()), node.getLength(),
-												KimHighlightingConfiguration.SUBJECT_ID);
+												cdesc.is(Type.ABSTRACT) ? KimHighlightingConfiguration.ABSTRACT_SUBJECT_ID : KimHighlightingConfiguration.SUBJECT_ID);
 									} else if (cdesc.is(Type.EVENT)) {
 										acceptor.addPosition((start = node.getOffset()), node.getLength(),
-												KimHighlightingConfiguration.EVENT_ID);
+												cdesc.is(Type.ABSTRACT) ? KimHighlightingConfiguration.ABSTRACT_EVENT_ID : KimHighlightingConfiguration.EVENT_ID);
 									} else if (cdesc.is(Type.PROCESS)) {
 										acceptor.addPosition((start = node.getOffset()), node.getLength(),
-												KimHighlightingConfiguration.PROCESS_ID);
+												cdesc.is(Type.ABSTRACT) ? KimHighlightingConfiguration.ABSTRACT_PROCESS_ID : KimHighlightingConfiguration.PROCESS_ID);
 									} else if (cdesc.is(Type.RELATIONSHIP)) {
 										acceptor.addPosition((start = node.getOffset()), node.getLength(),
-												KimHighlightingConfiguration.RELATIONSHIP_ID);
+												cdesc.is(Type.ABSTRACT) ? KimHighlightingConfiguration.ABSTRACT_RELATIONSHIP_ID : KimHighlightingConfiguration.RELATIONSHIP_ID);
 									}
 								} else if (cdesc.is(Type.TRAIT)) {
 									acceptor.addPosition((start = node.getOffset()), node.getLength(),
-											KimHighlightingConfiguration.TRAIT_ID);
+											cdesc.is(Type.ABSTRACT) ? KimHighlightingConfiguration.ABSTRACT_TRAIT_ID : KimHighlightingConfiguration.TRAIT_ID);
 								} else if (cdesc.is(Type.ROLE)) {
 									acceptor.addPosition((start = node.getOffset()), node.getLength(),
-											KimHighlightingConfiguration.ROLE_ID);
+											cdesc.is(Type.ABSTRACT) ? KimHighlightingConfiguration.ABSTRACT_ROLE_ID : KimHighlightingConfiguration.ROLE_ID);
 								} else if (cdesc.is(Type.CONFIGURATION)) {
 									acceptor.addPosition((start = node.getOffset()), node.getLength(),
-											KimHighlightingConfiguration.CONFIGURATION_ID);
+											cdesc.is(Type.ABSTRACT) ? KimHighlightingConfiguration.ABSTRACT_CONFIGURATION_ID : KimHighlightingConfiguration.CONFIGURATION_ID);
 								} else if (cdesc.is(Type.EXTENT)) {
 									acceptor.addPosition((start = node.getOffset()), node.getLength(),
-											KimHighlightingConfiguration.EXTENT_ID);
+											cdesc.is(Type.ABSTRACT) ? KimHighlightingConfiguration.ABSTRACT_EXTENT_ID : KimHighlightingConfiguration.EXTENT_ID);
 								}
 							}
 						}

@@ -70,7 +70,7 @@ public class KimHoverProvider extends DefaultEObjectHoverProvider {
 							+ (cd.is(Type.DELIBERATIVE) ? "deliberative " : "")
 							+ "agent <b>" + name + "</b>";
 				}
-				return ret;
+				return (cd.is(Type.ABSTRACT) ? "abstract " : "") + ret;
 			} else {
 				return "Undefined concept <b>" + name + "</b>";
 			}

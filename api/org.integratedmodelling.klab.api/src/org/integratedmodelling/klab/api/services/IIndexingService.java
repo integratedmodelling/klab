@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.klab.rest.SearchMatch.TokenClass;
 
 /**
  * The service that supports intelligent, fast suggestions and search for
@@ -65,22 +66,34 @@ public interface IIndexingService {
 		 * @return true if consistent
 		 */
 		boolean isConsistent();
-		
+
 		/**
-		 * If true, this is a composite that stands in for a sub-context returned
-		 * by getChildContext().
+		 * If true, this is a composite that stands in for a sub-context returned by
+		 * getChildContext().
 		 * 
 		 * @return true if composite
 		 */
 		boolean isComposite();
-		
+
 		/**
-		 * Return the child context if any. Will only return a non-null object if 
+		 * Return the child context if any. Will only return a non-null object if
 		 * getChildContext() is true.
 		 * 
 		 * @return the child context.
 		 */
 		Context getChildContext();
+
+		/**
+		 * Get the last accepted match, which will be used to validate the next input.
+		 */
+		Match getAcceptedMatch();
+
+		/**
+		 * Get the current depth of parenthesization.
+		 * 
+		 * @return
+		 */
+		int getDepth();
 	}
 
 	/**
@@ -91,7 +104,7 @@ public interface IIndexingService {
 	 */
 	public interface Match {
 
-        public enum Type {
+		public enum Type {
 			CONCEPT, PREFIX_OPERATOR, INFIX_OPERATOR, OBSERVATION, MODEL, MODIFIER, PRESET_OBSERVABLE, SEPARATOR, OPEN_PARENTHESIS, CLOSED_PARENTHESIS
 		}
 
@@ -139,6 +152,13 @@ public interface IIndexingService {
 		 * @return
 		 */
 		Map<String, String> getIndexableFields();
+
+		/**
+		 * Expected class of next token
+		 * 
+		 * @return
+		 */
+		TokenClass getTokenClass();
 	}
 
 	/**

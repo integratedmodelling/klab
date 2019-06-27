@@ -21,7 +21,9 @@ public class SearchResponse {
 	private boolean error;
 	private boolean last;
 	private long elapsedTimeMs = System.currentTimeMillis();
-
+	private String errorMessage;
+	private int parenthesisDepth;
+	
 	public String getContextId() {
 		return contextId;
 	}
@@ -87,6 +89,22 @@ public class SearchResponse {
 		long current = System.currentTimeMillis();
 		this.elapsedTimeMs = current - this.elapsedTimeMs;
 		return this;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
+
+	public int getParenthesisDepth() {
+		return parenthesisDepth;
+	}
+
+	public void setParenthesisDepth(int parenthesisDepth) {
+		this.parenthesisDepth = parenthesisDepth;
 	}
 
 }
