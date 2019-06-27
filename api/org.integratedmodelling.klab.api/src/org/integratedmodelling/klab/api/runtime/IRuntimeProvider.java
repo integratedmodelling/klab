@@ -21,6 +21,7 @@ import java.util.concurrent.Future;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -216,6 +217,16 @@ public interface IRuntimeProvider {
 	 */
 	IComputableResource getAggregatingResolver(IObservable classifiedObservable, IObservable aggregatorObservable);
 
+	/**
+	 * Return a computation that will apply the passed operator and operand to transform a state as requested.
+	 * 
+	 * @param classifiedObservable the quality observable 
+	 * @param operator
+	 * @param operand
+	 * @return
+	 */
+	IComputableResource getOperatorResolver(IObservable classifiedObservable, ValueOperator operator, Object operand);
+	
 	/*
 	 * Called on a computation returned by getComputation() to change the target ID
 	 * after creation. FIXME this is ugly and unstable - needs a different logic and

@@ -13,6 +13,7 @@ import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Authentication;
@@ -442,6 +443,13 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				return new ComputableResource(ObjectClassificationResolver.getServiceCall(classifiedResolvable, aggregatorObservable), Mode.RESOLUTION);
 			}
 		}
+		return null;
+	}
+
+	@Override
+	public IComputableResource getOperatorResolver(IObservable classifiedObservable, ValueOperator operator,
+			Object operand) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }

@@ -238,6 +238,7 @@ public enum KimKnowledgeProcessor {
 
 	public @Nullable Observable declare(final IKimObservable concept, IOntology declarationOntology,
 			final IMonitor monitor) {
+		
 		if (concept.getNonSemanticType() != null) {
 			Concept nsmain = OWL.INSTANCE.getNonsemanticPeer(concept.getModelReference(), concept.getNonSemanticType());
 			Observable observable = new Observable(nsmain);
@@ -349,6 +350,16 @@ public enum KimKnowledgeProcessor {
 			}
 		}
 
+		ret.setValueOperand(concept.getValueOperand());
+		
+		if (concept.getValueOperand() instanceof IKimConcept) {
+			ret.setValueOperand(declareInternal((IKimConcept)concept.getValueOperand(), (Ontology)declarationOntology, monitor));
+		} else if (concept.getValueOperand() instanceof IKimObservable) {
+			ret.setValueOperand(declare((IKimObservable)concept.getValueOperand(), (Ontology)declarationOntology, monitor));
+		} else {
+			ret.setValueOperand(concept.getValueOperand());
+		}
+		
 		for (IKimAnnotation annotation : concept.getAnnotations()) {
 			ret.addAnnotation(new Annotation(annotation));
 		}

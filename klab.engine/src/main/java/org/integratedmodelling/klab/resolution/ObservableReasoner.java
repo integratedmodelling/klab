@@ -10,8 +10,6 @@ import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.Observables;
-import org.integratedmodelling.klab.api.data.mediation.ICurrency;
-import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -19,8 +17,6 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.services.IObservableService;
-import org.integratedmodelling.klab.common.mediation.Currency;
-import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.runtime.code.Transformation;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
@@ -176,18 +172,26 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 	private CandidateObservable getDefaultCandidate(Observable original, Mode mode) {
 
 		/*
+		 * If we have an operator, our original observer will need to be observed
+		 * without it as a dependency.
+		 */
+		if (original.getValueOperator() != null) {
+			original = (Observable) original.getBuilder(scope.getMonitor()).withValueOperator(null, null)
+					.buildObservable();
+		}
+
+		/*
 		 * if we have an aggregator, give up the direct observation straight away and
-		 * separate the two. Transformations computed after will add the dependency and
-		 * the aggregator.
+		 * separate the two as before. This can coexist with operators and should come
+		 * after.
 		 */
 		if (original.getClassifier() != null) {
 			original = (Observable) original.getBuilder(scope.getMonitor()).by(null).buildObservable();
 		}
 
 		/*
-		 * TODO if this is a classifier (role or trait) we want the bare observable as a
-		 * dependency and the model strategy will look for a role/trait model (model
-		 * <role/trait> for/of <bare/observable>).
+		 * TODO trait models - probably no need for anything here, all the work is
+		 * downstream.
 		 */
 
 		/**
@@ -239,10 +243,50 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 	 */
 	private void computeTransformations(Observable observable, CandidateObservable candidate) {
 
+		if (observable.getValueOperator() != null) {
+
+			// candidate.observables[0] is already stripped of the operator
+
+			if (mode == Mode.INSTANTIATION || !observable.is(Type.QUALITY)) {
+				throw new KlabUnimplementedException(
+						"operators are currently not usable with non-qualities or with instantiating observations");
+			}
+
+			/*
+			 * add dependencies if the operand is an observable, which happens when we have
+			 * a 'where' clause.
+			 */
+			if (observable.getValueOperand() instanceof IObservable) {
+				if (model == null || model.findDependency(((IObservable) observable.getValueOperand())) == null) {
+					candidate.observables.add((Observable) observable.getValueOperand());
+				}
+			}
+
+			/*
+			 * add the computation
+			 */
+			IComputableResource computation = Klab.INSTANCE.getRuntimeProvider().getOperatorResolver(
+					candidate.observables.get(0), observable.getValueOperator(), observable.getValueOperand());
+
+			if (computation == null) {
+				throw new KlabUnimplementedException("the runtime system does not support using operator "
+						+ observable.getValueOperator() + " on " + candidate.observables.get(0).getType());
+			}
+
+			if (candidate.computation == null) {
+				candidate.computation = new ArrayList<>();
+			}
+
+			candidate.computation.add(computation);
+		}
+
+		/*
+		 * this can coexist with the above
+		 */
 		if (observable.getClassifier() != null) {
 
 			// candidate.observables[0] is already stripped of the classifier
-			
+
 			if (mode == Mode.INSTANTIATION || !observable.is(Type.QUALITY)) {
 				throw new KlabUnimplementedException(
 						"classifiers are currently not usable with non-qualities or with instantiating observations");
@@ -260,8 +304,8 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 				candidate.observables.add(aggregatorObservable);
 			}
 
-			IComputableResource computation = Klab.INSTANCE.getRuntimeProvider().getAggregatingResolver(candidate.observables.get(0),
-					aggregatorObservable);
+			IComputableResource computation = Klab.INSTANCE.getRuntimeProvider()
+					.getAggregatingResolver(candidate.observables.get(0), aggregatorObservable);
 
 			if (computation == null) {
 				throw new KlabUnimplementedException("the runtime system does not support classification of "
@@ -271,8 +315,9 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 			if (candidate.computation == null) {
 				candidate.computation = new ArrayList<>();
 			}
-			
+
 			candidate.computation.add(computation);
+
 		}
 
 	}

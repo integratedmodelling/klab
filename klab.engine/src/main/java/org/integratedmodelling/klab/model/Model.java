@@ -310,6 +310,22 @@ public class Model extends KimObject implements IModel {
 	}
 
 	/**
+	 * Find a dependency by equating observables. Uses resolves == 0 for the check.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public IObservable findDependency(IObservable concept) {
+		for (IObservable dependency : dependencies) {
+			if (((Observable)concept).canResolve((Observable)dependency)) {
+				return dependency;
+			}
+		}
+		return null;
+	}
+
+	
+	/**
 	 * 
 	 * @param action
 	 * @param monitor
