@@ -659,12 +659,6 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 				: ctx.getFirst().previous();
 
 		searchContexts.put(contextId, new Pair<>(newContext, new ArrayList<>()));
-
-		if (newContext != null) {
-			System.out.println(((SearchContext) newContext).dump());
-		} else {
-			System.out.println("Context is reset");
-		}
 	}
 
 	@MessageHandler(type = IMessage.Type.DataflowNodeDetail)
@@ -732,7 +726,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 					final Pair<Context, List<Match>> context = searchContexts.get(contextId);
 
 					response.setParenthesisDepth(context.getFirst().getDepth());
-					
+
 					if (request.isDefaultResults()) {
 
 						/*
@@ -754,6 +748,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 					} else {
 
 						Match lastMatch = context.getFirst().getAcceptedMatch();
+						boolean literalMatch = false;
 
 						if (lastMatch == null || lastMatch.getTokenClass() == TokenClass.TOKEN) {
 
@@ -761,38 +756,43 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 								// TODO open submatch
 								System.out.println("OPEN PARENTHESIS");
-								
+								literalMatch = true;
+
 							} else if (request.getQueryString().equals("(")) {
 
 								// TODO close submatch
-								// TODO should be only possible if context allows it (i.e., there is a parenthesis to close).
+								// TODO should be only possible if context allows it (i.e., there is a
+								// parenthesis to close).
 								System.out.println("OPEN PARENTHESIS");
+								literalMatch = true;
 
 							} else {
-							
-							/*
-							 * proceed to querying next tokens
-							 */
-							List<Match> matches = Indexing.INSTANCE.query(request.getQueryString(), context.getFirst());
 
-							int i = 0;
-							for (Match match : matches) {
-								SearchMatch m = new SearchMatch();
-								m.getSemanticType().addAll(match.getConceptType());
-								m.setMainSemanticType(Kim.INSTANCE.getFundamentalType(match.getConceptType()));
-								m.setMatchType(match.getMatchType());
-								m.setName(match.getName());
-								m.setId(match.getId());
-								m.setDescription(match.getDescription());
-								m.setIndex(i++);
-								m.setNextTokenClass(match.getTokenClass());
-								response.getMatches().add(m);
+								/*
+								 * proceed to querying next tokens
+								 */
+								List<Match> matches = Indexing.INSTANCE.query(request.getQueryString(),
+										context.getFirst());
+
+								int i = 0;
+								for (Match match : matches) {
+									SearchMatch m = new SearchMatch();
+									m.getSemanticType().addAll(match.getConceptType());
+									m.setMainSemanticType(Kim.INSTANCE.getFundamentalType(match.getConceptType()));
+									m.setMatchType(match.getMatchType());
+									m.setName(match.getName());
+									m.setId(match.getId());
+									m.setDescription(match.getDescription());
+									m.setIndex(i++);
+									m.setNextTokenClass(match.getTokenClass());
+									response.getMatches().add(m);
+								}
+
+								searchContexts.put(contextId,
+										new Pair<Context, List<Match>>(context.getFirst(), matches));
+
 							}
 
-							searchContexts.put(contextId, new Pair<Context, List<Match>>(context.getFirst(), matches));
-
-							}
-							
 						} else if (lastMatch.getTokenClass() == TokenClass.DOUBLE) {
 
 							try {
@@ -802,6 +802,8 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 								response.setErrorMessage("invalid floating point number: " + request.getQueryString());
 							}
 
+							literalMatch = true;
+
 						} else if (lastMatch.getTokenClass() == TokenClass.INTEGER) {
 
 							try {
@@ -810,6 +812,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 								response.setError(true);
 								response.setErrorMessage("invalid integer number: " + request.getQueryString());
 							}
+							literalMatch = true;
 
 						} else if (lastMatch.getTokenClass() == TokenClass.UNIT) {
 
@@ -819,8 +822,9 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 								response.setError(true);
 								response.setErrorMessage("invalid unit: " + request.getQueryString());
 							}
-							// TODO ensure the unit is compatible 
-							
+							// TODO ensure the unit is compatible
+							literalMatch = true;
+
 						} else if (lastMatch.getTokenClass() == TokenClass.CURRENCY) {
 
 							try {
@@ -829,10 +833,23 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 								response.setError(true);
 								response.setErrorMessage("invalid currency: " + request.getQueryString());
 							}
-							// TODO ensure the currency is compatible 
+							// TODO ensure the currency is compatible
+							literalMatch = true;
 
 						}
 
+						if (literalMatch) {
+							SearchMatch m = new SearchMatch();
+							m.getSemanticType().addAll(lastMatch.getConceptType());
+							m.setMainSemanticType(Kim.INSTANCE.getFundamentalType(lastMatch.getConceptType()));
+							m.setMatchType(lastMatch.getMatchType());
+							m.setName(request.getQueryString());
+							m.setId(request.getQueryString());
+							m.setDescription(request.getQueryString());
+							m.setIndex(0);
+							m.setNextTokenClass(TokenClass.TOKEN);
+							response.getMatches().add(m);
+						}
 					}
 
 					monitor.send(Message.create(token, IMessage.MessageClass.Query, IMessage.Type.QueryResult,
