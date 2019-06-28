@@ -58,7 +58,7 @@ ActorDefinition:
 			('maximum' rangeMax=Number) |		
 			('range' rangeMin=Number 'to' rangeMax=Number)
 		) |
-		('values' enumValues+=(UPPERCASE_ID|LOWERCASE_ID|CAMELCASE_ID) (',' enumValues+=(UPPERCASE_ID|LOWERCASE_ID|CAMELCASE_ID))*)		
+		('values' enumValues+=(STRING|UPPERCASE_ID|LOWERCASE_ID|CAMELCASE_ID) (',' enumValues+=(STRING|UPPERCASE_ID|LOWERCASE_ID|CAMELCASE_ID))*)		
 	)?
 	('default' default=Value)?
 	('as' localName=LOWERCASE_ID)?

@@ -281,7 +281,7 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 		}
 
 		/*
-		 * this can coexist with the above
+		 * this can coexist with the above. TODO ENSURE THE SAME DEPENDENCY HAD NOT BEEN ADDED ABOVE!
 		 */
 		if (observable.getClassifier() != null) {
 

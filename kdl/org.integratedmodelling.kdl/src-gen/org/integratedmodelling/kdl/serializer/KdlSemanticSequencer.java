@@ -177,8 +177,8 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *             rangeMax=Number | 
 	 *             (rangeMin=Number rangeMax=Number) | 
 	 *             (
-	 *                 (enumValues+=UPPERCASE_ID | enumValues+=LOWERCASE_ID | enumValues+=CAMELCASE_ID) 
-	 *                 (enumValues+=UPPERCASE_ID | enumValues+=LOWERCASE_ID | enumValues+=CAMELCASE_ID)*
+	 *                 (enumValues+=STRING | enumValues+=UPPERCASE_ID | enumValues+=LOWERCASE_ID | enumValues+=CAMELCASE_ID) 
+	 *                 (enumValues+=STRING | enumValues+=UPPERCASE_ID | enumValues+=LOWERCASE_ID | enumValues+=CAMELCASE_ID)*
 	 *             )
 	 *         )? 
 	 *         default=Value? 

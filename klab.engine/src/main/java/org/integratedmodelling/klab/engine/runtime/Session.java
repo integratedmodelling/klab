@@ -721,7 +721,7 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 					SearchResponse response = new SearchResponse();
 					response.setContextId(contextId);
 					response.setRequestId(request.getRequestId());
-					response.setLast(true);
+//					response.setLast(true);
 
 					final Pair<Context, List<Match>> context = searchContexts.get(contextId);
 

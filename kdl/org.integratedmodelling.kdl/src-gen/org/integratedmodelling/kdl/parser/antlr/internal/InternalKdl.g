@@ -1209,9 +1209,9 @@ ruleActorDefinition returns [EObject current=null]
 				(
 					(
 						(
-							lv_enumValues_35_1=RULE_UPPERCASE_ID
+							lv_enumValues_35_1=RULE_STRING
 							{
-								newLeafNode(lv_enumValues_35_1, grammarAccess.getActorDefinitionAccess().getEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_1_0_0());
+								newLeafNode(lv_enumValues_35_1, grammarAccess.getActorDefinitionAccess().getEnumValuesSTRINGTerminalRuleCall_14_1_1_0_0());
 							}
 							{
 								if ($current==null) {
@@ -1221,12 +1221,12 @@ ruleActorDefinition returns [EObject current=null]
 									$current,
 									"enumValues",
 									lv_enumValues_35_1,
-									"org.integratedmodelling.kdl.Kdl.UPPERCASE_ID");
+									"org.eclipse.xtext.common.Terminals.STRING");
 							}
 							    |
-							lv_enumValues_35_2=RULE_LOWERCASE_ID
+							lv_enumValues_35_2=RULE_UPPERCASE_ID
 							{
-								newLeafNode(lv_enumValues_35_2, grammarAccess.getActorDefinitionAccess().getEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_1_0_1());
+								newLeafNode(lv_enumValues_35_2, grammarAccess.getActorDefinitionAccess().getEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_1_0_1());
 							}
 							{
 								if ($current==null) {
@@ -1236,12 +1236,12 @@ ruleActorDefinition returns [EObject current=null]
 									$current,
 									"enumValues",
 									lv_enumValues_35_2,
-									"org.integratedmodelling.kdl.Kdl.LOWERCASE_ID");
+									"org.integratedmodelling.kdl.Kdl.UPPERCASE_ID");
 							}
 							    |
-							lv_enumValues_35_3=RULE_CAMELCASE_ID
+							lv_enumValues_35_3=RULE_LOWERCASE_ID
 							{
-								newLeafNode(lv_enumValues_35_3, grammarAccess.getActorDefinitionAccess().getEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_1_0_2());
+								newLeafNode(lv_enumValues_35_3, grammarAccess.getActorDefinitionAccess().getEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_1_0_2());
 							}
 							{
 								if ($current==null) {
@@ -1251,6 +1251,21 @@ ruleActorDefinition returns [EObject current=null]
 									$current,
 									"enumValues",
 									lv_enumValues_35_3,
+									"org.integratedmodelling.kdl.Kdl.LOWERCASE_ID");
+							}
+							    |
+							lv_enumValues_35_4=RULE_CAMELCASE_ID
+							{
+								newLeafNode(lv_enumValues_35_4, grammarAccess.getActorDefinitionAccess().getEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_1_0_3());
+							}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getActorDefinitionRule());
+								}
+								addWithLastConsumed(
+									$current,
+									"enumValues",
+									lv_enumValues_35_4,
 									"org.integratedmodelling.kdl.Kdl.CAMELCASE_ID");
 							}
 						)
@@ -1264,9 +1279,9 @@ ruleActorDefinition returns [EObject current=null]
 					(
 						(
 							(
-								lv_enumValues_37_1=RULE_UPPERCASE_ID
+								lv_enumValues_37_1=RULE_STRING
 								{
-									newLeafNode(lv_enumValues_37_1, grammarAccess.getActorDefinitionAccess().getEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_2_1_0_0());
+									newLeafNode(lv_enumValues_37_1, grammarAccess.getActorDefinitionAccess().getEnumValuesSTRINGTerminalRuleCall_14_1_2_1_0_0());
 								}
 								{
 									if ($current==null) {
@@ -1276,12 +1291,12 @@ ruleActorDefinition returns [EObject current=null]
 										$current,
 										"enumValues",
 										lv_enumValues_37_1,
-										"org.integratedmodelling.kdl.Kdl.UPPERCASE_ID");
+										"org.eclipse.xtext.common.Terminals.STRING");
 								}
 								    |
-								lv_enumValues_37_2=RULE_LOWERCASE_ID
+								lv_enumValues_37_2=RULE_UPPERCASE_ID
 								{
-									newLeafNode(lv_enumValues_37_2, grammarAccess.getActorDefinitionAccess().getEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_2_1_0_1());
+									newLeafNode(lv_enumValues_37_2, grammarAccess.getActorDefinitionAccess().getEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_2_1_0_1());
 								}
 								{
 									if ($current==null) {
@@ -1291,12 +1306,12 @@ ruleActorDefinition returns [EObject current=null]
 										$current,
 										"enumValues",
 										lv_enumValues_37_2,
-										"org.integratedmodelling.kdl.Kdl.LOWERCASE_ID");
+										"org.integratedmodelling.kdl.Kdl.UPPERCASE_ID");
 								}
 								    |
-								lv_enumValues_37_3=RULE_CAMELCASE_ID
+								lv_enumValues_37_3=RULE_LOWERCASE_ID
 								{
-									newLeafNode(lv_enumValues_37_3, grammarAccess.getActorDefinitionAccess().getEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_2_1_0_2());
+									newLeafNode(lv_enumValues_37_3, grammarAccess.getActorDefinitionAccess().getEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_2_1_0_2());
 								}
 								{
 									if ($current==null) {
@@ -1306,6 +1321,21 @@ ruleActorDefinition returns [EObject current=null]
 										$current,
 										"enumValues",
 										lv_enumValues_37_3,
+										"org.integratedmodelling.kdl.Kdl.LOWERCASE_ID");
+								}
+								    |
+								lv_enumValues_37_4=RULE_CAMELCASE_ID
+								{
+									newLeafNode(lv_enumValues_37_4, grammarAccess.getActorDefinitionAccess().getEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_2_1_0_3());
+								}
+								{
+									if ($current==null) {
+										$current = createModelElement(grammarAccess.getActorDefinitionRule());
+									}
+									addWithLastConsumed(
+										$current,
+										"enumValues",
+										lv_enumValues_37_4,
 										"org.integratedmodelling.kdl.Kdl.CAMELCASE_ID");
 								}
 							)

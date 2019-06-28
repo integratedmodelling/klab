@@ -350,7 +350,7 @@ public enum KimKnowledgeProcessor {
 			}
 		}
 
-		ret.setValueOperand(concept.getValueOperand());
+		ret.setValueOperator(concept.getValueOperator());
 		
 		if (concept.getValueOperand() instanceof IKimConcept) {
 			ret.setValueOperand(declareInternal((IKimConcept)concept.getValueOperand(), (Ontology)declarationOntology, monitor));

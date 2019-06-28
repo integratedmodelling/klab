@@ -89,6 +89,27 @@ process value categorize
 
 }
 
+process value transform
+	"Transform a state by applying an operator and an optional operand, which may be another state."
+	label "$operator"
+{
+	optional import value artifact
+		"The artifact to categorize" 
+
+	optional value 'value'
+		"The literal to use as operand. Not passed only if the operator is unary." 
+
+	optional import value state
+		"The operand when it is another state." 
+		
+	import enum operator
+		"The artifact to categorize by"
+		values GREATER, LESS, GREATEREQUAL, LESSEQUAL, IS, SAMEAS, WITHOUT, WHERE, PLUS, MINUS, TIMES, OVER, TOTAL
+		
+	class org.integratedmodelling.klab.components.runtime.contextualizers.ValueOperatorResolver
+
+}
+
 process value aggregate 
 	"Aggregate values of one state when they overlap the same object. Should be used with non-overlapping
 	 spatial aggregators."
@@ -149,13 +170,13 @@ process value cast
 	optional import number artifact 
 		"The artifact to cast. Defaults to the target artifact."
 	
-	// TODO make this an enum
-	text source
+	enum source
 		"The source type of the value"
-
-	// TODO make this an enum
-	text destination
+		values NUMBER, BOOLEAN, TEXT, CONCEPT
+		
+	enum destination
 		"The destination type of the value"
+		values NUMBER, BOOLEAN, TEXT, CONCEPT
 				
 	class org.integratedmodelling.klab.components.runtime.contextualizers.CastingStateResolver
 }

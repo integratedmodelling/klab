@@ -17,7 +17,7 @@ public class SearchResponse {
 	private String contextId;
 	private long requestId;
 	private List<SearchMatch> matches = new ArrayList<>();
-	private boolean end;
+//	private boolean end;
 	private boolean error;
 	private boolean last;
 	private long elapsedTimeMs = System.currentTimeMillis();
@@ -48,13 +48,13 @@ public class SearchResponse {
 		this.matches = matches;
 	}
 
-	public boolean isEnd() {
-		return end;
-	}
-
-	public void setEnd(boolean end) {
-		this.end = end;
-	}
+//	public boolean isEnd() {
+//		return end;
+//	}
+//
+//	public void setEnd(boolean end) {
+//		this.end = end;
+//	}
 
 	public boolean isError() {
 		return error;

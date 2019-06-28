@@ -403,16 +403,18 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cValuesKeyword_14_1_0 = (Keyword)cGroup_14_1.eContents().get(0);
 		private final Assignment cEnumValuesAssignment_14_1_1 = (Assignment)cGroup_14_1.eContents().get(1);
 		private final Alternatives cEnumValuesAlternatives_14_1_1_0 = (Alternatives)cEnumValuesAssignment_14_1_1.eContents().get(0);
-		private final RuleCall cEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_1_0_0 = (RuleCall)cEnumValuesAlternatives_14_1_1_0.eContents().get(0);
-		private final RuleCall cEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_1_0_1 = (RuleCall)cEnumValuesAlternatives_14_1_1_0.eContents().get(1);
-		private final RuleCall cEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_1_0_2 = (RuleCall)cEnumValuesAlternatives_14_1_1_0.eContents().get(2);
+		private final RuleCall cEnumValuesSTRINGTerminalRuleCall_14_1_1_0_0 = (RuleCall)cEnumValuesAlternatives_14_1_1_0.eContents().get(0);
+		private final RuleCall cEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_1_0_1 = (RuleCall)cEnumValuesAlternatives_14_1_1_0.eContents().get(1);
+		private final RuleCall cEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_1_0_2 = (RuleCall)cEnumValuesAlternatives_14_1_1_0.eContents().get(2);
+		private final RuleCall cEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_1_0_3 = (RuleCall)cEnumValuesAlternatives_14_1_1_0.eContents().get(3);
 		private final Group cGroup_14_1_2 = (Group)cGroup_14_1.eContents().get(2);
 		private final Keyword cCommaKeyword_14_1_2_0 = (Keyword)cGroup_14_1_2.eContents().get(0);
 		private final Assignment cEnumValuesAssignment_14_1_2_1 = (Assignment)cGroup_14_1_2.eContents().get(1);
 		private final Alternatives cEnumValuesAlternatives_14_1_2_1_0 = (Alternatives)cEnumValuesAssignment_14_1_2_1.eContents().get(0);
-		private final RuleCall cEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_2_1_0_0 = (RuleCall)cEnumValuesAlternatives_14_1_2_1_0.eContents().get(0);
-		private final RuleCall cEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_2_1_0_1 = (RuleCall)cEnumValuesAlternatives_14_1_2_1_0.eContents().get(1);
-		private final RuleCall cEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_2_1_0_2 = (RuleCall)cEnumValuesAlternatives_14_1_2_1_0.eContents().get(2);
+		private final RuleCall cEnumValuesSTRINGTerminalRuleCall_14_1_2_1_0_0 = (RuleCall)cEnumValuesAlternatives_14_1_2_1_0.eContents().get(0);
+		private final RuleCall cEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_2_1_0_1 = (RuleCall)cEnumValuesAlternatives_14_1_2_1_0.eContents().get(1);
+		private final RuleCall cEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_2_1_0_2 = (RuleCall)cEnumValuesAlternatives_14_1_2_1_0.eContents().get(2);
+		private final RuleCall cEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_2_1_0_3 = (RuleCall)cEnumValuesAlternatives_14_1_2_1_0.eContents().get(3);
 		private final Group cGroup_15 = (Group)cGroup.eContents().get(15);
 		private final Keyword cDefaultKeyword_15_0 = (Keyword)cGroup_15.eContents().get(0);
 		private final Assignment cDefaultAssignment_15_1 = (Assignment)cGroup_15.eContents().get(1);
@@ -445,9 +447,9 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//	name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('extends' extended=(LOWERCASE_ID | LOWERCASE_DASHID | STRING))?
 		//	('for' targets+=TARGET (',' targets+=TARGET)*)? docstring=STRING? ('label' label=STRING)? ('{' body=DataflowBody
 		//	'}')? (('minimum' rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number) |
-		//	'values' enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID) (',' enumValues+=(UPPERCASE_ID | LOWERCASE_ID |
-		//	CAMELCASE_ID))*)? ('default' default=Value)? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function (','
-		//	coverage+=Function)*)?;
+		//	'values' enumValues+=(STRING | UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID) (',' enumValues+=(STRING | UPPERCASE_ID |
+		//	LOWERCASE_ID | CAMELCASE_ID))*)? ('default' default=Value)? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function
+		//	(',' coverage+=Function)*)?;
 		@Override public ParserRule getRule() { return rule; }
 		
 		///*
@@ -460,9 +462,9 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//expression?='expression'? name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('extends' extended=(LOWERCASE_ID |
 		//LOWERCASE_DASHID | STRING))? ('for' targets+=TARGET (',' targets+=TARGET)*)? docstring=STRING? ('label' label=STRING)?
 		//('{' body=DataflowBody '}')? (('minimum' rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to'
-		//rangeMax=Number) | 'values' enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID) (',' enumValues+=(UPPERCASE_ID |
-		//LOWERCASE_ID | CAMELCASE_ID))*)? ('default' default=Value)? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function
-		//(',' coverage+=Function)*)?
+		//rangeMax=Number) | 'values' enumValues+=(STRING | UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID) (',' enumValues+=(STRING
+		//| UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID))*)? ('default' default=Value)? ('as' localName=LOWERCASE_ID)? ('over'
+		//coverage+=Function (',' coverage+=Function)*)?
 		public Group getGroup() { return cGroup; }
 		
 		///*
@@ -655,8 +657,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		public Keyword getRightCurlyBracketKeyword_13_2() { return cRightCurlyBracketKeyword_13_2; }
 		
 		//(('minimum' rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number) | 'values'
-		//enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID) (',' enumValues+=(UPPERCASE_ID | LOWERCASE_ID |
-		//CAMELCASE_ID))*)?
+		//enumValues+=(STRING | UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID) (',' enumValues+=(STRING | UPPERCASE_ID |
+		//LOWERCASE_ID | CAMELCASE_ID))*)?
 		public Alternatives getAlternatives_14() { return cAlternatives_14; }
 		
 		//('minimum' rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number)
@@ -707,48 +709,54 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//Number
 		public RuleCall getRangeMaxNumberParserRuleCall_14_0_2_3_0() { return cRangeMaxNumberParserRuleCall_14_0_2_3_0; }
 		
-		//'values' enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID) (',' enumValues+=(UPPERCASE_ID | LOWERCASE_ID |
-		//CAMELCASE_ID))*
+		//'values' enumValues+=(STRING | UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID) (',' enumValues+=(STRING | UPPERCASE_ID |
+		//LOWERCASE_ID | CAMELCASE_ID))*
 		public Group getGroup_14_1() { return cGroup_14_1; }
 		
 		//'values'
 		public Keyword getValuesKeyword_14_1_0() { return cValuesKeyword_14_1_0; }
 		
-		//enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID)
+		//enumValues+=(STRING | UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID)
 		public Assignment getEnumValuesAssignment_14_1_1() { return cEnumValuesAssignment_14_1_1; }
 		
-		//(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID)
+		//(STRING | UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID)
 		public Alternatives getEnumValuesAlternatives_14_1_1_0() { return cEnumValuesAlternatives_14_1_1_0; }
 		
+		//STRING
+		public RuleCall getEnumValuesSTRINGTerminalRuleCall_14_1_1_0_0() { return cEnumValuesSTRINGTerminalRuleCall_14_1_1_0_0; }
+		
 		//UPPERCASE_ID
-		public RuleCall getEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_1_0_0() { return cEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_1_0_0; }
+		public RuleCall getEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_1_0_1() { return cEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_1_0_1; }
 		
 		//LOWERCASE_ID
-		public RuleCall getEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_1_0_1() { return cEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_1_0_1; }
+		public RuleCall getEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_1_0_2() { return cEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_1_0_2; }
 		
 		//CAMELCASE_ID
-		public RuleCall getEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_1_0_2() { return cEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_1_0_2; }
+		public RuleCall getEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_1_0_3() { return cEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_1_0_3; }
 		
-		//(',' enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID))*
+		//(',' enumValues+=(STRING | UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID))*
 		public Group getGroup_14_1_2() { return cGroup_14_1_2; }
 		
 		//','
 		public Keyword getCommaKeyword_14_1_2_0() { return cCommaKeyword_14_1_2_0; }
 		
-		//enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID)
+		//enumValues+=(STRING | UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID)
 		public Assignment getEnumValuesAssignment_14_1_2_1() { return cEnumValuesAssignment_14_1_2_1; }
 		
-		//(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID)
+		//(STRING | UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID)
 		public Alternatives getEnumValuesAlternatives_14_1_2_1_0() { return cEnumValuesAlternatives_14_1_2_1_0; }
 		
+		//STRING
+		public RuleCall getEnumValuesSTRINGTerminalRuleCall_14_1_2_1_0_0() { return cEnumValuesSTRINGTerminalRuleCall_14_1_2_1_0_0; }
+		
 		//UPPERCASE_ID
-		public RuleCall getEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_2_1_0_0() { return cEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_2_1_0_0; }
+		public RuleCall getEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_2_1_0_1() { return cEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_2_1_0_1; }
 		
 		//LOWERCASE_ID
-		public RuleCall getEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_2_1_0_1() { return cEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_2_1_0_1; }
+		public RuleCall getEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_2_1_0_2() { return cEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_2_1_0_2; }
 		
 		//CAMELCASE_ID
-		public RuleCall getEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_2_1_0_2() { return cEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_2_1_0_2; }
+		public RuleCall getEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_2_1_0_3() { return cEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_2_1_0_3; }
 		
 		//('default' default=Value)?
 		public Group getGroup_15() { return cGroup_15; }
@@ -3306,9 +3314,9 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	//	name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('extends' extended=(LOWERCASE_ID | LOWERCASE_DASHID | STRING))?
 	//	('for' targets+=TARGET (',' targets+=TARGET)*)? docstring=STRING? ('label' label=STRING)? ('{' body=DataflowBody
 	//	'}')? (('minimum' rangeMin=Number | 'maximum' rangeMax=Number | 'range' rangeMin=Number 'to' rangeMax=Number) |
-	//	'values' enumValues+=(UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID) (',' enumValues+=(UPPERCASE_ID | LOWERCASE_ID |
-	//	CAMELCASE_ID))*)? ('default' default=Value)? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function (','
-	//	coverage+=Function)*)?;
+	//	'values' enumValues+=(STRING | UPPERCASE_ID | LOWERCASE_ID | CAMELCASE_ID) (',' enumValues+=(STRING | UPPERCASE_ID |
+	//	LOWERCASE_ID | CAMELCASE_ID))*)? ('default' default=Value)? ('as' localName=LOWERCASE_ID)? ('over' coverage+=Function
+	//	(',' coverage+=Function)*)?;
 	public ActorDefinitionElements getActorDefinitionAccess() {
 		return pActorDefinition;
 	}
