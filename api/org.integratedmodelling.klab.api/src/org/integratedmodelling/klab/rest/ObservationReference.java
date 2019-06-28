@@ -175,6 +175,7 @@ public class ObservationReference implements IObservationReference {
 	private String rootContextId;
 	private String label;
 	private String observable;
+	private String exportLabel;
 	private ValueType valueType;
 	private ObservationType observationType;
 	private Set<IKimConcept.Type> semantics = new HashSet<>();
@@ -839,6 +840,14 @@ public class ObservationReference implements IObservationReference {
 
 	public void setParentArtifactId(String parentArtifactId) {
 		this.parentArtifactId = parentArtifactId;
+	}
+
+	public String getExportLabel() {
+		return exportLabel;
+	}
+
+	public void setExportLabel(String exportLabel) {
+		this.exportLabel = exportLabel;
 	}
 
 }

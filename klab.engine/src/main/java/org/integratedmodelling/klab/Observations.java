@@ -225,7 +225,7 @@ public enum Observations implements IObservationService {
 		ObservationReference ret = new ObservationReference();
 
 		ret.setEmpty(observation.isEmpty());
-
+		
 		// for now
 		ret.setPrimary(true);
 
@@ -248,6 +248,7 @@ public enum Observations implements IObservationService {
 		ret.setMain(isMain);
 		ret.setCreationTime(observation.getTimestamp());
 		ret.setLastUpdate(((Observation) observation).getLastUpdate());
+		ret.setExportLabel(observation.getObservable().getName());
 
 		if (isMain && observation instanceof Observation && !((Observation) observation).isMain()) {
 			((Observation) observation).setMain(true);
