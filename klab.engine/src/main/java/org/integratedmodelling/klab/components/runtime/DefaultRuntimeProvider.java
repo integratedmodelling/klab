@@ -54,6 +54,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.LookupSta
 import org.integratedmodelling.klab.components.runtime.contextualizers.ObjectClassificationResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.UrnInstantiator;
 import org.integratedmodelling.klab.components.runtime.contextualizers.UrnResolver;
+import org.integratedmodelling.klab.components.runtime.contextualizers.ValueOperatorResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.DensityResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.DistanceResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.PresenceResolver;
@@ -343,8 +344,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 		} else if (observable.is(Type.CONFIGURATION)) {
 
-			ret = new org.integratedmodelling.klab.components.runtime.observations.Configuration(
-					observable.getName(), (Observable) observable, (Scale) scale, context);
+			ret = new org.integratedmodelling.klab.components.runtime.observations.Configuration(observable.getName(),
+					(Observable) observable, (Scale) scale, context);
 		}
 
 		ret.setGenerator(activity);
@@ -433,14 +434,19 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	@Override
-	public IComputableResource getAggregatingResolver(IObservable classifiedResolvable, IObservable aggregatorObservable) {
-			
+	public IComputableResource getAggregatingResolver(IObservable classifiedResolvable,
+			IObservable aggregatorObservable) {
+
 		if (classifiedResolvable.getType().is(IKimConcept.Type.QUALITY)) {
 			IArtifact.Type atype = aggregatorObservable.getArtifactType();
 			if (atype == IArtifact.Type.CONCEPT || atype == IArtifact.Type.BOOLEAN || atype == IArtifact.Type.TEXT) {
-				return new ComputableResource(CategoryClassificationResolver.getServiceCall(classifiedResolvable, aggregatorObservable), Mode.RESOLUTION);
+				return new ComputableResource(
+						CategoryClassificationResolver.getServiceCall(classifiedResolvable, aggregatorObservable),
+						Mode.RESOLUTION);
 			} else if (atype == IArtifact.Type.OBJECT) {
-				return new ComputableResource(ObjectClassificationResolver.getServiceCall(classifiedResolvable, aggregatorObservable), Mode.RESOLUTION);
+				return new ComputableResource(
+						ObjectClassificationResolver.getServiceCall(classifiedResolvable, aggregatorObservable),
+						Mode.RESOLUTION);
 			}
 		}
 		return null;
@@ -449,7 +455,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	@Override
 	public IComputableResource getOperatorResolver(IObservable classifiedObservable, ValueOperator operator,
 			Object operand) {
-		// TODO Auto-generated method stub
-		return null;
+		return new ComputableResource(ValueOperatorResolver.getServiceCall(classifiedObservable, operator, operand),
+				Mode.RESOLUTION);
 	}
 }

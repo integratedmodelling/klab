@@ -205,6 +205,11 @@ public enum Authentication implements IAuthenticationService {
 
 		String authenticationServer = certificate.getProperty(KlabCertificate.KEY_PARTNER_HUB);
 
+		/**
+		 * TODO try new hub @ https://www.integratedmodelling.org/hub/api/auth-cert/engine"
+		 * 
+		 * if experimental property set in properties
+		 */
 		if (authenticationServer == null) {
 			Logging.INSTANCE.warn("certificate has no hub address");
 			// try local hub, let fail if not active
