@@ -109,6 +109,11 @@ public class ValueOperatorResolver implements IResolver<IState>, IProcessor, IEx
 		IState values = (IState) classified;
 		IState others = (IState) stateOperand;
 
+		Object total = null;
+		if (operator == ValueOperator.TOTAL) {
+			total = others == null ? values.aggregate(context.getScale()) : others.aggregate(context.getScale());
+		}
+
 		/*
 		 * TODO some values are extensive. Others aren't. Put this check under
 		 * Observables after it's all understood.
@@ -224,6 +229,7 @@ public class ValueOperatorResolver implements IResolver<IState>, IProcessor, IEx
 				}
 				break;
 			case TOTAL:
+				value = total;
 				break;
 			case WHERE:
 				if (other == null || (other instanceof Number && Double.isNaN(((Number) other).doubleValue()))) {
