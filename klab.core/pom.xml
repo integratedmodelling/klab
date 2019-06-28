@@ -84,7 +84,7 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>23.1-jre</version>
+			<version>28.0-jre</version>
 		</dependency>
 
 		<!-- Kotlin support <dependency> <groupId>org.jetbrains.kotlin</groupId> 
