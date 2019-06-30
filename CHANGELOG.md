@@ -27,15 +27,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- Value operators are now recognized and stored in observables.
-### Changed
-### Fixed
-
-## [0.10.0.167] -- 2019/06/23
-### Added
 - k.IM expressions can be forced to evaluate in scalar context by prefixing them with 
   a pound sign. This can be used e.g. in an area evaluator that wants the area of each
   subdivision for further aggregation.
+- Value operators are recognized and handled both in dependencies and in the Explorer.
+- Semantics for attribute and role instantiation and resolution is defined and legal
+  in k.IM, although not handled yet.
+### Changed
+- k.IM highlighter uniformly shows abstract concepts in italics and concrete concepts
+  in regular type.
+### Fixed
+
+## [0.10.0.163] -- 2019/06/23
+### Added
 - Added value operators to observable syntax, allowing expressions as observables and as dependencies.
   Quantitative aggregation using 'by' is already working.
 - Template-based system documents all nodes in the dataflow, accessible through single-clicking each

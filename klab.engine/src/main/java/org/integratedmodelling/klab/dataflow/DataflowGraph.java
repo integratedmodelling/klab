@@ -63,6 +63,10 @@ public class DataflowGraph {
 
     public ElkNode compile(Flowchart flowchart) {
 
+        if (flowchart.getRoot() == null) {
+            return null;
+        }
+        
         ElkNode ret = compile(flowchart.getRoot(), null);
         for (Pair<String, String> connection : flowchart.getConnections()) {
             ElkConnectableShape source = nodes.get(connection.getFirst());

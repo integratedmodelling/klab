@@ -77,7 +77,12 @@ public interface IObservable extends ISemantic, IResolvable {
 		/**
 		 * The observation that produces a boolean quality (presence/absence)
 		 */
-		VERIFICATION
+		VERIFICATION,
+		/**
+		 * The observation that attributes a role, attribute or identity to
+		 * a countable.
+		 */
+		ATTRIBUTION
 	}
 
 	/**

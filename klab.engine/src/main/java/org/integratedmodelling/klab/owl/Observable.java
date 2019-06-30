@@ -283,7 +283,7 @@ public class Observable implements IObservable {
 	@Override
 	public ObservationType getObservationType() {
 		if (observationType == null && observable != null) {
-			if (/* classifier != null || */observable.is(Type.CLASS) || observable.is(Type.TRAIT)) {
+			if (observable.is(Type.CLASS) || observable.is(Type.TRAIT) ) {
 				observationType = ObservationType.CLASSIFICATION;
 			} else if (observable.is(Type.PRESENCE)) {
 				observationType = ObservationType.VERIFICATION;
@@ -295,6 +295,9 @@ public class Observable implements IObservable {
 				observationType = ObservationType.DETECTION;
 			} else if (observable.is(Type.PROCESS)) {
 				observationType = ObservationType.SIMULATION;
+			} else if (observable.is(Type.TRAIT) || observable.is(Type.ROLE)) {
+                observationType = ObservationType.ATTRIBUTION;
+                System.out.println("OSTIA un attributo nel posto sbagliato: " + observable);
 			}
 		}
 		return observationType;

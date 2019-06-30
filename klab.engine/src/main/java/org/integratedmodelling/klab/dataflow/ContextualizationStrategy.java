@@ -37,9 +37,9 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
     private Map<String, Element> elements = new HashMap<>();
     private Map<String, String> node2dataflowId = new HashMap<>();
 
-//    public List<Flowchart> getFlowcharts() {
-//        return flowcharts;
-//    }
+    //    public List<Flowchart> getFlowcharts() {
+    //        return flowcharts;
+    //    }
 
     //	String json = null;
 
@@ -73,7 +73,6 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 
         List<Flowchart> flowcharts = new ArrayList<>();
 
-        
         //		if (json == null) {
         synchronized (this) {
 
@@ -111,13 +110,15 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
                 DataflowGraph graph = new DataflowGraph(flowchart, this, kelk);
                 // TODO children - recurse on secondary contextualizations
                 ElkNode tgraph = graph.getRootNode();
-                root.getChildren().add(tgraph);
-                if (contextNode == null) {
-                    contextNode = tgraph;
-                } else {
-                    int i = 0;
-                    for (ElkConnectableShape outPort : graph.getOutputs()) {
-                        kelk.createSimpleEdge(outPort, contextNode, "ctx" + outPort.getIdentifier() + "_" + i);
+                if (tgraph != null) {
+                    root.getChildren().add(tgraph);
+                    if (contextNode == null) {
+                        contextNode = tgraph;
+                    } else {
+                        int i = 0;
+                        for (ElkConnectableShape outPort : graph.getOutputs()) {
+                            kelk.createSimpleEdge(outPort, contextNode, "ctx" + outPort.getIdentifier() + "_" + i);
+                        }
                     }
                 }
             }

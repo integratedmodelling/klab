@@ -269,13 +269,14 @@ public class Flowchart {
     public static Flowchart create(Dataflow dataflow) {
 
         Flowchart ret = new Flowchart();
-        Actuator actuator = (Actuator) dataflow.getActuators().get(0);
-        ret.compileActuator(actuator, null);
+        if (dataflow.getActuators().size() > 0) {
+            Actuator actuator = (Actuator) dataflow.getActuators().get(0);
+            ret.compileActuator(actuator, null);
 
-        if (!(actuator.getObservable().is(Type.COUNTABLE) && actuator.getMode() == Mode.RESOLUTION)) {
-            ret.outputs.put(actuator.getName(), ret.root.getOrCreateOutput(actuator.getName()));
+            if (!(actuator.getObservable().is(Type.COUNTABLE) && actuator.getMode() == Mode.RESOLUTION)) {
+                ret.outputs.put(actuator.getName(), ret.root.getOrCreateOutput(actuator.getName()));
+            }
         }
-
         return ret;
     }
 
