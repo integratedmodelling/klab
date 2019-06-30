@@ -39,6 +39,7 @@ import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService;
@@ -470,7 +471,7 @@ public enum Observables implements IObservableService {
     }
 
     @Override
-    public List<IComputableResource> computeMediators(IObservable from, IObservable to) {
+    public List<IComputableResource> computeMediators(IObservable from, IObservable to, IScale scale) {
 
         if (OWL.INSTANCE.isSemantic(from)) {
             if (!((Observable) to).canResolve((Observable) from)) {

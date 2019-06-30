@@ -168,6 +168,8 @@ public class Observable implements IObservable {
 		this.optional = observable.optional;
 		this.generic = observable.generic;
 		this.annotations.addAll(observable.getAnnotations());
+		this.valueOperand = observable.valueOperand;
+		this.valueOperator = observable.valueOperator;
 	}
 
 	@Override

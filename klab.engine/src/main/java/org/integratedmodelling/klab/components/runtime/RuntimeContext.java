@@ -315,7 +315,13 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 	@Override
 	public void setData(String name, IArtifact data) {
+	    if (catalog.get(name) != null) {
+	        structure.replace(catalog.get(name), data);
+	    }
 		catalog.put(name, data);
+		if (data instanceof Observation && observations.containsKey(data.getId())) {
+		    observations.put(data.getId(), (IObservation)data);
+		}
 	}
 
 	public void set(String name, Object value) {

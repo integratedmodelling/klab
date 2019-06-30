@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.data.storage;
 
-import java.util.Collection;
 import java.util.Iterator;
 
 import org.integratedmodelling.kim.api.IValueMediator;

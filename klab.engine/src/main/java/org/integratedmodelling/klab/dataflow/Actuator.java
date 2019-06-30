@@ -344,6 +344,19 @@ public class Actuator implements IActuator {
             if (model != null && !input && !artifacts.contains(ret)) {
                 artifacts.add(ret);
                 if (ret instanceof IObservation && !(ret instanceof StateLayer)) {
+                    // ACH creates problems later
+                    int i = 0; int toRemove = -1;
+                    for (IObservation o : this.products) {
+                        if (o.getObservable().getName().equals(((IObservation)ret).getObservable().getName())) {
+                            // added before: can only happen if this computation transformed it, so remove it.
+                            toRemove = i;
+                            break;
+                        }
+                        i ++;
+                    }
+                    if (toRemove >= 0) {
+                        this.products.remove(toRemove);
+                    }
                     this.products.add((IObservation) ret);
                 }
             }
@@ -361,10 +374,19 @@ public class Actuator implements IActuator {
             return ret;
         }
 
+
+        if (!runtimeContext.getTargetArtifact().equals(ret)) {
+            /*
+             * Computation has changed the artifact: reset into catalog
+             */
+            runtimeContext.setData(((IObservation)target).getObservable().getName(), ret);
+        }
+
         // FIXME the original context does not get the indirect artifacts
-        if (runtimeContext.getTargetArtifact() == null) {
+        if (runtimeContext.getTargetArtifact() == null || !runtimeContext.getTargetArtifact().equals(ret)) {
             ((IRuntimeContext) runtimeContext).setTarget(ret);
         }
+        
 
         // add any artifact, including the empty artifact, to the provenance. FIXME the
         // provenance doesn't get the indirect artifacts. This

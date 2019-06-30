@@ -144,7 +144,7 @@ public class DataflowCompiler {
              */
             if (observableCatalog.containsKey(actuator.getName()) && root instanceof Observable) {
                 for (IComputableResource mediator : Observables.INSTANCE
-                        .computeMediators(observableCatalog.get(actuator.getName()), (Observable) root)) {
+                        .computeMediators(observableCatalog.get(actuator.getName()), (Observable) root, node.scale)) {
                     actuator.addComputation(mediator);
                 }
             }
@@ -472,7 +472,7 @@ public class DataflowCompiler {
                     ret.getActuators().add(achild);
                     if (observableCatalog.containsKey(achild.getName())) {
                         for (IComputableResource mediator : Observables.INSTANCE
-                                .computeMediators(observableCatalog.get(achild.getName()), achild.getObservable())) {
+                                .computeMediators(observableCatalog.get(achild.getName()), achild.getObservable(), scale)) {
                             ret.addMediation(mediator, achild);
                         }
                     }

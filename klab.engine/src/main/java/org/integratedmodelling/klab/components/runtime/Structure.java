@@ -95,5 +95,30 @@ public class Structure extends DefaultDirectedGraph<IArtifact, DefaultEdge> {
 		}
 		return ret;
 	}
+
+    public void replace(IArtifact original, IArtifact replacement) {
+
+        // TODO deal with groups - really unnecessary at the moment, but incomplete.
+        
+        Set<IArtifact> outgoing = new HashSet<>();
+        Set<IArtifact> incoming = new HashSet<>();
+        if (this.containsVertex(original)) {
+            for (DefaultEdge edge : this.outgoingEdgesOf(original)) {
+                outgoing.add(this.getEdgeTarget(edge));
+            }
+            for (DefaultEdge edge : this.incomingEdgesOf(original)) {
+                incoming.add(this.getEdgeSource(edge));
+            }
+            this.removeVertex(original);
+        }
+        
+        this.addVertex(replacement);
+        for (IArtifact target : outgoing) {
+            this.addEdge(replacement, target);
+        }
+        for (IArtifact target : incoming) {
+            this.addEdge(target, replacement);
+        }
+    }
 	
 }
