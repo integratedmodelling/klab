@@ -477,7 +477,7 @@ public enum Observables implements IObservableService {
             if (!((Observable) to).canResolve((Observable) from)) {
                 throw new IllegalArgumentException("cannot compute mediators from an observable to another that does not resolve it: "
                         + from
-                        + " does not mediate to " + to);
+                        + " can not mediate to " + to);
             }
         }
 

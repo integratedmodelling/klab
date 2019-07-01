@@ -80,6 +80,7 @@ public class Observable implements IObservable {
 	// network boundaries
 	transient String sessionId;
 	private List<IAnnotation> annotations = new ArrayList<>();
+	private boolean givenName;
 
 	Observable(Concept concept) {
 		this.observable = this.main = concept;
@@ -285,7 +286,7 @@ public class Observable implements IObservable {
 	@Override
 	public ObservationType getObservationType() {
 		if (observationType == null && observable != null) {
-			if (observable.is(Type.CLASS) || observable.is(Type.TRAIT) ) {
+			if (observable.is(Type.CLASS) || observable.is(Type.TRAIT)) {
 				observationType = ObservationType.CLASSIFICATION;
 			} else if (observable.is(Type.PRESENCE)) {
 				observationType = ObservationType.VERIFICATION;
@@ -298,8 +299,8 @@ public class Observable implements IObservable {
 			} else if (observable.is(Type.PROCESS)) {
 				observationType = ObservationType.SIMULATION;
 			} else if (observable.is(Type.TRAIT) || observable.is(Type.ROLE)) {
-                observationType = ObservationType.ATTRIBUTION;
-                System.out.println("OSTIA un attributo nel posto sbagliato: " + observable);
+				observationType = ObservationType.ATTRIBUTION;
+				System.out.println("OSTIA un attributo nel posto sbagliato: " + observable);
 			}
 		}
 		return observationType;
@@ -441,20 +442,34 @@ public class Observable implements IObservable {
 	}
 
 	public boolean canResolve(Observable obj) {
+
+		boolean ok = false;
+
 		if (this.main.equals(obj.main)) {
+
+			ok = true;
 			if (this.observable.equals(obj.observable)) {
-				// this takes care of this.by == obj.by
-				return true;
-			}
-			if (obj.classifier != null && this.classifier == null) {
-				return true;
-			}
-			if (this.classifier != null && obj.classifier != null && obj.classifier.equals(this.classifier)) {
-				return ((this.downTo == null && obj.downTo == null) || ((this.downTo != null && obj.downTo != null
-						&& Concepts.INSTANCE.compareSpecificity(this.downTo, obj.downTo, true) >= 0)));
+				
+				ok = obj.classifier == null && this.classifier == null || (this.classifier != null
+						&& obj.classifier != null && obj.classifier.equals(this.classifier));
+				
+				if (ok) {
+					ok = ((this.downTo == null && obj.downTo == null) || ((this.downTo != null && obj.downTo != null
+							&& Concepts.INSTANCE.compareSpecificity(this.downTo, obj.downTo, true) >= 0)));
+				}
+				if (ok) {
+					/*
+					 * the one without the operator can resolve the one with the operator.
+					 */
+					ok = obj.valueOperator == null || (obj.valueOperator.equals(this.valueOperator)
+							&& ((obj.valueOperand == null && this.valueOperand == null)
+									|| (obj.valueOperand != null && obj.valueOperand.equals(this.valueOperand))));
+				}
 			}
 		}
-		return false;
+		
+		return ok;
+
 	}
 
 	public void setModelReference(String modelReference) {
@@ -668,6 +683,19 @@ public class Observable implements IObservable {
 
 	public void setValueOperand(Object valueOperand) {
 		this.valueOperand = valueOperand;
+	}
+
+	public void setGivenName(boolean b) {
+		this.givenName = b;
+	}
+	
+	/**
+	 * If true, the name is locked in by the user with a 'named' clause and shouldn't be changed.
+	 * 
+	 * @return
+	 */
+	public boolean isGivenName() {
+		return this.givenName;
 	}
 
 }

@@ -285,6 +285,8 @@ public interface IObservable extends ISemantic, IResolvable {
 
 		Builder linking(IConcept source, IConcept target);
 
+		Builder named(String name);
+
 	}
 
 	/**
