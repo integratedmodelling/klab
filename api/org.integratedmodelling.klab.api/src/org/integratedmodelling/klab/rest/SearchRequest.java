@@ -28,6 +28,11 @@ import org.integratedmodelling.klab.api.services.IIndexingService;
  */
 public class SearchRequest {
 
+	enum Mode {
+		SEMANTIC,
+		FREETEXT
+	}
+	
 	private String queryString;
 	private String contextId;
 	private long requestId;
@@ -36,7 +41,8 @@ public class SearchRequest {
 	private int maxResults = 9;
 	private Set<IKimConcept.Type> semanticTypes = EnumSet.noneOf(IKimConcept.Type.class);
 	private Set<IIndexingService.Match.Type> matchTypes = EnumSet.noneOf(IIndexingService.Match.Type.class);
-
+	private Mode searchMode;
+	
 	public String getQueryString() {
 		return queryString;
 	}
@@ -112,6 +118,14 @@ public class SearchRequest {
 
 	public void setDefaultResults(boolean defaultResults) {
 		this.defaultResults = defaultResults;
+	}
+
+	public Mode getSearchMode() {
+		return searchMode;
+	}
+
+	public void setSearchMode(Mode searchMode) {
+		this.searchMode = searchMode;
 	}
 
 }
