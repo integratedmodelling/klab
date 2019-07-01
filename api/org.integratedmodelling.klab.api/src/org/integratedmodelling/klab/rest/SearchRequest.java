@@ -28,7 +28,7 @@ import org.integratedmodelling.klab.api.services.IIndexingService;
  */
 public class SearchRequest {
 
-	enum Mode {
+	public enum Mode {
 		SEMANTIC,
 		FREETEXT
 	}

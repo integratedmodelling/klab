@@ -732,7 +732,12 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 					response.setParenthesisDepth(context.getFirst().getDepth());
 
-					if (request.isDefaultResults()) {
+					if (request.getSearchMode() == SearchRequest.Mode.FREETEXT) {
+
+						// TODO match string with network resources. May lookup local matches and
+						// spawn search for remote ones to answer later.
+
+					} else if (request.isDefaultResults()) {
 
 						/*
 						 * These come from the user's groups. They should eventually be linked to
@@ -759,15 +764,13 @@ public class Session implements ISession, UserDetails, IMessageBus.Relay {
 
 							if (request.getQueryString().equals("(")) {
 
-								// TODO open submatch
+								// TODO open submatch with empty head of list
 								System.out.println("OPEN PARENTHESIS");
 								literalMatch = true;
 
 							} else if (request.getQueryString().equals("(")) {
 
-								// TODO close submatch
-								// TODO should be only possible if context allows it (i.e., there is a
-								// parenthesis to close).
+								// TODO close submatch and collapse meaning
 								System.out.println("OPEN PARENTHESIS");
 								literalMatch = true;
 

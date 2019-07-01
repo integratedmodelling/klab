@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.xbase.scoping.batch.ExtensionScopeHelper;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimClassification;
 import org.integratedmodelling.kim.api.IKimExpression;
@@ -41,6 +42,7 @@ import org.integratedmodelling.klab.api.services.IResourceService;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Utils;
 
 public class ComputableResource extends KimStatement implements IComputableResource {
 
