@@ -31,6 +31,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
@@ -85,14 +86,32 @@ public class KlabNavigator extends CommonNavigator {
 	}
 
 	public static void refresh() {
+		System.out.println("REFRESHCAAHFUCKA CALLED");
 		if (_viewer != null) {
 			Display.getDefault().asyncExec(new Runnable() {
 				@Override
 				public void run() {
+					System.out.println("REFRESHCHICHH THE FUCCKING EDITOR");
 					_viewer.refresh();
 				}
 			});
 		}
 	}
 
+	public static void refresh(final Runnable runnable) {
+		System.out.println("REFRESHCAAHFUCKA CALLED");
+		if (_viewer != null) {
+			Display.getDefault().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					System.out.println("REFRESHCHICHH THE FUCCKING EDITOR AND RUNNA FUCKA RUNNABLE");
+					runnable.run();
+					Activator.klab().doNothing();
+					_viewer.refresh();
+				}
+			});
+		}
+	}
+
+	
 }

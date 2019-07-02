@@ -141,6 +141,7 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		// delete markers set and files created
+		System.out.println("DIOCANE DELETING MARKERS PORCODIO");
 		getProject().deleteMarkers(MARKER_TYPE, true, IResource.DEPTH_INFINITE);
 	}
 

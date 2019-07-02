@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.ide.model;
 
 import org.eclipse.core.resources.IFile;
 import org.integratedmodelling.kim.api.IKimNamespace;
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.ide.Activator;
@@ -27,16 +28,17 @@ public class KlabEngine extends KlabPeer {
 	@MessageHandler
 	public void handleNotification(NamespaceCompilationResult report) {
 		
-		Activator.klab().updateErrors(report);
-		IKimNamespace namespace = Activator.loader().getNamespace(report.getNamespaceId());
-		if (namespace != null) {
-			Activator.klab().setNamespaceStatus(namespace.getName(), report);
-			IFile ifile = Eclipse.INSTANCE.getIFile(namespace);
-			if (ifile != null) {
-				Eclipse.INSTANCE.updateMarkersForNamespace(report, ifile);
-				KlabNavigator.refresh();
+		KlabNavigator.refresh(() -> {
+			Activator.klab().updateErrors(report);
+			IKimNamespace namespace = Kim.INSTANCE.getNamespace(report.getNamespaceId());
+			if (namespace != null) {
+//				Activator.klab().setNamespaceStatus(namespace.getName(), report);
+				IFile ifile = Eclipse.INSTANCE.getIFile(namespace);
+				if (ifile != null) {
+					Eclipse.INSTANCE.updateMarkersForNamespace(report, ifile);
+				}
 			}
-		}
+		});
 	}
 
 }
