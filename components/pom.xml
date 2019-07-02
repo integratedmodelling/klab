@@ -18,5 +18,6 @@
   	<module>klab.component.tables</module>
   	<module>klab.components.cdm</module>
   	<module>klab.component.ecology</module>
+  	<module>klab.logmap</module>
   </modules>
 </project>
