@@ -673,13 +673,13 @@ public enum Eclipse {
                     file.deleteMarkers(XTEXT_MARKER_TYPE, true, IResource.DEPTH_ZERO);
                 }
 
-                Activator.klab().resetCompileNotifications(report.getNamespaceId());
+//                Activator.klab().resetCompileNotifications(report.getNamespaceId());
 
                 for (CompileNotificationReference inot : report.getNotifications()) {
 
                     System.out.println("COMPILE NOTIFICATION: " + inot);
 
-                    Activator.klab().recordCompileNotification(inot);
+//                    Activator.klab().recordCompileNotification(inot);
 
                     if (inot.getLevel() == Level.SEVERE.intValue()) {
                         addMarker(file, inot.getMessage(), inot.getFirstLine(), IMarker.SEVERITY_ERROR);

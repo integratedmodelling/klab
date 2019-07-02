@@ -21,7 +21,6 @@ import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
-import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.Namespace;
@@ -326,6 +325,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 
 	@Override
 	public void addChild(IKimScope child) {
+	
 		if (child instanceof IKimModel) {
 			statementsByName.put(((IKimModel) child).getName(), (IKimStatement) child);
 		} else if (child instanceof IKimConceptStatement || child instanceof IKimObserver) {
@@ -333,6 +333,12 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 		}
 		if (child instanceof KimStatement) {
 			((KimStatement)child).setNamespace(this.name);
+			if (((IKimStatement)child).isErrors()) {
+				setErrors(true);
+			}
+			if (((IKimStatement)child).isWarnings()) {
+				setWarnings(true);
+			}
 		}
 		super.addChild(child);
 	}

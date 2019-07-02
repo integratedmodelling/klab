@@ -36,6 +36,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - k.IM highlighter uniformly shows abstract concepts in italics and concrete concepts
   in regular type.
+- Annotations and function calls now accept a list of unnamed parameters as well as a 
+  single one.
 ### Fixed
 
 ## [0.10.0.163] -- 2019/06/23

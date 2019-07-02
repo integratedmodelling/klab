@@ -44,29 +44,19 @@ public interface ParameterList extends EObject
   EList<KeyValuePair> getPairs();
 
   /**
-   * Returns the value of the '<em><b>Single Value</b></em>' containment reference.
+   * Returns the value of the '<em><b>Single Value</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.Value}.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Single Value</em>' containment reference isn't clear,
+   * If the meaning of the '<em>Single Value</em>' containment reference list isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Single Value</em>' containment reference.
-   * @see #setSingleValue(Value)
+   * @return the value of the '<em>Single Value</em>' containment reference list.
    * @see org.integratedmodelling.kim.kim.KimPackage#getParameterList_SingleValue()
    * @model containment="true"
    * @generated
    */
-  Value getSingleValue();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ParameterList#getSingleValue <em>Single Value</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Single Value</em>' containment reference.
-   * @see #getSingleValue()
-   * @generated
-   */
-  void setSingleValue(Value value);
+  EList<Value> getSingleValue();
 
 } // ParameterList

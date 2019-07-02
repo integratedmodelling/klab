@@ -1,5 +1,6 @@
 package org.integratedmodelling.kim.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.KeyValuePair;
+import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
@@ -53,9 +55,13 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 			KimNamespace namespace = Kim.INSTANCE.getNamespace(statement);
 			this.name = statement.getName();
 			if (statement.getParameters() != null) {
-				if (statement.getParameters().getSingleValue() != null) {
-					this.parameters.put(DEFAULT_PARAMETER_NAME,
-							Kim.INSTANCE.parseValue(statement.getParameters().getSingleValue(), namespace));
+				if (statement.getParameters().getSingleValue() != null
+						&& statement.getParameters().getSingleValue().size() > 0) {
+					List<Object> objects = new ArrayList<>();
+					for (Value value : statement.getParameters().getSingleValue()) {
+						objects.add(Kim.INSTANCE.parseValue(value, namespace));
+					}
+					this.parameters.put(DEFAULT_PARAMETER_NAME, objects.size() == 1 ? objects.get(0) : objects);
 				} else if (statement.getParameters().getPairs() != null) {
 					for (KeyValuePair kv : statement.getParameters().getPairs()) {
 						this.parameters.put(kv.getName(), Kim.INSTANCE.parseValue(kv.getValue(), namespace));

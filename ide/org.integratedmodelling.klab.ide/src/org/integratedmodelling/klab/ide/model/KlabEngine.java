@@ -27,6 +27,7 @@ public class KlabEngine extends KlabPeer {
 	@MessageHandler
 	public void handleNotification(NamespaceCompilationResult report) {
 		
+		Activator.klab().updateErrors(report);
 		IKimNamespace namespace = Activator.loader().getNamespace(report.getNamespaceId());
 		if (namespace != null) {
 			Activator.klab().setNamespaceStatus(namespace.getName(), report);

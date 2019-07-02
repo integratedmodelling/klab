@@ -9,6 +9,7 @@ import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IKimSymbolDefinition;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
+import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.rest.CompileNotificationReference;
 
 public class CompileNotification implements ICompileNotification {
@@ -115,6 +116,14 @@ public class CompileNotification implements ICompileNotification {
 
 	public void setMainScope(IKimScope mainScope) {
 		this.mainScope = mainScope;
+	}
+
+	public void setNamespace(INamespace namespace) {
+		this.namespaceId = namespace.getId();
+	}
+
+	public void setStatement(IKimStatement statement) {
+		this.statement = statement;
 	}
     
 }

@@ -35,13 +35,13 @@ import org.integratedmodelling.kim.utils.ResourceSorter;
 import org.integratedmodelling.kim.utils.WorkspaceUtils;
 import org.integratedmodelling.kim.utils.WorkspaceUtils.NamespaceLocation;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
-import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.common.CompileNotification;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 public class KimLoader implements IKimLoader {
@@ -88,14 +88,6 @@ public class KimLoader implements IKimLoader {
 		return this.injector;
 	}
 
-	// /**
-	// * Call this to use an appropriate injector if calling from a non-standalone
-	// * setup.
-	// */
-	// private void setInjector(Injector injector) {
-	// this.injector = injector;
-	// }
-
 	public KimLoader(IKimLoader loader) {
 		if (loader != null) {
 			importLoader(loader);
@@ -118,11 +110,17 @@ public class KimLoader implements IKimLoader {
 
 	public KimLoader(Injector injector, IKimLoader loader) {
 		this.injector = injector;
+		if (injector != null) {
+			injector.injectMembers(this);
+		}
 		importLoader(loader);
 	}
 
 	public KimLoader(Injector injector, Collection<File> projectRoots) {
 		this.injector = injector;
+		if (injector != null) {
+			injector.injectMembers(this);
+		}
 		loadProjectFiles(projectRoots);
 	}
 

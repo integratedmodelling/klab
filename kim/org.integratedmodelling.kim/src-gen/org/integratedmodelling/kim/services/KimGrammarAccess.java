@@ -8325,14 +8325,21 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cCommaKeyword_0_1_0 = (Keyword)cGroup_0_1.eContents().get(0);
 		private final Assignment cPairsAssignment_0_1_1 = (Assignment)cGroup_0_1.eContents().get(1);
 		private final RuleCall cPairsKeyValuePairParserRuleCall_0_1_1_0 = (RuleCall)cPairsAssignment_0_1_1.eContents().get(0);
-		private final Assignment cSingleValueAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
-		private final RuleCall cSingleValueValueWithIdAndConceptParserRuleCall_1_0 = (RuleCall)cSingleValueAssignment_1.eContents().get(0);
+		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
+		private final Assignment cSingleValueAssignment_1_0 = (Assignment)cGroup_1.eContents().get(0);
+		private final RuleCall cSingleValueValueWithIdAndConceptParserRuleCall_1_0_0 = (RuleCall)cSingleValueAssignment_1_0.eContents().get(0);
+		private final Group cGroup_1_1 = (Group)cGroup_1.eContents().get(1);
+		private final Keyword cCommaKeyword_1_1_0 = (Keyword)cGroup_1_1.eContents().get(0);
+		private final Assignment cSingleValueAssignment_1_1_1 = (Assignment)cGroup_1_1.eContents().get(1);
+		private final RuleCall cSingleValueValueWithIdAndConceptParserRuleCall_1_1_1_0 = (RuleCall)cSingleValueAssignment_1_1_1.eContents().get(0);
 		
 		//ParameterList:
-		//	pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)* | singleValue=ValueWithIdAndConcept;
+		//	pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)* | singleValue+=ValueWithIdAndConcept (=> ','
+		//	singleValue+=ValueWithIdAndConcept)*;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)* | singleValue=ValueWithIdAndConcept
+		//pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)* | singleValue+=ValueWithIdAndConcept (=> ','
+		//singleValue+=ValueWithIdAndConcept)*
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)*
@@ -8356,11 +8363,26 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//KeyValuePair
 		public RuleCall getPairsKeyValuePairParserRuleCall_0_1_1_0() { return cPairsKeyValuePairParserRuleCall_0_1_1_0; }
 		
-		//singleValue=ValueWithIdAndConcept
-		public Assignment getSingleValueAssignment_1() { return cSingleValueAssignment_1; }
+		//singleValue+=ValueWithIdAndConcept (=> ',' singleValue+=ValueWithIdAndConcept)*
+		public Group getGroup_1() { return cGroup_1; }
+		
+		//singleValue+=ValueWithIdAndConcept
+		public Assignment getSingleValueAssignment_1_0() { return cSingleValueAssignment_1_0; }
 		
 		//ValueWithIdAndConcept
-		public RuleCall getSingleValueValueWithIdAndConceptParserRuleCall_1_0() { return cSingleValueValueWithIdAndConceptParserRuleCall_1_0; }
+		public RuleCall getSingleValueValueWithIdAndConceptParserRuleCall_1_0_0() { return cSingleValueValueWithIdAndConceptParserRuleCall_1_0_0; }
+		
+		//(=> ',' singleValue+=ValueWithIdAndConcept)*
+		public Group getGroup_1_1() { return cGroup_1_1; }
+		
+		//=> ','
+		public Keyword getCommaKeyword_1_1_0() { return cCommaKeyword_1_1_0; }
+		
+		//singleValue+=ValueWithIdAndConcept
+		public Assignment getSingleValueAssignment_1_1_1() { return cSingleValueAssignment_1_1_1; }
+		
+		//ValueWithIdAndConcept
+		public RuleCall getSingleValueValueWithIdAndConceptParserRuleCall_1_1_1_0() { return cSingleValueValueWithIdAndConceptParserRuleCall_1_1_1_0; }
 	}
 	public class ValueWithIdAndConceptElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.ValueWithIdAndConcept");
@@ -11540,7 +11562,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//ParameterList:
-	//	pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)* | singleValue=ValueWithIdAndConcept;
+	//	pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)* | singleValue+=ValueWithIdAndConcept (=> ','
+	//	singleValue+=ValueWithIdAndConcept)*;
 	public ParameterListElements getParameterListAccess() {
 		return pParameterList;
 	}

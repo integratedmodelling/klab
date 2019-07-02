@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kdl.api.IKdlActuator;
@@ -16,6 +17,7 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
@@ -275,6 +277,15 @@ public enum Annotations implements IAnnotationService {
         return false;
     }
 
+    public IAnnotation getAnnotation(IObservable observable, String s) {
+        for (IAnnotation annotation : observable.getAnnotations()) {
+            if (annotation.getName().equals(s)) {
+                return annotation;
+            }
+        }
+        return null;
+    }
+    
     public boolean hasAnnotation(IKimObject object, String s) {
         for (IAnnotation annotation : object.getAnnotations()) {
             if (annotation.getName().equals(s)) {
@@ -283,5 +294,30 @@ public enum Annotations implements IAnnotationService {
         }
         return false;
     }
+    
+    public IAnnotation getAnnotation(IKimObject object, String s) {
+        for (IAnnotation annotation : object.getAnnotations()) {
+            if (annotation.getName().equals(s)) {
+                return annotation;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Shorthand to check whether the default parameter (list or individual value) of an annotation 
+     * contains the passed string.
+     * 
+     * @param string
+     * @return
+     */
+	public boolean defaultsContain(IAnnotation annotation, String string) {
+		if (annotation.get(IServiceCall.DEFAULT_PARAMETER_NAME) instanceof List) {
+			return ((List<?>)annotation.get(IServiceCall.DEFAULT_PARAMETER_NAME)).contains(string);
+		} else if (annotation.get(IServiceCall.DEFAULT_PARAMETER_NAME) != null) {
+			return annotation.get(IServiceCall.DEFAULT_PARAMETER_NAME).equals(string);
+		}
+		return false;
+	}
 
 }

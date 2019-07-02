@@ -69,23 +69,23 @@ public class EProject extends ENavigatorItem {
 		return delegate.getRoot();
 	}
 
-	public boolean isErrors() {
-		for (IKimNamespace child : delegate.getNamespaces()) {
-			if (Activator.klab().getErrors(child.getName()).size() > 0) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public boolean isWarnings() {
-		for (IKimNamespace child : delegate.getNamespaces()) {
-			if (Activator.klab().getWarnings(child.getName()).size() > 0) {
-				return true;
-			}
-		}
-		return false;
-	}
+//	public boolean isErrors() {
+//		for (IKimNamespace child : delegate.getNamespaces()) {
+//			if (Activator.klab().getErrors(child.getName()).size() > 0) {
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
+//
+//	public boolean isWarnings() {
+//		for (IKimNamespace child : delegate.getNamespaces()) {
+//			if (Activator.klab().getWarnings(child.getName()).size() > 0) {
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
 
 	public IKimProject getProject() {
 		return delegate;

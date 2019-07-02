@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.ide.navigator.e3;
 
+import java.util.logging.Level;
+
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -19,6 +21,7 @@ import org.integratedmodelling.klab.ide.navigator.model.EDefinition;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.EModel;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
+import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 import org.integratedmodelling.klab.ide.navigator.model.EObserver;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
 import org.integratedmodelling.klab.ide.navigator.model.EResource;
@@ -82,14 +85,9 @@ public class ViewerLabelProvider extends LabelProvider
         boolean errors = false;
         boolean warnings = false;
 
-        if (element instanceof EKimObject) {
-            errors = ((EKimObject) element).isErrors();
-            warnings = ((EKimObject) element).isWarnings();
-        } else if (element instanceof EProject) {
-            errors = ((EProject) element).isErrors();
-            warnings = ((EProject) element).isWarnings();
-        } else if (element instanceof EResource) {
-            errors = ((EResource)element).getResource().isError();
+        if (element instanceof ENavigatorItem) {
+            errors = Activator.klab().hasNotifications((ENavigatorItem)element, Level.SEVERE);
+            warnings = Activator.klab().hasNotifications((ENavigatorItem)element, Level.WARNING);
         }
 
         if (element instanceof EConcept && ((EConcept) element).isAbstract()) {

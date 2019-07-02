@@ -11,15 +11,12 @@ import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
-import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
@@ -51,6 +48,7 @@ public class Observer extends KimObject implements IObserver {
 		this.name = statement.getName();
 		this.behavior = new Behavior(statement.getBehavior(), this);
 		this.urn = statement.getUrn();
+		this.setErrors(statement.isErrors());
 	}
 
 	public Observer(SpatialExtent regionOfInterest, Observable observable, Namespace namespace) {
@@ -78,8 +76,7 @@ public class Observer extends KimObject implements IObserver {
 
 				double resolution = regionOfInterest.getGridUnit() == null
 						? (double) envelope.getResolutionForZoomLevel().getFirst()
-						: /*Units.INSTANCE.METERS.convert(*/regionOfInterest.getGridResolution()/*,
-								Unit.create(regionOfInterest.getGridUnit())).doubleValue()*/;
+						: regionOfInterest.getGridResolution();
 
 				return Collections.singletonList(Space.create(Shape.create(envelope), resolution));
 			}

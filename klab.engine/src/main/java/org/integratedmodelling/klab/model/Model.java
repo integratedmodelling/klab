@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IDocumentationService;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.data.classification.Classification;
@@ -61,6 +62,13 @@ public class Model extends KimObject implements IModel {
 	private boolean reinterpreter;
 	private boolean inactive;
 	private boolean learning;
+	
+	/*
+	 * the geometry implicitly declared for the project, gathered from the resources
+	 * and the services used in it. Does not include the explicit contextualization
+	 * (over space/time) that must be compatible with it at validation.
+	 */
+	private IGeometry geometry;
 	// saved at resource read, to be intersected with own coverage when requested
 	private Scale resourceCoverage;
 	// own coverage, resulting of own specs if any, namespace's if any, and
@@ -103,6 +111,7 @@ public class Model extends KimObject implements IModel {
 		this.isPrivate = model.isPrivate();
 		this.instantiator = model.isInstantiator();
 		this.learning = model.isLearningModel();
+		this.setErrors(model.isErrors());
 		this.setInactive(model.isInactive());
 
 		setDeprecated(model.isDeprecated() || namespace.isDeprecated());
@@ -185,7 +194,6 @@ public class Model extends KimObject implements IModel {
 	private void validateTypechain(IMonitor monitor) {
 
 		Map<String, IArtifact.Type> typechain = new HashMap<>();
-		Map<String, IGeometry> geomchain = new HashMap<>();
 
 		for (IComputableResource resource : resources) {
 
@@ -193,10 +201,12 @@ public class Model extends KimObject implements IModel {
 					: resource.getTarget().getName();
 			IArtifact.Type type = Resources.INSTANCE.getType(resource);
 			IGeometry geometry = Resources.INSTANCE.getGeometry(resource);
+			
 			if (type != null) {
 				if (typechain.containsKey(target)) {
 					if (!IArtifact.Type.isCompatible(typechain.get(target), type)) {
-
+						monitor.error("the model uses inconsistent types across the computational chain", this.getStatement());
+						setErrors(true);
 					}
 				}
 				typechain.put(target, type);
@@ -208,6 +218,18 @@ public class Model extends KimObject implements IModel {
 					}
 				}
 				typechain.put(target, type);
+			}
+			
+			if (geometry != null) {
+				if (this.geometry == null) {
+					this.geometry = geometry;
+				} else {
+					this.geometry = ((Geometry)this.geometry).merge(geometry);
+					if (this.geometry == null) {
+						monitor.error("the model uses inconsistent space/time geometries across the computational chain", this.getStatement());
+						setErrors(true);
+					}
+				}
 			}
 
 		}
@@ -294,18 +316,21 @@ public class Model extends KimObject implements IModel {
 						if (dependency == null && !argument.isOptional()) {
 							monitor.error("contextualizer " + prototype.getName() + " requires a dependency named "
 									+ argument.getName(), resource.getServiceCall());
+							setErrors(true);
 						} else if (dependency != null
 								&& !IArtifact.Type.isCompatible(argument.getType(), dependency.getArtifactType())) {
 							monitor.error("contextualizer " + prototype.getName() + " requires type "
 									+ argument.getType().name().toLowerCase() + "for dependency " + argument.getName()
 									+ ":  " + dependency.getArtifactType().name().toLowerCase() + " was supplied",
 									resource.getServiceCall());
+							setErrors(true);
 						}
 					}
 				}
 			} else {
 				monitor.error("unknown contextualizer function: " + resource.getServiceCall().getName(),
 						resource.getServiceCall());
+				setErrors(true);
 			}
 		}
 
@@ -660,5 +685,11 @@ public class Model extends KimObject implements IModel {
 	public boolean isDerived() {
 		return derived;
 	}
+
+	@Override
+	public IGeometry getGeometry() {
+		return geometry;
+	}
+
 
 }

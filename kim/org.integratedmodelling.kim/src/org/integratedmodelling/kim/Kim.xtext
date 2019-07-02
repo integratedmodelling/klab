@@ -743,7 +743,7 @@ KeyValuePair:
 
 ParameterList:
 	pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)* |
-	singleValue=ValueWithIdAndConcept 
+	singleValue+=ValueWithIdAndConcept (=> ',' singleValue+=ValueWithIdAndConcept)*
 ;
 
 ValueWithIdAndConcept returns Value:

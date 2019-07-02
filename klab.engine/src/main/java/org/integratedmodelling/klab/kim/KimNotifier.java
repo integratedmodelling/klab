@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
@@ -22,6 +23,8 @@ import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Units;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -30,8 +33,10 @@ import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.CompileNotification;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.data.table.Table;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
@@ -42,6 +47,7 @@ import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
 import org.integratedmodelling.klab.rest.CompileNotificationReference;
 import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -185,8 +191,8 @@ public class KimNotifier implements Kim.Notifier {
 		 * anything in scripts.
 		 * 
 		 * TODO all these must pass the namespace as the "fallback" ontology to anything
-		 * that creates concepts. The fallback must happen every time, always checking if
-		 * each derived concept can be built in a stable namespace.
+		 * that creates concepts. The fallback must happen every time, always checking
+		 * if each derived concept can be built in a stable namespace.
 		 */
 		for (IKimScope statement : namespace.getChildren()) {
 
@@ -216,7 +222,13 @@ public class KimNotifier implements Kim.Notifier {
 				object = Model.create((IKimModel) statement, ns, monitor.contextualize(statement));
 				if (object instanceof IModel) {
 					try {
-						Models.INSTANCE.index((IModel) object, monitor);
+						/*
+						 * validate units vs. coverage and ensure that they're coherent with the
+						 * geometry
+						 */
+						if (!((Model) object).isErrors() && validateModelUsage((Model) object, monitor)) {
+							Models.INSTANCE.index((IModel) object, monitor);
+						}
 					} catch (KlabException e) {
 						monitor.error(
 								"error storing valid model " + ((IModel) object).getName() + ": " + e.getMessage());
@@ -229,8 +241,8 @@ public class KimNotifier implements Kim.Notifier {
 					try {
 						Observations.INSTANCE.index((IObserver) object, monitor);
 					} catch (KlabException e) {
-						monitor.error(
-								"error storing valid model " + ((IObserver) object).getName() + ": " + e.getMessage());
+						monitor.error("error storing valid observation " + ((IObserver) object).getName() + ": "
+								+ e.getMessage());
 					}
 				}
 			}
@@ -239,7 +251,7 @@ public class KimNotifier implements Kim.Notifier {
 				ns.addObject(object);
 			}
 		}
-		
+
 		Observations.INSTANCE.registerNamespace(ns, (Monitor) monitor);
 
 		Reasoner.INSTANCE.addOntology(ns.getOntology());
@@ -259,5 +271,41 @@ public class KimNotifier implements Kim.Notifier {
 		}
 
 		return ns;
+	}
+
+	private boolean validateModelUsage(Model model, ErrorNotifyingMonitor monitor) {
+
+		boolean ret = true;
+		
+		IGeometry geometry = model.getGeometry();
+		IScale scale = model.getCoverage(monitor);
+		if (scale != null) {
+			if (geometry == null) {
+				geometry = ((Scale)scale).asGeometry();
+			} else {
+				geometry = ((Geometry)geometry).merge(((Scale)scale).asGeometry());
+			}
+		}
+		
+		if (geometry != null && model.getObservables().get(0).is(Type.QUALITY)) {
+			
+			CompileNotification notification = Units.INSTANCE.validateUnit(model.getObservables().get(0), model.getGeometry(),
+					Annotations.INSTANCE.getAnnotation(model, "extensive"));
+			
+			if (notification != null) {
+				
+				notification.setNamespace(model.getNamespace());
+				notification.setStatement(model.getStatement());
+				
+				if (notification.getLevel().equals(Level.WARNING)) {
+					monitor.warn(notification.getMessage(), model.getStatement());
+				} else if (notification.getLevel().equals(Level.SEVERE)) {
+					monitor.error(notification.getMessage(), model.getStatement());
+					ret = false;
+				}
+			}
+		}
+
+		return ret;
 	}
 }

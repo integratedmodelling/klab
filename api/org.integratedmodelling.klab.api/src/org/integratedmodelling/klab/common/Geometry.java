@@ -205,6 +205,17 @@ public class Geometry implements IGeometry {
         public Type getType() {
             return type;
         }
+        
+        public DimensionImpl copy() {
+        	DimensionImpl ret = new DimensionImpl();
+        	ret.type = type;
+        	ret.regular = regular;
+        	ret.dimensionality = dimensionality;
+        	ret.shape = this.shape == null ? null : this.shape.clone();
+        	ret.parameters = new Parameters<>(this.parameters);
+        	ret.generic = this.generic;
+        	return ret;
+        }
 
         @Override
         public boolean isRegular() {
@@ -277,6 +288,22 @@ public class Geometry implements IGeometry {
         public void setGeneric(boolean generic) {
             this.generic = generic;
         }
+
+		public boolean isCompatible(Dimension dimension) {
+
+			if (type != dimension.getType()) {
+				return false;
+			}
+			
+			if (generic && !dimension.isGeneric() || !generic && dimension.isGeneric()) {
+				return false;
+			}
+			if (regular && !dimension.isRegular() || !regular && dimension.isRegular()) {
+				return false;
+			}
+			
+			return true;
+		}
 
     }
 
@@ -746,4 +773,45 @@ public class Geometry implements IGeometry {
         return false;
     }
 
+    /**
+     * Merge in the passed geometry and modify our data accordingly. If the passed geometry
+     * is incompatible, return null without error.
+     * 
+     * In general, any geometry can merge in a scalar geometry (an empty one will become 
+     * scalar); other dimensions can be inherited if they are not present, or they must 
+     * have the same dimensionality in order to be kept without error.
+     * 
+     * If we have a dimension that the other doesn't, just leave it there in the result.
+     * 
+     * @param geometry
+     * @return
+     */
+    public Geometry merge(IGeometry geometry) {
+    	
+    	if (this.isEmpty()) {
+    		return create(geometry.encode());
+    	}
+    	
+    	if (geometry.isScalar()) {
+    		return this;
+    	}
+    	
+    	List<Dimension> add = new ArrayList<>();
+    	for (Dimension dimension : geometry.getDimensions()) {
+    		if (getDimension(dimension.getType()) == null) {
+    			add.add(((DimensionImpl)dimension).copy());
+    		} else if (!((DimensionImpl)getDimension(dimension.getType())).isCompatible(dimension)) {
+    			return null;
+    		}
+    	}
+    	
+    	Geometry ret = create(geometry.encode());
+    	
+    	for (Dimension dimension : add) {
+    		ret.dimensions.add((DimensionImpl)dimension);
+    	}
+    	
+    	return ret;
+    }
+    
 }

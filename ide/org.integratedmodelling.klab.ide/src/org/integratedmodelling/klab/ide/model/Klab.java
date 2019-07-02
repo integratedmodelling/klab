@@ -14,12 +14,18 @@ import java.util.logging.Level;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
+import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.client.utils.JsonUtils;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
+import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
+import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
+import org.integratedmodelling.klab.ide.navigator.model.EResource;
+import org.integratedmodelling.klab.ide.navigator.model.EResourceFolder;
 import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.Capabilities;
@@ -170,7 +176,8 @@ public class Klab {
 			Eclipse.INSTANCE.getProject(resource.getProjectName()).getFolder(IKimProject.RESOURCE_FOLDER)
 					.refreshLocal(IFolder.DEPTH_INFINITE, null);
 		} catch (CoreException e) {
-			// just continue; this execs in a pretty controlled sandbox so it shouldn't happen
+			// just continue; this execs in a pretty controlled sandbox so it shouldn't
+			// happen
 		}
 		KlabNavigator.refresh();
 		Eclipse.INSTANCE.refreshOpenEditors();
@@ -194,7 +201,8 @@ public class Klab {
 			Eclipse.INSTANCE.getProject(resource.getProjectName()).getFolder(IKimProject.RESOURCE_FOLDER)
 					.refreshLocal(IFolder.DEPTH_INFINITE, null);
 		} catch (CoreException e) {
-			// just continue; this execs in a pretty controlled sandbox so it shouldn't happen
+			// just continue; this execs in a pretty controlled sandbox so it shouldn't
+			// happen
 		}
 		KlabNavigator.refresh();
 		Eclipse.INSTANCE.refreshOpenEditors();
@@ -211,7 +219,8 @@ public class Klab {
 			Eclipse.INSTANCE.getProject(resource.getProjectName()).getFolder(IKimProject.RESOURCE_FOLDER)
 					.refreshLocal(IFolder.DEPTH_INFINITE, null);
 		} catch (CoreException e) {
-			// just continue; this execs in a pretty controlled sandbox so it shouldn't happen
+			// just continue; this execs in a pretty controlled sandbox so it shouldn't
+			// happen
 		}
 		KlabNavigator.refresh();
 		Eclipse.INSTANCE.refreshOpenEditors();
@@ -283,12 +292,58 @@ public class Klab {
 		return null;
 	}
 
-	public void resetCompileNotifications(String namespaceId) {
-		compileInfo.put(namespaceId, new CompileInfo());
-		Eclipse.INSTANCE.refreshOpenEditors();
+	public void updateErrors(NamespaceCompilationResult report) {
+
+		compileInfo.put(report.getNamespaceId(), new CompileInfo());
+		for (CompileNotificationReference notification : report.getNotifications()) {
+			recordCompileNotification(notification);
+		}
 	}
 
-	public void recordCompileNotification(CompileNotificationReference inot) {
+	public boolean hasNotifications(Object item, Level level) {
+
+		if (item == null) {
+			return level.equals(Level.SEVERE);
+		} else if (item instanceof EProject) {
+			for (IKimNamespace namespace : Kim.INSTANCE.getProject(((EProject) item).getName()).getNamespaces()) {
+				if (hasNotifications(namespace, level)) {
+					return true;
+				}
+			}
+		} else if (item instanceof EResource) {
+			if (level.equals(Level.SEVERE)) {
+				return (((EResource)item).getResource().isError());
+			} 
+		} else if (item instanceof EResourceFolder) {
+			for (ENavigatorItem resource : (((EResourceFolder)item).getEChildren())) {
+				if (hasNotifications(resource, level)) {
+					return true;
+				}
+			}
+		} else if (item instanceof ENamespace) {
+			return hasNotifications(Kim.INSTANCE.getNamespace(((ENamespace) item).getName()), level);
+		} else if (item instanceof IKimNamespace) {
+			if (level.equals(Level.SEVERE) && ((IKimNamespace) item).isErrors()) {
+				return true;
+			}
+			if (level.equals(Level.WARNING) && ((IKimNamespace) item).isWarnings()) {
+				return true;
+			}
+			CompileInfo info = compileInfo.get(((IKimNamespace) item).getName());
+			if (info != null) {
+				if (level.equals(Level.SEVERE)) {
+					return info.errors.size() > 0;
+				} else if (level.equals(Level.WARNING)) {
+					return info.warnings.size() > 0;
+				} else if (level.equals(Level.INFO)) {
+					return info.info.size() > 0;
+				}
+			}
+		}
+		return false;
+	}
+
+	private void recordCompileNotification(CompileNotificationReference inot) {
 
 		CompileInfo ci = compileInfo.get(inot.getNamespaceId());
 

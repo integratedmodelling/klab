@@ -457,7 +457,7 @@ public class KlabSession extends KlabPeer {
                 Activator.klab().updateResource(resource);
             }
         }
-        Eclipse.INSTANCE.refreshOpenEditors();
+//        Eclipse.INSTANCE.refreshOpenEditors();
         KlabNavigator.refresh();
     }
 

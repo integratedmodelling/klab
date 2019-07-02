@@ -76,15 +76,15 @@ public class ENamespace extends EKimObject implements IKimNamespace {
 		return delegate.isWorldviewBound();
 	}
 
-	@Override
-	public boolean isErrors() {
-		return delegate.isErrors() || Activator.klab().getErrors(getName()).size() > 0;
-	}
-
-	@Override
-	public boolean isWarnings() {
-		return delegate.isWarnings() || Activator.klab().getWarnings(getName()).size() > 0;
-	}
+//	@Override
+//	public boolean isErrors() {
+//		return delegate.isErrors() || Activator.klab().getErrors(getName()).size() > 0;
+//	}
+//
+//	@Override
+//	public boolean isWarnings() {
+//		return delegate.isWarnings() || Activator.klab().getWarnings(getName()).size() > 0;
+//	}
 
 	@Override
 	public ENavigatorItem[] getEChildren() {

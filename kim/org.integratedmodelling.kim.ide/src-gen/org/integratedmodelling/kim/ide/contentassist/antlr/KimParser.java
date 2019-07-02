@@ -525,6 +525,8 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getKeyValuePairAccess().getGroup(), "rule__KeyValuePair__Group__0");
 					put(grammarAccess.getParameterListAccess().getGroup_0(), "rule__ParameterList__Group_0__0");
 					put(grammarAccess.getParameterListAccess().getGroup_0_1(), "rule__ParameterList__Group_0_1__0");
+					put(grammarAccess.getParameterListAccess().getGroup_1(), "rule__ParameterList__Group_1__0");
+					put(grammarAccess.getParameterListAccess().getGroup_1_1(), "rule__ParameterList__Group_1_1__0");
 					put(grammarAccess.getFunctionAccess().getGroup(), "rule__Function__Group__0");
 					put(grammarAccess.getSimpleObservableSemanticsAccess().getGroup(), "rule__SimpleObservableSemantics__Group__0");
 					put(grammarAccess.getSimpleObservableSemanticsAccess().getGroup_1_0(), "rule__SimpleObservableSemantics__Group_1_0__0");
@@ -1073,7 +1075,8 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getKeyValuePairAccess().getValueAssignment_2(), "rule__KeyValuePair__ValueAssignment_2");
 					put(grammarAccess.getParameterListAccess().getPairsAssignment_0_0(), "rule__ParameterList__PairsAssignment_0_0");
 					put(grammarAccess.getParameterListAccess().getPairsAssignment_0_1_1(), "rule__ParameterList__PairsAssignment_0_1_1");
-					put(grammarAccess.getParameterListAccess().getSingleValueAssignment_1(), "rule__ParameterList__SingleValueAssignment_1");
+					put(grammarAccess.getParameterListAccess().getSingleValueAssignment_1_0(), "rule__ParameterList__SingleValueAssignment_1_0");
+					put(grammarAccess.getParameterListAccess().getSingleValueAssignment_1_1_1(), "rule__ParameterList__SingleValueAssignment_1_1_1");
 					put(grammarAccess.getValueWithIdAndConceptAccess().getConceptAssignment_0(), "rule__ValueWithIdAndConcept__ConceptAssignment_0");
 					put(grammarAccess.getValueWithIdAndConceptAccess().getFunctionAssignment_1(), "rule__ValueWithIdAndConcept__FunctionAssignment_1");
 					put(grammarAccess.getValueWithIdAndConceptAccess().getLiteralAssignment_2(), "rule__ValueWithIdAndConcept__LiteralAssignment_2");

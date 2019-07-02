@@ -47,6 +47,7 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IResourceService;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.SemanticType;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.data.encoding.LocalDataBuilder;
@@ -1213,8 +1214,24 @@ public enum Resources implements IResourceService {
 	}
 
 	public IGeometry getGeometry(IComputableResource resource) {
-		// TODO
-		return null;
+		switch (resource.getType()) {
+		case RESOURCE:
+			IResource res = resolveResource(resource.getUrn());
+			if (res != null) {
+				return res.getGeometry();
+			}
+			break;
+		case SERVICE:
+			Prototype prototype = Extensions.INSTANCE.getPrototype(resource.getServiceCall().getName());
+			if (prototype != null) {
+				return prototype.getGeometry();
+			}
+			break;
+		default:
+			break;
+		
+		}
+		return Geometry.scalar();
 	}
 	
 	/**

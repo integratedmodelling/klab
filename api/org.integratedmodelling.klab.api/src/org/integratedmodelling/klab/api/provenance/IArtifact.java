@@ -21,7 +21,6 @@ import java.util.List;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
-import org.integratedmodelling.klab.api.data.artifacts.IModelArtifact;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -51,9 +50,6 @@ import org.integratedmodelling.klab.utils.Range;
  * Each artifact exposes the provenance graph it's part of, allowing all k.LAB
  * tasks to simply return any {@code IArtifact} and provide full information on
  * what happened.
- * <p>
- * The API to use a {@link IKimModel} as an artifact ({@link IModelArtifact}) is
- * not fully developed yet.
  * <p>
  *
  * @author Ferd

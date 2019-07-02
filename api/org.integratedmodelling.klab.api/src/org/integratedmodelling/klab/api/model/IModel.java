@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -42,8 +43,7 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface IModel
-		extends IActiveKimObject, INamespaceQualified, IResolvable, IComputable /* TODO , IModelArtifact<> */ {
+public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvable, IComputable {
 
 	/**
 	 * Return the semantics of all observables we are observing. The first in the
@@ -86,11 +86,11 @@ public interface IModel
 	List<IObservable> getDependencies();
 
 	/**
-	 * This will only be called in models that produce objects (isInstantiator()
-	 * == true) and have defined observers for attributes of the objects produced.
-	 * For each attribute name returned, the method getAttributeObserver() must
-	 * return a valid observer. Some of the attributes may be internally generated:
-	 * for example, it is always possible to infer 'presence of' an object from an
+	 * This will only be called in models that produce objects (isInstantiator() ==
+	 * true) and have defined observers for attributes of the objects produced. For
+	 * each attribute name returned, the method getAttributeObserver() must return a
+	 * valid observer. Some of the attributes may be internally generated: for
+	 * example, it is always possible to infer 'presence of' an object from an
 	 * observation of the object itself.
 	 *
 	 * @return the list of dereified attributes with their observers
@@ -146,7 +146,7 @@ public interface IModel
 	 * @return true if the model reinterprets the observable through a role.
 	 */
 	boolean isReinterpreter();
-	
+
 	/**
 	 * A learning model must produce a model as its primary artifact.
 	 * 
@@ -205,5 +205,15 @@ public interface IModel
 	 * @return true if semantic
 	 */
 	boolean isSemantic();
+
+	/**
+	 * The geometry implicitly declared for the model, gathered from the resources
+	 * and the services used in it. Does not include the explicit contextualization
+	 * (over space/time) that comes from the behavior and must be compatible with it
+	 * at validation.
+	 * 
+	 * @return the implicit geometry from the resources, or null.
+	 */
+	IGeometry getGeometry();
 
 }

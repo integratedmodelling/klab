@@ -18,6 +18,16 @@ public abstract class KimObject implements IKimObject {
 	private IMetadata metadata = new Metadata();
 	protected List<IKimObject> children = new ArrayList<>();
 	private List<IAnnotation> annotations = new ArrayList<>();
+	private boolean errors;
+	
+	@Override
+	public boolean isErrors() {
+		return errors;
+	}
+
+	public void setErrors(boolean errors) {
+		this.errors = errors;
+	}
 
 	public KimObject(IKimStatement statement) {
 		this.statement = statement;

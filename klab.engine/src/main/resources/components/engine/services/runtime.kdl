@@ -6,6 +6,13 @@
 @klab 0.10.0
 @version 0.10.0
 
+annotation extensive for models 
+	"The model produces extensive results, whose values are aggregated over $value when outputs are generated."
+{
+	list 'value'
+		"The extents over which the results are aggregated."
+}
+
 annotation reliability for models
 	"The reliability score forms part of the strategy used by k.LAB to rank models during resolution. The value 
      is used as part of the set of subjective rankings, which are combined using a multiple criteria algorithm
