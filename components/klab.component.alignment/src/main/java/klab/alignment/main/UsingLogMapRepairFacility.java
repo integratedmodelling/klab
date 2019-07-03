@@ -16,7 +16,7 @@ import uk.ac.ox.krr.logmap2.mappings.objects.MappingObjectStr;
 import uk.ac.ox.krr.logmap2.oaei.reader.MappingsReaderManager;
 
 
-
+// not ready yet
 
 public class UsingLogMapRepairFacility {
 
@@ -36,11 +36,11 @@ public class UsingLogMapRepairFacility {
 		
 			Set<MappingObjectStr> input_mappings;
 			
-		String onto1_iri = "file:/logmap2_standalone_v2.4_oct_2013/oaei2012_FMA_small_overlapping_nci.owl";
-		String onto2_iri = "file:/logmap2_standalone_v2.4_oct_2013/oaei2012_NCI_small_overlapping_fma.owl";
+	//	String onto1_iri = "file:/logmap2_standalone_v2.4_oct_2013/oaei2012_FMA_small_overlapping_nci.owl";
+	//	String onto2_iri = "file:/logmap2_standalone_v2.4_oct_2013/oaei2012_NCI_small_overlapping_fma.owl";
 			
-		//	String onto1_iri = "file:///align-4.9/examples/rdf/envo.owl";
-	//	String onto2_iri = "file:///align-4.9/examples/rdf/sweet.owl";
+		String onto1_iri = "file:///biodev/envo.owl";
+	  String onto2_iri = "file:///biodev/sweet.owl";
 			
 			onto_manager = OWLManager.createOWLOntologyManager();
 			
@@ -50,9 +50,9 @@ public class UsingLogMapRepairFacility {
 			
 			//Input from a file (RDF OAEI Alignment format)
 			//Mappings are also accepted as TXT or OWL with an special format
-		String input_mappings_file = "/logmap2_standalone_v2.4_oct_2013/logmaplt_small_fma2nci.rdf";
+	//	String input_mappings_file = "/logmap2_standalone_v2.4_oct_2013/logmaplt_small_fma2nci.rdf";
 			
-		//	String input_mappings_file = "/logmap2_standalone_v2.4_oct_2013/envo-sweet.rdf";
+			String input_mappings_file = "/logmap2_standalone_v2.4_oct_2013/envo-sweet.rdf";
 			
 			//String input_mappings_file = "/ont/output.txt";
 			
