@@ -24,14 +24,14 @@ public class TranslatorManager {
 	public TranslatorManager(int translator_id){
 		switch (translator_id){
 			case GOOGLE_BASED_TRANSLATOR:
-				translators.add(new GoogleBasedTranslator());
+//				translators.add(new GoogleBasedTranslator());
 				break;
 			case MICROSOFT_BASED_TRANSLATOR:
 				translators.add(new MicrosoftBasedTranslator());
 				break;
 			//Add other cases
 		  	default:
-		  		translators.add(new GoogleBasedTranslator());
+//		  		translators.add(new GoogleBasedTranslator());
 		  		translators.add(new MicrosoftBasedTranslator());
 		}
 	}
@@ -111,12 +111,13 @@ public class TranslatorManager {
 	public static Translator getTranslatorObject(int translator_id){
 		  switch (translator_id){
 			case GOOGLE_BASED_TRANSLATOR:
-				return new GoogleBasedTranslator();
+//				return new GoogleBasedTranslator();
 			case MICROSOFT_BASED_TRANSLATOR:
 				return new MicrosoftBasedTranslator();
 			//Add other cases
 		  	default:
-		  		return new GoogleBasedTranslator();
+//		  		return new GoogleBasedTranslator();
+				return new MicrosoftBasedTranslator();
 		}
 		
 	}
