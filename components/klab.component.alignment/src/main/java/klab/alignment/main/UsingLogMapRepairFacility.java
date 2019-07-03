@@ -82,15 +82,10 @@ public class UsingLogMapRepairFacility {
 							true);				//If the repair is performed in a two steps process (optimal) or in one cleaning step (more aggressive)
 			
 			
-			
-			
-			
 			//Set of mappings repaired by LogMap
 			Set<MappingObjectStr> repaired_mappings = logmap2_repair.getCleanMappings();
-			
-		
-			
-	        PrintWriter twriter = new PrintWriter(new FileWriter("C:\\ont\\output.txt"));
+
+			PrintWriter twriter = new PrintWriter(new FileWriter("C:\\ont\\output.txt"));
 	    	
 			for (MappingObjectStr mapping: repaired_mappings){
 				twriter.println("Mapping: ");
