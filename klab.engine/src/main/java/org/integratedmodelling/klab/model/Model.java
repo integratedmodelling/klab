@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Types;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
@@ -148,8 +149,9 @@ public class Model extends KimObject implements IModel {
 		}
 
 		/*
-		 * TODO validate typechain and final result vs. observable artifact type
+		 * TODO validate typechain, units and final result vs. observable artifact type
 		 */
+		validateTypechain(monitor);
 
 		/*
 		 * actions
@@ -178,6 +180,37 @@ public class Model extends KimObject implements IModel {
 			getMetadata().put(IMetadata.DC_COMMENT, model.getDocstring());
 		}
 
+	}
+
+	private void validateTypechain(IMonitor monitor) {
+
+		Map<String, IArtifact.Type> typechain = new HashMap<>();
+		Map<String, IGeometry> geomchain = new HashMap<>();
+
+		for (IComputableResource resource : resources) {
+
+			String target = resource.getTarget() == null ? this.observables.get(0).getName()
+					: resource.getTarget().getName();
+			IArtifact.Type type = Resources.INSTANCE.getType(resource);
+			IGeometry geometry = Resources.INSTANCE.getGeometry(resource);
+			if (type != null) {
+				if (typechain.containsKey(target)) {
+					if (!IArtifact.Type.isCompatible(typechain.get(target), type)) {
+
+					}
+				}
+				typechain.put(target, type);
+			}
+			if (type != null) {
+				if (typechain.containsKey(target)) {
+					if (!IArtifact.Type.isCompatible(typechain.get(target), type)) {
+
+					}
+				}
+				typechain.put(target, type);
+			}
+
+		}
 	}
 
 	/**
@@ -226,8 +259,8 @@ public class Model extends KimObject implements IModel {
 
 		} else if (resource.getAccordingTo() != null) {
 
-			IClassification classification = Types.INSTANCE.createClassificationFromMetadata(observables.get(0).getType(),
-					resource.getAccordingTo());
+			IClassification classification = Types.INSTANCE
+					.createClassificationFromMetadata(observables.get(0).getType(), resource.getAccordingTo());
 			resource.setValidatedResource(classification);
 
 		} else if (resource.getUrn() != null) {
@@ -317,14 +350,13 @@ public class Model extends KimObject implements IModel {
 	 */
 	public IObservable findDependency(IObservable concept) {
 		for (IObservable dependency : dependencies) {
-			if (((Observable)concept).canResolve((Observable)dependency)) {
+			if (((Observable) concept).canResolve((Observable) dependency)) {
 				return dependency;
 			}
 		}
 		return null;
 	}
 
-	
 	/**
 	 * 
 	 * @param action

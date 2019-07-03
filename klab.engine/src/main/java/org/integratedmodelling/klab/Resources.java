@@ -15,6 +15,7 @@ import java.util.concurrent.Executors;
 
 import javax.annotation.Nullable;
 
+import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IParameters;
@@ -69,6 +70,7 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.Group;
@@ -1208,6 +1210,50 @@ public enum Resources implements IResourceService {
 		}
 		// reload
 		getLoader().rescan(true);
+	}
+
+	public IGeometry getGeometry(IComputableResource resource) {
+		// TODO
+		return null;
+	}
+	
+	/**
+	 * Return the type computed by the specified resource.
+	 * 
+	 * @param resource
+	 * @return
+	 */
+	public Type getType(IComputableResource resource) {
+		switch (resource.getType()) {
+		case CLASSIFICATION:
+			return Type.CONCEPT;
+		case CONDITION:
+			break;
+		case CONVERSION:
+			break;
+		case EXPRESSION:
+			break;
+		case LITERAL:
+			return Utils.getArtifactType(Utils.getPODClass(resource.getLiteral()));
+		case LOOKUP_TABLE:
+			return resource.getLookupTable().getLookupType();
+		case RESOURCE:
+			IResource res = resolveResource(resource.getUrn());
+			if (res != null) {
+				return res.getType();
+			}
+			break;
+		case SERVICE:
+			Prototype prototype = Extensions.INSTANCE.getPrototype(resource.getServiceCall().getName());
+			if (prototype != null) {
+				return prototype.getType();
+			}
+			break;
+		default:
+			break;
+		
+		}
+		return null;
 	}
 
 }

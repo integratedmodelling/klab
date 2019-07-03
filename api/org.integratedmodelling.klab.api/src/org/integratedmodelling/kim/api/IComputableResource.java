@@ -173,6 +173,11 @@ public interface IComputableResource extends IKimStatement, IDataflowNode {
 
 	}
 
+	/**
+	 * Return the type of the contained resource.
+	 * 
+	 * @return
+	 */
 	Type getType();
 	
 	/**
@@ -350,5 +355,6 @@ public interface IComputableResource extends IKimStatement, IDataflowNode {
 	 * @return
 	 */
 	boolean isAvailable();
+
 
 }

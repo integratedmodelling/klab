@@ -173,6 +173,9 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 
 		// DO NOT CHANGE THE ORDER - 'by' is always last, so it comes first.
 
+		Observable observable = original;
+		boolean changed = false;
+		
 		/*
 		 * If we have an operator, our original observer will need to be observed
 		 * without it as a dependency.
@@ -183,16 +186,21 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 			 * separate the two as before. This can coexist with operators; if so, we handle
 			 * each one at a time.
 			 */
-			original = (Observable) original.getBuilder(scope.getMonitor()).named(original.getName() + "_raw").by(null)
-					.buildObservable();
-
+			observable = (Observable) original.getBuilder(scope.getMonitor()).by(null).buildObservable();
+			changed = true;
+			
 		} else if (original.getValueOperator() != null) {
 
-			original = (Observable) original.getBuilder(scope.getMonitor()).named(original.getName() + "_raw")
-					.withValueOperator(null, null).buildObservable();
-
+			observable = (Observable) original.getBuilder(scope.getMonitor()).withValueOperator(null, null)
+					.buildObservable();
+			changed = true;
+			
 		}
 
+		if (changed && observable.getName().equals(original.getName())) {
+			observable.setName(observable.getName() + "_raw");
+		}
+		
 		/*
 		 * TODO trait models - probably no need for anything here, all the work is
 		 * downstream.
@@ -201,7 +209,7 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 		/**
 		 * Otherwise this is the trivial observation of the observable itself.
 		 */
-		return new CandidateObservable(original, mode);
+		return new CandidateObservable(observable, mode);
 	}
 
 	@Override
