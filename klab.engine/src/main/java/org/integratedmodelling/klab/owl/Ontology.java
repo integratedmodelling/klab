@@ -304,7 +304,7 @@ public class Ontology implements IOntology {
 
         for (IAxiom axiom : axioms) {
 
-             System.out.println(" [" + id + "] => " + axiom);
+//             System.out.println(" [" + id + "] => " + axiom);
 
             try {
 
