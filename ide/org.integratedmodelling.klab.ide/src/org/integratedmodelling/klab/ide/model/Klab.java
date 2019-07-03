@@ -19,6 +19,7 @@ import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.client.utils.JsonUtils;
+import org.integratedmodelling.klab.common.CompileInfo;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
@@ -61,12 +62,6 @@ public class Klab {
 	private Map<String, Map<String, EResourceReference>> resourceCatalog = Collections.synchronizedMap(new HashMap<>());
 	private List<ResourceAdapterReference> resourceAdapters = new ArrayList<>();
 	private Map<String, NamespaceCompilationResult> namespaceStatus = new HashMap<>();
-
-	class CompileInfo {
-		List<CompileNotificationReference> errors = new ArrayList<>();
-		List<CompileNotificationReference> warnings = new ArrayList<>();
-		List<CompileNotificationReference> info = new ArrayList<>();
-	}
 
 	private Map<String, CompileInfo> compileInfo = Collections.synchronizedMap(new HashMap<>());
 
@@ -129,7 +124,7 @@ public class Klab {
 	}
 
 	/*
-	 * sync the resource status with the capabilities from the engine
+	 * sync the resource status and project errors with the capabilities from the engine
 	 */
 	private void synchronizeProjectResources(List<ProjectReference> localWorkspaceProjects) {
 		for (ProjectReference project : localWorkspaceProjects) {
@@ -140,7 +135,11 @@ public class Klab {
 					}
 				}
 			}
+			for (NamespaceCompilationResult compilationResult : project.getCompilationReports()) {
+				Kim.INSTANCE.updateErrors(compilationResult);
+			}
 		}
+		Eclipse.INSTANCE.refreshOpenEditors();
 	}
 
 	/**
@@ -222,8 +221,8 @@ public class Klab {
 			// just continue; this execs in a pretty controlled sandbox so it shouldn't
 			// happen
 		}
-		KlabNavigator.refresh();
 		Eclipse.INSTANCE.refreshOpenEditors();
+		KlabNavigator.refresh();
 		Eclipse.INSTANCE.notification("Resource deleted", "The resource with URN " + resource.getUrn()
 				+ " was deleted from project " + resource.getProjectName());
 	}
@@ -237,6 +236,7 @@ public class Klab {
 		case EngineUp:
 			synchronizeProjectResources(message.getPayload(Capabilities.class).getLocalWorkspaceProjects());
 			resourceAdapters.addAll(message.getPayload(Capabilities.class).getResourceAdapters());
+			Eclipse.INSTANCE.refreshOpenEditors();
 			KlabNavigator.refresh();
 			break;
 		case EngineDown:
@@ -246,6 +246,7 @@ public class Klab {
 				}
 			}
 			resourceAdapters.clear();
+			Eclipse.INSTANCE.refreshOpenEditors();
 			KlabNavigator.refresh();
 			break;
 		case ProjectFileAdded:
@@ -292,14 +293,6 @@ public class Klab {
 		return null;
 	}
 
-	public void updateErrors(NamespaceCompilationResult report) {
-
-		compileInfo.put(report.getNamespaceId(), new CompileInfo());
-		for (CompileNotificationReference notification : report.getNotifications()) {
-			recordCompileNotification(notification);
-		}
-	}
-
 	public boolean hasNotifications(Object item, Level level) {
 
 		if (item == null) {
@@ -329,40 +322,20 @@ public class Klab {
 			if (level.equals(Level.WARNING) && ((IKimNamespace) item).isWarnings()) {
 				return true;
 			}
-			CompileInfo info = compileInfo.get(((IKimNamespace) item).getName());
+			CompileInfo info = Kim.INSTANCE.getCompileInfo(((IKimNamespace) item).getName());
 			if (info != null) {
 				if (level.equals(Level.SEVERE)) {
-					return info.errors.size() > 0;
+					return info.getErrors().size() > 0;
 				} else if (level.equals(Level.WARNING)) {
-					return info.warnings.size() > 0;
+					return info.getWarnings().size() > 0;
 				} else if (level.equals(Level.INFO)) {
-					return info.info.size() > 0;
+					return info.getInfo().size() > 0;
 				}
 			}
 		}
 		return false;
 	}
 
-	private void recordCompileNotification(CompileNotificationReference inot) {
-
-		CompileInfo ci = compileInfo.get(inot.getNamespaceId());
-
-		if (inot.getLevel() == Level.SEVERE.intValue()) {
-			ci.errors.add(inot);
-		} else if (inot.getLevel() == Level.WARNING.intValue()) {
-			ci.warnings.add(inot);
-		} else if (inot.getLevel() == Level.INFO.intValue()) {
-			ci.info.add(inot);
-		}
-	}
-
-	public List<CompileNotificationReference> getWarnings(String namespaceId) {
-		return compileInfo.containsKey(namespaceId) ? compileInfo.get(namespaceId).warnings : new ArrayList<>();
-	}
-
-	public List<CompileNotificationReference> getErrors(String namespaceId) {
-		return compileInfo.containsKey(namespaceId) ? compileInfo.get(namespaceId).errors : new ArrayList<>();
-	}
 
 	public void updateResource(LocalResourceReference resource) {
 		EResourceReference res = getResource(resource.getUrn());
@@ -370,11 +343,6 @@ public class Klab {
 			res.setOnline(resource.isOnline());
 			res.setError(resource.isError());
 		}
-	}
-
-	public void doNothing() {
-		// TODO Auto-generated method stub
-		System.out.println("OHOHOA");
 	}
 
 }

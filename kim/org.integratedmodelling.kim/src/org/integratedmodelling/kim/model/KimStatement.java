@@ -71,6 +71,9 @@ public class KimStatement extends KimScope implements IKimStatement {
 		if (ns != null) {
 			this.namespace = ns.getName();
 		}
+		if (statement != null) {
+			this.uri = EcoreUtil.getURI(statement);
+		}
     }
 
 	protected static IKimNamespace findNamespace(IKimStatement statement) {

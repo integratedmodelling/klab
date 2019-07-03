@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -71,8 +72,12 @@ import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.kim.validation.KimValidator;
 import org.integratedmodelling.klab.api.data.CRUDOperation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.common.CompileInfo;
+import org.integratedmodelling.klab.common.CompileNotification;
 import org.integratedmodelling.klab.common.SemanticType;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.rest.CompileNotificationReference;
+import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -116,6 +121,11 @@ public enum Kim {
 	}
 
 	/**
+	 * Errors added externally to the validator that the validator must report.
+	 */
+	private Map<String, CompileInfo> compileInfo = Collections.synchronizedMap(new HashMap<>());
+	
+	/**
 	 * This contains concept descriptors for all concepts encountered, including
 	 * library ones and anything added externally, flattened to include children and
 	 * indexed by name.
@@ -127,17 +137,7 @@ public enum Kim {
 	 * worldviews, and are validated through a callback.
 	 */
 	private Map<String, EnumSet<Type>> coreConcepts = new HashMap<>();
-	//
-	// /**
-	// * Workspace for libraries. May be null. Loaded automatically at startup if
-	// * present, with code generation only in the engine.
-	// */
-	// private KimWorkspace libWorkspace;
-
 	private List<Notifier> notifiers = new ArrayList<>();
-
-	// private boolean libraryInitialized;
-	// private boolean workspaceInited;
 	private boolean initialBuildDone;
 
 	/*
@@ -1695,4 +1695,62 @@ public enum Kim {
 		this.projectWorkspaces.remove(project.getName());
 	}
 
+	public void updateErrors(NamespaceCompilationResult report) {
+
+		CompileInfo info = new CompileInfo();
+		for (CompileNotificationReference notification : report.getNotifications()) {
+			recordCompileNotification(notification, info);
+		}
+		compileInfo.put(report.getNamespaceId(), info);
+	}
+
+	private void recordCompileNotification(CompileNotificationReference inot, CompileInfo ci) {
+
+		if (inot.getLevel() == Level.SEVERE.intValue()) {
+			ci.getErrors().add(inot);
+		} else if (inot.getLevel() == Level.WARNING.intValue()) {
+			ci.getWarnings().add(inot);
+		} else if (inot.getLevel() == Level.INFO.intValue()) {
+			ci.getInfo().add(inot);
+		}
+	}
+
+	public List<CompileNotificationReference> getWarnings(String namespaceId) {
+		return compileInfo.containsKey(namespaceId) ? compileInfo.get(namespaceId).getWarnings() : new ArrayList<>();
+	}
+
+	public List<CompileNotificationReference> getErrors(String namespaceId) {
+		return compileInfo.containsKey(namespaceId) ? compileInfo.get(namespaceId).getErrors() : new ArrayList<>();
+	}
+	
+	public List<CompileNotificationReference> getNotificationsFor(String namespaceId, String statementUri) {
+		
+		List<CompileNotificationReference> ret = new ArrayList<>();
+		CompileInfo info = compileInfo.get(namespaceId);
+		if (info != null) {
+
+			for (CompileNotificationReference notification : info.getErrors()) {
+				if (notification.getStatementUrn() != null && statementUri.endsWith(notification.getStatementUrn())) {
+					ret.add(notification);
+				}
+			}
+			for (CompileNotificationReference notification : info.getWarnings()) {
+				if (notification.getStatementUrn() != null && statementUri.endsWith(notification.getStatementUrn())) {
+					ret.add(notification);
+				}
+			}
+			for (CompileNotificationReference notification : info.getInfo()) {
+				if (notification.getStatementUrn() != null && statementUri.endsWith(notification.getStatementUrn())) {
+					ret.add(notification);
+				}
+			}
+		}
+		return ret;
+	}
+
+	public CompileInfo getCompileInfo(String name) {
+		return compileInfo.get(name);
+	}
+
+	
 }

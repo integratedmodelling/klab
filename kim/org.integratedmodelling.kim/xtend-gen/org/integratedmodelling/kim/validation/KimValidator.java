@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
@@ -90,6 +91,7 @@ import org.integratedmodelling.kim.utils.DependencyGraph;
 import org.integratedmodelling.kim.validation.AbstractKimValidator;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
+import org.integratedmodelling.klab.rest.CompileNotificationReference;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -115,13 +117,16 @@ public class KimValidator extends AbstractKimValidator {
   
   public final static String BAD_TABLE_FORMAT = "badTableFormat";
   
+  public final static String REASONING_PROBLEM = "reasoningProblem";
+  
   private final static Set<String> nonSemanticModels = Collections.<String>unmodifiableSet(CollectionLiterals.<String>newHashSet("number", "text", "boolean"));
   
   @Check
   public void initializeRegisters(final Model model) {
     Namespace namespace = KimValidator.getNamespace(model);
     if ((namespace != null)) {
-      Kim.INSTANCE.initializeNamespaceRegisters(Kim.getNamespaceId(namespace));
+      final String namespaceId = Kim.getNamespaceId(namespace);
+      Kim.INSTANCE.initializeNamespaceRegisters(namespaceId);
       Kim.INSTANCE.removeNamespace(namespace);
     }
   }
@@ -353,6 +358,49 @@ public class KimValidator extends AbstractKimValidator {
           }
         }
         i++;
+      }
+    }
+  }
+  
+  @Check
+  public void checkModelStatement(final ModelStatement model) {
+    Namespace _xifexpression = null;
+    if ((model != null)) {
+      _xifexpression = KimValidator.getNamespace(model);
+    } else {
+      _xifexpression = null;
+    }
+    final Namespace namespace = _xifexpression;
+    String _xifexpression_1 = null;
+    if ((namespace != null)) {
+      _xifexpression_1 = Kim.getNamespaceId(namespace);
+    } else {
+      _xifexpression_1 = null;
+    }
+    final String namespaceId = _xifexpression_1;
+    final String uri = EcoreUtil.getURI(model).toString();
+    java.util.List<CompileNotificationReference> _notificationsFor = Kim.INSTANCE.getNotificationsFor(namespaceId, uri);
+    for (final CompileNotificationReference ref : _notificationsFor) {
+      int _level = ref.getLevel();
+      boolean _matched = false;
+      int _intValue = Level.SEVERE.intValue();
+      if (Objects.equal(_level, _intValue)) {
+        _matched=true;
+        this.error(ref.getMessage(), KimPackage.Literals.MODEL_STATEMENT__MODEL, KimValidator.REASONING_PROBLEM);
+      }
+      if (!_matched) {
+        int _intValue_1 = Level.WARNING.intValue();
+        if (Objects.equal(_level, _intValue_1)) {
+          _matched=true;
+          this.warning(ref.getMessage(), KimPackage.Literals.MODEL_STATEMENT__MODEL, KimValidator.REASONING_PROBLEM);
+        }
+      }
+      if (!_matched) {
+        int _intValue_2 = Level.INFO.intValue();
+        if (Objects.equal(_level, _intValue_2)) {
+          _matched=true;
+          this.info(ref.getMessage(), KimPackage.Literals.MODEL_STATEMENT__MODEL, KimValidator.REASONING_PROBLEM);
+        }
       }
     }
   }

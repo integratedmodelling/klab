@@ -3,14 +3,14 @@ package org.integratedmodelling.klab.rest;
 public class CompileNotificationReference {
 
 	private String statementUrn = null;
-	private String scopeName = null;
-	private String namespaceId = null;
-	private String message = null;
-	private int firstLine = 0;
-	private int lastLine = 0;
-	private int startOffset = 0;
-	private int endOffset = 0;
-	private int level = 0;
+	private String scopeName;
+	private String namespaceId;
+	private String message;
+	private int firstLine;
+	private int lastLine;
+	private int startOffset;
+	private int endOffset;
+	private int level;
 
 	public String getStatementUrn() {
 		return statementUrn;

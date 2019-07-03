@@ -86,12 +86,10 @@ public class KlabNavigator extends CommonNavigator {
 	}
 
 	public static void refresh() {
-		System.out.println("REFRESHCAAHFUCKA CALLED");
 		if (_viewer != null) {
 			Display.getDefault().asyncExec(new Runnable() {
 				@Override
 				public void run() {
-					System.out.println("REFRESHCHICHH THE FUCCKING EDITOR");
 					_viewer.refresh();
 				}
 			});
@@ -99,14 +97,11 @@ public class KlabNavigator extends CommonNavigator {
 	}
 
 	public static void refresh(final Runnable runnable) {
-		System.out.println("REFRESHCAAHFUCKA CALLED");
 		if (_viewer != null) {
 			Display.getDefault().asyncExec(new Runnable() {
 				@Override
 				public void run() {
-					System.out.println("REFRESHCHICHH THE FUCCKING EDITOR AND RUNNA FUCKA RUNNABLE");
 					runnable.run();
-					Activator.klab().doNothing();
 					_viewer.refresh();
 				}
 			});

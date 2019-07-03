@@ -10,6 +10,7 @@ import java.util.List
 import java.util.logging.Level
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EStructuralFeature
+import org.eclipse.emf.ecore.util.EcoreUtil
 import org.eclipse.xtext.validation.Check
 import org.integratedmodelling.kim.api.BinarySemanticOperator
 import org.integratedmodelling.kim.api.IKimConcept
@@ -61,6 +62,7 @@ import org.integratedmodelling.kim.model.KimSymbolDefinition
 import org.integratedmodelling.kim.model.KimTable
 import org.integratedmodelling.kim.model.KimWorkspace
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode
+import org.integratedmodelling.klab.rest.CompileNotificationReference
 import org.integratedmodelling.klab.utils.Pair
 
 /**
@@ -78,6 +80,7 @@ class KimValidator extends AbstractKimValidator {
 	public static val NO_NAMESPACE = 'noNamespace'
 	public static val BAD_NAMESPACE_ID = 'badNamespaceId'
 	public static val BAD_TABLE_FORMAT = 'badTableFormat'
+	public static val REASONING_PROBLEM = 'reasoningProblem'
 
 	static val nonSemanticModels = #{'number', 'text', 'boolean'}
 
@@ -85,7 +88,8 @@ class KimValidator extends AbstractKimValidator {
 	def initializeRegisters(Model model) {
 		var namespace = getNamespace(model)
 		if (namespace !== null) {
-			Kim.INSTANCE.initializeNamespaceRegisters(Kim.getNamespaceId(namespace))
+			val namespaceId = Kim.getNamespaceId(namespace)
+			Kim.INSTANCE.initializeNamespaceRegisters(namespaceId)
 			Kim.INSTANCE.removeNamespace(namespace);
 		}
 	}
@@ -248,6 +252,24 @@ class KimValidator extends AbstractKimValidator {
 			}
 			i++
 		}
+	}
+
+	@Check
+	def checkModelStatement(ModelStatement model) {
+
+			val namespace = if(model !== null) getNamespace(model) else null
+			val namespaceId = if (namespace !== null)  Kim.getNamespaceId(namespace) else null
+			val uri = EcoreUtil.getURI(model).toString();
+			for (CompileNotificationReference ref : Kim.INSTANCE.getNotificationsFor(namespaceId, uri)) {
+				switch (ref.level) {
+					case Level.SEVERE.intValue():
+						error(ref.message, KimPackage.Literals.MODEL_STATEMENT__MODEL, REASONING_PROBLEM)
+					case Level.WARNING.intValue():
+						warning(ref.message, KimPackage.Literals.MODEL_STATEMENT__MODEL, REASONING_PROBLEM)
+					case Level.INFO.intValue():
+						info(ref.message, KimPackage.Literals.MODEL_STATEMENT__MODEL, REASONING_PROBLEM)
+				}
+			}
 	}
 
 	@Check

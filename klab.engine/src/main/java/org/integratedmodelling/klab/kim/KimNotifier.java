@@ -137,12 +137,28 @@ public class KimNotifier implements Kim.Notifier {
 
 		public void sendReport() {
 
+			String project = namespace.getProject() == null ? null : namespace.getProject().getName();
 			List<CompileNotificationReference> nrefs = new ArrayList<>();
 			for (ICompileNotification notification : notifications) {
-				nrefs.add(((CompileNotification) notification).getReference());
+				CompileNotificationReference cref = ((CompileNotification) notification).getReference();
+				if (project != null && cref.getStatementUrn() != null) {
+					// cut the URN before the project name so that we can recognize it across
+					// platforms
+					int pidx = cref.getStatementUrn().indexOf(project);
+					if (pidx >= 0) {
+						cref.setStatementUrn(cref.getStatementUrn().substring(pidx));
+					}
+				}
+				nrefs.add(cref);
 			}
-			send(IMessage.MessageClass.KimLifecycle, IMessage.Type.NamespaceCompilationIssues,
-					new NamespaceCompilationResult(namespace.getName(), namespace.isPublishable(), nrefs));
+
+			/*
+			 * Keep these around and send to subscribers
+			 */
+			NamespaceCompilationResult result = new NamespaceCompilationResult(namespace.getName(),
+					namespace.isPublishable(), nrefs);
+			Kim.INSTANCE.updateErrors(result);
+			send(IMessage.MessageClass.KimLifecycle, IMessage.Type.NamespaceCompilationIssues, result);
 		}
 
 	}
@@ -226,7 +242,7 @@ public class KimNotifier implements Kim.Notifier {
 						 * validate units vs. coverage and ensure that they're coherent with the
 						 * geometry
 						 */
-						if (!((Model) object).isErrors() && validateModelUsage((Model) object, monitor)) {
+						if (!((Model) object).isErrors()) {
 							Models.INSTANCE.index((IModel) object, monitor);
 						}
 					} catch (KlabException e) {
@@ -253,11 +269,10 @@ public class KimNotifier implements Kim.Notifier {
 		}
 
 		Observations.INSTANCE.registerNamespace(ns, (Monitor) monitor);
-
 		Reasoner.INSTANCE.addOntology(ns.getOntology());
 
 		/*
-		 * report errors or lack thereof (so that previous errors can be removed)
+		 * store and report errors or lack thereof (so that previous errors can be removed)
 		 */
 		monitor.sendReport();
 
@@ -273,39 +288,4 @@ public class KimNotifier implements Kim.Notifier {
 		return ns;
 	}
 
-	private boolean validateModelUsage(Model model, ErrorNotifyingMonitor monitor) {
-
-		boolean ret = true;
-		
-		IGeometry geometry = model.getGeometry();
-		IScale scale = model.getCoverage(monitor);
-		if (scale != null) {
-			if (geometry == null) {
-				geometry = ((Scale)scale).asGeometry();
-			} else {
-				geometry = ((Geometry)geometry).merge(((Scale)scale).asGeometry());
-			}
-		}
-		
-		if (geometry != null && model.getObservables().get(0).is(Type.QUALITY)) {
-			
-			CompileNotification notification = Units.INSTANCE.validateUnit(model.getObservables().get(0), model.getGeometry(),
-					Annotations.INSTANCE.getAnnotation(model, "extensive"));
-			
-			if (notification != null) {
-				
-				notification.setNamespace(model.getNamespace());
-				notification.setStatement(model.getStatement());
-				
-				if (notification.getLevel().equals(Level.WARNING)) {
-					monitor.warn(notification.getMessage(), model.getStatement());
-				} else if (notification.getLevel().equals(Level.SEVERE)) {
-					monitor.error(notification.getMessage(), model.getStatement());
-					ret = false;
-				}
-			}
-		}
-
-		return ret;
-	}
 }

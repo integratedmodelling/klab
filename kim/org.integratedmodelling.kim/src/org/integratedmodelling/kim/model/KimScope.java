@@ -17,8 +17,8 @@ public abstract class KimScope implements IKimScope {
 		return children;
 	}
 
-	public java.net.URI getURI() {
-		return null; //uri;
+	public String getURI() {
+		return uri == null ? null : uri.toString();
 	}
 	
     public void dump() {

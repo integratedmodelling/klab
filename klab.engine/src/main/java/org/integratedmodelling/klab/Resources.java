@@ -47,6 +47,7 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IResourceService;
+import org.integratedmodelling.klab.common.CompileInfo;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.SemanticType;
 import org.integratedmodelling.klab.common.Urns;
@@ -76,6 +77,7 @@ import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.LocalResourceReference;
+import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
 import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
@@ -813,7 +815,7 @@ public enum Resources implements IResourceService {
 		IKlabData data = getResourceData(resource, urnp.getSecond(), scale,
 				context.getChild((Observable) observable, resource));
 
-		return new Pair<>(ctxArtifact, data.getArtifact());
+		return data == null ? null : new Pair<>(ctxArtifact, data.getArtifact());
 	}
 
 	@Override
@@ -1097,7 +1099,20 @@ public enum Resources implements IResourceService {
 		ProjectReference ret = new ProjectReference();
 		ret.setName(project.getName());
 		ret.setRootPath(project.getRoot());
+		for (INamespace namespace : project.getNamespaces()) {
+			CompileInfo compileInfo = Kim.INSTANCE.getCompileInfo(namespace.getId());
+			NamespaceCompilationResult compilationResult = new NamespaceCompilationResult();
+			compilationResult.setNamespaceId(namespace.getId());
+			if (compileInfo != null) {
+				compilationResult.getNotifications().addAll(compileInfo.getErrors());
+				compilationResult.getNotifications().addAll(compileInfo.getWarnings());
+				compilationResult.getNotifications().addAll(compileInfo.getInfo());
+			}
+			compilationResult.setPublishable(namespace.isPublishable());
+			ret.getCompilationReports().add(compilationResult);
+		}
 		for (String urn : project.getLocalResourceUrns()) {
+			// TODO should also include notifications from namespace compilation in project
 			LocalResourceReference rref = new LocalResourceReference();
 			rref.setUrn(urn);
 			IResource resource = Resources.INSTANCE.resolveResource(urn);

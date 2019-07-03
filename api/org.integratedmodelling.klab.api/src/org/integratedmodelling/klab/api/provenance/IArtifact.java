@@ -160,11 +160,19 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
         }
 
         public static boolean isCompatible(Type required, Type supplied) {
+        	
+        	// unknown/universal
+        	if (supplied == Type.VALUE || required == Type.VALUE) {
+        		return true;
+        	}
+        	
             if (required == supplied) {
                 return true;
-            } else if (required == Type.VALUE) {
-                return true;
+            } else if (required == BOOLEAN && supplied == NUMBER) {
+            	// runtime cast can do this
+            	return true;
             }
+            
             // TODO probably needs improvement
             return false;
         }

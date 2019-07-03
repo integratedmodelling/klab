@@ -94,7 +94,7 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
 	}
 
 	@Override
-	public URI getURI() {
+	public String getURI() {
 		return delegate_.getURI();
 	}
 

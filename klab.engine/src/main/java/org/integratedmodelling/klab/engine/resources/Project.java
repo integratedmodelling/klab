@@ -8,8 +8,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.templates.KimTemplates;
+import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.knowledge.IProject;
@@ -62,7 +64,14 @@ public class Project implements IProject {
 
 	@Override
 	public List<INamespace> getNamespaces() {
-		return null;
+		List<INamespace> namespaces = new ArrayList<>();
+		for (IKimNamespace ns : delegate.getNamespaces()) {
+			INamespace namespace = Namespaces.INSTANCE.getNamespace(ns.getName());
+			if (namespace != null) {
+				namespaces.add(namespace);
+			}
+		}
+		return namespaces;
 	}
 
 	@Override

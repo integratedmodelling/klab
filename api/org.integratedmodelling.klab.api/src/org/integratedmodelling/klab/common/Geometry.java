@@ -81,7 +81,6 @@ public class Geometry implements IGeometry {
     }
 
     private static Geometry emptyGeometry  = new Geometry();
-    private static Geometry scalarGeometry = makeGeometry("*", 0);
 
     /**
      * The empty geometry.
@@ -98,7 +97,9 @@ public class Geometry implements IGeometry {
      * @return the scalar geometry
      */
     public static Geometry scalar() {
-        return scalarGeometry;
+        Geometry ret = new Geometry();
+        ret.scalar = true;
+        return ret;
     }
 
     /**
@@ -596,7 +597,7 @@ public class Geometry implements IGeometry {
 
     @Override
     public boolean isEmpty() {
-        return dimensions.isEmpty() && child == null;
+        return !scalar && dimensions.isEmpty() && child == null;
     }
 
     @Override

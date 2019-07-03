@@ -5,7 +5,7 @@
 @version 0.10.0
 @namespace im.geomorphology
 
-export concept classifier
+export number classifier
 	"Classifies each cell into the numeric category of the containing geological form using 
 	 the Geomorphon algorithm."
 	 label 'Classify terrain morphology'

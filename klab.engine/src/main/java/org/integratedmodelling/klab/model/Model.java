@@ -5,14 +5,17 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.model.ComputableResource;
+import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Documentation;
@@ -20,6 +23,7 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Types;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -36,6 +40,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IDocumentationService;
+import org.integratedmodelling.klab.common.CompileNotification;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.Urns;
@@ -62,7 +67,7 @@ public class Model extends KimObject implements IModel {
 	private boolean reinterpreter;
 	private boolean inactive;
 	private boolean learning;
-	
+
 	/*
 	 * the geometry implicitly declared for the project, gathered from the resources
 	 * and the services used in it. Does not include the explicit contextualization
@@ -201,37 +206,59 @@ public class Model extends KimObject implements IModel {
 					: resource.getTarget().getName();
 			IArtifact.Type type = Resources.INSTANCE.getType(resource);
 			IGeometry geometry = Resources.INSTANCE.getGeometry(resource);
-			
-			if (type != null) {
-				if (typechain.containsKey(target)) {
-					if (!IArtifact.Type.isCompatible(typechain.get(target), type)) {
-						monitor.error("the model uses inconsistent types across the computational chain", this.getStatement());
-						setErrors(true);
-					}
-				}
-				typechain.put(target, type);
-			}
-			if (type != null) {
-				if (typechain.containsKey(target)) {
-					if (!IArtifact.Type.isCompatible(typechain.get(target), type)) {
 
-					}
+			if (type != null) {
+				if (typechain.containsKey(target)) {
+					// TODO check that the resource can take the current type
 				}
 				typechain.put(target, type);
 			}
-			
+
 			if (geometry != null) {
 				if (this.geometry == null) {
 					this.geometry = geometry;
 				} else {
-					this.geometry = ((Geometry)this.geometry).merge(geometry);
+					this.geometry = ((Geometry) this.geometry).merge(geometry);
 					if (this.geometry == null) {
-						monitor.error("the model uses inconsistent space/time geometries across the computational chain", this.getStatement());
+						monitor.error(
+								"the model uses inconsistent space/time geometries across the computational chain",
+								this.getStatement());
 						setErrors(true);
 					}
 				}
 			}
+		}
 
+		/*
+		 * check units against geometry
+		 */
+		if (geometry != null && observables.get(0).is(Type.QUALITY)) {
+
+			CompileNotification notification = Units.INSTANCE.validateUnit(observables.get(0), geometry,
+					Annotations.INSTANCE.getAnnotation(this, "extensive"));
+
+			if (notification != null) {
+
+				if (notification.getLevel().equals(Level.WARNING)) {
+					monitor.warn(notification.getMessage(), this.getStatement());
+				} else if (notification.getLevel().equals(Level.SEVERE)) {
+					monitor.error(notification.getMessage(), this.getStatement());
+					setErrors(true);
+				}
+			}
+		}
+
+		// check final type of observable against typechain
+		for (IObservable observable : observables) {
+			if (typechain.containsKey(observable.getName())) {
+				IArtifact.Type required = observable.getArtifactType();
+				if (!IArtifact.Type.isCompatible(required, typechain.get(observable.getName()))) {
+					monitor.error("the computation produces output of type " + typechain.get(observable.getName())
+							+ " for " + observable.getName() + " when " + required + " is expected",
+							this.getStatement());
+					setErrors(true);
+				}
+			}
 		}
 	}
 
@@ -315,14 +342,14 @@ public class Model extends KimObject implements IModel {
 						IObservable dependency = findDependency(argument.getName());
 						if (dependency == null && !argument.isOptional()) {
 							monitor.error("contextualizer " + prototype.getName() + " requires a dependency named "
-									+ argument.getName(), resource.getServiceCall());
+									+ argument.getName(), getStatement());
 							setErrors(true);
 						} else if (dependency != null
 								&& !IArtifact.Type.isCompatible(argument.getType(), dependency.getArtifactType())) {
 							monitor.error("contextualizer " + prototype.getName() + " requires type "
 									+ argument.getType().name().toLowerCase() + "for dependency " + argument.getName()
 									+ ":  " + dependency.getArtifactType().name().toLowerCase() + " was supplied",
-									resource.getServiceCall());
+									getStatement());
 							setErrors(true);
 						}
 					}
@@ -690,6 +717,5 @@ public class Model extends KimObject implements IModel {
 	public IGeometry getGeometry() {
 		return geometry;
 	}
-
 
 }

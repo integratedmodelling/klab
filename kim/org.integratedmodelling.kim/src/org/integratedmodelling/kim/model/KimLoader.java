@@ -131,14 +131,14 @@ public class KimLoader implements IKimLoader {
 		// one but a different project root.
 		List<IKimProject> projects = new ArrayList<>();
 		for (File root : projectRoots) {
-			
+
 			IKimProject project = Kim.INSTANCE.getProject(MiscUtilities.getFileName(root));
 			if (project != null && !project.getRoot().equals(root)) {
 				// TODO override in same workspace
 				KimWorkspace workspace = Kim.INSTANCE.getWorkspaceForProject(project.getName());
 				project = workspace.overrideProject(project.getName(), root);
 			}
-			
+
 			if (!projectLocations.contains(root)) {
 				project = Kim.INSTANCE.getProjectIn(root);
 				if (project == null) {
@@ -175,6 +175,33 @@ public class KimLoader implements IKimLoader {
 		}
 		if (!trivial) {
 			doLoad(false);
+		}
+	}
+
+	@Override
+	public void revalidate(Object namespaceProxy) {
+		revalidate(namespaceProxy, true);
+	}
+
+	public synchronized void revalidate(Object namespaceProxy, boolean recurseDependencies) {
+
+		File file = getFile(namespaceProxy);
+		IResourceValidator validator = getValidator();
+		XtextResourceSet resourceSet = getResourceSet();
+		URI uri = URI.createFileURI(file.toString());
+		Resource resource = resourceSet.getResource(uri, true);
+		if (resource != null) {
+			resource.setModified(true);
+			validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
+		}
+		
+		if (recurseDependencies) {
+			List<File> ret = new ArrayList<>();
+			Set<File> visited = new HashSet<>();
+			collectDependencies(file, ret, visited);
+			for (File f : ret) {
+				revalidate(f, false);
+			}
 		}
 	}
 

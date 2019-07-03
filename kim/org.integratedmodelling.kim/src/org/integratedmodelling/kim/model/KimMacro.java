@@ -325,7 +325,7 @@ public class KimMacro implements IKimMacro {
     }
 
 	@Override
-	public URI getURI() {
+	public String getURI() {
 		return delegate.getURI();
 	}
 

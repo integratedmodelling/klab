@@ -1,7 +1,6 @@
 package org.integratedmodelling.kim.api;
 
 import java.io.Serializable;
-import java.net.URI;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -40,7 +39,7 @@ public interface IKimScope extends Serializable {
 	 */
 	String getLocationDescriptor();
 
-	URI getURI();
+	String getURI();
 
 	void visit(Visitor visitor);
 

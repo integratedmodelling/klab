@@ -9,6 +9,7 @@ public class ProjectReference {
 	private File rootPath;
 	private String name;
 	private List<LocalResourceReference> localResources = new ArrayList<>();
+	private List<NamespaceCompilationResult> compilationReports = new ArrayList<>();
 	
 	public ProjectReference() {
 	}
@@ -40,5 +41,13 @@ public class ProjectReference {
 	@Override
 	public String toString() {
 		return name;
+	}
+
+	public List<NamespaceCompilationResult> getCompilationReports() {
+		return compilationReports;
+	}
+
+	public void setCompilationReports(List<NamespaceCompilationResult> compilationReports) {
+		this.compilationReports = compilationReports;
 	}
 }

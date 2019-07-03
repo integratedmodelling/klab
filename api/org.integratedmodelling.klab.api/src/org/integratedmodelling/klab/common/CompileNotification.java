@@ -70,7 +70,8 @@ public class CompileNotification implements ICompileNotification {
     }
 
     public CompileNotificationReference getReference() {
-        CompileNotificationReference ret = new CompileNotificationReference();
+
+    	CompileNotificationReference ret = new CompileNotificationReference();
         ret.setFirstLine(statement.getFirstLine());
         ret.setLastLine(statement.getLastLine());
         ret.setStartOffset(statement.getFirstCharOffset());
@@ -87,6 +88,10 @@ public class CompileNotification implements ICompileNotification {
         } else if (mainScope instanceof IKimSymbolDefinition) {
         	ret.setScopeName(((IKimSymbolDefinition)mainScope).getName());
         }
+        if (mainScope != null) {
+        	ret.setStatementUrn(mainScope.getURI());
+        }
+        
         return ret;
     }
 
