@@ -405,7 +405,7 @@ public enum Units implements IUnitService {
 
 		if (observable.is(Type.QUALITY)) {
 
-			if (observable.getUnit() == null || observable.getCurrency() == null) {
+			if (observable.getUnit() == null && observable.getCurrency() == null) {
 				return null;
 			}
 
@@ -423,13 +423,19 @@ public enum Units implements IUnitService {
 			if (observable.is(Type.EXTENSIVE_PROPERTY)) {
 
 				IUnit defUnit = getDefaultUnitFor(observable.getType());
+				IUnit ctxUnit = defUnit;
 
 				boolean spaceDone = false;
 				boolean timeDone = false;
 
 				int temporalDimensionality = getTemporalDimensionality(observable.getUnit());
 				int spatialDimensionality = getSpatialDimensionality(observable.getUnit());
-
+				
+				/*
+				 * correct unit can be compatible with the default unit after the dimensionality is
+				 * factored in.
+				 */
+				
 				/*
 				 * No temporality or spatiality in the unit triggers a warning unless the
 				 * aggregation dimension is mentioned in the annotation

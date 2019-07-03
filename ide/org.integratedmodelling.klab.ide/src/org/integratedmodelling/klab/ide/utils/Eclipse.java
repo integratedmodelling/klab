@@ -521,7 +521,7 @@ public enum Eclipse {
 							}
 						}
 					} catch (Exception e) {
-						// poh
+						// va be'
 					}
 				}
 			}
