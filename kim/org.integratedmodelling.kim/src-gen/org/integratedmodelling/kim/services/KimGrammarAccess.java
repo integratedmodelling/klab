@@ -6087,6 +6087,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cPropertySpecifiersPROPERTY_TYPEParserRuleCall_1_3_1_0_0 = (RuleCall)cPropertySpecifiersAssignment_1_3_1_0.eContents().get(0);
 		private final Assignment cPropertySpecifiersAssignment_1_3_1_1 = (Assignment)cGroup_1_3_1.eContents().get(1);
 		private final RuleCall cPropertySpecifiersPROPERTY_TYPEParserRuleCall_1_3_1_1_0 = (RuleCall)cPropertySpecifiersAssignment_1_3_1_1.eContents().get(0);
+		private final Assignment cAttributeSpecifierAssignment_1_3_2 = (Assignment)cAlternatives_1_3.eContents().get(2);
+		private final Keyword cAttributeSpecifierRescalingKeyword_1_3_2_0 = (Keyword)cAttributeSpecifierAssignment_1_3_2.eContents().get(0);
 		private final Assignment cConceptAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cConceptCONCEPT_TYPEParserRuleCall_2_0 = (RuleCall)cConceptAssignment_2.eContents().get(0);
 		private final Assignment cBodyAssignment_3 = (Assignment)cGroup.eContents().get(3);
@@ -6099,12 +6101,14 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//ConceptStatement:
 		//	annotations+=Annotation* (abstract?='abstract'? & deniable?='deniable'? & subjective?='subjective'? &
 		//	(agentSpecifier=('deliberative' | 'interactive' | 'reactive') | propertySpecifiers+=PROPERTY_TYPE
-		//	propertySpecifiers+=PROPERTY_TYPE*)?) concept=CONCEPT_TYPE body=ConceptStatementBody ('named' name=NamespaceId)?;
+		//	propertySpecifiers+=PROPERTY_TYPE* | attributeSpecifier='rescaling')?) concept=CONCEPT_TYPE body=ConceptStatementBody
+		//	('named' name=NamespaceId)?;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//annotations+=Annotation* (abstract?='abstract'? & deniable?='deniable'? & subjective?='subjective'? &
 		//(agentSpecifier=('deliberative' | 'interactive' | 'reactive') | propertySpecifiers+=PROPERTY_TYPE
-		//propertySpecifiers+=PROPERTY_TYPE*)?) concept=CONCEPT_TYPE body=ConceptStatementBody ('named' name=NamespaceId)?
+		//propertySpecifiers+=PROPERTY_TYPE* | attributeSpecifier='rescaling')?) concept=CONCEPT_TYPE body=ConceptStatementBody
+		//('named' name=NamespaceId)?
 		public Group getGroup() { return cGroup; }
 		
 		//annotations+=Annotation*
@@ -6114,7 +6118,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getAnnotationsAnnotationParserRuleCall_0_0() { return cAnnotationsAnnotationParserRuleCall_0_0; }
 		
 		//abstract?='abstract'? & deniable?='deniable'? & subjective?='subjective'? & (agentSpecifier=('deliberative' |
-		//'interactive' | 'reactive') | propertySpecifiers+=PROPERTY_TYPE propertySpecifiers+=PROPERTY_TYPE*)?
+		//'interactive' | 'reactive') | propertySpecifiers+=PROPERTY_TYPE propertySpecifiers+=PROPERTY_TYPE* |
+		//attributeSpecifier='rescaling')?
 		public UnorderedGroup getUnorderedGroup_1() { return cUnorderedGroup_1; }
 		
 		//abstract?='abstract'?
@@ -6136,7 +6141,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		public Keyword getSubjectiveSubjectiveKeyword_1_2_0() { return cSubjectiveSubjectiveKeyword_1_2_0; }
 		
 		//(agentSpecifier=('deliberative' | 'interactive' | 'reactive') | propertySpecifiers+=PROPERTY_TYPE
-		//propertySpecifiers+=PROPERTY_TYPE*)?
+		//propertySpecifiers+=PROPERTY_TYPE* | attributeSpecifier='rescaling')?
 		public Alternatives getAlternatives_1_3() { return cAlternatives_1_3; }
 		
 		//agentSpecifier=('deliberative' | 'interactive' | 'reactive')
@@ -6168,6 +6173,12 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//PROPERTY_TYPE
 		public RuleCall getPropertySpecifiersPROPERTY_TYPEParserRuleCall_1_3_1_1_0() { return cPropertySpecifiersPROPERTY_TYPEParserRuleCall_1_3_1_1_0; }
+		
+		//attributeSpecifier='rescaling'
+		public Assignment getAttributeSpecifierAssignment_1_3_2() { return cAttributeSpecifierAssignment_1_3_2; }
+		
+		//'rescaling'
+		public Keyword getAttributeSpecifierRescalingKeyword_1_3_2_0() { return cAttributeSpecifierRescalingKeyword_1_3_2_0; }
 		
 		//concept=CONCEPT_TYPE
 		public Assignment getConceptAssignment_2() { return cConceptAssignment_2; }
@@ -11322,7 +11333,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//ConceptStatement:
 	//	annotations+=Annotation* (abstract?='abstract'? & deniable?='deniable'? & subjective?='subjective'? &
 	//	(agentSpecifier=('deliberative' | 'interactive' | 'reactive') | propertySpecifiers+=PROPERTY_TYPE
-	//	propertySpecifiers+=PROPERTY_TYPE*)?) concept=CONCEPT_TYPE body=ConceptStatementBody ('named' name=NamespaceId)?;
+	//	propertySpecifiers+=PROPERTY_TYPE* | attributeSpecifier='rescaling')?) concept=CONCEPT_TYPE body=ConceptStatementBody
+	//	('named' name=NamespaceId)?;
 	public ConceptStatementElements getConceptStatementAccess() {
 		return pConceptStatement;
 	}

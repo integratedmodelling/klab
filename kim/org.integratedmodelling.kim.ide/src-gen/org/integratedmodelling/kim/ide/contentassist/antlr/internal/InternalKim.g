@@ -5143,6 +5143,12 @@ rule__ConceptStatement__Alternatives_1_3
 		(rule__ConceptStatement__Group_1_3_1__0)
 		{ after(grammarAccess.getConceptStatementAccess().getGroup_1_3_1()); }
 	)
+	|
+	(
+		{ before(grammarAccess.getConceptStatementAccess().getAttributeSpecifierAssignment_1_3_2()); }
+		(rule__ConceptStatement__AttributeSpecifierAssignment_1_3_2)
+		{ after(grammarAccess.getConceptStatementAccess().getAttributeSpecifierAssignment_1_3_2()); }
+	)
 ;
 finally {
 	restoreStackSize(stackSize);
@@ -41517,6 +41523,25 @@ rule__ConceptStatement__PropertySpecifiersAssignment_1_3_1_1
 		{ before(grammarAccess.getConceptStatementAccess().getPropertySpecifiersPROPERTY_TYPEParserRuleCall_1_3_1_1_0()); }
 		rulePROPERTY_TYPE
 		{ after(grammarAccess.getConceptStatementAccess().getPropertySpecifiersPROPERTY_TYPEParserRuleCall_1_3_1_1_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__ConceptStatement__AttributeSpecifierAssignment_1_3_2
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getConceptStatementAccess().getAttributeSpecifierRescalingKeyword_1_3_2_0()); }
+		(
+			{ before(grammarAccess.getConceptStatementAccess().getAttributeSpecifierRescalingKeyword_1_3_2_0()); }
+			'rescaling'
+			{ after(grammarAccess.getConceptStatementAccess().getAttributeSpecifierRescalingKeyword_1_3_2_0()); }
+		)
+		{ after(grammarAccess.getConceptStatementAccess().getAttributeSpecifierRescalingKeyword_1_3_2_0()); }
 	)
 ;
 finally {

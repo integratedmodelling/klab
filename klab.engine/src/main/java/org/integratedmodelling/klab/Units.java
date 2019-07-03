@@ -2,13 +2,14 @@ package org.integratedmodelling.klab;
 
 import java.io.PrintStream;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 
 import javax.measure.unit.Dimension;
 import javax.measure.unit.ProductUnit;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -22,9 +23,6 @@ import org.integratedmodelling.klab.common.CompileNotification;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
-import org.integratedmodelling.klab.rest.CompileNotificationReference;
-
-import com.github.os72.protobuf351.DescriptorProtos.GeneratedCodeInfo.Annotation;
 
 public enum Units implements IUnitService {
 
@@ -410,10 +408,11 @@ public enum Units implements IUnitService {
 			}
 
 			/*
-			 * 
+			 * Points aren't distributed
 			 */
 			boolean isDistributedInSpace = geometry.getDimension(IGeometry.Dimension.Type.SPACE) != null
-					&& geometry.getDimension(IGeometry.Dimension.Type.SPACE).isRegular();
+					&& geometry.getDimension(IGeometry.Dimension.Type.SPACE).isRegular()
+					&& geometry.getDimension(IGeometry.Dimension.Type.SPACE).getDimensionality() > 0;
 			boolean isDistributedInTime = geometry.getDimension(IGeometry.Dimension.Type.TIME) != null
 					&& geometry.getDimension(IGeometry.Dimension.Type.TIME).isRegular();
 
@@ -425,49 +424,62 @@ public enum Units implements IUnitService {
 				IUnit defUnit = getDefaultUnitFor(observable.getType());
 				IUnit ctxUnit = defUnit;
 
-				boolean spaceDone = false;
-				boolean timeDone = false;
+				if (defUnit == null) {
+					return CompileNotification.create(Level.SEVERE,
+							"Internal error: observable " + observable.getType() + " has no default unit", null, null);
+				}
 
 				int temporalDimensionality = getTemporalDimensionality(observable.getUnit());
 				int spatialDimensionality = getSpatialDimensionality(observable.getUnit());
-				
+
+				Set<ExtentDimension> dimensions = new HashSet<>();
+				if (isDistributedInSpace) {
+					dimensions.add(ExtentDimension
+							.spatial(geometry.getDimension(IGeometry.Dimension.Type.SPACE).getDimensionality()));
+				}
+				if (isDistributedInTime) {
+					dimensions.add(ExtentDimension.TEMPORAL);
+				}
+				if (dimensions.size() > 0) {
+					ctxUnit = addExtents(ctxUnit, dimensions);
+				}
+
 				/*
-				 * correct unit can be compatible with the default unit after the dimensionality is
-				 * factored in.
+				 * correct unit can be compatible with the default unit after the dimensionality
+				 * is factored in.
+				 * 
+				 * TODO should account for PARTIAL distribution over just one dimension
 				 */
-				
+
+				if (!observable.getUnit().isCompatible(defUnit) && !observable.getUnit().isCompatible(ctxUnit)) {
+					return CompileNotification.create(Level.SEVERE,
+							"Unit " + observable.getUnit()
+									+ (dimensions.size() == 0 ? (" is not compatible with the default " + defUnit)
+											: (" is not compatible with the contextualized unit " + ctxUnit
+													+ " nor with the aggregated unit " + defUnit)),
+							null, null);
+				}
+
 				/*
 				 * No temporality or spatiality in the unit triggers a warning unless the
 				 * aggregation dimension is mentioned in the annotation
+				 * TODO should account for PARTIAL distribution over just one dimension
 				 */
-				if (isDistributedInSpace && spatialDimensionality == 0) {
-					if (!(extensiveAnnotation != null
+				if (isDistributedInSpace && !observable.getUnit().isCompatible(ctxUnit)) {
+					if (spatialDimensionality == 0 && !(extensiveAnnotation != null
 							&& Annotations.INSTANCE.defaultsContain(extensiveAnnotation, "space"))) {
 						warning += "Unit " + observable.getUnit()
 								+ " is not distributed in space when the geometry implies it. If this is intentional, add an @extensive(space) annotation to declare it.";
 					}
-					spaceDone = true;
 				}
-				if (isDistributedInTime && temporalDimensionality == 0) {
-					if (!(extensiveAnnotation != null
+				if (isDistributedInTime && !observable.getUnit().isCompatible(ctxUnit)) {
+					if (temporalDimensionality == 0 && !(extensiveAnnotation != null
 							&& Annotations.INSTANCE.defaultsContain(extensiveAnnotation, "time"))) {
 						warning += (warning.isEmpty() ? ("Unit " + observable.getUnit()) : "\n It also")
 								+ " is not distributed in time when the geometry implies it. If this is intentional, add an @extensive(time) annotation to declare it.";
-					}
-					timeDone = true;
+					} 
 				}
 
-				if (!spaceDone && isDistributedInSpace && spatialDimensionality != geometry
-						.getDimension(IGeometry.Dimension.Type.SPACE).getDimensionality()) {
-					error += "Unit " + observable.getUnit()
-							+ " has different spatial distribution than implied by the geometry.";
-				}
-				if (!timeDone && isDistributedInTime && temporalDimensionality != geometry
-						.getDimension(IGeometry.Dimension.Type.TIME).getDimensionality()) {
-					error += (warning.isEmpty() ? ("Unit " + observable.getUnit()) : "\n It also")
-							+ " has different temporal distribution than implied by the geometry.";
-				}
-				
 				if (!error.isEmpty()) {
 					return CompileNotification.create(Level.SEVERE, error, null, null);
 				} else if (!warning.isEmpty()) {
@@ -477,7 +489,7 @@ public enum Units implements IUnitService {
 			} else if (observable.is(Type.MONEY)) {
 
 				// TODO extract the dimensions and merge with the above
-				
+
 			}
 
 		}
@@ -503,7 +515,7 @@ public enum Units implements IUnitService {
 			 * OK only if not transformed
 			 */
 			for (IConcept trait : Traits.INSTANCE.getTraits(concept)) {
-				if (trait.is(Concepts.c(NS.CORE_OBSERVATION_TRANSFORMATION))) {
+				if (trait.is(Type.RESCALING)) {
 					assignUnits = false;
 					break;
 				}
@@ -511,7 +523,7 @@ public enum Units implements IUnitService {
 		}
 
 		if (/* still */ assignUnits) {
-			Object unit = Concepts.INSTANCE.getMetadata(concept, NS.SI_UNIT_PROPERTY);
+			Object unit = Concepts.INSTANCE.getMetadata(Observables.INSTANCE.getBaseObservable(concept), NS.SI_UNIT_PROPERTY);
 			return unit == null ? null : getUnit(unit.toString());
 		}
 		return null;

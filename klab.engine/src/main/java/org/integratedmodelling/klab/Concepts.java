@@ -407,6 +407,29 @@ public enum Concepts implements IConceptService {
 		}
 		return new Pair<>(ret, rem);
 	}
+	
+
+	/**
+	 * Utility to filter a concept list
+	 * 
+	 * @param concepts
+	 * @param concept
+	 * @return
+	 */
+	public Pair<Collection<IConcept>, Collection<IConcept>> copyWithoutAny(Collection<IConcept> concepts,
+			IKimConcept.Type concept) {
+		Set<IConcept> ret = new HashSet<>();
+		Set<IConcept> rem = new HashSet<>();
+		for (IConcept c : concepts) {
+			if (!c.is(concept)) {
+				ret.add(c);
+			} else {
+				rem.add(c);
+			}
+		}
+		return new Pair<>(ret, rem);
+	}
+
 
 	public String getCssClass(IConcept concept) {
 		

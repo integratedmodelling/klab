@@ -318,8 +318,13 @@ public interface IKimConcept extends IKimStatement {
 		/**
 		 * Specifier for values; affects validation of currencies
 		 */
-		MONETARY;
-		
+		MONETARY,
+		/**
+		 * Makes an attribute a rescaling transformation, which does not preserve
+		 * observation semantics
+		 */
+		RESCALING;
+
 		boolean isNumeric() {
 			return IKimConcept.CONTINUOUS_QUALITY_TYPES.contains(this);
 		}

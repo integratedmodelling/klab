@@ -175,7 +175,7 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 
 		Observable observable = original;
 		boolean changed = false;
-		
+
 		/*
 		 * If we have an operator, our original observer will need to be observed
 		 * without it as a dependency.
@@ -188,19 +188,19 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 			 */
 			observable = (Observable) original.getBuilder(scope.getMonitor()).by(null).buildObservable();
 			changed = true;
-			
+
 		} else if (original.getValueOperator() != null) {
 
 			observable = (Observable) original.getBuilder(scope.getMonitor()).withValueOperator(null, null)
 					.buildObservable();
 			changed = true;
-			
+
 		}
 
 		if (changed && observable.getName().equals(original.getName())) {
 			observable.setName(observable.getName() + "_raw");
 		}
-		
+
 		/*
 		 * TODO trait models - probably no need for anything here, all the work is
 		 * downstream.
@@ -369,7 +369,7 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 		 * them.
 		 */
 		IObservable.Builder builder = observable.getBuilder(scope.getMonitor())
-				.withoutAny(Concepts.c(NS.CORE_OBSERVATION_TRANSFORMATION));
+				.withoutAny(Type.RESCALING);
 
 		if (builder.getRemoved().size() > 0) {
 			boolean ok = true;

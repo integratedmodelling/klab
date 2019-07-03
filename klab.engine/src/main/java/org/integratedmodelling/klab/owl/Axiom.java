@@ -65,6 +65,9 @@ public class Axiom implements IAxiom {
     }
 
     static public IAxiom SubClass(String parentClass, String subclass) {
+    	if(parentClass.equals("im:DataReinterpretation") && subclass.equals("DataReduction")) {
+    		System.out.println("F'OCK");
+    	}
         return new Axiom(SUBCLASS_OF, parentClass, subclass);
     }
 

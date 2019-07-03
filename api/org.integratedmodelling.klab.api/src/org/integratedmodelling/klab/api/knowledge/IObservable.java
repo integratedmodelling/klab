@@ -263,6 +263,8 @@ public interface IObservable extends ISemantic, IResolvable {
 
 		Builder withoutAny(Collection<IConcept> concepts);
 
+		Builder withoutAny(IKimConcept.Type... type);
+
 		Builder withoutAny(IConcept... concepts);
 
 		Builder withUnit(IUnit unit);

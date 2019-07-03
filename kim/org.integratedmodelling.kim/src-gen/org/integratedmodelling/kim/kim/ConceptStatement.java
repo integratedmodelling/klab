@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatement#isSubjective <em>Subjective</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatement#getAgentSpecifier <em>Agent Specifier</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatement#getPropertySpecifiers <em>Property Specifiers</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatement#getAttributeSpecifier <em>Attribute Specifier</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatement#getConcept <em>Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatement#getBody <em>Body</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatement#getName <em>Name</em>}</li>
@@ -169,6 +170,32 @@ public interface ConceptStatement extends EObject
    * @generated
    */
   EList<String> getPropertySpecifiers();
+
+  /**
+   * Returns the value of the '<em><b>Attribute Specifier</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Attribute Specifier</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Attribute Specifier</em>' attribute.
+   * @see #setAttributeSpecifier(String)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptStatement_AttributeSpecifier()
+   * @model
+   * @generated
+   */
+  String getAttributeSpecifier();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptStatement#getAttributeSpecifier <em>Attribute Specifier</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Attribute Specifier</em>' attribute.
+   * @see #getAttributeSpecifier()
+   * @generated
+   */
+  void setAttributeSpecifier(String value);
 
   /**
    * Returns the value of the '<em><b>Concept</b></em>' attribute.

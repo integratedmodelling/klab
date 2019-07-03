@@ -40,6 +40,7 @@ import org.integratedmodelling.kim.kim.KimPackage;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementImpl#isSubjective <em>Subjective</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementImpl#getAgentSpecifier <em>Agent Specifier</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementImpl#getPropertySpecifiers <em>Property Specifiers</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementImpl#getAttributeSpecifier <em>Attribute Specifier</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementImpl#getConcept <em>Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementImpl#getBody <em>Body</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementImpl#getName <em>Name</em>}</li>
@@ -148,6 +149,26 @@ public class ConceptStatementImpl extends MinimalEObjectImpl.Container implement
    * @ordered
    */
   protected EList<String> propertySpecifiers;
+
+  /**
+   * The default value of the '{@link #getAttributeSpecifier() <em>Attribute Specifier</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getAttributeSpecifier()
+   * @generated
+   * @ordered
+   */
+  protected static final String ATTRIBUTE_SPECIFIER_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getAttributeSpecifier() <em>Attribute Specifier</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getAttributeSpecifier()
+   * @generated
+   * @ordered
+   */
+  protected String attributeSpecifier = ATTRIBUTE_SPECIFIER_EDEFAULT;
 
   /**
    * The default value of the '{@link #getConcept() <em>Concept</em>}' attribute.
@@ -345,6 +366,29 @@ public class ConceptStatementImpl extends MinimalEObjectImpl.Container implement
    * <!-- end-user-doc -->
    * @generated
    */
+  public String getAttributeSpecifier()
+  {
+    return attributeSpecifier;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setAttributeSpecifier(String newAttributeSpecifier)
+  {
+    String oldAttributeSpecifier = attributeSpecifier;
+    attributeSpecifier = newAttributeSpecifier;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_STATEMENT__ATTRIBUTE_SPECIFIER, oldAttributeSpecifier, attributeSpecifier));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public String getConcept()
   {
     return concept;
@@ -474,6 +518,8 @@ public class ConceptStatementImpl extends MinimalEObjectImpl.Container implement
         return getAgentSpecifier();
       case KimPackage.CONCEPT_STATEMENT__PROPERTY_SPECIFIERS:
         return getPropertySpecifiers();
+      case KimPackage.CONCEPT_STATEMENT__ATTRIBUTE_SPECIFIER:
+        return getAttributeSpecifier();
       case KimPackage.CONCEPT_STATEMENT__CONCEPT:
         return getConcept();
       case KimPackage.CONCEPT_STATEMENT__BODY:
@@ -514,6 +560,9 @@ public class ConceptStatementImpl extends MinimalEObjectImpl.Container implement
       case KimPackage.CONCEPT_STATEMENT__PROPERTY_SPECIFIERS:
         getPropertySpecifiers().clear();
         getPropertySpecifiers().addAll((Collection<? extends String>)newValue);
+        return;
+      case KimPackage.CONCEPT_STATEMENT__ATTRIBUTE_SPECIFIER:
+        setAttributeSpecifier((String)newValue);
         return;
       case KimPackage.CONCEPT_STATEMENT__CONCEPT:
         setConcept((String)newValue);
@@ -556,6 +605,9 @@ public class ConceptStatementImpl extends MinimalEObjectImpl.Container implement
       case KimPackage.CONCEPT_STATEMENT__PROPERTY_SPECIFIERS:
         getPropertySpecifiers().clear();
         return;
+      case KimPackage.CONCEPT_STATEMENT__ATTRIBUTE_SPECIFIER:
+        setAttributeSpecifier(ATTRIBUTE_SPECIFIER_EDEFAULT);
+        return;
       case KimPackage.CONCEPT_STATEMENT__CONCEPT:
         setConcept(CONCEPT_EDEFAULT);
         return;
@@ -591,6 +643,8 @@ public class ConceptStatementImpl extends MinimalEObjectImpl.Container implement
         return AGENT_SPECIFIER_EDEFAULT == null ? agentSpecifier != null : !AGENT_SPECIFIER_EDEFAULT.equals(agentSpecifier);
       case KimPackage.CONCEPT_STATEMENT__PROPERTY_SPECIFIERS:
         return propertySpecifiers != null && !propertySpecifiers.isEmpty();
+      case KimPackage.CONCEPT_STATEMENT__ATTRIBUTE_SPECIFIER:
+        return ATTRIBUTE_SPECIFIER_EDEFAULT == null ? attributeSpecifier != null : !ATTRIBUTE_SPECIFIER_EDEFAULT.equals(attributeSpecifier);
       case KimPackage.CONCEPT_STATEMENT__CONCEPT:
         return CONCEPT_EDEFAULT == null ? concept != null : !CONCEPT_EDEFAULT.equals(concept);
       case KimPackage.CONCEPT_STATEMENT__BODY:
@@ -622,6 +676,8 @@ public class ConceptStatementImpl extends MinimalEObjectImpl.Container implement
     result.append(agentSpecifier);
     result.append(", propertySpecifiers: ");
     result.append(propertySpecifiers);
+    result.append(", attributeSpecifier: ");
+    result.append(attributeSpecifier);
     result.append(", concept: ");
     result.append(concept);
     result.append(", name: ");

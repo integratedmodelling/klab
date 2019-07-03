@@ -1583,6 +1583,17 @@ class KimValidator extends AbstractKimValidator {
 				type.add(Type.DENIABLE)
 			}
 		}
+		
+		if (statement.attributeSpecifier !== null) {
+			if (!type.contains(Type.ATTRIBUTE)) {
+				error('Only attributes can be further specified', KimPackage.Literals.CONCEPT_STATEMENT__ATTRIBUTE_SPECIFIER)
+				ok = false
+			} else {
+				if ("rescaling".equals(statement.attributeSpecifier)) {
+					type.add(Type.RESCALING)
+				}
+			}
+		}
 
 		if (statement.isSubjective) {
 			if (!type.contains(Type.ATTRIBUTE)) {

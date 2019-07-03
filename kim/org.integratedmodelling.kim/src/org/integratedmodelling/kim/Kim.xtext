@@ -501,7 +501,8 @@ ConceptStatement:
 	(deniable?='deniable')? &
 	(subjective?='subjective')? &
 	(agentSpecifier=('deliberative' | 'interactive' | 'reactive') |
-	(propertySpecifiers+=PROPERTY_TYPE (propertySpecifiers+=PROPERTY_TYPE)*))?)
+		(propertySpecifiers+=PROPERTY_TYPE (propertySpecifiers+=PROPERTY_TYPE)*) |
+		attributeSpecifier='rescaling')?)
 	concept=CONCEPT_TYPE body=ConceptStatementBody
 
 	// this is tautological and not meant to be used, just putting the

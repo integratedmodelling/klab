@@ -1953,11 +1953,26 @@ public class KimValidator extends AbstractKimValidator {
         type.add(IKimConcept.Type.DENIABLE);
       }
     }
-    boolean _isSubjective = statement.isSubjective();
-    if (_isSubjective) {
+    String _attributeSpecifier = statement.getAttributeSpecifier();
+    boolean _tripleNotEquals = (_attributeSpecifier != null);
+    if (_tripleNotEquals) {
       boolean _contains = type.contains(IKimConcept.Type.ATTRIBUTE);
       boolean _not = (!_contains);
       if (_not) {
+        this.error("Only attributes can be further specified", KimPackage.Literals.CONCEPT_STATEMENT__ATTRIBUTE_SPECIFIER);
+        ok = false;
+      } else {
+        boolean _equals = "rescaling".equals(statement.getAttributeSpecifier());
+        if (_equals) {
+          type.add(IKimConcept.Type.RESCALING);
+        }
+      }
+    }
+    boolean _isSubjective = statement.isSubjective();
+    if (_isSubjective) {
+      boolean _contains_1 = type.contains(IKimConcept.Type.ATTRIBUTE);
+      boolean _not_1 = (!_contains_1);
+      if (_not_1) {
         this.error("Only attributes can be subjective", KimPackage.Literals.CONCEPT_STATEMENT__SUBJECTIVE);
         ok = false;
       } else {
@@ -1965,11 +1980,11 @@ public class KimValidator extends AbstractKimValidator {
       }
     }
     String _agentSpecifier = statement.getAgentSpecifier();
-    boolean _tripleNotEquals = (_agentSpecifier != null);
-    if (_tripleNotEquals) {
-      boolean _contains_1 = type.contains(IKimConcept.Type.AGENT);
-      boolean _not_1 = (!_contains_1);
-      if (_not_1) {
+    boolean _tripleNotEquals_1 = (_agentSpecifier != null);
+    if (_tripleNotEquals_1) {
+      boolean _contains_2 = type.contains(IKimConcept.Type.AGENT);
+      boolean _not_2 = (!_contains_2);
+      if (_not_2) {
         String _agentSpecifier_1 = statement.getAgentSpecifier();
         String _plus = ("modifier " + _agentSpecifier_1);
         String _plus_1 = (_plus + " only applies to agents");
@@ -1996,15 +2011,15 @@ public class KimValidator extends AbstractKimValidator {
       }
     }
     EList<String> _propertySpecifiers = statement.getPropertySpecifiers();
-    boolean _tripleNotEquals_1 = (_propertySpecifiers != null);
-    if (_tripleNotEquals_1) {
+    boolean _tripleNotEquals_2 = (_propertySpecifiers != null);
+    if (_tripleNotEquals_2) {
       int i = 0;
       EList<String> _propertySpecifiers_1 = statement.getPropertySpecifiers();
       for (final String specifier : _propertySpecifiers_1) {
         {
-          boolean _contains_2 = type.contains(IKimConcept.Type.RELATIONSHIP);
-          boolean _not_2 = (!_contains_2);
-          if (_not_2) {
+          boolean _contains_3 = type.contains(IKimConcept.Type.RELATIONSHIP);
+          boolean _not_3 = (!_contains_3);
+          if (_not_3) {
             this.error((("modifier " + specifier) + " only applies to relationships"), 
               KimPackage.Literals.CONCEPT_STATEMENT__PROPERTY_SPECIFIERS, i);
             ok = false;

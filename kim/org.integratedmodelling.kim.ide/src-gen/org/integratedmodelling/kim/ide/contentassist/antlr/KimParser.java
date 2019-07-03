@@ -948,6 +948,7 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getConceptStatementAccess().getAgentSpecifierAssignment_1_3_0(), "rule__ConceptStatement__AgentSpecifierAssignment_1_3_0");
 					put(grammarAccess.getConceptStatementAccess().getPropertySpecifiersAssignment_1_3_1_0(), "rule__ConceptStatement__PropertySpecifiersAssignment_1_3_1_0");
 					put(grammarAccess.getConceptStatementAccess().getPropertySpecifiersAssignment_1_3_1_1(), "rule__ConceptStatement__PropertySpecifiersAssignment_1_3_1_1");
+					put(grammarAccess.getConceptStatementAccess().getAttributeSpecifierAssignment_1_3_2(), "rule__ConceptStatement__AttributeSpecifierAssignment_1_3_2");
 					put(grammarAccess.getConceptStatementAccess().getConceptAssignment_2(), "rule__ConceptStatement__ConceptAssignment_2");
 					put(grammarAccess.getConceptStatementAccess().getBodyAssignment_3(), "rule__ConceptStatement__BodyAssignment_3");
 					put(grammarAccess.getConceptStatementAccess().getNameAssignment_4_1(), "rule__ConceptStatement__NameAssignment_4_1");

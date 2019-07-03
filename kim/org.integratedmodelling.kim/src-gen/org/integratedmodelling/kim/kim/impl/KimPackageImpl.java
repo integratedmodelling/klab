@@ -3127,7 +3127,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getConceptStatement_Concept()
+  public EAttribute getConceptStatement_AttributeSpecifier()
   {
     return (EAttribute)conceptStatementEClass.getEStructuralFeatures().get(6);
   }
@@ -3137,9 +3137,19 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getConceptStatement_Concept()
+  {
+    return (EAttribute)conceptStatementEClass.getEStructuralFeatures().get(7);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EReference getConceptStatement_Body()
   {
-    return (EReference)conceptStatementEClass.getEStructuralFeatures().get(7);
+    return (EReference)conceptStatementEClass.getEStructuralFeatures().get(8);
   }
 
   /**
@@ -3149,7 +3159,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getConceptStatement_Name()
   {
-    return (EAttribute)conceptStatementEClass.getEStructuralFeatures().get(8);
+    return (EAttribute)conceptStatementEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -4962,6 +4972,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEAttribute(conceptStatementEClass, CONCEPT_STATEMENT__SUBJECTIVE);
     createEAttribute(conceptStatementEClass, CONCEPT_STATEMENT__AGENT_SPECIFIER);
     createEAttribute(conceptStatementEClass, CONCEPT_STATEMENT__PROPERTY_SPECIFIERS);
+    createEAttribute(conceptStatementEClass, CONCEPT_STATEMENT__ATTRIBUTE_SPECIFIER);
     createEAttribute(conceptStatementEClass, CONCEPT_STATEMENT__CONCEPT);
     createEReference(conceptStatementEClass, CONCEPT_STATEMENT__BODY);
     createEAttribute(conceptStatementEClass, CONCEPT_STATEMENT__NAME);
@@ -5462,6 +5473,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEAttribute(getConceptStatement_Subjective(), ecorePackage.getEBoolean(), "subjective", null, 0, 1, ConceptStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConceptStatement_AgentSpecifier(), ecorePackage.getEString(), "agentSpecifier", null, 0, 1, ConceptStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConceptStatement_PropertySpecifiers(), ecorePackage.getEString(), "propertySpecifiers", null, 0, -1, ConceptStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConceptStatement_AttributeSpecifier(), ecorePackage.getEString(), "attributeSpecifier", null, 0, 1, ConceptStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConceptStatement_Concept(), ecorePackage.getEString(), "concept", null, 0, 1, ConceptStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptStatement_Body(), this.getConceptStatementBody(), null, "body", null, 0, 1, ConceptStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConceptStatement_Name(), ecorePackage.getEString(), "name", null, 0, 1, ConceptStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

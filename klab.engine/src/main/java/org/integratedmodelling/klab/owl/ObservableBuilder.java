@@ -476,6 +476,82 @@ public class ObservableBuilder implements IObservable.Builder {
 	}
 
 	@Override
+	public Builder withoutAny(IKimConcept.Type... concepts) {
+
+		ObservableBuilder ret = new ObservableBuilder(this);
+		List<ComponentRole> removedRoles = new ArrayList<>();
+		for (IKimConcept.Type concept : concepts) {
+			Pair<Collection<IConcept>, Collection<IConcept>> tdelta = Concepts.INSTANCE.copyWithoutAny(ret.traits,
+					concept);
+			ret.traits = new ArrayList<>(tdelta.getFirst());
+			ret.removed.addAll(tdelta.getSecond());
+			for (int i = 0; i < tdelta.getSecond().size(); i++) {
+				removedRoles.add(ComponentRole.TRAIT);
+			}
+			Pair<Collection<IConcept>, Collection<IConcept>> rdelta = Concepts.INSTANCE.copyWithoutAny(ret.roles,
+					concept);
+			ret.roles = new ArrayList<>(rdelta.getFirst());
+			ret.removed.addAll(rdelta.getSecond());
+			for (int i = 0; i < tdelta.getSecond().size(); i++) {
+				removedRoles.add(ComponentRole.ROLE);
+			}
+			if (ret.context != null && ret.context.is(concept)) {
+				ret.removed.add(ret.context);
+				ret.context = null;
+				removedRoles.add(ComponentRole.CONTEXT);
+			}
+			if (ret.inherent != null && ret.inherent.is(concept)) {
+				ret.removed.add(ret.inherent);
+				ret.inherent = null;
+				removedRoles.add(ComponentRole.INHERENT);
+			}
+			if (ret.adjacent != null && ret.adjacent.is(concept)) {
+				ret.removed.add(ret.adjacent);
+				ret.adjacent = null;
+				removedRoles.add(ComponentRole.ADJACENT);
+			}
+			if (ret.caused != null && ret.caused.is(concept)) {
+				ret.removed.add(ret.caused);
+				ret.caused = null;
+				removedRoles.add(ComponentRole.CAUSED);
+			}
+			if (ret.causant != null && ret.causant.is(concept)) {
+				ret.removed.add(ret.causant);
+				ret.causant = null;
+				removedRoles.add(ComponentRole.CAUSANT);
+			}
+			if (ret.compresent != null && ret.compresent.is(concept)) {
+				ret.removed.add(ret.compresent);
+				ret.compresent = null;
+				removedRoles.add(ComponentRole.COMPRESENT);
+			}
+			if (ret.goal != null && ret.goal.is(concept)) {
+				ret.removed.add(ret.goal);
+				ret.goal = null;
+				removedRoles.add(ComponentRole.GOAL);
+			}
+			if (ret.cooccurrent != null && ret.cooccurrent.is(concept)) {
+				ret.removed.add(ret.cooccurrent);
+				ret.cooccurrent = null;
+				removedRoles.add(ComponentRole.COOCCURRENT);
+			}
+		}
+		if (ret.removed.size() > 0) {
+			List<String> declarations = new ArrayList<>();
+			for (IConcept r : ret.removed) {
+				declarations.add(r.getDefinition());
+			}
+			ret.declaration = ret.declaration.removeComponents(declarations, removedRoles);
+		}
+
+		ret.checkTrivial();
+
+		return ret;
+
+	}
+
+	
+	@Override
 	public Builder withoutAny(IConcept... concepts) {
 
 		ObservableBuilder ret = new ObservableBuilder(this);

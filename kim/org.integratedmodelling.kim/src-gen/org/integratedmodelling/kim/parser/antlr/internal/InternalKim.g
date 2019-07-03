@@ -10624,6 +10624,21 @@ ruleConceptStatement returns [EObject current=null]
 										)
 									)*
 								)
+								    |
+								(
+									(
+										lv_attributeSpecifier_8_0='rescaling'
+										{
+											newLeafNode(lv_attributeSpecifier_8_0, grammarAccess.getConceptStatementAccess().getAttributeSpecifierRescalingKeyword_1_3_2_0());
+										}
+										{
+											if ($current==null) {
+												$current = createModelElement(grammarAccess.getConceptStatementRule());
+											}
+											setWithLastConsumed($current, "attributeSpecifier", lv_attributeSpecifier_8_0, "rescaling");
+										}
+									)
+								)
 								))
 					{ 
 						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getConceptStatementAccess().getUnorderedGroup_1());
@@ -10642,7 +10657,7 @@ ruleConceptStatement returns [EObject current=null]
 				{
 					newCompositeNode(grammarAccess.getConceptStatementAccess().getConceptCONCEPT_TYPEParserRuleCall_2_0());
 				}
-				lv_concept_8_0=ruleCONCEPT_TYPE
+				lv_concept_9_0=ruleCONCEPT_TYPE
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getConceptStatementRule());
@@ -10650,7 +10665,7 @@ ruleConceptStatement returns [EObject current=null]
 					set(
 						$current,
 						"concept",
-						lv_concept_8_0,
+						lv_concept_9_0,
 						"org.integratedmodelling.kim.Kim.CONCEPT_TYPE");
 					afterParserOrEnumRuleCall();
 				}
@@ -10661,7 +10676,7 @@ ruleConceptStatement returns [EObject current=null]
 				{
 					newCompositeNode(grammarAccess.getConceptStatementAccess().getBodyConceptStatementBodyParserRuleCall_3_0());
 				}
-				lv_body_9_0=ruleConceptStatementBody
+				lv_body_10_0=ruleConceptStatementBody
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getConceptStatementRule());
@@ -10669,23 +10684,23 @@ ruleConceptStatement returns [EObject current=null]
 					set(
 						$current,
 						"body",
-						lv_body_9_0,
+						lv_body_10_0,
 						"org.integratedmodelling.kim.Kim.ConceptStatementBody");
 					afterParserOrEnumRuleCall();
 				}
 			)
 		)
 		(
-			otherlv_10='named'
+			otherlv_11='named'
 			{
-				newLeafNode(otherlv_10, grammarAccess.getConceptStatementAccess().getNamedKeyword_4_0());
+				newLeafNode(otherlv_11, grammarAccess.getConceptStatementAccess().getNamedKeyword_4_0());
 			}
 			(
 				(
 					{
 						newCompositeNode(grammarAccess.getConceptStatementAccess().getNameNamespaceIdParserRuleCall_4_1_0());
 					}
-					lv_name_11_0=ruleNamespaceId
+					lv_name_12_0=ruleNamespaceId
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getConceptStatementRule());
@@ -10693,7 +10708,7 @@ ruleConceptStatement returns [EObject current=null]
 						set(
 							$current,
 							"name",
-							lv_name_11_0,
+							lv_name_12_0,
 							"org.integratedmodelling.kim.Kim.NamespaceId");
 						afterParserOrEnumRuleCall();
 					}

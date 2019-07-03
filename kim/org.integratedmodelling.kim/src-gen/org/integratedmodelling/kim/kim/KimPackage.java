@@ -2702,13 +2702,22 @@ public interface KimPackage extends EPackage
   int CONCEPT_STATEMENT__PROPERTY_SPECIFIERS = 5;
 
   /**
+   * The feature id for the '<em><b>Attribute Specifier</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_STATEMENT__ATTRIBUTE_SPECIFIER = 6;
+
+  /**
    * The feature id for the '<em><b>Concept</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT__CONCEPT = 6;
+  int CONCEPT_STATEMENT__CONCEPT = 7;
 
   /**
    * The feature id for the '<em><b>Body</b></em>' containment reference.
@@ -2717,7 +2726,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT__BODY = 7;
+  int CONCEPT_STATEMENT__BODY = 8;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2726,7 +2735,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT__NAME = 8;
+  int CONCEPT_STATEMENT__NAME = 9;
 
   /**
    * The number of structural features of the '<em>Concept Statement</em>' class.
@@ -2735,7 +2744,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_FEATURE_COUNT = 9;
+  int CONCEPT_STATEMENT_FEATURE_COUNT = 10;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl <em>Concept Statement Body</em>}' class.
@@ -7119,6 +7128,17 @@ public interface KimPackage extends EPackage
   EAttribute getConceptStatement_PropertySpecifiers();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ConceptStatement#getAttributeSpecifier <em>Attribute Specifier</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Attribute Specifier</em>'.
+   * @see org.integratedmodelling.kim.kim.ConceptStatement#getAttributeSpecifier()
+   * @see #getConceptStatement()
+   * @generated
+   */
+  EAttribute getConceptStatement_AttributeSpecifier();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ConceptStatement#getConcept <em>Concept</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -10924,6 +10944,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute CONCEPT_STATEMENT__PROPERTY_SPECIFIERS = eINSTANCE.getConceptStatement_PropertySpecifiers();
+
+    /**
+     * The meta object literal for the '<em><b>Attribute Specifier</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT_STATEMENT__ATTRIBUTE_SPECIFIER = eINSTANCE.getConceptStatement_AttributeSpecifier();
 
     /**
      * The meta object literal for the '<em><b>Concept</b></em>' attribute feature.

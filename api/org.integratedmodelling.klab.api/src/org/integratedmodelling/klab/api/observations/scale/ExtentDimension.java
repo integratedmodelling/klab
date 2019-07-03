@@ -29,5 +29,19 @@ public enum ExtentDimension {
     AREAL,
     VOLUMETRIC,
     TEMPORAL,
-    CONCEPTUAL
+    CONCEPTUAL;
+	
+	public static ExtentDimension spatial(int spaceDimensionality) {
+		switch (spaceDimensionality) {
+		case 0:
+			return PUNTAL;
+		case 1:
+			return LINEAL;
+		case 2:
+			return AREAL;
+		case 3:
+			return VOLUMETRIC;
+		}
+		throw new IllegalArgumentException("ExtentDimension: dimensionality " + spaceDimensionality + " is not handled in this implementation");
+	}
 }
