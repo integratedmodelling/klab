@@ -789,9 +789,10 @@ public enum Resources implements IResourceService {
 
 		IObservable observable = observableSemantics instanceof IObservable ? (IObservable) observableSemantics
 				: (observableSemantics == null ? null : Observable.promote(observableSemantics.getType()));
-		IObservable contextObservable = contextObservableSemantics instanceof IObservable 
+		IObservable contextObservable = contextObservableSemantics instanceof IObservable
 				? (IObservable) contextObservableSemantics
-				: (contextObservableSemantics == null ? null : Observable.promote(contextObservableSemantics.getType()));
+				: (contextObservableSemantics == null ? null
+						: Observable.promote(contextObservableSemantics.getType()));
 
 		Pair<String, Map<String, String>> urnp = Urns.INSTANCE.resolveParameters(urn);
 		IResource resource = resolveResource(urn);
@@ -836,6 +837,43 @@ public enum Resources implements IResourceService {
 		return builder.build();
 	}
 
+	// @Override
+	// public IKlabData getResourceData(IResource resource, Map<String, String>
+	// urnParameters, IGeometry geometry,
+	// IComputationContext context) {
+	//
+	// if (Urns.INSTANCE.isLocal(resource.getUrn())) {
+	//
+	// IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
+	// if (adapter == null) {
+	// throw new KlabUnsupportedFeatureException(
+	// "adapter for resource of type " + resource.getAdapterType() + " not
+	// available");
+	// }
+	//
+	// IKlabData.Builder builder = new LocalDataBuilder((IRuntimeContext) context);
+	// try {
+	// adapter.getEncoder().getEncodedData(resource, urnParameters, geometry,
+	// builder, context);
+	// return builder.build();
+	// } catch (Throwable t) {
+	// context.getMonitor().error("cannot access resource data for " +
+	// resource.getUrn());
+	// }
+	// } else {
+	//
+	// /*
+	// * TODO send REST request to any node that owns this resource - start with the
+	// * named owner if we have it; if unsuccessful, try using resolution service on
+	// * all nodes. Then use the get endpoint.
+	// */
+	// }
+	// return null;
+	// }
+
+	/*
+	 * OLD version: the one above will break the system when errors happen - TODO figure out why.
+	 */
 	@Override
 	public IKlabData getResourceData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
 			IComputationContext context) {
@@ -849,12 +887,9 @@ public enum Resources implements IResourceService {
 			}
 
 			IKlabData.Builder builder = new LocalDataBuilder((IRuntimeContext) context);
-			try {
-				adapter.getEncoder().getEncodedData(resource, urnParameters, geometry, builder, context);
-				return builder.build();
-			} catch (Throwable t) {
-				context.getMonitor().error("cannot access resource data for " + resource.getUrn());
-			}
+			adapter.getEncoder().getEncodedData(resource, urnParameters, geometry, builder, context);
+			return builder.build();
+
 		} else {
 
 			/*
@@ -1248,7 +1283,7 @@ public enum Resources implements IResourceService {
 		}
 		return Geometry.scalar();
 	}
-	
+
 	/**
 	 * Return the type computed by the specified resource.
 	 * 
@@ -1283,7 +1318,7 @@ public enum Resources implements IResourceService {
 			break;
 		default:
 			break;
-		
+
 		}
 		return null;
 	}
