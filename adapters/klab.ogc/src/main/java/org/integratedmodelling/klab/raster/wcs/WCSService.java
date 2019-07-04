@@ -424,10 +424,12 @@ public class WCSService {
 				}
 			} catch (IOException e) {
 				errors.add(e);
+				Logging.INSTANCE.error(e);
 			}
 
 		} catch (Throwable e) {
 			errors.add(e);
+            Logging.INSTANCE.error(e);
 		}
 	}
 
