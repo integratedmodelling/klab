@@ -269,11 +269,11 @@ public class PolygonInstantiator implements IExpression, IInstantiator {
 		return new PolygonInstantiator(parameters, context);
 	}
 
-	@Override
-	public IGeometry getGeometry() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
 	private LinearRing[] getLinearRings(List<java.awt.Polygon> rings) {
 		ArrayList<LinearRing> ret = new ArrayList<>();

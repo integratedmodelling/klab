@@ -24,10 +24,10 @@ public class GeomorphonResolver implements IResolver<IState>, IExpression {
 	double pRadius = Double.NaN;
 	double pThreshold = Double.NaN;
 
-	@Override
-	public IGeometry getGeometry() {
-		return Geometry.create("S2");
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return Geometry.create("S2");
+//	}
 
 	@Override
 	public Type getType() {

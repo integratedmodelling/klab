@@ -181,10 +181,10 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 		return ret;
 	}
 
-	@Override
-	public IGeometry getGeometry() {
-		return Geometry.scalar();
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return Geometry.scalar();
+//	}
 
 	@Override
 	public IArtifact.Type getType() {

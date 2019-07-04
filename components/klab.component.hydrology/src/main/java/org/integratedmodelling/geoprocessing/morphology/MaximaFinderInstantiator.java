@@ -14,7 +14,6 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -24,7 +23,6 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
-import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
@@ -55,10 +53,10 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 	int size = 3;
 	private String thresholdExpression;
 
-	@Override
-	public IGeometry getGeometry() {
-		return Geometry.create("#s0");
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return Geometry.create("#s0");
+//	}
 
 	@Override
 	public Type getType() {

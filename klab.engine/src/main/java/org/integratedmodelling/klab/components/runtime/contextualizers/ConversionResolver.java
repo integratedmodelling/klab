@@ -49,10 +49,10 @@ public class ConversionResolver implements IResolver<IState>, IProcessor, IExpre
 				(IValueMediator) parameters.get("target"));
 	}
 
-	@Override
-	public IGeometry getGeometry() {
-		return Geometry.scalar();
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return Geometry.scalar();
+//	}
 
 	@Override
 	public IState resolve(IState ret, IComputationContext context) throws KlabException {

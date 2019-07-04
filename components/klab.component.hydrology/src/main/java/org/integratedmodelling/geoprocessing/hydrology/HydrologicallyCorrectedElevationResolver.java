@@ -19,10 +19,10 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 
 public class HydrologicallyCorrectedElevationResolver implements IResolver<IState>, IExpression {
 
-	@Override
-	public IGeometry getGeometry() {
-		return Geometry.create("S2");
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return Geometry.create("S2");
+//	}
 
 	@Override
 	public Type getType() {

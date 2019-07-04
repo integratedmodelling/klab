@@ -26,3 +26,10 @@
 		default ()
 		
 }
+
+ annotation main for models 
+ 	"Identify a model as producing output that will be shown as a main result to the user. Only
+ 	 affects visualization."
+{
+	// TODO add optional labels and descriptions
+}

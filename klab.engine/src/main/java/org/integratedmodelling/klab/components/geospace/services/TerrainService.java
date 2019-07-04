@@ -23,10 +23,10 @@ public class TerrainService implements IResolver<IDataArtifact>, IExpression {
 		return new TerrainService();
 	}
 
-	@Override
-	public IGeometry getGeometry() {
-		return Geometry.create("S2");
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return Geometry.create("S2");
+//	}
 
 	@Override
 	public IDataArtifact resolve(IDataArtifact ret, IComputationContext context) {

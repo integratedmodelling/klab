@@ -19,11 +19,11 @@ public class GeneralNetworkResolver implements IResolver<IConfiguration> {
 
 	Network network;
 	
-	@Override
-	public IGeometry getGeometry() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
 	@Override
 	public Type getType() {

@@ -66,10 +66,10 @@ public class UrnInstantiator implements IExpression, IInstantiator {
 		return new UrnInstantiator(parameters.get("urn", String.class));
 	}
 
-	@Override
-	public IGeometry getGeometry() {
-		return resource.getGeometry();
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return resource.getGeometry();
+//	}
 
 	@Override
 	public IArtifact.Type getType() {

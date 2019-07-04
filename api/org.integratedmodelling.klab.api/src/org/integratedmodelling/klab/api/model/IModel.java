@@ -24,6 +24,8 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
+import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
 import org.integratedmodelling.klab.api.resolution.IComputable;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 
@@ -215,5 +217,16 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
 	 * @return the implicit geometry from the resources, or null.
 	 */
 	IGeometry getGeometry();
+
+	/**
+	 * The asserted dimensionality of the model, combining the geometry of
+	 * resources, the declared scale if any, and any constraints set through
+	 * intensive/extensive annotations. Affects the validation of units of 
+	 * measurement and the mediation with other models and resources.
+	 * 
+	 * @return a map of each asserted dimension to the type of aggregation expected
+	 *         in it.
+	 */
+	Map<ExtentDimension, ExtentDistribution> getAssertedDimensionality();
 
 }

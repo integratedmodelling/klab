@@ -3,7 +3,6 @@ package org.integratedmodelling.geoprocessing.hydrology;
 import org.integratedmodelling.geoprocessing.GeoprocessingComponent;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Units;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
@@ -13,7 +12,6 @@ import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
-import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
@@ -25,10 +23,10 @@ import com.vividsolutions.jts.geom.Point;
 
 public class RunoffResolver implements IResolver<IState>, IExpression {
 	
-	@Override
-	public IGeometry getGeometry() {
-		return Geometry.create("S2");
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return Geometry.create("S2");
+//	}
 
 	@Override
 	public Type getType() {

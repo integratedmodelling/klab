@@ -13,6 +13,13 @@ annotation extensive for models
 		"The extents over which the results are aggregated."
 }
 
+annotation intensive for models 
+	"The model produces intensive results, whose values are distributed over $value when outputs are generated."
+{
+	list 'value'
+		"The extents over which the results are distributed."
+}
+
 annotation reliability for models
 	"The reliability score forms part of the strategy used by k.LAB to rank models during resolution. The value 
      is used as part of the set of subjective rankings, which are combined using a multiple criteria algorithm

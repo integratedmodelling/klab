@@ -13,7 +13,6 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Units;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
@@ -26,7 +25,6 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
-import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
@@ -61,10 +59,10 @@ public class CategoryClassificationResolver
                 context.getArtifact(parameters.get("classifier", String.class)));
     }
 
-    @Override
-    public IGeometry getGeometry() {
-        return Geometry.scalar();
-    }
+//    @Override
+//    public IGeometry getGeometry() {
+//        return Geometry.scalar();
+//    }
 
     @Override
     public IState resolve(IState ret, IComputationContext context) throws KlabException {

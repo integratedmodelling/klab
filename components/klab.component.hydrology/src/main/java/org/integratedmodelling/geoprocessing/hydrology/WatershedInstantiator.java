@@ -10,7 +10,6 @@ import org.hortonmachine.hmachine.modules.demmanipulation.wateroutlet.OmsExtract
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -24,7 +23,6 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
@@ -59,10 +57,10 @@ public class WatershedInstantiator implements IInstantiator, IExpression {
 
 	};
 
-	@Override
-	public IGeometry getGeometry() {
-		return Geometry.create("#s2");
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return Geometry.create("#s2");
+//	}
 
 	@Override
 	public Type getType() {

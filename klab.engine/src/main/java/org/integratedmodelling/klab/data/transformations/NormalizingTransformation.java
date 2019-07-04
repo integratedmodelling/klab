@@ -30,10 +30,10 @@ public class NormalizingTransformation implements IResolver<IState>, IExpression
 		this.state = (IState) artifact;
 	}
 
-	@Override
-	public IGeometry getGeometry() {
-		return state.getScale();
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return state.getScale();
+//	}
 
 	@Override
 	public Type getType() {

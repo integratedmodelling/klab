@@ -7,7 +7,6 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.KimServiceCall;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -17,7 +16,6 @@ import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
-import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
@@ -63,10 +61,10 @@ public class ValueOperatorResolver implements IResolver<IState>, IProcessor, IEx
 		return new ValueOperatorResolver(classified, operator, valueOperand, stateOperand);
 	}
 
-	@Override
-	public IGeometry getGeometry() {
-		return Geometry.scalar();
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return Geometry.scalar();
+//	}
 
 	/*
 	 * TODO extract this mechanism into a caching class which also handles AND and

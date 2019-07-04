@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.integratedmodelling.geoprocessing.GeoprocessingComponent;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -18,7 +17,6 @@ import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
-import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.api.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
@@ -40,10 +38,10 @@ public class StreamInstantiator implements IInstantiator, IExpression {
 	Map<Cell, List<Coordinate>> segments = new HashMap<>();
 	List<com.vividsolutions.jts.geom.Geometry> lines = new ArrayList<>();
 
-	@Override
-	public IGeometry getGeometry() {
-		return Geometry.create("S2");
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return Geometry.create("S2");
+//	}
 
 	@Override
 	public Type getType() {

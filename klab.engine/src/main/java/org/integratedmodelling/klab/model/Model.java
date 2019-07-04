@@ -14,6 +14,7 @@ import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Configuration;
@@ -25,6 +26,7 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
@@ -36,6 +38,8 @@ import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
+import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -52,6 +56,7 @@ import org.integratedmodelling.klab.resolution.CompatibleObservable;
 import org.integratedmodelling.klab.resolution.ObservableReasoner.CandidateObservable;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.CollectionUtils;
 
 public class Model extends KimObject implements IModel {
 
@@ -90,6 +95,8 @@ public class Model extends KimObject implements IModel {
 	private List<IResource> resourcesUsed = new ArrayList<>();
 	private long lastResourceCheck;
 	private boolean available = true;
+
+	Map<ExtentDimension, ExtentDistribution> declaredDimensionality;
 
 	// only for the delegate RankedModel
 	protected Model() {
@@ -213,39 +220,36 @@ public class Model extends KimObject implements IModel {
 				}
 				typechain.put(target, type);
 			}
+			mergeGeometry(geometry, monitor);
+		}
 
-			if (geometry != null) {
-				if (this.geometry == null) {
-					this.geometry = geometry;
-				} else {
-					this.geometry = ((Geometry) this.geometry).merge(geometry);
-					if (this.geometry == null) {
-						monitor.error(
-								"the model uses inconsistent space/time geometries across the computational chain",
-								this.getStatement());
-						setErrors(true);
-					}
-				}
-			}
+		mergeGeometry(getCoverage(monitor).asGeometry(), monitor);
+
+		if (geometry == null) {
+			geometry = Geometry.scalar();
 		}
 
 		/*
 		 * check units against geometry
 		 */
-		if (geometry != null && observables.get(0).is(Type.QUALITY)) {
+		for (IObservable observable : CollectionUtils.join(observables, dependencies)) {
 
-			CompileNotification notification = Units.INSTANCE.validateUnit(observables.get(0), geometry,
-					Annotations.INSTANCE.getAnnotation(this, "extensive"));
+			if (observable.is(Type.QUALITY)) {
 
-			if (notification != null) {
+				CompileNotification notification = Units.INSTANCE.validateUnit(observable, geometry,
+						Annotations.INSTANCE.getAnnotation(this, "extensive"));
 
-				if (notification.getLevel().equals(Level.WARNING)) {
-					monitor.warn(notification.getMessage(), this.getStatement());
-				} else if (notification.getLevel().equals(Level.SEVERE)) {
-					monitor.error(notification.getMessage(), this.getStatement());
-					setErrors(true);
+				if (notification != null) {
+
+					if (notification.getLevel().equals(Level.WARNING)) {
+						monitor.warn(notification.getMessage(), this.getStatement());
+					} else if (notification.getLevel().equals(Level.SEVERE)) {
+						monitor.error(notification.getMessage(), this.getStatement());
+						setErrors(true);
+					}
 				}
 			}
+			
 		}
 
 		// check final type of observable against typechain
@@ -255,6 +259,22 @@ public class Model extends KimObject implements IModel {
 				if (!IArtifact.Type.isCompatible(required, typechain.get(observable.getName()))) {
 					monitor.error("the computation produces output of type " + typechain.get(observable.getName())
 							+ " for " + observable.getName() + " when " + required + " is expected",
+							this.getStatement());
+					setErrors(true);
+				}
+			}
+		}
+	}
+
+	private void mergeGeometry(IGeometry geometry, IMonitor monitor) {
+
+		if (geometry != null) {
+			if (this.geometry == null) {
+				this.geometry = geometry;
+			} else if (!geometry.isEmpty()) {
+				this.geometry = ((Geometry) this.geometry).merge(geometry);
+				if (this.geometry == null) {
+					monitor.error("the model uses inconsistent space/time geometries across the computational chain",
 							this.getStatement());
 					setErrors(true);
 				}
@@ -587,7 +607,7 @@ public class Model extends KimObject implements IModel {
 	public Scale getCoverage(IMonitor monitor) throws KlabException {
 
 		if (this.coverage == null) {
-			this.coverage = Scale.create(behavior.getExtents(monitor));
+			this.coverage = Scale.create(behavior == null ? new ArrayList<>() : behavior.getExtents(monitor));
 			if (resourceCoverage != null) {
 				this.coverage = this.coverage.merge(resourceCoverage, LogicalConnector.INTERSECTION);
 			}
@@ -716,6 +736,82 @@ public class Model extends KimObject implements IModel {
 	@Override
 	public IGeometry getGeometry() {
 		return geometry;
+	}
+
+	@Override
+	public Map<ExtentDimension, ExtentDistribution> getAssertedDimensionality() {
+		return getAssertedDimensionality(null);
+	}
+
+	public Map<ExtentDimension, ExtentDistribution> getAssertedDimensionality(IMonitor monitor) {
+
+		if (this.declaredDimensionality == null) {
+
+			this.declaredDimensionality = new HashMap<>();
+
+			if (geometry != null) {
+
+				for (Dimension dimension : geometry.getDimensions()) {
+					if (dimension.getType() == Dimension.Type.SPACE) {
+						this.declaredDimensionality.put(ExtentDimension.spatial(dimension.getDimensionality()),
+								dimension.isRegular() || dimension.size() > 0 ? ExtentDistribution.INTENSIVE
+										: ExtentDistribution.EXTENSIVE);
+					} else if (dimension.getType() == Dimension.Type.TIME) {
+						this.declaredDimensionality.put(ExtentDimension.TEMPORAL,
+								dimension.isRegular() || dimension.size() > 0 ? ExtentDistribution.INTENSIVE
+										: ExtentDistribution.EXTENSIVE);
+					} else if (dimension.getType() == Dimension.Type.NUMEROSITY) {
+						this.declaredDimensionality.put(ExtentDimension.CONCEPTUAL,
+								dimension.isRegular() || dimension.size() > 0 ? ExtentDistribution.INTENSIVE
+										: ExtentDistribution.EXTENSIVE);
+					}
+				}
+			}
+
+			for (IAnnotation annotation : new IAnnotation[] { Annotations.INSTANCE.getAnnotation(this, "extensive"),
+					Annotations.INSTANCE.getAnnotation(this, "intensive") }) {
+				if (annotation != null) {
+					for (Object o : annotation.get(IServiceCall.DEFAULT_PARAMETER_NAME, List.class)) {
+						switch (o.toString()) {
+						case "space":
+						case "area":
+							this.declaredDimensionality.put(ExtentDimension.AREAL,
+									annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
+											: ExtentDistribution.INTENSIVE);
+							break;
+						case "line":
+							this.declaredDimensionality.put(ExtentDimension.LINEAL,
+									annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
+											: ExtentDistribution.INTENSIVE);
+							break;
+						case "volume":
+							this.declaredDimensionality.put(ExtentDimension.VOLUMETRIC,
+									annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
+											: ExtentDistribution.INTENSIVE);
+							break;
+						case "time":
+							this.declaredDimensionality.put(ExtentDimension.VOLUMETRIC,
+									annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
+											: ExtentDistribution.INTENSIVE);
+						case "numerosity":
+							this.declaredDimensionality.put(ExtentDimension.VOLUMETRIC,
+									annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
+											: ExtentDistribution.INTENSIVE);
+							break;
+						default:
+							if (monitor != null) {
+								monitor.error(
+										"Illegal extent in " + annotation.getName() + " annotation: " + o
+												+ ": allowed are space|area, line, volume, time and numerosity",
+										getStatement());
+							}
+						}
+					}
+				}
+			}
+		}
+		return this.declaredDimensionality;
+
 	}
 
 }

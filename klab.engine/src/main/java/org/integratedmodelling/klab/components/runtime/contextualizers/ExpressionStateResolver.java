@@ -52,10 +52,10 @@ public class ExpressionStateResolver implements IStateResolver {
                 : null;
     }
 
-    @Override
-    public IGeometry getGeometry() {
-        return Geometry.scalar();
-    }
+//    @Override
+//    public IGeometry getGeometry() {
+//        return Geometry.scalar();
+//    }
 
     @Override
     public IArtifact.Type getType() {

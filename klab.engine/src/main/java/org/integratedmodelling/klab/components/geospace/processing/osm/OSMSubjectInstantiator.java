@@ -151,11 +151,11 @@ public class OSMSubjectInstantiator implements IInstantiator, IExpression {
         }
     }
 
-    @Override
-    public IGeometry getGeometry() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+//    @Override
+//    public IGeometry getGeometry() {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
 
     @Override
     public Type getType() {

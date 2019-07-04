@@ -31,10 +31,10 @@ public class ConcordanceResolver implements IResolver<IState>, IExpression {
 	MCAContext mcaContext;
 	IGeometry geometry;
 
-	@Override
-	public IGeometry getGeometry() {
-		return geometry;
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return geometry;
+//	}
 
 	@Override
 	public Type getType() {

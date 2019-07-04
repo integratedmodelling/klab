@@ -7,7 +7,6 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Resources;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -56,10 +55,10 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
 		return new UrnResolver(parameters.get("urn", String.class));
 	}
 
-	@Override
-	public IGeometry getGeometry() {
-		return resource.getGeometry();
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return resource.getGeometry();
+//	}
 
 	@Override
 	public Type getType() {

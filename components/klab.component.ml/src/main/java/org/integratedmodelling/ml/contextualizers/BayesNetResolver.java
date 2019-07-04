@@ -2,14 +2,10 @@ package org.integratedmodelling.ml.contextualizers;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.model.KimServiceCall;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.general.IExpression;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.rest.ServiceCall;
-import org.integratedmodelling.klab.scale.Scale;
 
 import weka.classifiers.bayes.BayesNet;
 
@@ -70,12 +66,12 @@ public class BayesNetResolver extends AbstractWekaResolver<BayesNet> implements 
 		return parameters;
 	}
 
-	@Override
-	public IGeometry getGeometry() {
-		// TODO check
-		return ((Scale)context.getScale().at(ITime.INITIALIZATION)).asGeometry();
-	}
-
+//	@Override
+//	public IGeometry getGeometry() {
+//		// TODO check
+//		return ((Scale)context.getScale().at(ITime.INITIALIZATION)).asGeometry();
+//	}
+//
 	@Override
 	public Type getType() {
 		return Type.NUMBER;

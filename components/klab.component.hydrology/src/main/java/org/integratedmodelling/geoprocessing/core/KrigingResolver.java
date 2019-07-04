@@ -54,10 +54,10 @@ public class KrigingResolver implements IResolver<IState>, IExpression {
 	private boolean gaussian = true;
 	private boolean logarithmic = false;
 
-	@Override
-	public IGeometry getGeometry() {
-		return Geometry.create("S2");
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return Geometry.create("S2");
+//	}
 
 	@Override
 	public Type getType() {

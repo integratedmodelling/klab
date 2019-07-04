@@ -42,10 +42,10 @@ public class CastingStateResolver implements IStateResolver, IProcessor, IExpres
 				IArtifact.Type.valueOf(parameters.get("destination", String.class)));
 	}
 
-	@Override
-	public IGeometry getGeometry() {
-		return Geometry.scalar();
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return Geometry.scalar();
+//	}
 
 	@Override
 	public Object resolve(IObservable observable, IComputationContext context) throws KlabException {

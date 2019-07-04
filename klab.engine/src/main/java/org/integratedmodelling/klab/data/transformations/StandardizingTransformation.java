@@ -29,10 +29,10 @@ public class StandardizingTransformation implements IResolver<IState>, IProcesso
 		this.state = (IState) artifact;
 	}
 
-	@Override
-	public IGeometry getGeometry() {
-		return state.getScale();
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return state.getScale();
+//	}
 
 	@Override
 	public Type getType() {

@@ -58,10 +58,10 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 	IExpression valueExpression = null;
 	LongAdder adder = new LongAdder();
 
-	@Override
-	public IGeometry getGeometry() {
-		return Geometry.create("S2");
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return Geometry.create("S2");
+//	}
 
 	@Override
 	public Type getType() {

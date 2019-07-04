@@ -453,7 +453,7 @@ public enum Units implements IUnitService {
 
 				if (!observable.getUnit().isCompatible(defUnit) && !observable.getUnit().isCompatible(ctxUnit)) {
 					return CompileNotification.create(Level.SEVERE,
-							"Unit " + observable.getUnit()
+							"Unit " + observable.getUnit() + " in " + observable.getName()
 									+ (dimensions.size() == 0 ? (" is not compatible with the default " + defUnit)
 											: (" is not compatible with the contextualized unit " + ctxUnit
 													+ " nor with the aggregated unit " + defUnit)),
@@ -462,22 +462,23 @@ public enum Units implements IUnitService {
 
 				/*
 				 * No temporality or spatiality in the unit triggers a warning unless the
-				 * aggregation dimension is mentioned in the annotation
-				 * TODO should account for PARTIAL distribution over just one dimension
+				 * aggregation dimension is mentioned in the annotation TODO should account for
+				 * PARTIAL distribution over just one dimension
 				 */
 				if (isDistributedInSpace && !observable.getUnit().isCompatible(ctxUnit)) {
 					if (spatialDimensionality == 0 && !(extensiveAnnotation != null
 							&& Annotations.INSTANCE.defaultsContain(extensiveAnnotation, "space"))) {
-						warning += "Unit " + observable.getUnit()
+						warning += "Unit " + observable.getUnit() + " in " + observable.getName()
 								+ " is not distributed in space when the geometry implies it. If this is intentional, add an @extensive(space) annotation to declare it.";
 					}
 				}
 				if (isDistributedInTime && !observable.getUnit().isCompatible(ctxUnit)) {
 					if (temporalDimensionality == 0 && !(extensiveAnnotation != null
 							&& Annotations.INSTANCE.defaultsContain(extensiveAnnotation, "time"))) {
-						warning += (warning.isEmpty() ? ("Unit " + observable.getUnit()) : "\n It also")
+						warning += (warning.isEmpty() ? ("Unit " + observable.getUnit() + " in " + observable.getName())
+								: "\n It also")
 								+ " is not distributed in time when the geometry implies it. If this is intentional, add an @extensive(time) annotation to declare it.";
-					} 
+					}
 				}
 
 				if (!error.isEmpty()) {
@@ -523,7 +524,8 @@ public enum Units implements IUnitService {
 		}
 
 		if (/* still */ assignUnits) {
-			Object unit = Concepts.INSTANCE.getMetadata(Observables.INSTANCE.getBaseObservable(concept), NS.SI_UNIT_PROPERTY);
+			Object unit = Concepts.INSTANCE.getMetadata(Observables.INSTANCE.getBaseObservable(concept),
+					NS.SI_UNIT_PROPERTY);
 			return unit == null ? null : getUnit(unit.toString());
 		}
 		return null;

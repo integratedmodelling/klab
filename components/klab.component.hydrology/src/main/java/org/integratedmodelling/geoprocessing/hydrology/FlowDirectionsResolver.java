@@ -22,10 +22,10 @@ public class FlowDirectionsResolver implements IResolver<IState>, IExpression {
 
 	boolean computeAngles = false;
 	
-	@Override
-	public IGeometry getGeometry() {
-		return Geometry.create("S2");
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return Geometry.create("S2");
+//	}
 
 	@Override
 	public Type getType() {

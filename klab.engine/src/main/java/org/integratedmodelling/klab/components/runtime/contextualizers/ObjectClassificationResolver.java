@@ -59,10 +59,10 @@ public class ObjectClassificationResolver
                 context.getArtifact(parameters.get("classifier", String.class)));
     }
 
-    @Override
-    public IGeometry getGeometry() {
-        return Geometry.scalar();
-    }
+//    @Override
+//    public IGeometry getGeometry() {
+//        return Geometry.scalar();
+//    }
 
     @Override
     public IState resolve(IState ret, IComputationContext context) throws KlabException {

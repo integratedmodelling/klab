@@ -249,7 +249,7 @@ public class Prototype implements IPrototype {
 				ret.add(new Pair<>(name + ": argument " + arg + " is not recognized", Level.SEVERE));
 			} else {
 				Object val = function.getParameters().get(arg);
-				if (!classify(val, argument)) {
+				if ((val = classify(val, argument)) == null) {
 					ret.add(new Pair<>(name + ": argument " + arg + " is of incompatible type: "
 							+ (argument.getType() == Type.ENUM
 									? ("one of " + Arrays.toString(
@@ -269,8 +269,12 @@ public class Prototype implements IPrototype {
 		// do it when things are calm.
 		return ret;
 	}
-
-	private boolean classify(Object val, ArgumentImpl argument) {
+	
+	/*
+	 * Validate the passed object as the type requested and return it (or its transformation if
+	 * allowed) if valid; return null otherwise.
+	 */
+	private Object classify(Object val, ArgumentImpl argument) {
 		if (val == null) {
 			return true;
 		}
@@ -279,7 +283,7 @@ public class Prototype implements IPrototype {
 			break;
 		case BOOLEAN:
 			if (!(val instanceof Boolean)) {
-				return false;
+				return null;
 			}
 			break;
 		case CONCEPT:
@@ -290,17 +294,19 @@ public class Prototype implements IPrototype {
 			break;
 		case ENUM:
 			if (argument.enumValues == null || !argument.enumValues.contains(val.toString())) {
-				return false;
+				return null;
 			}
 			break;
 		case LIST:
 			if (!(val instanceof List)) {
-				return false;
+				List<Object> ret = new ArrayList<>();
+				ret.add(val);
+				val = ret;
 			}
 			break;
 		case NUMBER:
 			if (!(val instanceof Number)) {
-				return false;
+				return null;
 			}
 			break;
 		case EXTENT:
@@ -317,14 +323,14 @@ public class Prototype implements IPrototype {
 			break;
 		case TEXT:
 			if (!(val instanceof String)) {
-				return false;
+				return null;
 			}
 			break;
 		case VALUE:
 			break;
 		case TABLE:
 			if (!(val instanceof Map || val instanceof ITable)) {
-				return false;
+				return null;
 			}
 			break;
 		case VOID:
@@ -334,7 +340,7 @@ public class Prototype implements IPrototype {
 			break;
 
 		}
-		return true;
+		return val;
 	}
 
 	@Override

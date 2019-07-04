@@ -68,10 +68,10 @@ public class LiteralStateResolver implements IStateResolver, IExpression {
 		return new LiteralStateResolver(parameters.get("val"));
 	}
 
-	@Override
-	public IGeometry getGeometry() {
-		return Geometry.scalar();
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return Geometry.scalar();
+//	}
 
 	@Override
 	public Object resolve(IObservable semantics, IComputationContext context) {

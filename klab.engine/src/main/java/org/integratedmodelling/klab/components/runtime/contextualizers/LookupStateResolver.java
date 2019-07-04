@@ -41,10 +41,10 @@ public class LookupStateResolver implements IStateResolver, IProcessor, IExpress
 		return new LookupStateResolver(parameters.get("table", ILookupTable.class));
 	}
 
-	@Override
-	public IGeometry getGeometry() {
-		return Geometry.scalar();
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return Geometry.scalar();
+//	}
 
 	@Override
 	public Object resolve(IObservable observable, IComputationContext context) throws KlabException {

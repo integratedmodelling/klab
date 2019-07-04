@@ -30,10 +30,10 @@ public class FeatureBufferingInstantiator implements IInstantiator, IExpression 
 	private boolean subtract;
 	private double simplify = 0;
 
-	@Override
-	public IGeometry getGeometry() {
-		return Geometry.create("#s2");
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return Geometry.create("#s2");
+//	}
 
 	@Override
 	public Type getType() {

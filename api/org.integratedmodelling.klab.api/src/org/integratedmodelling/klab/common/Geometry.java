@@ -803,6 +803,16 @@ public class Geometry implements IGeometry {
     			add.add(((DimensionImpl)dimension).copy());
     		} else if (!((DimensionImpl)getDimension(dimension.getType())).isCompatible(dimension)) {
     			return null;
+    		} else {
+    			Dimension myDimension = getDimension(dimension.getType());
+    			if (myDimension.size() == 0 && dimension.size() > 0) {
+    				// merging a distributed dimension makes us distributed
+    				((DimensionImpl)myDimension).shape = ((DimensionImpl)dimension).shape.clone();
+    			}
+    			if (myDimension.isRegular() && !dimension.isRegular() && dimension.size() > 1) {
+    				// merging an irregular dimension makes us irregular
+    				((DimensionImpl)myDimension).regular = false;    
+    			}
     		}
     	}
     	

@@ -42,10 +42,10 @@ public class ClassifyingStateResolver implements IStateResolver, IProcessor, IEx
 		return new ClassifyingStateResolver(parameters.get("classification", IClassification.class));
 	}
 
-	@Override
-	public IGeometry getGeometry() {
-		return Geometry.scalar();
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return Geometry.scalar();
+//	}
 
 	@Override
 	public Object resolve(IObservable observable, IComputationContext context) throws KlabException {

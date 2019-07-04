@@ -540,6 +540,8 @@ public class ContextView extends ViewPart {
 		case UserProjectModified:
 			break;
 		case UserProjectOpened:
+			// TODO here the project load has ended and we should make a spinner stop spinning or something like that.
+			System.out.println("PROJECT SYNCHRONIZATION FINISHED");
 			break;
 		default:
 			break;

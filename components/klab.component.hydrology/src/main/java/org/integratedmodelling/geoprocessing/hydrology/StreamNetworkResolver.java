@@ -20,10 +20,10 @@ public class StreamNetworkResolver implements IResolver<IState>, IExpression {
 
 	double threshold = Double.NaN;
 
-	@Override
-	public IGeometry getGeometry() {
-		return Geometry.create("S2");
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return Geometry.create("S2");
+//	}
 
 	@Override
 	public Type getType() {

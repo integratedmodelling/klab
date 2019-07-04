@@ -32,10 +32,10 @@ public class RankingInstantiator implements IInstantiator, IProcessor, IExpressi
 	Method method = Method.EVAMIX;
 	boolean normalize = true;
 	
-	@Override
-	public IGeometry getGeometry() {
-		return Geometry.create("#");
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return Geometry.create("#");
+//	}
 
 	@Override
 	public Type getType() {

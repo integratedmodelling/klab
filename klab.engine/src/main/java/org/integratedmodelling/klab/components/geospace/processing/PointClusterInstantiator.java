@@ -201,10 +201,10 @@ public class PointClusterInstantiator implements IExpression, IInstantiator {
 		return ret;
 	}
 
-	@Override
-	public IGeometry getGeometry() {
-		return org.integratedmodelling.klab.common.Geometry.create("#s2");
-	}
+//	@Override
+//	public IGeometry getGeometry() {
+//		return org.integratedmodelling.klab.common.Geometry.create("#s2");
+//	}
 
 	@Override
 	public IArtifact.Type getType() {
