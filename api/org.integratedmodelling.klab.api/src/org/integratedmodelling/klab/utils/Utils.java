@@ -1,10 +1,12 @@
 package org.integratedmodelling.klab.utils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
-import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
@@ -131,7 +133,7 @@ public class Utils {
 
     /**
      * Basic conversions to match a type, including null -> NaN when what's wanted
-     * is a double or float
+     * is a double or float. Any value will be put into a list if a list is asked for.
      * 
      * @param ret
      * @param cls
@@ -144,6 +146,16 @@ public class Utils {
             return (T) ret;
         }
 
+        if (cls.equals(List.class)) {
+    		List<Object> list = new ArrayList<>(); 
+        	if (ret instanceof Collection) {
+        		list.addAll((Collection<?>)ret);
+        	} else {
+        		list.add(ret);
+        	}
+        	return (T)list;
+        }
+        
         if (ret == null) {
             if (cls.equals(Double.class)) {
                 return (T) new Double(Double.NaN);

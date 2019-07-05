@@ -230,14 +230,16 @@ public class Model extends KimObject implements IModel {
 		}
 
 		/*
-		 * check units against geometry
+		 * check units against geometry, in every observable
 		 */
+		Map<ExtentDimension, ExtentDistribution> dimensions = getAssertedDimensionality(monitor);
+		
 		for (IObservable observable : CollectionUtils.join(observables, dependencies)) {
 
 			if (observable.is(Type.QUALITY)) {
 
 				CompileNotification notification = Units.INSTANCE.validateUnit(observable, geometry,
-						Annotations.INSTANCE.getAnnotation(this, "extensive"));
+						Annotations.INSTANCE.getAnnotation(this, "extensive"), dimensions);
 
 				if (notification != null) {
 

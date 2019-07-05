@@ -16,9 +16,12 @@
 package org.integratedmodelling.klab.api.services;
 
 import java.util.Collection;
+import java.util.Map;
+
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
+import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 
 /**
@@ -45,6 +48,25 @@ public interface IUnitService {
      * @return a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
      */
     IUnit addExtents(IUnit refUnit, Collection<ExtentDimension> extentDimensions);
+
+    /**
+     * Remove extents.
+     * 
+     * @param refUnit
+     * @param extentDimensions
+     * @return
+     */
+	IUnit removeExtents(IUnit refUnit, Collection<ExtentDimension> extentDimensions);
+
+    /**
+     * Add and/or remove the extents specified by the passed map to the passed unit.
+     * 
+     * @param refUnit
+     * @param extentDimensions
+     * @return
+     */
+	IUnit contextualizeExtents(IUnit refUnit, Map<ExtentDimension, ExtentDistribution> extentDescriptors);
+
 
     /**
      * <p>isDensity.</p>
@@ -143,5 +165,6 @@ public interface IUnitService {
      * @return a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
      */
     IUnit getDefaultUnitFor(IConcept concept);
+
 
 }

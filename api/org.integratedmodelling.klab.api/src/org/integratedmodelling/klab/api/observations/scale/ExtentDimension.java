@@ -24,16 +24,18 @@ package org.integratedmodelling.klab.api.observations.scale;
  */
 public enum ExtentDimension {
 
-    PUNTAL(0),
-    LINEAL(1),
-    AREAL(2),
-    VOLUMETRIC(3),
-    TEMPORAL(1),
-    CONCEPTUAL(1);
+    PUNTAL(0, true, false),
+    LINEAL(1, true, false),
+    AREAL(2, true, false),
+    VOLUMETRIC(3, true, false),
+    TEMPORAL(1, false, true),
+    CONCEPTUAL(1, false, false);
 	
 	public int dimensionality;
+	public boolean spatial;
+	public boolean temporal;
 	
-	ExtentDimension(int dimensionality) {
+	ExtentDimension(int dimensionality, boolean spatial, boolean temporal) {
 		this.dimensionality = dimensionality;
 	}
 	

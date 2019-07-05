@@ -2,7 +2,9 @@ package org.integratedmodelling.klab;
 
 import java.io.PrintStream;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -16,6 +18,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
+import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.services.IUnitService;
@@ -23,6 +26,7 @@ import org.integratedmodelling.klab.common.CompileNotification;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
+import org.integratedmodelling.klab.utils.CollectionUtils;
 
 public enum Units implements IUnitService {
 
@@ -344,6 +348,7 @@ public enum Units implements IUnitService {
 
 	@Override
 	public IUnit addExtents(IUnit refUnit, Collection<ExtentDimension> extentDimensions) {
+
 		Unit unit = (Unit) refUnit;
 
 		for (ExtentDimension dim : extentDimensions) {
@@ -373,6 +378,85 @@ public enum Units implements IUnitService {
 		return unit;
 	}
 
+	@Override
+	public IUnit removeExtents(IUnit refUnit, Collection<ExtentDimension> extentDimensions) {
+
+		Unit unit = (Unit) refUnit;
+
+		for (ExtentDimension dim : extentDimensions) {
+			switch (dim) {
+			case AREAL:
+				unit = new Unit(((Unit) unit).getUnit().times(((Unit) getUnit("m^2")).getUnit()));
+				break;
+			case CONCEPTUAL:
+				break;
+			case LINEAL:
+				unit = new Unit(((Unit) unit).getUnit().times(((Unit) getUnit("m")).getUnit()));
+				break;
+			case PUNTAL:
+				break;
+			case TEMPORAL:
+				unit = new Unit(((Unit) unit).getUnit().times(((Unit) getUnit("s")).getUnit()));
+				break;
+			case VOLUMETRIC:
+				unit = new Unit(((Unit) unit).getUnit().times(((Unit) getUnit("m^3")).getUnit()));
+				break;
+			default:
+				break;
+			}
+		}
+
+		return unit;
+	}
+
+	public IUnit contextualizeExtents(IUnit refUnit, ExtentDimension dimension, ExtentDistribution distribution) {
+		Map<ExtentDimension, ExtentDistribution> dims = new HashMap<>();
+		dims.put(dimension, distribution);
+		return contextualizeExtents(refUnit, dims);
+	}
+
+	@Override
+	public IUnit contextualizeExtents(IUnit refUnit, Map<ExtentDimension, ExtentDistribution> extentDescriptors) {
+
+		Unit unit = (Unit) refUnit;
+
+		for (ExtentDimension dim : extentDescriptors.keySet()) {
+
+			ExtentDistribution dis = extentDescriptors.get(dim);
+
+			switch (dim) {
+			case AREAL:
+				unit = dis == ExtentDistribution.EXTENSIVE
+						? new Unit(((Unit) unit).getUnit().times(((Unit) getUnit("m^2")).getUnit()))
+						: new Unit(((Unit) unit).getUnit().divide(((Unit) getUnit("m^2")).getUnit()));
+				break;
+			case CONCEPTUAL:
+				break;
+			case LINEAL:
+				unit = dis == ExtentDistribution.EXTENSIVE
+						? new Unit(((Unit) unit).getUnit().times(((Unit) getUnit("m")).getUnit()))
+						: new Unit(((Unit) unit).getUnit().divide(((Unit) getUnit("m")).getUnit()));
+				break;
+			case PUNTAL:
+				break;
+			case TEMPORAL:
+				unit = dis == ExtentDistribution.EXTENSIVE
+						? new Unit(((Unit) unit).getUnit().times(((Unit) getUnit("s")).getUnit()))
+						: new Unit(((Unit) unit).getUnit().divide(((Unit) getUnit("s")).getUnit()));
+				break;
+			case VOLUMETRIC:
+				unit = dis == ExtentDistribution.EXTENSIVE
+						? new Unit(((Unit) unit).getUnit().times(((Unit) getUnit("m^3")).getUnit()))
+						: new Unit(((Unit) unit).getUnit().divide(((Unit) getUnit("m^3")).getUnit()));
+				break;
+			default:
+				break;
+			}
+		}
+
+		return unit;
+	}
+
 	public void dump(IUnit unit, PrintStream out) {
 
 		out.println("unit " + ((Unit) unit).getUnit());
@@ -395,11 +479,12 @@ public enum Units implements IUnitService {
 	 * return a warning if not.
 	 * 
 	 * @param observable
+	 * @param dimensions2
 	 * @param scale
 	 * @return
 	 */
-	public CompileNotification validateUnit(IObservable observable, IGeometry geometry,
-			IAnnotation extensiveAnnotation) {
+	public CompileNotification validateUnit(IObservable observable, IGeometry geometry, IAnnotation extensiveAnnotation,
+			Map<ExtentDimension, ExtentDistribution> assertedDimensionality) {
 
 		if (observable.is(Type.QUALITY)) {
 
@@ -407,84 +492,77 @@ public enum Units implements IUnitService {
 				return null;
 			}
 
-			/*
-			 * Points aren't distributed
-			 */
-			boolean isDistributedInSpace = geometry.getDimension(IGeometry.Dimension.Type.SPACE) != null
-					&& geometry.getDimension(IGeometry.Dimension.Type.SPACE).isRegular()
-					&& geometry.getDimension(IGeometry.Dimension.Type.SPACE).getDimensionality() > 0;
-			boolean isDistributedInTime = geometry.getDimension(IGeometry.Dimension.Type.TIME) != null
-					&& geometry.getDimension(IGeometry.Dimension.Type.TIME).isRegular();
-
-			String warning = "";
-			String error = "";
-
 			if (observable.is(Type.EXTENSIVE_PROPERTY)) {
 
-				IUnit defUnit = getDefaultUnitFor(observable.getType());
-				IUnit ctxUnit = defUnit;
+				IUnit statedUnit = observable.getUnit();
+				IUnit defaultUnit = getDefaultUnitFor(observable.getType());
 
-				if (defUnit == null) {
+				if (defaultUnit == null) {
 					return CompileNotification.create(Level.SEVERE,
-							"Internal error: observable " + observable.getType() + " has no default unit", null, null);
+							"Internal error: observable " + observable.getName() + " has no default unit", null, null);
 				}
-
-				int temporalDimensionality = getTemporalDimensionality(observable.getUnit());
-				int spatialDimensionality = getSpatialDimensionality(observable.getUnit());
-
-				Set<ExtentDimension> dimensions = new HashSet<>();
-				if (isDistributedInSpace) {
-					dimensions.add(ExtentDimension
-							.spatial(geometry.getDimension(IGeometry.Dimension.Type.SPACE).getDimensionality()));
-				}
-				if (isDistributedInTime) {
-					dimensions.add(ExtentDimension.TEMPORAL);
-				}
-				if (dimensions.size() > 0) {
-					ctxUnit = addExtents(ctxUnit, dimensions);
+				if (statedUnit == null) {
+					return CompileNotification.create(Level.SEVERE,
+							"Internal error: observable " + observable.getName() + " has no stated unit", null, null);
 				}
 
 				/*
-				 * correct unit can be compatible with the default unit after the dimensionality
-				 * is factored in.
-				 * 
-				 * TODO should account for PARTIAL distribution over just one dimension
+				 * prepare all the potential units with one or more extents aggregated
 				 */
+				IUnit contextualizedDefaultUnit = null;
+				Map<ExtentDimension, IUnit> partiallyContextualizedDefaultUnits = new HashMap<>();
+				if (assertedDimensionality.size() > 0) {
+					if (assertedDimensionality.size() > 1) {
+						for (ExtentDimension dim : assertedDimensionality.keySet()) {
+							partiallyContextualizedDefaultUnits.put(dim,
+									contextualizeExtents(defaultUnit, dim, assertedDimensionality.get(dim)));
+						}
+					}
+					contextualizedDefaultUnit = contextualizeExtents(defaultUnit, assertedDimensionality);
+				}
 
-				if (!observable.getUnit().isCompatible(defUnit) && !observable.getUnit().isCompatible(ctxUnit)) {
-					return CompileNotification.create(Level.SEVERE,
-							"Unit " + observable.getUnit() + " in " + observable.getName()
-									+ (dimensions.size() == 0 ? (" is not compatible with the default " + defUnit)
-											: (" is not compatible with the contextualized unit " + ctxUnit
-													+ " nor with the aggregated unit " + defUnit)),
-							null, null);
+				String acceptedUnits = "";
+				if (contextualizedDefaultUnit != null) {
+					acceptedUnits += contextualizedDefaultUnit;
+					for (ExtentDimension dim : partiallyContextualizedDefaultUnits.keySet()) {
+						acceptedUnits += " [" + dim + "]: " + partiallyContextualizedDefaultUnits.get(dim);
+					}
+				} else {
+					contextualizedDefaultUnit = defaultUnit;
+					acceptedUnits += defaultUnit;
 				}
 
 				/*
-				 * No temporality or spatiality in the unit triggers a warning unless the
-				 * aggregation dimension is mentioned in the annotation TODO should account for
-				 * PARTIAL distribution over just one dimension
+				 * try all of the possible units, assess the distribution and compare with the
+				 * stated. If no matches, we're using the wrong unit.
 				 */
-				if (isDistributedInSpace && !observable.getUnit().isCompatible(ctxUnit)) {
-					if (spatialDimensionality == 0 && !(extensiveAnnotation != null
-							&& Annotations.INSTANCE.defaultsContain(extensiveAnnotation, "space"))) {
-						warning += "Unit " + observable.getUnit() + " in " + observable.getName()
-								+ " is not distributed in space when the geometry implies it. If this is intentional, add an @extensive(space) annotation to declare it.";
-					}
-				}
-				if (isDistributedInTime && !observable.getUnit().isCompatible(ctxUnit)) {
-					if (temporalDimensionality == 0 && !(extensiveAnnotation != null
-							&& Annotations.INSTANCE.defaultsContain(extensiveAnnotation, "time"))) {
-						warning += (warning.isEmpty() ? ("Unit " + observable.getUnit() + " in " + observable.getName())
-								: "\n It also")
-								+ " is not distributed in time when the geometry implies it. If this is intentional, add an @extensive(time) annotation to declare it.";
-					}
-				}
+				boolean unitIsCoherent = statedUnit.isCompatible(contextualizedDefaultUnit);
+				Set<ExtentDimension> aggregatedDimensions = new HashSet<>();
 
-				if (!error.isEmpty()) {
-					return CompileNotification.create(Level.SEVERE, error, null, null);
-				} else if (!warning.isEmpty()) {
-					return CompileNotification.create(Level.WARNING, warning, null, null);
+				if (!unitIsCoherent) {
+
+					boolean unitIsAggregated = statedUnit.isCompatible(defaultUnit);
+					if (!unitIsAggregated) {
+						for (ExtentDimension dim : partiallyContextualizedDefaultUnits.keySet()) {
+							if (statedUnit.isCompatible(partiallyContextualizedDefaultUnits.get(dim))) {
+								aggregatedDimensions.add(dim);
+								break;
+							}
+						}
+					} else {
+						aggregatedDimensions.addAll(assertedDimensionality.keySet());
+					}
+
+					if (!unitIsAggregated) {
+						return CompileNotification.create(Level.SEVERE,
+								"Unit " + statedUnit + " in " + observable.getName()
+										+ " is not compatible with the default unit " + defaultUnit
+										+ " in the asserted context. The @extensive or @intensive annotations can "
+										+ "specify aggregation over time and/or space. As specified the model admits "
+										+ acceptedUnits,
+								null, null);
+					}
+
 				}
 
 			} else if (observable.is(Type.MONEY)) {
