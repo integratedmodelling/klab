@@ -6,6 +6,7 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
@@ -353,5 +354,9 @@ public class Time extends Extent implements ITime {
 		// TODO return a line Shape
 		return null;
 	}
-
+	
+    @Override
+    public ExtentDimension getExtentDimension() {
+        return ExtentDimension.TEMPORAL;
+    }
 }

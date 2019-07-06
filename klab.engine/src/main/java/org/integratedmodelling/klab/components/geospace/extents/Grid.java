@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
@@ -688,6 +689,11 @@ public class Grid extends Area implements IGrid {
         @Override
         public IExtent getBoundingExtent() {
             return getShape();
+        }
+
+        @Override
+        public ExtentDimension getExtentDimension() {
+            return ExtentDimension.AREAL;
         }
 	}
 

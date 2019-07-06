@@ -4,6 +4,8 @@
  */
 package org.integratedmodelling.kim.kim;
 
+import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -17,7 +19,8 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.Currency#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Currency#getYear <em>Year</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.Currency#getConcept <em>Concept</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Currency#getConnectors <em>Connectors</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Currency#getUnits <em>Units</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kim.kim.KimPackage#getCurrency()
@@ -79,29 +82,37 @@ public interface Currency extends EObject
   void setYear(int value);
 
   /**
-   * Returns the value of the '<em><b>Concept</b></em>' attribute.
+   * Returns the value of the '<em><b>Connectors</b></em>' attribute list.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.UnitOp}.
+   * The literals are from the enumeration {@link org.integratedmodelling.kim.kim.UnitOp}.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Concept</em>' attribute isn't clear,
+   * If the meaning of the '<em>Connectors</em>' attribute list isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Concept</em>' attribute.
-   * @see #setConcept(String)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getCurrency_Concept()
-   * @model
+   * @return the value of the '<em>Connectors</em>' attribute list.
+   * @see org.integratedmodelling.kim.kim.UnitOp
+   * @see org.integratedmodelling.kim.kim.KimPackage#getCurrency_Connectors()
+   * @model unique="false"
    * @generated
    */
-  String getConcept();
+  EList<UnitOp> getConnectors();
 
   /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Currency#getConcept <em>Concept</em>}' attribute.
+   * Returns the value of the '<em><b>Units</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.UnitElement}.
    * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Units</em>' containment reference list isn't clear,
+   * there really should be more of a description here...
+   * </p>
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Concept</em>' attribute.
-   * @see #getConcept()
+   * @return the value of the '<em>Units</em>' containment reference list.
+   * @see org.integratedmodelling.kim.kim.KimPackage#getCurrency_Units()
+   * @model containment="true"
    * @generated
    */
-  void setConcept(String value);
+  EList<UnitElement> getUnits();
 
 } // Currency

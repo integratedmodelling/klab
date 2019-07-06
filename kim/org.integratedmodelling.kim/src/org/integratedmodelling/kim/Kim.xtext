@@ -964,8 +964,7 @@ Unit:
 	{Unit} (root=UnitElement)? (=> (connectors+=UnitOp) (units+=UnitElement))*;
 
 Currency:
-	id=UPPERCASE_ID ('@' year=INT) |
-	concept=(CAMELCASE_ID | NamespaceId);
+	id=UPPERCASE_ID ('@' year=INT) (=> (connectors+=UnitOp) (units+=UnitElement))*;
 
 Number:
 	('+' | negative?='-')? => real=INT (=> long?='l')? => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+' | expNegative?='-')? exp=INT)?;

@@ -5,6 +5,7 @@ import java.util.List;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
+import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 
 /**
  * A IGeometry is the declaration of the topological dimensions for an observed resource or
@@ -196,6 +197,13 @@ public interface IGeometry extends Serializable, ILocator {
          * @return the parameters
          */
         IParameters<String> getParameters();
+
+        /**
+         * Return the extent dimension this dimension describes.
+         * 
+         * @return
+         */
+        ExtentDimension getExtentDimension();
 
     }
 

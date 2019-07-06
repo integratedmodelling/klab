@@ -4537,9 +4537,19 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getCurrency_Concept()
+  public EAttribute getCurrency_Connectors()
   {
     return (EAttribute)currencyEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getCurrency_Units()
+  {
+    return (EReference)currencyEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -5134,7 +5144,8 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     currencyEClass = createEClass(CURRENCY);
     createEAttribute(currencyEClass, CURRENCY__ID);
     createEAttribute(currencyEClass, CURRENCY__YEAR);
-    createEAttribute(currencyEClass, CURRENCY__CONCEPT);
+    createEAttribute(currencyEClass, CURRENCY__CONNECTORS);
+    createEReference(currencyEClass, CURRENCY__UNITS);
 
     numberEClass = createEClass(NUMBER);
     createEAttribute(numberEClass, NUMBER__NEGATIVE);
@@ -5635,7 +5646,8 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEClass(currencyEClass, Currency.class, "Currency", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getCurrency_Id(), ecorePackage.getEString(), "id", null, 0, 1, Currency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getCurrency_Year(), ecorePackage.getEInt(), "year", null, 0, 1, Currency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getCurrency_Concept(), ecorePackage.getEString(), "concept", null, 0, 1, Currency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCurrency_Connectors(), this.getUnitOp(), "connectors", null, 0, -1, Currency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getCurrency_Units(), this.getUnitElement(), null, "units", null, 0, -1, Currency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(numberEClass, org.integratedmodelling.kim.kim.Number.class, "Number", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getNumber_Negative(), ecorePackage.getEBoolean(), "negative", null, 0, 1, org.integratedmodelling.kim.kim.Number.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

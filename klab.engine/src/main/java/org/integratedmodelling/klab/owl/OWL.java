@@ -1062,4 +1062,12 @@ public enum OWL {
 		return !observable.getType().getNamespace().equals(nonSemanticConcepts.getName());
 	}
 
+    public IOntology readOntology(String string) {
+        try {
+            return new Ontology(manager.loadOntology(IRI.create(string)), MiscUtilities.getURLBaseName(string));
+        } catch (OWLOntologyCreationException e) {
+            throw new KlabIOException(e);
+        }
+    }
+
 }

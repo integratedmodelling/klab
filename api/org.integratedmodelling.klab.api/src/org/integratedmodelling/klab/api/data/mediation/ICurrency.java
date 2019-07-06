@@ -31,5 +31,13 @@ public interface ICurrency extends IValueMediator {
      * @return true if monetary
      */
     boolean isMonetary();
+    
+    /**
+     * Currencies have a unit, which is by default the unitless unit but can be
+     * distributed over time and/or space.
+     * 
+     * @return
+     */
+    IUnit getUnit();
 
 }

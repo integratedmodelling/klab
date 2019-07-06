@@ -59,7 +59,6 @@
 		<module>api</module>
 		<module>kdl</module>
 		<module>kim</module>
-		<module>klab.core</module>
 		<module>klab.engine</module>
 		<module>adapters</module>
 		<module>klab.modeler</module>

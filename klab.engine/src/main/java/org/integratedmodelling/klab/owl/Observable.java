@@ -81,6 +81,7 @@ public class Observable implements IObservable {
 	transient String sessionId;
 	private List<IAnnotation> annotations = new ArrayList<>();
 	private boolean givenName;
+    private String url;
 
 	Observable(Concept concept) {
 		this.observable = this.main = concept;
@@ -697,5 +698,13 @@ public class Observable implements IObservable {
 	public boolean isGivenName() {
 		return this.givenName;
 	}
+
+    public void setUrl(String uri) {
+        this.url = uri;
+    }
+    
+    public String getUrl() {
+        return this.url;
+    }
 
 }

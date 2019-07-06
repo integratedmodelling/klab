@@ -17,6 +17,7 @@ package org.integratedmodelling.klab.api.services;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -57,16 +58,6 @@ public interface IUnitService {
      * @return
      */
 	IUnit removeExtents(IUnit refUnit, Collection<ExtentDimension> extentDimensions);
-
-    /**
-     * Add and/or remove the extents specified by the passed map to the passed unit.
-     * 
-     * @param refUnit
-     * @param extentDimensions
-     * @return
-     */
-	IUnit contextualizeExtents(IUnit refUnit, Map<ExtentDimension, ExtentDistribution> extentDescriptors);
-
 
     /**
      * <p>isDensity.</p>
@@ -160,11 +151,23 @@ public interface IUnitService {
 
     /**
      * <p>getDefaultUnitFor.</p>
+     * 
+     * Ideally cache the result, at least until OWLAPI becomes faster.
      *
      * @param concept a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
      * @return a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
      */
     IUnit getDefaultUnitFor(IConcept concept);
+
+    /**
+     * Ensure that the passed unit is distributed in the passed dimensions and return
+     * the result. Only add a dimension if it's not there already. If the unit already
+     * has an incompatible dimension, return null.
+     * 
+     * @param unit
+     * @param aggregatable
+     */
+    IUnit contextualize(IUnit refUnit, Set<ExtentDimension> aggregatable);
 
 
 }

@@ -35,14 +35,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   in k.IM, although not handled yet.
 - Attributes qualified with 'rescaling' will modify the observation semantics of the
   quality they apply to, and cause units to be removed. 
-- Models check the units and allow aggregated units over space and/or time, rescaling
-  automatically at mediation and requiring a @extensive annotation to remove the warning
-  in case a model produces output that is aggregated over space or time. This is a pretty
-  big change as k.LAB is now serious about units and their use, and modelers usually
-  are not.
+- Models check the units agains the geometry and allow aggregating units, rescaling
+  automatically at mediation and requiring a @extensive/@intensive annotation to remove
+  the warning in case a model produces output that is legitimate but requires to
+  recontextualize the values. This is a pretty big change as k.LAB is now dead serious 
+  about units and their proper use, while modelers usually are not.
 - The computational typechain, contextualizer output and geometry are now checked for 
   coherency within models, both across each other and vs. the observable semantics.
 - Include LogMap2 alignment toolkit (not linked to k.LAB yet).
+- Monetary currencies now admit distributed spatial and temporal unit terms and can
+  produce the corresponding unit (with 'unitless' as the base unit). Observables with
+  MONEY or NUMEROSITY type now carry their actual unit, either the unit corresponding
+  to the currency or the unitless distribution of the 'per' unit for counts.
+- Wire in the LogMap2 aligner with a 'reason align' CLI command. Treatment of mappings
+  is non-existent for now.
+- Add a 'unit info' and 'unit contextualize' CLI command to check and analyze units.
 ### Changed
 - k.IM highlighter uniformly shows abstract concepts in italics and concrete concepts
   in regular type.
@@ -50,9 +57,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   single one.
 ### Fixed
 - Overhaul logic for communicating errors detected by the engine to the IDE; now they
-  are stored for the standard validator to find.
+  are stored for the standard validator to find. The process is supported for models
+  and observables within models only.
 - Notification markers should finally be reliably added to the IDE both for syntax and
   reasoning errors. 
+### Removed
+- Remove obsolete projects klab.core (merged with klab.engine), products/explorer and
+  products/klab.explorer.
 
 ## [0.10.0.163] -- 2019/06/23
 ### Added

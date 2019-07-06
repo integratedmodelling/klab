@@ -17413,10 +17413,32 @@ ruleCurrency returns [EObject current=null]
 	(
 		(
 			(
+				lv_id_0_0=RULE_UPPERCASE_ID
+				{
+					newLeafNode(lv_id_0_0, grammarAccess.getCurrencyAccess().getIdUPPERCASE_IDTerminalRuleCall_0_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getCurrencyRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"id",
+						lv_id_0_0,
+						"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
+				}
+			)
+		)
+		(
+			otherlv_1='@'
+			{
+				newLeafNode(otherlv_1, grammarAccess.getCurrencyAccess().getCommercialAtKeyword_1_0());
+			}
+			(
 				(
-					lv_id_0_0=RULE_UPPERCASE_ID
+					lv_year_2_0=RULE_INT
 					{
-						newLeafNode(lv_id_0_0, grammarAccess.getCurrencyAccess().getIdUPPERCASE_IDTerminalRuleCall_0_0_0());
+						newLeafNode(lv_year_2_0, grammarAccess.getCurrencyAccess().getYearINTTerminalRuleCall_1_1_0());
 					}
 					{
 						if ($current==null) {
@@ -17424,74 +17446,61 @@ ruleCurrency returns [EObject current=null]
 						}
 						setWithLastConsumed(
 							$current,
-							"id",
-							lv_id_0_0,
-							"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
+							"year",
+							lv_year_2_0,
+							"org.eclipse.xtext.common.Terminals.INT");
 					}
 				)
 			)
+		)
+		(
 			(
-				otherlv_1='@'
-				{
-					newLeafNode(otherlv_1, grammarAccess.getCurrencyAccess().getCommercialAtKeyword_0_1_0());
-				}
+				((
+					(
+						ruleUnitOp
+					)
+				)
+				)=>
 				(
 					(
-						lv_year_2_0=RULE_INT
 						{
-							newLeafNode(lv_year_2_0, grammarAccess.getCurrencyAccess().getYearINTTerminalRuleCall_0_1_1_0());
+							newCompositeNode(grammarAccess.getCurrencyAccess().getConnectorsUnitOpEnumRuleCall_2_0_0_0());
 						}
+						lv_connectors_3_0=ruleUnitOp
 						{
 							if ($current==null) {
-								$current = createModelElement(grammarAccess.getCurrencyRule());
+								$current = createModelElementForParent(grammarAccess.getCurrencyRule());
 							}
-							setWithLastConsumed(
+							add(
 								$current,
-								"year",
-								lv_year_2_0,
-								"org.eclipse.xtext.common.Terminals.INT");
+								"connectors",
+								lv_connectors_3_0,
+								"org.integratedmodelling.kim.Kim.UnitOp");
+							afterParserOrEnumRuleCall();
 						}
 					)
 				)
 			)
-		)
-		    |
-		(
 			(
 				(
-					lv_concept_3_1=RULE_CAMELCASE_ID
 					{
-						newLeafNode(lv_concept_3_1, grammarAccess.getCurrencyAccess().getConceptCAMELCASE_IDTerminalRuleCall_1_0_0());
+						newCompositeNode(grammarAccess.getCurrencyAccess().getUnitsUnitElementParserRuleCall_2_1_0());
 					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getCurrencyRule());
-						}
-						setWithLastConsumed(
-							$current,
-							"concept",
-							lv_concept_3_1,
-							"org.integratedmodelling.kim.Kim.CAMELCASE_ID");
-					}
-					    |
-					{
-						newCompositeNode(grammarAccess.getCurrencyAccess().getConceptNamespaceIdParserRuleCall_1_0_1());
-					}
-					lv_concept_3_2=ruleNamespaceId
+					lv_units_4_0=ruleUnitElement
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getCurrencyRule());
 						}
-						set(
+						add(
 							$current,
-							"concept",
-							lv_concept_3_2,
-							"org.integratedmodelling.kim.Kim.NamespaceId");
+							"units",
+							lv_units_4_0,
+							"org.integratedmodelling.kim.Kim.UnitElement");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
-		)
+		)*
 	)
 ;
 

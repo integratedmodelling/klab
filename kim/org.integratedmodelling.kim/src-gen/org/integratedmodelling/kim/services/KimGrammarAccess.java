@@ -9999,58 +9999,62 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	public class CurrencyElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.Currency");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
-		private final Assignment cIdAssignment_0_0 = (Assignment)cGroup_0.eContents().get(0);
-		private final RuleCall cIdUPPERCASE_IDTerminalRuleCall_0_0_0 = (RuleCall)cIdAssignment_0_0.eContents().get(0);
-		private final Group cGroup_0_1 = (Group)cGroup_0.eContents().get(1);
-		private final Keyword cCommercialAtKeyword_0_1_0 = (Keyword)cGroup_0_1.eContents().get(0);
-		private final Assignment cYearAssignment_0_1_1 = (Assignment)cGroup_0_1.eContents().get(1);
-		private final RuleCall cYearINTTerminalRuleCall_0_1_1_0 = (RuleCall)cYearAssignment_0_1_1.eContents().get(0);
-		private final Assignment cConceptAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
-		private final Alternatives cConceptAlternatives_1_0 = (Alternatives)cConceptAssignment_1.eContents().get(0);
-		private final RuleCall cConceptCAMELCASE_IDTerminalRuleCall_1_0_0 = (RuleCall)cConceptAlternatives_1_0.eContents().get(0);
-		private final RuleCall cConceptNamespaceIdParserRuleCall_1_0_1 = (RuleCall)cConceptAlternatives_1_0.eContents().get(1);
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cIdAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cIdUPPERCASE_IDTerminalRuleCall_0_0 = (RuleCall)cIdAssignment_0.eContents().get(0);
+		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
+		private final Keyword cCommercialAtKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
+		private final Assignment cYearAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cYearINTTerminalRuleCall_1_1_0 = (RuleCall)cYearAssignment_1_1.eContents().get(0);
+		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
+		private final Group cGroup_2_0 = (Group)cGroup_2.eContents().get(0);
+		private final Assignment cConnectorsAssignment_2_0_0 = (Assignment)cGroup_2_0.eContents().get(0);
+		private final RuleCall cConnectorsUnitOpEnumRuleCall_2_0_0_0 = (RuleCall)cConnectorsAssignment_2_0_0.eContents().get(0);
+		private final Assignment cUnitsAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
+		private final RuleCall cUnitsUnitElementParserRuleCall_2_1_0 = (RuleCall)cUnitsAssignment_2_1.eContents().get(0);
 		
 		//Currency:
-		//	id=UPPERCASE_ID ('@' year=INT) | concept=(CAMELCASE_ID | NamespaceId);
+		//	id=UPPERCASE_ID ('@' year=INT) (=> (connectors+=UnitOp) units+=UnitElement)*;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//id=UPPERCASE_ID ('@' year=INT) | concept=(CAMELCASE_ID | NamespaceId)
-		public Alternatives getAlternatives() { return cAlternatives; }
-		
-		//id=UPPERCASE_ID ('@' year=INT)
-		public Group getGroup_0() { return cGroup_0; }
+		//id=UPPERCASE_ID ('@' year=INT) (=> (connectors+=UnitOp) units+=UnitElement)*
+		public Group getGroup() { return cGroup; }
 		
 		//id=UPPERCASE_ID
-		public Assignment getIdAssignment_0_0() { return cIdAssignment_0_0; }
+		public Assignment getIdAssignment_0() { return cIdAssignment_0; }
 		
 		//UPPERCASE_ID
-		public RuleCall getIdUPPERCASE_IDTerminalRuleCall_0_0_0() { return cIdUPPERCASE_IDTerminalRuleCall_0_0_0; }
+		public RuleCall getIdUPPERCASE_IDTerminalRuleCall_0_0() { return cIdUPPERCASE_IDTerminalRuleCall_0_0; }
 		
 		//'@' year=INT
-		public Group getGroup_0_1() { return cGroup_0_1; }
+		public Group getGroup_1() { return cGroup_1; }
 		
 		//'@'
-		public Keyword getCommercialAtKeyword_0_1_0() { return cCommercialAtKeyword_0_1_0; }
+		public Keyword getCommercialAtKeyword_1_0() { return cCommercialAtKeyword_1_0; }
 		
 		//year=INT
-		public Assignment getYearAssignment_0_1_1() { return cYearAssignment_0_1_1; }
+		public Assignment getYearAssignment_1_1() { return cYearAssignment_1_1; }
 		
 		//INT
-		public RuleCall getYearINTTerminalRuleCall_0_1_1_0() { return cYearINTTerminalRuleCall_0_1_1_0; }
+		public RuleCall getYearINTTerminalRuleCall_1_1_0() { return cYearINTTerminalRuleCall_1_1_0; }
 		
-		//concept=(CAMELCASE_ID | NamespaceId)
-		public Assignment getConceptAssignment_1() { return cConceptAssignment_1; }
+		//(=> (connectors+=UnitOp) units+=UnitElement)*
+		public Group getGroup_2() { return cGroup_2; }
 		
-		//(CAMELCASE_ID | NamespaceId)
-		public Alternatives getConceptAlternatives_1_0() { return cConceptAlternatives_1_0; }
+		//=> (connectors+=UnitOp)
+		public Group getGroup_2_0() { return cGroup_2_0; }
 		
-		//CAMELCASE_ID
-		public RuleCall getConceptCAMELCASE_IDTerminalRuleCall_1_0_0() { return cConceptCAMELCASE_IDTerminalRuleCall_1_0_0; }
+		//connectors+=UnitOp
+		public Assignment getConnectorsAssignment_2_0_0() { return cConnectorsAssignment_2_0_0; }
 		
-		//NamespaceId
-		public RuleCall getConceptNamespaceIdParserRuleCall_1_0_1() { return cConceptNamespaceIdParserRuleCall_1_0_1; }
+		//UnitOp
+		public RuleCall getConnectorsUnitOpEnumRuleCall_2_0_0_0() { return cConnectorsUnitOpEnumRuleCall_2_0_0_0; }
+		
+		//units+=UnitElement
+		public Assignment getUnitsAssignment_2_1() { return cUnitsAssignment_2_1; }
+		
+		//UnitElement
+		public RuleCall getUnitsUnitElementParserRuleCall_2_1_0() { return cUnitsUnitElementParserRuleCall_2_1_0; }
 	}
 	public class NumberElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.Number");
@@ -11878,7 +11882,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Currency:
-	//	id=UPPERCASE_ID ('@' year=INT) | concept=(CAMELCASE_ID | NamespaceId);
+	//	id=UPPERCASE_ID ('@' year=INT) (=> (connectors+=UnitOp) units+=UnitElement)*;
 	public CurrencyElements getCurrencyAccess() {
 		return pCurrency;
 	}

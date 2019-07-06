@@ -257,6 +257,8 @@ public enum KimKnowledgeProcessor {
 
 		Observable ret = new Observable(observable);
 
+		ret.setUrl(concept.getURI());
+
 		String declaration = concept.getDefinition();
 
 		String unit = concept.getUnit();

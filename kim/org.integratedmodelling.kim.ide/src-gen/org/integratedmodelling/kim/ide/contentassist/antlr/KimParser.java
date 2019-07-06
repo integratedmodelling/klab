@@ -205,8 +205,6 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getUnitElementAccess().getAlternatives(), "rule__UnitElement__Alternatives");
 					put(grammarAccess.getUnitElementAccess().getIdAlternatives_0_0(), "rule__UnitElement__IdAlternatives_0_0");
 					put(grammarAccess.getREL_OPERATORAccess().getAlternatives(), "rule__REL_OPERATOR__Alternatives");
-					put(grammarAccess.getCurrencyAccess().getAlternatives(), "rule__Currency__Alternatives");
-					put(grammarAccess.getCurrencyAccess().getConceptAlternatives_1_0(), "rule__Currency__ConceptAlternatives_1_0");
 					put(grammarAccess.getNumberAccess().getAlternatives_0(), "rule__Number__Alternatives_0");
 					put(grammarAccess.getNumberAccess().getExponentialAlternatives_4_0_0_0(), "rule__Number__ExponentialAlternatives_4_0_0_0");
 					put(grammarAccess.getNumberAccess().getAlternatives_4_0_1(), "rule__Number__Alternatives_4_0_1");
@@ -565,8 +563,10 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getUnitAccess().getGroup(), "rule__Unit__Group__0");
 					put(grammarAccess.getUnitAccess().getGroup_2(), "rule__Unit__Group_2__0");
 					put(grammarAccess.getUnitAccess().getGroup_2_0(), "rule__Unit__Group_2_0__0");
-					put(grammarAccess.getCurrencyAccess().getGroup_0(), "rule__Currency__Group_0__0");
-					put(grammarAccess.getCurrencyAccess().getGroup_0_1(), "rule__Currency__Group_0_1__0");
+					put(grammarAccess.getCurrencyAccess().getGroup(), "rule__Currency__Group__0");
+					put(grammarAccess.getCurrencyAccess().getGroup_1(), "rule__Currency__Group_1__0");
+					put(grammarAccess.getCurrencyAccess().getGroup_2(), "rule__Currency__Group_2__0");
+					put(grammarAccess.getCurrencyAccess().getGroup_2_0(), "rule__Currency__Group_2_0__0");
 					put(grammarAccess.getNumberAccess().getGroup(), "rule__Number__Group__0");
 					put(grammarAccess.getNumberAccess().getGroup_3(), "rule__Number__Group_3__0");
 					put(grammarAccess.getNumberAccess().getGroup_3_0(), "rule__Number__Group_3_0__0");
@@ -1163,9 +1163,10 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getUnitAccess().getRootAssignment_1(), "rule__Unit__RootAssignment_1");
 					put(grammarAccess.getUnitAccess().getConnectorsAssignment_2_0_0(), "rule__Unit__ConnectorsAssignment_2_0_0");
 					put(grammarAccess.getUnitAccess().getUnitsAssignment_2_1(), "rule__Unit__UnitsAssignment_2_1");
-					put(grammarAccess.getCurrencyAccess().getIdAssignment_0_0(), "rule__Currency__IdAssignment_0_0");
-					put(grammarAccess.getCurrencyAccess().getYearAssignment_0_1_1(), "rule__Currency__YearAssignment_0_1_1");
-					put(grammarAccess.getCurrencyAccess().getConceptAssignment_1(), "rule__Currency__ConceptAssignment_1");
+					put(grammarAccess.getCurrencyAccess().getIdAssignment_0(), "rule__Currency__IdAssignment_0");
+					put(grammarAccess.getCurrencyAccess().getYearAssignment_1_1(), "rule__Currency__YearAssignment_1_1");
+					put(grammarAccess.getCurrencyAccess().getConnectorsAssignment_2_0_0(), "rule__Currency__ConnectorsAssignment_2_0_0");
+					put(grammarAccess.getCurrencyAccess().getUnitsAssignment_2_1(), "rule__Currency__UnitsAssignment_2_1");
 					put(grammarAccess.getNumberAccess().getNegativeAssignment_0_1(), "rule__Number__NegativeAssignment_0_1");
 					put(grammarAccess.getNumberAccess().getRealAssignment_1(), "rule__Number__RealAssignment_1");
 					put(grammarAccess.getNumberAccess().getLongAssignment_2(), "rule__Number__LongAssignment_2");

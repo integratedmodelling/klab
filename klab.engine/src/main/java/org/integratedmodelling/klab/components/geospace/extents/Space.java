@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
@@ -874,5 +875,10 @@ public class Space extends Extent implements ISpace {
     @Override
     public IExtent getBoundingExtent() {
         return getEnvelope().asShape();
+    }
+
+    @Override
+    public ExtentDimension getExtentDimension() {
+        return ExtentDimension.AREAL;
     }
 }

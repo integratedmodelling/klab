@@ -29,6 +29,7 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -119,6 +120,22 @@ public class MapUtils extends org.apache.commons.collections.MapUtils {
         } catch (UnsupportedEncodingException e) {
             return "MAP PRINT ERROR: " + e.getMessage();
         }
+    }
+    
+    public static String toString(Map<?, ?> map) {
+
+        final StringBuffer ret = new StringBuffer(256);
+        
+        ret.append("{");
+        int i = 0;
+        for (Entry<?, ?> entry : map.entrySet()) {
+            ret.append((i == 0 ? "" : ", ") + entry.getKey() + ":" + entry.getValue());
+            i++;
+        }
+        ret.append("}");
+        
+        return ret.toString();
+        
     }
 
     /**

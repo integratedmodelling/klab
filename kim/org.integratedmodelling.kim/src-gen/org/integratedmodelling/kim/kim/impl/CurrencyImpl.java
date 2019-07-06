@@ -4,15 +4,27 @@
  */
 package org.integratedmodelling.kim.kim.impl;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
+import org.eclipse.emf.ecore.util.EDataTypeEList;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
+
 import org.integratedmodelling.kim.kim.Currency;
 import org.integratedmodelling.kim.kim.KimPackage;
+import org.integratedmodelling.kim.kim.UnitElement;
+import org.integratedmodelling.kim.kim.UnitOp;
 
 /**
  * <!-- begin-user-doc -->
@@ -24,7 +36,8 @@ import org.integratedmodelling.kim.kim.KimPackage;
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.CurrencyImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.CurrencyImpl#getYear <em>Year</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.CurrencyImpl#getConcept <em>Concept</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.CurrencyImpl#getConnectors <em>Connectors</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.CurrencyImpl#getUnits <em>Units</em>}</li>
  * </ul>
  *
  * @generated
@@ -72,24 +85,24 @@ public class CurrencyImpl extends MinimalEObjectImpl.Container implements Curren
   protected int year = YEAR_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getConcept() <em>Concept</em>}' attribute.
+   * The cached value of the '{@link #getConnectors() <em>Connectors</em>}' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getConcept()
+   * @see #getConnectors()
    * @generated
    * @ordered
    */
-  protected static final String CONCEPT_EDEFAULT = null;
+  protected EList<UnitOp> connectors;
 
   /**
-   * The cached value of the '{@link #getConcept() <em>Concept</em>}' attribute.
+   * The cached value of the '{@link #getUnits() <em>Units</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getConcept()
+   * @see #getUnits()
    * @generated
    * @ordered
    */
-  protected String concept = CONCEPT_EDEFAULT;
+  protected EList<UnitElement> units;
 
   /**
    * <!-- begin-user-doc -->
@@ -163,9 +176,13 @@ public class CurrencyImpl extends MinimalEObjectImpl.Container implements Curren
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getConcept()
+  public EList<UnitOp> getConnectors()
   {
-    return concept;
+    if (connectors == null)
+    {
+      connectors = new EDataTypeEList<UnitOp>(UnitOp.class, this, KimPackage.CURRENCY__CONNECTORS);
+    }
+    return connectors;
   }
 
   /**
@@ -173,12 +190,29 @@ public class CurrencyImpl extends MinimalEObjectImpl.Container implements Curren
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setConcept(String newConcept)
+  public EList<UnitElement> getUnits()
   {
-    String oldConcept = concept;
-    concept = newConcept;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CURRENCY__CONCEPT, oldConcept, concept));
+    if (units == null)
+    {
+      units = new EObjectContainmentEList<UnitElement>(UnitElement.class, this, KimPackage.CURRENCY__UNITS);
+    }
+    return units;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
+  {
+    switch (featureID)
+    {
+      case KimPackage.CURRENCY__UNITS:
+        return ((InternalEList<?>)getUnits()).basicRemove(otherEnd, msgs);
+    }
+    return super.eInverseRemove(otherEnd, featureID, msgs);
   }
 
   /**
@@ -195,8 +229,10 @@ public class CurrencyImpl extends MinimalEObjectImpl.Container implements Curren
         return getId();
       case KimPackage.CURRENCY__YEAR:
         return getYear();
-      case KimPackage.CURRENCY__CONCEPT:
-        return getConcept();
+      case KimPackage.CURRENCY__CONNECTORS:
+        return getConnectors();
+      case KimPackage.CURRENCY__UNITS:
+        return getUnits();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -206,6 +242,7 @@ public class CurrencyImpl extends MinimalEObjectImpl.Container implements Curren
    * <!-- end-user-doc -->
    * @generated
    */
+  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
@@ -217,8 +254,13 @@ public class CurrencyImpl extends MinimalEObjectImpl.Container implements Curren
       case KimPackage.CURRENCY__YEAR:
         setYear((Integer)newValue);
         return;
-      case KimPackage.CURRENCY__CONCEPT:
-        setConcept((String)newValue);
+      case KimPackage.CURRENCY__CONNECTORS:
+        getConnectors().clear();
+        getConnectors().addAll((Collection<? extends UnitOp>)newValue);
+        return;
+      case KimPackage.CURRENCY__UNITS:
+        getUnits().clear();
+        getUnits().addAll((Collection<? extends UnitElement>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -240,8 +282,11 @@ public class CurrencyImpl extends MinimalEObjectImpl.Container implements Curren
       case KimPackage.CURRENCY__YEAR:
         setYear(YEAR_EDEFAULT);
         return;
-      case KimPackage.CURRENCY__CONCEPT:
-        setConcept(CONCEPT_EDEFAULT);
+      case KimPackage.CURRENCY__CONNECTORS:
+        getConnectors().clear();
+        return;
+      case KimPackage.CURRENCY__UNITS:
+        getUnits().clear();
         return;
     }
     super.eUnset(featureID);
@@ -261,8 +306,10 @@ public class CurrencyImpl extends MinimalEObjectImpl.Container implements Curren
         return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
       case KimPackage.CURRENCY__YEAR:
         return year != YEAR_EDEFAULT;
-      case KimPackage.CURRENCY__CONCEPT:
-        return CONCEPT_EDEFAULT == null ? concept != null : !CONCEPT_EDEFAULT.equals(concept);
+      case KimPackage.CURRENCY__CONNECTORS:
+        return connectors != null && !connectors.isEmpty();
+      case KimPackage.CURRENCY__UNITS:
+        return units != null && !units.isEmpty();
     }
     return super.eIsSet(featureID);
   }
@@ -282,8 +329,8 @@ public class CurrencyImpl extends MinimalEObjectImpl.Container implements Curren
     result.append(id);
     result.append(", year: ");
     result.append(year);
-    result.append(", concept: ");
-    result.append(concept);
+    result.append(", connectors: ");
+    result.append(connectors);
     result.append(')');
     return result.toString();
   }

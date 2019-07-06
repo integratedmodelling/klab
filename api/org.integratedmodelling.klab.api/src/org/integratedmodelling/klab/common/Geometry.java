@@ -10,6 +10,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 import org.integratedmodelling.klab.utils.NumberUtils;
@@ -305,6 +306,21 @@ public class Geometry implements IGeometry {
 			
 			return true;
 		}
+
+        @Override
+        public ExtentDimension getExtentDimension() {
+            switch (this.type) {
+            case NUMEROSITY:
+                return ExtentDimension.CONCEPTUAL;
+            case SPACE:
+                return ExtentDimension.spatial(this.dimensionality);
+            case TIME:
+                return ExtentDimension.TEMPORAL;
+            default:
+                break;
+            }
+            return null;
+        }
 
     }
 

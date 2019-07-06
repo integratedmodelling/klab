@@ -4181,13 +4181,22 @@ public interface KimPackage extends EPackage
   int CURRENCY__YEAR = 1;
 
   /**
-   * The feature id for the '<em><b>Concept</b></em>' attribute.
+   * The feature id for the '<em><b>Connectors</b></em>' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CURRENCY__CONCEPT = 2;
+  int CURRENCY__CONNECTORS = 2;
+
+  /**
+   * The feature id for the '<em><b>Units</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CURRENCY__UNITS = 3;
 
   /**
    * The number of structural features of the '<em>Currency</em>' class.
@@ -4196,7 +4205,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CURRENCY_FEATURE_COUNT = 3;
+  int CURRENCY_FEATURE_COUNT = 4;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.NumberImpl <em>Number</em>}' class.
@@ -8658,15 +8667,26 @@ public interface KimPackage extends EPackage
   EAttribute getCurrency_Year();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Currency#getConcept <em>Concept</em>}'.
+   * Returns the meta object for the attribute list '{@link org.integratedmodelling.kim.kim.Currency#getConnectors <em>Connectors</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Concept</em>'.
-   * @see org.integratedmodelling.kim.kim.Currency#getConcept()
+   * @return the meta object for the attribute list '<em>Connectors</em>'.
+   * @see org.integratedmodelling.kim.kim.Currency#getConnectors()
    * @see #getCurrency()
    * @generated
    */
-  EAttribute getCurrency_Concept();
+  EAttribute getCurrency_Connectors();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.Currency#getUnits <em>Units</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Units</em>'.
+   * @see org.integratedmodelling.kim.kim.Currency#getUnits()
+   * @see #getCurrency()
+   * @generated
+   */
+  EReference getCurrency_Units();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.Number <em>Number</em>}'.
@@ -12116,12 +12136,20 @@ public interface KimPackage extends EPackage
     EAttribute CURRENCY__YEAR = eINSTANCE.getCurrency_Year();
 
     /**
-     * The meta object literal for the '<em><b>Concept</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Connectors</b></em>' attribute list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute CURRENCY__CONCEPT = eINSTANCE.getCurrency_Concept();
+    EAttribute CURRENCY__CONNECTORS = eINSTANCE.getCurrency_Connectors();
+
+    /**
+     * The meta object literal for the '<em><b>Units</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CURRENCY__UNITS = eINSTANCE.getCurrency_Units();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.NumberImpl <em>Number</em>}' class.

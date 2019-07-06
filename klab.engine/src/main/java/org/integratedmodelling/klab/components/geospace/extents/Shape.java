@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
@@ -806,4 +807,9 @@ public class Shape extends AbstractExtent implements IShape {
 			((Graphics2D) g).draw(polyShape);
 		}
 	}
+	
+    @Override
+    public ExtentDimension getExtentDimension() {
+        return ExtentDimension.AREAL;
+    }
 }

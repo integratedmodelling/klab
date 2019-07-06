@@ -7,9 +7,6 @@
 @version 0.10.0
 @namespace reason
 
-/**
- * Help
- */
 void children
 	"List the asserted or inferred hierarchy of a concept."
 {
@@ -53,7 +50,6 @@ void contextualize
 	class org.integratedmodelling.klab.clitool.console.commands.reason.Contextualize
 }
 
-
 void reload
 	"Reload one or more namespaces."
 {
@@ -66,11 +62,16 @@ void 'export'
 	class org.integratedmodelling.klab.clitool.console.commands.reason.Export
 }
 
-
 void info
 	"Print information about a concept."
 {
 	class org.integratedmodelling.klab.clitool.console.commands.reason.ShowInfo
+}
+
+void align
+	"Compute and print the alignment mappings for each pair of the passed ontologies."
+{
+	class org.integratedmodelling.klab.clitool.console.commands.reason.Align
 }
 
 

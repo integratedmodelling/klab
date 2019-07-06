@@ -42,7 +42,6 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.rest.ServicePrototype;
 import org.integratedmodelling.klab.utils.Parameters;
-import org.integratedmodelling.klab.utils.Utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.JavaType;
@@ -70,7 +69,6 @@ public enum Extensions implements IExtensionService {
 		return components.values();
 	}
 
-	@Override
 	public org.integratedmodelling.klab.engine.extensions.Component getComponent(String componentId) {
 		return (org.integratedmodelling.klab.engine.extensions.Component) components.get(componentId);
 	}
@@ -395,5 +393,11 @@ public enum Extensions implements IExtensionService {
 
 		return ret;
 	}
+
+	@Override
+    public <T> T getComponentImplementation(String componentId, Class<? extends T> requestedClass) {
+        org.integratedmodelling.klab.engine.extensions.Component component = getComponent(componentId);
+        return component == null ? null : component.getImplementation(requestedClass);
+    }
 
 }
