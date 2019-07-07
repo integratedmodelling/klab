@@ -851,9 +851,10 @@ public class Geometry implements IGeometry {
     		}
     	}
     	
-    	Geometry ret = create(geometry.encode());
+    	Geometry ret = create(this.encode());
     	
     	for (Dimension dimension : add) {
+    	    ret.scalar = false;
     		ret.dimensions.add((DimensionImpl)dimension);
     	}
     	

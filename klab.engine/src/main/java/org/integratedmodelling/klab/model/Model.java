@@ -364,11 +364,12 @@ public class Model extends KimObject implements IModel {
                                         : ExtentDistribution.INTENSIVE);
                         break;
                     case "time":
-                        ret.put(ExtentDimension.VOLUMETRIC,
+                        ret.put(ExtentDimension.TEMPORAL,
                                 annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
                                         : ExtentDistribution.INTENSIVE);
+                        break;
                     case "numerosity":
-                        ret.put(ExtentDimension.VOLUMETRIC,
+                        ret.put(ExtentDimension.CONCEPTUAL,
                                 annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
                                         : ExtentDistribution.INTENSIVE);
                         break;
