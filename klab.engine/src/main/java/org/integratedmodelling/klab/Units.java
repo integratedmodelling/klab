@@ -596,12 +596,12 @@ public enum Units implements IUnitService {
     @Override
     public Unit getDefaultUnitFor(IConcept concept) {
 
-        if (defaultUnitCache.containsKey(concept.getDefinition())) {
-            return defaultUnitCache.get(concept.getDefinition());
-        }
-
         if (concept.is(Type.MONEY) || concept.is(Type.NUMEROSITY)) {
             return Unit.unitless();
+        }
+
+        if (defaultUnitCache.containsKey(concept.getDefinition())) {
+            return defaultUnitCache.get(concept.getDefinition());
         }
 
         Unit ret = null;

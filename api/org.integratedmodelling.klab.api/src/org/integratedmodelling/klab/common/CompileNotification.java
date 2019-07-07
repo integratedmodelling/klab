@@ -18,10 +18,12 @@ public class CompileNotification implements ICompileNotification {
     private String namespaceId;
     private IKimStatement statement;
     // scope at root level for error propagation
-    private IKimScope mainScope; 
+    private IKimScope mainScope;
     private String message;
-    
-    private CompileNotification() {}
+    private String observableUrn;
+
+    private CompileNotification() {
+    }
 
     public static CompileNotification create(Level level, String message, String namespace, IKimStatement statement) {
         CompileNotification ret = new CompileNotification();
@@ -31,7 +33,7 @@ public class CompileNotification implements ICompileNotification {
         ret.statement = statement;
         return ret;
     }
-    
+
     // TODO allow passing a kim object and set the URN from there
     public static CompileNotification error(String message, String namespace, IKimStatement statement) {
         CompileNotification ret = new CompileNotification();
@@ -59,7 +61,7 @@ public class CompileNotification implements ICompileNotification {
         ret.statement = statement;
         return ret;
     }
-    
+
     public static CompileNotification debug(String message, String namespace, IKimStatement statement) {
         CompileNotification ret = new CompileNotification();
         ret.level = Level.FINE;
@@ -71,27 +73,31 @@ public class CompileNotification implements ICompileNotification {
 
     public CompileNotificationReference getReference() {
 
-    	CompileNotificationReference ret = new CompileNotificationReference();
-        ret.setFirstLine(statement.getFirstLine());
-        ret.setLastLine(statement.getLastLine());
-        ret.setStartOffset(statement.getFirstCharOffset());
-        ret.setEndOffset(statement.getLastCharOffset());
+        CompileNotificationReference ret = new CompileNotificationReference();
+        if (statement != null) {
+            ret.setFirstLine(statement.getFirstLine());
+            ret.setLastLine(statement.getLastLine());
+            ret.setStartOffset(statement.getFirstCharOffset());
+            ret.setEndOffset(statement.getLastCharOffset());
+        }
         ret.setMessage(message);
         ret.setLevel(level.intValue());
         ret.setNamespaceId(namespaceId);
         if (mainScope instanceof IKimModel) {
-        	ret.setScopeName(((IKimModel)mainScope).getName());
+            ret.setScopeName(((IKimModel) mainScope).getName());
         } else if (mainScope instanceof IKimObserver) {
-        	ret.setScopeName(((IKimObserver)mainScope).getName());
+            ret.setScopeName(((IKimObserver) mainScope).getName());
         } else if (mainScope instanceof IKimConceptStatement) {
-        	ret.setScopeName(((IKimConceptStatement)mainScope).getName());
+            ret.setScopeName(((IKimConceptStatement) mainScope).getName());
         } else if (mainScope instanceof IKimSymbolDefinition) {
-        	ret.setScopeName(((IKimSymbolDefinition)mainScope).getName());
+            ret.setScopeName(((IKimSymbolDefinition) mainScope).getName());
         }
-        if (mainScope != null) {
-        	ret.setStatementUrn(mainScope.getURI());
+        if (observableUrn != null) {
+            ret.setStatementUrn(observableUrn);
+        } else if (mainScope != null) {
+            ret.setStatementUrn(mainScope.getURI());
         }
-        
+
         return ret;
     }
 
@@ -115,20 +121,28 @@ public class CompileNotification implements ICompileNotification {
         return message;
     }
 
-	public IKimScope getMainScope() {
-		return mainScope;
-	}
+    public IKimScope getMainScope() {
+        return mainScope;
+    }
 
-	public void setMainScope(IKimScope mainScope) {
-		this.mainScope = mainScope;
-	}
+    public void setMainScope(IKimScope mainScope) {
+        this.mainScope = mainScope;
+    }
 
-	public void setNamespace(INamespace namespace) {
-		this.namespaceId = namespace.getId();
-	}
+    public void setNamespace(INamespace namespace) {
+        this.namespaceId = namespace.getId();
+    }
 
-	public void setStatement(IKimStatement statement) {
-		this.statement = statement;
-	}
-    
+    public void setStatement(IKimStatement statement) {
+        this.statement = statement;
+    }
+
+    public String getObservableUrn() {
+        return observableUrn;
+    }
+
+    public void setObservableUrn(String observableUrn) {
+        this.observableUrn = observableUrn;
+    }
+
 }

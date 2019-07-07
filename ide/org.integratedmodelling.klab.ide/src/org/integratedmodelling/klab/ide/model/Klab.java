@@ -30,7 +30,6 @@ import org.integratedmodelling.klab.ide.navigator.model.EResourceFolder;
 import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.Capabilities;
-import org.integratedmodelling.klab.rest.CompileNotificationReference;
 import org.integratedmodelling.klab.rest.LocalResourceReference;
 import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
 import org.integratedmodelling.klab.rest.ProjectReference;
@@ -62,8 +61,6 @@ public class Klab {
 	private Map<String, Map<String, EResourceReference>> resourceCatalog = Collections.synchronizedMap(new HashMap<>());
 	private List<ResourceAdapterReference> resourceAdapters = new ArrayList<>();
 	private Map<String, NamespaceCompilationResult> namespaceStatus = new HashMap<>();
-
-	private Map<String, CompileInfo> compileInfo = Collections.synchronizedMap(new HashMap<>());
 
 	public void synchronizeProjectResources(String projectName, File projectRoot) {
 

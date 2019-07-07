@@ -295,11 +295,11 @@ class KimValidator extends AbstractKimValidator {
 		 * Find the original namespace: if we don't have one, don't register
 		 */
 		var namespace = if(statement !== null) getNamespace(statement) else null;
-
+		val namespaceId = if (namespace !== null) Kim.getNamespaceId(namespace) else null;
 		val isPrivate = statement.isPrivate || namespace.isPrivate || namespace.worldviewBound;
-
+		
 		/*
-		 * look-ahead the first observable to handle the special case where the 'observed as' is a concept and the first
+ 		 * look-ahead the first observable to handle the special case where the 'observed as' is a concept and the first
 		 * observable is a role.
 		 */
 		var firstObservable = if (nonSemanticModels.contains(statement.model) && namespace !== null) {
@@ -347,6 +347,17 @@ class KimValidator extends AbstractKimValidator {
 					Kim.INSTANCE.declareObservable(model.observables.get(obsIdx))
 
 			if (observable !== null) {
+
+				for (CompileNotificationReference ref : Kim.INSTANCE.getNotificationsFor(namespaceId, observable.getURI())) {
+					switch (ref.level) {
+						case Level.SEVERE.intValue():
+							error(ref.message, KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, REASONING_PROBLEM)
+						case Level.WARNING.intValue():
+							warning(ref.message, KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, REASONING_PROBLEM)
+						case Level.INFO.intValue():
+							info(ref.message, KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, REASONING_PROBLEM)
+					}
+				}
 
 				var definition = observable.descriptor
 				if (definition !== null) {
@@ -406,6 +417,17 @@ class KimValidator extends AbstractKimValidator {
 			}
 
 			if (cd.observable !== null) {
+
+				for (CompileNotificationReference ref : Kim.INSTANCE.getNotificationsFor(namespaceId, observable.getURI())) {
+					switch (ref.level) {
+						case Level.SEVERE.intValue():
+							error(ref.message, KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, REASONING_PROBLEM)
+						case Level.WARNING.intValue():
+							warning(ref.message, KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, REASONING_PROBLEM)
+						case Level.INFO.intValue():
+							info(ref.message, KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, REASONING_PROBLEM)
+					}
+				}
 
 				if (cd.observable.value !== null && cd.observable.value.id !== null) {
 					error(

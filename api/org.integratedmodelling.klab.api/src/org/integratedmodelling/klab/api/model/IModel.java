@@ -218,15 +218,5 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
 	 */
 	IGeometry getGeometry();
 
-	/**
-	 * The asserted dimensionality of the model, combining the geometry of
-	 * resources, the declared scale if any, and any constraints set through
-	 * intensive/extensive annotations. Affects the validation of units of 
-	 * measurement and the mediation with other models and resources.
-	 * 
-	 * @return a map of each asserted dimension to the type of aggregation expected
-	 *         in it.
-	 */
-	Map<ExtentDimension, ExtentDistribution> getAssertedDimensionality();
 
 }

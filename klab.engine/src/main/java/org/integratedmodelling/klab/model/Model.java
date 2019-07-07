@@ -5,7 +5,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
@@ -26,10 +27,11 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.data.mediation.IUnit.Contextualization;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -44,10 +46,10 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IDocumentationService;
-import org.integratedmodelling.klab.common.CompileNotification;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.Urns;
+import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -95,8 +97,6 @@ public class Model extends KimObject implements IModel {
     private List<IResource> resourcesUsed = new ArrayList<>();
     private long lastResourceCheck;
     private boolean available = true;
-
-    Map<ExtentDimension, ExtentDistribution> declaredDimensionality;
 
     // only for the delegate RankedModel
     protected Model() {
@@ -207,6 +207,19 @@ public class Model extends KimObject implements IModel {
 
         Map<String, IArtifact.Type> typechain = new HashMap<>();
 
+        /*
+         * start from a scalar geometry after merging any @intensive annotations. Gather the model's annotations
+         * by passing the first observable.
+         */
+        this.geometry = Geometry.scalar();
+        Map<ExtentDimension, ExtentDistribution> modelConstraints = getExtentConstraints(this.getObservables().get(0),
+                monitor);
+        for (Entry<ExtentDimension, ExtentDistribution> entry : modelConstraints.entrySet()) {
+            if (entry.getValue() == ExtentDistribution.INTENSIVE) {
+                mergeGeometry(Geometry.distributedIn(entry.getKey()), monitor);
+            }
+        }
+
         for (IComputableResource resource : resources) {
 
             String target = resource.getTarget() == null ? this.observables.get(0).getName()
@@ -225,13 +238,12 @@ public class Model extends KimObject implements IModel {
 
         mergeGeometry(getCoverage(monitor).asGeometry(), monitor);
 
-        if (geometry == null) {
+        if (geometry == null || geometry.isEmpty()) {
             geometry = Geometry.scalar();
         }
 
         for (IObservable observable : CollectionUtils.join(observables, dependencies)) {
             validateUnits(observable, monitor);
-
         }
 
         // check final type of observable against typechain
@@ -251,33 +263,128 @@ public class Model extends KimObject implements IModel {
     }
 
     private void validateUnits(IObservable observable, IMonitor monitor) {
-        
+
         if (observable.is(Type.MONEY) || observable.is(Type.NUMEROSITY) || observable.is(Type.EXTENSIVE_PROPERTY)) {
 
-            // money: get the unitless base plus any distribution
-            // count: get the 'per', if any, and invert it.
-            
+            IUnit statedUnit = observable.getUnit();
+
             /*
-             * check units against geometry, in every observable
+             * this will happen for transformed observables, e.g. normalized
              */
-//          Map<ExtentDimension, ExtentDistribution> dimensions = getAssertedDimensionality(monitor);
-//          CompileNotification notification = Units.INSTANCE.validateUnit(observable, geometry,
-//                  Annotations.INSTANCE.getAnnotation(this, "extensive"), dimensions);
-//
-//          if (notification != null) {
-//
-//              if (notification.getLevel().equals(Level.WARNING)) {
-//                  monitor.warn(notification.getMessage(), this.getStatement());
-//              } else if (notification.getLevel().equals(Level.SEVERE)) {
-//                  monitor.error(notification.getMessage(), this.getStatement());
-//                  setErrors(true);
-//              }
-//          }
-        } else {
-            
-            // ensure units are NOT distributed.
-            
+            if (statedUnit == null) {
+                return;
+            }
+
+            IUnit baseUnit = Units.INSTANCE.getDefaultUnitFor(observable.getType());
+
+            if (baseUnit == null) {
+                monitor.error(
+                        "Cannot establish base unit for " + observable.getName()
+                                + ": remove the unit or any transformations that do not preserve observation semantics",
+                        observable);
+                setErrors(true);
+                return;
+            }
+
+            Contextualization contextualization = baseUnit.contextualize(this.geometry,
+                    getExtentConstraints(observable, monitor));
+
+            /*
+             * if it's the same as the expected, everything's OK; inherit any aggregation 
+             */
+            if (statedUnit.isCompatible(contextualization.getChosenUnit())) {
+                statedUnit.getAggregatedDimensions()
+                        .addAll(contextualization.getChosenUnit().getAggregatedDimensions());
+                return;
+            }
+
+            /*
+             * if it's one of the others, add the extents, warn appropriately and return
+             */
+            for (IUnit unit : contextualization.getCandidateUnits()) {
+                if (statedUnit.isCompatible(unit)) {
+                    statedUnit.getAggregatedDimensions().addAll(unit.getAggregatedDimensions());
+                    monitor.warn("This observable's unit implies " + unit.getAggregatedDimensions() + " aggregation over a "
+                            + ((Geometry) this.geometry).getLabel()
+                            + " context. If this is intentional, add an @extensive annotation to the "
+                            + (getObservables().get(0).equals(observable) ? "model" : "observable")
+                            + " to remove this warning.", observable);
+                    return;
+                }
+            }
+
+            /*
+             * if we get here, we have an incompatible unit
+             */
+            setErrors(true);
+            monitor.error("Unit " + statedUnit + " is incompatible with this observable in a "
+                    + ((Geometry) this.geometry).getLabel() + " context"
+                    + (baseUnit.isCompatible(contextualization.getChosenUnit())
+                            ? ". You may add an @intensive annotation to the model to force its dimensionality."
+                            : ""),
+                    observable);
         }
+
+    }
+
+    private Map<ExtentDimension, ExtentDistribution> getExtentConstraints(IObservable observable, IMonitor monitor) {
+
+        Map<ExtentDimension, ExtentDistribution> ret = new HashMap<>();
+
+        boolean isModel = observable.equals(this.getObservables().get(0));
+
+        /*
+         * model annotations act as default unless there are specific annotations on each observable. If so,
+         * they completely replace the annotation set (there is no inheritance).
+         */
+        Collection<IAnnotation> annotations = isModel ? Annotations.INSTANCE.collectAnnotations(this)
+                : Annotations.INSTANCE.collectAnnotations(observable);
+        if (!isModel && annotations.isEmpty()) {
+            annotations = Annotations.INSTANCE.collectAnnotations(this);
+        }
+
+        for (IAnnotation annotation : annotations) {
+            if (annotation.getName().equals("extensive") || annotation.getName().equals("intensive")) {
+                for (Object o : annotation.get(IServiceCall.DEFAULT_PARAMETER_NAME, List.class)) {
+                    switch (o.toString()) {
+                    case "space":
+                    case "area":
+                        ret.put(ExtentDimension.AREAL,
+                                annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
+                                        : ExtentDistribution.INTENSIVE);
+                        break;
+                    case "line":
+                        ret.put(ExtentDimension.LINEAL,
+                                annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
+                                        : ExtentDistribution.INTENSIVE);
+                        break;
+                    case "volume":
+                        ret.put(ExtentDimension.VOLUMETRIC,
+                                annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
+                                        : ExtentDistribution.INTENSIVE);
+                        break;
+                    case "time":
+                        ret.put(ExtentDimension.VOLUMETRIC,
+                                annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
+                                        : ExtentDistribution.INTENSIVE);
+                    case "numerosity":
+                        ret.put(ExtentDimension.VOLUMETRIC,
+                                annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
+                                        : ExtentDistribution.INTENSIVE);
+                        break;
+                    default:
+                        if (monitor != null) {
+                            monitor.error(
+                                    "Illegal extent in " + annotation.getName() + " annotation: " + o
+                                            + ": allowed are space|area, line, volume, time and numerosity",
+                                    getStatement());
+                        }
+                    }
+                }
+            }
+        }
+
+        return ret;
     }
 
     private void mergeGeometry(IGeometry geometry, IMonitor monitor) {
@@ -750,82 +857,6 @@ public class Model extends KimObject implements IModel {
     @Override
     public IGeometry getGeometry() {
         return geometry;
-    }
-
-    @Override
-    public Map<ExtentDimension, ExtentDistribution> getAssertedDimensionality() {
-        return getAssertedDimensionality(null);
-    }
-
-    public Map<ExtentDimension, ExtentDistribution> getAssertedDimensionality(IMonitor monitor) {
-
-        if (this.declaredDimensionality == null) {
-
-            this.declaredDimensionality = new HashMap<>();
-
-            if (geometry != null) {
-
-                for (Dimension dimension : geometry.getDimensions()) {
-                    if (dimension.getType() == Dimension.Type.SPACE) {
-                        this.declaredDimensionality.put(ExtentDimension.spatial(dimension.getDimensionality()),
-                                dimension.isRegular() || dimension.size() > 0 ? ExtentDistribution.INTENSIVE
-                                        : ExtentDistribution.EXTENSIVE);
-                    } else if (dimension.getType() == Dimension.Type.TIME) {
-                        this.declaredDimensionality.put(ExtentDimension.TEMPORAL,
-                                dimension.isRegular() || dimension.size() > 0 ? ExtentDistribution.INTENSIVE
-                                        : ExtentDistribution.EXTENSIVE);
-                    } else if (dimension.getType() == Dimension.Type.NUMEROSITY) {
-                        this.declaredDimensionality.put(ExtentDimension.CONCEPTUAL,
-                                dimension.isRegular() || dimension.size() > 0 ? ExtentDistribution.INTENSIVE
-                                        : ExtentDistribution.EXTENSIVE);
-                    }
-                }
-            }
-
-            for (IAnnotation annotation : new IAnnotation[] { Annotations.INSTANCE.getAnnotation(this, "extensive"),
-                    Annotations.INSTANCE.getAnnotation(this, "intensive") }) {
-                if (annotation != null) {
-                    for (Object o : annotation.get(IServiceCall.DEFAULT_PARAMETER_NAME, List.class)) {
-                        switch (o.toString()) {
-                        case "space":
-                        case "area":
-                            this.declaredDimensionality.put(ExtentDimension.AREAL,
-                                    annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
-                                            : ExtentDistribution.INTENSIVE);
-                            break;
-                        case "line":
-                            this.declaredDimensionality.put(ExtentDimension.LINEAL,
-                                    annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
-                                            : ExtentDistribution.INTENSIVE);
-                            break;
-                        case "volume":
-                            this.declaredDimensionality.put(ExtentDimension.VOLUMETRIC,
-                                    annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
-                                            : ExtentDistribution.INTENSIVE);
-                            break;
-                        case "time":
-                            this.declaredDimensionality.put(ExtentDimension.VOLUMETRIC,
-                                    annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
-                                            : ExtentDistribution.INTENSIVE);
-                        case "numerosity":
-                            this.declaredDimensionality.put(ExtentDimension.VOLUMETRIC,
-                                    annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
-                                            : ExtentDistribution.INTENSIVE);
-                            break;
-                        default:
-                            if (monitor != null) {
-                                monitor.error(
-                                        "Illegal extent in " + annotation.getName() + " annotation: " + o
-                                                + ": allowed are space|area, line, volume, time and numerosity",
-                                        getStatement());
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return this.declaredDimensionality;
-
     }
 
 }

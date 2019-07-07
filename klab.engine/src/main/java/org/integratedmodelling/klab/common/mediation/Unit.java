@@ -219,7 +219,9 @@ public class Unit implements IUnit {
          */
         Set<ExtentDimension> aggregatable = new HashSet<>();
         for (IGeometry.Dimension dimension : geometry.getDimensions()) {
-            aggregatable.add(dimension.getExtentDimension());
+            if (dimension.size() > 1 || dimension.isRegular()) {
+                aggregatable.add(dimension.getExtentDimension());
+            }
         }
 
         IUnit fullyContextualized = Units.INSTANCE.contextualize(this, aggregatable);
@@ -239,6 +241,9 @@ public class Unit implements IUnit {
             Set<ExtentDimension> whitelist = new HashSet<>();
             Set<ExtentDimension> blacklist = new HashSet<>();
             for (ExtentDimension d : constraints.keySet()) {
+                if (!aggregatable.contains(d)) {
+                    continue;
+                }
                 if (constraints.get(d) == ExtentDistribution.EXTENSIVE) {
                     whitelist.add(d);
                 } else {

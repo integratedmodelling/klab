@@ -99,6 +99,9 @@ public interface IUnit extends IValueMediator {
      * constraints, pairing a dimension to a choice of extensive (aggregated) or intensive
      * (distributed). If the constraints are null, the chosen unit is the one that is distributed
      * over all the extents in the geometry.
+     * 
+     * In order to work properly, this must be called on the DEFAULT BASE UNIT of an observable,
+     * stripped of any contextualization.
      *  
      * @param geometry a geometry to contextualize to
      * @param constraints a map of requested constraints on the chosen unit (may be null)

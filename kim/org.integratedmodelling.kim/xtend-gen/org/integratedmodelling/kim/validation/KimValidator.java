@@ -428,38 +428,69 @@ public class KimValidator extends AbstractKimValidator {
       _xifexpression = null;
     }
     Namespace namespace = _xifexpression;
+    String _xifexpression_1 = null;
+    if ((namespace != null)) {
+      _xifexpression_1 = Kim.getNamespaceId(namespace);
+    } else {
+      _xifexpression_1 = null;
+    }
+    final String namespaceId = _xifexpression_1;
     final boolean isPrivate = ((statement.isPrivate() || namespace.isPrivate()) || namespace.isWorldviewBound());
-    KimObservable _xifexpression_1 = null;
+    KimObservable _xifexpression_2 = null;
     if ((KimValidator.nonSemanticModels.contains(statement.getModel()) && (namespace != null))) {
       String _model = statement.getModel();
       String _namespaceId = Kim.getNamespaceId(namespace);
       String _plus = (_namespaceId + ".");
       String _name = model.getName();
       String _plus_1 = (_plus + _name);
-      _xifexpression_1 = Kim.INSTANCE.createNonSemanticObservable(_model, _plus_1);
+      _xifexpression_2 = Kim.INSTANCE.createNonSemanticObservable(_model, _plus_1);
     } else {
-      KimObservable _xifexpression_2 = null;
+      KimObservable _xifexpression_3 = null;
       int _size = model.getObservables().size();
       boolean _greaterThan = (_size > 0);
       if (_greaterThan) {
-        _xifexpression_2 = Kim.INSTANCE.declareObservable(model.getObservables().get(0));
+        _xifexpression_3 = Kim.INSTANCE.declareObservable(model.getObservables().get(0));
       }
-      _xifexpression_1 = _xifexpression_2;
+      _xifexpression_2 = _xifexpression_3;
     }
-    KimObservable firstObservable = _xifexpression_1;
+    KimObservable firstObservable = _xifexpression_2;
     if (((firstObservable != null) && KimValidator.nonSemanticModels.contains(statement.getModel()))) {
       observables.add(firstObservable);
     }
     for (int obsIdx = 0; (obsIdx < model.getObservables().size()); obsIdx++) {
       {
-        KimObservable _xifexpression_3 = null;
+        KimObservable _xifexpression_4 = null;
         if (((obsIdx == 0) && (firstObservable != null))) {
-          _xifexpression_3 = firstObservable;
+          _xifexpression_4 = firstObservable;
         } else {
-          _xifexpression_3 = Kim.INSTANCE.declareObservable(model.getObservables().get(obsIdx));
+          _xifexpression_4 = Kim.INSTANCE.declareObservable(model.getObservables().get(obsIdx));
         }
-        KimObservable observable = _xifexpression_3;
+        KimObservable observable = _xifexpression_4;
         if ((observable != null)) {
+          java.util.List<CompileNotificationReference> _notificationsFor = Kim.INSTANCE.getNotificationsFor(namespaceId, observable.getURI());
+          for (final CompileNotificationReference ref : _notificationsFor) {
+            int _level = ref.getLevel();
+            boolean _matched = false;
+            int _intValue = Level.SEVERE.intValue();
+            if (Objects.equal(_level, _intValue)) {
+              _matched=true;
+              this.error(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);
+            }
+            if (!_matched) {
+              int _intValue_1 = Level.WARNING.intValue();
+              if (Objects.equal(_level, _intValue_1)) {
+                _matched=true;
+                this.warning(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);
+              }
+            }
+            if (!_matched) {
+              int _intValue_2 = Level.INFO.intValue();
+              if (Objects.equal(_level, _intValue_2)) {
+                _matched=true;
+                this.info(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);
+              }
+            }
+          }
           Kim.ConceptDescriptor definition = observable.getDescriptor();
           if ((definition != null)) {
             if ((definition.isUndefined() && (obsIdx > 0))) {
@@ -498,15 +529,15 @@ public class KimValidator extends AbstractKimValidator {
     EList<Dependency> _dependencies = model.getDependencies();
     for (final Dependency cd : _dependencies) {
       {
-        KimObservable _xifexpression_3 = null;
+        KimObservable _xifexpression_4 = null;
         ObservableSemantics _observable = cd.getObservable();
         boolean _tripleNotEquals = (_observable != null);
         if (_tripleNotEquals) {
-          _xifexpression_3 = Kim.INSTANCE.declareObservable(cd.getObservable());
+          _xifexpression_4 = Kim.INSTANCE.declareObservable(cd.getObservable());
         } else {
-          _xifexpression_3 = Kim.INSTANCE.declareModelReference(model, cd.getModelReference());
+          _xifexpression_4 = Kim.INSTANCE.declareModelReference(model, cd.getModelReference());
         }
-        KimObservable observable = _xifexpression_3;
+        KimObservable observable = _xifexpression_4;
         String _modelReference = cd.getModelReference();
         boolean _tripleNotEquals_1 = (_modelReference != null);
         if (_tripleNotEquals_1) {
@@ -514,14 +545,14 @@ public class KimValidator extends AbstractKimValidator {
             String _modelReference_1 = cd.getModelReference();
             String _plus_2 = ("Model reference " + _modelReference_1);
             String _plus_3 = (_plus_2 + " is unresolved: please ");
-            String _xifexpression_4 = null;
+            String _xifexpression_5 = null;
             boolean _contains = cd.getModelReference().contains(".");
             if (_contains) {
-              _xifexpression_4 = "import";
+              _xifexpression_5 = "import";
             } else {
-              _xifexpression_4 = "declare";
+              _xifexpression_5 = "declare";
             }
-            String _plus_4 = (_plus_3 + _xifexpression_4);
+            String _plus_4 = (_plus_3 + _xifexpression_5);
             String _plus_5 = (_plus_4 + " this model");
             this.error(_plus_5, 
               KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
@@ -533,6 +564,30 @@ public class KimValidator extends AbstractKimValidator {
         ObservableSemantics _observable_1 = cd.getObservable();
         boolean _tripleNotEquals_2 = (_observable_1 != null);
         if (_tripleNotEquals_2) {
+          java.util.List<CompileNotificationReference> _notificationsFor = Kim.INSTANCE.getNotificationsFor(namespaceId, observable.getURI());
+          for (final CompileNotificationReference ref : _notificationsFor) {
+            int _level = ref.getLevel();
+            boolean _matched = false;
+            int _intValue = Level.SEVERE.intValue();
+            if (Objects.equal(_level, _intValue)) {
+              _matched=true;
+              this.error(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.REASONING_PROBLEM);
+            }
+            if (!_matched) {
+              int _intValue_1 = Level.WARNING.intValue();
+              if (Objects.equal(_level, _intValue_1)) {
+                _matched=true;
+                this.warning(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.REASONING_PROBLEM);
+              }
+            }
+            if (!_matched) {
+              int _intValue_2 = Level.INFO.intValue();
+              if (Objects.equal(_level, _intValue_2)) {
+                _matched=true;
+                this.info(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.REASONING_PROBLEM);
+              }
+            }
+          }
           if (((cd.getObservable().getValue() != null) && (cd.getObservable().getValue().getId() != null))) {
             this.error(
               "Attributes IDs are not allowed in dependencies (<attribute> \'as\' ...): only values, expressions or functions", 
@@ -777,14 +832,14 @@ public class KimValidator extends AbstractKimValidator {
         EList<ValueAssignment> _contextualizers_1 = model.getContextualizers();
         for (final ValueAssignment contextualizer_1 : _contextualizers_1) {
           java.util.List<IComputableResource> _contextualization = descriptor.getContextualization();
-          IResolutionScope.Mode _xifexpression_3 = null;
+          IResolutionScope.Mode _xifexpression_4 = null;
           boolean _isInstantiator = model.isInstantiator();
           if (_isInstantiator) {
-            _xifexpression_3 = IResolutionScope.Mode.INSTANTIATION;
+            _xifexpression_4 = IResolutionScope.Mode.INSTANTIATION;
           } else {
-            _xifexpression_3 = IResolutionScope.Mode.RESOLUTION;
+            _xifexpression_4 = IResolutionScope.Mode.RESOLUTION;
           }
-          ComputableResource _computableResource = new ComputableResource(contextualizer_1, _xifexpression_3, descriptor);
+          ComputableResource _computableResource = new ComputableResource(contextualizer_1, _xifexpression_4, descriptor);
           _contextualization.add(_computableResource);
         }
         Classification _classification_1 = model.getClassification();
@@ -836,14 +891,14 @@ public class KimValidator extends AbstractKimValidator {
             if (_tripleNotEquals_11) {
               descriptor.name = observables.get(0).getFormalName();
             } else {
-              String _xifexpression_4 = null;
+              String _xifexpression_5 = null;
               boolean _isInstantiator_1 = model.isInstantiator();
               if (_isInstantiator_1) {
-                _xifexpression_4 = "instantiator";
+                _xifexpression_5 = "instantiator";
               } else {
-                _xifexpression_4 = "resolver";
+                _xifexpression_5 = "resolver";
               }
-              String name = _xifexpression_4;
+              String name = _xifexpression_5;
               String st = descriptor.getObservables().get(0).getCodeName();
               descriptor.name = ((st + "-") + name);
             }

@@ -446,18 +446,18 @@ public interface IObservable extends ISemantic, IResolvable {
 	 */
 	Object getValue();
 
-	/**
-	 * If true, observer produces an extensive value over the passed extent, one
-	 * that varies with the extents of computation. A true return value will cause
-	 * different aggregation than the default averaging when mediating to different
-	 * scales.
-	 *
-	 * @param c
-	 *            the extent concept selecting a particular extent
-	 * @return true if the value of the quality this represents is extensive in the
-	 *         extent concept passed
-	 */
-	boolean isExtensive(IConcept c);
+//	/**
+//	 * If true, observer produces an extensive value over the passed extent, one
+//	 * that varies with the extents of computation. A true return value will cause
+//	 * different aggregation than the default averaging when mediating to different
+//	 * scales.
+//	 *
+//	 * @param c
+//	 *            the extent concept selecting a particular extent
+//	 * @return true if the value of the quality this represents is extensive in the
+//	 *         extent concept passed
+//	 */
+//	boolean isExtensive(IConcept c);
 
 	/**
 	 * A generic observable expects to be resolved extensively - i.e., all the

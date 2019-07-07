@@ -102,6 +102,25 @@ public class Geometry implements IGeometry {
         ret.scalar = true;
         return ret;
     }
+    
+    public static Geometry distributedIn(ExtentDimension key) {
+        switch (key) {
+        case AREAL:
+            return create("S2");
+        case LINEAL:
+            return create("S1");
+        case PUNTAL:
+            return create("S0");
+        case TEMPORAL:
+            return create("T1");
+        case VOLUMETRIC:
+            return create("S3");
+        case CONCEPTUAL:
+        default:
+            break;
+        }
+        return empty();
+    }
 
     /**
      * Encode into a string representation. Keys in parameter maps are sorted so the
@@ -839,6 +858,31 @@ public class Geometry implements IGeometry {
     	}
     	
     	return ret;
+    }
+    
+    public String getLabel() {
+        // TODO handle numerosity
+        String prefix = "";
+        if (size() > 0) {
+            prefix = "distributed ";
+        } else {
+            for (Dimension d : dimensions) {
+                if (d.isRegular()) {
+                    prefix = "distributed ";
+                    break;
+                }
+            }
+        }
+        if (scalar) {
+            return "scalar";
+        } else if (getDimension(Type.SPACE) != null && getDimension(Type.TIME) != null) {
+            return prefix + "spatio-temporal";
+        } else if (getDimension(Type.SPACE) != null) {
+            return prefix + "spatial";
+        } else if (getDimension(Type.TIME) != null) {
+            return prefix + "temporal";
+        }
+        return "empty";
     }
     
 }

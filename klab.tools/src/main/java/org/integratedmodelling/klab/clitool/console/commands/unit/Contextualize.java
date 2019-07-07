@@ -11,6 +11,7 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.data.mediation.IUnit.Contextualization;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
 import org.integratedmodelling.klab.api.runtime.ISession;
@@ -58,47 +59,14 @@ public class Contextualize implements ICommand {
             i++;
         }
 
-        /*
-         * produce all possible base units: gather the extents in the geometry
-         */
-        Set<ExtentDimension> aggregatable = new HashSet<>();
-        for (IGeometry.Dimension dimension : geometry.getDimensions()) {
-            aggregatable.add(dimension.getExtentDimension());
+        Contextualization contextualization = unit.contextualize(geometry, forcings);
+        
+        ret += "Chosen unit: " + contextualization.getChosenUnit();
+        ret += "\nCandidates: ";
+        for (IUnit candidate : contextualization.getCandidateUnits()) {
+            ret += "\n" + candidate.getAggregatedDimensions() + "\t" + candidate;
         }
-
-        ret += "In geometry " + geometry + ", the unit can be any of:";
-        IUnit fullyContextualized = Units.INSTANCE.contextualize(unit, aggregatable);
-        ret += "\n   The fully contextualized unit: " + fullyContextualized;
-
-        List<Pair<Set<ExtentDimension>, IUnit>> potentialUnits = new ArrayList<>();
-        for (Set<ExtentDimension> set : Sets.powerSet(aggregatable)) {
-            IUnit aggregated = Units.INSTANCE.removeExtents(fullyContextualized, set);
-            potentialUnits.add(new Pair<>(set, aggregated));
-            ret += ("\n   After aggregating in " + set + " -> " + aggregated);
-        }
-
-        if (forcings.isEmpty()) {
-            ret += "\n Chosen unit for no forcings:\n*  " + fullyContextualized;
-        } else {
-
-            Set<ExtentDimension> whitelist = new HashSet<>();
-            Set<ExtentDimension> blacklist = new HashSet<>();
-            for (ExtentDimension d : forcings.keySet()) {
-                if (forcings.get(d) == ExtentDistribution.EXTENSIVE) {
-                    whitelist.add(d);
-                } else {
-                    blacklist.add(d);
-                }
-            }
-
-            for (Pair<Set<ExtentDimension>, IUnit> punit : potentialUnits) {
-                if (Sets.intersection(punit.getFirst(), whitelist).size() == whitelist.size()
-                        && Sets.intersection(punit.getFirst(), blacklist).size() == 0) {
-                    ret += "\n Chosen unit for " + MapUtils.toString(forcings) + " forcings:\n*  " + punit.getSecond();
-                    break;
-                }
-            }
-        }
+        
 
         return ret;
     }

@@ -132,7 +132,11 @@ public interface IGeometry extends Serializable, ILocator {
         Type getType();
 
         /**
-         * Whether any subdivisions in this dimension are regular or irregular.
+         * Whether any subdivisions in this dimension are regular or irregular. Regularity also 
+         * implies distribution, i.e. the behavior of values over this geometry will depend on 
+         * their extensive nature independent of size. If not regular, they will only depend if
+         * size > 1 and the effect will be different for each subdivision. Size may be 1 even in
+         * regular dimensions.
          * 
          * @return regularity
          */

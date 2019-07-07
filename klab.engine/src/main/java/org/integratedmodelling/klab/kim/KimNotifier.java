@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
@@ -23,8 +22,6 @@ import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.Resources;
-import org.integratedmodelling.klab.Units;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -33,10 +30,8 @@ import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.CompileNotification;
-import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.data.table.Table;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
@@ -45,9 +40,9 @@ import org.integratedmodelling.klab.model.ConceptStatement;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
+import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.CompileNotificationReference;
 import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
-import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -91,6 +86,7 @@ public class KimNotifier implements Kim.Notifier {
 			List<Object> savedArgs = new ArrayList<>();
 			IKimStatement statement = null;
 			String message = null;
+			String observableUrn = null;
 			for (Object o : args) {
 				if (o instanceof IKimStatement) {
 					statement = (IKimStatement) o;
@@ -100,18 +96,21 @@ public class KimNotifier implements Kim.Notifier {
 				} else if (o instanceof String) {
 					message = (String) o;
 					savedArgs.add(o);
+				} else if (o instanceof Observable) {
+				    observableUrn = ((Observable)o).getUrl();
 				} else {
 					savedArgs.add(o);
 				}
-
-				if (statement != null) {
-					CompileNotification notification = CompileNotification.create(level, message, namespace.getName(),
-							statement);
-					notification.setMainScope(mainScope);
-					notifications.add(notification);
-				}
-
 			}
+
+			if (statement != null || observableUrn != null) {
+                CompileNotification notification = CompileNotification.create(level, message, namespace.getName(),
+                        statement);
+                notification.setMainScope(mainScope);
+                notifications.add(notification);
+                notification.setObservableUrn(observableUrn);
+            }
+			
 			return statement == null ? args : savedArgs.toArray();
 		}
 

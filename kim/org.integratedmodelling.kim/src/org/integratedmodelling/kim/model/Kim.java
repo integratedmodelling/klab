@@ -1706,6 +1706,8 @@ public enum Kim {
 
 	private void recordCompileNotification(CompileNotificationReference inot, CompileInfo ci) {
 
+	    System.out.println("ADDING " + inot.getMessage() + " for " + inot.getStatementUrn());
+	    
 		if (inot.getLevel() == Level.SEVERE.intValue()) {
 			ci.getErrors().add(inot);
 		} else if (inot.getLevel() == Level.WARNING.intValue()) {
@@ -1725,17 +1727,21 @@ public enum Kim {
 	
 	public List<CompileNotificationReference> getNotificationsFor(String namespaceId, String statementUri) {
 		
+	    System.out.println("CHECKING NOTIFICATIONS FOR " + statementUri);
+	    
 		List<CompileNotificationReference> ret = new ArrayList<>();
 		CompileInfo info = compileInfo.get(namespaceId);
 		if (info != null) {
 
 			for (CompileNotificationReference notification : info.getErrors()) {
 				if (notification.getStatementUrn() != null && statementUri.endsWith(notification.getStatementUrn())) {
+			        System.out.println("DIOCAN CIAPA " + notification.getMessage());
 					ret.add(notification);
 				}
 			}
 			for (CompileNotificationReference notification : info.getWarnings()) {
 				if (notification.getStatementUrn() != null && statementUri.endsWith(notification.getStatementUrn())) {
+                    System.out.println("DIOCAN CIAPA " + notification.getMessage());
 					ret.add(notification);
 				}
 			}

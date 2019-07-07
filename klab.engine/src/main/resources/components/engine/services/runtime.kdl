@@ -6,13 +6,16 @@
 @klab 0.10.0
 @version 0.10.0
 
-annotation extensive for models 
+annotation extensive for models, dependencies
 	"The model produces extensive results, whose values are aggregated over $value when outputs are generated."
 {
 	list 'value'
 		"The extents over which the results are aggregated."
 }
 
+/*
+ * Intensive only goes on entire models, as it modifies the geometry
+ */
 annotation intensive for models 
 	"The model produces intensive results, whose values are distributed over $value when outputs are generated."
 {
