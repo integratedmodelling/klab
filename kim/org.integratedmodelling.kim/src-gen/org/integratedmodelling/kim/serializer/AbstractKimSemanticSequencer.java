@@ -540,7 +540,8 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         restrictedObservables+=ConceptDeclaration*
 	 *                     )? 
 	 *                     (
-	 *                         (coreConcept?='core' | alias?='equals')? 
+	 *                         alias?='equals'? 
+	 *                         coreConcept?='core'? 
 	 *                         (nothing?='nothing' | (parents+=ConceptDeclaration ((connectors+=',' | connectors+='or' | connectors+='and') parents+=ConceptDeclaration)*))
 	 *                     )?
 	 *                 )+

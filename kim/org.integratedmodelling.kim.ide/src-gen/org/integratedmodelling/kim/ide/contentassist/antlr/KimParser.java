@@ -144,7 +144,7 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getConceptStatementBodyAccess().getAlternatives_2_1_1_2(), "rule__ConceptStatementBody__Alternatives_2_1_1_2");
 					put(grammarAccess.getConceptStatementBodyAccess().getStringIdentifierAlternatives_2_1_1_2_0_0(), "rule__ConceptStatementBody__StringIdentifierAlternatives_2_1_1_2_0_0");
 					put(grammarAccess.getConceptStatementBodyAccess().getAuthorityAlternatives_2_1_1_4_0(), "rule__ConceptStatementBody__AuthorityAlternatives_2_1_1_4_0");
-					put(grammarAccess.getConceptStatementBodyAccess().getAlternatives_3_1_0(), "rule__ConceptStatementBody__Alternatives_3_1_0");
+					put(grammarAccess.getConceptStatementBodyAccess().getAlternatives_3_1_0_0(), "rule__ConceptStatementBody__Alternatives_3_1_0_0");
 					put(grammarAccess.getConceptStatementBodyAccess().getAlternatives_3_1_1(), "rule__ConceptStatementBody__Alternatives_3_1_1");
 					put(grammarAccess.getConceptStatementBodyAccess().getConnectorsAlternatives_3_1_1_1_1_0_0(), "rule__ConceptStatementBody__ConnectorsAlternatives_3_1_1_1_1_0_0");
 					put(grammarAccess.getConceptStatementBodyAccess().getAlternatives_3_2(), "rule__ConceptStatementBody__Alternatives_3_2");
@@ -445,7 +445,7 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getConceptStatementBodyAccess().getGroup_2_1(), "rule__ConceptStatementBody__Group_2_1__0");
 					put(grammarAccess.getConceptStatementBodyAccess().getGroup_2_1_1(), "rule__ConceptStatementBody__Group_2_1_1__0");
 					put(grammarAccess.getConceptStatementBodyAccess().getGroup_3_1(), "rule__ConceptStatementBody__Group_3_1__0");
-					put(grammarAccess.getConceptStatementBodyAccess().getGroup_3_1_0_0(), "rule__ConceptStatementBody__Group_3_1_0_0__0");
+					put(grammarAccess.getConceptStatementBodyAccess().getGroup_3_1_0(), "rule__ConceptStatementBody__Group_3_1_0__0");
 					put(grammarAccess.getConceptStatementBodyAccess().getGroup_3_1_1_1(), "rule__ConceptStatementBody__Group_3_1_1_1__0");
 					put(grammarAccess.getConceptStatementBodyAccess().getGroup_3_1_1_1_1(), "rule__ConceptStatementBody__Group_3_1_1_1_1__0");
 					put(grammarAccess.getConceptStatementBodyAccess().getGroup_3_2_0(), "rule__ConceptStatementBody__Group_3_2_0__0");
@@ -960,8 +960,8 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getConceptStatementBodyAccess().getIntIdentifierAssignment_2_1_1_2_1(), "rule__ConceptStatementBody__IntIdentifierAssignment_2_1_1_2_1");
 					put(grammarAccess.getConceptStatementBodyAccess().getAuthorityAssignment_2_1_1_4(), "rule__ConceptStatementBody__AuthorityAssignment_2_1_1_4");
 					put(grammarAccess.getConceptStatementBodyAccess().getDocstringAssignment_3_0(), "rule__ConceptStatementBody__DocstringAssignment_3_0");
-					put(grammarAccess.getConceptStatementBodyAccess().getCoreConceptAssignment_3_1_0_0_1(), "rule__ConceptStatementBody__CoreConceptAssignment_3_1_0_0_1");
-					put(grammarAccess.getConceptStatementBodyAccess().getAliasAssignment_3_1_0_1(), "rule__ConceptStatementBody__AliasAssignment_3_1_0_1");
+					put(grammarAccess.getConceptStatementBodyAccess().getAliasAssignment_3_1_0_0_1(), "rule__ConceptStatementBody__AliasAssignment_3_1_0_0_1");
+					put(grammarAccess.getConceptStatementBodyAccess().getCoreConceptAssignment_3_1_0_1(), "rule__ConceptStatementBody__CoreConceptAssignment_3_1_0_1");
 					put(grammarAccess.getConceptStatementBodyAccess().getNothingAssignment_3_1_1_0(), "rule__ConceptStatementBody__NothingAssignment_3_1_1_0");
 					put(grammarAccess.getConceptStatementBodyAccess().getParentsAssignment_3_1_1_1_0(), "rule__ConceptStatementBody__ParentsAssignment_3_1_1_1_0");
 					put(grammarAccess.getConceptStatementBodyAccess().getConnectorsAssignment_3_1_1_1_1_0(), "rule__ConceptStatementBody__ConnectorsAssignment_3_1_1_1_1_0");

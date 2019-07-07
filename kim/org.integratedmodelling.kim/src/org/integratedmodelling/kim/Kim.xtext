@@ -534,7 +534,7 @@ ConceptStatementBody:
 			   * adding children of its own (a 'foster parent' of sorts). It should only be permitted for 
 			   * subjective orderings.
 			   */
-		(('is' (coreConcept?='core')? | alias?='equals') (nothing?='nothing' | parents+=ConceptDeclaration (connectors+=(',' | 'or' | 'and') parents+=ConceptDeclaration)*))? &
+		((('is' | alias?='equals') (coreConcept?='core')?) (nothing?='nothing' | parents+=ConceptDeclaration (connectors+=(',' | 'or' | 'and') parents+=ConceptDeclaration)*))? &
 
 	/*
      * traits contextualized. Only applicable to

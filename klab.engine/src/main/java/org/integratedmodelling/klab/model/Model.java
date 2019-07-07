@@ -220,6 +220,11 @@ public class Model extends KimObject implements IModel {
             }
         }
 
+        /*
+         * FIXME instantiators require the OUTPUTS to match the collapsed geometry of EACH output
+         * artifact, not that of the context.
+         */
+
         for (IComputableResource resource : resources) {
 
             String target = resource.getTarget() == null ? this.observables.get(0).getName()
@@ -304,8 +309,8 @@ public class Model extends KimObject implements IModel {
             for (IUnit unit : contextualization.getCandidateUnits()) {
                 if (statedUnit.isCompatible(unit)) {
                     statedUnit.getAggregatedDimensions().addAll(unit.getAggregatedDimensions());
-                    monitor.warn("This observable's unit implies " + unit.getAggregatedDimensions() + " aggregation over a "
-                            + ((Geometry) this.geometry).getLabel()
+                    monitor.warn("This observable's unit implies " + unit.getAggregatedDimensions()
+                            + " aggregation over a " + ((Geometry) this.geometry).getLabel()
                             + " context. If this is intentional, add an @extensive annotation to the "
                             + (getObservables().get(0).equals(observable) ? "model" : "observable")
                             + " to remove this warning.", observable);

@@ -25,8 +25,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getIntIdentifier <em>Int Identifier</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getAuthority <em>Authority</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getDocstring <em>Docstring</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isCoreConcept <em>Core Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isAlias <em>Alias</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isCoreConcept <em>Core Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isNothing <em>Nothing</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getParents <em>Parents</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getConnectors <em>Connectors</em>}</li>
@@ -269,32 +269,6 @@ public interface ConceptStatementBody extends EObject
   void setDocstring(String value);
 
   /**
-   * Returns the value of the '<em><b>Core Concept</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Core Concept</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Core Concept</em>' attribute.
-   * @see #setCoreConcept(boolean)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptStatementBody_CoreConcept()
-   * @model
-   * @generated
-   */
-  boolean isCoreConcept();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isCoreConcept <em>Core Concept</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Core Concept</em>' attribute.
-   * @see #isCoreConcept()
-   * @generated
-   */
-  void setCoreConcept(boolean value);
-
-  /**
    * Returns the value of the '<em><b>Alias</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
@@ -319,6 +293,32 @@ public interface ConceptStatementBody extends EObject
    * @generated
    */
   void setAlias(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Core Concept</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Core Concept</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Core Concept</em>' attribute.
+   * @see #setCoreConcept(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptStatementBody_CoreConcept()
+   * @model
+   * @generated
+   */
+  boolean isCoreConcept();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isCoreConcept <em>Core Concept</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Core Concept</em>' attribute.
+   * @see #isCoreConcept()
+   * @generated
+   */
+  void setCoreConcept(boolean value);
 
   /**
    * Returns the value of the '<em><b>Nothing</b></em>' attribute.

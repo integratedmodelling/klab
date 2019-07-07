@@ -33,7 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Value operators are recognized and handled both in dependencies and in the Explorer.
 - Semantics for attribute and role instantiation and resolution is defined and legal
   in k.IM, although not handled yet.
-- Attributes qualified with 'rescaling' will modify the observation semantics of the
+- Attributes qualified with 'rescaling' modify the observation semantics of the
   quality they apply to, and cause units to be removed. 
 - Models check the units agains the geometry and allow aggregating units, rescaling
   automatically at mediation and requiring a @extensive/@intensive annotation to remove
@@ -55,6 +55,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   in regular type.
 - Annotations and function calls now accept a list of unnamed parameters as well as a 
   single one.
+- Enable 'equals core <concept>' in worldviews to refer to core concepts in abstract
+  observables.
 ### Fixed
 - Overhaul logic for communicating errors detected by the engine to the IDE; now they
   are stored for the standard validator to find. The process is supported for models

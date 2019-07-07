@@ -2829,22 +2829,22 @@ public interface KimPackage extends EPackage
   int CONCEPT_STATEMENT_BODY__DOCSTRING = 7;
 
   /**
-   * The feature id for the '<em><b>Core Concept</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT_STATEMENT_BODY__CORE_CONCEPT = 8;
-
-  /**
    * The feature id for the '<em><b>Alias</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__ALIAS = 9;
+  int CONCEPT_STATEMENT_BODY__ALIAS = 8;
+
+  /**
+   * The feature id for the '<em><b>Core Concept</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_STATEMENT_BODY__CORE_CONCEPT = 9;
 
   /**
    * The feature id for the '<em><b>Nothing</b></em>' attribute.
@@ -7279,17 +7279,6 @@ public interface KimPackage extends EPackage
   EAttribute getConceptStatementBody_Docstring();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isCoreConcept <em>Core Concept</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Core Concept</em>'.
-   * @see org.integratedmodelling.kim.kim.ConceptStatementBody#isCoreConcept()
-   * @see #getConceptStatementBody()
-   * @generated
-   */
-  EAttribute getConceptStatementBody_CoreConcept();
-
-  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isAlias <em>Alias</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -7299,6 +7288,17 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EAttribute getConceptStatementBody_Alias();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isCoreConcept <em>Core Concept</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Core Concept</em>'.
+   * @see org.integratedmodelling.kim.kim.ConceptStatementBody#isCoreConcept()
+   * @see #getConceptStatementBody()
+   * @generated
+   */
+  EAttribute getConceptStatementBody_CoreConcept();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isNothing <em>Nothing</em>}'.
@@ -11072,20 +11072,20 @@ public interface KimPackage extends EPackage
     EAttribute CONCEPT_STATEMENT_BODY__DOCSTRING = eINSTANCE.getConceptStatementBody_Docstring();
 
     /**
-     * The meta object literal for the '<em><b>Core Concept</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONCEPT_STATEMENT_BODY__CORE_CONCEPT = eINSTANCE.getConceptStatementBody_CoreConcept();
-
-    /**
      * The meta object literal for the '<em><b>Alias</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     EAttribute CONCEPT_STATEMENT_BODY__ALIAS = eINSTANCE.getConceptStatementBody_Alias();
+
+    /**
+     * The meta object literal for the '<em><b>Core Concept</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT_STATEMENT_BODY__CORE_CONCEPT = eINSTANCE.getConceptStatementBody_CoreConcept();
 
     /**
      * The meta object literal for the '<em><b>Nothing</b></em>' attribute feature.

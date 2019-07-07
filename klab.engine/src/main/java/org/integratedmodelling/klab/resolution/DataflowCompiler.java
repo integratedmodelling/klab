@@ -20,8 +20,11 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.data.mediation.IUnit.Contextualization;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
@@ -144,7 +147,7 @@ public class DataflowCompiler {
              */
             if (observableCatalog.containsKey(actuator.getName()) && root instanceof Observable) {
                 for (IComputableResource mediator : Observables.INSTANCE
-                        .computeMediators(observableCatalog.get(actuator.getName()), (Observable) root, node.scale)) {
+                        .computeMediators(observableCatalog.get(actuator.getName()), node.observable, node.scale)) {
                     actuator.addComputation(mediator);
                 }
             }
@@ -281,7 +284,7 @@ public class DataflowCompiler {
 
             if (resolvable instanceof Observable) {
 
-                this.observable = (Observable) resolvable;
+                this.observable = contextualize((Observable) resolvable, scale);
                 this.inlineValue = observable.getValue();
 
             } else if (resolvable instanceof Observer) {
@@ -292,7 +295,7 @@ public class DataflowCompiler {
             } else if (resolvable instanceof ResolvedArtifact) {
 
                 this.resolvedArtifact = (ResolvedArtifact) resolvable;
-                this.observable = (Observable) resolvedArtifact.getObservable();
+                this.observable = contextualize((Observable) resolvedArtifact.getObservable(), scale);
                 observableCatalog.put(this.resolvedArtifact.getArtifactId(),
                         (Observable) this.resolvedArtifact.getArtifact().getObservable());
             }
@@ -360,8 +363,8 @@ public class DataflowCompiler {
             if (models.size() == 1 && !this.hasPartitions) {
 
                 ModelD theModel = models.iterator().next();
-                defineActuator(ret, root ? observable.getName() : theModel.model.getLocalNameFor(observable),
-                        theModel, generated);
+                defineActuator(ret, root ? observable.getName() : theModel.model.getLocalNameFor(observable), theModel,
+                        generated);
 
             } else if (this.hasPartitions) {
 
@@ -471,8 +474,8 @@ public class DataflowCompiler {
                     Actuator achild = child.getActuatorTree(dataflow, monitor, generated);
                     ret.getActuators().add(achild);
                     if (observableCatalog.containsKey(achild.getName())) {
-                        for (IComputableResource mediator : Observables.INSTANCE
-                                .computeMediators(observableCatalog.get(achild.getName()), achild.getObservable(), scale)) {
+                        for (IComputableResource mediator : Observables.INSTANCE.computeMediators(
+                                observableCatalog.get(achild.getName()), achild.getObservable(), scale)) {
                             ret.addMediation(mediator, achild);
                         }
                     }
@@ -625,6 +628,29 @@ public class DataflowCompiler {
         }
 
         return ret;
+    }
+
+    public Observable contextualize(Observable observable, Scale scale) {
+
+        // verify the observation unit wrt the contextualization scale
+        if (observable.is(IKimConcept.Type.MONEY) || observable.is(IKimConcept.Type.NUMEROSITY)
+                || observable.is(IKimConcept.Type.EXTENSIVE_PROPERTY)) {
+
+//            if (observable.getUnit() == null) {
+//                return observable;
+//            }
+//            IUnit baseUnit = Units.INSTANCE.getDefaultUnitFor(observable.getType());
+//
+//            if (baseUnit == null) {
+//                return observable;
+//            }
+//
+//            Contextualization contextualization = baseUnit.contextualize(scale.asGeometry(), null);
+//            if (contextualization.getChosenUnit().equals(observable.getUnit())) {
+//                observable = new Observable(observable).withUnit(contextualization.getChosenUnit());
+//            }
+        }
+        return observable;
     }
 
     /**

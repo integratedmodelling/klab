@@ -712,4 +712,15 @@ public class Observable implements IObservable {
         return this.url;
     }
 
+    /**
+     * Sets the unit without conversions or adjustments, return this.
+     * 
+     * @param chosenUnit
+     * @return
+     */
+    public Observable withUnit(IUnit unit) {
+        this.unit = (Unit)unit;
+        return this;
+    }
+
 }

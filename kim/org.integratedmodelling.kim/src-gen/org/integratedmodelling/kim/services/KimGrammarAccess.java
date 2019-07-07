@@ -6236,13 +6236,13 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cDocstringAssignment_3_0 = (Assignment)cUnorderedGroup_3.eContents().get(0);
 		private final RuleCall cDocstringSTRINGTerminalRuleCall_3_0_0 = (RuleCall)cDocstringAssignment_3_0.eContents().get(0);
 		private final Group cGroup_3_1 = (Group)cUnorderedGroup_3.eContents().get(1);
-		private final Alternatives cAlternatives_3_1_0 = (Alternatives)cGroup_3_1.eContents().get(0);
-		private final Group cGroup_3_1_0_0 = (Group)cAlternatives_3_1_0.eContents().get(0);
-		private final Keyword cIsKeyword_3_1_0_0_0 = (Keyword)cGroup_3_1_0_0.eContents().get(0);
-		private final Assignment cCoreConceptAssignment_3_1_0_0_1 = (Assignment)cGroup_3_1_0_0.eContents().get(1);
-		private final Keyword cCoreConceptCoreKeyword_3_1_0_0_1_0 = (Keyword)cCoreConceptAssignment_3_1_0_0_1.eContents().get(0);
-		private final Assignment cAliasAssignment_3_1_0_1 = (Assignment)cAlternatives_3_1_0.eContents().get(1);
-		private final Keyword cAliasEqualsKeyword_3_1_0_1_0 = (Keyword)cAliasAssignment_3_1_0_1.eContents().get(0);
+		private final Group cGroup_3_1_0 = (Group)cGroup_3_1.eContents().get(0);
+		private final Alternatives cAlternatives_3_1_0_0 = (Alternatives)cGroup_3_1_0.eContents().get(0);
+		private final Keyword cIsKeyword_3_1_0_0_0 = (Keyword)cAlternatives_3_1_0_0.eContents().get(0);
+		private final Assignment cAliasAssignment_3_1_0_0_1 = (Assignment)cAlternatives_3_1_0_0.eContents().get(1);
+		private final Keyword cAliasEqualsKeyword_3_1_0_0_1_0 = (Keyword)cAliasAssignment_3_1_0_0_1.eContents().get(0);
+		private final Assignment cCoreConceptAssignment_3_1_0_1 = (Assignment)cGroup_3_1_0.eContents().get(1);
+		private final Keyword cCoreConceptCoreKeyword_3_1_0_1_0 = (Keyword)cCoreConceptAssignment_3_1_0_1.eContents().get(0);
 		private final Alternatives cAlternatives_3_1_1 = (Alternatives)cGroup_3_1.eContents().get(1);
 		private final Assignment cNothingAssignment_3_1_1_0 = (Assignment)cAlternatives_3_1_1.eContents().get(0);
 		private final Keyword cNothingNothingKeyword_3_1_1_0_0 = (Keyword)cNothingAssignment_3_1_1_0.eContents().get(0);
@@ -6452,8 +6452,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		// */ ConceptStatementBody:
 		//	annotations+=Annotation*
 		//	abstract?='abstract'? (root?='root' | name=CAMELCASE_ID ('identified' 'as' (stringIdentifier=(ID | STRING) |
-		//	intIdentifier=INT) 'by' authority=(UPPERCASE_ID | UPPERCASE_PATH))?) (docstring=STRING? & (('is' coreConcept?='core'?
-		//	| alias?='equals') (nothing?='nothing' | parents+=ConceptDeclaration (connectors+=(',' | 'or' | 'and')
+		//	intIdentifier=INT) 'by' authority=(UPPERCASE_ID | UPPERCASE_PATH))?) (docstring=STRING? & ((('is' | alias?='equals')
+		//	coreConcept?='core'?) (nothing?='nothing' | parents+=ConceptDeclaration (connectors+=(',' | 'or' | 'and')
 		//	parents+=ConceptDeclaration)*))? & ('exposes' contextualizedTraits+=ObservableSemantics (','
 		//	contextualizedTraits+=ObservableSemantics)* | specific?='exposing' contextualizesTraits+=ConceptDeclaration (','
 		//	contextualizesTraits+=ConceptDeclaration)*)? & ('defines' ('authority' definedAuthority=UPPERCASE_PATH |
@@ -6480,8 +6480,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//// FIXME shouldn't have to repeat these two. Mostly to keep the underlying ECore neat at the children.
 		//annotations+=Annotation* abstract?='abstract'? (root?='root' | name=CAMELCASE_ID ('identified' 'as'
 		//(stringIdentifier=(ID | STRING) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID | UPPERCASE_PATH))?)
-		//(docstring=STRING? & (('is' coreConcept?='core'? | alias?='equals') (nothing?='nothing' | parents+=ConceptDeclaration
-		//(connectors+=(',' | 'or' | 'and') parents+=ConceptDeclaration)*))? & ('exposes'
+		//(docstring=STRING? & ((('is' | alias?='equals') coreConcept?='core'?) (nothing?='nothing' |
+		//parents+=ConceptDeclaration (connectors+=(',' | 'or' | 'and') parents+=ConceptDeclaration)*))? & ('exposes'
 		//contextualizedTraits+=ObservableSemantics (',' contextualizedTraits+=ObservableSemantics)* | specific?='exposing'
 		//contextualizesTraits+=ConceptDeclaration (',' contextualizesTraits+=ConceptDeclaration)*)? & ('defines' ('authority'
 		//definedAuthority=UPPERCASE_PATH | upperConcept=Concept))? & ('requires' requirements+=IdentityRequirement (','
@@ -6582,7 +6582,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//UPPERCASE_PATH
 		public RuleCall getAuthorityUPPERCASE_PATHTerminalRuleCall_2_1_1_4_0_1() { return cAuthorityUPPERCASE_PATHTerminalRuleCall_2_1_1_4_0_1; }
 		
-		//docstring=STRING? & (('is' coreConcept?='core'? | alias?='equals') (nothing?='nothing' | parents+=ConceptDeclaration
+		//docstring=STRING? & ((('is' | alias?='equals') coreConcept?='core'?) (nothing?='nothing' | parents+=ConceptDeclaration
 		//(connectors+=(',' | 'or' | 'and') parents+=ConceptDeclaration)*))? & ('exposes'
 		//contextualizedTraits+=ObservableSemantics (',' contextualizedTraits+=ObservableSemantics)* | specific?='exposing'
 		//contextualizesTraits+=ConceptDeclaration (',' contextualizesTraits+=ConceptDeclaration)*)? & ('defines' ('authority'
@@ -6612,30 +6612,30 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//STRING
 		public RuleCall getDocstringSTRINGTerminalRuleCall_3_0_0() { return cDocstringSTRINGTerminalRuleCall_3_0_0; }
 		
-		//(('is' coreConcept?='core'? | alias?='equals') (nothing?='nothing' | parents+=ConceptDeclaration (connectors+=(',' |
+		//((('is' | alias?='equals') coreConcept?='core'?) (nothing?='nothing' | parents+=ConceptDeclaration (connectors+=(',' |
 		//'or' | 'and') parents+=ConceptDeclaration)*))?
 		public Group getGroup_3_1() { return cGroup_3_1; }
 		
-		//'is' coreConcept?='core'? | alias?='equals'
-		public Alternatives getAlternatives_3_1_0() { return cAlternatives_3_1_0; }
+		//('is' | alias?='equals') coreConcept?='core'?
+		public Group getGroup_3_1_0() { return cGroup_3_1_0; }
 		
-		//'is' coreConcept?='core'?
-		public Group getGroup_3_1_0_0() { return cGroup_3_1_0_0; }
+		//'is' | alias?='equals'
+		public Alternatives getAlternatives_3_1_0_0() { return cAlternatives_3_1_0_0; }
 		
 		//'is'
 		public Keyword getIsKeyword_3_1_0_0_0() { return cIsKeyword_3_1_0_0_0; }
 		
-		//coreConcept?='core'?
-		public Assignment getCoreConceptAssignment_3_1_0_0_1() { return cCoreConceptAssignment_3_1_0_0_1; }
-		
-		//'core'
-		public Keyword getCoreConceptCoreKeyword_3_1_0_0_1_0() { return cCoreConceptCoreKeyword_3_1_0_0_1_0; }
-		
 		//alias?='equals'
-		public Assignment getAliasAssignment_3_1_0_1() { return cAliasAssignment_3_1_0_1; }
+		public Assignment getAliasAssignment_3_1_0_0_1() { return cAliasAssignment_3_1_0_0_1; }
 		
 		//'equals'
-		public Keyword getAliasEqualsKeyword_3_1_0_1_0() { return cAliasEqualsKeyword_3_1_0_1_0; }
+		public Keyword getAliasEqualsKeyword_3_1_0_0_1_0() { return cAliasEqualsKeyword_3_1_0_0_1_0; }
+		
+		//coreConcept?='core'?
+		public Assignment getCoreConceptAssignment_3_1_0_1() { return cCoreConceptAssignment_3_1_0_1; }
+		
+		//'core'
+		public Keyword getCoreConceptCoreKeyword_3_1_0_1_0() { return cCoreConceptCoreKeyword_3_1_0_1_0; }
 		
 		//nothing?='nothing' | parents+=ConceptDeclaration (connectors+=(',' | 'or' | 'and') parents+=ConceptDeclaration)*
 		public Alternatives getAlternatives_3_1_1() { return cAlternatives_3_1_1; }
@@ -11359,8 +11359,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	// */ ConceptStatementBody:
 	//	annotations+=Annotation*
 	//	abstract?='abstract'? (root?='root' | name=CAMELCASE_ID ('identified' 'as' (stringIdentifier=(ID | STRING) |
-	//	intIdentifier=INT) 'by' authority=(UPPERCASE_ID | UPPERCASE_PATH))?) (docstring=STRING? & (('is' coreConcept?='core'?
-	//	| alias?='equals') (nothing?='nothing' | parents+=ConceptDeclaration (connectors+=(',' | 'or' | 'and')
+	//	intIdentifier=INT) 'by' authority=(UPPERCASE_ID | UPPERCASE_PATH))?) (docstring=STRING? & ((('is' | alias?='equals')
+	//	coreConcept?='core'?) (nothing?='nothing' | parents+=ConceptDeclaration (connectors+=(',' | 'or' | 'and')
 	//	parents+=ConceptDeclaration)*))? & ('exposes' contextualizedTraits+=ObservableSemantics (','
 	//	contextualizedTraits+=ObservableSemantics)* | specific?='exposing' contextualizesTraits+=ConceptDeclaration (','
 	//	contextualizesTraits+=ConceptDeclaration)*)? & ('defines' ('authority' definedAuthority=UPPERCASE_PATH |

@@ -10967,36 +10967,36 @@ ruleConceptStatementBody returns [EObject current=null]
 										{
 											newLeafNode(otherlv_12, grammarAccess.getConceptStatementBodyAccess().getIsKeyword_3_1_0_0_0());
 										}
+										    |
 										(
 											(
-												lv_coreConcept_13_0='core'
+												lv_alias_13_0='equals'
 												{
-													newLeafNode(lv_coreConcept_13_0, grammarAccess.getConceptStatementBodyAccess().getCoreConceptCoreKeyword_3_1_0_0_1_0());
+													newLeafNode(lv_alias_13_0, grammarAccess.getConceptStatementBodyAccess().getAliasEqualsKeyword_3_1_0_0_1_0());
 												}
 												{
 													if ($current==null) {
 														$current = createModelElement(grammarAccess.getConceptStatementBodyRule());
 													}
-													setWithLastConsumed($current, "coreConcept", true, "core");
+													setWithLastConsumed($current, "alias", true, "equals");
 												}
 											)
-										)?
+										)
 									)
-									    |
 									(
 										(
-											lv_alias_14_0='equals'
+											lv_coreConcept_14_0='core'
 											{
-												newLeafNode(lv_alias_14_0, grammarAccess.getConceptStatementBodyAccess().getAliasEqualsKeyword_3_1_0_1_0());
+												newLeafNode(lv_coreConcept_14_0, grammarAccess.getConceptStatementBodyAccess().getCoreConceptCoreKeyword_3_1_0_1_0());
 											}
 											{
 												if ($current==null) {
 													$current = createModelElement(grammarAccess.getConceptStatementBodyRule());
 												}
-												setWithLastConsumed($current, "alias", true, "equals");
+												setWithLastConsumed($current, "coreConcept", true, "core");
 											}
 										)
-									)
+									)?
 								)
 								(
 									(

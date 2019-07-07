@@ -48,8 +48,8 @@ import org.integratedmodelling.kim.kim.RestrictionStatement;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getIntIdentifier <em>Int Identifier</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getAuthority <em>Authority</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getDocstring <em>Docstring</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#isCoreConcept <em>Core Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#isAlias <em>Alias</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#isCoreConcept <em>Core Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#isNothing <em>Nothing</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getParents <em>Parents</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getConnectors <em>Connectors</em>}</li>
@@ -242,26 +242,6 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
   protected String docstring = DOCSTRING_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isCoreConcept() <em>Core Concept</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isCoreConcept()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean CORE_CONCEPT_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isCoreConcept() <em>Core Concept</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isCoreConcept()
-   * @generated
-   * @ordered
-   */
-  protected boolean coreConcept = CORE_CONCEPT_EDEFAULT;
-
-  /**
    * The default value of the '{@link #isAlias() <em>Alias</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -280,6 +260,26 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
    * @ordered
    */
   protected boolean alias = ALIAS_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isCoreConcept() <em>Core Concept</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isCoreConcept()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean CORE_CONCEPT_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isCoreConcept() <em>Core Concept</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isCoreConcept()
+   * @generated
+   * @ordered
+   */
+  protected boolean coreConcept = CORE_CONCEPT_EDEFAULT;
 
   /**
    * The default value of the '{@link #isNothing() <em>Nothing</em>}' attribute.
@@ -902,29 +902,6 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean isCoreConcept()
-  {
-    return coreConcept;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setCoreConcept(boolean newCoreConcept)
-  {
-    boolean oldCoreConcept = coreConcept;
-    coreConcept = newCoreConcept;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_STATEMENT_BODY__CORE_CONCEPT, oldCoreConcept, coreConcept));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public boolean isAlias()
   {
     return alias;
@@ -941,6 +918,29 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
     alias = newAlias;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_STATEMENT_BODY__ALIAS, oldAlias, alias));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public boolean isCoreConcept()
+  {
+    return coreConcept;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setCoreConcept(boolean newCoreConcept)
+  {
+    boolean oldCoreConcept = coreConcept;
+    coreConcept = newCoreConcept;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_STATEMENT_BODY__CORE_CONCEPT, oldCoreConcept, coreConcept));
   }
 
   /**
@@ -1932,10 +1932,10 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return getAuthority();
       case KimPackage.CONCEPT_STATEMENT_BODY__DOCSTRING:
         return getDocstring();
-      case KimPackage.CONCEPT_STATEMENT_BODY__CORE_CONCEPT:
-        return isCoreConcept();
       case KimPackage.CONCEPT_STATEMENT_BODY__ALIAS:
         return isAlias();
+      case KimPackage.CONCEPT_STATEMENT_BODY__CORE_CONCEPT:
+        return isCoreConcept();
       case KimPackage.CONCEPT_STATEMENT_BODY__NOTHING:
         return isNothing();
       case KimPackage.CONCEPT_STATEMENT_BODY__PARENTS:
@@ -2046,11 +2046,11 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
       case KimPackage.CONCEPT_STATEMENT_BODY__DOCSTRING:
         setDocstring((String)newValue);
         return;
-      case KimPackage.CONCEPT_STATEMENT_BODY__CORE_CONCEPT:
-        setCoreConcept((Boolean)newValue);
-        return;
       case KimPackage.CONCEPT_STATEMENT_BODY__ALIAS:
         setAlias((Boolean)newValue);
+        return;
+      case KimPackage.CONCEPT_STATEMENT_BODY__CORE_CONCEPT:
+        setCoreConcept((Boolean)newValue);
         return;
       case KimPackage.CONCEPT_STATEMENT_BODY__NOTHING:
         setNothing((Boolean)newValue);
@@ -2213,11 +2213,11 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
       case KimPackage.CONCEPT_STATEMENT_BODY__DOCSTRING:
         setDocstring(DOCSTRING_EDEFAULT);
         return;
-      case KimPackage.CONCEPT_STATEMENT_BODY__CORE_CONCEPT:
-        setCoreConcept(CORE_CONCEPT_EDEFAULT);
-        return;
       case KimPackage.CONCEPT_STATEMENT_BODY__ALIAS:
         setAlias(ALIAS_EDEFAULT);
+        return;
+      case KimPackage.CONCEPT_STATEMENT_BODY__CORE_CONCEPT:
+        setCoreConcept(CORE_CONCEPT_EDEFAULT);
         return;
       case KimPackage.CONCEPT_STATEMENT_BODY__NOTHING:
         setNothing(NOTHING_EDEFAULT);
@@ -2354,10 +2354,10 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return AUTHORITY_EDEFAULT == null ? authority != null : !AUTHORITY_EDEFAULT.equals(authority);
       case KimPackage.CONCEPT_STATEMENT_BODY__DOCSTRING:
         return DOCSTRING_EDEFAULT == null ? docstring != null : !DOCSTRING_EDEFAULT.equals(docstring);
-      case KimPackage.CONCEPT_STATEMENT_BODY__CORE_CONCEPT:
-        return coreConcept != CORE_CONCEPT_EDEFAULT;
       case KimPackage.CONCEPT_STATEMENT_BODY__ALIAS:
         return alias != ALIAS_EDEFAULT;
+      case KimPackage.CONCEPT_STATEMENT_BODY__CORE_CONCEPT:
+        return coreConcept != CORE_CONCEPT_EDEFAULT;
       case KimPackage.CONCEPT_STATEMENT_BODY__NOTHING:
         return nothing != NOTHING_EDEFAULT;
       case KimPackage.CONCEPT_STATEMENT_BODY__PARENTS:
@@ -2457,10 +2457,10 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
     result.append(authority);
     result.append(", docstring: ");
     result.append(docstring);
-    result.append(", coreConcept: ");
-    result.append(coreConcept);
     result.append(", alias: ");
     result.append(alias);
+    result.append(", coreConcept: ");
+    result.append(coreConcept);
     result.append(", nothing: ");
     result.append(nothing);
     result.append(", connectors: ");

@@ -24,7 +24,7 @@ import java.util.HashMap;
 @SuppressWarnings("all")
 public class InternalKimParser extends AbstractInternalAntlrParser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_UPPERCASE_ID", "RULE_LOWERCASE_ID", "RULE_STRING", "RULE_SEPARATOR", "RULE_EXPR", "RULE_CAMELCASE_ID", "RULE_LOWERCASE_DASHID", "RULE_ID", "RULE_INT", "RULE_UPPERCASE_PATH", "RULE_ANNOTATION_ID", "RULE_BACKCASE_ID", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "';'", "'void'", "'private'", "'define'", "'as'", "'each'", "','", "'true'", "'false'", "'observing'", "'using'", "'classified'", "'discretized'", "'into'", "'according'", "'to'", "'lookup'", "'('", "'?'", "'*'", "')'", "'metadata'", "'otherwise'", "'if'", "'unless'", "'inclusive'", "'exclusive'", "'in'", "'unknown'", "'{{'", "'}}'", "'|'", "'#'", "'aggregated'", "'over'", "'on'", "'definition'", "'resolution'", "'instantiation'", "'termination'", "'initialization'", "'context'", "'related'", "'change'", "'set'", "'integrate'", "'do'", "'then'", "'finally'", "'move'", "'away'", "'model'", "'learn'", "'number'", "'object'", "'text'", "'boolean'", "'>'", "'>='", "'<='", "'<'", "'where'", "'=='", "'='", "'without'", "'!='", "'plus'", "'minus'", "'times'", "'namespace'", "'scenario'", "'worldview'", "'imports'", "'covering'", "'domain'", "'root'", "'disjoint'", "'with'", "'version'", "'resolve'", "'from'", "'outside'", "'parameters'", "'urn:klab:'", "':'", "'&'", "'/'", "'.'", "'observe'", "'extends'", "'children'", "'any'", "'by'", "'down'", "'per'", "'optional'", "'required'", "'named'", "'of'", "'for'", "'caused'", "'adjacent'", "'contained'", "'containing'", "'causing'", "'during'", "'within'", "'linking'", "'${'", "'#{'", "'inherent'", "'compresent'", "'container'", "'purpose'", "'causant'", "'cooccurrent'", "'}'", "'not'", "'no'", "'identified'", "'presence'", "'count'", "'distance'", "'probability'", "'assessment'", "'uncertainty'", "'magnitude'", "'type'", "'observability'", "'proportion'", "'percentage'", "'ratio'", "'monetary'", "'value'", "'occurrence'", "'identity'", "'or'", "'and'", "'follows'", "'deliberative'", "'interactive'", "'reactive'", "'agent'", "'relationship'", "'abstract'", "'deniable'", "'subjective'", "'rescaling'", "'is'", "'core'", "'equals'", "'nothing'", "'exposes'", "'exposing'", "'defines'", "'authority'", "'requires'", "'describes'", "'increases'", "'decreases'", "'marks'", "'classifies'", "'discretizes'", "'inherits'", "'has'", "'role'", "'targeting'", "'confers'", "'part'", "'constituent'", "'consists'", "'creates'", "'applies'", "'links'", "'inverse'", "'affects'", "'between'", "'attribute'", "'realm'", "'extent'", "'uses'", "'contains'", "'implies'", "'only'", "'exactly'", "'at'", "'least'", "'most'", "'inheriting'", "'{'", "'transition'", "'?='", "'quality'", "'class'", "'quantity'", "'configuration'", "'bond'", "'ordering'", "'amount'", "'length'", "'mass'", "'volume'", "'weight'", "'money'", "'duration'", "'area'", "'acceleration'", "'energy'", "'entropy'", "'priority'", "'electric-potential'", "'charge'", "'resistance'", "'resistivity'", "'pressure'", "'angle'", "'velocity'", "'temperature'", "'viscosity'", "'thing'", "'process'", "'event'", "'functional'", "'structural'", "'@'", "'+'", "'-'", "'l'", "'e'", "'E'", "'integer'", "'float'", "'date'", "'^'"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_UPPERCASE_ID", "RULE_LOWERCASE_ID", "RULE_STRING", "RULE_SEPARATOR", "RULE_EXPR", "RULE_CAMELCASE_ID", "RULE_LOWERCASE_DASHID", "RULE_ID", "RULE_INT", "RULE_UPPERCASE_PATH", "RULE_ANNOTATION_ID", "RULE_BACKCASE_ID", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "';'", "'void'", "'private'", "'define'", "'as'", "'each'", "','", "'true'", "'false'", "'observing'", "'using'", "'classified'", "'discretized'", "'into'", "'according'", "'to'", "'lookup'", "'('", "'?'", "'*'", "')'", "'metadata'", "'otherwise'", "'if'", "'unless'", "'inclusive'", "'exclusive'", "'in'", "'unknown'", "'{{'", "'}}'", "'|'", "'#'", "'aggregated'", "'over'", "'on'", "'definition'", "'resolution'", "'instantiation'", "'termination'", "'initialization'", "'context'", "'related'", "'change'", "'set'", "'integrate'", "'do'", "'then'", "'finally'", "'move'", "'away'", "'model'", "'learn'", "'number'", "'object'", "'text'", "'boolean'", "'>'", "'>='", "'<='", "'<'", "'where'", "'=='", "'='", "'without'", "'!='", "'plus'", "'minus'", "'times'", "'namespace'", "'scenario'", "'worldview'", "'imports'", "'covering'", "'domain'", "'root'", "'disjoint'", "'with'", "'version'", "'resolve'", "'from'", "'outside'", "'parameters'", "'urn:klab:'", "':'", "'&'", "'/'", "'.'", "'observe'", "'extends'", "'children'", "'any'", "'by'", "'down'", "'per'", "'optional'", "'required'", "'named'", "'of'", "'for'", "'caused'", "'adjacent'", "'contained'", "'containing'", "'causing'", "'during'", "'within'", "'linking'", "'${'", "'#{'", "'inherent'", "'compresent'", "'container'", "'purpose'", "'causant'", "'cooccurrent'", "'}'", "'not'", "'no'", "'identified'", "'presence'", "'count'", "'distance'", "'probability'", "'assessment'", "'uncertainty'", "'magnitude'", "'type'", "'observability'", "'proportion'", "'percentage'", "'ratio'", "'monetary'", "'value'", "'occurrence'", "'identity'", "'or'", "'and'", "'follows'", "'deliberative'", "'interactive'", "'reactive'", "'agent'", "'relationship'", "'abstract'", "'deniable'", "'subjective'", "'rescaling'", "'is'", "'equals'", "'core'", "'nothing'", "'exposes'", "'exposing'", "'defines'", "'authority'", "'requires'", "'describes'", "'increases'", "'decreases'", "'marks'", "'classifies'", "'discretizes'", "'inherits'", "'has'", "'role'", "'targeting'", "'confers'", "'part'", "'constituent'", "'consists'", "'creates'", "'applies'", "'links'", "'inverse'", "'affects'", "'between'", "'attribute'", "'realm'", "'extent'", "'uses'", "'contains'", "'implies'", "'only'", "'exactly'", "'at'", "'least'", "'most'", "'inheriting'", "'{'", "'transition'", "'?='", "'quality'", "'class'", "'quantity'", "'configuration'", "'bond'", "'ordering'", "'amount'", "'length'", "'mass'", "'volume'", "'weight'", "'money'", "'duration'", "'area'", "'acceleration'", "'energy'", "'entropy'", "'priority'", "'electric-potential'", "'charge'", "'resistance'", "'resistivity'", "'pressure'", "'angle'", "'velocity'", "'temperature'", "'viscosity'", "'thing'", "'process'", "'event'", "'functional'", "'structural'", "'@'", "'+'", "'-'", "'l'", "'e'", "'E'", "'integer'", "'float'", "'date'", "'^'"
     };
     public static final int T__144=144;
     public static final int T__143=143;
@@ -440,7 +440,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                     {
                     int LA3_4 = input.LA(3);
 
-                    if ( (LA3_4==RULE_STRING||LA3_4==20||LA3_4==41||LA3_4==117||LA3_4==139||LA3_4==168||LA3_4==170||(LA3_4>=172 && LA3_4<=174)||(LA3_4>=176 && LA3_4<=184)||(LA3_4>=187 && LA3_4<=195)||(LA3_4>=200 && LA3_4<=202)) ) {
+                    if ( (LA3_4==RULE_STRING||LA3_4==20||LA3_4==41||LA3_4==117||LA3_4==139||(LA3_4>=168 && LA3_4<=169)||(LA3_4>=172 && LA3_4<=174)||(LA3_4>=176 && LA3_4<=184)||(LA3_4>=187 && LA3_4<=195)||(LA3_4>=200 && LA3_4<=202)) ) {
                         alt3=2;
                     }
                     else if ( (LA3_4==112) ) {
@@ -17643,13 +17643,13 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	            int alt146=2;
             	            int LA146_0 = input.LA(1);
 
-            	            if ( (LA146_0==EOF||(LA146_0>=RULE_LOWERCASE_ID && LA146_0<=RULE_STRING)||(LA146_0>=RULE_CAMELCASE_ID && LA146_0<=RULE_LOWERCASE_DASHID)||LA146_0==RULE_INT||LA146_0==RULE_BACKCASE_ID||LA146_0==20||LA146_0==26||(LA146_0>=29 && LA146_0<=30)||LA146_0==34||LA146_0==37||(LA146_0>=39 && LA146_0<=41)||LA146_0==47||(LA146_0>=53 && LA146_0<=55)||(LA146_0>=63 && LA146_0<=69)||(LA146_0>=77 && LA146_0<=88)||LA146_0==103||LA146_0==106||LA146_0==110||(LA146_0>=112 && LA146_0<=117)||(LA146_0>=128 && LA146_0<=129)||(LA146_0>=137 && LA146_0<=138)||(LA146_0>=140 && LA146_0<=155)||LA146_0==168||LA146_0==170||(LA146_0>=172 && LA146_0<=174)||(LA146_0>=176 && LA146_0<=184)||(LA146_0>=187 && LA146_0<=195)||(LA146_0>=200 && LA146_0<=202)||(LA146_0>=245 && LA146_0<=246)||LA146_0==253) ) {
+            	            if ( (LA146_0==EOF||(LA146_0>=RULE_LOWERCASE_ID && LA146_0<=RULE_STRING)||(LA146_0>=RULE_CAMELCASE_ID && LA146_0<=RULE_LOWERCASE_DASHID)||LA146_0==RULE_INT||LA146_0==RULE_BACKCASE_ID||LA146_0==20||LA146_0==26||(LA146_0>=29 && LA146_0<=30)||LA146_0==34||LA146_0==37||(LA146_0>=39 && LA146_0<=41)||LA146_0==47||(LA146_0>=53 && LA146_0<=55)||(LA146_0>=63 && LA146_0<=69)||(LA146_0>=77 && LA146_0<=88)||LA146_0==103||LA146_0==106||LA146_0==110||(LA146_0>=112 && LA146_0<=117)||(LA146_0>=128 && LA146_0<=129)||(LA146_0>=137 && LA146_0<=138)||(LA146_0>=140 && LA146_0<=155)||(LA146_0>=168 && LA146_0<=169)||(LA146_0>=172 && LA146_0<=174)||(LA146_0>=176 && LA146_0<=184)||(LA146_0>=187 && LA146_0<=195)||(LA146_0>=200 && LA146_0<=202)||(LA146_0>=245 && LA146_0<=246)||LA146_0==253) ) {
             	                alt146=1;
             	            }
             	            else if ( (LA146_0==RULE_UPPERCASE_ID) ) {
             	                int LA146_2 = input.LA(2);
 
-            	                if ( (LA146_2==EOF||(LA146_2>=RULE_LOWERCASE_ID && LA146_2<=RULE_STRING)||(LA146_2>=RULE_CAMELCASE_ID && LA146_2<=RULE_LOWERCASE_DASHID)||LA146_2==RULE_INT||LA146_2==20||LA146_2==26||(LA146_2>=29 && LA146_2<=30)||LA146_2==34||LA146_2==37||(LA146_2>=39 && LA146_2<=41)||LA146_2==47||(LA146_2>=53 && LA146_2<=55)||(LA146_2>=63 && LA146_2<=69)||(LA146_2>=77 && LA146_2<=88)||LA146_2==103||LA146_2==106||LA146_2==110||(LA146_2>=112 && LA146_2<=117)||(LA146_2>=128 && LA146_2<=129)||(LA146_2>=137 && LA146_2<=138)||(LA146_2>=140 && LA146_2<=155)||LA146_2==168||LA146_2==170||(LA146_2>=172 && LA146_2<=174)||(LA146_2>=176 && LA146_2<=184)||(LA146_2>=187 && LA146_2<=195)||(LA146_2>=200 && LA146_2<=202)||(LA146_2>=245 && LA146_2<=246)||LA146_2==253) ) {
+            	                if ( (LA146_2==EOF||(LA146_2>=RULE_LOWERCASE_ID && LA146_2<=RULE_STRING)||(LA146_2>=RULE_CAMELCASE_ID && LA146_2<=RULE_LOWERCASE_DASHID)||LA146_2==RULE_INT||LA146_2==20||LA146_2==26||(LA146_2>=29 && LA146_2<=30)||LA146_2==34||LA146_2==37||(LA146_2>=39 && LA146_2<=41)||LA146_2==47||(LA146_2>=53 && LA146_2<=55)||(LA146_2>=63 && LA146_2<=69)||(LA146_2>=77 && LA146_2<=88)||LA146_2==103||LA146_2==106||LA146_2==110||(LA146_2>=112 && LA146_2<=117)||(LA146_2>=128 && LA146_2<=129)||(LA146_2>=137 && LA146_2<=138)||(LA146_2>=140 && LA146_2<=155)||(LA146_2>=168 && LA146_2<=169)||(LA146_2>=172 && LA146_2<=174)||(LA146_2>=176 && LA146_2<=184)||(LA146_2>=187 && LA146_2<=195)||(LA146_2>=200 && LA146_2<=202)||(LA146_2>=245 && LA146_2<=246)||LA146_2==253) ) {
             	                    alt146=1;
             	                }
             	                else if ( (LA146_2==244) ) {
@@ -29089,7 +29089,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleConceptStatementBody"
-    // InternalKim.g:10739:1: ruleConceptStatementBody returns [EObject current=null] : ( ( (lv_annotations_0_0= ruleAnnotation ) )* ( (lv_abstract_1_0= 'abstract' ) )? ( ( (lv_root_2_0= 'root' ) ) | ( ( (lv_name_3_0= RULE_CAMELCASE_ID ) ) (otherlv_4= 'identified' otherlv_5= 'as' ( ( ( (lv_stringIdentifier_6_1= RULE_ID | lv_stringIdentifier_6_2= RULE_STRING ) ) ) | ( (lv_intIdentifier_7_0= RULE_INT ) ) ) otherlv_8= 'by' ( ( (lv_authority_9_1= RULE_UPPERCASE_ID | lv_authority_9_2= RULE_UPPERCASE_PATH ) ) ) )? ) ) ( ( ( ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )* ) ) ) ) ;
+    // InternalKim.g:10739:1: ruleConceptStatementBody returns [EObject current=null] : ( ( (lv_annotations_0_0= ruleAnnotation ) )* ( (lv_abstract_1_0= 'abstract' ) )? ( ( (lv_root_2_0= 'root' ) ) | ( ( (lv_name_3_0= RULE_CAMELCASE_ID ) ) (otherlv_4= 'identified' otherlv_5= 'as' ( ( ( (lv_stringIdentifier_6_1= RULE_ID | lv_stringIdentifier_6_2= RULE_STRING ) ) ) | ( (lv_intIdentifier_7_0= RULE_INT ) ) ) otherlv_8= 'by' ( ( (lv_authority_9_1= RULE_UPPERCASE_ID | lv_authority_9_2= RULE_UPPERCASE_PATH ) ) ) )? ) ) ( ( ( ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )* ) ) ) ) ;
     public final EObject ruleConceptStatementBody() throws RecognitionException {
         EObject current = null;
 
@@ -29106,8 +29106,8 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         Token lv_authority_9_2=null;
         Token lv_docstring_11_0=null;
         Token otherlv_12=null;
-        Token lv_coreConcept_13_0=null;
-        Token lv_alias_14_0=null;
+        Token lv_alias_13_0=null;
+        Token lv_coreConcept_14_0=null;
         Token lv_nothing_15_0=null;
         Token lv_connectors_17_1=null;
         Token lv_connectors_17_2=null;
@@ -29260,11 +29260,11 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	);
 
         try {
-            // InternalKim.g:10748:2: ( ( ( (lv_annotations_0_0= ruleAnnotation ) )* ( (lv_abstract_1_0= 'abstract' ) )? ( ( (lv_root_2_0= 'root' ) ) | ( ( (lv_name_3_0= RULE_CAMELCASE_ID ) ) (otherlv_4= 'identified' otherlv_5= 'as' ( ( ( (lv_stringIdentifier_6_1= RULE_ID | lv_stringIdentifier_6_2= RULE_STRING ) ) ) | ( (lv_intIdentifier_7_0= RULE_INT ) ) ) otherlv_8= 'by' ( ( (lv_authority_9_1= RULE_UPPERCASE_ID | lv_authority_9_2= RULE_UPPERCASE_PATH ) ) ) )? ) ) ( ( ( ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )* ) ) ) ) )
-            // InternalKim.g:10749:2: ( ( (lv_annotations_0_0= ruleAnnotation ) )* ( (lv_abstract_1_0= 'abstract' ) )? ( ( (lv_root_2_0= 'root' ) ) | ( ( (lv_name_3_0= RULE_CAMELCASE_ID ) ) (otherlv_4= 'identified' otherlv_5= 'as' ( ( ( (lv_stringIdentifier_6_1= RULE_ID | lv_stringIdentifier_6_2= RULE_STRING ) ) ) | ( (lv_intIdentifier_7_0= RULE_INT ) ) ) otherlv_8= 'by' ( ( (lv_authority_9_1= RULE_UPPERCASE_ID | lv_authority_9_2= RULE_UPPERCASE_PATH ) ) ) )? ) ) ( ( ( ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )* ) ) ) )
+            // InternalKim.g:10748:2: ( ( ( (lv_annotations_0_0= ruleAnnotation ) )* ( (lv_abstract_1_0= 'abstract' ) )? ( ( (lv_root_2_0= 'root' ) ) | ( ( (lv_name_3_0= RULE_CAMELCASE_ID ) ) (otherlv_4= 'identified' otherlv_5= 'as' ( ( ( (lv_stringIdentifier_6_1= RULE_ID | lv_stringIdentifier_6_2= RULE_STRING ) ) ) | ( (lv_intIdentifier_7_0= RULE_INT ) ) ) otherlv_8= 'by' ( ( (lv_authority_9_1= RULE_UPPERCASE_ID | lv_authority_9_2= RULE_UPPERCASE_PATH ) ) ) )? ) ) ( ( ( ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )* ) ) ) ) )
+            // InternalKim.g:10749:2: ( ( (lv_annotations_0_0= ruleAnnotation ) )* ( (lv_abstract_1_0= 'abstract' ) )? ( ( (lv_root_2_0= 'root' ) ) | ( ( (lv_name_3_0= RULE_CAMELCASE_ID ) ) (otherlv_4= 'identified' otherlv_5= 'as' ( ( ( (lv_stringIdentifier_6_1= RULE_ID | lv_stringIdentifier_6_2= RULE_STRING ) ) ) | ( (lv_intIdentifier_7_0= RULE_INT ) ) ) otherlv_8= 'by' ( ( (lv_authority_9_1= RULE_UPPERCASE_ID | lv_authority_9_2= RULE_UPPERCASE_PATH ) ) ) )? ) ) ( ( ( ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )* ) ) ) )
             {
-            // InternalKim.g:10749:2: ( ( (lv_annotations_0_0= ruleAnnotation ) )* ( (lv_abstract_1_0= 'abstract' ) )? ( ( (lv_root_2_0= 'root' ) ) | ( ( (lv_name_3_0= RULE_CAMELCASE_ID ) ) (otherlv_4= 'identified' otherlv_5= 'as' ( ( ( (lv_stringIdentifier_6_1= RULE_ID | lv_stringIdentifier_6_2= RULE_STRING ) ) ) | ( (lv_intIdentifier_7_0= RULE_INT ) ) ) otherlv_8= 'by' ( ( (lv_authority_9_1= RULE_UPPERCASE_ID | lv_authority_9_2= RULE_UPPERCASE_PATH ) ) ) )? ) ) ( ( ( ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )* ) ) ) )
-            // InternalKim.g:10750:3: ( (lv_annotations_0_0= ruleAnnotation ) )* ( (lv_abstract_1_0= 'abstract' ) )? ( ( (lv_root_2_0= 'root' ) ) | ( ( (lv_name_3_0= RULE_CAMELCASE_ID ) ) (otherlv_4= 'identified' otherlv_5= 'as' ( ( ( (lv_stringIdentifier_6_1= RULE_ID | lv_stringIdentifier_6_2= RULE_STRING ) ) ) | ( (lv_intIdentifier_7_0= RULE_INT ) ) ) otherlv_8= 'by' ( ( (lv_authority_9_1= RULE_UPPERCASE_ID | lv_authority_9_2= RULE_UPPERCASE_PATH ) ) ) )? ) ) ( ( ( ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )* ) ) )
+            // InternalKim.g:10749:2: ( ( (lv_annotations_0_0= ruleAnnotation ) )* ( (lv_abstract_1_0= 'abstract' ) )? ( ( (lv_root_2_0= 'root' ) ) | ( ( (lv_name_3_0= RULE_CAMELCASE_ID ) ) (otherlv_4= 'identified' otherlv_5= 'as' ( ( ( (lv_stringIdentifier_6_1= RULE_ID | lv_stringIdentifier_6_2= RULE_STRING ) ) ) | ( (lv_intIdentifier_7_0= RULE_INT ) ) ) otherlv_8= 'by' ( ( (lv_authority_9_1= RULE_UPPERCASE_ID | lv_authority_9_2= RULE_UPPERCASE_PATH ) ) ) )? ) ) ( ( ( ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )* ) ) ) )
+            // InternalKim.g:10750:3: ( (lv_annotations_0_0= ruleAnnotation ) )* ( (lv_abstract_1_0= 'abstract' ) )? ( ( (lv_root_2_0= 'root' ) ) | ( ( (lv_name_3_0= RULE_CAMELCASE_ID ) ) (otherlv_4= 'identified' otherlv_5= 'as' ( ( ( (lv_stringIdentifier_6_1= RULE_ID | lv_stringIdentifier_6_2= RULE_STRING ) ) ) | ( (lv_intIdentifier_7_0= RULE_INT ) ) ) otherlv_8= 'by' ( ( (lv_authority_9_1= RULE_UPPERCASE_ID | lv_authority_9_2= RULE_UPPERCASE_PATH ) ) ) )? ) ) ( ( ( ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )* ) ) )
             {
             // InternalKim.g:10750:3: ( (lv_annotations_0_0= ruleAnnotation ) )*
             loop222:
@@ -29711,17 +29711,17 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalKim.g:10925:3: ( ( ( ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )* ) ) )
-            // InternalKim.g:10926:4: ( ( ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )* ) )
+            // InternalKim.g:10925:3: ( ( ( ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )* ) ) )
+            // InternalKim.g:10926:4: ( ( ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )* ) )
             {
-            // InternalKim.g:10926:4: ( ( ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )* ) )
-            // InternalKim.g:10927:5: ( ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )* )
+            // InternalKim.g:10926:4: ( ( ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )* ) )
+            // InternalKim.g:10927:5: ( ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )* )
             {
             getUnorderedGroupHelper().enter(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3());
-            // InternalKim.g:10930:5: ( ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )* )
-            // InternalKim.g:10931:6: ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )*
+            // InternalKim.g:10930:5: ( ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )* )
+            // InternalKim.g:10931:6: ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )*
             {
-            // InternalKim.g:10931:6: ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )*
+            // InternalKim.g:10931:6: ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )*
             loop255:
             do {
                 int alt255=24;
@@ -29792,52 +29792,52 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	    }
             	    break;
             	case 2 :
-            	    // InternalKim.g:10959:4: ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) )
+            	    // InternalKim.g:10959:4: ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) )
             	    {
-            	    // InternalKim.g:10959:4: ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) )
-            	    // InternalKim.g:10960:5: {...}? => ( ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) )
+            	    // InternalKim.g:10959:4: ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) )
+            	    // InternalKim.g:10960:5: {...}? => ( ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) )
             	    {
             	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 1) ) {
             	        if (state.backtracking>0) {state.failed=true; return current;}
             	        throw new FailedPredicateException(input, "ruleConceptStatementBody", "getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 1)");
             	    }
-            	    // InternalKim.g:10960:117: ( ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) )
-            	    // InternalKim.g:10961:6: ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) )
+            	    // InternalKim.g:10960:117: ( ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) )
+            	    // InternalKim.g:10961:6: ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) )
             	    {
             	    getUnorderedGroupHelper().select(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 1);
-            	    // InternalKim.g:10964:9: ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) )
-            	    // InternalKim.g:10964:10: {...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) )
+            	    // InternalKim.g:10964:9: ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) )
+            	    // InternalKim.g:10964:10: {...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) )
             	    {
             	    if ( !((true)) ) {
             	        if (state.backtracking>0) {state.failed=true; return current;}
             	        throw new FailedPredicateException(input, "ruleConceptStatementBody", "true");
             	    }
-            	    // InternalKim.g:10964:19: ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) )
-            	    // InternalKim.g:10964:20: ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) )
+            	    // InternalKim.g:10964:19: ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) )
+            	    // InternalKim.g:10964:20: ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) )
             	    {
-            	    // InternalKim.g:10964:20: ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) )
-            	    int alt230=2;
-            	    int LA230_0 = input.LA(1);
+            	    // InternalKim.g:10964:20: ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? )
+            	    // InternalKim.g:10965:10: (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )?
+            	    {
+            	    // InternalKim.g:10965:10: (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) )
+            	    int alt229=2;
+            	    int LA229_0 = input.LA(1);
 
-            	    if ( (LA230_0==168) ) {
-            	        alt230=1;
+            	    if ( (LA229_0==168) ) {
+            	        alt229=1;
             	    }
-            	    else if ( (LA230_0==170) ) {
-            	        alt230=2;
+            	    else if ( (LA229_0==169) ) {
+            	        alt229=2;
             	    }
             	    else {
             	        if (state.backtracking>0) {state.failed=true; return current;}
             	        NoViableAltException nvae =
-            	            new NoViableAltException("", 230, 0, input);
+            	            new NoViableAltException("", 229, 0, input);
 
             	        throw nvae;
             	    }
-            	    switch (alt230) {
+            	    switch (alt229) {
             	        case 1 :
-            	            // InternalKim.g:10965:10: (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? )
-            	            {
-            	            // InternalKim.g:10965:10: (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? )
-            	            // InternalKim.g:10966:11: otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )?
+            	            // InternalKim.g:10966:11: otherlv_12= 'is'
             	            {
             	            otherlv_12=(Token)match(input,168,FOLLOW_132); if (state.failed) return current;
             	            if ( state.backtracking==0 ) {
@@ -29845,40 +29845,32 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	              											newLeafNode(otherlv_12, grammarAccess.getConceptStatementBodyAccess().getIsKeyword_3_1_0_0_0());
             	              										
             	            }
-            	            // InternalKim.g:10970:11: ( (lv_coreConcept_13_0= 'core' ) )?
-            	            int alt229=2;
-            	            int LA229_0 = input.LA(1);
 
-            	            if ( (LA229_0==169) ) {
-            	                alt229=1;
             	            }
-            	            switch (alt229) {
-            	                case 1 :
-            	                    // InternalKim.g:10971:12: (lv_coreConcept_13_0= 'core' )
-            	                    {
-            	                    // InternalKim.g:10971:12: (lv_coreConcept_13_0= 'core' )
-            	                    // InternalKim.g:10972:13: lv_coreConcept_13_0= 'core'
-            	                    {
-            	                    lv_coreConcept_13_0=(Token)match(input,169,FOLLOW_133); if (state.failed) return current;
-            	                    if ( state.backtracking==0 ) {
+            	            break;
+            	        case 2 :
+            	            // InternalKim.g:10971:11: ( (lv_alias_13_0= 'equals' ) )
+            	            {
+            	            // InternalKim.g:10971:11: ( (lv_alias_13_0= 'equals' ) )
+            	            // InternalKim.g:10972:12: (lv_alias_13_0= 'equals' )
+            	            {
+            	            // InternalKim.g:10972:12: (lv_alias_13_0= 'equals' )
+            	            // InternalKim.g:10973:13: lv_alias_13_0= 'equals'
+            	            {
+            	            lv_alias_13_0=(Token)match(input,169,FOLLOW_132); if (state.failed) return current;
+            	            if ( state.backtracking==0 ) {
 
-            	                      													newLeafNode(lv_coreConcept_13_0, grammarAccess.getConceptStatementBodyAccess().getCoreConceptCoreKeyword_3_1_0_0_1_0());
-            	                      												
-            	                    }
-            	                    if ( state.backtracking==0 ) {
+            	              													newLeafNode(lv_alias_13_0, grammarAccess.getConceptStatementBodyAccess().getAliasEqualsKeyword_3_1_0_0_1_0());
+            	              												
+            	            }
+            	            if ( state.backtracking==0 ) {
 
-            	                      													if (current==null) {
-            	                      														current = createModelElement(grammarAccess.getConceptStatementBodyRule());
-            	                      													}
-            	                      													setWithLastConsumed(current, "coreConcept", true, "core");
-            	                      												
-            	                    }
-
-            	                    }
-
-
-            	                    }
-            	                    break;
+            	              													if (current==null) {
+            	              														current = createModelElement(grammarAccess.getConceptStatementBodyRule());
+            	              													}
+            	              													setWithLastConsumed(current, "alias", true, "equals");
+            	              												
+            	            }
 
             	            }
 
@@ -29888,19 +29880,27 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
             	            }
             	            break;
-            	        case 2 :
-            	            // InternalKim.g:10986:10: ( (lv_alias_14_0= 'equals' ) )
+
+            	    }
+
+            	    // InternalKim.g:10986:10: ( (lv_coreConcept_14_0= 'core' ) )?
+            	    int alt230=2;
+            	    int LA230_0 = input.LA(1);
+
+            	    if ( (LA230_0==170) ) {
+            	        alt230=1;
+            	    }
+            	    switch (alt230) {
+            	        case 1 :
+            	            // InternalKim.g:10987:11: (lv_coreConcept_14_0= 'core' )
             	            {
-            	            // InternalKim.g:10986:10: ( (lv_alias_14_0= 'equals' ) )
-            	            // InternalKim.g:10987:11: (lv_alias_14_0= 'equals' )
+            	            // InternalKim.g:10987:11: (lv_coreConcept_14_0= 'core' )
+            	            // InternalKim.g:10988:12: lv_coreConcept_14_0= 'core'
             	            {
-            	            // InternalKim.g:10987:11: (lv_alias_14_0= 'equals' )
-            	            // InternalKim.g:10988:12: lv_alias_14_0= 'equals'
-            	            {
-            	            lv_alias_14_0=(Token)match(input,170,FOLLOW_133); if (state.failed) return current;
+            	            lv_coreConcept_14_0=(Token)match(input,170,FOLLOW_133); if (state.failed) return current;
             	            if ( state.backtracking==0 ) {
 
-            	              												newLeafNode(lv_alias_14_0, grammarAccess.getConceptStatementBodyAccess().getAliasEqualsKeyword_3_1_0_1_0());
+            	              												newLeafNode(lv_coreConcept_14_0, grammarAccess.getConceptStatementBodyAccess().getCoreConceptCoreKeyword_3_1_0_1_0());
             	              											
             	            }
             	            if ( state.backtracking==0 ) {
@@ -29908,7 +29908,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	              												if (current==null) {
             	              													current = createModelElement(grammarAccess.getConceptStatementBodyRule());
             	              												}
-            	              												setWithLastConsumed(current, "alias", true, "equals");
+            	              												setWithLastConsumed(current, "coreConcept", true, "core");
             	              											
             	            }
 
@@ -29916,10 +29916,10 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
 
             	            }
-
-
-            	            }
             	            break;
+
+            	    }
+
 
             	    }
 
@@ -34201,13 +34201,10 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                         if ( (LA260_0==26) ) {
                             int LA260_1 = input.LA(2);
 
-                            if ( (LA260_1==RULE_LOWERCASE_ID||(LA260_1>=RULE_CAMELCASE_ID && LA260_1<=RULE_LOWERCASE_DASHID)||LA260_1==37||(LA260_1>=128 && LA260_1<=129)||(LA260_1>=137 && LA260_1<=138)||(LA260_1>=140 && LA260_1<=154)) ) {
-                                alt260=1;
-                            }
-                            else if ( (LA260_1==155) ) {
-                                int LA260_4 = input.LA(3);
+                            if ( (LA260_1==155) ) {
+                                int LA260_3 = input.LA(3);
 
-                                if ( (LA260_4==RULE_CAMELCASE_ID) ) {
+                                if ( (LA260_3==RULE_CAMELCASE_ID) ) {
                                     int LA260_5 = input.LA(4);
 
                                     if ( (LA260_5==112) ) {
@@ -34216,11 +34213,14 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
 
                                 }
-                                else if ( (LA260_4==RULE_UPPERCASE_ID||LA260_4==RULE_STRING||(LA260_4>=RULE_ID && LA260_4<=RULE_INT)) ) {
+                                else if ( (LA260_3==RULE_UPPERCASE_ID||LA260_3==RULE_STRING||(LA260_3>=RULE_ID && LA260_3<=RULE_INT)) ) {
                                     alt260=1;
                                 }
 
 
+                            }
+                            else if ( (LA260_1==RULE_LOWERCASE_ID||(LA260_1>=RULE_CAMELCASE_ID && LA260_1<=RULE_LOWERCASE_DASHID)||LA260_1==37||(LA260_1>=128 && LA260_1<=129)||(LA260_1>=137 && LA260_1<=138)||(LA260_1>=140 && LA260_1<=154)) ) {
+                                alt260=1;
                             }
 
 
@@ -58446,8 +58446,8 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
     // $ANTLR start synpred420_InternalKim
     public final void synpred420_InternalKim_fragment() throws RecognitionException {   
         Token otherlv_12=null;
-        Token lv_coreConcept_13_0=null;
-        Token lv_alias_14_0=null;
+        Token lv_alias_13_0=null;
+        Token lv_coreConcept_14_0=null;
         Token lv_nothing_15_0=null;
         Token lv_connectors_17_1=null;
         Token lv_connectors_17_2=null;
@@ -58457,95 +58457,68 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         EObject lv_parents_18_0 = null;
 
 
-        // InternalKim.g:10959:4: ( ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) )
-        // InternalKim.g:10959:4: ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) )
+        // InternalKim.g:10959:4: ( ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) )
+        // InternalKim.g:10959:4: ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) )
         {
-        // InternalKim.g:10959:4: ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) )
-        // InternalKim.g:10960:5: {...}? => ( ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) )
+        // InternalKim.g:10959:4: ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) )
+        // InternalKim.g:10960:5: {...}? => ( ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) )
         {
         if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 1) ) {
             if (state.backtracking>0) {state.failed=true; return ;}
             throw new FailedPredicateException(input, "synpred420_InternalKim", "getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 1)");
         }
-        // InternalKim.g:10960:117: ( ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) )
-        // InternalKim.g:10961:6: ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) )
+        // InternalKim.g:10960:117: ( ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) )
+        // InternalKim.g:10961:6: ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) )
         {
         getUnorderedGroupHelper().select(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 1);
-        // InternalKim.g:10964:9: ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) )
-        // InternalKim.g:10964:10: {...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) )
+        // InternalKim.g:10964:9: ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) )
+        // InternalKim.g:10964:10: {...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) )
         {
         if ( !((true)) ) {
             if (state.backtracking>0) {state.failed=true; return ;}
             throw new FailedPredicateException(input, "synpred420_InternalKim", "true");
         }
-        // InternalKim.g:10964:19: ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) )
-        // InternalKim.g:10964:20: ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) )
+        // InternalKim.g:10964:19: ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) )
+        // InternalKim.g:10964:20: ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) )
         {
-        // InternalKim.g:10964:20: ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) )
-        int alt536=2;
-        int LA536_0 = input.LA(1);
+        // InternalKim.g:10964:20: ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? )
+        // InternalKim.g:10965:10: (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )?
+        {
+        // InternalKim.g:10965:10: (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) )
+        int alt534=2;
+        int LA534_0 = input.LA(1);
 
-        if ( (LA536_0==168) ) {
-            alt536=1;
+        if ( (LA534_0==168) ) {
+            alt534=1;
         }
-        else if ( (LA536_0==170) ) {
-            alt536=2;
+        else if ( (LA534_0==169) ) {
+            alt534=2;
         }
         else {
             if (state.backtracking>0) {state.failed=true; return ;}
             NoViableAltException nvae =
-                new NoViableAltException("", 536, 0, input);
+                new NoViableAltException("", 534, 0, input);
 
             throw nvae;
         }
-        switch (alt536) {
+        switch (alt534) {
             case 1 :
-                // InternalKim.g:10965:10: (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? )
-                {
-                // InternalKim.g:10965:10: (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? )
-                // InternalKim.g:10966:11: otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )?
+                // InternalKim.g:10966:11: otherlv_12= 'is'
                 {
                 otherlv_12=(Token)match(input,168,FOLLOW_132); if (state.failed) return ;
-                // InternalKim.g:10970:11: ( (lv_coreConcept_13_0= 'core' ) )?
-                int alt535=2;
-                int LA535_0 = input.LA(1);
-
-                if ( (LA535_0==169) ) {
-                    alt535=1;
-                }
-                switch (alt535) {
-                    case 1 :
-                        // InternalKim.g:10971:12: (lv_coreConcept_13_0= 'core' )
-                        {
-                        // InternalKim.g:10971:12: (lv_coreConcept_13_0= 'core' )
-                        // InternalKim.g:10972:13: lv_coreConcept_13_0= 'core'
-                        {
-                        lv_coreConcept_13_0=(Token)match(input,169,FOLLOW_133); if (state.failed) return ;
-
-                        }
-
-
-                        }
-                        break;
-
-                }
-
-
-                }
-
 
                 }
                 break;
             case 2 :
-                // InternalKim.g:10986:10: ( (lv_alias_14_0= 'equals' ) )
+                // InternalKim.g:10971:11: ( (lv_alias_13_0= 'equals' ) )
                 {
-                // InternalKim.g:10986:10: ( (lv_alias_14_0= 'equals' ) )
-                // InternalKim.g:10987:11: (lv_alias_14_0= 'equals' )
+                // InternalKim.g:10971:11: ( (lv_alias_13_0= 'equals' ) )
+                // InternalKim.g:10972:12: (lv_alias_13_0= 'equals' )
                 {
-                // InternalKim.g:10987:11: (lv_alias_14_0= 'equals' )
-                // InternalKim.g:10988:12: lv_alias_14_0= 'equals'
+                // InternalKim.g:10972:12: (lv_alias_13_0= 'equals' )
+                // InternalKim.g:10973:13: lv_alias_13_0= 'equals'
                 {
-                lv_alias_14_0=(Token)match(input,170,FOLLOW_133); if (state.failed) return ;
+                lv_alias_13_0=(Token)match(input,169,FOLLOW_132); if (state.failed) return ;
 
                 }
 
@@ -58558,24 +58531,51 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
         }
 
-        // InternalKim.g:11001:9: ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) )
-        int alt539=2;
-        int LA539_0 = input.LA(1);
+        // InternalKim.g:10986:10: ( (lv_coreConcept_14_0= 'core' ) )?
+        int alt535=2;
+        int LA535_0 = input.LA(1);
 
-        if ( (LA539_0==171) ) {
-            alt539=1;
+        if ( (LA535_0==170) ) {
+            alt535=1;
         }
-        else if ( (LA539_0==RULE_LOWERCASE_ID||(LA539_0>=RULE_CAMELCASE_ID && LA539_0<=RULE_LOWERCASE_DASHID)||LA539_0==37||(LA539_0>=128 && LA539_0<=129)||(LA539_0>=137 && LA539_0<=138)||(LA539_0>=140 && LA539_0<=155)) ) {
-            alt539=2;
+        switch (alt535) {
+            case 1 :
+                // InternalKim.g:10987:11: (lv_coreConcept_14_0= 'core' )
+                {
+                // InternalKim.g:10987:11: (lv_coreConcept_14_0= 'core' )
+                // InternalKim.g:10988:12: lv_coreConcept_14_0= 'core'
+                {
+                lv_coreConcept_14_0=(Token)match(input,170,FOLLOW_133); if (state.failed) return ;
+
+                }
+
+
+                }
+                break;
+
+        }
+
+
+        }
+
+        // InternalKim.g:11001:9: ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) )
+        int alt538=2;
+        int LA538_0 = input.LA(1);
+
+        if ( (LA538_0==171) ) {
+            alt538=1;
+        }
+        else if ( (LA538_0==RULE_LOWERCASE_ID||(LA538_0>=RULE_CAMELCASE_ID && LA538_0<=RULE_LOWERCASE_DASHID)||LA538_0==37||(LA538_0>=128 && LA538_0<=129)||(LA538_0>=137 && LA538_0<=138)||(LA538_0>=140 && LA538_0<=155)) ) {
+            alt538=2;
         }
         else {
             if (state.backtracking>0) {state.failed=true; return ;}
             NoViableAltException nvae =
-                new NoViableAltException("", 539, 0, input);
+                new NoViableAltException("", 538, 0, input);
 
             throw nvae;
         }
-        switch (alt539) {
+        switch (alt538) {
             case 1 :
                 // InternalKim.g:11002:10: ( (lv_nothing_15_0= 'nothing' ) )
                 {
@@ -58624,17 +58624,17 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                 }
 
                 // InternalKim.g:11037:11: ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )*
-                loop538:
+                loop537:
                 do {
-                    int alt538=2;
-                    int LA538_0 = input.LA(1);
+                    int alt537=2;
+                    int LA537_0 = input.LA(1);
 
-                    if ( (LA538_0==26||(LA538_0>=156 && LA538_0<=157)) ) {
-                        alt538=1;
+                    if ( (LA537_0==26||(LA537_0>=156 && LA537_0<=157)) ) {
+                        alt537=1;
                     }
 
 
-                    switch (alt538) {
+                    switch (alt537) {
                 	case 1 :
                 	    // InternalKim.g:11038:12: ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) )
                 	    {
@@ -58645,32 +58645,32 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                 	    // InternalKim.g:11040:14: (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' )
                 	    {
                 	    // InternalKim.g:11040:14: (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' )
-                	    int alt537=3;
+                	    int alt536=3;
                 	    switch ( input.LA(1) ) {
                 	    case 26:
                 	        {
-                	        alt537=1;
+                	        alt536=1;
                 	        }
                 	        break;
                 	    case 156:
                 	        {
-                	        alt537=2;
+                	        alt536=2;
                 	        }
                 	        break;
                 	    case 157:
                 	        {
-                	        alt537=3;
+                	        alt536=3;
                 	        }
                 	        break;
                 	    default:
                 	        if (state.backtracking>0) {state.failed=true; return ;}
                 	        NoViableAltException nvae =
-                	            new NoViableAltException("", 537, 0, input);
+                	            new NoViableAltException("", 536, 0, input);
 
                 	        throw nvae;
                 	    }
 
-                	    switch (alt537) {
+                	    switch (alt536) {
                 	        case 1 :
                 	            // InternalKim.g:11041:15: lv_connectors_17_1= ','
                 	            {
@@ -58728,7 +58728,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                 	    break;
 
                 	default :
-                	    break loop538;
+                	    break loop537;
                     }
                 } while (true);
 
@@ -58795,23 +58795,23 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             throw new FailedPredicateException(input, "synpred424_InternalKim", "true");
         }
         // InternalKim.g:11109:19: ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) )
-        int alt543=2;
-        int LA543_0 = input.LA(1);
+        int alt542=2;
+        int LA542_0 = input.LA(1);
 
-        if ( (LA543_0==172) ) {
-            alt543=1;
+        if ( (LA542_0==172) ) {
+            alt542=1;
         }
-        else if ( (LA543_0==173) ) {
-            alt543=2;
+        else if ( (LA542_0==173) ) {
+            alt542=2;
         }
         else {
             if (state.backtracking>0) {state.failed=true; return ;}
             NoViableAltException nvae =
-                new NoViableAltException("", 543, 0, input);
+                new NoViableAltException("", 542, 0, input);
 
             throw nvae;
         }
-        switch (alt543) {
+        switch (alt542) {
             case 1 :
                 // InternalKim.g:11109:20: (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* )
                 {
@@ -58842,17 +58842,17 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                 }
 
                 // InternalKim.g:11133:10: (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )*
-                loop541:
+                loop540:
                 do {
-                    int alt541=2;
-                    int LA541_0 = input.LA(1);
+                    int alt540=2;
+                    int LA540_0 = input.LA(1);
 
-                    if ( (LA541_0==26) ) {
-                        alt541=1;
+                    if ( (LA540_0==26) ) {
+                        alt540=1;
                     }
 
 
-                    switch (alt541) {
+                    switch (alt540) {
                 	case 1 :
                 	    // InternalKim.g:11134:11: otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) )
                 	    {
@@ -58884,7 +58884,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                 	    break;
 
                 	default :
-                	    break loop541;
+                	    break loop540;
                     }
                 } while (true);
 
@@ -58936,17 +58936,17 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                 }
 
                 // InternalKim.g:11194:10: (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )*
-                loop542:
+                loop541:
                 do {
-                    int alt542=2;
-                    int LA542_0 = input.LA(1);
+                    int alt541=2;
+                    int LA541_0 = input.LA(1);
 
-                    if ( (LA542_0==26) ) {
-                        alt542=1;
+                    if ( (LA541_0==26) ) {
+                        alt541=1;
                     }
 
 
-                    switch (alt542) {
+                    switch (alt541) {
                 	case 1 :
                 	    // InternalKim.g:11195:11: otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) )
                 	    {
@@ -58978,7 +58978,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                 	    break;
 
                 	default :
-                	    break loop542;
+                	    break loop541;
                     }
                 } while (true);
 
@@ -59039,23 +59039,23 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         {
         otherlv_27=(Token)match(input,174,FOLLOW_136); if (state.failed) return ;
         // InternalKim.g:11235:9: ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) )
-        int alt544=2;
-        int LA544_0 = input.LA(1);
+        int alt543=2;
+        int LA543_0 = input.LA(1);
 
-        if ( (LA544_0==175) ) {
-            alt544=1;
+        if ( (LA543_0==175) ) {
+            alt543=1;
         }
-        else if ( (LA544_0==RULE_LOWERCASE_ID||(LA544_0>=RULE_CAMELCASE_ID && LA544_0<=RULE_LOWERCASE_DASHID)||LA544_0==37||(LA544_0>=128 && LA544_0<=129)||(LA544_0>=137 && LA544_0<=138)||(LA544_0>=140 && LA544_0<=155)) ) {
-            alt544=2;
+        else if ( (LA543_0==RULE_LOWERCASE_ID||(LA543_0>=RULE_CAMELCASE_ID && LA543_0<=RULE_LOWERCASE_DASHID)||LA543_0==37||(LA543_0>=128 && LA543_0<=129)||(LA543_0>=137 && LA543_0<=138)||(LA543_0>=140 && LA543_0<=155)) ) {
+            alt543=2;
         }
         else {
             if (state.backtracking>0) {state.failed=true; return ;}
             NoViableAltException nvae =
-                new NoViableAltException("", 544, 0, input);
+                new NoViableAltException("", 543, 0, input);
 
             throw nvae;
         }
-        switch (alt544) {
+        switch (alt543) {
             case 1 :
                 // InternalKim.g:11236:10: (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) )
                 {
@@ -59187,17 +59187,17 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         }
 
         // InternalKim.g:11315:9: (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )*
-        loop545:
+        loop544:
         do {
-            int alt545=2;
-            int LA545_0 = input.LA(1);
+            int alt544=2;
+            int LA544_0 = input.LA(1);
 
-            if ( (LA545_0==26) ) {
-                alt545=1;
+            if ( (LA544_0==26) ) {
+                alt544=1;
             }
 
 
-            switch (alt545) {
+            switch (alt544) {
         	case 1 :
         	    // InternalKim.g:11316:10: otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) )
         	    {
@@ -59229,7 +59229,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	    break;
 
         	default :
-        	    break loop545;
+        	    break loop544;
             }
         } while (true);
 
@@ -59731,17 +59731,17 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         }
 
         // InternalKim.g:11586:9: (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )*
-        loop546:
+        loop545:
         do {
-            int alt546=2;
-            int LA546_0 = input.LA(1);
+            int alt545=2;
+            int LA545_0 = input.LA(1);
 
-            if ( (LA546_0==26) ) {
-                alt546=1;
+            if ( (LA545_0==26) ) {
+                alt545=1;
             }
 
 
-            switch (alt546) {
+            switch (alt545) {
         	case 1 :
         	    // InternalKim.g:11587:10: otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) )
         	    {
@@ -59773,7 +59773,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	    break;
 
         	default :
-        	    break loop546;
+        	    break loop545;
             }
         } while (true);
 
@@ -59865,17 +59865,17 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         }
 
         // InternalKim.g:11649:9: (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )*
-        loop548:
+        loop547:
         do {
-            int alt548=2;
-            int LA548_0 = input.LA(1);
+            int alt547=2;
+            int LA547_0 = input.LA(1);
 
-            if ( (LA548_0==26) ) {
-                alt548=1;
+            if ( (LA547_0==26) ) {
+                alt547=1;
             }
 
 
-            switch (alt548) {
+            switch (alt547) {
         	case 1 :
         	    // InternalKim.g:11650:10: otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) )
         	    {
@@ -59907,18 +59907,18 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	    break;
 
         	default :
-        	    break loop548;
+        	    break loop547;
             }
         } while (true);
 
         // InternalKim.g:11674:9: (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )?
-        int alt550=2;
-        int LA550_0 = input.LA(1);
+        int alt549=2;
+        int LA549_0 = input.LA(1);
 
-        if ( (LA550_0==186) ) {
-            alt550=1;
+        if ( (LA549_0==186) ) {
+            alt549=1;
         }
-        switch (alt550) {
+        switch (alt549) {
             case 1 :
                 // InternalKim.g:11675:10: otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )*
                 {
@@ -59946,17 +59946,17 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                 }
 
                 // InternalKim.g:11698:10: (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )*
-                loop549:
+                loop548:
                 do {
-                    int alt549=2;
-                    int LA549_0 = input.LA(1);
+                    int alt548=2;
+                    int LA548_0 = input.LA(1);
 
-                    if ( (LA549_0==26) ) {
-                        alt549=1;
+                    if ( (LA548_0==26) ) {
+                        alt548=1;
                     }
 
 
-                    switch (alt549) {
+                    switch (alt548) {
                 	case 1 :
                 	    // InternalKim.g:11699:11: otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) )
                 	    {
@@ -59988,7 +59988,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                 	    break;
 
                 	default :
-                	    break loop549;
+                	    break loop548;
                     }
                 } while (true);
 
@@ -60025,17 +60025,17 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         }
 
         // InternalKim.g:11748:10: (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )*
-        loop551:
+        loop550:
         do {
-            int alt551=2;
-            int LA551_0 = input.LA(1);
+            int alt550=2;
+            int LA550_0 = input.LA(1);
 
-            if ( (LA551_0==26) ) {
-                alt551=1;
+            if ( (LA550_0==26) ) {
+                alt550=1;
             }
 
 
-            switch (alt551) {
+            switch (alt550) {
         	case 1 :
         	    // InternalKim.g:11749:11: otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) )
         	    {
@@ -60067,7 +60067,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	    break;
 
         	default :
-        	    break loop551;
+        	    break loop550;
             }
         } while (true);
 
@@ -60154,17 +60154,17 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         }
 
         // InternalKim.g:11808:9: (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )*
-        loop553:
+        loop552:
         do {
-            int alt553=2;
-            int LA553_0 = input.LA(1);
+            int alt552=2;
+            int LA552_0 = input.LA(1);
 
-            if ( (LA553_0==26) ) {
-                alt553=1;
+            if ( (LA552_0==26) ) {
+                alt552=1;
             }
 
 
-            switch (alt553) {
+            switch (alt552) {
         	case 1 :
         	    // InternalKim.g:11809:10: otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) )
         	    {
@@ -60196,18 +60196,18 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	    break;
 
         	default :
-        	    break loop553;
+        	    break loop552;
             }
         } while (true);
 
         // InternalKim.g:11833:9: (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )?
-        int alt555=2;
-        int LA555_0 = input.LA(1);
+        int alt554=2;
+        int LA554_0 = input.LA(1);
 
-        if ( (LA555_0==35) ) {
-            alt555=1;
+        if ( (LA554_0==35) ) {
+            alt554=1;
         }
-        switch (alt555) {
+        switch (alt554) {
             case 1 :
                 // InternalKim.g:11834:10: otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )*
                 {
@@ -60235,17 +60235,17 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                 }
 
                 // InternalKim.g:11857:10: (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )*
-                loop554:
+                loop553:
                 do {
-                    int alt554=2;
-                    int LA554_0 = input.LA(1);
+                    int alt553=2;
+                    int LA553_0 = input.LA(1);
 
-                    if ( (LA554_0==26) ) {
-                        alt554=1;
+                    if ( (LA553_0==26) ) {
+                        alt553=1;
                     }
 
 
-                    switch (alt554) {
+                    switch (alt553) {
                 	case 1 :
                 	    // InternalKim.g:11858:11: otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) )
                 	    {
@@ -60277,7 +60277,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                 	    break;
 
                 	default :
-                	    break loop554;
+                	    break loop553;
                     }
                 } while (true);
 
@@ -60338,32 +60338,32 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         // InternalKim.g:11894:20: (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) )
         {
         // InternalKim.g:11894:20: (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) )
-        int alt556=3;
+        int alt555=3;
         switch ( input.LA(1) ) {
         case 188:
             {
-            alt556=1;
+            alt555=1;
             }
             break;
         case 189:
             {
-            alt556=2;
+            alt555=2;
             }
             break;
         case 190:
             {
-            alt556=3;
+            alt555=3;
             }
             break;
         default:
             if (state.backtracking>0) {state.failed=true; return ;}
             NoViableAltException nvae =
-                new NoViableAltException("", 556, 0, input);
+                new NoViableAltException("", 555, 0, input);
 
             throw nvae;
         }
 
-        switch (alt556) {
+        switch (alt555) {
             case 1 :
                 // InternalKim.g:11895:10: otherlv_74= 'part'
                 {
@@ -60521,17 +60521,17 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         }
 
         // InternalKim.g:11997:9: (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )*
-        loop557:
+        loop556:
         do {
-            int alt557=2;
-            int LA557_0 = input.LA(1);
+            int alt556=2;
+            int LA556_0 = input.LA(1);
 
-            if ( (LA557_0==26) ) {
-                alt557=1;
+            if ( (LA556_0==26) ) {
+                alt556=1;
             }
 
 
-            switch (alt557) {
+            switch (alt556) {
         	case 1 :
         	    // InternalKim.g:11998:10: otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) )
         	    {
@@ -60563,7 +60563,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	    break;
 
         	default :
-        	    break loop557;
+        	    break loop556;
             }
         } while (true);
 
@@ -60643,17 +60643,17 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         }
 
         // InternalKim.g:12060:9: (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )*
-        loop558:
+        loop557:
         do {
-            int alt558=2;
-            int LA558_0 = input.LA(1);
+            int alt557=2;
+            int LA557_0 = input.LA(1);
 
-            if ( (LA558_0==26) ) {
-                alt558=1;
+            if ( (LA557_0==26) ) {
+                alt557=1;
             }
 
 
-            switch (alt558) {
+            switch (alt557) {
         	case 1 :
         	    // InternalKim.g:12061:10: otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) )
         	    {
@@ -60685,7 +60685,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	    break;
 
         	default :
-        	    break loop558;
+        	    break loop557;
             }
         } while (true);
 
@@ -60798,17 +60798,17 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         }
 
         // InternalKim.g:12145:9: (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )*
-        loop559:
+        loop558:
         do {
-            int alt559=2;
-            int LA559_0 = input.LA(1);
+            int alt558=2;
+            int LA558_0 = input.LA(1);
 
-            if ( (LA559_0==26) ) {
-                alt559=1;
+            if ( (LA558_0==26) ) {
+                alt558=1;
             }
 
 
-            switch (alt559) {
+            switch (alt558) {
         	case 1 :
         	    // InternalKim.g:12146:10: otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) )
         	    {
@@ -60869,7 +60869,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	    break;
 
         	default :
-        	    break loop559;
+        	    break loop558;
             }
         } while (true);
 
@@ -61019,17 +61019,17 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         }
 
         // InternalKim.g:12268:9: (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )*
-        loop560:
+        loop559:
         do {
-            int alt560=2;
-            int LA560_0 = input.LA(1);
+            int alt559=2;
+            int LA559_0 = input.LA(1);
 
-            if ( (LA560_0==26) ) {
-                alt560=1;
+            if ( (LA559_0==26) ) {
+                alt559=1;
             }
 
 
-            switch (alt560) {
+            switch (alt559) {
         	case 1 :
         	    // InternalKim.g:12269:10: otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) )
         	    {
@@ -61061,7 +61061,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	    break;
 
         	default :
-        	    break loop560;
+        	    break loop559;
             }
         } while (true);
 
@@ -61119,13 +61119,13 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         {
         otherlv_103=(Token)match(input,184,FOLLOW_143); if (state.failed) return ;
         // InternalKim.g:12308:9: ( (lv_disjoint_104_0= 'disjoint' ) )?
-        int alt561=2;
-        int LA561_0 = input.LA(1);
+        int alt560=2;
+        int LA560_0 = input.LA(1);
 
-        if ( (LA561_0==96) ) {
-            alt561=1;
+        if ( (LA560_0==96) ) {
+            alt560=1;
         }
-        switch (alt561) {
+        switch (alt560) {
             case 1 :
                 // InternalKim.g:12309:10: (lv_disjoint_104_0= 'disjoint' )
                 {
@@ -61166,17 +61166,17 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         }
 
         // InternalKim.g:12345:9: (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )*
-        loop562:
+        loop561:
         do {
-            int alt562=2;
-            int LA562_0 = input.LA(1);
+            int alt561=2;
+            int LA561_0 = input.LA(1);
 
-            if ( (LA562_0==26) ) {
-                alt562=1;
+            if ( (LA561_0==26) ) {
+                alt561=1;
             }
 
 
-            switch (alt562) {
+            switch (alt561) {
         	case 1 :
         	    // InternalKim.g:12346:10: otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) )
         	    {
@@ -61208,7 +61208,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	    break;
 
         	default :
-        	    break loop562;
+        	    break loop561;
             }
         } while (true);
 
@@ -61288,27 +61288,27 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         {
         getUnorderedGroupHelper().select(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 21);
         // InternalKim.g:12381:9: ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+
-        int cnt563=0;
-        loop563:
+        int cnt562=0;
+        loop562:
         do {
-            int alt563=2;
-            int LA563_0 = input.LA(1);
+            int alt562=2;
+            int LA562_0 = input.LA(1);
 
-            if ( (LA563_0==200) && ((true))) {
-                alt563=1;
+            if ( (LA562_0==200) && ((true))) {
+                alt562=1;
             }
-            else if ( (LA563_0==184) && ((true))) {
-                alt563=1;
+            else if ( (LA562_0==184) && ((true))) {
+                alt562=1;
             }
-            else if ( (LA563_0==201) && ((true))) {
-                alt563=1;
+            else if ( (LA562_0==201) && ((true))) {
+                alt562=1;
             }
-            else if ( (LA563_0==202) && ((true))) {
-                alt563=1;
+            else if ( (LA562_0==202) && ((true))) {
+                alt562=1;
             }
 
 
-            switch (alt563) {
+            switch (alt562) {
         	case 1 :
         	    // InternalKim.g:12381:10: {...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) )
         	    {
@@ -61343,13 +61343,13 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	    break;
 
         	default :
-        	    if ( cnt563 >= 1 ) break loop563;
+        	    if ( cnt562 >= 1 ) break loop562;
         	    if (state.backtracking>0) {state.failed=true; return ;}
                     EarlyExitException eee =
-                        new EarlyExitException(563, input);
+                        new EarlyExitException(562, input);
                     throw eee;
             }
-            cnt563++;
+            cnt562++;
         } while (true);
 
 
@@ -61470,13 +61470,13 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         {
         otherlv_1=(Token)match(input,37,FOLLOW_158); if (state.failed) return ;
         // InternalKim.g:13279:4: ( (lv_parameters_2_0= ruleParameterList ) )?
-        int alt574=2;
-        int LA574_0 = input.LA(1);
+        int alt573=2;
+        int LA573_0 = input.LA(1);
 
-        if ( ((LA574_0>=RULE_UPPERCASE_ID && LA574_0<=RULE_STRING)||(LA574_0>=RULE_EXPR && LA574_0<=RULE_LOWERCASE_DASHID)||LA574_0==RULE_INT||(LA574_0>=27 && LA574_0<=28)||LA574_0==37||(LA574_0>=48 && LA574_0<=49)||(LA574_0>=128 && LA574_0<=129)||(LA574_0>=137 && LA574_0<=138)||(LA574_0>=140 && LA574_0<=155)||LA574_0==209||(LA574_0>=245 && LA574_0<=246)) ) {
-            alt574=1;
+        if ( ((LA573_0>=RULE_UPPERCASE_ID && LA573_0<=RULE_STRING)||(LA573_0>=RULE_EXPR && LA573_0<=RULE_LOWERCASE_DASHID)||LA573_0==RULE_INT||(LA573_0>=27 && LA573_0<=28)||LA573_0==37||(LA573_0>=48 && LA573_0<=49)||(LA573_0>=128 && LA573_0<=129)||(LA573_0>=137 && LA573_0<=138)||(LA573_0>=140 && LA573_0<=155)||LA573_0==209||(LA573_0>=245 && LA573_0<=246)) ) {
+            alt573=1;
         }
-        switch (alt574) {
+        switch (alt573) {
             case 1 :
                 // InternalKim.g:13280:5: (lv_parameters_2_0= ruleParameterList )
                 {
@@ -61704,22 +61704,22 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         // InternalKim.g:14508:5: (lv_id_4_1= rulePathName | lv_id_4_2= RULE_LOWERCASE_ID | lv_id_4_3= RULE_UPPERCASE_ID | lv_id_4_4= RULE_CAMELCASE_ID )
         {
         // InternalKim.g:14508:5: (lv_id_4_1= rulePathName | lv_id_4_2= RULE_LOWERCASE_ID | lv_id_4_3= RULE_UPPERCASE_ID | lv_id_4_4= RULE_CAMELCASE_ID )
-        int alt581=4;
+        int alt580=4;
         switch ( input.LA(1) ) {
         case RULE_LOWERCASE_ID:
             {
-            int LA581_1 = input.LA(2);
+            int LA580_1 = input.LA(2);
 
             if ( (synpred540_InternalKim()) ) {
-                alt581=1;
+                alt580=1;
             }
             else if ( (synpred541_InternalKim()) ) {
-                alt581=2;
+                alt580=2;
             }
             else {
                 if (state.backtracking>0) {state.failed=true; return ;}
                 NoViableAltException nvae =
-                    new NoViableAltException("", 581, 1, input);
+                    new NoViableAltException("", 580, 1, input);
 
                 throw nvae;
             }
@@ -61727,28 +61727,28 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             break;
         case RULE_LOWERCASE_DASHID:
             {
-            alt581=1;
+            alt580=1;
             }
             break;
         case RULE_UPPERCASE_ID:
             {
-            alt581=3;
+            alt580=3;
             }
             break;
         case RULE_CAMELCASE_ID:
             {
-            alt581=4;
+            alt580=4;
             }
             break;
         default:
             if (state.backtracking>0) {state.failed=true; return ;}
             NoViableAltException nvae =
-                new NoViableAltException("", 581, 0, input);
+                new NoViableAltException("", 580, 0, input);
 
             throw nvae;
         }
 
-        switch (alt581) {
+        switch (alt580) {
             case 1 :
                 // InternalKim.g:14509:6: lv_id_4_1= rulePathName
                 {
@@ -61881,32 +61881,32 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         // InternalKim.g:14727:5: (lv_id_3_1= RULE_LOWERCASE_ID | lv_id_3_2= RULE_UPPERCASE_ID | lv_id_3_3= RULE_CAMELCASE_ID )
         {
         // InternalKim.g:14727:5: (lv_id_3_1= RULE_LOWERCASE_ID | lv_id_3_2= RULE_UPPERCASE_ID | lv_id_3_3= RULE_CAMELCASE_ID )
-        int alt582=3;
+        int alt581=3;
         switch ( input.LA(1) ) {
         case RULE_LOWERCASE_ID:
             {
-            alt582=1;
+            alt581=1;
             }
             break;
         case RULE_UPPERCASE_ID:
             {
-            alt582=2;
+            alt581=2;
             }
             break;
         case RULE_CAMELCASE_ID:
             {
-            alt582=3;
+            alt581=3;
             }
             break;
         default:
             if (state.backtracking>0) {state.failed=true; return ;}
             NoViableAltException nvae =
-                new NoViableAltException("", 582, 0, input);
+                new NoViableAltException("", 581, 0, input);
 
             throw nvae;
         }
 
-        switch (alt582) {
+        switch (alt581) {
             case 1 :
                 // InternalKim.g:14728:6: lv_id_3_1= RULE_LOWERCASE_ID
                 {
@@ -62224,23 +62224,23 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             throw new FailedPredicateException(input, "synpred606_InternalKim", "true");
         }
         // InternalKim.g:15654:19: ( (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) ) | (otherlv_13= 'per' ( (lv_unit_14_0= ruleUnit ) ) ) )
-        int alt585=2;
-        int LA585_0 = input.LA(1);
+        int alt584=2;
+        int LA584_0 = input.LA(1);
 
-        if ( (LA585_0==47) ) {
-            alt585=1;
+        if ( (LA584_0==47) ) {
+            alt584=1;
         }
-        else if ( (LA585_0==114) ) {
-            alt585=2;
+        else if ( (LA584_0==114) ) {
+            alt584=2;
         }
         else {
             if (state.backtracking>0) {state.failed=true; return ;}
             NoViableAltException nvae =
-                new NoViableAltException("", 585, 0, input);
+                new NoViableAltException("", 584, 0, input);
 
             throw nvae;
         }
-        switch (alt585) {
+        switch (alt584) {
             case 1 :
                 // InternalKim.g:15654:20: (otherlv_10= 'in' ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) ) )
                 {
@@ -62249,25 +62249,25 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                 {
                 otherlv_10=(Token)match(input,47,FOLLOW_97); if (state.failed) return ;
                 // InternalKim.g:15659:10: ( ( (lv_unit_11_0= ruleUnit ) ) | ( (lv_currency_12_0= ruleCurrency ) ) )
-                int alt584=2;
-                int LA584_0 = input.LA(1);
+                int alt583=2;
+                int LA583_0 = input.LA(1);
 
-                if ( (LA584_0==EOF||LA584_0==RULE_LOWERCASE_ID||LA584_0==RULE_CAMELCASE_ID||LA584_0==RULE_BACKCASE_ID||LA584_0==37||LA584_0==39||LA584_0==106||LA584_0==253) ) {
-                    alt584=1;
+                if ( (LA583_0==EOF||LA583_0==RULE_LOWERCASE_ID||LA583_0==RULE_CAMELCASE_ID||LA583_0==RULE_BACKCASE_ID||LA583_0==37||LA583_0==39||LA583_0==106||LA583_0==253) ) {
+                    alt583=1;
                 }
-                else if ( (LA584_0==RULE_UPPERCASE_ID) ) {
-                    int LA584_2 = input.LA(2);
+                else if ( (LA583_0==RULE_UPPERCASE_ID) ) {
+                    int LA583_2 = input.LA(2);
 
-                    if ( (LA584_2==EOF||LA584_2==39||LA584_2==106||LA584_2==253) ) {
-                        alt584=1;
+                    if ( (LA583_2==EOF||LA583_2==39||LA583_2==106||LA583_2==253) ) {
+                        alt583=1;
                     }
-                    else if ( (LA584_2==244) ) {
-                        alt584=2;
+                    else if ( (LA583_2==244) ) {
+                        alt583=2;
                     }
                     else {
                         if (state.backtracking>0) {state.failed=true; return ;}
                         NoViableAltException nvae =
-                            new NoViableAltException("", 584, 2, input);
+                            new NoViableAltException("", 583, 2, input);
 
                         throw nvae;
                     }
@@ -62275,11 +62275,11 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                 else {
                     if (state.backtracking>0) {state.failed=true; return ;}
                     NoViableAltException nvae =
-                        new NoViableAltException("", 584, 0, input);
+                        new NoViableAltException("", 583, 0, input);
 
                     throw nvae;
                 }
-                switch (alt584) {
+                switch (alt583) {
                     case 1 :
                         // InternalKim.g:15660:11: ( (lv_unit_11_0= ruleUnit ) )
                         {
@@ -62586,9 +62586,9 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         }
 
         // InternalKim.g:15810:9: ( ( (lv_comparisonValue_19_0= ruleNumber ) ) | ( (lv_comparisonConcept_20_0= ruleConceptDeclaration ) ) | (otherlv_21= '(' ( (lv_comparisonObservable_22_0= ruleObservableSemantics ) ) otherlv_23= ')' ) )
-        int alt586=3;
-        alt586 = dfa586.predict(input);
-        switch (alt586) {
+        int alt585=3;
+        alt585 = dfa585.predict(input);
+        switch (alt585) {
             case 1 :
                 // InternalKim.g:15811:10: ( (lv_comparisonValue_19_0= ruleNumber ) )
                 {
@@ -62728,23 +62728,23 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             throw new FailedPredicateException(input, "synpred612_InternalKim", "true");
         }
         // InternalKim.g:15892:19: ( ( (lv_optional_24_0= 'optional' ) ) | otherlv_25= 'required' )
-        int alt587=2;
-        int LA587_0 = input.LA(1);
+        int alt586=2;
+        int LA586_0 = input.LA(1);
 
-        if ( (LA587_0==115) ) {
-            alt587=1;
+        if ( (LA586_0==115) ) {
+            alt586=1;
         }
-        else if ( (LA587_0==116) ) {
-            alt587=2;
+        else if ( (LA586_0==116) ) {
+            alt586=2;
         }
         else {
             if (state.backtracking>0) {state.failed=true; return ;}
             NoViableAltException nvae =
-                new NoViableAltException("", 587, 0, input);
+                new NoViableAltException("", 586, 0, input);
 
             throw nvae;
         }
-        switch (alt587) {
+        switch (alt586) {
             case 1 :
                 // InternalKim.g:15892:20: ( (lv_optional_24_0= 'optional' ) )
                 {
@@ -62826,23 +62826,23 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         // InternalKim.g:15928:11: (lv_name_27_1= RULE_LOWERCASE_ID | lv_name_27_2= RULE_STRING )
         {
         // InternalKim.g:15928:11: (lv_name_27_1= RULE_LOWERCASE_ID | lv_name_27_2= RULE_STRING )
-        int alt588=2;
-        int LA588_0 = input.LA(1);
+        int alt587=2;
+        int LA587_0 = input.LA(1);
 
-        if ( (LA588_0==RULE_LOWERCASE_ID) ) {
-            alt588=1;
+        if ( (LA587_0==RULE_LOWERCASE_ID) ) {
+            alt587=1;
         }
-        else if ( (LA588_0==RULE_STRING) ) {
-            alt588=2;
+        else if ( (LA587_0==RULE_STRING) ) {
+            alt587=2;
         }
         else {
             if (state.backtracking>0) {state.failed=true; return ;}
             NoViableAltException nvae =
-                new NoViableAltException("", 588, 0, input);
+                new NoViableAltException("", 587, 0, input);
 
             throw nvae;
         }
-        switch (alt588) {
+        switch (alt587) {
             case 1 :
                 // InternalKim.g:15929:12: lv_name_27_1= RULE_LOWERCASE_ID
                 {
@@ -63167,23 +63167,23 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             throw new FailedPredicateException(input, "synpred622_InternalKim", "true");
         }
         // InternalKim.g:16186:19: ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) )
-        int alt591=2;
-        int LA591_0 = input.LA(1);
+        int alt590=2;
+        int LA590_0 = input.LA(1);
 
-        if ( (LA591_0==47) ) {
-            alt591=1;
+        if ( (LA590_0==47) ) {
+            alt590=1;
         }
-        else if ( (LA591_0==114) ) {
-            alt591=2;
+        else if ( (LA590_0==114) ) {
+            alt590=2;
         }
         else {
             if (state.backtracking>0) {state.failed=true; return ;}
             NoViableAltException nvae =
-                new NoViableAltException("", 591, 0, input);
+                new NoViableAltException("", 590, 0, input);
 
             throw nvae;
         }
-        switch (alt591) {
+        switch (alt590) {
             case 1 :
                 // InternalKim.g:16186:20: (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) )
                 {
@@ -63192,25 +63192,25 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                 {
                 otherlv_13=(Token)match(input,47,FOLLOW_97); if (state.failed) return ;
                 // InternalKim.g:16191:10: ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) )
-                int alt590=2;
-                int LA590_0 = input.LA(1);
+                int alt589=2;
+                int LA589_0 = input.LA(1);
 
-                if ( (LA590_0==EOF||LA590_0==RULE_LOWERCASE_ID||LA590_0==RULE_CAMELCASE_ID||LA590_0==RULE_BACKCASE_ID||LA590_0==37||LA590_0==39||LA590_0==106||LA590_0==253) ) {
-                    alt590=1;
+                if ( (LA589_0==EOF||LA589_0==RULE_LOWERCASE_ID||LA589_0==RULE_CAMELCASE_ID||LA589_0==RULE_BACKCASE_ID||LA589_0==37||LA589_0==39||LA589_0==106||LA589_0==253) ) {
+                    alt589=1;
                 }
-                else if ( (LA590_0==RULE_UPPERCASE_ID) ) {
-                    int LA590_2 = input.LA(2);
+                else if ( (LA589_0==RULE_UPPERCASE_ID) ) {
+                    int LA589_2 = input.LA(2);
 
-                    if ( (LA590_2==EOF||LA590_2==39||LA590_2==106||LA590_2==253) ) {
-                        alt590=1;
+                    if ( (LA589_2==EOF||LA589_2==39||LA589_2==106||LA589_2==253) ) {
+                        alt589=1;
                     }
-                    else if ( (LA590_2==244) ) {
-                        alt590=2;
+                    else if ( (LA589_2==244) ) {
+                        alt589=2;
                     }
                     else {
                         if (state.backtracking>0) {state.failed=true; return ;}
                         NoViableAltException nvae =
-                            new NoViableAltException("", 590, 2, input);
+                            new NoViableAltException("", 589, 2, input);
 
                         throw nvae;
                     }
@@ -63218,11 +63218,11 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                 else {
                     if (state.backtracking>0) {state.failed=true; return ;}
                     NoViableAltException nvae =
-                        new NoViableAltException("", 590, 0, input);
+                        new NoViableAltException("", 589, 0, input);
 
                     throw nvae;
                 }
-                switch (alt590) {
+                switch (alt589) {
                     case 1 :
                         // InternalKim.g:16192:11: ( (lv_unit_14_0= ruleUnit ) )
                         {
@@ -63529,9 +63529,9 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         }
 
         // InternalKim.g:16342:9: ( ( (lv_comparisonValue_22_0= ruleNumber ) ) | ( (lv_comparisonConcept_23_0= ruleConceptDeclaration ) ) | (otherlv_24= '(' ( (lv_comparisonObservable_25_0= ruleObservableSemantics ) ) otherlv_26= ')' ) )
-        int alt592=3;
-        alt592 = dfa592.predict(input);
-        switch (alt592) {
+        int alt591=3;
+        alt591 = dfa591.predict(input);
+        switch (alt591) {
             case 1 :
                 // InternalKim.g:16343:10: ( (lv_comparisonValue_22_0= ruleNumber ) )
                 {
@@ -63671,23 +63671,23 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             throw new FailedPredicateException(input, "synpred628_InternalKim", "true");
         }
         // InternalKim.g:16424:19: ( ( (lv_optional_27_0= 'optional' ) ) | otherlv_28= 'required' )
-        int alt593=2;
-        int LA593_0 = input.LA(1);
+        int alt592=2;
+        int LA592_0 = input.LA(1);
 
-        if ( (LA593_0==115) ) {
-            alt593=1;
+        if ( (LA592_0==115) ) {
+            alt592=1;
         }
-        else if ( (LA593_0==116) ) {
-            alt593=2;
+        else if ( (LA592_0==116) ) {
+            alt592=2;
         }
         else {
             if (state.backtracking>0) {state.failed=true; return ;}
             NoViableAltException nvae =
-                new NoViableAltException("", 593, 0, input);
+                new NoViableAltException("", 592, 0, input);
 
             throw nvae;
         }
-        switch (alt593) {
+        switch (alt592) {
             case 1 :
                 // InternalKim.g:16424:20: ( (lv_optional_27_0= 'optional' ) )
                 {
@@ -63769,23 +63769,23 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         // InternalKim.g:16460:11: (lv_name_30_1= RULE_LOWERCASE_ID | lv_name_30_2= RULE_STRING )
         {
         // InternalKim.g:16460:11: (lv_name_30_1= RULE_LOWERCASE_ID | lv_name_30_2= RULE_STRING )
-        int alt594=2;
-        int LA594_0 = input.LA(1);
+        int alt593=2;
+        int LA593_0 = input.LA(1);
 
-        if ( (LA594_0==RULE_LOWERCASE_ID) ) {
-            alt594=1;
+        if ( (LA593_0==RULE_LOWERCASE_ID) ) {
+            alt593=1;
         }
-        else if ( (LA594_0==RULE_STRING) ) {
-            alt594=2;
+        else if ( (LA593_0==RULE_STRING) ) {
+            alt593=2;
         }
         else {
             if (state.backtracking>0) {state.failed=true; return ;}
             NoViableAltException nvae =
-                new NoViableAltException("", 594, 0, input);
+                new NoViableAltException("", 593, 0, input);
 
             throw nvae;
         }
-        switch (alt594) {
+        switch (alt593) {
             case 1 :
                 // InternalKim.g:16461:12: lv_name_30_1= RULE_LOWERCASE_ID
                 {
@@ -64110,23 +64110,23 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             throw new FailedPredicateException(input, "synpred638_InternalKim", "true");
         }
         // InternalKim.g:16718:19: ( (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) ) | (otherlv_16= 'per' ( (lv_unit_17_0= ruleUnit ) ) ) )
-        int alt597=2;
-        int LA597_0 = input.LA(1);
+        int alt596=2;
+        int LA596_0 = input.LA(1);
 
-        if ( (LA597_0==47) ) {
-            alt597=1;
+        if ( (LA596_0==47) ) {
+            alt596=1;
         }
-        else if ( (LA597_0==114) ) {
-            alt597=2;
+        else if ( (LA596_0==114) ) {
+            alt596=2;
         }
         else {
             if (state.backtracking>0) {state.failed=true; return ;}
             NoViableAltException nvae =
-                new NoViableAltException("", 597, 0, input);
+                new NoViableAltException("", 596, 0, input);
 
             throw nvae;
         }
-        switch (alt597) {
+        switch (alt596) {
             case 1 :
                 // InternalKim.g:16718:20: (otherlv_13= 'in' ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) ) )
                 {
@@ -64135,25 +64135,25 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                 {
                 otherlv_13=(Token)match(input,47,FOLLOW_97); if (state.failed) return ;
                 // InternalKim.g:16723:10: ( ( (lv_unit_14_0= ruleUnit ) ) | ( (lv_currency_15_0= ruleCurrency ) ) )
-                int alt596=2;
-                int LA596_0 = input.LA(1);
+                int alt595=2;
+                int LA595_0 = input.LA(1);
 
-                if ( (LA596_0==EOF||LA596_0==RULE_LOWERCASE_ID||LA596_0==RULE_CAMELCASE_ID||LA596_0==RULE_BACKCASE_ID||LA596_0==37||LA596_0==39||LA596_0==106||LA596_0==253) ) {
-                    alt596=1;
+                if ( (LA595_0==EOF||LA595_0==RULE_LOWERCASE_ID||LA595_0==RULE_CAMELCASE_ID||LA595_0==RULE_BACKCASE_ID||LA595_0==37||LA595_0==39||LA595_0==106||LA595_0==253) ) {
+                    alt595=1;
                 }
-                else if ( (LA596_0==RULE_UPPERCASE_ID) ) {
-                    int LA596_2 = input.LA(2);
+                else if ( (LA595_0==RULE_UPPERCASE_ID) ) {
+                    int LA595_2 = input.LA(2);
 
-                    if ( (LA596_2==EOF||LA596_2==39||LA596_2==106||LA596_2==253) ) {
-                        alt596=1;
+                    if ( (LA595_2==EOF||LA595_2==39||LA595_2==106||LA595_2==253) ) {
+                        alt595=1;
                     }
-                    else if ( (LA596_2==244) ) {
-                        alt596=2;
+                    else if ( (LA595_2==244) ) {
+                        alt595=2;
                     }
                     else {
                         if (state.backtracking>0) {state.failed=true; return ;}
                         NoViableAltException nvae =
-                            new NoViableAltException("", 596, 2, input);
+                            new NoViableAltException("", 595, 2, input);
 
                         throw nvae;
                     }
@@ -64161,11 +64161,11 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                 else {
                     if (state.backtracking>0) {state.failed=true; return ;}
                     NoViableAltException nvae =
-                        new NoViableAltException("", 596, 0, input);
+                        new NoViableAltException("", 595, 0, input);
 
                     throw nvae;
                 }
-                switch (alt596) {
+                switch (alt595) {
                     case 1 :
                         // InternalKim.g:16724:11: ( (lv_unit_14_0= ruleUnit ) )
                         {
@@ -64472,9 +64472,9 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         }
 
         // InternalKim.g:16874:9: ( ( (lv_comparisonValue_22_0= ruleNumber ) ) | ( (lv_comparisonConcept_23_0= ruleConceptDeclaration ) ) | (otherlv_24= '(' ( (lv_comparisonObservable_25_0= ruleObservableSemantics ) ) otherlv_26= ')' ) )
-        int alt598=3;
-        alt598 = dfa598.predict(input);
-        switch (alt598) {
+        int alt597=3;
+        alt597 = dfa597.predict(input);
+        switch (alt597) {
             case 1 :
                 // InternalKim.g:16875:10: ( (lv_comparisonValue_22_0= ruleNumber ) )
                 {
@@ -64723,16 +64723,16 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         }
 
         // InternalKim.g:17644:5: ( '+' | ( ( '-' ) ) )?
-        int alt600=3;
-        int LA600_0 = input.LA(1);
+        int alt599=3;
+        int LA599_0 = input.LA(1);
 
-        if ( (LA600_0==245) ) {
-            alt600=1;
+        if ( (LA599_0==245) ) {
+            alt599=1;
         }
-        else if ( (LA600_0==246) ) {
-            alt600=2;
+        else if ( (LA599_0==246) ) {
+            alt599=2;
         }
-        switch (alt600) {
+        switch (alt599) {
             case 1 :
                 // InternalKim.g:17645:6: '+'
                 {
@@ -67220,9 +67220,9 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
     protected DFA476 dfa476 = new DFA476(this);
     protected DFA475 dfa475 = new DFA475(this);
     protected DFA486 dfa486 = new DFA486(this);
-    protected DFA586 dfa586 = new DFA586(this);
-    protected DFA592 dfa592 = new DFA592(this);
-    protected DFA598 dfa598 = new DFA598(this);
+    protected DFA585 dfa585 = new DFA585(this);
+    protected DFA591 dfa591 = new DFA591(this);
+    protected DFA597 dfa597 = new DFA597(this);
     static final String dfa_1s = "\77\uffff";
     static final String dfa_2s = "\1\7\76\uffff";
     static final String dfa_3s = "\1\16\3\0\73\uffff";
@@ -69742,9 +69742,9 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
     static final String dfa_122s = "\1\5\1\uffff\2\5\34\uffff\1\5\1\45\23\uffff\1\5\1\uffff\1\5\1\11\135\uffff\2\45\1\0";
     static final String dfa_123s = "\1\u00f6\1\uffff\1\u00f6\1\12\34\uffff\1\u009b\1\153\23\uffff\1\u00f6\1\uffff\1\12\1\11\135\uffff\2\153\1\0";
     static final String dfa_124s = "\1\uffff\1\11\2\uffff\1\1\1\2\1\3\2\4\14\5\2\6\3\7\6\5\2\uffff\23\5\1\uffff\1\10\2\uffff\135\10\3\uffff";
-    static final String dfa_125s = "\1\1\1\uffff\1\4\1\3\61\uffff\1\0\142\uffff\1\2}>";
+    static final String dfa_125s = "\1\0\1\uffff\1\4\1\3\61\uffff\1\2\142\uffff\1\1}>";
     static final String[] dfa_126s = {
-            "\2\1\2\uffff\2\1\1\uffff\1\31\7\uffff\1\1\5\uffff\1\1\2\uffff\2\1\3\uffff\1\6\2\uffff\1\1\2\uffff\2\1\5\uffff\1\7\5\uffff\1\1\1\2\1\1\7\uffff\7\1\7\uffff\1\11\1\12\1\13\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\16\uffff\1\1\6\uffff\1\1\1\uffff\1\4\1\5\1\10\1\25\1\26\1\3\12\uffff\2\1\7\uffff\2\1\1\uffff\20\1\14\uffff\1\1\1\uffff\1\1\1\uffff\3\1\1\uffff\11\1\2\uffff\11\1\4\uffff\3\1\52\uffff\1\27\1\30",
+            "\2\1\2\uffff\2\1\1\uffff\1\31\7\uffff\1\1\5\uffff\1\1\2\uffff\2\1\3\uffff\1\6\2\uffff\1\1\2\uffff\2\1\5\uffff\1\7\5\uffff\1\1\1\2\1\1\7\uffff\7\1\7\uffff\1\11\1\12\1\13\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\16\uffff\1\1\6\uffff\1\1\1\uffff\1\4\1\5\1\10\1\25\1\26\1\3\12\uffff\2\1\7\uffff\2\1\1\uffff\20\1\14\uffff\2\1\2\uffff\3\1\1\uffff\11\1\2\uffff\11\1\4\uffff\3\1\52\uffff\1\27\1\30",
             "",
             "\1\40\3\uffff\1\37\1\41\1\uffff\1\34\30\uffff\1\64\132\uffff\1\42\1\43\7\uffff\1\35\1\36\1\uffff\1\44\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62\1\63\131\uffff\1\32\1\33",
             "\1\65\1\66\3\uffff\1\1",
@@ -69797,7 +69797,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             "",
             "",
             "",
-            "\1\110\1\112\2\uffff\1\113\1\111\1\uffff\1\u0095\7\uffff\1\105\5\uffff\1\72\2\uffff\1\143\1\141\3\uffff\1\u0082\2\uffff\1\140\2\uffff\1\106\1\142\5\uffff\1\u0083\5\uffff\1\73\1\74\1\75\7\uffff\1\76\1\77\1\100\1\101\1\102\1\103\1\104\7\uffff\1\u0085\1\u0086\1\u0087\1\u0088\1\u0089\1\u008a\1\u008b\1\u008c\1\u008d\1\u008e\1\u008f\1\u0090\16\uffff\1\107\1\1\2\uffff\1\1\2\uffff\1\144\1\uffff\1\u0080\1\u0081\1\u0084\1\u0091\1\u0092\1\145\12\uffff\1\116\1\117\7\uffff\1\114\1\115\1\uffff\1\120\1\121\1\122\1\123\1\124\1\125\1\126\1\127\1\130\1\131\1\132\1\133\1\134\1\135\1\136\1\137\14\uffff\1\146\1\uffff\1\147\1\uffff\1\150\1\151\1\152\1\uffff\1\153\1\154\1\155\1\156\1\157\1\160\1\161\1\162\1\163\2\uffff\1\164\1\165\1\166\1\167\1\170\1\171\1\172\1\173\1\174\4\uffff\1\175\1\176\1\177\52\uffff\1\u0093\1\u0094",
+            "\1\110\1\112\2\uffff\1\113\1\111\1\uffff\1\u0095\7\uffff\1\105\5\uffff\1\72\2\uffff\1\143\1\141\3\uffff\1\u0082\2\uffff\1\140\2\uffff\1\106\1\142\5\uffff\1\u0083\5\uffff\1\73\1\74\1\75\7\uffff\1\76\1\77\1\100\1\101\1\102\1\103\1\104\7\uffff\1\u0085\1\u0086\1\u0087\1\u0088\1\u0089\1\u008a\1\u008b\1\u008c\1\u008d\1\u008e\1\u008f\1\u0090\16\uffff\1\107\1\1\2\uffff\1\1\2\uffff\1\144\1\uffff\1\u0080\1\u0081\1\u0084\1\u0091\1\u0092\1\145\12\uffff\1\116\1\117\7\uffff\1\114\1\115\1\uffff\1\120\1\121\1\122\1\123\1\124\1\125\1\126\1\127\1\130\1\131\1\132\1\133\1\134\1\135\1\136\1\137\14\uffff\1\146\1\147\2\uffff\1\150\1\151\1\152\1\uffff\1\153\1\154\1\155\1\156\1\157\1\160\1\161\1\162\1\163\2\uffff\1\164\1\165\1\166\1\167\1\170\1\171\1\172\1\173\1\174\4\uffff\1\175\1\176\1\177\52\uffff\1\u0093\1\u0094",
             "",
             "\1\u0096\4\uffff\1\u0097",
             "\1\u0098",
@@ -69928,6 +69928,82 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	int _s = s;
             switch ( s ) {
                     case 0 : 
+                        int LA151_0 = input.LA(1);
+
+                         
+                        int index151_0 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( (LA151_0==EOF||(LA151_0>=RULE_LOWERCASE_ID && LA151_0<=RULE_STRING)||(LA151_0>=RULE_CAMELCASE_ID && LA151_0<=RULE_LOWERCASE_DASHID)||LA151_0==20||LA151_0==26||(LA151_0>=29 && LA151_0<=30)||LA151_0==37||(LA151_0>=40 && LA151_0<=41)||LA151_0==53||LA151_0==55||(LA151_0>=63 && LA151_0<=69)||LA151_0==103||LA151_0==110||(LA151_0>=128 && LA151_0<=129)||(LA151_0>=137 && LA151_0<=138)||(LA151_0>=140 && LA151_0<=155)||(LA151_0>=168 && LA151_0<=169)||(LA151_0>=172 && LA151_0<=174)||(LA151_0>=176 && LA151_0<=184)||(LA151_0>=187 && LA151_0<=195)||(LA151_0>=200 && LA151_0<=202)) ) {s = 1;}
+
+                        else if ( (LA151_0==54) ) {s = 2;}
+
+                        else if ( (LA151_0==117) ) {s = 3;}
+
+                        else if ( LA151_0 == 112 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 0) ) {s = 4;}
+
+                        else if ( LA151_0 == 113 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 1) ) {s = 5;}
+
+                        else if ( LA151_0 == 34 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 2) ) {s = 6;}
+
+                        else if ( LA151_0 == 47 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 3) ) {s = 7;}
+
+                        else if ( LA151_0 == 114 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 3) ) {s = 8;}
+
+                        else if ( LA151_0 == 77 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 9;}
+
+                        else if ( LA151_0 == 78 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 10;}
+
+                        else if ( LA151_0 == 79 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 11;}
+
+                        else if ( LA151_0 == 80 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 12;}
+
+                        else if ( LA151_0 == 81 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 13;}
+
+                        else if ( LA151_0 == 82 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 14;}
+
+                        else if ( LA151_0 == 83 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 15;}
+
+                        else if ( LA151_0 == 84 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 16;}
+
+                        else if ( LA151_0 == 85 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 17;}
+
+                        else if ( LA151_0 == 86 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 18;}
+
+                        else if ( LA151_0 == 87 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 19;}
+
+                        else if ( LA151_0 == 88 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 20;}
+
+                        else if ( LA151_0 == 115 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 5) ) {s = 21;}
+
+                        else if ( LA151_0 == 116 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 5) ) {s = 22;}
+
+                        else if ( LA151_0 == 245 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 6) ) {s = 23;}
+
+                        else if ( LA151_0 == 246 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 6) ) {s = 24;}
+
+                        else if ( LA151_0 == RULE_INT && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 6) ) {s = 25;}
+
+                         
+                        input.seek(index151_0);
+                        if ( s>=0 ) return s;
+                        break;
+                    case 1 : 
+                        int LA151_152 = input.LA(1);
+
+                         
+                        int index151_152 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( synpred262_InternalKim() && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 52;}
+
+                        else if ( (true) ) {s = 1;}
+
+                         
+                        input.seek(index151_152);
+                        if ( s>=0 ) return s;
+                        break;
+                    case 2 : 
                         int LA151_53 = input.LA(1);
 
                          
@@ -70026,7 +70102,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
                         else if ( LA151_53 == 168 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 7) ) {s = 102;}
 
-                        else if ( LA151_53 == 170 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 7) ) {s = 103;}
+                        else if ( LA151_53 == 169 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 7) ) {s = 103;}
 
                         else if ( LA151_53 == 172 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 7) ) {s = 104;}
 
@@ -70124,82 +70200,6 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
                          
                         input.seek(index151_53);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 1 : 
-                        int LA151_0 = input.LA(1);
-
-                         
-                        int index151_0 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (LA151_0==EOF||(LA151_0>=RULE_LOWERCASE_ID && LA151_0<=RULE_STRING)||(LA151_0>=RULE_CAMELCASE_ID && LA151_0<=RULE_LOWERCASE_DASHID)||LA151_0==20||LA151_0==26||(LA151_0>=29 && LA151_0<=30)||LA151_0==37||(LA151_0>=40 && LA151_0<=41)||LA151_0==53||LA151_0==55||(LA151_0>=63 && LA151_0<=69)||LA151_0==103||LA151_0==110||(LA151_0>=128 && LA151_0<=129)||(LA151_0>=137 && LA151_0<=138)||(LA151_0>=140 && LA151_0<=155)||LA151_0==168||LA151_0==170||(LA151_0>=172 && LA151_0<=174)||(LA151_0>=176 && LA151_0<=184)||(LA151_0>=187 && LA151_0<=195)||(LA151_0>=200 && LA151_0<=202)) ) {s = 1;}
-
-                        else if ( (LA151_0==54) ) {s = 2;}
-
-                        else if ( (LA151_0==117) ) {s = 3;}
-
-                        else if ( LA151_0 == 112 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 0) ) {s = 4;}
-
-                        else if ( LA151_0 == 113 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 1) ) {s = 5;}
-
-                        else if ( LA151_0 == 34 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 2) ) {s = 6;}
-
-                        else if ( LA151_0 == 47 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 3) ) {s = 7;}
-
-                        else if ( LA151_0 == 114 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 3) ) {s = 8;}
-
-                        else if ( LA151_0 == 77 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 9;}
-
-                        else if ( LA151_0 == 78 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 10;}
-
-                        else if ( LA151_0 == 79 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 11;}
-
-                        else if ( LA151_0 == 80 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 12;}
-
-                        else if ( LA151_0 == 81 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 13;}
-
-                        else if ( LA151_0 == 82 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 14;}
-
-                        else if ( LA151_0 == 83 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 15;}
-
-                        else if ( LA151_0 == 84 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 16;}
-
-                        else if ( LA151_0 == 85 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 17;}
-
-                        else if ( LA151_0 == 86 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 18;}
-
-                        else if ( LA151_0 == 87 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 19;}
-
-                        else if ( LA151_0 == 88 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 20;}
-
-                        else if ( LA151_0 == 115 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 5) ) {s = 21;}
-
-                        else if ( LA151_0 == 116 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 5) ) {s = 22;}
-
-                        else if ( LA151_0 == 245 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 6) ) {s = 23;}
-
-                        else if ( LA151_0 == 246 && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 6) ) {s = 24;}
-
-                        else if ( LA151_0 == RULE_INT && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 6) ) {s = 25;}
-
-                         
-                        input.seek(index151_0);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 2 : 
-                        int LA151_152 = input.LA(1);
-
-                         
-                        int index151_152 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( synpred262_InternalKim() && getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 4) ) {s = 52;}
-
-                        else if ( (true) ) {s = 1;}
-
-                         
-                        input.seek(index151_152);
                         if ( s>=0 ) return s;
                         break;
                     case 3 : 
@@ -70965,7 +70965,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
     static final String dfa_161s = "\1\uffff\1\2\171\uffff\1\1";
     static final String dfa_162s = "\43\uffff\1\0\27\uffff\1\1\1\2\1\uffff\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\51\uffff}>";
     static final String[] dfa_163s = {
-            "\1\73\1\1\2\uffff\1\76\1\74\1\uffff\1\1\7\uffff\1\1\3\uffff\1\1\1\uffff\1\1\2\uffff\4\1\1\uffff\3\1\1\43\2\uffff\5\1\2\uffff\1\1\2\uffff\2\1\1\uffff\3\1\7\uffff\7\1\7\uffff\14\1\10\uffff\1\1\5\uffff\2\1\5\uffff\1\1\1\uffff\20\1\1\101\1\102\6\uffff\1\1\1\77\1\100\1\uffff\1\103\1\104\1\105\1\106\1\107\1\110\1\111\1\112\1\113\1\114\1\115\1\116\1\117\1\120\1\121\1\122\3\1\11\uffff\1\1\1\uffff\1\1\1\uffff\3\1\1\uffff\11\1\1\uffff\13\1\3\uffff\3\1\5\uffff\1\1\44\uffff\2\1",
+            "\1\73\1\1\2\uffff\1\76\1\74\1\uffff\1\1\7\uffff\1\1\3\uffff\1\1\1\uffff\1\1\2\uffff\4\1\1\uffff\3\1\1\43\2\uffff\5\1\2\uffff\1\1\2\uffff\2\1\1\uffff\3\1\7\uffff\7\1\7\uffff\14\1\10\uffff\1\1\5\uffff\2\1\5\uffff\1\1\1\uffff\20\1\1\101\1\102\6\uffff\1\1\1\77\1\100\1\uffff\1\103\1\104\1\105\1\106\1\107\1\110\1\111\1\112\1\113\1\114\1\115\1\116\1\117\1\120\1\121\1\122\3\1\11\uffff\2\1\2\uffff\3\1\1\uffff\11\1\1\uffff\13\1\3\uffff\3\1\5\uffff\1\1\44\uffff\2\1",
             "",
             "",
             "",
@@ -71493,7 +71493,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
     static final String dfa_167s = "\1\uffff\1\1\171\uffff\1\2";
     static final String dfa_168s = "\14\uffff\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62\1\63\1\64\1\65\1\66\1\67\1\70\1\71\1\72\1\73\1\74\1\75\1\76\1\77\1\100\1\101\1\102\1\103\1\104\1\105\1\106\1\107\1\110\1\111\1\112\1\113\1\114\1\115\1\116\1\117\1\120\1\121\1\122\1\123\1\124\1\125\1\126\1\127\1\130\1\131\1\132\1\133\1\134\1\135\1\136\1\137\1\140\1\141\1\142\1\143\1\144\1\145\1\146\1\147\1\150\1\151\1\152\1\153\1\154\1\155\1\156\1\uffff}>";
     static final String[] dfa_169s = {
-            "\1\73\1\75\2\uffff\1\76\1\74\1\uffff\1\70\7\uffff\1\34\3\uffff\1\171\1\uffff\1\17\2\uffff\1\124\1\123\1\160\1\161\1\uffff\1\46\1\166\1\20\1\43\2\uffff\1\36\1\33\1\14\1\15\1\16\2\uffff\1\42\2\uffff\1\41\1\40\1\uffff\1\21\1\22\1\23\7\uffff\1\24\1\25\1\26\1\27\1\30\1\31\1\32\7\uffff\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62\1\63\10\uffff\1\1\5\uffff\1\72\1\37\5\uffff\1\125\1\uffff\1\44\1\45\1\47\1\64\1\65\1\71\12\1\1\101\1\102\6\uffff\1\172\1\77\1\100\1\uffff\1\103\1\104\1\105\1\106\1\107\1\110\1\111\1\112\1\113\1\114\1\115\1\116\1\117\1\120\1\121\1\122\1\164\1\162\1\163\11\uffff\1\126\1\uffff\1\127\1\uffff\1\130\1\131\1\132\1\uffff\1\133\1\134\1\135\1\136\1\137\1\140\1\141\1\142\1\143\1\uffff\1\165\1\144\1\145\1\146\1\147\1\150\1\151\1\152\1\153\1\154\1\167\3\uffff\1\155\1\156\1\157\5\uffff\1\170\44\uffff\1\66\1\67",
+            "\1\73\1\75\2\uffff\1\76\1\74\1\uffff\1\70\7\uffff\1\34\3\uffff\1\171\1\uffff\1\17\2\uffff\1\124\1\123\1\160\1\161\1\uffff\1\46\1\166\1\20\1\43\2\uffff\1\36\1\33\1\14\1\15\1\16\2\uffff\1\42\2\uffff\1\41\1\40\1\uffff\1\21\1\22\1\23\7\uffff\1\24\1\25\1\26\1\27\1\30\1\31\1\32\7\uffff\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62\1\63\10\uffff\1\1\5\uffff\1\72\1\37\5\uffff\1\125\1\uffff\1\44\1\45\1\47\1\64\1\65\1\71\12\1\1\101\1\102\6\uffff\1\172\1\77\1\100\1\uffff\1\103\1\104\1\105\1\106\1\107\1\110\1\111\1\112\1\113\1\114\1\115\1\116\1\117\1\120\1\121\1\122\1\164\1\162\1\163\11\uffff\1\126\1\127\2\uffff\1\130\1\131\1\132\1\uffff\1\133\1\134\1\135\1\136\1\137\1\140\1\141\1\142\1\143\1\uffff\1\165\1\144\1\145\1\146\1\147\1\150\1\151\1\152\1\153\1\154\1\167\3\uffff\1\155\1\156\1\157\5\uffff\1\170\44\uffff\1\66\1\67",
             "",
             "",
             "",
@@ -73325,7 +73325,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
     static final String dfa_174s = "\1\uffff\1\14\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13";
     static final String dfa_175s = "\1\0\14\uffff}>";
     static final String[] dfa_176s = {
-            "\2\1\2\uffff\2\1\1\uffff\1\1\7\uffff\1\1\3\uffff\1\1\1\uffff\1\1\2\uffff\4\1\1\uffff\4\1\2\uffff\5\1\2\uffff\1\1\2\uffff\2\1\1\uffff\3\1\7\uffff\7\1\7\uffff\14\1\10\uffff\1\4\5\uffff\2\1\5\uffff\1\1\1\uffff\6\1\1\2\1\3\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1\14\2\1\6\uffff\3\1\1\uffff\23\1\11\uffff\1\1\1\uffff\1\1\1\uffff\3\1\1\uffff\11\1\1\uffff\13\1\3\uffff\3\1\5\uffff\1\1\44\uffff\2\1",
+            "\2\1\2\uffff\2\1\1\uffff\1\1\7\uffff\1\1\3\uffff\1\1\1\uffff\1\1\2\uffff\4\1\1\uffff\4\1\2\uffff\5\1\2\uffff\1\1\2\uffff\2\1\1\uffff\3\1\7\uffff\7\1\7\uffff\14\1\10\uffff\1\4\5\uffff\2\1\5\uffff\1\1\1\uffff\6\1\1\2\1\3\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1\14\2\1\6\uffff\3\1\1\uffff\23\1\11\uffff\2\1\2\uffff\3\1\1\uffff\11\1\1\uffff\13\1\3\uffff\3\1\5\uffff\1\1\44\uffff\2\1",
             "",
             "",
             "",
@@ -73375,7 +73375,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                         int index173_0 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (LA173_0==EOF||(LA173_0>=RULE_LOWERCASE_ID && LA173_0<=RULE_STRING)||(LA173_0>=RULE_CAMELCASE_ID && LA173_0<=RULE_LOWERCASE_DASHID)||LA173_0==RULE_INT||LA173_0==20||LA173_0==24||LA173_0==26||(LA173_0>=29 && LA173_0<=32)||(LA173_0>=34 && LA173_0<=37)||(LA173_0>=40 && LA173_0<=44)||LA173_0==47||(LA173_0>=50 && LA173_0<=51)||(LA173_0>=53 && LA173_0<=55)||(LA173_0>=63 && LA173_0<=69)||(LA173_0>=77 && LA173_0<=88)||(LA173_0>=103 && LA173_0<=104)||LA173_0==110||(LA173_0>=112 && LA173_0<=117)||(LA173_0>=128 && LA173_0<=129)||(LA173_0>=136 && LA173_0<=138)||(LA173_0>=140 && LA173_0<=158)||LA173_0==168||LA173_0==170||(LA173_0>=172 && LA173_0<=174)||(LA173_0>=176 && LA173_0<=184)||(LA173_0>=186 && LA173_0<=196)||(LA173_0>=200 && LA173_0<=202)||LA173_0==208||(LA173_0>=245 && LA173_0<=246)) ) {s = 1;}
+                        if ( (LA173_0==EOF||(LA173_0>=RULE_LOWERCASE_ID && LA173_0<=RULE_STRING)||(LA173_0>=RULE_CAMELCASE_ID && LA173_0<=RULE_LOWERCASE_DASHID)||LA173_0==RULE_INT||LA173_0==20||LA173_0==24||LA173_0==26||(LA173_0>=29 && LA173_0<=32)||(LA173_0>=34 && LA173_0<=37)||(LA173_0>=40 && LA173_0<=44)||LA173_0==47||(LA173_0>=50 && LA173_0<=51)||(LA173_0>=53 && LA173_0<=55)||(LA173_0>=63 && LA173_0<=69)||(LA173_0>=77 && LA173_0<=88)||(LA173_0>=103 && LA173_0<=104)||LA173_0==110||(LA173_0>=112 && LA173_0<=117)||(LA173_0>=128 && LA173_0<=129)||(LA173_0>=136 && LA173_0<=138)||(LA173_0>=140 && LA173_0<=158)||(LA173_0>=168 && LA173_0<=169)||(LA173_0>=172 && LA173_0<=174)||(LA173_0>=176 && LA173_0<=184)||(LA173_0>=186 && LA173_0<=196)||(LA173_0>=200 && LA173_0<=202)||LA173_0==208||(LA173_0>=245 && LA173_0<=246)) ) {s = 1;}
 
                         else if ( LA173_0 == 118 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 0) ) {s = 2;}
 
@@ -73416,9 +73416,9 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
     static final String dfa_179s = "\1\5\1\uffff\30\0\1\uffff";
     static final String dfa_180s = "\1\u00f6\1\uffff\30\0\1\uffff";
     static final String dfa_181s = "\1\uffff\1\2\30\uffff\1\1";
-    static final String dfa_182s = "\2\uffff\1\16\1\25\1\17\1\7\1\12\1\1\1\27\1\15\1\13\1\0\1\26\1\20\1\3\1\21\1\4\1\22\1\5\1\23\1\2\1\14\1\10\1\6\1\24\1\11\1\uffff}>";
+    static final String dfa_182s = "\2\uffff\1\15\1\25\1\17\1\16\1\11\1\1\1\27\1\14\1\12\1\0\1\26\1\20\1\3\1\21\1\4\1\22\1\5\1\23\1\2\1\13\1\7\1\6\1\24\1\10\1\uffff}>";
     static final String[] dfa_183s = {
-            "\1\3\1\1\2\uffff\1\5\1\4\1\uffff\1\1\7\uffff\1\1\3\uffff\1\1\1\uffff\1\1\2\uffff\4\1\1\uffff\3\1\1\2\2\uffff\5\1\2\uffff\1\1\2\uffff\2\1\1\uffff\3\1\7\uffff\7\1\7\uffff\14\1\3\uffff\2\1\2\uffff\4\1\1\uffff\4\1\5\uffff\1\1\1\uffff\20\1\1\10\1\11\6\uffff\1\1\1\6\1\7\1\uffff\1\12\1\13\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\3\1\11\uffff\1\1\1\uffff\1\1\1\uffff\3\1\1\uffff\11\1\1\uffff\13\1\3\uffff\3\1\5\uffff\1\1\44\uffff\2\1",
+            "\1\3\1\1\2\uffff\1\5\1\4\1\uffff\1\1\7\uffff\1\1\3\uffff\1\1\1\uffff\1\1\2\uffff\4\1\1\uffff\3\1\1\2\2\uffff\5\1\2\uffff\1\1\2\uffff\2\1\1\uffff\3\1\7\uffff\7\1\7\uffff\14\1\3\uffff\2\1\2\uffff\4\1\1\uffff\4\1\5\uffff\1\1\1\uffff\20\1\1\10\1\11\6\uffff\1\1\1\6\1\7\1\uffff\1\12\1\13\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\3\1\11\uffff\2\1\2\uffff\3\1\1\uffff\11\1\1\uffff\13\1\3\uffff\3\1\5\uffff\1\1\44\uffff\2\1",
             "",
             "\1\uffff",
             "\1\uffff",
@@ -73581,21 +73581,6 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                         if ( s>=0 ) return s;
                         break;
                     case 7 : 
-                        int LA208_5 = input.LA(1);
-
-                         
-                        int index208_5 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred386_InternalKim()) ) {s = 26;}
-
-                        else if ( (true) ) {s = 1;}
-
-                         
-                        input.seek(index208_5);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 8 : 
                         int LA208_22 = input.LA(1);
 
                          
@@ -73610,7 +73595,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                         input.seek(index208_22);
                         if ( s>=0 ) return s;
                         break;
-                    case 9 : 
+                    case 8 : 
                         int LA208_25 = input.LA(1);
 
                          
@@ -73625,7 +73610,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                         input.seek(index208_25);
                         if ( s>=0 ) return s;
                         break;
-                    case 10 : 
+                    case 9 : 
                         int LA208_6 = input.LA(1);
 
                          
@@ -73640,7 +73625,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                         input.seek(index208_6);
                         if ( s>=0 ) return s;
                         break;
-                    case 11 : 
+                    case 10 : 
                         int LA208_10 = input.LA(1);
 
                          
@@ -73655,7 +73640,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                         input.seek(index208_10);
                         if ( s>=0 ) return s;
                         break;
-                    case 12 : 
+                    case 11 : 
                         int LA208_21 = input.LA(1);
 
                          
@@ -73670,7 +73655,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                         input.seek(index208_21);
                         if ( s>=0 ) return s;
                         break;
-                    case 13 : 
+                    case 12 : 
                         int LA208_9 = input.LA(1);
 
                          
@@ -73685,7 +73670,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                         input.seek(index208_9);
                         if ( s>=0 ) return s;
                         break;
-                    case 14 : 
+                    case 13 : 
                         int LA208_2 = input.LA(1);
 
                          
@@ -73698,6 +73683,21 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
                          
                         input.seek(index208_2);
+                        if ( s>=0 ) return s;
+                        break;
+                    case 14 : 
+                        int LA208_5 = input.LA(1);
+
+                         
+                        int index208_5 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( (synpred386_InternalKim()) ) {s = 26;}
+
+                        else if ( (true) ) {s = 1;}
+
+                         
+                        input.seek(index208_5);
                         if ( s>=0 ) return s;
                         break;
                     case 15 : 
@@ -73986,9 +73986,9 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
     static final String dfa_196s = "\1\6\17\uffff\1\5\60\uffff";
     static final String dfa_197s = "\1\u00ca\17\uffff\1\u00fc\60\uffff";
     static final String dfa_198s = "\1\uffff\1\30\1\1\2\2\2\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1\14\1\uffff\1\16\3\17\1\20\1\21\1\22\1\23\1\24\3\26\1\27\1\15\40\26\2\25";
-    static final String dfa_199s = "\1\1\17\uffff\1\0\60\uffff}>";
+    static final String dfa_199s = "\1\0\17\uffff\1\1\60\uffff}>";
     static final String[] dfa_200s = {
-            "\1\2\15\uffff\1\1\23\uffff\1\1\1\35\113\uffff\1\1\62\uffff\1\3\1\uffff\1\4\1\uffff\1\5\1\6\1\7\1\uffff\1\10\1\11\1\12\1\13\1\14\1\15\1\16\1\17\1\20\2\uffff\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\4\uffff\1\32\1\33\1\34",
+            "\1\2\15\uffff\1\1\23\uffff\1\1\1\35\113\uffff\1\1\62\uffff\1\3\1\4\2\uffff\1\5\1\6\1\7\1\uffff\1\10\1\11\1\12\1\13\1\14\1\15\1\16\1\17\1\20\2\uffff\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\4\uffff\1\32\1\33\1\34",
             "",
             "",
             "",
@@ -74077,13 +74077,82 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             this.transition = dfa_200;
         }
         public String getDescription() {
-            return "()* loopback of 10931:6: ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' ( (lv_coreConcept_13_0= 'core' ) )? ) | ( (lv_alias_14_0= 'equals' ) ) ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )*";
+            return "()* loopback of 10931:6: ( ({...}? => ( ({...}? => ( (lv_docstring_11_0= RULE_STRING ) ) ) ) ) | ({...}? => ( ({...}? => ( ( (otherlv_12= 'is' | ( (lv_alias_13_0= 'equals' ) ) ) ( (lv_coreConcept_14_0= 'core' ) )? ) ( ( (lv_nothing_15_0= 'nothing' ) ) | ( ( (lv_parents_16_0= ruleConceptDeclaration ) ) ( ( ( (lv_connectors_17_1= ',' | lv_connectors_17_2= 'or' | lv_connectors_17_3= 'and' ) ) ) ( (lv_parents_18_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_19= 'exposes' ( (lv_contextualizedTraits_20_0= ruleObservableSemantics ) ) (otherlv_21= ',' ( (lv_contextualizedTraits_22_0= ruleObservableSemantics ) ) )* ) | ( ( (lv_specific_23_0= 'exposing' ) ) ( (lv_contextualizesTraits_24_0= ruleConceptDeclaration ) ) (otherlv_25= ',' ( (lv_contextualizesTraits_26_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_27= 'defines' ( (otherlv_28= 'authority' ( (lv_definedAuthority_29_0= RULE_UPPERCASE_PATH ) ) ) | ( (lv_upperConcept_30_0= ruleConcept ) ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_31= 'requires' ( (lv_requirements_32_0= ruleIdentityRequirement ) ) (otherlv_33= ',' ( (lv_requirements_34_0= ruleIdentityRequirement ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_35= 'describes' ( (lv_describedQuality_36_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_37= 'increases' otherlv_38= 'with' ( (lv_describedProportionality_39_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_40= 'decreases' otherlv_41= 'with' ( (lv_describedInverseProportionalityQuality_42_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_43= 'marks' ( (lv_describedNonzeroQuality_44_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_45= 'classifies' ( (lv_classifiesQuality_46_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_47= 'discretizes' ( (lv_discretizesQuality_48_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_49= 'inherits' ( (lv_actuallyInheritedTraits_50_0= ruleConceptDeclaration ) ) (otherlv_51= ',' ( (lv_actuallyInheritedTraits_52_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_53= 'has' otherlv_54= 'role' ( (lv_roles_55_0= ruleConceptDeclaration ) ) (otherlv_56= ',' ( (lv_roles_57_0= ruleConceptDeclaration ) ) )* (otherlv_58= 'targeting' ( (lv_targetObservables_59_0= ruleConceptDeclaration ) ) (otherlv_60= ',' ( (lv_targetObservables_61_0= ruleConceptDeclaration ) ) )* )? (otherlv_62= 'in' ( (lv_restrictedObservables_63_0= ruleConceptDeclaration ) ) (otherlv_64= ',' ( (lv_restrictedObservables_65_0= ruleConceptDeclaration ) ) )* ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_66= 'confers' ( (lv_conferredTraits_67_0= ruleConceptDeclaration ) ) (otherlv_68= ',' ( (lv_conferredTraits_69_0= ruleConceptDeclaration ) ) )* (otherlv_70= 'to' ( (lv_conferredTargets_71_0= ruleConceptDeclaration ) ) (otherlv_72= ',' ( (lv_conferredTargets_73_0= ruleConceptDeclaration ) ) )* )? ) ) ) ) | ({...}? => ( ({...}? => ( (otherlv_74= 'part' | ( (lv_constituent_75_0= 'constituent' ) ) | ( (lv_constitutes_76_0= 'consists' ) ) ) ( (lv_partOf_77_0= 'of' ) ) ( (lv_whole_78_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_79= 'creates' ( (lv_creates_80_0= ruleConceptDeclaration ) ) (otherlv_81= ',' ( (lv_creates_82_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_83= 'applies' otherlv_84= 'to' ( (lv_traitTargets_85_0= ruleApplicableTarget ) ) (otherlv_86= ',' ( (lv_traitTargets_87_0= ruleApplicableTarget ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_88= 'links' ( (lv_domains_89_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_90= 'to' ) ( (lv_ranges_91_0= ruleSimpleConceptDeclaration ) ) (otherlv_92= ',' ( (lv_domains_93_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_94= 'to' ) ( (lv_ranges_95_0= ruleSimpleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_96= 'inverse' otherlv_97= 'of' ( (lv_inverse_98_0= ruleConceptDeclaration ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_99= 'affects' ( (lv_qualitiesAffected_100_0= ruleConceptDeclaration ) ) (otherlv_101= ',' ( (lv_qualitiesAffected_102_0= ruleConceptDeclaration ) ) )* ) ) ) ) | ({...}? => ( ({...}? => (otherlv_103= 'has' ( (lv_disjoint_104_0= 'disjoint' ) )? otherlv_105= 'children' ( (lv_children_106_0= ruleChildConcept ) ) (otherlv_107= ',' ( (lv_children_108_0= ruleChildConcept ) ) )* ) ) ) ) | ({...}? => ( ({...}? => ( (lv_restrictions_109_0= ruleRestrictionStatement ) ) )+ ) ) | ({...}? => ( ({...}? => (otherlv_110= 'metadata' ( (lv_metadata_111_0= ruleMetadata ) ) ) ) ) ) )*";
         }
         public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
             TokenStream input = (TokenStream)_input;
         	int _s = s;
             switch ( s ) {
                     case 0 : 
+                        int LA255_0 = input.LA(1);
+
+                         
+                        int index255_0 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( (LA255_0==EOF||LA255_0==20||LA255_0==40||LA255_0==117) ) {s = 1;}
+
+                        else if ( LA255_0 == RULE_STRING && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 0) ) {s = 2;}
+
+                        else if ( LA255_0 == 168 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 1) ) {s = 3;}
+
+                        else if ( LA255_0 == 169 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 1) ) {s = 4;}
+
+                        else if ( LA255_0 == 172 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 2) ) {s = 5;}
+
+                        else if ( LA255_0 == 173 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 2) ) {s = 6;}
+
+                        else if ( LA255_0 == 174 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 3) ) {s = 7;}
+
+                        else if ( LA255_0 == 176 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 4) ) {s = 8;}
+
+                        else if ( LA255_0 == 177 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 5) ) {s = 9;}
+
+                        else if ( LA255_0 == 178 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 6) ) {s = 10;}
+
+                        else if ( LA255_0 == 179 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 7) ) {s = 11;}
+
+                        else if ( LA255_0 == 180 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 8) ) {s = 12;}
+
+                        else if ( LA255_0 == 181 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 9) ) {s = 13;}
+
+                        else if ( LA255_0 == 182 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 10) ) {s = 14;}
+
+                        else if ( LA255_0 == 183 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 11) ) {s = 15;}
+
+                        else if ( (LA255_0==184) ) {s = 16;}
+
+                        else if ( LA255_0 == 187 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 13) ) {s = 17;}
+
+                        else if ( LA255_0 == 188 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 14) ) {s = 18;}
+
+                        else if ( LA255_0 == 189 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 14) ) {s = 19;}
+
+                        else if ( LA255_0 == 190 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 14) ) {s = 20;}
+
+                        else if ( LA255_0 == 191 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 15) ) {s = 21;}
+
+                        else if ( LA255_0 == 192 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 16) ) {s = 22;}
+
+                        else if ( LA255_0 == 193 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 17) ) {s = 23;}
+
+                        else if ( LA255_0 == 194 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 18) ) {s = 24;}
+
+                        else if ( LA255_0 == 195 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 19) ) {s = 25;}
+
+                        else if ( LA255_0 == 200 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 21) ) {s = 26;}
+
+                        else if ( LA255_0 == 201 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 21) ) {s = 27;}
+
+                        else if ( LA255_0 == 202 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 21) ) {s = 28;}
+
+                        else if ( LA255_0 == 41 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 22) ) {s = 29;}
+
+                         
+                        input.seek(index255_0);
+                        if ( s>=0 ) return s;
+                        break;
+                    case 1 : 
                         int LA255_16 = input.LA(1);
 
                          
@@ -74162,75 +74231,6 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
                          
                         input.seek(index255_16);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 1 : 
-                        int LA255_0 = input.LA(1);
-
-                         
-                        int index255_0 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (LA255_0==EOF||LA255_0==20||LA255_0==40||LA255_0==117) ) {s = 1;}
-
-                        else if ( LA255_0 == RULE_STRING && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 0) ) {s = 2;}
-
-                        else if ( LA255_0 == 168 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 1) ) {s = 3;}
-
-                        else if ( LA255_0 == 170 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 1) ) {s = 4;}
-
-                        else if ( LA255_0 == 172 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 2) ) {s = 5;}
-
-                        else if ( LA255_0 == 173 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 2) ) {s = 6;}
-
-                        else if ( LA255_0 == 174 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 3) ) {s = 7;}
-
-                        else if ( LA255_0 == 176 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 4) ) {s = 8;}
-
-                        else if ( LA255_0 == 177 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 5) ) {s = 9;}
-
-                        else if ( LA255_0 == 178 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 6) ) {s = 10;}
-
-                        else if ( LA255_0 == 179 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 7) ) {s = 11;}
-
-                        else if ( LA255_0 == 180 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 8) ) {s = 12;}
-
-                        else if ( LA255_0 == 181 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 9) ) {s = 13;}
-
-                        else if ( LA255_0 == 182 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 10) ) {s = 14;}
-
-                        else if ( LA255_0 == 183 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 11) ) {s = 15;}
-
-                        else if ( (LA255_0==184) ) {s = 16;}
-
-                        else if ( LA255_0 == 187 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 13) ) {s = 17;}
-
-                        else if ( LA255_0 == 188 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 14) ) {s = 18;}
-
-                        else if ( LA255_0 == 189 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 14) ) {s = 19;}
-
-                        else if ( LA255_0 == 190 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 14) ) {s = 20;}
-
-                        else if ( LA255_0 == 191 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 15) ) {s = 21;}
-
-                        else if ( LA255_0 == 192 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 16) ) {s = 22;}
-
-                        else if ( LA255_0 == 193 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 17) ) {s = 23;}
-
-                        else if ( LA255_0 == 194 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 18) ) {s = 24;}
-
-                        else if ( LA255_0 == 195 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 19) ) {s = 25;}
-
-                        else if ( LA255_0 == 200 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 21) ) {s = 26;}
-
-                        else if ( LA255_0 == 201 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 21) ) {s = 27;}
-
-                        else if ( LA255_0 == 202 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 21) ) {s = 28;}
-
-                        else if ( LA255_0 == 41 && getUnorderedGroupHelper().canSelect(grammarAccess.getConceptStatementBodyAccess().getUnorderedGroup_3(), 22) ) {s = 29;}
-
-                         
-                        input.seek(index255_0);
                         if ( s>=0 ) return s;
                         break;
             }
@@ -76345,7 +76345,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
     static final String dfa_272s = "\3\uffff\1\1\2\uffff\1\2\141\uffff";
     static final String dfa_273s = "\1\uffff\1\0\1\1\2\uffff\1\2\142\uffff}>";
     static final String[] dfa_274s = {
-            "\1\3\1\2\1\6\2\uffff\1\1\1\6\1\uffff\1\6\2\uffff\1\3\4\uffff\1\6\3\uffff\1\6\1\uffff\1\6\2\uffff\4\6\1\uffff\1\6\1\uffff\1\6\1\5\1\uffff\3\6\1\uffff\1\6\3\uffff\1\6\5\uffff\3\6\7\uffff\7\6\7\uffff\14\6\16\uffff\1\6\2\uffff\1\6\3\uffff\1\6\1\uffff\6\6\12\uffff\2\6\7\uffff\2\6\1\uffff\20\6\14\uffff\1\6\1\uffff\1\6\1\uffff\3\6\1\uffff\11\6\2\uffff\11\6\4\uffff\3\6\52\uffff\2\6\6\uffff\1\6",
+            "\1\3\1\2\1\6\2\uffff\1\1\1\6\1\uffff\1\6\2\uffff\1\3\4\uffff\1\6\3\uffff\1\6\1\uffff\1\6\2\uffff\4\6\1\uffff\1\6\1\uffff\1\6\1\5\1\uffff\3\6\1\uffff\1\6\3\uffff\1\6\5\uffff\3\6\7\uffff\7\6\7\uffff\14\6\16\uffff\1\6\2\uffff\1\6\3\uffff\1\6\1\uffff\6\6\12\uffff\2\6\7\uffff\2\6\1\uffff\20\6\14\uffff\2\6\2\uffff\3\6\1\uffff\11\6\2\uffff\11\6\4\uffff\3\6\52\uffff\2\6\6\uffff\1\6",
             "\1\uffff",
             "\1\uffff",
             "",
@@ -76861,11 +76861,11 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         }
     }
 
-    class DFA586 extends DFA {
+    class DFA585 extends DFA {
 
-        public DFA586(BaseRecognizer recognizer) {
+        public DFA585(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
-            this.decisionNumber = 586;
+            this.decisionNumber = 585;
             this.eot = dfa_127;
             this.eof = dfa_127;
             this.min = dfa_128;
@@ -76882,10 +76882,10 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	int _s = s;
             switch ( s ) {
                     case 0 : 
-                        int LA586_27 = input.LA(1);
+                        int LA585_27 = input.LA(1);
 
                          
-                        int index586_27 = input.index();
+                        int index585_27 = input.index();
                         input.rewind();
                         s = -1;
                         if ( (synpred609_InternalKim()) ) {s = 4;}
@@ -76893,23 +76893,23 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                         else if ( (true) ) {s = 28;}
 
                          
-                        input.seek(index586_27);
+                        input.seek(index585_27);
                         if ( s>=0 ) return s;
                         break;
             }
             if (state.backtracking>0) {state.failed=true; return -1;}
             NoViableAltException nvae =
-                new NoViableAltException(getDescription(), 586, _s, input);
+                new NoViableAltException(getDescription(), 585, _s, input);
             error(nvae);
             throw nvae;
         }
     }
 
-    class DFA592 extends DFA {
+    class DFA591 extends DFA {
 
-        public DFA592(BaseRecognizer recognizer) {
+        public DFA591(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
-            this.decisionNumber = 592;
+            this.decisionNumber = 591;
             this.eot = dfa_127;
             this.eof = dfa_127;
             this.min = dfa_128;
@@ -76926,10 +76926,10 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	int _s = s;
             switch ( s ) {
                     case 0 : 
-                        int LA592_27 = input.LA(1);
+                        int LA591_27 = input.LA(1);
 
                          
-                        int index592_27 = input.index();
+                        int index591_27 = input.index();
                         input.rewind();
                         s = -1;
                         if ( (synpred625_InternalKim()) ) {s = 4;}
@@ -76937,23 +76937,23 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                         else if ( (true) ) {s = 28;}
 
                          
-                        input.seek(index592_27);
+                        input.seek(index591_27);
                         if ( s>=0 ) return s;
                         break;
             }
             if (state.backtracking>0) {state.failed=true; return -1;}
             NoViableAltException nvae =
-                new NoViableAltException(getDescription(), 592, _s, input);
+                new NoViableAltException(getDescription(), 591, _s, input);
             error(nvae);
             throw nvae;
         }
     }
 
-    class DFA598 extends DFA {
+    class DFA597 extends DFA {
 
-        public DFA598(BaseRecognizer recognizer) {
+        public DFA597(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
-            this.decisionNumber = 598;
+            this.decisionNumber = 597;
             this.eot = dfa_127;
             this.eof = dfa_127;
             this.min = dfa_128;
@@ -76970,10 +76970,10 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	int _s = s;
             switch ( s ) {
                     case 0 : 
-                        int LA598_27 = input.LA(1);
+                        int LA597_27 = input.LA(1);
 
                          
-                        int index598_27 = input.index();
+                        int index597_27 = input.index();
                         input.rewind();
                         s = -1;
                         if ( (synpred641_InternalKim()) ) {s = 4;}
@@ -76981,13 +76981,13 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                         else if ( (true) ) {s = 28;}
 
                          
-                        input.seek(index598_27);
+                        input.seek(index597_27);
                         if ( s>=0 ) return s;
                         break;
             }
             if (state.backtracking>0) {state.failed=true; return -1;}
             NoViableAltException nvae =
-                new NoViableAltException(getDescription(), 598, _s, input);
+                new NoViableAltException(getDescription(), 597, _s, input);
             error(nvae);
             throw nvae;
         }
@@ -77122,20 +77122,20 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
     public static final BitSet FOLLOW_126 = new BitSet(new long[]{0x0000000000004200L,0x0000000080000000L,0x0000001000000000L});
     public static final BitSet FOLLOW_127 = new BitSet(new long[]{0x0000000000000002L,0x0020000000000000L});
     public static final BitSet FOLLOW_128 = new BitSet(new long[]{0x0000000000000200L,0x0000000080000000L});
-    public static final BitSet FOLLOW_129 = new BitSet(new long[]{0x0000020000000042L,0x0000000000000000L,0xF9FF750000000000L,0x000000000000070FL});
-    public static final BitSet FOLLOW_130 = new BitSet(new long[]{0x0000020000000042L,0x0000000000000000L,0xF9FF750000000800L,0x000000000000070FL});
+    public static final BitSet FOLLOW_129 = new BitSet(new long[]{0x0000020000000042L,0x0000000000000000L,0xF9FF730000000000L,0x000000000000070FL});
+    public static final BitSet FOLLOW_130 = new BitSet(new long[]{0x0000020000000042L,0x0000000000000000L,0xF9FF730000000800L,0x000000000000070FL});
     public static final BitSet FOLLOW_131 = new BitSet(new long[]{0x0000000000001840L});
-    public static final BitSet FOLLOW_132 = new BitSet(new long[]{0x0000002018001660L,0x0000008000000000L,0x00000A000FFFF603L,0x0060000000000000L});
+    public static final BitSet FOLLOW_132 = new BitSet(new long[]{0x0000002018001660L,0x0000008000000000L,0x00000C000FFFF603L,0x0060000000000000L});
     public static final BitSet FOLLOW_133 = new BitSet(new long[]{0x0000002018001660L,0x0000008000000000L,0x000008000FFFF603L,0x0060000000000000L});
-    public static final BitSet FOLLOW_134 = new BitSet(new long[]{0x0000020004000042L,0x0000000000000000L,0xF9FF750030000000L,0x000000000000070FL});
-    public static final BitSet FOLLOW_135 = new BitSet(new long[]{0x0000020004000042L,0x0000000000000000L,0xF9FF750000000000L,0x000000000000070FL});
+    public static final BitSet FOLLOW_134 = new BitSet(new long[]{0x0000020004000042L,0x0000000000000000L,0xF9FF730030000000L,0x000000000000070FL});
+    public static final BitSet FOLLOW_135 = new BitSet(new long[]{0x0000020004000042L,0x0000000000000000L,0xF9FF730000000000L,0x000000000000070FL});
     public static final BitSet FOLLOW_136 = new BitSet(new long[]{0x0000002018001660L,0x0000008000000000L,0x000080000FFFF603L,0x0060000000000000L});
     public static final BitSet FOLLOW_137 = new BitSet(new long[]{0x0000000000002000L});
     public static final BitSet FOLLOW_138 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0000800008000000L,0x00000000000000E0L});
     public static final BitSet FOLLOW_139 = new BitSet(new long[]{0x0000000000000000L,0x0000000000000000L,0x0200000000000000L});
     public static final BitSet FOLLOW_140 = new BitSet(new long[]{0x0000800004000000L,0x0000000000000000L,0x0400000000000000L});
     public static final BitSet FOLLOW_141 = new BitSet(new long[]{0x0000800004000000L});
-    public static final BitSet FOLLOW_142 = new BitSet(new long[]{0x0000020804000042L,0x0000000000000000L,0xF9FF750000000000L,0x000000000000070FL});
+    public static final BitSet FOLLOW_142 = new BitSet(new long[]{0x0000020804000042L,0x0000000000000000L,0xF9FF730000000000L,0x000000000000070FL});
     public static final BitSet FOLLOW_143 = new BitSet(new long[]{0x0000000000000000L,0x0000400100000000L});
     public static final BitSet FOLLOW_144 = new BitSet(new long[]{0x0000000000000000L,0x0000400000000000L});
     public static final BitSet FOLLOW_145 = new BitSet(new long[]{0x0000002000000200L,0x0000000000000000L,0x0000001000000000L});

@@ -3257,7 +3257,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getConceptStatementBody_CoreConcept()
+  public EAttribute getConceptStatementBody_Alias()
   {
     return (EAttribute)conceptStatementBodyEClass.getEStructuralFeatures().get(8);
   }
@@ -3267,7 +3267,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getConceptStatementBody_Alias()
+  public EAttribute getConceptStatementBody_CoreConcept()
   {
     return (EAttribute)conceptStatementBodyEClass.getEStructuralFeatures().get(9);
   }
@@ -4996,8 +4996,8 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEAttribute(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__INT_IDENTIFIER);
     createEAttribute(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__AUTHORITY);
     createEAttribute(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__DOCSTRING);
-    createEAttribute(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__CORE_CONCEPT);
     createEAttribute(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__ALIAS);
+    createEAttribute(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__CORE_CONCEPT);
     createEAttribute(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__NOTHING);
     createEReference(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__PARENTS);
     createEAttribute(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__CONNECTORS);
@@ -5498,8 +5498,8 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEAttribute(getConceptStatementBody_IntIdentifier(), ecorePackage.getEInt(), "intIdentifier", null, 0, 1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConceptStatementBody_Authority(), ecorePackage.getEString(), "authority", null, 0, 1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConceptStatementBody_Docstring(), ecorePackage.getEString(), "docstring", null, 0, 1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getConceptStatementBody_CoreConcept(), ecorePackage.getEBoolean(), "coreConcept", null, 0, 1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConceptStatementBody_Alias(), ecorePackage.getEBoolean(), "alias", null, 0, 1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConceptStatementBody_CoreConcept(), ecorePackage.getEBoolean(), "coreConcept", null, 0, 1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConceptStatementBody_Nothing(), ecorePackage.getEBoolean(), "nothing", null, 0, 1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptStatementBody_Parents(), this.getConceptDeclaration(), null, "parents", null, 0, -1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConceptStatementBody_Connectors(), ecorePackage.getEString(), "connectors", null, 0, -1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
