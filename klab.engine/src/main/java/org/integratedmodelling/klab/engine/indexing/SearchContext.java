@@ -618,7 +618,7 @@ public class SearchContext implements IIndexingService.Context {
 	public void allow(Constraint constraint) {
 		constraints.add(constraint);
 	}
-	
+
 	private SearchContext acceptToken(SearchMatch match) {
 
 		/*
@@ -752,8 +752,10 @@ public class SearchContext implements IIndexingService.Context {
 				ret.allow(Constraint.allTraits(false)/* .applyingTo(IKimConcept.Type.EVENT) */);
 				break;
 			case IN:
-				ret.nextTokenType = meaning.getSemantics().contains(IKimConcept.Type.MONEY) ? TokenClass.CURRENCY
-						: TokenClass.UNIT;
+				ret.nextTokenType = meaning.getSemantics().contains(IKimConcept.Type.MONEY)
+						|| meaning.getSemantics().contains(IKimConcept.Type.MONETARY) 
+							? TokenClass.CURRENCY
+							: TokenClass.UNIT;
 				ret.allow(Constraint.unit(meaning.getSemantics()));
 				break;
 			case OF:

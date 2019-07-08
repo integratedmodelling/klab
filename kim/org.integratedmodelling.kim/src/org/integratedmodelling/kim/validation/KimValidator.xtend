@@ -854,13 +854,6 @@ class KimValidator extends AbstractKimValidator {
 	@Check
 	def checkObservableSemantics(ObservableSemantics semantics) {
 
-//		if (semantics.role !== null) {
-//			var role = checkConcept(semantics.role, null, null)
-//			if (!role.contains(Type.ROLE)) {
-//				error("Only roles can be used in the 'as' specification of an observable", semantics.role, null,
-//					KimPackage.OBSERVABLE_SEMANTICS__ROLE)
-//			}
-//		}
 		var declaration = Kim.INSTANCE.declareConcept(semantics.declaration)
 
 		if (declaration !== null) {
@@ -875,7 +868,7 @@ class KimValidator extends AbstractKimValidator {
 				}
 			}
 			if (semantics.currency !== null) {
-				if (!declaration.is(Type.MONEY)) {
+				if (!declaration.is(Type.MONEY) && !declaration.is(Type.MONETARY)) {
 					error("Currencies can only be specified for monetary values", semantics.currency, null,
 						KimPackage.OBSERVABLE_SEMANTICS__CURRENCY)
 				}
@@ -1044,6 +1037,15 @@ class KimValidator extends AbstractKimValidator {
 										error = true
 									}
 								}
+								case ADJACENT: {
+									if (!mtype.isOptional && declaration.adjacent === null) {
+										error(
+											"Macro " + mmacro.name +
+												" requires an adjacent ('adjacent to ...') concept of type " +
+												description, main, null, KimPackage.CONCEPT_DECLARATION__MAIN)
+										error = true
+									}
+								}							
 							}
 						}
 					}

@@ -82,8 +82,7 @@ public class CategoryClassificationResolver
          * TODO some values are extensive. Others aren't. Put this check under Observables after it's all
          * understood.
          */
-        boolean isExtensive = values.getObservable().is(Type.EXTENSIVE_PROPERTY)
-                || values.getObservable().is(Type.VALUE) || values.getObservable().is(Type.MONEY);
+        boolean isExtensive = Units.INSTANCE.needsUnitScaling(values.getObservable());
 
         IUnit propagateSpace = values.getObservable().getUnit() != null && (ret.getScale().getSpace() != null
                 && Units.INSTANCE.isArealDensity(values.getObservable().getUnit()))

@@ -633,8 +633,7 @@ public class DataflowCompiler {
     public Observable contextualize(Observable observable, Scale scale) {
 
         // verify the observation unit wrt the contextualization scale
-        if (observable.is(IKimConcept.Type.MONEY) || observable.is(IKimConcept.Type.NUMEROSITY)
-                || observable.is(IKimConcept.Type.EXTENSIVE_PROPERTY)) {
+        if (Units.INSTANCE.needsUnitScaling(observable)) {
 
 //            if (observable.getUnit() == null) {
 //                return observable;

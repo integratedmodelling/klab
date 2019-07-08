@@ -17,6 +17,7 @@ package org.integratedmodelling.klab.common.mediation;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -29,10 +30,16 @@ import javax.measure.unit.UnitFormat;
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -47,238 +54,292 @@ import com.google.common.collect.Sets;
  */
 public class Unit implements IUnit {
 
-    javax.measure.unit.Unit<?> _unit;
-    int _startLine;
-    int _endLine;
-    String statement;
-    Set<ExtentDimension> aggregatedDimensions = EnumSet.noneOf(ExtentDimension.class);
+	javax.measure.unit.Unit<?> _unit;
+	int _startLine;
+	int _endLine;
+	String statement;
+	Set<ExtentDimension> aggregatedDimensions = EnumSet.noneOf(ExtentDimension.class);
+	boolean wasContextualized = false;
 
-    /**
-     * Create a unit from a string.
-     *
-     * @param string
-     *            the string
-     * @return the unit
-     */
-    public static Unit create(String string) {
+	/**
+	 * Create a unit from a string.
+	 *
+	 * @param string
+	 *            the string
+	 * @return the unit
+	 */
+	public static Unit create(String string) {
 
-        if (string.trim().isEmpty()) {
-            return null;
-        }
+		if (string.trim().isEmpty()) {
+			return null;
+		}
 
-        Pair<Double, String> pd = MiscUtilities.splitNumberFromString(string);
-        javax.measure.unit.Unit<?> unit = null;
+		Pair<Double, String> pd = MiscUtilities.splitNumberFromString(string);
+		javax.measure.unit.Unit<?> unit = null;
 
-        double factor = 1.0;
-        if (pd.getFirst() != null) {
-            factor = pd.getFirst();
-        }
+		double factor = 1.0;
+		if (pd.getFirst() != null) {
+			factor = pd.getFirst();
+		}
 
-        try {
-            unit = (javax.measure.unit.Unit<?>) UnitFormat.getUCUMInstance().parseObject(string);
-        } catch (Throwable e) {
-            throw new KlabValidationException("Invalid unit: " + string);
-        }
-        if (factor != 1.0) {
-            unit = unit.times(factor);
-        }
+		try {
+			unit = (javax.measure.unit.Unit<?>) UnitFormat.getUCUMInstance().parseObject(string);
+		} catch (Throwable e) {
+			throw new KlabValidationException("Invalid unit: " + string);
+		}
+		if (factor != 1.0) {
+			unit = unit.times(factor);
+		}
 
-        return new Unit(unit, string);
-    }
-    
-    public static Unit unitless() {
-        return new Unit(javax.measure.unit.Unit.ONE);
-    }
+		return new Unit(unit, string);
+	}
 
-    /**
-     * Convert a quantity from a unit to another.
-     *
-     * @param value
-     *            the value
-     * @param unitFrom
-     *            the unit from
-     * @param unitTo
-     *            the unit to
-     * @return the double
-     */
-    public static double convert(double value, String unitFrom, String unitTo) {
-        return unitFrom.equals(unitTo) ? value : create(unitTo).convert(value, create(unitFrom)).doubleValue();
-    }
+	public static Unit unitless() {
+		return new Unit(javax.measure.unit.Unit.ONE);
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean isCompatible(IValueMediator other) {
-        return other instanceof Unit && ((Unit) other)._unit.isCompatible(_unit);
-    }
+	/**
+	 * Convert a quantity from a unit to another.
+	 *
+	 * @param value
+	 *            the value
+	 * @param unitFrom
+	 *            the unit from
+	 * @param unitTo
+	 *            the unit to
+	 * @return the double
+	 */
+	public static double convert(double value, String unitFrom, String unitTo) {
+		return unitFrom.equals(unitTo) ? value : create(unitTo).convert(value, create(unitFrom)).doubleValue();
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean equals(Object o) {
-        return o instanceof Unit && toString().equals(((Unit) o).toString());
-    }
+	/** {@inheritDoc} */
+	@Override
+	public boolean isCompatible(IValueMediator other) {
+		return other instanceof Unit && ((Unit) other)._unit.isCompatible(_unit);
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public int hashCode() {
-        return toString().hashCode();
-    }
+	/** {@inheritDoc} */
+	@Override
+	public boolean equals(Object o) {
+		return o instanceof Unit && toString().equals(((Unit) o).toString());
+	}
 
-    /**
-     * Instantiates a new unit.
-     *
-     * @param unit
-     *            the unit
-     * @param statement
-     *            the statement
-     */
-    public Unit(javax.measure.unit.Unit<?> unit, String statement) {
-        this._unit = unit;
-        this.statement = statement;
-    }
+	/** {@inheritDoc} */
+	@Override
+	public int hashCode() {
+		return toString().hashCode();
+	}
 
-    /**
-     * Instantiates a new unit.
-     *
-     * @param unit
-     *            the unit
-     */
-    public Unit(javax.measure.unit.Unit<?> unit) {
-        this._unit = unit;
-        this.statement = unit.toString();
-    }
+	/**
+	 * Instantiates a new unit.
+	 *
+	 * @param unit
+	 *            the unit
+	 * @param statement
+	 *            the statement
+	 */
+	public Unit(javax.measure.unit.Unit<?> unit, String statement) {
+		this._unit = unit;
+		this.statement = statement;
+	}
 
-    /**
-     * The main method.
-     *
-     * @param a
-     *            the arguments
-     */
-    static public void main(String[] a) {
-        System.out.println(convert(120, "m", "mm"));
-    }
+	/**
+	 * Instantiates a new unit.
+	 *
+	 * @param unit
+	 *            the unit
+	 */
+	public Unit(javax.measure.unit.Unit<?> unit) {
+		this._unit = unit;
+		this.statement = unit.toString();
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public Number convert(Number value, IValueMediator unit) {
+	/**
+	 * The main method.
+	 *
+	 * @param a
+	 *            the arguments
+	 */
+	static public void main(String[] a) {
+		System.out.println(convert(120, "m", "mm"));
+	}
 
-        if (!(unit instanceof Unit)) {
-            throw new IllegalArgumentException("illegal conversion " + this + " to " + unit);
-        }
+	/** {@inheritDoc} */
+	@Override
+	public Number convert(Number value, IValueMediator unit) {
 
-        UnitConverter converter = ((Unit) unit).getUnit().getConverterTo(_unit);
-        return converter.convert(value.doubleValue());
-    }
+		if (!(unit instanceof Unit)) {
+			throw new IllegalArgumentException("illegal conversion " + this + " to " + unit);
+		}
 
-    /**
-     * Gets the unit.
-     *
-     * @return the unit
-     */
-    public javax.measure.unit.Unit<?> getUnit() {
-        return _unit;
-    }
+		UnitConverter converter = ((Unit) unit).getUnit().getConverterTo(_unit);
+		return converter.convert(value.doubleValue());
+	}
 
-    public String toUTFString() {
-        return _unit.toString();
-    }
+	/**
+	 * Gets the unit.
+	 *
+	 * @return the unit
+	 */
+	public javax.measure.unit.Unit<?> getUnit() {
+		return _unit;
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return statement;
-    }
+	public String toUTFString() {
+		return _unit.toString();
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public IUnit multiply(IUnit unit) {
-        return new Unit(_unit.times(((Unit) unit)._unit));
-    }
+	/** {@inheritDoc} */
+	@Override
+	public String toString() {
+		return statement;
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public IUnit divide(IUnit unit) {
-        return new Unit(_unit.divide(((Unit) unit)._unit));
-    }
+	/** {@inheritDoc} */
+	@Override
+	public IUnit multiply(IUnit unit) {
+		return new Unit(_unit.times(((Unit) unit)._unit));
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public IUnit scale(double scale) {
-        return new Unit(_unit.times(scale));
-    }
+	/** {@inheritDoc} */
+	@Override
+	public IUnit divide(IUnit unit) {
+		return new Unit(_unit.divide(((Unit) unit)._unit));
+	}
 
-    @Override
-    public Set<ExtentDimension> getAggregatedDimensions() {
-        return aggregatedDimensions;
-    }
+	/** {@inheritDoc} */
+	@Override
+	public IUnit scale(double scale) {
+		return new Unit(_unit.times(scale));
+	}
 
-    @Override
-    public Contextualization contextualize(IGeometry geometry, Map<ExtentDimension, ExtentDistribution> constraints) {
+	@Override
+	public Set<ExtentDimension> getAggregatedDimensions() {
+		return aggregatedDimensions;
+	}
 
-        /*
-         * produce all possible base units: gather the extents in the geometry
-         */
-        Set<ExtentDimension> aggregatable = new HashSet<>();
-        for (IGeometry.Dimension dimension : geometry.getDimensions()) {
-            if (dimension.size() > 1 || dimension.isRegular()) {
-                aggregatable.add(dimension.getExtentDimension());
-            }
-        }
+	@Override
+	public Pair<IValueMediator, Boolean> getContextualizationFactor(IObservable observable, IScale scale, ILocator locator) {
 
-        IUnit fullyContextualized = Units.INSTANCE.contextualize(this, aggregatable);
+		if (observable.getUnit() == null || !Units.INSTANCE.needsUnitScaling(observable)
+				|| this.isCompatible(observable.getUnit())) {
+			return new Pair<>(this, false);
+		}
 
-        List<Unit> potentialUnits = new ArrayList<>();
-        for (Set<ExtentDimension> set : Sets.powerSet(aggregatable)) {
-            Unit aggregated = (Unit)Units.INSTANCE.removeExtents(fullyContextualized, set);
-            potentialUnits.add(aggregated.withAggregatedDimensions(set));
-        }
+		/*
+		 * Contextualize the passed unit and find the base unit that matches it
+		 */
+		Contextualization contextualization = Units.INSTANCE.getDefaultUnitFor(observable.getType())
+				.contextualize(((Scale) scale).asGeometry(), null);
 
-        IUnit chosen = null;
+		IUnit matching = null;
+		for (IUnit unit : contextualization.getCandidateUnits()) {
+			if (unit.isCompatible(observable.getUnit())) {
+				matching = unit;
+				break;
+			}
+		}
+		
+		if (matching == null) {
+			// shouldn't happen
+			throw new IllegalStateException("trying to recontextualize a unit in an incompatible scale");
+		}
+		
+		boolean regular = true;
+		IUnit recontextualizer = this;
+		for (ExtentDimension ed : matching.getAggregatedDimensions()) {
+			recontextualizer = Units.INSTANCE.removeExtents(recontextualizer, Collections.singleton(ed));
+			Dimension dim = ((Scale)scale).asGeometry().getDimension(ed.spatial ? Type.SPACE : Type.TIME);
+			if (dim.size() > 0 || dim.isRegular()) {
+				if (!dim.isRegular()) {
+					regular = false;
+					break;
+				}
+			}
+		}
 
-        if (constraints == null || constraints.isEmpty()) {
-            chosen = fullyContextualized;
-        } else {
+		/*
+		 * TODO locator size!
+		 */
+		
+		/*
+		 * obtain the individual conversion factor
+		 */
+		double contextualConversion = 1.0/matching.convert(1.0, observable.getUnit()).doubleValue();
 
-            Set<ExtentDimension> whitelist = new HashSet<>();
-            Set<ExtentDimension> blacklist = new HashSet<>();
-            for (ExtentDimension d : constraints.keySet()) {
-                if (!aggregatable.contains(d)) {
-                    continue;
-                }
-                if (constraints.get(d) == ExtentDistribution.EXTENSIVE) {
-                    whitelist.add(d);
-                } else {
-                    blacklist.add(d);
-                }
-            }
+		return new Pair<>(new RecontextualizingUnit(this, recontextualizer, contextualConversion), !regular);
+	}
 
-            for (Unit punit : potentialUnits) {
-                if (Sets.intersection(punit.getAggregatedDimensions(), whitelist).size() == whitelist.size()
-                        && Sets.intersection(punit.getAggregatedDimensions(), blacklist).size() == 0) {
-                    chosen =  punit;
-                    break;
-                }
-            }
-        }
-        
-        final Set<IUnit> candidates = new HashSet<IUnit>(potentialUnits);
-        final IUnit correctUnit = chosen;
-        
-        return new Contextualization() {
-            
-            @Override
-            public IUnit getChosenUnit() {
-                return correctUnit;
-            }
-            
-            @Override
-            public Collection<IUnit> getCandidateUnits() {
-                return candidates;
-            }
-        };
-    }
+	@Override
+	public Contextualization contextualize(IGeometry geometry, Map<ExtentDimension, ExtentDistribution> constraints) {
 
-    private Unit withAggregatedDimensions(Set<ExtentDimension> set) {
-        this.aggregatedDimensions.addAll(set);
-        return this;
-    }
+		/*
+		 * produce all possible base units: gather the extents in the geometry
+		 */
+		Set<ExtentDimension> aggregatable = new HashSet<>();
+		for (IGeometry.Dimension dimension : geometry.getDimensions()) {
+			if (dimension.size() > 1 || dimension.isRegular()) {
+				aggregatable.add(dimension.getExtentDimension());
+			}
+		}
+
+		IUnit fullyContextualized = Units.INSTANCE.contextualize(this, aggregatable);
+
+		List<Unit> potentialUnits = new ArrayList<>();
+		for (Set<ExtentDimension> set : Sets.powerSet(aggregatable)) {
+			Unit aggregated = (Unit) Units.INSTANCE.removeExtents(fullyContextualized, set);
+			potentialUnits.add(aggregated.withAggregatedDimensions(set));
+		}
+
+		IUnit chosen = null;
+
+		if (constraints == null || constraints.isEmpty()) {
+			chosen = fullyContextualized;
+		} else {
+
+			Set<ExtentDimension> whitelist = new HashSet<>();
+			Set<ExtentDimension> blacklist = new HashSet<>();
+			for (ExtentDimension d : constraints.keySet()) {
+				if (!aggregatable.contains(d)) {
+					continue;
+				}
+				if (constraints.get(d) == ExtentDistribution.EXTENSIVE) {
+					whitelist.add(d);
+				} else {
+					blacklist.add(d);
+				}
+			}
+
+			for (Unit punit : potentialUnits) {
+				if (Sets.intersection(punit.getAggregatedDimensions(), whitelist).size() == whitelist.size()
+						&& Sets.intersection(punit.getAggregatedDimensions(), blacklist).size() == 0) {
+					chosen = punit;
+					break;
+				}
+			}
+		}
+
+		final Set<IUnit> candidates = new HashSet<IUnit>(potentialUnits);
+		final IUnit correctUnit = chosen;
+
+		return new Contextualization() {
+
+			@Override
+			public IUnit getChosenUnit() {
+				return correctUnit;
+			}
+
+			@Override
+			public Collection<IUnit> getCandidateUnits() {
+				return candidates;
+			}
+		};
+	}
+
+	private Unit withAggregatedDimensions(Set<ExtentDimension> set) {
+		this.aggregatedDimensions.addAll(set);
+		wasContextualized = true;
+		return this;
+	}
 }

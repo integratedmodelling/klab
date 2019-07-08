@@ -313,16 +313,6 @@ public enum KimKnowledgeProcessor {
 		}
 		ret.setName(name);
 
-		/*
-		 * set default unit if any is appropriate
-		 */
-		if (ret.getUnit() == null && ret.getCurrency() == null) {
-			ret.setUnit(Units.INSTANCE.getDefaultUnitFor(observable));
-			if (ret.getUnit() != null) {
-				declaration += " in " + ret.getUnit();
-			}
-		}
-
 		if (concept.getValueOperator() != null) {
 
 			ret.setValueOperator(concept.getValueOperator());

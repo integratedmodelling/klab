@@ -1114,9 +1114,7 @@ public class KimValidator extends AbstractKimValidator {
       Currency _currency = semantics.getCurrency();
       boolean _tripleNotEquals_1 = (_currency != null);
       if (_tripleNotEquals_1) {
-        boolean _is = declaration.is(IKimConcept.Type.MONEY);
-        boolean _not = (!_is);
-        if (_not) {
+        if (((!declaration.is(IKimConcept.Type.MONEY)) && (!declaration.is(IKimConcept.Type.MONETARY)))) {
           this.error("Currencies can only be specified for monetary values", semantics.getCurrency(), null, 
             KimPackage.OBSERVABLE_SEMANTICS__CURRENCY);
         }
@@ -1124,9 +1122,9 @@ public class KimValidator extends AbstractKimValidator {
       ConceptDeclaration _by = semantics.getBy();
       boolean _tripleNotEquals_2 = (_by != null);
       if (_tripleNotEquals_2) {
-        boolean _is_1 = declaration.is(IKimConcept.Type.QUALITY);
-        boolean _not_1 = (!_is_1);
-        if (_not_1) {
+        boolean _is = declaration.is(IKimConcept.Type.QUALITY);
+        boolean _not = (!_is);
+        if (_not) {
           this.error("Classifiers and aggregators can only be specified for qualities", semantics.getFrom(), null, 
             KimPackage.OBSERVABLE_SEMANTICS__BY);
         }
@@ -1294,6 +1292,17 @@ public class KimValidator extends AbstractKimValidator {
                             " requires a co-occurrent (\'during ...\') concept of type ");
                           String _plus_25 = (_plus_24 + description);
                           this.error(_plus_25, main, null, KimPackage.CONCEPT_DECLARATION__MAIN);
+                          error = true;
+                        }
+                        break;
+                      case ADJACENT:
+                        if (((!mtype.isOptional()) && (declaration.getAdjacent() == null))) {
+                          String _name_10 = mmacro.getName();
+                          String _plus_26 = ("Macro " + _name_10);
+                          String _plus_27 = (_plus_26 + 
+                            " requires an adjacent (\'adjacent to ...\') concept of type ");
+                          String _plus_28 = (_plus_27 + description);
+                          this.error(_plus_28, main, null, KimPackage.CONCEPT_DECLARATION__MAIN);
                           error = true;
                         }
                         break;

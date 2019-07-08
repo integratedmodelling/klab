@@ -88,7 +88,7 @@ public class SearchMatch implements IIndexingService.Match {
 			case WITHOUT:
 				// only for concepts
 				break;
-				
+
 			case GREATER:
 			case GREATEREQUAL:
 			case LESS:
@@ -99,7 +99,10 @@ public class SearchMatch implements IIndexingService.Match {
 			case PLUS:
 				return TokenClass.DOUBLE;
 			case IN:
-				return this.semantics.contains(IKimConcept.Type.MONEY) ? TokenClass.CURRENCY : TokenClass.UNIT; 
+				return this.semantics.contains(IKimConcept.Type.MONEY)
+						|| this.semantics.contains(IKimConcept.Type.MONETARY) 
+						? TokenClass.CURRENCY 
+						: TokenClass.UNIT;
 			case PER:
 				// also, should be contextual - spatial and/or temporal only
 				return TokenClass.UNIT;

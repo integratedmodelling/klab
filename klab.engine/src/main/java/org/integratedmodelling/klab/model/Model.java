@@ -269,7 +269,7 @@ public class Model extends KimObject implements IModel {
 
     private void validateUnits(IObservable observable, IMonitor monitor) {
 
-        if (observable.is(Type.MONEY) || observable.is(Type.NUMEROSITY) || observable.is(Type.EXTENSIVE_PROPERTY)) {
+        if (Units.INSTANCE.needsUnitScaling(observable)) {
 
             IUnit statedUnit = observable.getUnit();
 
