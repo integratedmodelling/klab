@@ -950,14 +950,14 @@ public enum Resources implements IResourceService {
 			return (IResolvable) obj;
 		}
 		if (obj instanceof IConceptDefinition) {
-			return Observable.promote((IConceptDefinition) obj, scale);
+			return Observable.promote((IConceptDefinition) obj);
 		}
 		// if it has spaces or parentheses it may be a declaration; try that one last
 		// time before giving up
 		if (urn.contains(" ") || urn.contains("(")) {
 			IObservable obs = Observables.INSTANCE.declare(urn);
 			if (obs != null) {
-				return ((Observable) obs).contextualizeUnits(scale);
+				return ((Observable) obs)/*.contextualizeUnits(scale)*/;
 			}
 		}
 		return null;

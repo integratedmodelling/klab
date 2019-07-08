@@ -1,9 +1,7 @@
 package org.integratedmodelling.klab.owl;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
@@ -13,7 +11,6 @@ import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
-import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -25,8 +22,6 @@ import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -87,43 +82,43 @@ public class Observable implements IObservable {
         this.observable = this.main = concept;
     }
 
-    public static Observable promote(IConceptDefinition concept, IScale scale) {
+    public static Observable promote(IConceptDefinition concept/*, IScale scale*/) {
 
         Observable ret = promote(concept.getConcept());
-        return ret.contextualizeUnits(scale);
+        return ret/*.contextualizeUnits(scale)*/;
     }
 
-    /**
-     * Ensure the unit is appropriate for the scale if the observable is an
-     * extensive property. Modifies the unit - call on a copy.
-     * 
-     * @param scale
-     * @return this observable (not a copy)
-     */
-    @Deprecated
-    public Observable contextualizeUnits(IScale scale) {
-
-        if (this.getType().is(Type.EXTENSIVE_PROPERTY)) {
-            IUnit unit = this.getUnit();
-            if (unit != null) {
-                Set<ExtentDimension> toAdd = new HashSet<>();
-                if (scale.isSpatiallyDistributed() && !Units.INSTANCE.isSpatialDensity(unit, scale.getSpace())
-                        && !Units.INSTANCE.isArea(unit)) {
-                    toAdd.add(Units.INSTANCE.getExtentDimension(scale.getSpace()));
-                }
-                if (scale.isTemporallyDistributed() && !Units.INSTANCE.isRate(unit) /* TODO add isTime condition */) {
-                    toAdd.add(ExtentDimension.TEMPORAL);
-                }
-                if (toAdd != null) {
-                    unit = Units.INSTANCE.addExtents(unit, toAdd);
-                    this.unit = (Unit) unit;
-                    this.declaration += " in " + this.unit;
-                }
-            }
-        }
-        return this;
-
-    }
+//    /**
+//     * Ensure the unit is appropriate for the scale if the observable is an
+//     * extensive property. Modifies the unit - call on a copy.
+//     * 
+//     * @param scale
+//     * @return this observable (not a copy)
+//     */
+//    @Deprecated
+//    public Observable contextualizeUnits(IScale scale) {
+//
+//        if (this.getType().is(Type.EXTENSIVE_PROPERTY)) {
+//            IUnit unit = this.getUnit();
+//            if (unit != null) {
+//                Set<ExtentDimension> toAdd = new HashSet<>();
+//                if (scale.isSpatiallyDistributed() && !Units.INSTANCE.isSpatialDensity(unit, scale.getSpace())
+//                        && !Units.INSTANCE.isArea(unit)) {
+//                    toAdd.add(Units.INSTANCE.getExtentDimension(scale.getSpace()));
+//                }
+//                if (scale.isTemporallyDistributed() && !Units.INSTANCE.isRate(unit) /* TODO add isTime condition */) {
+//                    toAdd.add(ExtentDimension.TEMPORAL);
+//                }
+//                if (toAdd != null) {
+//                    unit = Units.INSTANCE.addExtents(unit, toAdd);
+//                    this.unit = (Unit) unit;
+//                    this.declaration += " in " + this.unit;
+//                }
+//            }
+//        }
+//        return this;
+//
+//    }
 
     public static Observable promote(IModel model) {
         Observable ret = new Observable((Observable) model.getObservables().get(0));
@@ -131,11 +126,11 @@ public class Observable implements IObservable {
         return ret;
     }
 
-    public static Observable promote(IConcept concept) {
+    public static Observable promote(IConcept concept) {/*
         return promote(concept, true);
     }
 
-    public static Observable promote(IConcept concept, boolean setUnits) {
+    public static Observable promote(IConcept concept, boolean setUnits) {*/
         if (concept instanceof Observable) {
             return (Observable) concept;
         }
@@ -146,13 +141,13 @@ public class Observable implements IObservable {
         ret.isAbstract = concept.isAbstract();
         ret.generic = concept.isAbstract();
 
-        if (setUnits) {
+/*        if (setUnits) {
             ret.unit = (Unit) Units.INSTANCE.getDefaultUnitFor(concept);
             if (ret.unit != null) {
                 ret.declaration += " in " + ret.unit;
             }
         }
-        return ret;
+*/        return ret;
     }
 
     public Observable(Observable observable) {

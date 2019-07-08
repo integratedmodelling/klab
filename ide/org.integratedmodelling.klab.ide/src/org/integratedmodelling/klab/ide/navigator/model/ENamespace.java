@@ -75,17 +75,7 @@ public class ENamespace extends EKimObject implements IKimNamespace {
 	public boolean isWorldviewBound() {
 		return delegate.isWorldviewBound();
 	}
-
-//	@Override
-//	public boolean isErrors() {
-//		return delegate.isErrors() || Activator.klab().getErrors(getName()).size() > 0;
-//	}
-//
-//	@Override
-//	public boolean isWarnings() {
-//		return delegate.isWarnings() || Activator.klab().getWarnings(getName()).size() > 0;
-//	}
-
+	
 	@Override
 	public ENavigatorItem[] getEChildren() {
 		List<ENavigatorItem> ret = new ArrayList<>(delegate.getChildren().size());

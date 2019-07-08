@@ -352,6 +352,8 @@ public class ModelKbox extends ObservableKbox {
 
 	/*
 	 * select models that intersect the given space or have no space at all.
+	 * TODO must match geometry when forced - if it has @intensive(space, time) it shouldn't
+	 * match no space/time OR non-distributed space/time. ALSO the dimensionality!
 	 */
 	private String spaceQuery(ISpace space) {
 
@@ -372,7 +374,10 @@ public class ModelKbox extends ObservableKbox {
 	 * current info - either closer to the context or to today if time is null. For
 	 * dynamic models we should either not have a context or cover the context.
 	 * Guess this is the job of the prioritizer, and we should simply let anything
-	 * through except when we look for process models.
+	 * through except when we look for T1(n>1) models.
+	 * 
+	 * TODO must match geometry when forced - if it has @intensive(space, time) it shouldn't
+	 * match no space/time OR non-distributed space/time. ALSO the dimensionality!
 	 */
 	private String timeQuery(ITime time) {
 

@@ -14,6 +14,7 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
@@ -25,626 +26,535 @@ import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 
 public enum Units implements IUnitService {
 
-    INSTANCE;
+	INSTANCE;
 
-    public IUnit METERS = getUnit("m");
-    public IUnit SQUARE_METERS = getUnit("m^2");
-    public IUnit SQUARE_KILOMETERS = getUnit("km^2");
-    public IUnit CUBIC_METERS = getUnit("m^3");
+	public IUnit METERS = getUnit("m");
+	public IUnit SQUARE_METERS = getUnit("m^2");
+	public IUnit SQUARE_KILOMETERS = getUnit("km^2");
+	public IUnit CUBIC_METERS = getUnit("m^3");
+	public IUnit SECONDS = getUnit("s");
+	public IUnit YEARS = getUnit("year");
+	public IUnit HOURS = getUnit("h");
 
-    private Map<String, Unit> defaultUnitCache = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, Unit> defaultUnitCache = Collections.synchronizedMap(new HashMap<>());
 
-    @Override
-    public Unit getUnit(String string) {
-        return Unit.create(string);
-    }
+	@Override
+	public Unit getUnit(String string) {
+		return Unit.create(string);
+	}
 
-    private Units() {
-        Services.INSTANCE.registerService(this, IUnitService.class);
-    }
+	private Units() {
+		Services.INSTANCE.registerService(this, IUnitService.class);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.integratedmodelling.thinklab.modelling.units.IUnit#isRate()
-     */
-    @Override
-    public boolean isRate(IUnit unit) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.integratedmodelling.thinklab.modelling.units.IUnit#isRate()
+	 */
+	@Override
+	public boolean isRate(IUnit unit) {
 
-        boolean ret = false;
-        if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
-            ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
-            for (int i = 0; i < pu.getUnitCount(); i++) {
-                javax.measure.unit.Unit<?> su = pu.getUnit(i);
-                int power = pu.getUnitPow(i);
-                if (su.getDimension().equals(Dimension.TIME) && power == -1) {
-                    ret = true;
-                    break;
-                }
-            }
-        }
-        return ret;
-    }
+		boolean ret = false;
+		if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
+			ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
+			for (int i = 0; i < pu.getUnitCount(); i++) {
+				javax.measure.unit.Unit<?> su = pu.getUnit(i);
+				int power = pu.getUnitPow(i);
+				if (su.getDimension().equals(Dimension.TIME) && power == -1) {
+					ret = true;
+					break;
+				}
+			}
+		}
+		return ret;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.integratedmodelling.thinklab.modelling.units.IUnit#getTimeExtentUnit()
-     */
-    @Override
-    public IUnit getTimeExtentUnit(IUnit unit) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.integratedmodelling.thinklab.modelling.units.IUnit#getTimeExtentUnit()
+	 */
+	@Override
+	public IUnit getTimeExtentUnit(IUnit unit) {
 
-        if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
-            ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
-            for (int i = 0; i < pu.getUnitCount(); i++) {
-                javax.measure.unit.Unit<?> su = pu.getUnit(i);
-                int power = pu.getUnitPow(i);
-                if (su.getDimension().equals(Dimension.TIME) && power == -1) {
-                    return new Unit(su);
-                }
-            }
-        }
-        return null;
-    }
+		if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
+			ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
+			for (int i = 0; i < pu.getUnitCount(); i++) {
+				javax.measure.unit.Unit<?> su = pu.getUnit(i);
+				int power = pu.getUnitPow(i);
+				if (su.getDimension().equals(Dimension.TIME) && power == -1) {
+					return new Unit(su);
+				}
+			}
+		}
+		return null;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.integratedmodelling.thinklab.modelling.units.IUnit#isLengthDensity()
-     */
-    @Override
-    public boolean isLengthDensity(IUnit unit) {
-        boolean ret = false;
-        if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
-            ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
-            for (int i = 0; i < pu.getUnitCount(); i++) {
-                javax.measure.unit.Unit<?> su = pu.getUnit(i);
-                int power = pu.getUnitPow(i);
-                if (su.getDimension().equals(Dimension.LENGTH) && power == -1) {
-                    ret = true;
-                    break;
-                }
-            }
-        }
-        return ret;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.integratedmodelling.thinklab.modelling.units.IUnit#isLengthDensity()
+	 */
+	@Override
+	public boolean isLengthDensity(IUnit unit) {
+		boolean ret = false;
+		if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
+			ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
+			for (int i = 0; i < pu.getUnitCount(); i++) {
+				javax.measure.unit.Unit<?> su = pu.getUnit(i);
+				int power = pu.getUnitPow(i);
+				if (su.getDimension().equals(Dimension.LENGTH) && power == -1) {
+					ret = true;
+					break;
+				}
+			}
+		}
+		return ret;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.integratedmodelling.thinklab.modelling.units.IUnit#getLengthExtentUnit()
-     */
-    @Override
-    public IUnit getLengthExtentUnit(IUnit unit) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.integratedmodelling.thinklab.modelling.units.IUnit#getLengthExtentUnit()
+	 */
+	@Override
+	public IUnit getLengthExtentUnit(IUnit unit) {
 
-        if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
-            ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
-            for (int i = 0; i < pu.getUnitCount(); i++) {
-                javax.measure.unit.Unit<?> su = pu.getUnit(i);
-                int power = pu.getUnitPow(i);
-                if (su.getDimension().equals(Dimension.LENGTH) && power == -1) {
-                    return new Unit(su);
-                }
-            }
-        }
-        return null;
-    }
+		if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
+			ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
+			for (int i = 0; i < pu.getUnitCount(); i++) {
+				javax.measure.unit.Unit<?> su = pu.getUnit(i);
+				int power = pu.getUnitPow(i);
+				if (su.getDimension().equals(Dimension.LENGTH) && power == -1) {
+					return new Unit(su);
+				}
+			}
+		}
+		return null;
+	}
 
-    private javax.measure.unit.Unit<?> getPrimaryUnit(javax.measure.unit.Unit<?> uu) {
+	private javax.measure.unit.Unit<?> getPrimaryUnit(javax.measure.unit.Unit<?> uu) {
 
-        if (uu instanceof ProductUnit<?>) {
-            ProductUnit<?> pu = (ProductUnit<?>) uu;
-            return pu.getUnit(0);
-        }
-        return uu;
-    }
+		if (uu instanceof ProductUnit<?>) {
+			ProductUnit<?> pu = (ProductUnit<?>) uu;
+			return pu.getUnit(0);
+		}
+		return uu;
+	}
 
-    public javax.measure.unit.Unit<?> getPrimaryUnit(IUnit unit) {
-        return getPrimaryUnit(((Unit) unit).getUnit());
-    }
+	public javax.measure.unit.Unit<?> getPrimaryUnit(IUnit unit) {
+		return getPrimaryUnit(((Unit) unit).getUnit());
+	}
 
-    public boolean isArea(IUnit unit) {
-        boolean ret = false;
-        if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
-            ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
-            for (int i = 0; i < pu.getUnitCount(); i++) {
-                javax.measure.unit.Unit<?> su = pu.getUnit(i);
-                int power = pu.getUnitPow(i);
-                if ((su.getDimension().equals(Dimension.LENGTH) && power == 2)) {
-                    ret = true;
-                    break;
-                }
-            }
-        }
-        return ret;
-    }
+	public boolean isArea(IUnit unit) {
+		boolean ret = false;
+		if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
+			ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
+			for (int i = 0; i < pu.getUnitCount(); i++) {
+				javax.measure.unit.Unit<?> su = pu.getUnit(i);
+				int power = pu.getUnitPow(i);
+				if ((su.getDimension().equals(Dimension.LENGTH) && power == 2)) {
+					ret = true;
+					break;
+				}
+			}
+		}
+		return ret;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.integratedmodelling.thinklab.modelling.units.IUnit#isArealDensity()
-     */
-    @Override
-    public boolean isArealDensity(IUnit unit) {
-        boolean ret = false;
-        if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
-            ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
-            for (int i = 0; i < pu.getUnitCount(); i++) {
-                javax.measure.unit.Unit<?> su = pu.getUnit(i);
-                int power = pu.getUnitPow(i);
-                if ((su.getDimension().equals(Dimension.LENGTH.pow(2)) && power == -1)
-                        || (su.getDimension().equals(Dimension.LENGTH) && power == -2)) {
-                    ret = true;
-                    break;
-                }
-            }
-        }
-        return ret;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.integratedmodelling.thinklab.modelling.units.IUnit#isArealDensity()
+	 */
+	@Override
+	public boolean isArealDensity(IUnit unit) {
+		boolean ret = false;
+		if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
+			ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
+			for (int i = 0; i < pu.getUnitCount(); i++) {
+				javax.measure.unit.Unit<?> su = pu.getUnit(i);
+				int power = pu.getUnitPow(i);
+				if ((su.getDimension().equals(Dimension.LENGTH.pow(2)) && power == -1)
+						|| (su.getDimension().equals(Dimension.LENGTH) && power == -2)) {
+					ret = true;
+					break;
+				}
+			}
+		}
+		return ret;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.integratedmodelling.thinklab.modelling.units.IUnit#getArealExtentUnit()
-     */
-    @Override
-    public IUnit getArealExtentUnit(IUnit unit) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.integratedmodelling.thinklab.modelling.units.IUnit#getArealExtentUnit()
+	 */
+	@Override
+	public IUnit getArealExtentUnit(IUnit unit) {
 
-        if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
-            ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
-            for (int i = 0; i < pu.getUnitCount(); i++) {
-                javax.measure.unit.Unit<?> su = pu.getUnit(i);
-                int power = pu.getUnitPow(i);
-                if (su.getDimension().equals(Dimension.LENGTH.pow(2)) && power == -1) {
-                    return new Unit(su);
-                } else if (su.getDimension().equals(Dimension.LENGTH) && power == -2) {
-                    return new Unit(su.pow(2));
-                }
-            }
-        }
-        return null;
-    }
+		if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
+			ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
+			for (int i = 0; i < pu.getUnitCount(); i++) {
+				javax.measure.unit.Unit<?> su = pu.getUnit(i);
+				int power = pu.getUnitPow(i);
+				if (su.getDimension().equals(Dimension.LENGTH.pow(2)) && power == -1) {
+					return new Unit(su);
+				} else if (su.getDimension().equals(Dimension.LENGTH) && power == -2) {
+					return new Unit(su.pow(2));
+				}
+			}
+		}
+		return null;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.integratedmodelling.thinklab.modelling.units.IUnit#isVolumeDensity()
-     */
-    @Override
-    public boolean isVolumeDensity(IUnit unit) {
-        boolean ret = false;
-        if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
-            ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
-            for (int i = 0; i < pu.getUnitCount(); i++) {
-                javax.measure.unit.Unit<?> su = pu.getUnit(i);
-                int power = pu.getUnitPow(i);
-                if (su.getDimension().equals(Dimension.LENGTH.pow(3)) && power == -1
-                        || (su.getDimension().equals(Dimension.LENGTH) && power == -3)) {
-                    ret = true;
-                    break;
-                }
-            }
-        }
-        return ret;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.integratedmodelling.thinklab.modelling.units.IUnit#isVolumeDensity()
+	 */
+	@Override
+	public boolean isVolumeDensity(IUnit unit) {
+		boolean ret = false;
+		if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
+			ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
+			for (int i = 0; i < pu.getUnitCount(); i++) {
+				javax.measure.unit.Unit<?> su = pu.getUnit(i);
+				int power = pu.getUnitPow(i);
+				if (su.getDimension().equals(Dimension.LENGTH.pow(3)) && power == -1
+						|| (su.getDimension().equals(Dimension.LENGTH) && power == -3)) {
+					ret = true;
+					break;
+				}
+			}
+		}
+		return ret;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.integratedmodelling.thinklab.modelling.units.IUnit#getVolumeExtentUnit()
-     */
-    @Override
-    public IUnit getVolumeExtentUnit(IUnit unit) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.integratedmodelling.thinklab.modelling.units.IUnit#getVolumeExtentUnit()
+	 */
+	@Override
+	public IUnit getVolumeExtentUnit(IUnit unit) {
 
-        if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
-            ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
-            for (int i = 0; i < pu.getUnitCount(); i++) {
-                javax.measure.unit.Unit<?> su = pu.getUnit(i);
-                int power = pu.getUnitPow(i);
-                if (su.getDimension().equals(Dimension.LENGTH.pow(3)) && power == -1
-                        || (su.getDimension().equals(Dimension.LENGTH) && power == -3)) {
-                    return new Unit(su);
-                }
-            }
-        }
-        return null;
-    }
+		if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
+			ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
+			for (int i = 0; i < pu.getUnitCount(); i++) {
+				javax.measure.unit.Unit<?> su = pu.getUnit(i);
+				int power = pu.getUnitPow(i);
+				if (su.getDimension().equals(Dimension.LENGTH.pow(3)) && power == -1
+						|| (su.getDimension().equals(Dimension.LENGTH) && power == -3)) {
+					return new Unit(su);
+				}
+			}
+		}
+		return null;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.integratedmodelling.thinklab.modelling.units.IUnit#isUnitless()
-     */
-    @Override
-    public boolean isUnitless(IUnit unit) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.integratedmodelling.thinklab.modelling.units.IUnit#isUnitless()
+	 */
+	@Override
+	public boolean isUnitless(IUnit unit) {
 
-        boolean ret = false;
+		boolean ret = false;
 
-        if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
+		if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
 
-            // assume no unitless unit without a distribution
-            ret = true;
-            ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
-            for (int i = 0; i < pu.getUnitCount(); i++) {
-                int power = pu.getUnitPow(i);
-                if (power > 0) {
-                    ret = false;
-                    break;
-                }
-            }
-        }
-        return ret;
-    }
+			// assume no unitless unit without a distribution
+			ret = true;
+			ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
+			for (int i = 0; i < pu.getUnitCount(); i++) {
+				int power = pu.getUnitPow(i);
+				if (power > 0) {
+					ret = false;
+					break;
+				}
+			}
+		}
+		return ret;
+	}
 
-    public boolean isSpatialDensity(IUnit unit, IGeometry.Dimension space) {
-        switch (space.getDimensionality()) {
-        case 0:
-            return false;
-        case 1:
-            return isLengthDensity(unit);
-        case 2:
-            return isArealDensity(unit);
-        case 3:
-            return isVolumeDensity(unit);
-        }
-        return false;
-    }
+	public boolean isSpatialDensity(IUnit unit, IGeometry.Dimension space) {
+		switch (space.getDimensionality()) {
+		case 0:
+			return false;
+		case 1:
+			return isLengthDensity(unit);
+		case 2:
+			return isArealDensity(unit);
+		case 3:
+			return isVolumeDensity(unit);
+		}
+		return false;
+	}
 
-    @Override
-    public boolean isSpatialDensity(IUnit unit, IExtent space) {
-        if (space instanceof Space) {
-            switch (((Space) space).getDimensionSizes().length) {
-            case 0:
-                return false;
-            case 1:
-                return isLengthDensity(unit);
-            case 2:
-                return isArealDensity(unit);
-            case 3:
-                return isVolumeDensity(unit);
-            }
-        }
-        return false;
-    }
+	@Override
+	public boolean isSpatialDensity(IUnit unit, IExtent space) {
+		if (space instanceof Space) {
+			switch (((Space) space).getDimensionSizes().length) {
+			case 0:
+				return false;
+			case 1:
+				return isLengthDensity(unit);
+			case 2:
+				return isArealDensity(unit);
+			case 3:
+				return isVolumeDensity(unit);
+			}
+		}
+		return false;
+	}
 
-    public int getSpatialDimensionality(IUnit unit) {
-        if (isLengthDensity(unit)) {
-            return 1;
-        }
-        if (isArealDensity(unit)) {
-            return 2;
-        }
-        if (isVolumeDensity(unit)) {
-            return 3;
-        }
-        return 0;
-    }
+	public int getSpatialDimensionality(IUnit unit) {
+		if (isLengthDensity(unit)) {
+			return 1;
+		}
+		if (isArealDensity(unit)) {
+			return 2;
+		}
+		if (isVolumeDensity(unit)) {
+			return 3;
+		}
+		return 0;
+	}
 
-    public int getTemporalDimensionality(IUnit unit) {
-        if (isRate(unit)) {
-            return 1;
-        }
-        return 0;
-    }
+	public int getTemporalDimensionality(IUnit unit) {
+		if (isRate(unit)) {
+			return 1;
+		}
+		return 0;
+	}
 
-    @Override
-    public boolean isDensity(IUnit unit, IConcept extent) {
+	@Override
+	public boolean isDensity(IUnit unit, IConcept extent) {
 
-        if (extent.is(Concepts.c(NS.SPACE_DOMAIN))) {
-            return isArealDensity(unit) || isLengthDensity(unit) || isVolumeDensity(unit);
-        }
-        if (extent.is(Concepts.c(NS.TIME_DOMAIN))) {
-            return isRate(unit);
-        }
-        return false;
-    }
+		if (extent.is(Concepts.c(NS.SPACE_DOMAIN))) {
+			return isArealDensity(unit) || isLengthDensity(unit) || isVolumeDensity(unit);
+		}
+		if (extent.is(Concepts.c(NS.TIME_DOMAIN))) {
+			return isRate(unit);
+		}
+		return false;
+	}
 
-    @Override
-    public IUnit addExtents(IUnit refUnit, Collection<ExtentDimension> extentDimensions) {
+	@Override
+	public IUnit addExtents(IUnit refUnit, Collection<ExtentDimension> extentDimensions) {
 
-        Unit unit = (Unit) refUnit;
+		Unit unit = (Unit) refUnit;
 
-        for (ExtentDimension dim : extentDimensions) {
-            switch (dim) {
-            case AREAL:
-                unit = new Unit(((Unit) unit).getUnit().divide(((Unit) getUnit("m^2")).getUnit()));
-                break;
-            case CONCEPTUAL:
-                break;
-            case LINEAL:
-                unit = new Unit(((Unit) unit).getUnit().divide(((Unit) getUnit("m")).getUnit()));
-                break;
-            case PUNTAL:
-                break;
-            case TEMPORAL:
-                unit = new Unit(((Unit) unit).getUnit().divide(((Unit) getUnit("s")).getUnit()));
-                break;
-            case VOLUMETRIC:
-                unit = new Unit(((Unit) unit).getUnit().divide(((Unit) getUnit("m^3")).getUnit()));
-                break;
-            default:
-                break;
+		for (ExtentDimension dim : extentDimensions) {
+			switch (dim) {
+			case AREAL:
+				unit = new Unit(((Unit) unit).getUnit().divide(((Unit) getUnit("m^2")).getUnit()));
+				break;
+			case CONCEPTUAL:
+				break;
+			case LINEAL:
+				unit = new Unit(((Unit) unit).getUnit().divide(((Unit) getUnit("m")).getUnit()));
+				break;
+			case PUNTAL:
+				break;
+			case TEMPORAL:
+				unit = new Unit(((Unit) unit).getUnit().divide(((Unit) getUnit("s")).getUnit()));
+				break;
+			case VOLUMETRIC:
+				unit = new Unit(((Unit) unit).getUnit().divide(((Unit) getUnit("m^3")).getUnit()));
+				break;
+			default:
+				break;
 
-            }
-        }
+			}
+		}
 
-        return unit;
-    }
+		return unit;
+	}
 
-    @Override
-    public IUnit removeExtents(IUnit refUnit, Collection<ExtentDimension> extentDimensions) {
+	@Override
+	public IUnit removeExtents(IUnit refUnit, Collection<ExtentDimension> extentDimensions) {
 
-        Unit unit = (Unit) refUnit;
+		Unit unit = (Unit) refUnit;
 
-        for (ExtentDimension dim : extentDimensions) {
-            switch (dim) {
-            case AREAL:
-                unit = new Unit(((Unit) unit).getUnit().times(((Unit) getUnit("m^2")).getUnit()));
-                break;
-            case CONCEPTUAL:
-                break;
-            case LINEAL:
-                unit = new Unit(((Unit) unit).getUnit().times(((Unit) getUnit("m")).getUnit()));
-                break;
-            case PUNTAL:
-                break;
-            case TEMPORAL:
-                unit = new Unit(((Unit) unit).getUnit().times(((Unit) getUnit("s")).getUnit()));
-                break;
-            case VOLUMETRIC:
-                unit = new Unit(((Unit) unit).getUnit().times(((Unit) getUnit("m^3")).getUnit()));
-                break;
-            default:
-                break;
-            }
-        }
+		for (ExtentDimension dim : extentDimensions) {
+			switch (dim) {
+			case AREAL:
+				unit = new Unit(((Unit) unit).getUnit().times(((Unit) getUnit("m^2")).getUnit()));
+				break;
+			case CONCEPTUAL:
+				break;
+			case LINEAL:
+				unit = new Unit(((Unit) unit).getUnit().times(((Unit) getUnit("m")).getUnit()));
+				break;
+			case PUNTAL:
+				break;
+			case TEMPORAL:
+				unit = new Unit(((Unit) unit).getUnit().times(((Unit) getUnit("s")).getUnit()));
+				break;
+			case VOLUMETRIC:
+				unit = new Unit(((Unit) unit).getUnit().times(((Unit) getUnit("m^3")).getUnit()));
+				break;
+			default:
+				break;
+			}
+		}
 
-        return unit;
-    }
+		return unit;
+	}
 
-    /**
-     * Ensure that the passed unit is distributed in the passed dimensions and return
-     * the result. Only add a dimension if it's not there already. If the unit already
-     * has an incompatible dimension, return null.
-     * 
-     * @param unit
-     * @param aggregatable
-     */
-    @Override
-    public IUnit contextualize(IUnit refUnit, Set<ExtentDimension> aggregatable) {
+	/**
+	 * Ensure that the passed unit is distributed in the passed dimensions and
+	 * return the result. Only add a dimension if it's not there already. If the
+	 * unit already has an incompatible dimension, return null.
+	 * 
+	 * @param unit
+	 * @param aggregatable
+	 */
+	@Override
+	public IUnit contextualize(IUnit refUnit, Set<ExtentDimension> aggregatable) {
 
-        Unit unit = (Unit) refUnit;
+		Unit unit = (Unit) refUnit;
 
-        for (ExtentDimension dim : aggregatable) {
+		for (ExtentDimension dim : aggregatable) {
 
-            switch (dim) {
-            case AREAL:
-                int sdim = getSpatialDimensionality(unit);
-                if (sdim == 0) {
-                    unit = new Unit(((Unit) unit).getUnit().divide(((Unit) getUnit("m^2")).getUnit()));
-                } else if (sdim != 2) {
-                    return null;
-                }
-                break;
-            case CONCEPTUAL:
-                throw new KlabUnimplementedException("can't handle non-spatio/temporal extents yet");
-            case LINEAL:
-                sdim = getSpatialDimensionality(unit);
-                if (sdim == 0) {
-                    unit = new Unit(((Unit) unit).getUnit().divide(((Unit) getUnit("m")).getUnit()));
-                } else if (sdim != 1) {
-                    return null;
-                }
-                break;
-            case PUNTAL:
-                break;
-            case TEMPORAL:
-                sdim = getTemporalDimensionality(unit);
-                if (sdim == 0) {
-                    unit = new Unit(((Unit) unit).getUnit().divide(((Unit) getUnit("s")).getUnit()));
-                } else if (sdim != 1) {
-                    return null;
-                }
-                break;
-            case VOLUMETRIC:
-                sdim = getSpatialDimensionality(unit);
-                if (sdim == 0) {
-                    unit = new Unit(((Unit) unit).getUnit().divide(((Unit) getUnit("m^3")).getUnit()));
-                } else if (sdim != 3) {
-                    return null;
-                }
-                break;
-            default:
-                break;
-            }
-        }
+			switch (dim) {
+			case AREAL:
+				int sdim = getSpatialDimensionality(unit);
+				if (sdim == 0) {
+					unit = new Unit(((Unit) unit).getUnit().divide(((Unit) getUnit("m^2")).getUnit()));
+				} else if (sdim != 2) {
+					return null;
+				}
+				break;
+			case CONCEPTUAL:
+				throw new KlabUnimplementedException("can't handle non-spatio/temporal extents yet");
+			case LINEAL:
+				sdim = getSpatialDimensionality(unit);
+				if (sdim == 0) {
+					unit = new Unit(((Unit) unit).getUnit().divide(((Unit) getUnit("m")).getUnit()));
+				} else if (sdim != 1) {
+					return null;
+				}
+				break;
+			case PUNTAL:
+				break;
+			case TEMPORAL:
+				sdim = getTemporalDimensionality(unit);
+				if (sdim == 0) {
+					unit = new Unit(((Unit) unit).getUnit().divide(((Unit) getUnit("s")).getUnit()));
+				} else if (sdim != 1) {
+					return null;
+				}
+				break;
+			case VOLUMETRIC:
+				sdim = getSpatialDimensionality(unit);
+				if (sdim == 0) {
+					unit = new Unit(((Unit) unit).getUnit().divide(((Unit) getUnit("m^3")).getUnit()));
+				} else if (sdim != 3) {
+					return null;
+				}
+				break;
+			default:
+				break;
+			}
+		}
 
-        return unit;
+		return unit;
 
-    }
+	}
 
-    public void dump(IUnit unit, PrintStream out) {
+	public void dump(IUnit unit, PrintStream out) {
 
-        out.println("unit " + ((Unit) unit).getUnit());
+		out.println("unit " + ((Unit) unit).getUnit());
 
-        // if (_modifier != null)
-        // out.println("modifier: " + _modifier);
+		// if (_modifier != null)
+		// out.println("modifier: " + _modifier);
 
-        out.println("is" + (isUnitless(unit) ? " " : " not ") + "unitless");
-        out.println("is" + (isRate(unit) ? " " : " not ") + "a rate");
-        out.println("is" + (isLengthDensity(unit) ? " " : " not ") + "a lenght density");
-        out.println("is" + (isArealDensity(unit) ? " " : " not ") + "an areal density");
-        out.println("is" + (isVolumeDensity(unit) ? " " : " not ") + "a volumetric density");
-    }
+		out.println("is" + (isUnitless(unit) ? " " : " not ") + "unitless");
+		out.println("is" + (isRate(unit) ? " " : " not ") + "a rate");
+		out.println("is" + (isLengthDensity(unit) ? " " : " not ") + "a lenght density");
+		out.println("is" + (isArealDensity(unit) ? " " : " not ") + "an areal density");
+		out.println("is" + (isVolumeDensity(unit) ? " " : " not ") + "a volumetric density");
+	}
 
-    //    /**
-    //     * Verify that the unit, if any, in an observable is compatible with the
-    //     * observable and the scale. If the unit is incompatible, return an error. If
-    //     * the unit is compatible but not contextualized to the scale, verify that the
-    //     * situation has been fully accounted for with an 'extensive' annotation, and
-    //     * return a warning if not.
-    //     * 
-    //     * @param observable
-    //     * @param dimensions2
-    //     * @param scale
-    //     * @return
-    //     */
-    //    public CompileNotification validateUnit(IObservable observable, IGeometry geometry, IAnnotation extensiveAnnotation,
-    //            Map<ExtentDimension, ExtentDistribution> assertedDimensionality) {
-    //
-    //        if (observable.is(Type.QUALITY)) {
-    //
-    //            if (observable.getUnit() == null && observable.getCurrency() == null) {
-    //                return null;
-    //            }
-    //
-    //            if (observable.is(Type.EXTENSIVE_PROPERTY)) {
-    //
-    //                IUnit statedUnit = observable.getUnit();
-    //                IUnit defaultUnit = getDefaultUnitFor(observable.getType());
-    //
-    //                if (defaultUnit == null) {
-    //                    return CompileNotification.create(Level.SEVERE,
-    //                            "Internal error: observable " + observable.getName() + " has no default unit", null, null);
-    //                }
-    //                if (statedUnit == null) {
-    //                    return CompileNotification.create(Level.SEVERE,
-    //                            "Internal error: observable " + observable.getName() + " has no stated unit", null, null);
-    //                }
-    //
-    //                /*
-    //                 * prepare all the potential units with one or more extents aggregated
-    //                 */
-    //                IUnit contextualizedDefaultUnit = null;
-    //                Map<ExtentDimension, IUnit> partiallyContextualizedDefaultUnits = new HashMap<>();
-    //                if (assertedDimensionality.size() > 0) {
-    //                    if (assertedDimensionality.size() > 1) {
-    //                        for (ExtentDimension dim : assertedDimensionality.keySet()) {
-    //                            partiallyContextualizedDefaultUnits.put(dim,
-    //                                    contextualizeExtents(defaultUnit, dim, assertedDimensionality.get(dim)));
-    //                        }
-    //                    }
-    //                    contextualizedDefaultUnit = contextualizeExtents(defaultUnit, assertedDimensionality);
-    //                }
-    //
-    //                String acceptedUnits = "";
-    //                if (contextualizedDefaultUnit != null) {
-    //                    acceptedUnits += contextualizedDefaultUnit;
-    //                    for (ExtentDimension dim : partiallyContextualizedDefaultUnits.keySet()) {
-    //                        acceptedUnits += " [" + dim + "]: " + partiallyContextualizedDefaultUnits.get(dim);
-    //                    }
-    //                } else {
-    //                    contextualizedDefaultUnit = defaultUnit;
-    //                    acceptedUnits += defaultUnit;
-    //                }
-    //
-    //                /*
-    //                 * try all of the possible units, assess the distribution and compare with the
-    //                 * stated. If no matches, we're using the wrong unit.
-    //                 */
-    //                boolean unitIsCoherent = statedUnit.isCompatible(contextualizedDefaultUnit);
-    //                Set<ExtentDimension> aggregatedDimensions = new HashSet<>();
-    //
-    //                if (!unitIsCoherent) {
-    //
-    //                    boolean unitIsAggregated = statedUnit.isCompatible(defaultUnit);
-    //                    if (!unitIsAggregated) {
-    //                        for (ExtentDimension dim : partiallyContextualizedDefaultUnits.keySet()) {
-    //                            if (statedUnit.isCompatible(partiallyContextualizedDefaultUnits.get(dim))) {
-    //                                aggregatedDimensions.add(dim);
-    //                                break;
-    //                            }
-    //                        }
-    //                    } else {
-    //                        aggregatedDimensions.addAll(assertedDimensionality.keySet());
-    //                    }
-    //
-    //                    if (!unitIsAggregated) {
-    //                        return CompileNotification.create(Level.SEVERE,
-    //                                "Unit " + statedUnit + " in " + observable.getName()
-    //                                        + " is not compatible with the default unit " + defaultUnit
-    //                                        + " in the asserted context. The @extensive or @intensive annotations can "
-    //                                        + "specify aggregation over time and/or space. As specified the model admits "
-    //                                        + acceptedUnits,
-    //                                null, null);
-    //                    }
-    //
-    //                }
-    //
-    //            } else if (observable.is(Type.MONEY)) {
-    //
-    //                // TODO extract the dimensions and merge with the above
-    //
-    //            }
-    //
-    //        }
-    //
-    //        return null;
-    //    }
+	/**
+	 * Get the default unit for the passed concept. Only returns a unit if the
+	 * concept is a physical property.
+	 * 
+	 * @param concept
+	 * @return the default SI unit or null
+	 */
+	@Override
+	public Unit getDefaultUnitFor(IConcept concept) {
 
-    /**
-     * Get the default unit for the passed concept. Only returns a unit if the
-     * concept is a physical property.
-     * 
-     * @param concept
-     * @return the default SI unit or null
-     */
-    @Override
-    public Unit getDefaultUnitFor(IConcept concept) {
+		if (concept.is(Type.MONEY) || concept.is(Type.MONETARY) || concept.is(Type.NUMEROSITY)) {
+			return Unit.unitless();
+		}
 
-        if (concept.is(Type.MONEY) || concept.is(Type.NUMEROSITY)) {
-            return Unit.unitless();
-        }
+		if (defaultUnitCache.containsKey(concept.getDefinition())) {
+			return defaultUnitCache.get(concept.getDefinition());
+		}
 
-        if (defaultUnitCache.containsKey(concept.getDefinition())) {
-            return defaultUnitCache.get(concept.getDefinition());
-        }
+		Unit ret = null;
 
-        Unit ret = null;
+		boolean assignUnits = concept.is(Type.EXTENSIVE_PROPERTY) || concept.is(Type.INTENSIVE_PROPERTY);
 
-        boolean assignUnits = concept.is(Type.EXTENSIVE_PROPERTY) || concept.is(Type.INTENSIVE_PROPERTY);
+		if (assignUnits) {
+			/*
+			 * OK only if not transformed
+			 */
+			for (IConcept trait : Traits.INSTANCE.getTraits(concept)) {
+				if (trait.is(Type.RESCALING)) {
+					assignUnits = false;
+					break;
+				}
+			}
+		}
 
-        if (assignUnits) {
-            /*
-             * OK only if not transformed
-             */
-            for (IConcept trait : Traits.INSTANCE.getTraits(concept)) {
-                if (trait.is(Type.RESCALING)) {
-                    assignUnits = false;
-                    break;
-                }
-            }
-        }
+		if (/* still */ assignUnits) {
+			Object unit = Concepts.INSTANCE.getMetadata(Observables.INSTANCE.getBaseObservable(concept),
+					NS.SI_UNIT_PROPERTY);
+			ret = unit == null ? null : getUnit(unit.toString());
 
-        if (/* still */ assignUnits) {
-            Object unit = Concepts.INSTANCE.getMetadata(Observables.INSTANCE.getBaseObservable(concept),
-                    NS.SI_UNIT_PROPERTY);
-            ret = unit == null ? null : getUnit(unit.toString());
+		}
 
-        }
+		// also cache nulls
+		defaultUnitCache.put(concept.getDefinition(), ret);
 
-        // also cache nulls
-        defaultUnitCache.put(concept.getDefinition(), ret);
+		return ret;
+	}
 
-        return ret;
-    }
+	public ExtentDimension getExtentDimension(ISpace space) {
+		switch (space.getDimensionality()) {
+		case 0:
+			return ExtentDimension.PUNTAL;
+		case 1:
+			return ExtentDimension.LINEAL;
+		case 2:
+			return ExtentDimension.AREAL;
+		case 3:
+			return ExtentDimension.VOLUMETRIC;
+		}
+		throw new IllegalArgumentException("cannot attribute dimensional extent to spatial representation " + space);
+	}
 
-    public ExtentDimension getExtentDimension(ISpace space) {
-        switch (space.getDimensionality()) {
-        case 0:
-            return ExtentDimension.PUNTAL;
-        case 1:
-            return ExtentDimension.LINEAL;
-        case 2:
-            return ExtentDimension.AREAL;
-        case 3:
-            return ExtentDimension.VOLUMETRIC;
-        }
-        throw new IllegalArgumentException("cannot attribute dimensional extent to spatial representation " + space);
-    }
+	@Override
+	public boolean needUnits(IObservable observable) {
+		return observable.is(Type.MONEY) || observable.is(Type.MONETARY) || observable.is(Type.EXTENSIVE_PROPERTY)
+				|| observable.is(Type.INTENSIVE_PROPERTY) || observable.is(Type.NUMEROSITY);
+	}
 
+	@Override
+	public boolean needsUnitScaling(IObservable observable) {
+		return observable.is(Type.MONEY) || observable.is(Type.MONETARY) || observable.is(Type.EXTENSIVE_PROPERTY)
+				|| observable.is(Type.NUMEROSITY);
+	}
 }

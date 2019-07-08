@@ -1746,7 +1746,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	@Override
 	public IObservable buildObservable() throws KlabValidationException {
 
-		Observable ret = Observable.promote(buildConcept(), false);
+		Observable ret = Observable.promote(buildConcept()/*, false*/);
 
 		if (currency != null) {
 			ret.setCurrency((Currency) currency);
@@ -1754,13 +1754,13 @@ public class ObservableBuilder implements IObservable.Builder {
 		} else if (unit != null) {
 			ret.setUnit((Unit) unit);
 			ret.setDeclaration(ret.getDeclaration() + " in " + ret.getCurrency());
-		} else {
+		} /*else {
 			IUnit unit = (Unit) Units.INSTANCE.getDefaultUnitFor(ret.getType());
 			if (unit != null) {
 				ret.setUnit((Unit) unit);
 				ret.setDeclaration(ret.getDeclaration() + " in " + ret.getCurrency());
 			}
-		}
+		}*/
 
 		if (valueOperator != null) {
 

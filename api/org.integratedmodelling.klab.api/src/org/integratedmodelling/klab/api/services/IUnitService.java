@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
@@ -168,6 +169,10 @@ public interface IUnitService {
      * @param aggregatable
      */
     IUnit contextualize(IUnit refUnit, Set<ExtentDimension> aggregatable);
+
+	boolean needUnits(IObservable observable);
+
+	boolean needsUnitScaling(IObservable observable);
 
 
 }

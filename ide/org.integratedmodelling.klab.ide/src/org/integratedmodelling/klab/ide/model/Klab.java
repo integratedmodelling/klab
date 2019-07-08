@@ -22,11 +22,14 @@ import org.integratedmodelling.klab.client.utils.JsonUtils;
 import org.integratedmodelling.klab.common.CompileInfo;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
+import org.integratedmodelling.klab.ide.navigator.model.EModel;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
 import org.integratedmodelling.klab.ide.navigator.model.EResource;
 import org.integratedmodelling.klab.ide.navigator.model.EResourceFolder;
+import org.integratedmodelling.klab.ide.navigator.model.EScriptFolder;
+import org.integratedmodelling.klab.ide.navigator.model.ETestFolder;
 import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.Capabilities;
@@ -310,6 +313,18 @@ public class Klab {
 					return true;
 				}
 			}
+		} else if (item instanceof EScriptFolder) {
+			for (ENavigatorItem resource : (((EScriptFolder)item).getEChildren())) {
+				if (hasNotifications(resource, level)) {
+					return true;
+				}
+			}
+		} else if (item instanceof ETestFolder) {
+			for (ENavigatorItem resource : (((ETestFolder)item).getEChildren())) {
+				if (hasNotifications(resource, level)) {
+					return true;
+				}
+			}
 		} else if (item instanceof ENamespace) {
 			return hasNotifications(Kim.INSTANCE.getNamespace(((ENamespace) item).getName()), level);
 		} else if (item instanceof IKimNamespace) {
@@ -329,8 +344,25 @@ public class Klab {
 					return info.getInfo().size() > 0;
 				}
 			}
+		} else if (item instanceof EModel) {
+			if (level.equals(Level.SEVERE) && ((EModel) item).isErrors()) {
+				return true;
+			}
+			if (level.equals(Level.WARNING) && ((EModel) item).isWarnings()) {
+				return true;
+			}
+			CompileInfo info = Kim.INSTANCE.getCompileInfo(((EModel)item).getNamespace());
+			if (info != null) {
+				if (level.equals(Level.SEVERE)) {
+					return info.getErrors(((EModel)item).getName()).size() > 0;
+				} else if (level.equals(Level.WARNING)) {
+					return info.getWarnings(((EModel)item).getName()).size() > 0;
+				} else if (level.equals(Level.INFO)) {
+					return info.getInfo(((EModel)item).getName()).size() > 0;
+				}
+			}
 		}
-		return false;
+ 		return false;
 	}
 
 
