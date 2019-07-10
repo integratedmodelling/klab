@@ -14,6 +14,7 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
@@ -473,6 +474,8 @@ public enum Units implements IUnitService {
 
 	public void dump(IUnit unit, PrintStream out) {
 
+		javax.measure.unit.Unit<?> iunit = ((Unit) unit).getUnit();
+		
 		out.println("unit " + ((Unit) unit).getUnit());
 
 		// if (_modifier != null)
@@ -483,6 +486,16 @@ public enum Units implements IUnitService {
 		out.println("is" + (isLengthDensity(unit) ? " " : " not ") + "a lenght density");
 		out.println("is" + (isArealDensity(unit) ? " " : " not ") + "an areal density");
 		out.println("is" + (isVolumeDensity(unit) ? " " : " not ") + "a volumetric density");
+		
+		if (iunit instanceof ProductUnit<?>) {
+			out.println("Product of:");
+			ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
+			for (int i = 0; i < pu.getUnitCount(); i++) {
+				javax.measure.unit.Unit<?> su = pu.getUnit(i);
+				int power = pu.getUnitPow(i);
+				out.println("   " + su + " [" + su.getDimension() + "^" + power + "]");
+			}
+		}
 	}
 
 	/**
@@ -493,41 +506,50 @@ public enum Units implements IUnitService {
 	 * @return the default SI unit or null
 	 */
 	@Override
-	public Unit getDefaultUnitFor(IConcept concept) {
+	public Unit getDefaultUnitFor(IObservable observable) {
 
-		if (concept.is(Type.MONEY) || concept.is(Type.MONETARY) || concept.is(Type.NUMEROSITY)) {
+		if (observable.is(Type.MONEY) || observable.is(Type.MONETARY) || observable.is(Type.NUMEROSITY)) {
 			return Unit.unitless();
 		}
 
-		if (defaultUnitCache.containsKey(concept.getDefinition())) {
-			return defaultUnitCache.get(concept.getDefinition());
+		if (defaultUnitCache.containsKey(observable.getType().getDefinition())) {
+			return defaultUnitCache.get(observable.getType().getDefinition());
 		}
 
 		Unit ret = null;
 
-		boolean assignUnits = concept.is(Type.EXTENSIVE_PROPERTY) || concept.is(Type.INTENSIVE_PROPERTY);
+		boolean assignUnits = observable.is(Type.EXTENSIVE_PROPERTY) || observable.is(Type.INTENSIVE_PROPERTY);
 
 		if (assignUnits) {
 			/*
 			 * OK only if not transformed
 			 */
-			for (IConcept trait : Traits.INSTANCE.getTraits(concept)) {
-				if (trait.is(Type.RESCALING)) {
-					assignUnits = false;
-					break;
+			Boolean rescaled = observable.getType().getMetadata().get(IMetadata.IM_IS_RESCALED, Boolean.class);
+			if (rescaled == null) {
+				for (IConcept trait : Traits.INSTANCE.getTraits(observable.getType())) {
+					if (trait.is(Type.RESCALING)) {
+						assignUnits = false;
+						observable.getType().getMetadata().put(IMetadata.IM_IS_RESCALED, Boolean.TRUE);
+						break;
+					}
 				}
+				if (/* still */ assignUnits) {
+					observable.getType().getMetadata().put(IMetadata.IM_IS_RESCALED, Boolean.FALSE);
+				}
+			} else {
+				assignUnits = !rescaled;
 			}
 		}
 
 		if (/* still */ assignUnits) {
-			Object unit = Concepts.INSTANCE.getMetadata(Observables.INSTANCE.getBaseObservable(concept),
+			Object unit = Concepts.INSTANCE.getMetadata(Observables.INSTANCE.getBaseObservable(observable.getType()),
 					NS.SI_UNIT_PROPERTY);
 			ret = unit == null ? null : getUnit(unit.toString());
 
 		}
 
 		// also cache nulls
-		defaultUnitCache.put(concept.getDefinition(), ret);
+		defaultUnitCache.put(observable.getType().getDefinition(), ret);
 
 		return ret;
 	}
@@ -547,14 +569,62 @@ public enum Units implements IUnitService {
 	}
 
 	@Override
-	public boolean needUnits(IObservable observable) {
-		return observable.is(Type.MONEY) || observable.is(Type.MONETARY) || observable.is(Type.EXTENSIVE_PROPERTY)
-				|| observable.is(Type.INTENSIVE_PROPERTY) || observable.is(Type.NUMEROSITY);
+	public boolean needsUnits(IObservable observable) {
+
+		boolean checkMetadata = false;
+		if (observable.is(Type.MONEY) || observable.is(Type.MONETARY) || observable.is(Type.EXTENSIVE_PROPERTY)
+				|| observable.is(Type.INTENSIVE_PROPERTY) || observable.is(Type.NUMEROSITY)) {
+			boolean assignUnits = true;
+			Boolean rescaled = observable.getType().getMetadata().get(IMetadata.IM_IS_RESCALED, Boolean.class);
+			if (rescaled == null) {
+				// move on with further checks later
+				checkMetadata = true;
+				for (IConcept trait : Traits.INSTANCE.getTraits(observable.getType())) {
+					if (trait.is(Type.RESCALING)) {
+						assignUnits = false;
+						observable.getType().getMetadata().put(IMetadata.IM_IS_RESCALED, Boolean.TRUE);
+						break;
+					}
+				}
+				if (/* still */ assignUnits) {
+					observable.getType().getMetadata().put(IMetadata.IM_IS_RESCALED, Boolean.FALSE);
+				}
+			} else {
+				assignUnits = !rescaled;
+			}
+
+			/**
+			 * This part is for the benefit of checking if this describes an extensive value
+			 * OF some countable, done by needsUnitScaling, which calls this first, so we
+			 * keep all the logic in one place. If this is a property inherent to something
+			 * else, this is intensive, not extensive.
+			 * 
+			 * FIXME the numerosity check is because at the moment we use the inherent type
+			 * for the numerosity 'of', but this makes it impossible to have "numerosity of
+			 * X of Y" - which is a limitation of the language but also a stumbling block
+			 * for fully general statements.
+			 */
+			if (checkMetadata && !observable.is(Type.NUMEROSITY) && !observable.is(Type.INTENSIVE_PROPERTY)) {
+				Boolean rescalesInherent = observable.getType().getMetadata().get(IMetadata.IM_RESCALES_INHERENT,
+						Boolean.class);
+				if (rescalesInherent == null) {
+					if (Observables.INSTANCE.getDirectInherentType(observable.getType()) != null) {
+						rescalesInherent = true;
+					} else {
+						rescalesInherent = false;
+					}
+					observable.getType().getMetadata().put(IMetadata.IM_RESCALES_INHERENT, rescalesInherent);
+				}
+			}
+
+			return assignUnits;
+		}
+		return false;
 	}
 
 	@Override
 	public boolean needsUnitScaling(IObservable observable) {
-		return observable.is(Type.MONEY) || observable.is(Type.MONETARY) || observable.is(Type.EXTENSIVE_PROPERTY)
-				|| observable.is(Type.NUMEROSITY);
+		return needsUnits(observable) && !observable.is(Type.INTENSIVE_PROPERTY)
+				&& !observable.getType().getMetadata().get(IMetadata.IM_RESCALES_INHERENT, Boolean.FALSE);
 	}
 }

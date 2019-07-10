@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.common.mediation.RecontextualizingUnit;
 import org.integratedmodelling.klab.components.runtime.RuntimeContext;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.owl.Observable;
@@ -69,12 +70,10 @@ public class MediatingState extends Observation implements IState {
 	}
 
 	private IValueMediator getScaleConverter(ILocator index) {
-		IValueMediator ret = null;
 		IUnit unit = from instanceof IUnit ? (IUnit) from : ((ICurrency) from).getUnit();
-		Pair<IValueMediator, Boolean> cfac = unit.getContextualizationFactor(this.getObservable(), this.getScale(),
+		IValueMediator ret = unit.getContextualizingUnit(this.getObservable(), this.getScale(),
 				index);
-		ret = cfac.getFirst();
-		if (!cfac.getSecond()) {
+		if (!(ret instanceof RecontextualizingUnit && ((RecontextualizingUnit)ret).variesByLocation())) {
 			rescalingTo = ret;
 		}
 		return ret;

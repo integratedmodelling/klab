@@ -9,7 +9,9 @@ import java.util.function.Consumer;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
@@ -27,6 +29,7 @@ import org.integratedmodelling.klab.components.geospace.api.IGrid;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.scale.AbstractExtent;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * 
@@ -695,6 +698,11 @@ public class Grid extends Area implements IGrid {
         public ExtentDimension getExtentDimension() {
             return ExtentDimension.AREAL;
         }
+
+		@Override
+		public Pair<Double, IUnit> getStandardizedDimension(ILocator locator) {
+			return new Pair<>(getStandardizedArea(), Units.INSTANCE.SQUARE_METERS);
+		}
 	}
 
 	Shape shape;

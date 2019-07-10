@@ -38,6 +38,9 @@ public class Info implements ICommand {
         try (PrintStream ps = new PrintStream(baos, true, "UTF-8")) {
             Units.INSTANCE.dump(unit, ps);
         }
+        
         return baos.toString();
+        
+        
     }
 }

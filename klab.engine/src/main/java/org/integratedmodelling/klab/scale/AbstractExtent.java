@@ -38,6 +38,16 @@ public abstract class AbstractExtent implements IExtent {
 	}
 
 	public abstract boolean isEmpty();
+
+    /**
+     * Return a double that describes the extent of this topological object. It
+     * should only be used to compare objects of the same type. Redundant with
+     * {@link IExtent#getStandardizedDimension()} but this is meant to compute
+     * fast.
+     *
+     * @return the covered extent
+     */
+    public abstract double getCoveredExtent();
 	
 	/**
 	 * Return the string rep for the {@link Dimension} this represents.

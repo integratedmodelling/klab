@@ -276,7 +276,7 @@ public class Coverage extends Scale implements ICoverage {
 
 		if (how == LogicalConnector.UNION) {
 
-			double origcover = orig.getCoveredExtent();
+			double origcover = ((AbstractExtent)orig).getCoveredExtent();
 
 			// guarantee that we don't union with anything larger. Use outer extent.
 			IExtent x = orig.equals(other) ? other
@@ -285,10 +285,10 @@ public class Coverage extends Scale implements ICoverage {
 
 			IExtent union = null;
 			if (current == null) {
-				newcover = x.getCoveredExtent();
+				newcover = ((AbstractExtent)x).getCoveredExtent();
 			} else {
 				union = x.equals(current) ? x : ((AbstractExtent) x).mergeCoverage(current, LogicalConnector.UNION);
-				newcover = union.getCoveredExtent();
+				newcover = ((AbstractExtent)union).getCoveredExtent();
 			}
 
 			boolean proceed = ((newcover / origcover) - ccover) > minModelCoverage;
@@ -302,10 +302,10 @@ public class Coverage extends Scale implements ICoverage {
 
 			// if intersecting nothing with X, leave it at nothing
 			if (current != null) {
-				double origcover = orig.getCoveredExtent();
+				double origcover = ((AbstractExtent)orig).getCoveredExtent();
 				IExtent x = ((AbstractExtent) current).mergeCoverage(((AbstractExtent) other).getExtent(),
 						LogicalConnector.INTERSECTION);
-				newcover = x.getCoveredExtent();
+				newcover = ((AbstractExtent)x).getCoveredExtent();
 				gain = (newcover / origcover) - previouscoverage;
 				this.gain = Double.isNaN(this.gain) ? gain : this.gain * gain;
 				return new Pair<>(newcover == 0 ? null : x, newcover / origcover);

@@ -18,3 +18,10 @@ void contextualize
 {
 	class org.integratedmodelling.klab.clitool.console.commands.unit.Contextualize
 }
+
+void split
+	"Split a unit into a non-extentual part and an extentual part. Pass the unit and 
+	 the extent (AREAL,VOLUMETRIC,LINEAL or TEMPORAL)"
+{
+	class org.integratedmodelling.klab.clitool.console.commands.unit.Split
+}

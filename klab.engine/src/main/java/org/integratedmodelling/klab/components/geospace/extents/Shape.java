@@ -41,6 +41,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.scale.AbstractExtent;
+import org.integratedmodelling.klab.utils.Pair;
 
 import com.vividsolutions.jts.algorithm.ConvexHull;
 import com.vividsolutions.jts.awt.ShapeWriter;
@@ -812,4 +813,11 @@ public class Shape extends AbstractExtent implements IShape {
     public ExtentDimension getExtentDimension() {
         return ExtentDimension.AREAL;
     }
+
+	@Override
+	public Pair<Double, IUnit> getStandardizedDimension(ILocator locator) {
+		// TODO ignoring the locator: should check and throw exceptions
+		return new Pair<>(getStandardizedArea(), Units.INSTANCE.SQUARE_METERS);
+	}
+
 }

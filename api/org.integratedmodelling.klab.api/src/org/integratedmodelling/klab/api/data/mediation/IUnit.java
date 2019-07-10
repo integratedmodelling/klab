@@ -26,7 +26,6 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * Units of measurement. Creation and inquiry methods are provided by
@@ -134,6 +133,6 @@ public interface IUnit extends IValueMediator {
 	 * @param scale
 	 * @return
 	 */
-	Pair<IValueMediator, Boolean> getContextualizationFactor(IObservable observable, IScale scale, ILocator locator);
+	IValueMediator getContextualizingUnit(IObservable observable, IScale scale, ILocator locator);
 
 }

@@ -218,6 +218,17 @@ public interface IMetadata extends IParameters<String> {
 	 */
 	public static final String IM_NOTES = "im:notes";
 
+	/**
+	 * Tags concepts that annotate physical states that don't need units 
+	 * because of adopting rescaling traits.
+	 */
+	public static final String IM_IS_RESCALED = "im:is-rescaled";
+	
+	/**
+	 * Tags those extensive observables that are actually intensive because
+	 * the observation is of an inherent countable.
+	 */
+	public static final String IM_RESCALES_INHERENT = "im:rescales-inherent";
 	
 	/** The Constant KLAB_LINE_COLOR. */
 	/*

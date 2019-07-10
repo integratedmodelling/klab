@@ -117,7 +117,7 @@ public class ShowInfo implements ICommand {
             ret += "Traits:\n";
             for (IConcept trait : allTraits) {
                 ret += "    " + trait.getDefinition()
-                        + (dirTraits.contains(trait) ? " [direct]" : " [indirect]") + "\n";
+                        + (dirTraits.contains(trait) ? " [direct]" : " [indirect]") + " " + ((Concept)trait).getTypeSet() + "\n";
             }
         }
 
@@ -129,6 +129,11 @@ public class ShowInfo implements ICommand {
                 ret += "    " + trait.getDefinition()
                         + (dirRoles.contains(trait) ? " [direct]" : " [indirect]") + "\n";
             }
+        }
+        
+        ret += "Metadata:\n";
+        for (String key : concept.getMetadata().keySet()) {
+        	ret += "   " + key + ": " + concept.getMetadata().get(key) + "\n";
         }
 
         return ret;

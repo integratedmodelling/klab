@@ -18,7 +18,9 @@ package org.integratedmodelling.klab.api.observations.scale;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * A {@code IExtent} is a semantically aware {@link Dimension geometry
@@ -87,14 +89,13 @@ public interface IExtent extends ILocator, ITopology<IExtent>, Iterable<IExtent>
      * @return the boundary.
      */
     IExtent getBoundingExtent();
-
+    
     /**
-     * Return a double that describes the extent of this topological object. It
-     * should only be used to compare objects of the same type.
-     *
-     * @return the covered extent
+     * Return the standardized (SI) dimension of the extent at the passed locator,
+     * 
+     * @return
      */
-    double getCoveredExtent();
+    Pair<Double, IUnit> getStandardizedDimension(ILocator locator);
 
     /**
      * If this extent specifies a larger portion of the topology than the modeled

@@ -1,15 +1,9 @@
 package org.integratedmodelling.klab.clitool.console.commands.unit;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.klab.Units;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.data.mediation.IUnit.Contextualization;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
@@ -18,10 +12,6 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.clitool.api.ICommand;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.mediation.Unit;
-import org.integratedmodelling.klab.utils.MapUtils;
-import org.integratedmodelling.klab.utils.Pair;
-
-import com.google.common.collect.Sets;
 
 /**
  * Print all the possible contextualizations of a unit into a geometry, possibly

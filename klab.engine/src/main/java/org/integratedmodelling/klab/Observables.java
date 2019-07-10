@@ -475,13 +475,13 @@ public enum Observables implements IObservableService {
 		/*
 		 * inherit units or currencies if needed. Scaling is left to the mediators.
 		 */
-		if (Units.INSTANCE.needUnits(from) && from.getUnit() == null) {
+		if (Units.INSTANCE.needsUnits(from) && from.getUnit() == null) {
 			throw new IllegalStateException(
 					"Source observable has no units: " + from
 							+ " mediating to " + to);
 		}
 		
-		if (Units.INSTANCE.needUnits(to) && to.getUnit() == null) {
+		if (Units.INSTANCE.needsUnits(to) && to.getUnit() == null) {
 			to = ((Observable)to).withUnit(from.getUnit());
 		}
 

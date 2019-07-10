@@ -9,7 +9,9 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -43,6 +45,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.scale.Extent;
 import org.integratedmodelling.klab.scale.Scale.Mediator;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.collections.IterableAdapter;
 import org.integratedmodelling.klab.utils.collections.IteratorAdapter;
 
@@ -881,4 +884,11 @@ public class Space extends Extent implements ISpace {
     public ExtentDimension getExtentDimension() {
         return ExtentDimension.AREAL;
     }
+    
+	@Override
+	public Pair<Double, IUnit> getStandardizedDimension(ILocator locator) {
+		// TODO
+		return new Pair<>(getStandardizedArea(), Units.INSTANCE.SQUARE_METERS);
+	}
+
 }

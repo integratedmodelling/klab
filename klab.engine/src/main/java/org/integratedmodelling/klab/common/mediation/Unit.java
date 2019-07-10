@@ -25,18 +25,20 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.measure.converter.UnitConverter;
+import javax.measure.unit.Dimension;
+import javax.measure.unit.ProductUnit;
 import javax.measure.unit.UnitFormat;
 
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
+import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
@@ -219,18 +221,181 @@ public class Unit implements IUnit {
 		return aggregatedDimensions;
 	}
 
+	/**
+	 * Problem is: if we know it's extentual but it's been declared in the
+	 * factorized form, we must find the spatial unit that it was divided by, i.e.
+	 * the one that will legitimately make it extentual in that dimension.
+	 * 
+	 * @param extent
+	 *            the extent unit. This will assume that the unit DOES contain it
+	 *            even if it's not explicitly declared in the unit.
+	 * @return
+	 */
+	public IUnit getExtentUnit(ExtentDimension extent) {
+
+		IUnit ret = null;
+		switch (extent) {
+		case AREAL:
+			ret = Units.INSTANCE.getArealExtentUnit(this);
+			if (ret == null) {
+				Pair<javax.measure.unit.Unit<?>, Integer> uret = getUnit(Dimension.LENGTH);
+				// must be 1, i.e. a volume divided by area
+				if (uret != null && uret.getSecond() == 1) {
+					return new Unit(uret.getFirst().pow(2));
+				}
+			}
+		case LINEAL:
+			ret = Units.INSTANCE.getLengthExtentUnit(this);
+			if (ret == null) {
+				Pair<javax.measure.unit.Unit<?>, Integer> uret = getUnit(Dimension.LENGTH);
+				// must be 2, i.e. a volume divided by lenght, or 2 (area by length)
+				if (uret != null && (uret.getSecond() == 2 || uret.getSecond() == 1)) {
+					return new Unit(uret.getFirst().root(1));
+				}
+			}
+		case TEMPORAL:
+			ret = Units.INSTANCE.getTimeExtentUnit(this);
+			// AAGH
+		case VOLUMETRIC:
+			ret = Units.INSTANCE.getVolumeExtentUnit(this);
+			// AAGH
+		case PUNTAL:
+		case CONCEPTUAL:
+		default:
+			break;
+		}
+		return ret;
+	}
+
+	private Dimension getUnitDimension(ExtentDimension dimension) {
+		switch (dimension) {
+		case AREAL:
+		case LINEAL:
+		case VOLUMETRIC:
+			return Dimension.LENGTH;
+		case TEMPORAL:
+			return Dimension.TIME;
+		case CONCEPTUAL:
+		case PUNTAL:
+		default:
+			break;
+
+		}
+		return Dimension.NONE;
+	}
+
+//	public int getActualPower(javax.measure.unit.Unit<?> unit) {
+//		int ret = 1;
+//		if (unit instanceof ProductUnit) {
+//			for (int i = 0; i < ((ProductUnit<?>) _unit).getUnitCount(); i++) {
+//				ret *= getActualPower(((ProductUnit<?>) _unit).getUnit(i)) * ((ProductUnit<?>) _unit).getUnitPow(i);
+//			}
+//		}
+//		return ret;
+//	}
+
+	/**
+	 * Assuming the unit is distributed over the passed extent, split the unit from
+	 * the extent and return them separately. This will also infer spatial unit if
+	 * called on the factorized form.
+	 * 
+	 * @param dimension
+	 * @return
+	 */
+	public Pair<Unit, Unit> splitExtent(ExtentDimension dimension) {
+
+		Dimension dim = getUnitDimension(dimension);
+
+		if (dim == Dimension.NONE) {
+			return new Pair<>(this, null);
+		}
+
+		List<javax.measure.unit.Unit<?>> components = new ArrayList<>();
+		List<Integer> powers = new ArrayList<>();
+		javax.measure.unit.Unit<?> extentual = null;
+		int dimensionality = dimension.dimensionality;
+		Dimension powered = dim.pow(dimensionality);
+		boolean raiseExtentual = false;
+		
+		/*
+		 * split into components, keeping the extentual component separated
+		 */
+		int n = _unit instanceof ProductUnit ? ((ProductUnit<?>) _unit).getUnitCount() : 1;
+		for (int i = 0; i < n; i++) {
+
+			javax.measure.unit.Unit<?> component = _unit instanceof ProductUnit ? ((ProductUnit<?>) _unit).getUnit(i)
+					: _unit;
+			int power = _unit instanceof ProductUnit ? ((ProductUnit<?>) _unit).getUnitPow(i) : 1;
+
+			if (component.getDimension().equals(dim) && power == -dimensionality) {
+				extentual = component;
+				raiseExtentual = true;
+			} else if (component.getDimension().equals(powered) && power == -1) {
+				extentual = component;
+			} else {
+				components.add(component);
+				powers.add(power);
+			}
+		}
+
+		/*
+		 * if the extentual component wasn't found, there must be one of the same
+		 * dimension that has been yielded by dividing by the same
+		 */
+		if (extentual == null) {
+			for (int i = 0; i < components.size(); i++) {
+				if (components.get(i).getDimension() == dim) {
+					extentual = components.get(i);
+					powers.set(i, powers.get(i) + dimensionality);
+					raiseExtentual = true;
+				}
+			}
+		}
+
+		if (extentual /* still */ == null) {
+			return new Pair<>(this, null);
+		}
+
+		/*
+		 * reconstruct the unit with the new dimensionality
+		 */
+		javax.measure.unit.Unit<?> decontextualized = components.get(0).pow(powers.get(0));
+		for (int i = 1; i < components.size(); i++) {
+			decontextualized = decontextualized.times(components.get(i).pow(powers.get(i)));
+		}
+
+		return new Pair<>(new Unit(decontextualized), new Unit(raiseExtentual ? extentual.pow(dimensionality) : extentual));
+	}
+
+	// get unit component with given dimension and return the power it's at
+	public Pair<javax.measure.unit.Unit<?>, Integer> getUnit(Dimension dimension) {
+
+		if (_unit instanceof ProductUnit<?>) {
+			ProductUnit<?> pu = (ProductUnit<?>) _unit;
+			for (int i = 0; i < pu.getUnitCount(); i++) {
+				javax.measure.unit.Unit<?> su = pu.getUnit(i);
+				if (su.getDimension().equals(dimension)) {
+					return new Pair<>(su, pu.getUnitPow(i));
+				}
+			}
+		} else if (_unit.getDimension().equals(dimension)) {
+			return new Pair<>(_unit, 1);
+		}
+		return null;
+	}
+
 	@Override
-	public Pair<IValueMediator, Boolean> getContextualizationFactor(IObservable observable, IScale scale, ILocator locator) {
+	public IValueMediator getContextualizingUnit(IObservable observable, IScale scale, ILocator locator) {
 
 		if (observable.getUnit() == null || !Units.INSTANCE.needsUnitScaling(observable)
 				|| this.isCompatible(observable.getUnit())) {
-			return new Pair<>(this, false);
+			return this;
 		}
 
 		/*
 		 * Contextualize the passed unit and find the base unit that matches it
 		 */
-		Contextualization contextualization = Units.INSTANCE.getDefaultUnitFor(observable.getType())
+		Contextualization contextualization = Units.INSTANCE.getDefaultUnitFor(observable)
 				.contextualize(((Scale) scale).asGeometry(), null);
 
 		IUnit matching = null;
@@ -240,35 +405,39 @@ public class Unit implements IUnit {
 				break;
 			}
 		}
-		
+
 		if (matching == null) {
 			// shouldn't happen
 			throw new IllegalStateException("trying to recontextualize a unit in an incompatible scale");
 		}
-		
+
 		boolean regular = true;
-		IUnit recontextualizer = this;
+		Unit recontextualizer = this;
+		double contextualConversion = 1.0;
 		for (ExtentDimension ed : matching.getAggregatedDimensions()) {
-			recontextualizer = Units.INSTANCE.removeExtents(recontextualizer, Collections.singleton(ed));
-			Dimension dim = ((Scale)scale).asGeometry().getDimension(ed.spatial ? Type.SPACE : Type.TIME);
-			if (dim.size() > 0 || dim.isRegular()) {
-				if (!dim.isRegular()) {
-					regular = false;
-					break;
+
+			IExtent dim = ((Scale) scale).getDimension(ed.spatial ? Type.SPACE : Type.TIME);
+			Pair<Unit, Unit> split = recontextualizer.splitExtent(ed);
+			if (split != null) {
+
+				recontextualizer = split.getFirst();
+				dim.getStandardizedDimension(locator);
+
+				if (dim.size() > 0 || dim.isRegular()) {
+					if (!dim.isRegular()) {
+						regular = false;
+						break;
+					}
 				}
+
 			}
 		}
 
 		/*
 		 * TODO locator size!
 		 */
-		
-		/*
-		 * obtain the individual conversion factor
-		 */
-		double contextualConversion = 1.0/matching.convert(1.0, observable.getUnit()).doubleValue();
 
-		return new Pair<>(new RecontextualizingUnit(this, recontextualizer, contextualConversion), !regular);
+		return new RecontextualizingUnit(this, recontextualizer, contextualConversion, !regular);
 	}
 
 	@Override

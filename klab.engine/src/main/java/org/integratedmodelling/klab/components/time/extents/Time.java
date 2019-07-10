@@ -4,6 +4,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
@@ -19,6 +20,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.scale.AbstractExtent;
 import org.integratedmodelling.klab.scale.Extent;
 import org.integratedmodelling.klab.scale.Scale.Mediator;
+import org.integratedmodelling.klab.utils.Pair;
 import org.joda.time.DateTime;
 
 public class Time extends Extent implements ITime {
@@ -359,4 +361,10 @@ public class Time extends Extent implements ITime {
     public ExtentDimension getExtentDimension() {
         return ExtentDimension.TEMPORAL;
     }
+
+	@Override
+	public Pair<Double, IUnit> getStandardizedDimension(ILocator locator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
