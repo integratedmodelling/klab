@@ -46,7 +46,7 @@ public class MediatingState extends Observation implements IState {
 
 	public Object get(ILocator index) {
 		Object val = delegate.get(index);
-		IValueMediator mediatorTo = to;
+		IValueMediator mediatorTo = rescalingTo == null ? to : rescalingTo;
 		if (convertScale && rescalingTo == null) {
 			mediatorTo = getScaleConverter(index);
 		}
@@ -59,10 +59,10 @@ public class MediatingState extends Observation implements IState {
 	@SuppressWarnings("unchecked")
 	public <T> T get(ILocator index, Class<T> cls) {
 		Object val = delegate.get(index, cls);
-		IValueMediator mediatorTo = to;
+		IValueMediator mediatorTo = rescalingTo == null ? to : rescalingTo;
 		if (convertScale && rescalingTo == null) {
 			mediatorTo = getScaleConverter(index);
-		}
+		} 
 		if (val instanceof Number && (Number.class.isAssignableFrom(cls))) {
 			val = mediatorTo.convert((Number) val, from).doubleValue();
 		}
@@ -73,7 +73,7 @@ public class MediatingState extends Observation implements IState {
 		IUnit unit = from instanceof IUnit ? (IUnit) from : ((ICurrency) from).getUnit();
 		IValueMediator ret = unit.getContextualizingUnit(this.getObservable(), this.getScale(),
 				index);
-		if (!(ret instanceof RecontextualizingUnit && ((RecontextualizingUnit)ret).variesByLocation())) {
+		if (ret instanceof RecontextualizingUnit && !((RecontextualizingUnit)ret).variesByLocation()) {
 			rescalingTo = ret;
 		}
 		return ret;

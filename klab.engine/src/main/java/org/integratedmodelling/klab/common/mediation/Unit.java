@@ -284,15 +284,16 @@ public class Unit implements IUnit {
 		return Dimension.NONE;
 	}
 
-//	public int getActualPower(javax.measure.unit.Unit<?> unit) {
-//		int ret = 1;
-//		if (unit instanceof ProductUnit) {
-//			for (int i = 0; i < ((ProductUnit<?>) _unit).getUnitCount(); i++) {
-//				ret *= getActualPower(((ProductUnit<?>) _unit).getUnit(i)) * ((ProductUnit<?>) _unit).getUnitPow(i);
-//			}
-//		}
-//		return ret;
-//	}
+	// public int getActualPower(javax.measure.unit.Unit<?> unit) {
+	// int ret = 1;
+	// if (unit instanceof ProductUnit) {
+	// for (int i = 0; i < ((ProductUnit<?>) _unit).getUnitCount(); i++) {
+	// ret *= getActualPower(((ProductUnit<?>) _unit).getUnit(i)) *
+	// ((ProductUnit<?>) _unit).getUnitPow(i);
+	// }
+	// }
+	// return ret;
+	// }
 
 	/**
 	 * Assuming the unit is distributed over the passed extent, split the unit from
@@ -316,7 +317,7 @@ public class Unit implements IUnit {
 		int dimensionality = dimension.dimensionality;
 		Dimension powered = dim.pow(dimensionality);
 		boolean raiseExtentual = false;
-		
+
 		/*
 		 * split into components, keeping the extentual component separated
 		 */
@@ -364,7 +365,8 @@ public class Unit implements IUnit {
 			decontextualized = decontextualized.times(components.get(i).pow(powers.get(i)));
 		}
 
-		return new Pair<>(new Unit(decontextualized), new Unit(raiseExtentual ? extentual.pow(dimensionality) : extentual));
+		return new Pair<>(new Unit(decontextualized),
+				new Unit(raiseExtentual ? extentual.pow(dimensionality) : extentual));
 	}
 
 	// get unit component with given dimension and return the power it's at
@@ -418,10 +420,12 @@ public class Unit implements IUnit {
 
 			IExtent dim = ((Scale) scale).getDimension(ed.spatial ? Type.SPACE : Type.TIME);
 			Pair<Unit, Unit> split = recontextualizer.splitExtent(ed);
-			if (split != null) {
+			if (split != null && split.getSecond() != null) {
 
 				recontextualizer = split.getFirst();
-				dim.getStandardizedDimension(locator);
+				Pair<Double, IUnit> dimsize = dim.getStandardizedDimension(locator);
+				contextualConversion *= split.getSecond().convert(dimsize.getFirst(), dimsize.getSecond())
+						.doubleValue();
 
 				if (dim.size() > 0 || dim.isRegular()) {
 					if (!dim.isRegular()) {
@@ -437,7 +441,7 @@ public class Unit implements IUnit {
 		 * TODO locator size!
 		 */
 
-		return new RecontextualizingUnit(this, recontextualizer, contextualConversion, !regular);
+		return new RecontextualizingUnit((Unit)observable.getUnit(), recontextualizer, contextualConversion, !regular);
 	}
 
 	@Override
