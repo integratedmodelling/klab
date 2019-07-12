@@ -6,11 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
-import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IPrototype;
@@ -49,7 +47,6 @@ import org.integratedmodelling.klab.api.services.IDocumentationService;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.Urns;
-import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -127,9 +124,6 @@ public class Model extends KimObject implements IModel {
 		this.setInactive(model.isInactive());
 
 		setDeprecated(model.isDeprecated() || namespace.isDeprecated());
-
-		// TODO report observable errors (e.g. UNITS) that are currently ignored (they
-		// just suppress other errors)
 
 		for (IKimObservable observable : model.getObservables()) {
 			if (observable.hasAttributeIdentifier()) {
@@ -269,6 +263,9 @@ public class Model extends KimObject implements IModel {
 
 	private void validateUnits(IObservable observable, IMonitor monitor) {
 		
+		// for debugging only
+		((Observable)observable).setOriginatingModelId(this.getName());
+		
 		if (!Units.INSTANCE.needsUnits(observable) && observable.getUnit() != null) {
 			/*
 			 * this is pretty much guaranteed to result from rescaling, as the validator
@@ -301,7 +298,7 @@ public class Model extends KimObject implements IModel {
 				return;
 			}
 
-			Contextualization contextualization = baseUnit.contextualize(this.geometry,
+			Contextualization contextualization = Units.INSTANCE.getContextualization(baseUnit, this.geometry,
 					getExtentConstraints(observable, monitor));
 
 			/*

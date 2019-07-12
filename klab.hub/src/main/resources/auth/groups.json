@@ -32,14 +32,14 @@
 			{
 				"separator": false,
 				"label": "Organic Carbon Mass",
-				"observable": "chemistry:Organic chemistry:Carbon im:Mass in t/ha",
+				"observable": "chemistry:Organic chemistry:Carbon im:Mass",
 				"description": "The total amount of stored carbon originating from ecosystem processes. Includes organic matter in the soil, roots and aerial vegetation.",
 				"semantics": "QUALITY"
 			},
 			{
 				"separator": false,
 				"label": "Vegetation Carbon Mass",
-				"observable": "ecology:Vegetation chemistry:Carbon im:Mass in t/ha",
+				"observable": "ecology:Vegetation chemistry:Carbon im:Mass",
 				"description": "The total amount of stored carbon in vegetation, including roots and aerial parts.",
 				"semantics": "QUALITY"
 			},
@@ -123,7 +123,7 @@
 			{
 				"separator": false,
 				"label": "Value of Outdoor Recreation",
-				"observable": "value of behavior:Outdoor behavior:Recreation 0 to 1",
+				"observable": "value of behavior:Outdoor behavior:Recreation",
 				"description": "The accrued value of outdoor recreation, combining supply and demand in each cell through a Cobb-Douglas function.",
 				"semantics": "QUALITY"
 			},
@@ -137,14 +137,14 @@
 			{
 				"separator": false,
 				"label": "Demanded value of Outdoor Recreation",
-				"observable": "ses:Demanded value of behavior:Outdoor behavior:Recreation 0 to 2",
+				"observable": "ses:Demanded value of behavior:Outdoor behavior:Recreation",
 				"description": "The demand for outdoors recreation based on population density and travel time to attractive natural areas.",
 				"semantics": "QUALITY"
 			},
 			{
 				"separator": false,
 				"label": "Potential Value of Outdoor Recreation",
-				"observable": "im:Potential value of behavior:Outdoor behavior:Recreation 1 to 9",
+				"observable": "im:Potential value of behavior:Outdoor behavior:Recreation",
 				"description": "The Recreation Opportunity Spectrum, or the potential value based on natural attractiveness and accessibility of each cell.",
 				"semantics": "QUALITY"
 			},
@@ -163,14 +163,14 @@
 			{
 				"separator": false,
 				"label": "Retained Soil Mass caused by Vegetation",
-				"observable": "im:Retained soil:Soil im:Mass caused by ecology:Vegetation in t/ha",
+				"observable": "im:Retained soil:Soil im:Mass caused by ecology:Vegetation",
 				"description": "The retained sediment mass due to the effect of vegetation, in tons per hectare.",
 				"semantics": "QUALITY"
 			},
 			{
 				"separator": false,
 				"label": "Potential Removed Soil Mass",
-				"observable": "im:Potential (im:Removed soil:Soil im:Mass) in t/ha",
+				"observable": "im:Potential (im:Removed soil:Soil im:Mass)",
 				"description": "The result of applying the Revised Universal Soil Loss equation, representing total sediment loss.",
 				"semantics": "QUALITY"
 			},

@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.clitool.console.commands.unit;
 
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.clitool.api.ICommand;
@@ -34,7 +35,7 @@ public class Split implements ICommand {
 			i++;
 		}
 
-		Pair<Unit, Unit> split = unit.splitExtent(dim);
+		Pair<IUnit, IUnit> split = unit.splitExtent(dim);
 
 		ret += "Decontextualized unit: " + split.getFirst() + "\n"; 
 		ret += "Distribution unit:     " + split.getSecond(); 

@@ -1,9 +1,12 @@
 package org.integratedmodelling.klab;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,10 +16,12 @@ import javax.measure.unit.ProductUnit;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.data.mediation.IUnit.Contextualization;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
+import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.services.IUnitService;
@@ -24,6 +29,9 @@ import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
+import org.integratedmodelling.klab.scale.Scale;
+
+import com.google.common.collect.Sets;
 
 public enum Units implements IUnitService {
 
@@ -475,7 +483,7 @@ public enum Units implements IUnitService {
 	public void dump(IUnit unit, PrintStream out) {
 
 		javax.measure.unit.Unit<?> iunit = ((Unit) unit).getUnit();
-		
+
 		out.println("unit " + ((Unit) unit).getUnit());
 
 		// if (_modifier != null)
@@ -486,7 +494,7 @@ public enum Units implements IUnitService {
 		out.println("is" + (isLengthDensity(unit) ? " " : " not ") + "a lenght density");
 		out.println("is" + (isArealDensity(unit) ? " " : " not ") + "an areal density");
 		out.println("is" + (isVolumeDensity(unit) ? " " : " not ") + "a volumetric density");
-		
+
 		if (iunit instanceof ProductUnit<?>) {
 			out.println("Product of:");
 			ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
@@ -627,4 +635,97 @@ public enum Units implements IUnitService {
 		return needsUnits(observable) && !observable.is(Type.INTENSIVE_PROPERTY)
 				&& !observable.getType().getMetadata().get(IMetadata.IM_RESCALES_INHERENT, Boolean.FALSE);
 	}
+
+	/**
+	 * Contextualize this observable (with units) to the passed geometry, returning
+	 * a descriptor that contains all the acceptable <b>base</b> units paired with
+	 * the set of extents that are aggregated in them. The descriptor also contains
+	 * a chosen unit that corresponds to an optional set of constraints, pairing a
+	 * dimension to a choice of extensive (aggregated) or intensive (distributed).
+	 * If the constraints are null, the chosen unit is the one that is distributed
+	 * over all the extents in the geometry.
+	 * 
+	 * @param geometry
+	 *            a scale or geometry to contextualize to
+	 * @param constraints
+	 *            a map of requested constraints on the chosen unit (may be null)
+	 * @return
+	 */
+	public Contextualization getContextualization(IObservable observable, IGeometry geometry,
+			Map<ExtentDimension, ExtentDistribution> constraints) {
+
+		if (geometry instanceof Scale) {
+			geometry = ((Scale) geometry).asGeometry();
+		}
+
+		IUnit unit = getDefaultUnitFor(observable);
+
+		return getContextualization(unit, geometry, constraints);
+	}
+	
+	public Contextualization getContextualization(IUnit baseUnit, IGeometry geometry,
+			Map<ExtentDimension, ExtentDistribution> constraints) {
+		
+		/*
+		 * produce all possible base units: gather the extents in the geometry
+		 */
+		Set<ExtentDimension> aggregatable = new HashSet<>();
+		for (IGeometry.Dimension dimension : geometry.getDimensions()) {
+			if (dimension.size() > 1 || dimension.isRegular()) {
+				aggregatable.add(dimension.getExtentDimension());
+			}
+		}
+
+		IUnit fullyContextualized = contextualize(baseUnit, aggregatable);
+
+		List<Unit> potentialUnits = new ArrayList<>();
+		for (Set<ExtentDimension> set : Sets.powerSet(aggregatable)) {
+			Unit aggregated = (Unit) Units.INSTANCE.removeExtents(fullyContextualized, set);
+			potentialUnits.add(aggregated.withAggregatedDimensions(set));
+		}
+
+		IUnit chosen = null;
+
+		if (constraints == null || constraints.isEmpty()) {
+			chosen = fullyContextualized;
+		} else {
+			Set<ExtentDimension> whitelist = new HashSet<>();
+			Set<ExtentDimension> blacklist = new HashSet<>();
+			for (ExtentDimension d : constraints.keySet()) {
+				if (!aggregatable.contains(d)) {
+					continue;
+				}
+				if (constraints.get(d) == ExtentDistribution.EXTENSIVE) {
+					whitelist.add(d);
+				} else {
+					blacklist.add(d);
+				}
+			}
+
+			for (Unit punit : potentialUnits) {
+				if (Sets.intersection(punit.getAggregatedDimensions(), whitelist).size() == whitelist.size()
+						&& Sets.intersection(punit.getAggregatedDimensions(), blacklist).size() == 0) {
+					chosen = punit;
+					break;
+				}
+			}
+		}
+
+		final Set<IUnit> candidates = new HashSet<IUnit>(potentialUnits);
+		final IUnit correctUnit = chosen;
+
+		return new Contextualization() {
+
+			@Override
+			public IUnit getChosenUnit() {
+				return correctUnit;
+			}
+
+			@Override
+			public Collection<IUnit> getCandidateUnits() {
+				return candidates;
+			}
+		};
+	}
+
 }

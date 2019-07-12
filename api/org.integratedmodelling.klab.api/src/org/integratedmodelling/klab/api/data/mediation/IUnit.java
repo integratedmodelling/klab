@@ -24,12 +24,15 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
-import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * Units of measurement. Creation and inquiry methods are provided by
  * {@link org.integratedmodelling.klab.api.services.IUnitService}.
+ * 
+ * Much more complex than (not-really-)standard JRS-275 units due to the need of
+ * scale awareness and semantic-driven value aggregation and propagation.
  *
  * @author Ferd
  * @version $Id: $Id
@@ -101,38 +104,51 @@ public interface IUnit extends IValueMediator {
 	 */
 	Set<ExtentDimension> getAggregatedDimensions();
 
-	/**
-	 * Contextualize this <em>base unit</em> to the passed geometry, returning a
-	 * descriptor that contains all the acceptable units paired with the set of
-	 * extents that are aggregated in them. The descriptor also contains a chosen
-	 * unit that corresponds to an optional set of constraints, pairing a dimension
-	 * to a choice of extensive (aggregated) or intensive (distributed). If the
-	 * constraints are null, the chosen unit is the one that is distributed over all
-	 * the extents in the geometry.
-	 * <p>
-	 * In order to work properly, this must be called on the <b>DEFAULT BASE
-	 * UNIT</b> of an observable, stripped of any contextualization.
-	 * 
-	 * @param geometry
-	 *            a geometry to contextualize to
-	 * @param constraints
-	 *            a map of requested constraints on the chosen unit (may be null)
-	 * @return
-	 */
-	Contextualization contextualize(IGeometry geometry, Map<ExtentDimension, ExtentDistribution> constraints);
+//	/**
+//	 * Contextualize this <em>base unit</em> to the passed geometry, returning a
+//	 * descriptor that contains all the acceptable units paired with the set of
+//	 * extents that are aggregated in them. The descriptor also contains a chosen
+//	 * unit that corresponds to an optional set of constraints, pairing a dimension
+//	 * to a choice of extensive (aggregated) or intensive (distributed). If the
+//	 * constraints are null, the chosen unit is the one that is distributed over all
+//	 * the extents in the geometry.
+//	 * <p>
+//	 * In order to work properly, this must be called on the <b>DEFAULT BASE
+//	 * UNIT</b> of an observable, stripped of any contextualization.
+//	 * 
+//	 * @param geometry
+//	 *            a geometry to contextualize to
+//	 * @param constraints
+//	 *            a map of requested constraints on the chosen unit (may be null)
+//	 * @return
+//	 */
+//	Contextualization contextualize(IGeometry geometry, Map<ExtentDimension, ExtentDistribution> constraints);
 
 	/**
-	 * Ppass another unit to obtain the multiplication factor to convert a value to
-	 * this unit in a given scale. Return the factor and whether the factor should
-	 * be re-evaluated at every call.
+	 * Pass an observable with unit to obtain a mediator that will convert a value
+	 * to this unit crossing extentual boundaries over the passed scale, i.e.
+	 * aggregating to this unit over any dimension that is in the original value
+	 * (and in the scale) and is not in this unit.
 	 * 
-	 * E.g. I am m^2; call (m^2).getContextualizationFactor([extensive observable in
-	 * mm], spatialScaleS2) -> factor to convert n mm into (n*factor) m^2
+	 * The specialized mediator returned should have additional API to check if it
+	 * is stable over the scale or needs to be redefined at each locator (i.e., the
+	 * scale is regular or not over the aggregated extent(s)).
 	 * 
 	 * @param observable
 	 * @param scale
 	 * @return
 	 */
 	IValueMediator getContextualizingUnit(IObservable observable, IScale scale, ILocator locator);
+
+	/**
+	 * Assuming the unit is distributed over the passed extent, split the unit from
+	 * the extent and return them separately. This will also infer spatial unit if
+	 * called on the factorized form (e.g. for mm over AREAL, it will return (mm^3,
+	 * mm^2)).
+	 * 
+	 * @param dimension
+	 * @return
+	 */
+	Pair<IUnit, IUnit> splitExtent(ExtentDimension dimension);
 
 }

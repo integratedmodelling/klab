@@ -16,12 +16,8 @@
 package org.integratedmodelling.klab.common.mediation;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.measure.converter.UnitConverter;
@@ -31,21 +27,17 @@ import javax.measure.unit.UnitFormat;
 
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Units;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
-import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
-
-import com.google.common.collect.Sets;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -221,52 +213,6 @@ public class Unit implements IUnit {
 		return aggregatedDimensions;
 	}
 
-	/**
-	 * Problem is: if we know it's extentual but it's been declared in the
-	 * factorized form, we must find the spatial unit that it was divided by, i.e.
-	 * the one that will legitimately make it extentual in that dimension.
-	 * 
-	 * @param extent
-	 *            the extent unit. This will assume that the unit DOES contain it
-	 *            even if it's not explicitly declared in the unit.
-	 * @return
-	 */
-	public IUnit getExtentUnit(ExtentDimension extent) {
-
-		IUnit ret = null;
-		switch (extent) {
-		case AREAL:
-			ret = Units.INSTANCE.getArealExtentUnit(this);
-			if (ret == null) {
-				Pair<javax.measure.unit.Unit<?>, Integer> uret = getUnit(Dimension.LENGTH);
-				// must be 1, i.e. a volume divided by area
-				if (uret != null && uret.getSecond() == 1) {
-					return new Unit(uret.getFirst().pow(2));
-				}
-			}
-		case LINEAL:
-			ret = Units.INSTANCE.getLengthExtentUnit(this);
-			if (ret == null) {
-				Pair<javax.measure.unit.Unit<?>, Integer> uret = getUnit(Dimension.LENGTH);
-				// must be 2, i.e. a volume divided by lenght, or 2 (area by length)
-				if (uret != null && (uret.getSecond() == 2 || uret.getSecond() == 1)) {
-					return new Unit(uret.getFirst().root(1));
-				}
-			}
-		case TEMPORAL:
-			ret = Units.INSTANCE.getTimeExtentUnit(this);
-			// AAGH
-		case VOLUMETRIC:
-			ret = Units.INSTANCE.getVolumeExtentUnit(this);
-			// AAGH
-		case PUNTAL:
-		case CONCEPTUAL:
-		default:
-			break;
-		}
-		return ret;
-	}
-
 	private Dimension getUnitDimension(ExtentDimension dimension) {
 		switch (dimension) {
 		case AREAL:
@@ -283,27 +229,9 @@ public class Unit implements IUnit {
 		}
 		return Dimension.NONE;
 	}
-
-	// public int getActualPower(javax.measure.unit.Unit<?> unit) {
-	// int ret = 1;
-	// if (unit instanceof ProductUnit) {
-	// for (int i = 0; i < ((ProductUnit<?>) _unit).getUnitCount(); i++) {
-	// ret *= getActualPower(((ProductUnit<?>) _unit).getUnit(i)) *
-	// ((ProductUnit<?>) _unit).getUnitPow(i);
-	// }
-	// }
-	// return ret;
-	// }
-
-	/**
-	 * Assuming the unit is distributed over the passed extent, split the unit from
-	 * the extent and return them separately. This will also infer spatial unit if
-	 * called on the factorized form.
-	 * 
-	 * @param dimension
-	 * @return
-	 */
-	public Pair<Unit, Unit> splitExtent(ExtentDimension dimension) {
+	
+	@Override
+	public Pair<IUnit, IUnit> splitExtent(ExtentDimension dimension) {
 
 		Dimension dim = getUnitDimension(dimension);
 
@@ -369,23 +297,6 @@ public class Unit implements IUnit {
 				new Unit(raiseExtentual ? extentual.pow(dimensionality) : extentual));
 	}
 
-	// get unit component with given dimension and return the power it's at
-	public Pair<javax.measure.unit.Unit<?>, Integer> getUnit(Dimension dimension) {
-
-		if (_unit instanceof ProductUnit<?>) {
-			ProductUnit<?> pu = (ProductUnit<?>) _unit;
-			for (int i = 0; i < pu.getUnitCount(); i++) {
-				javax.measure.unit.Unit<?> su = pu.getUnit(i);
-				if (su.getDimension().equals(dimension)) {
-					return new Pair<>(su, pu.getUnitPow(i));
-				}
-			}
-		} else if (_unit.getDimension().equals(dimension)) {
-			return new Pair<>(_unit, 1);
-		}
-		return null;
-	}
-
 	@Override
 	public IValueMediator getContextualizingUnit(IObservable observable, IScale scale, ILocator locator) {
 
@@ -397,8 +308,7 @@ public class Unit implements IUnit {
 		/*
 		 * Contextualize the passed unit and find the base unit that matches it
 		 */
-		Contextualization contextualization = Units.INSTANCE.getDefaultUnitFor(observable)
-				.contextualize(((Scale) scale).asGeometry(), null);
+		Contextualization contextualization = Units.INSTANCE.getContextualization(observable, scale, null);
 
 		IUnit matching = null;
 		for (IUnit unit : contextualization.getCandidateUnits()) {
@@ -419,10 +329,10 @@ public class Unit implements IUnit {
 		for (ExtentDimension ed : matching.getAggregatedDimensions()) {
 
 			IExtent dim = ((Scale) scale).getDimension(ed.spatial ? Type.SPACE : Type.TIME);
-			Pair<Unit, Unit> split = recontextualizer.splitExtent(ed);
+			Pair<IUnit, IUnit> split = recontextualizer.splitExtent(ed);
 			if (split != null && split.getSecond() != null) {
 
-				recontextualizer = split.getFirst();
+				recontextualizer = (Unit)split.getFirst();
 				Pair<Double, IUnit> dimsize = dim.getStandardizedDimension(locator);
 				contextualConversion *= split.getSecond().convert(dimsize.getFirst(), dimsize.getSecond())
 						.doubleValue();
@@ -437,80 +347,76 @@ public class Unit implements IUnit {
 			}
 		}
 
-		/*
-		 * TODO locator size!
-		 */
-
 		return new RecontextualizingUnit((Unit)observable.getUnit(), recontextualizer, contextualConversion, !regular);
 	}
 
-	@Override
-	public Contextualization contextualize(IGeometry geometry, Map<ExtentDimension, ExtentDistribution> constraints) {
+//	@Override
+//	public Contextualization contextualize(IGeometry geometry, Map<ExtentDimension, ExtentDistribution> constraints) {
+//
+//		/*
+//		 * produce all possible base units: gather the extents in the geometry
+//		 */
+//		Set<ExtentDimension> aggregatable = new HashSet<>();
+//		for (IGeometry.Dimension dimension : geometry.getDimensions()) {
+//			if (dimension.size() > 1 || dimension.isRegular()) {
+//				aggregatable.add(dimension.getExtentDimension());
+//			}
+//		}
+//
+//		IUnit fullyContextualized = Units.INSTANCE.contextualize(this, aggregatable);
+//
+//		List<Unit> potentialUnits = new ArrayList<>();
+//		for (Set<ExtentDimension> set : Sets.powerSet(aggregatable)) {
+//			Unit aggregated = (Unit) Units.INSTANCE.removeExtents(fullyContextualized, set);
+//			potentialUnits.add(aggregated.withAggregatedDimensions(set));
+//		}
+//
+//		IUnit chosen = null;
+//
+//		if (constraints == null || constraints.isEmpty()) {
+//			chosen = fullyContextualized;
+//		} else {
+//
+//			Set<ExtentDimension> whitelist = new HashSet<>();
+//			Set<ExtentDimension> blacklist = new HashSet<>();
+//			for (ExtentDimension d : constraints.keySet()) {
+//				if (!aggregatable.contains(d)) {
+//					continue;
+//				}
+//				if (constraints.get(d) == ExtentDistribution.EXTENSIVE) {
+//					whitelist.add(d);
+//				} else {
+//					blacklist.add(d);
+//				}
+//			}
+//
+//			for (Unit punit : potentialUnits) {
+//				if (Sets.intersection(punit.getAggregatedDimensions(), whitelist).size() == whitelist.size()
+//						&& Sets.intersection(punit.getAggregatedDimensions(), blacklist).size() == 0) {
+//					chosen = punit;
+//					break;
+//				}
+//			}
+//		}
+//
+//		final Set<IUnit> candidates = new HashSet<IUnit>(potentialUnits);
+//		final IUnit correctUnit = chosen;
+//
+//		return new Contextualization() {
+//
+//			@Override
+//			public IUnit getChosenUnit() {
+//				return correctUnit;
+//			}
+//
+//			@Override
+//			public Collection<IUnit> getCandidateUnits() {
+//				return candidates;
+//			}
+//		};
+//	}
 
-		/*
-		 * produce all possible base units: gather the extents in the geometry
-		 */
-		Set<ExtentDimension> aggregatable = new HashSet<>();
-		for (IGeometry.Dimension dimension : geometry.getDimensions()) {
-			if (dimension.size() > 1 || dimension.isRegular()) {
-				aggregatable.add(dimension.getExtentDimension());
-			}
-		}
-
-		IUnit fullyContextualized = Units.INSTANCE.contextualize(this, aggregatable);
-
-		List<Unit> potentialUnits = new ArrayList<>();
-		for (Set<ExtentDimension> set : Sets.powerSet(aggregatable)) {
-			Unit aggregated = (Unit) Units.INSTANCE.removeExtents(fullyContextualized, set);
-			potentialUnits.add(aggregated.withAggregatedDimensions(set));
-		}
-
-		IUnit chosen = null;
-
-		if (constraints == null || constraints.isEmpty()) {
-			chosen = fullyContextualized;
-		} else {
-
-			Set<ExtentDimension> whitelist = new HashSet<>();
-			Set<ExtentDimension> blacklist = new HashSet<>();
-			for (ExtentDimension d : constraints.keySet()) {
-				if (!aggregatable.contains(d)) {
-					continue;
-				}
-				if (constraints.get(d) == ExtentDistribution.EXTENSIVE) {
-					whitelist.add(d);
-				} else {
-					blacklist.add(d);
-				}
-			}
-
-			for (Unit punit : potentialUnits) {
-				if (Sets.intersection(punit.getAggregatedDimensions(), whitelist).size() == whitelist.size()
-						&& Sets.intersection(punit.getAggregatedDimensions(), blacklist).size() == 0) {
-					chosen = punit;
-					break;
-				}
-			}
-		}
-
-		final Set<IUnit> candidates = new HashSet<IUnit>(potentialUnits);
-		final IUnit correctUnit = chosen;
-
-		return new Contextualization() {
-
-			@Override
-			public IUnit getChosenUnit() {
-				return correctUnit;
-			}
-
-			@Override
-			public Collection<IUnit> getCandidateUnits() {
-				return candidates;
-			}
-		};
-	}
-
-	private Unit withAggregatedDimensions(Set<ExtentDimension> set) {
+	public Unit withAggregatedDimensions(Set<ExtentDimension> set) {
 		this.aggregatedDimensions.addAll(set);
 		wasContextualized = true;
 		return this;

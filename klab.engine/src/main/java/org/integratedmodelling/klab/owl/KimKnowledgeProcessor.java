@@ -24,7 +24,6 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Traits;
-import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
@@ -263,10 +262,6 @@ public enum KimKnowledgeProcessor {
 
 		String unit = concept.getUnit();
 		String currency = concept.getCurrency();
-		// if (unit != null && unit.contains("@")) {
-		// currency = unit;
-		// unit = null;
-		// }
 
 		if (unit != null) {
 			try {
@@ -386,6 +381,10 @@ public enum KimKnowledgeProcessor {
 		ret.setDeclaration(declaration);
 		ret.setGivenName(defineName);
 
+		if (Units.INSTANCE.needsUnits(ret) && ret.getUnit() == null) {
+			ret.setFluidUnits(true);
+		}
+		
 		for (IKimAnnotation annotation : concept.getAnnotations()) {
 			ret.addAnnotation(new Annotation(annotation));
 		}

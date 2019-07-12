@@ -16,22 +16,25 @@ A *resource* is, in k.LAB, any informational artifact that can be used to produc
 The resource lifecycle
 ----------------------
 
-In k.LAB, resources can be *local* or *public*. The former reside within a k.LAB project, which must be physically available in a workspace in order for the resource to be used. The latter reside on the network and are available to all users that are authorized to use it. Local resources have a URN that starts with "local:". 
+In k.LAB, the general way of pointing to an informational resource is through an identifier that follows the syntax of a Uniform Resource Name (URN). URNs identify anything that can be used in k.LAB: concepts, models, data, computations, results of semantic queries, etc. Running a query will first separate the query into the URNs of the composing concepts, then send the resulting URN to the network, which will assemble data and model components that are annotated in URN-specified models and in turn annotate URN-specified data and computations; assembling these will produce a URN-specified computation (a dataflow) which can be saved as a URN-specified public resource and become available to others. All resources have a status (public or ) ....
+
+....
+
+A URN is a string conforming to the following general pattern:
+
+   urn:klab:<authoritative-node>:<catalog>:<namespace>:<name>
+
+
+
+However, in order to maintain user friendliness and a smooth coding experience, we provide shorthand notations so that you will normally never have to write 'klab:urn:....' in a k.IM file. For example, concept identifiers in k.IM (such as `infrastructure:Road`) are, themselves, informational resources - they specify "pure" knowledge. For example, the concept `geography:Elevation` will internally be known as `urn:klab:im:im:geography:Elevation`. 
+
+You can inquire about the contents of a URN by sending a GET call to any k.LAB node on a network using the /resolve endpoint (and you can always count on the IM partnership's nodes - try clicking on the URN above). If your user has access rights to that URN (and public URNs like the above do not need authentication), this will return a data structure that describes its contents, which you can later retrieve using the /get endpoint. 
+
+In k.LAB, resources can be *local* or *public*. Local resources reside within a k.LAB project, which must be physically available in a workspace in order for the resource to be used. Public resources reside on the network and are available to all users that are authorized to use it. Local resources have a URN that starts with "local:". 
 
 Other URNs
 ----------
 
-Concept identifiers in k.IM (such as `infrastructure:Road`) are, themselves, informational resources - they specify "pure" knowledge, but a concrete concept can be seen as the result of observing its abstract (base) type. For example, .... 
-
-In k.LAB, the general way of pointing to an informational resource is through an identifier that follows the syntax of a Uniform Resource Name (URN):
-
-....
-
-However, in order to maintain user friendliness and a smooth coding experience, we provide shorthand notations so that you will normally never have to write 'klab:urn:....' in a k.IM file. The `namespace:ConceptId` notation you have seen for concepts is one of those. It is internally expanded to
-
-    urn:klab:<authoritative-node>:<worldview>:<namespace>:<conceptId>
-
-For example, the concept `geography:Elevation` will internally be known as `urn:klab:im:im:geography:Elevation`. You can inquire about the contents of a URN by sending a GET call to any k.LAB node on a network using the /resolve endpoint (and you can always count on the IM partnership's nodes - try clicking on the URN above). If your user has access rights to that URN (and public URNs like the above do not need authentication), this will return a data structure that describes its contents, which you can later retrieve using the /get endpoint. 
 
 To better understand the information in a URN descriptor, let's break down the results of resolving typical data URN such as XXX. As you can confirm by clicking on the link, this will produce the following JSON response:
 

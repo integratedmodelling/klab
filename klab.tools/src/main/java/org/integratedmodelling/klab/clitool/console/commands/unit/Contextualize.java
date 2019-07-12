@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.data.mediation.IUnit.Contextualization;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
@@ -16,7 +17,7 @@ import org.integratedmodelling.klab.common.mediation.Unit;
 /**
  * Print all the possible contextualizations of a unit into a geometry, possibly
  * after constraining one or more dimensions to extensive or intensive.
- * .
+ * 
  * @author Ferd
  *
  */
@@ -49,7 +50,7 @@ public class Contextualize implements ICommand {
             i++;
         }
 
-        Contextualization contextualization = unit.contextualize(geometry, forcings);
+        Contextualization contextualization = Units.INSTANCE.getContextualization(unit, geometry, forcings);
         
         ret += "Chosen unit: " + contextualization.getChosenUnit();
         ret += "\nCandidates: ";

@@ -16,14 +16,12 @@ import javax.annotation.Nullable;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kim.api.BinarySemanticOperator;
-import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement.DescriptionType;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
-import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimObservable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -39,7 +37,6 @@ import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService;
@@ -459,55 +456,6 @@ public enum Observables implements IObservableService {
 			return getObservationClass(((IModel) resolvable).getObservables().get(0));
 		}
 		return null;
-	}
-
-	@Override
-	public List<IComputableResource> computeMediators(IObservable from, IObservable to, IScale scale) {
-
-		if (OWL.INSTANCE.isSemantic(from)) {
-			if (!((Observable) to).canResolve((Observable) from)) {
-				throw new IllegalArgumentException(
-						"cannot compute mediators from an observable to another that does not resolve it: " + from
-								+ " can not mediate to " + to);
-			}
-		}
-
-		/*
-		 * inherit units or currencies if needed. Scaling is left to the mediators.
-		 */
-		if (Units.INSTANCE.needsUnits(from) && from.getUnit() == null) {
-			throw new IllegalStateException(
-					"Source observable has no units: " + from
-							+ " mediating to " + to);
-		}
-		
-		if (Units.INSTANCE.needsUnits(to) && to.getUnit() == null) {
-			to = ((Observable)to).withUnit(from.getUnit());
-		}
-
-		List<IComputableResource> ret = new ArrayList<>();
-		IObservable current = from;
-
-		// TODO resolve any conceptual issues (downTo etc) and redefine current until
-		// the current observable has the same core type as the target
-
-		if (current.getType().equals(to.getType())) {
-
-			/*
-			 * can only be a mediator issue, and if we get here, mediators are compatible
-			 */
-			if (current.getCurrency() != null && to.getCurrency() != null
-					&& !current.getCurrency().equals(to.getCurrency())) {
-				ret.add(new ComputableResource(current.getCurrency(), to.getCurrency()));
-			} else if (current.getUnit() != null && to.getUnit() != null && !current.getUnit().equals(to.getUnit())) {
-				ret.add(new ComputableResource(current.getUnit(), to.getUnit()));
-			}
-			if (current.getRange() != null && to.getRange() != null && !current.getRange().equals(to.getRange())) {
-				ret.add(new ComputableResource(current.getRange(), to.getRange()));
-			}
-		}
-
-		return ret;
 	}
 
 	@Override

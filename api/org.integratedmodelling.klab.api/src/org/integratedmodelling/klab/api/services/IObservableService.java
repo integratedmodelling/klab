@@ -14,15 +14,12 @@
 package org.integratedmodelling.klab.api.services;
 
 import java.util.Collection;
-import java.util.List;
 
-import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
@@ -247,34 +244,6 @@ public interface IObservableService {
      * @return a {@link java.lang.Class} object.
      */
     Class<? extends IObservation> getObservationClass(IResolvable resolvable);
-
-    /**
-     * Return service calls producing the sequence of mediators needed to turn an
-     * observable into a compatible one. Scale, if passed, is used to ensure that
-     * conversions include potential aggregation/deaggregation if units over spatial
-     * or temporal extents (density or rates) are matched to absolute units.
-     *
-     * The guaranteed constraint coming in is that to.canResolve(from). If this is
-     * not true, the function throws an IllegalArgumentException.
-     *
-     * If from.observable.equals(to.observable), the mediation can only be a unit or
-     * currency conversion. Otherwise it may involve classification (by/downTo) or
-     * other transformation.
-     *
-     * @param from
-     *            a {@link org.integratedmodelling.klab.api.knowledge.IObservable}
-     *            object.
-     * @param to
-     *            a {@link org.integratedmodelling.klab.api.knowledge.IObservable}
-     *            object.
-     * @param scaleFrom 
-     *            the scale of the observation involving the mediation, or null.
-     * 
-     * @throws java.lang.IllegalArgumentException
-     *             if observables are incompatible
-     * @return a list of mediators, never null, possibly empty
-     */
-    List<IComputableResource> computeMediators(IObservable from, IObservable to, IScale scale);
 
     /**
      * Return the base enum type (quality, subject....) for the passed observable.
