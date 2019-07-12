@@ -710,5 +710,14 @@ public class Observable implements IObservable {
 	public void setOriginatingModelId(String modelId) {
 		this.originatingModelId = modelId;
 	}
+	
+	public String getOriginatingModelId() {
+		return this.originatingModelId;
+	}
+
+	public Observable withCurrency(ICurrency currency) {
+		this.currency = (Currency)currency;
+		return this;
+	}
 
 }

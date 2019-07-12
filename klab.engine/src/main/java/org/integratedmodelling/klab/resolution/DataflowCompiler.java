@@ -52,6 +52,7 @@ import org.integratedmodelling.klab.resolution.ResolutionScope.Link;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.StringUtils;
 import org.integratedmodelling.klab.utils.graph.Graphs;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
@@ -69,13 +70,16 @@ public class DataflowCompiler {
 
 	Graph<IResolvable, ResolutionEdge> resolutionGraph = new DefaultDirectedGraph<>(ResolutionEdge.class);
 	Map<Model, ModelD> modelCatalog = new HashMap<>();
-
-	/*
-	 * maps the original name on each non-reference actuator to the original
-	 * observable coming out of the model. Used to set up mediators in models that
-	 * depend on them.
-	 */
-	Map<String, Observable> observableCatalog = new HashMap<>();
+	// index the original observables as they come out of models that compute them
+	// with the name of the actuator that
+	// does the job.
+	Map<String, Observable> sources = new HashMap<>();
+	// /*
+	// * maps the original name on each non-reference actuator to the original
+	// * observable coming out of the model. Used to set up mediators in models that
+	// * depend on them.
+	// */
+	// Map<String, Observable> observableCatalog = new HashMap<>();
 
 	static class ResolutionEdge {
 
@@ -121,8 +125,6 @@ public class DataflowCompiler {
 		ret.setContext(this.context);
 		ret.setResolutionScope((ResolutionScope) scope);
 
-		Map<String, IUnit> chosenUnits = new HashMap<>();
-
 		for (IResolvable root : getRootResolvables(resolutionGraph)) {
 
 			modelCatalog.clear();
@@ -131,7 +133,7 @@ public class DataflowCompiler {
 			node.root = true;
 			node.initializer = ((ResolutionScope) scope).getContextModel();
 
-			Actuator actuator = node.getActuatorTree(ret, monitor, new HashSet<>());
+			Actuator actuator = node.getActuatorTree(ret, monitor, new HashSet<>(), 0);
 			ret.getActuators().add(actuator);
 
 			// compute coverage
@@ -143,20 +145,14 @@ public class DataflowCompiler {
 			} catch (KlabException e) {
 				monitor.error("error computing dataflow coverage: " + e.getMessage());
 			}
-			
-			/*
-			 * if needed and applicable, finish the computational chain with any mediators
-			 * needed to turn the modeled observable into the requested one.
-			 */
-			if (observableCatalog.containsKey(actuator.getName()) && root instanceof Observable) {
-				
-				/*
-				 * Infer units if necessary
-				 */
-				inferUnits(node.observable, observableCatalog.get(actuator.getName()), node.scale, chosenUnits);
 
-				for (IComputableResource mediator : computeMediators(observableCatalog.get(actuator.getName()),
-						node.observable, node.scale, chosenUnits)) {
+			/*
+			 * Any mediators still needed between the root observable and the source node
+			 * are added at the end of the final computation.
+			 */
+			if (sources.containsKey(actuator.getName()) && root instanceof Observable) {
+				for (IComputableResource mediator : computeMediators(sources.get(actuator.getName()), node.observable, 
+						node.scale)) {
 					actuator.addComputation(mediator);
 				}
 			}
@@ -282,17 +278,15 @@ public class DataflowCompiler {
 		IModel initializer;
 
 		public String toString() {
-			return 
-				(root ? "ROOT " : "")
-				+ ("[" + children.size() + "]")
-				+ ("{" + (models.size() > 0 ? models.iterator().next().model : "") + " #" + models.size() + "}")
-				+ (" " + mode + " ")
-				+ (observer != null ? ("OBSERVER " + observer) : "") 
-				+ (resolvedArtifact != null ? ("RESOLVED " + resolvedArtifact) : "") 
-				+ (observable != null ? ("" + observable) : "");
+			return (root ? "ROOT " : "") + ("[" + children.size() + "]")
+					+ ("{" + (models.size() > 0 ? models.iterator().next().model : "") + " #" + models.size() + "}")
+					+ (" " + mode + " ") + (observer != null ? ("OBSERVER " + observer) : "")
+					+ (resolvedArtifact != null ? ("RESOLVED " + resolvedArtifact) : "")
+					+ (observable != null
+							? ("" + observable + " from " + ((Observable) observable).getOriginatingModelId())
+							: "");
 		}
-		
-		
+
 		/*
 		 * True if the children are partitions (even if there is just one child which
 		 * covers the context partially).
@@ -317,7 +311,7 @@ public class DataflowCompiler {
 
 				this.resolvedArtifact = (ResolvedArtifact) resolvable;
 				this.observable = (Observable) resolvedArtifact.getObservable();
-				observableCatalog.put(this.resolvedArtifact.getArtifactId(),
+				sources.put(this.resolvedArtifact.getArtifactId(),
 						(Observable) this.resolvedArtifact.getArtifact().getObservable());
 			}
 		}
@@ -482,29 +476,115 @@ public class DataflowCompiler {
 		 * get the finished actuator with all the children and the mediation strategy;
 		 * add any last mediation for the root observable if needed
 		 */
-		Actuator getActuatorTree(Dataflow dataflow, IMonitor monitor, Set<ModelD> generated) {
+		Actuator getActuatorTree(Dataflow dataflow, IMonitor monitor, Set<ModelD> generated, int level) {
+
+			System.out.println(StringUtils.spaces(level * 3) + this);
 
 			Actuator ret = createActuator(dataflow, monitor, generated);
 			if (!ret.isReference()) {
+
+				if (Units.INSTANCE.needsUnits(this.observable)) {
+					System.out.println(StringUtils.spaces(level * 3) + "UNITS BEFORE:" + this.observable.getUnit()
+							+ (this.observable.isFluidUnits() ? ", fluid" : ", fixed"));
+				}
+
 				Map<String, IUnit> chosenUnits = new HashMap<>();
+
 				for (Node child : sortChildren()) {
-					/*
-					 * ACHTUNG the pre-resolved observable (from the original artifact) is not in
-					 * the catalog, so mediators for external inputs do not get generated.
-					 */
 					// this may be a new actuator or a reference to an existing one
-					Actuator achild = child.getActuatorTree(dataflow, monitor, generated);
+					Actuator achild = child.getActuatorTree(dataflow, monitor, generated, level + 1);
 					ret.getActuators().add(achild);
-					if (observableCatalog.containsKey(achild.getName())) {
-						for (IComputableResource mediator : computeMediators(observableCatalog.get(achild.getName()),
-								achild.getObservable(), scale, chosenUnits)) {
+					recordUnits(achild, chosenUnits);
+					if (sources.containsKey(achild.getName())) {
+						for (IComputableResource mediator : computeMediators(sources.get(achild.getName()),
+								achild.getObservable(), scale)) {
 							ret.addMediation(mediator, achild);
 						}
 					}
 				}
-				inferUnits(observable, ret.getObservable(), scale, chosenUnits);
+				inferUnits(ret, chosenUnits);
+
+				if (Units.INSTANCE.needsUnits(this.observable)) {
+					System.out.println(StringUtils.spaces(level * 3) + "UNITS AFTER:" + this.observable.getUnit()
+							+ " using " + chosenUnits);
+				}
+
 			}
 			return ret;
+		}
+
+		private void recordUnits(Actuator achild, Map<String, IUnit> chosenUnits) {
+			if (Units.INSTANCE.needsUnits(achild.getObservable()) && achild.getObservable().getUnit() != null) {
+				IUnit baseUnit = Units.INSTANCE.getDefaultUnitFor(achild.getObservable());
+				if (!chosenUnits.containsKey(baseUnit.toString())) {
+					chosenUnits.put(baseUnit.toString(), achild.getObservable().getUnit());
+				}
+			}
+		}
+
+		public void inferUnits(Actuator ret, Map<String, IUnit> chosenUnits) {
+
+			/*
+			 * TODO we should also inherit currencies and ranges if we don't have them
+			 */
+
+			Observable modelObservable = null;
+
+			if (Units.INSTANCE.needsUnits(observable)) {
+
+				for (ModelD md : models) {
+
+					Model model = md.model;
+
+					modelObservable = model.getCompatibleOutput(ret.getObservable());
+					if (modelObservable == null) {
+						continue;
+					}
+
+					IUnit baseUnit = Units.INSTANCE.getDefaultUnitFor(observable);
+					if (observable.isFluidUnits() && observable.getUnit() == null) {
+
+						if (modelObservable.getUnit() != null) {
+							observable.withUnit(modelObservable.getUnit());
+							chosenUnits.put(baseUnit.toString(), modelObservable.getUnit());
+						} else {
+							if (!chosenUnits.containsKey(baseUnit.toString())) {
+								if (Units.INSTANCE.needsUnitScaling(observable)) {
+									Contextualization contextualization = Units.INSTANCE
+											.getContextualization(modelObservable, scale, null);
+									observable.withUnit(contextualization.getChosenUnit());
+								} else {
+									observable.withUnit(baseUnit);
+								}
+								chosenUnits.put(baseUnit.toString(), observable.getUnit());
+							} else {
+								observable.withUnit(chosenUnits.get(baseUnit.toString()));
+							}
+						}
+					} else if (observable.getUnit() == null) {
+						observable.withUnit(modelObservable.getUnit() == null ? baseUnit : modelObservable.getUnit());
+						chosenUnits.put(baseUnit.toString(), observable.getUnit());
+					}
+				}
+
+				if (modelObservable.getUnit() == null) {
+					/*
+					 * it's a fluid unit; find it in the unit catalog and use a new observable with the
+					 * unit to compute mediations. If it's not in there, mediator computation will
+					 * throw an exception.
+					 */
+					IUnit baseUnit = Units.INSTANCE.getDefaultUnitFor(observable);
+					modelObservable = new Observable(modelObservable).withUnit(chosenUnits.get(baseUnit.toString()));
+				}
+			}
+
+			/**
+			 * Record the source in the catalog only after any fluid units have been resolved.
+			 */
+			if (modelObservable != null && !sources.containsKey(ret.getName())) {
+				sources.put(ret.getName(), modelObservable);
+			}
+
 		}
 
 		Scale computeCoverage(Scale current) throws KlabException {
@@ -614,7 +694,7 @@ public class DataflowCompiler {
 			if (source instanceof ResolvedArtifact) {
 
 				ret.resolvedArtifact = (ResolvedArtifact) source;
-				observableCatalog.put(ret.resolvedArtifact.getArtifactId(),
+				sources.put(ret.resolvedArtifact.getArtifactId(),
 						new Observable((Observable) ret.resolvedArtifact.getArtifact().getObservable()));
 
 				for (ResolutionEdge o : graph.incomingEdgesOf(source)) {
@@ -631,9 +711,9 @@ public class DataflowCompiler {
 					// only happens when the observable is resolved indirectly
 					compatibleOutput = ret.observable;
 				} else {
-					 compatibleOutput = new Observable(compatibleOutput);
+					compatibleOutput = new Observable(compatibleOutput);
 				}
-				observableCatalog.put(compatibleOutput.getName(), compatibleOutput);
+				// observableCatalog.put(compatibleOutput.getName(), compatibleOutput);
 
 				ModelD md = compileModel(model, /* d.indirectAdapters, */ d.isPartition && honorPartitions);
 				for (ResolutionEdge o : graph.incomingEdgesOf(model)) {
@@ -654,24 +734,6 @@ public class DataflowCompiler {
 		}
 
 		return ret;
-	}
-	
-	public void inferUnits(Observable mainObservable, Observable observable, Scale scale, Map<String, IUnit> chosenUnits) {
-				
-		if (observable.isFluidUnits() && observable.getUnit() == null) {
-			IUnit baseUnit = Units.INSTANCE.getDefaultUnitFor(observable);
-			if (chosenUnits.containsKey(baseUnit.toString())) {
-				Contextualization contextualization = Units.INSTANCE.getContextualization(mainObservable, scale, null);
-				observable.withUnit(contextualization.getChosenUnit());
-			} else {
-				observable.withUnit(chosenUnits.get(baseUnit.toString()));
-			}
-		}
-
-		if (mainObservable.isFluidUnits() && mainObservable.getUnit() == null) {
-			mainObservable.withUnit(observable.getUnit());
-		}
-		
 	}
 
 	/**
@@ -864,8 +926,7 @@ public class DataflowCompiler {
 	 * @param chosenUnits
 	 * @return
 	 */
-	public List<IComputableResource> computeMediators(IObservable from, IObservable to, IScale scale,
-			Map<String, IUnit> chosenUnits) {
+	public List<IComputableResource> computeMediators(Observable from, Observable to, IScale scale) {
 
 		if (OWL.INSTANCE.isSemantic(from)) {
 			if (!((Observable) to).canResolve((Observable) from)) {
@@ -875,37 +936,12 @@ public class DataflowCompiler {
 			}
 		}
 
-		/*
-		 * inherit units or currencies if needed. Scaling is left to the mediators.
-		 */
-		if (Units.INSTANCE.needsUnits(from) && from.getUnit() == null) {
-			throw new IllegalStateException("Source observable has no units: " + from + " mediating to " + to);
-		}
-
-		if (Units.INSTANCE.needsUnits(to)) {
-
-			if (((Observable) to).isFluidUnits()) {
-				/*
-				 * choose any unit that was chosen before, including the contextualization, so
-				 * that we preserve comparability in case of value comparison or operations.
-				 */
-				IUnit baseUnit = Units.INSTANCE.getDefaultUnitFor(to);
-				if (chosenUnits.containsKey(baseUnit.toString())) {
-					to = ((Observable) to).withUnit(chosenUnits.get(baseUnit.toString()));
-				} else {
-					to = ((Observable) to).withUnit(from.getUnit());
-					chosenUnits.put(baseUnit.toString(), to.getUnit());
-				}
-			} else if (to.getUnit() == null) {
-				to = ((Observable) to).withUnit(from.getUnit());
-			}
+		if (Units.INSTANCE.needsUnits(from) && from.getUnit() == null /* && to.getUnit() == null */) {
+			throw new IllegalStateException("Observables need units but have none: " + from + " mediating to " + to);
 		}
 
 		List<IComputableResource> ret = new ArrayList<>();
 		IObservable current = from;
-
-		// TODO resolve any conceptual issues (downTo etc) and redefine current until
-		// the current observable has the same core type as the target
 
 		if (current.getType().equals(to.getType())) {
 

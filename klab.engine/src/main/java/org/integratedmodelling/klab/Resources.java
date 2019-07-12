@@ -957,8 +957,6 @@ public enum Resources implements IResourceService {
 		if (urn.contains(" ") || urn.contains("(")) {
 			IObservable obs = Observables.INSTANCE.declare(urn);
 			if (obs != null) {
-				// this is needed to properly inherit the units from the resolving models
-				((Observable)obs).setFluidUnits(false);
 				// for debug only
 				((Observable)obs).setOriginatingModelId("QUERY: " + urn);
 				return ((Observable) obs);
