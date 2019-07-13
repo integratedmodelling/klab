@@ -39,6 +39,7 @@ import org.integratedmodelling.kim.kim.OwlImport;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.NamespaceImpl#getAnnotations <em>Annotations</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.NamespaceImpl#isProjectPrivate <em>Project Private</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.NamespaceImpl#isPrivate <em>Private</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.NamespaceImpl#isInactive <em>Inactive</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.NamespaceImpl#isScenario <em>Scenario</em>}</li>
@@ -72,6 +73,26 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
    * @ordered
    */
   protected EList<Annotation> annotations;
+
+  /**
+   * The default value of the '{@link #isProjectPrivate() <em>Project Private</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isProjectPrivate()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean PROJECT_PRIVATE_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isProjectPrivate() <em>Project Private</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isProjectPrivate()
+   * @generated
+   * @ordered
+   */
+  protected boolean projectPrivate = PROJECT_PRIVATE_EDEFAULT;
 
   /**
    * The default value of the '{@link #isPrivate() <em>Private</em>}' attribute.
@@ -366,6 +387,29 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
       annotations = new EObjectContainmentEList<Annotation>(Annotation.class, this, KimPackage.NAMESPACE__ANNOTATIONS);
     }
     return annotations;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public boolean isProjectPrivate()
+  {
+    return projectPrivate;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setProjectPrivate(boolean newProjectPrivate)
+  {
+    boolean oldProjectPrivate = projectPrivate;
+    projectPrivate = newProjectPrivate;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.NAMESPACE__PROJECT_PRIVATE, oldProjectPrivate, projectPrivate));
   }
 
   /**
@@ -870,6 +914,8 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
     {
       case KimPackage.NAMESPACE__ANNOTATIONS:
         return getAnnotations();
+      case KimPackage.NAMESPACE__PROJECT_PRIVATE:
+        return isProjectPrivate();
       case KimPackage.NAMESPACE__PRIVATE:
         return isPrivate();
       case KimPackage.NAMESPACE__INACTIVE:
@@ -924,6 +970,9 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
       case KimPackage.NAMESPACE__ANNOTATIONS:
         getAnnotations().clear();
         getAnnotations().addAll((Collection<? extends Annotation>)newValue);
+        return;
+      case KimPackage.NAMESPACE__PROJECT_PRIVATE:
+        setProjectPrivate((Boolean)newValue);
         return;
       case KimPackage.NAMESPACE__PRIVATE:
         setPrivate((Boolean)newValue);
@@ -1002,6 +1051,9 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
       case KimPackage.NAMESPACE__ANNOTATIONS:
         getAnnotations().clear();
         return;
+      case KimPackage.NAMESPACE__PROJECT_PRIVATE:
+        setProjectPrivate(PROJECT_PRIVATE_EDEFAULT);
+        return;
       case KimPackage.NAMESPACE__PRIVATE:
         setPrivate(PRIVATE_EDEFAULT);
         return;
@@ -1072,6 +1124,8 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
     {
       case KimPackage.NAMESPACE__ANNOTATIONS:
         return annotations != null && !annotations.isEmpty();
+      case KimPackage.NAMESPACE__PROJECT_PRIVATE:
+        return projectPrivate != PROJECT_PRIVATE_EDEFAULT;
       case KimPackage.NAMESPACE__PRIVATE:
         return private_ != PRIVATE_EDEFAULT;
       case KimPackage.NAMESPACE__INACTIVE:
@@ -1123,7 +1177,9 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (private: ");
+    result.append(" (projectPrivate: ");
+    result.append(projectPrivate);
+    result.append(", private: ");
     result.append(private_);
     result.append(", inactive: ");
     result.append(inactive);

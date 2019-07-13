@@ -58,8 +58,8 @@ public class EModel extends EKimObject implements IKimModel, EDocumentable {
         return delegate.getObservables();
     }
 
-    public boolean isPrivate() {
-        return delegate.isPrivate();
+    public Scope getScope() {
+        return delegate.getScope();
     }
 
     public Type getType() {

@@ -36,6 +36,7 @@ import org.integratedmodelling.kim.api.IKimStatement;
  */
 public interface IKimObject {
 
+	
 	/**
 	 * The object's ID is its unique name within the namespace. The fully qualified
 	 * name is returned by {@link #getName()}.

@@ -21,13 +21,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IKimNamespace;
+import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.knowledge.IProject;
-import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
@@ -210,12 +210,12 @@ public interface INamespace extends IKimObject {
 	File getLocalFile();
 
 	/**
-	 * If the namespace is private, each model in it is private even if not tagged
-	 * as such.
+	 * Models inherit their scope from the namespace, unless they have one of their
+	 * own. They can only make the scope narrower.
 	 *
 	 * @return whether the whole namespace is private
 	 */
-	boolean isPrivate();
+	Scope getScope();
 
 	/**
 	 * If the namespace is inactive, each model in it is inactive even if not tagged

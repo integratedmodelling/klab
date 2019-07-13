@@ -15,13 +15,11 @@ public interface IKimModel extends IKimActiveStatement {
 
 	List<IKimObservable> getObservables();
 
-	boolean isPrivate();
+	Scope getScope();
 
 	Type getType();
 
 	List<String> getResourceUrns();
-
-//	boolean isAssessmentModel();
 
 	boolean isLearningModel();
 

@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
@@ -80,7 +81,7 @@ public class ModelReference {
 	private String serverId;
 	private String projectUrn;
 	private String projectId;
-	private boolean privateModel;
+	private Scope scope;
 	private String namespaceId;
 	private boolean inScenario;
 	private boolean reification;
@@ -130,7 +131,7 @@ public class ModelReference {
 		ret.serverId = serverId;
 		ret.projectId = projectId;
 		ret.projectUrn = projectUrn;
-		ret.privateModel = privateModel;
+		ret.scope = scope;
 		ret.namespaceId = namespaceId;
 		ret.inScenario = inScenario;
 		ret.reification = reification;
@@ -274,25 +275,6 @@ public class ModelReference {
 	}
 
 	/**
-	 * Checks if is private model.
-	 *
-	 * @return a boolean.
-	 */
-	public boolean isPrivateModel() {
-		return privateModel;
-	}
-
-	/**
-	 * Sets the private model.
-	 *
-	 * @param privateModel
-	 *            the new private model
-	 */
-	public void setPrivateModel(boolean privateModel) {
-		this.privateModel = privateModel;
-	}
-
-	/**
 	 * Gets the namespace id.
 	 *
 	 * @return the namespace id
@@ -308,9 +290,6 @@ public class ModelReference {
 	 *            the new namespace id
 	 */
 	public void setNamespaceId(String namespaceId) {
-//		if (namespaceId.startsWith("file:")) {
-//			System.out.println("HOSTIA");
-//		}
 		this.namespaceId = namespaceId;
 	}
 
@@ -849,6 +828,14 @@ public class ModelReference {
 
 	public void setPriority(int priority) {
 		this.priority = priority;
+	}
+
+	public Scope getScope() {
+		return scope;
+	}
+
+	public void setScope(Scope scope) {
+		this.scope = scope;
 	}
 
 }

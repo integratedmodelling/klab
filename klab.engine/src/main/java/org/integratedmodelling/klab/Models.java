@@ -20,6 +20,7 @@ import org.eclipse.xtext.validation.IResourceValidator;
 import org.eclipse.xtext.validation.Issue;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimNamespace;
+import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.Notifier;
@@ -151,7 +152,7 @@ public enum Models implements IModelService {
 
         try {
             kbox.store(model, monitor);
-            if (!model.isPrivate()) {
+            if (model.getScope() != Scope.NAMESPACE) {
                 Indexer.INSTANCE.index(model.getStatement(), model.getNamespace().getName());
             }
         } catch (Throwable e) {

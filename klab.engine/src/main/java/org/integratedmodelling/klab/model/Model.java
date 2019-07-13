@@ -11,6 +11,7 @@ import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimObservable;
+import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -94,6 +95,7 @@ public class Model extends KimObject implements IModel {
 	private List<IResource> resourcesUsed = new ArrayList<>();
 	private long lastResourceCheck;
 	private boolean available = true;
+	private Scope scope = Scope.PUBLIC;
 
 	// only for the delegate RankedModel
 	protected Model() {
@@ -117,20 +119,22 @@ public class Model extends KimObject implements IModel {
 
 		this.id = model.getName();
 		this.namespace = namespace;
-		this.isPrivate = model.isPrivate();
 		this.instantiator = model.isInstantiator();
 		this.learning = model.isLearningModel();
+		this.scope = model.getScope();
 		this.setErrors(model.isErrors());
 		this.setInactive(model.isInactive());
 
 		setDeprecated(model.isDeprecated() || namespace.isDeprecated());
 
 		for (IKimObservable observable : model.getObservables()) {
+
+			Observable obs = Observables.INSTANCE.declare(observable, monitor);
+
 			if (observable.hasAttributeIdentifier()) {
-				attributeObservables.put(observable.getValue().toString(),
-						Observables.INSTANCE.declare(observable, monitor));
+				attributeObservables.put(observable.getValue().toString(), obs);
 			} else {
-				observables.add(Observables.INSTANCE.declare(observable, monitor));
+				observables.add(obs);
 			}
 		}
 
@@ -156,11 +160,29 @@ public class Model extends KimObject implements IModel {
 			this.resources.add(validate(new ComputableResource(model.getInlineValue()), monitor));
 		}
 
+		if (this.resources.size() > 0) {
+			for (IObservable o : observables) {
+				if (((Observable) o).isFluidUnits()) {
+					monitor.error(
+							"Observables with unspecified units are not allowed in models that produce data through resources",
+							o);
+					setErrors(true);
+				}
+			}
+		}
+
 		/*
 		 * all resources after 'using' or further classification/lookup transformations
 		 */
 		for (IComputableResource resource : model.getContextualization()) {
-			this.resources.add(validate((ComputableResource) resource, monitor));
+			try {
+				this.resources.add(validate((ComputableResource) resource, monitor));
+			} catch (Throwable e) {
+				monitor.error(
+						"Model has resource validation errors",
+						getStatement());
+				setErrors(true);
+			}
 		}
 
 		/*
@@ -262,10 +284,10 @@ public class Model extends KimObject implements IModel {
 	}
 
 	private void validateUnits(IObservable observable, IMonitor monitor) {
-		
+
 		// for debugging only
-		((Observable)observable).setOriginatingModelId(this.getName());
-		
+		((Observable) observable).setOriginatingModelId(this.getName());
+
 		if (!Units.INSTANCE.needsUnits(observable) && observable.getUnit() != null) {
 			/*
 			 * this is pretty much guaranteed to result from rescaling, as the validator
@@ -727,8 +749,8 @@ public class Model extends KimObject implements IModel {
 	}
 
 	@Override
-	public boolean isPrivate() {
-		return isPrivate || namespace.isPrivate() || !isSemantic();
+	public Scope getScope() {
+		return this.scope;
 	}
 
 	/**

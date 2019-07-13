@@ -22,7 +22,8 @@ Statement:
 ;
 
 ModelStatement:
-	 (annotations+=Annotation (annotations+=Annotation)*)? ((inactive?='void')? & (private?='private')?)? model=MODEL_TYPE body=ModelBodyStatement
+	 (annotations+=Annotation (annotations+=Annotation)*)? 
+	 ((inactive?='void')? & ((projectPrivate?='project')? private?='private')?)? model=MODEL_TYPE body=ModelBodyStatement
 ;
 
 DefineStatement:
@@ -234,7 +235,7 @@ VALUE_MODIFIER:
 Namespace:
 	(annotations+=Annotation (annotations+=Annotation)*)?
 	(
-		(private?='private')? & 
+		((projectPrivate?='project')? private?='private')? & 
 		(inactive?='void')?
 	) 
 	('namespace' | scenario?='scenario' | worldviewBound?='worldview') name=PathName (docstring=STRING)? 

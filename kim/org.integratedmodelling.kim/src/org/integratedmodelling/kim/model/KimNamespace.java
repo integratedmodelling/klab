@@ -37,7 +37,6 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 	private IKimProject project;
 	private long timestamp = System.currentTimeMillis();
 	private List<String> imported = new ArrayList<>();
-	private boolean isPrivate = false;
 	private boolean inactive = false;
 	private boolean scenario = false;
 	private List<Pair<String, String>> owlImports = new ArrayList<>();
@@ -46,7 +45,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 	private String testCaseId;
 	private boolean worldviewBound = false;
 	private File file;
-//	private boolean projectKnowledge;
+	private Scope scope = Scope.PUBLIC;
 	private boolean annotationsScanned = false;
 	private Set<String> importsScanned = null;
 	private IKimLoader loader;
@@ -70,7 +69,12 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 		project.addNamespace(this);
 		this.worldviewBound = namespace.isWorldviewBound();
 		// worldview-bound anonymous namespaces are private by design.
-		this.isPrivate = namespace.isPrivate() | namespace.isWorldviewBound();
+		if (namespace.isPrivate()) {
+			scope = namespace.isProjectPrivate() ? Scope.PROJECT : Scope.NAMESPACE;
+		}
+		if (namespace.isWorldviewBound()) {
+			this.scope = Scope.NAMESPACE;
+		}
 		this.inactive = namespace.isInactive();
 		this.scenario = namespace.isScenario();
 		for (OwlImport imp : namespace.getOwlImports()) {
@@ -207,15 +211,6 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 		return imported;
 	}
 	
-	@Override
-	public boolean isPrivate() {
-		return isPrivate;
-	}
-
-	public void setPrivate(boolean isPrivate) {
-		this.isPrivate = isPrivate;
-	}
-
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -357,6 +352,14 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 	
 	public IKimStatement getStatement(String id) {
 		return statementsByName.get(id);
+	}
+
+	public Scope getScope() {
+		return scope;
+	}
+
+	public void setScope(Scope scope) {
+		this.scope = scope;
 	}
 
 }

@@ -177,20 +177,23 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final UnorderedGroup cUnorderedGroup_1 = (UnorderedGroup)cGroup.eContents().get(1);
 		private final Assignment cInactiveAssignment_1_0 = (Assignment)cUnorderedGroup_1.eContents().get(0);
 		private final Keyword cInactiveVoidKeyword_1_0_0 = (Keyword)cInactiveAssignment_1_0.eContents().get(0);
-		private final Assignment cPrivateAssignment_1_1 = (Assignment)cUnorderedGroup_1.eContents().get(1);
-		private final Keyword cPrivatePrivateKeyword_1_1_0 = (Keyword)cPrivateAssignment_1_1.eContents().get(0);
+		private final Group cGroup_1_1 = (Group)cUnorderedGroup_1.eContents().get(1);
+		private final Assignment cProjectPrivateAssignment_1_1_0 = (Assignment)cGroup_1_1.eContents().get(0);
+		private final Keyword cProjectPrivateProjectKeyword_1_1_0_0 = (Keyword)cProjectPrivateAssignment_1_1_0.eContents().get(0);
+		private final Assignment cPrivateAssignment_1_1_1 = (Assignment)cGroup_1_1.eContents().get(1);
+		private final Keyword cPrivatePrivateKeyword_1_1_1_0 = (Keyword)cPrivateAssignment_1_1_1.eContents().get(0);
 		private final Assignment cModelAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cModelMODEL_TYPEParserRuleCall_2_0 = (RuleCall)cModelAssignment_2.eContents().get(0);
 		private final Assignment cBodyAssignment_3 = (Assignment)cGroup.eContents().get(3);
 		private final RuleCall cBodyModelBodyStatementParserRuleCall_3_0 = (RuleCall)cBodyAssignment_3.eContents().get(0);
 		
 		//ModelStatement:
-		//	(annotations+=Annotation annotations+=Annotation*)? (inactive?='void'? & private?='private'?)? model=MODEL_TYPE
-		//	body=ModelBodyStatement;
+		//	(annotations+=Annotation annotations+=Annotation*)? (inactive?='void'? & (projectPrivate?='project'?
+		//	private?='private')?)? model=MODEL_TYPE body=ModelBodyStatement;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(annotations+=Annotation annotations+=Annotation*)? (inactive?='void'? & private?='private'?)? model=MODEL_TYPE
-		//body=ModelBodyStatement
+		//(annotations+=Annotation annotations+=Annotation*)? (inactive?='void'? & (projectPrivate?='project'?
+		//private?='private')?)? model=MODEL_TYPE body=ModelBodyStatement
 		public Group getGroup() { return cGroup; }
 		
 		//(annotations+=Annotation annotations+=Annotation*)?
@@ -208,7 +211,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//Annotation
 		public RuleCall getAnnotationsAnnotationParserRuleCall_0_1_0() { return cAnnotationsAnnotationParserRuleCall_0_1_0; }
 		
-		//(inactive?='void'? & private?='private'?)?
+		//(inactive?='void'? & (projectPrivate?='project'? private?='private')?)?
 		public UnorderedGroup getUnorderedGroup_1() { return cUnorderedGroup_1; }
 		
 		//inactive?='void'?
@@ -217,11 +220,20 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'void'
 		public Keyword getInactiveVoidKeyword_1_0_0() { return cInactiveVoidKeyword_1_0_0; }
 		
-		//private?='private'?
-		public Assignment getPrivateAssignment_1_1() { return cPrivateAssignment_1_1; }
+		//(projectPrivate?='project'? private?='private')?
+		public Group getGroup_1_1() { return cGroup_1_1; }
+		
+		//projectPrivate?='project'?
+		public Assignment getProjectPrivateAssignment_1_1_0() { return cProjectPrivateAssignment_1_1_0; }
+		
+		//'project'
+		public Keyword getProjectPrivateProjectKeyword_1_1_0_0() { return cProjectPrivateProjectKeyword_1_1_0_0; }
+		
+		//private?='private'
+		public Assignment getPrivateAssignment_1_1_1() { return cPrivateAssignment_1_1_1; }
 		
 		//'private'
-		public Keyword getPrivatePrivateKeyword_1_1_0() { return cPrivatePrivateKeyword_1_1_0; }
+		public Keyword getPrivatePrivateKeyword_1_1_1_0() { return cPrivatePrivateKeyword_1_1_1_0; }
 		
 		//model=MODEL_TYPE
 		public Assignment getModelAssignment_2() { return cModelAssignment_2; }
@@ -2602,8 +2614,11 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cAnnotationsAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
 		private final RuleCall cAnnotationsAnnotationParserRuleCall_0_1_0 = (RuleCall)cAnnotationsAssignment_0_1.eContents().get(0);
 		private final UnorderedGroup cUnorderedGroup_1 = (UnorderedGroup)cGroup.eContents().get(1);
-		private final Assignment cPrivateAssignment_1_0 = (Assignment)cUnorderedGroup_1.eContents().get(0);
-		private final Keyword cPrivatePrivateKeyword_1_0_0 = (Keyword)cPrivateAssignment_1_0.eContents().get(0);
+		private final Group cGroup_1_0 = (Group)cUnorderedGroup_1.eContents().get(0);
+		private final Assignment cProjectPrivateAssignment_1_0_0 = (Assignment)cGroup_1_0.eContents().get(0);
+		private final Keyword cProjectPrivateProjectKeyword_1_0_0_0 = (Keyword)cProjectPrivateAssignment_1_0_0.eContents().get(0);
+		private final Assignment cPrivateAssignment_1_0_1 = (Assignment)cGroup_1_0.eContents().get(1);
+		private final Keyword cPrivatePrivateKeyword_1_0_1_0 = (Keyword)cPrivateAssignment_1_0_1.eContents().get(0);
 		private final Assignment cInactiveAssignment_1_1 = (Assignment)cUnorderedGroup_1.eContents().get(1);
 		private final Keyword cInactiveVoidKeyword_1_1_0 = (Keyword)cInactiveAssignment_1_1.eContents().get(0);
 		private final Alternatives cAlternatives_2 = (Alternatives)cGroup.eContents().get(2);
@@ -2692,25 +2707,26 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		// * A namespace may be a scenario - if so, nothing changes except its models will never be used from
 		// * the DB unless the scenario is being computed (should be 'observe ... in scenario ....).
 		// */ Namespace:
-		//	(annotations+=Annotation annotations+=Annotation*)? (private?='private'? & inactive?='void'?) ('namespace' |
-		//	scenario?='scenario' | worldviewBound?='worldview') name=PathName docstring=STRING? (('using' imported+=Import (=>
-		//	',' imported+=Import)*)? & ('imports' owlImports+=OwlImport (',' owlImports+=OwlImport)*)? & ('covering'
-		//	coverage+=Function (=> ',' coverage+=Function)*)? & ('in' 'domain' (rootDomain?='root' | domainConcept=Concept))? &
-		//	('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName*))? & ('version'
-		//	version=VersionNumber)? & ('resolve' ('from' lookupNamespace+=PathName*)? & ('outside'
-		//	blacklistNamespace+=PathName*)? & ('using' weights=Metadata)?)?) ('parameters' parameters=Metadata)? ('metadata'
-		//	metadata=Metadata)?
+		//	(annotations+=Annotation annotations+=Annotation*)? ((projectPrivate?='project'? private?='private')? &
+		//	inactive?='void'?) ('namespace' | scenario?='scenario' | worldviewBound?='worldview') name=PathName docstring=STRING?
+		//	(('using' imported+=Import (=> ',' imported+=Import)*)? & ('imports' owlImports+=OwlImport (','
+		//	owlImports+=OwlImport)*)? & ('covering' coverage+=Function (=> ',' coverage+=Function)*)? & ('in' 'domain'
+		//	(rootDomain?='root' | domainConcept=Concept))? & ('disjoint' 'with' disjointNamespaces+=PathName (','
+		//	disjointNamespaces+=PathName*))? & ('version' version=VersionNumber)? & ('resolve' ('from'
+		//	lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Metadata)?)?)
+		//	('parameters' parameters=Metadata)? ('metadata' metadata=Metadata)?
 		//	//	('documentation' documentation=Metadata)? 
 		//	';';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(annotations+=Annotation annotations+=Annotation*)? (private?='private'? & inactive?='void'?) ('namespace' |
-		//scenario?='scenario' | worldviewBound?='worldview') name=PathName docstring=STRING? (('using' imported+=Import (=> ','
-		//imported+=Import)*)? & ('imports' owlImports+=OwlImport (',' owlImports+=OwlImport)*)? & ('covering'
-		//coverage+=Function (=> ',' coverage+=Function)*)? & ('in' 'domain' (rootDomain?='root' | domainConcept=Concept))? &
-		//('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName*))? & ('version'
-		//version=VersionNumber)? & ('resolve' ('from' lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)?
-		//& ('using' weights=Metadata)?)?) ('parameters' parameters=Metadata)? ('metadata' metadata=Metadata)? //	('documentation' documentation=Metadata)? 
+		//(annotations+=Annotation annotations+=Annotation*)? ((projectPrivate?='project'? private?='private')? &
+		//inactive?='void'?) ('namespace' | scenario?='scenario' | worldviewBound?='worldview') name=PathName docstring=STRING?
+		//(('using' imported+=Import (=> ',' imported+=Import)*)? & ('imports' owlImports+=OwlImport (','
+		//owlImports+=OwlImport)*)? & ('covering' coverage+=Function (=> ',' coverage+=Function)*)? & ('in' 'domain'
+		//(rootDomain?='root' | domainConcept=Concept))? & ('disjoint' 'with' disjointNamespaces+=PathName (','
+		//disjointNamespaces+=PathName*))? & ('version' version=VersionNumber)? & ('resolve' ('from'
+		//lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Metadata)?)?)
+		//('parameters' parameters=Metadata)? ('metadata' metadata=Metadata)? //	('documentation' documentation=Metadata)? 
 		//';'
 		public Group getGroup() { return cGroup; }
 		
@@ -2729,14 +2745,23 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//Annotation
 		public RuleCall getAnnotationsAnnotationParserRuleCall_0_1_0() { return cAnnotationsAnnotationParserRuleCall_0_1_0; }
 		
-		//private?='private'? & inactive?='void'?
+		//(projectPrivate?='project'? private?='private')? & inactive?='void'?
 		public UnorderedGroup getUnorderedGroup_1() { return cUnorderedGroup_1; }
 		
-		//private?='private'?
-		public Assignment getPrivateAssignment_1_0() { return cPrivateAssignment_1_0; }
+		//(projectPrivate?='project'? private?='private')?
+		public Group getGroup_1_0() { return cGroup_1_0; }
+		
+		//projectPrivate?='project'?
+		public Assignment getProjectPrivateAssignment_1_0_0() { return cProjectPrivateAssignment_1_0_0; }
+		
+		//'project'
+		public Keyword getProjectPrivateProjectKeyword_1_0_0_0() { return cProjectPrivateProjectKeyword_1_0_0_0; }
+		
+		//private?='private'
+		public Assignment getPrivateAssignment_1_0_1() { return cPrivateAssignment_1_0_1; }
 		
 		//'private'
-		public Keyword getPrivatePrivateKeyword_1_0_0() { return cPrivatePrivateKeyword_1_0_0; }
+		public Keyword getPrivatePrivateKeyword_1_0_1_0() { return cPrivatePrivateKeyword_1_0_1_0; }
 		
 		//inactive?='void'?
 		public Assignment getInactiveAssignment_1_1() { return cInactiveAssignment_1_1; }
@@ -10744,8 +10769,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//ModelStatement:
-	//	(annotations+=Annotation annotations+=Annotation*)? (inactive?='void'? & private?='private'?)? model=MODEL_TYPE
-	//	body=ModelBodyStatement;
+	//	(annotations+=Annotation annotations+=Annotation*)? (inactive?='void'? & (projectPrivate?='project'?
+	//	private?='private')?)? model=MODEL_TYPE body=ModelBodyStatement;
 	public ModelStatementElements getModelStatementAccess() {
 		return pModelStatement;
 	}
@@ -11042,14 +11067,14 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	// * A namespace may be a scenario - if so, nothing changes except its models will never be used from
 	// * the DB unless the scenario is being computed (should be 'observe ... in scenario ....).
 	// */ Namespace:
-	//	(annotations+=Annotation annotations+=Annotation*)? (private?='private'? & inactive?='void'?) ('namespace' |
-	//	scenario?='scenario' | worldviewBound?='worldview') name=PathName docstring=STRING? (('using' imported+=Import (=>
-	//	',' imported+=Import)*)? & ('imports' owlImports+=OwlImport (',' owlImports+=OwlImport)*)? & ('covering'
-	//	coverage+=Function (=> ',' coverage+=Function)*)? & ('in' 'domain' (rootDomain?='root' | domainConcept=Concept))? &
-	//	('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName*))? & ('version'
-	//	version=VersionNumber)? & ('resolve' ('from' lookupNamespace+=PathName*)? & ('outside'
-	//	blacklistNamespace+=PathName*)? & ('using' weights=Metadata)?)?) ('parameters' parameters=Metadata)? ('metadata'
-	//	metadata=Metadata)?
+	//	(annotations+=Annotation annotations+=Annotation*)? ((projectPrivate?='project'? private?='private')? &
+	//	inactive?='void'?) ('namespace' | scenario?='scenario' | worldviewBound?='worldview') name=PathName docstring=STRING?
+	//	(('using' imported+=Import (=> ',' imported+=Import)*)? & ('imports' owlImports+=OwlImport (','
+	//	owlImports+=OwlImport)*)? & ('covering' coverage+=Function (=> ',' coverage+=Function)*)? & ('in' 'domain'
+	//	(rootDomain?='root' | domainConcept=Concept))? & ('disjoint' 'with' disjointNamespaces+=PathName (','
+	//	disjointNamespaces+=PathName*))? & ('version' version=VersionNumber)? & ('resolve' ('from'
+	//	lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Metadata)?)?)
+	//	('parameters' parameters=Metadata)? ('metadata' metadata=Metadata)?
 	//	//	('documentation' documentation=Metadata)? 
 	//	';';
 	public NamespaceElements getNamespaceAccess() {

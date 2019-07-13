@@ -255,8 +255,7 @@ public class Observable implements IObservable {
 	@Override
 	public ObservationType getObservationType() {
 		if (observationType == null && observable != null) {
-			if (observable.is(Type.CLASS)
-					/* TODO remove the next to start handling attrs properly */ || observable.is(Type.TRAIT)) {
+			if (observable.is(Type.CLASS)) {
 				observationType = ObservationType.CLASSIFICATION;
 			} else if (observable.is(Type.PRESENCE)) {
 				observationType = ObservationType.VERIFICATION;
@@ -275,13 +274,6 @@ public class Observable implements IObservable {
 		}
 		return observationType;
 	}
-
-	// @Override
-	// public boolean isExtensive(IConcept extent) {
-	// return observable != null && unit != null &&
-	// observable.is(Type.EXTENSIVE_PROPERTY)
-	// && Units.INSTANCE.isDensity(unit, extent);
-	// }
 
 	public boolean isOptional() {
 		return optional;

@@ -667,7 +667,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getModelStatement_Private()
+  public EAttribute getModelStatement_ProjectPrivate()
   {
     return (EAttribute)modelStatementEClass.getEStructuralFeatures().get(2);
   }
@@ -677,7 +677,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getModelStatement_Model()
+  public EAttribute getModelStatement_Private()
   {
     return (EAttribute)modelStatementEClass.getEStructuralFeatures().get(3);
   }
@@ -687,9 +687,19 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getModelStatement_Model()
+  {
+    return (EAttribute)modelStatementEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EReference getModelStatement_Body()
   {
-    return (EReference)modelStatementEClass.getEStructuralFeatures().get(4);
+    return (EReference)modelStatementEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -1837,7 +1847,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getNamespace_Private()
+  public EAttribute getNamespace_ProjectPrivate()
   {
     return (EAttribute)namespaceEClass.getEStructuralFeatures().get(1);
   }
@@ -1847,7 +1857,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getNamespace_Inactive()
+  public EAttribute getNamespace_Private()
   {
     return (EAttribute)namespaceEClass.getEStructuralFeatures().get(2);
   }
@@ -1857,7 +1867,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getNamespace_Scenario()
+  public EAttribute getNamespace_Inactive()
   {
     return (EAttribute)namespaceEClass.getEStructuralFeatures().get(3);
   }
@@ -1867,7 +1877,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getNamespace_WorldviewBound()
+  public EAttribute getNamespace_Scenario()
   {
     return (EAttribute)namespaceEClass.getEStructuralFeatures().get(4);
   }
@@ -1877,7 +1887,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getNamespace_Name()
+  public EAttribute getNamespace_WorldviewBound()
   {
     return (EAttribute)namespaceEClass.getEStructuralFeatures().get(5);
   }
@@ -1887,7 +1897,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getNamespace_Docstring()
+  public EAttribute getNamespace_Name()
   {
     return (EAttribute)namespaceEClass.getEStructuralFeatures().get(6);
   }
@@ -1897,9 +1907,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getNamespace_Imported()
+  public EAttribute getNamespace_Docstring()
   {
-    return (EReference)namespaceEClass.getEStructuralFeatures().get(7);
+    return (EAttribute)namespaceEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -1907,7 +1917,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getNamespace_OwlImports()
+  public EReference getNamespace_Imported()
   {
     return (EReference)namespaceEClass.getEStructuralFeatures().get(8);
   }
@@ -1917,7 +1927,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getNamespace_Coverage()
+  public EReference getNamespace_OwlImports()
   {
     return (EReference)namespaceEClass.getEStructuralFeatures().get(9);
   }
@@ -1927,9 +1937,19 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EReference getNamespace_Coverage()
+  {
+    return (EReference)namespaceEClass.getEStructuralFeatures().get(10);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EAttribute getNamespace_RootDomain()
   {
-    return (EAttribute)namespaceEClass.getEStructuralFeatures().get(10);
+    return (EAttribute)namespaceEClass.getEStructuralFeatures().get(11);
   }
 
   /**
@@ -1939,7 +1959,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getNamespace_DomainConcept()
   {
-    return (EReference)namespaceEClass.getEStructuralFeatures().get(11);
+    return (EReference)namespaceEClass.getEStructuralFeatures().get(12);
   }
 
   /**
@@ -1949,7 +1969,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getNamespace_DisjointNamespaces()
   {
-    return (EAttribute)namespaceEClass.getEStructuralFeatures().get(12);
+    return (EAttribute)namespaceEClass.getEStructuralFeatures().get(13);
   }
 
   /**
@@ -1959,7 +1979,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getNamespace_Version()
   {
-    return (EAttribute)namespaceEClass.getEStructuralFeatures().get(13);
+    return (EAttribute)namespaceEClass.getEStructuralFeatures().get(14);
   }
 
   /**
@@ -1969,7 +1989,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getNamespace_LookupNamespace()
   {
-    return (EAttribute)namespaceEClass.getEStructuralFeatures().get(14);
+    return (EAttribute)namespaceEClass.getEStructuralFeatures().get(15);
   }
 
   /**
@@ -1979,7 +1999,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getNamespace_BlacklistNamespace()
   {
-    return (EAttribute)namespaceEClass.getEStructuralFeatures().get(15);
+    return (EAttribute)namespaceEClass.getEStructuralFeatures().get(16);
   }
 
   /**
@@ -1989,7 +2009,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getNamespace_Weights()
   {
-    return (EReference)namespaceEClass.getEStructuralFeatures().get(16);
+    return (EReference)namespaceEClass.getEStructuralFeatures().get(17);
   }
 
   /**
@@ -1999,7 +2019,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getNamespace_Parameters()
   {
-    return (EReference)namespaceEClass.getEStructuralFeatures().get(17);
+    return (EReference)namespaceEClass.getEStructuralFeatures().get(18);
   }
 
   /**
@@ -2009,7 +2029,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getNamespace_Metadata()
   {
-    return (EReference)namespaceEClass.getEStructuralFeatures().get(18);
+    return (EReference)namespaceEClass.getEStructuralFeatures().get(19);
   }
 
   /**
@@ -4707,6 +4727,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     modelStatementEClass = createEClass(MODEL_STATEMENT);
     createEReference(modelStatementEClass, MODEL_STATEMENT__ANNOTATIONS);
     createEAttribute(modelStatementEClass, MODEL_STATEMENT__INACTIVE);
+    createEAttribute(modelStatementEClass, MODEL_STATEMENT__PROJECT_PRIVATE);
     createEAttribute(modelStatementEClass, MODEL_STATEMENT__PRIVATE);
     createEAttribute(modelStatementEClass, MODEL_STATEMENT__MODEL);
     createEReference(modelStatementEClass, MODEL_STATEMENT__BODY);
@@ -4842,6 +4863,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
     namespaceEClass = createEClass(NAMESPACE);
     createEReference(namespaceEClass, NAMESPACE__ANNOTATIONS);
+    createEAttribute(namespaceEClass, NAMESPACE__PROJECT_PRIVATE);
     createEAttribute(namespaceEClass, NAMESPACE__PRIVATE);
     createEAttribute(namespaceEClass, NAMESPACE__INACTIVE);
     createEAttribute(namespaceEClass, NAMESPACE__SCENARIO);
@@ -5209,6 +5231,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEClass(modelStatementEClass, ModelStatement.class, "ModelStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getModelStatement_Annotations(), this.getAnnotation(), null, "annotations", null, 0, -1, ModelStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getModelStatement_Inactive(), ecorePackage.getEBoolean(), "inactive", null, 0, 1, ModelStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getModelStatement_ProjectPrivate(), ecorePackage.getEBoolean(), "projectPrivate", null, 0, 1, ModelStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getModelStatement_Private(), ecorePackage.getEBoolean(), "private", null, 0, 1, ModelStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getModelStatement_Model(), ecorePackage.getEString(), "model", null, 0, 1, ModelStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getModelStatement_Body(), this.getModelBodyStatement(), null, "body", null, 0, 1, ModelStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -5344,6 +5367,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
     initEClass(namespaceEClass, Namespace.class, "Namespace", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getNamespace_Annotations(), this.getAnnotation(), null, "annotations", null, 0, -1, Namespace.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getNamespace_ProjectPrivate(), ecorePackage.getEBoolean(), "projectPrivate", null, 0, 1, Namespace.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getNamespace_Private(), ecorePackage.getEBoolean(), "private", null, 0, 1, Namespace.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getNamespace_Inactive(), ecorePackage.getEBoolean(), "inactive", null, 0, 1, Namespace.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getNamespace_Scenario(), ecorePackage.getEBoolean(), "scenario", null, 0, 1, Namespace.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

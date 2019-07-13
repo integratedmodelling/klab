@@ -398,16 +398,32 @@ ruleModelStatement returns [EObject current=null]
 						getUnorderedGroupHelper().select(grammarAccess.getModelStatementAccess().getUnorderedGroup_1(), 1);
 					}
 								({true}?=>((
-									lv_private_4_0='private'
-									{
-										newLeafNode(lv_private_4_0, grammarAccess.getModelStatementAccess().getPrivatePrivateKeyword_1_1_0());
-									}
-									{
-										if ($current==null) {
-											$current = createModelElement(grammarAccess.getModelStatementRule());
+									(
+										lv_projectPrivate_4_0='project'
+										{
+											newLeafNode(lv_projectPrivate_4_0, grammarAccess.getModelStatementAccess().getProjectPrivateProjectKeyword_1_1_0_0());
 										}
-										setWithLastConsumed($current, "private", true, "private");
-									}
+										{
+											if ($current==null) {
+												$current = createModelElement(grammarAccess.getModelStatementRule());
+											}
+											setWithLastConsumed($current, "projectPrivate", true, "project");
+										}
+									)
+								)?
+								(
+									(
+										lv_private_5_0='private'
+										{
+											newLeafNode(lv_private_5_0, grammarAccess.getModelStatementAccess().getPrivatePrivateKeyword_1_1_1_0());
+										}
+										{
+											if ($current==null) {
+												$current = createModelElement(grammarAccess.getModelStatementRule());
+											}
+											setWithLastConsumed($current, "private", true, "private");
+										}
+									)
 								)
 								))
 					{ 
@@ -427,7 +443,7 @@ ruleModelStatement returns [EObject current=null]
 				{
 					newCompositeNode(grammarAccess.getModelStatementAccess().getModelMODEL_TYPEParserRuleCall_2_0());
 				}
-				lv_model_5_0=ruleMODEL_TYPE
+				lv_model_6_0=ruleMODEL_TYPE
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getModelStatementRule());
@@ -435,7 +451,7 @@ ruleModelStatement returns [EObject current=null]
 					set(
 						$current,
 						"model",
-						lv_model_5_0,
+						lv_model_6_0,
 						"org.integratedmodelling.kim.Kim.MODEL_TYPE");
 					afterParserOrEnumRuleCall();
 				}
@@ -446,7 +462,7 @@ ruleModelStatement returns [EObject current=null]
 				{
 					newCompositeNode(grammarAccess.getModelStatementAccess().getBodyModelBodyStatementParserRuleCall_3_0());
 				}
-				lv_body_6_0=ruleModelBodyStatement
+				lv_body_7_0=ruleModelBodyStatement
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getModelStatementRule());
@@ -454,7 +470,7 @@ ruleModelStatement returns [EObject current=null]
 					set(
 						$current,
 						"body",
-						lv_body_6_0,
+						lv_body_7_0,
 						"org.integratedmodelling.kim.Kim.ModelBodyStatement");
 					afterParserOrEnumRuleCall();
 				}
@@ -4501,16 +4517,32 @@ ruleNamespace returns [EObject current=null]
 						getUnorderedGroupHelper().select(grammarAccess.getNamespaceAccess().getUnorderedGroup_1(), 0);
 					}
 								({true}?=>((
-									lv_private_3_0='private'
-									{
-										newLeafNode(lv_private_3_0, grammarAccess.getNamespaceAccess().getPrivatePrivateKeyword_1_0_0());
-									}
-									{
-										if ($current==null) {
-											$current = createModelElement(grammarAccess.getNamespaceRule());
+									(
+										lv_projectPrivate_3_0='project'
+										{
+											newLeafNode(lv_projectPrivate_3_0, grammarAccess.getNamespaceAccess().getProjectPrivateProjectKeyword_1_0_0_0());
 										}
-										setWithLastConsumed($current, "private", true, "private");
-									}
+										{
+											if ($current==null) {
+												$current = createModelElement(grammarAccess.getNamespaceRule());
+											}
+											setWithLastConsumed($current, "projectPrivate", true, "project");
+										}
+									)
+								)?
+								(
+									(
+										lv_private_4_0='private'
+										{
+											newLeafNode(lv_private_4_0, grammarAccess.getNamespaceAccess().getPrivatePrivateKeyword_1_0_1_0());
+										}
+										{
+											if ($current==null) {
+												$current = createModelElement(grammarAccess.getNamespaceRule());
+											}
+											setWithLastConsumed($current, "private", true, "private");
+										}
+									)
 								)
 								))
 					{ 
@@ -4524,9 +4556,9 @@ ruleNamespace returns [EObject current=null]
 						getUnorderedGroupHelper().select(grammarAccess.getNamespaceAccess().getUnorderedGroup_1(), 1);
 					}
 								({true}?=>((
-									lv_inactive_4_0='void'
+									lv_inactive_5_0='void'
 									{
-										newLeafNode(lv_inactive_4_0, grammarAccess.getNamespaceAccess().getInactiveVoidKeyword_1_1_0());
+										newLeafNode(lv_inactive_5_0, grammarAccess.getNamespaceAccess().getInactiveVoidKeyword_1_1_0());
 									}
 									{
 										if ($current==null) {
@@ -4549,16 +4581,16 @@ ruleNamespace returns [EObject current=null]
 				}
 		)
 		(
-			otherlv_5='namespace'
+			otherlv_6='namespace'
 			{
-				newLeafNode(otherlv_5, grammarAccess.getNamespaceAccess().getNamespaceKeyword_2_0());
+				newLeafNode(otherlv_6, grammarAccess.getNamespaceAccess().getNamespaceKeyword_2_0());
 			}
 			    |
 			(
 				(
-					lv_scenario_6_0='scenario'
+					lv_scenario_7_0='scenario'
 					{
-						newLeafNode(lv_scenario_6_0, grammarAccess.getNamespaceAccess().getScenarioScenarioKeyword_2_1_0());
+						newLeafNode(lv_scenario_7_0, grammarAccess.getNamespaceAccess().getScenarioScenarioKeyword_2_1_0());
 					}
 					{
 						if ($current==null) {
@@ -4571,9 +4603,9 @@ ruleNamespace returns [EObject current=null]
 			    |
 			(
 				(
-					lv_worldviewBound_7_0='worldview'
+					lv_worldviewBound_8_0='worldview'
 					{
-						newLeafNode(lv_worldviewBound_7_0, grammarAccess.getNamespaceAccess().getWorldviewBoundWorldviewKeyword_2_2_0());
+						newLeafNode(lv_worldviewBound_8_0, grammarAccess.getNamespaceAccess().getWorldviewBoundWorldviewKeyword_2_2_0());
 					}
 					{
 						if ($current==null) {
@@ -4589,7 +4621,7 @@ ruleNamespace returns [EObject current=null]
 				{
 					newCompositeNode(grammarAccess.getNamespaceAccess().getNamePathNameParserRuleCall_3_0());
 				}
-				lv_name_8_0=rulePathName
+				lv_name_9_0=rulePathName
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getNamespaceRule());
@@ -4597,7 +4629,7 @@ ruleNamespace returns [EObject current=null]
 					set(
 						$current,
 						"name",
-						lv_name_8_0,
+						lv_name_9_0,
 						"org.integratedmodelling.kim.Kim.PathName");
 					afterParserOrEnumRuleCall();
 				}
@@ -4605,9 +4637,9 @@ ruleNamespace returns [EObject current=null]
 		)
 		(
 			(
-				lv_docstring_9_0=RULE_STRING
+				lv_docstring_10_0=RULE_STRING
 				{
-					newLeafNode(lv_docstring_9_0, grammarAccess.getNamespaceAccess().getDocstringSTRINGTerminalRuleCall_4_0());
+					newLeafNode(lv_docstring_10_0, grammarAccess.getNamespaceAccess().getDocstringSTRINGTerminalRuleCall_4_0());
 				}
 				{
 					if ($current==null) {
@@ -4616,7 +4648,7 @@ ruleNamespace returns [EObject current=null]
 					setWithLastConsumed(
 						$current,
 						"docstring",
-						lv_docstring_9_0,
+						lv_docstring_10_0,
 						"org.eclipse.xtext.common.Terminals.STRING");
 				}
 			)
@@ -4633,16 +4665,16 @@ ruleNamespace returns [EObject current=null]
 					{
 						getUnorderedGroupHelper().select(grammarAccess.getNamespaceAccess().getUnorderedGroup_5(), 0);
 					}
-								({true}?=>(otherlv_11='using'
+								({true}?=>(otherlv_12='using'
 								{
-									newLeafNode(otherlv_11, grammarAccess.getNamespaceAccess().getUsingKeyword_5_0_0());
+									newLeafNode(otherlv_12, grammarAccess.getNamespaceAccess().getUsingKeyword_5_0_0());
 								}
 								(
 									(
 										{
 											newCompositeNode(grammarAccess.getNamespaceAccess().getImportedImportParserRuleCall_5_0_1_0());
 										}
-										lv_imported_12_0=ruleImport
+										lv_imported_13_0=ruleImport
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getNamespaceRule());
@@ -4650,7 +4682,7 @@ ruleNamespace returns [EObject current=null]
 											add(
 												$current,
 												"imported",
-												lv_imported_12_0,
+												lv_imported_13_0,
 												"org.integratedmodelling.kim.Kim.Import");
 											afterParserOrEnumRuleCall();
 										}
@@ -4659,9 +4691,9 @@ ruleNamespace returns [EObject current=null]
 								(
 									(
 										(',')=>
-										otherlv_13=','
+										otherlv_14=','
 										{
-											newLeafNode(otherlv_13, grammarAccess.getNamespaceAccess().getCommaKeyword_5_0_2_0());
+											newLeafNode(otherlv_14, grammarAccess.getNamespaceAccess().getCommaKeyword_5_0_2_0());
 										}
 									)
 									(
@@ -4669,7 +4701,7 @@ ruleNamespace returns [EObject current=null]
 											{
 												newCompositeNode(grammarAccess.getNamespaceAccess().getImportedImportParserRuleCall_5_0_2_1_0());
 											}
-											lv_imported_14_0=ruleImport
+											lv_imported_15_0=ruleImport
 											{
 												if ($current==null) {
 													$current = createModelElementForParent(grammarAccess.getNamespaceRule());
@@ -4677,7 +4709,7 @@ ruleNamespace returns [EObject current=null]
 												add(
 													$current,
 													"imported",
-													lv_imported_14_0,
+													lv_imported_15_0,
 													"org.integratedmodelling.kim.Kim.Import");
 												afterParserOrEnumRuleCall();
 											}
@@ -4695,16 +4727,16 @@ ruleNamespace returns [EObject current=null]
 					{
 						getUnorderedGroupHelper().select(grammarAccess.getNamespaceAccess().getUnorderedGroup_5(), 1);
 					}
-								({true}?=>(otherlv_15='imports'
+								({true}?=>(otherlv_16='imports'
 								{
-									newLeafNode(otherlv_15, grammarAccess.getNamespaceAccess().getImportsKeyword_5_1_0());
+									newLeafNode(otherlv_16, grammarAccess.getNamespaceAccess().getImportsKeyword_5_1_0());
 								}
 								(
 									(
 										{
 											newCompositeNode(grammarAccess.getNamespaceAccess().getOwlImportsOwlImportParserRuleCall_5_1_1_0());
 										}
-										lv_owlImports_16_0=ruleOwlImport
+										lv_owlImports_17_0=ruleOwlImport
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getNamespaceRule());
@@ -4712,23 +4744,23 @@ ruleNamespace returns [EObject current=null]
 											add(
 												$current,
 												"owlImports",
-												lv_owlImports_16_0,
+												lv_owlImports_17_0,
 												"org.integratedmodelling.kim.Kim.OwlImport");
 											afterParserOrEnumRuleCall();
 										}
 									)
 								)
 								(
-									otherlv_17=','
+									otherlv_18=','
 									{
-										newLeafNode(otherlv_17, grammarAccess.getNamespaceAccess().getCommaKeyword_5_1_2_0());
+										newLeafNode(otherlv_18, grammarAccess.getNamespaceAccess().getCommaKeyword_5_1_2_0());
 									}
 									(
 										(
 											{
 												newCompositeNode(grammarAccess.getNamespaceAccess().getOwlImportsOwlImportParserRuleCall_5_1_2_1_0());
 											}
-											lv_owlImports_18_0=ruleOwlImport
+											lv_owlImports_19_0=ruleOwlImport
 											{
 												if ($current==null) {
 													$current = createModelElementForParent(grammarAccess.getNamespaceRule());
@@ -4736,7 +4768,7 @@ ruleNamespace returns [EObject current=null]
 												add(
 													$current,
 													"owlImports",
-													lv_owlImports_18_0,
+													lv_owlImports_19_0,
 													"org.integratedmodelling.kim.Kim.OwlImport");
 												afterParserOrEnumRuleCall();
 											}
@@ -4754,16 +4786,16 @@ ruleNamespace returns [EObject current=null]
 					{
 						getUnorderedGroupHelper().select(grammarAccess.getNamespaceAccess().getUnorderedGroup_5(), 2);
 					}
-								({true}?=>(otherlv_19='covering'
+								({true}?=>(otherlv_20='covering'
 								{
-									newLeafNode(otherlv_19, grammarAccess.getNamespaceAccess().getCoveringKeyword_5_2_0());
+									newLeafNode(otherlv_20, grammarAccess.getNamespaceAccess().getCoveringKeyword_5_2_0());
 								}
 								(
 									(
 										{
 											newCompositeNode(grammarAccess.getNamespaceAccess().getCoverageFunctionParserRuleCall_5_2_1_0());
 										}
-										lv_coverage_20_0=ruleFunction
+										lv_coverage_21_0=ruleFunction
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getNamespaceRule());
@@ -4771,7 +4803,7 @@ ruleNamespace returns [EObject current=null]
 											add(
 												$current,
 												"coverage",
-												lv_coverage_20_0,
+												lv_coverage_21_0,
 												"org.integratedmodelling.kim.Kim.Function");
 											afterParserOrEnumRuleCall();
 										}
@@ -4780,9 +4812,9 @@ ruleNamespace returns [EObject current=null]
 								(
 									(
 										(',')=>
-										otherlv_21=','
+										otherlv_22=','
 										{
-											newLeafNode(otherlv_21, grammarAccess.getNamespaceAccess().getCommaKeyword_5_2_2_0());
+											newLeafNode(otherlv_22, grammarAccess.getNamespaceAccess().getCommaKeyword_5_2_2_0());
 										}
 									)
 									(
@@ -4790,7 +4822,7 @@ ruleNamespace returns [EObject current=null]
 											{
 												newCompositeNode(grammarAccess.getNamespaceAccess().getCoverageFunctionParserRuleCall_5_2_2_1_0());
 											}
-											lv_coverage_22_0=ruleFunction
+											lv_coverage_23_0=ruleFunction
 											{
 												if ($current==null) {
 													$current = createModelElementForParent(grammarAccess.getNamespaceRule());
@@ -4798,7 +4830,7 @@ ruleNamespace returns [EObject current=null]
 												add(
 													$current,
 													"coverage",
-													lv_coverage_22_0,
+													lv_coverage_23_0,
 													"org.integratedmodelling.kim.Kim.Function");
 												afterParserOrEnumRuleCall();
 											}
@@ -4816,20 +4848,20 @@ ruleNamespace returns [EObject current=null]
 					{
 						getUnorderedGroupHelper().select(grammarAccess.getNamespaceAccess().getUnorderedGroup_5(), 3);
 					}
-								({true}?=>(otherlv_23='in'
+								({true}?=>(otherlv_24='in'
 								{
-									newLeafNode(otherlv_23, grammarAccess.getNamespaceAccess().getInKeyword_5_3_0());
+									newLeafNode(otherlv_24, grammarAccess.getNamespaceAccess().getInKeyword_5_3_0());
 								}
-								otherlv_24='domain'
+								otherlv_25='domain'
 								{
-									newLeafNode(otherlv_24, grammarAccess.getNamespaceAccess().getDomainKeyword_5_3_1());
+									newLeafNode(otherlv_25, grammarAccess.getNamespaceAccess().getDomainKeyword_5_3_1());
 								}
 								(
 									(
 										(
-											lv_rootDomain_25_0='root'
+											lv_rootDomain_26_0='root'
 											{
-												newLeafNode(lv_rootDomain_25_0, grammarAccess.getNamespaceAccess().getRootDomainRootKeyword_5_3_2_0_0());
+												newLeafNode(lv_rootDomain_26_0, grammarAccess.getNamespaceAccess().getRootDomainRootKeyword_5_3_2_0_0());
 											}
 											{
 												if ($current==null) {
@@ -4845,7 +4877,7 @@ ruleNamespace returns [EObject current=null]
 											{
 												newCompositeNode(grammarAccess.getNamespaceAccess().getDomainConceptConceptParserRuleCall_5_3_2_1_0());
 											}
-											lv_domainConcept_26_0=ruleConcept
+											lv_domainConcept_27_0=ruleConcept
 											{
 												if ($current==null) {
 													$current = createModelElementForParent(grammarAccess.getNamespaceRule());
@@ -4853,7 +4885,7 @@ ruleNamespace returns [EObject current=null]
 												set(
 													$current,
 													"domainConcept",
-													lv_domainConcept_26_0,
+													lv_domainConcept_27_0,
 													"org.integratedmodelling.kim.Kim.Concept");
 												afterParserOrEnumRuleCall();
 											}
@@ -4871,20 +4903,20 @@ ruleNamespace returns [EObject current=null]
 					{
 						getUnorderedGroupHelper().select(grammarAccess.getNamespaceAccess().getUnorderedGroup_5(), 4);
 					}
-								({true}?=>(otherlv_27='disjoint'
+								({true}?=>(otherlv_28='disjoint'
 								{
-									newLeafNode(otherlv_27, grammarAccess.getNamespaceAccess().getDisjointKeyword_5_4_0());
+									newLeafNode(otherlv_28, grammarAccess.getNamespaceAccess().getDisjointKeyword_5_4_0());
 								}
-								otherlv_28='with'
+								otherlv_29='with'
 								{
-									newLeafNode(otherlv_28, grammarAccess.getNamespaceAccess().getWithKeyword_5_4_1());
+									newLeafNode(otherlv_29, grammarAccess.getNamespaceAccess().getWithKeyword_5_4_1());
 								}
 								(
 									(
 										{
 											newCompositeNode(grammarAccess.getNamespaceAccess().getDisjointNamespacesPathNameParserRuleCall_5_4_2_0());
 										}
-										lv_disjointNamespaces_29_0=rulePathName
+										lv_disjointNamespaces_30_0=rulePathName
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getNamespaceRule());
@@ -4892,23 +4924,23 @@ ruleNamespace returns [EObject current=null]
 											add(
 												$current,
 												"disjointNamespaces",
-												lv_disjointNamespaces_29_0,
+												lv_disjointNamespaces_30_0,
 												"org.integratedmodelling.kim.Kim.PathName");
 											afterParserOrEnumRuleCall();
 										}
 									)
 								)
 								(
-									otherlv_30=','
+									otherlv_31=','
 									{
-										newLeafNode(otherlv_30, grammarAccess.getNamespaceAccess().getCommaKeyword_5_4_3_0());
+										newLeafNode(otherlv_31, grammarAccess.getNamespaceAccess().getCommaKeyword_5_4_3_0());
 									}
 									(
 										(
 											{
 												newCompositeNode(grammarAccess.getNamespaceAccess().getDisjointNamespacesPathNameParserRuleCall_5_4_3_1_0());
 											}
-											lv_disjointNamespaces_31_0=rulePathName
+											lv_disjointNamespaces_32_0=rulePathName
 											{
 												if ($current==null) {
 													$current = createModelElementForParent(grammarAccess.getNamespaceRule());
@@ -4916,7 +4948,7 @@ ruleNamespace returns [EObject current=null]
 												add(
 													$current,
 													"disjointNamespaces",
-													lv_disjointNamespaces_31_0,
+													lv_disjointNamespaces_32_0,
 													"org.integratedmodelling.kim.Kim.PathName");
 												afterParserOrEnumRuleCall();
 											}
@@ -4934,16 +4966,16 @@ ruleNamespace returns [EObject current=null]
 					{
 						getUnorderedGroupHelper().select(grammarAccess.getNamespaceAccess().getUnorderedGroup_5(), 5);
 					}
-								({true}?=>(otherlv_32='version'
+								({true}?=>(otherlv_33='version'
 								{
-									newLeafNode(otherlv_32, grammarAccess.getNamespaceAccess().getVersionKeyword_5_5_0());
+									newLeafNode(otherlv_33, grammarAccess.getNamespaceAccess().getVersionKeyword_5_5_0());
 								}
 								(
 									(
 										{
 											newCompositeNode(grammarAccess.getNamespaceAccess().getVersionVersionNumberParserRuleCall_5_5_1_0());
 										}
-										lv_version_33_0=ruleVersionNumber
+										lv_version_34_0=ruleVersionNumber
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getNamespaceRule());
@@ -4951,7 +4983,7 @@ ruleNamespace returns [EObject current=null]
 											set(
 												$current,
 												"version",
-												lv_version_33_0,
+												lv_version_34_0,
 												"org.integratedmodelling.kim.Kim.VersionNumber");
 											afterParserOrEnumRuleCall();
 										}
@@ -4979,21 +5011,21 @@ ruleNamespace returns [EObject current=null]
 										{
 											getUnorderedGroupHelper().select(grammarAccess.getNamespaceAccess().getUnorderedGroup_5_6(), 0);
 										}
-													({true}?=>(otherlv_35='resolve'
+													({true}?=>(otherlv_36='resolve'
 													{
-														newLeafNode(otherlv_35, grammarAccess.getNamespaceAccess().getResolveKeyword_5_6_0_0());
+														newLeafNode(otherlv_36, grammarAccess.getNamespaceAccess().getResolveKeyword_5_6_0_0());
 													}
 													(
-														otherlv_36='from'
+														otherlv_37='from'
 														{
-															newLeafNode(otherlv_36, grammarAccess.getNamespaceAccess().getFromKeyword_5_6_0_1_0());
+															newLeafNode(otherlv_37, grammarAccess.getNamespaceAccess().getFromKeyword_5_6_0_1_0());
 														}
 														(
 															(
 																{
 																	newCompositeNode(grammarAccess.getNamespaceAccess().getLookupNamespacePathNameParserRuleCall_5_6_0_1_1_0());
 																}
-																lv_lookupNamespace_37_0=rulePathName
+																lv_lookupNamespace_38_0=rulePathName
 																{
 																	if ($current==null) {
 																		$current = createModelElementForParent(grammarAccess.getNamespaceRule());
@@ -5001,7 +5033,7 @@ ruleNamespace returns [EObject current=null]
 																	add(
 																		$current,
 																		"lookupNamespace",
-																		lv_lookupNamespace_37_0,
+																		lv_lookupNamespace_38_0,
 																		"org.integratedmodelling.kim.Kim.PathName");
 																	afterParserOrEnumRuleCall();
 																}
@@ -5019,16 +5051,16 @@ ruleNamespace returns [EObject current=null]
 										{
 											getUnorderedGroupHelper().select(grammarAccess.getNamespaceAccess().getUnorderedGroup_5_6(), 1);
 										}
-													({true}?=>(otherlv_38='outside'
+													({true}?=>(otherlv_39='outside'
 													{
-														newLeafNode(otherlv_38, grammarAccess.getNamespaceAccess().getOutsideKeyword_5_6_1_0());
+														newLeafNode(otherlv_39, grammarAccess.getNamespaceAccess().getOutsideKeyword_5_6_1_0());
 													}
 													(
 														(
 															{
 																newCompositeNode(grammarAccess.getNamespaceAccess().getBlacklistNamespacePathNameParserRuleCall_5_6_1_1_0());
 															}
-															lv_blacklistNamespace_39_0=rulePathName
+															lv_blacklistNamespace_40_0=rulePathName
 															{
 																if ($current==null) {
 																	$current = createModelElementForParent(grammarAccess.getNamespaceRule());
@@ -5036,7 +5068,7 @@ ruleNamespace returns [EObject current=null]
 																add(
 																	$current,
 																	"blacklistNamespace",
-																	lv_blacklistNamespace_39_0,
+																	lv_blacklistNamespace_40_0,
 																	"org.integratedmodelling.kim.Kim.PathName");
 																afterParserOrEnumRuleCall();
 															}
@@ -5053,16 +5085,16 @@ ruleNamespace returns [EObject current=null]
 										{
 											getUnorderedGroupHelper().select(grammarAccess.getNamespaceAccess().getUnorderedGroup_5_6(), 2);
 										}
-													({true}?=>(otherlv_40='using'
+													({true}?=>(otherlv_41='using'
 													{
-														newLeafNode(otherlv_40, grammarAccess.getNamespaceAccess().getUsingKeyword_5_6_2_0());
+														newLeafNode(otherlv_41, grammarAccess.getNamespaceAccess().getUsingKeyword_5_6_2_0());
 													}
 													(
 														(
 															{
 																newCompositeNode(grammarAccess.getNamespaceAccess().getWeightsMetadataParserRuleCall_5_6_2_1_0());
 															}
-															lv_weights_41_0=ruleMetadata
+															lv_weights_42_0=ruleMetadata
 															{
 																if ($current==null) {
 																	$current = createModelElementForParent(grammarAccess.getNamespaceRule());
@@ -5070,7 +5102,7 @@ ruleNamespace returns [EObject current=null]
 																set(
 																	$current,
 																	"weights",
-																	lv_weights_41_0,
+																	lv_weights_42_0,
 																	"org.integratedmodelling.kim.Kim.Metadata");
 																afterParserOrEnumRuleCall();
 															}
@@ -5103,16 +5135,16 @@ ruleNamespace returns [EObject current=null]
 				}
 		)
 		(
-			otherlv_42='parameters'
+			otherlv_43='parameters'
 			{
-				newLeafNode(otherlv_42, grammarAccess.getNamespaceAccess().getParametersKeyword_6_0());
+				newLeafNode(otherlv_43, grammarAccess.getNamespaceAccess().getParametersKeyword_6_0());
 			}
 			(
 				(
 					{
 						newCompositeNode(grammarAccess.getNamespaceAccess().getParametersMetadataParserRuleCall_6_1_0());
 					}
-					lv_parameters_43_0=ruleMetadata
+					lv_parameters_44_0=ruleMetadata
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getNamespaceRule());
@@ -5120,7 +5152,7 @@ ruleNamespace returns [EObject current=null]
 						set(
 							$current,
 							"parameters",
-							lv_parameters_43_0,
+							lv_parameters_44_0,
 							"org.integratedmodelling.kim.Kim.Metadata");
 						afterParserOrEnumRuleCall();
 					}
@@ -5128,16 +5160,16 @@ ruleNamespace returns [EObject current=null]
 			)
 		)?
 		(
-			otherlv_44='metadata'
+			otherlv_45='metadata'
 			{
-				newLeafNode(otherlv_44, grammarAccess.getNamespaceAccess().getMetadataKeyword_7_0());
+				newLeafNode(otherlv_45, grammarAccess.getNamespaceAccess().getMetadataKeyword_7_0());
 			}
 			(
 				(
 					{
 						newCompositeNode(grammarAccess.getNamespaceAccess().getMetadataMetadataParserRuleCall_7_1_0());
 					}
-					lv_metadata_45_0=ruleMetadata
+					lv_metadata_46_0=ruleMetadata
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getNamespaceRule());
@@ -5145,16 +5177,16 @@ ruleNamespace returns [EObject current=null]
 						set(
 							$current,
 							"metadata",
-							lv_metadata_45_0,
+							lv_metadata_46_0,
 							"org.integratedmodelling.kim.Kim.Metadata");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
 		)?
-		otherlv_46=';'
+		otherlv_47=';'
 		{
-			newLeafNode(otherlv_46, grammarAccess.getNamespaceAccess().getSemicolonKeyword_8());
+			newLeafNode(otherlv_47, grammarAccess.getNamespaceAccess().getSemicolonKeyword_8());
 		}
 	)
 ;

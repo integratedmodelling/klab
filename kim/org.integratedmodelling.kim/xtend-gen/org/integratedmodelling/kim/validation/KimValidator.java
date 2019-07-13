@@ -31,6 +31,7 @@ import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
+import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IKimTable;
 import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -491,6 +492,11 @@ public class KimValidator extends AbstractKimValidator {
               }
             }
           }
+          if ((((observable.getMain() != null) && observable.getMain().is(IKimConcept.Type.TRAIT)) && (observable.getMain().getInherent() == null))) {
+            this.error(
+              ("Lone predicates are not valid observables. Use classifying observables to attribute " + " or resolve predicates, or use \'type of\' to observe them over a context."), 
+              KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);
+          }
           Kim.ConceptDescriptor definition = observable.getDescriptor();
           if ((definition != null)) {
             if ((definition.isUndefined() && (obsIdx > 0))) {
@@ -587,6 +593,11 @@ public class KimValidator extends AbstractKimValidator {
                 this.info(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.REASONING_PROBLEM);
               }
             }
+          }
+          if ((((observable.getMain() != null) && observable.getMain().is(IKimConcept.Type.TRAIT)) && (observable.getMain().getInherent() == null))) {
+            this.error(
+              ("Lone predicates are not valid observables. Use classifying observables to attribute " + " or resolve predicates, or use \'type of\' to observe them over a context."), 
+              KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.REASONING_PROBLEM);
           }
           if (((cd.getObservable().getValue() != null) && (cd.getObservable().getValue().getId() != null))) {
             this.error(
@@ -794,7 +805,25 @@ public class KimValidator extends AbstractKimValidator {
             }
           }
         }
-        descriptor.setPrivate((statement.isPrivate() || ns_1.isPrivate()));
+        descriptor.setScope(ns_1.getScope());
+        boolean _isPrivate = statement.isPrivate();
+        if (_isPrivate) {
+          IKimStatement.Scope _xifexpression_4 = null;
+          boolean _isProjectPrivate = statement.isProjectPrivate();
+          if (_isProjectPrivate) {
+            _xifexpression_4 = IKimStatement.Scope.PROJECT;
+          } else {
+            _xifexpression_4 = IKimStatement.Scope.NAMESPACE;
+          }
+          IKimStatement.Scope scope = _xifexpression_4;
+          int _ordinal = descriptor.getScope().ordinal();
+          int _ordinal_1 = scope.ordinal();
+          boolean _lessThan = (_ordinal < _ordinal_1);
+          if (_lessThan) {
+            this.error("cannot make a model\'s scope broader than the scope of the namespace it\'s in", statement, KimPackage.Literals.MODEL_STATEMENT__BODY);
+          }
+          descriptor.setScope(scope);
+        }
         descriptor.setLearningModel(statement.getModel().equals("learn"));
         IKimModel.Type _switchResult = null;
         String _model_1 = statement.getModel();
@@ -832,14 +861,14 @@ public class KimValidator extends AbstractKimValidator {
         EList<ValueAssignment> _contextualizers_1 = model.getContextualizers();
         for (final ValueAssignment contextualizer_1 : _contextualizers_1) {
           java.util.List<IComputableResource> _contextualization = descriptor.getContextualization();
-          IResolutionScope.Mode _xifexpression_4 = null;
+          IResolutionScope.Mode _xifexpression_5 = null;
           boolean _isInstantiator = model.isInstantiator();
           if (_isInstantiator) {
-            _xifexpression_4 = IResolutionScope.Mode.INSTANTIATION;
+            _xifexpression_5 = IResolutionScope.Mode.INSTANTIATION;
           } else {
-            _xifexpression_4 = IResolutionScope.Mode.RESOLUTION;
+            _xifexpression_5 = IResolutionScope.Mode.RESOLUTION;
           }
-          ComputableResource _computableResource = new ComputableResource(contextualizer_1, _xifexpression_4, descriptor);
+          ComputableResource _computableResource = new ComputableResource(contextualizer_1, _xifexpression_5, descriptor);
           _contextualization.add(_computableResource);
         }
         Classification _classification_1 = model.getClassification();
@@ -891,14 +920,14 @@ public class KimValidator extends AbstractKimValidator {
             if (_tripleNotEquals_11) {
               descriptor.name = observables.get(0).getFormalName();
             } else {
-              String _xifexpression_5 = null;
+              String _xifexpression_6 = null;
               boolean _isInstantiator_1 = model.isInstantiator();
               if (_isInstantiator_1) {
-                _xifexpression_5 = "instantiator";
+                _xifexpression_6 = "instantiator";
               } else {
-                _xifexpression_5 = "resolver";
+                _xifexpression_6 = "resolver";
               }
-              String name = _xifexpression_5;
+              String name = _xifexpression_6;
               String st = descriptor.getObservables().get(0).getCodeName();
               descriptor.name = ((st + "-") + name);
             }

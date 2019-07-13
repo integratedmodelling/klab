@@ -35,6 +35,7 @@ import org.integratedmodelling.kim.kim.ModelStatement;
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelStatementImpl#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelStatementImpl#isInactive <em>Inactive</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelStatementImpl#isProjectPrivate <em>Project Private</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelStatementImpl#isPrivate <em>Private</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelStatementImpl#getModel <em>Model</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelStatementImpl#getBody <em>Body</em>}</li>
@@ -73,6 +74,26 @@ public class ModelStatementImpl extends MinimalEObjectImpl.Container implements 
    * @ordered
    */
   protected boolean inactive = INACTIVE_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isProjectPrivate() <em>Project Private</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isProjectPrivate()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean PROJECT_PRIVATE_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isProjectPrivate() <em>Project Private</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isProjectPrivate()
+   * @generated
+   * @ordered
+   */
+  protected boolean projectPrivate = PROJECT_PRIVATE_EDEFAULT;
 
   /**
    * The default value of the '{@link #isPrivate() <em>Private</em>}' attribute.
@@ -180,6 +201,29 @@ public class ModelStatementImpl extends MinimalEObjectImpl.Container implements 
     inactive = newInactive;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_STATEMENT__INACTIVE, oldInactive, inactive));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public boolean isProjectPrivate()
+  {
+    return projectPrivate;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setProjectPrivate(boolean newProjectPrivate)
+  {
+    boolean oldProjectPrivate = projectPrivate;
+    projectPrivate = newProjectPrivate;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_STATEMENT__PROJECT_PRIVATE, oldProjectPrivate, projectPrivate));
   }
 
   /**
@@ -308,6 +352,8 @@ public class ModelStatementImpl extends MinimalEObjectImpl.Container implements 
         return getAnnotations();
       case KimPackage.MODEL_STATEMENT__INACTIVE:
         return isInactive();
+      case KimPackage.MODEL_STATEMENT__PROJECT_PRIVATE:
+        return isProjectPrivate();
       case KimPackage.MODEL_STATEMENT__PRIVATE:
         return isPrivate();
       case KimPackage.MODEL_STATEMENT__MODEL:
@@ -335,6 +381,9 @@ public class ModelStatementImpl extends MinimalEObjectImpl.Container implements 
         return;
       case KimPackage.MODEL_STATEMENT__INACTIVE:
         setInactive((Boolean)newValue);
+        return;
+      case KimPackage.MODEL_STATEMENT__PROJECT_PRIVATE:
+        setProjectPrivate((Boolean)newValue);
         return;
       case KimPackage.MODEL_STATEMENT__PRIVATE:
         setPrivate((Boolean)newValue);
@@ -365,6 +414,9 @@ public class ModelStatementImpl extends MinimalEObjectImpl.Container implements 
       case KimPackage.MODEL_STATEMENT__INACTIVE:
         setInactive(INACTIVE_EDEFAULT);
         return;
+      case KimPackage.MODEL_STATEMENT__PROJECT_PRIVATE:
+        setProjectPrivate(PROJECT_PRIVATE_EDEFAULT);
+        return;
       case KimPackage.MODEL_STATEMENT__PRIVATE:
         setPrivate(PRIVATE_EDEFAULT);
         return;
@@ -392,6 +444,8 @@ public class ModelStatementImpl extends MinimalEObjectImpl.Container implements 
         return annotations != null && !annotations.isEmpty();
       case KimPackage.MODEL_STATEMENT__INACTIVE:
         return inactive != INACTIVE_EDEFAULT;
+      case KimPackage.MODEL_STATEMENT__PROJECT_PRIVATE:
+        return projectPrivate != PROJECT_PRIVATE_EDEFAULT;
       case KimPackage.MODEL_STATEMENT__PRIVATE:
         return private_ != PRIVATE_EDEFAULT;
       case KimPackage.MODEL_STATEMENT__MODEL:
@@ -415,6 +469,8 @@ public class ModelStatementImpl extends MinimalEObjectImpl.Container implements 
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (inactive: ");
     result.append(inactive);
+    result.append(", projectPrivate: ");
+    result.append(projectPrivate);
     result.append(", private: ");
     result.append(private_);
     result.append(", model: ");

@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.h2gis.utilities.SpatialResultSet;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
@@ -83,7 +84,7 @@ public class ModelKbox extends ObservableKbox {
 				public String getCreateSQL() {
 					String ret = "CREATE TABLE model (" + "oid LONG, " + "serverid VARCHAR(64), " + "id VARCHAR(256), "
 							+ "name VARCHAR(256), " + "namespaceid VARCHAR(128), " + "projectid VARCHAR(128), "
-							+ "typeid LONG, " + "otypeid LONG, " + "isprivate BOOLEAN, " + "isresolved BOOLEAN, "
+							+ "typeid LONG, " + "otypeid LONG, " + "scope VARCHAR(16), " + "isresolved BOOLEAN, "
 							+ "isreification BOOLEAN, " + "inscenario BOOLEAN, " + "hasdirectobjects BOOLEAN, "
 							+ "hasdirectdata BOOLEAN, " + "timestart LONG, " + "timeend LONG, " + "isspatial BOOLEAN, "
 							+ "istemporal BOOLEAN, " + "timemultiplicity LONG, " + "spacemultiplicity LONG, "
@@ -112,8 +113,7 @@ public class ModelKbox extends ObservableKbox {
 					String ret = "INSERT INTO model VALUES (" + primaryKey + ", " + "'" + cn(model.getServerId())
 							+ "', " + "'" + cn(model.getId()) + "', " + "'" + cn(model.getName()) + "', " + "'"
 							+ cn(model.getNamespaceId()) + "', " + "'" + cn(model.getProjectId()) + "', " + tid + ", "
-							+ /* observation concept is obsolete oid */ 0 + ", "
-							+ (model.isPrivateModel() ? "TRUE" : "FALSE") + ", "
+							+ /* observation concept is obsolete oid */ 0 + ", '" + (model.getScope().name()) + "', "
 							+ (model.isResolved() ? "TRUE" : "FALSE") + ", "
 							+ (model.isReification() ? "TRUE" : "FALSE") + ", "
 							+ (model.isInScenario() ? "TRUE" : "FALSE") + ", "
@@ -318,22 +318,23 @@ public class ModelKbox extends ObservableKbox {
 
 	/*
 	 * select models that are [instantiators if required] AND:] [private and in the
-	 * home namespace if not dummy OR] (non-private and non-scenario) OR (in any of
-	 * the scenarios in the context).
+	 * home namespace if not dummy OR] [project private and in the home project if
+	 * not dummy OR] (non-private and non-scenario) OR (in any of the scenarios in
+	 * the context).
 	 */
 	private String scopeQuery(IResolutionScope context, IObservable observable) {
 
 		String ret = "";
-
+		String projectId = null;
 		String namespaceId = context.getResolutionNamespace() == null ? DUMMY_NAMESPACE_ID
 				: context.getResolutionNamespace().getId();
 		if (!namespaceId.equals(DUMMY_NAMESPACE_ID)) {
-			// ret += "(model.isprivate AND model.namespaceid = '" + namespaceId
-			// + "')";
 			ret += "(model.namespaceid = '" + namespaceId + "')";
+			projectId = context.getResolutionNamespace().getProject() == null ? null
+					: context.getResolutionNamespace().getProject().getName();
 		}
 
-		ret += (ret.isEmpty() ? "" : " OR ") + "((NOT model.isprivate) AND (NOT model.inscenario))";
+		ret += (ret.isEmpty() ? "" : " OR ") + "((NOT model.scope = 'NAMESPACE') AND (NOT model.inscenario))";
 
 		if (context.getScenarios() != null && context.getScenarios().size() > 0) {
 			ret += " OR (" + joinStringConditions("model.namespaceid", context.getScenarios(), "OR") + ")";
@@ -347,13 +348,18 @@ public class ModelKbox extends ObservableKbox {
 			}
 		}
 
+		if (projectId != null) {
+			ret += " AND (NOT (model.scope = 'PROJECT' AND model.projectid <> '" + projectId + "'))";
+		}
+
 		return ret;
 	}
 
 	/*
-	 * select models that intersect the given space or have no space at all.
-	 * TODO must match geometry when forced - if it has @intensive(space, time) it shouldn't
-	 * match no space/time OR non-distributed space/time. ALSO the dimensionality!
+	 * select models that intersect the given space or have no space at all. TODO
+	 * must match geometry when forced - if it has @intensive(space, time) it
+	 * shouldn't match no space/time OR non-distributed space/time. ALSO the
+	 * dimensionality!
 	 */
 	private String spaceQuery(ISpace space) {
 
@@ -376,8 +382,9 @@ public class ModelKbox extends ObservableKbox {
 	 * Guess this is the job of the prioritizer, and we should simply let anything
 	 * through except when we look for T1(n>1) models.
 	 * 
-	 * TODO must match geometry when forced - if it has @intensive(space, time) it shouldn't
-	 * match no space/time OR non-distributed space/time. ALSO the dimensionality!
+	 * TODO must match geometry when forced - if it has @intensive(space, time) it
+	 * shouldn't match no space/time OR non-distributed space/time. ALSO the
+	 * dimensionality!
 	 */
 	private String timeQuery(ITime time) {
 
@@ -441,7 +448,7 @@ public class ModelKbox extends ObservableKbox {
 					ret.setNamespaceId(srs.getString(5));
 					ret.setProjectId(nullify(srs.getString(6)));
 
-					ret.setPrivateModel(srs.getBoolean(9));
+					ret.setScope(Scope.valueOf(srs.getString(9)));
 					ret.setResolved(srs.getBoolean(10));
 					ret.setReification(srs.getBoolean(11));
 					ret.setInScenario(srs.getBoolean(12));
@@ -760,7 +767,7 @@ public class ModelKbox extends ObservableKbox {
 			m.setObservableConcept(obs.getType());
 			// m.setObservationConcept(obs.getObservationType());
 
-			m.setPrivateModel(model.isPrivate());
+			m.setScope(model.getScope());
 			m.setInScenario(model.getNamespace().isScenario());
 			m.setReification(model.isInstantiator());
 			m.setResolved(model.isResolved());

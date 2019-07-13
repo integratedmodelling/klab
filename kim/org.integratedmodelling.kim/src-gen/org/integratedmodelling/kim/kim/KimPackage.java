@@ -198,13 +198,22 @@ public interface KimPackage extends EPackage
   int MODEL_STATEMENT__INACTIVE = 1;
 
   /**
+   * The feature id for the '<em><b>Project Private</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MODEL_STATEMENT__PROJECT_PRIVATE = 2;
+
+  /**
    * The feature id for the '<em><b>Private</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MODEL_STATEMENT__PRIVATE = 2;
+  int MODEL_STATEMENT__PRIVATE = 3;
 
   /**
    * The feature id for the '<em><b>Model</b></em>' attribute.
@@ -213,7 +222,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_STATEMENT__MODEL = 3;
+  int MODEL_STATEMENT__MODEL = 4;
 
   /**
    * The feature id for the '<em><b>Body</b></em>' containment reference.
@@ -222,7 +231,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_STATEMENT__BODY = 4;
+  int MODEL_STATEMENT__BODY = 5;
 
   /**
    * The number of structural features of the '<em>Model Statement</em>' class.
@@ -231,7 +240,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_STATEMENT_FEATURE_COUNT = 5;
+  int MODEL_STATEMENT_FEATURE_COUNT = 6;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.DefineStatementImpl <em>Define Statement</em>}' class.
@@ -1431,13 +1440,22 @@ public interface KimPackage extends EPackage
   int NAMESPACE__ANNOTATIONS = 0;
 
   /**
+   * The feature id for the '<em><b>Project Private</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int NAMESPACE__PROJECT_PRIVATE = 1;
+
+  /**
    * The feature id for the '<em><b>Private</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int NAMESPACE__PRIVATE = 1;
+  int NAMESPACE__PRIVATE = 2;
 
   /**
    * The feature id for the '<em><b>Inactive</b></em>' attribute.
@@ -1446,7 +1464,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int NAMESPACE__INACTIVE = 2;
+  int NAMESPACE__INACTIVE = 3;
 
   /**
    * The feature id for the '<em><b>Scenario</b></em>' attribute.
@@ -1455,7 +1473,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int NAMESPACE__SCENARIO = 3;
+  int NAMESPACE__SCENARIO = 4;
 
   /**
    * The feature id for the '<em><b>Worldview Bound</b></em>' attribute.
@@ -1464,7 +1482,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int NAMESPACE__WORLDVIEW_BOUND = 4;
+  int NAMESPACE__WORLDVIEW_BOUND = 5;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1473,7 +1491,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int NAMESPACE__NAME = 5;
+  int NAMESPACE__NAME = 6;
 
   /**
    * The feature id for the '<em><b>Docstring</b></em>' attribute.
@@ -1482,7 +1500,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int NAMESPACE__DOCSTRING = 6;
+  int NAMESPACE__DOCSTRING = 7;
 
   /**
    * The feature id for the '<em><b>Imported</b></em>' containment reference list.
@@ -1491,7 +1509,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int NAMESPACE__IMPORTED = 7;
+  int NAMESPACE__IMPORTED = 8;
 
   /**
    * The feature id for the '<em><b>Owl Imports</b></em>' containment reference list.
@@ -1500,7 +1518,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int NAMESPACE__OWL_IMPORTS = 8;
+  int NAMESPACE__OWL_IMPORTS = 9;
 
   /**
    * The feature id for the '<em><b>Coverage</b></em>' containment reference list.
@@ -1509,7 +1527,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int NAMESPACE__COVERAGE = 9;
+  int NAMESPACE__COVERAGE = 10;
 
   /**
    * The feature id for the '<em><b>Root Domain</b></em>' attribute.
@@ -1518,7 +1536,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int NAMESPACE__ROOT_DOMAIN = 10;
+  int NAMESPACE__ROOT_DOMAIN = 11;
 
   /**
    * The feature id for the '<em><b>Domain Concept</b></em>' containment reference.
@@ -1527,7 +1545,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int NAMESPACE__DOMAIN_CONCEPT = 11;
+  int NAMESPACE__DOMAIN_CONCEPT = 12;
 
   /**
    * The feature id for the '<em><b>Disjoint Namespaces</b></em>' attribute list.
@@ -1536,7 +1554,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int NAMESPACE__DISJOINT_NAMESPACES = 12;
+  int NAMESPACE__DISJOINT_NAMESPACES = 13;
 
   /**
    * The feature id for the '<em><b>Version</b></em>' attribute.
@@ -1545,7 +1563,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int NAMESPACE__VERSION = 13;
+  int NAMESPACE__VERSION = 14;
 
   /**
    * The feature id for the '<em><b>Lookup Namespace</b></em>' attribute list.
@@ -1554,7 +1572,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int NAMESPACE__LOOKUP_NAMESPACE = 14;
+  int NAMESPACE__LOOKUP_NAMESPACE = 15;
 
   /**
    * The feature id for the '<em><b>Blacklist Namespace</b></em>' attribute list.
@@ -1563,7 +1581,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int NAMESPACE__BLACKLIST_NAMESPACE = 15;
+  int NAMESPACE__BLACKLIST_NAMESPACE = 16;
 
   /**
    * The feature id for the '<em><b>Weights</b></em>' containment reference.
@@ -1572,7 +1590,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int NAMESPACE__WEIGHTS = 16;
+  int NAMESPACE__WEIGHTS = 17;
 
   /**
    * The feature id for the '<em><b>Parameters</b></em>' containment reference.
@@ -1581,7 +1599,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int NAMESPACE__PARAMETERS = 17;
+  int NAMESPACE__PARAMETERS = 18;
 
   /**
    * The feature id for the '<em><b>Metadata</b></em>' containment reference.
@@ -1590,7 +1608,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int NAMESPACE__METADATA = 18;
+  int NAMESPACE__METADATA = 19;
 
   /**
    * The number of structural features of the '<em>Namespace</em>' class.
@@ -1599,7 +1617,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int NAMESPACE_FEATURE_COUNT = 19;
+  int NAMESPACE_FEATURE_COUNT = 20;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.OwlImportImpl <em>Owl Import</em>}' class.
@@ -4460,6 +4478,17 @@ public interface KimPackage extends EPackage
   EAttribute getModelStatement_Inactive();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ModelStatement#isProjectPrivate <em>Project Private</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Project Private</em>'.
+   * @see org.integratedmodelling.kim.kim.ModelStatement#isProjectPrivate()
+   * @see #getModelStatement()
+   * @generated
+   */
+  EAttribute getModelStatement_ProjectPrivate();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ModelStatement#isPrivate <em>Private</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -5727,6 +5756,17 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EReference getNamespace_Annotations();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Namespace#isProjectPrivate <em>Project Private</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Project Private</em>'.
+   * @see org.integratedmodelling.kim.kim.Namespace#isProjectPrivate()
+   * @see #getNamespace()
+   * @generated
+   */
+  EAttribute getNamespace_ProjectPrivate();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Namespace#isPrivate <em>Private</em>}'.
@@ -8940,6 +8980,14 @@ public interface KimPackage extends EPackage
     EAttribute MODEL_STATEMENT__INACTIVE = eINSTANCE.getModelStatement_Inactive();
 
     /**
+     * The meta object literal for the '<em><b>Project Private</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MODEL_STATEMENT__PROJECT_PRIVATE = eINSTANCE.getModelStatement_ProjectPrivate();
+
+    /**
      * The meta object literal for the '<em><b>Private</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -9910,6 +9958,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EReference NAMESPACE__ANNOTATIONS = eINSTANCE.getNamespace_Annotations();
+
+    /**
+     * The meta object literal for the '<em><b>Project Private</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute NAMESPACE__PROJECT_PRIVATE = eINSTANCE.getNamespace_ProjectPrivate();
 
     /**
      * The meta object literal for the '<em><b>Private</b></em>' attribute feature.

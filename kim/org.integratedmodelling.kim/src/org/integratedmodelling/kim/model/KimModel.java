@@ -38,7 +38,7 @@ public class KimModel extends KimStatement implements IKimModel {
 	private boolean learningModel = false;
 //	private boolean assessmentModel = false;
 	private Type type = Type.SEMANTIC;
-	private boolean isPrivate = false;
+	private Scope scope = Scope.PUBLIC;
 	private List<IKimObservable> observables = new ArrayList<>();
 	private List<IKimObservable> dependencies = new ArrayList<>();
 	private IKimConcept reinterpretingRole = null;
@@ -130,12 +130,8 @@ public class KimModel extends KimStatement implements IKimModel {
 	}
 
 	@Override
-	public boolean isPrivate() {
-		return isPrivate;
-	}
-
-	public void setPrivate(boolean isPrivate) {
-		this.isPrivate = isPrivate;
+	public Scope getScope() {
+		return this.scope;
 	}
 
 	@Override
@@ -243,6 +239,10 @@ public class KimModel extends KimStatement implements IKimModel {
 	@Override
 	public boolean isSemantic() {
 		return observables.size() > 0 && observables.get(0).getNonSemanticType() == null;
+	}
+
+	public void setScope(IKimStatement.Scope scope) {
+		this.scope = scope;
 	}
 
 }

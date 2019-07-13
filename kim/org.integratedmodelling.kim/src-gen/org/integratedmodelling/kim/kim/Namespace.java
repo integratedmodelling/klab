@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.Namespace#getAnnotations <em>Annotations</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Namespace#isProjectPrivate <em>Project Private</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Namespace#isPrivate <em>Private</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Namespace#isInactive <em>Inactive</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Namespace#isScenario <em>Scenario</em>}</li>
@@ -59,6 +60,32 @@ public interface Namespace extends EObject
    * @generated
    */
   EList<Annotation> getAnnotations();
+
+  /**
+   * Returns the value of the '<em><b>Project Private</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Project Private</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Project Private</em>' attribute.
+   * @see #setProjectPrivate(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getNamespace_ProjectPrivate()
+   * @model
+   * @generated
+   */
+  boolean isProjectPrivate();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Namespace#isProjectPrivate <em>Project Private</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Project Private</em>' attribute.
+   * @see #isProjectPrivate()
+   * @generated
+   */
+  void setProjectPrivate(boolean value);
 
   /**
    * Returns the value of the '<em><b>Private</b></em>' attribute.

@@ -261,9 +261,13 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
     }
 
     /*
-     * lexical scope -> locality wrt context 100 = in observation scenario 75 = in same
-     * namespace as context 50-26 closer to same namespace as context 25 = in same project
-     * as context 0 = non-private in other visible namespace
+     * lexical scope -> locality wrt context 
+     * 
+     * 	100 = in observation scenario 
+     *  75 = in same namespace as context 
+     *  50-26 closer to same namespace as context 
+     *  25 = in same project as context 
+     *  0 = non-private in other visible namespace
      */
     public double computeLexicalScope(ModelReference model, ResolutionScope context) {
 

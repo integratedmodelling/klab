@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import org.integratedmodelling.kim.api.IKimNamespace;
+import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimNamespace;
 import org.integratedmodelling.klab.Extensions;
@@ -38,7 +39,6 @@ public class Namespace extends KimObject implements INamespace {
 	private boolean canonical = false;
 	private boolean scenario = false;
 	private boolean inactive = false;
-	private boolean isPrivate = false;
 	private long timestamp = 0l;
 
 	List<IKimObject> objects = new ArrayList<>();
@@ -52,11 +52,12 @@ public class Namespace extends KimObject implements INamespace {
 	List<IAxiom> axioms = new ArrayList<>();
 	private boolean publishable = true;
 	private Scale coverage;
+	private Scope scope = Scope.PUBLIC;
 
 	public Namespace(IKimNamespace namespace) {
 		super((KimNamespace) namespace);
 		this.name = namespace.getName();
-		this.isPrivate = namespace.isPrivate();
+		this.scope = namespace.getScope();
 		this.inactive = namespace.isInactive();
 		this.scenario = namespace.isScenario();
 		this.ontology = Ontologies.INSTANCE.require(name);
@@ -204,8 +205,8 @@ public class Namespace extends KimObject implements INamespace {
 	}
 
 	@Override
-	public boolean isPrivate() {
-		return isPrivate;
+	public Scope getScope() {
+		return this.scope ;
 	}
 
 	@Override

@@ -70,16 +70,12 @@ public class DataflowCompiler {
 
 	Graph<IResolvable, ResolutionEdge> resolutionGraph = new DefaultDirectedGraph<>(ResolutionEdge.class);
 	Map<Model, ModelD> modelCatalog = new HashMap<>();
-	// index the original observables as they come out of models that compute them
-	// with the name of the actuator that
-	// does the job.
+
+	/*
+	 * index the original observables as they come out of models that compute them,
+	 * using the name of the actuator that does the job.
+	 */
 	Map<String, Observable> sources = new HashMap<>();
-	// /*
-	// * maps the original name on each non-reference actuator to the original
-	// * observable coming out of the model. Used to set up mediators in models that
-	// * depend on them.
-	// */
-	// Map<String, Observable> observableCatalog = new HashMap<>();
 
 	static class ResolutionEdge {
 
@@ -131,7 +127,7 @@ public class DataflowCompiler {
 			Node node = compileActuator(root, scope.getMode(), resolutionGraph,
 					this.context == null ? null : this.context.getScale(), monitor);
 			node.root = true;
-			node.initializer = ((ResolutionScope) scope).getContextModel();
+//			node.initializer = ((ResolutionScope) scope).getContextModel();
 
 			Actuator actuator = node.getActuatorTree(ret, monitor, new HashSet<>(), 0);
 			ret.getActuators().add(actuator);
@@ -151,7 +147,7 @@ public class DataflowCompiler {
 			 * are added at the end of the final computation.
 			 */
 			if (sources.containsKey(actuator.getName()) && root instanceof Observable) {
-				for (IComputableResource mediator : computeMediators(sources.get(actuator.getName()), node.observable, 
+				for (IComputableResource mediator : computeMediators(sources.get(actuator.getName()), node.observable,
 						node.scale)) {
 					actuator.addComputation(mediator);
 				}
@@ -268,15 +264,7 @@ public class DataflowCompiler {
 		String alias;
 		Object inlineValue;
 		ResolvedArtifact resolvedArtifact;
-
-		/**
-		 * Initializer models are the instantiators that potentially carry states and/or
-		 * actions to be transferred to the resolved objects. Only the root node of a
-		 * compiled dataflow can have an initializer, as these result from resolving
-		 * each instance after instantiation.
-		 */
-		IModel initializer;
-
+		
 		public String toString() {
 			return (root ? "ROOT " : "") + ("[" + children.size() + "]")
 					+ ("{" + (models.size() > 0 ? models.iterator().next().model : "") + " #" + models.size() + "}")
@@ -569,9 +557,9 @@ public class DataflowCompiler {
 
 				if (modelObservable.getUnit() == null) {
 					/*
-					 * it's a fluid unit; find it in the unit catalog and use a new observable with the
-					 * unit to compute mediations. If it's not in there, mediator computation will
-					 * throw an exception.
+					 * it's a fluid unit; find it in the unit catalog and use a new observable with
+					 * the unit to compute mediations. If it's not in there, mediator computation
+					 * will throw an exception.
 					 */
 					IUnit baseUnit = Units.INSTANCE.getDefaultUnitFor(observable);
 					modelObservable = new Observable(modelObservable).withUnit(chosenUnits.get(baseUnit.toString()));
@@ -579,7 +567,8 @@ public class DataflowCompiler {
 			}
 
 			/**
-			 * Record the source in the catalog only after any fluid units have been resolved.
+			 * Record the source in the catalog only after any fluid units have been
+			 * resolved.
 			 */
 			if (modelObservable != null && !sources.containsKey(ret.getName())) {
 				sources.put(ret.getName(), modelObservable);

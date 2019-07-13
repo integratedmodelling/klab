@@ -20,6 +20,7 @@ import org.integratedmodelling.kim.api.IKimMacro
 import org.integratedmodelling.kim.api.IKimMacro.Field
 import org.integratedmodelling.kim.api.IKimModel
 import org.integratedmodelling.kim.api.IKimNamespace
+import org.integratedmodelling.kim.api.IKimStatement.Scope
 import org.integratedmodelling.kim.api.IKimTable
 import org.integratedmodelling.kim.kim.ActionSpecification
 import org.integratedmodelling.kim.kim.Concept
@@ -309,25 +310,6 @@ class KimValidator extends AbstractKimValidator {
 				Kim.INSTANCE.declareObservable(model.observables.get(0))
 			}
 
-//		var KimObservable interpretedRole = null
-//
-//		if (firstObservable?.descriptor !== null && firstObservable.descriptor.is(Type.ROLE)) {
-//
-//			firstObservable = Kim.INSTANCE.declareObservable(model.concept)
-//			if (model.concept === null && !firstObservable.main.traitObservable) {
-//				error(
-//					"Models that specify a role to interpret their observable must declare a valid observable concept before 'as'",
-//					KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, 0, INVALID_NONSEMANTIC_MODEL)
-//				ok = false
-//			} else {
-//				interpretedRole = firstObservable
-//				if (firstObservable.descriptor.isUndefined) {
-//					error('Observable has undefined semantics', KimPackage.Literals.MODEL_BODY_STATEMENT__CONCEPT,
-//						BAD_OBSERVABLE)
-//					ok = false
-//				}
-//			}
-//		}
 
 		if (firstObservable !== null && nonSemanticModels.contains(statement.model)) {
 			observables.add(firstObservable)
@@ -358,7 +340,13 @@ class KimValidator extends AbstractKimValidator {
 							info(ref.message, KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, REASONING_PROBLEM)
 					}
 				}
-
+				
+				if (observable.main !== null && observable.main.is(Type.TRAIT) && observable.main.inherent === null) {
+					error("Lone predicates are not valid observables. Use classifying observables to attribute "
+						+ " or resolve predicates, or use 'type of' to observe them over a context.", 
+						KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, REASONING_PROBLEM)
+				}
+				
 				var definition = observable.descriptor
 				if (definition !== null) {
 					if (definition.isUndefined && (obsIdx > 0)) {
@@ -427,6 +415,12 @@ class KimValidator extends AbstractKimValidator {
 						case Level.INFO.intValue():
 							info(ref.message, KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, REASONING_PROBLEM)
 					}
+				}
+
+				if (observable.main !== null && observable.main.is(Type.TRAIT) && observable.main.inherent === null) {
+					error("Lone predicates are not valid observables. Use classifying observables to attribute "
+						+ " or resolve predicates, or use 'type of' to observe them over a context.", 
+						KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, REASONING_PROBLEM)
 				}
 
 				if (cd.observable.value !== null && cd.observable.value.id !== null) {
@@ -619,8 +613,16 @@ class KimValidator extends AbstractKimValidator {
 				}
 
 				// the rest
-				descriptor.private = statement.isPrivate || ns.isPrivate
-//				descriptor.assessmentModel = statement.model.equals('assess')
+				descriptor.setScope(ns.scope);
+				if (statement.isPrivate) {
+					var scope = if (statement.projectPrivate) Scope.PROJECT else Scope.NAMESPACE;
+					if (descriptor.scope.ordinal < scope.ordinal) {
+						error("cannot make a model's scope broader than the scope of the namespace it's in",
+							statement, KimPackage.Literals.MODEL_STATEMENT__BODY
+						);
+					}
+					descriptor.setScope(scope)
+				}
 				descriptor.learningModel = statement.model.equals('learn')
 				descriptor.type = switch (statement.model) {
 					case 'number': IKimModel.Type.NUMBER

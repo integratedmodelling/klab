@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimModel;
+import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -181,8 +182,8 @@ public class RankedModel extends Model implements IRankedModel {
 		return getDelegate().getBehavior();
 	}
 
-	public boolean isPrivate() {
-		return getDelegate().isPrivate();
+	public Scope getScope() {
+		return getDelegate().getScope();
 	}
 
 	public Scale getCoverage(IMonitor monitor) throws KlabException {

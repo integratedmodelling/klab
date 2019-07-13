@@ -226,6 +226,7 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getStatementAccess().getGroup_4(), "rule__Statement__Group_4__0");
 					put(grammarAccess.getModelStatementAccess().getGroup(), "rule__ModelStatement__Group__0");
 					put(grammarAccess.getModelStatementAccess().getGroup_0(), "rule__ModelStatement__Group_0__0");
+					put(grammarAccess.getModelStatementAccess().getGroup_1_1(), "rule__ModelStatement__Group_1_1__0");
 					put(grammarAccess.getDefineStatementAccess().getGroup(), "rule__DefineStatement__Group__0");
 					put(grammarAccess.getDefineStatementAccess().getGroup_0(), "rule__DefineStatement__Group_0__0");
 					put(grammarAccess.getDefinitionBodyAccess().getGroup(), "rule__DefinitionBody__Group__0");
@@ -303,6 +304,7 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getExecutableValueAccess().getGroup_1(), "rule__ExecutableValue__Group_1__0");
 					put(grammarAccess.getNamespaceAccess().getGroup(), "rule__Namespace__Group__0");
 					put(grammarAccess.getNamespaceAccess().getGroup_0(), "rule__Namespace__Group_0__0");
+					put(grammarAccess.getNamespaceAccess().getGroup_1_0(), "rule__Namespace__Group_1_0__0");
 					put(grammarAccess.getNamespaceAccess().getGroup_5_0(), "rule__Namespace__Group_5_0__0");
 					put(grammarAccess.getNamespaceAccess().getGroup_5_0_2(), "rule__Namespace__Group_5_0_2__0");
 					put(grammarAccess.getNamespaceAccess().getGroup_5_1(), "rule__Namespace__Group_5_1__0");
@@ -592,7 +594,8 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getModelStatementAccess().getAnnotationsAssignment_0_0(), "rule__ModelStatement__AnnotationsAssignment_0_0");
 					put(grammarAccess.getModelStatementAccess().getAnnotationsAssignment_0_1(), "rule__ModelStatement__AnnotationsAssignment_0_1");
 					put(grammarAccess.getModelStatementAccess().getInactiveAssignment_1_0(), "rule__ModelStatement__InactiveAssignment_1_0");
-					put(grammarAccess.getModelStatementAccess().getPrivateAssignment_1_1(), "rule__ModelStatement__PrivateAssignment_1_1");
+					put(grammarAccess.getModelStatementAccess().getProjectPrivateAssignment_1_1_0(), "rule__ModelStatement__ProjectPrivateAssignment_1_1_0");
+					put(grammarAccess.getModelStatementAccess().getPrivateAssignment_1_1_1(), "rule__ModelStatement__PrivateAssignment_1_1_1");
 					put(grammarAccess.getModelStatementAccess().getModelAssignment_2(), "rule__ModelStatement__ModelAssignment_2");
 					put(grammarAccess.getModelStatementAccess().getBodyAssignment_3(), "rule__ModelStatement__BodyAssignment_3");
 					put(grammarAccess.getDefineStatementAccess().getAnnotationsAssignment_0_0(), "rule__DefineStatement__AnnotationsAssignment_0_0");
@@ -749,7 +752,8 @@ public class KimParser extends AbstractContentAssistParser {
 					put(grammarAccess.getExecutableValueAccess().getConditionAssignment_1_1(), "rule__ExecutableValue__ConditionAssignment_1_1");
 					put(grammarAccess.getNamespaceAccess().getAnnotationsAssignment_0_0(), "rule__Namespace__AnnotationsAssignment_0_0");
 					put(grammarAccess.getNamespaceAccess().getAnnotationsAssignment_0_1(), "rule__Namespace__AnnotationsAssignment_0_1");
-					put(grammarAccess.getNamespaceAccess().getPrivateAssignment_1_0(), "rule__Namespace__PrivateAssignment_1_0");
+					put(grammarAccess.getNamespaceAccess().getProjectPrivateAssignment_1_0_0(), "rule__Namespace__ProjectPrivateAssignment_1_0_0");
+					put(grammarAccess.getNamespaceAccess().getPrivateAssignment_1_0_1(), "rule__Namespace__PrivateAssignment_1_0_1");
 					put(grammarAccess.getNamespaceAccess().getInactiveAssignment_1_1(), "rule__Namespace__InactiveAssignment_1_1");
 					put(grammarAccess.getNamespaceAccess().getScenarioAssignment_2_1(), "rule__Namespace__ScenarioAssignment_2_1");
 					put(grammarAccess.getNamespaceAccess().getWorldviewBoundAssignment_2_2(), "rule__Namespace__WorldviewBoundAssignment_2_2");

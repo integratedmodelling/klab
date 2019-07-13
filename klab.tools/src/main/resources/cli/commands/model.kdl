@@ -1,0 +1,43 @@
+@klab 0.10.0
+@version 0.10.0
+@namespace model
+
+void 'list'
+	"List the models in the local kbox."
+{
+	
+	optional boolean verbose
+		"Verbose output: list model details"
+		default false
+	
+	class org.integratedmodelling.klab.clitool.console.commands.model.List
+}
+
+void 'compatible'
+	"List the available observables that are compatible with the passed semantics."
+{
+	
+	optional boolean verbose
+		"Verbose output: list model details"
+		default false
+	
+	class org.integratedmodelling.klab.clitool.console.commands.model.Compatible
+}
+
+
+void 'coverage'
+	"List the coverage of either a model or all the models that resolve a concept."
+{
+	
+	optional boolean verbose
+		"Verbose output: list model details"
+		default false
+	
+	class org.integratedmodelling.klab.clitool.console.commands.model.Coverage
+}
+
+void 'info'
+	"Print detailed information about a model and its observables."
+{
+	class org.integratedmodelling.klab.clitool.console.commands.model.Info
+}

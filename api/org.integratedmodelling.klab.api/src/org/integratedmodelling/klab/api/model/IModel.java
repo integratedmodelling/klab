@@ -20,12 +20,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IComputableResource;
+import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
-import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
 import org.integratedmodelling.klab.api.resolution.IComputable;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 
@@ -46,6 +45,7 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
  * @version $Id: $Id
  */
 public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvable, IComputable {
+
 
 	/**
 	 * Return the semantics of all observables we are observing. The first in the
@@ -183,12 +183,12 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
 	IMetadata getMetadata();
 
 	/**
-	 * If true, the model or the namespace containing it have been declared private,
-	 * and only models in the same namespace can use it for resolution.
+	 * If not PUBLIC, the model or the namespace containing it are private to its
+	 * declared scope, and only models in the same scope can use it for resolution.
 	 *
 	 * @return true if private
 	 */
-	boolean isPrivate();
+	Scope getScope();
 
 	/**
 	 * If true, the model is semantically and syntactically valid but has been
@@ -217,6 +217,5 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
 	 * @return the implicit geometry from the resources, or null.
 	 */
 	IGeometry getGeometry();
-
 
 }

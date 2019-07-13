@@ -27,6 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Finally made it illegal to have lone traits as observables or dependencies, in 
+  preparation for attribute instantiators and resolvers. Error messages suggest
+  use of 'type of' to contextualize traits.
 - k.IM expressions can be forced to evaluate in scalar context by prefixing them with 
   a pound sign. This can be used e.g. in an area evaluator that wants the area of each
   subdivision for further aggregation.
@@ -39,30 +42,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   automatically at mediation and requiring a @extensive/@intensive annotation to remove
   the warning in case a model produces output that is legitimate but requires to
   recontextualize the values. This is a pretty big change as k.LAB is now dead serious 
-  about units and their proper use, while modelers usually are not.
+  about units and their proper use, while modelers are usually half-dead sloppy.
 - The computational typechain, contextualizer output and geometry are now checked for 
   coherency within models, both across each other and vs. the observable semantics.
-- Include LogMap2 alignment toolkit (not linked to k.LAB yet).
 - Monetary currencies now admit distributed spatial and temporal unit terms and can
   produce the corresponding unit (with 'unitless' as the base unit). Observables with
   MONEY or NUMEROSITY type now carry their actual unit, either the unit corresponding
   to the currency or the unitless distribution of the 'per' unit for counts.
+- Enabled unspecified units in observable that need units to make it possible to
+  apply units flexibly but ensuring that the same base types have the same unit
+  within a set of dependencies. Otherwise the unit does not default to the base
+  SI unit because the geometry of the context cannot be predicted; instead, any
+  model that annotates resources is required to specify the units.
 - Wire in the LogMap2 aligner with a 'reason align' CLI command. Treatment of mappings
   is non-existent for now.
 - Add a 'unit info' and 'unit contextualize' CLI command to check and analyze units.
+- Add a 'model info' CLI command for detailed info about a model.
+- Switched from 'private'/public status for models and namespaces to 'private', 
+  'project private' and public. Now models and namespaces carry scope with them instead
+  of a private flag, and models cannot increase the visibility of their namespaces.
 ### Changed
 - k.IM highlighter uniformly shows abstract concepts in italics and concrete concepts
-  in regular type.
+  in regular type. This becomes important as attribute models work differently in
+  either situation.
 - Annotations and function calls now accept a list of unnamed parameters as well as a 
-  single one.
+  single one. Anything declared as a list will be a list in the API, even if only one
+  value is passed.
 - Enable 'equals core <concept>' in worldviews to refer to core concepts in abstract
   observables.
+- Changed 'kbox' command namespace to 'model'.
 ### Fixed
 - Overhaul logic for communicating errors detected by the engine to the IDE; now they
   are stored for the standard validator to find. The process is supported for models
   and observables within models only.
 - Notification markers should finally be reliably added to the IDE both for syntax and
-  reasoning errors. 
+  reasoning errors. There are still issues for syntax errors not visible upstream at 
+  project load.
 ### Removed
 - Remove obsolete projects klab.core (merged with klab.engine), products/explorer and
   products/klab.explorer.

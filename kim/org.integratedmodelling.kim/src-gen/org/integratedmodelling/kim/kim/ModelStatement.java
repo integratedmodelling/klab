@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelStatement#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelStatement#isInactive <em>Inactive</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ModelStatement#isProjectPrivate <em>Project Private</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelStatement#isPrivate <em>Private</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelStatement#getModel <em>Model</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelStatement#getBody <em>Body</em>}</li>
@@ -71,6 +72,32 @@ public interface ModelStatement extends EObject
    * @generated
    */
   void setInactive(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Project Private</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Project Private</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Project Private</em>' attribute.
+   * @see #setProjectPrivate(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getModelStatement_ProjectPrivate()
+   * @model
+   * @generated
+   */
+  boolean isProjectPrivate();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ModelStatement#isProjectPrivate <em>Project Private</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Project Private</em>' attribute.
+   * @see #isProjectPrivate()
+   * @generated
+   */
+  void setProjectPrivate(boolean value);
 
   /**
    * Returns the value of the '<em><b>Private</b></em>' attribute.

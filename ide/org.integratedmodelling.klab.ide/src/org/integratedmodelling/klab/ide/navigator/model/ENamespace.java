@@ -39,8 +39,8 @@ public class ENamespace extends EKimObject implements IKimNamespace {
 		return delegate.getName();
 	}
 
-	public boolean isPrivate() {
-		return delegate.isPrivate();
+	public Scope getScope() {
+		return delegate.getScope();
 	}
 
 	public List<IKimNamespace> getImported() {
