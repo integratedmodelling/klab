@@ -66,11 +66,11 @@ ModelBodyStatement:
 		 ('metadata' metadata=Metadata)? 
 ;
 
-AttributeIdentifier:
-	name=(LOWERCASE_ID|UPPERCASE_ID) |
-	function=Function |
-	expression=EXPR
-;
+//AttributeIdentifier:
+//	name=(LOWERCASE_ID|UPPERCASE_ID) |
+//	function=Function |
+//	expression=EXPR
+//;
 
 Classification:
 	classifiers+=Classifier (=> ',' classifiers+=Classifier)*;

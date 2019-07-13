@@ -75,6 +75,58 @@ public enum KimKnowledgeProcessor {
 		Namespace ns = (Namespace) namespace;
 		try {
 
+			if (concept.getName().equals("Quantity")) {
+				System.out.println("AHYEOH");
+			}
+
+			if (concept.isAlias()) {
+				
+				/*
+				 * can only have 'is' X or 'equals' X
+				 */
+				IConcept parent = null;
+				if (concept.getUpperConceptDefined() != null) {
+					parent = Concepts.INSTANCE.getConcept(concept.getUpperConceptDefined());
+					if (parent == null) {
+						monitor.error("Core concept " + concept.getUpperConceptDefined() + " is unknown", concept);
+					} else {
+						((Concept)parent).getTypeSet().addAll(concept.getType());
+					}
+				} else {
+					
+					List<IConcept> concepts = new ArrayList<>();
+					int i = 0;
+					for (ParentConcept p : ((KimConceptStatement) concept).getParents()) {
+
+						if (i > 0) {
+							monitor.error("concepts defining aliases with 'equals' cannot have more than one parent", p);
+						}
+
+						for (IKimConcept pdecl : p.getConcepts()) {
+							IConcept declared = declare(pdecl, namespace.getOntology(), monitor);
+							if (declared == null) {
+								monitor.error("parent declaration " + pdecl + " does not identify known concepts",
+										pdecl);
+								return null;
+							}
+							concepts.add(declared);
+						}
+						i++;
+					}
+
+					if (concepts.size() == 1) {
+						parent = concepts.get(0);
+					}
+				}
+
+				if (parent != null) {
+					((Ontology) namespace.getOntology()).addDelegateConcept(concept.getName(), namespace.getStatement(),
+							(Concept) parent);
+				}
+
+				return null;
+			}
+
 			Concept ret = buildInternal(concept, ns, kimObject, monitor);
 			if (((KimConceptStatement) concept).getParents().isEmpty()) {
 				IConcept parent = null;
@@ -153,12 +205,7 @@ public enum KimKnowledgeProcessor {
 			}
 
 			if (concepts.size() == 1) {
-				if (concept.isAlias()) {
-					namespace.getOntology().addDelegateConcept(mainId, namespace.getStatement(),
-							(Concept) concepts.get(0));
-				} else {
-					namespace.addAxiom(Axiom.SubClass(concepts.get(0).getUrn(), mainId));
-				}
+				namespace.addAxiom(Axiom.SubClass(concepts.get(0).getUrn(), mainId));
 			} else {
 				IConcept expr = null;
 				switch (parent.getConnector()) {
@@ -384,7 +431,7 @@ public enum KimKnowledgeProcessor {
 		if (Units.INSTANCE.needsUnits(ret) && ret.getUnit() == null) {
 			ret.setFluidUnits(true);
 		}
-		
+
 		for (IKimAnnotation annotation : concept.getAnnotations()) {
 			ret.addAnnotation(new Annotation(annotation));
 		}
