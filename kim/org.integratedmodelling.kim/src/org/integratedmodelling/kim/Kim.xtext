@@ -381,9 +381,9 @@ ConceptDeclaration:
 		// binary semantic operators; also 'as', 'by' and 'follows' handled in other rules
 		(
 			// primary inherency (when secondary is given using 'within')
-			('of' (('each' distributedTraitInherency=SimpleConceptDeclaration) | inherency=SimpleConceptDeclaration))? &
+			('of' ((distributedOfInherency?='each')? inherency=SimpleConceptDeclaration))? &
 			// purpose (achievement event created from target)
-			('for' (('each' distributedRoleInherency=SimpleConceptDeclaration) | motivation=SimpleConceptDeclaration))? &
+			('for' ((distributedForInherency?='each')? motivation=SimpleConceptDeclaration))? &
 			// compresence (subject, process, event, presence or partitioned quality)
 			('with' compresent=SimpleConceptDeclaration)? &
 			// cause towards self - causant can be anything (?)
@@ -399,7 +399,7 @@ ConceptDeclaration:
 			// concomitant with event (?)
 			('during'   during=SimpleConceptDeclaration)? &
 			// context or secondary inherency
-			('within' (('each' distributedTraitContext=SimpleConceptDeclaration) |  context=SimpleConceptDeclaration))? &
+			('within' ((distributedWithinInherency?='each')? context=SimpleConceptDeclaration))? &
 			// for relationships: specialize source and target types
 			('linking' relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?
 		)?

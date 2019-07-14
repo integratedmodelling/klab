@@ -245,7 +245,7 @@ public enum Types implements ITypeService {
             throws KlabValidationException {
 
         if (rootClass.is(Type.CLASS)) {
-            rootClass = getIncarnatedType(rootClass);
+            rootClass = getCategorizingType(rootClass);
         }
 
         Classification ret = Classification.create(rootClass);
@@ -265,7 +265,7 @@ public enum Types implements ITypeService {
         return ret;
     }
 
-    public IConcept getIncarnatedType(IConcept concept) {
+    public IConcept getCategorizingType(IConcept concept) {
         Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
                 Concepts.p(NS.INCARNATES_TRAIT_PROPERTY));
         return cls.isEmpty() ? null : cls.iterator().next();

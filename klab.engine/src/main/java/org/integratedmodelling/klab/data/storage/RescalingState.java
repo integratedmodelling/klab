@@ -263,7 +263,7 @@ public class RescalingState extends Observation implements IState {
             Object ret = null;
 
             switch (observationType) {
-            case CLASSIFICATION:
+            case CATEGORIZATION:
             case VERIFICATION:
                 // TODO handle weight
                 double cur = 0;
@@ -293,7 +293,7 @@ public class RescalingState extends Observation implements IState {
             }
 
             switch (observationType) {
-            case CLASSIFICATION:
+            case CATEGORIZATION:
             case VERIFICATION:
                 Double n = dominance.get(object);
                 dominance.put(object, n == null ? weight : n + weight);

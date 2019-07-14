@@ -15,7 +15,6 @@ import org.integratedmodelling.kim.kim.Action;
 import org.integratedmodelling.kim.kim.ActionSpecification;
 import org.integratedmodelling.kim.kim.Annotation;
 import org.integratedmodelling.kim.kim.ApplicableTarget;
-import org.integratedmodelling.kim.kim.AttributeIdentifier;
 import org.integratedmodelling.kim.kim.Classification;
 import org.integratedmodelling.kim.kim.Classifier;
 import org.integratedmodelling.kim.kim.ClassifierRHS;
@@ -158,11 +157,6 @@ public class KimAdapterFactory extends AdapterFactoryImpl
       public Adapter caseModelBodyStatement(ModelBodyStatement object)
       {
         return createModelBodyStatementAdapter();
-      }
-      @Override
-      public Adapter caseAttributeIdentifier(AttributeIdentifier object)
-      {
-        return createAttributeIdentifierAdapter();
       }
       @Override
       public Adapter caseClassification(Classification object)
@@ -507,21 +501,6 @@ public class KimAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createModelBodyStatementAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.AttributeIdentifier <em>Attribute Identifier</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see org.integratedmodelling.kim.kim.AttributeIdentifier
-   * @generated
-   */
-  public Adapter createAttributeIdentifierAdapter()
   {
     return null;
   }

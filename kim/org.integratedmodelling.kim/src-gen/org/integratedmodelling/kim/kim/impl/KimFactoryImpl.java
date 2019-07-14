@@ -17,7 +17,6 @@ import org.integratedmodelling.kim.kim.Action;
 import org.integratedmodelling.kim.kim.ActionSpecification;
 import org.integratedmodelling.kim.kim.Annotation;
 import org.integratedmodelling.kim.kim.ApplicableTarget;
-import org.integratedmodelling.kim.kim.AttributeIdentifier;
 import org.integratedmodelling.kim.kim.Classification;
 import org.integratedmodelling.kim.kim.Classifier;
 import org.integratedmodelling.kim.kim.ClassifierRHS;
@@ -129,7 +128,6 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
       case KimPackage.DEFINE_STATEMENT: return createDefineStatement();
       case KimPackage.DEFINITION_BODY: return createDefinitionBody();
       case KimPackage.MODEL_BODY_STATEMENT: return createModelBodyStatement();
-      case KimPackage.ATTRIBUTE_IDENTIFIER: return createAttributeIdentifier();
       case KimPackage.CLASSIFICATION: return createClassification();
       case KimPackage.CLASSIFIER: return createClassifier();
       case KimPackage.CLASSIFIER_RHS: return createClassifierRHS();
@@ -284,17 +282,6 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
   {
     ModelBodyStatementImpl modelBodyStatement = new ModelBodyStatementImpl();
     return modelBodyStatement;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public AttributeIdentifier createAttributeIdentifier()
-  {
-    AttributeIdentifierImpl attributeIdentifier = new AttributeIdentifierImpl();
-    return attributeIdentifier;
   }
 
   /**

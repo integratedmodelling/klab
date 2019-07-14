@@ -26,10 +26,8 @@ public class CompatibleObservable extends Observable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((getClassifier() == null) ? 0 : getClassifier().hashCode());
-//		result = prime * result + ((getAggregator() == null) ? 0 : getAggregator().hashCode());
 		result = prime * result + ((getDownTo() == null) ? 0 : getDownTo().hashCode());
-		result = prime * result + ((getMain() == null) ? 0 : getMain().hashCode());
-		result = prime * result + ((getObservable() == null) ? 0 : getObservable().hashCode());
+		result = prime * result + ((getType() == null) ? 0 : getType().hashCode());
 		return result;
   }
 
@@ -52,13 +50,6 @@ public class CompatibleObservable extends Observable {
 		} else if (!getClassifier().equals(other.getClassifier())) {
 			return false;
 		}
-//		if (getAggregator() == null) {
-//			if (other.getAggregator() != null) {
-//				return false;
-//			}
-//		} else if (!getAggregator().equals(other.getAggregator())) {
-//			return false;
-//		}		
 		if (getDownTo() == null) {
 			if (other.getDownTo() != null) {
 				return false;
@@ -66,18 +57,11 @@ public class CompatibleObservable extends Observable {
 		} else if (!getDownTo().equals(other.getDownTo())) {
 			return false;
 		}
-		if (getMain() == null) {
-			if (other.getMain() != null) {
+		if (getType() == null) {
+			if (other.getType() != null) {
 				return false;
 			}
-		} else if (!getMain().equals(other.getMain())) {
-			return false;
-		}
-		if (getObservable() == null) {
-			if (other.getObservable() != null) {
-				return false;
-			}
-		} else if (!getObservable().equals(other.getObservable())) {
+		} else if (!getType().equals(other.getType())) {
 			return false;
 		}
 		return true;

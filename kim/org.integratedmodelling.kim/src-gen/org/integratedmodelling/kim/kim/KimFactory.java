@@ -79,15 +79,6 @@ public interface KimFactory extends EFactory
   ModelBodyStatement createModelBodyStatement();
 
   /**
-   * Returns a new object of class '<em>Attribute Identifier</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Attribute Identifier</em>'.
-   * @generated
-   */
-  AttributeIdentifier createAttributeIdentifier();
-
-  /**
    * Returns a new object of class '<em>Classification</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

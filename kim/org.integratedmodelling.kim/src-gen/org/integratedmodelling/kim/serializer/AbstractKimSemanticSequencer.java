@@ -18,7 +18,6 @@ import org.eclipse.xtext.serializer.sequencer.ITransientValueService.ValueTransi
 import org.integratedmodelling.kim.kim.ActionSpecification;
 import org.integratedmodelling.kim.kim.Annotation;
 import org.integratedmodelling.kim.kim.ApplicableTarget;
-import org.integratedmodelling.kim.kim.AttributeIdentifier;
 import org.integratedmodelling.kim.kim.Classification;
 import org.integratedmodelling.kim.kim.Classifier;
 import org.integratedmodelling.kim.kim.ClassifierRHS;
@@ -94,9 +93,6 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 				return; 
 			case KimPackage.APPLICABLE_TARGET:
 				sequence_ApplicableTarget(context, (ApplicableTarget) semanticObject); 
-				return; 
-			case KimPackage.ATTRIBUTE_IDENTIFIER:
-				sequence_AttributeIdentifier(context, (AttributeIdentifier) semanticObject); 
 				return; 
 			case KimPackage.CLASSIFICATION:
 				sequence_Classification(context, (Classification) semanticObject); 
@@ -481,18 +477,6 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	
 	/**
 	 * Contexts:
-	 *     AttributeIdentifier returns AttributeIdentifier
-	 *
-	 * Constraint:
-	 *     (name=LOWERCASE_ID | name=UPPERCASE_ID | function=Function | expression=EXPR)
-	 */
-	protected void sequence_AttributeIdentifier(ISerializationContext context, AttributeIdentifier semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
 	 *     ChildConcept returns ConceptStatementBody
 	 *
 	 * Constraint:
@@ -521,16 +505,16 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         restrictions+=RestrictionStatement | 
 	 *                         metadata=Metadata
 	 *                     )? 
-	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
-	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
-	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
-	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
-	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
-	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
 	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
+	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
+	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
+	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
+	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
+	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
+	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
-	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
 	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
+	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
 	 *                     ((constituent?='constituent' | constitutes?='consists')? partOf?='of' whole=ConceptDeclaration)? 
 	 *                     (
 	 *                         alias?='equals'? 
@@ -658,20 +642,17 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *         main+=Concept+ 
 	 *         (
 	 *             (
-	 *                 distributedTraitInherency=SimpleConceptDeclaration | 
-	 *                 inherency=SimpleConceptDeclaration | 
-	 *                 distributedRoleInherency=SimpleConceptDeclaration | 
-	 *                 motivation=SimpleConceptDeclaration | 
 	 *                 compresent=SimpleConceptDeclaration | 
 	 *                 causant=SimpleConceptDeclaration | 
 	 *                 adjacent=SimpleConceptDeclaration | 
 	 *                 container=SimpleConceptDeclaration | 
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration | 
-	 *                 during=SimpleConceptDeclaration | 
-	 *                 distributedTraitContext=SimpleConceptDeclaration | 
-	 *                 context=SimpleConceptDeclaration
+	 *                 during=SimpleConceptDeclaration
 	 *             )? 
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
 	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+
 	 *     )
@@ -690,21 +671,18 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *         main+=Concept+ 
 	 *         (
 	 *             (
-	 *                 distributedTraitInherency=SimpleConceptDeclaration | 
-	 *                 inherency=SimpleConceptDeclaration | 
-	 *                 distributedRoleInherency=SimpleConceptDeclaration | 
-	 *                 motivation=SimpleConceptDeclaration | 
 	 *                 compresent=SimpleConceptDeclaration | 
 	 *                 causant=SimpleConceptDeclaration | 
 	 *                 adjacent=SimpleConceptDeclaration | 
 	 *                 container=SimpleConceptDeclaration | 
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration | 
-	 *                 during=SimpleConceptDeclaration | 
-	 *                 distributedTraitContext=SimpleConceptDeclaration | 
-	 *                 context=SimpleConceptDeclaration
+	 *                 during=SimpleConceptDeclaration
 	 *             )? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)*
 	 *     )
@@ -724,21 +702,18 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *         main+=Concept+ 
 	 *         (
 	 *             (
-	 *                 distributedTraitInherency=SimpleConceptDeclaration | 
-	 *                 inherency=SimpleConceptDeclaration | 
-	 *                 distributedRoleInherency=SimpleConceptDeclaration | 
-	 *                 motivation=SimpleConceptDeclaration | 
 	 *                 compresent=SimpleConceptDeclaration | 
 	 *                 causant=SimpleConceptDeclaration | 
 	 *                 adjacent=SimpleConceptDeclaration | 
 	 *                 container=SimpleConceptDeclaration | 
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration | 
-	 *                 during=SimpleConceptDeclaration | 
-	 *                 distributedTraitContext=SimpleConceptDeclaration | 
-	 *                 context=SimpleConceptDeclaration
+	 *                 during=SimpleConceptDeclaration
 	 *             )? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)* 
 	 *         (operators+='or' operands+=Factor)*

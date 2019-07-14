@@ -18,9 +18,9 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getMain <em>Main</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getDistributedTraitInherency <em>Distributed Trait Inherency</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#isDistributedOfInherency <em>Distributed Of Inherency</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getInherency <em>Inherency</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getDistributedRoleInherency <em>Distributed Role Inherency</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#isDistributedForInherency <em>Distributed For Inherency</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getMotivation <em>Motivation</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getCompresent <em>Compresent</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getCausant <em>Causant</em>}</li>
@@ -29,7 +29,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getContained <em>Contained</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getCaused <em>Caused</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getDuring <em>During</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getDistributedTraitContext <em>Distributed Trait Context</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#isDistributedWithinInherency <em>Distributed Within Inherency</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getContext <em>Context</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getRelationshipSource <em>Relationship Source</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getRelationshipTarget <em>Relationship Target</em>}</li>
@@ -61,30 +61,30 @@ public interface ConceptDeclaration extends EObject
   EList<Concept> getMain();
 
   /**
-   * Returns the value of the '<em><b>Distributed Trait Inherency</b></em>' containment reference.
+   * Returns the value of the '<em><b>Distributed Of Inherency</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Distributed Trait Inherency</em>' containment reference isn't clear,
+   * If the meaning of the '<em>Distributed Of Inherency</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Distributed Trait Inherency</em>' containment reference.
-   * @see #setDistributedTraitInherency(ConceptDeclaration)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptDeclaration_DistributedTraitInherency()
-   * @model containment="true"
+   * @return the value of the '<em>Distributed Of Inherency</em>' attribute.
+   * @see #setDistributedOfInherency(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptDeclaration_DistributedOfInherency()
+   * @model
    * @generated
    */
-  ConceptDeclaration getDistributedTraitInherency();
+  boolean isDistributedOfInherency();
 
   /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getDistributedTraitInherency <em>Distributed Trait Inherency</em>}' containment reference.
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#isDistributedOfInherency <em>Distributed Of Inherency</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Distributed Trait Inherency</em>' containment reference.
-   * @see #getDistributedTraitInherency()
+   * @param value the new value of the '<em>Distributed Of Inherency</em>' attribute.
+   * @see #isDistributedOfInherency()
    * @generated
    */
-  void setDistributedTraitInherency(ConceptDeclaration value);
+  void setDistributedOfInherency(boolean value);
 
   /**
    * Returns the value of the '<em><b>Inherency</b></em>' containment reference.
@@ -113,30 +113,30 @@ public interface ConceptDeclaration extends EObject
   void setInherency(ConceptDeclaration value);
 
   /**
-   * Returns the value of the '<em><b>Distributed Role Inherency</b></em>' containment reference.
+   * Returns the value of the '<em><b>Distributed For Inherency</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Distributed Role Inherency</em>' containment reference isn't clear,
+   * If the meaning of the '<em>Distributed For Inherency</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Distributed Role Inherency</em>' containment reference.
-   * @see #setDistributedRoleInherency(ConceptDeclaration)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptDeclaration_DistributedRoleInherency()
-   * @model containment="true"
+   * @return the value of the '<em>Distributed For Inherency</em>' attribute.
+   * @see #setDistributedForInherency(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptDeclaration_DistributedForInherency()
+   * @model
    * @generated
    */
-  ConceptDeclaration getDistributedRoleInherency();
+  boolean isDistributedForInherency();
 
   /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getDistributedRoleInherency <em>Distributed Role Inherency</em>}' containment reference.
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#isDistributedForInherency <em>Distributed For Inherency</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Distributed Role Inherency</em>' containment reference.
-   * @see #getDistributedRoleInherency()
+   * @param value the new value of the '<em>Distributed For Inherency</em>' attribute.
+   * @see #isDistributedForInherency()
    * @generated
    */
-  void setDistributedRoleInherency(ConceptDeclaration value);
+  void setDistributedForInherency(boolean value);
 
   /**
    * Returns the value of the '<em><b>Motivation</b></em>' containment reference.
@@ -347,30 +347,30 @@ public interface ConceptDeclaration extends EObject
   void setDuring(ConceptDeclaration value);
 
   /**
-   * Returns the value of the '<em><b>Distributed Trait Context</b></em>' containment reference.
+   * Returns the value of the '<em><b>Distributed Within Inherency</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Distributed Trait Context</em>' containment reference isn't clear,
+   * If the meaning of the '<em>Distributed Within Inherency</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Distributed Trait Context</em>' containment reference.
-   * @see #setDistributedTraitContext(ConceptDeclaration)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptDeclaration_DistributedTraitContext()
-   * @model containment="true"
+   * @return the value of the '<em>Distributed Within Inherency</em>' attribute.
+   * @see #setDistributedWithinInherency(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptDeclaration_DistributedWithinInherency()
+   * @model
    * @generated
    */
-  ConceptDeclaration getDistributedTraitContext();
+  boolean isDistributedWithinInherency();
 
   /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getDistributedTraitContext <em>Distributed Trait Context</em>}' containment reference.
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#isDistributedWithinInherency <em>Distributed Within Inherency</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Distributed Trait Context</em>' containment reference.
-   * @see #getDistributedTraitContext()
+   * @param value the new value of the '<em>Distributed Within Inherency</em>' attribute.
+   * @see #isDistributedWithinInherency()
    * @generated
    */
-  void setDistributedTraitContext(ConceptDeclaration value);
+  void setDistributedWithinInherency(boolean value);
 
   /**
    * Returns the value of the '<em><b>Context</b></em>' containment reference.

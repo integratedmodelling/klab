@@ -504,7 +504,7 @@ public class KimValidator extends AbstractKimValidator {
                 KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.BAD_OBSERVABLE);
               ok = false;
             } else {
-              if ((observable.getMain().isDistributedInherency() && (obsIdx > 0))) {
+              if (((observable.getMain().getDistributedInherent() != null) && (obsIdx > 0))) {
                 this.error(
                   "Distributed inherency (of each, for each, within each) are only allowed as main observables", 
                   KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.BAD_OBSERVABLE);
@@ -623,8 +623,9 @@ public class KimValidator extends AbstractKimValidator {
                 KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
               ok = false;
             } else {
-              boolean _isDistributedInherency = observable.getMain().isDistributedInherency();
-              if (_isDistributedInherency) {
+              IKimConcept.ComponentRole _distributedInherent = observable.getMain().getDistributedInherent();
+              boolean _tripleNotEquals_4 = (_distributedInherent != null);
+              if (_tripleNotEquals_4) {
                 this.error("Distributed inherency (of each, for each, within each) are only allowed as main observables", 
                   KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
                 ok = false;
@@ -1417,28 +1418,25 @@ public class KimValidator extends AbstractKimValidator {
       }
       this.copyInheritableFlags(flags, type);
     }
-    if ((((declaration.getDistributedRoleInherency() != null) || (declaration.getDistributedTraitContext() != null)) || (declaration.getDistributedTraitInherency() != null))) {
-      traitObservable = true;
+    boolean _isDistributedOfInherency = declaration.isDistributedOfInherency();
+    if (_isDistributedOfInherency) {
       distributedInherency = true;
-      ConceptDeclaration inherency = declaration.getDistributedRoleInherency();
-      if ((inherency == null)) {
-        inherency = declaration.getDistributedTraitInherency();
+    }
+    boolean _isDistributedForInherency = declaration.isDistributedForInherency();
+    if (_isDistributedForInherency) {
+      if (distributedInherency) {
+        this.error("Distributed inherency (\'of each\') can only be used once in a declaration", declaration.getMotivation(), null, 
+          KimPackage.CONCEPT_DECLARATION__MOTIVATION);
       }
-      if ((inherency == null)) {
-        inherency = declaration.getDistributedTraitContext();
+      distributedInherency = true;
+    }
+    boolean _isDistributedWithinInherency = declaration.isDistributedWithinInherency();
+    if (_isDistributedWithinInherency) {
+      if (distributedInherency) {
+        this.error("Distributed inherency (\'of each\') can only be used once in a declaration", declaration.getContext(), null, 
+          KimPackage.CONCEPT_DECLARATION__CONTEXT);
       }
-      flags = this.checkDeclaration(inherency);
-      boolean _isEmpty_2 = flags.isEmpty();
-      if (_isEmpty_2) {
-        type.clear();
-      } else {
-        if (((!flags.contains(IKimConcept.Type.DIRECT_OBSERVABLE)) && (!flags.contains(IKimConcept.Type.CONFIGURATION)))) {
-          this.error(
-            "The inherent type (of) must be a direct observable (process, subject, event or relationship) or a configuration", inherency, null, KimPackage.CONCEPT_DECLARATION__INHERENCY);
-          error = true;
-        }
-      }
-      this.copyInheritableFlags(flags, type);
+      distributedInherency = true;
     }
     ConceptDeclaration _context = declaration.getContext();
     boolean _tripleNotEquals_1 = (_context != null);
@@ -1452,8 +1450,8 @@ public class KimValidator extends AbstractKimValidator {
         }
       }
       flags = this.checkDeclaration(declaration.getContext());
-      boolean _isEmpty_3 = flags.isEmpty();
-      if (_isEmpty_3) {
+      boolean _isEmpty_2 = flags.isEmpty();
+      if (_isEmpty_2) {
         type.clear();
       } else {
         boolean _contains_2 = flags.contains(IKimConcept.Type.MACRO);
@@ -1496,8 +1494,8 @@ public class KimValidator extends AbstractKimValidator {
           KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_SOURCE);
       }
       flags = this.checkDeclaration(declaration.getRelationshipSource());
-      boolean _isEmpty_4 = flags.isEmpty();
-      if (_isEmpty_4) {
+      boolean _isEmpty_3 = flags.isEmpty();
+      if (_isEmpty_3) {
         type.clear();
       } else {
         boolean _contains_5 = flags.contains(IKimConcept.Type.MACRO);
@@ -1513,8 +1511,8 @@ public class KimValidator extends AbstractKimValidator {
         }
       }
       flags = this.checkDeclaration(declaration.getRelationshipTarget());
-      boolean _isEmpty_5 = flags.isEmpty();
-      if (_isEmpty_5) {
+      boolean _isEmpty_4 = flags.isEmpty();
+      if (_isEmpty_4) {
         type.clear();
       } else {
         boolean _contains_7 = flags.contains(IKimConcept.Type.MACRO);
@@ -1535,8 +1533,8 @@ public class KimValidator extends AbstractKimValidator {
     boolean _tripleNotEquals_3 = (_compresent != null);
     if (_tripleNotEquals_3) {
       flags = this.checkDeclaration(declaration.getCompresent());
-      boolean _isEmpty_6 = flags.isEmpty();
-      if (_isEmpty_6) {
+      boolean _isEmpty_5 = flags.isEmpty();
+      if (_isEmpty_5) {
         type.clear();
       } else {
         boolean _contains_9 = flags.contains(IKimConcept.Type.MACRO);
@@ -1567,8 +1565,8 @@ public class KimValidator extends AbstractKimValidator {
     boolean _tripleNotEquals_4 = (_causant != null);
     if (_tripleNotEquals_4) {
       flags = this.checkDeclaration(declaration.getCausant());
-      boolean _isEmpty_7 = flags.isEmpty();
-      if (_isEmpty_7) {
+      boolean _isEmpty_6 = flags.isEmpty();
+      if (_isEmpty_6) {
         type.clear();
       } else {
         boolean _contains_10 = flags.contains(IKimConcept.Type.MACRO);
@@ -1599,8 +1597,8 @@ public class KimValidator extends AbstractKimValidator {
     boolean _tripleNotEquals_5 = (_caused != null);
     if (_tripleNotEquals_5) {
       flags = this.checkDeclaration(declaration.getCaused());
-      boolean _isEmpty_8 = flags.isEmpty();
-      if (_isEmpty_8) {
+      boolean _isEmpty_7 = flags.isEmpty();
+      if (_isEmpty_7) {
         type.clear();
       } else {
         boolean _contains_11 = flags.contains(IKimConcept.Type.MACRO);
@@ -1630,8 +1628,8 @@ public class KimValidator extends AbstractKimValidator {
     boolean _tripleNotEquals_6 = (_adjacent != null);
     if (_tripleNotEquals_6) {
       flags = this.checkDeclaration(declaration.getAdjacent());
-      boolean _isEmpty_9 = flags.isEmpty();
-      if (_isEmpty_9) {
+      boolean _isEmpty_8 = flags.isEmpty();
+      if (_isEmpty_8) {
         type.clear();
       } else {
         boolean _contains_12 = flags.contains(IKimConcept.Type.MACRO);
@@ -1662,8 +1660,8 @@ public class KimValidator extends AbstractKimValidator {
     boolean _tripleNotEquals_7 = (_motivation != null);
     if (_tripleNotEquals_7) {
       flags = this.checkDeclaration(declaration.getMotivation());
-      boolean _isEmpty_10 = flags.isEmpty();
-      if (_isEmpty_10) {
+      boolean _isEmpty_9 = flags.isEmpty();
+      if (_isEmpty_9) {
         type.clear();
       } else {
         boolean _contains_13 = flags.contains(IKimConcept.Type.MACRO);
@@ -1694,8 +1692,8 @@ public class KimValidator extends AbstractKimValidator {
     boolean _tripleNotEquals_8 = (_during != null);
     if (_tripleNotEquals_8) {
       flags = this.checkDeclaration(declaration.getDuring());
-      boolean _isEmpty_11 = flags.isEmpty();
-      if (_isEmpty_11) {
+      boolean _isEmpty_10 = flags.isEmpty();
+      if (_isEmpty_10) {
         type.clear();
       } else {
         boolean _contains_14 = flags.contains(IKimConcept.Type.MACRO);
@@ -1728,8 +1726,8 @@ public class KimValidator extends AbstractKimValidator {
       }
       this.copyInheritableFlags(flags, type);
     }
-    boolean _isEmpty_12 = type.isEmpty();
-    boolean _not_24 = (!_isEmpty_12);
+    boolean _isEmpty_11 = type.isEmpty();
+    boolean _not_24 = (!_isEmpty_11);
     if (_not_24) {
       int i = 0;
       EList<ConceptDeclaration> _operands = declaration.getOperands();

@@ -35,7 +35,7 @@ public class Compare implements ICommand {
 				declarations.add(declaration);
 			}
 			for (String d : declarations) {
-				concepts.add(Observables.INSTANCE.declare(d).getMain());
+				concepts.add(Observables.INSTANCE.declare(d).getType());
 			}
 		}
 

@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Ontology;
 
 public enum Ontologies implements IOntologyService {
+	
     INSTANCE;
 
     private Ontologies() {
@@ -90,6 +91,6 @@ public enum Ontologies implements IOntologyService {
                 break;
             }
         }
-        return (Ontology) (transitive ? ns.getOntology() : fallback);
+        return (Ontology) (transitive && ns != null ? ns.getOntology() : fallback);
     }
 }

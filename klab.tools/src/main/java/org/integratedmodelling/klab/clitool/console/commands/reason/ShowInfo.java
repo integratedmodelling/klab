@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.ISession;
@@ -41,9 +42,14 @@ public class ShowInfo implements ICommand {
 
         } else {
 
-            IConcept concept = declaration.startsWith("k:")
+        	IObservable observable = null;
+        	if (!declaration.startsWith("k:")) {
+        		observable = Observables.INSTANCE.declare(declaration);
+        	}
+        	
+            IConcept concept = observable == null
                     ? Reasoner.INSTANCE.getOntology().getConcept(declaration.substring(2))
-                    : Observables.INSTANCE.declare(declaration).getType();
+                    : observable.getType();
 
             if (concept == null) {
                 throw new KlabValidationException("expression '" + declaration
@@ -54,6 +60,11 @@ public class ShowInfo implements ICommand {
                 ret += (ret.isEmpty() ? "" : (concept.is(Type.UNION) ? "\n  OR\n" : "\n  AND\n"))
                         + describe(c);
             }
+
+            if (observable != null) {
+            	ret += "\nObservation type: " + observable.getObservationType() + "\n";
+            }
+            
         }
         return ret;
     }

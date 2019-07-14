@@ -13,7 +13,6 @@ import org.integratedmodelling.kim.kim.Action;
 import org.integratedmodelling.kim.kim.ActionSpecification;
 import org.integratedmodelling.kim.kim.Annotation;
 import org.integratedmodelling.kim.kim.ApplicableTarget;
-import org.integratedmodelling.kim.kim.AttributeIdentifier;
 import org.integratedmodelling.kim.kim.Classification;
 import org.integratedmodelling.kim.kim.Classifier;
 import org.integratedmodelling.kim.kim.ClassifierRHS;
@@ -166,13 +165,6 @@ public class KimSwitch<T> extends Switch<T>
       {
         ModelBodyStatement modelBodyStatement = (ModelBodyStatement)theEObject;
         T result = caseModelBodyStatement(modelBodyStatement);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case KimPackage.ATTRIBUTE_IDENTIFIER:
-      {
-        AttributeIdentifier attributeIdentifier = (AttributeIdentifier)theEObject;
-        T result = caseAttributeIdentifier(attributeIdentifier);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -602,22 +594,6 @@ public class KimSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseModelBodyStatement(ModelBodyStatement object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Attribute Identifier</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Attribute Identifier</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseAttributeIdentifier(AttributeIdentifier object)
   {
     return null;
   }

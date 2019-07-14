@@ -62,7 +62,7 @@ public interface IObservable extends ISemantic, IResolvable {
 		 */
 		DETECTION,
 		/**
-		 * The observation that produces a dynamic account
+		 * The observation that produces a dynamic account of a process
 		 */
 		SIMULATION,
 		/**
@@ -70,18 +70,25 @@ public interface IObservable extends ISemantic, IResolvable {
 		 */
 		QUANTIFICATION,
 		/**
-		 * The observation that produces a categorical quality
+		 * The observation that produces a categorical quality (observes a conceptual
+		 * category) over a context.
 		 */
-		CLASSIFICATION,
+		CATEGORIZATION,
 		/**
 		 * The observation that produces a boolean quality (presence/absence)
 		 */
 		VERIFICATION,
 		/**
-		 * The observation that attributes a role, attribute or identity to
-		 * a countable.
+		 * The observation that attributes a trait or role to another observation (if it
+		 * is a quality, it may transform its values). Equivalent to INSTANTIATION of a
+		 * concrete t/a given the abstract form and an inherent observable.
 		 */
-		ATTRIBUTION
+		CLASSIFICATION,
+		/**
+		 * The resolution of a concrete trait or role that has been previously
+		 * attributed to an observation.
+		 */
+		CHARACTERIZATION
 	}
 
 	/**
@@ -273,7 +280,7 @@ public interface IObservable extends ISemantic, IResolvable {
 		Builder downTo(IConcept detail);
 
 		Builder by(IConcept classifier);
-		
+
 		Builder withValueOperator(ValueOperator operator, Object valueOperand);
 
 		/**
@@ -287,6 +294,14 @@ public interface IObservable extends ISemantic, IResolvable {
 		Builder linking(IConcept source, IConcept target);
 
 		Builder named(String name);
+
+		/**
+		 * Set the flag that signifies distributed inherency (of each).
+		 * 
+		 * @param ofEach
+		 * @return
+		 */
+		Builder setDistributedInherency(boolean ofEach);
 
 	}
 
@@ -329,15 +344,6 @@ public interface IObservable extends ISemantic, IResolvable {
 	String getName();
 
 	/**
-	 * Return the untransformed concept, which will be identical to the type
-	 * returned by {@link #getType()} unless a "by" (and possibly a "down to")
-	 * predicate was specified.
-	 *
-	 * @return the declared concept before any reclassification
-	 */
-	IConcept getMain();
-
-	/**
 	 * <p>
 	 * getDownTo.
 	 * </p>
@@ -350,11 +356,6 @@ public interface IObservable extends ISemantic, IResolvable {
 	 * @return the 'by' classifier concept, if any was specified.
 	 */
 	IConcept getClassifier();
-
-	// /**
-	// * @return the 'by' aggregator concept, if any was specified.
-	// */
-	// IConcept getAggregator();
 
 	/**
 	 * <p>
@@ -445,19 +446,6 @@ public interface IObservable extends ISemantic, IResolvable {
 	 */
 	Object getValue();
 
-//	/**
-//	 * If true, observer produces an extensive value over the passed extent, one
-//	 * that varies with the extents of computation. A true return value will cause
-//	 * different aggregation than the default averaging when mediating to different
-//	 * scales.
-//	 *
-//	 * @param c
-//	 *            the extent concept selecting a particular extent
-//	 * @return true if the value of the quality this represents is extensive in the
-//	 *         extent concept passed
-//	 */
-//	boolean isExtensive(IConcept c);
-
 	/**
 	 * A generic observable expects to be resolved extensively - i.e., all the
 	 * subtypes, leaving the base type last if the subtypes don't provide full
@@ -513,8 +501,8 @@ public interface IObservable extends ISemantic, IResolvable {
 	String getDefinition();
 
 	/**
-	 * Abstract status of an observable may be more involved than just the abstract status of
-	 * the main type, although in most cases that will be the result.
+	 * Abstract status of an observable may be more involved than just the abstract
+	 * status of the main type, although in most cases that will be the result.
 	 * 
 	 * @return
 	 */
@@ -527,19 +515,24 @@ public interface IObservable extends ISemantic, IResolvable {
 	 * @return
 	 */
 	boolean is(Type type);
-	
+
 	/**
 	 * If the observable has a value operator (e.g. "> 0") return it here.
+	 * 
+	 * TODO this must become a list of <operator, operand> pairs
 	 * 
 	 * @return
 	 */
 	ValueOperator getValueOperator();
-	
+
 	/**
-	 * If the observable has a value modifier, then it will also have an operand for it, which
-	 * can be another IObservable, a IConcept, or a literal value (currently a number only).
+	 * If the observable has a value modifier, then it will also have an operand for
+	 * it, which can be another IObservable, a IConcept, or a literal value
+	 * (currently a number only).
 	 * 
-	 * @return the operand. Will be null unless {@link #getValueOperator()} returns not null.
+	 * @return the operand. Will be null unless {@link #getValueOperator()} returns
+	 *         not null.
+	 * @deprecated see note for getValueOperator().
 	 */
 	Object getValueOperand();
 

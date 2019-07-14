@@ -134,6 +134,7 @@ public class CoreOntology extends AbstractWorkspace {
 		public static final String REPRESENTED_BY_PROPERTY = "observation:representedBy";
 		public static final String IS_TYPE_DELEGATE = "observation:isTypeDelegate";
 		public static final String IS_NEGATION_OF = "observation:isNegationOf";
+		public static final String INHERENCY_IS_DISTRIBUTED = "observation:inherencyIsDistributed";
 
 		// core observation ontology
 		public static final String OBSERVATION = "observation:Observation";
@@ -410,27 +411,27 @@ public class CoreOntology extends AbstractWorkspace {
 		} else if (type.contains(Type.EVENT)) {
 			ret = Type.EVENT;
 		} else if (type.contains(Type.RELATIONSHIP)) {
-//			if (type.contains(Type.FUNCTIONAL)) {
-//				ret = Type.FUNCTIONAL;
-//			} else if (type.contains(Type.STRUCTURAL)) {
-//				ret = Type.STRUCTURAL;
-//			} else {
-				ret = Type.RELATIONSHIP;
-//			}
+			// if (type.contains(Type.FUNCTIONAL)) {
+			// ret = Type.FUNCTIONAL;
+			// } else if (type.contains(Type.STRUCTURAL)) {
+			// ret = Type.STRUCTURAL;
+			// } else {
+			ret = Type.RELATIONSHIP;
+			// }
 		} else if (type.contains(Type.EXTENSIVE_PROPERTY)) {
 			ret = Type.EXTENSIVE_PROPERTY;
 		} else if (type.contains(Type.INTENSIVE_PROPERTY)) {
 			ret = Type.INTENSIVE_PROPERTY;
-		} else /*if (type.contains(Type.TRAIT)) {*/
-			if (type.contains(Type.IDENTITY)) {
-				ret = Type.IDENTITY;
-			} else if (type.contains(Type.ATTRIBUTE)) {
-				ret = Type.ATTRIBUTE;
-			} else if (type.contains(Type.REALM)) {
-				ret = Type.REALM;
-			} else if (type.contains(Type.ORDERING)) {
-				ret = Type.ORDERING;
-//			}
+		} else /* if (type.contains(Type.TRAIT)) { */
+		if (type.contains(Type.IDENTITY)) {
+			ret = Type.IDENTITY;
+		} else if (type.contains(Type.ATTRIBUTE)) {
+			ret = Type.ATTRIBUTE;
+		} else if (type.contains(Type.REALM)) {
+			ret = Type.REALM;
+		} else if (type.contains(Type.ORDERING)) {
+			ret = Type.ORDERING;
+			// }
 		} else if (type.contains(Type.ROLE)) {
 			ret = Type.ROLE;
 		} else if (type.contains(Type.CONFIGURATION)) {
@@ -482,15 +483,15 @@ public class CoreOntology extends AbstractWorkspace {
 		} else if (type.contains(Type.VISCOSITY)) {
 			ret = Type.VISCOSITY;
 		} else if (type.contains(Type.AGENT)) {
-//			if (type.contains(Type.DELIBERATIVE)) {
-//				ret = Type.DELIBERATIVE;
-//			} else if (type.contains(Type.INTERACTIVE)) {
-//				ret = Type.INTERACTIVE;
-//			} else if (type.contains(Type.REACTIVE)) {
-//				ret = Type.REACTIVE;
-//			} else {
-				ret = Type.AGENT;
-//			}
+			// if (type.contains(Type.DELIBERATIVE)) {
+			// ret = Type.DELIBERATIVE;
+			// } else if (type.contains(Type.INTERACTIVE)) {
+			// ret = Type.INTERACTIVE;
+			// } else if (type.contains(Type.REACTIVE)) {
+			// ret = Type.REACTIVE;
+			// } else {
+			ret = Type.AGENT;
+			// }
 		} else if (type.contains(Type.UNCERTAINTY)) {
 			ret = Type.UNCERTAINTY;
 		} else if (type.contains(Type.PROBABILITY)) {
@@ -511,9 +512,9 @@ public class CoreOntology extends AbstractWorkspace {
 			ret = Type.PRESENCE;
 		} else if (type.contains(Type.EXTENT)) {
 			ret = Type.EXTENT;
-		} /*else if (type.contains(Type.ASSESSMENT)) {
-			ret = Type.ASSESSMENT;
-		}*/
+		} /*
+			 * else if (type.contains(Type.ASSESSMENT)) { ret = Type.ASSESSMENT; }
+			 */
 
 		return ret;
 	}
@@ -536,18 +537,20 @@ public class CoreOntology extends AbstractWorkspace {
 	}
 
 	public IConcept alignCoreInheritance(IConcept concept) {
-//		if (concept.is(IKimConcept.Type.RELATIONSHIP)) {
-//			// parent of core relationship depends on functional/structural nature
-//			if (concept.is(IKimConcept.Type.FUNCTIONAL) || concept.is(IKimConcept.Type.STRUCTURAL)) {
-//				concept = getCoreType(EnumSet.of(IKimConcept.Type.RELATIONSHIP));
-//			}
-//		} else if (concept.is(IKimConcept.Type.AGENT)) {
-//			// parent of agent depends on agent typology
-//			if (concept.is(IKimConcept.Type.DELIBERATIVE) || concept.is(IKimConcept.Type.INTERACTIVE)
-//					|| concept.is(IKimConcept.Type.REACTIVE)) {
-//				concept = getCoreType(EnumSet.of(IKimConcept.Type.AGENT));
-//			}
-//		}
+		// if (concept.is(IKimConcept.Type.RELATIONSHIP)) {
+		// // parent of core relationship depends on functional/structural nature
+		// if (concept.is(IKimConcept.Type.FUNCTIONAL) ||
+		// concept.is(IKimConcept.Type.STRUCTURAL)) {
+		// concept = getCoreType(EnumSet.of(IKimConcept.Type.RELATIONSHIP));
+		// }
+		// } else if (concept.is(IKimConcept.Type.AGENT)) {
+		// // parent of agent depends on agent typology
+		// if (concept.is(IKimConcept.Type.DELIBERATIVE) ||
+		// concept.is(IKimConcept.Type.INTERACTIVE)
+		// || concept.is(IKimConcept.Type.REACTIVE)) {
+		// concept = getCoreType(EnumSet.of(IKimConcept.Type.AGENT));
+		// }
+		// }
 		return concept;
 	}
 

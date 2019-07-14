@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimStatement.Scope;
@@ -35,6 +36,7 @@ import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -162,13 +164,19 @@ public class Model extends KimObject implements IModel {
 
 		if (this.resources.size() > 0) {
 			for (IObservable o : observables) {
-				if (((Observable) o).isFluidUnits()) {
+				if (o != null && ((Observable) o).isFluidUnits()) {
 					monitor.error(
 							"Observables with unspecified units are not allowed in models that produce data through resources",
 							o);
 					setErrors(true);
 				}
 			}
+		}
+
+		if (observables.size() > 0 && observables.get(0) != null
+				&& observables.get(0).getObservationType() == ObservationType.CLASSIFICATION) {
+			// it's an instantiator, albeit of attributes
+			this.instantiator = true;
 		}
 
 		/*
@@ -178,9 +186,7 @@ public class Model extends KimObject implements IModel {
 			try {
 				this.resources.add(validate((ComputableResource) resource, monitor));
 			} catch (Throwable e) {
-				monitor.error(
-						"Model has resource validation errors",
-						getStatement());
+				monitor.error("Model has resource validation errors", getStatement());
 				setErrors(true);
 			}
 		}
@@ -458,6 +464,10 @@ public class Model extends KimObject implements IModel {
 		this.dependencies.addAll(candidateObservable.observables);
 		if (candidateObservable.computation != null) {
 			this.resources.addAll(candidateObservable.computation);
+		}
+		if (mainObservable.is(Type.COUNTABLE)
+				|| mainObservable.getObservationType() == ObservationType.CLASSIFICATION) {
+			this.instantiator = true;
 		}
 	}
 

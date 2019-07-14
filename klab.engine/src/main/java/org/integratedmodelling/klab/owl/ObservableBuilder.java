@@ -11,12 +11,12 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimConcept.ComponentRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimConcept;
-import org.integratedmodelling.kim.model.KimConcept.ComponentRole;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Ontologies;
@@ -24,7 +24,6 @@ import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Traits;
-import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
@@ -49,7 +48,6 @@ public class ObservableBuilder implements IObservable.Builder {
 	private Ontology ontology;
 
 	private Concept main;
-	private Concept parent;
 	private String mainId;
 	private Set<Type> type;
 	private IConcept inherent;
@@ -80,6 +78,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	private ICurrency currency;
 
 	private boolean isTrivial = true;
+	private boolean distributedInherency = false;
 	private KimConcept declaration;
 
 	// this gets set to true if a finished declaration is set using
@@ -94,23 +93,6 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.type = ((Concept) main).type;
 	}
 
-	// public ObservableBuilder(String main, Concept parent, Ontology ontology) {
-	// this.mainId = main;
-	// this.ontology = ontology;
-	// this.parent = parent;
-	// this.declaration = Concepts.INSTANCE.declare(main);
-	// this.declaration.setParent(Concepts.INSTANCE.getDeclaration(parent));
-	// this.type = ((Concept) parent).type;
-	// }
-
-	// public ObservableBuilder(String main, Set<Type> parent, Ontology ontology) {
-	// this.mainId = main;
-	// this.ontology = ontology;
-	// this.parent = Resources.INSTANCE.getUpperOntology().getCoreType(parent);
-	// this.declaration = Concepts.INSTANCE.declare(main);
-	// this.type = parent;
-	// }
-
 	/**
 	 * Copies all info from the first level of specification of the passed
 	 * observable. Will retain the original semantics, so it won't separate prefix
@@ -121,7 +103,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	 */
 	public ObservableBuilder(Observable observable, IMonitor monitor) {
 
-		this.main = (Concept) Observables.INSTANCE.getCoreObservable(observable.getMain());
+		this.main = (Concept) Observables.INSTANCE.getCoreObservable(observable.getType());
 		this.type = this.main.getTypeSet();
 		this.ontology = (Ontology) observable.getType().getOntology();
 		this.context = Observables.INSTANCE.getDirectContextType(observable.getType());
@@ -132,7 +114,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.cooccurrent = Observables.INSTANCE.getDirectCooccurrentType(observable.getType());
 		this.goal = Observables.INSTANCE.getDirectGoalType(observable.getType());
 		this.compresent = Observables.INSTANCE.getDirectCompresentType(observable.getType());
-		this.declaration = Concepts.INSTANCE.getDeclaration(observable.getMain());
+		this.declaration = Concepts.INSTANCE.getDeclaration(observable.getType());
 
 		for (IConcept role : Roles.INSTANCE.getDirectRoles(observable.getType())) {
 			this.roles.add(role);
@@ -382,7 +364,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.type = main.type;
 		traits.clear();
 		roles.clear();
-		comparison = context = inherent = /* classifier = downTo = */ caused = compresent = inherent = parent = null;
+		comparison = context = inherent = /* classifier = downTo = */ caused = compresent = inherent = null;
 		isTrivial = true;
 		// declaration remains the same
 	}
@@ -550,7 +532,6 @@ public class ObservableBuilder implements IObservable.Builder {
 
 	}
 
-	
 	@Override
 	public Builder withoutAny(IConcept... concepts) {
 
@@ -1633,11 +1614,20 @@ public class ObservableBuilder implements IObservable.Builder {
 			}
 		}
 
+		if (distributedInherency) {
+			// distinguish the label to avoid conflicts; semantically we are the same, so
+			// the display label remains unchanged.
+			cId += "Classifier";
+		}
+
 		List<IAxiom> axioms = new ArrayList<>();
 		axioms.add(Axiom.ClassAssertion(conceptId, type));
 		axioms.add(Axiom.AnnotationAssertion(conceptId, NS.DISPLAY_LABEL_PROPERTY, cDs));
 		axioms.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cId));
 		axioms.add(Axiom.SubClass(main.getUrn(), conceptId));
+		if (distributedInherency) {
+			axioms.add(Axiom.AnnotationAssertion(conceptId, NS.INHERENCY_IS_DISTRIBUTED, "true"));
+		}
 
 		/*
 		 * add the core observable concept ID using NS.CORE_OBSERVABLE_PROPERTY
@@ -1746,7 +1736,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	@Override
 	public IObservable buildObservable() throws KlabValidationException {
 
-		Observable ret = Observable.promote(buildConcept()/*, false*/);
+		Observable ret = Observable.promote(buildConcept()/* , false */);
 
 		if (currency != null) {
 			ret.setCurrency((Currency) currency);
@@ -1754,13 +1744,11 @@ public class ObservableBuilder implements IObservable.Builder {
 		} else if (unit != null) {
 			ret.setUnit((Unit) unit);
 			ret.setDeclaration(ret.getDeclaration() + " in " + ret.getCurrency());
-		} /*else {
-			IUnit unit = (Unit) Units.INSTANCE.getDefaultUnitFor(ret.getType());
-			if (unit != null) {
-				ret.setUnit((Unit) unit);
-				ret.setDeclaration(ret.getDeclaration() + " in " + ret.getCurrency());
-			}
-		}*/
+		} /*
+			 * else { IUnit unit = (Unit) Units.INSTANCE.getDefaultUnitFor(ret.getType());
+			 * if (unit != null) { ret.setUnit((Unit) unit);
+			 * ret.setDeclaration(ret.getDeclaration() + " in " + ret.getCurrency()); } }
+			 */
 
 		if (valueOperator != null) {
 
@@ -1811,9 +1799,9 @@ public class ObservableBuilder implements IObservable.Builder {
 			ret.setDeclaration(ret.getDeclaration() + " down to " + downTo.getDefinition());
 			if (name == null) {
 				ret.setName(ret.getName() + "_down_to_"
-					+ Concepts.INSTANCE.getDisplayName(downTo).replaceAll("\\-", "_").replaceAll(" ", "_"));
+						+ Concepts.INSTANCE.getDisplayName(downTo).replaceAll("\\-", "_").replaceAll(" ", "_"));
 			}
-		}	
+		}
 
 		if (name != null) {
 			ret.setName(name);
@@ -1837,7 +1825,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	@Override
 	public Builder downTo(IConcept detail) {
 		this.downTo = detail;
-//		isTrivial = false;
+		// isTrivial = false;
 		return this;
 	}
 
@@ -1850,7 +1838,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	@Override
 	public Builder by(IConcept classifier) {
 		this.classifier = classifier;
-//		isTrivial = false;
+		// isTrivial = false;
 		return this;
 	}
 
@@ -1858,7 +1846,13 @@ public class ObservableBuilder implements IObservable.Builder {
 	public Builder withValueOperator(ValueOperator operator, Object valueOperand) {
 		this.valueOperator = operator;
 		this.valueOperand = valueOperand;
-//		isTrivial = false;
+		// isTrivial = false;
+		return this;
+	}
+
+	@Override
+	public Builder setDistributedInherency(boolean ofEach) {
+		this.distributedInherency = ofEach;
 		return this;
 	}
 

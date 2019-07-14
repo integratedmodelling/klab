@@ -332,6 +332,13 @@ public interface IKimConcept extends IKimStatement {
 	}
 
 	/**
+	 * Roles of each component, to ease modifications and inspect specific clauses.
+	 */
+	public enum ComponentRole {
+		TRAIT, ROLE, CONTEXT, INHERENT, ADJACENT, CAUSED, CAUSANT, COMPRESENT, GOAL, COOCCURRENT
+	}
+
+	/**
 	 * All declarable concept bits set. Each observable AND this must yield a set of
 	 * size 1.
 	 */
@@ -523,7 +530,7 @@ public interface IKimConcept extends IKimStatement {
 	 */
 	String getCodeName();
 
-	boolean isDistributedInherency();
+	ComponentRole getDistributedInherent();
 
 	boolean isTraitObservable();
 

@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimConcept.ComponentRole;
 import org.integratedmodelling.kim.api.IKimConcept.Expression;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
@@ -75,12 +76,8 @@ public enum KimKnowledgeProcessor {
 		Namespace ns = (Namespace) namespace;
 		try {
 
-			if (concept.getName().equals("Quantity")) {
-				System.out.println("AHYEOH");
-			}
-
 			if (concept.isAlias()) {
-				
+
 				/*
 				 * can only have 'is' X or 'equals' X
 				 */
@@ -90,16 +87,17 @@ public enum KimKnowledgeProcessor {
 					if (parent == null) {
 						monitor.error("Core concept " + concept.getUpperConceptDefined() + " is unknown", concept);
 					} else {
-						((Concept)parent).getTypeSet().addAll(concept.getType());
+						((Concept) parent).getTypeSet().addAll(concept.getType());
 					}
 				} else {
-					
+
 					List<IConcept> concepts = new ArrayList<>();
 					int i = 0;
 					for (ParentConcept p : ((KimConceptStatement) concept).getParents()) {
 
 						if (i > 0) {
-							monitor.error("concepts defining aliases with 'equals' cannot have more than one parent", p);
+							monitor.error("concepts defining aliases with 'equals' cannot have more than one parent",
+									p);
 						}
 
 						for (IKimConcept pdecl : p.getConcepts()) {
@@ -469,10 +467,14 @@ public enum KimKnowledgeProcessor {
 
 		Builder builder = new ObservableBuilder(main, ontology).withDeclaration(concept, monitor);
 
+		if (concept.getDistributedInherent() != null) {
+			builder.setDistributedInherency(true);
+		}
+		
 		/*
 		 * transformations first
 		 */
-
+		
 		if (concept.getInherent() != null) {
 			IConcept c = declareInternal(concept.getInherent(), ontology, monitor);
 			if (c != null) {
@@ -482,7 +484,11 @@ public enum KimKnowledgeProcessor {
 		if (concept.getContext() != null) {
 			IConcept c = declareInternal(concept.getContext(), ontology, monitor);
 			if (c != null) {
-				builder.within(c);
+				if (ComponentRole.CONTEXT.equals(concept.getDistributedInherent())) {
+					builder.of(c);
+				} else {
+					builder.within(c);
+				}
 			}
 		}
 		if (concept.getCompresent() != null) {
@@ -506,7 +512,11 @@ public enum KimKnowledgeProcessor {
 		if (concept.getMotivation() != null) {
 			IConcept c = declareInternal(concept.getMotivation(), ontology, monitor);
 			if (c != null) {
-				builder.withGoal(c);
+				if (ComponentRole.GOAL.equals(concept.getDistributedInherent())) {
+					builder.of(c);
+				} else {
+					builder.withGoal(c);
+				}
 			}
 		}
 		if (concept.getCooccurrent() != null) {

@@ -16,6 +16,7 @@ import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 import org.integratedmodelling.kim.validation.KimValidator;
 import org.integratedmodelling.klab.utils.CamelCase;
+import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.SemanticType;
 
 /**
@@ -31,11 +32,6 @@ import org.integratedmodelling.klab.utils.SemanticType;
  *
  */
 public class KimConcept extends KimStatement implements IKimConcept {
-
-	// roles of each component, to ease modifications
-	public enum ComponentRole {
-		TRAIT, ROLE, CONTEXT, INHERENT, ADJACENT, CAUSED, CAUSANT, COMPRESENT, GOAL, COOCCURRENT
-	}
 
 	private String name;
 
@@ -113,9 +109,10 @@ public class KimConcept extends KimStatement implements IKimConcept {
 	private boolean traitObservable = false;
 
 	/**
-	 * traitObservable is true, plus a 'each' was added after the of, within or for
+	 * if any component was declared as the distributed inherent ('of each'), this
+	 * returns the correspondent component role.
 	 */
-	private boolean distributedInherency = false;
+	private ComponentRole distributedInherent = null;
 
 	/**
 	 * True if any concepts in the declaration are templated
@@ -164,7 +161,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		this.template = other.template;
 		this.descriptor = other.descriptor;
 		this.traitObservable = other.traitObservable;
-		this.distributedInherency = other.distributedInherency;
+		this.distributedInherent = other.distributedInherent;
 	}
 
 	public KimConcept(Concept statement, IKimStatement parent) {
@@ -238,9 +235,13 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			unclassified.remove(unclassified.size() - 1);
 		}
 
+		boolean hasConcretizingTrait = false;
 		for (KimConcept c : unclassified) {
 			if (c.is(Type.TRAIT)) {
 				ret.traits.add(c);
+				if (!c.is(Type.ABSTRACT) && (c.is(Type.IDENTITY) || c.is(Type.REALM))) {
+					hasConcretizingTrait = true;
+				}
 			} else if (c.is(Type.ROLE)) {
 				ret.roles.add(c);
 			} else {
@@ -254,20 +255,19 @@ public class KimConcept extends KimStatement implements IKimConcept {
 
 		ret.observable = observable;
 		ret.type = observable.type;
-
-		// those should be all in XOR if we get here
-		ConceptDeclaration inherency = declaration.getInherency();
-		if (declaration.getDistributedRoleInherency() != null) {
-			ret.distributedInherency = true;
-			inherency = declaration.getDistributedRoleInherency();
-		} else if (declaration.getDistributedTraitInherency() != null) {
-			ret.distributedInherency = true;
-			inherency = declaration.getDistributedRoleInherency();
-		} else if (declaration.getDistributedTraitContext() != null) {
-			ret.distributedInherency = true;
-			inherency = declaration.getDistributedRoleInherency();
+		if (hasConcretizingTrait) {
+			ret.type.remove(Type.ABSTRACT);
 		}
 		
+		if (declaration.isDistributedOfInherency()) {
+			ret.distributedInherent = ComponentRole.INHERENT;
+		} else if (declaration.isDistributedForInherency()) {
+			ret.distributedInherent = ComponentRole.GOAL;
+		} else if (declaration.isDistributedWithinInherency()) {
+			ret.distributedInherent = ComponentRole.CONTEXT;
+		}
+
+		ConceptDeclaration inherency = declaration.getInherency();
 		if (inherency != null) {
 			ret.inherent = normalize(inherency, parent);
 			if (ret.inherent == null) {
@@ -281,7 +281,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			if (ret.inherent.isTemplate()) {
 				ret.template = true;
 			}
-			
+
 			if (ret.type.contains(IKimConcept.Type.TRAIT) || ret.type.contains(IKimConcept.Type.ROLE)) {
 				/*
 				 * inherency is for the trait, i.e. this can only be used in an observable.
@@ -312,7 +312,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			}
 		}
 		if (declaration.getMotivation() != null) {
-			
+
 			ret.motivation = normalize(declaration.getMotivation(), parent);
 			if (ret.motivation == null) {
 				return null;
@@ -482,6 +482,64 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			}
 		}
 
+		/*
+		 * check for special forms that need rearrangement
+		 */
+		ret.rearrangeSpecialForms();
+
+		return ret;
+	}
+
+	/*
+	 * rearrange the special variant of <single concrete attribute/role> <abstract
+	 * observable> to <attribute/role> of <observable>
+	 */
+	private void rearrangeSpecialForms() {
+		if (traits.size() + roles.size() == 1 && observable != null && observable.is(Type.ABSTRACT) && authority == null
+				&& getSemanticSubsetters().size() == 0 && operands.size() == 0) {
+			IKimConcept trait = CollectionUtils.join(traits, roles).iterator().next();
+			if ((trait.is(Type.ROLE) || trait.is(Type.ATTRIBUTE)) && !trait.is(Type.ABSTRACT)) {
+				KimConcept inh = this.observable;
+				this.type.clear();
+				this.type.addAll(trait.getType());
+				this.observable = (KimConcept)trait;
+				this.traits.clear();
+				this.roles.clear();
+				this.inherent = inh;
+				// description remains the same
+			}
+		}
+	}
+
+	private List<IKimConcept> getSemanticSubsetters() {
+		List<IKimConcept> ret = new ArrayList<>();
+		if (inherent != null) {
+			ret.add(inherent);
+		}
+		if (context != null) {
+			ret.add(context);
+		}
+		if (adjacent != null) {
+			ret.add(adjacent);
+		}
+		if (causant != null) {
+			ret.add(causant);
+		}
+		if (caused != null) {
+			ret.add(caused);
+		}
+		if (compresent != null) {
+			ret.add(compresent);
+		}
+		if (cooccurrent != null) {
+			ret.add(cooccurrent);
+		}
+		if (motivation != null) {
+			ret.add(motivation);
+		}
+		if (otherConcept != null) {
+			ret.add(otherConcept);
+		}
 		return ret;
 	}
 
@@ -659,7 +717,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		}
 
 		if (inherent != null) {
-			ret += " of " + inherent;
+			ret += " of " + (distributedInherent == null ? "" : "each ") + inherent;
 			complex = true;
 		}
 
@@ -1125,8 +1183,6 @@ public class KimConcept extends KimStatement implements IKimConcept {
 
 		// no need to sort again
 
-		// ret.computeName();
-
 		return ret;
 	}
 
@@ -1139,11 +1195,6 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		}
 		return ret;
 	}
-
-	// private void computeName() {
-	// // TODO Auto-generated method stub
-	//
-	// }
 
 	@Override
 	public String getCodeName() {
@@ -1226,12 +1277,8 @@ public class KimConcept extends KimStatement implements IKimConcept {
 	}
 
 	@Override
-	public boolean isDistributedInherency() {
-		return distributedInherency;
-	}
-
-	public void setDistributedInherency(boolean distributedInherency) {
-		this.distributedInherency = distributedInherency;
+	public ComponentRole getDistributedInherent() {
+		return distributedInherent;
 	}
 
 }

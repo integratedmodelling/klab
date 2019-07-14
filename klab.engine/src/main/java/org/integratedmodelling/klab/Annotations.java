@@ -247,7 +247,7 @@ public enum Annotations implements IAnnotationService {
                 }
             }
 
-            collectAnnotations(((IObservable) object).getMain(), collection);
+            collectAnnotations(((IObservable) object).getType(), collection);
 
         } else if (object instanceof IConcept) {
             IKimObject mobject = Resources.INSTANCE.getModelObject(object.toString());
@@ -256,7 +256,7 @@ public enum Annotations implements IAnnotationService {
             }
             if (((IConcept)object).is(Type.CLASS)) {
                 // collect annotations from what is classified
-                IConcept classified = Types.INSTANCE.getIncarnatedType((IConcept)object);
+                IConcept classified = Types.INSTANCE.getCategorizingType((IConcept)object);
                 if (classified != null) {
                     collectAnnotations(classified, collection);
                 }

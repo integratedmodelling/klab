@@ -663,27 +663,6 @@ public class ModelKbox extends ObservableKbox {
 			}
 		}
 
-		// if (model.getObservables().get(0).is(Type.CLASS)) {
-		//
-		// Collection<IConcept> trs =
-		// Types.INSTANCE.getExposedTraits(model.getObservables().get(0).getType());
-		// IConcept context =
-		// Observables.INSTANCE.getContextType(model.getObservables().get(0).getType());
-		// IConcept inherent =
-		// Observables.INSTANCE.getInherentType(model.getObservables().get(0).getType());
-		//
-		// if (trs != null) {
-		// for (IConcept tr : trs) {
-		// /**
-		// * TODO add model for type of given trait with context and inherency from
-		// class
-		// */
-		// IConcept tinherent = Observables.INSTANCE.getInherentType(tr);
-		// }
-		// }
-		//
-		// }
-
 		return ret;
 	}
 

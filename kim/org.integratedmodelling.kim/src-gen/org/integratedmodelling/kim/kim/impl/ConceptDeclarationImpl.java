@@ -34,9 +34,9 @@ import org.integratedmodelling.kim.kim.KimPackage;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getMain <em>Main</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getDistributedTraitInherency <em>Distributed Trait Inherency</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#isDistributedOfInherency <em>Distributed Of Inherency</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getInherency <em>Inherency</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getDistributedRoleInherency <em>Distributed Role Inherency</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#isDistributedForInherency <em>Distributed For Inherency</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getMotivation <em>Motivation</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getCompresent <em>Compresent</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getCausant <em>Causant</em>}</li>
@@ -45,7 +45,7 @@ import org.integratedmodelling.kim.kim.KimPackage;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getContained <em>Contained</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getCaused <em>Caused</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getDuring <em>During</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getDistributedTraitContext <em>Distributed Trait Context</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#isDistributedWithinInherency <em>Distributed Within Inherency</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getContext <em>Context</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getRelationshipSource <em>Relationship Source</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getRelationshipTarget <em>Relationship Target</em>}</li>
@@ -69,14 +69,24 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
   protected EList<Concept> main;
 
   /**
-   * The cached value of the '{@link #getDistributedTraitInherency() <em>Distributed Trait Inherency</em>}' containment reference.
+   * The default value of the '{@link #isDistributedOfInherency() <em>Distributed Of Inherency</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getDistributedTraitInherency()
+   * @see #isDistributedOfInherency()
    * @generated
    * @ordered
    */
-  protected ConceptDeclaration distributedTraitInherency;
+  protected static final boolean DISTRIBUTED_OF_INHERENCY_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isDistributedOfInherency() <em>Distributed Of Inherency</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isDistributedOfInherency()
+   * @generated
+   * @ordered
+   */
+  protected boolean distributedOfInherency = DISTRIBUTED_OF_INHERENCY_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getInherency() <em>Inherency</em>}' containment reference.
@@ -89,14 +99,24 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
   protected ConceptDeclaration inherency;
 
   /**
-   * The cached value of the '{@link #getDistributedRoleInherency() <em>Distributed Role Inherency</em>}' containment reference.
+   * The default value of the '{@link #isDistributedForInherency() <em>Distributed For Inherency</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getDistributedRoleInherency()
+   * @see #isDistributedForInherency()
    * @generated
    * @ordered
    */
-  protected ConceptDeclaration distributedRoleInherency;
+  protected static final boolean DISTRIBUTED_FOR_INHERENCY_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isDistributedForInherency() <em>Distributed For Inherency</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isDistributedForInherency()
+   * @generated
+   * @ordered
+   */
+  protected boolean distributedForInherency = DISTRIBUTED_FOR_INHERENCY_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getMotivation() <em>Motivation</em>}' containment reference.
@@ -179,14 +199,24 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
   protected ConceptDeclaration during;
 
   /**
-   * The cached value of the '{@link #getDistributedTraitContext() <em>Distributed Trait Context</em>}' containment reference.
+   * The default value of the '{@link #isDistributedWithinInherency() <em>Distributed Within Inherency</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getDistributedTraitContext()
+   * @see #isDistributedWithinInherency()
    * @generated
    * @ordered
    */
-  protected ConceptDeclaration distributedTraitContext;
+  protected static final boolean DISTRIBUTED_WITHIN_INHERENCY_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isDistributedWithinInherency() <em>Distributed Within Inherency</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isDistributedWithinInherency()
+   * @generated
+   * @ordered
+   */
+  protected boolean distributedWithinInherency = DISTRIBUTED_WITHIN_INHERENCY_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getContext() <em>Context</em>}' containment reference.
@@ -298,9 +328,9 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
-  public ConceptDeclaration getDistributedTraitInherency()
+  public boolean isDistributedOfInherency()
   {
-    return distributedTraitInherency;
+    return distributedOfInherency;
   }
 
   /**
@@ -308,37 +338,12 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetDistributedTraitInherency(ConceptDeclaration newDistributedTraitInherency, NotificationChain msgs)
+  public void setDistributedOfInherency(boolean newDistributedOfInherency)
   {
-    ConceptDeclaration oldDistributedTraitInherency = distributedTraitInherency;
-    distributedTraitInherency = newDistributedTraitInherency;
+    boolean oldDistributedOfInherency = distributedOfInherency;
+    distributedOfInherency = newDistributedOfInherency;
     if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_TRAIT_INHERENCY, oldDistributedTraitInherency, newDistributedTraitInherency);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setDistributedTraitInherency(ConceptDeclaration newDistributedTraitInherency)
-  {
-    if (newDistributedTraitInherency != distributedTraitInherency)
-    {
-      NotificationChain msgs = null;
-      if (distributedTraitInherency != null)
-        msgs = ((InternalEObject)distributedTraitInherency).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_TRAIT_INHERENCY, null, msgs);
-      if (newDistributedTraitInherency != null)
-        msgs = ((InternalEObject)newDistributedTraitInherency).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_TRAIT_INHERENCY, null, msgs);
-      msgs = basicSetDistributedTraitInherency(newDistributedTraitInherency, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_TRAIT_INHERENCY, newDistributedTraitInherency, newDistributedTraitInherency));
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_OF_INHERENCY, oldDistributedOfInherency, distributedOfInherency));
   }
 
   /**
@@ -394,9 +399,9 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
-  public ConceptDeclaration getDistributedRoleInherency()
+  public boolean isDistributedForInherency()
   {
-    return distributedRoleInherency;
+    return distributedForInherency;
   }
 
   /**
@@ -404,37 +409,12 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetDistributedRoleInherency(ConceptDeclaration newDistributedRoleInherency, NotificationChain msgs)
+  public void setDistributedForInherency(boolean newDistributedForInherency)
   {
-    ConceptDeclaration oldDistributedRoleInherency = distributedRoleInherency;
-    distributedRoleInherency = newDistributedRoleInherency;
+    boolean oldDistributedForInherency = distributedForInherency;
+    distributedForInherency = newDistributedForInherency;
     if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_ROLE_INHERENCY, oldDistributedRoleInherency, newDistributedRoleInherency);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setDistributedRoleInherency(ConceptDeclaration newDistributedRoleInherency)
-  {
-    if (newDistributedRoleInherency != distributedRoleInherency)
-    {
-      NotificationChain msgs = null;
-      if (distributedRoleInherency != null)
-        msgs = ((InternalEObject)distributedRoleInherency).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_ROLE_INHERENCY, null, msgs);
-      if (newDistributedRoleInherency != null)
-        msgs = ((InternalEObject)newDistributedRoleInherency).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_ROLE_INHERENCY, null, msgs);
-      msgs = basicSetDistributedRoleInherency(newDistributedRoleInherency, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_ROLE_INHERENCY, newDistributedRoleInherency, newDistributedRoleInherency));
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_FOR_INHERENCY, oldDistributedForInherency, distributedForInherency));
   }
 
   /**
@@ -826,9 +806,9 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
-  public ConceptDeclaration getDistributedTraitContext()
+  public boolean isDistributedWithinInherency()
   {
-    return distributedTraitContext;
+    return distributedWithinInherency;
   }
 
   /**
@@ -836,37 +816,12 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetDistributedTraitContext(ConceptDeclaration newDistributedTraitContext, NotificationChain msgs)
+  public void setDistributedWithinInherency(boolean newDistributedWithinInherency)
   {
-    ConceptDeclaration oldDistributedTraitContext = distributedTraitContext;
-    distributedTraitContext = newDistributedTraitContext;
+    boolean oldDistributedWithinInherency = distributedWithinInherency;
+    distributedWithinInherency = newDistributedWithinInherency;
     if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_TRAIT_CONTEXT, oldDistributedTraitContext, newDistributedTraitContext);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setDistributedTraitContext(ConceptDeclaration newDistributedTraitContext)
-  {
-    if (newDistributedTraitContext != distributedTraitContext)
-    {
-      NotificationChain msgs = null;
-      if (distributedTraitContext != null)
-        msgs = ((InternalEObject)distributedTraitContext).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_TRAIT_CONTEXT, null, msgs);
-      if (newDistributedTraitContext != null)
-        msgs = ((InternalEObject)newDistributedTraitContext).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_TRAIT_CONTEXT, null, msgs);
-      msgs = basicSetDistributedTraitContext(newDistributedTraitContext, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_TRAIT_CONTEXT, newDistributedTraitContext, newDistributedTraitContext));
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_WITHIN_INHERENCY, oldDistributedWithinInherency, distributedWithinInherency));
   }
 
   /**
@@ -1076,12 +1031,8 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
     {
       case KimPackage.CONCEPT_DECLARATION__MAIN:
         return ((InternalEList<?>)getMain()).basicRemove(otherEnd, msgs);
-      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_TRAIT_INHERENCY:
-        return basicSetDistributedTraitInherency(null, msgs);
       case KimPackage.CONCEPT_DECLARATION__INHERENCY:
         return basicSetInherency(null, msgs);
-      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_ROLE_INHERENCY:
-        return basicSetDistributedRoleInherency(null, msgs);
       case KimPackage.CONCEPT_DECLARATION__MOTIVATION:
         return basicSetMotivation(null, msgs);
       case KimPackage.CONCEPT_DECLARATION__COMPRESENT:
@@ -1098,8 +1049,6 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
         return basicSetCaused(null, msgs);
       case KimPackage.CONCEPT_DECLARATION__DURING:
         return basicSetDuring(null, msgs);
-      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_TRAIT_CONTEXT:
-        return basicSetDistributedTraitContext(null, msgs);
       case KimPackage.CONCEPT_DECLARATION__CONTEXT:
         return basicSetContext(null, msgs);
       case KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_SOURCE:
@@ -1124,12 +1073,12 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
     {
       case KimPackage.CONCEPT_DECLARATION__MAIN:
         return getMain();
-      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_TRAIT_INHERENCY:
-        return getDistributedTraitInherency();
+      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_OF_INHERENCY:
+        return isDistributedOfInherency();
       case KimPackage.CONCEPT_DECLARATION__INHERENCY:
         return getInherency();
-      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_ROLE_INHERENCY:
-        return getDistributedRoleInherency();
+      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_FOR_INHERENCY:
+        return isDistributedForInherency();
       case KimPackage.CONCEPT_DECLARATION__MOTIVATION:
         return getMotivation();
       case KimPackage.CONCEPT_DECLARATION__COMPRESENT:
@@ -1146,8 +1095,8 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
         return getCaused();
       case KimPackage.CONCEPT_DECLARATION__DURING:
         return getDuring();
-      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_TRAIT_CONTEXT:
-        return getDistributedTraitContext();
+      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_WITHIN_INHERENCY:
+        return isDistributedWithinInherency();
       case KimPackage.CONCEPT_DECLARATION__CONTEXT:
         return getContext();
       case KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_SOURCE:
@@ -1179,14 +1128,14 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
         getMain().clear();
         getMain().addAll((Collection<? extends Concept>)newValue);
         return;
-      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_TRAIT_INHERENCY:
-        setDistributedTraitInherency((ConceptDeclaration)newValue);
+      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_OF_INHERENCY:
+        setDistributedOfInherency((Boolean)newValue);
         return;
       case KimPackage.CONCEPT_DECLARATION__INHERENCY:
         setInherency((ConceptDeclaration)newValue);
         return;
-      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_ROLE_INHERENCY:
-        setDistributedRoleInherency((ConceptDeclaration)newValue);
+      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_FOR_INHERENCY:
+        setDistributedForInherency((Boolean)newValue);
         return;
       case KimPackage.CONCEPT_DECLARATION__MOTIVATION:
         setMotivation((ConceptDeclaration)newValue);
@@ -1212,8 +1161,8 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
       case KimPackage.CONCEPT_DECLARATION__DURING:
         setDuring((ConceptDeclaration)newValue);
         return;
-      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_TRAIT_CONTEXT:
-        setDistributedTraitContext((ConceptDeclaration)newValue);
+      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_WITHIN_INHERENCY:
+        setDistributedWithinInherency((Boolean)newValue);
         return;
       case KimPackage.CONCEPT_DECLARATION__CONTEXT:
         setContext((ConceptDeclaration)newValue);
@@ -1252,14 +1201,14 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
       case KimPackage.CONCEPT_DECLARATION__MAIN:
         getMain().clear();
         return;
-      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_TRAIT_INHERENCY:
-        setDistributedTraitInherency((ConceptDeclaration)null);
+      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_OF_INHERENCY:
+        setDistributedOfInherency(DISTRIBUTED_OF_INHERENCY_EDEFAULT);
         return;
       case KimPackage.CONCEPT_DECLARATION__INHERENCY:
         setInherency((ConceptDeclaration)null);
         return;
-      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_ROLE_INHERENCY:
-        setDistributedRoleInherency((ConceptDeclaration)null);
+      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_FOR_INHERENCY:
+        setDistributedForInherency(DISTRIBUTED_FOR_INHERENCY_EDEFAULT);
         return;
       case KimPackage.CONCEPT_DECLARATION__MOTIVATION:
         setMotivation((ConceptDeclaration)null);
@@ -1285,8 +1234,8 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
       case KimPackage.CONCEPT_DECLARATION__DURING:
         setDuring((ConceptDeclaration)null);
         return;
-      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_TRAIT_CONTEXT:
-        setDistributedTraitContext((ConceptDeclaration)null);
+      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_WITHIN_INHERENCY:
+        setDistributedWithinInherency(DISTRIBUTED_WITHIN_INHERENCY_EDEFAULT);
         return;
       case KimPackage.CONCEPT_DECLARATION__CONTEXT:
         setContext((ConceptDeclaration)null);
@@ -1322,12 +1271,12 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
     {
       case KimPackage.CONCEPT_DECLARATION__MAIN:
         return main != null && !main.isEmpty();
-      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_TRAIT_INHERENCY:
-        return distributedTraitInherency != null;
+      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_OF_INHERENCY:
+        return distributedOfInherency != DISTRIBUTED_OF_INHERENCY_EDEFAULT;
       case KimPackage.CONCEPT_DECLARATION__INHERENCY:
         return inherency != null;
-      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_ROLE_INHERENCY:
-        return distributedRoleInherency != null;
+      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_FOR_INHERENCY:
+        return distributedForInherency != DISTRIBUTED_FOR_INHERENCY_EDEFAULT;
       case KimPackage.CONCEPT_DECLARATION__MOTIVATION:
         return motivation != null;
       case KimPackage.CONCEPT_DECLARATION__COMPRESENT:
@@ -1344,8 +1293,8 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
         return caused != null;
       case KimPackage.CONCEPT_DECLARATION__DURING:
         return during != null;
-      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_TRAIT_CONTEXT:
-        return distributedTraitContext != null;
+      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_WITHIN_INHERENCY:
+        return distributedWithinInherency != DISTRIBUTED_WITHIN_INHERENCY_EDEFAULT;
       case KimPackage.CONCEPT_DECLARATION__CONTEXT:
         return context != null;
       case KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_SOURCE:
@@ -1373,7 +1322,13 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (operators: ");
+    result.append(" (distributedOfInherency: ");
+    result.append(distributedOfInherency);
+    result.append(", distributedForInherency: ");
+    result.append(distributedForInherency);
+    result.append(", distributedWithinInherency: ");
+    result.append(distributedWithinInherency);
+    result.append(", operators: ");
     result.append(operators);
     result.append(", name: ");
     result.append(name);

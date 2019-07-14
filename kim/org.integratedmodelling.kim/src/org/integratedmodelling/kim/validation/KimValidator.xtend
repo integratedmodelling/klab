@@ -353,7 +353,7 @@ class KimValidator extends AbstractKimValidator {
 						error('Observable has undefined semantics',
 							KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, BAD_OBSERVABLE)
 						ok = false
-					} else if (observable.main.distributedInherency && obsIdx > 0) {
+					} else if (observable.main.distributedInherent !== null && obsIdx > 0) {
 						error(
 							"Distributed inherency (of each, for each, within each) are only allowed as main observables",
 							KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, BAD_OBSERVABLE)
@@ -445,7 +445,7 @@ class KimValidator extends AbstractKimValidator {
 					error('Models can only describe observables or traits',
 						KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, BAD_OBSERVABLE)
 					ok = false
-				} else if (observable.main.distributedInherency) {
+				} else if (observable.main.distributedInherent !== null) {
 					error("Distributed inherency (of each, for each, within each) are only allowed as main observables",
 						KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, BAD_OBSERVABLE)
 					ok = false
@@ -1120,36 +1120,24 @@ class KimValidator extends AbstractKimValidator {
 		/*
 		 * this is the 'of each' form (can also be 'for each' and 'within each').
 		 */		
-		if (declaration.distributedRoleInherency !== null || declaration.distributedTraitContext !== null || declaration.distributedTraitInherency !== null) {
-			
-			traitObservable = true;
+		if (declaration.distributedOfInherency) {
 			distributedInherency = true;
+		}
 
-			/*
-			 * TODO must disallow more than one of these and their use with an actual inherency
-			 */
-			var inherency = declaration.distributedRoleInherency;
-			if (inherency === null) {
-				inherency = declaration.distributedTraitInherency;
-			} 
-			if (inherency === null) {
-				inherency = declaration.distributedTraitContext;
+		if (declaration.distributedForInherency) {
+			if (distributedInherency) {
+				error("Distributed inherency ('of each') can only be used once in a declaration", declaration.motivation, null,
+					KimPackage.CONCEPT_DECLARATION__MOTIVATION)
 			}
+			distributedInherency = true;
+		}
 
-			flags = checkDeclaration(inherency)
-			if (flags.isEmpty) {
-				type.clear
-			} else  {
-				// this cannot happen in definitions, so it will never be in a macro without error
-				if (!flags.contains(Type.DIRECT_OBSERVABLE) && !flags.contains(Type.CONFIGURATION)) {
-					error(
-						"The inherent type (of) must be a direct observable (process, subject, event or relationship) or a configuration",
-						inherency, null, KimPackage.CONCEPT_DECLARATION__INHERENCY)
-					error = true
-				}
+		if (declaration.distributedWithinInherency) {
+			if (distributedInherency) {
+				error("Distributed inherency ('of each') can only be used once in a declaration", declaration.context, null,
+					KimPackage.CONCEPT_DECLARATION__CONTEXT)
 			}
-			copyInheritableFlags(flags, type);
-			
+			distributedInherency = true;
 		}
 
 		if (declaration.context !== null) {

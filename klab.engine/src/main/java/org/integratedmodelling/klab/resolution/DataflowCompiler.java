@@ -319,7 +319,7 @@ public class DataflowCompiler {
 			ret.setAlias(localName);
 
 			switch (observable.getObservationType()) {
-			case CLASSIFICATION:
+			case CATEGORIZATION:
 				ret.setType(Type.CONCEPT);
 				break;
 			case DETECTION:

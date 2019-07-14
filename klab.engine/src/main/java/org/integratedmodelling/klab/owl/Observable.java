@@ -28,12 +28,12 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.dataflow.Dataflow;
+import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.Annotation;
-import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Range;
 
@@ -46,7 +46,7 @@ import org.integratedmodelling.klab.utils.Range;
 public class Observable implements IObservable {
 
 	protected Concept observable;
-	protected Concept main;
+	// protected Concept main;
 	private String name;
 	private String declaration;
 	private boolean isAbstract;
@@ -79,14 +79,14 @@ public class Observable implements IObservable {
 	private List<IAnnotation> annotations = new ArrayList<>();
 	private boolean givenName;
 	private String url;
-	
+
 	/*
 	 * this is only for debugging
 	 */
-	 transient String originatingModelId;
+	transient String originatingModelId;
 
 	Observable(Concept concept) {
-		this.observable = this.main = concept;
+		this.observable = concept;
 	}
 
 	public static Observable promote(IConceptDefinition concept) {
@@ -106,7 +106,6 @@ public class Observable implements IObservable {
 		}
 		Observable ret = new Observable((Concept) concept);
 		ret.observable = (Concept) concept;
-		ret.main = (Concept) concept;
 		ret.declaration = concept.getDefinition().trim();
 		ret.isAbstract = concept.isAbstract();
 		ret.generic = concept.isAbstract();
@@ -119,7 +118,6 @@ public class Observable implements IObservable {
 
 	public Observable(Observable observable) {
 		this.observable = observable.observable;
-		this.main = observable.main;
 		this.name = observable.name;
 		this.declaration = observable.declaration;
 		this.isAbstract = observable.isAbstract;
@@ -152,10 +150,10 @@ public class Observable implements IObservable {
 		return name;
 	}
 
-	@Override
-	public IConcept getMain() {
-		return main;
-	}
+	// @Override
+	// public IConcept getMain() {
+	// return main;
+	// }
 
 	@Override
 	public IConcept getDownTo() {
@@ -187,17 +185,17 @@ public class Observable implements IObservable {
 		return isAbstract;
 	}
 
-	public IConcept getObservable() {
-		return observable;
-	}
+	// public IConcept getObservable() {
+	// return observable;
+	// }
+	//
+	// public void setObservable(Concept observable) {
+	// this.observable = observable;
+	// }
 
-	public void setObservable(Concept observable) {
-		this.observable = observable;
-	}
-
-	public void setMain(Concept main) {
-		this.main = main;
-	}
+	// public void setMain(Concept main) {
+	// this.main = main;
+	// }
 
 	public void setName(String name) {
 		this.name = name;
@@ -256,7 +254,7 @@ public class Observable implements IObservable {
 	public ObservationType getObservationType() {
 		if (observationType == null && observable != null) {
 			if (observable.is(Type.CLASS)) {
-				observationType = ObservationType.CLASSIFICATION;
+				observationType = ObservationType.CATEGORIZATION;
 			} else if (observable.is(Type.PRESENCE)) {
 				observationType = ObservationType.VERIFICATION;
 			} else if (observable.is(Type.QUALITY)) { // don't reorder these!
@@ -268,8 +266,9 @@ public class Observable implements IObservable {
 			} else if (observable.is(Type.PROCESS)) {
 				observationType = ObservationType.SIMULATION;
 			} else if (observable.is(Type.TRAIT) || observable.is(Type.ROLE)) {
-				observationType = ObservationType.ATTRIBUTION;
-				System.out.println("OSTIA un attributo nel posto sbagliato: " + observable);
+				boolean distributed = Boolean
+						.parseBoolean(observable.getMetadata().get(NS.INHERENCY_IS_DISTRIBUTED, "false"));
+				observationType = distributed ? ObservationType.CLASSIFICATION : ObservationType.CHARACTERIZATION;
 			}
 		}
 		return observationType;
@@ -306,7 +305,7 @@ public class Observable implements IObservable {
 		result = prime * result + ((classifier == null) ? 0 : classifier.hashCode());
 		result = prime * result + ((currency == null) ? 0 : currency.hashCode());
 		result = prime * result + ((downTo == null) ? 0 : downTo.hashCode());
-		result = prime * result + ((main == null) ? 0 : main.hashCode());
+		// result = prime * result + ((main == null) ? 0 : main.hashCode());
 		// result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((observable == null) ? 0 : observable.hashCode());
 		// result = prime * result + (optional ? 1231 : 1237);
@@ -349,13 +348,13 @@ public class Observable implements IObservable {
 		} else if (!downTo.equals(other.downTo)) {
 			return false;
 		}
-		if (main == null) {
-			if (other.main != null) {
-				return false;
-			}
-		} else if (other.main == null || !main.equals(other.main)) {
-			return false;
-		}
+		// if (main == null) {
+		// if (other.main != null) {
+		// return false;
+		// }
+		// } else if (other.main == null || !main.equals(other.main)) {
+		// return false;
+		// }
 		// if (name == null) {
 		// if (other.name != null) {
 		// return false;
@@ -407,32 +406,25 @@ public class Observable implements IObservable {
 	public boolean canResolve(Observable obj) {
 
 		boolean ok = false;
+		if (this.observable.equals(obj.observable)) {
 
-		if (this.main.equals(obj.main)) {
+			ok = obj.classifier == null && this.classifier == null
+					|| (this.classifier != null && obj.classifier != null && obj.classifier.equals(this.classifier));
 
-			ok = true;
-			if (this.observable.equals(obj.observable)) {
-
-				ok = obj.classifier == null && this.classifier == null || (this.classifier != null
-						&& obj.classifier != null && obj.classifier.equals(this.classifier));
-
-				if (ok) {
-					ok = ((this.downTo == null && obj.downTo == null) || ((this.downTo != null && obj.downTo != null
-							&& Concepts.INSTANCE.compareSpecificity(this.downTo, obj.downTo, true) >= 0)));
-				}
-				if (ok) {
-					/*
-					 * the one without the operator can resolve the one with the operator.
-					 */
-					ok = obj.valueOperator == null || (obj.valueOperator.equals(this.valueOperator)
-							&& ((obj.valueOperand == null && this.valueOperand == null)
-									|| (obj.valueOperand != null && obj.valueOperand.equals(this.valueOperand))));
-				}
+			if (ok) {
+				ok = ((this.downTo == null && obj.downTo == null) || ((this.downTo != null && obj.downTo != null
+						&& Concepts.INSTANCE.compareSpecificity(this.downTo, obj.downTo, true) >= 0)));
+			}
+			if (ok) {
+				/*
+				 * the one without the operator can resolve the one with the operator.
+				 */
+				ok = obj.valueOperator == null || (obj.valueOperator.equals(this.valueOperator)
+						&& ((obj.valueOperand == null && this.valueOperand == null)
+								|| (obj.valueOperand != null && obj.valueOperand.equals(this.valueOperand))));
 			}
 		}
-
 		return ok;
-
 	}
 
 	public void setModelReference(String modelReference) {
@@ -490,7 +482,7 @@ public class Observable implements IObservable {
 	public IArtifact.Type getArtifactType() {
 
 		if (observable != null) {
-			if (/* classifier != null || */ observable.is(Type.CLASS) || observable.is(Type.TRAIT)) {
+			if (observable.is(Type.CLASS)) {
 				return IArtifact.Type.CONCEPT;
 			} else if (observable.is(Type.PRESENCE)) {
 				return IArtifact.Type.BOOLEAN;
@@ -504,6 +496,7 @@ public class Observable implements IObservable {
 				return IArtifact.Type.OBJECT;
 			}
 		}
+		// trait and role observers specify filters, which produce void.
 		return IArtifact.Type.VOID;
 	}
 
@@ -702,13 +695,13 @@ public class Observable implements IObservable {
 	public void setOriginatingModelId(String modelId) {
 		this.originatingModelId = modelId;
 	}
-	
+
 	public String getOriginatingModelId() {
 		return this.originatingModelId;
 	}
 
 	public Observable withCurrency(ICurrency currency) {
-		this.currency = (Currency)currency;
+		this.currency = (Currency) currency;
 		return this;
 	}
 
