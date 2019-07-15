@@ -742,15 +742,15 @@ ruleActorDefinition returns [EObject current=null]
 			    |
 			(
 				(
-					lv_processor_5_0='process'
+					lv_filter_5_0='filter'
 					{
-						newLeafNode(lv_processor_5_0, grammarAccess.getActorDefinitionAccess().getProcessorProcessKeyword_4_1_0());
+						newLeafNode(lv_filter_5_0, grammarAccess.getActorDefinitionAccess().getFilterFilterKeyword_4_1_0());
 					}
 					{
 						if ($current==null) {
 							$current = createModelElement(grammarAccess.getActorDefinitionRule());
 						}
-						setWithLastConsumed($current, "processor", true, "process");
+						setWithLastConsumed($current, "filter", true, "filter");
 					}
 				)
 			)

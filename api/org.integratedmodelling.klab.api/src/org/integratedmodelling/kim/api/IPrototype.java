@@ -252,12 +252,14 @@ public interface IPrototype {
 	
 	/**
 	 * True if the prototype specifies a service that modifies an existing artifact
-	 * (with 'process' instead of 'export')
+	 * (with 'filter' instead of 'export'). When filtering, an 'import' parameter is
+	 * mandatory. The actual output must match the type of the input and the returned
+	 * value may be the same input or a different one.
 	 * 
 	 * @return
 	 */
-	boolean isProcessor();
-
+	boolean isFilter();
+	
 	/**
 	 * If the service specifications include a geometry for the result, return it
 	 * here. Processors that do not produce data return an empty geometry.

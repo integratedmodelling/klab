@@ -35,7 +35,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   subdivision for further aggregation.
 - Value operators are recognized and handled both in dependencies and in the Explorer.
 - Semantics for attribute and role instantiation and resolution is defined and legal
-  in k.IM, although not handled yet.
+  in k.IM.
+- Attribute resolvers/instantiators have new observation types CHARACTERIZATION and
+  CLASSIFICATION respectively. The previous CLASSIFICATION (dedicated to contextual
+  observation of class qualities) is now more appropriately CATEGORIZATION.
+- Actuators that have CHARACTERIZATION or CLASSIFICATION for their observable now
+  require the contextualizers to be filters. Those are merged with the computation
+  of the father actuator instead of leaving the actuator in the dataflow.
 - Attributes qualified with 'rescaling' modify the observation semantics of the
   quality they apply to, and cause units to be removed. 
 - Models check the units agains the geometry and allow aggregating units, rescaling
@@ -68,9 +74,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Annotations and function calls now accept a list of unnamed parameters as well as a 
   single one. Anything declared as a list will be a list in the API, even if only one
   value is passed.
-- Enable 'equals core <concept>' in worldviews to refer to core concepts in abstract
-  observables.
 - Changed 'kbox' command namespace to 'model'.
+- Changed 'process' to 'filter' in k.DL and corresponding 'isProcessor' to 'isFilter' 
+  in actuator API.
+- Removed previous handling of 'rescaling attributes' in favor of new generalized 
+  handling of attributes and roles.
 ### Fixed
 - Overhaul logic for communicating errors detected by the engine to the IDE; now they
   are stored for the standard validator to find. The process is supported for models
@@ -78,6 +86,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Notification markers should finally be reliably added to the IDE both for syntax and
   reasoning errors. There are still issues for syntax errors not visible upstream at 
   project load.
+- Fix implementation of 'equals' and allow it to use core concepts in the root domain,
+  so that k.IM proxies for all core classes actually use the core ontology instead of
+  branching from it. This way core concepts can be correctly used in models that use
+  generic scope in context, inherents and the like.
 ### Removed
 - Remove obsolete projects klab.core (merged with klab.engine), products/explorer and
   products/klab.explorer.

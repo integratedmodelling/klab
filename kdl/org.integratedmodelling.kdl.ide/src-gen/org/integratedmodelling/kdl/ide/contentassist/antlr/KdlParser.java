@@ -210,7 +210,7 @@ public class KdlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getActorDefinitionAccess().getFinalAssignment_2(), "rule__ActorDefinition__FinalAssignment_2");
 					put(grammarAccess.getActorDefinitionAccess().getOptionalAssignment_3(), "rule__ActorDefinition__OptionalAssignment_3");
 					put(grammarAccess.getActorDefinitionAccess().getExportedAssignment_4_0(), "rule__ActorDefinition__ExportedAssignment_4_0");
-					put(grammarAccess.getActorDefinitionAccess().getProcessorAssignment_4_1(), "rule__ActorDefinition__ProcessorAssignment_4_1");
+					put(grammarAccess.getActorDefinitionAccess().getFilterAssignment_4_1(), "rule__ActorDefinition__FilterAssignment_4_1");
 					put(grammarAccess.getActorDefinitionAccess().getImportedAssignment_4_2_0(), "rule__ActorDefinition__ImportedAssignment_4_2_0");
 					put(grammarAccess.getActorDefinitionAccess().getMultipleAssignment_4_2_1_0(), "rule__ActorDefinition__MultipleAssignment_4_2_1_0");
 					put(grammarAccess.getActorDefinitionAccess().getArityAssignment_4_2_1_1_0(), "rule__ActorDefinition__ArityAssignment_4_2_1_1_0");

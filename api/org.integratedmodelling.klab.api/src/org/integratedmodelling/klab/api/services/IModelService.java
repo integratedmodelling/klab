@@ -39,110 +39,142 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  */
 public interface IModelService {
 
-  /**
-   * A lazy wrapper for a model that includes its ranking in resolving a particular observable and
-   * the coverage of the resolution. Returned by
-   * {@link IModelService#resolve(IObservable, IResolutionScope)}.
-   * 
-   * @author Ferd
-   *
-   */
-  public interface IRankedModel extends IModel {
+	/**
+	 * A lazy wrapper for a model that includes its ranking in resolving a
+	 * particular observable and the coverage of the resolution. Returned by
+	 * {@link IModelService#resolve(IObservable, IResolutionScope)}.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public interface IRankedModel extends IModel {
 
-    /**
-     * Coverage resulting from resolution, i.e. the portion of the scale that will be covered once
-     * the model has been used to produce the observation.
-     * 
-     * @return the model's coverage of the resolution context
-     */
-    ICoverage getContextCoverage();
-    
-    /**
-     * Native coverage of the model independent of resolution. Intersected with any other model to compute
-     * the coverage of the resulting dataflow.
-     * 
-     * @return coverage as a scale, or null for global coverage.
-     */
-    IScale getNativeCoverage();
+		/**
+		 * Coverage resulting from resolution, i.e. the portion of the scale that will
+		 * be covered once the model has been used to produce the observation.
+		 * 
+		 * @return the model's coverage of the resolution context
+		 */
+		ICoverage getContextCoverage();
 
-    /**
-     * Breakdown of the resolution criteria with the corresponding ranks.
-     * 
-     * @return the individual ranks.
-     */
-    Map<String, Double> getRanks();
-    
-    /**
-     * A 0+ integer that reflects the prioritizer's assessment of the ranks in the
-     * resolution scope. Lower values mean the model has the highest priority.
-     * 
-     * @return the priority for this ranked model in the current scope
-     */
-    int getPriority();
+		/**
+		 * Native coverage of the model independent of resolution. Intersected with any
+		 * other model to compute the coverage of the resulting dataflow.
+		 * 
+		 * @return coverage as a scale, or null for global coverage.
+		 */
+		IScale getNativeCoverage();
 
-  }
-//
-//  /**
-//   * Release all models pertaining to named namespace, both in live and persistent storage.
-//   *
-//   * @param namespace a {@link org.integratedmodelling.klab.api.model.INamespace} object.
-//   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
-//   * @throws org.integratedmodelling.klab.exceptions.KlabException
-//   */
-//  void releaseNamespace(INamespace namespace, IMonitor monitor) throws KlabException;
+		/**
+		 * Breakdown of the resolution criteria with the corresponding ranks.
+		 * 
+		 * @return the individual ranks.
+		 */
+		Map<String, Double> getRanks();
 
-//  /**
-//   * Index the passed model in kbox.
-//   *
-//   * @param model a {@link org.integratedmodelling.klab.api.model.IModel} object.
-//   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
-//   * @throws org.integratedmodelling.klab.exceptions.KlabException
-//   */
-//  void index(IModel model, IMonitor monitor) throws KlabException;
+		/**
+		 * A 0+ integer that reflects the prioritizer's assessment of the ranks in the
+		 * resolution scope. Lower values mean the model has the highest priority.
+		 * 
+		 * @return the priority for this ranked model in the current scope
+		 */
+		int getPriority();
 
-  /**
-   * Resolve the passed observable to a list of ranked models, ordered from best to worst. The
-   * returned models should work in a lazy way, only creating and returning the actual model (which
-   * may involve network downloads of multiple projects or components) when any of the models'
-   * functions are actually called.
-   *
-   * @param observable a {@link org.integratedmodelling.klab.api.knowledge.IObservable} object.
-   * @param scope a {@link org.integratedmodelling.klab.api.resolution.IResolutionScope} object.
-   * @return the list of candidates in decreasing rank.
-   * @throws org.integratedmodelling.klab.exceptions.KlabException
-   */
-  List<IRankedModel> resolve(IObservable observable, IResolutionScope scope) throws KlabException;
+		/**
+		 * If this model is a filter, the resolver puts here the observable
+		 * corresponding to the filter artifact, so that it can be found by the actuator
+		 * and correctly linked to the computation.
+		 * 
+		 * @returns the filtered observable, if any.
+		 */
+		IObservable getFilteredObservable();
 
-  /**
-   * Load a single model file from a URL. Namespace must have no dependencies and name a worldview
-   * at the top.
-   *
-   * @param url a {@link java.net.URL} object.
-   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
-   * @return the namespace loaded
-   * @throws org.integratedmodelling.klab.exceptions.KlabException
-   */
-  INamespace load(URL url, IMonitor monitor) throws KlabException;
+	}
+	//
+	// /**
+	// * Release all models pertaining to named namespace, both in live and
+	// persistent storage.
+	// *
+	// * @param namespace a {@link
+	// org.integratedmodelling.klab.api.model.INamespace} object.
+	// * @param monitor a {@link
+	// org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
+	// * @throws org.integratedmodelling.klab.exceptions.KlabException
+	// */
+	// void releaseNamespace(INamespace namespace, IMonitor monitor) throws
+	// KlabException;
 
-  /**
-   * Load a single model file. Namespace must have no dependencies and name a worldview at the top.
-   *
-   * @param file a {@link java.io.File} object.
-   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
-   * @return the namespace loaded
-   * @throws org.integratedmodelling.klab.exceptions.KlabException
-   */
-  INamespace load(File file, IMonitor monitor) throws KlabException;
+	// /**
+	// * Index the passed model in kbox.
+	// *
+	// * @param model a {@link org.integratedmodelling.klab.api.model.IModel}
+	// object.
+	// * @param monitor a {@link
+	// org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
+	// * @throws org.integratedmodelling.klab.exceptions.KlabException
+	// */
+	// void index(IModel model, IMonitor monitor) throws KlabException;
 
-//  /**
-//   * Load a single model file from a stream. Namespace must have no dependencies and name a
-//   * worldview at the top.
-//   *
-//   * @param input a {@link java.io.InputStream} object.
-//   * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
-//   * @return the namespace loaded
-//   * @throws org.integratedmodelling.klab.exceptions.KlabException
-//   */
-//  INamespace load(InputStream input, IMonitor monitor) throws KlabException;
+	/**
+	 * Resolve the passed observable to a list of ranked models, ordered from best
+	 * to worst. The returned models should work in a lazy way, only creating and
+	 * returning the actual model (which may involve network downloads of multiple
+	 * projects or components) when any of the models' functions are actually
+	 * called.
+	 *
+	 * @param observable
+	 *            a {@link org.integratedmodelling.klab.api.knowledge.IObservable}
+	 *            object.
+	 * @param scope
+	 *            a
+	 *            {@link org.integratedmodelling.klab.api.resolution.IResolutionScope}
+	 *            object.
+	 * @return the list of candidates in decreasing rank.
+	 * @throws org.integratedmodelling.klab.exceptions.KlabException
+	 */
+	List<IRankedModel> resolve(IObservable observable, IResolutionScope scope) throws KlabException;
+
+	/**
+	 * Load a single model file from a URL. Namespace must have no dependencies and
+	 * name a worldview at the top.
+	 *
+	 * @param url
+	 *            a {@link java.net.URL} object.
+	 * @param monitor
+	 *            a
+	 *            {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor}
+	 *            object.
+	 * @return the namespace loaded
+	 * @throws org.integratedmodelling.klab.exceptions.KlabException
+	 */
+	INamespace load(URL url, IMonitor monitor) throws KlabException;
+
+	/**
+	 * Load a single model file. Namespace must have no dependencies and name a
+	 * worldview at the top.
+	 *
+	 * @param file
+	 *            a {@link java.io.File} object.
+	 * @param monitor
+	 *            a
+	 *            {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor}
+	 *            object.
+	 * @return the namespace loaded
+	 * @throws org.integratedmodelling.klab.exceptions.KlabException
+	 */
+	INamespace load(File file, IMonitor monitor) throws KlabException;
+
+	// /**
+	// * Load a single model file from a stream. Namespace must have no dependencies
+	// and name a
+	// * worldview at the top.
+	// *
+	// * @param input a {@link java.io.InputStream} object.
+	// * @param monitor a {@link
+	// org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
+	// * @return the namespace loaded
+	// * @throws org.integratedmodelling.klab.exceptions.KlabException
+	// */
+	// INamespace load(InputStream input, IMonitor monitor) throws KlabException;
 
 }

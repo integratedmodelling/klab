@@ -4,6 +4,7 @@
 package org.integratedmodelling.kdl.validation;
 
 import com.google.common.base.Objects;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.validation.Check;
@@ -28,8 +29,7 @@ public class KdlValidator extends AbstractKdlValidator {
   @Check
   public void checkActorDefinition(final ActorDefinition actor) {
     if (((actor.getTargets().size() > 0) && (!Objects.equal(actor.getType(), "annotation")))) {
-      this.error("Only annotations can specify their targets", actor, 
-        KdlPackage.Literals.ACTOR_DEFINITION__TARGETS);
+      this.error("Only annotations can specify their targets", actor, KdlPackage.Literals.ACTOR_DEFINITION__TARGETS);
     }
     if (((actor.isParameter() && actor.isOptional()) && (actor.getDefault() == null))) {
       this.error("Optional parameters must specify a default value", actor, 
@@ -45,7 +45,7 @@ public class KdlValidator extends AbstractKdlValidator {
       }
       this.error("abstract actors and extensions are only allowed at top level", actor, _xifexpression);
     }
-    if ((actor.isProcessor() && (!(actor.eContainer() instanceof Model)))) {
+    if ((actor.isFilter() && (!(actor.eContainer() instanceof Model)))) {
       EAttribute _xifexpression_1 = null;
       boolean _isAbstract_1 = actor.isAbstract();
       if (_isAbstract_1) {
@@ -71,6 +71,23 @@ public class KdlValidator extends AbstractKdlValidator {
           this.error("Using an identifier as default is only allowed in enum typed parameters", actor, 
             KdlPackage.Literals.ACTOR_DEFINITION__DEFAULT);
         }
+      }
+    }
+    boolean _isFilter = actor.isFilter();
+    if (_isFilter) {
+      boolean ok = false;
+      if ((((actor.getBody() != null) && (actor.getBody().getDataflows() != null)) && (actor.getBody().getDataflows().size() > 0))) {
+        EList<ActorDefinition> _dataflows = actor.getBody().getDataflows();
+        for (final ActorDefinition child : _dataflows) {
+          boolean _isImported = child.isImported();
+          if (_isImported) {
+            ok = true;
+          }
+        }
+      }
+      if ((!ok)) {
+        this.error("Actors declared as filters must import at least one artifact", actor, 
+          KdlPackage.Literals.ACTOR_DEFINITION__DEFAULT);
       }
     }
   }

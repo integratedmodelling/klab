@@ -6,23 +6,19 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Klab;
-import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.model.IModel;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.services.IObservableService;
-import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
-import org.integratedmodelling.klab.engine.runtime.code.Transformation;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.resolution.ObservableReasoner.CandidateObservable;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * An observable reasoner implements all context-dependent inferences on
@@ -68,14 +64,6 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 		public Mode mode;
 
 		/**
-		 * If true, this is part of a group of contiguous observables representing a set
-		 * of alternative observables in OR. We will resolve all the observables,
-		 * failing only if none is resolved, and contextualize the resulting
-		 * contextualizers lazily until fulfillment of the observation.
-		 */
-		public boolean inGroup;
-
-		/**
 		 * Any necessary computation to apply to the resulting artifact to produce the
 		 * requested observation
 		 */
@@ -92,14 +80,30 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 			this.computation = computables;
 		}
 
-		CandidateObservable(Observable original, Mode mode, boolean inGroup) {
-			this.observables.add(original);
-			this.mode = mode;
-			this.inGroup = inGroup;
-		}
+		// CandidateObservable(Observable original, Mode mode, boolean inGroup) {
+		// this.observables.add(original);
+		// this.mode = mode;
+		// this.inGroup = inGroup;
+		// }
 
 		public boolean isTrivial() {
 			return this.observables.size() == 1 && (this.computation == null || this.computation.isEmpty());
+		}
+
+		public void addComputation(IComputableResource computation) {
+
+			if (this.computation == null) {
+				this.computation = new ArrayList<>();
+			}
+			this.computation.add(computation);
+
+		}
+
+		public void addComputations(List<IComputableResource> computations) {
+			if (computation == null) {
+				computation = new ArrayList<>();
+			}
+			computation.addAll(computations);
 		}
 	}
 
@@ -287,11 +291,7 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 						+ candidate.observables.get(0).getType() + " by " + observable.getClassifier());
 			}
 
-			if (candidate.computation == null) {
-				candidate.computation = new ArrayList<>();
-			}
-
-			candidate.computation.add(computation);
+			candidate.addComputation(computation);
 
 		} else if (observable.getValueOperator() != null) {
 
@@ -323,11 +323,7 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 						+ observable.getValueOperator() + " on " + candidate.observables.get(0).getType());
 			}
 
-			if (candidate.computation == null) {
-				candidate.computation = new ArrayList<>();
-			}
-
-			candidate.computation.add(computation);
+			candidate.addComputation(computation);
 
 		}
 
@@ -363,44 +359,72 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 			observable = (Observable) observable.getBuilder(scope.getMonitor()).by(null).buildObservable();
 		}
 
+		CandidateObservable candidate = null;
+
 		/*
 		 * if we get here, we already know that the original observable isn't available.
-		 * First strip any data reduction traits that we know how to handle and save
-		 * them.
+		 * First strip one attribute or role and see if we can resolve the two
+		 * separately. More than one attribute is resolved recursively.
 		 */
-		IObservable.Builder builder = observable.getBuilder(scope.getMonitor())
-				.withoutAny(Type.RESCALING);
+		if (observable.hasResolvableTraits()) {
 
-		if (builder.getRemoved().size() > 0) {
-			boolean ok = true;
+			Pair<IConcept, Observable> resolvables = observable.popResolvableTrait(scope.getMonitor());
+
 			/*
-			 * TODO Simple strategy assuming that transformations are not contextual. Should
-			 * become smarter to include other attributes, and be called lazily (currently
-			 * it's not).
+			 * add the observable without the trait...
 			 */
-			List<IModel> transformers = new ArrayList<>();
-			for (IConcept trait : builder.getRemoved()) {
-				IModel transformer = Models.INSTANCE.resolve(trait, this.scope);
-				if (transformer == null) {
-					ok = false;
-					break;
-				}
-				transformers.add(transformer);
-			}
+			candidate = new CandidateObservable(resolvables.getSecond(),
+					resolvables.getSecond().is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
 
-			if (ok) {
-				List<IComputableResource> transformations = new ArrayList<>();
-				IObservable newobs = builder.buildObservable();
-				for (IModel model : transformers) {
-					for (IComputableResource computation : model.getComputation(ITime.INITIALIZATION)) {
-						transformations.add(new Transformation(computation, newobs));
-					}
-				}
-				ret.add(new CandidateObservable((Observable) newobs, Mode.RESOLUTION, transformations));
-			}
+			candidate.observables.add((Observable) new ObservableBuilder(resolvables.getFirst())
+					.of(Observables.INSTANCE.getBaseObservable(resolvables.getSecond().getType()))
+					.filtering(resolvables.getSecond()).buildObservable());
 
+			/*
+			 * continue as the next observable
+			 */
+			observable = resolvables.getSecond();
 		}
 
+		// IObservable.Builder builder = observable.getBuilder(scope.getMonitor())
+		// .withoutAny(Type.RESCALING);
+		//
+		// if (builder.getRemoved().size() > 0) {
+		// boolean ok = true;
+		// /*
+		// * TODO Simple strategy assuming that transformations are not contextual.
+		// Should
+		// * become smarter to include other attributes, and be called lazily (currently
+		// * it's not).
+		// */
+		// List<IModel> transformers = new ArrayList<>();
+		// for (IConcept trait : builder.getRemoved()) {
+		// IModel transformer = Models.INSTANCE.resolve(trait, this.scope);
+		// if (transformer == null) {
+		// ok = false;
+		// break;
+		// }
+		// transformers.add(transformer);
+		// }
+		//
+		// if (ok) {
+		// List<IComputableResource> transformations = new ArrayList<>();
+		// IObservable newobs = builder.buildObservable();
+		// for (IModel model : transformers) {
+		// for (IComputableResource computation :
+		// model.getComputation(ITime.INITIALIZATION)) {
+		// transformations.add(new Transformation(computation, newobs));
+		// }
+		// }
+		// ret.add(new CandidateObservable((Observable) newobs, Mode.RESOLUTION,
+		// transformations));
+		// }
+		//
+		// }
+
+		/*
+		 * then check for any semantic operator that we know how to handle
+		 */
 		if (observable.is(Type.PRESENCE)) {
 
 			IConcept inherent = Observables.INSTANCE.getInherentType(observable.getType());
@@ -409,7 +433,10 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 				List<IComputableResource> dereificator = Klab.INSTANCE.getRuntimeProvider()
 						.getComputation(Observable.promote(inherent), Mode.RESOLUTION, observable);
 				if (dereificator != null) {
-					ret.add(new CandidateObservable(Observable.promote(inherent), Mode.INSTANTIATION, dereificator));
+					if (candidate == null) {
+						candidate = new CandidateObservable(Observable.promote(inherent), Mode.INSTANTIATION);
+					}
+					candidate.addComputations(dereificator);
 				}
 			}
 
@@ -422,12 +449,19 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 				List<IComputableResource> dereificator = Klab.INSTANCE.getRuntimeProvider()
 						.getComputation(Observable.promote(inherent), Mode.RESOLUTION, observable);
 				if (dereificator != null) {
-					ret.add(new CandidateObservable(Observable.promote(inherent), Mode.INSTANTIATION, dereificator));
+					if (candidate == null) {
+						candidate = new CandidateObservable(Observable.promote(inherent), Mode.INSTANTIATION);
+					}
+					candidate.addComputations(dereificator);
 				}
 			}
 
 		} else if (observable.is(Type.RATIO)) {
 			// TODO
+		}
+
+		if (candidate != null) {
+			ret.add(candidate);
 		}
 
 		return ret;

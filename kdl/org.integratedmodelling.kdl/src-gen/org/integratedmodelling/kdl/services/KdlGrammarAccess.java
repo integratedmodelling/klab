@@ -332,8 +332,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cAlternatives_4 = (Alternatives)cGroup.eContents().get(4);
 		private final Assignment cExportedAssignment_4_0 = (Assignment)cAlternatives_4.eContents().get(0);
 		private final Keyword cExportedExportKeyword_4_0_0 = (Keyword)cExportedAssignment_4_0.eContents().get(0);
-		private final Assignment cProcessorAssignment_4_1 = (Assignment)cAlternatives_4.eContents().get(1);
-		private final Keyword cProcessorProcessKeyword_4_1_0 = (Keyword)cProcessorAssignment_4_1.eContents().get(0);
+		private final Assignment cFilterAssignment_4_1 = (Assignment)cAlternatives_4.eContents().get(1);
+		private final Keyword cFilterFilterKeyword_4_1_0 = (Keyword)cFilterAssignment_4_1.eContents().get(0);
 		private final Group cGroup_4_2 = (Group)cAlternatives_4.eContents().get(2);
 		private final Assignment cImportedAssignment_4_2_0 = (Assignment)cGroup_4_2.eContents().get(0);
 		private final Keyword cImportedImportKeyword_4_2_0_0 = (Keyword)cImportedAssignment_4_2_0.eContents().get(0);
@@ -436,7 +436,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//	annotations+=Annotation*
 		//	// abstract only allowed at root level; only exists to be extended
 		//	abstract?='abstract'?
-		//	final?='final'? optional?='optional'? (exported?='export' | processor?='process' | imported?='import'
+		//	final?='final'? optional?='optional'? (exported?='export' | filter?='filter' | imported?='import'
 		//	(multiple?='multiple' | arity=INT minimum?='+'?)?)?
 		//	// parameters denotes the ability of the implementation of accepting modified values during run
 		//	// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
@@ -455,8 +455,8 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		///*
 		//	 * This is the form that specifies dataflows
 		//	 */ annotations+=Annotation* // abstract only allowed at root level; only exists to be extended
-		//abstract?='abstract'? final?='final'? optional?='optional'? (exported?='export' | processor?='process' |
-		//imported?='import' (multiple?='multiple' | arity=INT minimum?='+'?)?)? // parameters denotes the ability of the implementation of accepting modified values during run
+		//abstract?='abstract'? final?='final'? optional?='optional'? (exported?='export' | filter?='filter' | imported?='import'
+		//(multiple?='multiple' | arity=INT minimum?='+'?)?)? // parameters denotes the ability of the implementation of accepting modified values during run
 		//// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios
 		//parameter?='parameter'? type=ACTOR // expressions must return the type; they are evaluated in the context and the artifacts named in them are imports
 		//expression?='expression'? name=(LOWERCASE_ID | LOWERCASE_DASHID | STRING) ('extends' extended=(LOWERCASE_ID |
@@ -494,7 +494,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//'optional'
 		public Keyword getOptionalOptionalKeyword_3_0() { return cOptionalOptionalKeyword_3_0; }
 		
-		//(exported?='export' | processor?='process' | imported?='import' (multiple?='multiple' | arity=INT minimum?='+'?)?)?
+		//(exported?='export' | filter?='filter' | imported?='import' (multiple?='multiple' | arity=INT minimum?='+'?)?)?
 		public Alternatives getAlternatives_4() { return cAlternatives_4; }
 		
 		//exported?='export'
@@ -503,11 +503,11 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//'export'
 		public Keyword getExportedExportKeyword_4_0_0() { return cExportedExportKeyword_4_0_0; }
 		
-		//processor?='process'
-		public Assignment getProcessorAssignment_4_1() { return cProcessorAssignment_4_1; }
+		//filter?='filter'
+		public Assignment getFilterAssignment_4_1() { return cFilterAssignment_4_1; }
 		
-		//'process'
-		public Keyword getProcessorProcessKeyword_4_1_0() { return cProcessorProcessKeyword_4_1_0; }
+		//'filter'
+		public Keyword getFilterFilterKeyword_4_1_0() { return cFilterFilterKeyword_4_1_0; }
 		
 		//imported?='import' (multiple?='multiple' | arity=INT minimum?='+'?)?
 		public Group getGroup_4_2() { return cGroup_4_2; }
@@ -3303,7 +3303,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	//	annotations+=Annotation*
 	//	// abstract only allowed at root level; only exists to be extended
 	//	abstract?='abstract'?
-	//	final?='final'? optional?='optional'? (exported?='export' | processor?='process' | imported?='import'
+	//	final?='final'? optional?='optional'? (exported?='export' | filter?='filter' | imported?='import'
 	//	(multiple?='multiple' | arity=INT minimum?='+'?)?)?
 	//	// parameters denotes the ability of the implementation of accepting modified values during run
 	//	// parameters cannot be multiple, must have a default and should have a range, can be calibrated, and will appear in calibration scenarios

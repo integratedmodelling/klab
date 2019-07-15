@@ -23,7 +23,7 @@ import java.util.HashMap;
 @SuppressWarnings("all")
 public class InternalKdlParser extends AbstractInternalContentAssistParser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_LOWERCASE_ID", "RULE_LOWERCASE_DASHID", "RULE_STRING", "RULE_UPPERCASE_ID", "RULE_CAMELCASE_ID", "RULE_ID", "RULE_SHAPE", "RULE_INT", "RULE_ANNOTATION_ID", "RULE_EXPR", "RULE_UPPERCASE_PATH", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'*'", "'object'", "'value'", "'number'", "'concept'", "'boolean'", "'text'", "'list'", "'extent'", "'spatialextent'", "'temporalextent'", "'annotation'", "'enum'", "'range'", "'void'", "'partition'", "'models'", "'concepts'", "'observers'", "'definitions'", "'dependencies'", "'exclusive'", "'true'", "'false'", "'='", "'+'", "'e'", "'E'", "'.'", "'/'", "'^'", "'@dataflow'", "'@var'", "'@val'", "'@author'", "'@version'", "'@klab'", "'@worldview'", "'@geometry'", "'@endpoint'", "'@namespace'", "'@coverage'", "','", "'@context'", "'('", "')'", "'extends'", "'for'", "'label'", "'{'", "'}'", "'minimum'", "'maximum'", "'to'", "'values'", "'default'", "'as'", "'over'", "'geometry'", "'units'", "'metadata'", "'class'", "'compute'", "'in'", "'urn:klab:'", "':'", "'#'", "'{{'", "'}}'", "'|'", "'>>'", "'-'", "'abstract'", "'final'", "'optional'", "'export'", "'process'", "'import'", "'multiple'", "'parameter'", "'expression'", "'inclusive'", "'unknown'", "'=?'", "'>'", "'<'", "'!='", "'<='", "'>='"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_LOWERCASE_ID", "RULE_LOWERCASE_DASHID", "RULE_STRING", "RULE_UPPERCASE_ID", "RULE_CAMELCASE_ID", "RULE_ID", "RULE_SHAPE", "RULE_INT", "RULE_ANNOTATION_ID", "RULE_EXPR", "RULE_UPPERCASE_PATH", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'*'", "'object'", "'value'", "'number'", "'concept'", "'boolean'", "'text'", "'list'", "'extent'", "'spatialextent'", "'temporalextent'", "'annotation'", "'enum'", "'range'", "'void'", "'partition'", "'models'", "'concepts'", "'observers'", "'definitions'", "'dependencies'", "'exclusive'", "'true'", "'false'", "'='", "'+'", "'e'", "'E'", "'.'", "'/'", "'^'", "'@dataflow'", "'@var'", "'@val'", "'@author'", "'@version'", "'@klab'", "'@worldview'", "'@geometry'", "'@endpoint'", "'@namespace'", "'@coverage'", "','", "'@context'", "'('", "')'", "'extends'", "'for'", "'label'", "'{'", "'}'", "'minimum'", "'maximum'", "'to'", "'values'", "'default'", "'as'", "'over'", "'geometry'", "'units'", "'metadata'", "'class'", "'compute'", "'in'", "'urn:klab:'", "':'", "'#'", "'{{'", "'}}'", "'|'", "'>>'", "'-'", "'abstract'", "'final'", "'optional'", "'export'", "'filter'", "'import'", "'multiple'", "'parameter'", "'expression'", "'inclusive'", "'unknown'", "'=?'", "'>'", "'<'", "'!='", "'<='", "'>='"
     };
     public static final int T__50=50;
     public static final int RULE_UPPERCASE_ID=7;
@@ -3522,13 +3522,13 @@ public class InternalKdlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ActorDefinition__Alternatives_4"
-    // InternalKdl.g:1040:1: rule__ActorDefinition__Alternatives_4 : ( ( ( rule__ActorDefinition__ExportedAssignment_4_0 ) ) | ( ( rule__ActorDefinition__ProcessorAssignment_4_1 ) ) | ( ( rule__ActorDefinition__Group_4_2__0 ) ) );
+    // InternalKdl.g:1040:1: rule__ActorDefinition__Alternatives_4 : ( ( ( rule__ActorDefinition__ExportedAssignment_4_0 ) ) | ( ( rule__ActorDefinition__FilterAssignment_4_1 ) ) | ( ( rule__ActorDefinition__Group_4_2__0 ) ) );
     public final void rule__ActorDefinition__Alternatives_4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKdl.g:1044:1: ( ( ( rule__ActorDefinition__ExportedAssignment_4_0 ) ) | ( ( rule__ActorDefinition__ProcessorAssignment_4_1 ) ) | ( ( rule__ActorDefinition__Group_4_2__0 ) ) )
+            // InternalKdl.g:1044:1: ( ( ( rule__ActorDefinition__ExportedAssignment_4_0 ) ) | ( ( rule__ActorDefinition__FilterAssignment_4_1 ) ) | ( ( rule__ActorDefinition__Group_4_2__0 ) ) )
             int alt2=3;
             switch ( input.LA(1) ) {
             case 94:
@@ -3585,19 +3585,19 @@ public class InternalKdlParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 2 :
-                    // InternalKdl.g:1051:2: ( ( rule__ActorDefinition__ProcessorAssignment_4_1 ) )
+                    // InternalKdl.g:1051:2: ( ( rule__ActorDefinition__FilterAssignment_4_1 ) )
                     {
-                    // InternalKdl.g:1051:2: ( ( rule__ActorDefinition__ProcessorAssignment_4_1 ) )
-                    // InternalKdl.g:1052:3: ( rule__ActorDefinition__ProcessorAssignment_4_1 )
+                    // InternalKdl.g:1051:2: ( ( rule__ActorDefinition__FilterAssignment_4_1 ) )
+                    // InternalKdl.g:1052:3: ( rule__ActorDefinition__FilterAssignment_4_1 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getActorDefinitionAccess().getProcessorAssignment_4_1()); 
+                       before(grammarAccess.getActorDefinitionAccess().getFilterAssignment_4_1()); 
                     }
-                    // InternalKdl.g:1053:3: ( rule__ActorDefinition__ProcessorAssignment_4_1 )
-                    // InternalKdl.g:1053:4: rule__ActorDefinition__ProcessorAssignment_4_1
+                    // InternalKdl.g:1053:3: ( rule__ActorDefinition__FilterAssignment_4_1 )
+                    // InternalKdl.g:1053:4: rule__ActorDefinition__FilterAssignment_4_1
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ActorDefinition__ProcessorAssignment_4_1();
+                    rule__ActorDefinition__FilterAssignment_4_1();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -3605,7 +3605,7 @@ public class InternalKdlParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getActorDefinitionAccess().getProcessorAssignment_4_1()); 
+                       after(grammarAccess.getActorDefinitionAccess().getFilterAssignment_4_1()); 
                     }
 
                     }
@@ -37082,37 +37082,37 @@ public class InternalKdlParser extends AbstractInternalContentAssistParser {
     // $ANTLR end "rule__ActorDefinition__ExportedAssignment_4_0"
 
 
-    // $ANTLR start "rule__ActorDefinition__ProcessorAssignment_4_1"
-    // InternalKdl.g:10852:1: rule__ActorDefinition__ProcessorAssignment_4_1 : ( ( 'process' ) ) ;
-    public final void rule__ActorDefinition__ProcessorAssignment_4_1() throws RecognitionException {
+    // $ANTLR start "rule__ActorDefinition__FilterAssignment_4_1"
+    // InternalKdl.g:10852:1: rule__ActorDefinition__FilterAssignment_4_1 : ( ( 'filter' ) ) ;
+    public final void rule__ActorDefinition__FilterAssignment_4_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKdl.g:10856:1: ( ( ( 'process' ) ) )
-            // InternalKdl.g:10857:2: ( ( 'process' ) )
+            // InternalKdl.g:10856:1: ( ( ( 'filter' ) ) )
+            // InternalKdl.g:10857:2: ( ( 'filter' ) )
             {
-            // InternalKdl.g:10857:2: ( ( 'process' ) )
-            // InternalKdl.g:10858:3: ( 'process' )
+            // InternalKdl.g:10857:2: ( ( 'filter' ) )
+            // InternalKdl.g:10858:3: ( 'filter' )
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getActorDefinitionAccess().getProcessorProcessKeyword_4_1_0()); 
+               before(grammarAccess.getActorDefinitionAccess().getFilterFilterKeyword_4_1_0()); 
             }
-            // InternalKdl.g:10859:3: ( 'process' )
-            // InternalKdl.g:10860:4: 'process'
+            // InternalKdl.g:10859:3: ( 'filter' )
+            // InternalKdl.g:10860:4: 'filter'
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getActorDefinitionAccess().getProcessorProcessKeyword_4_1_0()); 
+               before(grammarAccess.getActorDefinitionAccess().getFilterFilterKeyword_4_1_0()); 
             }
             match(input,95,FOLLOW_2); if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getActorDefinitionAccess().getProcessorProcessKeyword_4_1_0()); 
+               after(grammarAccess.getActorDefinitionAccess().getFilterFilterKeyword_4_1_0()); 
             }
 
             }
 
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getActorDefinitionAccess().getProcessorProcessKeyword_4_1_0()); 
+               after(grammarAccess.getActorDefinitionAccess().getFilterFilterKeyword_4_1_0()); 
             }
 
             }
@@ -37132,7 +37132,7 @@ public class InternalKdlParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ActorDefinition__ProcessorAssignment_4_1"
+    // $ANTLR end "rule__ActorDefinition__FilterAssignment_4_1"
 
 
     // $ANTLR start "rule__ActorDefinition__ImportedAssignment_4_2_0"

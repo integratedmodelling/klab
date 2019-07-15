@@ -11,7 +11,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.xtext.xbase.scoping.batch.ExtensionScopeHelper;
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimClassification;
 import org.integratedmodelling.kim.api.IKimExpression;
@@ -42,7 +41,6 @@ import org.integratedmodelling.klab.api.services.IResourceService;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.utils.Utils;
 
 public class ComputableResource extends KimStatement implements IComputableResource {
 
@@ -68,17 +66,16 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	private Collection<Pair<String, IArtifact.Type>> requiredResourceNames = null;
 	private Map<String, Object> interactiveParameters;
 	private Type type;
-	
+
 	/**
 	 * Slot to save a validated resource so that it won't need to be validated
 	 * twice. Shouldn't be serialized.
 	 */
 	private transient Object validatedResource;
-	
-    private transient AtomicInteger status = new AtomicInteger(0);
-    private transient AtomicLong startComputation = new AtomicLong(0);
-    private transient AtomicLong endComputation = new AtomicLong(0);
 
+	private transient AtomicInteger status = new AtomicInteger(0);
+	private transient AtomicLong startComputation = new AtomicLong(0);
+	private transient AtomicLong endComputation = new AtomicLong(0);
 
 	// all that follows can only be set on a copy as they are runtime-dependent.
 	private String targetId;
@@ -92,6 +89,10 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	private List<ComputableResource> siblings = new ArrayList<>();
 
 	private List<IAnnotation> externalParameters;
+
+	// send this from the observable to ensure that we can find the filter target if
+	// we specify a filter.
+	private IObservable filterTarget;
 
 	public ComputableResource copy() {
 		ComputableResource ret = new ComputableResource(getEObject(), getParent());
@@ -336,7 +337,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		} else if (value.getExpr() != null) {
 			this.expression = new KimExpression(value.getExpr(), null);
 			this.type = Type.EXPRESSION;
-		// this.type = IArtifact.Type.VALUE;
+			// this.type = IArtifact.Type.VALUE;
 		} else if (value.getLiteral() != null) {
 			this.literal = Kim.INSTANCE.parseLiteral(value.getLiteral(), Kim.INSTANCE.getNamespace(value));
 			this.type = Type.LITERAL;
@@ -346,16 +347,16 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		this.language = value.getLanguage();
 	}
 
-//	private String removeDelimiters(String string) {
-//		String expr = string.trim();
-//		if (expr.startsWith("[")) {
-//			expr = expr.substring(1);
-//		}
-//		if (expr.endsWith("]")) {
-//			expr = expr.substring(0, expr.length() - 1);
-//		}
-//		return expr;
-//	}
+	// private String removeDelimiters(String string) {
+	// String expr = string.trim();
+	// if (expr.startsWith("[")) {
+	// expr = expr.substring(1);
+	// }
+	// if (expr.endsWith("]")) {
+	// expr = expr.substring(0, expr.length() - 1);
+	// }
+	// return expr;
+	// }
 
 	@Override
 	public IObservable getTarget() {
@@ -442,7 +443,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 					}
 				}
 			} else if (getServiceCall() != null) {
-			    
+
 			}
 		}
 		return requiredResourceNames;
@@ -709,7 +710,8 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	public Type getType() {
 		if (type == null) {
 			// FIXME this shouldn't be necessary but I can't find a way to fix it
-			if (this.accordingTo != null || this.classification != null || this.validatedResource instanceof IClassification) {
+			if (this.accordingTo != null || this.classification != null
+					|| this.validatedResource instanceof IClassification) {
 				type = Type.CLASSIFICATION;
 			} else if (this.lookupTable != null) {
 				type = Type.LOOKUP_TABLE;
@@ -727,7 +729,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 				type = Type.RESOURCE;
 			}
 		}
-		
+
 		if (type /* still */ == null) {
 			throw new KlabInternalErrorException("internal: resource type is null!");
 		}
@@ -737,9 +739,18 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	protected void setType(Type type) {
 		this.type = type;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "<" + getType() + " -> " + (target == null ? "default" : target) + " [" + dataflowId + "]>";
+	}
+
+	public IComputableResource withFilterTarget(IObservable observable) {
+		this.filterTarget = observable;
+		return this;
+	}
+
+	public IObservable getFilterTarget() {
+		return this.filterTarget;
 	}
 }

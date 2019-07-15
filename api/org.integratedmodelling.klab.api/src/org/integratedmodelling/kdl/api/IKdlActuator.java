@@ -163,7 +163,7 @@ public interface IKdlActuator extends IKdlStatement {
      * 
      * @return
      */
-    boolean isProcessor();
+    boolean isFilter();
 
 
     /**

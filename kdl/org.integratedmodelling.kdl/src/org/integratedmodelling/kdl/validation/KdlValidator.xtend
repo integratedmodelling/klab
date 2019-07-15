@@ -30,47 +30,67 @@ class KdlValidator extends AbstractKdlValidator {
 
 	@Check
 	def checkActorDefinition(ActorDefinition actor) {
-		
+
 		if (actor.targets.size > 0 && actor.type != 'annotation') {
-			error("Only annotations can specify their targets", actor,
-					KdlPackage.Literals.ACTOR_DEFINITION__TARGETS);
-		}		
+			error("Only annotations can specify their targets", actor, KdlPackage.Literals.ACTOR_DEFINITION__TARGETS);
+		}
 //		if (actor.localName !== null && !actor.imported) {
 //				error("Only imports can specify a formal name", actor,
 //					KdlPackage.Literals.ACTOR_DEFINITION__LOCAL_NAME);
 //		}
 		if (actor.isParameter && actor.isOptional && actor.getDefault() === null) {
-				error("Optional parameters must specify a default value", actor,
-					KdlPackage.Literals.ACTOR_DEFINITION__OPTIONAL);
+			error("Optional parameters must specify a default value", actor,
+				KdlPackage.Literals.ACTOR_DEFINITION__OPTIONAL);
 		}
 		if ((actor.isAbstract || actor.extended !== null) && !(actor.eContainer instanceof Model)) {
-				error("abstract actors and extensions are only allowed at top level", actor,
-					if (actor.isAbstract) KdlPackage.Literals.ACTOR_DEFINITION__ABSTRACT else KdlPackage.Literals.ACTOR_DEFINITION__EXTENDED);
+			error("abstract actors and extensions are only allowed at top level", actor, if (actor.isAbstract)
+				KdlPackage.Literals.ACTOR_DEFINITION__ABSTRACT
+			else
+				KdlPackage.Literals.ACTOR_DEFINITION__EXTENDED);
 		}
-		if ((actor.isProcessor) && !(actor.eContainer instanceof Model)) {
-				error("processing actors and extensions are only allowed at top level", actor,
-					if (actor.isAbstract) KdlPackage.Literals.ACTOR_DEFINITION__ABSTRACT else KdlPackage.Literals.ACTOR_DEFINITION__EXTENDED);
+		if ((actor.isFilter) && !(actor.eContainer instanceof Model)) {
+			error("processing actors and extensions are only allowed at top level", actor, if (actor.isAbstract)
+				KdlPackage.Literals.ACTOR_DEFINITION__ABSTRACT
+			else
+				KdlPackage.Literals.ACTOR_DEFINITION__EXTENDED);
 		}
 		if (actor.type !== null && actor.type === 'enum' && actor.enumValues.isEmpty) {
-				error("Enum parameters must specify all enum values with 'values'", actor,
-					KdlPackage.Literals.ACTOR_DEFINITION__TYPE);
+			error("Enum parameters must specify all enum values with 'values'", actor,
+				KdlPackage.Literals.ACTOR_DEFINITION__TYPE);
 		} else if (actor.getDefault() !== null && !actor.enumValues.isEmpty && actor.getDefault().enumId !== null) {
 			if (!actor.enumValues.contains(actor.getDefault().enumId)) {
 				error("The default value is not one of the allowed enum values", actor,
 					KdlPackage.Literals.ACTOR_DEFINITION__DEFAULT);
 			}
 		} else if (actor.getDefault() !== null && actor.getDefault().enumId !== null && actor.enumValues.isEmpty) {
-				error("Using an identifier as default is only allowed in enum typed parameters", actor,
+			error("Using an identifier as default is only allowed in enum typed parameters", actor,
+				KdlPackage.Literals.ACTOR_DEFINITION__DEFAULT);
+		}
+
+		if (actor.isFilter) {
+			// must have at least one import parameter
+			var ok = false;
+			if (actor.body !== null && actor.body.dataflows !== null && actor.body.dataflows.size() > 0) {
+				for (child : actor.body.dataflows) {
+					if (child.isImported) {
+						ok = true
+					// f'ing break is not available, let's waste cycles
+					}
+				}
+			}
+			if (!ok) {
+				error("Actors declared as filters must import at least one artifact", actor,
 					KdlPackage.Literals.ACTOR_DEFINITION__DEFAULT);
+			}
 		}
 	}
-	
+
 	def getDataflow(EObject o) {
 		var ob = o
 		while (ob !== null && !(ob.eContainer instanceof Model)) {
 			ob = ob.eContainer
 		}
-		return if (ob.eContainer instanceof Model) (ob.eContainer as Model) else null
+		return if(ob.eContainer instanceof Model) (ob.eContainer as Model) else null
 	}
 
 }

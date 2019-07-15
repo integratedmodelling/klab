@@ -526,7 +526,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getActorDefinition_Processor()
+  public EAttribute getActorDefinition_Filter()
   {
     return (EAttribute)actorDefinitionEClass.getEStructuralFeatures().get(5);
   }
@@ -1866,7 +1866,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     createEAttribute(actorDefinitionEClass, ACTOR_DEFINITION__FINAL);
     createEAttribute(actorDefinitionEClass, ACTOR_DEFINITION__OPTIONAL);
     createEAttribute(actorDefinitionEClass, ACTOR_DEFINITION__EXPORTED);
-    createEAttribute(actorDefinitionEClass, ACTOR_DEFINITION__PROCESSOR);
+    createEAttribute(actorDefinitionEClass, ACTOR_DEFINITION__FILTER);
     createEAttribute(actorDefinitionEClass, ACTOR_DEFINITION__IMPORTED);
     createEAttribute(actorDefinitionEClass, ACTOR_DEFINITION__MULTIPLE);
     createEAttribute(actorDefinitionEClass, ACTOR_DEFINITION__ARITY);
@@ -2077,7 +2077,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     initEAttribute(getActorDefinition_Final(), ecorePackage.getEBoolean(), "final", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getActorDefinition_Optional(), ecorePackage.getEBoolean(), "optional", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getActorDefinition_Exported(), ecorePackage.getEBoolean(), "exported", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getActorDefinition_Processor(), ecorePackage.getEBoolean(), "processor", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getActorDefinition_Filter(), ecorePackage.getEBoolean(), "filter", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getActorDefinition_Imported(), ecorePackage.getEBoolean(), "imported", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getActorDefinition_Multiple(), ecorePackage.getEBoolean(), "multiple", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getActorDefinition_Arity(), ecorePackage.getEInt(), "arity", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

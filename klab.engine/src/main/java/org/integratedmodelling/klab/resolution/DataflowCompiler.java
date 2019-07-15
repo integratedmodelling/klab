@@ -14,6 +14,7 @@ import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Extensions;
@@ -37,6 +38,7 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
@@ -127,7 +129,7 @@ public class DataflowCompiler {
 			Node node = compileActuator(root, scope.getMode(), resolutionGraph,
 					this.context == null ? null : this.context.getScale(), monitor);
 			node.root = true;
-//			node.initializer = ((ResolutionScope) scope).getContextModel();
+			// node.initializer = ((ResolutionScope) scope).getContextModel();
 
 			Actuator actuator = node.getActuatorTree(ret, monitor, new HashSet<>(), 0);
 			ret.getActuators().add(actuator);
@@ -264,7 +266,7 @@ public class DataflowCompiler {
 		String alias;
 		Object inlineValue;
 		ResolvedArtifact resolvedArtifact;
-		
+
 		public String toString() {
 			return (root ? "ROOT " : "") + ("[" + children.size() + "]")
 					+ ("{" + (models.size() > 0 ? models.iterator().next().model : "") + " #" + models.size() + "}")
@@ -334,6 +336,12 @@ public class DataflowCompiler {
 				break;
 			case VERIFICATION:
 				ret.setType(Type.BOOLEAN);
+				break;
+			case CHARACTERIZATION:
+			case CLASSIFICATION:
+				ret.setType(Type.VOID);
+				break;
+			default:
 				break;
 			}
 
@@ -439,12 +447,14 @@ public class DataflowCompiler {
 			Model model = theModel.model;
 			ret.setName(name);
 			ret.setModel(model);
+			
+			IObservable filtered = ((RankedModel)model).getFilteredObservable();
 
 			if (!generated.contains(theModel)) {
 
 				generated.add(theModel);
 				for (IComputableResource resource : getModelComputation(model, ret.getType(), ITime.INITIALIZATION)) {
-					ret.addComputation(resource);
+					ret.addComputation(filtered == null ? resource : ((ComputableResource)resource).withFilterTarget(filtered));
 				}
 
 				ret.getAnnotations().addAll(Annotations.INSTANCE.collectAnnotations(observable, model));
@@ -476,22 +486,53 @@ public class DataflowCompiler {
 							+ (this.observable.isFluidUnits() ? ", fluid" : ", fixed"));
 				}
 
+				// collect units from dependent models to ensure consistency across unspecified
+				// ones
 				Map<String, IUnit> chosenUnits = new HashMap<>();
+				// collect filter models to merge in their computations at the end
+				List<Pair<IServiceCall, IComputableResource>> filterMediators = new ArrayList<>();
+				List<IComputableResource> filterComputations = new ArrayList<>();
 
 				for (Node child : sortChildren()) {
-					// this may be a new actuator or a reference to an existing one
+
+					// this may be a new actuator or a reference to an existing one.
 					Actuator achild = child.getActuatorTree(dataflow, monitor, generated, level + 1);
-					ret.getActuators().add(achild);
-					recordUnits(achild, chosenUnits);
-					if (sources.containsKey(achild.getName())) {
-						for (IComputableResource mediator : computeMediators(sources.get(achild.getName()),
-								achild.getObservable(), scale)) {
-							ret.addMediation(mediator, achild);
+
+					if (achild.isFilter()) {
+						
+						/*
+						 * enqueue dependents as our own and merge computations at the end.
+						 */
+						for (IActuator dep : achild.getActuators()) {
+							ret.getActuators().add(dep);
+						}
+						filterMediators.addAll(achild.getMediationStrategy());
+						filterComputations.addAll(achild.getComputation());
+						
+					} else {
+
+						ret.getActuators().add(achild);
+						recordUnits(achild, chosenUnits);
+						if (sources.containsKey(achild.getName())) {
+							for (IComputableResource mediator : computeMediators(sources.get(achild.getName()),
+									achild.getObservable(), scale)) {
+								ret.addMediation(mediator, achild);
+							}
 						}
 					}
 				}
 				inferUnits(ret, chosenUnits);
-
+				
+				/*
+				 * FIXME mediation inheritance is very sketchy
+				 */
+				for (Pair<IServiceCall, IComputableResource> mediation : filterMediators) {
+					ret.addMediation(mediation.getSecond(), ret);
+				}
+				for (IComputableResource computation : filterComputations) {
+					ret.addComputation(((ComputableResource)computation));
+				}
+				
 				if (Units.INSTANCE.needsUnits(this.observable)) {
 					System.out.println(StringUtils.spaces(level * 3) + "UNITS AFTER:" + this.observable.getUnit()
 							+ " using " + chosenUnits);

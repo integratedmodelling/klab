@@ -53,6 +53,7 @@ import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.CompatibleObservable;
 import org.integratedmodelling.klab.resolution.ObservableReasoner.CandidateObservable;
@@ -249,12 +250,20 @@ public class Model extends KimObject implements IModel {
 
 		for (IComputableResource resource : resources) {
 
+			if (this.observables.get(0).getObservationType() == ObservationType.CHARACTERIZATION
+					|| this.observables.get(0).getObservationType() == ObservationType.CLASSIFICATION) {
+				// must be a filter
+				if (!isFilter(resource)) {
+					monitor.error("all computations in attribute contextualizers must be filters", this.getStatement());
+				}
+			}
+
 			String target = resource.getTarget() == null ? this.observables.get(0).getName()
 					: resource.getTarget().getName();
 			IArtifact.Type type = Resources.INSTANCE.getType(resource);
 			IGeometry geometry = Resources.INSTANCE.getGeometry(resource);
 
-			if (type != null) {
+			if (type != null && !isFilter(resource)) {
 				if (typechain.containsKey(target)) {
 					// TODO check that the resource can take the current type
 				}
@@ -274,9 +283,7 @@ public class Model extends KimObject implements IModel {
 		}
 
 		// check final type of observable against typechain
-		for (
-
-		IObservable observable : observables) {
+		for (IObservable observable : observables) {
 			if (typechain.containsKey(observable.getName())) {
 				IArtifact.Type required = observable.getArtifactType();
 				if (!IArtifact.Type.isCompatible(required, typechain.get(observable.getName()))) {
@@ -287,6 +294,16 @@ public class Model extends KimObject implements IModel {
 				}
 			}
 		}
+	}
+
+	private boolean isFilter(IComputableResource resource) {
+		if (resource.getServiceCall() != null) {
+			IPrototype prototype = Extensions.INSTANCE.getPrototype(resource.getServiceCall().getName());
+			if (prototype != null && prototype.isFilter()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void validateUnits(IObservable observable, IMonitor monitor) {

@@ -1361,6 +1361,9 @@ public enum Kim {
 		if (t.size() == 1) {
 			return t.iterator().next();
 		}
+		if (type.contains(IKimConcept.Type.ROLE)) {
+			return IKimConcept.Type.ROLE;
+		}
 		return null;
 	}
 

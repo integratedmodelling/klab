@@ -13,7 +13,7 @@
  * Each instantiator actor will generate independent direct observations, whose
  * resolution will generate more workflows.
  */
-process p1 {
+filter p1 {
 		
 	// typical optimizable actuator - if used only 	once it can go inside
 	// its point of use (except it won't be executed in parallel with other

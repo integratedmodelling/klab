@@ -287,13 +287,13 @@ public interface KdlPackage extends EPackage
   int ACTOR_DEFINITION__EXPORTED = 4;
 
   /**
-   * The feature id for the '<em><b>Processor</b></em>' attribute.
+   * The feature id for the '<em><b>Filter</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__PROCESSOR = 5;
+  int ACTOR_DEFINITION__FILTER = 5;
 
   /**
    * The feature id for the '<em><b>Imported</b></em>' attribute.
@@ -1929,15 +1929,15 @@ public interface KdlPackage extends EPackage
   EAttribute getActorDefinition_Exported();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isProcessor <em>Processor</em>}'.
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isFilter <em>Filter</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Processor</em>'.
-   * @see org.integratedmodelling.kdl.kdl.ActorDefinition#isProcessor()
+   * @return the meta object for the attribute '<em>Filter</em>'.
+   * @see org.integratedmodelling.kdl.kdl.ActorDefinition#isFilter()
    * @see #getActorDefinition()
    * @generated
    */
-  EAttribute getActorDefinition_Processor();
+  EAttribute getActorDefinition_Filter();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isImported <em>Imported</em>}'.
@@ -3538,12 +3538,12 @@ public interface KdlPackage extends EPackage
     EAttribute ACTOR_DEFINITION__EXPORTED = eINSTANCE.getActorDefinition_Exported();
 
     /**
-     * The meta object literal for the '<em><b>Processor</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Filter</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute ACTOR_DEFINITION__PROCESSOR = eINSTANCE.getActorDefinition_Processor();
+    EAttribute ACTOR_DEFINITION__FILTER = eINSTANCE.getActorDefinition_Filter();
 
     /**
      * The meta object literal for the '<em><b>Imported</b></em>' attribute feature.

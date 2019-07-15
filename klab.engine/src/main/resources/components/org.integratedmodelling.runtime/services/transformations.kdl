@@ -2,7 +2,7 @@
 @version 0.10.0
 @namespace klab.data
 
-process number normalize 
+filter number normalize 
 	"" 
 	label "Normalize"
 {
@@ -12,7 +12,7 @@ process number normalize
 	class org.integratedmodelling.klab.data.transformations.NormalizingTransformation
 }
 
-process number standardize 
+filter number standardize 
 	"" 
 	label "Standardize"
 {

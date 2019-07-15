@@ -90,7 +90,7 @@ public class ModelKbox extends ObservableKbox {
 							+ "istemporal BOOLEAN, " + "timemultiplicity LONG, " + "spacemultiplicity LONG, "
 							+ "scalemultiplicity LONG, " + "dereifyingattribute VARCHAR(256), "
 							+ "minspatialscale INTEGER, " + "maxspatialscale INTEGER, " + "mintimescale INTEGER, "
-							+ "maxtimescale INTEGER, " + "space GEOMETRY, " + "); "
+							+ "maxtimescale INTEGER, " + "space GEOMETRY, " + "observationtype VARCHAR(256), " + "); "
 							+ "CREATE INDEX model_oid_index ON model(oid); "
 							+ "CREATE SPATIAL INDEX model_space ON model(space);";
 
@@ -127,7 +127,7 @@ public class ModelKbox extends ObservableKbox {
 							+ model.getMaxTimeScaleFactor() + ", " + "'"
 							+ (model.getShape() == null ? "GEOMETRYCOLLECTION EMPTY"
 									: ((Shape) model.getShape()).getStandardizedGeometry().toString())
-							+ "'" + ");";
+							+ "', '" + model.getObservationType() + "');";
 
 					if (model.getMetadata() != null && model.getMetadata().size() > 0) {
 						storeMetadataFor(primaryKey, model.getMetadata());

@@ -303,6 +303,15 @@ public interface IObservable extends ISemantic, IResolvable {
 		 */
 		Builder setDistributedInherency(boolean ofEach);
 
+		/**
+		 * Set the observable whose observation is expected to go to the 
+		 * filter that this observable specifies.
+		 * 
+		 * @param observableId
+		 * @return
+		 */
+		Builder filtering(IObservable observable);
+
 	}
 
 	/**

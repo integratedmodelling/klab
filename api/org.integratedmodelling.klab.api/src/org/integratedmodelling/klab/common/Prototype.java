@@ -177,7 +177,7 @@ public class Prototype implements IPrototype {
 	protected Geometry geometry;
 	protected boolean distributed;
 	protected boolean contextualizer;
-	protected boolean processor;
+	protected boolean filter;
 	protected String label = null;
 	protected List<ArgumentImpl> exports = new ArrayList<>();
     protected List<ArgumentImpl> imports = new ArrayList<>();
@@ -454,8 +454,8 @@ public class Prototype implements IPrototype {
 	}
 
     @Override
-    public boolean isProcessor() {
-        return processor;
+    public boolean isFilter() {
+        return filter;
     }
 
 }

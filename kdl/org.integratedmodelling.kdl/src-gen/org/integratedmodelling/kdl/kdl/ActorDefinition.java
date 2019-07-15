@@ -21,7 +21,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isFinal <em>Final</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isOptional <em>Optional</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isExported <em>Exported</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isProcessor <em>Processor</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isFilter <em>Filter</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isImported <em>Imported</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isMultiple <em>Multiple</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getArity <em>Arity</em>}</li>
@@ -170,30 +170,30 @@ public interface ActorDefinition extends EObject
   void setExported(boolean value);
 
   /**
-   * Returns the value of the '<em><b>Processor</b></em>' attribute.
+   * Returns the value of the '<em><b>Filter</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Processor</em>' attribute isn't clear,
+   * If the meaning of the '<em>Filter</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Processor</em>' attribute.
-   * @see #setProcessor(boolean)
-   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Processor()
+   * @return the value of the '<em>Filter</em>' attribute.
+   * @see #setFilter(boolean)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Filter()
    * @model
    * @generated
    */
-  boolean isProcessor();
+  boolean isFilter();
 
   /**
-   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isProcessor <em>Processor</em>}' attribute.
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isFilter <em>Filter</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Processor</em>' attribute.
-   * @see #isProcessor()
+   * @param value the new value of the '<em>Filter</em>' attribute.
+   * @see #isFilter()
    * @generated
    */
-  void setProcessor(boolean value);
+  void setFilter(boolean value);
 
   /**
    * Returns the value of the '<em><b>Imported</b></em>' attribute.

@@ -258,7 +258,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		if (hasConcretizingTrait) {
 			ret.type.remove(Type.ABSTRACT);
 		}
-		
+
 		if (declaration.isDistributedOfInherency()) {
 			ret.distributedInherent = ComponentRole.INHERENT;
 		} else if (declaration.isDistributedForInherency()) {
@@ -492,17 +492,21 @@ public class KimConcept extends KimStatement implements IKimConcept {
 
 	/*
 	 * rearrange the special variant of <single concrete attribute/role> <abstract
-	 * observable> to <attribute/role> of <observable>
+	 * observable> to <attribute/role> of <observable>. Use only attributes for
+	 * qualities, where realms and identities are strictly identifying, and allow
+	 * identities and realms for countables where ambiguity is unlikely.
 	 */
 	private void rearrangeSpecialForms() {
 		if (traits.size() + roles.size() == 1 && observable != null && observable.is(Type.ABSTRACT) && authority == null
 				&& getSemanticSubsetters().size() == 0 && operands.size() == 0) {
 			IKimConcept trait = CollectionUtils.join(traits, roles).iterator().next();
-			if ((trait.is(Type.ROLE) || trait.is(Type.ATTRIBUTE)) && !trait.is(Type.ABSTRACT)) {
+			if ((trait.is(Type.ROLE) || trait.is(Type.ATTRIBUTE)
+					|| (observable.is(Type.COUNTABLE) && (trait.is(Type.IDENTITY) || trait.is(Type.REALM))))
+					&& !trait.is(Type.ABSTRACT)) {
 				KimConcept inh = this.observable;
 				this.type.clear();
 				this.type.addAll(trait.getType());
-				this.observable = (KimConcept)trait;
+				this.observable = (KimConcept) trait;
 				this.traits.clear();
 				this.roles.clear();
 				this.inherent = inh;

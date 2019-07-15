@@ -30,6 +30,6 @@
  		""
  		default false
  	
- 	optional text filter
+ 	optional text 'filter'
  		""
  }

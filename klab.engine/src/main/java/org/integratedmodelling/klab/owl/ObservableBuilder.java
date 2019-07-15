@@ -65,6 +65,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	private ValueOperator valueOperator;
 	private Object valueOperand;
 	private String name;
+	private IObservable filteredObservable;
 
 	private List<IConcept> traits = new ArrayList<>();
 	private List<IConcept> roles = new ArrayList<>();
@@ -89,6 +90,13 @@ public class ObservableBuilder implements IObservable.Builder {
 	public ObservableBuilder(Concept main, Ontology ontology) {
 		this.main = main;
 		this.ontology = ontology;
+		this.declaration = Concepts.INSTANCE.getDeclaration(main);
+		this.type = ((Concept) main).type;
+	}
+
+	public ObservableBuilder(IConcept main) {
+		this.main = (Concept) main;
+		this.ontology = (Ontology) main.getOntology();
 		this.declaration = Concepts.INSTANCE.getDeclaration(main);
 		this.type = ((Concept) main).type;
 	}
@@ -135,7 +143,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.valueOperator = observable.getValueOperator();
 		this.valueOperand = observable.getValueOperand();
 		this.monitor = monitor;
-
+		this.filteredObservable = observable.getFilteredObservable();
 	}
 
 	public ObservableBuilder(ObservableBuilder other) {
@@ -160,6 +168,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.valueOperator = other.valueOperator;
 		this.classifier = other.classifier;
 		this.downTo = other.downTo;
+		this.filteredObservable = other.filteredObservable;
 
 		checkTrivial();
 	}
@@ -229,6 +238,12 @@ public class ObservableBuilder implements IObservable.Builder {
 		}
 		this.roles.add(concept);
 		isTrivial = false;
+		return this;
+	}
+
+	@Override
+	public Builder filtering(IObservable observable) {
+		this.filteredObservable = observable;
 		return this;
 	}
 
@@ -1734,7 +1749,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	}
 
 	@Override
-	public IObservable buildObservable() throws KlabValidationException {
+	public Observable buildObservable() throws KlabValidationException {
 
 		Observable ret = Observable.promote(buildConcept()/* , false */);
 
@@ -1744,11 +1759,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		} else if (unit != null) {
 			ret.setUnit((Unit) unit);
 			ret.setDeclaration(ret.getDeclaration() + " in " + ret.getCurrency());
-		} /*
-			 * else { IUnit unit = (Unit) Units.INSTANCE.getDefaultUnitFor(ret.getType());
-			 * if (unit != null) { ret.setUnit((Unit) unit);
-			 * ret.setDeclaration(ret.getDeclaration() + " in " + ret.getCurrency()); } }
-			 */
+		}
 
 		if (valueOperator != null) {
 
@@ -1806,6 +1817,8 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (name != null) {
 			ret.setName(name);
 		}
+		
+		ret.setfilteredObservable(filteredObservable);
 
 		return ret;
 	}

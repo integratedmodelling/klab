@@ -40,7 +40,7 @@ import org.integratedmodelling.kdl.kdl.Value;
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isFinal <em>Final</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isOptional <em>Optional</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isExported <em>Exported</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isProcessor <em>Processor</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isFilter <em>Filter</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isImported <em>Imported</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isMultiple <em>Multiple</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getArity <em>Arity</em>}</li>
@@ -157,24 +157,24 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   protected boolean exported = EXPORTED_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isProcessor() <em>Processor</em>}' attribute.
+   * The default value of the '{@link #isFilter() <em>Filter</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isProcessor()
+   * @see #isFilter()
    * @generated
    * @ordered
    */
-  protected static final boolean PROCESSOR_EDEFAULT = false;
+  protected static final boolean FILTER_EDEFAULT = false;
 
   /**
-   * The cached value of the '{@link #isProcessor() <em>Processor</em>}' attribute.
+   * The cached value of the '{@link #isFilter() <em>Filter</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isProcessor()
+   * @see #isFilter()
    * @generated
    * @ordered
    */
-  protected boolean processor = PROCESSOR_EDEFAULT;
+  protected boolean filter = FILTER_EDEFAULT;
 
   /**
    * The default value of the '{@link #isImported() <em>Imported</em>}' attribute.
@@ -618,9 +618,9 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean isProcessor()
+  public boolean isFilter()
   {
-    return processor;
+    return filter;
   }
 
   /**
@@ -628,12 +628,12 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setProcessor(boolean newProcessor)
+  public void setFilter(boolean newFilter)
   {
-    boolean oldProcessor = processor;
-    processor = newProcessor;
+    boolean oldFilter = filter;
+    filter = newFilter;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__PROCESSOR, oldProcessor, processor));
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__FILTER, oldFilter, filter));
   }
 
   /**
@@ -1192,8 +1192,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return isOptional();
       case KdlPackage.ACTOR_DEFINITION__EXPORTED:
         return isExported();
-      case KdlPackage.ACTOR_DEFINITION__PROCESSOR:
-        return isProcessor();
+      case KdlPackage.ACTOR_DEFINITION__FILTER:
+        return isFilter();
       case KdlPackage.ACTOR_DEFINITION__IMPORTED:
         return isImported();
       case KdlPackage.ACTOR_DEFINITION__MULTIPLE:
@@ -1263,8 +1263,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
       case KdlPackage.ACTOR_DEFINITION__EXPORTED:
         setExported((Boolean)newValue);
         return;
-      case KdlPackage.ACTOR_DEFINITION__PROCESSOR:
-        setProcessor((Boolean)newValue);
+      case KdlPackage.ACTOR_DEFINITION__FILTER:
+        setFilter((Boolean)newValue);
         return;
       case KdlPackage.ACTOR_DEFINITION__IMPORTED:
         setImported((Boolean)newValue);
@@ -1355,8 +1355,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
       case KdlPackage.ACTOR_DEFINITION__EXPORTED:
         setExported(EXPORTED_EDEFAULT);
         return;
-      case KdlPackage.ACTOR_DEFINITION__PROCESSOR:
-        setProcessor(PROCESSOR_EDEFAULT);
+      case KdlPackage.ACTOR_DEFINITION__FILTER:
+        setFilter(FILTER_EDEFAULT);
         return;
       case KdlPackage.ACTOR_DEFINITION__IMPORTED:
         setImported(IMPORTED_EDEFAULT);
@@ -1439,8 +1439,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return optional != OPTIONAL_EDEFAULT;
       case KdlPackage.ACTOR_DEFINITION__EXPORTED:
         return exported != EXPORTED_EDEFAULT;
-      case KdlPackage.ACTOR_DEFINITION__PROCESSOR:
-        return processor != PROCESSOR_EDEFAULT;
+      case KdlPackage.ACTOR_DEFINITION__FILTER:
+        return filter != FILTER_EDEFAULT;
       case KdlPackage.ACTOR_DEFINITION__IMPORTED:
         return imported != IMPORTED_EDEFAULT;
       case KdlPackage.ACTOR_DEFINITION__MULTIPLE:
@@ -1502,8 +1502,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
     result.append(optional);
     result.append(", exported: ");
     result.append(exported);
-    result.append(", processor: ");
-    result.append(processor);
+    result.append(", filter: ");
+    result.append(filter);
     result.append(", imported: ");
     result.append(imported);
     result.append(", multiple: ");

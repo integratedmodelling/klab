@@ -139,10 +139,6 @@ public enum Indexer {
 			try {
 
 				Document document = new Document();
-
-				if (ret.getId().contains("t/ha")) {
-					System.out.println("PORCODDIO");
-				}
 				
 				document.add(new StringField("id", ret.getId(), Store.YES));
 				document.add(new StringField("namespace", namespaceId, Store.YES));

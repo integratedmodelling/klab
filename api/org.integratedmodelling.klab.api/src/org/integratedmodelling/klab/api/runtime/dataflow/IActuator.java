@@ -87,6 +87,15 @@ public interface IActuator extends IDataflowNode {
     boolean isInput();
     
     /**
+     * If true, this actuator is a filter for an artifact, modifying the same artifact (and
+     * potentially returning a new one, or the same). It must have a first 'import' parameter
+     * and its return type will match that of the filtered input.
+     *  
+     * @return
+     */
+    boolean isFilter();
+    
+    /**
      * True if this actuator computes anything. Used when building dependencies (a computed actuator depends on
      * its children, which can otherwise be executed in parallel).
      *

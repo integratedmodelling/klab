@@ -30,11 +30,6 @@ public class NormalizingTransformation implements IResolver<IState>, IExpression
 		this.state = (IState) artifact;
 	}
 
-//	@Override
-//	public IGeometry getGeometry() {
-//		return state.getScale();
-//	}
-
 	@Override
 	public Type getType() {
 		return Type.NUMBER;
@@ -47,9 +42,7 @@ public class NormalizingTransformation implements IResolver<IState>, IExpression
 
 	@Override
 	public IState resolve(IState ret, IComputationContext context) throws KlabException {
-		if (state == null) {
-			state = ret;
-		}
+
 		StateSummary summary = Observations.INSTANCE.getStateSummary(state, ITime.INITIALIZATION);
 		if (!summary.isDegenerate()) {
 			for (ILocator locator : context.getScale()) {

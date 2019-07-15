@@ -46,7 +46,7 @@ export value literal
 
 }
 
-process number convert
+filter number convert
 	"Convert a numeric state from a unit, range or currency to a compatible other."
 	label '$original to $target'
 {
@@ -63,7 +63,7 @@ process number convert
 
 }
 
-process concept classify
+filter concept classify
 	"Return a state contextualizer that classifies its input into a concept"
 	label 'Classify'
 {
@@ -75,7 +75,7 @@ process concept classify
 
 }
 
-process value categorize 
+filter value categorize 
 	"Aggregate values of one state when they correspond to the same value of another."
 	label "Aggregate by $classifier"
 {
@@ -89,7 +89,7 @@ process value categorize
 
 }
 
-process value transform
+filter value transform
 	"Transform a state by applying an operator and an optional operand, which may be another state."
 	label "$operator"
 {
@@ -110,7 +110,7 @@ process value transform
 
 }
 
-process value aggregate 
+filter value aggregate 
 	"Aggregate values of one state when they overlap the same object. Should be used with non-overlapping
 	 spatial aggregators."
 	label "Aggregate by $classifier"
@@ -125,7 +125,7 @@ process value aggregate
 
 }
 
-process value lookup
+filter value lookup
 	"Return a state contextualizer that classifies its inputs using a lookup table"
 	label 'Lookup table'
 {
@@ -163,7 +163,7 @@ export object instantiate
 
 }
 
-process value cast
+filter value cast
 	"Return a state resolver that will convert a value from a type to another"
 	label '$source to $destination'
 {

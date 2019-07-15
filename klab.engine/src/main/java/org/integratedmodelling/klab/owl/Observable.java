@@ -11,6 +11,8 @@ import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Roles;
+import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -35,6 +37,7 @@ import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.Annotation;
 import org.integratedmodelling.klab.utils.CamelCase;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 
 /**
@@ -73,6 +76,15 @@ public class Observable implements IObservable {
 	 */
 	transient IModel resolvedModel;
 	private String modelReference;
+
+	/**
+	 * If this observable specifies a characterization or classification, which is 
+	 * performed by a filter, the name of the filtered observable is passed along
+	 * with the observable, so that the model can later use it in computations.
+	 */
+	transient private IObservable filteredObservable;
+	
+	
 	// only used to resolve the subject observable if it has to be marshalled across
 	// network boundaries
 	transient String sessionId;
@@ -101,19 +113,14 @@ public class Observable implements IObservable {
 
 	public static Observable promote(IConcept concept) {
 
-		if (concept instanceof Observable) {
-			return (Observable) concept;
-		}
 		Observable ret = new Observable((Concept) concept);
+		
 		ret.observable = (Concept) concept;
 		ret.declaration = concept.getDefinition().trim();
 		ret.isAbstract = concept.isAbstract();
 		ret.generic = concept.isAbstract();
-
-		/*
-		 * if (setUnits) { ret.unit = (Unit) Units.INSTANCE.getDefaultUnitFor(concept);
-		 * if (ret.unit != null) { ret.declaration += " in " + ret.unit; } }
-		 */ return ret;
+		
+		return ret;
 	}
 
 	public Observable(Observable observable) {
@@ -135,6 +142,7 @@ public class Observable implements IObservable {
 		this.valueOperator = observable.valueOperator;
 		this.fluidUnits = observable.fluidUnits;
 		this.originatingModelId = observable.originatingModelId;
+		this.filteredObservable = observable.filteredObservable;
 	}
 
 	@Override
@@ -149,11 +157,6 @@ public class Observable implements IObservable {
 		}
 		return name;
 	}
-
-	// @Override
-	// public IConcept getMain() {
-	// return main;
-	// }
 
 	@Override
 	public IConcept getDownTo() {
@@ -184,18 +187,6 @@ public class Observable implements IObservable {
 	public boolean isAbstract() {
 		return isAbstract;
 	}
-
-	// public IConcept getObservable() {
-	// return observable;
-	// }
-	//
-	// public void setObservable(Concept observable) {
-	// this.observable = observable;
-	// }
-
-	// public void setMain(Concept main) {
-	// this.main = main;
-	// }
 
 	public void setName(String name) {
 		this.name = name;
@@ -494,6 +485,8 @@ public class Observable implements IObservable {
 				return IArtifact.Type.OBJECT;
 			} else if (observable.is(Type.PROCESS)) {
 				return IArtifact.Type.OBJECT;
+			} else if (observable.is(Type.TRAIT) || observable.is(Type.ROLE)) {
+				return IArtifact.Type.VALUE;
 			}
 		}
 		// trait and role observers specify filters, which produce void.
@@ -703,6 +696,60 @@ public class Observable implements IObservable {
 	public Observable withCurrency(ICurrency currency) {
 		this.currency = (Currency) currency;
 		return this;
+	}
+
+	public boolean hasResolvableTraits() {
+		if (observable.is(Type.OBSERVABLE)) {
+			for (IConcept c : Traits.INSTANCE.getDirectTraits(observable)) {
+				if (!c.is(Type.ABSTRACT)) {
+					return true;
+				}
+			}
+			for (IConcept c : Roles.INSTANCE.getDirectRoles(observable)) {
+				if (!c.is(Type.ABSTRACT)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Find the first resolvable trait and return it along with a new observable
+	 * without it. Get traits first so that roles can be resolved with the full
+	 * trait set resolved.
+	 * 
+	 * @return
+	 */
+	public Pair<IConcept, Observable> popResolvableTrait(IMonitor monitor) {
+		IConcept resolvable = null;
+		if (observable.is(Type.OBSERVABLE)) {
+			for (IConcept c : Traits.INSTANCE.getDirectTraits(observable)) {
+				if (!c.is(Type.ABSTRACT)) {
+					resolvable = c;
+					break;
+				}
+			}
+			if (resolvable /* still */ == null) {
+				for (IConcept c : Roles.INSTANCE.getDirectRoles(observable)) {
+					if (!c.is(Type.ABSTRACT)) {
+						resolvable = c;
+						break;
+					}
+				}
+			}
+		}
+
+		return resolvable == null ? null
+				: new Pair<>(resolvable, (Observable) getBuilder(monitor).without(resolvable).buildObservable());
+	}
+
+	public IObservable getFilteredObservable() {
+		return filteredObservable;
+	}
+
+	public void setfilteredObservable(IObservable filteredObservable) {
+		this.filteredObservable = filteredObservable;
 	}
 
 }

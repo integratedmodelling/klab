@@ -48,7 +48,7 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
     boolean parameter = false;
     boolean isFinal = false;
     boolean isAbstract = false;
-    boolean isProcessor = false;
+    boolean isFilter = false;
     boolean isExpression = false;
     boolean multipleInstances;
     boolean moreInstancesAllowed;
@@ -82,7 +82,8 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
         this.isAbstract = o.isAbstract();
         this.label = o.getLabel();
         this.isExpression = o.isExpression();
-
+        this.isFilter = o.isFilter();
+        
         for (String s : o.getEnumValues()) {
             this.enumValues.add(s);
         }
@@ -221,8 +222,8 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
     }
 
     @Override
-    public boolean isProcessor() {
-        return isProcessor;
+    public boolean isFilter() {
+        return isFilter;
     }
 
     public Collection<IKdlActuator> getOutputs() {
