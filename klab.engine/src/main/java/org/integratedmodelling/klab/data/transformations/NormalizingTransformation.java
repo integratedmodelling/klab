@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.data.transformations;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Observations;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
@@ -42,7 +41,6 @@ public class NormalizingTransformation implements IResolver<IState>, IExpression
 
 	@Override
 	public IState resolve(IState ret, IComputationContext context) throws KlabException {
-
 		StateSummary summary = Observations.INSTANCE.getStateSummary(state, ITime.INITIALIZATION);
 		if (!summary.isDegenerate()) {
 			for (ILocator locator : context.getScale()) {

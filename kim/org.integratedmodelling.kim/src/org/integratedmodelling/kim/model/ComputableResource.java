@@ -90,9 +90,9 @@ public class ComputableResource extends KimStatement implements IComputableResou
 
 	private List<IAnnotation> externalParameters;
 
-	// send this from the observable to ensure that we can find the filter target if
-	// we specify a filter.
-	private IObservable filterTarget;
+//	// send this from the observable to ensure that we can find the filter target if
+//	// we specify a filter.
+//	private IObservable filterTarget;
 
 	public ComputableResource copy() {
 		ComputableResource ret = new ComputableResource(getEObject(), getParent());
@@ -745,12 +745,12 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		return "<" + getType() + " -> " + (target == null ? "default" : target) + " [" + dataflowId + "]>";
 	}
 
-	public IComputableResource withFilterTarget(IObservable observable) {
-		this.filterTarget = observable;
-		return this;
-	}
-
-	public IObservable getFilterTarget() {
-		return this.filterTarget;
-	}
+//	public IComputableResource withFilterTarget(IObservable observable) {
+//		this.filterTarget = observable;
+//		return this;
+//	}
+//
+//	public IObservable getFilterTarget() {
+//		return this.filterTarget;
+//	}
 }

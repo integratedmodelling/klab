@@ -1158,7 +1158,7 @@ public class KimValidator extends AbstractKimValidator {
           this.error("Classifiers and aggregators can only be specified for qualities", semantics.getFrom(), null, 
             KimPackage.OBSERVABLE_SEMANTICS__BY);
         }
-        KimConcept by = KimConcept.normalize(semantics.getBy(), declaration);
+        KimConcept by = KimConcept.normalize(semantics.getBy(), declaration, true);
         if ((((!by.is(IKimConcept.Type.TRAIT)) && (!by.is(IKimConcept.Type.CLASS))) && (!by.is(IKimConcept.Type.COUNTABLE)))) {
           this.error(
             "Concepts after \'by\' can only be orderings (discretization), traits (partial aggregation) or countables (object aggregation)", 

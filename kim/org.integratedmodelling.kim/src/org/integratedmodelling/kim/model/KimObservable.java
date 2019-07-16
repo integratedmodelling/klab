@@ -149,11 +149,11 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		}
 
 		if (declaration.getBy() != null) {
-			ret.classifier = KimConcept.normalize(declaration.getBy(), parent);
+			ret.classifier = KimConcept.normalize(declaration.getBy(), parent, false);
 		}
 
 		if (declaration.getDownTo() != null) {
-			ret.downTo = KimConcept.normalize(declaration.getDownTo(), parent);
+			ret.downTo = KimConcept.normalize(declaration.getDownTo(), parent, false);
 		}
 
 		return ret;

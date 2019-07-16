@@ -448,11 +448,11 @@ public enum Kim {
 	}
 
 	public KimConcept declareConcept(ConceptDeclaration declaration) {
-		return declaration == null ? null : KimConcept.normalize(declaration, null);
+		return declaration == null ? null : KimConcept.normalize(declaration, null, true);
 	}
 
 	public KimConcept declareConcept(ConceptDeclaration declaration, IKimMacro macro) {
-		return declaration == null ? null : KimConcept.normalize(declaration, null);
+		return declaration == null ? null : KimConcept.normalize(declaration, null, true);
 	}
 
 	public KimObservable declareObservable(ObservableSemantics declaration) {
@@ -460,11 +460,11 @@ public enum Kim {
 	}
 
 	public KimConcept declareConcept(ConceptDeclaration declaration, IKimStatement parent) {
-		return declaration == null ? null : KimConcept.normalize(declaration, parent);
+		return declaration == null ? null : KimConcept.normalize(declaration, parent, true);
 	}
 
 	public KimConcept declareConcept(ConceptDeclaration declaration, IKimMacro macro, IKimStatement parent) {
-		return declaration == null ? null : KimConcept.normalize(declaration, parent);
+		return declaration == null ? null : KimConcept.normalize(declaration, parent, true);
 	}
 
 	public KimObservable declareObservable(ObservableSemantics declaration, IKimStatement parent) {

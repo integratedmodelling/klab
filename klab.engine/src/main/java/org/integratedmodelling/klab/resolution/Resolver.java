@@ -326,9 +326,6 @@ public enum Resolver {
                                     continue;
                                 }
                                 
-                                // send along the filtered observable if this is a filter
-                                ((RankedModel)model).setFilteredObservable(observable.getFilteredObservable());
-                                
                                 // for reporting
                                 boolean wasZero = percentCovered == 0;
                                 // percent covered by new model

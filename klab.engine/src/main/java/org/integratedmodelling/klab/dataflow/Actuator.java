@@ -17,6 +17,7 @@ import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
+import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
@@ -134,8 +135,8 @@ public class Actuator implements IActuator {
 		IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource, this);
 
 		// filters without their artifact argument get it here
-		if (((ComputableResource)resource).getFilterTarget() != null) {
-			checkFilterArguments(serviceCall, ((ComputableResource)resource).getFilterTarget());
+		if (observable.getFilteredObservable() != null) {
+			checkFilterArguments(resource, observable.getFilteredObservable());
 		}
 
 		computationStrategy.add(new Pair<>(serviceCall, resource));
@@ -466,17 +467,23 @@ public class Actuator implements IActuator {
 		return ret;
 	}
 
-	private void checkFilterArguments(IServiceCall function, IObservable target) {
+	private void checkFilterArguments(IComputableResource resource, IObservable target) {
 
-		IPrototype p = Extensions.INSTANCE.getPrototype(function.getName());
-		if (p != null && p.isFilter()) {
-			String artifactArg = null;
-			for (Argument argument : p.listImports()) {
-				artifactArg = argument.getName();
-				break; // yes, break
-			}
-			if (artifactArg != null && !function.getParameters().containsKey(artifactArg)) {
-				function.getParameters().put(artifactArg, target.getName());
+		if (resource.getServiceCall() != null) {
+			KimServiceCall function = (KimServiceCall) resource.getServiceCall();
+			IPrototype p = Extensions.INSTANCE.getPrototype(function.getName());
+			if (p != null && p.isFilter()) {
+				String artifactArg = null;
+				for (Argument argument : p.listImports()) {
+					artifactArg = argument.getName();
+					break; // yes, break
+				}
+				if (artifactArg != null && !function.getParameters().containsKey(artifactArg)) {
+					function = function.copy();
+					function.getParameters().put(artifactArg, target.getName());
+					((ComputableResource)resource).setServiceCall(function);
+				}
+				
 			}
 		}
 	}

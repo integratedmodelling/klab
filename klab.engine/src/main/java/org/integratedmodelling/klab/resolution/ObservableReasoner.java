@@ -6,8 +6,10 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -366,6 +368,9 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 		 * First strip one attribute or role and see if we can resolve the two
 		 * separately. More than one attribute is resolved recursively.
 		 */
+		if (Traits.INSTANCE.hasTrait(observable.getType(), Concepts.c("im:Normalized"))) {
+			System.out.println("ZOPOPA");
+		}
 		if (observable.hasResolvableTraits()) {
 
 			Pair<IConcept, Observable> resolvables = observable.popResolvableTrait(scope.getMonitor());

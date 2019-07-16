@@ -52,191 +52,191 @@ import com.google.inject.Injector;
 
 public enum Models implements IModelService {
 
-    INSTANCE;
+	INSTANCE;
 
-    private static final String KBOX_NAME = "models";
+	private static final String KBOX_NAME = "models";
 
-    @Inject
-    ParseHelper<Model> modelParser;
+	@Inject
+	ParseHelper<Model> modelParser;
 
-    @Inject
-    IResourceValidator validator;
+	@Inject
+	IResourceValidator validator;
 
-    /*
-     * index for local models
-     */
-    private ModelKbox kbox = null;
-    // Map<String, Integer> recheckModelNS = new HashMap<>();
+	/*
+	 * index for local models
+	 */
+	private ModelKbox kbox = null;
+	// Map<String, Integer> recheckModelNS = new HashMap<>();
 
-    private Models() {
-        IInjectorProvider injectorProvider = new KimInjectorProvider();
-        Injector injector = injectorProvider.getInjector();
-        if (injector != null) {
-            injector.injectMembers(this);
-        }
-        this.kbox = ModelKbox.create(KBOX_NAME);
-        Services.INSTANCE.registerService(this, IModelService.class);
-    }
+	private Models() {
+		IInjectorProvider injectorProvider = new KimInjectorProvider();
+		Injector injector = injectorProvider.getInjector();
+		if (injector != null) {
+			injector.injectMembers(this);
+		}
+		this.kbox = ModelKbox.create(KBOX_NAME);
+		Services.INSTANCE.registerService(this, IModelService.class);
+	}
 
-    @Override
-    public INamespace load(URL url, IMonitor monitor) throws KlabException {
-        try (InputStream stream = url.openStream()) {
-            return load(url.toURI(), stream, monitor);
-        } catch (Exception e) {
-            throw e instanceof KlabException ? (KlabException) e : new KlabIOException(e);
-        }
-    }
+	@Override
+	public INamespace load(URL url, IMonitor monitor) throws KlabException {
+		try (InputStream stream = url.openStream()) {
+			return load(url.toURI(), stream, monitor);
+		} catch (Exception e) {
+			throw e instanceof KlabException ? (KlabException) e : new KlabIOException(e);
+		}
+	}
 
-    @Override
-    public INamespace load(File file, IMonitor monitor) throws KlabException {
-        try (InputStream stream = new FileInputStream(file)) {
-            return load(file.toURI(), stream, monitor);
-        } catch (Exception e) {
-            throw e instanceof KlabException ? (KlabException) e : new KlabIOException(e);
-        }
-    }
+	@Override
+	public INamespace load(File file, IMonitor monitor) throws KlabException {
+		try (InputStream stream = new FileInputStream(file)) {
+			return load(file.toURI(), stream, monitor);
+		} catch (Exception e) {
+			throw e instanceof KlabException ? (KlabException) e : new KlabIOException(e);
+		}
+	}
 
-    public Namespace load(URI uri, InputStream input, IMonitor monitor) throws KlabException {
+	public Namespace load(URI uri, InputStream input, IMonitor monitor) throws KlabException {
 
-        Namespace ret = null;
-        try {
-            String definition = IOUtils.toString(input);
-            Model model = modelParser.parse(definition);
+		Namespace ret = null;
+		try {
+			String definition = IOUtils.toString(input);
+			Model model = modelParser.parse(definition);
 
-            if (model != null && model.getNamespace() != null) {
-                // treat as orphan
-                Kim.INSTANCE.eraseOrphanNamespace(uri.toString());
-                model.getNamespace().eResource().setURI(org.eclipse.emf.common.util.URI.createURI(uri.toString()));
-                List<Issue> issues = validator.validate(model.eResource(), CheckMode.ALL, CancelIndicator.NullImpl);
-                for (Issue issue : issues) {
-                    if (issue.getSeverity() == Severity.ERROR) {
-                        Kim.INSTANCE.reportLibraryError(issue);
-                    }
-                }
+			if (model != null && model.getNamespace() != null) {
+				// treat as orphan
+				Kim.INSTANCE.eraseOrphanNamespace(uri.toString());
+				model.getNamespace().eResource().setURI(org.eclipse.emf.common.util.URI.createURI(uri.toString()));
+				List<Issue> issues = validator.validate(model.eResource(), CheckMode.ALL, CancelIndicator.NullImpl);
+				for (Issue issue : issues) {
+					if (issue.getSeverity() == Severity.ERROR) {
+						Kim.INSTANCE.reportLibraryError(issue);
+					}
+				}
 
-                // recover the namespace that was parsed
-                IKimNamespace namespace = Kim.INSTANCE/* .getCommonProject() */
-                        .getNamespace(model.getNamespace());
+				// recover the namespace that was parsed
+				IKimNamespace namespace = Kim.INSTANCE/* .getCommonProject() */
+						.getNamespace(model.getNamespace());
 
-                if (namespace != null) {
-                    for (Notifier notifier : Kim.INSTANCE.getNotifiers()) {
-                        if (notifier instanceof KimNotifier) {
-                            ret = (Namespace) ((KimNotifier) notifier).with((Monitor) monitor)
-                                    .synchronizeNamespaceWithRuntime(namespace);
-                        }
-                    }
-                }
-            }
+				if (namespace != null) {
+					for (Notifier notifier : Kim.INSTANCE.getNotifiers()) {
+						if (notifier instanceof KimNotifier) {
+							ret = (Namespace) ((KimNotifier) notifier).with((Monitor) monitor)
+									.synchronizeNamespaceWithRuntime(namespace);
+						}
+					}
+				}
+			}
 
-        } catch (Exception e) {
-            throw e instanceof KlabException ? (KlabException) e : new KlabValidationException(e);
-        }
-        return ret;
-    }
+		} catch (Exception e) {
+			throw e instanceof KlabException ? (KlabException) e : new KlabValidationException(e);
+		}
+		return ret;
+	}
 
-    // @Override
-    public void releaseNamespace(String namespaceId, IMonitor monitor) throws KlabException {
-        /* int cmodel = */kbox.remove(namespaceId, monitor);
-        // if (cmodel > 0) {
-        // recheckModelNS.put(namespace.getName(), cmodel);
-        // }
-    }
+	// @Override
+	public void releaseNamespace(String namespaceId, IMonitor monitor) throws KlabException {
+		/* int cmodel = */kbox.remove(namespaceId, monitor);
+		// if (cmodel > 0) {
+		// recheckModelNS.put(namespace.getName(), cmodel);
+		// }
+	}
 
-    // @Override
-    public void index(IModel model, IMonitor monitor) throws KlabException {
+	// @Override
+	public void index(IModel model, IMonitor monitor) throws KlabException {
 
-        // wrong models don't get indexed; non-semantic models do (as private)
-        if (model.getStatement().isErrors() || model.getObservables().size() == 0) {
-            return;
-        }
+		// wrong models don't get indexed; non-semantic models do (as private)
+		if (model.getStatement().isErrors() || model.getObservables().size() == 0) {
+			return;
+		}
 
-        try {
-            kbox.store(model, monitor);
-            if (model.getScope() != Scope.NAMESPACE) {
-                Indexer.INSTANCE.index(model.getStatement(), model.getNamespace().getName());
-            }
-        } catch (Throwable e) {
-            // happens with URN resources in space specs
-            monitor.error("error indexing model " + model.getName() + ": " + e.getMessage());
-            ((org.integratedmodelling.klab.model.Model) model).setInactive(true);
-        }
-    }
+		try {
+			kbox.store(model, monitor);
+			if (model.getScope() != Scope.NAMESPACE) {
+				Indexer.INSTANCE.index(model.getStatement(), model.getNamespace().getName());
+			}
+		} catch (Throwable e) {
+			// happens with URN resources in space specs
+			monitor.error("error indexing model " + model.getName() + ": " + e.getMessage());
+			((org.integratedmodelling.klab.model.Model) model).setInactive(true);
+		}
+	}
 
-    @Override
-    public List<IRankedModel> resolve(IObservable observable, IResolutionScope scope) throws KlabException {
-        return kbox.query(observable, (ResolutionScope) scope);
-    }
+	@Override
+	public List<IRankedModel> resolve(IObservable observable, IResolutionScope scope) throws KlabException {
+		return kbox.query(observable, (ResolutionScope) scope);
+	}
 
-    /*
-     * Non-API - finalize namespace storage in kbox for proper synchronization
-     * 
-     * @param namespace
-     * 
-     * @param monitor
-     */
-    public void finalizeNamespace(INamespace namespace, IMonitor monitor) {
+	/*
+	 * Non-API - finalize namespace storage in kbox for proper synchronization
+	 * 
+	 * @param namespace
+	 * 
+	 * @param monitor
+	 */
+	public void finalizeNamespace(INamespace namespace, IMonitor monitor) {
 
-        // Integer storingNamespace = recheckModelNS.remove(namespace.getId());
-        // if (storingNamespace != null && storingNamespace > 0 &&
-        // (namespace.getProject() == null || !(namespace.getProject().isRemote()))) {
-        // try {
-        kbox.store(namespace, monitor);
-        // } catch (Exception e) {
-        // monitor.error("error storing namespace", e);
-        // }
-        // }
-    }
+		// Integer storingNamespace = recheckModelNS.remove(namespace.getId());
+		// if (storingNamespace != null && storingNamespace > 0 &&
+		// (namespace.getProject() == null || !(namespace.getProject().isRemote()))) {
+		// try {
+		kbox.store(namespace, monitor);
+		// } catch (Exception e) {
+		// monitor.error("error storing namespace", e);
+		// }
+		// }
+	}
 
-    /**
-     * Simplest query for any model observing the passed concept. Should only be
-     * used for transformations or other commodity models. May be removed after the
-     * resolver can deal with these quickly and more flexibly.
-     * 
-     * @param trait
-     * @return the "best" model or null. There's no ranking so no need to choose
-     *         from a list.
-     */
-    public IModel resolve(IConcept trait, IResolutionScope scope) {
-        List<IRankedModel> ret = kbox.query(Observable.promote(trait), (ResolutionScope) scope);
-        return ret.isEmpty() ? null : ret.get(0);
-    }
+	/**
+	 * Simplest query for any model observing the passed concept. Should only be
+	 * used for transformations or other commodity models. May be removed after the
+	 * resolver can deal with these quickly and more flexibly.
+	 * 
+	 * @param trait
+	 * @return the "best" model or null. There's no ranking so no need to choose
+	 *         from a list.
+	 */
+	public IModel resolve(IConcept trait, IResolutionScope scope) {
+		List<IRankedModel> ret = kbox.query(Observable.promote(trait), (ResolutionScope) scope);
+		return ret.isEmpty() ? null : ret.get(0);
+	}
 
-    public List<ModelReference> listModels(boolean sort) {
-        List<ModelReference> ret = kbox.retrieveAll(Klab.INSTANCE.getRootMonitor());
-        if (sort) {
-            ret.sort(new Comparator<ModelReference>() {
+	public List<ModelReference> listModels(boolean sort) {
+		List<ModelReference> ret = kbox.retrieveAll(Klab.INSTANCE.getRootMonitor());
+		if (sort) {
+			ret.sort(new Comparator<ModelReference>() {
 
-                @Override
-                public int compare(ModelReference o1, ModelReference o2) {
-                    return o1.getUrn().compareTo(o2.getUrn());
-                }
-            });
-        }
-        return ret;
-    }
+				@Override
+				public int compare(ModelReference o1, ModelReference o2) {
+					return o1.getUrn().compareTo(o2.getUrn());
+				}
+			});
+		}
+		return ret;
+	}
 
-    public ModelReference getModelReference(String string) {
-        return kbox.retrieveModel(string, Klab.INSTANCE.getRootMonitor());
-    }
+	public ModelReference getModelReference(String string) {
+		return kbox.retrieveModel(string, Klab.INSTANCE.getRootMonitor());
+	}
 
-    public ModelKbox getKbox() {
-        return kbox;
-    }
+	public ModelKbox getKbox() {
+		return kbox;
+	}
 
-    public boolean isAvailable(String modelName) {
-        IKimObject model = Resources.INSTANCE.getModelObject(modelName);
-        if (!(model instanceof IModel)) {
-            return false;
-        }
-        for (IComputableResource resource : ((IModel) model).getResources()) {
-            if (!resource.isAvailable()) {
-                return false;
-            }
-        }
-        return true;
-    }
+	public boolean isAvailable(String modelName) {
+		IKimObject model = Resources.INSTANCE.getModelObject(modelName);
+		if (!(model instanceof IModel)) {
+			return false;
+		}
+		for (IComputableResource resource : ((IModel) model).getResources()) {
+			if (!resource.isAvailable()) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-    /**
+	/**
      * Called when a candidate observable has more than one model and/or a computation, making it a 
      * derived strategy to observe a given concepts. Must return a list with one single model with all
      * the candidates as dependencies and the computations as computables, belonging to the namespace
@@ -253,8 +253,16 @@ public enum Models implements IModelService {
      */
     public List<IRankedModel> createDerivedModel(Observable mainObservable, CandidateObservable candidateObservable,
             ResolutionScope scope) {
-        return Collections.singletonList(new RankedModel(
-                new org.integratedmodelling.klab.model.Model(mainObservable, candidateObservable, scope)));
+    	
+    	org.integratedmodelling.klab.model.Model inner = new org.integratedmodelling.klab.model.Model(mainObservable, candidateObservable, scope);
+    	RankedModel outer = new RankedModel(inner);
+    	for (Observable obs : candidateObservable.observables) {
+    		if (obs.getFilteredObservable() != null) {
+    			outer.setFilteredObservable(obs);
+    			break;
+    		}
+    	}
+        return Collections.singletonList(outer);
     }
 
 }

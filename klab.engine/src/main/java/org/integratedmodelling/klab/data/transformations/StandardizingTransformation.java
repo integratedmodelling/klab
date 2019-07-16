@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.data.transformations;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Observations;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
@@ -28,12 +27,7 @@ public class StandardizingTransformation implements IResolver<IState>, IProcesso
 		}
 		this.state = (IState) artifact;
 	}
-
-//	@Override
-//	public IGeometry getGeometry() {
-//		return state.getScale();
-//	}
-
+	
 	@Override
 	public Type getType() {
 		return Type.NUMBER;
@@ -46,9 +40,6 @@ public class StandardizingTransformation implements IResolver<IState>, IProcesso
 
 	@Override
 	public IState resolve(IState ret, IComputationContext context) throws KlabException {
-		if (state == null) {
-			state = ret;
-		}
 		StateSummary summary = Observations.INSTANCE.getStateSummary(state, ITime.INITIALIZATION);
 		if (!summary.isDegenerate()) {
 			for (ILocator locator : context.getScale()) {
