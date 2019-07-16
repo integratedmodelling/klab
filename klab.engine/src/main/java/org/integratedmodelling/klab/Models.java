@@ -256,12 +256,6 @@ public enum Models implements IModelService {
     	
     	org.integratedmodelling.klab.model.Model inner = new org.integratedmodelling.klab.model.Model(mainObservable, candidateObservable, scope);
     	RankedModel outer = new RankedModel(inner);
-    	for (Observable obs : candidateObservable.observables) {
-    		if (obs.getFilteredObservable() != null) {
-    			outer.setFilteredObservable(obs);
-    			break;
-    		}
-    	}
         return Collections.singletonList(outer);
     }
 

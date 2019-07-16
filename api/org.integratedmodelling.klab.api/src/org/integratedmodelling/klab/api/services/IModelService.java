@@ -16,7 +16,6 @@
 package org.integratedmodelling.klab.api.services;
 
 import java.io.File;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -80,40 +79,8 @@ public interface IModelService {
 		 */
 		int getPriority();
 
-		/**
-		 * If this model is a filter, the resolver puts here the observable
-		 * corresponding to the filter artifact, so that it can be found by the actuator
-		 * and correctly linked to the computation.
-		 * 
-		 * @returns the filtered observable, if any.
-		 */
-		IObservable getFilteredObservable();
 
 	}
-	//
-	// /**
-	// * Release all models pertaining to named namespace, both in live and
-	// persistent storage.
-	// *
-	// * @param namespace a {@link
-	// org.integratedmodelling.klab.api.model.INamespace} object.
-	// * @param monitor a {@link
-	// org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
-	// * @throws org.integratedmodelling.klab.exceptions.KlabException
-	// */
-	// void releaseNamespace(INamespace namespace, IMonitor monitor) throws
-	// KlabException;
-
-	// /**
-	// * Index the passed model in kbox.
-	// *
-	// * @param model a {@link org.integratedmodelling.klab.api.model.IModel}
-	// object.
-	// * @param monitor a {@link
-	// org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
-	// * @throws org.integratedmodelling.klab.exceptions.KlabException
-	// */
-	// void index(IModel model, IMonitor monitor) throws KlabException;
 
 	/**
 	 * Resolve the passed observable to a list of ranked models, ordered from best
@@ -163,18 +130,5 @@ public interface IModelService {
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
 	INamespace load(File file, IMonitor monitor) throws KlabException;
-
-	// /**
-	// * Load a single model file from a stream. Namespace must have no dependencies
-	// and name a
-	// * worldview at the top.
-	// *
-	// * @param input a {@link java.io.InputStream} object.
-	// * @param monitor a {@link
-	// org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
-	// * @return the namespace loaded
-	// * @throws org.integratedmodelling.klab.exceptions.KlabException
-	// */
-	// INamespace load(InputStream input, IMonitor monitor) throws KlabException;
 
 }

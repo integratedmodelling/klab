@@ -38,7 +38,6 @@ public class RankedModel extends Model implements IRankedModel {
 	Model delegate;
 	Map<String, Double> ranks;
 	int priority = 0;
-	IObservable filteredObservable = null;
 
 	private transient ModelReference modelData;
 
@@ -264,13 +263,4 @@ public class RankedModel extends Model implements IRankedModel {
 		return delegate.isDerived();
 	}
 
-	@Override
-	public IObservable getFilteredObservable() {
-		return filteredObservable;
-	}
-
-	public void setFilteredObservable(IObservable observable) {
-		this.filteredObservable = observable;
-	}
-	
 }
