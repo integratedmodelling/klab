@@ -368,9 +368,6 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 		 * First strip one attribute or role and see if we can resolve the two
 		 * separately. More than one attribute is resolved recursively.
 		 */
-		if (Traits.INSTANCE.hasTrait(observable.getType(), Concepts.c("im:Normalized"))) {
-			System.out.println("ZOPOPA");
-		}
 		if (observable.hasResolvableTraits()) {
 
 			Pair<IConcept, Observable> resolvables = observable.popResolvableTrait(scope.getMonitor());
@@ -380,52 +377,15 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 			 */
 			candidate = new CandidateObservable(resolvables.getSecond(),
 					resolvables.getSecond().is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
-
+			
+			/*
+			 * ...and the model that would resolve the trait in it.
+			 */
 			candidate.observables.add((Observable) new ObservableBuilder(resolvables.getFirst())
 					.of(Observables.INSTANCE.getBaseObservable(resolvables.getSecond().getType()))
 					.filtering(resolvables.getSecond()).buildObservable());
 
-			/*
-			 * continue as the next observable
-			 */
-			observable = resolvables.getSecond();
 		}
-
-		// IObservable.Builder builder = observable.getBuilder(scope.getMonitor())
-		// .withoutAny(Type.RESCALING);
-		//
-		// if (builder.getRemoved().size() > 0) {
-		// boolean ok = true;
-		// /*
-		// * TODO Simple strategy assuming that transformations are not contextual.
-		// Should
-		// * become smarter to include other attributes, and be called lazily (currently
-		// * it's not).
-		// */
-		// List<IModel> transformers = new ArrayList<>();
-		// for (IConcept trait : builder.getRemoved()) {
-		// IModel transformer = Models.INSTANCE.resolve(trait, this.scope);
-		// if (transformer == null) {
-		// ok = false;
-		// break;
-		// }
-		// transformers.add(transformer);
-		// }
-		//
-		// if (ok) {
-		// List<IComputableResource> transformations = new ArrayList<>();
-		// IObservable newobs = builder.buildObservable();
-		// for (IModel model : transformers) {
-		// for (IComputableResource computation :
-		// model.getComputation(ITime.INITIALIZATION)) {
-		// transformations.add(new Transformation(computation, newobs));
-		// }
-		// }
-		// ret.add(new CandidateObservable((Observable) newobs, Mode.RESOLUTION,
-		// transformations));
-		// }
-		//
-		// }
 
 		/*
 		 * then check for any semantic operator that we know how to handle

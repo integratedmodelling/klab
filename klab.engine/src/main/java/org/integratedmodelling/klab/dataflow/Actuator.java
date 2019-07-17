@@ -63,6 +63,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.monitoring.Message;
@@ -130,15 +131,8 @@ public class Actuator implements IActuator {
 	private transient IRuntimeContext currentContext;
 
 	public void addComputation(IComputableResource resource) {
-
 		computedResources.add(resource);
 		IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource, this);
-
-		// filters without their artifact argument get it here
-		if (observable.getFilteredObservable() != null) {
-			checkFilterArguments(resource, observable.getFilteredObservable());
-		}
-
 		computationStrategy.add(new Pair<>(serviceCall, resource));
 	}
 
@@ -178,8 +172,6 @@ public class Actuator implements IActuator {
 	 */
 	private List<IObservation> products = new ArrayList<>();
 
-	// private boolean definesScale;
-
 	// if this is non-null, coverage is also non-null and the actuator defines a
 	// partition of the named target artifact, covering our coverage only.
 	private String partitionedTarget;
@@ -198,6 +190,13 @@ public class Actuator implements IActuator {
 	 * it into the actuator, so each actuator tree should be used only once.
 	 */
 	private Scale mergedScale;
+
+	/*
+	 * Name of the corresponding observable in the generating model, if that's unambiguous; otherwise
+	 * name of the observable. Users should be able to choose whether to generate their artifacts using
+	 * this or (as a default) the observable's name, e.g. the dependency name.
+	 */
+	private String referenceName;
 
 	@Override
 	public String getName() {
@@ -465,27 +464,6 @@ public class Actuator implements IActuator {
 		this.status.set(2);
 
 		return ret;
-	}
-
-	private void checkFilterArguments(IComputableResource resource, IObservable target) {
-
-		if (resource.getServiceCall() != null) {
-			KimServiceCall function = (KimServiceCall) resource.getServiceCall();
-			IPrototype p = Extensions.INSTANCE.getPrototype(function.getName());
-			if (p != null && p.isFilter()) {
-				String artifactArg = null;
-				for (Argument argument : p.listImports()) {
-					artifactArg = argument.getName();
-					break; // yes, break
-				}
-				if (artifactArg != null && !function.getParameters().containsKey(artifactArg)) {
-					function = function.copy();
-					function.getParameters().put(artifactArg, target.getName());
-					((ComputableResource)resource).setServiceCall(function);
-				}
-				
-			}
-		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -997,6 +975,9 @@ public class Actuator implements IActuator {
 
 		if (actuator.isReference()) {
 			actuator = catalog.get(actuator.getName());
+			if (actuator == null) {
+				return;
+			}
 		}
 
 		boolean add = !added.contains(actuator);
@@ -1130,4 +1111,128 @@ public class Actuator implements IActuator {
 				|| observable.getObservationType() == ObservationType.CLASSIFICATION;
 	}
 
+	/**
+	 * Set things up to use the filter model compiled into the passed actuator. The
+	 * actuator sorting strategy ensures filters are called last.
+	 * 
+	 * @param filter
+	 * @param existingActuators
+	 */
+	public void adoptFilter(Actuator filter, Map<String, Actuator> existingActuators) {
+
+		/*
+		 * the observable is in the primary actuator, reference or not
+		 */
+		IObservable filtered = filter.observable.getFilteredObservable();
+		
+		/*
+		 * if it's not in the catalog with its original name, it must have been
+		 * aliased and we look for its observable to find its aliased name, so
+		 * we can compile the proper reference in the filter function.
+		 */
+		if (!existingActuators.containsKey(filtered.getName())) {
+			for (Actuator actuator : existingActuators.values()) {
+				if (actuator.observable.canResolve((Observable)filtered)) {
+					filtered = actuator.observable;
+					break;
+				}
+			}
+		}
+
+		if (filter.isReference()) {
+			// switch to original actuator
+			filter = existingActuators.get(filter.getReferenceName());
+		}
+		
+		if (filter == null || !existingActuators.containsKey(filtered.getName())) {
+			// should never happen - remove when it indeed doesn't
+			throw new KlabInternalErrorException("UNRESOLVED FILTER REFERENCE!");
+		}
+
+		// adopt all dependencies; if the dependency exists in the passed catalog and we
+		// don't already
+		// have it, compile in a reference to it, otherwise put it in here.
+		for (IActuator dependency : filter.actuators) {
+			if (!((Actuator) dependency).isReference() && existingActuators.containsKey(dependency.getName())
+					&& !haveActuatorNamed(dependency.getName())) {
+				dependency = ((Actuator) dependency).getReference();
+			}
+			this.actuators.add(dependency);
+		}
+
+		// compile in all mediations as they are
+		for (Pair<IServiceCall, IComputableResource> mediator : filter.mediationStrategy) {
+			this.mediationStrategy.add(mediator);
+		}
+
+		// compile in all filter computations, making a copy and ensuring the target is
+		// our filtered observable. These can only be filters by virtue of validation.
+		for (Pair<IServiceCall, IComputableResource> computation : filter.computationStrategy) {
+			this.computationStrategy.add(new Pair<>(setFilteredArgument(computation.getFirst(), filtered),
+					setFilteredArgument(computation.getSecond(), filtered)));
+		}
+
+	}
+
+	private KimServiceCall setFilteredArgument(IServiceCall function, IObservable filtered) {
+
+		IPrototype p = Extensions.INSTANCE.getPrototype(function.getName());
+		if (p != null && p.isFilter()) {
+			String artifactArg = null;
+			for (Argument argument : p.listImports()) {
+				artifactArg = argument.getName();
+				break; // yes, break
+			}
+			if (artifactArg != null) {
+				function = ((KimServiceCall) function).copy();
+				function.getParameters().put(artifactArg, filtered.getName());
+			}
+		}
+		return (KimServiceCall) function;
+	}
+
+	private IComputableResource setFilteredArgument(IComputableResource resource, IObservable filtered) {
+		if (resource.getServiceCall() != null) {
+			resource = ((ComputableResource) resource).copy();
+			((ComputableResource) resource).setServiceCall(setFilteredArgument(resource.getServiceCall(), filtered));
+		}
+		return resource;
+	}
+
+	public Actuator getReference() {
+		Actuator ret = new Actuator();
+		ret.name = this.name;
+		ret.alias = this.alias;
+		ret.referenceName = this.referenceName;
+		ret.reference = true;
+		ret.type = this.type;
+		ret.observable = this.observable;
+		ret.namespace = this.namespace;
+		ret.session = this.session;
+		ret.partitionedTarget = this.partitionedTarget;
+		return ret;
+	}
+
+	private boolean haveActuatorNamed(String name) {
+		for (IActuator actuator : actuators) {
+			if (actuator.getName().equals(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * The name of the observable of the model that generated this. If it's a multi-model
+	 * partitioning actuator, keep the name of the observable.
+	 * 
+	 * @return
+	 */
+	public String getReferenceName() {
+		return this.referenceName;
+	}
+
+	public void setReferenceName(String name) {
+		this.referenceName = name;
+	}
 }

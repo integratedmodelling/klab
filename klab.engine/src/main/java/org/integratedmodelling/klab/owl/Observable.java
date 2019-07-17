@@ -394,6 +394,12 @@ public class Observable implements IObservable {
 		return true;
 	}
 
+	/**
+	 * Checks for equality of 'actual' meaning, i.e. equal observers besides name and mediators.
+	 *  
+	 * @param obj
+	 * @return
+	 */
 	public boolean canResolve(Observable obj) {
 
 		boolean ok = false;

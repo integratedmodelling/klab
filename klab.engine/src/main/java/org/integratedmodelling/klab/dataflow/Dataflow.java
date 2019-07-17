@@ -395,6 +395,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		actuator.setType(observable.getArtifactType());
 		actuator.setNamespace(((ResolutionScope) scope).getResolutionNamespace());
 		actuator.setName(name);
+		actuator.setReferenceName(name);
 		ret.getActuators().add(actuator);
 		ret.setNamespace(actuator.getNamespace());
 

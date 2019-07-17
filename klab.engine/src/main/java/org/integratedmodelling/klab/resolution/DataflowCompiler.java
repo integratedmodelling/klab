@@ -14,7 +14,6 @@ import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IPrototype;
-import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Extensions;
@@ -27,7 +26,6 @@ import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.data.mediation.IUnit.Contextualization;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -39,7 +37,6 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.ISession;
-import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
@@ -73,6 +70,12 @@ public class DataflowCompiler {
 
 	Graph<IResolvable, ResolutionEdge> resolutionGraph = new DefaultDirectedGraph<>(ResolutionEdge.class);
 	Map<Model, ModelD> modelCatalog = new HashMap<>();
+
+	/*
+	 * add any true actuator so that we can find it given a reference. Needed to implement
+	 * filters, which are merged with computations rather than compiled independently.
+	 */
+	Map<String, Actuator> actuatorCatalog = new HashMap<>();
 
 	/*
 	 * index the original observables as they come out of models that compute them,
@@ -121,6 +124,7 @@ public class DataflowCompiler {
 		Dataflow ret = new Dataflow(monitor.getIdentity().getParentIdentity(ISession.class));
 
 		ret.setName(this.name);
+		ret.setReferenceName(this.name);
 		ret.setContext(this.context);
 		ret.setResolutionScope((ResolutionScope) scope);
 
@@ -197,6 +201,7 @@ public class DataflowCompiler {
 					Actuator child = Actuator.create(dataflow, Mode.RESOLUTION);
 					child.setObservable(new Observable((Observable) contextModel.getObservables().get(i)));
 					child.setName(contextModel.getObservables().get(i).getName());
+					child.setReferenceName(contextModel.getObservables().get(i).getName());
 					child.setType(contextModel.getObservables().get(i).getArtifactType());
 					child.addComputation(ComputableResource.create(contextModel.getObservables().get(i).getValue()));
 					actuator.getActuators().add(child);
@@ -350,6 +355,7 @@ public class DataflowCompiler {
 
 				ret.setNamespace(observer.getNamespace());
 				ret.setName(observer.getId());
+				ret.setReferenceName(observer.getId());
 
 			} else if (resolvedArtifact != null /* && artifactAdapters == null */) {
 				/*
@@ -358,10 +364,12 @@ public class DataflowCompiler {
 				 * observable, done below.
 				 */
 				ret.setName(resolvedArtifact.getArtifactId());
+				ret.setReferenceName(resolvedArtifact.getArtifactId());
 				ret.setInput(true);
 
 			} else {
 				ret.setName(observable.getName());
+				ret.setReferenceName(observable.getName());
 			}
 
 			/*
@@ -375,6 +383,7 @@ public class DataflowCompiler {
 			if (models.size() == 1 && !this.hasPartitions) {
 
 				ModelD theModel = models.iterator().next();
+				ret.setReferenceName(theModel.model.getObservables().get(0).getName());
 				defineActuator(ret, root ? observable.getName() : theModel.model.getLocalNameFor(observable), theModel,
 						generated);
 
@@ -447,20 +456,14 @@ public class DataflowCompiler {
 
 			Model model = theModel.model;
 			ret.setName(name);
+			ret.setReferenceName(name);
 			ret.setModel(model);
-
-			if (!(model instanceof RankedModel)) {
-				System.out.println("CRPST");
-			}
-			
-//			IObservable filtered = model instanceof RankedModel ? ((RankedModel) model).getFilteredObservable() : null;
 
 			if (!generated.contains(theModel)) {
 
 				generated.add(theModel);
 				for (IComputableResource resource : getModelComputation(model, ret.getType(), ITime.INITIALIZATION)) {
-					ret.addComputation(/*
-							filtered == null ? */resource/* : ((ComputableResource) resource).withFilterTarget(filtered)*/);
+					ret.addComputation(resource);
 				}
 
 				ret.getAnnotations().addAll(Annotations.INSTANCE.collectAnnotations(observable, model));
@@ -470,10 +473,14 @@ public class DataflowCompiler {
 
 				setModelContext(((ResolutionScope) scope).getContextModel(), ret, ret.getDataflow());
 
+				actuatorCatalog.put(ret.getReferenceName(), ret);
+
 			} else {
 				ret.setReference(true);
+				Observable obs = ret.getObservable();
+				IObservable cob = model.getCompatibleOutput(obs);
+				ret.setReferenceName(cob == null ? ret.getName() : cob.getName());
 			}
-
 		}
 
 		/*
@@ -487,40 +494,47 @@ public class DataflowCompiler {
 			Actuator ret = createActuator(dataflow, monitor, generated);
 			if (!ret.isReference()) {
 
-				if (Units.INSTANCE.needsUnits(this.observable)) {
-					System.out.println(StringUtils.spaces(level * 3) + "UNITS BEFORE:" + this.observable.getUnit()
-							+ (this.observable.isFluidUnits() ? ", fluid" : ", fixed"));
-				}
+//				if (Units.INSTANCE.needsUnits(this.observable)) {
+//					System.out.println(StringUtils.spaces(level * 3) + "UNITS BEFORE:" + this.observable.getUnit()
+//							+ (this.observable.isFluidUnits() ? ", fluid" : ", fixed"));
+//				}
 
 				// collect units from dependent models to ensure consistency across unspecified
 				// ones
 				Map<String, IUnit> chosenUnits = new HashMap<>();
-				// collect filter models to merge in their computations at the end
-				List<Pair<IServiceCall, IComputableResource>> filterMediators = new ArrayList<>();
-				List<IComputableResource> filterComputations = new ArrayList<>();
 
+				int i = 0;
 				for (Node child : sortChildren()) {
-					
-					if (child.observable.getObservationType() == ObservationType.CHARACTERIZATION) {
-						System.out.println("DOOD");
-					}
 
 					// this may be a new actuator or a reference to an existing one.
 					Actuator achild = child.getActuatorTree(dataflow, monitor, generated, level + 1);
 
 					if (achild.isFilter()) {
-
-						/*
-						 * enqueue dependents as our own and merge computations at the end.
-						 */
-						for (IActuator dep : achild.getActuators()) {
-							ret.getActuators().add(dep);
-						}
-						filterMediators.addAll(achild.getMediationStrategy());
-						filterComputations.addAll(achild.getComputation());
+						
+						System.out.println("FILTER IS #" + i);
+						// adopt the filter, which may be a reference but this child contains the actual
+						// filtered observable, so we pass the catalog to ensure we define the
+						// computation
+						// with the correct observable.
+						ret.adoptFilter(achild, actuatorCatalog);
 
 					} else {
 
+						if (achild.isReference() && !actuatorCatalog.containsKey(achild.getName())) {
+							/*
+							 * it's a reference to a formal observable compiled in by the observable resolver: find
+							 * the local name and use a reference to that instead.
+							 * 
+							 * FIXME this is pretty ugly and I'm not sure it can't be avoided.
+							 */
+							for (Actuator actuator : actuatorCatalog.values()) {
+								if (actuator.getObservable().canResolve((Observable)achild.getObservable())) {
+									achild = actuator.getReference();
+									break;
+								}
+							}
+						}
+						
 						ret.getActuators().add(achild);
 						recordUnits(achild, chosenUnits);
 						if (sources.containsKey(achild.getName())) {
@@ -530,23 +544,15 @@ public class DataflowCompiler {
 							}
 						}
 					}
+					
+					i++;
 				}
 				inferUnits(ret, chosenUnits);
 
-				/*
-				 * FIXME mediation inheritance is very sketchy
-				 */
-				for (Pair<IServiceCall, IComputableResource> mediation : filterMediators) {
-					ret.addMediation(mediation.getSecond(), ret);
-				}
-				for (IComputableResource computation : filterComputations) {
-					ret.addComputation(((ComputableResource) computation));
-				}
-
-				if (Units.INSTANCE.needsUnits(this.observable)) {
-					System.out.println(StringUtils.spaces(level * 3) + "UNITS AFTER:" + this.observable.getUnit()
-							+ " using " + chosenUnits);
-				}
+//				if (Units.INSTANCE.needsUnits(this.observable)) {
+//					System.out.println(StringUtils.spaces(level * 3) + "UNITS AFTER:" + this.observable.getUnit()
+//							+ " using " + chosenUnits);
+//				}
 
 			}
 			return ret;
@@ -606,7 +612,7 @@ public class DataflowCompiler {
 					}
 				}
 
-				if (modelObservable.getUnit() == null) {
+				if (modelObservable != null && modelObservable.getUnit() == null) {
 					/*
 					 * it's a fluid unit; find it in the unit catalog and use a new observable with
 					 * the unit to compute mediations. If it's not in there, mediator computation
@@ -655,7 +661,7 @@ public class DataflowCompiler {
 
 		/*
 		 * sort by reverse refcount of model, so that actuators are always output before
-		 * any references to them.
+		 * any references to them. Ensure that filters are output last.
 		 */
 		private List<Node> sortChildren() {
 			List<Node> ret = new ArrayList<>(children);
@@ -670,6 +676,12 @@ public class DataflowCompiler {
 						return 1;
 					}
 					if (o2.models.isEmpty() && !o1.models.isEmpty()) {
+						return -1;
+					}
+					if (o1.observable.getFilteredObservable() != null && o2.observable.getFilteredObservable() == null) {
+						return 1;
+					}
+					if (o1.observable.getFilteredObservable() == null && o2.observable.getFilteredObservable() != null) {
 						return -1;
 					}
 					return Integer.compare(o2.models.iterator().next().useCount, o1.models.iterator().next().useCount);
