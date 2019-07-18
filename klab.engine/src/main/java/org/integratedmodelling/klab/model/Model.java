@@ -70,7 +70,6 @@ public class Model extends KimObject implements IModel {
 	private Namespace namespace;
 	private Behavior behavior;
 	private List<IComputableResource> resources = new ArrayList<>();
-	private boolean isPrivate;
 	private boolean instantiator;
 	private boolean reinterpreter;
 	private boolean inactive;

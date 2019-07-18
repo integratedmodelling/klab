@@ -41,9 +41,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   observation of class qualities) is now more appropriately CATEGORIZATION.
 - Actuators that have CHARACTERIZATION or CLASSIFICATION for their observable now
   require the contextualizers to be filters. Those are merged with the computation
-  of the father actuator instead of leaving the actuator in the dataflow.
+  of the containing actuator instead of leaving the actuator in the dataflow.
 - Attributes qualified with 'rescaling' modify the observation semantics of the
-  quality they apply to, and cause units to be removed. 
+  quality they apply to, and cause units to be removed and to become illegal in
+  k.IM. 
 - Models check the units agains the geometry and allow aggregating units, rescaling
   automatically at mediation and requiring a @extensive/@intensive annotation to remove
   the warning in case a model produces output that is legitimate but requires to
@@ -71,6 +72,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - k.IM highlighter uniformly shows abstract concepts in italics and concrete concepts
   in regular type. This becomes important as attribute models work differently in
   either situation.
+- Abstract status of an observable is now dependent on whether the main observable
+  is concrete; if not, it changes to concrete by adopting concrete realms or identities
+  (all realms or identities must be concrete) and, if any, concrete subsetters (such
+  as inherents, context, etc). This will be eventually complemented by checking that
+  these are of the 'require' persuasion.
 - Annotations and function calls now accept a list of unnamed parameters as well as a 
   single one. Anything declared as a list will be a list in the API, even if only one
   value is passed.

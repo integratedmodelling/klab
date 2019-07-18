@@ -194,6 +194,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 	}
 	
 	private static KimConcept normalize(ConceptDeclaration declaration, IKimMacro macro, IKimStatement parent, boolean root) {
+		
 		if (Kim.INSTANCE.hasErrors(declaration)) {
 			return null;
 		}
@@ -238,13 +239,10 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			unclassified.remove(unclassified.size() - 1);
 		}
 
-		boolean hasConcretizingTrait = false;
+//		boolean hasConcretizingTrait = false;
 		for (KimConcept c : unclassified) {
 			if (c.is(Type.TRAIT)) {
 				ret.traits.add(c);
-				if (!c.is(Type.ABSTRACT) && (c.is(Type.IDENTITY) || c.is(Type.REALM))) {
-					hasConcretizingTrait = true;
-				}
 			} else if (c.is(Type.ROLE)) {
 				ret.roles.add(c);
 			} else {
@@ -258,9 +256,6 @@ public class KimConcept extends KimStatement implements IKimConcept {
 
 		ret.observable = observable;
 		ret.type = observable.type;
-		if (hasConcretizingTrait) {
-			ret.type.remove(Type.ABSTRACT);
-		}
 
 		if (declaration.isDistributedOfInherency()) {
 			ret.distributedInherent = ComponentRole.INHERENT;
@@ -466,6 +461,10 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		} else if (subjective) {
 			ret.type.add(Type.SUBJECTIVE);
 		}
+		
+		if (ret.is(Type.ABSTRACT) && !Kim.INSTANCE.computeAbstractStatus(ret)) {
+			ret.type.remove(Type.ABSTRACT);
+		}
 
 		/*
 		 * expression operands (between self and them)
@@ -520,7 +519,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		}
 	}
 
-	private List<IKimConcept> getSemanticSubsetters() {
+	public List<IKimConcept> getSemanticSubsetters() {
 		List<IKimConcept> ret = new ArrayList<>();
 		if (inherent != null) {
 			ret.add(inherent);

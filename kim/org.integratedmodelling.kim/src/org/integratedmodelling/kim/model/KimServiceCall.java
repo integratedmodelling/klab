@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -157,6 +158,8 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 			// TODO table literal
 			// TODO must also pass argument list to the same function...
 			return "{{" + ret + "}}";
+		} else if (val instanceof IKimExpression) {
+			return "[" + ((IKimExpression)val).getCode() + "]";
 		} else if (val instanceof KimServiceCall) {
 			return ((KimServiceCall) val).getSourceCode();
 		} else if (val instanceof ComputableResource) {

@@ -17,6 +17,7 @@ package org.integratedmodelling.klab.api.resolution;
 
 import java.util.Collection;
 
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -155,5 +156,15 @@ public interface IResolutionScope {
      * @return the original scope
      */
     Scope getOriginalScope();
+
+    /**
+     * Return the specific observable that resolves the passed one, or null. Resolution requires
+     * identity of concept but not of name or mediators.
+     * 
+     * @param observable
+     * @param mode
+     * @return
+     */
+	IObservable getResolvedObservable(IObservable observable, Mode mode);
 
 }

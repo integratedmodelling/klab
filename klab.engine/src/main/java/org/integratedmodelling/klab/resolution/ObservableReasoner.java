@@ -6,10 +6,8 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
-import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -27,14 +25,17 @@ import org.integratedmodelling.klab.utils.Pair;
  * observables (those that are context-independent are available through the
  * configured {@link IObservableService}). It can produce all the model
  * observables that can resolve a stated one, taking into account mode of
- * resolution (for instantiation or resolution) and context, along with the
- * recipe on how to observe them and transform the resulting artifact if
- * necessary. When iterated, returns the original observable when appropriate,
- * then, upon request, produces all the other candidates.
+ * resolution (for instantiation or resolution), attributes, roles and context,
+ * along with the recipe on how to observe them and transform the resulting
+ * artifact if necessary. When iterated, returns the original observable when
+ * appropriate, then, upon request, produces all the other candidates. Each
+ * candidate includes one or more observables and optional computations;
+ * non-trivial candidates (with more than one observable and/or any computation)
+ * produce an ad-hoc model that is resolved recursively.
  * <p>
- * It can also be used to infer all the actual dependencies of a model, based on
- * the model's stated ones and on its semantics, taking into account roles,
- * abstract status, relationship endpoints etc.
+ * The observable reasoner can also infer all the actual dependencies of a
+ * model, based on the model's stated ones and on its semantics, taking into
+ * account roles, abstract status, relationship endpoints etc.
  * 
  * @author ferdinando.villa
  *
@@ -81,13 +82,7 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 			this.mode = mode;
 			this.computation = computables;
 		}
-
-		// CandidateObservable(Observable original, Mode mode, boolean inGroup) {
-		// this.observables.add(original);
-		// this.mode = mode;
-		// this.inGroup = inGroup;
-		// }
-
+		
 		public boolean isTrivial() {
 			return this.observables.size() == 1 && (this.computation == null || this.computation.isEmpty());
 		}
@@ -365,25 +360,39 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 
 		/*
 		 * if we get here, we already know that the original observable isn't available.
-		 * First strip one attribute or role and see if we can resolve the two
-		 * separately. More than one attribute is resolved recursively.
+		 * Strip one attribute or role and return a candidate to resolve the two
+		 * separately. If attributes are left in the observable, we'll go through this
+		 * again when resolving the derived model.
 		 */
 		if (observable.hasResolvableTraits()) {
 
 			Pair<IConcept, Observable> resolvables = observable.popResolvableTrait(scope.getMonitor());
 
+			IConcept attribute = resolvables.getFirst();
+			Observable target = resolvables.getSecond();
+			Mode mode = target.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION;
+
+			/*
+			 * if the observable was resolved before, use that so we don't have to translate
+			 * names when we compile the dataflow.
+			 */
+			Observable previous = scope.getResolvedObservable(target, mode);
+			if (previous != null) {
+				target = previous;
+			}
+
 			/*
 			 * add the observable without the trait...
 			 */
-			candidate = new CandidateObservable(resolvables.getSecond(),
-					resolvables.getSecond().is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
-			
+			candidate = new CandidateObservable(target, mode);
+
 			/*
-			 * ...and the model that would resolve the trait in it.
+			 * ...and the observable for the model that can resolve the trait in it.
 			 */
-			candidate.observables.add((Observable) new ObservableBuilder(resolvables.getFirst())
-					.of(Observables.INSTANCE.getBaseObservable(resolvables.getSecond().getType()))
-					.filtering(resolvables.getSecond()).buildObservable());
+			IObservable filter = new ObservableBuilder(attribute)
+					.of(Observables.INSTANCE.getBaseObservable(target.getType())).filtering(target).buildObservable();
+
+			candidate.observables.add((Observable) filter);
 
 		}
 

@@ -346,11 +346,22 @@ public interface IObservable extends ISemantic, IResolvable {
 	 * Observables always have a name, which is unique in the context of a model
 	 * where they are used, and can be used within a model to refer to the
 	 * observation made of it. The name can be explicitly set using the 'named' k.IM
-	 * clause, and is always a simple lowercase identifier.
+	 * clause, and is always a simple lowercase identifier. If no 'named' clause is
+	 * present, it returns the same value as {@link #getReferenceName()}.
 	 *
 	 * @return the formal name of this observable
 	 */
 	String getName();
+	
+	/**
+	 * The reference name is the default name unless a 'named' clause was given, and
+	 * only depends on the contents of the observable. It is not unique because it 
+	 * does not include namespaces for the composing concepts. It's a simple lowercase
+	 * identifier usable for coding in k.IM, k.DL, and most languages.
+	 * 
+	 * @return the reference name of this observable
+	 */
+	String getReferenceName();
 
 	/**
 	 * <p>
@@ -358,11 +369,13 @@ public interface IObservable extends ISemantic, IResolvable {
 	 * </p>
 	 *
 	 * @return the normalized 'down to' limiter concept if any was specified.
+	 * @deprecated should be subsumed in value operators
 	 */
 	IConcept getDownTo();
 
 	/**
 	 * @return the 'by' classifier concept, if any was specified.
+	 * @deprecated should be subsumed in value operators
 	 */
 	IConcept getClassifier();
 
@@ -528,9 +541,8 @@ public interface IObservable extends ISemantic, IResolvable {
 	/**
 	 * If the observable has a value operator (e.g. "> 0") return it here.
 	 * 
-	 * TODO this must become a list of <operator, operand> pairs
-	 * 
 	 * @return
+	 * @deprecated this must become a list of <operator, operand> pairs
 	 */
 	ValueOperator getValueOperator();
 

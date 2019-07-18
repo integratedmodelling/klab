@@ -38,7 +38,6 @@ import org.integratedmodelling.klab.kim.KimNotifier.ErrorNotifyingMonitor;
 import org.integratedmodelling.klab.model.Annotation;
 import org.integratedmodelling.klab.model.ConceptStatement;
 import org.integratedmodelling.klab.model.Namespace;
-import org.integratedmodelling.klab.utils.CamelCase;
 
 /**
  * A singleton that handles translation of k.IM knowledge statements to internal
@@ -288,6 +287,7 @@ public enum KimKnowledgeProcessor {
 			Observable observable = new Observable(nsmain);
 			observable.setModelReference(concept.getModelReference());
 			observable.setName(concept.getFormalName());
+			observable.setReferenceName(concept.getFormalName());
 			return observable;
 		}
 
@@ -341,25 +341,13 @@ public enum KimKnowledgeProcessor {
 		ret.setOptional(concept.isOptional());
 		ret.setGeneric(concept.isAbstractObservable());
 
-		/*
-		 * TODO redefine observable if modifiers (by) were given
-		 */
-
-		boolean defineName = false;
-		String name = concept.getFormalName();
-		if (name == null) {
-			defineName = true;
-			name = CamelCase.toLowerCase(Concepts.INSTANCE.getDisplayName(main), '_');
-		}
-		ret.setName(name);
+		ret.setReferenceName(Concepts.INSTANCE.getCodeName(main));
 
 		if (concept.getValueOperator() != null) {
 
 			ret.setValueOperator(concept.getValueOperator());
 			declaration += " " + concept.getValueOperator().declaration;
-			if (defineName) {
-				ret.setName(ret.getName() + "_" + concept.getValueOperator().textForm);
-			}
+			ret.setReferenceName(ret.getReferenceName() + "_" + concept.getValueOperator().textForm);
 
 			if (concept.getValueOperand() instanceof IKimConcept) {
 
@@ -367,28 +355,24 @@ public enum KimKnowledgeProcessor {
 						(Ontology) declarationOntology, monitor));
 
 				declaration += " " + concept.getValueOperand();
-				if (defineName) {
-					ret.setName(ret.getName() + "_"
-							+ ((IKimConcept) concept.getValueOperand()).getCodeName().replaceAll("\\-", "_"));
-				}
+				ret.setReferenceName(ret.getName() + "_"
+						+ ((IKimConcept) concept.getValueOperand()).getCodeName().replaceAll("\\-", "_"));
 
 			} else if (concept.getValueOperand() instanceof IKimObservable) {
 				ret.setValueOperand(
 						declare((IKimObservable) concept.getValueOperand(), (Ontology) declarationOntology, monitor));
 
 				declaration += " (" + concept.getValueOperand() + ")";
-				if (defineName) {
-					ret.setName(ret.getName() + "_" + ((IKimObservable) concept.getValueOperand()).getFormalName());
-				}
+				ret.setReferenceName(
+						ret.getReferenceName() + "_" + ((IKimObservable) concept.getValueOperand()).getFormalName());
+
 			} else {
 
 				ret.setValueOperand(concept.getValueOperand());
 
 				if (concept.getValueOperand() != null) {
 					declaration += " " + concept.getValueOperand();
-					if (defineName) {
-						ret.setName(ret.getName() + "_" + concept.getValueOperand());
-					}
+					ret.setReferenceName(ret.getReferenceName() + "_" + concept.getValueOperand());
 				}
 			}
 		}
@@ -413,19 +397,18 @@ public enum KimKnowledgeProcessor {
 			}
 
 			ret.setClassifier(by);
-			// force re-creation of name unless it was pre-set by code
-			if (defineName) {
-				ret.setName(ret.getName() + "_by_" + modifier.getCodeName().replaceAll("\\-", "_"));
-			}
+			ret.setReferenceName(ret.getReferenceName() + "_by_" + modifier.getCodeName().replaceAll("\\-", "_"));
 			ret.setDownTo(downTo);
 			if (downTo != null) {
-				ret.setName(ret.getName() + "_down_to_" + concept.getDownTo().getCodeName().replaceAll("\\-", "_"));
+				ret.setReferenceName(ret.getReferenceName() + "_down_to_" + concept.getDownTo().getCodeName().replaceAll("\\-", "_"));
 			}
 		}
 
 		ret.setDeclaration(declaration);
-		ret.setGivenName(defineName);
 
+		ret.setName(concept.getFormalName() == null ? ret.getReferenceName() : concept.getFormalName());
+		
+		
 		if (Units.INSTANCE.needsUnits(ret) && ret.getUnit() == null) {
 			ret.setFluidUnits(true);
 		}
@@ -470,11 +453,11 @@ public enum KimKnowledgeProcessor {
 		if (concept.getDistributedInherent() != null) {
 			builder.setDistributedInherency(true);
 		}
-		
+
 		/*
 		 * transformations first
 		 */
-		
+
 		if (concept.getInherent() != null) {
 			IConcept c = declareInternal(concept.getInherent(), ontology, monitor);
 			if (c != null) {

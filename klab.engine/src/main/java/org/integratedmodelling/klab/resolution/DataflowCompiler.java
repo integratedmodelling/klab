@@ -52,7 +52,6 @@ import org.integratedmodelling.klab.resolution.ResolutionScope.Link;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.utils.StringUtils;
 import org.integratedmodelling.klab.utils.graph.Graphs;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
@@ -134,7 +133,6 @@ public class DataflowCompiler {
 			Node node = compileActuator(root, scope.getMode(), resolutionGraph,
 					this.context == null ? null : this.context.getScale(), monitor);
 			node.root = true;
-			// node.initializer = ((ResolutionScope) scope).getContextModel();
 
 			Actuator actuator = node.getActuatorTree(ret, monitor, new HashSet<>(), 0);
 			ret.getActuators().add(actuator);
@@ -322,9 +320,9 @@ public class DataflowCompiler {
 			 */
 			Actuator ret = Actuator.create(dataflow, mode);
 
-			String localName = observable.getName();
 			ret.setObservable(observable);
-			ret.setAlias(localName);
+			ret.setName(observable.getReferenceName());
+			ret.setAlias(observable.getName());
 
 			switch (observable.getObservationType()) {
 			case CATEGORIZATION:
@@ -354,7 +352,6 @@ public class DataflowCompiler {
 			if (observer != null) {
 
 				ret.setNamespace(observer.getNamespace());
-				ret.setName(observer.getId());
 				ret.setReferenceName(observer.getId());
 
 			} else if (resolvedArtifact != null /* && artifactAdapters == null */) {
@@ -363,12 +360,10 @@ public class DataflowCompiler {
 				 * have artifact adapters, we must compile an import as a child and use our own
 				 * observable, done below.
 				 */
-				ret.setName(resolvedArtifact.getArtifactId());
-				ret.setReferenceName(resolvedArtifact.getArtifactId());
 				ret.setInput(true);
+				ret.setReferenceName(resolvedArtifact.getObservable().getName());
 
 			} else {
-				ret.setName(observable.getName());
 				ret.setReferenceName(observable.getName());
 			}
 
@@ -437,13 +432,6 @@ public class DataflowCompiler {
 			if (partials) {
 				if (reference) {
 					ret.setReference(true);
-					// only way to properly assign the name is to keep them around. The alias is OK
-					// as is.
-					for (IObservable mobs : mergedCatalog) {
-						if (observable.equals(mobs)) {
-							ret.setName(mobs.getName());
-						}
-					}
 				} else {
 					mergedCatalog.add(observable);
 				}
@@ -455,8 +443,6 @@ public class DataflowCompiler {
 		private void defineActuator(Actuator ret, String name, ModelD theModel, Set<ModelD> generated) {
 
 			Model model = theModel.model;
-			ret.setName(name);
-			ret.setReferenceName(name);
 			ret.setModel(model);
 
 			if (!generated.contains(theModel)) {
@@ -477,9 +463,6 @@ public class DataflowCompiler {
 
 			} else {
 				ret.setReference(true);
-				Observable obs = ret.getObservable();
-				IObservable cob = model.getCompatibleOutput(obs);
-				ret.setReferenceName(cob == null ? ret.getName() : cob.getName());
 			}
 		}
 
@@ -489,7 +472,7 @@ public class DataflowCompiler {
 		 */
 		Actuator getActuatorTree(Dataflow dataflow, IMonitor monitor, Set<ModelD> generated, int level) {
 
-			System.out.println(StringUtils.spaces(level * 3) + this);
+//			System.out.println(StringUtils.spaces(level * 3) + this);
 
 			Actuator ret = createActuator(dataflow, monitor, generated);
 			if (!ret.isReference()) {
@@ -503,37 +486,16 @@ public class DataflowCompiler {
 				// ones
 				Map<String, IUnit> chosenUnits = new HashMap<>();
 
-				int i = 0;
 				for (Node child : sortChildren()) {
 
 					// this may be a new actuator or a reference to an existing one.
 					Actuator achild = child.getActuatorTree(dataflow, monitor, generated, level + 1);
 
 					if (achild.isFilter()) {
-						
-						System.out.println("FILTER IS #" + i);
-						// adopt the filter, which may be a reference but this child contains the actual
-						// filtered observable, so we pass the catalog to ensure we define the
-						// computation
-						// with the correct observable.
+
 						ret.adoptFilter(achild, actuatorCatalog);
 
 					} else {
-
-						if (achild.isReference() && !actuatorCatalog.containsKey(achild.getName())) {
-							/*
-							 * it's a reference to a formal observable compiled in by the observable resolver: find
-							 * the local name and use a reference to that instead.
-							 * 
-							 * FIXME this is pretty ugly and I'm not sure it can't be avoided.
-							 */
-							for (Actuator actuator : actuatorCatalog.values()) {
-								if (actuator.getObservable().canResolve((Observable)achild.getObservable())) {
-									achild = actuator.getReference();
-									break;
-								}
-							}
-						}
 						
 						ret.getActuators().add(achild);
 						recordUnits(achild, chosenUnits);
@@ -544,9 +506,8 @@ public class DataflowCompiler {
 							}
 						}
 					}
-					
-					i++;
 				}
+				
 				inferUnits(ret, chosenUnits);
 
 //				if (Units.INSTANCE.needsUnits(this.observable)) {
@@ -669,6 +630,12 @@ public class DataflowCompiler {
 
 				@Override
 				public int compare(DataflowCompiler.Node o1, DataflowCompiler.Node o2) {
+					if (o1.observable.getFilteredObservable() != null && o2.observable.getFilteredObservable() == null) {
+						return 1;
+					}
+					if (o1.observable.getFilteredObservable() == null && o2.observable.getFilteredObservable() != null) {
+						return -1;
+					}
 					if (o2.models.isEmpty() && o1.models.isEmpty()) {
 						return 0;
 					}
@@ -676,12 +643,6 @@ public class DataflowCompiler {
 						return 1;
 					}
 					if (o2.models.isEmpty() && !o1.models.isEmpty()) {
-						return -1;
-					}
-					if (o1.observable.getFilteredObservable() != null && o2.observable.getFilteredObservable() == null) {
-						return 1;
-					}
-					if (o1.observable.getFilteredObservable() == null && o2.observable.getFilteredObservable() != null) {
 						return -1;
 					}
 					return Integer.compare(o2.models.iterator().next().useCount, o1.models.iterator().next().useCount);
@@ -936,6 +897,9 @@ public class DataflowCompiler {
 	 */
 	List<Pair<String, Observable>> ambiguous = new ArrayList<>();
 
+	/*
+	 * FIXME sketchy - reconsider moving logics into resolver
+	 */
 	private IResolvable disambiguateResolvable(IResolvable resolvable) {
 		IResolvable ret = resolvable;
 		if (context != null && ret instanceof Observable) {

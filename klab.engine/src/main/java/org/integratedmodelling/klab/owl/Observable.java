@@ -78,18 +78,18 @@ public class Observable implements IObservable {
 	private String modelReference;
 
 	/**
-	 * If this observable specifies a characterization or classification, which is 
+	 * If this observable specifies a characterization or classification, which is
 	 * performed by a filter, the name of the filtered observable is passed along
 	 * with the observable, so that the model can later use it in computations.
 	 */
 	transient private IObservable filteredObservable;
-	
-	
+
 	// only used to resolve the subject observable if it has to be marshalled across
 	// network boundaries
 	transient String sessionId;
 	private List<IAnnotation> annotations = new ArrayList<>();
-	private boolean givenName;
+	// private boolean givenName;
+	private String referenceName;
 	private String url;
 
 	/*
@@ -114,18 +114,20 @@ public class Observable implements IObservable {
 	public static Observable promote(IConcept concept) {
 
 		Observable ret = new Observable((Concept) concept);
-		
+
 		ret.observable = (Concept) concept;
 		ret.declaration = concept.getDefinition().trim();
 		ret.isAbstract = concept.isAbstract();
 		ret.generic = concept.isAbstract();
-		
+		ret.referenceName = ret.name = Concepts.INSTANCE.getCodeName(ret.observable);
+
 		return ret;
 	}
 
 	public Observable(Observable observable) {
 		this.observable = observable.observable;
 		this.name = observable.name;
+		this.referenceName = observable.referenceName;
 		this.declaration = observable.declaration;
 		this.isAbstract = observable.isAbstract;
 		this.range = observable.range;
@@ -395,8 +397,9 @@ public class Observable implements IObservable {
 	}
 
 	/**
-	 * Checks for equality of 'actual' meaning, i.e. equal observers besides name and mediators.
-	 *  
+	 * Checks for equality of 'actual' meaning, i.e. equal observers besides name
+	 * and mediators.
+	 * 
 	 * @param obj
 	 * @return
 	 */
@@ -640,19 +643,19 @@ public class Observable implements IObservable {
 		this.valueOperand = valueOperand;
 	}
 
-	public void setGivenName(boolean b) {
-		this.givenName = b;
-	}
-
-	/**
-	 * If true, the name is locked in by the user with a 'named' clause and
-	 * shouldn't be changed.
-	 * 
-	 * @return
-	 */
-	public boolean isGivenName() {
-		return this.givenName;
-	}
+	// public void setGivenName(boolean b) {
+	// this.givenName = b;
+	// }
+	//
+	// /**
+	// * If true, the name is locked in by the user with a 'named' clause and
+	// * shouldn't be changed.
+	// *
+	// * @return
+	// */
+	// public boolean isGivenName() {
+	// return this.givenName;
+	// }
 
 	public void setUrl(String uri) {
 		this.url = uri;
@@ -756,6 +759,15 @@ public class Observable implements IObservable {
 
 	public void setfilteredObservable(IObservable filteredObservable) {
 		this.filteredObservable = filteredObservable;
+	}
+
+	public void setReferenceName(String name) {
+		this.referenceName = name;
+	}
+
+	@Override
+	public String getReferenceName() {
+		return this.referenceName;
 	}
 
 }

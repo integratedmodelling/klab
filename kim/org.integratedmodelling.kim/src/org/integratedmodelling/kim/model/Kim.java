@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +74,6 @@ import org.integratedmodelling.kim.validation.KimValidator;
 import org.integratedmodelling.klab.api.data.CRUDOperation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.CompileInfo;
-import org.integratedmodelling.klab.common.CompileNotification;
 import org.integratedmodelling.klab.common.SemanticType;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.rest.CompileNotificationReference;
@@ -124,7 +124,7 @@ public enum Kim {
 	 * Errors added externally to the validator that the validator must report.
 	 */
 	private Map<String, CompileInfo> compileInfo = Collections.synchronizedMap(new HashMap<>());
-	
+
 	/**
 	 * This contains concept descriptors for all concepts encountered, including
 	 * library ones and anything added externally, flattened to include children and
@@ -307,18 +307,18 @@ public enum Kim {
 
 		private int flags = 0;
 		private String documentation;
-        List<Pair<String, IArtifact.Type>> dependencies = new ArrayList<>();
+		List<Pair<String, IArtifact.Type>> dependencies = new ArrayList<>();
 
 		public UrnDescriptor(int flags) {
 			this.flags = flags;
 		}
-		
+
 		public Collection<Pair<String, IArtifact.Type>> getDependencies() {
-		    return dependencies;
+			return dependencies;
 		}
-		
+
 		public void addDependency(String name, IArtifact.Type type) {
-		    dependencies.add(new Pair<>(name, type));
+			dependencies.add(new Pair<>(name, type));
 		}
 
 		public UrnDescriptor(int flags, String documentation) {
@@ -516,10 +516,12 @@ public enum Kim {
 		} else if (value.getTable() != null) {
 			return new KimTable(value.getTable().getTable(), namespace);
 		} else if (value.getConcept() != null) {
-			// this intercepts any camelcase, so ensure that only fully qualified concepts are parsed
+			// this intercepts any camelcase, so ensure that only fully qualified concepts
+			// are parsed
 			if (value.toString().contains(":")) {
 				return declareConcept(value.getConcept());
-			} else return value.toString();
+			} else
+				return value.toString();
 		} else if (value.getExpr() != null) {
 			return new KimExpression(value.getExpr(), null);
 		}
@@ -816,7 +818,7 @@ public enum Kim {
 	}
 
 	public EnumSet<Type> makeQuality(EnumSet<Type> original, Type... quality) {
-	    
+
 		// remove any direct observable flags, add the one specified and quality
 		EnumSet<Type> ret = EnumSet.copyOf(original);
 		ret.removeAll(IKimConcept.DIRECT_OBSERVABLE_TYPES);
@@ -841,47 +843,47 @@ public enum Kim {
 		// TODO use callback
 		System.out.println(issue.toString());
 	}
-	
+
 	public EnumSet<Type> getType(UnarySemanticOperator operator) {
-	    
-	    switch (operator) {
-        case ASSESSMENT:
-            // won't happen
-            break;
-        case COUNT:
-            return getType("count");
-        case DISTANCE:
-            return getType("distance");
-        case MAGNITUDE:
-            return getType("magnitude");
-        case MONETARY_VALUE:
-            return getType("money");
-        case OBSERVABILITY:
-            return getType("observability");
-        case OCCURRENCE:
-            return getType("occurrence");
-        case PERCENTAGE:
-            return getType("percentage");
-        case PRESENCE:
-            return getType("presence");
-        case PROBABILITY:
-            return getType("probability");
-        case PROPORTION:
-            return getType("proportion");
-        case RATIO:
-            return getType("ratio");
-        case TYPE:
-            return getType("class");
-        case UNCERTAINTY:
-            return getType("uncertainty");
-        case VALUE:
-            return getType("value");
-        case NOT:
-        default:
-            break;
-	    }
-	    
-	    return null;
+
+		switch (operator) {
+		case ASSESSMENT:
+			// won't happen
+			break;
+		case COUNT:
+			return getType("count");
+		case DISTANCE:
+			return getType("distance");
+		case MAGNITUDE:
+			return getType("magnitude");
+		case MONETARY_VALUE:
+			return getType("money");
+		case OBSERVABILITY:
+			return getType("observability");
+		case OCCURRENCE:
+			return getType("occurrence");
+		case PERCENTAGE:
+			return getType("percentage");
+		case PRESENCE:
+			return getType("presence");
+		case PROBABILITY:
+			return getType("probability");
+		case PROPORTION:
+			return getType("proportion");
+		case RATIO:
+			return getType("ratio");
+		case TYPE:
+			return getType("class");
+		case UNCERTAINTY:
+			return getType("uncertainty");
+		case VALUE:
+			return getType("value");
+		case NOT:
+		default:
+			break;
+		}
+
+		return null;
 	}
 
 	public EnumSet<Type> getType(String string) {
@@ -1340,7 +1342,7 @@ public enum Kim {
 			model = (IKimModel) namespace.getSymbolTable().get(string);
 		}
 		if (model == null && StringUtil.countMatches(string, ":") >= 3) {
-		    // URN - TODO support it: add a new KimModel that only observers the URN.
+			// URN - TODO support it: add a new KimModel that only observers the URN.
 		}
 		return model == null ? null : (KimObservable) model.getObservables().get(0);
 	}
@@ -1426,7 +1428,6 @@ public enum Kim {
 		return !set.isEmpty();
 	}
 
-	
 	/**
 	 * Return the system name for the namespace. This will be the stated name for
 	 * "regular" namespaces, adding "|" and a normalized, stable transformation of
@@ -1683,14 +1684,15 @@ public enum Kim {
 			this.userWorkspace = kimWorkspace;
 		}
 	}
-	
+
 	/**
 	 * Called by k.LAB workspaces when they create a new project
+	 * 
 	 * @param projectName
 	 * @param kimWorkspace
 	 */
 	public void registerProject(String projectName, IKimWorkspace kimWorkspace) {
-		this.projectWorkspaces.put(projectName, (KimWorkspace)kimWorkspace);
+		this.projectWorkspaces.put(projectName, (KimWorkspace) kimWorkspace);
 	}
 
 	public void unregisterProject(IKimProject project) {
@@ -1709,7 +1711,7 @@ public enum Kim {
 
 	private void recordCompileNotification(CompileNotificationReference inot, CompileInfo ci) {
 
-	    if (inot.getLevel() == Level.SEVERE.intValue()) {
+		if (inot.getLevel() == Level.SEVERE.intValue()) {
 			ci.getErrors().add(inot);
 		} else if (inot.getLevel() == Level.WARNING.intValue()) {
 			ci.getWarnings().add(inot);
@@ -1725,9 +1727,9 @@ public enum Kim {
 	public List<CompileNotificationReference> getErrors(String namespaceId) {
 		return compileInfo.containsKey(namespaceId) ? compileInfo.get(namespaceId).getErrors() : new ArrayList<>();
 	}
-	
+
 	public List<CompileNotificationReference> getNotificationsFor(String namespaceId, String statementUri) {
-		
+
 		List<CompileNotificationReference> ret = new ArrayList<>();
 		CompileInfo info = compileInfo.get(namespaceId);
 		if (info != null) {
@@ -1755,5 +1757,65 @@ public enum Kim {
 		return compileInfo.get(name);
 	}
 
-	
+	/**
+	 * Take a concept that was made abstract by virtue of its base observable and
+	 * evaluate if its traits or components should make it concrete. Return whether
+	 * it stays abstract or not.
+	 * <p>
+	 * Rules so far:
+	 * <ul>
+	 * <li>If the concept adopts a concrete identity or realm, and all identities
+	 * and realms it adopts are concrete, it becomes concrete (FOR LATER: it should
+	 * only do so if the trait is a required one, which requires analysis of the
+	 * lineage or reasoning).</li>
+	 * <li>If it has subsetting components and all of its subsetting components are
+	 * concrete, it becomes concrete.</li>
+	 * </ul>
+	 * 
+	 * @param concept
+	 * @return true if the concept is truly abstract
+	 */
+	public boolean computeAbstractStatus(IKimConcept ret) {
+
+		boolean isAbstract = ret.is(Type.ABSTRACT);
+
+		if (isAbstract) {
+
+			boolean traitsOk = true;
+			boolean haveDefiningTraits = false;
+			for (IKimConcept trait : ret.getTraits()) {
+				if ((trait.is(Type.IDENTITY) || trait.is(Type.REALM))) {
+					haveDefiningTraits = true;
+					if (trait.is(Type.ABSTRACT)) {
+						traitsOk = false;
+						break;
+					}
+				}
+			}
+
+			if (haveDefiningTraits && traitsOk) {
+				isAbstract = false;
+			}
+		}
+
+		if (/* still */ isAbstract) {
+			
+			boolean componentsOk = true;
+			boolean haveDefiningComponents = false;
+			for (IKimConcept subsetter : ((KimConcept) ret).getSemanticSubsetters()) {
+				haveDefiningComponents = true;
+				if (subsetter.is(Type.ABSTRACT)) {
+					componentsOk = false;
+					break;
+				}
+			}
+			
+			if (haveDefiningComponents && componentsOk) {
+				isAbstract = false;
+			}
+		}
+
+		return isAbstract;
+	}
+
 }

@@ -232,6 +232,10 @@ public enum Resolver {
      * to resolve its observation or instantiate the target observations. Final
      * coverage is the OR of the coverage of all models found; lookup of models
      * stops when coverage is complete.
+     * <p>
+     * TODO: if observable reference name is already known for a different
+     * observable, must change it. When that is done, remove the correspondent
+     * logics in DataflowCompiler. 
      * 
      * @param observable
      * @param parentScope
