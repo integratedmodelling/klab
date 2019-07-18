@@ -51,7 +51,8 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 	private IKimLoader loader;
 	private List<IServiceCall> extents = new ArrayList<>();
 	private Map<String, IKimStatement> statementsByName = new HashMap<>();
-
+	private IKimConcept domain; 
+	
 	public KimNamespace(Namespace namespace, KimProject project) {
 		super(namespace, null);
 		this.name = this.namespace = Kim.getNamespaceId(namespace);
@@ -68,6 +69,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 		this.project = project;
 		project.addNamespace(this);
 		this.worldviewBound = namespace.isWorldviewBound();
+		this.domain = new KimConcept(namespace.getDomainConcept(), this);
 		// worldview-bound anonymous namespaces are private by design.
 		if (namespace.isPrivate()) {
 			scope = namespace.isProjectPrivate() ? Scope.PROJECT : Scope.NAMESPACE;
@@ -361,5 +363,10 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 	public void setScope(Scope scope) {
 		this.scope = scope;
 	}
+
+	public IKimConcept getDomain() {
+		return domain;
+	}
+
 
 }

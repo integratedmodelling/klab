@@ -192,9 +192,10 @@ public class KimConcept extends KimStatement implements IKimConcept {
 	public static KimConcept normalize(ConceptDeclaration declaration, IKimMacro macro, IKimStatement parent) {
 		return normalize(declaration, macro, parent, true);
 	}
-	
-	private static KimConcept normalize(ConceptDeclaration declaration, IKimMacro macro, IKimStatement parent, boolean root) {
-		
+
+	private static KimConcept normalize(ConceptDeclaration declaration, IKimMacro macro, IKimStatement parent,
+			boolean root) {
+
 		if (Kim.INSTANCE.hasErrors(declaration)) {
 			return null;
 		}
@@ -239,7 +240,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			unclassified.remove(unclassified.size() - 1);
 		}
 
-//		boolean hasConcretizingTrait = false;
+		// boolean hasConcretizingTrait = false;
 		for (KimConcept c : unclassified) {
 			if (c.is(Type.TRAIT)) {
 				ret.traits.add(c);
@@ -461,7 +462,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		} else if (subjective) {
 			ret.type.add(Type.SUBJECTIVE);
 		}
-		
+
 		if (ret.is(Type.ABSTRACT) && !Kim.INSTANCE.computeAbstractStatus(ret)) {
 			ret.type.remove(Type.ABSTRACT);
 		}
@@ -490,7 +491,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		if (root) {
 			ret.rearrangeSpecialForms();
 		}
-		
+
 		return ret;
 	}
 

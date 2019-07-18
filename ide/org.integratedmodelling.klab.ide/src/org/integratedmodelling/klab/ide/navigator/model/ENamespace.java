@@ -9,6 +9,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimModel;
@@ -170,5 +171,10 @@ public class ENamespace extends EKimObject implements IKimNamespace {
 	@Override
 	public Collection<String> getImportedIds() {
 		return delegate.getImportedIds();
+	}
+
+	@Override
+	public IKimConcept getDomain() {
+		return delegate.getDomain();
 	}
 }

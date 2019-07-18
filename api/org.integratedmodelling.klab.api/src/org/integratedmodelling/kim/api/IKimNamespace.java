@@ -76,6 +76,14 @@ public interface IKimNamespace extends IKimStatement {
 	boolean isInactive();
 
 	boolean isScenario();
+	
+
+	/**
+	 * The domain concept, if stated.
+	 * 
+	 * @return
+	 */
+	IKimConcept getDomain();
 
 	/**
 	 * If the namespace was read from a file, return it.
@@ -147,4 +155,5 @@ public interface IKimNamespace extends IKimStatement {
 	 * @return
 	 */
 	Collection<String> getImportedIds();
+
 }

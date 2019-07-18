@@ -13,6 +13,7 @@ import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimNamespace;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Ontologies;
 import org.integratedmodelling.klab.Resources;
@@ -40,6 +41,7 @@ public class Namespace extends KimObject implements INamespace {
 	private boolean scenario = false;
 	private boolean inactive = false;
 	private long timestamp = 0l;
+	private IConcept domain;
 
 	List<IKimObject> objects = new ArrayList<>();
 	Map<String, IKimObject> objectsByName = new HashMap<>();
@@ -60,6 +62,9 @@ public class Namespace extends KimObject implements INamespace {
 		this.scope = namespace.getScope();
 		this.inactive = namespace.isInactive();
 		this.scenario = namespace.isScenario();
+		if (namespace.getDomain() != null) {
+			this.domain = Concepts.INSTANCE.declare(namespace.getDomain());
+		}
 		this.ontology = Ontologies.INSTANCE.require(name);
 		if (namespace.getProject() != null) {
 			this.project = Resources.INSTANCE.retrieveOrCreate(namespace.getProject());
@@ -68,8 +73,10 @@ public class Namespace extends KimObject implements INamespace {
 		if (this.timestamp == 0) {
 			this.timestamp = System.currentTimeMillis();
 		}
-		for (IServiceCall extent : namespace.getExtents())
-			setDeprecated(namespace.isDeprecated());
+		for (IServiceCall extent : namespace.getExtents()) {
+			coveredExtents.add(extent);
+		}
+		setDeprecated(namespace.isDeprecated());
 	}
 
 	/*
@@ -105,8 +112,7 @@ public class Namespace extends KimObject implements INamespace {
 
 	@Override
 	public IConcept getDomain() {
-		// TODO Auto-generated method stub
-		return null;
+		return domain;
 	}
 
 	@Override
