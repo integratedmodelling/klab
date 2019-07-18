@@ -437,6 +437,7 @@ public class KimValidator extends AbstractKimValidator {
     }
     final String namespaceId = _xifexpression_1;
     final boolean isPrivate = ((statement.isPrivate() || namespace.isPrivate()) || namespace.isWorldviewBound());
+    boolean hasDistributedAttributeObservable = false;
     KimObservable _xifexpression_2 = null;
     if ((KimValidator.nonSemanticModels.contains(statement.getModel()) && (namespace != null))) {
       String _model = statement.getModel();
@@ -492,10 +493,15 @@ public class KimValidator extends AbstractKimValidator {
               }
             }
           }
-          if ((((observable.getMain() != null) && observable.getMain().is(IKimConcept.Type.TRAIT)) && (observable.getMain().getInherent() == null))) {
+          if ((((observable.getMain() != null) && (observable.getMain().is(IKimConcept.Type.TRAIT) || observable.getMain().is(IKimConcept.Type.ROLE))) && (observable.getMain().getInherent() == null))) {
             this.error(
               ("Lone predicates are not valid observables. Use classifying observables to attribute " + " or resolve predicates, or use \'type of\' to observe them over a context."), 
               KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);
+          }
+          if ((((obsIdx == 0) && (observable.getMain() != null)) && (observable.getMain().is(IKimConcept.Type.TRAIT) || observable.getMain().is(IKimConcept.Type.ROLE)))) {
+            IKimConcept.ComponentRole _distributedInherent = observable.getMain().getDistributedInherent();
+            boolean _tripleNotEquals = (_distributedInherent != null);
+            hasDistributedAttributeObservable = _tripleNotEquals;
           }
           Kim.ConceptDescriptor definition = observable.getDescriptor();
           if ((definition != null)) {
@@ -776,7 +782,7 @@ public class KimValidator extends AbstractKimValidator {
         }
         descriptor.getObservables().addAll(observables);
         descriptor.getDependencies().addAll(dependencies);
-        descriptor.setInstantiator(model.isInstantiator());
+        descriptor.setInstantiator((model.isInstantiator() || hasDistributedAttributeObservable));
         descriptor.setDocstring(model.getDocstring());
         EList<Urn> _urns = model.getUrns();
         for (final Urn urn : _urns) {
@@ -863,7 +869,7 @@ public class KimValidator extends AbstractKimValidator {
         for (final ValueAssignment contextualizer_1 : _contextualizers_1) {
           java.util.List<IComputableResource> _contextualization = descriptor.getContextualization();
           IResolutionScope.Mode _xifexpression_5 = null;
-          boolean _isInstantiator = model.isInstantiator();
+          boolean _isInstantiator = descriptor.isInstantiator();
           if (_isInstantiator) {
             _xifexpression_5 = IResolutionScope.Mode.INSTANTIATION;
           } else {
@@ -922,11 +928,17 @@ public class KimValidator extends AbstractKimValidator {
               descriptor.name = observables.get(0).getFormalName();
             } else {
               String _xifexpression_6 = null;
-              boolean _isInstantiator_1 = model.isInstantiator();
-              if (_isInstantiator_1) {
-                _xifexpression_6 = "instantiator";
+              if (hasDistributedAttributeObservable) {
+                _xifexpression_6 = "classifier";
               } else {
-                _xifexpression_6 = "resolver";
+                String _xifexpression_7 = null;
+                boolean _isInstantiator_1 = descriptor.isInstantiator();
+                if (_isInstantiator_1) {
+                  _xifexpression_7 = "instantiator";
+                } else {
+                  _xifexpression_7 = "resolver";
+                }
+                _xifexpression_6 = _xifexpression_7;
               }
               String name = _xifexpression_6;
               String st = descriptor.getObservables().get(0).getCodeName();

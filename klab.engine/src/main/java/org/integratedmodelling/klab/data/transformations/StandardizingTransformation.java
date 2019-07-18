@@ -40,6 +40,13 @@ public class StandardizingTransformation implements IResolver<IState>, IProcesso
 
 	@Override
 	public IState resolve(IState ret, IComputationContext context) throws KlabException {
+		/*
+		 * this is for when the contextualizer is used directly without arguments in a
+		 * 'using' clause. In that circumstance, it means 'contextualize myself'.
+		 */
+		if (state == null) {
+			state = context.get("self", IState.class);
+		}
 		StateSummary summary = Observations.INSTANCE.getStateSummary(state, ITime.INITIALIZATION);
 		if (!summary.isDegenerate()) {
 			for (ILocator locator : context.getScale()) {

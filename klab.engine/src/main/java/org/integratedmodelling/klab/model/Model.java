@@ -172,13 +172,7 @@ public class Model extends KimObject implements IModel {
 				}
 			}
 		}
-
-		if (observables.size() > 0 && observables.get(0) != null
-				&& observables.get(0).getObservationType() == ObservationType.CLASSIFICATION) {
-			// it's an instantiator, albeit of attributes
-			this.instantiator = true;
-		}
-
+		
 		/*
 		 * all resources after 'using' or further classification/lookup transformations
 		 */

@@ -18,10 +18,11 @@ public class NormalizingTransformation implements IResolver<IState>, IExpression
 
 	IState state;
 
-	public NormalizingTransformation() {}
-	
+	public NormalizingTransformation() {
+	}
+
 	public NormalizingTransformation(IParameters<String> parameters, IComputationContext context) {
-		
+
 		IArtifact artifact = context.getArtifact(parameters.get("artifact", String.class));
 		if (artifact instanceof IState && (artifact.getType() != Type.NUMBER && artifact.getType() != Type.VALUE)) {
 			throw new IllegalArgumentException("normalization operations can only be performed on numeric states");
@@ -41,6 +42,13 @@ public class NormalizingTransformation implements IResolver<IState>, IExpression
 
 	@Override
 	public IState resolve(IState ret, IComputationContext context) throws KlabException {
+		/*
+		 * this is for when the contextualizer is used directly without arguments in a
+		 * 'using' clause. In that circumstance, it means 'contextualize myself'.
+		 */
+		if (state == null) {
+			state = context.get("self", IState.class);
+		}
 		StateSummary summary = Observations.INSTANCE.getStateSummary(state, ITime.INITIALIZATION);
 		if (!summary.isDegenerate()) {
 			for (ILocator locator : context.getScale()) {

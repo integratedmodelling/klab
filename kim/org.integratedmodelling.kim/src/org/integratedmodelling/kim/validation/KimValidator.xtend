@@ -298,6 +298,7 @@ class KimValidator extends AbstractKimValidator {
 		var namespace = if(statement !== null) getNamespace(statement) else null;
 		val namespaceId = if (namespace !== null) Kim.getNamespaceId(namespace) else null;
 		val isPrivate = statement.isPrivate || namespace.isPrivate || namespace.worldviewBound;
+		var hasDistributedAttributeObservable = false
 		
 		/*
  		 * look-ahead the first observable to handle the special case where the 'observed as' is a concept and the first
@@ -341,10 +342,14 @@ class KimValidator extends AbstractKimValidator {
 					}
 				}
 				
-				if (observable.main !== null && observable.main.is(Type.TRAIT) && observable.main.inherent === null) {
+				if (observable.main !== null && (observable.main.is(Type.TRAIT) || observable.main.is(Type.ROLE)) && observable.main.inherent === null) {
 					error("Lone predicates are not valid observables. Use classifying observables to attribute "
 						+ " or resolve predicates, or use 'type of' to observe them over a context.", 
 						KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, REASONING_PROBLEM)
+				}
+				
+				if (obsIdx == 0 && observable.main !== null && (observable.main.is(Type.TRAIT) || observable.main.is(Type.ROLE))) {
+					hasDistributedAttributeObservable = observable.main.distributedInherent !== null
 				}
 				
 				var definition = observable.descriptor
@@ -363,7 +368,7 @@ class KimValidator extends AbstractKimValidator {
 						error('Models can only describe observables, configurations or traits',
 							KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, BAD_OBSERVABLE)
 						ok = false
-					} */ else if (obsIdx == 0 && statement !== null && model.isInstantiator &&
+					} */ else if (obsIdx == 0 && statement !== null && model.isInstantiator && // leave as is: must not check classifiers
 						!definition.is(Type.COUNTABLE)) {
 						error(
 							"The first observable in an instantiator model ('model each') must be countable: subject, event or relationship",
@@ -589,12 +594,8 @@ class KimValidator extends AbstractKimValidator {
 
 				descriptor.observables.addAll(observables)
 				descriptor.dependencies.addAll(dependencies)
-				descriptor.instantiator = model.isInstantiator
+				descriptor.instantiator = model.isInstantiator || hasDistributedAttributeObservable
 				descriptor.docstring = model.docstring
-//				if (interpretedRole !== null) {
-//					descriptor.interpreter = true
-//					descriptor.reinterpretingRole = interpretedRole.main
-//				}
 
 				// data source - function or literal/remote URN
 				for (urn : model.urns) {
@@ -643,7 +644,7 @@ class KimValidator extends AbstractKimValidator {
 				for (contextualizer : model.contextualizers) {
 					descriptor.contextualization.add(
 						new ComputableResource(contextualizer,
-							if(model.instantiator) Mode.INSTANTIATION else Mode.RESOLUTION, descriptor))
+							if(descriptor.instantiator) Mode.INSTANTIATION else Mode.RESOLUTION, descriptor))
 				}
 
 				// these must come after
@@ -673,10 +674,15 @@ class KimValidator extends AbstractKimValidator {
 					if (descriptor.observables.get(0).formalName !== null) {
 						descriptor.name = observables.get(0).formalName
 					} else {
-						var name = if(model.instantiator) "instantiator" else "resolver";
-						// TODO maybe if there are traits or roles we should add those too
+						
+						var name = if (hasDistributedAttributeObservable) 
+										"classifier" 
+									else if (descriptor.instantiator) 
+										"instantiator" 
+									else "resolver";
+									
 						var st = descriptor.observables.get(0).codeName
-						descriptor.name = /**/ st + "-" + name
+						descriptor.name = st + "-" + name
 					}
 				}
 
@@ -693,9 +699,7 @@ class KimValidator extends AbstractKimValidator {
 				if (model.metadata !== null) {
 					descriptor.metadata = new KimMetadata(model.metadata, descriptor);
 				}
-//				if (model.documentation !== null) {
-////					descriptor.documentation = new KimMetadata(model.documentation);
-//				}
+
 				/*
 				 * Check all other models in namespace and if name is duplicated, add number starting from 1
 				 */

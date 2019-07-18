@@ -182,6 +182,9 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 				case TRAIT:
 				case IDENTITY:
 				case REALM:
+					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, 
+							((EModel) element).isInstantiator() ? "icons/attribute_instantiator.png"
+									: "icons/attribute_resolver.png");
 				case QUALITY:
 					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/quality_resolver.png");
 				case RELATIONSHIP:
