@@ -562,7 +562,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		if (concept.getConcept() != null) {
 
 			// reading a semantic operator
-			ret = normalize(concept.getConcept(), null, parent, root);
+			ret = normalize(concept.getConcept(), null, parent, false);
 			if (ret == null) {
 				return null;
 			}
@@ -858,7 +858,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 	}
 
 	@Override
-	public UnarySemanticOperator getObservationType() {
+	public UnarySemanticOperator getSemanticModifier() {
 		return observationType;
 	}
 

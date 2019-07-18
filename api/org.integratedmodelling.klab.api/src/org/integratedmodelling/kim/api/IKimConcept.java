@@ -460,7 +460,7 @@ public interface IKimConcept extends IKimStatement {
 
 	String getAuthority();
 
-	UnarySemanticOperator getObservationType();
+	UnarySemanticOperator getSemanticModifier();
 
 	IKimConcept getRelationshipSource();
 

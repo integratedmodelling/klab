@@ -28,7 +28,6 @@ import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IModel;
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -42,7 +41,6 @@ import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
@@ -879,8 +877,8 @@ public class DataflowCompiler {
 	 */
 	public DataflowCompiler withResolution(Link link) {
 
-		IResolvable source = disambiguateResolvable(link.getSource().getResolvable());
-		IResolvable target = disambiguateResolvable(link.getTarget().getResolvable());
+		IResolvable source = link.getSource().getResolvable();
+		IResolvable target = link.getTarget().getResolvable();
 
 		resolutionGraph.addVertex(target);
 		resolutionGraph.addVertex(source);
@@ -896,41 +894,6 @@ public class DataflowCompiler {
 	 * TODO still issues observing e.g. geography:Slope -> presence of earth:Slope.
 	 */
 	List<Pair<String, Observable>> ambiguous = new ArrayList<>();
-
-	/*
-	 * FIXME sketchy - reconsider moving logics into resolver
-	 */
-	private IResolvable disambiguateResolvable(IResolvable resolvable) {
-		IResolvable ret = resolvable;
-		if (context != null && ret instanceof Observable) {
-			IRuntimeContext ctx = context.getRuntimeContext();
-			IArtifact existing = ctx.getArtifact(((Observable) ret).getName());
-			if (existing instanceof IObservation) {
-				IObservable existingObservable = ((IObservation) existing).getObservable();
-				if (!existingObservable.equals(ret)) {
-
-					// must substitute
-					int nexisting = 0;
-					for (Pair<String, Observable> a : ambiguous) {
-						// local to this resolution, OK
-						if (a.getSecond().equals(ret)) {
-							return a.getSecond();
-						}
-						if (a.getFirst().equals(((Observable) ret).getName())) {
-							nexisting++;
-						}
-					}
-
-					String newName = ((Observable) ret).getName() + "$" + (nexisting + 1);
-					Observable newObservable = new Observable((Observable) ret);
-					newObservable.setName(newName);
-					ambiguous.add(new Pair<>(((Observable) ret).getName(), newObservable));
-					ret = newObservable;
-				}
-			}
-		}
-		return ret;
-	}
 
 	/**
 	 * Compute mediators, ensuring that two observables declared with fluid units

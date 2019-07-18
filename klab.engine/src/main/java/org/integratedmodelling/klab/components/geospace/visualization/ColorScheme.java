@@ -97,7 +97,7 @@ public class ColorScheme {
 			unitFrom = Unit.create(this.valueUnit);
 			unitTo = state.getObservable().getUnit();
 			if (unitTo == null) {
-				throw new KlabValidationException("the " + this.name + " color scheme requires values with units");
+				return null;
 			}
 		}
 		
@@ -108,7 +108,7 @@ public class ColorScheme {
 		
 		if (getNumberColors().size() > 0) {
 			if (state.getType() != IArtifact.Type.NUMBER) {
-				throw new KlabValidationException("the " + this.name + " color scheme requires numeric values");
+				return null;
 			}
 			
 			Map<String, List<Integer>> map = getNumberColors().get(mapIndex);
@@ -144,7 +144,7 @@ public class ColorScheme {
 
 		} else if (getCategoryColors().size() > 0) {
 			if (state.getType() != IArtifact.Type.CONCEPT) {
-				throw new KlabValidationException("the " + this.name + " color scheme requires categorical values");
+				return null;
 			}
 		}
 		

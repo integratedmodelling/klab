@@ -1764,6 +1764,8 @@ public enum Kim {
 	 * <p>
 	 * Rules so far:
 	 * <ul>
+	 * <li>If the concept is a semantic transformation (e.g. value of) an abstract
+	 * concept, it becomes concrete;</li>
 	 * <li>If the concept adopts a concrete identity or realm, and all identities
 	 * and realms it adopts are concrete, it becomes concrete (FOR LATER: it should
 	 * only do so if the trait is a required one, which requires analysis of the
@@ -1779,6 +1781,10 @@ public enum Kim {
 
 		boolean isAbstract = ret.is(Type.ABSTRACT);
 
+		if (ret.getSemanticModifier() != null) {
+			isAbstract = false;
+		}
+		
 		if (isAbstract) {
 
 			boolean traitsOk = true;

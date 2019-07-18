@@ -215,16 +215,22 @@ public enum Renderer {
 				shadedReliefBrightnessOnly = annotation.get("brighten", false);
 
 				if (name != null) {
+
+					boolean done = false;
 					if (colorSchemata.containsKey(name)) {
 
 						ColorScheme scheme = colorSchemata.get(name);
 						Triple<double[], Color[], String[]> result = scheme.computeScheme(state, locator);
 
-						values = result.getFirst();
-						colors = result.getSecond();
-						labels = result.getThird();
+						if (result != null) {
+							done = true;
+							values = result.getFirst();
+							colors = result.getSecond();
+							labels = result.getThird();
+						}
+					}
 
-					} else {
+					if (!done) {
 
 						colors = getColormap(name, opacity);
 						if (colors == null && colorBrewer.hasPalette(name)) {

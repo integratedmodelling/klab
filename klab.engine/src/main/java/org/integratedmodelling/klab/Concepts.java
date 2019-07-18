@@ -465,7 +465,7 @@ public enum Concepts implements IConceptService {
 		return null;
 	}
 
-	public String getCodeName(Concept main) {
+	public String getCodeName(IConcept main) {
 		return CamelCase.toLowerCase(getDisplayName(main), '_');
 	}
 

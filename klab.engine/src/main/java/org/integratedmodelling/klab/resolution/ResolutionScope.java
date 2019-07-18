@@ -10,7 +10,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Models;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
@@ -28,13 +30,13 @@ import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.klab.resolution.ObservableReasoner.CandidateObservable;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
@@ -725,13 +727,13 @@ public class ResolutionScope implements IResolutionScope {
 	@Override
 	public Observable getResolvedObservable(IObservable observable, Mode mode) {
 		for (ResolutionScope o : resolvedObservables) {
-			if (o.observable.canResolve((Observable)observable) && o.mode == mode) {
+			if (o.observable.canResolve((Observable) observable) && o.mode == mode) {
 				return o.observable;
 			}
 		}
 		return null;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -947,6 +949,88 @@ public class ResolutionScope implements IResolutionScope {
 
 	public void setOriginalScope(Scope originalScope) {
 		this.originalScope = originalScope;
+	}
+
+	/**
+	 * Check the passed observable against all the ones we already know and those in
+	 * the context. If we have an observable with the same reference name but with a
+	 * different semantics, return a new observable with an unambiguous name.
+	 * 
+	 * @param resolvable
+	 * @return
+	 */
+	public Observable disambiguateObservable(Observable resolvable) {
+
+		Observable ret = resolvable;
+		Map<String, IObservable> knownObservables = new HashMap<>();
+		if (context != null) {
+			IRuntimeContext ctx = context.getRuntimeContext();
+			if (ctx != null) {
+				for (Pair<String, IObservation> obs : ctx.getArtifacts(IObservation.class)) {
+					knownObservables.put(obs.getSecond().getObservable().getReferenceName(),
+							obs.getSecond().getObservable());
+				}
+			}
+		}
+		for (ResolutionScope o : resolvedObservables) {
+			knownObservables.put(o.observable.getReferenceName(), o.observable);
+		}
+
+		if (knownObservables.containsKey(resolvable.getReferenceName())
+				&& !((Observable) knownObservables.get(resolvable.getReferenceName())).canResolve(resolvable)) {
+
+			boolean domainsTested = false;
+			boolean namespacesTested = false;
+
+			String newName = resolvable.getReferenceName();
+			int i = 1;
+			do {
+
+				if (!domainsTested) {
+					/*
+					 * try domains first
+					 */
+					IConcept baseOb = Observables.INSTANCE.getBaseObservable(resolvable.getType());
+					if (baseOb != null) {
+						IConcept domain = baseOb.getDomain();
+						if (domain != null) {
+							newName = resolvable.getReferenceName() +  "__" + Concepts.INSTANCE.getCodeName(domain);
+						}
+					}
+					domainsTested = true;
+				}
+
+				else if (!namespacesTested) {
+
+					/*
+					 * then namespaces
+					 */
+					IConcept baseOb = Observables.INSTANCE.getBaseObservable(resolvable.getType());
+					if (baseOb != null) {
+						String namespace = baseOb.getNamespace();
+						if (namespace != null) {
+							newName = resolvable.getReferenceName() +  "__" + namespace.replaceAll("\\.", "_");
+						}
+					}
+					namespacesTested = true;
+
+				} else {
+
+					/*
+					 * worst case, resort to numbers - should be very unlikely
+					 */
+					newName = resolvable.getReferenceName() +  "__" + (i++);
+				}
+			} while (knownObservables.containsKey(newName));
+
+			System.out.println("SUPERCIUCK HAS BEEN RENAMED " + newName);
+			
+			ret = new Observable(resolvable);
+			ret.setReferenceName(newName);
+
+		}
+
+		return ret;
 	}
 
 }

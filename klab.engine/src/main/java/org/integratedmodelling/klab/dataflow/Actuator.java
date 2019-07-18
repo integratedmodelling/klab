@@ -1141,7 +1141,7 @@ public class Actuator implements IActuator {
 			filter = existingActuators.get(filter.getReferenceName());
 		}
 
-		if (filter == null || !existingActuators.containsKey(filtered.getReferenceName())) {
+		if (filter == null || !existingActuators.containsKey(filter.getReferenceName())) {
 			// should never happen - remove when we're certain that it doesn't indeed
 			throw new KlabInternalErrorException("UNRESOLVED FILTER REFERENCE!");
 		}

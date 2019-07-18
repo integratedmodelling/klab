@@ -539,13 +539,13 @@ public enum KimKnowledgeProcessor {
 
 		// semantic operator goes last as it builds the operand and resets all
 		// predicates
-		if (concept.getObservationType() != null) {
+		if (concept.getSemanticModifier() != null) {
 			IConcept other = null;
 			if (concept.getComparisonConcept() != null) {
 				other = declareInternal(concept.getComparisonConcept(), ontology, monitor);
 			}
 			try {
-				builder.as(concept.getObservationType(), other == null ? (IConcept[]) null : new IConcept[] { other });
+				builder.as(concept.getSemanticModifier(), other == null ? (IConcept[]) null : new IConcept[] { other });
 			} catch (KlabValidationException e) {
 				monitor.error(e, concept);
 			}
