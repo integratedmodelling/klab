@@ -1,6 +1,9 @@
 package org.integratedmodelling.kim.api;
 
+import java.util.List;
+
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 
 public interface IKimObservable extends IKimStatement {
@@ -11,17 +14,17 @@ public interface IKimObservable extends IKimStatement {
 	 */
 	IKimConcept getMain();
 
-	/**
-	 * 
-	 * @return the 'down to' concept
-	 */
-	IKimConcept getDownTo();
-
-	/**
-	 * 
-	 * @return the 'by' classifier trait
-	 */
-	IKimConcept getClassifier();
+//	/**
+//	 * 
+//	 * @return the 'down to' concept
+//	 */
+//	IKimConcept getDownTo();
+//
+//	/**
+//	 * 
+//	 * @return the 'by' classifier trait
+//	 */
+//	IKimConcept getClassifier();
 
 	/**
 	 * 
@@ -53,6 +56,13 @@ public interface IKimObservable extends IKimStatement {
 	 */
 	Object getValue();
 
+	/**
+	 * Value operators with their operands.
+	 * 
+	 * @return
+	 */
+	List<Pair<ValueOperator, Object>> getValueOperators();
+	
 	/**
 	 * 
 	 * @return true if abstract
@@ -113,20 +123,20 @@ public interface IKimObservable extends IKimStatement {
 	 */
 	String getCodeName();
 	
-	/**
-	 * If a value operator was specified, return it. This will be the value
-	 * subset of the Modifier enum - TODO separate the two.
-	 * 
-	 * @return the modifier or null
-	 */
-	ValueOperator getValueOperator();
-	
-	/**
-	 * If a value operator was specified, the operand to it is returned here. It may be 
-	 * a POD value, a concept, list thereof (not yet), or another IKimObservable.
-	 * 
-	 * @return the modifier operand.
-	 */
-	Object getValueOperand();
+//	/**
+//	 * If a value operator was specified, return it. This will be the value
+//	 * subset of the Modifier enum - TODO separate the two.
+//	 * 
+//	 * @return the modifier or null
+//	 */
+//	ValueOperator getValueOperator();
+//	
+//	/**
+//	 * If a value operator was specified, the operand to it is returned here. It may be 
+//	 * a POD value, a concept, list thereof (not yet), or another IKimObservable.
+//	 * 
+//	 * @return the modifier operand.
+//	 */
+//	Object getValueOperand();
 	
 }

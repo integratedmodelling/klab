@@ -36,7 +36,7 @@ class KimFormatter extends AbstractFormatter2 {
 	def dispatch void format(ObservableSemantics observableSemantics, extension IFormattableDocument document) {
 		// TODO: format HiddenRegions around keywords, attributes, cross references, etc. 
 		observableSemantics.getDeclaration.format;
-		observableSemantics.getBy.format;
+//		observableSemantics.getBy.format;
 		observableSemantics.getUnit.format;
 		observableSemantics.getCurrency.format;
 		observableSemantics.getFrom.format;

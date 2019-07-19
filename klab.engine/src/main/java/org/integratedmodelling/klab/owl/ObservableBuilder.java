@@ -62,19 +62,20 @@ public class ObservableBuilder implements IObservable.Builder {
 	private IConcept relationshipSource;
 	private IConcept relationshipTarget;
 	private boolean optional;
-	private ValueOperator valueOperator;
-	private Object valueOperand;
+//	private ValueOperator valueOperator;
+//	private Object valueOperand;
 	private String name;
 	private IObservable filteredObservable;
 
 	private List<IConcept> traits = new ArrayList<>();
 	private List<IConcept> roles = new ArrayList<>();
 	private List<IConcept> removed = new ArrayList<>();
+	private List<Pair<ValueOperator, Object>> valueOperators = new ArrayList<>();
 	private List<KlabValidationException> errors = new ArrayList<>();
-	private Set<IConcept> assignedRoles = new HashSet<>();
+//	private Set<IConcept> assignedRoles = new HashSet<>();
 
-	private IConcept classifier;
-	private IConcept downTo;
+//	private IConcept classifier;
+//	private IConcept downTo;
 	private IUnit unit;
 	private ICurrency currency;
 
@@ -138,10 +139,10 @@ public class ObservableBuilder implements IObservable.Builder {
 		// these are only used if buildObservable() is called
 		this.unit = observable.getUnit();
 		this.currency = observable.getCurrency();
-		this.downTo = observable.getDownTo();
-		this.classifier = observable.getClassifier();
-		this.valueOperator = observable.getValueOperator();
-		this.valueOperand = observable.getValueOperand();
+//		this.downTo = observable.getDownTo();
+//		this.classifier = observable.getClassifier();
+		this.valueOperators.addAll(observable.getValueOperators());
+//		this.valueOperand = observable.getValueOperand();
 		this.monitor = monitor;
 		this.filteredObservable = observable.getFilteredObservable();
 	}
@@ -164,10 +165,11 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.type = other.type;
 		this.declaration = other.declaration;
 		this.monitor = other.monitor;
-		this.valueOperand = other.valueOperand;
-		this.valueOperator = other.valueOperator;
-		this.classifier = other.classifier;
-		this.downTo = other.downTo;
+		this.valueOperators.addAll(other.valueOperators);
+//		this.valueOperand = other.valueOperand;
+//		this.valueOperator = other.valueOperator;
+//		this.classifier = other.classifier;
+//		this.downTo = other.downTo;
 		this.filteredObservable = other.filteredObservable;
 
 		checkTrivial();
@@ -1751,7 +1753,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	@Override
 	public Observable buildObservable() throws KlabValidationException {
 
-		Observable ret = Observable.promote(buildConcept()/* , false */);
+		Observable ret = Observable.promote(buildConcept());
 
 		if (currency != null) {
 			ret.setCurrency((Currency) currency);
@@ -1761,15 +1763,17 @@ public class ObservableBuilder implements IObservable.Builder {
 			ret.setDeclaration(ret.getDeclaration() + " in " + ret.getCurrency());
 		}
 
-		if (valueOperator != null) {
+		for (Pair<ValueOperator, Object> op : valueOperators) {
 
-			ret.setValueOperator(valueOperator);
+			ValueOperator valueOperator = op.getFirst();
+			Object valueOperand = op.getSecond();
+			
 			ret.setDeclaration(ret.getDeclaration() + " " + valueOperator.declaration);
 			if (name == null) {
 				ret.setName(ret.getName() + "_" + valueOperator.textForm);
 			}
-			ret.setValueOperand(valueOperand);
 
+			
 			if (valueOperand instanceof IConcept) {
 
 				ret.setDeclaration(ret.getDeclaration() + " " + ((IConcept) valueOperand).getDefinition());
@@ -1792,27 +1796,29 @@ public class ObservableBuilder implements IObservable.Builder {
 					}
 				}
 			}
+			
+			ret.getValueOperators().add(new Pair<>(valueOperator, valueOperand));
 
 		}
 
-		if (classifier != null) {
-			ret.setClassifier((Concept) classifier);
-			ret.setDeclaration(ret.getDeclaration() + " by " + classifier.getDefinition());
-			if (name == null) {
-				ret.setName(ret.getName() + "_by_"
-						+ Concepts.INSTANCE.getDisplayName(classifier).replaceAll("\\-", "_").replaceAll(" ", "_"));
-			}
-		}
-
-		// TODO move up as this is just another value operator
-		if (downTo != null) {
-			ret.setDownTo((Concept) downTo);
-			ret.setDeclaration(ret.getDeclaration() + " down to " + downTo.getDefinition());
-			if (name == null) {
-				ret.setName(ret.getName() + "_down_to_"
-						+ Concepts.INSTANCE.getDisplayName(downTo).replaceAll("\\-", "_").replaceAll(" ", "_"));
-			}
-		}
+//		if (classifier != null) {
+//			ret.setClassifier((Concept) classifier);
+//			ret.setDeclaration(ret.getDeclaration() + " by " + classifier.getDefinition());
+//			if (name == null) {
+//				ret.setName(ret.getName() + "_by_"
+//						+ Concepts.INSTANCE.getDisplayName(classifier).replaceAll("\\-", "_").replaceAll(" ", "_"));
+//			}
+//		}
+//
+//		// TODO move up as this is just another value operator
+//		if (downTo != null) {
+//			ret.setDownTo((Concept) downTo);
+//			ret.setDeclaration(ret.getDeclaration() + " down to " + downTo.getDefinition());
+//			if (name == null) {
+//				ret.setName(ret.getName() + "_down_to_"
+//						+ Concepts.INSTANCE.getDisplayName(downTo).replaceAll("\\-", "_").replaceAll(" ", "_"));
+//			}
+//		}
 
 		if (name != null) {
 			ret.setName(name);
@@ -1836,36 +1842,27 @@ public class ObservableBuilder implements IObservable.Builder {
 	}
 
 	@Override
-	public Builder downTo(IConcept detail) {
-		this.downTo = detail;
-		// isTrivial = false;
-		return this;
-	}
-
-	@Override
 	public Builder named(String name) {
 		this.name = name;
 		return this;
 	}
 
-	@Override
-	public Builder by(IConcept classifier) {
-		this.classifier = classifier;
-		// isTrivial = false;
-		return this;
-	}
-
-	@Override
-	public Builder withValueOperator(ValueOperator operator, Object valueOperand) {
-		this.valueOperator = operator;
-		this.valueOperand = valueOperand;
-		// isTrivial = false;
-		return this;
-	}
 
 	@Override
 	public Builder setDistributedInherency(boolean ofEach) {
 		this.distributedInherency = ofEach;
+		return this;
+	}
+
+	@Override
+	public Builder withValueOperator(ValueOperator operator, Object operand) {
+		this.valueOperators.add(new Pair<>(operator, operand));
+		return this;
+	}
+
+	@Override
+	public Builder withoutValueOperators() {
+		this.valueOperators.clear();
 		return this;
 	}
 

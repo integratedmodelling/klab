@@ -66,6 +66,7 @@ import org.integratedmodelling.kim.kim.UpperOntologyDefinition;
 import org.integratedmodelling.kim.kim.Urn;
 import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.kim.ValueAssignment;
+import org.integratedmodelling.kim.kim.ValueOperator;
 import org.integratedmodelling.kim.services.KimGrammarAccess;
 
 @SuppressWarnings("all")
@@ -338,6 +339,9 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 					return; 
 				}
 				else break;
+			case KimPackage.VALUE_OPERATOR:
+				sequence_ValueOperator(context, (ValueOperator) semanticObject); 
+				return; 
 			}
 		if (errorAcceptor != null)
 			errorAcceptor.accept(diagnosticProvider.createInvalidContextOrTypeDiagnostic(semanticObject, context));
@@ -400,16 +404,9 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *         generic?='any'? 
 	 *         declaration=ConceptDeclaration 
 	 *         (
-	 *             (
-	 *                 by=ConceptDeclaration | 
-	 *                 downTo=Concept | 
-	 *                 accordingTo=PropertyId | 
-	 *                 unit=Unit | 
-	 *                 currency=Currency | 
-	 *                 unit=Unit
-	 *             )? 
-	 *             (from=Number to=Number)? 
-	 *             (valueModifier=VALUE_MODIFIER (comparisonValue=Number | comparisonConcept=ConceptDeclaration | comparisonObservable=ObservableSemantics))?
+	 *             (accordingTo=PropertyId | unit=Unit | currency=Currency | unit=Unit)? 
+	 *             (valueOperators+=ValueOperator valueOperators+=ValueOperator*)? 
+	 *             (from=Number to=Number)?
 	 *         )+ 
 	 *         condition=EXPR?
 	 *     )
@@ -431,8 +428,6 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *         declaration=ConceptDeclaration 
 	 *         (
 	 *             (
-	 *                 by=ConceptDeclaration | 
-	 *                 downTo=Concept | 
 	 *                 accordingTo=PropertyId | 
 	 *                 unit=Unit | 
 	 *                 currency=Currency | 
@@ -441,8 +436,8 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 name=LOWERCASE_ID | 
 	 *                 name=STRING
 	 *             )? 
-	 *             (from=Number to=Number)? 
-	 *             (valueModifier=VALUE_MODIFIER (comparisonValue=Number | comparisonConcept=ConceptDeclaration | comparisonObservable=ObservableSemantics))?
+	 *             (valueOperators+=ValueOperator valueOperators+=ValueOperator*)? 
+	 *             (from=Number to=Number)?
 	 *         )+
 	 *     )
 	 */
@@ -505,16 +500,16 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         restrictions+=RestrictionStatement | 
 	 *                         metadata=Metadata
 	 *                     )? 
-	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
+	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
 	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
-	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
 	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
 	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
+	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
+	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
 	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
-	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
-	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
 	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
+	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
 	 *                     ((constituent?='constituent' | constitutes?='consists')? partOf?='of' whole=ConceptDeclaration)? 
 	 *                     (
 	 *                         alias?='equals'? 
@@ -680,9 +675,9 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 during=SimpleConceptDeclaration
 	 *             )? 
 	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
 	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
-	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)?
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)*
 	 *     )
@@ -711,9 +706,9 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 during=SimpleConceptDeclaration
 	 *             )? 
 	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
 	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
-	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)?
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)* 
 	 *         (operators+='or' operands+=Factor)*
@@ -902,8 +897,6 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *         declaration=ConceptDeclaration 
 	 *         (
 	 *             (
-	 *                 by=ConceptDeclaration | 
-	 *                 downTo=Concept | 
 	 *                 accordingTo=PropertyId | 
 	 *                 unit=Unit | 
 	 *                 currency=Currency | 
@@ -912,8 +905,8 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 name=LOWERCASE_ID | 
 	 *                 name=STRING
 	 *             )? 
-	 *             (from=Number to=Number)? 
-	 *             (valueModifier=VALUE_MODIFIER (comparisonValue=Number | comparisonConcept=ConceptDeclaration | comparisonObservable=ObservableSemantics))?
+	 *             (valueOperators+=ValueOperator valueOperators+=ValueOperator*)? 
+	 *             (from=Number to=Number)?
 	 *         )+
 	 *     )
 	 */
@@ -1330,8 +1323,6 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *         declaration=ConceptDeclaration 
 	 *         (
 	 *             (
-	 *                 by=ConceptDeclaration | 
-	 *                 downTo=Concept | 
 	 *                 accordingTo=PropertyId | 
 	 *                 unit=Unit | 
 	 *                 currency=Currency | 
@@ -1340,8 +1331,8 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 name=LOWERCASE_ID | 
 	 *                 name=STRING
 	 *             )? 
-	 *             (from=Number to=Number)? 
-	 *             (valueModifier=VALUE_MODIFIER (comparisonValue=Number | comparisonConcept=ConceptDeclaration | comparisonObservable=ObservableSemantics))?
+	 *             (valueOperators+=ValueOperator valueOperators+=ValueOperator*)? 
+	 *             (from=Number to=Number)?
 	 *         )+
 	 *     )
 	 */
@@ -1498,8 +1489,6 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *         declaration=ConceptDeclaration 
 	 *         (
 	 *             (
-	 *                 by=ConceptDeclaration | 
-	 *                 downTo=Concept | 
 	 *                 accordingTo=PropertyId | 
 	 *                 unit=Unit | 
 	 *                 currency=Currency | 
@@ -1508,8 +1497,8 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 name=LOWERCASE_ID | 
 	 *                 name=STRING
 	 *             )? 
-	 *             (from=Number to=Number)? 
-	 *             (valueModifier=VALUE_MODIFIER (comparisonValue=Number | comparisonConcept=ConceptDeclaration | comparisonObservable=ObservableSemantics))?
+	 *             (valueOperators+=ValueOperator valueOperators+=ValueOperator*)? 
+	 *             (from=Number to=Number)?
 	 *         )+
 	 *     )
 	 */
@@ -1662,6 +1651,24 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *     (execValue=ExecutableValue target=LOWERCASE_ID?)
 	 */
 	protected void sequence_ValueExecution(ISerializationContext context, ValueAssignment semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     ValueOperator returns ValueOperator
+	 *
+	 * Constraint:
+	 *     (
+	 *         (
+	 *             (modifier=VALUE_OPERATOR | downTo='down') 
+	 *             (comparisonValue=Number | comparisonConcept=ConceptDeclaration | comparisonObservable=ObservableSemantics)
+	 *         ) | 
+	 *         total='total'
+	 *     )
+	 */
+	protected void sequence_ValueOperator(ISerializationContext context, ValueOperator semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

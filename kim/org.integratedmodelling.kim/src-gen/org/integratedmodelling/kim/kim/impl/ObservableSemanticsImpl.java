@@ -21,13 +21,13 @@ import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.integratedmodelling.kim.kim.Annotation;
-import org.integratedmodelling.kim.kim.Concept;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.Currency;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.kim.Unit;
 import org.integratedmodelling.kim.kim.Value;
+import org.integratedmodelling.kim.kim.ValueOperator;
 
 /**
  * <!-- begin-user-doc -->
@@ -40,15 +40,10 @@ import org.integratedmodelling.kim.kim.Value;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getValue <em>Value</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#isGeneric <em>Generic</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getDeclaration <em>Declaration</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getBy <em>By</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getDownTo <em>Down To</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getAccordingTo <em>According To</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getUnit <em>Unit</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getCurrency <em>Currency</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getValueModifier <em>Value Modifier</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getComparisonValue <em>Comparison Value</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getComparisonConcept <em>Comparison Concept</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getComparisonObservable <em>Comparison Observable</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getValueOperators <em>Value Operators</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#isOptional <em>Optional</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getFrom <em>From</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getTo <em>To</em>}</li>
@@ -102,26 +97,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
   protected ConceptDeclaration declaration;
 
   /**
-   * The cached value of the '{@link #getBy() <em>By</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getBy()
-   * @generated
-   * @ordered
-   */
-  protected ConceptDeclaration by;
-
-  /**
-   * The cached value of the '{@link #getDownTo() <em>Down To</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getDownTo()
-   * @generated
-   * @ordered
-   */
-  protected Concept downTo;
-
-  /**
    * The default value of the '{@link #getAccordingTo() <em>According To</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -162,54 +137,14 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
   protected Currency currency;
 
   /**
-   * The default value of the '{@link #getValueModifier() <em>Value Modifier</em>}' attribute.
+   * The cached value of the '{@link #getValueOperators() <em>Value Operators</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getValueModifier()
+   * @see #getValueOperators()
    * @generated
    * @ordered
    */
-  protected static final String VALUE_MODIFIER_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getValueModifier() <em>Value Modifier</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getValueModifier()
-   * @generated
-   * @ordered
-   */
-  protected String valueModifier = VALUE_MODIFIER_EDEFAULT;
-
-  /**
-   * The cached value of the '{@link #getComparisonValue() <em>Comparison Value</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getComparisonValue()
-   * @generated
-   * @ordered
-   */
-  protected org.integratedmodelling.kim.kim.Number comparisonValue;
-
-  /**
-   * The cached value of the '{@link #getComparisonConcept() <em>Comparison Concept</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getComparisonConcept()
-   * @generated
-   * @ordered
-   */
-  protected ConceptDeclaration comparisonConcept;
-
-  /**
-   * The cached value of the '{@link #getComparisonObservable() <em>Comparison Observable</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getComparisonObservable()
-   * @generated
-   * @ordered
-   */
-  protected ObservableSemantics comparisonObservable;
+  protected EList<ValueOperator> valueOperators;
 
   /**
    * The default value of the '{@link #isOptional() <em>Optional</em>}' attribute.
@@ -446,102 +381,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * <!-- end-user-doc -->
    * @generated
    */
-  public ConceptDeclaration getBy()
-  {
-    return by;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetBy(ConceptDeclaration newBy, NotificationChain msgs)
-  {
-    ConceptDeclaration oldBy = by;
-    by = newBy;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__BY, oldBy, newBy);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setBy(ConceptDeclaration newBy)
-  {
-    if (newBy != by)
-    {
-      NotificationChain msgs = null;
-      if (by != null)
-        msgs = ((InternalEObject)by).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.OBSERVABLE_SEMANTICS__BY, null, msgs);
-      if (newBy != null)
-        msgs = ((InternalEObject)newBy).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.OBSERVABLE_SEMANTICS__BY, null, msgs);
-      msgs = basicSetBy(newBy, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__BY, newBy, newBy));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Concept getDownTo()
-  {
-    return downTo;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetDownTo(Concept newDownTo, NotificationChain msgs)
-  {
-    Concept oldDownTo = downTo;
-    downTo = newDownTo;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__DOWN_TO, oldDownTo, newDownTo);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setDownTo(Concept newDownTo)
-  {
-    if (newDownTo != downTo)
-    {
-      NotificationChain msgs = null;
-      if (downTo != null)
-        msgs = ((InternalEObject)downTo).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.OBSERVABLE_SEMANTICS__DOWN_TO, null, msgs);
-      if (newDownTo != null)
-        msgs = ((InternalEObject)newDownTo).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.OBSERVABLE_SEMANTICS__DOWN_TO, null, msgs);
-      msgs = basicSetDownTo(newDownTo, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__DOWN_TO, newDownTo, newDownTo));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public String getAccordingTo()
   {
     return accordingTo;
@@ -661,166 +500,13 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getValueModifier()
+  public EList<ValueOperator> getValueOperators()
   {
-    return valueModifier;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setValueModifier(String newValueModifier)
-  {
-    String oldValueModifier = valueModifier;
-    valueModifier = newValueModifier;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__VALUE_MODIFIER, oldValueModifier, valueModifier));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public org.integratedmodelling.kim.kim.Number getComparisonValue()
-  {
-    return comparisonValue;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetComparisonValue(org.integratedmodelling.kim.kim.Number newComparisonValue, NotificationChain msgs)
-  {
-    org.integratedmodelling.kim.kim.Number oldComparisonValue = comparisonValue;
-    comparisonValue = newComparisonValue;
-    if (eNotificationRequired())
+    if (valueOperators == null)
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE, oldComparisonValue, newComparisonValue);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
+      valueOperators = new EObjectContainmentEList<ValueOperator>(ValueOperator.class, this, KimPackage.OBSERVABLE_SEMANTICS__VALUE_OPERATORS);
     }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setComparisonValue(org.integratedmodelling.kim.kim.Number newComparisonValue)
-  {
-    if (newComparisonValue != comparisonValue)
-    {
-      NotificationChain msgs = null;
-      if (comparisonValue != null)
-        msgs = ((InternalEObject)comparisonValue).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE, null, msgs);
-      if (newComparisonValue != null)
-        msgs = ((InternalEObject)newComparisonValue).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE, null, msgs);
-      msgs = basicSetComparisonValue(newComparisonValue, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE, newComparisonValue, newComparisonValue));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public ConceptDeclaration getComparisonConcept()
-  {
-    return comparisonConcept;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetComparisonConcept(ConceptDeclaration newComparisonConcept, NotificationChain msgs)
-  {
-    ConceptDeclaration oldComparisonConcept = comparisonConcept;
-    comparisonConcept = newComparisonConcept;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT, oldComparisonConcept, newComparisonConcept);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setComparisonConcept(ConceptDeclaration newComparisonConcept)
-  {
-    if (newComparisonConcept != comparisonConcept)
-    {
-      NotificationChain msgs = null;
-      if (comparisonConcept != null)
-        msgs = ((InternalEObject)comparisonConcept).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT, null, msgs);
-      if (newComparisonConcept != null)
-        msgs = ((InternalEObject)newComparisonConcept).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT, null, msgs);
-      msgs = basicSetComparisonConcept(newComparisonConcept, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT, newComparisonConcept, newComparisonConcept));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public ObservableSemantics getComparisonObservable()
-  {
-    return comparisonObservable;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetComparisonObservable(ObservableSemantics newComparisonObservable, NotificationChain msgs)
-  {
-    ObservableSemantics oldComparisonObservable = comparisonObservable;
-    comparisonObservable = newComparisonObservable;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE, oldComparisonObservable, newComparisonObservable);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setComparisonObservable(ObservableSemantics newComparisonObservable)
-  {
-    if (newComparisonObservable != comparisonObservable)
-    {
-      NotificationChain msgs = null;
-      if (comparisonObservable != null)
-        msgs = ((InternalEObject)comparisonObservable).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE, null, msgs);
-      if (newComparisonObservable != null)
-        msgs = ((InternalEObject)newComparisonObservable).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE, null, msgs);
-      msgs = basicSetComparisonObservable(newComparisonObservable, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE, newComparisonObservable, newComparisonObservable));
+    return valueOperators;
   }
 
   /**
@@ -1016,20 +702,12 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return basicSetValue(null, msgs);
       case KimPackage.OBSERVABLE_SEMANTICS__DECLARATION:
         return basicSetDeclaration(null, msgs);
-      case KimPackage.OBSERVABLE_SEMANTICS__BY:
-        return basicSetBy(null, msgs);
-      case KimPackage.OBSERVABLE_SEMANTICS__DOWN_TO:
-        return basicSetDownTo(null, msgs);
       case KimPackage.OBSERVABLE_SEMANTICS__UNIT:
         return basicSetUnit(null, msgs);
       case KimPackage.OBSERVABLE_SEMANTICS__CURRENCY:
         return basicSetCurrency(null, msgs);
-      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE:
-        return basicSetComparisonValue(null, msgs);
-      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT:
-        return basicSetComparisonConcept(null, msgs);
-      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE:
-        return basicSetComparisonObservable(null, msgs);
+      case KimPackage.OBSERVABLE_SEMANTICS__VALUE_OPERATORS:
+        return ((InternalEList<?>)getValueOperators()).basicRemove(otherEnd, msgs);
       case KimPackage.OBSERVABLE_SEMANTICS__FROM:
         return basicSetFrom(null, msgs);
       case KimPackage.OBSERVABLE_SEMANTICS__TO:
@@ -1056,24 +734,14 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return isGeneric();
       case KimPackage.OBSERVABLE_SEMANTICS__DECLARATION:
         return getDeclaration();
-      case KimPackage.OBSERVABLE_SEMANTICS__BY:
-        return getBy();
-      case KimPackage.OBSERVABLE_SEMANTICS__DOWN_TO:
-        return getDownTo();
       case KimPackage.OBSERVABLE_SEMANTICS__ACCORDING_TO:
         return getAccordingTo();
       case KimPackage.OBSERVABLE_SEMANTICS__UNIT:
         return getUnit();
       case KimPackage.OBSERVABLE_SEMANTICS__CURRENCY:
         return getCurrency();
-      case KimPackage.OBSERVABLE_SEMANTICS__VALUE_MODIFIER:
-        return getValueModifier();
-      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE:
-        return getComparisonValue();
-      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT:
-        return getComparisonConcept();
-      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE:
-        return getComparisonObservable();
+      case KimPackage.OBSERVABLE_SEMANTICS__VALUE_OPERATORS:
+        return getValueOperators();
       case KimPackage.OBSERVABLE_SEMANTICS__OPTIONAL:
         return isOptional();
       case KimPackage.OBSERVABLE_SEMANTICS__FROM:
@@ -1110,12 +778,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
       case KimPackage.OBSERVABLE_SEMANTICS__DECLARATION:
         setDeclaration((ConceptDeclaration)newValue);
         return;
-      case KimPackage.OBSERVABLE_SEMANTICS__BY:
-        setBy((ConceptDeclaration)newValue);
-        return;
-      case KimPackage.OBSERVABLE_SEMANTICS__DOWN_TO:
-        setDownTo((Concept)newValue);
-        return;
       case KimPackage.OBSERVABLE_SEMANTICS__ACCORDING_TO:
         setAccordingTo((String)newValue);
         return;
@@ -1125,17 +787,9 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
       case KimPackage.OBSERVABLE_SEMANTICS__CURRENCY:
         setCurrency((Currency)newValue);
         return;
-      case KimPackage.OBSERVABLE_SEMANTICS__VALUE_MODIFIER:
-        setValueModifier((String)newValue);
-        return;
-      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE:
-        setComparisonValue((org.integratedmodelling.kim.kim.Number)newValue);
-        return;
-      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT:
-        setComparisonConcept((ConceptDeclaration)newValue);
-        return;
-      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE:
-        setComparisonObservable((ObservableSemantics)newValue);
+      case KimPackage.OBSERVABLE_SEMANTICS__VALUE_OPERATORS:
+        getValueOperators().clear();
+        getValueOperators().addAll((Collection<? extends ValueOperator>)newValue);
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__OPTIONAL:
         setOptional((Boolean)newValue);
@@ -1179,12 +833,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
       case KimPackage.OBSERVABLE_SEMANTICS__DECLARATION:
         setDeclaration((ConceptDeclaration)null);
         return;
-      case KimPackage.OBSERVABLE_SEMANTICS__BY:
-        setBy((ConceptDeclaration)null);
-        return;
-      case KimPackage.OBSERVABLE_SEMANTICS__DOWN_TO:
-        setDownTo((Concept)null);
-        return;
       case KimPackage.OBSERVABLE_SEMANTICS__ACCORDING_TO:
         setAccordingTo(ACCORDING_TO_EDEFAULT);
         return;
@@ -1194,17 +842,8 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
       case KimPackage.OBSERVABLE_SEMANTICS__CURRENCY:
         setCurrency((Currency)null);
         return;
-      case KimPackage.OBSERVABLE_SEMANTICS__VALUE_MODIFIER:
-        setValueModifier(VALUE_MODIFIER_EDEFAULT);
-        return;
-      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE:
-        setComparisonValue((org.integratedmodelling.kim.kim.Number)null);
-        return;
-      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT:
-        setComparisonConcept((ConceptDeclaration)null);
-        return;
-      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE:
-        setComparisonObservable((ObservableSemantics)null);
+      case KimPackage.OBSERVABLE_SEMANTICS__VALUE_OPERATORS:
+        getValueOperators().clear();
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__OPTIONAL:
         setOptional(OPTIONAL_EDEFAULT);
@@ -1244,24 +883,14 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return generic != GENERIC_EDEFAULT;
       case KimPackage.OBSERVABLE_SEMANTICS__DECLARATION:
         return declaration != null;
-      case KimPackage.OBSERVABLE_SEMANTICS__BY:
-        return by != null;
-      case KimPackage.OBSERVABLE_SEMANTICS__DOWN_TO:
-        return downTo != null;
       case KimPackage.OBSERVABLE_SEMANTICS__ACCORDING_TO:
         return ACCORDING_TO_EDEFAULT == null ? accordingTo != null : !ACCORDING_TO_EDEFAULT.equals(accordingTo);
       case KimPackage.OBSERVABLE_SEMANTICS__UNIT:
         return unit != null;
       case KimPackage.OBSERVABLE_SEMANTICS__CURRENCY:
         return currency != null;
-      case KimPackage.OBSERVABLE_SEMANTICS__VALUE_MODIFIER:
-        return VALUE_MODIFIER_EDEFAULT == null ? valueModifier != null : !VALUE_MODIFIER_EDEFAULT.equals(valueModifier);
-      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_VALUE:
-        return comparisonValue != null;
-      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT:
-        return comparisonConcept != null;
-      case KimPackage.OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE:
-        return comparisonObservable != null;
+      case KimPackage.OBSERVABLE_SEMANTICS__VALUE_OPERATORS:
+        return valueOperators != null && !valueOperators.isEmpty();
       case KimPackage.OBSERVABLE_SEMANTICS__OPTIONAL:
         return optional != OPTIONAL_EDEFAULT;
       case KimPackage.OBSERVABLE_SEMANTICS__FROM:
@@ -1293,8 +922,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
     result.append(generic);
     result.append(", accordingTo: ");
     result.append(accordingTo);
-    result.append(", valueModifier: ");
-    result.append(valueModifier);
     result.append(", optional: ");
     result.append(optional);
     result.append(", name: ");

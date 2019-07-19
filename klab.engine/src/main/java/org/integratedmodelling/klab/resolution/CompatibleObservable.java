@@ -1,70 +1,70 @@
-package org.integratedmodelling.klab.resolution;
-
-import org.integratedmodelling.klab.owl.Observable;
-
-/**
- * A specialized observable that redefines its equality methods so that only one compatible
- * observable per type will be found in a set. Equality is assessed based only on the equality of
- * the observable concept, independent of any mediations, units etc (which are guaranteed compatible
- * by the semantics).
- * 
- * A set of compatible observables can be further reduced using
- * {@link Observable#canResolve(Observable)} to optimize when classifications can be encoded
- * directly instead of calling other models.
- * 
- * @author Ferd
- *
- */
-public class CompatibleObservable extends Observable {
-
-  public CompatibleObservable(Observable observable) {
-    super(observable);
-  }
-
-  @Override
-  public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((getClassifier() == null) ? 0 : getClassifier().hashCode());
-		result = prime * result + ((getDownTo() == null) ? 0 : getDownTo().hashCode());
-		result = prime * result + ((getType() == null) ? 0 : getType().hashCode());
-		return result;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		Observable other = (Observable) obj;
-		if (getClassifier() == null) {
-			if (other.getClassifier() != null) {
-				return false;
-			}
-		} else if (!getClassifier().equals(other.getClassifier())) {
-			return false;
-		}
-		if (getDownTo() == null) {
-			if (other.getDownTo() != null) {
-				return false;
-			}
-		} else if (!getDownTo().equals(other.getDownTo())) {
-			return false;
-		}
-		if (getType() == null) {
-			if (other.getType() != null) {
-				return false;
-			}
-		} else if (!getType().equals(other.getType())) {
-			return false;
-		}
-		return true;
-  }
-
-}
+//package org.integratedmodelling.klab.resolution;
+//
+//import org.integratedmodelling.klab.owl.Observable;
+//
+///**
+// * A specialized observable that redefines its equality methods so that only one compatible
+// * observable per type will be found in a set. Equality is assessed based only on the equality of
+// * the observable concept, independent of any mediations, units etc (which are guaranteed compatible
+// * by the semantics).
+// * 
+// * A set of compatible observables can be further reduced using
+// * {@link Observable#canResolve(Observable)} to optimize when classifications can be encoded
+// * directly instead of calling other models.
+// * 
+// * @author Ferd
+// *
+// */
+//public class CompatibleObservable extends Observable {
+//
+//  public CompatibleObservable(Observable observable) {
+//    super(observable);
+//  }
+//
+//  @Override
+//  public int hashCode() {
+//		final int prime = 31;
+//		int result = 1;
+////		result = prime * result + ((getClassifier() == null) ? 0 : getClassifier().hashCode());
+////		result = prime * result + ((getDownTo() == null) ? 0 : getDownTo().hashCode());
+//		result = prime * result + ((getType() == null) ? 0 : getType().hashCode());
+//		return result;
+//  }
+//
+//  @Override
+//  public boolean equals(Object obj) {
+//		if (this == obj) {
+//			return true;
+//		}
+//		if (obj == null) {
+//			return false;
+//		}
+//		if (getClass() != obj.getClass()) {
+//			return false;
+//		}
+//		Observable other = (Observable) obj;
+////		if (getClassifier() == null) {
+////			if (other.getClassifier() != null) {
+////				return false;
+////			}
+////		} else if (!getClassifier().equals(other.getClassifier())) {
+////			return false;
+////		}
+////		if (getDownTo() == null) {
+////			if (other.getDownTo() != null) {
+////				return false;
+////			}
+////		} else if (!getDownTo().equals(other.getDownTo())) {
+////			return false;
+////		}
+//		if (getType() == null) {
+//			if (other.getType() != null) {
+//				return false;
+//			}
+//		} else if (!getType().equals(other.getType())) {
+//			return false;
+//		}
+//		return true;
+//  }
+//
+//}

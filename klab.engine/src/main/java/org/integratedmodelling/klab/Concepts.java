@@ -172,12 +172,15 @@ public enum Concepts implements IConceptService {
 	public String getDisplayName(IObservable o) {
 
 		String ret = getDisplayName(o.getType());
-		if (o.getClassifier() != null) {
-			ret += "By" + getDisplayName(o.getClassifier());
-		}
-		if (o.getDownTo() != null) {
-			ret += "DownTo" + getDisplayName(o.getDownTo());
-		}
+		/**
+		 * ZIKAROGA
+		 */
+//		if (o.getClassifier() != null) {
+//			ret += "By" + getDisplayName(o.getClassifier());
+//		}
+//		if (o.getDownTo() != null) {
+//			ret += "DownTo" + getDisplayName(o.getDownTo());
+//		}
 		return ret;
 	}
 	

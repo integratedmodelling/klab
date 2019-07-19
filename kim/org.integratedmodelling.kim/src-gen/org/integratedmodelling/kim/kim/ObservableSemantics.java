@@ -20,15 +20,10 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getValue <em>Value</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#isGeneric <em>Generic</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getDeclaration <em>Declaration</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getBy <em>By</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getDownTo <em>Down To</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getAccordingTo <em>According To</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getUnit <em>Unit</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getCurrency <em>Currency</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getValueModifier <em>Value Modifier</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonValue <em>Comparison Value</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonConcept <em>Comparison Concept</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonObservable <em>Comparison Observable</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getValueOperators <em>Value Operators</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#isOptional <em>Optional</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getFrom <em>From</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getTo <em>To</em>}</li>
@@ -122,58 +117,6 @@ public interface ObservableSemantics extends EObject
   void setDeclaration(ConceptDeclaration value);
 
   /**
-   * Returns the value of the '<em><b>By</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>By</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>By</em>' containment reference.
-   * @see #setBy(ConceptDeclaration)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics_By()
-   * @model containment="true"
-   * @generated
-   */
-  ConceptDeclaration getBy();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getBy <em>By</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>By</em>' containment reference.
-   * @see #getBy()
-   * @generated
-   */
-  void setBy(ConceptDeclaration value);
-
-  /**
-   * Returns the value of the '<em><b>Down To</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Down To</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Down To</em>' containment reference.
-   * @see #setDownTo(Concept)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics_DownTo()
-   * @model containment="true"
-   * @generated
-   */
-  Concept getDownTo();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getDownTo <em>Down To</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Down To</em>' containment reference.
-   * @see #getDownTo()
-   * @generated
-   */
-  void setDownTo(Concept value);
-
-  /**
    * Returns the value of the '<em><b>According To</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
@@ -252,108 +195,20 @@ public interface ObservableSemantics extends EObject
   void setCurrency(Currency value);
 
   /**
-   * Returns the value of the '<em><b>Value Modifier</b></em>' attribute.
+   * Returns the value of the '<em><b>Value Operators</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.ValueOperator}.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Value Modifier</em>' attribute isn't clear,
+   * If the meaning of the '<em>Value Operators</em>' containment reference list isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Value Modifier</em>' attribute.
-   * @see #setValueModifier(String)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics_ValueModifier()
-   * @model
-   * @generated
-   */
-  String getValueModifier();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getValueModifier <em>Value Modifier</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Value Modifier</em>' attribute.
-   * @see #getValueModifier()
-   * @generated
-   */
-  void setValueModifier(String value);
-
-  /**
-   * Returns the value of the '<em><b>Comparison Value</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Comparison Value</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Comparison Value</em>' containment reference.
-   * @see #setComparisonValue(org.integratedmodelling.kim.kim.Number)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics_ComparisonValue()
+   * @return the value of the '<em>Value Operators</em>' containment reference list.
+   * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics_ValueOperators()
    * @model containment="true"
    * @generated
    */
-  org.integratedmodelling.kim.kim.Number getComparisonValue();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonValue <em>Comparison Value</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Comparison Value</em>' containment reference.
-   * @see #getComparisonValue()
-   * @generated
-   */
-  void setComparisonValue(org.integratedmodelling.kim.kim.Number value);
-
-  /**
-   * Returns the value of the '<em><b>Comparison Concept</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Comparison Concept</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Comparison Concept</em>' containment reference.
-   * @see #setComparisonConcept(ConceptDeclaration)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics_ComparisonConcept()
-   * @model containment="true"
-   * @generated
-   */
-  ConceptDeclaration getComparisonConcept();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonConcept <em>Comparison Concept</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Comparison Concept</em>' containment reference.
-   * @see #getComparisonConcept()
-   * @generated
-   */
-  void setComparisonConcept(ConceptDeclaration value);
-
-  /**
-   * Returns the value of the '<em><b>Comparison Observable</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Comparison Observable</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Comparison Observable</em>' containment reference.
-   * @see #setComparisonObservable(ObservableSemantics)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics_ComparisonObservable()
-   * @model containment="true"
-   * @generated
-   */
-  ObservableSemantics getComparisonObservable();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonObservable <em>Comparison Observable</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Comparison Observable</em>' containment reference.
-   * @see #getComparisonObservable()
-   * @generated
-   */
-  void setComparisonObservable(ObservableSemantics value);
+  EList<ValueOperator> getValueOperators();
 
   /**
    * Returns the value of the '<em><b>Optional</b></em>' attribute.

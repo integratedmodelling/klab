@@ -221,6 +221,16 @@ public class ResolutionScope implements IResolutionScope {
 	}
 
 	/**
+	 * Get an empty resolution scope. FOR TESTING ONLY.
+	 * @param monitor
+	 * @return
+	 */
+	public static ResolutionScope create(IMonitor monitor) {
+		return new ResolutionScope(monitor);
+	}
+	
+	
+	/**
 	 * Get a root scope with the scale of an existing subject used as a context for
 	 * the next observations.
 	 * 
@@ -233,6 +243,11 @@ public class ResolutionScope implements IResolutionScope {
 	public static ResolutionScope create(Subject observer, IMonitor monitor, Collection<String> scenarios)
 			throws KlabException {
 		return new ResolutionScope(observer, monitor, scenarios);
+	}
+	
+	private ResolutionScope(IMonitor monitor) throws KlabException {
+		this.coverage = Coverage.empty(Scale.create());
+		this.monitor = monitor;
 	}
 
 	private ResolutionScope(Subject observer, IMonitor monitor, Collection<String> scenarios) throws KlabException {
@@ -304,7 +319,7 @@ public class ResolutionScope implements IResolutionScope {
 	public final ResolutionScope empty() {
 		return new ResolutionScope(this, 0.0);
 	}
-
+	
 	public boolean isResolving(String modelName) {
 		return beingResolved.contains(modelName);
 	}

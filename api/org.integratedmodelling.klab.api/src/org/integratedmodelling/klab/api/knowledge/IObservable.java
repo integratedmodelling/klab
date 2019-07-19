@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 
 /**
@@ -276,11 +277,14 @@ public interface IObservable extends ISemantic, IResolvable {
 		Builder withUnit(IUnit unit);
 
 		Builder withCurrency(ICurrency currency);
-
-		Builder downTo(IConcept detail);
-
-		Builder by(IConcept classifier);
-
+		
+		/**
+		 * Value operators are added in the order they are received.
+		 * 
+		 * @param operator
+		 * @param valueOperand
+		 * @return
+		 */
 		Builder withValueOperator(ValueOperator operator, Object valueOperand);
 
 		/**
@@ -311,6 +315,13 @@ public interface IObservable extends ISemantic, IResolvable {
 		 * @return
 		 */
 		Builder filtering(IObservable observable);
+
+		/**
+		 * Remove any value operators
+		 * 
+		 * @return
+		 */
+		Builder withoutValueOperators();
 
 	}
 
@@ -362,22 +373,6 @@ public interface IObservable extends ISemantic, IResolvable {
 	 * @return the reference name of this observable
 	 */
 	String getReferenceName();
-
-	/**
-	 * <p>
-	 * getDownTo.
-	 * </p>
-	 *
-	 * @return the normalized 'down to' limiter concept if any was specified.
-	 * @deprecated should be subsumed in value operators
-	 */
-	IConcept getDownTo();
-
-	/**
-	 * @return the 'by' classifier concept, if any was specified.
-	 * @deprecated should be subsumed in value operators
-	 */
-	IConcept getClassifier();
 
 	/**
 	 * <p>
@@ -539,22 +534,10 @@ public interface IObservable extends ISemantic, IResolvable {
 	boolean is(Type type);
 
 	/**
-	 * If the observable has a value operator (e.g. "> 0") return it here.
+	 * Any value operators are returned here, paired with their legal operands.
 	 * 
 	 * @return
-	 * @deprecated this must become a list of <operator, operand> pairs
 	 */
-	ValueOperator getValueOperator();
-
-	/**
-	 * If the observable has a value modifier, then it will also have an operand for
-	 * it, which can be another IObservable, a IConcept, or a literal value
-	 * (currently a number only).
-	 * 
-	 * @return the operand. Will be null unless {@link #getValueOperator()} returns
-	 *         not null.
-	 * @deprecated see note for getValueOperator().
-	 */
-	Object getValueOperand();
+	List<Pair<ValueOperator, Object>> getValueOperators();
 
 }

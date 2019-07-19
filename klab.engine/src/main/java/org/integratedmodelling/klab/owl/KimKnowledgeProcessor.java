@@ -17,6 +17,7 @@ import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimConceptStatement.ApplicableConcept;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimScope;
+import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.KimConceptStatement;
 import org.integratedmodelling.kim.model.KimConceptStatement.ParentConcept;
 import org.integratedmodelling.klab.Concepts;
@@ -38,6 +39,7 @@ import org.integratedmodelling.klab.kim.KimNotifier.ErrorNotifyingMonitor;
 import org.integratedmodelling.klab.model.Annotation;
 import org.integratedmodelling.klab.model.ConceptStatement;
 import org.integratedmodelling.klab.model.Namespace;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * A singleton that handles translation of k.IM knowledge statements to internal
@@ -343,72 +345,74 @@ public enum KimKnowledgeProcessor {
 
 		ret.setReferenceName(Concepts.INSTANCE.getCodeName(main));
 
-		if (concept.getValueOperator() != null) {
+		for (Pair<ValueOperator, Object> operator : concept.getValueOperators()) {
 
-			ret.setValueOperator(concept.getValueOperator());
-			declaration += " " + concept.getValueOperator().declaration;
-			ret.setReferenceName(ret.getReferenceName() + "_" + concept.getValueOperator().textForm);
+			Object operand = null;
 
-			if (concept.getValueOperand() instanceof IKimConcept) {
+			declaration += " " + operator.getFirst().declaration;
+			ret.setReferenceName(ret.getReferenceName() + "_" + operator.getFirst().textForm);
 
-				ret.setValueOperand(declareInternal((IKimConcept) concept.getValueOperand(),
-						(Ontology) declarationOntology, monitor));
+			if (operator.getSecond() instanceof IKimConcept) {
 
-				declaration += " " + concept.getValueOperand();
+				operand = declareInternal((IKimConcept) operator.getSecond(), (Ontology) declarationOntology, monitor);
+				declaration += " " + operator.getSecond();
 				ret.setReferenceName(ret.getName() + "_"
-						+ ((IKimConcept) concept.getValueOperand()).getCodeName().replaceAll("\\-", "_"));
+						+ ((IKimConcept) operator.getSecond()).getCodeName().replaceAll("\\-", "_"));
 
-			} else if (concept.getValueOperand() instanceof IKimObservable) {
-				ret.setValueOperand(
-						declare((IKimObservable) concept.getValueOperand(), (Ontology) declarationOntology, monitor));
-
-				declaration += " (" + concept.getValueOperand() + ")";
+			} else if (operator.getSecond() instanceof IKimObservable) {
+				
+				operand = declare((IKimObservable) operator.getSecond(), (Ontology) declarationOntology, monitor);
+				declaration += " (" + operator.getSecond() + ")";
 				ret.setReferenceName(
-						ret.getReferenceName() + "_" + ((IKimObservable) concept.getValueOperand()).getFormalName());
+						ret.getReferenceName() + "_" + ((IKimObservable) operator.getSecond()).getFormalName());
 
 			} else {
 
-				ret.setValueOperand(concept.getValueOperand());
-
-				if (concept.getValueOperand() != null) {
-					declaration += " " + concept.getValueOperand();
-					ret.setReferenceName(ret.getReferenceName() + "_" + concept.getValueOperand());
+				operand = operator.getSecond();
+				if (operator.getSecond() != null) {
+					declaration += " " + operator.getSecond();
+					ret.setReferenceName(ret.getReferenceName() + "_" + operator.getSecond());
 				}
 			}
+
+			ret.getValueOperators().add(new Pair<>(operator.getFirst(), operand));
 		}
 
-		if (concept.getClassifier() != null) {
-
-			IKimConcept modifier = concept.getClassifier();
-
-			Concept by = declareInternal(modifier, (Ontology) declarationOntology, monitor);
-			declaration += " by " + by;
-
-			if (by == null) {
-				monitor.error("unknown concept in 'by' clause: " + modifier.getDefinition());
-				return null;
-			}
-
-			Concept downTo = null;
-
-			if (concept.getDownTo() != null) {
-				downTo = declareInternal(concept.getDownTo(), (Ontology) declarationOntology, monitor);
-				declaration += " down to " + by;
-			}
-
-			ret.setClassifier(by);
-			ret.setReferenceName(ret.getReferenceName() + "_by_" + modifier.getCodeName().replaceAll("\\-", "_"));
-			ret.setDownTo(downTo);
-			if (downTo != null) {
-				ret.setReferenceName(ret.getReferenceName() + "_down_to_" + concept.getDownTo().getCodeName().replaceAll("\\-", "_"));
-			}
-		}
+		// if (concept.getClassifier() != null) {
+		//
+		// IKimConcept modifier = concept.getClassifier();
+		//
+		// Concept by = declareInternal(modifier, (Ontology) declarationOntology,
+		// monitor);
+		// declaration += " by " + by;
+		//
+		// if (by == null) {
+		// monitor.error("unknown concept in 'by' clause: " + modifier.getDefinition());
+		// return null;
+		// }
+		//
+		// Concept downTo = null;
+		//
+		// if (concept.getDownTo() != null) {
+		// downTo = declareInternal(concept.getDownTo(), (Ontology) declarationOntology,
+		// monitor);
+		// declaration += " down to " + by;
+		// }
+		//
+		// ret.setClassifier(by);
+		// ret.setReferenceName(ret.getReferenceName() + "_by_" +
+		// modifier.getCodeName().replaceAll("\\-", "_"));
+		// ret.setDownTo(downTo);
+		// if (downTo != null) {
+		// ret.setReferenceName(ret.getReferenceName() + "_down_to_" +
+		// concept.getDownTo().getCodeName().replaceAll("\\-", "_"));
+		// }
+		// }
 
 		ret.setDeclaration(declaration);
 
 		ret.setName(concept.getFormalName() == null ? ret.getReferenceName() : concept.getFormalName());
-		
-		
+
 		if (Units.INSTANCE.needsUnits(ret) && ret.getUnit() == null) {
 			ret.setFluidUnits(true);
 		}

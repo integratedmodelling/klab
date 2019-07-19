@@ -45,7 +45,6 @@ public class KimFormatter extends AbstractFormatter2 {
   
   protected void _format(final ObservableSemantics observableSemantics, @Extension final IFormattableDocument document) {
     document.<ConceptDeclaration>format(observableSemantics.getDeclaration());
-    document.<ConceptDeclaration>format(observableSemantics.getBy());
     document.<Unit>format(observableSemantics.getUnit());
     document.<Currency>format(observableSemantics.getCurrency());
     document.<org.integratedmodelling.kim.kim.Number>format(observableSemantics.getFrom());

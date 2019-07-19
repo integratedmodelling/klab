@@ -64,6 +64,7 @@ import org.integratedmodelling.kim.kim.UpperOntologyDefinition;
 import org.integratedmodelling.kim.kim.Urn;
 import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.kim.ValueAssignment;
+import org.integratedmodelling.kim.kim.ValueOperator;
 
 /**
  * <!-- begin-user-doc -->
@@ -252,6 +253,11 @@ public class KimAdapterFactory extends AdapterFactoryImpl
       public Adapter caseObservableSemantics(ObservableSemantics object)
       {
         return createObservableSemanticsAdapter();
+      }
+      @Override
+      public Adapter caseValueOperator(ValueOperator object)
+      {
+        return createValueOperatorAdapter();
       }
       @Override
       public Adapter caseDependency(Dependency object)
@@ -786,6 +792,21 @@ public class KimAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createObservableSemanticsAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.ValueOperator <em>Value Operator</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.ValueOperator
+   * @generated
+   */
+  public Adapter createValueOperatorAdapter()
   {
     return null;
   }

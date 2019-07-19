@@ -66,12 +66,6 @@ ModelBodyStatement:
 		 ('metadata' metadata=Metadata)? 
 ;
 
-//AttributeIdentifier:
-//	name=(LOWERCASE_ID|UPPERCASE_ID) |
-//	function=Function |
-//	expression=EXPR
-//;
-
 Classification:
 	classifiers+=Classifier (=> ',' classifiers+=Classifier)*;
 
@@ -211,7 +205,7 @@ MODEL_TYPE:
 	'boolean' 
 ;
 
-VALUE_MODIFIER:
+VALUE_OPERATOR:
 	'>'  |
 	'>=' |
 	'<='|
@@ -224,7 +218,8 @@ VALUE_MODIFIER:
 	'plus'|
 	'minus'|
 	'times'|
-	'over'
+	'over' |
+	'by' 
 ;
 
 /*
@@ -250,7 +245,6 @@ Namespace:
 	)
 	('parameters' parameters=Metadata)? 
 	('metadata' metadata=Metadata)? 
-//	('documentation' documentation=Metadata)? 
 	';';	
 
 OwlImport:
@@ -305,7 +299,6 @@ ObserveStatementBody:
 		(actions+=ActionSpecification*) &
 		('using' (accessor=Function)?)? &
 		('metadata' metadata=Metadata)? 
-//		('documentation' documentation=Metadata)? 
 ;
 
 
@@ -319,20 +312,23 @@ ObservableSemantics:
 	(generic?='any')?
 	declaration=ConceptDeclaration
 	(
-		('by' by=ConceptDeclaration)? &
-		('down' 'to' downTo=Concept)? &
 		('according' 'to' accordingTo=PropertyId)? &
 		(
 			('in' (unit=Unit | currency=Currency)) |
 			('per' unit=Unit)
 		)? &
-		(valueModifier=VALUE_MODIFIER
-			(comparisonValue=Number | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')'))
-		)? &
+		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
 		(optional?='optional' | 'required')? &
 		(from=Number 'to' to=Number)? &
 		('named' name=(LOWERCASE_ID|STRING))?
 	);
+
+
+ValueOperator:
+	(modifier=VALUE_OPERATOR | downTo='down' 'to') 
+		(comparisonValue=Number | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')')) |
+	total='total'
+;
 
 /** 
  * Same as full observablesemantics above but with annotations and without 'as' (using 
@@ -344,17 +340,12 @@ AnnotatedObservableSemantics returns ObservableSemantics:
 	(generic?='any')?
 	declaration=ConceptDeclaration
 	(
-		('by' by=ConceptDeclaration)? &
-		('down' 'to' downTo=Concept)? &
-//		('as' role=Concept)? &
 		('according' 'to' accordingTo=PropertyId)? &
 		(
 			('in' (unit=Unit | currency=Currency)) |
 			('per' unit=Unit)
 		)? &
-		(valueModifier=VALUE_MODIFIER
-			(comparisonValue=Number | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')'))
-		)? &
+		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
 		(optional?='optional' | 'required')? &
 		(from=Number 'to' to=Number)? &
 		('named' name=(LOWERCASE_ID|STRING))?
@@ -871,17 +862,13 @@ SimpleObservableSemantics returns ObservableSemantics:
 	
 	declaration=ConceptDeclaration
 	(
-		('by' by=ConceptDeclaration)? &
-		('down' 'to' downTo=Concept)? &
 		('according' 'to' accordingTo=PropertyId)? &
 		(
 			('in' (unit=Unit | currency=Currency)) |
 			('per' unit=Unit)
 		)? &
 		(from=Number 'to' to=Number)? &
-		(valueModifier=VALUE_MODIFIER
-			(comparisonValue=Number | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')'))
-		)? &
+		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
 		(optional?='optional' | 'required')? &
 		('named' name=(LOWERCASE_ID|STRING))?
 	);
@@ -895,17 +882,13 @@ DependencyObservableSemantics returns ObservableSemantics:
 	(generic?='any')?
 	declaration=ConceptDeclaration
 	(
-		('by' by=ConceptDeclaration)? &
-		('down' 'to' downTo=Concept)? &
 		('according' 'to' accordingTo=PropertyId)? &
 		(
 			('in' (unit=Unit | currency=Currency)) |
 			('per' unit=Unit)
 		)? &
 		(from=Number 'to' to=Number)? &
-		(valueModifier=VALUE_MODIFIER
-			(comparisonValue=Number | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')'))
-		)? &
+		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
 		(optional?='optional' | 'required')? &
 		('named' name=(LOWERCASE_ID|STRING))?
 	);
@@ -920,17 +903,13 @@ AlternativeDependencyObservableSemantics returns ObservableSemantics:
 	(generic?='any')?
 	declaration=ConceptDeclaration
 	(
-		('by' by=ConceptDeclaration)? &
-		('down' 'to' downTo=Concept)? &
 		('according' 'to' accordingTo=PropertyId)? &
 		(
 			('in' (unit=Unit | currency=Currency)) |
 			('per' unit=Unit)
 		)? &
 		(from=Number 'to' to=Number)? &
-		(valueModifier=VALUE_MODIFIER
-			(comparisonValue=Number | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')'))
-		)?
+		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)?
 	)
 	('if' condition=EXPR)?;
 	

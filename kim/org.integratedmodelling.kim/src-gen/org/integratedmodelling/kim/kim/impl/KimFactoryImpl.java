@@ -69,6 +69,7 @@ import org.integratedmodelling.kim.kim.UpperOntologyDefinition;
 import org.integratedmodelling.kim.kim.Urn;
 import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.kim.ValueAssignment;
+import org.integratedmodelling.kim.kim.ValueOperator;
 
 /**
  * <!-- begin-user-doc -->
@@ -147,6 +148,7 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
       case KimPackage.OBSERVE_STATEMENT: return createObserveStatement();
       case KimPackage.OBSERVE_STATEMENT_BODY: return createObserveStatementBody();
       case KimPackage.OBSERVABLE_SEMANTICS: return createObservableSemantics();
+      case KimPackage.VALUE_OPERATOR: return createValueOperator();
       case KimPackage.DEPENDENCY: return createDependency();
       case KimPackage.CONCEPT_DECLARATION: return createConceptDeclaration();
       case KimPackage.CONCEPT_REFERENCE: return createConceptReference();
@@ -491,6 +493,17 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
   {
     ObservableSemanticsImpl observableSemantics = new ObservableSemanticsImpl();
     return observableSemantics;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ValueOperator createValueOperator()
+  {
+    ValueOperatorImpl valueOperator = new ValueOperatorImpl();
+    return valueOperator;
   }
 
   /**

@@ -24,7 +24,6 @@ void 'compatible'
 	class org.integratedmodelling.klab.clitool.console.commands.model.Compatible
 }
 
-
 void 'coverage'
 	"List the coverage of either a model or all the models that resolve a concept."
 {
@@ -40,4 +39,10 @@ void 'info'
 	"Print detailed information about a model and its observables."
 {
 	class org.integratedmodelling.klab.clitool.console.commands.model.Info
+}
+
+void 'compute'
+	"Compute all observation strategies for the passed observable and print them."
+{
+	class org.integratedmodelling.klab.clitool.console.commands.model.Compute
 }

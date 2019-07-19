@@ -62,6 +62,7 @@ import org.integratedmodelling.kim.kim.UpperOntologyDefinition;
 import org.integratedmodelling.kim.kim.Urn;
 import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.kim.ValueAssignment;
+import org.integratedmodelling.kim.kim.ValueOperator;
 
 /**
  * <!-- begin-user-doc -->
@@ -298,6 +299,13 @@ public class KimSwitch<T> extends Switch<T>
       {
         ObservableSemantics observableSemantics = (ObservableSemantics)theEObject;
         T result = caseObservableSemantics(observableSemantics);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.VALUE_OPERATOR:
+      {
+        ValueOperator valueOperator = (ValueOperator)theEObject;
+        T result = caseValueOperator(valueOperator);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -898,6 +906,22 @@ public class KimSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseObservableSemantics(ObservableSemantics object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Value Operator</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Value Operator</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseValueOperator(ValueOperator object)
   {
     return null;
   }

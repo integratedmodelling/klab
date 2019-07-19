@@ -67,6 +67,7 @@ import org.integratedmodelling.kim.kim.UpperOntologyDefinition;
 import org.integratedmodelling.kim.kim.Urn;
 import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.kim.ValueAssignment;
+import org.integratedmodelling.kim.kim.ValueOperator;
 
 /**
  * <!-- begin-user-doc -->
@@ -250,6 +251,13 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   private EClass observableSemanticsEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass valueOperatorEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -2229,29 +2237,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getObservableSemantics_By()
-  {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(3);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getObservableSemantics_DownTo()
-  {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(4);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EAttribute getObservableSemantics_AccordingTo()
   {
-    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(5);
+    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -2261,7 +2249,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getObservableSemantics_Unit()
   {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(6);
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -2271,7 +2259,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getObservableSemantics_Currency()
   {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(7);
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -2279,39 +2267,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getObservableSemantics_ValueModifier()
+  public EReference getObservableSemantics_ValueOperators()
   {
-    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(8);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getObservableSemantics_ComparisonValue()
-  {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(9);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getObservableSemantics_ComparisonConcept()
-  {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(10);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getObservableSemantics_ComparisonObservable()
-  {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(11);
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(6);
   }
 
   /**
@@ -2321,7 +2279,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getObservableSemantics_Optional()
   {
-    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(12);
+    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -2331,7 +2289,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getObservableSemantics_From()
   {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(13);
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(8);
   }
 
   /**
@@ -2341,7 +2299,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getObservableSemantics_To()
   {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(14);
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -2351,7 +2309,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getObservableSemantics_Name()
   {
-    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(15);
+    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(10);
   }
 
   /**
@@ -2361,7 +2319,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EReference getObservableSemantics_Annotations()
   {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(16);
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(11);
   }
 
   /**
@@ -2371,7 +2329,77 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    */
   public EAttribute getObservableSemantics_Condition()
   {
-    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(17);
+    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(12);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getValueOperator()
+  {
+    return valueOperatorEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getValueOperator_Modifier()
+  {
+    return (EAttribute)valueOperatorEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getValueOperator_DownTo()
+  {
+    return (EAttribute)valueOperatorEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getValueOperator_ComparisonValue()
+  {
+    return (EReference)valueOperatorEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getValueOperator_ComparisonConcept()
+  {
+    return (EReference)valueOperatorEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getValueOperator_ComparisonObservable()
+  {
+    return (EReference)valueOperatorEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getValueOperator_Total()
+  {
+    return (EAttribute)valueOperatorEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -4858,21 +4886,24 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__VALUE);
     createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__GENERIC);
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__DECLARATION);
-    createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__BY);
-    createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__DOWN_TO);
     createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__ACCORDING_TO);
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__UNIT);
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__CURRENCY);
-    createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__VALUE_MODIFIER);
-    createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__COMPARISON_VALUE);
-    createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT);
-    createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE);
+    createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__VALUE_OPERATORS);
     createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__OPTIONAL);
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__FROM);
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__TO);
     createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__NAME);
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__ANNOTATIONS);
     createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__CONDITION);
+
+    valueOperatorEClass = createEClass(VALUE_OPERATOR);
+    createEAttribute(valueOperatorEClass, VALUE_OPERATOR__MODIFIER);
+    createEAttribute(valueOperatorEClass, VALUE_OPERATOR__DOWN_TO);
+    createEReference(valueOperatorEClass, VALUE_OPERATOR__COMPARISON_VALUE);
+    createEReference(valueOperatorEClass, VALUE_OPERATOR__COMPARISON_CONCEPT);
+    createEReference(valueOperatorEClass, VALUE_OPERATOR__COMPARISON_OBSERVABLE);
+    createEAttribute(valueOperatorEClass, VALUE_OPERATOR__TOTAL);
 
     dependencyEClass = createEClass(DEPENDENCY);
     createEReference(dependencyEClass, DEPENDENCY__ANNOTATIONS);
@@ -5357,21 +5388,24 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getObservableSemantics_Value(), this.getValue(), null, "value", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getObservableSemantics_Generic(), ecorePackage.getEBoolean(), "generic", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObservableSemantics_Declaration(), this.getConceptDeclaration(), null, "declaration", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getObservableSemantics_By(), this.getConceptDeclaration(), null, "by", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getObservableSemantics_DownTo(), this.getConcept(), null, "downTo", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getObservableSemantics_AccordingTo(), ecorePackage.getEString(), "accordingTo", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObservableSemantics_Unit(), this.getUnit(), null, "unit", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObservableSemantics_Currency(), this.getCurrency(), null, "currency", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getObservableSemantics_ValueModifier(), ecorePackage.getEString(), "valueModifier", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getObservableSemantics_ComparisonValue(), this.getNumber(), null, "comparisonValue", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getObservableSemantics_ComparisonConcept(), this.getConceptDeclaration(), null, "comparisonConcept", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getObservableSemantics_ComparisonObservable(), this.getObservableSemantics(), null, "comparisonObservable", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getObservableSemantics_ValueOperators(), this.getValueOperator(), null, "valueOperators", null, 0, -1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getObservableSemantics_Optional(), ecorePackage.getEBoolean(), "optional", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObservableSemantics_From(), this.getNumber(), null, "from", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObservableSemantics_To(), this.getNumber(), null, "to", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getObservableSemantics_Name(), ecorePackage.getEString(), "name", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObservableSemantics_Annotations(), this.getAnnotation(), null, "annotations", null, 0, -1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getObservableSemantics_Condition(), ecorePackage.getEString(), "condition", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(valueOperatorEClass, ValueOperator.class, "ValueOperator", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getValueOperator_Modifier(), ecorePackage.getEString(), "modifier", null, 0, 1, ValueOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getValueOperator_DownTo(), ecorePackage.getEString(), "downTo", null, 0, 1, ValueOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getValueOperator_ComparisonValue(), this.getNumber(), null, "comparisonValue", null, 0, 1, ValueOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getValueOperator_ComparisonConcept(), this.getConceptDeclaration(), null, "comparisonConcept", null, 0, 1, ValueOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getValueOperator_ComparisonObservable(), this.getObservableSemantics(), null, "comparisonObservable", null, 0, 1, ValueOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getValueOperator_Total(), ecorePackage.getEString(), "total", null, 0, 1, ValueOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(dependencyEClass, Dependency.class, "Dependency", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getDependency_Annotations(), this.getAnnotation(), null, "annotations", null, 0, -1, Dependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

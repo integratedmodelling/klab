@@ -71,8 +71,7 @@ public class MapClassifier {
 
 			if (s.getDataKey() != null) {
 				this.discretization = s.getDataKey();
-			} else if (s.getObservable().getArtifactType() == IArtifact.Type.NUMBER
-					&& s.getObservable().getClassifier() == null) {
+			} else if (s.getObservable().getArtifactType() == IArtifact.Type.NUMBER) {
 				this.discretization = Observations.INSTANCE.discretize(s, locator, maxBinsPerState);
 			} else {
 				// I guess boolean is left

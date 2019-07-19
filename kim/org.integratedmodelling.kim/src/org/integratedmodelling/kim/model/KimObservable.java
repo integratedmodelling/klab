@@ -1,12 +1,14 @@
 package org.integratedmodelling.kim.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimStatement;
-import org.integratedmodelling.kim.api.Modifier;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.kim.Annotation;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
@@ -14,6 +16,7 @@ import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 import org.integratedmodelling.kim.validation.KimValidator;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.utils.CamelCase;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 
 public class KimObservable extends KimStatement implements IKimObservable {
@@ -38,13 +41,10 @@ public class KimObservable extends KimStatement implements IKimObservable {
 	private boolean abstractObservable;
 	private boolean hasAttribute;
 	private boolean optional;
-	private IKimConcept classifier = null;
-	private IKimConcept downTo = null;
+	private List<Pair<ValueOperator, Object>> valueOperators = new ArrayList<>();
 	private String modelReference;
 	private IArtifact.Type nonSemanticType = null;
-	private ValueOperator valueOperator;
-	private Object valueOperand;
-	
+
 	@Override
 	public IArtifact.Type getNonSemanticType() {
 		return nonSemanticType;
@@ -57,24 +57,6 @@ public class KimObservable extends KimStatement implements IKimObservable {
 
 	public void setAbstractObservable(boolean abstractObservable) {
 		this.abstractObservable = abstractObservable;
-	}
-
-	@Override
-	public IKimConcept getClassifier() {
-		return classifier;
-	}
-
-	public void setClassifier(IKimConcept by) {
-		this.classifier = by;
-	}
-
-	@Override
-	public IKimConcept getDownTo() {
-		return downTo;
-	}
-
-	public void setDownTo(IKimConcept downTo) {
-		this.downTo = downTo;
 	}
 
 	public void setMain(IKimConcept main) {
@@ -117,18 +99,26 @@ public class KimObservable extends KimStatement implements IKimObservable {
 				ret.hasAttribute = true;
 			}
 		}
-		
-		if (declaration.getValueModifier() != null) {
-			ret.valueOperator = ValueOperator.getOperator(declaration.getValueModifier());
-			if (declaration.getComparisonConcept() != null) {
-				ret.valueOperand = Kim.INSTANCE.declareConcept(declaration.getComparisonConcept());
-			} else if (declaration.getComparisonObservable() != null) {
-				ret.valueOperand = Kim.INSTANCE.declareObservable(declaration.getComparisonObservable());
-			} else if (declaration.getComparisonValue() != null) {
-				ret.valueOperand = Kim.INSTANCE.parseNumber(declaration.getComparisonValue());
-			}
-		}
 
+		for (org.integratedmodelling.kim.kim.ValueOperator modifier : declaration.getValueOperators()) {
+
+			String op = modifier.getModifier() == null ? (modifier.getTotal() == null ? "down_to" : "total")
+					: modifier.getModifier();
+			
+			ValueOperator operator = ValueOperator.getOperator(op);
+			Object operand = null;
+
+			if (modifier.getComparisonConcept() != null) {
+				operand = Kim.INSTANCE.declareConcept(modifier.getComparisonConcept());
+			} else if (modifier.getComparisonObservable() != null) {
+				operand = Kim.INSTANCE.declareObservable(modifier.getComparisonObservable());
+			} else if (modifier.getComparisonValue() != null) {
+				operand = Kim.INSTANCE.parseNumber(modifier.getComparisonValue());
+			}
+
+			ret.valueOperators.add(new Pair<>(operator, operand));
+		}
+		
 		// TODO save units and ranges
 		if (declaration.getUnit() != null) {
 			ICompositeNode node = NodeModelUtils.getNode(declaration.getUnit());
@@ -146,14 +136,6 @@ public class KimObservable extends KimStatement implements IKimObservable {
 				to = Kim.INSTANCE.parseNumber(declaration.getTo()).doubleValue();
 			}
 			ret.range = new Range(from, to, false, false);
-		}
-
-		if (declaration.getBy() != null) {
-			ret.classifier = KimConcept.normalize(declaration.getBy(), parent, false);
-		}
-
-		if (declaration.getDownTo() != null) {
-			ret.downTo = KimConcept.normalize(declaration.getDownTo(), parent, false);
 		}
 
 		return ret;
@@ -285,22 +267,10 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		if (main != null) {
 			main.visit(visitor);
 		}
-		if (classifier != null) {
-			classifier.visit(visitor);
-		}
-		if (downTo != null) {
-			downTo.visit(visitor);
-		}
+		/**
+		 * ZIKAROGA
+		 */
 	}
-
-//	@Override
-//	public IKimConcept getAggregator() {
-//		return aggregator;
-//	}
-//
-//	public void setAggregator(IKimConcept aggregator) {
-//		this.aggregator = aggregator;
-//	}
 
 	public String validateValue() {
 
@@ -312,13 +282,13 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		if (main.is(Type.COUNTABLE)) {
 			return "A countable observable cannot have pre-defined values: only qualities and traits can";
 		}
-		if (value instanceof Number && !main.is(Type.QUANTIFIABLE) /*|| classifier != null*/) {
+		if (value instanceof Number && !main.is(Type.QUANTIFIABLE) /* || classifier != null */) {
 			return value + " is not an acceptable value for this observable";
 		}
 		if (value instanceof String) {
 			return "A string is not an acceptable value for any observable";
 		}
-		if (value instanceof IKimConcept && !(main.is(Type.CLASS) || main.is(Type.TRAIT) /*|| classifier != null*/)) {
+		if (value instanceof IKimConcept && !(main.is(Type.CLASS) || main.is(Type.TRAIT) /* || classifier != null */)) {
 			return "A concept is not an acceptable value for this observable";
 		}
 		if (value instanceof IKimConcept && !main.is(((IKimConcept) value).getFundamentalType())) {
@@ -334,23 +304,17 @@ public class KimObservable extends KimStatement implements IKimObservable {
 			return "undefined";
 		}
 		String ret = main.getCodeName();
-		if (classifier != null) {
-			ret = ret + "-by-" + classifier.getCodeName();
-		}
-		if (downTo != null) {
-			ret = ret + "-to-" + downTo.getCodeName();
-		}
-		return ret; // CamelCase.toLowerCase(new
-					// SemanticType(main.getObservable().getName()).getName(), '-');
+		/**
+		 * ZIKAROGA
+		 */
+		/*
+		 * TODO add args of all value operators
+		 */
+		return ret;
 	}
 
 	@Override
-	public ValueOperator getValueOperator() {
-		return valueOperator;
-	}
-
-	@Override
-	public Object getValueOperand() {
-		return valueOperand;
+	public List<Pair<ValueOperator, Object>> getValueOperators() {
+		return valueOperators;
 	}
 }

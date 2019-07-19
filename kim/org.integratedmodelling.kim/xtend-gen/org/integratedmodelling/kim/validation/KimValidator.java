@@ -1161,25 +1161,9 @@ public class KimValidator extends AbstractKimValidator {
             KimPackage.OBSERVABLE_SEMANTICS__CURRENCY);
         }
       }
-      ConceptDeclaration _by = semantics.getBy();
-      boolean _tripleNotEquals_2 = (_by != null);
-      if (_tripleNotEquals_2) {
-        boolean _is = declaration.is(IKimConcept.Type.QUALITY);
-        boolean _not = (!_is);
-        if (_not) {
-          this.error("Classifiers and aggregators can only be specified for qualities", semantics.getFrom(), null, 
-            KimPackage.OBSERVABLE_SEMANTICS__BY);
-        }
-        KimConcept by = KimConcept.normalize(semantics.getBy(), declaration, true);
-        if ((((!by.is(IKimConcept.Type.TRAIT)) && (!by.is(IKimConcept.Type.CLASS))) && (!by.is(IKimConcept.Type.COUNTABLE)))) {
-          this.error(
-            "Concepts after \'by\' can only be orderings (discretization), traits (partial aggregation) or countables (object aggregation)", 
-            semantics.getFrom(), null, KimPackage.OBSERVABLE_SEMANTICS__BY);
-        }
-      }
       org.integratedmodelling.kim.kim.Number _from = semantics.getFrom();
-      boolean _tripleNotEquals_3 = (_from != null);
-      if (_tripleNotEquals_3) {
+      boolean _tripleNotEquals_2 = (_from != null);
+      if (_tripleNotEquals_2) {
         if ((((declaration.is(IKimConcept.Type.PROPORTION) || declaration.is(IKimConcept.Type.PROBABILITY)) || declaration.is(IKimConcept.Type.ANGLE)) || 
           declaration.is(IKimConcept.Type.OCCURRENCE))) {
           this.error("Numeric range can not be specified for proportions, percentages, probabilities and angles", 

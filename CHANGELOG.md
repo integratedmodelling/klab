@@ -27,6 +27,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- In observable declaration, 'by' and 'down to' are now merged with all the other
+  value operators and treated consistently.
+- Overhauled the ObservableReasoner strategy builder into a new ObservationStrategy
+  class and inference engine; add 'model compute' command to test the inferences
+  from any observable.
 - Finally made it illegal to have lone traits as observables or dependencies, in 
   preparation for attribute instantiators and resolvers. Error messages suggest
   use of 'type of' to contextualize traits.

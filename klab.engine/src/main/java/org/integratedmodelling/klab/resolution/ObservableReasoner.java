@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -38,7 +39,7 @@ import org.integratedmodelling.klab.utils.Pair;
  * account roles, abstract status, relationship endpoints etc.
  * 
  * @author ferdinando.villa
- *
+ * @deprecated use {@link ObservationStrategy}
  */
 public class ObservableReasoner implements Iterable<CandidateObservable> {
 
@@ -143,18 +144,18 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 		}
 	}
 
-	/**
-	 * Same as {@link #ObservableReasoner(Observable, ResolutionScope)} when the
-	 * scope is not available.
-	 * 
-	 * @param original
-	 * @param mode
-	 */
-	public ObservableReasoner(Observable original, Mode mode, ResolutionScope scope) {
-		this.mode = mode;
-		this.scope = scope;
-		this.alternatives.add(getDefaultCandidate(original, mode));
-	}
+//	/**
+//	 * Same as {@link #ObservableReasoner(Observable, ResolutionScope)} when the
+//	 * scope is not available.
+//	 * 
+//	 * @param original
+//	 * @param mode
+//	 */
+//	public ObservableReasoner(Observable original, Mode mode, ResolutionScope scope) {
+//		this.mode = mode;
+//		this.scope = scope;
+//		this.alternatives.add(getDefaultCandidate(original, mode));
+//	}
 
 	/**
 	 * Use to compute all the alternative observables that can resolve an original
@@ -177,26 +178,26 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 		Observable observable = original;
 		boolean changed = false;
 
-		/*
-		 * If we have an operator, our original observer will need to be observed
-		 * without it as a dependency.
-		 */
-		if (original.getClassifier() != null) {
-			/*
-			 * if we have an aggregator, give up the direct observation straight away and
-			 * separate the two as before. This can coexist with operators; if so, we handle
-			 * each one at a time.
-			 */
-			observable = (Observable) original.getBuilder(scope.getMonitor()).by(null).buildObservable();
-			changed = true;
-
-		} else if (original.getValueOperator() != null) {
-
-			observable = (Observable) original.getBuilder(scope.getMonitor()).withValueOperator(null, null)
-					.buildObservable();
-			changed = true;
-
-		}
+//		/*
+//		 * If we have an operator, our original observer will need to be observed
+//		 * without it as a dependency.
+//		 */
+//		if (original.getClassifier() != null) {
+//			/*
+//			 * if we have an aggregator, give up the direct observation straight away and
+//			 * separate the two as before. This can coexist with operators; if so, we handle
+//			 * each one at a time.
+//			 */
+//			observable = (Observable) original.getBuilder(scope.getMonitor()).by(null).buildObservable();
+//			changed = true;
+//
+//		} else if (original.getValueOperator() != null) {
+//
+//			observable = (Observable) original.getBuilder(scope.getMonitor()).withValueOperator(null, null)
+//					.buildObservable();
+//			changed = true;
+//
+//		}
 
 		if (changed && observable.getName().equals(original.getName())) {
 			observable.setName(observable.getName() + "_raw");
@@ -259,7 +260,10 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 	 */
 	private void computeTransformations(Observable observable, CandidateObservable candidate) {
 
-		if (observable.getClassifier() != null) {
+		IConcept classifier = null;
+		ValueOperator operator = null;
+		Object operand = null;
+		if (classifier != null) {
 
 			// candidate.observables[0] is already stripped of the classifier
 
@@ -270,10 +274,10 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 
 			Observable aggregatorObservable = null;
 			boolean addAggregator = model == null
-					|| (aggregatorObservable = (Observable) model.findDependency(observable.getClassifier())) == null;
+					|| (aggregatorObservable = (Observable) model.findDependency(classifier)) == null;
 
 			if (aggregatorObservable == null) {
-				aggregatorObservable = Observable.promote(observable.getClassifier());
+				aggregatorObservable = Observable.promote(classifier);
 			}
 
 			if (addAggregator) {
@@ -285,12 +289,12 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 
 			if (computation == null) {
 				throw new KlabUnimplementedException("the runtime system does not support classification of "
-						+ candidate.observables.get(0).getType() + " by " + observable.getClassifier());
+						+ candidate.observables.get(0).getType() + " by " + classifier);
 			}
 
 			candidate.addComputation(computation);
 
-		} else if (observable.getValueOperator() != null) {
+		} else if (operator != null) {
 
 			// candidate.observables[0] is already stripped of the operator
 
@@ -303,9 +307,9 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 			 * add dependencies if the operand is an observable, which happens when we have
 			 * a 'where' clause.
 			 */
-			if (observable.getValueOperand() instanceof IObservable) {
-				if (model == null || model.findDependency(((IObservable) observable.getValueOperand())) == null) {
-					candidate.observables.add((Observable) observable.getValueOperand());
+			if (operand instanceof IObservable) {
+				if (model == null || model.findDependency(((IObservable) operand)) == null) {
+					candidate.observables.add((Observable) operand);
 				}
 			}
 
@@ -313,11 +317,11 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 			 * add the computation
 			 */
 			IComputableResource computation = Klab.INSTANCE.getRuntimeProvider().getOperatorResolver(
-					candidate.observables.get(0), observable.getValueOperator(), observable.getValueOperand());
+					candidate.observables.get(0), operator, operand);
 
 			if (computation == null) {
 				throw new KlabUnimplementedException("the runtime system does not support using operator "
-						+ observable.getValueOperator() + " on " + candidate.observables.get(0).getType());
+						+ operator + " on " + candidate.observables.get(0).getType());
 			}
 
 			candidate.addComputation(computation);
@@ -352,8 +356,9 @@ public class ObservableReasoner implements Iterable<CandidateObservable> {
 
 		List<CandidateObservable> ret = new ArrayList<>();
 
-		if (observable.getClassifier() != null) {
-			observable = (Observable) observable.getBuilder(scope.getMonitor()).by(null).buildObservable();
+		IConcept classifier = null;
+		if (classifier != null) {
+			observable = (Observable) observable.getBuilder(scope.getMonitor())/*.by(null).*/.buildObservable();
 		}
 
 		CandidateObservable candidate = null;

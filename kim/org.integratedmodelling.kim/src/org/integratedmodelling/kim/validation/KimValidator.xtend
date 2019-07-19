@@ -880,19 +880,19 @@ class KimValidator extends AbstractKimValidator {
 				}
 			}
 
-			if (semantics.by !== null) {
-				if (!declaration.is(Type.QUALITY)) {
-					error("Classifiers and aggregators can only be specified for qualities", semantics.from, null,
-						KimPackage.OBSERVABLE_SEMANTICS__BY)
-				}
-				// FIXME makes no sense that this one is the only pre-normalized concept - leave it as declaration
-				var by = KimConcept.normalize(semantics.getBy(), declaration, true)
-				if (!by.is(Type.TRAIT) && !by.is(Type.CLASS) && !by.is(Type.COUNTABLE)) {
-					error(
-						"Concepts after 'by' can only be orderings (discretization), traits (partial aggregation) or countables (object aggregation)",
-						semantics.from, null, KimPackage.OBSERVABLE_SEMANTICS__BY)
-				}
-			}
+//			if (semantics.by !== null) {
+//				if (!declaration.is(Type.QUALITY)) {
+//					error("Classifiers and aggregators can only be specified for qualities", semantics.from, null,
+//						KimPackage.OBSERVABLE_SEMANTICS__BY)
+//				}
+//				// FIXME makes no sense that this one is the only pre-normalized concept - leave it as declaration
+//				var by = KimConcept.normalize(semantics.getBy(), declaration, true)
+//				if (!by.is(Type.TRAIT) && !by.is(Type.CLASS) && !by.is(Type.COUNTABLE)) {
+//					error(
+//						"Concepts after 'by' can only be orderings (discretization), traits (partial aggregation) or countables (object aggregation)",
+//						semantics.from, null, KimPackage.OBSERVABLE_SEMANTICS__BY)
+//				}
+//			}
 
 			/*
 			 * Range is only allowed for numeric qualities where it's not already implicit

@@ -250,6 +250,15 @@ public interface KimFactory extends EFactory
   ObservableSemantics createObservableSemantics();
 
   /**
+   * Returns a new object of class '<em>Value Operator</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Value Operator</em>'.
+   * @generated
+   */
+  ValueOperator createValueOperator();
+
+  /**
    * Returns a new object of class '<em>Dependency</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

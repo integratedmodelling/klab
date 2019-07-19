@@ -130,6 +130,11 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 	public void visit(Visitor visitor) {
 		// TODO must visit concept declarations in maps
 	}
+	
+	@Override
+	public String toString() {
+		return getSourceCode();
+	}
 
 	private String getStringValue(Object val) {
 

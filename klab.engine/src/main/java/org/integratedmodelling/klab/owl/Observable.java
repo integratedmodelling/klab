@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.owl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -56,16 +57,17 @@ public class Observable implements IObservable {
 	private Range range;
 	private Unit unit;
 	private Currency currency;
-	private Concept classifier;
-	private Concept downTo;
+	// private Concept classifier;
+	// private Concept downTo;
 	private Object value;
 	private ObservationType observationType;
 	private boolean optional;
 	private boolean generic;
 	private String observerId;
 	private IDirectObservation observer;
-	private ValueOperator valueOperator;
-	private Object valueOperand;
+	private List<Pair<ValueOperator, Object>> valueOperators = new ArrayList<>();
+	// private ValueOperator valueOperator;
+	// private Object valueOperand;
 	private boolean fluidUnits;
 
 	/**
@@ -133,15 +135,15 @@ public class Observable implements IObservable {
 		this.range = observable.range;
 		this.unit = observable.unit;
 		this.currency = observable.currency;
-		this.classifier = observable.classifier;
-		this.downTo = observable.downTo;
+		// this.classifier = observable.classifier;
+		// this.downTo = observable.downTo;
 		this.value = observable.value;
 		this.observationType = observable.observationType;
 		this.optional = observable.optional;
 		this.generic = observable.generic;
 		this.annotations.addAll(observable.getAnnotations());
-		this.valueOperand = observable.valueOperand;
-		this.valueOperator = observable.valueOperator;
+		// this.valueOperand = observable.valueOperand;
+		this.valueOperators.addAll(observable.valueOperators);
 		this.fluidUnits = observable.fluidUnits;
 		this.originatingModelId = observable.originatingModelId;
 		this.filteredObservable = observable.filteredObservable;
@@ -160,15 +162,15 @@ public class Observable implements IObservable {
 		return name;
 	}
 
-	@Override
-	public IConcept getDownTo() {
-		return downTo;
-	}
-
-	@Override
-	public IConcept getClassifier() {
-		return classifier;
-	}
+	// @Override
+	// public IConcept getDownTo() {
+	// return downTo;
+	// }
+	//
+	// @Override
+	// public IConcept getClassifier() {
+	// return classifier;
+	// }
 
 	@Override
 	public Range getRange() {
@@ -217,13 +219,13 @@ public class Observable implements IObservable {
 		this.currency = currency;
 	}
 
-	public void setClassifier(Concept by) {
-		this.classifier = by;
-	}
-
-	public void setDownTo(Concept downTo) {
-		this.downTo = downTo;
-	}
+	// public void setClassifier(Concept by) {
+	// this.classifier = by;
+	// }
+	//
+	// public void setDownTo(Concept downTo) {
+	// this.downTo = downTo;
+	// }
 
 	@Override
 	public String getDefinition() {
@@ -291,140 +293,83 @@ public class Observable implements IObservable {
 		return "[" + getName() + " = " + this.declaration + "]";
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((classifier == null) ? 0 : classifier.hashCode());
-		result = prime * result + ((currency == null) ? 0 : currency.hashCode());
-		result = prime * result + ((downTo == null) ? 0 : downTo.hashCode());
-		// result = prime * result + ((main == null) ? 0 : main.hashCode());
-		// result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((observable == null) ? 0 : observable.hashCode());
-		// result = prime * result + (optional ? 1231 : 1237);
-		result = prime * result + ((range == null) ? 0 : range.hashCode());
-		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
-		// result = prime * result + ((value == null) ? 0 : value.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		Observable other = (Observable) obj;
-		if (classifier == null) {
-			if (other.classifier != null) {
-				return false;
-			}
-		} else if (!classifier.equals(other.classifier)) {
-			return false;
-		}
-		if (currency == null) {
-			if (other.currency != null) {
-				return false;
-			}
-		} else if (!currency.equals(other.currency)) {
-			return false;
-		}
-		if (downTo == null) {
-			if (other.downTo != null) {
-				return false;
-			}
-		} else if (!downTo.equals(other.downTo)) {
-			return false;
-		}
-		// if (main == null) {
-		// if (other.main != null) {
-		// return false;
-		// }
-		// } else if (other.main == null || !main.equals(other.main)) {
-		// return false;
-		// }
-		// if (name == null) {
-		// if (other.name != null) {
-		// return false;
-		// }
-		// } else if (!getName().equals(other.getName())) {
-		// return false;
-		// }
-		if (observable == null) {
-			if (other.observable != null) {
-				return false;
-			}
-		} else if (!observable.equals(other.observable)) {
-			return false;
-		}
-		// if (optional != other.optional) {
-		// return false;
-		// }
-		if (range == null) {
-			if (other.range != null) {
-				return false;
-			}
-		} else if (!range.equals(other.range)) {
-			return false;
-		}
-		if (unit == null) {
-			if (other.unit != null) {
-				return false;
-			}
-		} else if (!unit.equals(other.unit)) {
-			return false;
-		}
-		if (valueOperator == null) {
-			if (other.valueOperator != null) {
-				return false;
-			}
-		} else if (!valueOperator.equals(other.valueOperator) || !valueOperand.equals(other.valueOperand)) {
-			return false;
-		}
-		// if (value == null) {
-		// if (other.value != null) {
-		// return false;
-		// }
-		// } else if (!value.equals(other.value)) {
-		// return false;
-		// }
-		return true;
-	}
-
 	/**
-	 * Checks for equality of 'actual' meaning, i.e. equal observers besides name
-	 * and mediators.
+	 * Checks for equality of 'actual' meaning, i.e. equal observables and observers
+	 * besides name and mediators.
 	 * 
 	 * @param obj
 	 * @return
 	 */
 	public boolean canResolve(Observable obj) {
 
-		boolean ok = false;
-		if (this.observable.equals(obj.observable)) {
-
-			ok = obj.classifier == null && this.classifier == null
-					|| (this.classifier != null && obj.classifier != null && obj.classifier.equals(this.classifier));
-
-			if (ok) {
-				ok = ((this.downTo == null && obj.downTo == null) || ((this.downTo != null && obj.downTo != null
-						&& Concepts.INSTANCE.compareSpecificity(this.downTo, obj.downTo, true) >= 0)));
+		if (observer == null) {
+			if (obj.observer != null) {
+				return false;
 			}
-			if (ok) {
-				/*
-				 * the one without the operator can resolve the one with the operator.
-				 */
-				ok = obj.valueOperator == null || (obj.valueOperator.equals(this.valueOperator)
-						&& ((obj.valueOperand == null && this.valueOperand == null)
-								|| (obj.valueOperand != null && obj.valueOperand.equals(this.valueOperand))));
-			}
+		} else if (!observer.equals(obj.observer)) {
+			return false;
 		}
-		return ok;
+
+		return this.observable.equals(obj.observable)
+				&& CollectionUtils.isEqualCollection(this.valueOperators, obj.valueOperators);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((currency == null) ? 0 : currency.hashCode());
+		result = prime * result + ((observable == null) ? 0 : observable.hashCode());
+		result = prime * result + ((observer == null) ? 0 : observer.hashCode());
+		result = prime * result + ((range == null) ? 0 : range.hashCode());
+		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
+		result = prime * result + ((valueOperators == null) ? 0 : valueOperators.hashCode());
+		return result;
+	}
+
+	/**
+	 * Equality checks semantics, mediators and operators but not names.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Observable other = (Observable) obj;
+		if (currency == null) {
+			if (other.currency != null)
+				return false;
+		} else if (!currency.equals(other.currency))
+			return false;
+		if (observable == null) {
+			if (other.observable != null)
+				return false;
+		} else if (!observable.equals(other.observable))
+			return false;
+		if (observer == null) {
+			if (other.observer != null)
+				return false;
+		} else if (!observer.equals(other.observer))
+			return false;
+		if (range == null) {
+			if (other.range != null)
+				return false;
+		} else if (!range.equals(other.range))
+			return false;
+		if (unit == null) {
+			if (other.unit != null)
+				return false;
+		} else if (!unit.equals(other.unit))
+			return false;
+		if (valueOperators == null) {
+			if (other.valueOperators != null)
+				return false;
+		} else if (!valueOperators.equals(other.valueOperators))
+			return false;
+		return true;
 	}
 
 	public void setModelReference(String modelReference) {
@@ -603,16 +548,18 @@ public class Observable implements IObservable {
 	@Override
 	public boolean is(ISemantic semantics) {
 		IConcept c = semantics.getType();
-		boolean ret = getType() == null ? false : getType().is(c);
-		if (ret && semantics instanceof IObservable) {
-			if (((IObservable) semantics).getClassifier() != null) {
-				ret = getClassifier() == null || getClassifier().is(((IObservable) semantics).getClassifier());
-			}
-			if (ret && ((IObservable) semantics).getDownTo() != null) {
-				ret = getDownTo() == null || getDownTo().is(((IObservable) semantics).getDownTo());
-			}
-		}
-		return ret;
+		return getType() == null ? false : getType().is(c);
+		// if (ret && semantics instanceof IObservable) {
+		// if (((IObservable) semantics).getClassifier() != null) {
+		// ret = getClassifier() == null || getClassifier().is(((IObservable)
+		// semantics).getClassifier());
+		// }
+		// if (ret && ((IObservable) semantics).getDownTo() != null) {
+		// ret = getDownTo() == null || getDownTo().is(((IObservable)
+		// semantics).getDownTo());
+		// }
+		// }
+		// return ret;
 	}
 
 	public String getNamespace() {
@@ -624,24 +571,24 @@ public class Observable implements IObservable {
 	public boolean is(Type type) {
 		return getType() == null ? false : getType().is(type);
 	}
+	//
+	// @Override
+	// public ValueOperator getValueOperator() {
+	// return valueOperator;
+	// }
+	//
+	// @Override
+	// public Object getValueOperand() {
+	// return valueOperand;
+	// }
 
-	@Override
-	public ValueOperator getValueOperator() {
-		return valueOperator;
-	}
-
-	@Override
-	public Object getValueOperand() {
-		return valueOperand;
-	}
-
-	public void setValueOperator(ValueOperator valueOperator) {
-		this.valueOperator = valueOperator;
-	}
-
-	public void setValueOperand(Object valueOperand) {
-		this.valueOperand = valueOperand;
-	}
+	// public void setValueOperator(ValueOperator valueOperator) {
+	// this.valueOperator = valueOperator;
+	// }
+	//
+	// public void setValueOperand(Object valueOperand) {
+	// this.valueOperand = valueOperand;
+	// }
 
 	// public void setGivenName(boolean b) {
 	// this.givenName = b;
@@ -768,6 +715,11 @@ public class Observable implements IObservable {
 	@Override
 	public String getReferenceName() {
 		return this.referenceName;
+	}
+
+	@Override
+	public List<Pair<ValueOperator, Object>> getValueOperators() {
+		return this.valueOperators;
 	}
 
 }

@@ -1831,31 +1831,13 @@ public interface KimPackage extends EPackage
   int OBSERVABLE_SEMANTICS__DECLARATION = 2;
 
   /**
-   * The feature id for the '<em><b>By</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int OBSERVABLE_SEMANTICS__BY = 3;
-
-  /**
-   * The feature id for the '<em><b>Down To</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int OBSERVABLE_SEMANTICS__DOWN_TO = 4;
-
-  /**
    * The feature id for the '<em><b>According To</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__ACCORDING_TO = 5;
+  int OBSERVABLE_SEMANTICS__ACCORDING_TO = 3;
 
   /**
    * The feature id for the '<em><b>Unit</b></em>' containment reference.
@@ -1864,7 +1846,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__UNIT = 6;
+  int OBSERVABLE_SEMANTICS__UNIT = 4;
 
   /**
    * The feature id for the '<em><b>Currency</b></em>' containment reference.
@@ -1873,43 +1855,16 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__CURRENCY = 7;
+  int OBSERVABLE_SEMANTICS__CURRENCY = 5;
 
   /**
-   * The feature id for the '<em><b>Value Modifier</b></em>' attribute.
+   * The feature id for the '<em><b>Value Operators</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__VALUE_MODIFIER = 8;
-
-  /**
-   * The feature id for the '<em><b>Comparison Value</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int OBSERVABLE_SEMANTICS__COMPARISON_VALUE = 9;
-
-  /**
-   * The feature id for the '<em><b>Comparison Concept</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT = 10;
-
-  /**
-   * The feature id for the '<em><b>Comparison Observable</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE = 11;
+  int OBSERVABLE_SEMANTICS__VALUE_OPERATORS = 6;
 
   /**
    * The feature id for the '<em><b>Optional</b></em>' attribute.
@@ -1918,7 +1873,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__OPTIONAL = 12;
+  int OBSERVABLE_SEMANTICS__OPTIONAL = 7;
 
   /**
    * The feature id for the '<em><b>From</b></em>' containment reference.
@@ -1927,7 +1882,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__FROM = 13;
+  int OBSERVABLE_SEMANTICS__FROM = 8;
 
   /**
    * The feature id for the '<em><b>To</b></em>' containment reference.
@@ -1936,7 +1891,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__TO = 14;
+  int OBSERVABLE_SEMANTICS__TO = 9;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1945,7 +1900,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__NAME = 15;
+  int OBSERVABLE_SEMANTICS__NAME = 10;
 
   /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
@@ -1954,7 +1909,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__ANNOTATIONS = 16;
+  int OBSERVABLE_SEMANTICS__ANNOTATIONS = 11;
 
   /**
    * The feature id for the '<em><b>Condition</b></em>' attribute.
@@ -1963,7 +1918,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__CONDITION = 17;
+  int OBSERVABLE_SEMANTICS__CONDITION = 12;
 
   /**
    * The number of structural features of the '<em>Observable Semantics</em>' class.
@@ -1972,7 +1927,80 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS_FEATURE_COUNT = 18;
+  int OBSERVABLE_SEMANTICS_FEATURE_COUNT = 13;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ValueOperatorImpl <em>Value Operator</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kim.kim.impl.ValueOperatorImpl
+   * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getValueOperator()
+   * @generated
+   */
+  int VALUE_OPERATOR = 25;
+
+  /**
+   * The feature id for the '<em><b>Modifier</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE_OPERATOR__MODIFIER = 0;
+
+  /**
+   * The feature id for the '<em><b>Down To</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE_OPERATOR__DOWN_TO = 1;
+
+  /**
+   * The feature id for the '<em><b>Comparison Value</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE_OPERATOR__COMPARISON_VALUE = 2;
+
+  /**
+   * The feature id for the '<em><b>Comparison Concept</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE_OPERATOR__COMPARISON_CONCEPT = 3;
+
+  /**
+   * The feature id for the '<em><b>Comparison Observable</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE_OPERATOR__COMPARISON_OBSERVABLE = 4;
+
+  /**
+   * The feature id for the '<em><b>Total</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE_OPERATOR__TOTAL = 5;
+
+  /**
+   * The number of structural features of the '<em>Value Operator</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE_OPERATOR_FEATURE_COUNT = 6;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.DependencyImpl <em>Dependency</em>}' class.
@@ -1982,7 +2010,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getDependency()
    * @generated
    */
-  int DEPENDENCY = 25;
+  int DEPENDENCY = 26;
 
   /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
@@ -2055,7 +2083,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getConceptDeclaration()
    * @generated
    */
-  int CONCEPT_DECLARATION = 26;
+  int CONCEPT_DECLARATION = 27;
 
   /**
    * The feature id for the '<em><b>Main</b></em>' containment reference list.
@@ -2245,7 +2273,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getConceptReference()
    * @generated
    */
-  int CONCEPT_REFERENCE = 27;
+  int CONCEPT_REFERENCE = 28;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2309,7 +2337,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getConcept()
    * @generated
    */
-  int CONCEPT = 28;
+  int CONCEPT = 29;
 
   /**
    * The feature id for the '<em><b>Negated</b></em>' attribute.
@@ -2544,7 +2572,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUpperOntologyDefinition()
    * @generated
    */
-  int UPPER_ONTOLOGY_DEFINITION = 29;
+  int UPPER_ONTOLOGY_DEFINITION = 30;
 
   /**
    * The feature id for the '<em><b>Agent Specifier</b></em>' attribute.
@@ -2617,7 +2645,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getConceptStatement()
    * @generated
    */
-  int CONCEPT_STATEMENT = 30;
+  int CONCEPT_STATEMENT = 31;
 
   /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
@@ -2726,7 +2754,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getConceptStatementBody()
    * @generated
    */
-  int CONCEPT_STATEMENT_BODY = 31;
+  int CONCEPT_STATEMENT_BODY = 32;
 
   /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
@@ -3150,7 +3178,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getApplicableTarget()
    * @generated
    */
-  int APPLICABLE_TARGET = 32;
+  int APPLICABLE_TARGET = 33;
 
   /**
    * The feature id for the '<em><b>Target</b></em>' containment reference.
@@ -3196,7 +3224,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getIdentityRequirement()
    * @generated
    */
-  int IDENTITY_REQUIREMENT = 33;
+  int IDENTITY_REQUIREMENT = 34;
 
   /**
    * The feature id for the '<em><b>Identities</b></em>' containment reference list.
@@ -3233,7 +3261,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getRestrictionStatement()
    * @generated
    */
-  int RESTRICTION_STATEMENT = 34;
+  int RESTRICTION_STATEMENT = 35;
 
   /**
    * The feature id for the '<em><b>Rel Type</b></em>' attribute.
@@ -3306,7 +3334,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getRestrictionDefinition()
    * @generated
    */
-  int RESTRICTION_DEFINITION = 35;
+  int RESTRICTION_DEFINITION = 36;
 
   /**
    * The feature id for the '<em><b>Only</b></em>' attribute.
@@ -3415,7 +3443,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getAnnotation()
    * @generated
    */
-  int ANNOTATION = 36;
+  int ANNOTATION = 37;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -3452,7 +3480,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getList()
    * @generated
    */
-  int LIST = 37;
+  int LIST = 38;
 
   /**
    * The feature id for the '<em><b>Contents</b></em>' containment reference list.
@@ -3480,7 +3508,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getLiteral()
    * @generated
    */
-  int LITERAL = 38;
+  int LITERAL = 39;
 
   /**
    * The feature id for the '<em><b>From</b></em>' containment reference.
@@ -3562,7 +3590,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getDocumentation()
    * @generated
    */
-  int DOCUMENTATION = 40;
+  int DOCUMENTATION = 41;
 
   /**
    * The number of structural features of the '<em>Documentation</em>' class.
@@ -3581,7 +3609,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getMetadata()
    * @generated
    */
-  int METADATA = 39;
+  int METADATA = 40;
 
   /**
    * The feature id for the '<em><b>Ids</b></em>' attribute list.
@@ -3627,7 +3655,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getMap()
    * @generated
    */
-  int MAP = 41;
+  int MAP = 42;
 
   /**
    * The feature id for the '<em><b>Entries</b></em>' containment reference list.
@@ -3655,7 +3683,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getMapEntry()
    * @generated
    */
-  int MAP_ENTRY = 42;
+  int MAP_ENTRY = 43;
 
   /**
    * The feature id for the '<em><b>Classifier</b></em>' containment reference.
@@ -3692,7 +3720,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getDocSelector()
    * @generated
    */
-  int DOC_SELECTOR = 43;
+  int DOC_SELECTOR = 44;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3756,7 +3784,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getKeyValuePair()
    * @generated
    */
-  int KEY_VALUE_PAIR = 44;
+  int KEY_VALUE_PAIR = 45;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -3802,7 +3830,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getParameterList()
    * @generated
    */
-  int PARAMETER_LIST = 45;
+  int PARAMETER_LIST = 46;
 
   /**
    * The feature id for the '<em><b>Pairs</b></em>' containment reference list.
@@ -3839,7 +3867,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getValue()
    * @generated
    */
-  int VALUE = 46;
+  int VALUE = 47;
 
   /**
    * The feature id for the '<em><b>Concept</b></em>' containment reference.
@@ -3939,7 +3967,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getFunction()
    * @generated
    */
-  int FUNCTION = 47;
+  int FUNCTION = 48;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -3976,7 +4004,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUnitElement()
    * @generated
    */
-  int UNIT_ELEMENT = 48;
+  int UNIT_ELEMENT = 49;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -4013,7 +4041,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getREL_OPERATOR()
    * @generated
    */
-  int REL_OPERATOR = 49;
+  int REL_OPERATOR = 50;
 
   /**
    * The feature id for the '<em><b>Gt</b></em>' attribute.
@@ -4086,7 +4114,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUnit()
    * @generated
    */
-  int UNIT = 50;
+  int UNIT = 51;
 
   /**
    * The feature id for the '<em><b>Root</b></em>' containment reference.
@@ -4132,7 +4160,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getCurrency()
    * @generated
    */
-  int CURRENCY = 51;
+  int CURRENCY = 52;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -4187,7 +4215,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getNumber()
    * @generated
    */
-  int NUMBER = 52;
+  int NUMBER = 53;
 
   /**
    * The feature id for the '<em><b>Negative</b></em>' attribute.
@@ -4278,7 +4306,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getDataType()
    * @generated
    */
-  int DATA_TYPE = 53;
+  int DATA_TYPE = 54;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.UnitOp <em>Unit Op</em>}' enum.
@@ -4288,7 +4316,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUnitOp()
    * @generated
    */
-  int UNIT_OP = 54;
+  int UNIT_OP = 55;
 
 
   /**
@@ -6137,28 +6165,6 @@ public interface KimPackage extends EPackage
   EReference getObservableSemantics_Declaration();
 
   /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getBy <em>By</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>By</em>'.
-   * @see org.integratedmodelling.kim.kim.ObservableSemantics#getBy()
-   * @see #getObservableSemantics()
-   * @generated
-   */
-  EReference getObservableSemantics_By();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getDownTo <em>Down To</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Down To</em>'.
-   * @see org.integratedmodelling.kim.kim.ObservableSemantics#getDownTo()
-   * @see #getObservableSemantics()
-   * @generated
-   */
-  EReference getObservableSemantics_DownTo();
-
-  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getAccordingTo <em>According To</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -6192,48 +6198,15 @@ public interface KimPackage extends EPackage
   EReference getObservableSemantics_Currency();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getValueModifier <em>Value Modifier</em>}'.
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getValueOperators <em>Value Operators</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Value Modifier</em>'.
-   * @see org.integratedmodelling.kim.kim.ObservableSemantics#getValueModifier()
+   * @return the meta object for the containment reference list '<em>Value Operators</em>'.
+   * @see org.integratedmodelling.kim.kim.ObservableSemantics#getValueOperators()
    * @see #getObservableSemantics()
    * @generated
    */
-  EAttribute getObservableSemantics_ValueModifier();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonValue <em>Comparison Value</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Comparison Value</em>'.
-   * @see org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonValue()
-   * @see #getObservableSemantics()
-   * @generated
-   */
-  EReference getObservableSemantics_ComparisonValue();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonConcept <em>Comparison Concept</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Comparison Concept</em>'.
-   * @see org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonConcept()
-   * @see #getObservableSemantics()
-   * @generated
-   */
-  EReference getObservableSemantics_ComparisonConcept();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonObservable <em>Comparison Observable</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Comparison Observable</em>'.
-   * @see org.integratedmodelling.kim.kim.ObservableSemantics#getComparisonObservable()
-   * @see #getObservableSemantics()
-   * @generated
-   */
-  EReference getObservableSemantics_ComparisonObservable();
+  EReference getObservableSemantics_ValueOperators();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ObservableSemantics#isOptional <em>Optional</em>}'.
@@ -6300,6 +6273,82 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EAttribute getObservableSemantics_Condition();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.ValueOperator <em>Value Operator</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Value Operator</em>'.
+   * @see org.integratedmodelling.kim.kim.ValueOperator
+   * @generated
+   */
+  EClass getValueOperator();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ValueOperator#getModifier <em>Modifier</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Modifier</em>'.
+   * @see org.integratedmodelling.kim.kim.ValueOperator#getModifier()
+   * @see #getValueOperator()
+   * @generated
+   */
+  EAttribute getValueOperator_Modifier();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ValueOperator#getDownTo <em>Down To</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Down To</em>'.
+   * @see org.integratedmodelling.kim.kim.ValueOperator#getDownTo()
+   * @see #getValueOperator()
+   * @generated
+   */
+  EAttribute getValueOperator_DownTo();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ValueOperator#getComparisonValue <em>Comparison Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Comparison Value</em>'.
+   * @see org.integratedmodelling.kim.kim.ValueOperator#getComparisonValue()
+   * @see #getValueOperator()
+   * @generated
+   */
+  EReference getValueOperator_ComparisonValue();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ValueOperator#getComparisonConcept <em>Comparison Concept</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Comparison Concept</em>'.
+   * @see org.integratedmodelling.kim.kim.ValueOperator#getComparisonConcept()
+   * @see #getValueOperator()
+   * @generated
+   */
+  EReference getValueOperator_ComparisonConcept();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ValueOperator#getComparisonObservable <em>Comparison Observable</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Comparison Observable</em>'.
+   * @see org.integratedmodelling.kim.kim.ValueOperator#getComparisonObservable()
+   * @see #getValueOperator()
+   * @generated
+   */
+  EReference getValueOperator_ComparisonObservable();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ValueOperator#getTotal <em>Total</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Total</em>'.
+   * @see org.integratedmodelling.kim.kim.ValueOperator#getTotal()
+   * @see #getValueOperator()
+   * @generated
+   */
+  EAttribute getValueOperator_Total();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.Dependency <em>Dependency</em>}'.
@@ -10191,22 +10240,6 @@ public interface KimPackage extends EPackage
     EReference OBSERVABLE_SEMANTICS__DECLARATION = eINSTANCE.getObservableSemantics_Declaration();
 
     /**
-     * The meta object literal for the '<em><b>By</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference OBSERVABLE_SEMANTICS__BY = eINSTANCE.getObservableSemantics_By();
-
-    /**
-     * The meta object literal for the '<em><b>Down To</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference OBSERVABLE_SEMANTICS__DOWN_TO = eINSTANCE.getObservableSemantics_DownTo();
-
-    /**
      * The meta object literal for the '<em><b>According To</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -10231,36 +10264,12 @@ public interface KimPackage extends EPackage
     EReference OBSERVABLE_SEMANTICS__CURRENCY = eINSTANCE.getObservableSemantics_Currency();
 
     /**
-     * The meta object literal for the '<em><b>Value Modifier</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Value Operators</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute OBSERVABLE_SEMANTICS__VALUE_MODIFIER = eINSTANCE.getObservableSemantics_ValueModifier();
-
-    /**
-     * The meta object literal for the '<em><b>Comparison Value</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference OBSERVABLE_SEMANTICS__COMPARISON_VALUE = eINSTANCE.getObservableSemantics_ComparisonValue();
-
-    /**
-     * The meta object literal for the '<em><b>Comparison Concept</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference OBSERVABLE_SEMANTICS__COMPARISON_CONCEPT = eINSTANCE.getObservableSemantics_ComparisonConcept();
-
-    /**
-     * The meta object literal for the '<em><b>Comparison Observable</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference OBSERVABLE_SEMANTICS__COMPARISON_OBSERVABLE = eINSTANCE.getObservableSemantics_ComparisonObservable();
+    EReference OBSERVABLE_SEMANTICS__VALUE_OPERATORS = eINSTANCE.getObservableSemantics_ValueOperators();
 
     /**
      * The meta object literal for the '<em><b>Optional</b></em>' attribute feature.
@@ -10309,6 +10318,64 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute OBSERVABLE_SEMANTICS__CONDITION = eINSTANCE.getObservableSemantics_Condition();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.ValueOperatorImpl <em>Value Operator</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kim.kim.impl.ValueOperatorImpl
+     * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getValueOperator()
+     * @generated
+     */
+    EClass VALUE_OPERATOR = eINSTANCE.getValueOperator();
+
+    /**
+     * The meta object literal for the '<em><b>Modifier</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE_OPERATOR__MODIFIER = eINSTANCE.getValueOperator_Modifier();
+
+    /**
+     * The meta object literal for the '<em><b>Down To</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE_OPERATOR__DOWN_TO = eINSTANCE.getValueOperator_DownTo();
+
+    /**
+     * The meta object literal for the '<em><b>Comparison Value</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE_OPERATOR__COMPARISON_VALUE = eINSTANCE.getValueOperator_ComparisonValue();
+
+    /**
+     * The meta object literal for the '<em><b>Comparison Concept</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE_OPERATOR__COMPARISON_CONCEPT = eINSTANCE.getValueOperator_ComparisonConcept();
+
+    /**
+     * The meta object literal for the '<em><b>Comparison Observable</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE_OPERATOR__COMPARISON_OBSERVABLE = eINSTANCE.getValueOperator_ComparisonObservable();
+
+    /**
+     * The meta object literal for the '<em><b>Total</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE_OPERATOR__TOTAL = eINSTANCE.getValueOperator_Total();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.DependencyImpl <em>Dependency</em>}' class.
