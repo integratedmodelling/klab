@@ -843,8 +843,7 @@ public class Model extends KimObject implements IModel {
 	 */
 	public Observable getCompatibleOutput(Observable observable) {
 		for (IObservable output : observables) {
-			if (output.getType().resolves(observable.getType()) > 0) {
-//			if (new CompatibleObservable((Observable) output).equals(new CompatibleObservable(observable))) {
+			if (output.getType().resolves(observable.getType()) >= 0) {
 				return (Observable) output;
 			}
 		}

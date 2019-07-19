@@ -310,8 +310,12 @@ public class Observable implements IObservable {
 			return false;
 		}
 
-		return this.observable.equals(obj.observable)
-				&& CollectionUtils.isEqualCollection(this.valueOperators, obj.valueOperators);
+		/*
+		 * TODO check: operators are only allowed at the receiving end. We should also
+		 * allow the same operators and operands as us in the provider.
+		 */
+		return this.observable.equals(obj.observable) && (obj.valueOperators.isEmpty()
+				|| CollectionUtils.isEqualCollection(this.valueOperators, obj.valueOperators));
 	}
 
 	@Override

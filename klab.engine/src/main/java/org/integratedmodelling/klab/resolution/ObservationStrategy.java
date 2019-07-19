@@ -94,11 +94,15 @@ public class ObservationStrategy {
 
 		Observable target = (Observable) observable;
 
-		ret.add(new ObservationStrategy((Observable) observable, mode));
-
 		List<Pair<ValueOperator, Object>> operators = observable.getValueOperators();
 		if (!operators.isEmpty()) {
 
+			/*
+			 * no as-is resolution, just use the operators. Otherwise it becomes messy to
+			 * match candidates, and the utility of allowing pre-modified source models is
+			 * doubtful as it encourages use of partial information as primary.
+			 */
+			
 			target = (Observable) ((Observable) observable).getBuilder(scope.getMonitor()).withoutValueOperators()
 					.buildObservable();
 			Observable previous = ((ResolutionScope) scope).getResolvedObservable(target, mode);
@@ -116,6 +120,8 @@ public class ObservationStrategy {
 			ret.add(alternative);
 
 		} else if (target.hasResolvableTraits()) {
+
+			ret.add(new ObservationStrategy((Observable) observable, mode));
 
 			Pair<IConcept, Observable> resolvables = target.popResolvableTrait(scope.getMonitor());
 
@@ -141,6 +147,8 @@ public class ObservationStrategy {
 			ret.add(alternative);
 
 		} else if (hasResolvableInherency(target, scope)) {
+
+			ret.add(new ObservationStrategy((Observable) observable, mode));
 
 			List<IComputableResource> computations = new ArrayList<>();
 			IConcept inherent = null;
@@ -182,6 +190,13 @@ public class ObservationStrategy {
 				alternative.computation.addAll(computations);
 				ret.add(alternative);
 			}
+
+		} else {
+
+			/*
+			 * just add as is
+			 */
+			ret.add(new ObservationStrategy((Observable) observable, mode));
 
 		}
 
