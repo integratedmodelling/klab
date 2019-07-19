@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.resolution;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -35,7 +34,6 @@ import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.klab.resolution.ObservableReasoner.CandidateObservable;
 import org.integratedmodelling.klab.rest.ModelReference;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
@@ -303,12 +301,10 @@ public enum Resolver {
 			// will be non-empty if this observable was resolved before, empty otherwise
 			if (coverage.isEmpty()) {
 
-				ObservableReasoner reasoner = new ObservableReasoner(observable, ret);
+				List<ObservationStrategy> candidates = ObservationStrategy.computeStrategies(observable, ret, ret.getMode());
 				boolean done = false;
 				int order = 0;
-				for (Iterator<CandidateObservable> it = reasoner.iterator(); !done && it.hasNext();) {
-
-					CandidateObservable candidate = it.next();
+				for (ObservationStrategy strategy : candidates) {
 
 					try {
 
@@ -320,10 +316,10 @@ public enum Resolver {
 						 * that instead of branching through a forest of possibilities. Otherwise search
 						 * the kbox and network for candidates.
 						 */
-						List<IRankedModel> candidateModels = candidate.isTrivial()
-								? Models.INSTANCE.resolve(candidate.observables.get(0),
-										ret.getChildScope(candidate.observables.get(0), candidate.mode))
-								: Models.INSTANCE.createDerivedModel(observable, candidate, ret);
+						List<IRankedModel> candidateModels = strategy.isTrivial()
+								? Models.INSTANCE.resolve(strategy.getObservables().get(0),
+										ret.getChildScope(strategy.getObservables().get(0), strategy.getMode()))
+								: Models.INSTANCE.createDerivedModel(observable, strategy, ret);
 
 						for (IRankedModel model : candidateModels) {
 
@@ -360,12 +356,15 @@ public enum Resolver {
 								done = true;
 								break;
 							}
+						}
 
+						if (done) {
+							break;
 						}
 
 					} catch (KlabException e) {
 						parentScope.getMonitor()
-								.error("error during resolution of " + candidate + ": " + e.getMessage());
+								.error("error during resolution of " + strategy + ": " + e.getMessage());
 						return parentScope.empty();
 					}
 				}
@@ -437,15 +436,16 @@ public enum Resolver {
 		}
 
 		// use the reasoner to infer any missing dependency from the semantics
-		ObservableReasoner reasoner = new ObservableReasoner(model, parentScope.getObservable(), ret);
-		for (CandidateObservable observable : reasoner.getObservables()) {
+		List<ObservationStrategy> strategies = ObservationStrategy.computeDependencies(parentScope.getObservable(),
+				model, ret);
+		for (ObservationStrategy strategy : strategies) {
 			// ACHTUNG TODO OBSERVABLE CAN BE MULTIPLE (probably not here though) - still,
 			// should be resolving a CandidateObservable
-			ResolutionScope mscope = resolve(observable.observables.get(0), ret, observable.mode);
+			ResolutionScope mscope = resolve(strategy.getObservables().get(0), ret, strategy.getMode());
 			Coverage newCoverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
 			if (newCoverage.isEmpty()) {
 				parentScope.getMonitor().info("discarding first choice " + model.getId() + " due to missing dependency "
-						+ observable.observables.get(0).getName());
+						+ strategy.getObservables().get(0).getName());
 				break;
 			}
 			coverage = newCoverage;

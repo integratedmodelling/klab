@@ -54,7 +54,7 @@ import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.klab.resolution.ObservableReasoner.CandidateObservable;
+import org.integratedmodelling.klab.resolution.ObservationStrategy;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
@@ -462,16 +462,16 @@ public class Model extends KimObject implements IModel {
 	 * @param candidateObservable
 	 * @param scope
 	 */
-	public Model(Observable mainObservable, CandidateObservable candidateObservable, ResolutionScope scope) {
+	public Model(Observable mainObservable, ObservationStrategy candidateObservable, ResolutionScope scope) {
 		super(null);
 		this.derived = true;
 		this.id = mainObservable.getName() + "_derived";
 		this.namespace = scope.getResolutionNamespace();
 		this.behavior = new Behavior(null, this);
 		this.observables.add(mainObservable);
-		this.dependencies.addAll(candidateObservable.observables);
-		if (candidateObservable.computation != null) {
-			this.resources.addAll(candidateObservable.computation);
+		this.dependencies.addAll(candidateObservable.getObservables());
+		if (candidateObservable.getComputation() != null) {
+			this.resources.addAll(candidateObservable.getComputation());
 		}
 		if (mainObservable.is(Type.COUNTABLE)
 				|| mainObservable.getObservationType() == ObservationType.CLASSIFICATION) {

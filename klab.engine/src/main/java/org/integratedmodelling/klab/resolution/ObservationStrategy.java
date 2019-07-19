@@ -17,7 +17,6 @@ import org.integratedmodelling.klab.api.services.IObservableService;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
-import org.integratedmodelling.klab.resolution.ObservableReasoner.CandidateObservable;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -89,28 +88,25 @@ public class ObservationStrategy {
 	 * @param scope
 	 * @return
 	 */
-	public static List<ObservationStrategy> computeStrategies(IObservable observable, IResolutionScope scope) {
+	public static List<ObservationStrategy> computeStrategies(IObservable observable, IResolutionScope scope, Mode mode) {
 
 		List<ObservationStrategy> ret = new ArrayList<>();
 
 		Observable target = (Observable) observable;
 
-		ret.add(new ObservationStrategy((Observable) observable,
-				observable.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
+		ret.add(new ObservationStrategy((Observable) observable, mode));
 
 		List<Pair<ValueOperator, Object>> operators = observable.getValueOperators();
 		if (!operators.isEmpty()) {
 
 			target = (Observable) ((Observable) observable).getBuilder(scope.getMonitor()).withoutValueOperators()
 					.buildObservable();
-			Observable previous = ((ResolutionScope) scope).getResolvedObservable(target, 
-					observable.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
+			Observable previous = ((ResolutionScope) scope).getResolvedObservable(target, mode);
 			if (previous != null) {
 				target = previous;
 			}
 			
-			ObservationStrategy alternative = new ObservationStrategy(target,
-					target.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
+			ObservationStrategy alternative = new ObservationStrategy(target, mode);
 
 			for (Pair<ValueOperator, Object> operator : operators) {
 				alternative.computation.add(Klab.INSTANCE.getRuntimeProvider().getOperatorResolver(target,
@@ -125,7 +121,6 @@ public class ObservationStrategy {
 
 			IConcept attribute = resolvables.getFirst();
 			target = resolvables.getSecond();
-			Mode mode = target.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION;
 
 			/*
 			 * if the observable was resolved before, use that so we don't have to translate
@@ -139,8 +134,7 @@ public class ObservationStrategy {
 			Observable filter = (Observable) new ObservableBuilder(attribute)
 					.of(Observables.INSTANCE.getBaseObservable(target.getType())).filtering(target).buildObservable();
 
-			ObservationStrategy alternative = new ObservationStrategy(target,
-					target.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
+			ObservationStrategy alternative = new ObservationStrategy(target, mode);
 
 			alternative.observables.add(filter);
 
@@ -183,8 +177,7 @@ public class ObservationStrategy {
 					inherentObservable = Observable.promote(inherent);
 				}
 				
-				ObservationStrategy alternative = new ObservationStrategy(inherentObservable,
-						inherent.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
+				ObservationStrategy alternative = new ObservationStrategy(inherentObservable, mode);
 				
 				alternative.computation.addAll(computations);
 				ret.add(alternative);

@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -41,7 +40,7 @@ import org.integratedmodelling.klab.kim.KimNotifier;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.persistence.ModelKbox;
-import org.integratedmodelling.klab.resolution.ObservableReasoner.CandidateObservable;
+import org.integratedmodelling.klab.resolution.ObservationStrategy;
 import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.rest.ModelReference;
@@ -251,7 +250,7 @@ public enum Models implements IModelService {
      * @param ret
      * @return
      */
-    public List<IRankedModel> createDerivedModel(Observable mainObservable, CandidateObservable candidateObservable,
+    public List<IRankedModel> createDerivedModel(Observable mainObservable, ObservationStrategy candidateObservable,
             ResolutionScope scope) {
     	
     	org.integratedmodelling.klab.model.Model inner = new org.integratedmodelling.klab.model.Model(mainObservable, candidateObservable, scope);
