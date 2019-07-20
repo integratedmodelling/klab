@@ -14,13 +14,19 @@ import org.eclipse.ui.navigator.IDescriptionProvider;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimStatement.Scope;
+import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.model.EConcept;
 import org.integratedmodelling.klab.ide.navigator.model.EDefinition;
+import org.integratedmodelling.klab.ide.navigator.model.EDependency;
+import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.EModel;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
+import org.integratedmodelling.klab.ide.navigator.model.EObservable;
 import org.integratedmodelling.klab.ide.navigator.model.EObserver;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
 import org.integratedmodelling.klab.ide.navigator.model.EResource;
@@ -44,7 +50,7 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 	}
 
 	Image getErrorMarker() {
-		return ResourceManager.getPluginImage("org.eclipse.ui.navigator.resources", "/icons/full/ovr16/error_co.png");
+		return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "/icons/error_ovr.gif");
 	}
 
 	Image getWarningMarker() {
@@ -65,6 +71,10 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 
 	Image getAbstractMarker() {
 		return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "/icons/abstract_co.gif");
+	}
+
+	Image getPrivateMarker() {
+		return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "/icons/accessibility-private.gif");
 	}
 
 	WorkbenchLabelProvider delegate = new WorkbenchLabelProvider();
@@ -88,6 +98,11 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 
 		if (element instanceof EConcept && ((EConcept) element).isAbstract()) {
 			ret = ResourceManager.decorateImage(ret, getAbstractMarker(), SWTResourceManager.TOP_RIGHT);
+		}
+
+		if (element instanceof EModel && ((EModel) element).getScope() == Scope.NAMESPACE
+				|| element instanceof ENamespace && ((ENamespace) element).getScope() == Scope.NAMESPACE) {
+			ret = ResourceManager.decorateImage(ret, getPrivateMarker(), SWTResourceManager.TOP_RIGHT);
 		}
 
 		if (errors) {
@@ -182,7 +197,7 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 				case TRAIT:
 				case IDENTITY:
 				case REALM:
-					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, 
+					return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
 							((EModel) element).isInstantiator() ? "icons/attribute_instantiator.png"
 									: "icons/attribute_resolver.png");
 				case QUALITY:
@@ -204,6 +219,65 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 				return ResourceManager.decorateImage(
 						ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/model.png"), getErrorMarker(),
 						SWTResourceManager.BOTTOM_LEFT);
+			}
+		}
+		if (element instanceof EObservable || element instanceof EDependency) {
+
+			boolean isDependency = element instanceof EDependency;
+			IKimObservable observable = (IKimObservable) ((EKimObject) element).getKimStatement();
+
+			/*
+			 * TODO handle non-semantic first
+			 */
+			Type observableType = observable.getMain() == null ? null
+					: Kim.INSTANCE.getFundamentalType(observable.getMain().getType());
+
+			if (observableType != null) {
+				switch (observableType) {
+				/*
+				 * TODO decoration
+				 */
+				// case NOTHING:
+				// // TODO SCREAM (at Javier)
+				// break;
+				// case CONFIGURATION:
+				// return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
+				// "icons/configuration_resolver.png");
+				// case EVENT:
+				// return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
+				// ((EModel) element).isInstantiator() ? "icons/event_instantiator.png"
+				// : "icons/event_resolver.png");
+				// case PROCESS:
+				// return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
+				// "icons/process_resolver.png");
+				// case ATTRIBUTE:
+				// case TRAIT:
+				// case IDENTITY:
+				// case REALM:
+				// return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
+				// ((EModel) element).isInstantiator() ? "icons/attribute_instantiator.png"
+				// : "icons/attribute_resolver.png");
+				// case QUALITY:
+				// return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
+				// "icons/quality_resolver.png");
+				// case RELATIONSHIP:
+				// return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
+				// ((EModel) element).isInstantiator() ? "icons/relationship_instantiator.png"
+				// : "icons/relationship_resolver.png");
+				// case ROLE:
+				// break;
+				// case SUBJECT:
+				// return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
+				// ((EModel) element).isInstantiator() ? "icons/subject_instantiator.png"
+				// : "icons/subject_resolver.png");
+				default:
+					return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
+							isDependency ? "icons/dependency.png" : "icons/observable.png");
+				}
+			} else {
+				// TODO use grey
+				return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
+						isDependency ? "icons/dependency.png" : "icons/observable.png");
 			}
 		}
 		if (element instanceof IKimObserver)
@@ -304,6 +378,12 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 		if (element instanceof EDocumentationScope) {
 			return ((EDocumentationScope) element).getName();
 		}
+		if (element instanceof EObservable) {
+			return ((EObservable) element).getName();
+		}
+		if (element instanceof EDependency) {
+			return ((EDependency) element).getName();
+		}
 		if (element instanceof EReferencesPage) {
 			return "References";
 		}
@@ -339,6 +419,12 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 				return SWTResourceManager.getBoldFont(KlabNavigator.getViewerFont());
 			}
 		}
+		if (element instanceof EDependency || element instanceof EObservable) {
+			IKimObservable observable = (IKimObservable) ((EKimObject) element).getKimStatement();
+			if (observable.getMain() != null && observable.getMain().is(Type.ABSTRACT)) {
+				return SWTResourceManager.getItalicFont(KlabNavigator.getViewerFont());
+			}
+		}
 		return null;
 	}
 
@@ -348,6 +434,12 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 			EResourceReference resource = ((EResource) element).getResource();
 			return /* TODO errors in red */ SWTResourceManager
 					.getColor(resource.isOnline() ? SWT.COLOR_DARK_GREEN : SWT.COLOR_DARK_GRAY);
+		}
+		if (element instanceof EDependency || element instanceof EObservable) {
+			IKimObservable observable = (IKimObservable) ((EKimObject) element).getKimStatement();
+			if (observable.getMain() == null) {
+				return SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY);
+			}
 		}
 		return null;
 	}

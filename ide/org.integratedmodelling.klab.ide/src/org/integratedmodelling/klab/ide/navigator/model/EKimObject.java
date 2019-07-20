@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.ide.navigator.model;
 
 import java.io.File;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
@@ -37,7 +36,7 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
 		this.delegate_ = statement;
 	}
 
-	protected IKimStatement getKimStatement() {
+	public IKimStatement getKimStatement() {
 		return this.delegate_;
 	}
 

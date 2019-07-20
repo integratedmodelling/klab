@@ -90,7 +90,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		ret.main = concept;
 		ret.formalName = declaration.getName();
 		ret.optional = declaration.isOptional();
-		ret.abstractObservable = concept.checkAbstractStatus().contains(Type.ABSTRACT) || declaration.isGeneric();
+		ret.abstractObservable = concept.is(Type.ABSTRACT) || declaration.isGeneric();
 		if (declaration.getValue() != null) {
 			String id = declaration.getValue().getId();
 			ret.value = Kim.INSTANCE.parseValue(declaration.getValue(),

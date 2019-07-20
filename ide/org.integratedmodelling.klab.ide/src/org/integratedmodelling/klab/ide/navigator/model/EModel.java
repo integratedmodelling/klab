@@ -69,11 +69,7 @@ public class EModel extends EKimObject implements IKimModel, EDocumentable {
     public List<String> getResourceUrns() {
         return delegate.getResourceUrns();
     }
-
-//    public boolean isAssessmentModel() {
-//        return delegate.isAssessmentModel();
-//    }
-
+    
     public boolean isLearningModel() {
         return delegate.isLearningModel();
     }
@@ -117,12 +113,20 @@ public class EModel extends EKimObject implements IKimModel, EDocumentable {
 
     @Override
     public ENavigatorItem[] getEChildren() {
-        return new ENavigatorItem[] {};
+        ENavigatorItem[] ret = new ENavigatorItem[delegate.getObservables().size() + delegate.getDependencies().size()];
+        int i = 0;
+        for (IKimObservable observable : delegate.getObservables()) {
+        	ret[i++] = new EObservable(observable.getDefinition(), observable, this);
+        }
+        for (IKimObservable observable : delegate.getDependencies()) {
+        	ret[i++] = new EDependency(observable.getDefinition(), observable, this);
+        }
+        return ret;
     }
 
     @Override
     public boolean hasEChildren() {
-        return false;
+        return delegate.getObservables().size() + delegate.getDependencies().size() > 0;
     }
 
     @Override

@@ -1103,16 +1103,6 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		this.operands = operands;
 	}
 
-	/**
-	 * Call to check if the declaration defines an abstract status. Returns the type
-	 * for fluency.
-	 * 
-	 * @return true if abstract according to concept composition rules
-	 */
-	public Set<Type> checkAbstractStatus() {
-		return type;
-	}
-
 	@Override
 	public Type getFundamentalType() {
 		return Kim.INSTANCE.getFundamentalType(this.type);

@@ -589,13 +589,15 @@ public enum Observables implements IObservableService {
 					descriptor = configurations.get(inherent.getDefinition());
 				}
 				boolean found = false;
-				for (IConcept target : descriptor.targets) {
-					if (concept.equals(target)) {
-						found = true;
-						break;
+				if (descriptor != null) {
+					for (IConcept target : descriptor.targets) {
+						if (concept.equals(target)) {
+							found = true;
+							break;
+						}
 					}
 				}
-				if (!found) {
+				if (!found && descriptor != null) {
 					descriptor.targets.add(concept);
 				}
 			}
