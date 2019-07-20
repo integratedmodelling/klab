@@ -1070,8 +1070,12 @@ public enum Kim {
 					orphanNamespaceRegistry.put(uri, ret);
 				}
 			} else {
+				/*
+				 * FIXME this happens when importing a project because the validator is called
+				 * before the project exists.
+				 */
 				throw new KlabInternalErrorException(
-						"cannot establish ownership for namespace " + Kim.getNamespaceId(namespace));
+						"cannot establish project ownership for namespace " + Kim.getNamespaceId(namespace));
 			}
 		}
 

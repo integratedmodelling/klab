@@ -90,7 +90,7 @@
 		<nd4j.version>1.0.0-beta3</nd4j.version>
 		<tycho-version>1.0.0</tycho-version>
 		<xtextVersion>2.18.0</xtextVersion>
-		<mweVersion>2.11.0</mweVersion>
+		<mweVersion>2.10.0</mweVersion>
 
 		<!-- the five below go together. Never change one without checking the 
 			others. Spring security latest is currently requiring 5.0.4, implying boot 

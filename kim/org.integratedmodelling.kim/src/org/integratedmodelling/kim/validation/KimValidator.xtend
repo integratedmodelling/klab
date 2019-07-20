@@ -101,7 +101,7 @@ class KimValidator extends AbstractKimValidator {
 		if (!namespace.worldviewBound) {
 
 			var ns = Kim.INSTANCE.getNamespace(namespace)
-
+					
 			var project = ns.project
 			var expectedId = (project as KimProject).getNamespaceIdFor(namespace)
 			if (expectedId === null) {

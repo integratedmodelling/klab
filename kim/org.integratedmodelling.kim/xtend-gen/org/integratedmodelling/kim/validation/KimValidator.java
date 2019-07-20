@@ -102,25 +102,25 @@ import org.integratedmodelling.klab.utils.Pair;
  */
 @SuppressWarnings("all")
 public class KimValidator extends AbstractKimValidator {
-  public final static String NONPRIVATE_SUBJECTIVE_MODEL = "nonPrivateSubjectiveModel";
+  public static final String NONPRIVATE_SUBJECTIVE_MODEL = "nonPrivateSubjectiveModel";
   
-  public final static String BAD_OBSERVABLE = "badObservable";
+  public static final String BAD_OBSERVABLE = "badObservable";
   
-  public final static String BAD_OBSERVATION = "badObservation";
+  public static final String BAD_OBSERVATION = "badObservation";
   
-  public final static String INVALID_NONSEMANTIC_MODEL = "invalidNonSemanticModel";
+  public static final String INVALID_NONSEMANTIC_MODEL = "invalidNonSemanticModel";
   
-  public final static String PROBLEMATIC_URN = "problematicURN";
+  public static final String PROBLEMATIC_URN = "problematicURN";
   
-  public final static String NO_NAMESPACE = "noNamespace";
+  public static final String NO_NAMESPACE = "noNamespace";
   
-  public final static String BAD_NAMESPACE_ID = "badNamespaceId";
+  public static final String BAD_NAMESPACE_ID = "badNamespaceId";
   
-  public final static String BAD_TABLE_FORMAT = "badTableFormat";
+  public static final String BAD_TABLE_FORMAT = "badTableFormat";
   
-  public final static String REASONING_PROBLEM = "reasoningProblem";
+  public static final String REASONING_PROBLEM = "reasoningProblem";
   
-  private final static Set<String> nonSemanticModels = Collections.<String>unmodifiableSet(CollectionLiterals.<String>newHashSet("number", "text", "boolean"));
+  private static final Set<String> nonSemanticModels = Collections.<String>unmodifiableSet(CollectionLiterals.<String>newHashSet("number", "text", "boolean"));
   
   @Check
   public void initializeRegisters(final Model model) {

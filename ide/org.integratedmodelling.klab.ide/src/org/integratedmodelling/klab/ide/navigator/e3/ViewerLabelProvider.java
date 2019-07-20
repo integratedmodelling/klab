@@ -76,6 +76,10 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 	Image getPrivateMarker() {
 		return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "/icons/accessibility-private.gif");
 	}
+	
+	Image getProjectPrivateMarker() {
+		return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "/icons/accessibility-project.gif");
+	}
 
 	WorkbenchLabelProvider delegate = new WorkbenchLabelProvider();
 
@@ -103,6 +107,10 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 		if (element instanceof EModel && ((EModel) element).getScope() == Scope.NAMESPACE
 				|| element instanceof ENamespace && ((ENamespace) element).getScope() == Scope.NAMESPACE) {
 			ret = ResourceManager.decorateImage(ret, getPrivateMarker(), SWTResourceManager.TOP_RIGHT);
+		}
+		if (element instanceof EModel && ((EModel) element).getScope() == Scope.PROJECT
+				|| element instanceof ENamespace && ((ENamespace) element).getScope() == Scope.PROJECT) {
+			ret = ResourceManager.decorateImage(ret, getProjectPrivateMarker(), SWTResourceManager.TOP_RIGHT);
 		}
 
 		if (errors) {

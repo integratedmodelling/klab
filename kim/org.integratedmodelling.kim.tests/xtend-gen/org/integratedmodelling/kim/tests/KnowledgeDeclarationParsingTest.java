@@ -79,7 +79,6 @@ public class KnowledgeDeclarationParsingTest {
             Assert.assertNull(observable);
           } catch (final Throwable _t) {
             if (_t instanceof NullPointerException) {
-              final NullPointerException e = (NullPointerException)_t;
             } else {
               throw Exceptions.sneakyThrow(_t);
             }

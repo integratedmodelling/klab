@@ -8,9 +8,8 @@ Bundle-ActivationPolicy: lazy
 Require-Bundle: org.integratedmodelling.kdl,
  org.eclipse.xtext.ide,
  org.eclipse.xtext.xbase.ide,
- org.antlr.runtime
+ org.antlr.runtime;bundle-version="[3.2.0,3.2.1)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.integratedmodelling.kdl.ide.contentassist.antlr,
  org.integratedmodelling.kdl.ide.contentassist.antlr.internal
 Automatic-Module-Name: org.integratedmodelling.kdl.ide
-

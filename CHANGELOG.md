@@ -31,8 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   abstract observables in italics and a (not yet color-coded) icon. The label
   is the formal, normalized and fully parenthesized declaration, so that 
   modelers can be sure of the logical structure of each statement.
-- IDE now adds a 'lock' marker to namespace-private models and namespaces.
-  Project-private doesn't get an icon yet.
+- IDE now adds a black 'lock' marker to namespace-private models and namespaces.
+  Project-private gets a gold lock.
 - In observable declaration, 'by' and 'down to' are now merged with all the other
   value operators and treated consistently.
 - Overhauled the ObservableReasoner strategy builder into a new ObservationStrategy
