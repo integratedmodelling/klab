@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.api.model.contextualization;
 
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 
 /**
@@ -11,7 +11,7 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
  * @author Ferd
  *
  */
-public interface IPredicateResolver<T extends IObservation> extends IContextualizer {
+public interface IPredicateResolver<T extends IDirectObservation> extends IContextualizer {
 
 	/**
 	 * Resolve the predicate within the observation. If false is returned, the

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimMacro;
@@ -184,8 +183,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 	 * macro instance for substitutions.
 	 * 
 	 * @param declaration
-	 * @param macro
-	 *            can be null
+	 * @param macro       can be null
 	 * @param parent
 	 * @return the normalized concept
 	 */
@@ -497,7 +495,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 
 	/*
 	 * rearrange the special variant of <single concrete attribute/role> <abstract
-	 * observable> to <attribute/role> of <observable>. Use only attributes for
+	 * observable> to <attribute/role> of <observable>. Use only rescaling attributes for
 	 * qualities, where realms and identities are strictly identifying, and allow
 	 * identities and realms for countables where ambiguity is unlikely.
 	 */
@@ -505,17 +503,25 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		if (traits.size() + roles.size() == 1 && observable != null && observable.is(Type.ABSTRACT) && authority == null
 				&& getSemanticSubsetters().size() == 0 && operands.size() == 0) {
 			IKimConcept trait = CollectionUtils.join(traits, roles).iterator().next();
-			if ((trait.is(Type.ROLE) || trait.is(Type.ATTRIBUTE)
-					|| (observable.is(Type.COUNTABLE) && (trait.is(Type.IDENTITY) || trait.is(Type.REALM))))
-					&& !trait.is(Type.ABSTRACT)) {
-				KimConcept inh = this.observable;
-				this.type.clear();
-				this.type.addAll(trait.getType());
-				this.observable = (KimConcept) trait;
-				this.traits.clear();
-				this.roles.clear();
-				this.inherent = inh;
-				// description remains the same
+
+			if (!trait.is(Type.ABSTRACT)) {
+
+				boolean rearrange = trait.is(Type.ROLE) || trait.is(Type.ATTRIBUTE)
+						|| (observable.is(Type.COUNTABLE) && (trait.is(Type.IDENTITY) || trait.is(Type.REALM)));
+
+				if (rearrange && this.is(Type.QUALITY)) {
+					rearrange = trait.is(Type.RESCALING);
+				}
+
+				if (rearrange) {
+					KimConcept inh = this.observable;
+					this.type.clear();
+					this.type.addAll(trait.getType());
+					this.observable = (KimConcept) trait;
+					this.traits.clear();
+					this.roles.clear();
+					this.inherent = inh;
+				}
 			}
 		}
 	}

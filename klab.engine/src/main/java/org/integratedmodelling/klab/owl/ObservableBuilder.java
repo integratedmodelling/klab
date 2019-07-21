@@ -1255,10 +1255,6 @@ public class ObservableBuilder implements IObservable.Builder {
 	 */
 	public Concept makeType(IConcept classified, boolean addDefinition) {
 
-		// if (classified.is(Type.TRAIT)) {
-		// monitor.error("Traits cannot be further classified", declaration);
-		// }
-
 		String traitID = getCleanId(classified) + "Type";
 		String definition = UnarySemanticOperator.TYPE.declaration[0] + " " + classified.getDefinition();
 		Ontology ontology = (Ontology) classified.getOntology();

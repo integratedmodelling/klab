@@ -659,15 +659,25 @@ public class Observable implements IObservable {
 	}
 
 	public boolean hasResolvableTraits() {
+
+		/*
+		 * only resolve rescaling attributes for qualities, where attributes transform
+		 * values. For direct observations, resolve everything.
+		 */
 		if (observable.is(Type.OBSERVABLE)) {
 			for (IConcept c : Traits.INSTANCE.getDirectTraits(observable)) {
 				if (!c.is(Type.ABSTRACT)) {
+					if (is(Type.QUALITY) && !c.is(Type.RESCALING)) {
+						continue;
+					}
 					return true;
 				}
 			}
-			for (IConcept c : Roles.INSTANCE.getDirectRoles(observable)) {
-				if (!c.is(Type.ABSTRACT)) {
-					return true;
+			if (!is(Type.QUALITY)) {
+				for (IConcept c : Roles.INSTANCE.getDirectRoles(observable)) {
+					if (!c.is(Type.ABSTRACT)) {
+						return true;
+					}
 				}
 			}
 		}
@@ -686,15 +696,20 @@ public class Observable implements IObservable {
 		if (observable.is(Type.OBSERVABLE)) {
 			for (IConcept c : Traits.INSTANCE.getDirectTraits(observable)) {
 				if (!c.is(Type.ABSTRACT)) {
+					if (is(Type.QUALITY) && !c.is(Type.RESCALING)) {
+						continue;
+					}
 					resolvable = c;
 					break;
 				}
 			}
-			if (resolvable /* still */ == null) {
-				for (IConcept c : Roles.INSTANCE.getDirectRoles(observable)) {
-					if (!c.is(Type.ABSTRACT)) {
-						resolvable = c;
-						break;
+			if (!is(Type.QUALITY)) {
+				if (resolvable /* still */ == null) {
+					for (IConcept c : Roles.INSTANCE.getDirectRoles(observable)) {
+						if (!c.is(Type.ABSTRACT)) {
+							resolvable = c;
+							break;
+						}
 					}
 				}
 			}
