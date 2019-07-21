@@ -104,7 +104,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 
 			String op = modifier.getModifier() == null ? (modifier.getTotal() == null ? "down_to" : "total")
 					: modifier.getModifier();
-			
+
 			ValueOperator operator = ValueOperator.getOperator(op);
 			Object operand = null;
 
@@ -118,7 +118,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 
 			ret.valueOperators.add(new Pair<>(operator, operand));
 		}
-		
+
 		// TODO save units and ranges
 		if (declaration.getUnit() != null) {
 			ICompositeNode node = NodeModelUtils.getNode(declaration.getUnit());
@@ -169,7 +169,19 @@ public class KimObservable extends KimStatement implements IKimObservable {
 
 		String ret = main.getDefinition();
 
-		// TODO
+		for (Pair<ValueOperator, Object> operator : valueOperators) {
+
+			ret += " " + operator.getFirst().declaration;
+
+			if (operator.getSecond() instanceof IKimConcept) {
+				ret += " " + ((IKimConcept) operator.getSecond()).getDefinition();
+			} else if (operator.getSecond() instanceof IKimObservable) {
+				ret += " (" + ((IKimObservable) operator.getSecond()).getDefinition() + ")";
+			} else {
+				ret += " " + (operator.getSecond() instanceof String ? "'" : "") + operator.getSecond().toString()
+						+ (operator.getSecond() instanceof String ? "'" : "");
+			}
+		}
 
 		if (formalName != null) {
 			ret += " named " + formalName;
@@ -264,12 +276,18 @@ public class KimObservable extends KimStatement implements IKimObservable {
 
 	@Override
 	public void visit(Visitor visitor) {
+
 		if (main != null) {
 			main.visit(visitor);
 		}
-		/**
-		 * ZIKAROGA
-		 */
+
+		for (Pair<ValueOperator, Object> operator : valueOperators) {
+			if (operator.getSecond() instanceof IKimConcept) {
+				((IKimConcept) operator.getSecond()).visit(visitor);
+			} else if (operator.getSecond() instanceof IKimObservable) {
+				((IKimObservable) operator.getSecond()).visit(visitor);
+			}
+		}
 	}
 
 	public String validateValue() {
@@ -297,19 +315,32 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		return null;
 	}
 
+	public String validateOperators() {
+		// TODO!
+		return null;
+	}
+
 	@Override
 	public String getCodeName() {
-		// FIXME old shit here
+
 		if (main == null) {
 			return "undefined";
 		}
 		String ret = main.getCodeName();
-		/**
-		 * ZIKAROGA
-		 */
-		/*
-		 * TODO add args of all value operators
-		 */
+
+		for (Pair<ValueOperator, Object> operator : valueOperators) {
+
+			ret += "_" + operator.getFirst().declaration.replace(' ', '_');
+
+			if (operator.getSecond() instanceof IKimConcept) {
+				ret += "_" + ((IKimConcept) operator.getSecond()).getCodeName();
+			} else if (operator.getSecond() instanceof IKimObservable) {
+				ret += "_" + ((IKimObservable) operator.getSecond()).getCodeName();
+			} else {
+				ret += "_" + operator.getSecond().toString().replace(' ', '_');
+			}
+		}
+
 		return ret;
 	}
 

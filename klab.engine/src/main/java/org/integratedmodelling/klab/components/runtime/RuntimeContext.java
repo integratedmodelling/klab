@@ -1133,4 +1133,36 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		return notifiedObservations;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends IArtifact> T getArtifact(IConcept concept, Class<T> cls) {
+		
+		Set<IArtifact> ret = new HashSet<>();
+		for (IArtifact artifact : catalog.values()) {
+			if (artifact instanceof IObservation
+					&& ((IObservation) artifact).getObservable().getType().is(concept)) {
+				ret.add(artifact);
+			}
+		}
+		
+		Set<IArtifact> chosen = new HashSet<>();
+		if (ret.size() > 1) {
+			for (IArtifact artifact : ret) {
+				if (cls.isAssignableFrom(artifact.getClass())) {
+					if (model != null && artifact instanceof IObservation) {
+						for (IObservable obs : model.getDependencies()) {
+							if (obs.getName().equals(((IObservation)artifact).getObservable().getName())) {
+								chosen.add(artifact);
+							}
+						}
+					} else {
+						chosen.add(artifact);
+					}
+				}
+			}
+		}
+		
+		return (T) (chosen.isEmpty() ? null : chosen.iterator().next());
+	}
+
 }

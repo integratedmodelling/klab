@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.engine.runtime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -567,5 +568,30 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
         // TODO Auto-generated method stub
         return null;
     }
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends IArtifact> T getArtifact(IConcept concept, Class<T> cls) {
+		
+		Set<IArtifact> ret = new HashSet<>();
+		for (IArtifact artifact : artifacts.values()) {
+			if (artifact instanceof IObservation
+					&& ((IObservation) artifact).getObservable().getType().is(concept)) {
+				ret.add(artifact);
+			}
+		}
+		
+		Set<IArtifact> chosen = new HashSet<>();
+		if (ret.size() > 1) {
+			for (IArtifact artifact : ret) {
+				if (cls.isAssignableFrom(artifact.getClass())) {
+					chosen.add(artifact);
+				}
+			}
+		}
+		
+		return (T) (chosen.isEmpty() ? null : chosen.iterator().next());
+	}
+
 
 }

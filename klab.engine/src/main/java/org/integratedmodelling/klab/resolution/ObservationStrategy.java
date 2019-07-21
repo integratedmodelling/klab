@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
@@ -77,6 +78,39 @@ public class ObservationStrategy {
 			}
 		}
 
+		/*
+		 * If we're classifying a countable with a trait and we don't have the dependency for it,
+		 * add it.
+		 */
+		if (observable.getObservationType() == ObservationType.CLASSIFICATION) {
+			IConcept dep = observable.getInherentType();
+			if (((Model) model).findDependency(dep) == null) {
+				ret.add(new ObservationStrategy(Observable.promote(dep),
+						// this is always countable, but leave it.
+						dep.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
+			}
+		}
+		
+		/**
+		 * Add dependencies for anything mentioned in operators if needed
+		 */
+		for (Pair<ValueOperator, Object> operator : observable.getValueOperators()) {
+
+			if (operator.getSecond() instanceof IConcept) {
+				IConcept dep = (IConcept) operator.getSecond();
+				if (((Model) model).findDependency(dep) == null) {
+					ret.add(new ObservationStrategy(Observable.promote(dep),
+							dep.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
+				}
+			} else if (operator.getSecond() instanceof IObservable) {
+				IObservable dep = (IObservable) operator.getSecond();
+				if (((Model) model).findDependency(dep) == null) {
+					ret.add(new ObservationStrategy((Observable) dep,
+							dep.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
+				}
+			}
+		}
+
 		return ret;
 	}
 
@@ -88,7 +122,8 @@ public class ObservationStrategy {
 	 * @param scope
 	 * @return
 	 */
-	public static List<ObservationStrategy> computeStrategies(IObservable observable, IResolutionScope scope, Mode mode) {
+	public static List<ObservationStrategy> computeStrategies(IObservable observable, IResolutionScope scope,
+			Mode mode) {
 
 		List<ObservationStrategy> ret = new ArrayList<>();
 
@@ -102,14 +137,14 @@ public class ObservationStrategy {
 			 * match candidates, and the utility of allowing pre-modified source models is
 			 * doubtful as it encourages use of partial information as primary.
 			 */
-			
+
 			target = (Observable) ((Observable) observable).getBuilder(scope.getMonitor()).withoutValueOperators()
 					.buildObservable();
 			Observable previous = ((ResolutionScope) scope).getResolvedObservable(target, mode);
 			if (previous != null) {
 				target = previous;
 			}
-			
+
 			ObservationStrategy alternative = new ObservationStrategy(target, mode);
 
 			for (Pair<ValueOperator, Object> operator : operators) {
@@ -175,18 +210,18 @@ public class ObservationStrategy {
 			}
 
 			if (!computations.isEmpty()) {
-				
+
 				Observable inherentObservable = null;
-				Observable previous = ((ResolutionScope) scope).getResolvedObservable(target, 
+				Observable previous = ((ResolutionScope) scope).getResolvedObservable(target,
 						inherent.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
 				if (previous != null) {
 					inherentObservable = previous;
 				} else {
 					inherentObservable = Observable.promote(inherent);
 				}
-				
+
 				ObservationStrategy alternative = new ObservationStrategy(inherentObservable, mode);
-				
+
 				alternative.computation.addAll(computations);
 				ret.add(alternative);
 			}

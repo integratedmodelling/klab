@@ -23,6 +23,8 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
+import org.integratedmodelling.kim.api.IKimObservable;
+import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimConcept;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -172,15 +174,19 @@ public enum Concepts implements IConceptService {
 	public String getDisplayName(IObservable o) {
 
 		String ret = getDisplayName(o.getType());
-		/**
-		 * ZIKAROGA
-		 */
-//		if (o.getClassifier() != null) {
-//			ret += "By" + getDisplayName(o.getClassifier());
-//		}
-//		if (o.getDownTo() != null) {
-//			ret += "DownTo" + getDisplayName(o.getDownTo());
-//		}
+		
+		for (Pair<ValueOperator, Object> operator : o.getValueOperators()) {
+
+			ret += StringUtils.capitalize(operator.getFirst().declaration.replace(' ', '_'));
+
+			if (operator.getSecond() instanceof IConcept) {
+				ret += getDisplayName((IConcept)operator.getSecond());
+			} else if (operator.getSecond() instanceof IObservable) {
+				ret += getDisplayName((IObservable)operator.getSecond());
+			} else {
+				ret += "_" + operator.getSecond().toString().replace(' ', '_');
+			}
+		}
 		return ret;
 	}
 	

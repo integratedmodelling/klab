@@ -193,8 +193,7 @@ public class KimValidator extends AbstractKimValidator {
               String _name_2 = import_.getName();
               String _plus_4 = ("Importing namespace " + _name_2);
               String _plus_5 = (_plus_4 + " causes circular dependencies in workspace");
-              this.error(_plus_5, namespace, 
-                KimPackage.Literals.NAMESPACE__IMPORTED, i, KimValidator.BAD_NAMESPACE_ID);
+              this.error(_plus_5, namespace, KimPackage.Literals.NAMESPACE__IMPORTED, i, KimValidator.BAD_NAMESPACE_ID);
               ns.setErrors(true);
             } else {
               dependencies.addDependency(namespace.getName(), import_.getName());
@@ -469,39 +468,49 @@ public class KimValidator extends AbstractKimValidator {
         }
         KimObservable observable = _xifexpression_4;
         if ((observable != null)) {
-          java.util.List<CompileNotificationReference> _notificationsFor = Kim.INSTANCE.getNotificationsFor(namespaceId, observable.getURI());
+          java.util.List<CompileNotificationReference> _notificationsFor = Kim.INSTANCE.getNotificationsFor(namespaceId, 
+            observable.getURI());
           for (final CompileNotificationReference ref : _notificationsFor) {
             int _level = ref.getLevel();
             boolean _matched = false;
             int _intValue = Level.SEVERE.intValue();
             if (Objects.equal(_level, _intValue)) {
               _matched=true;
-              this.error(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);
+              this.error(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, 
+                KimValidator.REASONING_PROBLEM);
             }
             if (!_matched) {
               int _intValue_1 = Level.WARNING.intValue();
               if (Objects.equal(_level, _intValue_1)) {
                 _matched=true;
-                this.warning(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);
+                this.warning(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, 
+                  KimValidator.REASONING_PROBLEM);
               }
             }
             if (!_matched) {
               int _intValue_2 = Level.INFO.intValue();
               if (Objects.equal(_level, _intValue_2)) {
                 _matched=true;
-                this.info(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);
+                this.info(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, 
+                  KimValidator.REASONING_PROBLEM);
               }
             }
           }
-          if ((((observable.getMain() != null) && (observable.getMain().is(IKimConcept.Type.TRAIT) || observable.getMain().is(IKimConcept.Type.ROLE))) && (observable.getMain().getInherent() == null))) {
-            this.error(
-              ("Lone predicates are not valid observables. Use classifying observables to attribute " + " or resolve predicates, or use \'type of\' to observe them over a context."), 
+          if ((((observable.getMain() != null) && (observable.getMain().is(IKimConcept.Type.TRAIT) || observable.getMain().is(IKimConcept.Type.ROLE))) && 
+            (observable.getMain().getInherent() == null))) {
+            this.error(("Lone predicates are not valid observables. Use classifying observables to attribute " + 
+              " or resolve predicates, or use \'type of\' to observe them over a context."), 
               KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);
           }
           if ((((obsIdx == 0) && (observable.getMain() != null)) && (observable.getMain().is(IKimConcept.Type.TRAIT) || observable.getMain().is(IKimConcept.Type.ROLE)))) {
             IKimConcept.ComponentRole _distributedInherent = observable.getMain().getDistributedInherent();
             boolean _tripleNotEquals = (_distributedInherent != null);
             hasDistributedAttributeObservable = _tripleNotEquals;
+          }
+          if ((((observable.getMain() != null) && observable.getMain().is(IKimConcept.Type.ABSTRACT)) && 
+            (!(observable.getMain().is(IKimConcept.Type.TRAIT) || observable.getMain().is(IKimConcept.Type.ROLE))))) {
+            this.error("Abstract observables in models are only allowed in classifiers and characterizers (models that instantiate or\r\n                           resolve attributes or roles).", 
+              KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);
           }
           Kim.ConceptDescriptor definition = observable.getDescriptor();
           if ((definition != null)) {
@@ -576,33 +585,37 @@ public class KimValidator extends AbstractKimValidator {
         ObservableSemantics _observable_1 = cd.getObservable();
         boolean _tripleNotEquals_2 = (_observable_1 != null);
         if (_tripleNotEquals_2) {
-          java.util.List<CompileNotificationReference> _notificationsFor = Kim.INSTANCE.getNotificationsFor(namespaceId, observable.getURI());
+          java.util.List<CompileNotificationReference> _notificationsFor = Kim.INSTANCE.getNotificationsFor(namespaceId, 
+            observable.getURI());
           for (final CompileNotificationReference ref : _notificationsFor) {
             int _level = ref.getLevel();
             boolean _matched = false;
             int _intValue = Level.SEVERE.intValue();
             if (Objects.equal(_level, _intValue)) {
               _matched=true;
-              this.error(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.REASONING_PROBLEM);
+              this.error(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, 
+                KimValidator.REASONING_PROBLEM);
             }
             if (!_matched) {
               int _intValue_1 = Level.WARNING.intValue();
               if (Objects.equal(_level, _intValue_1)) {
                 _matched=true;
-                this.warning(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.REASONING_PROBLEM);
+                this.warning(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, 
+                  KimValidator.REASONING_PROBLEM);
               }
             }
             if (!_matched) {
               int _intValue_2 = Level.INFO.intValue();
               if (Objects.equal(_level, _intValue_2)) {
                 _matched=true;
-                this.info(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.REASONING_PROBLEM);
+                this.info(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, 
+                  KimValidator.REASONING_PROBLEM);
               }
             }
           }
           if ((((observable.getMain() != null) && observable.getMain().is(IKimConcept.Type.TRAIT)) && (observable.getMain().getInherent() == null))) {
-            this.error(
-              ("Lone predicates are not valid observables. Use classifying observables to attribute " + " or resolve predicates, or use \'type of\' to observe them over a context."), 
+            this.error(("Lone predicates are not valid observables. Use classifying observables to attribute " + 
+              " or resolve predicates, or use \'type of\' to observe them over a context."), 
               KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.REASONING_PROBLEM);
           }
           if (((cd.getObservable().getValue() != null) && (cd.getObservable().getValue().getId() != null))) {
@@ -613,7 +626,11 @@ public class KimValidator extends AbstractKimValidator {
           Object _value = observable.getValue();
           boolean _tripleNotEquals_3 = (_value != null);
           if (_tripleNotEquals_3) {
-            final String error = observable.validateValue();
+            String error = observable.validateValue();
+            if ((error != null)) {
+              this.error(error, KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
+            }
+            error = observable.validateOperators();
             if ((error != null)) {
               this.error(error, KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
             }
@@ -827,7 +844,9 @@ public class KimValidator extends AbstractKimValidator {
           int _ordinal_1 = scope.ordinal();
           boolean _lessThan = (_ordinal < _ordinal_1);
           if (_lessThan) {
-            this.error("cannot make a model\'s scope broader than the scope of the namespace it\'s in", statement, KimPackage.Literals.MODEL_STATEMENT__BODY);
+            this.error(
+              "cannot make a model\'s scope broader than the scope of the namespace it\'s in", statement, 
+              KimPackage.Literals.MODEL_STATEMENT__BODY);
           }
           descriptor.setScope(scope);
         }
@@ -1421,16 +1440,16 @@ public class KimValidator extends AbstractKimValidator {
     boolean _isDistributedForInherency = declaration.isDistributedForInherency();
     if (_isDistributedForInherency) {
       if (distributedInherency) {
-        this.error("Distributed inherency (\'of each\') can only be used once in a declaration", declaration.getMotivation(), null, 
-          KimPackage.CONCEPT_DECLARATION__MOTIVATION);
+        this.error("Distributed inherency (\'of each\') can only be used once in a declaration", 
+          declaration.getMotivation(), null, KimPackage.CONCEPT_DECLARATION__MOTIVATION);
       }
       distributedInherency = true;
     }
     boolean _isDistributedWithinInherency = declaration.isDistributedWithinInherency();
     if (_isDistributedWithinInherency) {
       if (distributedInherency) {
-        this.error("Distributed inherency (\'of each\') can only be used once in a declaration", declaration.getContext(), null, 
-          KimPackage.CONCEPT_DECLARATION__CONTEXT);
+        this.error("Distributed inherency (\'of each\') can only be used once in a declaration", declaration.getContext(), 
+          null, KimPackage.CONCEPT_DECLARATION__CONTEXT);
       }
       distributedInherency = true;
     }
@@ -1500,8 +1519,11 @@ public class KimValidator extends AbstractKimValidator {
           boolean _contains_6 = flags.contains(IKimConcept.Type.DIRECT_OBSERVABLE);
           boolean _not_8 = (!_contains_6);
           if (_not_8) {
-            this.error("The relationship source type is not a direct observable", declaration.getRelationshipSource(), 
-              null, KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_SOURCE);
+            this.error(
+              "The relationship source type is not a direct observable", 
+              declaration.getRelationshipSource(), 
+              null, 
+              KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_SOURCE);
             error = true;
           }
         }
@@ -1517,8 +1539,11 @@ public class KimValidator extends AbstractKimValidator {
           boolean _contains_8 = flags.contains(IKimConcept.Type.DIRECT_OBSERVABLE);
           boolean _not_10 = (!_contains_8);
           if (_not_10) {
-            this.error("The relationship source type is not a direct observable", declaration.getRelationshipSource(), 
-              null, KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_SOURCE);
+            this.error(
+              "The relationship source type is not a direct observable", 
+              declaration.getRelationshipSource(), 
+              null, 
+              KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_SOURCE);
             error = true;
           }
         }
@@ -1639,9 +1664,9 @@ public class KimValidator extends AbstractKimValidator {
             if (_not_18) {
               String _name_5 = macro.getName();
               String _plus_10 = ("The adjacent type (adjacent to) does not match the type requested by the " + _name_5);
-              String _plus_11 = (_plus_10 + " macro");
-              this.error(_plus_11, declaration.getAdjacent(), null, 
-                KimPackage.CONCEPT_DECLARATION__ADJACENT);
+              String _plus_11 = (_plus_10 + 
+                " macro");
+              this.error(_plus_11, declaration.getAdjacent(), null, KimPackage.CONCEPT_DECLARATION__ADJACENT);
               error = true;
             } else {
               macro.setField(IKimMacro.Field.ADJACENT, declaration.getAdjacent());
@@ -1703,9 +1728,9 @@ public class KimValidator extends AbstractKimValidator {
             if (_not_22) {
               String _name_7 = macro.getName();
               String _plus_14 = ("The co-occurrent type (for) does not match the type requested by the " + _name_7);
-              String _plus_15 = (_plus_14 + " macro");
-              this.error(_plus_15, declaration.getMotivation(), null, 
-                KimPackage.CONCEPT_DECLARATION__MOTIVATION);
+              String _plus_15 = (_plus_14 + 
+                " macro");
+              this.error(_plus_15, declaration.getMotivation(), null, KimPackage.CONCEPT_DECLARATION__MOTIVATION);
               error = true;
             } else {
               macro.setField(IKimMacro.Field.COOCCURRENT, declaration.getMotivation());
@@ -1735,10 +1760,8 @@ public class KimValidator extends AbstractKimValidator {
           if (_not_25) {
             String _get = declaration.getOperators().get(i);
             String _plus_16 = ("Operands in the \'" + _get);
-            String _plus_17 = (_plus_16 + 
-              "\' expression are of incompatible types");
-            this.error(_plus_17, operand, 
-              KimPackage.Literals.CONCEPT_DECLARATION__OPERANDS, i);
+            String _plus_17 = (_plus_16 + "\' expression are of incompatible types");
+            this.error(_plus_17, operand, KimPackage.Literals.CONCEPT_DECLARATION__OPERANDS, i);
             error = true;
           }
           i++;
@@ -1827,10 +1850,11 @@ public class KimValidator extends AbstractKimValidator {
           } else {
             String ns = concept.getName().getName().substring(0, concept.getName().getName().indexOf(":"));
             KimNamespace namespace_1 = Kim.INSTANCE.getNamespace(concept);
-            if (((!namespace_1.isWorldviewBound()) && ((KimWorkspace) namespace_1.getProject().getWorkspace()).getNamespaceIds().contains(ns))) {
+            if (((!namespace_1.isWorldviewBound()) && 
+              ((KimWorkspace) namespace_1.getProject().getWorkspace()).getNamespaceIds().contains(ns))) {
               if (((!namespace_1.getName().equals(ns)) && (!((KimNamespace) namespace_1).getImportedIds().contains(ns)))) {
-                this.error((("Namespace " + ns) + " is in the same workspace and must be explicitly imported for its concepts to be used"), concept, null, 
-                  KimPackage.CONCEPT__CONCEPT);
+                this.error((("Namespace " + ns) + 
+                  " is in the same workspace and must be explicitly imported for its concepts to be used"), concept, null, KimPackage.CONCEPT__CONCEPT);
               }
             }
           }
@@ -2046,7 +2070,8 @@ public class KimValidator extends AbstractKimValidator {
       boolean _contains = type.contains(IKimConcept.Type.ATTRIBUTE);
       boolean _not = (!_contains);
       if (_not) {
-        this.error("Only attributes can be further specified", KimPackage.Literals.CONCEPT_STATEMENT__ATTRIBUTE_SPECIFIER);
+        this.error("Only attributes can be further specified", 
+          KimPackage.Literals.CONCEPT_STATEMENT__ATTRIBUTE_SPECIFIER);
         ok = false;
       } else {
         boolean _equals = "rescaling".equals(statement.getAttributeSpecifier());

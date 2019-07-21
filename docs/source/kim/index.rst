@@ -9,6 +9,7 @@ Semantic modeling in the k.IM language
    :caption: Contents:
 
 	Namespaces and project structure <namespaces>
-	Modeling knowledge: concepts <concepts/index>
-	Making observations: models <models/index>
+	Defining knowledge: concepts <concepts/index>
+	Semantic annotation: observables <observables/index>
+	Semantic modelling: models <models/index>
 

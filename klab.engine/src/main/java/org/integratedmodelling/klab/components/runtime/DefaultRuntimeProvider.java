@@ -28,6 +28,7 @@ import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
 import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.api.extensions.Component;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
@@ -432,29 +433,27 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		}
 		return null;
 	}
-
-	@Override
-	public IComputableResource getAggregatingResolver(IObservable classifiedResolvable,
-			IObservable aggregatorObservable) {
-
-		if (classifiedResolvable.getType().is(IKimConcept.Type.QUALITY)) {
-			IArtifact.Type atype = aggregatorObservable.getArtifactType();
-			if (atype == IArtifact.Type.CONCEPT || atype == IArtifact.Type.BOOLEAN || atype == IArtifact.Type.TEXT) {
-				return new ComputableResource(
-						CategoryClassificationResolver.getServiceCall(classifiedResolvable, aggregatorObservable),
-						Mode.RESOLUTION);
-			} else if (atype == IArtifact.Type.OBJECT) {
-				return new ComputableResource(
-						ObjectClassificationResolver.getServiceCall(classifiedResolvable, aggregatorObservable),
-						Mode.RESOLUTION);
-			}
-		}
-		return null;
-	}
-
+	
 	@Override
 	public IComputableResource getOperatorResolver(IObservable classifiedObservable, ValueOperator operator,
 			Object operand) {
+		
+		if (operator == ValueOperator.BY) {
+
+			if (!(operand instanceof IConcept)) {
+				throw new IllegalArgumentException("Cannot classify an observable by anything else than a concept");
+			}
+			
+			IConcept aggregator = (IConcept) operand;
+			if (aggregator.is(Type.CLASS) || aggregator.is(Type.TRAIT) || aggregator.is(Type.PRESENCE)) {
+				return new ComputableResource(
+						CategoryClassificationResolver.getServiceCall(classifiedObservable, aggregator),
+						Mode.RESOLUTION);
+			} else if (aggregator.is(Type.COUNTABLE)) {
+				return new ComputableResource(
+						ObjectClassificationResolver.getServiceCall(classifiedObservable, aggregator), Mode.RESOLUTION);
+			}
+		}
 		return new ComputableResource(ValueOperatorResolver.getServiceCall(classifiedObservable, operator, operand),
 				Mode.RESOLUTION);
 	}

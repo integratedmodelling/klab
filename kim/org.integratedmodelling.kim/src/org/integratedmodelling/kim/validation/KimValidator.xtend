@@ -101,7 +101,7 @@ class KimValidator extends AbstractKimValidator {
 		if (!namespace.worldviewBound) {
 
 			var ns = Kim.INSTANCE.getNamespace(namespace)
-					
+
 			var project = ns.project
 			var expectedId = (project as KimProject).getNamespaceIdFor(namespace)
 			if (expectedId === null) {
@@ -116,7 +116,8 @@ class KimValidator extends AbstractKimValidator {
 			}
 
 			var i = 0
-			var dependencies = if (namespace.imported.size() > 0) Kim.INSTANCE.currentLoader.dependencyGraph.copy() else null
+			var dependencies = if(namespace.imported.size() > 0) Kim.INSTANCE.currentLoader.dependencyGraph.
+					copy() else null
 			for (import : namespace.imported) {
 				var importedNs = Kim.INSTANCE.getNamespace(import.name)
 				if (importedNs === null) {
@@ -134,8 +135,8 @@ class KimValidator extends AbstractKimValidator {
 					}
 					// verify circular dependencies
 					if (!dependencies.canImport(namespace.name, import.name)) {
-						error("Importing namespace " + import.name + " causes circular dependencies in workspace", namespace,
-							KimPackage.Literals.NAMESPACE__IMPORTED, i, BAD_NAMESPACE_ID)
+						error("Importing namespace " + import.name + " causes circular dependencies in workspace",
+							namespace, KimPackage.Literals.NAMESPACE__IMPORTED, i, BAD_NAMESPACE_ID)
 						ns.errors = true
 					} else {
 						dependencies.addDependency(namespace.name, import.name)
@@ -258,19 +259,19 @@ class KimValidator extends AbstractKimValidator {
 	@Check
 	def checkModelStatement(ModelStatement model) {
 
-			val namespace = if(model !== null) getNamespace(model) else null
-			val namespaceId = if (namespace !== null)  Kim.getNamespaceId(namespace) else null
-			val uri = EcoreUtil.getURI(model).toString();
-			for (CompileNotificationReference ref : Kim.INSTANCE.getNotificationsFor(namespaceId, uri)) {
-				switch (ref.level) {
-					case Level.SEVERE.intValue():
-						error(ref.message, KimPackage.Literals.MODEL_STATEMENT__MODEL, REASONING_PROBLEM)
-					case Level.WARNING.intValue():
-						warning(ref.message, KimPackage.Literals.MODEL_STATEMENT__MODEL, REASONING_PROBLEM)
-					case Level.INFO.intValue():
-						info(ref.message, KimPackage.Literals.MODEL_STATEMENT__MODEL, REASONING_PROBLEM)
-				}
+		val namespace = if(model !== null) getNamespace(model) else null
+		val namespaceId = if(namespace !== null) Kim.getNamespaceId(namespace) else null
+		val uri = EcoreUtil.getURI(model).toString();
+		for (CompileNotificationReference ref : Kim.INSTANCE.getNotificationsFor(namespaceId, uri)) {
+			switch (ref.level) {
+				case Level.SEVERE.intValue():
+					error(ref.message, KimPackage.Literals.MODEL_STATEMENT__MODEL, REASONING_PROBLEM)
+				case Level.WARNING.intValue():
+					warning(ref.message, KimPackage.Literals.MODEL_STATEMENT__MODEL, REASONING_PROBLEM)
+				case Level.INFO.intValue():
+					info(ref.message, KimPackage.Literals.MODEL_STATEMENT__MODEL, REASONING_PROBLEM)
 			}
+		}
 	}
 
 	@Check
@@ -296,12 +297,12 @@ class KimValidator extends AbstractKimValidator {
 		 * Find the original namespace: if we don't have one, don't register
 		 */
 		var namespace = if(statement !== null) getNamespace(statement) else null;
-		val namespaceId = if (namespace !== null) Kim.getNamespaceId(namespace) else null;
+		val namespaceId = if(namespace !== null) Kim.getNamespaceId(namespace) else null;
 		val isPrivate = statement.isPrivate || namespace.isPrivate || namespace.worldviewBound;
 		var hasDistributedAttributeObservable = false
-		
+
 		/*
- 		 * look-ahead the first observable to handle the special case where the 'observed as' is a concept and the first
+		 * look-ahead the first observable to handle the special case where the 'observed as' is a concept and the first
 		 * observable is a role.
 		 */
 		var firstObservable = if (nonSemanticModels.contains(statement.model) && namespace !== null) {
@@ -310,7 +311,6 @@ class KimValidator extends AbstractKimValidator {
 			} else if (model.observables.size() > 0) {
 				Kim.INSTANCE.declareObservable(model.observables.get(0))
 			}
-
 
 		if (firstObservable !== null && nonSemanticModels.contains(statement.model)) {
 			observables.add(firstObservable)
@@ -331,27 +331,40 @@ class KimValidator extends AbstractKimValidator {
 
 			if (observable !== null) {
 
-				for (CompileNotificationReference ref : Kim.INSTANCE.getNotificationsFor(namespaceId, observable.getURI())) {
+				for (CompileNotificationReference ref : Kim.INSTANCE.getNotificationsFor(namespaceId,
+					observable.getURI())) {
 					switch (ref.level) {
 						case Level.SEVERE.intValue():
-							error(ref.message, KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, REASONING_PROBLEM)
+							error(ref.message, KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx,
+								REASONING_PROBLEM)
 						case Level.WARNING.intValue():
-							warning(ref.message, KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, REASONING_PROBLEM)
+							warning(ref.message, KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx,
+								REASONING_PROBLEM)
 						case Level.INFO.intValue():
-							info(ref.message, KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, REASONING_PROBLEM)
+							info(ref.message, KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx,
+								REASONING_PROBLEM)
 					}
 				}
-				
-				if (observable.main !== null && (observable.main.is(Type.TRAIT) || observable.main.is(Type.ROLE)) && observable.main.inherent === null) {
-					error("Lone predicates are not valid observables. Use classifying observables to attribute "
-						+ " or resolve predicates, or use 'type of' to observe them over a context.", 
+
+				if (observable.main !== null && (observable.main.is(Type.TRAIT) || observable.main.is(Type.ROLE)) &&
+					observable.main.inherent === null) {
+					error("Lone predicates are not valid observables. Use classifying observables to attribute " +
+						" or resolve predicates, or use 'type of' to observe them over a context.",
 						KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, REASONING_PROBLEM)
 				}
-				
-				if (obsIdx == 0 && observable.main !== null && (observable.main.is(Type.TRAIT) || observable.main.is(Type.ROLE))) {
+
+				if (obsIdx == 0 && observable.main !== null &&
+					(observable.main.is(Type.TRAIT) || observable.main.is(Type.ROLE))) {
 					hasDistributedAttributeObservable = observable.main.distributedInherent !== null
 				}
-				
+
+				if (observable.main !== null && observable.main.is(Type.ABSTRACT) &&
+					!(observable.main.is(Type.TRAIT) || observable.main.is(Type.ROLE))) {
+					error("Abstract observables in models are only allowed in classifiers and characterizers (models that instantiate or
+                           resolve attributes or roles).",
+						KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, REASONING_PROBLEM)
+				}
+
 				var definition = observable.descriptor
 				if (definition !== null) {
 					if (definition.isUndefined && (obsIdx > 0)) {
@@ -363,13 +376,15 @@ class KimValidator extends AbstractKimValidator {
 							"Distributed inherency (of each, for each, within each) are only allowed as main observables",
 							KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, BAD_OBSERVABLE)
 						ok = false
-					} /* else if (!definition.is(Type.OBSERVABLE) && !definition.is(Type.TRAIT) &&
-						!definition.is(Type.CONFIGURATION)) {
-						error('Models can only describe observables, configurations or traits',
-							KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, BAD_OBSERVABLE)
-						ok = false
-					} */ else if (obsIdx == 0 && statement !== null && model.isInstantiator && // leave as is: must not check classifiers
-						!definition.is(Type.COUNTABLE)) {
+					}
+					/* else if (!definition.is(Type.OBSERVABLE) && !definition.is(Type.TRAIT) &&
+					 * 	!definition.is(Type.CONFIGURATION)) {
+					 * 	error('Models can only describe observables, configurations or traits',
+					 * 		KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, BAD_OBSERVABLE)
+					 * 	ok = false
+					 } */
+					else if (obsIdx == 0 && statement !== null && model.isInstantiator && // leave as is: must not check classifiers
+					!definition.is(Type.COUNTABLE)) {
 						error(
 							"The first observable in an instantiator model ('model each') must be countable: subject, event or relationship",
 							KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, BAD_OBSERVABLE)
@@ -388,9 +403,8 @@ class KimValidator extends AbstractKimValidator {
 
 		var i = 0
 		for (cd : model.dependencies) {
-			
+
 			// TODO check for 'model each'
-			
 			// context consistency left to reasoner
 			var observable = if (cd.observable !== null)
 					Kim.INSTANCE.declareObservable(cd.observable)
@@ -411,20 +425,24 @@ class KimValidator extends AbstractKimValidator {
 
 			if (cd.observable !== null) {
 
-				for (CompileNotificationReference ref : Kim.INSTANCE.getNotificationsFor(namespaceId, observable.getURI())) {
+				for (CompileNotificationReference ref : Kim.INSTANCE.getNotificationsFor(namespaceId,
+					observable.getURI())) {
 					switch (ref.level) {
 						case Level.SEVERE.intValue():
-							error(ref.message, KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, REASONING_PROBLEM)
+							error(ref.message, KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i,
+								REASONING_PROBLEM)
 						case Level.WARNING.intValue():
-							warning(ref.message, KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, REASONING_PROBLEM)
+							warning(ref.message, KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i,
+								REASONING_PROBLEM)
 						case Level.INFO.intValue():
-							info(ref.message, KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, REASONING_PROBLEM)
+							info(ref.message, KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i,
+								REASONING_PROBLEM)
 					}
 				}
 
 				if (observable.main !== null && observable.main.is(Type.TRAIT) && observable.main.inherent === null) {
-					error("Lone predicates are not valid observables. Use classifying observables to attribute "
-						+ " or resolve predicates, or use 'type of' to observe them over a context.", 
+					error("Lone predicates are not valid observables. Use classifying observables to attribute " +
+						" or resolve predicates, or use 'type of' to observe them over a context.",
 						KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, REASONING_PROBLEM)
 				}
 
@@ -433,9 +451,13 @@ class KimValidator extends AbstractKimValidator {
 						"Attributes IDs are not allowed in dependencies (<attribute> 'as' ...): only values, expressions or functions",
 						KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, BAD_OBSERVABLE)
 				}
-				
+
 				if (observable.value !== null) {
-					val error = observable.validateValue();
+					var error = observable.validateValue();
+					if (error !== null) {
+						error(error, KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, BAD_OBSERVABLE)
+					}
+					error = observable.validateOperators();
 					if (error !== null) {
 						error(error, KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, BAD_OBSERVABLE)
 					}
@@ -616,10 +638,12 @@ class KimValidator extends AbstractKimValidator {
 				// the rest
 				descriptor.setScope(ns.scope);
 				if (statement.isPrivate) {
-					var scope = if (statement.projectPrivate) Scope.PROJECT else Scope.NAMESPACE;
+					var scope = if(statement.projectPrivate) Scope.PROJECT else Scope.NAMESPACE;
 					if (descriptor.scope.ordinal < scope.ordinal) {
-						error("cannot make a model's scope broader than the scope of the namespace it's in",
-							statement, KimPackage.Literals.MODEL_STATEMENT__BODY
+						error(
+							"cannot make a model's scope broader than the scope of the namespace it's in",
+							statement,
+							KimPackage.Literals.MODEL_STATEMENT__BODY
 						);
 					}
 					descriptor.setScope(scope)
@@ -674,13 +698,14 @@ class KimValidator extends AbstractKimValidator {
 					if (descriptor.observables.get(0).formalName !== null) {
 						descriptor.name = observables.get(0).formalName
 					} else {
-						
-						var name = if (hasDistributedAttributeObservable) 
-										"classifier" 
-									else if (descriptor.instantiator) 
-										"instantiator" 
-									else "resolver";
-									
+
+						var name = if (hasDistributedAttributeObservable)
+								"classifier"
+							else if (descriptor.instantiator)
+								"instantiator"
+							else
+								"resolver";
+
 						var st = descriptor.observables.get(0).codeName
 						descriptor.name = st + "-" + name
 					}
@@ -893,7 +918,6 @@ class KimValidator extends AbstractKimValidator {
 //						semantics.from, null, KimPackage.OBSERVABLE_SEMANTICS__BY)
 //				}
 //			}
-
 			/*
 			 * Range is only allowed for numeric qualities where it's not already implicit
 			 */
@@ -920,14 +944,14 @@ class KimValidator extends AbstractKimValidator {
 		var subjective = false
 		var template = false
 		var KimMacro macro = null;
-		
+
 		// this tracks those concepts that contain attributes or roles with inherency and 
 		// are only legal when used within specific usages of observables. This happens when
 		// a trait or role is followed by of/for/within. 
 		var traitObservable = false;
 		// as above, with the addition of a 'each' after the of, within or for
 		var distributedInherency = false;
-		
+
 		for (main : declaration.main) {
 
 			var mmacro = new KimMacro();
@@ -1052,7 +1076,7 @@ class KimValidator extends AbstractKimValidator {
 												description, main, null, KimPackage.CONCEPT_DECLARATION__MAIN)
 										error = true
 									}
-								}							
+								}
 							}
 						}
 					}
@@ -1076,7 +1100,7 @@ class KimValidator extends AbstractKimValidator {
 		}
 
 		if (declaration.inherency !== null) {
-			
+
 			if (flags.contains(Type.EXTENT)) {
 				// TODO restrict to worldviews as this is pretty fundamental
 			} else if (flags.contains(Type.TRAIT) || flags.contains(Type.ROLE)) {
@@ -1124,23 +1148,23 @@ class KimValidator extends AbstractKimValidator {
 
 		/*
 		 * this is the 'of each' form (can also be 'for each' and 'within each').
-		 */		
+		 */
 		if (declaration.distributedOfInherency) {
 			distributedInherency = true;
 		}
 
 		if (declaration.distributedForInherency) {
 			if (distributedInherency) {
-				error("Distributed inherency ('of each') can only be used once in a declaration", declaration.motivation, null,
-					KimPackage.CONCEPT_DECLARATION__MOTIVATION)
+				error("Distributed inherency ('of each') can only be used once in a declaration",
+					declaration.motivation, null, KimPackage.CONCEPT_DECLARATION__MOTIVATION)
 			}
 			distributedInherency = true;
 		}
 
 		if (declaration.distributedWithinInherency) {
 			if (distributedInherency) {
-				error("Distributed inherency ('of each') can only be used once in a declaration", declaration.context, null,
-					KimPackage.CONCEPT_DECLARATION__CONTEXT)
+				error("Distributed inherency ('of each') can only be used once in a declaration", declaration.context,
+					null, KimPackage.CONCEPT_DECLARATION__CONTEXT)
 			}
 			distributedInherency = true;
 		}
@@ -1187,24 +1211,30 @@ class KimValidator extends AbstractKimValidator {
 				type.clear
 			} else if (!flags.contains(Type.MACRO)) {
 				if (!flags.contains(Type.DIRECT_OBSERVABLE)) {
-					error("The relationship source type is not a direct observable", declaration.relationshipSource, 
-						null, KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_SOURCE
+					error(
+						"The relationship source type is not a direct observable",
+						declaration.relationshipSource,
+						null,
+						KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_SOURCE
 					)
 					error = true
 				}
-				// TODO macro support				
+			// TODO macro support				
 			}
 			flags = checkDeclaration(declaration.relationshipTarget)
 			if (flags.isEmpty) {
 				type.clear
 			} else if (!flags.contains(Type.MACRO)) {
 				if (!flags.contains(Type.DIRECT_OBSERVABLE)) {
-					error("The relationship source type is not a direct observable", declaration.relationshipSource, 
-						null, KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_SOURCE
+					error(
+						"The relationship source type is not a direct observable",
+						declaration.relationshipSource,
+						null,
+						KimPackage.CONCEPT_DECLARATION__RELATIONSHIP_SOURCE
 					)
 					error = true
 				}
-				// TODO macro support				
+			// TODO macro support				
 			}
 			copyInheritableFlags(flags, type);
 		}
@@ -1296,9 +1326,8 @@ class KimValidator extends AbstractKimValidator {
 					var ctype = Kim.intersection(rtype.type, flags)
 					if (!ctype.containsAll(rtype.type)) {
 						error(
-							"The adjacent type (adjacent to) does not match the type requested by the " +
-								macro.name + " macro", declaration.adjacent, null,
-							KimPackage.CONCEPT_DECLARATION__ADJACENT)
+							"The adjacent type (adjacent to) does not match the type requested by the " + macro.name +
+								" macro", declaration.adjacent, null, KimPackage.CONCEPT_DECLARATION__ADJACENT)
 						error = true
 					} else {
 						macro.setField(Field.ADJACENT, declaration.adjacent)
@@ -1349,9 +1378,8 @@ class KimValidator extends AbstractKimValidator {
 					var ctype = Kim.intersection(rtype.type, flags)
 					if (!ctype.containsAll(rtype.type)) {
 						error(
-							"The co-occurrent type (for) does not match the type requested by the " +
-								macro.name + " macro", declaration.motivation, null,
-							KimPackage.CONCEPT_DECLARATION__MOTIVATION)
+							"The co-occurrent type (for) does not match the type requested by the " + macro.name +
+								" macro", declaration.motivation, null, KimPackage.CONCEPT_DECLARATION__MOTIVATION)
 						error = true
 					} else {
 						macro.setField(Field.COOCCURRENT, declaration.motivation)
@@ -1371,9 +1399,8 @@ class KimValidator extends AbstractKimValidator {
 			for (operand : declaration.operands) {
 				var otype = checkDeclaration(operand)
 				if (!Kim.isCompatible(type, otype)) {
-					error("Operands in the '" + declaration.operators.get(i) +
-						"' expression are of incompatible types", operand,
-						KimPackage.Literals.CONCEPT_DECLARATION__OPERANDS, i)
+					error("Operands in the '" + declaration.operators.get(i) + "' expression are of incompatible types",
+						operand, KimPackage.Literals.CONCEPT_DECLARATION__OPERANDS, i)
 					error = true
 				}
 				i++
@@ -1426,7 +1453,7 @@ class KimValidator extends AbstractKimValidator {
 				}
 
 			} else {
-				
+
 				if (!concept.name.name.contains(":")) {
 					var namespace = KimValidator.getNamespace(concept);
 					concept.name.name = (if (namespace === null)
@@ -1437,13 +1464,16 @@ class KimValidator extends AbstractKimValidator {
 					// validate imports within namespace and workspace
 					var ns = concept.name.name.substring(0, concept.name.name.indexOf(':'))
 					var namespace = Kim.INSTANCE.getNamespace(concept)
-					if (!namespace.worldviewBound && (namespace.project.workspace as KimWorkspace).namespaceIds.contains(ns)) {
+					if (!namespace.worldviewBound &&
+						(namespace.project.workspace as KimWorkspace).namespaceIds.contains(ns)) {
 						/* if (namespace.name.equals(ns)) {
-							warning("Concept " + concept.name + " is in this same namespace and should be referred to by ID only", concept, null,
-								KimPackage.CONCEPT__CONCEPT)
-						} else */ if (!namespace.name.equals(ns) && !(namespace as KimNamespace).importedIds.contains(ns)) {
-							error("Namespace " + ns + " is in the same workspace and must be explicitly imported for its concepts to be used", concept, null,
-								KimPackage.CONCEPT__CONCEPT)
+						 * 	warning("Concept " + concept.name + " is in this same namespace and should be referred to by ID only", concept, null,
+						 * 		KimPackage.CONCEPT__CONCEPT)
+						 } else */
+						if (!namespace.name.equals(ns) && !(namespace as KimNamespace).importedIds.contains(ns)) {
+							error("Namespace " + ns +
+								" is in the same workspace and must be explicitly imported for its concepts to be used",
+								concept, null, KimPackage.CONCEPT__CONCEPT)
 						}
 					}
 				}
@@ -1501,10 +1531,10 @@ class KimValidator extends AbstractKimValidator {
 					operator.add(Type.SUBJECTIVE)
 				} else if (concept.isType) {
 					if (flags.contains(Type.TRAIT)) {
-					   if (!flags.contains(Type.ABSTRACT)) {
-						error("Types of traits can only be referenced for abstract traits", concept.concept, null,
-							KimPackage.CONCEPT__CONCEPT)
-					   }
+						if (!flags.contains(Type.ABSTRACT)) {
+							error("Types of traits can only be referenced for abstract traits", concept.concept, null,
+								KimPackage.CONCEPT__CONCEPT)
+						}
 					} else if (flags.contains(Type.QUALITY)) {
 						error("Qualities cannot be further categorized", concept.concept, null,
 							KimPackage.CONCEPT__CONCEPT)
@@ -1554,8 +1584,8 @@ class KimValidator extends AbstractKimValidator {
 							concept.concept, null, KimPackage.CONCEPT__CONCEPT)
 					}
 					operator.add(Type.UNCERTAINTY)
-				} 
-				
+				}
+
 				if (!operator.isEmpty) {
 					ret = Kim.INSTANCE.makeQuality(ret, operator.toArray(newArrayOfSize(operator.size())))
 					if (flags.contains(Type.MACRO)) {
@@ -1602,10 +1632,11 @@ class KimValidator extends AbstractKimValidator {
 				type.add(Type.DENIABLE)
 			}
 		}
-		
+
 		if (statement.attributeSpecifier !== null) {
 			if (!type.contains(Type.ATTRIBUTE)) {
-				error('Only attributes can be further specified', KimPackage.Literals.CONCEPT_STATEMENT__ATTRIBUTE_SPECIFIER)
+				error('Only attributes can be further specified',
+					KimPackage.Literals.CONCEPT_STATEMENT__ATTRIBUTE_SPECIFIER)
 				ok = false
 			} else {
 				if ("rescaling".equals(statement.attributeSpecifier)) {
@@ -1636,7 +1667,7 @@ class KimValidator extends AbstractKimValidator {
 				})
 			}
 		}
-		
+
 		if (statement.propertySpecifiers !== null) {
 			var i = 0;
 			for (specifier : statement.propertySpecifiers) {
@@ -1653,7 +1684,6 @@ class KimValidator extends AbstractKimValidator {
 				i++
 			}
 		}
-
 
 		if (ok && statement.body !== null) {
 
@@ -1851,7 +1881,7 @@ class KimValidator extends AbstractKimValidator {
 						ok = false
 					} else {
 						if (child.isAbstract) {
-							childsc.type.add(Type.ABSTRACT)				
+							childsc.type.add(Type.ABSTRACT)
 						}
 						ret.addChild(childsc)
 					}

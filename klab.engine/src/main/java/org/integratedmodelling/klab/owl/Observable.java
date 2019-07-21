@@ -553,17 +553,6 @@ public class Observable implements IObservable {
 	public boolean is(ISemantic semantics) {
 		IConcept c = semantics.getType();
 		return getType() == null ? false : getType().is(c);
-		// if (ret && semantics instanceof IObservable) {
-		// if (((IObservable) semantics).getClassifier() != null) {
-		// ret = getClassifier() == null || getClassifier().is(((IObservable)
-		// semantics).getClassifier());
-		// }
-		// if (ret && ((IObservable) semantics).getDownTo() != null) {
-		// ret = getDownTo() == null || getDownTo().is(((IObservable)
-		// semantics).getDownTo());
-		// }
-		// }
-		// return ret;
 	}
 
 	public String getNamespace() {
@@ -575,38 +564,6 @@ public class Observable implements IObservable {
 	public boolean is(Type type) {
 		return getType() == null ? false : getType().is(type);
 	}
-	//
-	// @Override
-	// public ValueOperator getValueOperator() {
-	// return valueOperator;
-	// }
-	//
-	// @Override
-	// public Object getValueOperand() {
-	// return valueOperand;
-	// }
-
-	// public void setValueOperator(ValueOperator valueOperator) {
-	// this.valueOperator = valueOperator;
-	// }
-	//
-	// public void setValueOperand(Object valueOperand) {
-	// this.valueOperand = valueOperand;
-	// }
-
-	// public void setGivenName(boolean b) {
-	// this.givenName = b;
-	// }
-	//
-	// /**
-	// * If true, the name is locked in by the user with a 'named' clause and
-	// * shouldn't be changed.
-	// *
-	// * @return
-	// */
-	// public boolean isGivenName() {
-	// return this.givenName;
-	// }
 
 	public void setUrl(String uri) {
 		this.url = uri;

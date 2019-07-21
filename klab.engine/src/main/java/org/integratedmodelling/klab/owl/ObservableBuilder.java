@@ -1797,25 +1797,6 @@ public class ObservableBuilder implements IObservable.Builder {
 
 		}
 
-//		if (classifier != null) {
-//			ret.setClassifier((Concept) classifier);
-//			ret.setDeclaration(ret.getDeclaration() + " by " + classifier.getDefinition());
-//			if (name == null) {
-//				ret.setName(ret.getName() + "_by_"
-//						+ Concepts.INSTANCE.getDisplayName(classifier).replaceAll("\\-", "_").replaceAll(" ", "_"));
-//			}
-//		}
-//
-//		// TODO move up as this is just another value operator
-//		if (downTo != null) {
-//			ret.setDownTo((Concept) downTo);
-//			ret.setDeclaration(ret.getDeclaration() + " down to " + downTo.getDefinition());
-//			if (name == null) {
-//				ret.setName(ret.getName() + "_down_to_"
-//						+ Concepts.INSTANCE.getDisplayName(downTo).replaceAll("\\-", "_").replaceAll(" ", "_"));
-//			}
-//		}
-
 		if (name != null) {
 			ret.setName(name);
 		}
