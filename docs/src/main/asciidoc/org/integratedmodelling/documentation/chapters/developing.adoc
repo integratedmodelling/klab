@@ -1,16 +1,11 @@
 = Developer API: using and extending k.LAB from code
 :doctype: book
 
-== Overview
-
-Mixed content
+Overview...
 
 == Embedding a k.LAB engine
 
-A programmer can use the engine API to embed observation functionalities 
-in Java programs. A basic example of using the Java API to access the network 
-and make observations through referencing concept and observation URNs could 
-look like this:
+A programmer can use the engine API to embed observation functionalities in Java programs. A basic example of using the Java API to access the network and make observations through referencing concept and observation URNs could look like this:
 
 [source,java]
 ----
@@ -35,25 +30,15 @@ try (ISession session = engine.createSession()) {
 }
 ----
 
-The first call creates and boots a modeling engine, of which you will 
-only need one:
+The first call creates and boots a modeling engine, of which you will only need one:
 
 This uses the default configuration, looking for a file named `im.cert` in the default 
-k.LAB work directory (`~/.klab`), containing a valid k.LAB 
-certificate. You can use a specific certificate as a parameter to the `Engine.start()`
-call.
+k.LAB work directory (`~/.klab`), containing a valid k.LAB  certificate. You can use a 
+specific certificate as a parameter to the `Engine.start()` call.
 
-In all cases, the initialization method called on the engine will 
-authorize the user, synchronize the worldview from the network, load it, 
-connect to the k.LAB network and initialize all network resources 
-according to the user's permissions. When that exits (after a short wait) 
-without error, the engine is ready to make observations. The engine makes
-observations within a *session*, which we must request. Operations within 
-sessions are assumed synchronous, while you may have several concurrent 
-sessions without problems.
+In all cases, the initialization method called on the engine will authorize the user, synchronize the worldview from the network, load it, connect to the k.LAB network and initialize all network resources according to the user's permissions. When that exits (after a short wait) without error, the engine is ready to make observations. The engine makesobservations within a *session*, which we must request. Operations within sessions are assumed synchronous, while you may have several concurrent sessions without problems.
 
-A Session is a `java.io.Closeable` so it can be opened and closed automatically
-within a try-with-resource block:
+A Session is a `java.io.Closeable` so it can be opened and closed automatically within a try-with-resource block:
 
 [source,java]
 ----
@@ -65,20 +50,12 @@ try (ISession session = engine.createSession()) {
 }
 ----
 
-The rationale of having sessions is that an engine can serve multiple simultaneous sessions, owned
-by different users. In fact, createSession() can be optionally passed a previously authenticated 
-IUser, which the web interface of the k.LAB engine allows to configure and authenticate. In 
-embedded mode, we can simply use the shorthand method createSession() with no arguments, which 
-will create a session owned by the same user who owns the engine and the certificate. You can 
-retrieve this user from the engine using `engine.getUser()`.
+The rationale of having sessions is that an engine can serve multiple simultaneous sessions, owned by different users. In fact, createSession() can be optionally passed a previously authenticated  IUser, which the web interface of the k.LAB engine allows to configure and authenticate. In  embedded mode, we can simply use the shorthand method createSession() with no arguments, which  will create a session owned by the same user who owns the engine and the certificate. You can retrieve this user from the engine using `engine.getUser()`.
 
-A major part of many independent developers’ interests will likely include development of components 
-– independent packages that provide functionalities for k.LAB, such as new model integrations. A 
-Maven archetype is provided that installs a sample component to use as a template. The KLAB project
-in Bitbucket contains many of the components that are currently available.
+== Using the REST API
 
-Little documentation and support is currently available for working with the k.LAB API, but the
-IM partnership plans to produce those and maintain active Gitter channels to support open-source
- developers interested in collaborating with the core team. Question should be directed to 
- info@integratedmodelling.org and we encourage interested open-source contributors to inquire.
+== Developing extensions
+
+A major part of many independent developers’ interests will likely include development of components – independent packages that provide functionalities for k.LAB, such as new model integrations. A  Maven archetype is provided that installs a sample component to use as a template. The `klab` project in Bitbucket contains many of the components that are currently available.
+
  

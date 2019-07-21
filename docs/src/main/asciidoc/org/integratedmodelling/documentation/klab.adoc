@@ -8,6 +8,8 @@ ifndef::sourcedir[:sourcedir: ../../../main/java]
 
 include::chapters/overview.adoc[]
 
+include::chapters/gettingstarted.adoc[]
+
 include::chapters/kim.adoc[]
 
 include::chapters/worldview.adoc[]
@@ -20,17 +22,15 @@ include::chapters/modeler.adoc[]
 
 include::chapters/developing.adoc[]
 
+include::chapters/administration.adoc[]
+
 :numbered!:
 
 [appendix]
-Example Appendix
+Appendix
 ----------------
-One or more optional appendixes go here at section level 1.
 
-Appendix Sub-section
-~~~~~~~~~~~~~~~~~~~
-Sub-section body.
-
+include::appendices/units.adoc[]
 
 [bibliography]
 Example Bibliography

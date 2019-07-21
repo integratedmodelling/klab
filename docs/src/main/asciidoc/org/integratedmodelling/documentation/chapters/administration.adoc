@@ -1,0 +1,8 @@
+= Installing, connecting and administering the k.LAB software stack
+:doctype: book
+
+== The modeler stack: engine and k.Modeler
+
+== Node installation and administration
+
+== Hub installation and administration

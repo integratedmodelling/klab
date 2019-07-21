@@ -3,4 +3,8 @@
 
 == Overview
 
-Mixed content
+== The resolution process
+
+== Dataflows
+
+== The resource lifecycle
