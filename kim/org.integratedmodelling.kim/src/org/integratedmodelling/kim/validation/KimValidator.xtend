@@ -360,8 +360,8 @@ class KimValidator extends AbstractKimValidator {
 
 				if (observable.main !== null && observable.main.is(Type.ABSTRACT) &&
 					!(observable.main.is(Type.TRAIT) || observable.main.is(Type.ROLE))) {
-					error("Abstract observables in models are only allowed in classifiers and characterizers (models that instantiate or
-                           resolve attributes or roles).",
+					error("Abstract observables in models are only allowed in classifiers and characterizers (models that instantiate or" +
+                          " resolve attributes or roles).",
 						KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, REASONING_PROBLEM)
 				}
 

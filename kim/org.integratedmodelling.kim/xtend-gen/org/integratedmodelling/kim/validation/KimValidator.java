@@ -509,7 +509,8 @@ public class KimValidator extends AbstractKimValidator {
           }
           if ((((observable.getMain() != null) && observable.getMain().is(IKimConcept.Type.ABSTRACT)) && 
             (!(observable.getMain().is(IKimConcept.Type.TRAIT) || observable.getMain().is(IKimConcept.Type.ROLE))))) {
-            this.error("Abstract observables in models are only allowed in classifiers and characterizers (models that instantiate or\r\n                           resolve attributes or roles).", 
+            this.error(("Abstract observables in models are only allowed in classifiers and characterizers (models that instantiate or" + 
+              " resolve attributes or roles)."), 
               KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);
           }
           Kim.ConceptDescriptor definition = observable.getDescriptor();

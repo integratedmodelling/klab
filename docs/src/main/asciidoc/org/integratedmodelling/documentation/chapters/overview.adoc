@@ -1,0 +1,6 @@
+= The k.LAB infrastructure for integrated science
+:doctype: book
+
+== Overview
+
+Mixed content

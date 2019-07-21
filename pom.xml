@@ -26,10 +26,20 @@
 			<email>enrico.girotto@gmail.com</email>
 		</developer>
 		<developer>
+			<name>Steven Wohl</name>
+			<email>steven.wohl@bc3research.org</email>
+			<organization>Basque Centre for Climate Change (BC3)</organization>
+		</developer>
+		<developer>
 			<name>J.Luke Scott</name>
 			<email>luke@cron.works</email>
 			<organization>CronWorks Software, LLC</organization>
 			<organizationUrl>http://cronworks.net</organizationUrl>
+		</developer>
+		<developer>
+			<name>Tarik Fissaa</name>
+			<email>tarik.fissaa@bc3research.org</email>
+			<organization>Basque Centre for Climate Change (BC3)</organization>
 		</developer>
 	</developers>
 
@@ -69,7 +79,8 @@
 		<module>klab.node</module>
 		<module>products</module>
 		<module>components</module>
-	</modules>
+		<module>docs</module>
+ 	</modules>
 
 	<properties>
 

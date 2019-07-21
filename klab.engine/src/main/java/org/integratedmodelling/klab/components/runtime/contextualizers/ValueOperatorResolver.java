@@ -44,8 +44,7 @@ public class ValueOperatorResolver implements IResolver<IState>, IProcessor, IEx
 	public static IServiceCall getServiceCall(IObservable classified, ValueOperator operator, Object operand)
 			throws KlabValidationException {
 		return KimServiceCall.create(FUNCTION_ID, "artifact", classified.getName(), "operator", operator.name(),
-				(operand instanceof IObservable ? "state" : "value"),
-				(operand instanceof IObservable ? ((IObservable) operand).getName() : operand));
+				"value", operand);
 	}
 
 	@Override
@@ -60,11 +59,6 @@ public class ValueOperatorResolver implements IResolver<IState>, IProcessor, IEx
 
 		return new ValueOperatorResolver(classified, operator, valueOperand, stateOperand);
 	}
-
-//	@Override
-//	public IGeometry getGeometry() {
-//		return Geometry.scalar();
-//	}
 
 	/*
 	 * TODO extract this mechanism into a caching class which also handles AND and

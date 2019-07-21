@@ -99,7 +99,7 @@ filter value transform
 	optional value 'value'
 		"The literal to use as operand. Not passed only if the operator is unary." 
 
-	optional import value state
+	optional value state
 		"The operand when it is another state." 
 		
 	import enum operator
@@ -118,7 +118,7 @@ filter value aggregate
 	optional import value artifact
 		"The artifact to categorize" 
 		
-	import object classifier
+	import object 'classifier'
 		"The artifact providing the coverage for classification." 
 
 	class org.integratedmodelling.klab.components.runtime.contextualizers.ObjectClassificationResolver

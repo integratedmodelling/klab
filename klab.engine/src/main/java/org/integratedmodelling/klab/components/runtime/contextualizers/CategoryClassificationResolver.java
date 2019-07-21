@@ -50,7 +50,7 @@ public class CategoryClassificationResolver
 
 	public static IServiceCall getServiceCall(IObservable classified, IConcept classifier)
 			throws KlabValidationException {
-		return KimServiceCall.create(FUNCTION_ID, "artifact", classified.getName(), "classifier", classifier.getName());
+		return KimServiceCall.create(FUNCTION_ID, "artifact", classified.getName(), "classifier", classifier);
 	}
 
 	@Override
@@ -78,15 +78,6 @@ public class CategoryClassificationResolver
 		 * Observables after it's all understood.
 		 */
 		boolean isExtensive = Units.INSTANCE.needsUnitScaling(values.getObservable());
-
-		IUnit propagateSpace = values.getObservable().getUnit() != null && (ret.getScale().getSpace() != null
-				&& Units.INSTANCE.isArealDensity(values.getObservable().getUnit()))
-						? Units.INSTANCE.getArealExtentUnit(values.getObservable().getUnit())
-						: null;
-		IUnit propagateTime = values.getObservable().getUnit() != null
-				&& (ret.getScale().getTime() != null && Units.INSTANCE.isRate(values.getObservable().getUnit()))
-						? Units.INSTANCE.getTimeExtentUnit(values.getObservable().getUnit())
-						: null;
 
 		for (ILocator locator : ret.getScale()) {
 
