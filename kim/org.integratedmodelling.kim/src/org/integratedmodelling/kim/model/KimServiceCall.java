@@ -19,6 +19,8 @@ import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
+import org.integratedmodelling.klab.api.data.mediation.ICurrency;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.utils.Escape;
@@ -169,6 +171,8 @@ public class KimServiceCall extends KimStatement implements IServiceCall {
 			return ((KimServiceCall) val).getSourceCode();
 		} else if (val instanceof ComputableResource) {
 			return ((ComputableResource) val).getSourceCode();
+		} else if (val instanceof IUnit || val instanceof ICurrency) {
+			return "\"" + val + "\""; 
 		}
 		return val.toString();
 	}
