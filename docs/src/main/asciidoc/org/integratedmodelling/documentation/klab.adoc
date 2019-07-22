@@ -1,6 +1,6 @@
 = k.LAB: a semantic web software stack for integrated science
 Ferdinando Villa <ferdinando.villa@bc3research.org>
-:copyright: (2019) Integrated Modelling Partnership and all authors
+:copyright: Copyright (C) 2019 Integrated Modelling Partnership and all listed authors. All rights reserved.
 :revnumber: {project-version}
 :doctype: book
 ifndef::imagesdir[:imagesdir: images]

@@ -3,8 +3,21 @@
 
 == Overview
 
-== The resolution process
+=== The resolution process
 
-== Dataflows
+=== Dataflows
 
-== The resource lifecycle
+=== The resource lifecycle
+
+=== Provenance
+
+== Semantic modeling in practice
+
+
+== Components in k.LAB
+
+include::modeling/gis.adoc[]
+
+include::modeling/mca.adoc[]
+
+include::modeling/weka.adoc[]

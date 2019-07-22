@@ -65,14 +65,15 @@ public class CategoryClassificationResolver
 		Map<Object, Double> cache = new HashMap<>();
 		Map<Object, Long> count = new HashMap<>();
 
-		if (!(classified instanceof IState) || !(classifier instanceof IState)) {
+		IArtifact classfc = ((IRuntimeContext)context).getArtifact(classifier, IArtifact.class);
+		
+		if (!(classified instanceof IState) || !(classfc instanceof IState)) {
 			throw new IllegalArgumentException(
 					"Category classification is not possible unless all arguments are states");
 		}
 
 		IState values = (IState) classified;
-		IState classf = ((IRuntimeContext)context).getArtifact(classifier, IState.class);
-
+		IState classf = (IState) classfc;
 		/*
 		 * TODO some values are extensive. Others aren't. Put this check under
 		 * Observables after it's all understood.
@@ -113,12 +114,12 @@ public class CategoryClassificationResolver
 		/*
 		 * TODO set the table into the documentation outputs
 		 */
-		addDocumentationTags(cache);
+		addDocumentationTags(cache, classf);
 
 		return ret;
 	}
 
-	private void addDocumentationTags(Map<Object, Double> cache) {
+	private void addDocumentationTags(Map<Object, Double> cache, IState classifier) {
 
 		final StringBuffer body = new StringBuffer(1024);
 		String separator = "";
@@ -146,7 +147,7 @@ public class CategoryClassificationResolver
 			@Override
 			public String getTitle() {
 				return Concepts.INSTANCE.getDisplayName(((IState) classified).getObservable()) + " aggregated by "
-						+ Concepts.INSTANCE.getDisplayLabel(((IState) classifier).getObservable());
+						+ Concepts.INSTANCE.getDisplayLabel(classifier.getObservable());
 			}
 
 			@Override

@@ -10,7 +10,6 @@ import java.util.concurrent.Future;
 import java.util.stream.StreamSupport;
 
 import org.integratedmodelling.kim.api.IComputableResource;
-import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.ValueOperator;

@@ -1,5 +1,6 @@
 = Developer API: using and extending k.LAB from code
 :doctype: book
+ifndef::sourcedir[:sourcedir: ../../../main/java]
 
 Overview...
 
@@ -56,6 +57,13 @@ The rationale of having sessions is that an engine can serve multiple simultaneo
 
 == Developing extensions
 
-A major part of many independent developers’ interests will likely include development of components – independent packages that provide functionalities for k.LAB, such as new model integrations. A  Maven archetype is provided that installs a sample component to use as a template. The `klab` project in Bitbucket contains many of the components that are currently available.
+A major part of many independent developers’ interests will likely include development of `components` – independent packages that provide functionalities for k.LAB, such as new model integrations. A  Maven archetype is provided that installs a sample component to use as a template. The `klab` project in Bitbucket contains many of the components that are currently available.
 
+Components can provide:
+
+* *contextualizers*, which implement specific contextualization strategies for dataflows and can be called in k.IM as functions.
+* *resource adapters*, which provide support for specific data formats or server-based computational strategies that are called in k.IM by referencing URNs whose contents can be hosted locally or published on servers.
+* *language support* for a programming language to be usable within a k.IM expression block.
+
+Of course, the entire k.LAB code base is open source and any serious developer who feels they can contribute to the core software is welcome to check it out, fork it, play with it and propose changes and improvements, according to the terms of the https://www.gnu.org/licenses/gpl-3.0.en.html[General Public License 3.0].
  

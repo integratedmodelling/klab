@@ -37,12 +37,6 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
     private Map<String, Element> elements = new HashMap<>();
     private Map<String, String> node2dataflowId = new HashMap<>();
 
-    //    public List<Flowchart> getFlowcharts() {
-    //        return flowcharts;
-    //    }
-
-    //	String json = null;
-
     public ContextualizationStrategy() {
         super(DefaultEdge.class);
     }
@@ -50,10 +44,6 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
     List<Dataflow> rootNodes = new ArrayList<>();
 
     private static final long serialVersionUID = 1L;
-
-    //    List<Dataflow> getRootNodes() {
-    //        return rootNodes;
-    //    }
 
     public void add(Dataflow dataflow) {
         synchronized (rootNodes) {

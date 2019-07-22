@@ -3,9 +3,32 @@
 
 == Overview
 
-IMPORTANT: REVIEW ENTIRELY!
+`k.LAB` supports *integrated modeling*, a scientific pathway that reconciles strong semantics with the production of scientific artifacts such as datasets, models and computational services. Integrated modeling aims to enable a more efficient, valuable and _democratic_ science by providing actionable _modularity_, _interoperability_, _reusability_, and _openness_ through multiple paradigms and scales. 
 
-`k.LAB` aims to address the task of "integrated modeling", which reconciles strong semantics with modeling practice, helping achieve advantages such as modularity, interoperability, reusability, and integration of multiple paradigms and scales. To achieve this goal, k.LAB keeps the logical representation of the modeled world distinct from the algorithmic knowledge that allows it to be simulated, and uses artificial intelligence to assemble computations that produce *observations* of such knowledge.
+To achieve this goal, k.LAB keeps the logical representation of the observed world distinct from the physical data or the functional knowledge that allows it to be described, and uses artificial intelligence to assemble computations that produce *observations* of such knowledge by finding, linking and connecting information made available by other scientists. Because information is mandatorily linked to known, stable and fully specified _semantics_, each scientist can work on their specific area of interest without concern for data representation, visualization, storage, or for any of the domains that are not of their specific interest, leaving all integration tasks to k.LAB.
+
+For example.... [MODEL CODE HERE with callouts]
+
+Describe callouts: 
+Describe lack of context
+Describe units and spatialization
+Describe automatic transformations and recontextualizations
+Describe choice of data 
+
+Show how users can use it in the explorer
+
+Example with time
+
+
+IMPORTANT: REVIEW ENTIRELY! 
+
+Classes of knowledge and where they are stored
+
+Knowledge/worldviews; observables -> shared and synchronized, collecting community thinking, constantly reviewed
+Non-semantic data and computations; resources URNS, local -> public
+Semantic models; k.IM projects, basically the content of the SWWW, usable by searching (like code above)
+
+Lifecycle of each of the 3
 
 In this document, the term *observation* identifies an informational artifact that describes an *observable concept*, PUT A TABLE HERE such as the elevation of a region of Earth (the artifact is a map), the length of a train (a number), or the way water flows on a landscape (a set of differential equations). If science produces observations of the physical world, a *model* is a procedure that *defines* observations, i.e. it represents a "strategy" to produce observations of an observable concept. k.LAB is a software platform that supports:
 - compiling observable concepts for many domains of knowledge into a single :ref:`worldview <worldview>`, composed of an extensible set of *ontologies*, which can be shared among users and network endpoints;
@@ -30,7 +53,7 @@ The logical representation is modeled using concepts and relationships that comp
 
 The algorithmic knowledge base is where you can provide models so that simulated "observations" can be computed. At the user's request, the artificial intelligence in k.LAB will choose algorithms from this knowledge base and build an integrated algorithm by assembling them, driven by the abstract semantics. The result of calibrating and running the integrated model is the production of observations of the concepts contained in the abstract knowledge base.
 
-A model in k.LAB represents a strategy to observe a concept. Models can consist of entire complex simulations, simpler functions, look-up tables or classifications, datasets, or even single numbers; from the k.LAB point of view, all these just represent different ways to observe a concept. In striking difference from almost all mainstream modeling approaches, numbers, data or equations have absolutely no meaning by themselves, even with descriptive names or associated with formal metadata: even the simplest number can only be used in k.LAB if it has a concept associated with it. k.LAB forces you to use concepts so that "metadata" in your models only document auxiliary information as they should; the conceptual part of the knowledge base serves automatically as the documentation of the models, while at the same time providing a layer of "meaning" on which collaboration and model integration are based.
+A model in k.LAB represents a _strategy to observe a concept_. Models can consist of entire complex simulations, simpler functions, look-up tables or classifications, datasets, or even single numbers; from the k.LAB point of view, all these just represent different ways to observe a concept. In striking difference from almost all mainstream modeling approaches, numbers, data or equations have absolutely no meaning by themselves, even with descriptive names or associated with formal metadata: even the simplest number can only be used in k.LAB if it has a concept associated with it. k.LAB forces you to use concepts so that "metadata" in your models only document auxiliary information as they should; the conceptual part of the knowledge base serves automatically as the documentation of the models, while at the same time providing a layer of "meaning" on which collaboration and model integration are based.
 
 
 LOOK OUT FOR:
@@ -39,4 +62,3 @@ LOOK OUT FOR:
 		Models are global by default and semantics is not scoped! Risks 
 		of using same concepts and "playing around" with models.
 		 
-Mixed content
