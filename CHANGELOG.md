@@ -28,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - IDE now shows input and output observables when expanding a model, with the
-  abstract observables in italics and a (not yet color-coded) icon. The label
+  abstract observables in italics and a color-coded icon. The label
   is the formal, normalized and fully parenthesized declaration, so that 
   modelers can be sure of the logical structure of each statement.
 - IDE now adds a black 'lock' marker to namespace-private models and namespaces.
@@ -36,14 +36,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - In observable declaration, 'by' and 'down to' are now merged with all the other
   value operators and treated consistently.
 - Overhauled the ObservableReasoner strategy builder into a new ObservationStrategy
-  class and inference engine; add 'model compute' command to test the inferences
-  from any observable.
+  class and inference engine; add 'model compute' CLI command to test the inferences
+  made for any observable.
 - Finally made it illegal to have lone traits as observables or dependencies, in 
   preparation for attribute instantiators and resolvers. Error messages suggest
   use of 'type of' to contextualize traits.
 - k.IM expressions can be forced to evaluate in scalar context by prefixing them with 
   a pound sign. This can be used e.g. in an area evaluator that wants the area of each
-  subdivision for further aggregation.
+  subdivision for further aggregation, so that 'space' refers to the subdivision instead
+  of the context.
 - Value operators are recognized and handled both in dependencies and in the Explorer.
 - Semantics for attribute and role instantiation and resolution is defined and legal
   in k.IM.
@@ -79,6 +80,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Switched from 'private'/public status for models and namespaces to 'private', 
   'project private' and public. Now models and namespaces carry scope with them instead
   of a private flag, and models cannot increase the visibility of their namespaces.
+- Add tentative API for characterizers and classifiers (attribute resolvers and
+  instantiators), still not wired in.
 ### Changed
 - k.IM highlighter uniformly shows abstract concepts in italics and concrete concepts
   in regular type. This becomes important as attribute models work differently in

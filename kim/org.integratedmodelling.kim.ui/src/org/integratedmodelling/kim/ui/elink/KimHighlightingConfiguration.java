@@ -213,7 +213,7 @@ public class KimHighlightingConfiguration extends DefaultHighlightingConfigurati
 
 	protected TextStyle configurationTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(98, 98, 98));
+		textStyle.setColor(new RGB(0, 100, 100));
 		// textStyle.setStyle(SWT.ITALIC);
 		return textStyle;
 	}
