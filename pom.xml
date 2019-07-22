@@ -79,7 +79,8 @@
 		<module>klab.node</module>
 		<module>products</module>
 		<module>components</module>
-		<module>docs</module>
+		<!-- later (requires mvn 3.0.5 which can't be installed on sua) -->
+		<!--  <module>docs</module> -->
  	</modules>
 
 	<properties>
