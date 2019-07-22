@@ -23,8 +23,8 @@
 		<module>org.integratedmodelling.kdl.target</module>
 		<module>org.integratedmodelling.kdl.feature</module>
 		<module>org.integratedmodelling.kdl.repository</module>
-		<module>org.integratedmodelling.kdl.tests</module>
-		<module>org.integratedmodelling.kdl.ui.tests</module>
+		<!-- <module>org.integratedmodelling.kdl.tests</module>  -->
+		<!-- <module>org.integratedmodelling.kdl.ui.tests</module> -->
 	</modules>
 	<build>
 		<plugins>
