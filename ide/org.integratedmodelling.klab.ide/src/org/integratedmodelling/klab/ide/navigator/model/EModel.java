@@ -116,15 +116,23 @@ public class EModel extends EKimObject implements IKimModel, EDocumentable {
         ENavigatorItem[] ret = new ENavigatorItem[delegate.getObservables().size() + delegate.getDependencies().size()];
         int i = 0;
         for (IKimObservable observable : delegate.getObservables()) {
-        	ret[i++] = new EObservable(observable.getDefinition(), observable, this);
+        	ret[i++] = new EObservable(processDefinition(observable), observable, this);
         }
         for (IKimObservable observable : delegate.getDependencies()) {
-        	ret[i++] = new EDependency(observable.getDefinition(), observable, this);
+        	ret[i++] = new EDependency(processDefinition(observable), observable, this);
         }
         return ret;
     }
 
-    @Override
+    private String processDefinition(IKimObservable observable) {
+		String ret = observable.getDefinition();
+//		if (!ret.contains(" named ")) {
+//			ret += " [" + observable.getCodeName() + "]";
+//		}
+		return ret;
+	}
+
+	@Override
     public boolean hasEChildren() {
         return delegate.getObservables().size() + delegate.getDependencies().size() > 0;
     }
