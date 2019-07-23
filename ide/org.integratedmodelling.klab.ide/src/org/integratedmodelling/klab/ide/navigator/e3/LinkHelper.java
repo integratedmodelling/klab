@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
@@ -37,31 +39,49 @@ public class LinkHelper implements ILinkHelper {
 	@Override
 	public IStructuredSelection findSelection(IEditorInput anInput) {
 
+		IFile file = ResourceUtil.getFile(anInput);
+		if (file == null) {
+			return StructuredSelection.EMPTY;
+		}
+
 		IEditorPart editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findEditor(anInput);
 		StyledText text = (StyledText) editor.getAdapter(Control.class);
-		int caret = text.getCaretOffset();
+		if (text == null) {
+			
+			try {
+				
+				file.getProject().refreshLocal(IFolder.DEPTH_INFINITE, null);
+				editor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findEditor(anInput);
+				text = (StyledText) editor.getAdapter(Control.class);
+				
+			} catch (CoreException e) {
+			}
 
-		IFile file = ResourceUtil.getFile(anInput);
-		if (file != null) {
-			String namespaceId = Eclipse.INSTANCE.getNamespaceIdFromIFile(file);
-			if (namespaceId != null) {
-				IKimNamespace namespace = Kim.INSTANCE.getNamespace(namespaceId);
-				if (namespace != null) {
-					
-					ENavigatorItem selection = KimData.INSTANCE.findObjectAt(caret, namespace);
-					if (selection == null) {
-						return StructuredSelection.EMPTY;
-					}
-					
-					List<Object> treePath = new ArrayList<>();
-					while (selection != null) {
-						treePath.add(0, selection);
-						selection = selection.getEParent();
-					}
-					return new TreeSelection(new TreePath(treePath.toArray()));
-				}
+			if (text /* still */ == null) {
+				return StructuredSelection.EMPTY;
 			}
 		}
+		int caret = text.getCaretOffset();
+
+		String namespaceId = Eclipse.INSTANCE.getNamespaceIdFromIFile(file);
+		if (namespaceId != null) {
+			IKimNamespace namespace = Kim.INSTANCE.getNamespace(namespaceId);
+			if (namespace != null) {
+
+				ENavigatorItem selection = KimData.INSTANCE.findObjectAt(caret, namespace);
+				if (selection == null) {
+					return StructuredSelection.EMPTY;
+				}
+
+				List<Object> treePath = new ArrayList<>();
+				while (selection != null) {
+					treePath.add(0, selection);
+					selection = selection.getEParent();
+				}
+				return new TreeSelection(new TreePath(treePath.toArray()));
+			}
+		}
+
 		return StructuredSelection.EMPTY;
 	}
 
@@ -89,12 +109,13 @@ public class LinkHelper implements ILinkHelper {
 				Eclipse.INSTANCE.handleException(e);
 			}
 		} else if (aSelection.getFirstElement() instanceof EDocumentationItem) {
-		    KlabNavigatorActions.editDocumentation((EDocumentationItem)aSelection.getFirstElement());
+			KlabNavigatorActions.editDocumentation((EDocumentationItem) aSelection.getFirstElement());
 		} else if (aSelection.getFirstElement() instanceof EReference) {
-            KlabNavigatorActions.editReference((EReference)aSelection.getFirstElement());
-        } else if (aSelection.getFirstElement() instanceof EReferencesPage) {
-            KlabNavigatorActions.editReferences(((EReferencesPage)aSelection.getFirstElement()).getEParent(EProject.class));
-        }
+			KlabNavigatorActions.editReference((EReference) aSelection.getFirstElement());
+		} else if (aSelection.getFirstElement() instanceof EReferencesPage) {
+			KlabNavigatorActions
+					.editReferences(((EReferencesPage) aSelection.getFirstElement()).getEParent(EProject.class));
+		}
 	}
 
 }

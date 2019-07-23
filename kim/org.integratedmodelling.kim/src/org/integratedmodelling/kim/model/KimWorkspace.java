@@ -50,7 +50,17 @@ public class KimWorkspace implements IKimWorkspace {
 	}
 
 	public KimProject getProject(String projectId) {
-		return (KimProject) projects.get(projectId);
+		KimProject ret = (KimProject) projects.get(projectId);
+		if (ret == null) {
+			// check if we have a location for the project
+			for (File f : projectLocations) {
+				if (MiscUtilities.getFileName(f).equals(projectId)) {
+					ret = loadProject(f);
+					break;
+				}
+			}
+		}
+		return ret;
 	}
 
 	@Override

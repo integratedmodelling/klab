@@ -23,9 +23,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [comment]: <>   (  Fixed for any bug fixes.)
 [comment]: <>   (  Security in case of vulnerabilities.)
 [comment]: <>   ()
-[comment]: <>   (Next build: [0.10.0.151] -- ISO Date)
+[comment]: <>   (Next build: [0.10.0.xxx] -- ISO Date)
 
 ## Unreleased
+### Added
+### Changed
+- Switch the documentation templates to Asciidoc and set the docs/ folder up
+  as a maven project. Obsolete Sphinx-based files are in etc.
+### Fixed
+### Removed
 
 ## [0.10.0.174] -- 2019/07/23
 ### Added
@@ -58,7 +64,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   of the containing actuator instead of leaving the actuator in the dataflow.
 - Attributes qualified with 'rescaling' modify the observation semantics of the
   quality they apply to, and cause units to be removed and to become illegal in
-  k.IM. 
+  k.IM. They are also the only ones to be handled through attribute resolution when
+  applied to qualities.
 - Models check the units agains the geometry and allow aggregating units, rescaling
   automatically at mediation and requiring a @extensive/@intensive annotation to remove
   the warning in case a model produces output that is legitimate but requires to
