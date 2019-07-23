@@ -26,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [comment]: <>   (Next build: [0.10.0.151] -- ISO Date)
 
 ## Unreleased
+
+## [0.10.0.174] -- 2019/07/23
 ### Added
 - IDE now shows input and output observables when expanding a model, with the
   abstract observables in italics and a color-coded icon. The label
