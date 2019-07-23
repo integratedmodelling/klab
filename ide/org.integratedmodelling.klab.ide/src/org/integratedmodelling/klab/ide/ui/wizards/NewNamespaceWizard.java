@@ -30,6 +30,9 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Display;
 import org.integratedmodelling.kim.api.IKimNamespace;
@@ -78,10 +81,15 @@ public class NewNamespaceWizard extends Wizard {
 				File file = message.getPayload(ProjectModificationNotification.class).getFile();
 				Activator.loader().add(file);
 				Display.getDefault().asyncExec(() -> {
-				    Eclipse.INSTANCE.openFile(
-						Eclipse.INSTANCE.getIFile(file),
-						0);
-				    KlabNavigator.refresh();
+					IFile ifile = Eclipse.INSTANCE.getIFile(file);
+					try {
+						ifile.getParent().refreshLocal(IFolder.DEPTH_INFINITE, null);
+					    Eclipse.INSTANCE.openFile(
+								ifile,
+								0);
+					    KlabNavigator.refresh();
+					} catch (CoreException e) {
+					}
 				});
 			}, IMessage.MessageClass.ProjectLifecycle,
 					isScenario ? IMessage.Type.CreateScenario : IMessage.Type.CreateNamespace,

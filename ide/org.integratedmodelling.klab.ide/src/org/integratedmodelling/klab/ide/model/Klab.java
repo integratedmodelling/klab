@@ -250,7 +250,7 @@ public class Klab {
 			KlabNavigator.refresh();
 			break;
 		case ProjectFileAdded:
-
+			System.out.println("PITONE");
 			break;
 		default:
 			break;
