@@ -59,7 +59,7 @@ public class KlabCertificate implements ICertificate {
 
 	static final String DEFAULT_WORLDVIEW = "im";
 
-	static final String DEFAULT_WORLDVIEW_REPOSITORIES = "https://bitbucket.org/integratedmodelling/im.git#feature/noobservers,https://bitbucket.org/integratedmodelling/im.aries.git#feature/noobservers";
+	static final String DEFAULT_WORLDVIEW_REPOSITORIES = "https://bitbucket.org/integratedmodelling/im.git,https://bitbucket.org/integratedmodelling/im.aries.git";
 
 	/**
 	 * Create a new certificate from a file. Check isValid() on the resulting
