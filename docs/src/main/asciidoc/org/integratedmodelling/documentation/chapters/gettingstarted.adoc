@@ -13,6 +13,4 @@
 
 === Contributing core knowledge
 
-
-
 == As a k.LAB developer

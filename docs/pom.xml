@@ -71,7 +71,7 @@
 							<sourceDirectory>src/main/asciidoc/org/integratedmodelling/documentation</sourceDirectory>
 							<backend>html5</backend>
 							<!-- original was coderay -->
-							<sourceHighlighter>rouge</sourceHighlighter>
+							<sourceHighlighter>highlight.js</sourceHighlighter>
 							<attributes>
 								<imagesdir>./images</imagesdir>
 								<toc>left</toc>
@@ -92,7 +92,7 @@
 							<backend>pdf</backend>
 							<!-- Since 1.5.0-alpha.9, PDF back-end can also use 'rouge' which 
 								provides more coverage for other languages like scala -->
-							<sourceHighlighter>coderay</sourceHighlighter>
+							<sourceHighlighter>highlight.js</sourceHighlighter>
 							<attributes>
 								<pagenums />
 								<toc />

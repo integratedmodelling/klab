@@ -13,11 +13,64 @@
 
 == Semantic modeling in practice
 
+=== Model syntax
+
+A model's outputs are referred to as its _observables_, i.e. the concepts that the model defines an observation strategy for; its inputs as _dependencies_. Observables are listed after the keyword `model` that introduces the statement. The keyword `observing` introduces the list of dependencies. All these are merely <<kim.adoc#section-kim-observables,k.IM observables>>, i.e. pure semantics. In addition to observables and dependencies, a model can specify resources, contextualizers and actions to use as sources of "raw" information or to process the outputs before they reach the k.LAB ecosystem as observations.
+
+==== Observables
+
+==== Dependencies
+
+==== Actions and resources
+
+==== Types of models and observations
+
+==== Learning models
+
+==== Scope
+
+===== What does the work: contextualizers
+
+===== Procedural knowledge: language bridges
+
+The k.LAB stack can be extended to accommodate extension languages within its expressions. If no language is specified, the <<modeling-language-groovy,default k.IM expression language>> is used. 
+
+Writing a language adapter is no small task if smooth integration with the k.LAB environment is desired, with handling of concepts, observation etc. Yet, it can be much simpler for more basic integration such as producing additional variables. For example, a simple adapter to R (using http://renjin.org[Renjin]) could be written to simply provide R-computed outputs to use later in the default language, as in:
+
+[source,kim]
+----
+model ....
+	observing 
+		....
+	set r_out to [....] using R
+	set to [r_out.p < 0.05 ? significant : insignificant];
+----
+
+To support the code above, all the language bridge has to go is to collect inputs from k.LAB. According to what the guest language produces, translation of the outputs to a more idiomatic API may be desirable, but if the outputs are Java-compatible, the Groovy compiler in the default language will take care of everything else.
+
+==== Controlling resolution
+
+==== Scaling and contextualization
+
+===== Units and context
+
+==== Non-semantic models
+
+[#modeling-language-groovy]
+== The expression language
 
 == Components in k.LAB
 
-include::modeling/gis.adoc[]
+Modes of extension:
 
-include::modeling/mca.adoc[]
+- Contextualizers
+- Adapters
+- Language bridges
 
-include::modeling/weka.adoc[]
+See the developer documentation to learn how to define components.
+
+include::./modeling/gis.adoc[]
+
+include::./modeling/mca.adoc[]
+
+include::./modeling/weka.adoc[]

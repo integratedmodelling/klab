@@ -4,7 +4,7 @@
 		"description": "Integrated Modelling Partnership",
 		"sshKey": null,
 		"projectUrls": [
-			"https://bitbucket.org/ariesteam/im.git#feature/noobservers"
+			"https://bitbucket.org/ariesteam/im.git"
 		],
 		"observables": []
 	},
@@ -13,7 +13,7 @@
 		"description": "ARIES (ARtificial Intelligence for Ecosystem Services)",
 		"sshKey": null,
 		"projectUrls": [
-			"https://bitbucket.org/ariesteam/im.aries.git#feature/noobservers",
+			"https://bitbucket.org/ariesteam/im.aries.git",
 			"https://bitbucket.org/ariesteam/im.data.global.git",
 			"https://bitbucket.org/ariesteam/im.data.operators.git",
 			"https://bitbucket.org/ariesteam/im.data.osm.git",

@@ -219,6 +219,10 @@ public class Model extends KimObject implements IModel {
 
 	private void validateTypechain(IMonitor monitor) {
 
+		if (observables.size() == 0 || observables.get(0) == null) {
+			return;
+		}
+		
 		Map<String, IArtifact.Type> typechain = new HashMap<>();
 
 		/*
@@ -300,6 +304,10 @@ public class Model extends KimObject implements IModel {
 	private void validateUnits(IObservable observable, IMonitor monitor) {
 
 		// for debugging only
+		if (observable == null) {
+			return;
+		}
+		
 		((Observable) observable).setOriginatingModelId(this.getName());
 
 		if (!Units.INSTANCE.needsUnits(observable) && observable.getUnit() != null) {
@@ -379,6 +387,10 @@ public class Model extends KimObject implements IModel {
 
 		Map<ExtentDimension, ExtentDistribution> ret = new HashMap<>();
 
+		if (observable == null) {
+			return ret;
+		}
+		
 		boolean isModel = observable.equals(this.getObservables().get(0));
 
 		/*

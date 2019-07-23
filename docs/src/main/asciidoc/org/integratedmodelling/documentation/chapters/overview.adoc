@@ -1,24 +1,47 @@
-= The k.LAB infrastructure for integrated science
+[#chapter-overview]
+= k.LAB: an infrastructure for integrated science
 :doctype: book
 
-== Overview
+////
+see if preamble is OK as is or we want another. 
+////
 
-`k.LAB` supports *integrated modeling*, a scientific pathway that reconciles strong semantics with the production of scientific artifacts such as datasets, models and computational services. Integrated modeling aims to enable a more efficient, valuable and _democratic_ science by providing actionable _modularity_, _interoperability_, _reusability_, and _openness_ through multiple paradigms and scales. 
+`k.LAB` supports *integrated modeling*, a scientific pathway that reconciles strong semantics with the production, use and curation of scientific artifacts such as datasets, models and computational services. Integrated modeling aims to enable a more efficient, valuable and _democratic_ science by providing actionable _modularity_, _interoperability_, _reusability_, and _openness_ through multiple paradigms and scales. 
 
 To achieve this goal, k.LAB keeps the logical representation of the observed world distinct from the physical data or the functional knowledge that allows it to be described, and uses artificial intelligence to assemble computations that produce *observations* of such knowledge by finding, linking and connecting information made available by other scientists. Because information is mandatorily linked to known, stable and fully specified _semantics_, each scientist can work on their specific area of interest without concern for data representation, visualization, storage, or for any of the domains that are not of their specific interest, leaving all integration tasks to k.LAB.
 
-For example.... [MODEL CODE HERE with callouts]
+For example, a scientist may have developed a method to compute the probability of a region to become flooded when sufficient precipitation is received (below we show the total wetness index, a known metric). The k.IM model for that method may look like this:
 
-Describe callouts: 
-Describe lack of context
-Describe units and spatialization
-Describe automatic transformations and recontextualizations
-Describe choice of data 
+[source,kim]
+----
+model occurrence of earth:Region with im:Still earth:PrecipitationVolume <1>
+	observing 
+		geography:Slope in ° named slope, <2>
+		hydrology:ContributingArea in m² named contributing_area <3>
+	set to [ <4>
+		def sloperad = Math.tan((slope * 1.570796 )/90)
+		return Math.log((contributing_area+1)/Math.tan((sloperad+0.001)));
+	];
+----
+
+Reads as English and is, to a good extent, self-documenting. Describe callouts: 
+
+- Describe where the concepts come from (the distributed, self-updating <<worldview.adoc#chapter-worldview,worldview>>)
+- Describe lack of context, automatic transformations and recontextualizations: to space, time and scale
+- Describe units and spatialization
+- Describe choice of data 
+
+Show definition of concepts in worldview
 
 Show how users can use it in the explorer
 
-Example with time
+Show how this can be shared with others.
 
+Show dataflow in Explorer
+
+Example with time and agents
+
+Example with machine learning
 
 IMPORTANT: REVIEW ENTIRELY! 
 
@@ -29,11 +52,6 @@ Non-semantic data and computations; resources URNS, local -> public
 Semantic models; k.IM projects, basically the content of the SWWW, usable by searching (like code above)
 
 Lifecycle of each of the 3
-
-In this document, the term *observation* identifies an informational artifact that describes an *observable concept*, PUT A TABLE HERE such as the elevation of a region of Earth (the artifact is a map), the length of a train (a number), or the way water flows on a landscape (a set of differential equations). If science produces observations of the physical world, a *model* is a procedure that *defines* observations, i.e. it represents a "strategy" to produce observations of an observable concept. k.LAB is a software platform that supports:
-- compiling observable concepts for many domains of knowledge into a single :ref:`worldview <worldview>`, composed of an extensible set of *ontologies*, which can be shared among users and network endpoints;
-- compiling and storing models describing the worldview's concepts in independent network nodes; 
-- assist users in creating *observations* of concepts by automatically choosing and assembling computations to build them, automatically negotiating links between data and models and assembling more complex models out of simpler ones.
 
 In k.LAB, if the observable concepts are compatible, models for those observables also are. The semantics is the backbone of distributed computations and ensures that each investigator can develop only parts of models, guaranteeing the soundness of the results and allowing a scalable, adaptable computation strategy that adapts to 
 

@@ -5,6 +5,7 @@
 
 == Concept declaration
 
+[#section-kim-observables]
 == Observable declaration
 
 == Model declaration
