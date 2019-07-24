@@ -13,19 +13,7 @@ public interface IKimObservable extends IKimStatement {
 	 * @return the main concept
 	 */
 	IKimConcept getMain();
-
-//	/**
-//	 * 
-//	 * @return the 'down to' concept
-//	 */
-//	IKimConcept getDownTo();
-//
-//	/**
-//	 * 
-//	 * @return the 'by' classifier trait
-//	 */
-//	IKimConcept getClassifier();
-
+	
 	/**
 	 * 
 	 * @return the range
@@ -121,22 +109,6 @@ public interface IKimObservable extends IKimStatement {
 	 * 
 	 * @return the name for k.IM code
 	 */
-	String getCodeName();
-	
-//	/**
-//	 * If a value operator was specified, return it. This will be the value
-//	 * subset of the Modifier enum - TODO separate the two.
-//	 * 
-//	 * @return the modifier or null
-//	 */
-//	ValueOperator getValueOperator();
-//	
-//	/**
-//	 * If a value operator was specified, the operand to it is returned here. It may be 
-//	 * a POD value, a concept, list thereof (not yet), or another IKimObservable.
-//	 * 
-//	 * @return the modifier operand.
-//	 */
-//	Object getValueOperand();
+	String getCodeName();	
 	
 }

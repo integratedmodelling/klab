@@ -6,7 +6,7 @@ Overview...
 
 == Embedding a k.LAB engine
 
-A programmer can use the engine API to embed observation functionalities in Java programs. A basic example of using the Java API to access the network and make observations through referencing concept and observation URNs could look like this:
+A programmer can use the engine API to embed observation functionalities in JVM-compatible programs. A basic example of using the Java API to access the network and make observations through referencing concept and observation URNs could look like this:
 
 [source,java]
 ----
@@ -16,9 +16,9 @@ try (ISession session = engine.createSession()) {
 
   IObservation observation =
     session
-      // ISession.observe() returns a future ISubject
+      // ISession.observe(urn) returns a future ISubject
       .observe("im:ariesteam:example.locations:tanzania>>earth:Region").get()
-      /* ISubject.observe() will return a future IObservation, in this case
+      /* ISubject.observe(urn) will return a future IObservation, in this case
          a IState (observation of a quality within the subject) */
       .observe("geography:Elevation").get();
 
@@ -35,9 +35,9 @@ The first call creates and boots a modeling engine, of which you will only need 
 
 This uses the default configuration, looking for a file named `im.cert` in the default 
 k.LAB work directory (`~/.klab`), containing a valid k.LAB  certificate. You can use a 
-specific certificate as a parameter to the `Engine.start()` call.
+specific certificate, and change a number of other settings, by passing an appropriately configured `EngineStartupOptions` object as a parameter to the `Engine.start()` call.
 
-In all cases, the initialization method called on the engine will authorize the user, synchronize the worldview from the network, load it, connect to the k.LAB network and initialize all network resources according to the user's permissions. When that exits (after a short wait) without error, the engine is ready to make observations. The engine makesobservations within a *session*, which we must request. Operations within sessions are assumed synchronous, while you may have several concurrent sessions without problems.
+In all cases, the initialization method called on the engine will authorize the user, synchronize the user's assigned worldview from the network, load it, connect to the k.LAB network through the nearest k.LAB hub, and initialize all network resources according to the user's permissions. When that exits (after a short wait) without error, the engine is ready to make observations. The engine makes observations within a *session*, which we must request. User operations and API requests are assumed synchronous within a session, while concurrent sessions coexist without problems.
 
 A Session is a `java.io.Closeable` so it can be opened and closed automatically within a try-with-resource block:
 
@@ -52,6 +52,8 @@ try (ISession session = engine.createSession()) {
 ----
 
 The rationale of having sessions is that an engine can serve multiple simultaneous sessions, owned by different users. In fact, createSession() can be optionally passed a previously authenticated  IUser, which the web interface of the k.LAB engine allows to configure and authenticate. In  embedded mode, we can simply use the shorthand method createSession() with no arguments, which  will create a session owned by the same user who owns the engine and the certificate. You can retrieve this user from the engine using `engine.getUser()`.
+
+== A field guide to the k.LAB source code
 
 == Using the REST API
 

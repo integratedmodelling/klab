@@ -13,7 +13,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
+import org.integratedmodelling.klab.api.knowledge.IObservable.Description;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubjectiveState;
@@ -48,7 +48,7 @@ public class RescalingState extends Observation implements IState {
 
     List<IScaleMediator> mediators = null;
     boolean conformant = false;
-    private ObservationType observationType;
+    private Description observationType;
     boolean redistribute = false;
 
     public RescalingState(IState state, Scale newScale, IRuntimeContext context) {
@@ -56,7 +56,7 @@ public class RescalingState extends Observation implements IState {
         this.delegate = state;
         this.newScale = newScale;
         this.originalGeometry = ((Scale) state.getScale()).asGeometry();
-        this.observationType = state.getObservable().getObservationType();
+        this.observationType = state.getObservable().getDescription();
         // TODO check if we need to sum in aggregation. Depends on the observable and on
         // the relationship between the extents (e.g spatially distributed vs. not)
         // this.redistribute = ...
@@ -67,7 +67,7 @@ public class RescalingState extends Observation implements IState {
         this.delegate = state;
         this.newScale = newScale;
         this.originalGeometry = ((Scale) state.getScale()).asGeometry();
-        this.observationType = newObservable.getObservationType();
+        this.observationType = newObservable.getDescription();
         // TODO check if we need to sum in aggregation. Depends on the observable and on
         // the relationship between the extents (e.g spatially distributed vs. not)
         // this.redistribute = ...

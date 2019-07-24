@@ -1,13 +1,19 @@
 = The k.IM semantic modeling language
 :doctype: book
 
+[#section-kim-overview]
 == Overview
 
+[#section-kim-concepts]
 == Concept declaration
 
 [#section-kim-observables]
 == Observable declaration
 
+[#section-kim-models]
 == Model declaration
+
+[#section-kim-defines]
+== Definitions
 
 Mixed content

@@ -2,6 +2,29 @@
 = Understanding, using, building, and maintaining a k.LAB worldview
 :doctype: book
 
+The _worldview_ is the core semantics used by all users of the same network. The choice of worldview is encoded in the k.LAB user certificate, and the same worldview is adopted by all nodes of the k.LAB network those users connect to. The worldview has a modular structure that allows more specialized users to automatically use conceptual details others don't need. Any changes in the worldview are immediately pushed to all active users.
+
+****
+Before we start: the reader will rarely, if ever, have to design a worldview from scratch. The point of k.LAB is integration, and there is no integration without a _shared_ worldview. Building such a worldview requires a _community_: if you want to use it, you will most likely have to _contribute_ to the worldview you are sharing: by using it, challenging it constructively, identifying gaps and inconsistencies, etc. The k.LAB team is mostly working in social, environmental, economic and agricultural fields, and this is why the worldview we use and maintain is especially adequate for these domains and observational scales. Nothing prevents one from developing other worldviews, for the same or other domains. This is, however, a very hard job, and as long as your applications are in the same fields, we really hope that you consider contributing to our (and by that we mean _your_) worldview before you set out to build your own. With this in mind, this chapter is a guide to understanding enough of a worldview to efficiently use it and contribute to it.
+****
+
 == Overview
 
-Mixed content
+== Structure and defining principles
+
+=== Domains
+
+=== Orthogonality and parsimony
+
+=== Modular organization
+
+== For the knowledge engineers out there
+
+=== The observation ontology
+
+=== Upper ontologies and the root domain
+
+==== k.IM and OWL
+
+==== Ontology tooling in k.LAB
+

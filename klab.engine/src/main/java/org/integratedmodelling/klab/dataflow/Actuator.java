@@ -32,7 +32,7 @@ import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
+import org.integratedmodelling.klab.api.knowledge.IObservable.Description;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
@@ -1108,8 +1108,8 @@ public class Actuator implements IActuator {
 	}
 
 	public boolean isFilter() {
-		return observable.getObservationType() == ObservationType.CHARACTERIZATION
-				|| observable.getObservationType() == ObservationType.CLASSIFICATION;
+		return observable.getDescription() == Description.CHARACTERIZATION
+				|| observable.getDescription() == Description.CLASSIFICATION;
 	}
 
 	/**

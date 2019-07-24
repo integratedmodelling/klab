@@ -48,18 +48,18 @@ public interface IObservable extends ISemantic, IResolvable {
 
 	/**
 	 * A classification of the observation activity that can produce an observation
-	 * of this observable.
+	 * of this observable. Encodes the same classification in ODO-IM.
 	 * 
 	 * @author ferdinando.villa
 	 *
 	 */
-	public enum ObservationType {
+	public enum Description {
 		/**
 		 * The observation that produces a countable object
 		 */
 		INSTANTIATION,
 		/**
-		 * The observation that produces a configuration
+		 * The observation that produces a configuration (aka EMERGENCE).
 		 */
 		DETECTION,
 		/**
@@ -257,8 +257,7 @@ public interface IObservable extends ISemantic, IResolvable {
 		 * Use this to pass a declaration being parsed and set up a monitor so that
 		 * logically inconsistent declarations can be reported.
 		 * 
-		 * @param declaration
-		 *            (may be null)
+		 * @param declaration (may be null)
 		 * @param monitor
 		 * @return the same builder this was called on, for chaining calls
 		 */
@@ -277,7 +276,7 @@ public interface IObservable extends ISemantic, IResolvable {
 		Builder withUnit(IUnit unit);
 
 		Builder withCurrency(ICurrency currency);
-		
+
 		/**
 		 * Value operators are added in the order they are received.
 		 * 
@@ -308,8 +307,8 @@ public interface IObservable extends ISemantic, IResolvable {
 		Builder setDistributedInherency(boolean ofEach);
 
 		/**
-		 * Set the observable whose observation is expected to go to the 
-		 * filter that this observable specifies.
+		 * Set the observable whose observation is expected to go to the filter that
+		 * this observable specifies.
 		 * 
 		 * @param observableId
 		 * @return
@@ -329,21 +328,20 @@ public interface IObservable extends ISemantic, IResolvable {
 	 * Get a builder that will rebuild this observable. Use to build alternative
 	 * observables with added or removed components.
 	 * 
-	 * @param monitor
-	 *            building is monitored, so a monitor must be passed.
+	 * @param monitor building is monitored, so a monitor must be passed.
 	 * 
 	 * @return
 	 */
 	Builder getBuilder(IMonitor monitor);
 
 	/**
-	 * Each observable must be able to quickly assess the type of the observation
-	 * that will produce an IObservation of it. This is also used to instantiate the
-	 * storage for states.
+	 * Each observable must be able to quickly assess the type of the description
+	 * (observation activity) that will produce an IObservation of it. This is also
+	 * used to instantiate storage for states.
 	 *
 	 * @return the necessary observation type
 	 */
-	ObservationType getObservationType();
+	Description getDescription();
 
 	/**
 	 * Return the type of the artifact correspondent to an observation of this
@@ -363,12 +361,12 @@ public interface IObservable extends ISemantic, IResolvable {
 	 * @return the formal name of this observable
 	 */
 	String getName();
-	
+
 	/**
 	 * The reference name is the default name unless a 'named' clause was given, and
-	 * only depends on the contents of the observable. It is not unique because it 
-	 * does not include namespaces for the composing concepts. It's a simple lowercase
-	 * identifier usable for coding in k.IM, k.DL, and most languages.
+	 * only depends on the contents of the observable. It is not unique because it
+	 * does not include namespaces for the composing concepts. It's a simple
+	 * lowercase identifier usable for coding in k.IM, k.DL, and most languages.
 	 * 
 	 * @return the reference name of this observable
 	 */

@@ -147,7 +147,11 @@ public class KimLoader implements IKimLoader {
 					Kim.INSTANCE.registerWorkspace(Kim.INSTANCE.userWorkspace);
 					project = Kim.INSTANCE.getProjectIn(root);
 				}
-				projects.add(project);
+				if (project != null) {
+					projects.add(project);
+				} else {
+					System.err.println("internal: project path " + root + " caused a null project");
+				}
 			}
 		}
 		if (!projects.isEmpty()) {

@@ -3,6 +3,7 @@
 :revnumber: {project-version}
 :doctype: book
 :source-highlighter: highlightjs
+:highlightjsdir: highlight
 ifndef::imagesdir[:imagesdir: images]
 ifndef::sourcedir[:sourcedir: ../../../main/java]
 Ferdinando Villa <ferdinando.villa@bc3research.org>

@@ -60,7 +60,7 @@ public class Observable implements IObservable {
 	// private Concept classifier;
 	// private Concept downTo;
 	private Object value;
-	private ObservationType observationType;
+	private Description observationType;
 	private boolean optional;
 	private boolean generic;
 	private String observerId;
@@ -246,24 +246,24 @@ public class Observable implements IObservable {
 	}
 
 	@Override
-	public ObservationType getObservationType() {
+	public Description getDescription() {
 		if (observationType == null && observable != null) {
 			if (observable.is(Type.CLASS)) {
-				observationType = ObservationType.CATEGORIZATION;
+				observationType = Description.CATEGORIZATION;
 			} else if (observable.is(Type.PRESENCE)) {
-				observationType = ObservationType.VERIFICATION;
+				observationType = Description.VERIFICATION;
 			} else if (observable.is(Type.QUALITY)) { // don't reorder these!
-				observationType = ObservationType.QUANTIFICATION;
+				observationType = Description.QUANTIFICATION;
 			} else if (observable.is(Type.COUNTABLE)) {
-				observationType = ObservationType.INSTANTIATION;
+				observationType = Description.INSTANTIATION;
 			} else if (observable.is(Type.CONFIGURATION)) {
-				observationType = ObservationType.DETECTION;
+				observationType = Description.DETECTION;
 			} else if (observable.is(Type.PROCESS)) {
-				observationType = ObservationType.SIMULATION;
+				observationType = Description.SIMULATION;
 			} else if (observable.is(Type.TRAIT) || observable.is(Type.ROLE)) {
 				boolean distributed = Boolean
 						.parseBoolean(observable.getMetadata().get(NS.INHERENCY_IS_DISTRIBUTED, "false"));
-				observationType = distributed ? ObservationType.CLASSIFICATION : ObservationType.CHARACTERIZATION;
+				observationType = distributed ? Description.CLASSIFICATION : Description.CHARACTERIZATION;
 			}
 		}
 		return observationType;
@@ -277,7 +277,7 @@ public class Observable implements IObservable {
 		this.optional = optional;
 	}
 
-	public void setObservationType(ObservationType observationType) {
+	public void setObservationType(Description observationType) {
 		this.observationType = observationType;
 	}
 

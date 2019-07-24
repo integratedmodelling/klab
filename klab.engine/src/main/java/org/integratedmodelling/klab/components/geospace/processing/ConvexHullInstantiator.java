@@ -17,7 +17,7 @@ import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
+import org.integratedmodelling.klab.api.knowledge.IObservable.Description;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -142,7 +142,7 @@ public class ConvexHullInstantiator implements IExpression, IInstantiator {
 		Range limits = null;
 		if (sourceStates.size() == 1 && !Double.isNaN(selectFraction)) {
 			fractionState = sourceStates.get(0);
-			if (!(fractionState.getObservable().getObservationType() == ObservationType.QUANTIFICATION)) {
+			if (!(fractionState.getObservable().getDescription() == Description.QUANTIFICATION)) {
 				throw new KlabValidationException(
 						"feature extractor: state for fraction extraction " + fractionState + " must be numeric");
 			}

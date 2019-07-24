@@ -36,7 +36,7 @@ import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IObservable.ObservationType;
+import org.integratedmodelling.klab.api.knowledge.IObservable.Description;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -245,8 +245,8 @@ public class Model extends KimObject implements IModel {
 
 		for (IComputableResource resource : resources) {
 
-			if (this.observables.get(0).getObservationType() == ObservationType.CHARACTERIZATION
-					|| this.observables.get(0).getObservationType() == ObservationType.CLASSIFICATION) {
+			if (this.observables.get(0).getDescription() == Description.CHARACTERIZATION
+					|| this.observables.get(0).getDescription() == Description.CLASSIFICATION) {
 				// must be a filter
 				if (!isFilter(resource)) {
 					monitor.error("all computations in attribute contextualizers must be filters", this.getStatement());
@@ -486,7 +486,7 @@ public class Model extends KimObject implements IModel {
 			this.resources.addAll(candidateObservable.getComputation());
 		}
 		if (mainObservable.is(Type.COUNTABLE)
-				|| mainObservable.getObservationType() == ObservationType.CLASSIFICATION) {
+				|| mainObservable.getDescription() == Description.CLASSIFICATION) {
 			this.instantiator = true;
 		}
 	}

@@ -1,0 +1,5 @@
+[#appendix-development-setup]
+= Setting up a k.LAB development environment
+:doctype: book
+
+== Overview

@@ -343,6 +343,64 @@ public class KimObservable extends KimStatement implements IKimObservable {
 
 		return ret;
 	}
+	
+//	@Override
+	public boolean needsUnits() {
+
+		boolean checkMetadata = false;
+		if (main == null) {
+			return false;
+		}
+		if (main.is(Type.MONEY) || main.is(Type.MONETARY) || main.is(Type.EXTENSIVE_PROPERTY)
+				|| main.is(Type.INTENSIVE_PROPERTY) || main.is(Type.NUMEROSITY)) {
+			boolean assignUnits = true;
+//			Boolean rescaled = main.getType().getMetadata().get(IMetadata.IM_IS_RESCALED, Boolean.class);
+//			if (rescaled == null) {
+//				// move on with further checks later
+//				checkMetadata = true;
+//				for (IConcept trait : Traits.INSTANCE.getTraits(observable.getType())) {
+//					if (trait.is(Type.RESCALING)) {
+//						assignUnits = false;
+//						observable.getType().getMetadata().put(IMetadata.IM_IS_RESCALED, Boolean.TRUE);
+//						break;
+//					}
+//				}
+//				if (/* still */ assignUnits) {
+//					observable.getType().getMetadata().put(IMetadata.IM_IS_RESCALED, Boolean.FALSE);
+//				}
+//			} else {
+//				assignUnits = !rescaled;
+//			}
+
+			/**
+			 * This part is for the benefit of checking if this describes an extensive value
+			 * OF some countable, done by needsUnitScaling, which calls this first, so we
+			 * keep all the logic in one place. If this is a property inherent to something
+			 * else, this is intensive, not extensive.
+			 * 
+			 * FIXME the numerosity check is because at the moment we use the inherent type
+			 * for the numerosity 'of', but this makes it impossible to have "numerosity of
+			 * X of Y" - which is a limitation of the language but also a stumbling block
+			 * for fully general statements.
+			 */
+			if (checkMetadata && !main.is(Type.NUMEROSITY) && !main.is(Type.INTENSIVE_PROPERTY)) {
+//				Boolean rescalesInherent = main.getType().getMetadata().get(IMetadata.IM_RESCALES_INHERENT,
+//						Boolean.class);
+//				if (rescalesInherent == null) {
+//					if (main.getInherent() != null) {
+//						rescalesInherent = true;
+//					} else {
+//						rescalesInherent = false;
+//					}
+//					observable.getType().getMetadata().put(IMetadata.IM_RESCALES_INHERENT, rescalesInherent);
+//				}
+			}
+
+			return assignUnits;
+		}
+		return false;
+	}
+
 
 	@Override
 	public List<Pair<ValueOperator, Object>> getValueOperators() {

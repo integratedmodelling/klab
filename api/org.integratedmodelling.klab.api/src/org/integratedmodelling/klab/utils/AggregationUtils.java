@@ -195,7 +195,7 @@ public class AggregationUtils {
     }
 
     public static Aggregation getAggregation(IObservable observable) {
-        switch (observable.getObservationType()) {
+        switch (observable.getDescription()) {
         case CATEGORIZATION:
         case VERIFICATION:
             return Aggregation.MAJORITY;
