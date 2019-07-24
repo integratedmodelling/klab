@@ -55,7 +55,9 @@ public interface IObservable extends ISemantic, IResolvable {
 	 */
 	public enum Description {
 		/**
-		 * The observation that produces a countable object
+		 * The observation that produces a countable object. Acknowledgement is a
+		 * special case of instantiation, limited to a subject and performed on
+		 * a fiat basis (in k.IM through an <code>observe</code> statement).
 		 */
 		INSTANTIATION,
 		/**

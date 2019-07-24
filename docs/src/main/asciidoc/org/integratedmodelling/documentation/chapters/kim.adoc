@@ -13,6 +13,12 @@
 [#section-kim-models]
 == Model declaration
 
+A model's outputs are referred to as its _observables_, i.e. the concepts that the model defines an observation strategy for; its inputs as _dependencies_. Observables are listed after the keyword `model` that introduces the statement. The keyword `observing` introduces a comma-separated list of dependencies. Dependencies and observables are merely <<#section-kim-observables,k.IM observables>>, i.e. pure semantics. In addition to observables and dependencies, a model can specify resources, contextualizers and actions to use as sources of "raw", non-semantic information or to define what to do with the outputs before they reach the k.LAB ecosystem as observations.
+
+=== Non-semantic models
+
+=== Learning models
+
 [#section-kim-defines]
 == Definitions
 

@@ -13,25 +13,15 @@
 
 == Semantic modeling in practice
 
-=== Model syntax
+=== Types of models and observations
 
-A model's outputs are referred to as its _observables_, i.e. the concepts that the model defines an observation strategy for; its inputs as _dependencies_. Observables are listed after the keyword `model` that introduces the statement. The keyword `observing` introduces the list of dependencies. All these are merely <<kim.adoc#section-kim-observables,k.IM observables>>, i.e. pure semantics. In addition to observables and dependencies, a model can specify resources, contextualizers and actions to use as sources of "raw" information or to process the outputs before they reach the k.LAB ecosystem as observations.
+=== Learning models
 
-==== Observables
+=== Scope
 
-==== Dependencies
+=== What does the work: contextualizers
 
-==== Actions and resources
-
-==== Types of models and observations
-
-==== Learning models
-
-==== Scope
-
-===== What does the work: contextualizers
-
-===== Procedural knowledge: language bridges
+=== Procedural knowledge: language bridges
 
 The k.LAB stack can be extended to accommodate extension languages within its expressions. If no language is specified, the <<modeling-language-groovy,default k.IM expression language>> is used. 
 
