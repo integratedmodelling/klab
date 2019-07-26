@@ -7,9 +7,10 @@ Category: common, enterprise
 function (hljs) {
   var KIM_IDENT_RE = '[\u00C0-\u02B8a-zA-Z_$][\u00C0-\u02B8a-zA-Z_$0-9]*';
   var GENERIC_IDENT_RE = KIM_IDENT_RE + '(<' + KIM_IDENT_RE + '(\\s*,\\s*' + KIM_IDENT_RE + ')*>)?';
-  var KEYWORDS = __KEYWORDS__;  // https://docs.oracle.com/javase/7/docs/technotes/guides/language/underscores-literals.html
+  // https://docs.oracle.com/javase/7/docs/technotes/guides/language/underscores-literals.html
+  var KEYWORDS = __KEYWORDS__;  
   var QUALITIES = __QUALITIES__;
-  var SUBJECTS = _SUBJECTS__;
+  var SUBJECTS = __SUBJECTS__;
   var EVENTS = __EVENTS__;
   var PROCESSES = __PROCESSES__;
   var RELATIONSHIPS = __RELATIONSHIPS__;
@@ -65,9 +66,41 @@ function (hljs) {
       hljs.APOS_STRING_MODE,
       hljs.QUOTE_STRING_MODE,
       {
+        className: 'quality',
+        keywords: QUALITIES,
+      },
+      {
+        className: 'trait',
+        keywords: TRAITS,
+      },
+      {
+        className: 'subject',
+        keywords: SUBJECTS,
+      },
+      {
+        className: 'process',
+        keywords: PROCESSES,
+      },
+      {
+        className: 'role',
+        keywords: ROLES,
+      },
+      {
+        className: 'relationship',
+        keywords: RELATIONSHIPS,
+      },
+      {
+        className: 'configuration',
+        keywords: CONFIGURATIONS,
+      },
+      {
+        className: 'event',
+        keywords: EVENTS,
+      },
+      {
         className: 'class',
-        beginKeywords: 'class interface', end: /[{;=]/, excludeEnd: true,
-        keywords: 'class interface',
+        beginKeywords: 'model learn number concept boolean text', end: /[{;=]/, excludeEnd: true,
+        keywords: 'model learn number concept boolean text observing using',
         illegal: /[:"\[\]]/,
         contains: [
           {beginKeywords: 'extends implements'},

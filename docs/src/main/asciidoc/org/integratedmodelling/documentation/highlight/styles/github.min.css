@@ -25,6 +25,20 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
   font-weight: bold;
 }
 
+.hljs-quality,
+.hljs-selector-tag,
+.hljs-subst {
+  color: rgb(0, 255, 64);
+  font-weight: bold;
+}
+
+.hljs-trait,
+.hljs-selector-tag,
+.hljs-subst {
+  color: rgb(0, 128, 192);
+  font-weight: bold;
+}
+
 .hljs-number,
 .hljs-literal,
 .hljs-variable,
