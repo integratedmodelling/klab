@@ -7,6 +7,9 @@
 [#section-kim-concepts]
 == Concept declaration
 
+
+=== Macros
+
 [#section-kim-observables]
 == Observable declaration
 

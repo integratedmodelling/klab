@@ -69,7 +69,7 @@ public class CategoryClassificationResolver
 		
 		if (!(classified instanceof IState) || !(classfc instanceof IState)) {
 			throw new IllegalArgumentException(
-					"Category classification is not possible unless all arguments are states");
+					"Category classification is not possible: state for " + classifier + " not found or not a state");
 		}
 
 		IState values = (IState) classified;

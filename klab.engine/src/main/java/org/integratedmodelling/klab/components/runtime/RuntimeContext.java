@@ -1160,7 +1160,10 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 					}
 				}
 			}
-		} else if (ret.size() == 1) {
+		} 
+		
+		if (chosen.isEmpty() && !ret.isEmpty()) {
+			// just take the first
 			chosen.add(ret.iterator().next());
 		}
 		
