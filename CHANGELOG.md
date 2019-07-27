@@ -25,12 +25,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [comment]: <>   ()
 [comment]: <>   (Next build: [0.10.0.xxx] -- ISO Date)
 
+
 ## Unreleased
 ### Added
+### Changed
+### Fixed
+### Removed
+
+## [0.10.0.175] -- 2019/07/27
 ### Changed
 - Switch the documentation templates to Asciidoc and set the docs/ folder up
   as a maven project. Obsolete Sphinx-based files are in etc.
 ### Fixed
+- Correct some lack of sync between IDE and k.IM project structure (in part due to
+  adopting an upgraded Eclipse).
 ### Removed
 
 ## [0.10.0.174] -- 2019/07/23
