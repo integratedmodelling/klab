@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -1070,12 +1071,37 @@ public enum Kim {
 					orphanNamespaceRegistry.put(uri, ret);
 				}
 			} else {
+				
+				String uri = namespace.eResource().getURI().toString();
+				String projectName = getProjectName(uri);
+				KimWorkspace workspace = projectName == null ? null : getWorkspaceForProject(projectName);
+				if (projectName != null && workspace == null) {
+					// haven't seen this project before: will make an educated guess and 
+					// assume this is the user workspace, as this happens when a validator
+					// automatically loads an imported project from the IDE before we come in.
+					if (userWorkspace != null) {
+						File root = getProjectRoot(uri);
+						if (root != null) {
+							project = (KimProject)userWorkspace.overrideProject(projectName, root);
+							ret = new KimNamespace(namespace, project);
+							projectWorkspaces.put(projectName, userWorkspace);
+						}
+					}
+				} else {
+					// a lone k.IM file - be nice and make a namespace, which will certainly
+					// cause well-deserved trouble.
+					ret = new KimNamespace(uri, null);
+					orphanNamespaceRegistry.put(uri, ret);
+				}
+
 				/*
 				 * FIXME this happens when importing a project because the validator is called
 				 * before the project exists.
 				 */
-				throw new KlabInternalErrorException(
+				if (ret /* still */ == null) {	
+					throw new KlabInternalErrorException(
 						"cannot establish project ownership for namespace " + Kim.getNamespaceId(namespace));
+				}
 			}
 		}
 
@@ -1151,6 +1177,45 @@ public enum Kim {
 			}
 			if (properties != null) {
 				ret = path.substring(path.lastIndexOf('/') + 1);
+			}
+
+		} catch (Exception e) {
+			// just return null;
+		}
+
+		return ret;
+	}
+	
+	/**
+	 * Get the project name from the string form of any Xtext resource URI.
+	 * 
+	 * @param resourceURI
+	 * @return
+	 */
+	public File getProjectRoot(String resourceURI) {
+
+		File ret = null;
+		try {
+			URL url = new URL(resourceURI);
+			String path = url.getPath();
+			Properties properties = null;
+			URL purl = null;
+			while ((path = chopLastPathElement(path)) != null) {
+				purl = new URL(url.getProtocol(), url.getAuthority(), url.getPort(),
+						path + "/META-INF/klab.properties");
+				try (InputStream is = purl.openStream()) {
+					properties = new Properties();
+					properties.load(is);
+					break;
+				} catch (IOException exception) {
+					continue;
+				}
+			}
+			if (properties != null) {
+				URL furl = FileLocator.toFileURL(purl);
+				if (furl != null) {
+					ret = new File(furl.getFile()).getParentFile().getParentFile();
+				}
 			}
 
 		} catch (Exception e) {
@@ -1829,6 +1894,14 @@ public enum Kim {
 		}
 
 		return isAbstract;
+	}
+
+	public void closeProject(String projectId) {
+		KimWorkspace workspace = projectWorkspaces.get(projectId);
+		if (workspace != null) {
+			IKimProject project = workspace.getProject(projectId);
+			workspace.deleteProject(project);
+		}
 	}
 
 }

@@ -11,41 +11,44 @@ import org.integratedmodelling.kim.model.Kim;
 
 public class EWorkspace extends ENavigatorItem {
 
-    public static EWorkspace INSTANCE = new EWorkspace();
-    
-    private EWorkspace() {
-        super("__WORKSPACE__", null);
-    }
+	public static EWorkspace INSTANCE = new EWorkspace();
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T getAdapter(Class<T> adapter) {
-        if (IWorkspaceRoot.class.isAssignableFrom(adapter)) {
-            return (T) ResourcesPlugin.getWorkspace().getRoot();
-        }
-        return null;
-    }
+	private EWorkspace() {
+		super("__WORKSPACE__", null);
+	}
 
-    @Override
-    public ENavigatorItem[] getEChildren() {
-        List<ENavigatorItem> ret = new ArrayList<>();
-        for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
-            IKimProject p = Kim.INSTANCE.getProject(project.getName());
-            if (p != null) {
-                ret.add(new EProject(p, this));
-            }
-        }
-        return ret.toArray(new ENavigatorItem[ret.size()]);
-    }
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		if (IWorkspaceRoot.class.isAssignableFrom(adapter)) {
+			return (T) ResourcesPlugin.getWorkspace().getRoot();
+		}
+		return null;
+	}
 
-    @Override
-    public boolean hasEChildren() {
-        for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
-            if (Kim.INSTANCE.getProject(project.getName()) != null) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
+	@Override
+	public ENavigatorItem[] getEChildren() {
+		List<ENavigatorItem> ret = new ArrayList<>();
+		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+			if (!project.isAccessible() || !project.isOpen()) {
+				continue;
+			}
+			IKimProject p = Kim.INSTANCE.getProject(project.getName());
+			if (p != null) {
+				ret.add(new EProject(p, this));
+			}
+		}
+		return ret.toArray(new ENavigatorItem[ret.size()]);
+	}
+
+	@Override
+	public boolean hasEChildren() {
+		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+			if (Kim.INSTANCE.getProject(project.getName()) != null) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

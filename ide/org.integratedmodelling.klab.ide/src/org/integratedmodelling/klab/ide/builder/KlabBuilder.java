@@ -48,11 +48,13 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 				// ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION,
 				// ((IFile) resource).getLocation().toFile()));
 				// }
+				KlabNavigator.refresh();
 				break;
 			case IResourceDelta.REMOVED:
 				System.out.println("REMOVED: " + delta);
 				// just close the editor; everything else is dealt with by the loader and
 				// callback
+				KlabNavigator.refresh();
 				break;
 			case IResourceDelta.CHANGED:
 				if (resource instanceof IFile && isRelevant((IFile) resource)) {

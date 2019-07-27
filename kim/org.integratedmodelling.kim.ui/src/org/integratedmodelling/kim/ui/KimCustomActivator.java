@@ -43,14 +43,6 @@ public class KimCustomActivator extends KimActivator {
             }
         });
         
-        /*
-         *  Library initialization logics for UI (w/o code generation) moved 
-         *  to {@link KimNatureAddingEditorCallback}
-         *  
-         *  TODO may want to have callbacks for synchronization and engine start here.
-         */
-        ResourcesPlugin.getWorkspace().addResourceChangeListener(new KimResourceListener());
-        
         super.start(context);
     }
 }

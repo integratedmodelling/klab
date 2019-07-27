@@ -12,6 +12,7 @@ import java.util.logging.Level;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.wb.swt.ResourceManager;
@@ -33,6 +34,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.client.http.Client;
 import org.integratedmodelling.klab.client.http.EngineMonitor;
 import org.integratedmodelling.klab.ide.kim.KimData;
+import org.integratedmodelling.klab.ide.kim.KimResourceListener;
 import org.integratedmodelling.klab.ide.model.Klab;
 import org.integratedmodelling.klab.ide.model.KlabEngine;
 import org.integratedmodelling.klab.ide.model.KlabExplorer;
@@ -169,6 +171,12 @@ public class Activator extends AbstractUIPlugin {
 			}
 
 		});
+		
+		/*
+		 * this tells us when a project is being closed
+		 */
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(new KimResourceListener());
+        
 
 		/*
 		 * install link helper
