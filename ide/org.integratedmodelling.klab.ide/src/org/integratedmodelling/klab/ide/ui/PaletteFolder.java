@@ -34,7 +34,7 @@ public class PaletteFolder extends Composite {
 		DropTarget dropTarget = new DropTarget(this, DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK);
 		dropTarget.setTransfer(new Transfer[] { TextTransfer.getInstance() });
 		dropTarget.addDropListener(new DropTargetAdapter() {
-
+			
 			@Override
 			public void drop(DropTargetEvent event) {
 				Point where = PaletteFolder.this.toControl(event.x, event.y);

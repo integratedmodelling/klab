@@ -25,9 +25,11 @@ import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
  * <strong>Declaring geometries</strong>
  * <p>
  * A geometry can be declared through a simple string (which is also its string value). Each
- * dimension can use S/s for space, T/s for time, and any other uppercase/lowercase letters except S
+ * dimension can use S/s for space, T/t for time, and any other uppercase/lowercase letters except S
  * and T for other extents (the latter are currently unused and will need a "legend" of sort if/when
- * so).
+ * so). The correspondent Greek letters (sigma and tau) can be used to specify "generic" dimensions,
+ * which are stated to exist and may have a resolution but are aspecific w.r.t. their actual location
+ * and topology.
  * <p>
  * Each letter can be used alone if the shape consists of one extent without subdivisions, or it can
  * be followed by the number of dimensions for each extent if subdivided: so T will mean located in

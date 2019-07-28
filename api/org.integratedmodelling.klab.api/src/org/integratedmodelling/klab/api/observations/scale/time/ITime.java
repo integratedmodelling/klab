@@ -36,7 +36,7 @@ public interface ITime extends IExtent {
 		public enum Type {
 
 			MILLENNIUM(0), CENTURY(1), DECADE(2), YEAR(3), MONTH(4), WEEK(5), DAY(6), HOUR(7), MINUTE(8), SECOND(
-					9), MILLISECOND(10), NANOSECOND(11);
+					9), MILLISECOND(10);
 
 			int rank;
 
@@ -46,6 +46,37 @@ public interface ITime extends IExtent {
 
 			public int getRank() {
 				return rank;
+			}
+
+			public long getMilliseconds() {
+				switch (this) {
+				case MILLISECOND:
+					return 1;
+				case SECOND:
+					return 1000;
+				case MINUTE:
+					return 1000l * 60l;
+				case HOUR:
+					return 1000l * 60l * 60l;
+				case DAY:
+					return 1000l * 60l * 60l * 24l;
+				case WEEK:
+					return 1000l * 60l * 60l * 24l * 7l;
+				case MONTH:
+					return 1000l * 60l * 60l * 24l * 30;
+				case YEAR:
+					return 1000l * 60l * 60l * 24l * 365l;
+				case DECADE:
+					return 1000l * 60l * 60l * 24l * 365l * 10l;
+				case CENTURY:
+					return 1000l * 60l * 60l * 24l * 365l * 100l;
+				case MILLENNIUM:
+					return 1000l * 60l * 60l * 24l * 365l * 1000l;
+				default:
+					break;
+
+				}
+				return 0;
 			}
 
 		}
