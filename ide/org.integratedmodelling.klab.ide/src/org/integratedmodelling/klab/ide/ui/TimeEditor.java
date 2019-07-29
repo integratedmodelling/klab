@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -25,6 +26,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Type;
 import org.integratedmodelling.klab.utils.StringUtil;
+import org.eclipse.swt.custom.CLabel;
 
 public class TimeEditor extends Composite {
 
@@ -41,6 +43,7 @@ public class TimeEditor extends Composite {
 	private Composite scopeWidget;
 	private Composite stepWidget;
 	private Combo time_step;
+	private CLabel message;
 
 	/**
 	 * Pass one to the constructor to be notified of any changes that result in a
@@ -64,7 +67,9 @@ public class TimeEditor extends Composite {
 		Composite grpTime = new Composite(this, SWT.NONE);
 		grpTime.setForeground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_FOREGROUND));
 		grpTime.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		grpTime.setLayout(new GridLayout(3, false));
+		GridLayout gl_grpTime = new GridLayout(3, false);
+		gl_grpTime.marginTop = 5;
+		grpTime.setLayout(gl_grpTime);
 
 		Label lblNewLabel = new Label(grpTime, SWT.NONE);
 		lblNewLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -222,6 +227,14 @@ public class TimeEditor extends Composite {
 
 		Label time_chooseStep = new Label(grpTime, SWT.NONE);
 		time_chooseStep.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
+		new Label(grpTime, SWT.NONE);
+
+		message = new CLabel(grpTime, SWT.WRAP);
+		message.setFont(SWTResourceManager.getFont("Segoe UI", 7, SWT.NORMAL));
+		message.setTopMargin(5);
+		message.setText("");
+		message.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+//		new Label(grpTime, SWT.NONE);
 		// new Label(grpTime, SWT.NONE);
 	}
 
@@ -348,6 +361,13 @@ public class TimeEditor extends Composite {
 
 	public String getGeometry() {
 
+		// happens at init
+		if (this.message == null) {
+			return null;
+		}
+
+		this.message.setText("");
+
 		String ret = null;
 		this.error = null;
 
@@ -356,14 +376,14 @@ public class TimeEditor extends Composite {
 		}
 		switch (timeType) {
 		case GENERIC:
-			ret = "\u03C4";
+			ret = "\u03C4" + "1";
 			break;
 		case GRID:
 		case REAL:
-			ret = "T";
+			ret = "T1";
 			break;
 		case SPECIFIC:
-			ret = "t";
+			ret = "t1";
 			break;
 		default:
 			break;
@@ -371,44 +391,46 @@ public class TimeEditor extends Composite {
 
 		Date start = null;
 		Date end = null;
+		String startDesc = null;
+		String endDesc = null;
 
 		if (time_start.isEnabled() && !time_start.getText().trim().isEmpty()) {
 			try {
-				DateFormat df = getFormat(time_start.getText().trim());
-				start = df == null ? null : df.parse(time_start.getText().trim());
+				startDesc = time_start.getText().trim();
+				DateFormat df = getFormat(startDesc);
+				start = df == null ? null : df.parse(startDesc);
 				if (df == null) {
-					error = "Invalid format for start date: " + time_start.getText();
+					error = "Invalid format for start date";
 				}
 			} catch (ParseException e) {
-				error = "Invalid format for start date: " + time_start.getText();
+				error = "Invalid format for start date";
 			}
 		}
 
 		if (time_end.isEnabled() && !time_end.getText().trim().isEmpty()) {
 			try {
-				DateFormat df = getFormat(time_end.getText().trim());
-				end = df == null ? null : df.parse(time_end.getText());
-				error = "Invalid format for end date: " + time_end.getText();
+				endDesc = time_end.getText().trim();
+				DateFormat df = getFormat(endDesc);
+				end = df == null ? null : df.parse(endDesc);
+				if (df == null) {
+					error = "Invalid format for end date";
+				}
 			} catch (ParseException e) {
-				error = "Invalid format for end date: " + time_end.getText();
+				error = "Invalid format for end date";
 			}
 		}
 
-		String resolution = "1";
-
-		if (time_scope.isEnabled()) {
-			// compute step and n. of steps
-		}
-
 		long step = -1;
+		long divs = -1;
 
 		if (start != null && end != null) {
 			long diff = end.getTime() - start.getTime();
 			if (diff <= 0) {
-				error = "the end date is not after the start date";
+				error = "End date not after the start date";
 			}
 		}
 
+		String stepDesc = null;
 		if (error == null && stepResolution != null && time_step.isEnabled()
 				&& !time_step_multiplier.getText().trim().isEmpty()) {
 
@@ -417,26 +439,56 @@ public class TimeEditor extends Composite {
 				len = Long.parseLong(time_step_multiplier.getText());
 				len *= stepResolution.getMilliseconds();
 			} catch (Throwable t) {
-				error = "timestep is not an integer";
+				error = "Timestep is not an integer";
 			}
 
 			if (error == null && start != null && end != null) {
 				// must be divisible
 				long diff = end.getTime() - start.getTime();
 				if (diff <= len) {
-					error = "the time step is larger than the total time interval";
-				} else if ((len % diff) != 0) {
-					error = "the time step is not an integer multiplier of the time interval";
+					error = "Time step larger than the interval";
+				} else if ((diff % len) != 0) {
+					error = "Time step does not divide the interval";
+				} else {
+					divs = diff / len;
+					step = len;
+					stepDesc = time_step_multiplier.getText() + " " + stepResolution;
+					ret += ("(" + divs + ")");
 				}
 			}
+
 		}
 
 		if (error != null) {
-			System.out.println(error);
-		}
-		System.out.println((error != null ? "ERROR " : "CORRECT ") + "parsed: resolution = " + resolution + "; start = "
-				+ start + "; end = " + end + "; step = " + step);
+			
+			this.message.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
+			this.message.setText(error);
+			
+		} else {
 
+			ret += "{";
+			ret += "type=" + timeType.name().toLowerCase();
+			if (time_scope.isEnabled()) {
+				ret += ",scope=" + scopeResolution.name().toLowerCase();
+			}
+
+			if (start != null) {
+				ret += ",start=" + start.getTime();
+			}
+			if (end != null) {
+				ret += ",end=" + end.getTime();
+			}
+			if (step > 0) {
+				ret += ",step=" + step;
+			}
+
+			ret += "}";
+		}
+
+		if (listener != null && error == null) {
+			listener.onValidModification(ret);
+		}
+		
 		return error != null ? null : ret;
 	}
 
@@ -453,75 +505,11 @@ public class TimeEditor extends Composite {
 		int nColons = tokens.length > 1 ? StringUtil.countMatches(tokens[1], ":") : -1;
 		boolean mss = tokens.length > 1 && tokens[1].contains(".");
 
-		// minimum required based on the mode
-		int rTokens = 0;
-		int rDashes = 0;
-		int rColons = 0;
-
-		switch (this.stepResolution == null ? scopeResolution : stepResolution) {
-		case CENTURY:
-			rTokens = 1;
-			rDashes = 0;
-			rColons = 0;
-			break;
-		case DAY:
-			rTokens = 1;
-			rDashes = 2;
-			rColons = 0;
-			break;
-		case DECADE:
-			rTokens = 1;
-			rDashes = 0;
-			rColons = 0;
-			break;
-		case HOUR:
-			rTokens = 2;
-			rDashes = 2;
-			rColons = 0;
-			break;
-		case MILLENNIUM:
-			rTokens = 1;
-			rDashes = 0;
-			rColons = 0;
-			break;
-		case MILLISECOND:
-			rTokens = 2;
-			rDashes = 2;
-			rColons = 2;
-			break;
-		case MINUTE:
-			rTokens = 2;
-			rDashes = 2;
-			rColons = 1;
-			break;
-		case MONTH:
-			rTokens = 1;
-			rDashes = 1;
-			rColons = 0;
-			break;
-		case SECOND:
-			rTokens = 2;
-			rDashes = 2;
-			rColons = 2;
-			break;
-		case WEEK:
-			rTokens = 1;
-			rDashes = 2;
-			rColons = 0;
-			break;
-		case YEAR:
-			rTokens = 1;
-			rDashes = 0;
-			rColons = 0;
-			break;
-		default:
-			break;
-		}
-
 		/*
 		 * Ensure we have the min tokens required
 		 */
-		if (nTokens > 2 || nDashes > 2 || nColons > 2 || nTokens < rTokens || nDashes < rDashes || nColons < rColons) {
+		if (nTokens > 2 || nDashes > 2
+				|| nColons > 2 /* || nTokens < rTokens || nDashes < rDashes || nColons < rColons */) {
 			return null;
 		}
 
@@ -562,11 +550,10 @@ public class TimeEditor extends Composite {
 			format += ".SSSSSSS";
 		}
 
-		if (format != null) {
-			System.out.println("FORMAT: " + format);
-		}
-		
-		return format == null ? null : new SimpleDateFormat(format, Locale.ENGLISH);
+		SimpleDateFormat ret = format == null ? null : new SimpleDateFormat(format);
+		ret.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+		return ret;
 
 	}
 
@@ -576,5 +563,9 @@ public class TimeEditor extends Composite {
 
 	public boolean isValid() {
 		return getGeometry() != null;
+	}
+
+	public void setListener(Listener listener) {
+		this.listener = listener;
 	}
 }
