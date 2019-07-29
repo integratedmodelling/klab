@@ -29,8 +29,11 @@ public class KimCustomActivator extends KimActivator {
                 	String uriPath = uri.toString().substring("platform:/resource/".length());
                 	IResource ret = ResourcesPlugin.getWorkspace().getRoot().findMember(uriPath);
                 	if (ret instanceof IFile) {
+                		((IFile)ret).getProject();
                 		String projectId = uriPath.substring(0, uriPath.indexOf('/'));
                 		IPath resourceFile = ((IFile)ret).getLocation();
+                		// ACHTUNG this won't work if the name of the project is in the namespace. Use the IFile.getProject() and
+                		// take it from there.
                 		while (!resourceFile.lastSegment().equals(projectId)) {
                 			resourceFile = resourceFile.removeLastSegments(1);
                 		}

@@ -74,7 +74,7 @@ public class KimProject implements IKimProject {
 															// if they are the same.
 		String furi = o.eResource().getURI().toFileString();
 
-		if (wuri.startsWith(PLATFORM_URI_PREFIX) /*&& kuri.startsWith("file:")*/) {
+		if (wuri.startsWith(PLATFORM_URI_PREFIX) /* && kuri.startsWith("file:") */) {
 			// substitute actual file location of workspace
 			UriResolver resolver = Kim.INSTANCE.getUriResolver("platform");
 			if (resolver != null) {
@@ -83,23 +83,19 @@ public class KimProject implements IKimProject {
 				wuri = ws + (ws.endsWith("/") ? "" : "/") + wuri.substring(PLATFORM_URI_PREFIX.length());
 			}
 		}
-//		if (wuri.startsWith(kuri)) {
-//			return this.name;
-//		} else {
-			try {
-				String kuri = root.toURI().toURL() + (sourceDir == null || sourceDir.isEmpty() ? "" : sourceDir);
-				if (wuri.startsWith(kuri)) {
-					ret = wuri.substring(kuri.length() + 1);
-					if (ret.endsWith(".kim")) {
-						ret = ret.substring(0, ret.length() - 4);
-					}
-					ret = ret.replaceAll("\\/", "\\.");
+		try {
+			String kuri = root.toURI().toURL() + (sourceDir == null || sourceDir.isEmpty() ? "" : sourceDir);
+			if (wuri.startsWith(kuri)) {
+				ret = wuri.substring(kuri.length() + 1);
+				if (ret.endsWith(".kim")) {
+					ret = ret.substring(0, ret.length() - 4);
 				}
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ret = ret.replaceAll("\\/", "\\.");
 			}
-//		}
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		// no correspondence: resource is outside the beaten path
 		return ret;
 	}
