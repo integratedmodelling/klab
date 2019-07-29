@@ -1455,11 +1455,13 @@ class KimValidator extends AbstractKimValidator {
 			} else {
 
 				if (!concept.name.name.contains(":")) {
+					
 					var namespace = KimValidator.getNamespace(concept);
 					concept.name.name = (if (namespace === null)
 						"UNDEFINED"
 					else
 						Kim.getNamespaceId(namespace)) + ":" + concept.name.name
+
 				} else {
 					// validate imports within namespace and workspace
 					var ns = concept.name.name.substring(0, concept.name.name.indexOf(':'))
@@ -1882,6 +1884,11 @@ class KimValidator extends AbstractKimValidator {
 					} else {
 						if (child.isAbstract) {
 							childsc.type.add(Type.ABSTRACT)
+							// suka suka
+							var cdesc = Kim.INSTANCE.getConceptDescriptor(namespace.getName() + ":" + childsc.name)
+							if (cdesc !== null) {
+								cdesc.flags.add(Type.ABSTRACT)
+							}
 						}
 						ret.addChild(childsc)
 					}

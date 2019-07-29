@@ -65,6 +65,10 @@ public class NumberUtils {
 		return DOUBLE_PATTERN.matcher(s).matches();
 	}
 
+	public static boolean encodesLong(String s) {
+		return INTEGER_PATTERN.matcher(s).matches();
+	}
+	
 	public static boolean encodesInteger(String s) {
 		return INTEGER_PATTERN.matcher(s).matches();
 	}

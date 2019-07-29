@@ -4,10 +4,10 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.TimeZone;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -22,11 +22,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Type;
 import org.integratedmodelling.klab.utils.StringUtil;
-import org.eclipse.swt.custom.CLabel;
 
 public class TimeEditor extends Composite {
 
@@ -126,7 +126,7 @@ public class TimeEditor extends Composite {
 		time_scope.setEnabled(false);
 		time_scope.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		time_scope.setItems(new String[] { "Millennium", "Century", "Decade", "Year", "Month", "Week", "Day", "Hour",
-				"Minute", "Second", "Millisecond", "Nanosecond" });
+				"Minute", "Second", "Millisecond"/* , "Nanosecond" */ });
 		time_scope.select(3);
 
 		Label label_1 = new Label(grpTime, SWT.NONE);
@@ -234,10 +234,16 @@ public class TimeEditor extends Composite {
 		message.setTopMargin(5);
 		message.setText("");
 		message.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-//		new Label(grpTime, SWT.NONE);
-		// new Label(grpTime, SWT.NONE);
 	}
 
+	public void setTo(Dimension time) {
+		if (time == null) {
+			
+		} else {
+			
+		}
+	}
+	
 	protected void modified() {
 		String geometry = getGeometry();
 		if (listener != null) {
@@ -316,7 +322,7 @@ public class TimeEditor extends Composite {
 			time_end.setEnabled(false);
 			time_step_multiplier.setEnabled(false);
 			time_step.setEnabled(false);
-			stepResolution = null;
+//			stepResolution = null;
 			break;
 		case "Generic":
 			timeType = Type.GENERIC;
@@ -326,7 +332,7 @@ public class TimeEditor extends Composite {
 			time_end.setEnabled(false);
 			time_step_multiplier.setEnabled(false);
 			time_step.setEnabled(false);
-			stepResolution = null;
+//			stepResolution = null;
 			break;
 		case "Specific":
 			timeType = Type.SPECIFIC;
@@ -336,7 +342,7 @@ public class TimeEditor extends Composite {
 			time_end.setEnabled(true);
 			time_step_multiplier.setEnabled(false);
 			time_step.setEnabled(false);
-			stepResolution = null;
+//			stepResolution = null;
 			break;
 		case "Grid":
 			timeType = Type.GRID;
@@ -422,6 +428,7 @@ public class TimeEditor extends Composite {
 
 		long step = -1;
 		long divs = -1;
+		Resolution.Type resolution = null;
 
 		if (start != null && end != null) {
 			long diff = end.getTime() - start.getTime();
@@ -433,7 +440,7 @@ public class TimeEditor extends Composite {
 		String stepDesc = null;
 		if (error == null && stepResolution != null && time_step.isEnabled()
 				&& !time_step_multiplier.getText().trim().isEmpty()) {
-
+			resolution = stepResolution;
 			long len = -1;
 			try {
 				len = Long.parseLong(time_step_multiplier.getText());
@@ -456,7 +463,8 @@ public class TimeEditor extends Composite {
 					ret += ("(" + divs + ")");
 				}
 			}
-
+		} else if (error != null && time_scope.isEnabled()) {
+			resolution = scopeResolution;
 		}
 
 		if (error != null) {
@@ -468,8 +476,8 @@ public class TimeEditor extends Composite {
 
 			ret += "{";
 			ret += "type=" + timeType.name().toLowerCase();
-			if (time_scope.isEnabled()) {
-				ret += ",scope=" + scopeResolution.name().toLowerCase();
+			if (resolution != null) {
+				ret += ",resolution=" + resolution.name().toLowerCase();
 			}
 
 			if (start != null) {

@@ -2396,6 +2396,14 @@ public class KimValidator extends AbstractKimValidator {
               boolean _isAbstract = child.isAbstract();
               if (_isAbstract) {
                 childsc.getType().add(IKimConcept.Type.ABSTRACT);
+                String _name_4 = namespace.getName();
+                String _plus_4 = (_name_4 + ":");
+                String _name_5 = childsc.getName();
+                String _plus_5 = (_plus_4 + _name_5);
+                Kim.ConceptDescriptor cdesc = Kim.INSTANCE.getConceptDescriptor(_plus_5);
+                if ((cdesc != null)) {
+                  cdesc.getFlags().add(IKimConcept.Type.ABSTRACT);
+                }
               }
               ret.addChild(childsc);
             }

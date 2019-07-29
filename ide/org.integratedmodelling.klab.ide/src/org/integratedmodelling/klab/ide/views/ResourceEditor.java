@@ -62,6 +62,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.klab.api.data.CRUDOperation;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
@@ -121,6 +122,7 @@ public class ResourceEditor extends ViewPart {
 	private Combo geoRegion;
 	private StyledText references;
 	private StyledText notes;
+	private TimeEditor timeEditor;
 
 	private TableViewerColumn tableViewerColumn_3D;
 	private Label messageLabel;
@@ -404,6 +406,8 @@ public class ResourceEditor extends ViewPart {
 			}
 		}
 
+		this.timeEditor.setTo(this.geometry.getDimension(Type.TIME));
+		
 		// TODO errors! They are not contained in the resource.
 		// this.isPublishable.setSelection(false);
 		// this.unpublishableReason.setText(string == null ? "" : string);
@@ -559,14 +563,13 @@ public class ResourceEditor extends ViewPart {
 			grpTime.setLayout(new GridLayout(1, false));
 			grpTime.setText("Time");
 
-			TimeEditor timeEditor = new TimeEditor(grpTime, SWT.NONE);
-			timeEditor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-			timeEditor.setListener(new TimeEditor.Listener() {
+			timeEditor = new TimeEditor(grpTime, SWT.NONE, new TimeEditor.Listener() {
 				@Override
 				public void onValidModification(String geometrySpecs) {
 					swapDimension(geometrySpecs);
 				}
 			});
+			timeEditor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 			Composite composite_1 = new Composite(grpGeometry, SWT.NONE);
 			composite_1.setToolTipText("Help for operations appear here");

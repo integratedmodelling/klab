@@ -603,10 +603,13 @@ public class Geometry implements IGeometry {
 			Object v = null;
 			if (val.startsWith("[") && val.endsWith("]")) {
 				v = NumberUtils.podArrayFromString(val, "\\s+");
-			} else if (NumberUtils.encodesDouble(((String) val))) {
-				v = Double.parseDouble(val);
+			} else if (NumberUtils.encodesLong(val)) {
+				// This way all integers will be longs and the next won't be called - check if that's OK
+				v = Long.parseLong(val);
 			} else if (NumberUtils.encodesInteger(val)) {
 				v = Integer.parseInt(val);
+			} else if (NumberUtils.encodesDouble(((String) val))) {
+				v = Double.parseDouble(val);
 			} else {
 				v = val;
 			}
