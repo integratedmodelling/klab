@@ -32,6 +32,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 ### Removed
 
+## [0.10.0.176] -- 2019/07/30
+### Fixed
+- Abstract concepts declared as children of another concept are now made abstract as
+  requested.
+- Fixed rare situation in which namespace IDs were wrongly reported as illegal (when
+  they were secondary namespaces and the root namespace had the same ID as the 
+  project).
+
 ## [0.10.0.175] -- 2019/07/27
 ### Changed
 - Switch the documentation templates to Asciidoc and set the docs/ folder up
@@ -39,7 +47,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Correct some lack of sync between IDE and k.IM project structure (in part due to
   adopting an upgraded Eclipse).
-### Removed
 
 ## [0.10.0.174] -- 2019/07/23
 ### Added

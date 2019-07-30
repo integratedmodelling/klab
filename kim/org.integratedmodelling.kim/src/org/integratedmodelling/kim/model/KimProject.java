@@ -69,7 +69,25 @@ public class KimProject implements IKimProject {
 		final String PLATFORM_URI_PREFIX = "platform:/resource/";
 		String ret = null;
 		String sourceDir = SOURCE_FOLDER;
-//		String kuri = workspace.getURL() + "/" + name + "/META-INF/knowledge.kim";
+
+		String ouri = o.eResource().getURI().toString();
+		String projectId = Kim.INSTANCE.getProjectName(o.eResource().getURI().toString());
+		if (projectId != null) {
+			/*
+			 * find projectname/src in the URI
+			 */
+			String segment = projectId + "/" + SOURCE_FOLDER;
+			int iseg = ouri.indexOf(segment);
+			if (iseg > 0) {				
+				segment = ouri.substring(iseg+segment.length() + 1);
+				if (segment.endsWith(".kim")) {
+					segment = segment.substring(0, segment.length() - 4);
+				} 
+				return segment.replaceAll("\\/", "\\.");
+			}
+		}
+
+		// String kuri = workspace.getURL() + "/" + name + "/META-INF/knowledge.kim";
 		String wuri = o.eResource().getURI().toString(); // THIS GETS platform for workspace files even
 															// if they are the same.
 		String furi = o.eResource().getURI().toFileString();
@@ -84,6 +102,12 @@ public class KimProject implements IKimProject {
 			}
 		}
 		try {
+			/*
+			 * FIXME this is flawed - going backwards will return wrong results if the
+			 * namespace parent has the same name as the project. After ensuring this works
+			 * with tests and script, scrap this and remove the painful UriResolver for
+			 * good.
+			 */
 			String kuri = root.toURI().toURL() + (sourceDir == null || sourceDir.isEmpty() ? "" : sourceDir);
 			if (wuri.startsWith(kuri)) {
 				ret = wuri.substring(kuri.length() + 1);
