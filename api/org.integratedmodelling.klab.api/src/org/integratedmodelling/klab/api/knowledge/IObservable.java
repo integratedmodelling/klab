@@ -56,8 +56,8 @@ public interface IObservable extends ISemantic, IResolvable {
 	public enum Description {
 		/**
 		 * The observation that produces a countable object. Acknowledgement is a
-		 * special case of instantiation, limited to a subject and performed on
-		 * a fiat basis (in k.IM through an <code>observe</code> statement).
+		 * special case of instantiation, limited to a subject and performed on a fiat
+		 * basis (in k.IM through an <code>observe</code> statement).
 		 */
 		INSTANTIATION,
 		/**
@@ -323,6 +323,16 @@ public interface IObservable extends ISemantic, IResolvable {
 		 * @return
 		 */
 		Builder withoutValueOperators();
+
+		/**
+		 * Tags the classifier of an abstract attribute as targeting a specific concrete
+		 * attribute, so that any classified objects that won't have that specific
+		 * attribute can be recognized as irrelevant to this observation and hidden.
+		 * 
+		 * @param targetPredicate
+		 * @return
+		 */
+		Builder withTargetPredicate(IConcept targetPredicate);
 
 	}
 

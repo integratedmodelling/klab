@@ -8,6 +8,7 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.Description;
@@ -79,8 +80,8 @@ public class ObservationStrategy {
 		}
 
 		/*
-		 * If we're classifying a countable with a trait and we don't have the dependency for it,
-		 * add it.
+		 * If we're classifying a countable with a trait and we don't have the
+		 * dependency for it, add it.
 		 */
 		if (observable.getDescription() == Description.CLASSIFICATION) {
 			IConcept dep = observable.getInherentType();
@@ -90,7 +91,7 @@ public class ObservationStrategy {
 						dep.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
 			}
 		}
-		
+
 		/**
 		 * Add dependencies for anything mentioned in operators if needed
 		 */
@@ -146,7 +147,7 @@ public class ObservationStrategy {
 			}
 
 			ObservationStrategy alternative = new ObservationStrategy(target, mode);
-
+			
 			for (Pair<ValueOperator, Object> operator : operators) {
 				alternative.computation.add(Klab.INSTANCE.getRuntimeProvider().getOperatorResolver(target,
 						operator.getFirst(), operator.getSecond()));
@@ -172,14 +173,37 @@ public class ObservationStrategy {
 				target = previous;
 			}
 
-			Observable filter = (Observable) new ObservableBuilder(attribute)
-					.of(Observables.INSTANCE.getBaseObservable(target.getType())).filtering(target).buildObservable();
+			IConcept targetAttribute = null;
+			if (!attribute.is(Type.ABSTRACT) && observable.is(Type.COUNTABLE)) {
+				/*
+				 * find the first base observable that is abstract; give up if not found. The
+				 * dataflow will discard the outputs that are not what is wanted, and tag others
+				 * as irrelevant (hidden) if it's a first instantiation.
+				 */
+				IConcept base = Traits.INSTANCE.getBaseParentTrait(attribute);
+				if (base.isAbstract()) {
+					targetAttribute = attribute;
+					attribute = base;
+				} else {
+					scope.getMonitor().debug("cannot resolve predicate " + attribute + " within " + target
+							+ ": can't find an abstract base predicate for classification");
+					attribute = null;
+				}
+			}
 
-			ObservationStrategy alternative = new ObservationStrategy(target, mode);
+			if (attribute != null) {
 
-			alternative.observables.add(filter);
+				Observable filter = (Observable) new ObservableBuilder(attribute)
+						.of(Observables.INSTANCE.getBaseObservable(target.getType())).filtering(target)
+						.withTargetPredicate(targetAttribute)
+						.buildObservable();
 
-			ret.add(alternative);
+				ObservationStrategy alternative = new ObservationStrategy(target, mode);
+
+				alternative.observables.add(filter);
+
+				ret.add(alternative);
+			}
 
 		} else if (hasResolvableInherency(target, scope)) {
 

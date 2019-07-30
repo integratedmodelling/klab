@@ -57,8 +57,6 @@ public class Observable implements IObservable {
 	private Range range;
 	private Unit unit;
 	private Currency currency;
-	// private Concept classifier;
-	// private Concept downTo;
 	private Object value;
 	private Description observationType;
 	private boolean optional;
@@ -66,9 +64,14 @@ public class Observable implements IObservable {
 	private String observerId;
 	private IDirectObservation observer;
 	private List<Pair<ValueOperator, Object>> valueOperators = new ArrayList<>();
-	// private ValueOperator valueOperator;
-	// private Object valueOperand;
 	private boolean fluidUnits;
+	/*
+	 * Target predicate is a concrete predicate that may be added to the observable
+	 * that classifies its abstract base predicate, so that any outputs that do not
+	 * have the exact target predicate after classification can be marked as
+	 * irrelevant to the observation and hidden.
+	 */
+	private IConcept targetPredicate;
 
 	/**
 	 * This and the next support situations in which the observable contains a
@@ -90,7 +93,6 @@ public class Observable implements IObservable {
 	// network boundaries
 	transient String sessionId;
 	private List<IAnnotation> annotations = new ArrayList<>();
-	// private boolean givenName;
 	private String referenceName;
 	private String url;
 
@@ -135,14 +137,12 @@ public class Observable implements IObservable {
 		this.range = observable.range;
 		this.unit = observable.unit;
 		this.currency = observable.currency;
-		// this.classifier = observable.classifier;
-		// this.downTo = observable.downTo;
+		this.targetPredicate = observable.targetPredicate;
 		this.value = observable.value;
 		this.observationType = observable.observationType;
 		this.optional = observable.optional;
 		this.generic = observable.generic;
 		this.annotations.addAll(observable.getAnnotations());
-		// this.valueOperand = observable.valueOperand;
 		this.valueOperators.addAll(observable.valueOperators);
 		this.fluidUnits = observable.fluidUnits;
 		this.originatingModelId = observable.originatingModelId;
@@ -161,16 +161,6 @@ public class Observable implements IObservable {
 		}
 		return name;
 	}
-
-	// @Override
-	// public IConcept getDownTo() {
-	// return downTo;
-	// }
-	//
-	// @Override
-	// public IConcept getClassifier() {
-	// return classifier;
-	// }
 
 	@Override
 	public Range getRange() {
@@ -696,6 +686,14 @@ public class Observable implements IObservable {
 	@Override
 	public List<Pair<ValueOperator, Object>> getValueOperators() {
 		return this.valueOperators;
+	}
+
+	public void setTargetPredicate(IConcept targetPredicate) {
+		this.targetPredicate = targetPredicate;
+	}
+
+	public IConcept getTargetPredicate() {
+		return this.targetPredicate;
 	}
 
 }

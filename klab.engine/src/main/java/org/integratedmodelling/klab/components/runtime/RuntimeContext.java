@@ -108,6 +108,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	// set only by the actuator, relevant only in instantiators with attributes
 	IModel model;
 	Set<String> notifiedObservations;
+	Map<IConcept, ObservationGroup> groups;
 
 	// root scope of the entire dataflow, unchanging, for downstream resolutions
 	ResolutionScope resolutionScope;
@@ -125,6 +126,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		this.structure = new Structure();
 		this.provenance = new Provenance();
 		this.notifiedObservations = new HashSet<>();
+		this.groups = new HashMap<>();
 		this.monitor = monitor;
 		this.namespace = actuator.getNamespace();
 		this.scale = scale;
@@ -169,6 +171,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		this.structure = context.structure;
 		this.monitor = context.monitor;
 		this.catalog = context.catalog;
+		this.groups = context.groups;
 		this.scale = context.scale;
 		this.artifactType = context.artifactType;
 		this.semantics = context.semantics;
@@ -614,6 +617,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		ret.scale = scale;
 		ret.semantics = new HashMap<>();
 		ret.catalog = new HashMap<>();
+		ret.groups = new HashMap<>();
 		ret.targetSemantics = ((Actuator) actuator).getObservable();
 		ret.monitor = monitor;
 		ret.semantics.put(actuator.getName(), ret.targetSemantics);
@@ -798,7 +802,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			List<IState> predefinedStates = new ArrayList<>();
 
 			if (observable.is(Type.COUNTABLE) && mode == Mode.INSTANTIATION) {
-				observation = new ObservationGroup(observable, (Scale) scale, this, IArtifact.Type.OBJECT);
+				observation = getObservationGroup(observable, scale); 
 			} else {
 
 				if (observable.is(Type.RELATIONSHIP)) {
@@ -903,12 +907,23 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 	}
 
+	@Override
+	public ObservationGroup getObservationGroup(IObservable observable, IScale scale) {
+		IConcept mainObservable = Observables.INSTANCE.getBaseObservable(observable.getType());
+		ObservationGroup ret = groups.get(mainObservable);
+		if (ret == null) {
+			ret = new ObservationGroup((Observable)observable, (Scale) scale, this, IArtifact.Type.OBJECT);
+			groups.put(mainObservable, ret);
+		}	
+		return ret;
+	}
+
 	public IArtifact createTarget(IObservable observable) {
 
 		IObservation observation = null;
 
 		if (observable.is(Type.COUNTABLE)) {
-			observation = new ObservationGroup((Observable) observable, (Scale) scale, this, IArtifact.Type.OBJECT);
+			observation = getObservationGroup(observable, scale);
 		} else {
 			observation = DefaultRuntimeProvider.createObservation(observable, scale, this);
 		}

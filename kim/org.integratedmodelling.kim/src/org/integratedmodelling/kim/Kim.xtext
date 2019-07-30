@@ -235,6 +235,7 @@ Namespace:
 	) 
 	('namespace' | scenario?='scenario' | worldviewBound?='worldview') name=PathName (docstring=STRING)? 
 	(
+		('using' 'language' language=UPPERCASE_ID)? & 
 		('using' imported+=Import (=> ',' imported+=Import)*)? & 
 		('imports' owlImports+=OwlImport (',' owlImports+=OwlImport)*)? & 
 		('covering' coverage+=Function (=> ',' coverage+=Function)*)? &
@@ -245,7 +246,7 @@ Namespace:
 	)
 	('parameters' parameters=Metadata)? 
 	('metadata' metadata=Metadata)? 
-	';';	
+	';';
 
 OwlImport:
 	name=STRING ('as' prefix=LOWERCASE_ID)
@@ -753,7 +754,7 @@ ValueWithIdAndConcept returns Value:
 Value:
 	literal=LiteralOrIdOrComma |
 	function=Function |
-	expr=EXPR |
+	expr=EXPR ('in' language=UPPERCASE_ID)? |
 	id=(LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID) |
 	list=List |
 	table=LookupTable |

@@ -12,6 +12,7 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.atteo.evo.inflector.English;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
@@ -126,11 +127,9 @@ public enum Observations implements IObservationService {
 	 * FIXME caching strategy currently just fills up forever - must shed caches as
 	 * transitions advance.
 	 * 
-	 * @param state
-	 *            a state
-	 * @param locator
-	 *            the subsetting locator for the wanted data, or null if global
-	 *            summaries are required.
+	 * @param state   a state
+	 * @param locator the subsetting locator for the wanted data, or null if global
+	 *                summaries are required.
 	 * @return the state summary
 	 */
 	public StateSummary getStateSummary(IState state, ILocator locator) {
@@ -222,7 +221,7 @@ public enum Observations implements IObservationService {
 		ObservationReference ret = new ObservationReference();
 
 		ret.setEmpty(observation.isEmpty());
-		
+
 		// for now
 		ret.setPrimary(true);
 
@@ -266,16 +265,21 @@ public enum Observations implements IObservationService {
 		ret.setUrn(observation.getUrn());
 		ret.setParentId(parent == null ? null : parent.getId());
 
-		ret.setLabel(observation instanceof IDirectObservation ? ((IDirectObservation) observation).getName()
-				: observation.getObservable().getName());
-		ret.setLabel(StringUtils.capitalize(ret.getLabel().replaceAll("_", " ")));
+		if (observation instanceof ObservationGroup) {
+			ret.setLabel(StringUtils.capitalize(
+					English.plural(observation.getObservable().getType().getName())));
+		} else {
+			ret.setLabel(observation instanceof IDirectObservation ? ((IDirectObservation) observation).getName()
+					: observation.getObservable().getName());
+			ret.setLabel(StringUtils.capitalize(ret.getLabel().replaceAll("_", " ")));
+		}
 		if (observation.getObservable().getUnit() != null) {
-			ret.setLabel(ret.getLabel() + " [" + ((Unit) observation.getObservable().getUnit()).toUTFString() + "]");
+			ret.setLabel(ret.getLabel() + " in " + ((Unit) observation.getObservable().getUnit()).toUTFString());
 		} else if (observation.getObservable().getCurrency() != null) {
-			ret.setLabel(ret.getLabel() + " [" + observation.getObservable().getCurrency() + "]");
+			ret.setLabel(ret.getLabel() + " in " + observation.getObservable().getCurrency());
 		} else if (observation.getObservable().getRange() != null) {
-			ret.setLabel(ret.getLabel() + " [" + observation.getObservable().getRange().getLowerBound() + " to "
-					+ observation.getObservable().getRange().getUpperBound() + "]");
+			ret.setLabel(ret.getLabel() + " " + observation.getObservable().getRange().getLowerBound() + " to "
+					+ observation.getObservable().getRange().getUpperBound());
 		}
 
 		ret.setObservable(observation.getObservable().getDefinition());
@@ -488,7 +492,7 @@ public enum Observations implements IObservationService {
 		/*
 		 * activity that generated us.
 		 */
-			ret.setTaskId(((Artifact)observation).getGeneratorActivityId());
+		ret.setTaskId(((Artifact) observation).getGeneratorActivityId());
 
 		ret.getActions().add(ActionReference.separator());
 		ret.getActions().add(new ActionReference("Add to cache", "AddToCache"));

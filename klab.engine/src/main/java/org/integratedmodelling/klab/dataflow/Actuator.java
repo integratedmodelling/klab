@@ -53,6 +53,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
+import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.StateLayer;
 import org.integratedmodelling.klab.data.Metadata;
@@ -234,14 +235,13 @@ public class Actuator implements IActuator {
 	/**
 	 * Compute the actuator.
 	 * 
-	 * @param target
-	 *            the final artifact being computed. If this actuator handles an
-	 *            instantiation, the passed target is null and will be set to the
-	 *            first object in the result chain, or to the empty artifact if no
-	 *            instances are created. In the end the method will always return a
-	 *            non-null artifact.
-	 * @param runtimeContext
-	 *            the runtime context
+	 * @param target         the final artifact being computed. If this actuator
+	 *                       handles an instantiation, the passed target is null and
+	 *                       will be set to the first object in the result chain, or
+	 *                       to the empty artifact if no instances are created. In
+	 *                       the end the method will always return a non-null
+	 *                       artifact.
+	 * @param runtimeContext the runtime context
 	 * @return the finalized observation data. TODO when an instantiator returns no
 	 *         instances, should return an empty observation. Currently it returns
 	 *         null.
@@ -568,9 +568,8 @@ public class Actuator implements IActuator {
 	 * found by the contextualizer.
 	 * 
 	 * @param ctx
-	 * @param self
-	 *            the current artifact which will be set as "self" in the context.
-	 *            May be the target or a layer of the target.
+	 * @param self   the current artifact which will be set as "self" in the
+	 *               context. May be the target or a layer of the target.
 	 * @param second
 	 * @return
 	 */
@@ -1069,7 +1068,12 @@ public class Actuator implements IActuator {
 
 		for (IObservation product : products) {
 
-			if (context.getNotifiedObservations().contains(product.getId())) {
+			boolean isNew = true;
+			if (product instanceof ObservationGroup) {
+				isNew = ((ObservationGroup) product).isNew();
+			}
+
+			if (isNew && context.getNotifiedObservations().contains(product.getId())) {
 				continue;
 			}
 
@@ -1077,14 +1081,25 @@ public class Actuator implements IActuator {
 
 			// parent is always getContext() because these notifications aren't sent beyond
 			// level 0
-			IObservationReference observation = Observations.INSTANCE.createArtifactDescriptor(product,
-					product.getContext(), ITime.INITIALIZATION, 0, /* false, */ isMainObservable || isMain)
-					.withTaskId(taskId);
 
-			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
-					IMessage.Type.NewObservation, observation));
+			if (isNew) {
+				IObservationReference observation = Observations.INSTANCE.createArtifactDescriptor(product,
+						product.getContext(), ITime.INITIALIZATION, 0, /* false, */ isMainObservable || isMain)
+						.withTaskId(taskId);
 
-			((Report) context.getReport()).include(observation);
+				session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+						IMessage.Type.NewObservation, observation));
+
+				((Report) context.getReport()).include(observation);
+			} else {
+				
+				// TODO notify a change in an observation group, if any happened
+				
+			}
+
+			if (product instanceof ObservationGroup) {
+				((ObservationGroup) product).setNew(false);
+			}
 		}
 
 		/*

@@ -49,8 +49,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
     }
 
     public static IObservation empty(IObservable observable, IComputationContext context) {
-        return new ObservationGroup((Observable) observable, (Scale) context
-                .getScale(), (IRuntimeContext) context, observable.getArtifactType());
+        return ((IRuntimeContext)context).getObservationGroup(observable, context.getScale());
     }
 
     protected Observation(Observable observable, Scale scale, IRuntimeContext context) {

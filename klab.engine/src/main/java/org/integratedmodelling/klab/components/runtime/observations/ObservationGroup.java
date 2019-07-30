@@ -30,6 +30,14 @@ public class ObservationGroup extends CountableObservation implements ISubjectiv
 	boolean sorted = false;
 	private Comparator<IArtifact> comparator = null;
 
+	/*
+	 * like everything, a group is born new, then the actuator ensures the next time
+	 * objects are added we should notify a change and not the whole group. Because
+	 * the group changes when objects are added or removed, we use the notified size
+	 * to assess if it's new.
+	 */
+	int notifiedSize = -1;
+
 	public ObservationGroup(Observable observable, Scale scale, IRuntimeContext context, IArtifact.Type type) {
 		super(observable.getName(), observable, scale, context);
 		this.atype = type;
@@ -54,6 +62,14 @@ public class ObservationGroup extends CountableObservation implements ISubjectiv
 	@Override
 	public boolean isEmpty() {
 		return artifacts.isEmpty();
+	}
+
+	public boolean isNew() {
+		return groupSize() != notifiedSize;
+	}
+
+	public void setNew(boolean b) {
+		this.notifiedSize = groupSize();
 	}
 
 	@Override
@@ -88,9 +104,9 @@ public class ObservationGroup extends CountableObservation implements ISubjectiv
 	@Override
 	public void setObserver(IDirectObservation observer) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
 	public ISubjectiveObservation reinterpret(IDirectObservation observer) {
 		throw new IllegalStateException("reinterpret() was called on an illegal or unsupported type");
@@ -101,5 +117,5 @@ public class ObservationGroup extends CountableObservation implements ISubjectiv
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 }

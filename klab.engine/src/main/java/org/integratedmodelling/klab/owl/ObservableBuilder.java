@@ -66,7 +66,8 @@ public class ObservableBuilder implements IObservable.Builder {
 //	private Object valueOperand;
 	private String name;
 	private IObservable filteredObservable;
-
+	private IConcept targetPredicate;
+	
 	private List<IConcept> traits = new ArrayList<>();
 	private List<IConcept> roles = new ArrayList<>();
 	private List<IConcept> removed = new ArrayList<>();
@@ -1801,6 +1802,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			ret.setName(name);
 		}
 		
+		ret.setTargetPredicate(targetPredicate);
 		ret.setfilteredObservable(filteredObservable);
 
 		return ret;
@@ -1840,6 +1842,12 @@ public class ObservableBuilder implements IObservable.Builder {
 	@Override
 	public Builder withoutValueOperators() {
 		this.valueOperators.clear();
+		return this;
+	}
+
+	@Override
+	public Builder withTargetPredicate(IConcept targetPredicate) {
+		this.targetPredicate = targetPredicate;
 		return this;
 	}
 

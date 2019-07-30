@@ -487,21 +487,6 @@ public class ObservationReference implements IObservationReference {
 		this.shapeType = shapeType;
 	}
 
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see
-	// * org.integratedmodelling.klab.rest.IObservationReference#getSiblingCount()
-	// */
-	// @Override
-	// public int getSiblingCount() {
-	// return siblingCount;
-	// }
-	//
-	// public void setSiblingCount(int siblingCount) {
-	// this.siblingCount = siblingCount;
-	// }
-
 	public void setUrn(String urn) {
 		this.urn = urn;
 	}

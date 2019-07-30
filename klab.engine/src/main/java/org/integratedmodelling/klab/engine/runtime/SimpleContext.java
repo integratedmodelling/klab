@@ -593,5 +593,11 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 		return (T) (chosen.isEmpty() ? null : chosen.iterator().next());
 	}
 
+	@Override
+	public ObservationGroup getObservationGroup(IObservable observable, IScale scale) {
+		// TODO implement the same mechanism as RuntimeContext
+		return new ObservationGroup((Observable)observable, (Scale)scale, this, IArtifact.Type.OBJECT);
+	}
+
 
 }
