@@ -11,8 +11,9 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IObservable.Description;
 import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.provenance.IActivity;
+import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.services.IObservableService;
@@ -83,7 +84,7 @@ public class ObservationStrategy {
 		 * If we're classifying a countable with a trait and we don't have the
 		 * dependency for it, add it.
 		 */
-		if (observable.getDescription() == Description.CLASSIFICATION) {
+		if (observable.getDescription() == IActivity.Description.CLASSIFICATION) {
 			IConcept dep = observable.getInherentType();
 			if (((Model) model).findDependency(dep) == null) {
 				ret.add(new ObservationStrategy(Observable.promote(dep),

@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.components.runtime.contextualizers;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -11,7 +10,6 @@ import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
-import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 public class ExpressionStateResolver implements IStateResolver {
@@ -51,11 +49,6 @@ public class ExpressionStateResolver implements IStateResolver {
                 .eval(context, context, additionalParameters)
                 : null;
     }
-
-//    @Override
-//    public IGeometry getGeometry() {
-//        return Geometry.scalar();
-//    }
 
     @Override
     public IArtifact.Type getType() {

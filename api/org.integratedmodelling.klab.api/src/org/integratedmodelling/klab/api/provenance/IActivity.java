@@ -17,64 +17,105 @@ package org.integratedmodelling.klab.api.provenance;
 
 import java.util.Optional;
 
+import org.integratedmodelling.klab.api.resolution.IResolutionScope;
+
 /**
- * Activity (process). 
+ * Activity (process).
  * 
  * @author Ferd
  * @version $Id: $Id
  */
 public interface IActivity extends IProvenance.Node {
 
-	enum Type {
+	/**
+	 * A classification of the observation activity (odo:Description) that can
+	 * produce an observation of this observable. Encodes the same classification in
+	 * ODO-IM. The descriptions specialize {@link IResolutionScope#Mode}, which is
+	 * captured by exposing its correspondent value.
+	 * 
+	 * @author ferdinando.villa
+	 *
+	 */
+	enum Description {
+
 		/**
-		 * 
+		 * The observation activity that produces a countable object. Acknowledgement is
+		 * a special case of instantiation, limited to a subject and performed on a fiat
+		 * basis (in k.IM through an <code>observe</code> statement).
 		 */
-		Resolution,
+		INSTANTIATION(IResolutionScope.Mode.INSTANTIATION),
 		/**
-		 * 
+		 * The observation activity that produces a configuration (aka EMERGENCE) - the
+		 * instantiation of a configuration.
 		 */
-		Instantiation,
+		DETECTION(IResolutionScope.Mode.INSTANTIATION),
 		/**
-		 * 
+		 * The observation activity that produces a dynamic account of a process
 		 */
-		Acknowledgement,
+		SIMULATION(IResolutionScope.Mode.RESOLUTION),
 		/**
-		 * 
+		 * The observation activity that produces a numeric quality
 		 */
-		Detection,
+		QUANTIFICATION(IResolutionScope.Mode.RESOLUTION),
 		/**
-		 * Connects an activity to another that was inferred to be necessary in order to execute the
-		 * first. The agent will determine who made it.
+		 * The observation activity that produces a categorical quality (observes a
+		 * conceptual category) over a context.
 		 */
-		Inference
+		CATEGORIZATION(IResolutionScope.Mode.RESOLUTION),
+		/**
+		 * The observation activity that produces a boolean quality (presence/absence)
+		 */
+		VERIFICATION(IResolutionScope.Mode.RESOLUTION),
+		/**
+		 * The observation activity that attributes a trait or role to another
+		 * observation (if it is a quality, it may transform its values). Equivalent to
+		 * INSTANTIATION of a concrete t/a given the abstract form and an inherent
+		 * observable.
+		 */
+		CLASSIFICATION(IResolutionScope.Mode.INSTANTIATION),
+		/**
+		 * The resolution activity of a concrete trait or role that has been previously
+		 * attributed to an observation.
+		 */
+		CHARACTERIZATION(IResolutionScope.Mode.RESOLUTION);
+
+		IResolutionScope.Mode mode;
+
+		Description(IResolutionScope.Mode mode) {
+			this.mode = mode;
+		}
 	}
-	
-  /**
-   * <p>getStart.</p>
-   *
-   * @return a long.
-   */
-  long getStart();
 
-  /**
-   * <p>getEnd.</p>
-   *
-   * @return a long.
-   */
-  long getEnd();
+	/**
+	 * <p>
+	 * getStart.
+	 * </p>
+	 *
+	 * @return a long.
+	 */
+	long getStart();
 
-  /**
-   * If the action was caused by another action, return the action that caused it.
-   *
-   * @return a {@link java.util.Optional} object.
-   */
-  Optional<IActivity> getCause();
+	/**
+	 * <p>
+	 * getEnd.
+	 * </p>
+	 *
+	 * @return a long.
+	 */
+	long getEnd();
 
-  /**
-   * Actions are made by agents.
-   *
-   * @return a {@link org.integratedmodelling.klab.api.provenance.IAgent} object.
-   */
-  IAgent getAgent();
+	/**
+	 * If the action was caused by another action, return the action that caused it.
+	 *
+	 * @return a {@link java.util.Optional} object.
+	 */
+	Optional<IActivity> getCause();
+
+	/**
+	 * Actions are made by agents.
+	 *
+	 * @return a {@link org.integratedmodelling.klab.api.provenance.IAgent} object.
+	 */
+	IAgent getAgent();
 
 }

@@ -13,12 +13,13 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IObservable.Description;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
+import org.integratedmodelling.klab.api.provenance.IActivity;
+import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -48,7 +49,7 @@ public class RescalingState extends Observation implements IState {
 
     List<IScaleMediator> mediators = null;
     boolean conformant = false;
-    private Description observationType;
+    private IActivity.Description observationType;
     boolean redistribute = false;
 
     public RescalingState(IState state, Scale newScale, IRuntimeContext context) {

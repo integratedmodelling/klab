@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -58,7 +59,7 @@ public class Observable implements IObservable {
 	private Unit unit;
 	private Currency currency;
 	private Object value;
-	private Description observationType;
+	private IActivity.Description observationType;
 	private boolean optional;
 	private boolean generic;
 	private String observerId;
@@ -236,24 +237,24 @@ public class Observable implements IObservable {
 	}
 
 	@Override
-	public Description getDescription() {
+	public IActivity.Description getDescription() {
 		if (observationType == null && observable != null) {
 			if (observable.is(Type.CLASS)) {
-				observationType = Description.CATEGORIZATION;
+				observationType = IActivity.Description.CATEGORIZATION;
 			} else if (observable.is(Type.PRESENCE)) {
-				observationType = Description.VERIFICATION;
+				observationType = IActivity.Description.VERIFICATION;
 			} else if (observable.is(Type.QUALITY)) { // don't reorder these!
-				observationType = Description.QUANTIFICATION;
+				observationType = IActivity.Description.QUANTIFICATION;
 			} else if (observable.is(Type.COUNTABLE)) {
-				observationType = Description.INSTANTIATION;
+				observationType = IActivity.Description.INSTANTIATION;
 			} else if (observable.is(Type.CONFIGURATION)) {
-				observationType = Description.DETECTION;
+				observationType = IActivity.Description.DETECTION;
 			} else if (observable.is(Type.PROCESS)) {
-				observationType = Description.SIMULATION;
+				observationType = IActivity.Description.SIMULATION;
 			} else if (observable.is(Type.TRAIT) || observable.is(Type.ROLE)) {
 				boolean distributed = Boolean
 						.parseBoolean(observable.getMetadata().get(NS.INHERENCY_IS_DISTRIBUTED, "false"));
-				observationType = distributed ? Description.CLASSIFICATION : Description.CHARACTERIZATION;
+				observationType = distributed ? IActivity.Description.CLASSIFICATION : IActivity.Description.CHARACTERIZATION;
 			}
 		}
 		return observationType;
@@ -267,7 +268,7 @@ public class Observable implements IObservable {
 		this.optional = optional;
 	}
 
-	public void setObservationType(Description observationType) {
+	public void setObservationType(IActivity.Description observationType) {
 		this.observationType = observationType;
 	}
 

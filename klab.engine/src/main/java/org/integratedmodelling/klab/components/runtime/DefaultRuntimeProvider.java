@@ -186,7 +186,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				ret = UrnResolver.getServiceCall(resource.getUrn(), resource.getCondition(), resource.isNegated());
 			}
 		} else if (resource.getExpression() != null) {
-			ret = ExpressionResolver.getServiceCall(resource);
+			ret = ExpressionResolver.getServiceCall(resource, ((Actuator)target).getObservable());
 		} else if (resource.getLiteral() != null) {
 			ret = LiteralStateResolver.getServiceCall(resource.getLiteral(), resource.getCondition(),
 					resource.isNegated());

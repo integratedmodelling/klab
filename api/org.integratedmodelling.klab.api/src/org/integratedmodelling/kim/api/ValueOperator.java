@@ -30,7 +30,6 @@ public enum ValueOperator {
     public String declaration;
     public String textForm;
     
-
 	ValueOperator(String declaration, String textForm) {
         this.declaration = declaration;
         this.textForm = textForm;

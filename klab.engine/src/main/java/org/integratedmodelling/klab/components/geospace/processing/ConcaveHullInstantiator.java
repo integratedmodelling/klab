@@ -17,11 +17,12 @@ import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IObservable.Description;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
+import org.integratedmodelling.klab.api.provenance.IActivity;
+import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -142,7 +143,7 @@ public class ConcaveHullInstantiator implements IExpression, IInstantiator {
 		Range limits = null;
 		if (sourceStates.size() == 1 && !Double.isNaN(selectFraction)) {
 			fractionState = sourceStates.get(0);
-			if (!(fractionState.getObservable().getDescription() == Description.QUANTIFICATION)) {
+			if (!(fractionState.getObservable().getDescription() == IActivity.Description.QUANTIFICATION)) {
 				throw new KlabValidationException(
 						"feature extractor: state for fraction extraction " + fractionState + " must be numeric");
 			}

@@ -32,7 +32,6 @@ import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IObservable.Description;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
@@ -45,6 +44,8 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.provenance.IActivity;
+import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
@@ -1123,8 +1124,8 @@ public class Actuator implements IActuator {
 	}
 
 	public boolean isFilter() {
-		return observable.getDescription() == Description.CHARACTERIZATION
-				|| observable.getDescription() == Description.CLASSIFICATION;
+		return observable.getDescription() == IActivity.Description.CHARACTERIZATION
+				|| observable.getDescription() == IActivity.Description.CLASSIFICATION;
 	}
 
 	/**

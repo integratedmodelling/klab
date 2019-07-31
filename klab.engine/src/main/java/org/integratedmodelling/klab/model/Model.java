@@ -36,13 +36,14 @@ import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IObservable.Description;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
+import org.integratedmodelling.klab.api.provenance.IActivity;
+import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -245,8 +246,8 @@ public class Model extends KimObject implements IModel {
 
 		for (IComputableResource resource : resources) {
 
-			if (this.observables.get(0).getDescription() == Description.CHARACTERIZATION
-					|| this.observables.get(0).getDescription() == Description.CLASSIFICATION) {
+			if (this.observables.get(0).getDescription() == IActivity.Description.CHARACTERIZATION
+					|| this.observables.get(0).getDescription() == IActivity.Description.CLASSIFICATION) {
 				// must be a filter
 				if (!isFilter(resource)) {
 					monitor.error("all computations in attribute contextualizers must be filters", this.getStatement());
@@ -486,7 +487,7 @@ public class Model extends KimObject implements IModel {
 			this.resources.addAll(candidateObservable.getComputation());
 		}
 		if (mainObservable.is(Type.COUNTABLE)
-				|| mainObservable.getDescription() == Description.CLASSIFICATION) {
+				|| mainObservable.getDescription() == IActivity.Description.CLASSIFICATION) {
 			this.instantiator = true;
 		}
 	}

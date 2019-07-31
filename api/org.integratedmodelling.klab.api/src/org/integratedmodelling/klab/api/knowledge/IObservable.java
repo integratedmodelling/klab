@@ -28,6 +28,7 @@ import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -45,54 +46,6 @@ import org.integratedmodelling.klab.utils.Range;
  * @version $Id: $Id
  */
 public interface IObservable extends ISemantic, IResolvable {
-
-	/**
-	 * A classification of the observation activity that can produce an observation
-	 * of this observable. Encodes the same classification in ODO-IM.
-	 * 
-	 * @author ferdinando.villa
-	 *
-	 */
-	public enum Description {
-		/**
-		 * The observation that produces a countable object. Acknowledgement is a
-		 * special case of instantiation, limited to a subject and performed on a fiat
-		 * basis (in k.IM through an <code>observe</code> statement).
-		 */
-		INSTANTIATION,
-		/**
-		 * The observation that produces a configuration (aka EMERGENCE).
-		 */
-		DETECTION,
-		/**
-		 * The observation that produces a dynamic account of a process
-		 */
-		SIMULATION,
-		/**
-		 * The observation that produces a numeric quality
-		 */
-		QUANTIFICATION,
-		/**
-		 * The observation that produces a categorical quality (observes a conceptual
-		 * category) over a context.
-		 */
-		CATEGORIZATION,
-		/**
-		 * The observation that produces a boolean quality (presence/absence)
-		 */
-		VERIFICATION,
-		/**
-		 * The observation that attributes a trait or role to another observation (if it
-		 * is a quality, it may transform its values). Equivalent to INSTANTIATION of a
-		 * concrete t/a given the abstract form and an inherent observable.
-		 */
-		CLASSIFICATION,
-		/**
-		 * The resolution of a concrete trait or role that has been previously
-		 * attributed to an observation.
-		 */
-		CHARACTERIZATION
-	}
 
 	/**
 	 * The observable builder provides a uniform interface to create and declare
@@ -353,7 +306,7 @@ public interface IObservable extends ISemantic, IResolvable {
 	 *
 	 * @return the necessary observation type
 	 */
-	Description getDescription();
+	IActivity.Description getDescription();
 
 	/**
 	 * Return the type of the artifact correspondent to an observation of this

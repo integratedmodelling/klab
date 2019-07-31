@@ -12,16 +12,16 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Extensions;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
-import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Pair;
@@ -74,9 +74,11 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 		}
 	}
 
-	public static IServiceCall getServiceCall(IComputableResource resource) {
+	public static IServiceCall getServiceCall(IComputableResource resource, IObservable observable) {
 		
 		IServiceCall ret = KimServiceCall.create(FUNCTION_ID);
+		
+		boolean classifier = observable.getDescription() == IActivity.Description.CLASSIFICATION;
 		ret.getParameters().put("code", resource.getExpression());
 		if (resource.getExpression().isForcedScalar()) {
 			ret.getParameters().put("scalar", Boolean.TRUE);
@@ -84,6 +86,8 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 		if (resource.getCondition() != null) {
 			ret.getParameters().put(resource.isNegated() ? "unlesscondition" : "ifcondition", resource.getCondition());
 		}
+		ret.getParameters().put("classifier", classifier);
+		
 		return ret;
 	}
 
@@ -129,6 +133,13 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 			}
 		}
 
+		boolean classifier = parameters.get("classifier", Boolean.FALSE);
+		
+		if (classifier) {
+			// TODO parameters: needs the classified concept and a potential focal one
+			return new ExpressionClassifier();
+		}
+		
 		if (scalar || forceScalar) {
 			return new ExpressionStateResolver(descriptor, condition, parameters, context, additionalParameters);
 		}

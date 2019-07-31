@@ -22,9 +22,9 @@ import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.klab.api.auth.IEngineIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IResource;
-import org.integratedmodelling.klab.api.knowledge.IObservable.Description;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 
 /**
@@ -47,7 +47,7 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
  * The equivalent of a OPM Plan is a {@link IDataflow}, which organizes model
  * Agents into a strategy to perform Activities. The latter are
  * <strong>observation activities</strong> and are typed according to
- * {@link Description}: they may be acknowledgements, computations (either
+ * {@link IActivity.Description}: they may be acknowledgements, computations (either
  * resolutions or instantiations) or detections.
  * <p>
  * The observation Activities are organized into super-activities (processes)

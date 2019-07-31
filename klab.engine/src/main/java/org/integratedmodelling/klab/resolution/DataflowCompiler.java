@@ -69,8 +69,9 @@ public class DataflowCompiler {
 	Map<Model, ModelD> modelCatalog = new HashMap<>();
 
 	/*
-	 * add any true actuator so that we can find it given a reference. Needed to implement
-	 * filters, which are merged with computations rather than compiled independently.
+	 * add any true actuator so that we can find it given a reference. Needed to
+	 * implement filters, which are merged with computations rather than compiled
+	 * independently.
 	 */
 	Map<String, Actuator> actuatorCatalog = new HashMap<>();
 
@@ -494,7 +495,7 @@ public class DataflowCompiler {
 						ret.adoptFilter(achild, actuatorCatalog);
 
 					} else {
-						
+
 						ret.getActuators().add(achild);
 						recordUnits(achild, chosenUnits);
 						if (sources.containsKey(achild.getName())) {
@@ -505,7 +506,7 @@ public class DataflowCompiler {
 						}
 					}
 				}
-				
+
 				inferUnits(ret, chosenUnits);
 
 //				if (Units.INSTANCE.needsUnits(this.observable)) {
@@ -628,10 +629,12 @@ public class DataflowCompiler {
 
 				@Override
 				public int compare(DataflowCompiler.Node o1, DataflowCompiler.Node o2) {
-					if (o1.observable.getFilteredObservable() != null && o2.observable.getFilteredObservable() == null) {
+					if (o1.observable.getFilteredObservable() != null
+							&& o2.observable.getFilteredObservable() == null) {
 						return 1;
 					}
-					if (o1.observable.getFilteredObservable() == null && o2.observable.getFilteredObservable() != null) {
+					if (o1.observable.getFilteredObservable() == null
+							&& o2.observable.getFilteredObservable() != null) {
 						return -1;
 					}
 					if (o2.models.isEmpty() && o1.models.isEmpty()) {
