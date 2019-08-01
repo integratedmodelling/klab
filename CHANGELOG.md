@@ -4,8 +4,8 @@ All notable changes to this project are documented in this file. The number afte
 the minor release is the build number. All changes made in the develop branch appear 
 as unreleased until merged to master.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this 
+project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 [comment]: <>   (Guiding Principles:)
 [comment]: <>   (  Changelogs are for humans, not machines.)
@@ -29,8 +29,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 ### Changed
-
+- Revised k.IM syntax for restrictions and allowed arbitrary properties to be defined
+  through it, which is discouraged but should remain possible. Implementation still
+  ignores all that. Put stubs in the docs to document why using attributes, roles and
+  the like is a better strategy that does not introduce opaque semantics.
 ### Fixed
+- Fix declaration of presence dereifier (which caused a number->boolean conversion being
+  inserted, and false being produced overall).
 ### Removed
 
 ## [0.10.0.176] -- 2019/07/30

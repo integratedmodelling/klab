@@ -56,9 +56,8 @@ import org.integratedmodelling.kim.kim.ObserveStatement;
 import org.integratedmodelling.kim.kim.ObserveStatementBody;
 import org.integratedmodelling.kim.kim.OwlImport;
 import org.integratedmodelling.kim.kim.ParameterList;
+import org.integratedmodelling.kim.kim.PropertyStatement;
 import org.integratedmodelling.kim.kim.REL_OPERATOR;
-import org.integratedmodelling.kim.kim.RestrictionDefinition;
-import org.integratedmodelling.kim.kim.RestrictionStatement;
 import org.integratedmodelling.kim.kim.Statement;
 import org.integratedmodelling.kim.kim.Table;
 import org.integratedmodelling.kim.kim.TableRow;
@@ -156,10 +155,9 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
       case KimPackage.UPPER_ONTOLOGY_DEFINITION: return createUpperOntologyDefinition();
       case KimPackage.CONCEPT_STATEMENT: return createConceptStatement();
       case KimPackage.CONCEPT_STATEMENT_BODY: return createConceptStatementBody();
+      case KimPackage.PROPERTY_STATEMENT: return createPropertyStatement();
       case KimPackage.APPLICABLE_TARGET: return createApplicableTarget();
       case KimPackage.IDENTITY_REQUIREMENT: return createIdentityRequirement();
-      case KimPackage.RESTRICTION_STATEMENT: return createRestrictionStatement();
-      case KimPackage.RESTRICTION_DEFINITION: return createRestrictionDefinition();
       case KimPackage.ANNOTATION: return createAnnotation();
       case KimPackage.LIST: return createList();
       case KimPackage.LITERAL: return createLiteral();
@@ -622,6 +620,18 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
    * @generated
    */
   @Override
+  public PropertyStatement createPropertyStatement()
+  {
+    PropertyStatementImpl propertyStatement = new PropertyStatementImpl();
+    return propertyStatement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public ApplicableTarget createApplicableTarget()
   {
     ApplicableTargetImpl applicableTarget = new ApplicableTargetImpl();
@@ -638,30 +648,6 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
   {
     IdentityRequirementImpl identityRequirement = new IdentityRequirementImpl();
     return identityRequirement;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public RestrictionStatement createRestrictionStatement()
-  {
-    RestrictionStatementImpl restrictionStatement = new RestrictionStatementImpl();
-    return restrictionStatement;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public RestrictionDefinition createRestrictionDefinition()
-  {
-    RestrictionDefinitionImpl restrictionDefinition = new RestrictionDefinitionImpl();
-    return restrictionDefinition;
   }
 
   /**

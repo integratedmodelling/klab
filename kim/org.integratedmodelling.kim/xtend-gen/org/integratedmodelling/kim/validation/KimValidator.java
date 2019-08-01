@@ -62,7 +62,6 @@ import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.kim.ObserveStatement;
 import org.integratedmodelling.kim.kim.ObserveStatementBody;
-import org.integratedmodelling.kim.kim.RestrictionStatement;
 import org.integratedmodelling.kim.kim.Statement;
 import org.integratedmodelling.kim.kim.Table;
 import org.integratedmodelling.kim.kim.TableRow;
@@ -2834,9 +2833,6 @@ public class KimValidator extends AbstractKimValidator {
         ok = false;
       } else {
       }
-    }
-    EList<RestrictionStatement> _restrictions = concept.getRestrictions();
-    for (final RestrictionStatement restriction : _restrictions) {
     }
     Metadata _metadata = concept.getMetadata();
     boolean _tripleNotEquals_12 = (_metadata != null);

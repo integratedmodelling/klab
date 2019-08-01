@@ -50,9 +50,8 @@ import org.integratedmodelling.kim.kim.ObserveStatement;
 import org.integratedmodelling.kim.kim.ObserveStatementBody;
 import org.integratedmodelling.kim.kim.OwlImport;
 import org.integratedmodelling.kim.kim.ParameterList;
+import org.integratedmodelling.kim.kim.PropertyStatement;
 import org.integratedmodelling.kim.kim.REL_OPERATOR;
-import org.integratedmodelling.kim.kim.RestrictionDefinition;
-import org.integratedmodelling.kim.kim.RestrictionStatement;
 import org.integratedmodelling.kim.kim.Statement;
 import org.integratedmodelling.kim.kim.Table;
 import org.integratedmodelling.kim.kim.TableRow;
@@ -358,6 +357,13 @@ public class KimSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case KimPackage.PROPERTY_STATEMENT:
+      {
+        PropertyStatement propertyStatement = (PropertyStatement)theEObject;
+        T result = casePropertyStatement(propertyStatement);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case KimPackage.APPLICABLE_TARGET:
       {
         ApplicableTarget applicableTarget = (ApplicableTarget)theEObject;
@@ -369,20 +375,6 @@ public class KimSwitch<T> extends Switch<T>
       {
         IdentityRequirement identityRequirement = (IdentityRequirement)theEObject;
         T result = caseIdentityRequirement(identityRequirement);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case KimPackage.RESTRICTION_STATEMENT:
-      {
-        RestrictionStatement restrictionStatement = (RestrictionStatement)theEObject;
-        T result = caseRestrictionStatement(restrictionStatement);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case KimPackage.RESTRICTION_DEFINITION:
-      {
-        RestrictionDefinition restrictionDefinition = (RestrictionDefinition)theEObject;
-        T result = caseRestrictionDefinition(restrictionDefinition);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -1039,6 +1031,22 @@ public class KimSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>Property Statement</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Property Statement</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T casePropertyStatement(PropertyStatement object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>Applicable Target</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -1066,38 +1074,6 @@ public class KimSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseIdentityRequirement(IdentityRequirement object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Restriction Statement</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Restriction Statement</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseRestrictionStatement(RestrictionStatement object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Restriction Definition</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Restriction Definition</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseRestrictionDefinition(RestrictionDefinition object)
   {
     return null;
   }

@@ -52,9 +52,8 @@ import org.integratedmodelling.kim.kim.ObserveStatement;
 import org.integratedmodelling.kim.kim.ObserveStatementBody;
 import org.integratedmodelling.kim.kim.OwlImport;
 import org.integratedmodelling.kim.kim.ParameterList;
+import org.integratedmodelling.kim.kim.PropertyStatement;
 import org.integratedmodelling.kim.kim.REL_OPERATOR;
-import org.integratedmodelling.kim.kim.RestrictionDefinition;
-import org.integratedmodelling.kim.kim.RestrictionStatement;
 import org.integratedmodelling.kim.kim.Statement;
 import org.integratedmodelling.kim.kim.Table;
 import org.integratedmodelling.kim.kim.TableRow;
@@ -295,6 +294,11 @@ public class KimAdapterFactory extends AdapterFactoryImpl
         return createConceptStatementBodyAdapter();
       }
       @Override
+      public Adapter casePropertyStatement(PropertyStatement object)
+      {
+        return createPropertyStatementAdapter();
+      }
+      @Override
       public Adapter caseApplicableTarget(ApplicableTarget object)
       {
         return createApplicableTargetAdapter();
@@ -303,16 +307,6 @@ public class KimAdapterFactory extends AdapterFactoryImpl
       public Adapter caseIdentityRequirement(IdentityRequirement object)
       {
         return createIdentityRequirementAdapter();
-      }
-      @Override
-      public Adapter caseRestrictionStatement(RestrictionStatement object)
-      {
-        return createRestrictionStatementAdapter();
-      }
-      @Override
-      public Adapter caseRestrictionDefinition(RestrictionDefinition object)
-      {
-        return createRestrictionDefinitionAdapter();
       }
       @Override
       public Adapter caseAnnotation(Annotation object)
@@ -917,6 +911,21 @@ public class KimAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.PropertyStatement <em>Property Statement</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.PropertyStatement
+   * @generated
+   */
+  public Adapter createPropertyStatementAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.ApplicableTarget <em>Applicable Target</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -942,36 +951,6 @@ public class KimAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createIdentityRequirementAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.RestrictionStatement <em>Restriction Statement</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see org.integratedmodelling.kim.kim.RestrictionStatement
-   * @generated
-   */
-  public Adapter createRestrictionStatementAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.RestrictionDefinition <em>Restriction Definition</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see org.integratedmodelling.kim.kim.RestrictionDefinition
-   * @generated
-   */
-  public Adapter createRestrictionDefinitionAdapter()
   {
     return null;
   }

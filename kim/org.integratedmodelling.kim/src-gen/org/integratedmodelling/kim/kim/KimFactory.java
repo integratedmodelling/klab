@@ -322,6 +322,15 @@ public interface KimFactory extends EFactory
   ConceptStatementBody createConceptStatementBody();
 
   /**
+   * Returns a new object of class '<em>Property Statement</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Property Statement</em>'.
+   * @generated
+   */
+  PropertyStatement createPropertyStatement();
+
+  /**
    * Returns a new object of class '<em>Applicable Target</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -338,24 +347,6 @@ public interface KimFactory extends EFactory
    * @generated
    */
   IdentityRequirement createIdentityRequirement();
-
-  /**
-   * Returns a new object of class '<em>Restriction Statement</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Restriction Statement</em>'.
-   * @generated
-   */
-  RestrictionStatement createRestrictionStatement();
-
-  /**
-   * Returns a new object of class '<em>Restriction Definition</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Restriction Definition</em>'.
-   * @generated
-   */
-  RestrictionDefinition createRestrictionDefinition();
 
   /**
    * Returns a new object of class '<em>Annotation</em>'.

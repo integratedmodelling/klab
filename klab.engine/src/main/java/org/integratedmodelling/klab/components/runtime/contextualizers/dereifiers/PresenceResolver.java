@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.components.runtime.contextualizers.dereifie
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -81,11 +80,6 @@ public class PresenceResolver implements IResolver<IDataArtifact>, IExpression {
 
 		return ret;
 	}
-
-//	@Override
-//	public IGeometry getGeometry() {
-//		return Geometry.create("S2");
-//	}
 
 	@Override
 	public Type getType() {

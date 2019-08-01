@@ -30,7 +30,7 @@ import org.integratedmodelling.kim.kim.IdentityRequirement;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.Metadata;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
-import org.integratedmodelling.kim.kim.RestrictionStatement;
+import org.integratedmodelling.kim.kim.PropertyStatement;
 
 /**
  * <!-- begin-user-doc -->
@@ -83,8 +83,9 @@ import org.integratedmodelling.kim.kim.RestrictionStatement;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getQualitiesAffected <em>Qualities Affected</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#isDisjoint <em>Disjoint</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getChildren <em>Children</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getRestrictions <em>Restrictions</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getAuthorities <em>Authorities</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getMetadata <em>Metadata</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getProperties <em>Properties</em>}</li>
  * </ul>
  *
  * @generated
@@ -682,14 +683,14 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
   protected EList<ConceptStatementBody> children;
 
   /**
-   * The cached value of the '{@link #getRestrictions() <em>Restrictions</em>}' containment reference list.
+   * The cached value of the '{@link #getAuthorities() <em>Authorities</em>}' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getRestrictions()
+   * @see #getAuthorities()
    * @generated
    * @ordered
    */
-  protected EList<RestrictionStatement> restrictions;
+  protected EList<String> authorities;
 
   /**
    * The cached value of the '{@link #getMetadata() <em>Metadata</em>}' containment reference.
@@ -700,6 +701,16 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
    * @ordered
    */
   protected Metadata metadata;
+
+  /**
+   * The cached value of the '{@link #getProperties() <em>Properties</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getProperties()
+   * @generated
+   * @ordered
+   */
+  protected EList<PropertyStatement> properties;
 
   /**
    * <!-- begin-user-doc -->
@@ -1848,13 +1859,13 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
    * @generated
    */
   @Override
-  public EList<RestrictionStatement> getRestrictions()
+  public EList<String> getAuthorities()
   {
-    if (restrictions == null)
+    if (authorities == null)
     {
-      restrictions = new EObjectContainmentEList<RestrictionStatement>(RestrictionStatement.class, this, KimPackage.CONCEPT_STATEMENT_BODY__RESTRICTIONS);
+      authorities = new EDataTypeEList<String>(String.class, this, KimPackage.CONCEPT_STATEMENT_BODY__AUTHORITIES);
     }
-    return restrictions;
+    return authorities;
   }
 
   /**
@@ -1905,6 +1916,21 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
     }
     else if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_STATEMENT_BODY__METADATA, newMetadata, newMetadata));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EList<PropertyStatement> getProperties()
+  {
+    if (properties == null)
+    {
+      properties = new EObjectContainmentEList<PropertyStatement>(PropertyStatement.class, this, KimPackage.CONCEPT_STATEMENT_BODY__PROPERTIES);
+    }
+    return properties;
   }
 
   /**
@@ -1969,10 +1995,10 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return ((InternalEList<?>)getQualitiesAffected()).basicRemove(otherEnd, msgs);
       case KimPackage.CONCEPT_STATEMENT_BODY__CHILDREN:
         return ((InternalEList<?>)getChildren()).basicRemove(otherEnd, msgs);
-      case KimPackage.CONCEPT_STATEMENT_BODY__RESTRICTIONS:
-        return ((InternalEList<?>)getRestrictions()).basicRemove(otherEnd, msgs);
       case KimPackage.CONCEPT_STATEMENT_BODY__METADATA:
         return basicSetMetadata(null, msgs);
+      case KimPackage.CONCEPT_STATEMENT_BODY__PROPERTIES:
+        return ((InternalEList<?>)getProperties()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -2073,10 +2099,12 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return isDisjoint();
       case KimPackage.CONCEPT_STATEMENT_BODY__CHILDREN:
         return getChildren();
-      case KimPackage.CONCEPT_STATEMENT_BODY__RESTRICTIONS:
-        return getRestrictions();
+      case KimPackage.CONCEPT_STATEMENT_BODY__AUTHORITIES:
+        return getAuthorities();
       case KimPackage.CONCEPT_STATEMENT_BODY__METADATA:
         return getMetadata();
+      case KimPackage.CONCEPT_STATEMENT_BODY__PROPERTIES:
+        return getProperties();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -2239,12 +2267,16 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
         getChildren().clear();
         getChildren().addAll((Collection<? extends ConceptStatementBody>)newValue);
         return;
-      case KimPackage.CONCEPT_STATEMENT_BODY__RESTRICTIONS:
-        getRestrictions().clear();
-        getRestrictions().addAll((Collection<? extends RestrictionStatement>)newValue);
+      case KimPackage.CONCEPT_STATEMENT_BODY__AUTHORITIES:
+        getAuthorities().clear();
+        getAuthorities().addAll((Collection<? extends String>)newValue);
         return;
       case KimPackage.CONCEPT_STATEMENT_BODY__METADATA:
         setMetadata((Metadata)newValue);
+        return;
+      case KimPackage.CONCEPT_STATEMENT_BODY__PROPERTIES:
+        getProperties().clear();
+        getProperties().addAll((Collection<? extends PropertyStatement>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -2389,11 +2421,14 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
       case KimPackage.CONCEPT_STATEMENT_BODY__CHILDREN:
         getChildren().clear();
         return;
-      case KimPackage.CONCEPT_STATEMENT_BODY__RESTRICTIONS:
-        getRestrictions().clear();
+      case KimPackage.CONCEPT_STATEMENT_BODY__AUTHORITIES:
+        getAuthorities().clear();
         return;
       case KimPackage.CONCEPT_STATEMENT_BODY__METADATA:
         setMetadata((Metadata)null);
+        return;
+      case KimPackage.CONCEPT_STATEMENT_BODY__PROPERTIES:
+        getProperties().clear();
         return;
     }
     super.eUnset(featureID);
@@ -2495,10 +2530,12 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return disjoint != DISJOINT_EDEFAULT;
       case KimPackage.CONCEPT_STATEMENT_BODY__CHILDREN:
         return children != null && !children.isEmpty();
-      case KimPackage.CONCEPT_STATEMENT_BODY__RESTRICTIONS:
-        return restrictions != null && !restrictions.isEmpty();
+      case KimPackage.CONCEPT_STATEMENT_BODY__AUTHORITIES:
+        return authorities != null && !authorities.isEmpty();
       case KimPackage.CONCEPT_STATEMENT_BODY__METADATA:
         return metadata != null;
+      case KimPackage.CONCEPT_STATEMENT_BODY__PROPERTIES:
+        return properties != null && !properties.isEmpty();
     }
     return super.eIsSet(featureID);
   }
@@ -2548,6 +2585,8 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
     result.append(partOf);
     result.append(", disjoint: ");
     result.append(disjoint);
+    result.append(", authorities: ");
+    result.append(authorities);
     result.append(')');
     return result.toString();
   }

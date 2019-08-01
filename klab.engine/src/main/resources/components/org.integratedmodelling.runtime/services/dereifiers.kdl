@@ -19,7 +19,7 @@ export number 'distance'
 	class org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.DistanceResolver
 }
 
-export number 'presence'
+export boolean 'presence'
 	"Return a dereifying resolver turning a countable artifact into a presence coverage"
 	label 'Compute presence of features'
 {

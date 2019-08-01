@@ -455,9 +455,9 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 		for (IKimConcept c : requiredRealms) {
 			c.visit(visitor);
 		}
-		for (IKimRestriction c : restrictions) {
-			((KimRestriction) c).visit(visitor);
-		}
+//		for (IKimRestriction c : restrictions) {
+//			((KimRestriction) c).visit(visitor);
+//		}
 		for (ApplicableConcept a : subjectsLinked) {
 			((ApplicableConceptImpl) a).visit(visitor);
 		}

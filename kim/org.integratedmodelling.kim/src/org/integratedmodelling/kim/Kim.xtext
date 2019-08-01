@@ -645,10 +645,23 @@ ConceptStatementBody:
 
 		('has' (disjoint?='disjoint')? 'children' children+=ChildConcept (',' children+=ChildConcept)*)? &
 
-		(restrictions+=RestrictionStatement*) &
+//		(restrictions+=RestrictionStatement*) &
 	
-		('metadata' metadata=Metadata)?
+		('uses' 'authority' authorities+=(UPPERCASE_ID|UPPERCASE_PATH))? &
+
+		('metadata' metadata=Metadata)? &
+
+		// properties are only object properties and are declared on appearance. This makes typos
+		// problematic, of course, but the alternative is a load of ugly syntax.
+		(properties+=PropertyStatement*) 
+	
 	)
+;
+
+PropertyStatement:
+	(property=(PropertyId|BACKCASE_ID) | has?='has' | contains?='contains' | uses?='uses')
+		(only?='only' | (exactly?='exactly' | 'at' (atLeast?='least' | atMost?='most'))? cardinality=INT ('or' orMore?='more')? )? 
+		propertyTarget=SimpleConceptDeclaration
 ;
 
 ApplicableTarget:
@@ -679,19 +692,19 @@ IdentityRequirement:
  * Also hosts the 'uses authority' restriction which is only accepted by domains.
  * 
  */
-RestrictionStatement:
-	relType=('uses' | 'has' | 'contains' | 'implies') definitions+=RestrictionDefinition (',' definitions+=RestrictionDefinition)* |
-	'uses' 'authority' authorities+=(UPPERCASE_ID|UPPERCASE_PATH) (=> ',' authorities+=(UPPERCASE_ID|UPPERCASE_PATH))* |
-	'uses' value=Literal literal?='for' subject=(CAMELCASE_ID | NamespaceId);
-	
-RestrictionDefinition:
-	// concept restriction: the 'for' should introduce a concept, for a property defined by k.LAB
-	(only?='only' | none?='no' | ((exactly?='exactly' | ('at' atLeast?='least') | ('at' atMost?='most')) howmany=INT))?
-	(source=ConceptDeclaration | dataType=DataType) ('inheriting' traitType=ConceptDeclaration)?
-	('as' (subject=ConceptDeclaration))? /*|
-	// data restriction, only for special cases in worldview namespaces; 'for' introduces a data property from core ontologies
-	value=Literal ('to' maxValue=Number)? 'for' property=PropertyId */
-;
+//RestrictionStatement:
+//	relType=('uses' | 'has' | 'contains' | 'implies') definitions+=RestrictionDefinition (',' definitions+=RestrictionDefinition)* |
+//	'uses' 'authority' authorities+=(UPPERCASE_ID|UPPERCASE_PATH) (=> ',' authorities+=(UPPERCASE_ID|UPPERCASE_PATH))* |
+//	'uses' value=Literal literal?='for' subject=(CAMELCASE_ID | NamespaceId);
+//	
+//RestrictionDefinition:
+//	// concept restriction: the 'for' should introduce a concept, for a property defined by k.LAB
+//	(only?='only' | none?='no' | ((exactly?='exactly' | ('at' atLeast?='least') | ('at' atMost?='most')) howmany=INT))?
+//	(source=ConceptDeclaration | dataType=DataType) ('inheriting' traitType=ConceptDeclaration)?
+//	('as' (subject=ConceptDeclaration))? /*|
+//	// data restriction, only for special cases in worldview namespaces; 'for' introduces a data property from core ontologies
+//	value=Literal ('to' maxValue=Number)? 'for' property=PropertyId */
+//;
 
 Annotation:
 	name=ANNOTATION_ID ('(' parameters=ParameterList? ')')?;
@@ -976,7 +989,7 @@ terminal UPPERCASE_PATH:
 
 terminal CAMELCASE_ID:
 	('A'..'Z') ('A'..'z'|'0'..'9')*;
-	
+
 terminal BACKCASE_ID:
 	('a'..'z') ('A'..'z'|'0'..'9')*;
 	
@@ -984,7 +997,7 @@ NamespaceId:
 	PathName ':' CAMELCASE_ID;
 
 PropertyId:
-	(PathName | LOWERCASE_ID) ':' (LOWERCASE_ID|LOWERCASE_DASHID);
+	(PathName | LOWERCASE_ID) ':' (LOWERCASE_ID|BACKCASE_ID|LOWERCASE_DASHID);
 
 VersionNumber:
 	INT ('.' INT ('.' INT)?)? ('-')? ((LOWERCASE_ID|UPPERCASE_ID))?

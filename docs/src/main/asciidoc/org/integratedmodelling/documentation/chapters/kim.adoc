@@ -8,10 +8,69 @@
 == Concept declaration
 
 
+[#section-kim-logical-expressions]
+=== Logical expressions
+
+
+=== On properties, roles and attributes
+
+- OWL properties can be declared (syntax later)
+- Yet, using properties can lead to more obscure semantics where using roles and attributes keeps their meaning out in the open. Example: limiting factors as a property or as a role with implications.
+
+=== Base concepts
+
+
+
 === Macros
 
 [#section-kim-observables]
 == Observable declaration
+
+Observables are k.IM statements used to express the semantics of an observation in queries and in models. A user can type an observable in k.Explorer and obtain an artifact as the result of its resolution and computation. <<section-kim-models, k.IM models>> use observables to specify their inputs and outputs. For this reason, it is important to be very familiar with the way observables are declared.
+
+An observable declaration is a k.IM <<section-kim-logical-expressions,logical expression>> augmented with optional, additional observation semantics. The logical expression in the observable specifies _what_ is observed, where the additional semantics may impose constraints on _how_ it is observed, for example specifying a range, currency or unit of measurement for the values:
+
+[source,kim]
+----
+// range
+value of behavior:Outdoor behavior:Recreation behavior:Activity 0 to 1
+
+// unit
+geography:Elevation in m
+
+// currency
+economics:Income within demography:Household in EUR@2002
+----
+
+In the example above, the range `0 to 1` and the unit or currency after `in` are part of the additional syntax introduced compared to a naked logical expressions. Such specifications affect the _value_, i.e. the scaling of the numbers in the result, and do not affect the _meaning_ of what is observed. A full set of _value operators_ is available in k.IM to enable on-the-fly computations that can range from simple to complex:
+
+[source,kim]
+----
+geography:Elevation in m >= 300
+
+ecology:Vegetation chemistry:Carbon im:Mass by landcover:LandCoverType
+
+soil:Soil chemistry:Carbon im:Mass by (landcover:LandCoverType without landcover:Urban)
+
+economics:Income within demography:Household in USD@2000 where (landcover:LandCoverType is landcover:LowDensityUrban) by policy:Country
+---- 
+
+Such queries can be used as dependencies in a k.IM model, saving plenty of checking and tedious code when using the numbers, or typed directly in k.Explorer for instant results. All of them modify the _values_ and not the _meaning_.
+
+Observables may also specify less obvious constraints for the inherent types: for example
+
+[source, kim]
+----
+im:Orientation of each earth:Site 
+----
+
+is a logical expression that contains a keyword `each` that would not be admitted in a concept declaration, as it affects the _way_ this attribute is resolved (by resolving a _set_ of sites first, then classifying the abstract orientation to a concrete attribute in each) rather than its inherent meaning. Such forms are used to declare classifier models, which will be discussed <<section-kim-models,later>>.
+
+=== Ranges, units and currencies
+
+=== Value operators
+
+=== Rules of composition for observables
 
 [#section-kim-models]
 == Model declaration

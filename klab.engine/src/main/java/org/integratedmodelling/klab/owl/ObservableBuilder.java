@@ -1629,6 +1629,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		}
 
 		if (distributedInherency) {
+			// TODO revise - this must have proper declaration etc.
 			// distinguish the label to avoid conflicts; semantically we are the same, so
 			// the display label remains unchanged.
 			cId += "Classifier";

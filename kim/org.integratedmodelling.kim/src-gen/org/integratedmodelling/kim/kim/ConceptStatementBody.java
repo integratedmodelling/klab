@@ -60,8 +60,9 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getQualitiesAffected <em>Qualities Affected</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isDisjoint <em>Disjoint</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getChildren <em>Children</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getRestrictions <em>Restrictions</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getAuthorities <em>Authorities</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getMetadata <em>Metadata</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getProperties <em>Properties</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kim.kim.KimPackage#getConceptStatementBody()
@@ -837,16 +838,16 @@ public interface ConceptStatementBody extends EObject
   EList<ConceptStatementBody> getChildren();
 
   /**
-   * Returns the value of the '<em><b>Restrictions</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kim.kim.RestrictionStatement}.
+   * Returns the value of the '<em><b>Authorities</b></em>' attribute list.
+   * The list contents are of type {@link java.lang.String}.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Restrictions</em>' containment reference list.
-   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptStatementBody_Restrictions()
-   * @model containment="true"
+   * @return the value of the '<em>Authorities</em>' attribute list.
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptStatementBody_Authorities()
+   * @model unique="false"
    * @generated
    */
-  EList<RestrictionStatement> getRestrictions();
+  EList<String> getAuthorities();
 
   /**
    * Returns the value of the '<em><b>Metadata</b></em>' containment reference.
@@ -869,5 +870,17 @@ public interface ConceptStatementBody extends EObject
    * @generated
    */
   void setMetadata(Metadata value);
+
+  /**
+   * Returns the value of the '<em><b>Properties</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.PropertyStatement}.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Properties</em>' containment reference list.
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptStatementBody_Properties()
+   * @model containment="true"
+   * @generated
+   */
+  EList<PropertyStatement> getProperties();
 
 } // ConceptStatementBody

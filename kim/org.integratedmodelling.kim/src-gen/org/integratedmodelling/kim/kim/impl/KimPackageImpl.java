@@ -55,8 +55,7 @@ import org.integratedmodelling.kim.kim.ObserveStatement;
 import org.integratedmodelling.kim.kim.ObserveStatementBody;
 import org.integratedmodelling.kim.kim.OwlImport;
 import org.integratedmodelling.kim.kim.ParameterList;
-import org.integratedmodelling.kim.kim.RestrictionDefinition;
-import org.integratedmodelling.kim.kim.RestrictionStatement;
+import org.integratedmodelling.kim.kim.PropertyStatement;
 import org.integratedmodelling.kim.kim.Statement;
 import org.integratedmodelling.kim.kim.Table;
 import org.integratedmodelling.kim.kim.TableRow;
@@ -313,6 +312,13 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  private EClass propertyStatementEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   private EClass applicableTargetEClass = null;
 
   /**
@@ -321,20 +327,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   private EClass identityRequirementEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass restrictionStatementEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass restrictionDefinitionEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -3926,9 +3918,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptStatementBody_Restrictions()
+  public EAttribute getConceptStatementBody_Authorities()
   {
-    return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(43);
+    return (EAttribute)conceptStatementBodyEClass.getEStructuralFeatures().get(43);
   }
 
   /**
@@ -3940,6 +3932,149 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   public EReference getConceptStatementBody_Metadata()
   {
     return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(44);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getConceptStatementBody_Properties()
+  {
+    return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(45);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getPropertyStatement()
+  {
+    return propertyStatementEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getPropertyStatement_Property()
+  {
+    return (EAttribute)propertyStatementEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getPropertyStatement_Has()
+  {
+    return (EAttribute)propertyStatementEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getPropertyStatement_Contains()
+  {
+    return (EAttribute)propertyStatementEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getPropertyStatement_Uses()
+  {
+    return (EAttribute)propertyStatementEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getPropertyStatement_Only()
+  {
+    return (EAttribute)propertyStatementEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getPropertyStatement_Exactly()
+  {
+    return (EAttribute)propertyStatementEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getPropertyStatement_AtLeast()
+  {
+    return (EAttribute)propertyStatementEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getPropertyStatement_AtMost()
+  {
+    return (EAttribute)propertyStatementEClass.getEStructuralFeatures().get(7);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getPropertyStatement_Cardinality()
+  {
+    return (EAttribute)propertyStatementEClass.getEStructuralFeatures().get(8);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getPropertyStatement_OrMore()
+  {
+    return (EAttribute)propertyStatementEClass.getEStructuralFeatures().get(9);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getPropertyStatement_PropertyTarget()
+  {
+    return (EReference)propertyStatementEClass.getEStructuralFeatures().get(10);
   }
 
   /**
@@ -4017,204 +4152,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   public EAttribute getIdentityRequirement_Authority()
   {
     return (EAttribute)identityRequirementEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EClass getRestrictionStatement()
-  {
-    return restrictionStatementEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EAttribute getRestrictionStatement_RelType()
-  {
-    return (EAttribute)restrictionStatementEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EReference getRestrictionStatement_Definitions()
-  {
-    return (EReference)restrictionStatementEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EAttribute getRestrictionStatement_Authorities()
-  {
-    return (EAttribute)restrictionStatementEClass.getEStructuralFeatures().get(2);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EReference getRestrictionStatement_Value()
-  {
-    return (EReference)restrictionStatementEClass.getEStructuralFeatures().get(3);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EAttribute getRestrictionStatement_Literal()
-  {
-    return (EAttribute)restrictionStatementEClass.getEStructuralFeatures().get(4);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EAttribute getRestrictionStatement_Subject()
-  {
-    return (EAttribute)restrictionStatementEClass.getEStructuralFeatures().get(5);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EClass getRestrictionDefinition()
-  {
-    return restrictionDefinitionEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EAttribute getRestrictionDefinition_Only()
-  {
-    return (EAttribute)restrictionDefinitionEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EAttribute getRestrictionDefinition_None()
-  {
-    return (EAttribute)restrictionDefinitionEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EAttribute getRestrictionDefinition_Exactly()
-  {
-    return (EAttribute)restrictionDefinitionEClass.getEStructuralFeatures().get(2);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EAttribute getRestrictionDefinition_AtLeast()
-  {
-    return (EAttribute)restrictionDefinitionEClass.getEStructuralFeatures().get(3);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EAttribute getRestrictionDefinition_AtMost()
-  {
-    return (EAttribute)restrictionDefinitionEClass.getEStructuralFeatures().get(4);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EAttribute getRestrictionDefinition_Howmany()
-  {
-    return (EAttribute)restrictionDefinitionEClass.getEStructuralFeatures().get(5);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EReference getRestrictionDefinition_Source()
-  {
-    return (EReference)restrictionDefinitionEClass.getEStructuralFeatures().get(6);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EAttribute getRestrictionDefinition_DataType()
-  {
-    return (EAttribute)restrictionDefinitionEClass.getEStructuralFeatures().get(7);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EReference getRestrictionDefinition_TraitType()
-  {
-    return (EReference)restrictionDefinitionEClass.getEStructuralFeatures().get(8);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EReference getRestrictionDefinition_Subject()
-  {
-    return (EReference)restrictionDefinitionEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -5468,8 +5405,22 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED);
     createEAttribute(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__DISJOINT);
     createEReference(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__CHILDREN);
-    createEReference(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__RESTRICTIONS);
+    createEAttribute(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__AUTHORITIES);
     createEReference(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__METADATA);
+    createEReference(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__PROPERTIES);
+
+    propertyStatementEClass = createEClass(PROPERTY_STATEMENT);
+    createEAttribute(propertyStatementEClass, PROPERTY_STATEMENT__PROPERTY);
+    createEAttribute(propertyStatementEClass, PROPERTY_STATEMENT__HAS);
+    createEAttribute(propertyStatementEClass, PROPERTY_STATEMENT__CONTAINS);
+    createEAttribute(propertyStatementEClass, PROPERTY_STATEMENT__USES);
+    createEAttribute(propertyStatementEClass, PROPERTY_STATEMENT__ONLY);
+    createEAttribute(propertyStatementEClass, PROPERTY_STATEMENT__EXACTLY);
+    createEAttribute(propertyStatementEClass, PROPERTY_STATEMENT__AT_LEAST);
+    createEAttribute(propertyStatementEClass, PROPERTY_STATEMENT__AT_MOST);
+    createEAttribute(propertyStatementEClass, PROPERTY_STATEMENT__CARDINALITY);
+    createEAttribute(propertyStatementEClass, PROPERTY_STATEMENT__OR_MORE);
+    createEReference(propertyStatementEClass, PROPERTY_STATEMENT__PROPERTY_TARGET);
 
     applicableTargetEClass = createEClass(APPLICABLE_TARGET);
     createEReference(applicableTargetEClass, APPLICABLE_TARGET__TARGET);
@@ -5479,26 +5430,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     identityRequirementEClass = createEClass(IDENTITY_REQUIREMENT);
     createEReference(identityRequirementEClass, IDENTITY_REQUIREMENT__IDENTITIES);
     createEAttribute(identityRequirementEClass, IDENTITY_REQUIREMENT__AUTHORITY);
-
-    restrictionStatementEClass = createEClass(RESTRICTION_STATEMENT);
-    createEAttribute(restrictionStatementEClass, RESTRICTION_STATEMENT__REL_TYPE);
-    createEReference(restrictionStatementEClass, RESTRICTION_STATEMENT__DEFINITIONS);
-    createEAttribute(restrictionStatementEClass, RESTRICTION_STATEMENT__AUTHORITIES);
-    createEReference(restrictionStatementEClass, RESTRICTION_STATEMENT__VALUE);
-    createEAttribute(restrictionStatementEClass, RESTRICTION_STATEMENT__LITERAL);
-    createEAttribute(restrictionStatementEClass, RESTRICTION_STATEMENT__SUBJECT);
-
-    restrictionDefinitionEClass = createEClass(RESTRICTION_DEFINITION);
-    createEAttribute(restrictionDefinitionEClass, RESTRICTION_DEFINITION__ONLY);
-    createEAttribute(restrictionDefinitionEClass, RESTRICTION_DEFINITION__NONE);
-    createEAttribute(restrictionDefinitionEClass, RESTRICTION_DEFINITION__EXACTLY);
-    createEAttribute(restrictionDefinitionEClass, RESTRICTION_DEFINITION__AT_LEAST);
-    createEAttribute(restrictionDefinitionEClass, RESTRICTION_DEFINITION__AT_MOST);
-    createEAttribute(restrictionDefinitionEClass, RESTRICTION_DEFINITION__HOWMANY);
-    createEReference(restrictionDefinitionEClass, RESTRICTION_DEFINITION__SOURCE);
-    createEAttribute(restrictionDefinitionEClass, RESTRICTION_DEFINITION__DATA_TYPE);
-    createEReference(restrictionDefinitionEClass, RESTRICTION_DEFINITION__TRAIT_TYPE);
-    createEReference(restrictionDefinitionEClass, RESTRICTION_DEFINITION__SUBJECT);
 
     annotationEClass = createEClass(ANNOTATION);
     createEAttribute(annotationEClass, ANNOTATION__NAME);
@@ -5972,8 +5903,22 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getConceptStatementBody_QualitiesAffected(), this.getConceptDeclaration(), null, "qualitiesAffected", null, 0, -1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConceptStatementBody_Disjoint(), ecorePackage.getEBoolean(), "disjoint", null, 0, 1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptStatementBody_Children(), this.getConceptStatementBody(), null, "children", null, 0, -1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getConceptStatementBody_Restrictions(), this.getRestrictionStatement(), null, "restrictions", null, 0, -1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConceptStatementBody_Authorities(), ecorePackage.getEString(), "authorities", null, 0, -1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptStatementBody_Metadata(), this.getMetadata(), null, "metadata", null, 0, 1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getConceptStatementBody_Properties(), this.getPropertyStatement(), null, "properties", null, 0, -1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(propertyStatementEClass, PropertyStatement.class, "PropertyStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getPropertyStatement_Property(), ecorePackage.getEString(), "property", null, 0, 1, PropertyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPropertyStatement_Has(), ecorePackage.getEBoolean(), "has", null, 0, 1, PropertyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPropertyStatement_Contains(), ecorePackage.getEBoolean(), "contains", null, 0, 1, PropertyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPropertyStatement_Uses(), ecorePackage.getEBoolean(), "uses", null, 0, 1, PropertyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPropertyStatement_Only(), ecorePackage.getEBoolean(), "only", null, 0, 1, PropertyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPropertyStatement_Exactly(), ecorePackage.getEBoolean(), "exactly", null, 0, 1, PropertyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPropertyStatement_AtLeast(), ecorePackage.getEBoolean(), "atLeast", null, 0, 1, PropertyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPropertyStatement_AtMost(), ecorePackage.getEBoolean(), "atMost", null, 0, 1, PropertyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPropertyStatement_Cardinality(), ecorePackage.getEInt(), "cardinality", null, 0, 1, PropertyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPropertyStatement_OrMore(), ecorePackage.getEBoolean(), "orMore", null, 0, 1, PropertyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getPropertyStatement_PropertyTarget(), this.getConceptDeclaration(), null, "propertyTarget", null, 0, 1, PropertyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(applicableTargetEClass, ApplicableTarget.class, "ApplicableTarget", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getApplicableTarget_Target(), this.getConceptDeclaration(), null, "target", null, 0, 1, ApplicableTarget.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -5983,26 +5928,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEClass(identityRequirementEClass, IdentityRequirement.class, "IdentityRequirement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getIdentityRequirement_Identities(), this.getConceptDeclaration(), null, "identities", null, 0, -1, IdentityRequirement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getIdentityRequirement_Authority(), ecorePackage.getEString(), "authority", null, 0, 1, IdentityRequirement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(restrictionStatementEClass, RestrictionStatement.class, "RestrictionStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getRestrictionStatement_RelType(), ecorePackage.getEString(), "relType", null, 0, 1, RestrictionStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getRestrictionStatement_Definitions(), this.getRestrictionDefinition(), null, "definitions", null, 0, -1, RestrictionStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getRestrictionStatement_Authorities(), ecorePackage.getEString(), "authorities", null, 0, -1, RestrictionStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getRestrictionStatement_Value(), this.getLiteral(), null, "value", null, 0, 1, RestrictionStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getRestrictionStatement_Literal(), ecorePackage.getEBoolean(), "literal", null, 0, 1, RestrictionStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getRestrictionStatement_Subject(), ecorePackage.getEString(), "subject", null, 0, 1, RestrictionStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(restrictionDefinitionEClass, RestrictionDefinition.class, "RestrictionDefinition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getRestrictionDefinition_Only(), ecorePackage.getEBoolean(), "only", null, 0, 1, RestrictionDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getRestrictionDefinition_None(), ecorePackage.getEBoolean(), "none", null, 0, 1, RestrictionDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getRestrictionDefinition_Exactly(), ecorePackage.getEBoolean(), "exactly", null, 0, 1, RestrictionDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getRestrictionDefinition_AtLeast(), ecorePackage.getEBoolean(), "atLeast", null, 0, 1, RestrictionDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getRestrictionDefinition_AtMost(), ecorePackage.getEBoolean(), "atMost", null, 0, 1, RestrictionDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getRestrictionDefinition_Howmany(), ecorePackage.getEInt(), "howmany", null, 0, 1, RestrictionDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getRestrictionDefinition_Source(), this.getConceptDeclaration(), null, "source", null, 0, 1, RestrictionDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getRestrictionDefinition_DataType(), this.getDataType(), "dataType", null, 0, 1, RestrictionDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getRestrictionDefinition_TraitType(), this.getConceptDeclaration(), null, "traitType", null, 0, 1, RestrictionDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getRestrictionDefinition_Subject(), this.getConceptDeclaration(), null, "subject", null, 0, 1, RestrictionDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(annotationEClass, Annotation.class, "Annotation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getAnnotation_Name(), ecorePackage.getEString(), "name", null, 0, 1, Annotation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

@@ -3153,13 +3153,13 @@ public interface KimPackage extends EPackage
   int CONCEPT_STATEMENT_BODY__CHILDREN = 42;
 
   /**
-   * The feature id for the '<em><b>Restrictions</b></em>' containment reference list.
+   * The feature id for the '<em><b>Authorities</b></em>' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__RESTRICTIONS = 43;
+  int CONCEPT_STATEMENT_BODY__AUTHORITIES = 43;
 
   /**
    * The feature id for the '<em><b>Metadata</b></em>' containment reference.
@@ -3171,13 +3171,140 @@ public interface KimPackage extends EPackage
   int CONCEPT_STATEMENT_BODY__METADATA = 44;
 
   /**
+   * The feature id for the '<em><b>Properties</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_STATEMENT_BODY__PROPERTIES = 45;
+
+  /**
    * The number of structural features of the '<em>Concept Statement Body</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY_FEATURE_COUNT = 45;
+  int CONCEPT_STATEMENT_BODY_FEATURE_COUNT = 46;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.PropertyStatementImpl <em>Property Statement</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kim.kim.impl.PropertyStatementImpl
+   * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getPropertyStatement()
+   * @generated
+   */
+  int PROPERTY_STATEMENT = 33;
+
+  /**
+   * The feature id for the '<em><b>Property</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PROPERTY_STATEMENT__PROPERTY = 0;
+
+  /**
+   * The feature id for the '<em><b>Has</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PROPERTY_STATEMENT__HAS = 1;
+
+  /**
+   * The feature id for the '<em><b>Contains</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PROPERTY_STATEMENT__CONTAINS = 2;
+
+  /**
+   * The feature id for the '<em><b>Uses</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PROPERTY_STATEMENT__USES = 3;
+
+  /**
+   * The feature id for the '<em><b>Only</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PROPERTY_STATEMENT__ONLY = 4;
+
+  /**
+   * The feature id for the '<em><b>Exactly</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PROPERTY_STATEMENT__EXACTLY = 5;
+
+  /**
+   * The feature id for the '<em><b>At Least</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PROPERTY_STATEMENT__AT_LEAST = 6;
+
+  /**
+   * The feature id for the '<em><b>At Most</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PROPERTY_STATEMENT__AT_MOST = 7;
+
+  /**
+   * The feature id for the '<em><b>Cardinality</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PROPERTY_STATEMENT__CARDINALITY = 8;
+
+  /**
+   * The feature id for the '<em><b>Or More</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PROPERTY_STATEMENT__OR_MORE = 9;
+
+  /**
+   * The feature id for the '<em><b>Property Target</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PROPERTY_STATEMENT__PROPERTY_TARGET = 10;
+
+  /**
+   * The number of structural features of the '<em>Property Statement</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PROPERTY_STATEMENT_FEATURE_COUNT = 11;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ApplicableTargetImpl <em>Applicable Target</em>}' class.
@@ -3187,7 +3314,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getApplicableTarget()
    * @generated
    */
-  int APPLICABLE_TARGET = 33;
+  int APPLICABLE_TARGET = 34;
 
   /**
    * The feature id for the '<em><b>Target</b></em>' containment reference.
@@ -3233,7 +3360,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getIdentityRequirement()
    * @generated
    */
-  int IDENTITY_REQUIREMENT = 34;
+  int IDENTITY_REQUIREMENT = 35;
 
   /**
    * The feature id for the '<em><b>Identities</b></em>' containment reference list.
@@ -3263,188 +3390,6 @@ public interface KimPackage extends EPackage
   int IDENTITY_REQUIREMENT_FEATURE_COUNT = 2;
 
   /**
-   * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.RestrictionStatementImpl <em>Restriction Statement</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see org.integratedmodelling.kim.kim.impl.RestrictionStatementImpl
-   * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getRestrictionStatement()
-   * @generated
-   */
-  int RESTRICTION_STATEMENT = 35;
-
-  /**
-   * The feature id for the '<em><b>Rel Type</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int RESTRICTION_STATEMENT__REL_TYPE = 0;
-
-  /**
-   * The feature id for the '<em><b>Definitions</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int RESTRICTION_STATEMENT__DEFINITIONS = 1;
-
-  /**
-   * The feature id for the '<em><b>Authorities</b></em>' attribute list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int RESTRICTION_STATEMENT__AUTHORITIES = 2;
-
-  /**
-   * The feature id for the '<em><b>Value</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int RESTRICTION_STATEMENT__VALUE = 3;
-
-  /**
-   * The feature id for the '<em><b>Literal</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int RESTRICTION_STATEMENT__LITERAL = 4;
-
-  /**
-   * The feature id for the '<em><b>Subject</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int RESTRICTION_STATEMENT__SUBJECT = 5;
-
-  /**
-   * The number of structural features of the '<em>Restriction Statement</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int RESTRICTION_STATEMENT_FEATURE_COUNT = 6;
-
-  /**
-   * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.RestrictionDefinitionImpl <em>Restriction Definition</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see org.integratedmodelling.kim.kim.impl.RestrictionDefinitionImpl
-   * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getRestrictionDefinition()
-   * @generated
-   */
-  int RESTRICTION_DEFINITION = 36;
-
-  /**
-   * The feature id for the '<em><b>Only</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int RESTRICTION_DEFINITION__ONLY = 0;
-
-  /**
-   * The feature id for the '<em><b>None</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int RESTRICTION_DEFINITION__NONE = 1;
-
-  /**
-   * The feature id for the '<em><b>Exactly</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int RESTRICTION_DEFINITION__EXACTLY = 2;
-
-  /**
-   * The feature id for the '<em><b>At Least</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int RESTRICTION_DEFINITION__AT_LEAST = 3;
-
-  /**
-   * The feature id for the '<em><b>At Most</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int RESTRICTION_DEFINITION__AT_MOST = 4;
-
-  /**
-   * The feature id for the '<em><b>Howmany</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int RESTRICTION_DEFINITION__HOWMANY = 5;
-
-  /**
-   * The feature id for the '<em><b>Source</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int RESTRICTION_DEFINITION__SOURCE = 6;
-
-  /**
-   * The feature id for the '<em><b>Data Type</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int RESTRICTION_DEFINITION__DATA_TYPE = 7;
-
-  /**
-   * The feature id for the '<em><b>Trait Type</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int RESTRICTION_DEFINITION__TRAIT_TYPE = 8;
-
-  /**
-   * The feature id for the '<em><b>Subject</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int RESTRICTION_DEFINITION__SUBJECT = 9;
-
-  /**
-   * The number of structural features of the '<em>Restriction Definition</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int RESTRICTION_DEFINITION_FEATURE_COUNT = 10;
-
-  /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.AnnotationImpl <em>Annotation</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -3452,7 +3397,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getAnnotation()
    * @generated
    */
-  int ANNOTATION = 37;
+  int ANNOTATION = 36;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -3489,7 +3434,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getList()
    * @generated
    */
-  int LIST = 38;
+  int LIST = 37;
 
   /**
    * The feature id for the '<em><b>Contents</b></em>' containment reference list.
@@ -3517,7 +3462,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getLiteral()
    * @generated
    */
-  int LITERAL = 39;
+  int LITERAL = 38;
 
   /**
    * The feature id for the '<em><b>From</b></em>' containment reference.
@@ -3599,7 +3544,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getDocumentation()
    * @generated
    */
-  int DOCUMENTATION = 41;
+  int DOCUMENTATION = 40;
 
   /**
    * The number of structural features of the '<em>Documentation</em>' class.
@@ -3618,7 +3563,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getMetadata()
    * @generated
    */
-  int METADATA = 40;
+  int METADATA = 39;
 
   /**
    * The feature id for the '<em><b>Ids</b></em>' attribute list.
@@ -3664,7 +3609,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getMap()
    * @generated
    */
-  int MAP = 42;
+  int MAP = 41;
 
   /**
    * The feature id for the '<em><b>Entries</b></em>' containment reference list.
@@ -3692,7 +3637,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getMapEntry()
    * @generated
    */
-  int MAP_ENTRY = 43;
+  int MAP_ENTRY = 42;
 
   /**
    * The feature id for the '<em><b>Classifier</b></em>' containment reference.
@@ -3729,7 +3674,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getDocSelector()
    * @generated
    */
-  int DOC_SELECTOR = 44;
+  int DOC_SELECTOR = 43;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3793,7 +3738,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getKeyValuePair()
    * @generated
    */
-  int KEY_VALUE_PAIR = 45;
+  int KEY_VALUE_PAIR = 44;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -3839,7 +3784,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getParameterList()
    * @generated
    */
-  int PARAMETER_LIST = 46;
+  int PARAMETER_LIST = 45;
 
   /**
    * The feature id for the '<em><b>Pairs</b></em>' containment reference list.
@@ -3876,7 +3821,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getValue()
    * @generated
    */
-  int VALUE = 47;
+  int VALUE = 46;
 
   /**
    * The feature id for the '<em><b>Concept</b></em>' containment reference.
@@ -3985,7 +3930,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getFunction()
    * @generated
    */
-  int FUNCTION = 48;
+  int FUNCTION = 47;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -4022,7 +3967,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUnitElement()
    * @generated
    */
-  int UNIT_ELEMENT = 49;
+  int UNIT_ELEMENT = 48;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -4059,7 +4004,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getREL_OPERATOR()
    * @generated
    */
-  int REL_OPERATOR = 50;
+  int REL_OPERATOR = 49;
 
   /**
    * The feature id for the '<em><b>Gt</b></em>' attribute.
@@ -4132,7 +4077,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUnit()
    * @generated
    */
-  int UNIT = 51;
+  int UNIT = 50;
 
   /**
    * The feature id for the '<em><b>Root</b></em>' containment reference.
@@ -4178,7 +4123,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getCurrency()
    * @generated
    */
-  int CURRENCY = 52;
+  int CURRENCY = 51;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -4233,7 +4178,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getNumber()
    * @generated
    */
-  int NUMBER = 53;
+  int NUMBER = 52;
 
   /**
    * The feature id for the '<em><b>Negative</b></em>' attribute.
@@ -4324,7 +4269,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getDataType()
    * @generated
    */
-  int DATA_TYPE = 54;
+  int DATA_TYPE = 53;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.UnitOp <em>Unit Op</em>}' enum.
@@ -4334,7 +4279,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUnitOp()
    * @generated
    */
-  int UNIT_OP = 55;
+  int UNIT_OP = 54;
 
 
   /**
@@ -7693,15 +7638,15 @@ public interface KimPackage extends EPackage
   EReference getConceptStatementBody_Children();
 
   /**
-   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getRestrictions <em>Restrictions</em>}'.
+   * Returns the meta object for the attribute list '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getAuthorities <em>Authorities</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Restrictions</em>'.
-   * @see org.integratedmodelling.kim.kim.ConceptStatementBody#getRestrictions()
+   * @return the meta object for the attribute list '<em>Authorities</em>'.
+   * @see org.integratedmodelling.kim.kim.ConceptStatementBody#getAuthorities()
    * @see #getConceptStatementBody()
    * @generated
    */
-  EReference getConceptStatementBody_Restrictions();
+  EAttribute getConceptStatementBody_Authorities();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getMetadata <em>Metadata</em>}'.
@@ -7713,6 +7658,148 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EReference getConceptStatementBody_Metadata();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getProperties <em>Properties</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Properties</em>'.
+   * @see org.integratedmodelling.kim.kim.ConceptStatementBody#getProperties()
+   * @see #getConceptStatementBody()
+   * @generated
+   */
+  EReference getConceptStatementBody_Properties();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.PropertyStatement <em>Property Statement</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Property Statement</em>'.
+   * @see org.integratedmodelling.kim.kim.PropertyStatement
+   * @generated
+   */
+  EClass getPropertyStatement();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.PropertyStatement#getProperty <em>Property</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Property</em>'.
+   * @see org.integratedmodelling.kim.kim.PropertyStatement#getProperty()
+   * @see #getPropertyStatement()
+   * @generated
+   */
+  EAttribute getPropertyStatement_Property();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.PropertyStatement#isHas <em>Has</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Has</em>'.
+   * @see org.integratedmodelling.kim.kim.PropertyStatement#isHas()
+   * @see #getPropertyStatement()
+   * @generated
+   */
+  EAttribute getPropertyStatement_Has();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.PropertyStatement#isContains <em>Contains</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Contains</em>'.
+   * @see org.integratedmodelling.kim.kim.PropertyStatement#isContains()
+   * @see #getPropertyStatement()
+   * @generated
+   */
+  EAttribute getPropertyStatement_Contains();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.PropertyStatement#isUses <em>Uses</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Uses</em>'.
+   * @see org.integratedmodelling.kim.kim.PropertyStatement#isUses()
+   * @see #getPropertyStatement()
+   * @generated
+   */
+  EAttribute getPropertyStatement_Uses();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.PropertyStatement#isOnly <em>Only</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Only</em>'.
+   * @see org.integratedmodelling.kim.kim.PropertyStatement#isOnly()
+   * @see #getPropertyStatement()
+   * @generated
+   */
+  EAttribute getPropertyStatement_Only();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.PropertyStatement#isExactly <em>Exactly</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Exactly</em>'.
+   * @see org.integratedmodelling.kim.kim.PropertyStatement#isExactly()
+   * @see #getPropertyStatement()
+   * @generated
+   */
+  EAttribute getPropertyStatement_Exactly();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.PropertyStatement#isAtLeast <em>At Least</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>At Least</em>'.
+   * @see org.integratedmodelling.kim.kim.PropertyStatement#isAtLeast()
+   * @see #getPropertyStatement()
+   * @generated
+   */
+  EAttribute getPropertyStatement_AtLeast();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.PropertyStatement#isAtMost <em>At Most</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>At Most</em>'.
+   * @see org.integratedmodelling.kim.kim.PropertyStatement#isAtMost()
+   * @see #getPropertyStatement()
+   * @generated
+   */
+  EAttribute getPropertyStatement_AtMost();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.PropertyStatement#getCardinality <em>Cardinality</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Cardinality</em>'.
+   * @see org.integratedmodelling.kim.kim.PropertyStatement#getCardinality()
+   * @see #getPropertyStatement()
+   * @generated
+   */
+  EAttribute getPropertyStatement_Cardinality();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.PropertyStatement#isOrMore <em>Or More</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Or More</em>'.
+   * @see org.integratedmodelling.kim.kim.PropertyStatement#isOrMore()
+   * @see #getPropertyStatement()
+   * @generated
+   */
+  EAttribute getPropertyStatement_OrMore();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.PropertyStatement#getPropertyTarget <em>Property Target</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Property Target</em>'.
+   * @see org.integratedmodelling.kim.kim.PropertyStatement#getPropertyTarget()
+   * @see #getPropertyStatement()
+   * @generated
+   */
+  EReference getPropertyStatement_PropertyTarget();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.ApplicableTarget <em>Applicable Target</em>}'.
@@ -7788,202 +7875,6 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EAttribute getIdentityRequirement_Authority();
-
-  /**
-   * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.RestrictionStatement <em>Restriction Statement</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Restriction Statement</em>'.
-   * @see org.integratedmodelling.kim.kim.RestrictionStatement
-   * @generated
-   */
-  EClass getRestrictionStatement();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.RestrictionStatement#getRelType <em>Rel Type</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Rel Type</em>'.
-   * @see org.integratedmodelling.kim.kim.RestrictionStatement#getRelType()
-   * @see #getRestrictionStatement()
-   * @generated
-   */
-  EAttribute getRestrictionStatement_RelType();
-
-  /**
-   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.RestrictionStatement#getDefinitions <em>Definitions</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Definitions</em>'.
-   * @see org.integratedmodelling.kim.kim.RestrictionStatement#getDefinitions()
-   * @see #getRestrictionStatement()
-   * @generated
-   */
-  EReference getRestrictionStatement_Definitions();
-
-  /**
-   * Returns the meta object for the attribute list '{@link org.integratedmodelling.kim.kim.RestrictionStatement#getAuthorities <em>Authorities</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute list '<em>Authorities</em>'.
-   * @see org.integratedmodelling.kim.kim.RestrictionStatement#getAuthorities()
-   * @see #getRestrictionStatement()
-   * @generated
-   */
-  EAttribute getRestrictionStatement_Authorities();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.RestrictionStatement#getValue <em>Value</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Value</em>'.
-   * @see org.integratedmodelling.kim.kim.RestrictionStatement#getValue()
-   * @see #getRestrictionStatement()
-   * @generated
-   */
-  EReference getRestrictionStatement_Value();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.RestrictionStatement#isLiteral <em>Literal</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Literal</em>'.
-   * @see org.integratedmodelling.kim.kim.RestrictionStatement#isLiteral()
-   * @see #getRestrictionStatement()
-   * @generated
-   */
-  EAttribute getRestrictionStatement_Literal();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.RestrictionStatement#getSubject <em>Subject</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Subject</em>'.
-   * @see org.integratedmodelling.kim.kim.RestrictionStatement#getSubject()
-   * @see #getRestrictionStatement()
-   * @generated
-   */
-  EAttribute getRestrictionStatement_Subject();
-
-  /**
-   * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.RestrictionDefinition <em>Restriction Definition</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Restriction Definition</em>'.
-   * @see org.integratedmodelling.kim.kim.RestrictionDefinition
-   * @generated
-   */
-  EClass getRestrictionDefinition();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.RestrictionDefinition#isOnly <em>Only</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Only</em>'.
-   * @see org.integratedmodelling.kim.kim.RestrictionDefinition#isOnly()
-   * @see #getRestrictionDefinition()
-   * @generated
-   */
-  EAttribute getRestrictionDefinition_Only();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.RestrictionDefinition#isNone <em>None</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>None</em>'.
-   * @see org.integratedmodelling.kim.kim.RestrictionDefinition#isNone()
-   * @see #getRestrictionDefinition()
-   * @generated
-   */
-  EAttribute getRestrictionDefinition_None();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.RestrictionDefinition#isExactly <em>Exactly</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Exactly</em>'.
-   * @see org.integratedmodelling.kim.kim.RestrictionDefinition#isExactly()
-   * @see #getRestrictionDefinition()
-   * @generated
-   */
-  EAttribute getRestrictionDefinition_Exactly();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.RestrictionDefinition#isAtLeast <em>At Least</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>At Least</em>'.
-   * @see org.integratedmodelling.kim.kim.RestrictionDefinition#isAtLeast()
-   * @see #getRestrictionDefinition()
-   * @generated
-   */
-  EAttribute getRestrictionDefinition_AtLeast();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.RestrictionDefinition#isAtMost <em>At Most</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>At Most</em>'.
-   * @see org.integratedmodelling.kim.kim.RestrictionDefinition#isAtMost()
-   * @see #getRestrictionDefinition()
-   * @generated
-   */
-  EAttribute getRestrictionDefinition_AtMost();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.RestrictionDefinition#getHowmany <em>Howmany</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Howmany</em>'.
-   * @see org.integratedmodelling.kim.kim.RestrictionDefinition#getHowmany()
-   * @see #getRestrictionDefinition()
-   * @generated
-   */
-  EAttribute getRestrictionDefinition_Howmany();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.RestrictionDefinition#getSource <em>Source</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Source</em>'.
-   * @see org.integratedmodelling.kim.kim.RestrictionDefinition#getSource()
-   * @see #getRestrictionDefinition()
-   * @generated
-   */
-  EReference getRestrictionDefinition_Source();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.RestrictionDefinition#getDataType <em>Data Type</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Data Type</em>'.
-   * @see org.integratedmodelling.kim.kim.RestrictionDefinition#getDataType()
-   * @see #getRestrictionDefinition()
-   * @generated
-   */
-  EAttribute getRestrictionDefinition_DataType();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.RestrictionDefinition#getTraitType <em>Trait Type</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Trait Type</em>'.
-   * @see org.integratedmodelling.kim.kim.RestrictionDefinition#getTraitType()
-   * @see #getRestrictionDefinition()
-   * @generated
-   */
-  EReference getRestrictionDefinition_TraitType();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.RestrictionDefinition#getSubject <em>Subject</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Subject</em>'.
-   * @see org.integratedmodelling.kim.kim.RestrictionDefinition#getSubject()
-   * @see #getRestrictionDefinition()
-   * @generated
-   */
-  EReference getRestrictionDefinition_Subject();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.Annotation <em>Annotation</em>}'.
@@ -11400,12 +11291,12 @@ public interface KimPackage extends EPackage
     EReference CONCEPT_STATEMENT_BODY__CHILDREN = eINSTANCE.getConceptStatementBody_Children();
 
     /**
-     * The meta object literal for the '<em><b>Restrictions</b></em>' containment reference list feature.
+     * The meta object literal for the '<em><b>Authorities</b></em>' attribute list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference CONCEPT_STATEMENT_BODY__RESTRICTIONS = eINSTANCE.getConceptStatementBody_Restrictions();
+    EAttribute CONCEPT_STATEMENT_BODY__AUTHORITIES = eINSTANCE.getConceptStatementBody_Authorities();
 
     /**
      * The meta object literal for the '<em><b>Metadata</b></em>' containment reference feature.
@@ -11414,6 +11305,112 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EReference CONCEPT_STATEMENT_BODY__METADATA = eINSTANCE.getConceptStatementBody_Metadata();
+
+    /**
+     * The meta object literal for the '<em><b>Properties</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT_STATEMENT_BODY__PROPERTIES = eINSTANCE.getConceptStatementBody_Properties();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.PropertyStatementImpl <em>Property Statement</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kim.kim.impl.PropertyStatementImpl
+     * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getPropertyStatement()
+     * @generated
+     */
+    EClass PROPERTY_STATEMENT = eINSTANCE.getPropertyStatement();
+
+    /**
+     * The meta object literal for the '<em><b>Property</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PROPERTY_STATEMENT__PROPERTY = eINSTANCE.getPropertyStatement_Property();
+
+    /**
+     * The meta object literal for the '<em><b>Has</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PROPERTY_STATEMENT__HAS = eINSTANCE.getPropertyStatement_Has();
+
+    /**
+     * The meta object literal for the '<em><b>Contains</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PROPERTY_STATEMENT__CONTAINS = eINSTANCE.getPropertyStatement_Contains();
+
+    /**
+     * The meta object literal for the '<em><b>Uses</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PROPERTY_STATEMENT__USES = eINSTANCE.getPropertyStatement_Uses();
+
+    /**
+     * The meta object literal for the '<em><b>Only</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PROPERTY_STATEMENT__ONLY = eINSTANCE.getPropertyStatement_Only();
+
+    /**
+     * The meta object literal for the '<em><b>Exactly</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PROPERTY_STATEMENT__EXACTLY = eINSTANCE.getPropertyStatement_Exactly();
+
+    /**
+     * The meta object literal for the '<em><b>At Least</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PROPERTY_STATEMENT__AT_LEAST = eINSTANCE.getPropertyStatement_AtLeast();
+
+    /**
+     * The meta object literal for the '<em><b>At Most</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PROPERTY_STATEMENT__AT_MOST = eINSTANCE.getPropertyStatement_AtMost();
+
+    /**
+     * The meta object literal for the '<em><b>Cardinality</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PROPERTY_STATEMENT__CARDINALITY = eINSTANCE.getPropertyStatement_Cardinality();
+
+    /**
+     * The meta object literal for the '<em><b>Or More</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PROPERTY_STATEMENT__OR_MORE = eINSTANCE.getPropertyStatement_OrMore();
+
+    /**
+     * The meta object literal for the '<em><b>Property Target</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference PROPERTY_STATEMENT__PROPERTY_TARGET = eINSTANCE.getPropertyStatement_PropertyTarget();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.ApplicableTargetImpl <em>Applicable Target</em>}' class.
@@ -11474,154 +11471,6 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute IDENTITY_REQUIREMENT__AUTHORITY = eINSTANCE.getIdentityRequirement_Authority();
-
-    /**
-     * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.RestrictionStatementImpl <em>Restriction Statement</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.integratedmodelling.kim.kim.impl.RestrictionStatementImpl
-     * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getRestrictionStatement()
-     * @generated
-     */
-    EClass RESTRICTION_STATEMENT = eINSTANCE.getRestrictionStatement();
-
-    /**
-     * The meta object literal for the '<em><b>Rel Type</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute RESTRICTION_STATEMENT__REL_TYPE = eINSTANCE.getRestrictionStatement_RelType();
-
-    /**
-     * The meta object literal for the '<em><b>Definitions</b></em>' containment reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference RESTRICTION_STATEMENT__DEFINITIONS = eINSTANCE.getRestrictionStatement_Definitions();
-
-    /**
-     * The meta object literal for the '<em><b>Authorities</b></em>' attribute list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute RESTRICTION_STATEMENT__AUTHORITIES = eINSTANCE.getRestrictionStatement_Authorities();
-
-    /**
-     * The meta object literal for the '<em><b>Value</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference RESTRICTION_STATEMENT__VALUE = eINSTANCE.getRestrictionStatement_Value();
-
-    /**
-     * The meta object literal for the '<em><b>Literal</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute RESTRICTION_STATEMENT__LITERAL = eINSTANCE.getRestrictionStatement_Literal();
-
-    /**
-     * The meta object literal for the '<em><b>Subject</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute RESTRICTION_STATEMENT__SUBJECT = eINSTANCE.getRestrictionStatement_Subject();
-
-    /**
-     * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.RestrictionDefinitionImpl <em>Restriction Definition</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.integratedmodelling.kim.kim.impl.RestrictionDefinitionImpl
-     * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getRestrictionDefinition()
-     * @generated
-     */
-    EClass RESTRICTION_DEFINITION = eINSTANCE.getRestrictionDefinition();
-
-    /**
-     * The meta object literal for the '<em><b>Only</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute RESTRICTION_DEFINITION__ONLY = eINSTANCE.getRestrictionDefinition_Only();
-
-    /**
-     * The meta object literal for the '<em><b>None</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute RESTRICTION_DEFINITION__NONE = eINSTANCE.getRestrictionDefinition_None();
-
-    /**
-     * The meta object literal for the '<em><b>Exactly</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute RESTRICTION_DEFINITION__EXACTLY = eINSTANCE.getRestrictionDefinition_Exactly();
-
-    /**
-     * The meta object literal for the '<em><b>At Least</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute RESTRICTION_DEFINITION__AT_LEAST = eINSTANCE.getRestrictionDefinition_AtLeast();
-
-    /**
-     * The meta object literal for the '<em><b>At Most</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute RESTRICTION_DEFINITION__AT_MOST = eINSTANCE.getRestrictionDefinition_AtMost();
-
-    /**
-     * The meta object literal for the '<em><b>Howmany</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute RESTRICTION_DEFINITION__HOWMANY = eINSTANCE.getRestrictionDefinition_Howmany();
-
-    /**
-     * The meta object literal for the '<em><b>Source</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference RESTRICTION_DEFINITION__SOURCE = eINSTANCE.getRestrictionDefinition_Source();
-
-    /**
-     * The meta object literal for the '<em><b>Data Type</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute RESTRICTION_DEFINITION__DATA_TYPE = eINSTANCE.getRestrictionDefinition_DataType();
-
-    /**
-     * The meta object literal for the '<em><b>Trait Type</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference RESTRICTION_DEFINITION__TRAIT_TYPE = eINSTANCE.getRestrictionDefinition_TraitType();
-
-    /**
-     * The meta object literal for the '<em><b>Subject</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference RESTRICTION_DEFINITION__SUBJECT = eINSTANCE.getRestrictionDefinition_Subject();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.AnnotationImpl <em>Annotation</em>}' class.

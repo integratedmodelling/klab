@@ -2254,9 +2254,9 @@ class KimValidator extends AbstractKimValidator {
 			}
 		}
 
-		for (restriction : concept.restrictions) {
-			// TODO process restriction
-		}
+//		for (restriction : concept.restrictions) {
+//			// TODO process restriction
+//		}
 
 		if (concept.metadata !== null) {
 			ret.metadata = new KimMetadata(concept.metadata, ret)
