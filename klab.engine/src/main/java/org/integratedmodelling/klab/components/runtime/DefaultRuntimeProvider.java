@@ -299,7 +299,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	public static IObservation createObservation(IObservable observable, IScale scale, RuntimeContext context,
 			boolean scalarStorage) {
 
-		boolean createActors = scale.getTime() != null;
+		boolean createActors = observable.is(Type.COUNTABLE) && scale.getTime().size() > 1;
 		Activity activity = null;
 
 		IIdentity identity = context.getMonitor().getIdentity();

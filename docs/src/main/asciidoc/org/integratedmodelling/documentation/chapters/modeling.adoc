@@ -3,6 +3,16 @@
 
 == Overview
 
+What models are, how they are chosen and what they cause once used.
+
+Models make observations, i.e. _contextualize_ a concept in a context, producing the observational artifact throug a two-step process: first, the concept is _resolved_ to the best model or models for the context - which, through its dependencies, may cause more resolutions to take place until the system has a strategy to make the observation. Second, the resolved strategy is compiled into a _dataflow_, i.e. a computation that can be run by a runtime system that is unaware of any semantics. Third, the dataflow is run to compute all the observations in the context.
+
+Because all contextualizations are context-dependent, the choice of the overall context for the observation is an arbitrary choice of the user. So the first observation is not computed, but merely _acknowledged_: for example, we may _choose_ to use Italy as a context, and maybe pre-define a resolution and extent for the time and space that we want reflected in the observations. After that initial choice, users can just say what they want and how they want it observed, by querying the k.LAB engine. 
+
+Models make _observations_, and according to the underlying https://github.com/integratedmodelling/odo.html[ontology], the activities that create observational artifacts are of two fundamental types: _resolution_ and _instantiation_.  These, in turn, are subdivided into a few subcategories. The <<section-kim-observable,observable>> declared for the model determines which type of observation activity is encoded in each model.
+
+
+
 === The resolution process
 
 === Dataflows
