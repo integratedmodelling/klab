@@ -12,6 +12,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
@@ -24,6 +25,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
@@ -87,6 +89,13 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 			ret.getParameters().put(resource.isNegated() ? "unlesscondition" : "ifcondition", resource.getCondition());
 		}
 		ret.getParameters().put("classifier", classifier);
+		if (classifier) {
+			ret.getParameters().put("classified", ((Observable)observable).getFilteredObservable().getName());
+			ret.getParameters().put("base", Observables.INSTANCE.getBaseObservable(observable.getType()));
+			if (((Observable)observable).getTargetPredicate() != null) {
+				ret.getParameters().put("target", ((Observable)observable).getTargetPredicate());
+			}
+		}
 		
 		return ret;
 	}

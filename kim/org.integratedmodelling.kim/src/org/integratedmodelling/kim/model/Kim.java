@@ -888,6 +888,10 @@ public enum Kim {
 
 	public EnumSet<Type> getType(String string) {
 
+		if (string == null) {
+			return EnumSet.noneOf(Type.class);
+		}
+		
 		String id = string.toLowerCase();
 
 		switch (id) {
@@ -1434,7 +1438,7 @@ public enum Kim {
 		if (type.contains(IKimConcept.Type.ROLE)) {
 			return IKimConcept.Type.ROLE;
 		}
-		return null;
+		return Type.NOTHING;
 	}
 
 	public void registerNamespace(KimNamespace kimNamespace) {

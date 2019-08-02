@@ -5,18 +5,51 @@
 The _worldview_ is the core semantics used by all users of the same network. The choice of worldview is encoded in the k.LAB user certificate, and the same worldview is adopted by all nodes of the k.LAB network those users connect to. The worldview has a modular structure that allows more specialized users to automatically use conceptual details others don't need. Any changes in the worldview are immediately pushed to all active users.
 
 ****
-Before we start: the reader will rarely, if ever, have to design a worldview from scratch. The point of k.LAB is integration, and there is no integration without a _shared_ worldview. Building such a worldview requires a _community_: if you want to use it, you will most likely have to _contribute_ to the worldview you are sharing: by using it, challenging it constructively, identifying gaps and inconsistencies, etc. The k.LAB team is mostly working in social, environmental, economic and agricultural fields, and this is why the worldview we use and maintain is especially adequate for these domains and observational scales. Nothing prevents one from developing other worldviews, for the same or other domains. This is, however, a very hard job, and as long as your applications are in the same fields, we really hope that you consider contributing to our (and by that we mean _your_) worldview before you set out to build your own. With this in mind, this chapter is a guide to understanding enough of a worldview to efficiently use it and contribute to it.
+Before we start: the reader will rarely, if ever, have to design a worldview from scratch. The point of k.LAB is integration, and there is no integration without a _shared_ worldview. Building such a worldview requires a _community_: if you want to use it, you will most likely have to contribute, by using it, challenging it constructively, identifying gaps and inconsistencies, etc. The k.LAB team is mostly working in social, environmental, economic and agricultural fields, and this is why the worldview we use and maintain is especially adequate for these domains and observational scales. Nothing prevents one from developing other worldviews, for the same or other domains. This is, however, a very hard job, and as long as your applications are in the same fields, we really hope that you consider contributing to our (and by that we mean _your_) worldview before you set out to build your own. With this in mind, this chapter is a guide to understanding enough of a worldview to efficiently use it and contribute to it.
 ****
 
 == Overview
 
+Know the Observation ontology
+The core types and relationships
+
 == Structure and defining principles
+
+Parsimony
+Orthogonality
+
 
 === Domains
 
 === Orthogonality and parsimony
 
+=== Pitfalls: common parlance vs. ontological sanity
+
+It's a constant war with the "automatic" and the "jargon"
+
+- Processes instead of the quantities they affect: establish a rule and stick to it.
+- Unneeded attributes like 'mean precipitation' or 'total biomass'.
+- Semantics shouldn't depend on scale - the worldview does
+- Events don't prevent processes 
+- Volume and mass
+- Indicators and rankings
+- Other non-measurables or fuzzies
+
+=== How much to orthogonalize?
+
+- Advantages
+- Handling common cases: using an attribute introduces more potential ambiguity when annotating. Workarounds:
+ - use our alignment platform (describe later)
+ - use equals instead of is to capture commonly recognized semantics that shouldn't become a new concept
+ - do it for selected concepts but always capture the derivation
+
+=== When to use macros
+
 === Modular organization
+
+== Lifecycle of a worldview contribution
+
+=== Tooling
 
 == For the knowledge engineers out there
 
@@ -26,5 +59,10 @@ Before we start: the reader will rarely, if ever, have to design a worldview fro
 
 ==== k.IM and OWL
 
-==== Ontology tooling in k.LAB
+=== Ontology tooling in k.LAB
+
+==== Alignment tools
+
+==== Tools to collaborate and dispel ambiguity
+
 

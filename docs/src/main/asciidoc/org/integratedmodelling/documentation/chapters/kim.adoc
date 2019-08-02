@@ -42,7 +42,9 @@ geography:Elevation in m
 economics:Income within demography:Household in EUR@2002
 ----
 
-In the example above, the range `0 to 1` and the unit or currency after `in` are part of the additional syntax introduced compared to a naked logical expressions. Such specifications affect the _value_, i.e. the scaling of the numbers in the result, and do not affect the _meaning_ of what is observed. A full set of _value operators_ is available in k.IM to enable on-the-fly computations that can range from simple to complex:
+In the example above, the range `0 to 1` and the unit or currency after `in` are part of the additional syntax introduced compared to a naked logical expressions. Such specifications affect the _value_, i.e. the scaling of the numbers in the result, and do not affect the _meaning_ of what is observed, therefore their specification is not part of the _semantics_: as a consequence, observables can only be used in models (i.e., it is illegal to use units in a concept declaration, for example after 'is').
+
+A full set of _value operators_ is also available in observables, to enable on-the-fly computations that can range from simple to complex:
 
 [source,kim]
 ----
@@ -55,9 +57,9 @@ soil:Soil chemistry:Carbon im:Mass by (landcover:LandCoverType without landcover
 economics:Income within demography:Household in USD@2000 where (landcover:LandCoverType is landcover:LowDensityUrban) by policy:Country
 ---- 
 
-Such queries can be used as dependencies in a k.IM model, saving plenty of checking and tedious code when using the numbers, or typed directly in k.Explorer for instant results. All of them modify the _values_ and not the _meaning_.
+Such queries are all valid observables, and can be used as queries in k.Explorer or any client, or as dependencies in a k.IM model, saving much tedious coding when using the values in computation. All of them modify the _values_ and not the _meaning_. They come in particularly handy when values are distributed, like in spatially explicit observations with multiple values.
 
-Observables may also specify less obvious constraints for the inherent types: for example
+Observable syntax is not limited to setting constraints on values of qualities; it may also specify less obvious constraints on the observation of the inherent type. For example
 
 [source, kim]
 ----
@@ -69,6 +71,8 @@ is a logical expression that contains a keyword `each` that would not be admitte
 === Ranges, units and currencies
 
 === Value operators
+
+
 
 === Rules of composition for observables
 

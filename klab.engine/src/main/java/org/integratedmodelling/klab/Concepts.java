@@ -478,4 +478,9 @@ public enum Concepts implements IConceptService {
 		return CamelCase.toLowerCase(getDisplayName(main), '_');
 	}
 
+	public boolean isDerived(IConcept c) {
+		// FIXME weak - use an annotation property
+		return c.getName().contains("_0"); 
+	}
+
 }

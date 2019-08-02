@@ -196,7 +196,7 @@ public class ObservationStrategy {
 
 				Observable filter = (Observable) new ObservableBuilder(attribute)
 						.of(Observables.INSTANCE.getBaseObservable(target.getType())).filtering(target)
-						.withTargetPredicate(targetAttribute)
+						.withTargetPredicate(targetAttribute).withDistributedInherency(observable.is(Type.COUNTABLE))
 						.buildObservable();
 
 				ObservationStrategy alternative = new ObservationStrategy(target, mode);

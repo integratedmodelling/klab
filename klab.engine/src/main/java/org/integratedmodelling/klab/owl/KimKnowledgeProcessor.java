@@ -455,7 +455,7 @@ public enum KimKnowledgeProcessor {
 		Builder builder = new ObservableBuilder(main, ontology).withDeclaration(concept, monitor);
 
 		if (concept.getDistributedInherent() != null) {
-			builder.setDistributedInherency(true);
+			builder.withDistributedInherency(true);
 		}
 
 		/*

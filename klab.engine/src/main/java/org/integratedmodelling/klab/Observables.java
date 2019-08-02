@@ -403,7 +403,7 @@ public enum Observables implements IObservableService {
 	}
 
 	/**
-	 * Get the first base observable without direct traits or roles
+	 * Get the first base observable without direct traits, roles, and any modifiers
 	 * 
 	 * @param c
 	 * @return
@@ -411,7 +411,7 @@ public enum Observables implements IObservableService {
 	public IConcept getBaseObservable(IConcept c) {
 		Collection<IConcept> traits = Traits.INSTANCE.getDirectTraits(c);
 		Collection<IConcept> roles = Roles.INSTANCE.getDirectRoles(c);
-		if (traits.size() == 0 && roles.size() == 0) {
+		if (traits.size() == 0 && roles.size() == 0 && !Concepts.INSTANCE.isDerived(c)) {
 			return c;
 		}
 		return getBaseObservable(c.getParent());
