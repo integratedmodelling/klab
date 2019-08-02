@@ -78,9 +78,8 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 
 	public static IServiceCall getServiceCall(IComputableResource resource, IObservable observable) {
 		
-		IServiceCall ret = KimServiceCall.create(FUNCTION_ID);
-		
 		boolean classifier = observable.getDescription() == IActivity.Description.CLASSIFICATION;
+		IServiceCall ret = KimServiceCall.create(classifier ? ExpressionClassifier.ID : FUNCTION_ID);
 		ret.getParameters().put("code", resource.getExpression());
 		if (resource.getExpression().isForcedScalar()) {
 			ret.getParameters().put("scalar", Boolean.TRUE);
@@ -88,9 +87,8 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 		if (resource.getCondition() != null) {
 			ret.getParameters().put(resource.isNegated() ? "unlesscondition" : "ifcondition", resource.getCondition());
 		}
-		ret.getParameters().put("classifier", classifier);
+
 		if (classifier) {
-			ret.getParameters().put("classified", ((Observable)observable).getFilteredObservable().getName());
 			ret.getParameters().put("base", Observables.INSTANCE.getBaseObservable(observable.getType()));
 			if (((Observable)observable).getTargetPredicate() != null) {
 				ret.getParameters().put("target", ((Observable)observable).getTargetPredicate());
@@ -142,13 +140,6 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 			}
 		}
 
-		boolean classifier = parameters.get("classifier", Boolean.FALSE);
-		
-		if (classifier) {
-			// TODO parameters: needs the classified concept and a potential focal one
-			return new ExpressionClassifier();
-		}
-		
 		if (scalar || forceScalar) {
 			return new ExpressionStateResolver(descriptor, condition, parameters, context, additionalParameters);
 		}

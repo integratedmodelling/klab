@@ -332,122 +332,30 @@ public class Flowchart {
 		Set<String> computationOutputs = new HashSet<>();
 		Set<String> computationInputs = new HashSet<>();
 
+		/*
+		 * Normally we have the literal resource as second element and the service call
+		 * that contextualizes it as first.
+		 * 
+		 * If the second element is an expression, the inputs may or may not be
+		 * expressed as parameters in it.
+		 */
+
 		if (computation.getSecond().getServiceCall() != null) {
 
-			/*
-			 * Functions: check any parameters that identify artifacts against local catalog
-			 * and the taginput annotations. Use exports for additional outputs and check
-			 * with output map.
-			 */
-			IPrototype prototype = Extensions.INSTANCE.getPrototype(computation.getSecond().getServiceCall().getName());
-			if (prototype != null) {
-
-				ret.label = Extensions.INSTANCE.getServiceLabel(computation.getSecond().getServiceCall());
-
-				if (prototype.getType() != IArtifact.Type.VOID) {
-					computationOutputs.add(computationTarget);
-				}
-
-				/*
-				 * match imported artifacts declared in the prototype to imports in the
-				 * function. If not available, store the ID so that we can look for artifact
-				 * parameters later.
-				 */
-				Set<String> importArgs = new HashSet<>();
-				for (Argument arg : prototype.listImports()) {
-					String name = formalNameOf(arg.getName(), context);
-					if (name != null
-							&& (elementsByName.containsKey(name) || parent.datapaths.containsKey(arg.getName()))) {
-						computationInputs.add(arg.getName());
-					} else {
-						importArgs.add(arg.getName());
-					}
-				}
-
-				/*
-				 * Add any additional parameters marked as artifact (passing the parameter) or
-				 * named in expressions.
-				 */
-				for (String arg : computation.getSecond().getServiceCall().getParameters().keySet()) {
-					Object parameter = computation.getSecond().getServiceCall().getParameters().get(arg);
-					Argument argument = prototype.getArgument(arg);
-					if (importArgs.contains(arg)) {
-						if (parameter instanceof IConcept || parameter instanceof IObservable) {
-							// must be a known observables, which we will link through its alias
-							IConcept concept = parameter instanceof IConcept ? ((IConcept) parameter)
-									: ((IObservable) parameter).getType();
-							for (IActuator dependency : context.getActuators()) {
-								if (concept.resolves(((Actuator) dependency).getObservable().getType()) >= 0) {
-									parameter = ((Actuator) dependency).getAlias();
-									break;
-								}
-							}
-						}
-						
-						computationInputs.add(parameter.toString());
-						
-					} else if (argument == null) {
-						continue;
-					} else if (argument.isExpression()) {
-						Object expression = computation.getSecond().getServiceCall().getParameters().get(arg);
-						String expcode = expression instanceof IKimExpression ? ((IKimExpression) expression).getCode()
-								: expression.toString();
-						String explang = expression instanceof IKimExpression
-								? ((IKimExpression) expression).getLanguage()
-								: null;
-						for (String input : getExpressionInputs(expcode, explang, context)) {
-							computationInputs.add(input);
-						}
-					}
-				}
-
-				IModel model = context.getModel();
-				if (model != null) {
-					for (String s : prototype.listInputTags()) {
-						for (IObservable observable : model.getDependencies()) {
-							if (Annotations.INSTANCE.hasAnnotation(observable, s)) {
-								computationInputs.add(observable.getName());
-							}
-						}
-					}
-				}
-
-				/*
-				 * Check if this is a transformation type so we can add the default target as
-				 * argument if not specified.
-				 */
-				boolean singleArtifact = prototype.listImports().size() == 1;
-
-				/*
-				 * add any further outputs if it's used.
-				 */
-				for (Argument arg : prototype.listExports()) {
-					if (elementsByName.containsKey(arg.getName())) {
-						computationOutputs.add(arg.getName());
-					}
-				}
-
-				/*
-				 * we let computations with a single artifact parameter default their argument
-				 * to the main target.
-				 */
-				if (computationInputs.isEmpty() && singleArtifact) {
-					computationInputs.add(computationTarget);
-				}
-
-				if (prototype.getType() == IArtifact.Type.OBJECT) {
-					ret.type = ElementType.INSTANTIATOR;
-				}
-
-			} else {
-				// shouldn't happen but here goes
-				throw new KlabInternalErrorException("function " + computation.getSecond().getServiceCall().getName()
-						+ " is undeclared in dataflow");
-			}
+			analyzeServiceCall(computation.getSecond().getServiceCall(), context, ret, parent, computationTarget,
+					computationInputs, computationOutputs);
 
 		} else if (computation.getSecond().getExpression() != null) {
 
 			computationOutputs.add(computationTarget);
+
+			/*
+			 * the calling function is important if the expression is passed to a classifier or
+			 * something more complex.
+			 */
+			analyzeServiceCall(computation.getFirst(), context, ret, parent, computationTarget,
+					computationInputs, computationOutputs);
+			
 			for (String input : getExpressionInputs(computation.getSecond().getExpression().getCode(),
 					computation.getSecond().getLanguage(), context)) {
 				computationInputs.add("self".equals(input) ? computationTarget : input);
@@ -577,6 +485,120 @@ public class Flowchart {
 		}
 
 		return ret;
+	}
+
+	private void analyzeServiceCall(IServiceCall serviceCall, Actuator context, Element ret, Element parent,
+			String computationTarget, Set<String> computationInputs, Set<String> computationOutputs) {
+
+		/*
+		 * Functions: check any parameters that identify artifacts against local catalog
+		 * and the taginput annotations. Use exports for additional outputs and check
+		 * with output map.
+		 */
+		IPrototype prototype = Extensions.INSTANCE.getPrototype(serviceCall.getName());
+
+		if (prototype != null) {
+
+			ret.label = Extensions.INSTANCE.getServiceLabel(serviceCall);
+
+			if (prototype.getType() != IArtifact.Type.VOID) {
+				computationOutputs.add(computationTarget);
+			}
+
+			/*
+			 * match imported artifacts declared in the prototype to imports in the
+			 * function. If not available, store the ID so that we can look for artifact
+			 * parameters later.
+			 */
+			Set<String> importArgs = new HashSet<>();
+			for (Argument arg : prototype.listImports()) {
+				String name = formalNameOf(arg.getName(), context);
+				if (name != null && (elementsByName.containsKey(name) || parent.datapaths.containsKey(arg.getName()))) {
+					computationInputs.add(arg.getName());
+				} else {
+					importArgs.add(arg.getName());
+				}
+			}
+
+			/*
+			 * Add any additional parameters marked as artifact (passing the parameter) or
+			 * named in expressions.
+			 */
+			for (String arg : serviceCall.getParameters().keySet()) {
+				Object parameter = serviceCall.getParameters().get(arg);
+				Argument argument = prototype.getArgument(arg);
+				if (importArgs.contains(arg)) {
+					if (parameter instanceof IConcept || parameter instanceof IObservable) {
+						// must be a known observables, which we will link through its alias
+						IConcept concept = parameter instanceof IConcept ? ((IConcept) parameter)
+								: ((IObservable) parameter).getType();
+						for (IActuator dependency : context.getActuators()) {
+							if (concept.resolves(((Actuator) dependency).getObservable().getType()) >= 0) {
+								parameter = ((Actuator) dependency).getAlias();
+								break;
+							}
+						}
+					}
+
+					computationInputs.add(parameter.toString());
+
+				} else if (argument == null) {
+					continue;
+				} else if (argument.isExpression()) {
+					Object expression = serviceCall.getParameters().get(arg);
+					String expcode = expression instanceof IKimExpression ? ((IKimExpression) expression).getCode()
+							: expression.toString();
+					String explang = expression instanceof IKimExpression ? ((IKimExpression) expression).getLanguage()
+							: null;
+					for (String input : getExpressionInputs(expcode, explang, context)) {
+						computationInputs.add(input);
+					}
+				}
+			}
+
+			IModel model = context.getModel();
+			if (model != null) {
+				for (String s : prototype.listInputTags()) {
+					for (IObservable observable : model.getDependencies()) {
+						if (Annotations.INSTANCE.hasAnnotation(observable, s)) {
+							computationInputs.add(observable.getName());
+						}
+					}
+				}
+			}
+
+			/*
+			 * Check if this is a transformation type so we can add the default target as
+			 * argument if not specified.
+			 */
+			boolean singleArtifact = prototype.listImports().size() == 1;
+
+			/*
+			 * add any further outputs if it's used.
+			 */
+			for (Argument arg : prototype.listExports()) {
+				if (elementsByName.containsKey(arg.getName())) {
+					computationOutputs.add(arg.getName());
+				}
+			}
+
+			/*
+			 * we let computations with a single artifact parameter default their argument
+			 * to the main target.
+			 */
+			if (computationInputs.isEmpty() && singleArtifact) {
+				computationInputs.add(computationTarget);
+			}
+
+			if (prototype.getType() == IArtifact.Type.OBJECT) {
+				ret.type = ElementType.INSTANTIATOR;
+			}
+
+		} else {
+			// shouldn't happen but here goes
+			throw new KlabInternalErrorException("function " + serviceCall.getName() + " is undeclared in dataflow");
+		}
+
 	}
 
 	private String localNameFor(String name, Actuator context) {

@@ -16,11 +16,9 @@ export value exec
 		
 	optional boolean expression ifcondition 
 		"A condition to check before executing the code" 
-		default ""
 
 	optional boolean expression unlesscondition 
 		"A negative conditions to check before executing the code" 
-		default ""
 		
 	optional boolean scalar
 		"Run the expression in a scalar context independent of the result of code analysis."
@@ -73,6 +71,31 @@ filter concept classify
 
 	class org.integratedmodelling.klab.components.runtime.contextualizers.ClassifyingStateResolver
 
+}
+
+filter object classifier
+	"Classify an object by a predicate, attributing a concrete value based on the 
+     return value of an expression."
+	label 'Classify' 
+{
+	optional import object artifact
+		"The object artifact whose objects we classify" 
+	
+	concept base 
+		"The abstract semantics of the predicate to produce"
+		
+	concept expression code 
+		"The expression producing the concrete semantics for the base predicate"
+		
+	optional concept target
+		"If a specific concrete predicate is requested as output, it is passed here so that 
+         those objects that do not have it can be filtered out."
+         
+    optional boolean expression ifcondition 
+		"A condition to check before executing the code" 
+
+	optional boolean expression unlesscondition 
+		"A negative conditions to check before executing the code" 
 }
 
 filter value categorize 

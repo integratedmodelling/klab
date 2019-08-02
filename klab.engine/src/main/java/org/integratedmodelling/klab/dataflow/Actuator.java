@@ -1168,6 +1168,9 @@ public class Actuator implements IActuator {
 		 * otherwise put it in here.
 		 */
 		for (IActuator dependency : filter.actuators) {
+			if (hasDependency(dependency)) {
+				continue;
+			}
 			if (!((Actuator) dependency).isReference() && existingActuators.containsKey(dependency.getName())
 					&& !haveActuatorNamed(dependency.getName())) {
 				dependency = ((Actuator) dependency).getReference();
@@ -1189,6 +1192,15 @@ public class Actuator implements IActuator {
 					setFilteredArgument(computation.getSecond(), filtered.getName())));
 		}
 
+	}
+
+	private boolean hasDependency(IActuator dependency) {
+		for (IActuator actuator : actuators) {
+			if (((Actuator)actuator).getObservable().canResolve(((Actuator)dependency).observable)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private KimServiceCall setFilteredArgument(IServiceCall function, String filteredArgument) {
