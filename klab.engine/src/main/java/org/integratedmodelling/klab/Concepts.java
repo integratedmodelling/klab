@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -478,9 +479,10 @@ public enum Concepts implements IConceptService {
 		return CamelCase.toLowerCase(getDisplayName(main), '_');
 	}
 
+	static Pattern internalConceptPattern = Pattern.compile("[A-Z]+_[0-9]+");
+
 	public boolean isDerived(IConcept c) {
-		// FIXME weak - use an annotation property
-		return c.getName().contains("_0"); 
+		return internalConceptPattern.matcher(c.getName()).matches(); 
 	}
 
 }

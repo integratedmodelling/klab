@@ -12,7 +12,6 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Extensions;
-import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
@@ -25,7 +24,6 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
@@ -78,8 +76,14 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 
 	public static IServiceCall getServiceCall(IComputableResource resource, IObservable observable) {
 		
-		boolean classifier = observable.getDescription() == IActivity.Description.CLASSIFICATION;
-		IServiceCall ret = KimServiceCall.create(classifier ? ExpressionClassifier.ID : FUNCTION_ID);
+		String functionId = FUNCTION_ID;
+		if (observable.getDescription() == IActivity.Description.CLASSIFICATION) {
+			functionId = ExpressionClassifier.ID;
+		} else if (observable.getDescription() == IActivity.Description.CHARACTERIZATION) {
+			functionId = ExpressionCharacterizer.ID;
+		}
+		
+		IServiceCall ret = KimServiceCall.create(functionId);
 		ret.getParameters().put("code", resource.getExpression());
 		if (resource.getExpression().isForcedScalar()) {
 			ret.getParameters().put("scalar", Boolean.TRUE);
