@@ -14,6 +14,7 @@ public class ObservationChange {
 	private String newName;
 	private String newSemantics;
 	private int newSize;
+	private boolean newMainStatus;
 	private boolean newValues;
 	private boolean terminated;
 
@@ -79,6 +80,14 @@ public class ObservationChange {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public boolean isNewMainStatus() {
+		return newMainStatus;
+	}
+
+	public void setNewMainStatus(boolean newMainStatus) {
+		this.newMainStatus = newMainStatus;
 	}
 
 

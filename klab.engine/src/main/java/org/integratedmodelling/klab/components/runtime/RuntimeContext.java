@@ -63,6 +63,7 @@ import org.integratedmodelling.klab.engine.runtime.code.ExpressionContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.provenance.Provenance;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
@@ -136,8 +137,9 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		this.artifactType = Observables.INSTANCE.getObservableType(actuator.getObservable(), true);
 
 		/*
-		 * Complex and convoluted, but there is no other way to get this which must be created by the
-		 * task for the first context. Successive contextualizations will add to it.
+		 * Complex and convoluted, but there is no other way to get this which must be
+		 * created by the task for the first context. Successive contextualizations will
+		 * add to it.
 		 */
 		this.contextualizationStrategy = monitor.getIdentity().getParentIdentity(AbstractTask.class)
 				.getContextualizationStrategy();
@@ -318,12 +320,12 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 	@Override
 	public void setData(String name, IArtifact data) {
-	    if (catalog.get(name) != null) {
-	        structure.replace(catalog.get(name), data);
-	    }
+		if (catalog.get(name) != null) {
+			structure.replace(catalog.get(name), data);
+		}
 		catalog.put(name, data);
 		if (data instanceof Observation && observations.containsKey(data.getId())) {
-		    observations.put(data.getId(), (IObservation)data);
+			observations.put(data.getId(), (IObservation) data);
 		}
 	}
 
@@ -365,6 +367,10 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		return ret;
 	}
 
+	/**
+	 * TODO move the dataflow caching logics of all the new-.... functions into a
+	 * DataflowPool object or something like that.
+	 */
 	@Override
 	public ICountableObservation newObservation(IObservable observable, String name, IScale scale, IMetadata metadata)
 			throws KlabException {
@@ -435,6 +441,83 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		}
 
 		return ret;
+	}
+
+	@Override
+	public void newPredicate(IDirectObservation target, IConcept predicate) {
+
+		if (predicate.isAbstract() || (!predicate.is(Type.TRAIT) && !predicate.is(Type.ROLE))) {
+			throw new IllegalArgumentException(
+					"RuntimeContext: cannot attribute predicate " + predicate + ": must be a concrete trait or role");
+		}
+
+		IObservable observable = new ObservableBuilder(predicate).of(target.getObservable().getType())
+				.buildObservable();
+
+		/*
+		 * preload all the possible resolvers in the wider scope before specializing the
+		 * scope to the child observation. Then leave it to the kbox to use the context
+		 * with the preloaded cache.
+		 */
+		this.resolutionScope.preloadResolvers(observable);
+
+		Dataflow dataflow = null;
+		ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
+		ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild();
+		ResolutionScope scope = this.resolutionScope.getChildScope(target, Mode.RESOLUTION);
+
+		List<Pair<ICoverage, Dataflow>> pairs = dataflowCache
+				.get(new ResolvedObservable((Observable) observable, Mode.RESOLUTION));
+
+		if (pairs != null) {
+			for (Pair<ICoverage, Dataflow> pair : pairs) {
+				if (pair.getFirst() == null || pair.getFirst().contains(scale)) {
+					dataflow = pair.getSecond();
+					break;
+				}
+			}
+		}
+		if (dataflow == null) {
+
+			if (pairs == null) {
+				pairs = new ArrayList<>();
+				dataflowCache.put(new ResolvedObservable((Observable) observable, Mode.RESOLUTION), pairs);
+			}
+
+			// TODO check model parameter
+			scope = Resolver.INSTANCE.resolve((Observable) observable, scope, Mode.RESOLUTION, target.getScale(),
+					model);
+
+			if (scope.getCoverage().isRelevant()) {
+
+				dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope)
+						.setPrimary(false);
+				dataflow.setModel((Model) model);
+
+				// TODO this must be added to the computational strategy and linked to the
+				// original context.
+				pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
+
+			} else if (resolutionScope.getPreresolvedModels(observable) == null
+					|| resolutionScope.getPreresolvedModels(observable).getSecond().size() == 0) {
+
+				/*
+				 * Add an empty dataflow to create the predicate without further consequences.
+				 * This is only done if there are no preloaded resolvers in this scale, so we
+				 * are certain that other subjects will encounter the same conditions.
+				 */
+				pairs.add(new Pair<>(null, dataflow = Dataflow.empty(observable, null, scope)));
+				dataflowCache.put(new ResolvedObservable((Observable) observable, Mode.RESOLUTION), pairs);
+			}
+		}
+
+		if (dataflow != null) {
+
+			System.out.println(dataflow.getKdlCode());
+
+			dataflow.run(scale, (Monitor) monitor);
+		}
+
 	}
 
 	@Override
@@ -777,8 +860,8 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		if (actuator.getModel() != null) {
 			for (int i = 1; i < actuator.getModel().getObservables().size(); i++) {
 				IObservable output = actuator.getModel().getObservables().get(i);
-				targetObservables.put(output.getName(), new Pair<>((Observable) output,
-						output.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
+				targetObservables.put(output.getName(),
+						new Pair<>((Observable) output, output.getDescription().getResolutionMode()));
 			}
 		}
 
@@ -792,6 +875,13 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			}
 		}
 
+		/*
+		 * will be pre-existing only if: (i) it's an existing observation group and the
+		 * observable does not determine a new view; or (ii) we're resolving an
+		 * attribute through a dataflow, which will be added by this.
+		 */
+		IObservation preexisting = null;
+
 		for (String name : targetObservables.keySet()) {
 
 			Pair<Observable, Mode> op = targetObservables.get(name);
@@ -802,7 +892,17 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			List<IState> predefinedStates = new ArrayList<>();
 
 			if (observable.is(Type.COUNTABLE) && mode == Mode.INSTANTIATION) {
-				observation = getObservationGroup(observable, scale); 
+				observation = getObservationGroup(observable, scale);
+				if (getNotifiedObservations().contains(observation.getId())) {
+					preexisting = observation;
+				}
+			} else if ((observable.is(Type.TRAIT) || observable.is(Type.ROLE)) && mode == Mode.RESOLUTION) {
+				// AHA get the target from the scope, add the predicate to it, return that
+				if (this.target instanceof IDirectObservation) {
+					((DirectObservation) this.target)
+							.addPredicate(Observables.INSTANCE.getBaseObservable(observable.getType()));
+				}
+				preexisting = (IObservation) this.target;
 			} else {
 
 				if (observable.is(Type.RELATIONSHIP)) {
@@ -868,42 +968,44 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 				}
 			}
 
-			// transmit all annotations and any interpretation keys to the artifact
-			actuator.notifyNewObservation(observation);
+			if (preexisting == null) {
+				// transmit all annotations and any interpretation keys to the artifact
+				actuator.notifyNewObservation(observation);
 
-			/*
-			 * register the obs and potentially the root subject
-			 */
-			this.observations.put(observation.getId(), observation);
-			if (this.rootSubject == null && observation instanceof ISubject) {
-				this.rootSubject = (ISubject) observation;
-			}
-			this.catalog.put(name, observation);
-			this.structure.addVertex(observation);
-			if (contextSubject != null) {
-				this.structure.addEdge(observation,
-						contextSubject instanceof ObservationGroup ? contextSubject.getContext() : contextSubject);
-			}
-			if (observation instanceof ISubject) {
-				this.network.addVertex((ISubject) observation);
-			}
+				/*
+				 * register the obs and potentially the root subject
+				 */
+				this.observations.put(observation.getId(), observation);
+				if (this.rootSubject == null && observation instanceof ISubject) {
+					this.rootSubject = (ISubject) observation;
+				}
+				this.catalog.put(name, observation);
+				this.structure.addVertex(observation);
+				if (contextSubject != null) {
+					this.structure.addEdge(observation,
+							contextSubject instanceof ObservationGroup ? contextSubject.getContext() : contextSubject);
+				}
+				if (observation instanceof ISubject) {
+					this.network.addVertex((ISubject) observation);
+				}
 
-			/*
-			 * set the target observations if this is a configuration
-			 */
-			if (observation instanceof IConfiguration) {
-				((Configuration) observation).setTargets(actuator.getDataflow().getConfigurationTargets());
-			}
+				/*
+				 * set the target observations if this is a configuration
+				 */
+				if (observation instanceof IConfiguration) {
+					((Configuration) observation).setTargets(actuator.getDataflow().getConfigurationTargets());
+				}
 
-			/*
-			 * add any predefined states to the structure
-			 */
-			for (IState state : predefinedStates) {
-				link(observation, state);
+				/*
+				 * add any predefined states to the structure
+				 */
+				for (IState state : predefinedStates) {
+					link(observation, state);
+				}
 			}
 		}
 
-		return this.catalog.get(actuator.getName());
+		return preexisting == null ? this.catalog.get(actuator.getName()) : preexisting;
 
 	}
 
@@ -912,9 +1014,9 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		IConcept mainObservable = Observables.INSTANCE.getBaseObservable(observable.getType());
 		ObservationGroup ret = groups.get(mainObservable);
 		if (ret == null) {
-			ret = new ObservationGroup((Observable)observable, (Scale) scale, this, IArtifact.Type.OBJECT);
+			ret = new ObservationGroup(Observable.promote(mainObservable), (Scale) scale, this, IArtifact.Type.OBJECT);
 			groups.put(mainObservable, ret);
-		}	
+		}
 		return ret;
 	}
 
@@ -924,6 +1026,9 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 		if (observable.is(Type.COUNTABLE)) {
 			observation = getObservationGroup(observable, scale);
+		} else if (observable.is(Type.TRAIT) || observable.is(Type.ROLE)) {
+			// AHA get the target from the scope, add the predicate to it, return that
+			System.out.println("ZIO PUTINO");
 		} else {
 			observation = DefaultRuntimeProvider.createObservation(observable, scale, this);
 		}
@@ -1151,22 +1256,21 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends IArtifact> T getArtifact(IConcept concept, Class<T> cls) {
-		
+
 		Set<IArtifact> ret = new HashSet<>();
 		for (IArtifact artifact : catalog.values()) {
-			if (artifact instanceof IObservation
-					&& ((IObservation) artifact).getObservable().getType().is(concept)) {
+			if (artifact instanceof IObservation && ((IObservation) artifact).getObservable().getType().is(concept)) {
 				ret.add(artifact);
 			}
 		}
-		
+
 		Set<IArtifact> chosen = new HashSet<>();
 		if (ret.size() > 1) {
 			for (IArtifact artifact : ret) {
 				if (cls.isAssignableFrom(artifact.getClass())) {
 					if (model != null && artifact instanceof IObservation) {
 						for (IObservable obs : model.getDependencies()) {
-							if (obs.getName().equals(((IObservation)artifact).getObservable().getName())) {
+							if (obs.getName().equals(((IObservation) artifact).getObservable().getName())) {
 								chosen.add(artifact);
 							}
 						}
@@ -1175,14 +1279,13 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 					}
 				}
 			}
-		} 
-		
+		}
+
 		if (chosen.isEmpty() && !ret.isEmpty()) {
 			// just take the first
 			chosen.add(ret.iterator().next());
 		}
-		
+
 		return (T) (chosen.isEmpty() ? null : chosen.iterator().next());
 	}
-
 }

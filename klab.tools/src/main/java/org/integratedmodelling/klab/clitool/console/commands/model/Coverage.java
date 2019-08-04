@@ -34,19 +34,19 @@ public class Coverage implements ICommand {
 		String declaration = StringUtils.join((List<?>) call.getParameters().get("arguments"), ' ').trim();
 
 		if (!declaration.contains(":")) {
-			
+
 			// it's a model
 			IKimObject mob = Resources.INSTANCE.getModelObject(declaration);
 			if (mob instanceof IModel) {
-				Scale scale = ((Model)mob).getCoverage(session.getMonitor());
+				Scale scale = ((Model) mob).getCoverage(session.getMonitor());
 				ret += scale.asGeometry().toString();
 			}
-			
+
 		} else {
 
 			// it's a concept
 			// TODO compute union of coverage of all models resolving it.
-			
+
 			IConcept concept = null;
 			if (declaration.startsWith("k:")) {
 				concept = Reasoner.INSTANCE.getOntology().getConcept(declaration.substring(2));
@@ -56,7 +56,9 @@ public class Coverage implements ICommand {
 				concept = observable.getType();
 			}
 
-			Set<Long> ids = Models.INSTANCE.getKbox().getCompatibleTypeIds(Observable.promote(concept));
+			IObservable observable = Observable.promote(concept);
+			Set<Long> ids = Models.INSTANCE.getKbox().getCompatibleTypeIds(observable,
+					observable.getDescription().getResolutionMode());
 
 			for (long id : ids) {
 				String idst = "[" + id + "]";

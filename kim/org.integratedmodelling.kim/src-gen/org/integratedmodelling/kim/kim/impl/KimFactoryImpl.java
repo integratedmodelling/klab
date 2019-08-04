@@ -57,6 +57,7 @@ import org.integratedmodelling.kim.kim.ObserveStatementBody;
 import org.integratedmodelling.kim.kim.OwlImport;
 import org.integratedmodelling.kim.kim.ParameterList;
 import org.integratedmodelling.kim.kim.PropertyStatement;
+import org.integratedmodelling.kim.kim.Quantity;
 import org.integratedmodelling.kim.kim.REL_OPERATOR;
 import org.integratedmodelling.kim.kim.Statement;
 import org.integratedmodelling.kim.kim.Table;
@@ -175,6 +176,7 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
       case KimPackage.UNIT: return createUnit();
       case KimPackage.CURRENCY: return createCurrency();
       case KimPackage.NUMBER: return createNumber();
+      case KimPackage.QUANTITY: return createQuantity();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
     }
@@ -852,6 +854,18 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
   {
     NumberImpl number = new NumberImpl();
     return number;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Quantity createQuantity()
+  {
+    QuantityImpl quantity = new QuantityImpl();
+    return quantity;
   }
 
   /**

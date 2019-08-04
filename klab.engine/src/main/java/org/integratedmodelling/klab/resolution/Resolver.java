@@ -129,7 +129,7 @@ public enum Resolver {
 			parentScope.setOriginalScope(
 					((Observable) resolvable).getReferencedModel() == null ? Scope.OBSERVABLE : Scope.MODEL);
 			return resolve((Observable) resolvable, parentScope,
-					((Observable) resolvable).is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
+					((Observable) resolvable).getDescription().getResolutionMode());
 		} else if (resolvable instanceof Model) {
 			parentScope.setOriginalScope(Scope.MODEL);
 			return resolve((Model) resolvable, parentScope);
@@ -169,9 +169,8 @@ public enum Resolver {
 	 * @param parentScope
 	 * @param mode
 	 * @param scale
-	 * @param model
-	 *            the model that has started the resolution - usually the
-	 *            instantiator for the object being resolved.
+	 * @param model       the model that has started the resolution - usually the
+	 *                    instantiator for the object being resolved.
 	 * @return the merged scope
 	 * @throws KlabException
 	 */
@@ -301,7 +300,8 @@ public enum Resolver {
 			// will be non-empty if this observable was resolved before, empty otherwise
 			if (coverage.isEmpty()) {
 
-				List<ObservationStrategy> candidates = ObservationStrategy.computeStrategies(observable, ret, ret.getMode());
+				List<ObservationStrategy> candidates = ObservationStrategy.computeStrategies(observable, ret,
+						ret.getMode());
 				boolean done = false;
 				int order = 0;
 				for (ObservationStrategy strategy : candidates) {
@@ -380,7 +380,8 @@ public enum Resolver {
 								+ NumberFormat.getPercentInstance().format(ret.getCoverage().getCoverage())
 								+ " of the context");
 			}
-		} else if (observable.isOptional() || (observable.is(Type.SUBJECT) && mode == Mode.RESOLUTION)) {
+		} else if (observable.isOptional()
+				|| ((observable.is(Type.SUBJECT) || observable.is(Type.PREDICATE)) && mode == Mode.RESOLUTION)) {
 
 			if (coverage.getCoverage() > 0) {
 				parentScope.getMonitor()
@@ -431,7 +432,7 @@ public enum Resolver {
 				coverage.setCoverage(1.0);
 			} else {
 				parentScope.getMonitor().error(new KlabInternalErrorException(
-						"coverage before resolution of dependencies is 0: this should never happen"));
+						"empty model coverage before resolution of dependencies: this should never happen"));
 			}
 		}
 

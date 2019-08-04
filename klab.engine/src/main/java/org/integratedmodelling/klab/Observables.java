@@ -721,4 +721,15 @@ public enum Observables implements IObservableService {
 
 	}
 
+	/**
+	 * True if the passed concept has been tagged with a distributed inherency
+	 * declaration (of each).
+	 * 
+	 * @param candidate
+	 * @return
+	 */
+	public boolean hasDistributedInherency(IConcept candidate) {
+		return candidate.getMetadata().get(NS.INHERENCY_IS_DISTRIBUTED, " false").equals("true");
+	}
+
 }

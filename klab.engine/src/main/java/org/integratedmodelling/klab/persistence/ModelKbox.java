@@ -154,9 +154,9 @@ public class ModelKbox extends ObservableKbox {
 
 		initialize(context.getMonitor());
 
-		// HERE is the place to contextualize the observable - which is also used to
+		// Contextualize the observable if it's a quality - also used to
 		// establish semantic distance in the matcher
-		if (context.getContext() != null) {
+		if (context.getContext() != null && observable.is(Type.QUALITY)) {
 			observable = Observables.INSTANCE.contextualizeTo(observable,
 					context.getContext().getObservable().getType(), context.getMonitor());
 		}
@@ -256,7 +256,7 @@ public class ModelKbox extends ObservableKbox {
 		}
 
 		String query = "SELECT model.oid FROM model WHERE ";
-		String typequery = observableQuery(observable);
+		String typequery = observableQuery(observable, context.getMode());
 
 		if (typequery == null) {
 			return ret;
@@ -298,14 +298,14 @@ public class ModelKbox extends ObservableKbox {
 		return ret;
 	}
 
-	private String observableQuery(IObservable observable) {
+	private String observableQuery(IObservable observable, Mode mode) {
 
 		// /*
 		// * remove any transformations before querying
 		// */
 		// IConcept concept = observable.getMain();
 
-		Set<Long> ids = this.getCompatibleTypeIds(observable);
+		Set<Long> ids = this.getCompatibleTypeIds(observable, mode);
 		if (ids == null || ids.size() == 0) {
 			return null;
 		}

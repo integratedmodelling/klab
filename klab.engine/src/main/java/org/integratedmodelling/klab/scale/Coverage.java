@@ -291,6 +291,11 @@ public class Coverage extends Scale implements ICoverage {
 				newcover = ((AbstractExtent)union).getCoveredExtent();
 			}
 
+			// happens with non-dimensional extents
+			if (!((AbstractExtent)x).isEmpty() && newcover == 0 && origcover == 0) {
+				newcover = origcover = 1;
+			}
+			
 			boolean proceed = ((newcover / origcover) - ccover) > minModelCoverage;
 			if (proceed) {
 				gain = (newcover / origcover) - previouscoverage;
@@ -306,7 +311,13 @@ public class Coverage extends Scale implements ICoverage {
 				IExtent x = ((AbstractExtent) current).mergeCoverage(((AbstractExtent) other).getExtent(),
 						LogicalConnector.INTERSECTION);
 				newcover = ((AbstractExtent)x).getCoveredExtent();
-				gain = (newcover / origcover) - previouscoverage;
+
+				// happens with non-dimensional extents
+				if (!((AbstractExtent)x).isEmpty() && newcover == 0 && origcover == 0) {
+					newcover = origcover = 1;
+				}
+				
+				gain = (newcover / origcover) - previouscoverage; 
 				this.gain = Double.isNaN(this.gain) ? gain : this.gain * gain;
 				return new Pair<>(newcover == 0 ? null : x, newcover / origcover);
 			}

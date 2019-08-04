@@ -9,6 +9,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -29,10 +30,13 @@ public class ExpressionClassifier implements IPredicateClassifier<IDirectObserva
 
 	public final static String ID = "klab.runtime.classifier";
 
-	private IConcept abstractPredicate;
-	private IConcept targetPredicate;
 	private static Set<String> prototypeParameters;
 	Map<String, Object> additionalParameters = null;
+
+	private Descriptor expressionDescriptor;
+	private ILanguageExpression expression;
+	private Descriptor conditionDescriptor;
+	private ILanguageExpression condition;
 
 	static {
 		prototypeParameters = new HashSet<>();
@@ -46,9 +50,9 @@ public class ExpressionClassifier implements IPredicateClassifier<IDirectObserva
 	}
 
 	public ExpressionClassifier(Descriptor code, Descriptor condition, IParameters<String> parameters,
-			IComputationContext context, IConcept basePredicate, IConcept targetPredicate,
-			Map<String, Object> additional) {
-
+			IComputationContext context, Map<String, Object> additional) {
+		this.expressionDescriptor = code;
+		this.conditionDescriptor = condition;
 	}
 
 	@Override
@@ -57,15 +61,39 @@ public class ExpressionClassifier implements IPredicateClassifier<IDirectObserva
 	}
 
 	@Override
-	public boolean initialize(IObjectArtifact observations, IComputationContext context) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public IConcept classify(IConcept abstractPredicate, IDirectObservation observation, IComputationContext context) {
-		// TODO Auto-generated method stub
-		return null;
+
+		/*
+		 * run expression, ensure it returns an OK concept, if so return it.
+		 */
+
+		boolean ok = true;
+		if (this.expression == null) {
+			this.expression = expressionDescriptor.compile();
+			if (conditionDescriptor != null) {
+				this.condition = conditionDescriptor.compile();
+			}
+		}
+		if (condition != null) {
+			Object ret = condition.override("self", observation, "scale", observation.getScale(), "space", observation.getScale().getSpace())
+					.eval(context, context, additionalParameters);
+			ok = ret instanceof Boolean && ((Boolean) ret);
+		}
+		
+		Object ret = ok 
+				? expression.override("self", observation, "scale", observation.getScale(), "space", observation.getScale().getSpace())
+						.eval(context, context, additionalParameters) 
+				: null;
+
+		if (ret == null) {
+			return null;
+		}
+						
+		if (ret instanceof IConcept && ((IConcept)ret).is(abstractPredicate)) {
+			return (IConcept)ret;
+		}
+		
+		throw new IllegalStateException("classification expression does not return a concept or a subtype of " + abstractPredicate);
 	}
 
 	@Override
@@ -94,11 +122,13 @@ public class ExpressionClassifier implements IPredicateClassifier<IDirectObserva
 			}
 		}
 
-		IConcept basePredicate = parameters.get("base", IConcept.class);
-		IConcept targetPredicate = parameters.get("target", IConcept.class);
+		return new ExpressionClassifier(selector, condition, context, context, additionalParameters);
+	}
 
-		return new ExpressionClassifier(selector, condition, context, context, basePredicate, targetPredicate,
-				additionalParameters);
+	@Override
+	public boolean initialize(IObjectArtifact observations, IConcept abstractPredicate, IConcept targetPredicate,
+			IComputationContext context) {
+		return true;
 	}
 
 }

@@ -56,6 +56,7 @@ import org.integratedmodelling.kim.kim.ObserveStatementBody;
 import org.integratedmodelling.kim.kim.OwlImport;
 import org.integratedmodelling.kim.kim.ParameterList;
 import org.integratedmodelling.kim.kim.PropertyStatement;
+import org.integratedmodelling.kim.kim.Quantity;
 import org.integratedmodelling.kim.kim.Statement;
 import org.integratedmodelling.kim.kim.Table;
 import org.integratedmodelling.kim.kim.TableRow;
@@ -446,6 +447,13 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   private EClass numberEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass quantityEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -4655,9 +4663,20 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
+  public EReference getValue_Quantity()
+  {
+    return (EReference)valueEClass.getEStructuralFeatures().get(8);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EAttribute getValue_Null()
   {
-    return (EAttribute)valueEClass.getEStructuralFeatures().get(8);
+    return (EAttribute)valueEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -4668,7 +4687,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getValue_Language()
   {
-    return (EAttribute)valueEClass.getEStructuralFeatures().get(9);
+    return (EAttribute)valueEClass.getEStructuralFeatures().get(10);
   }
 
   /**
@@ -5010,6 +5029,39 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   public EAttribute getNumber_Exp()
   {
     return (EAttribute)numberEClass.getEStructuralFeatures().get(7);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getQuantity()
+  {
+    return quantityEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getQuantity_Value()
+  {
+    return (EReference)quantityEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getQuantity_Unit()
+  {
+    return (EReference)quantityEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -5486,6 +5538,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(valueEClass, VALUE__LIST);
     createEReference(valueEClass, VALUE__TABLE);
     createEReference(valueEClass, VALUE__MAP);
+    createEReference(valueEClass, VALUE__QUANTITY);
     createEAttribute(valueEClass, VALUE__NULL);
     createEAttribute(valueEClass, VALUE__LANGUAGE);
 
@@ -5525,6 +5578,10 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEAttribute(numberEClass, NUMBER__EXPONENTIAL);
     createEAttribute(numberEClass, NUMBER__EXP_NEGATIVE);
     createEAttribute(numberEClass, NUMBER__EXP);
+
+    quantityEClass = createEClass(QUANTITY);
+    createEReference(quantityEClass, QUANTITY__VALUE);
+    createEReference(quantityEClass, QUANTITY__UNIT);
 
     // Create enums
     dataTypeEEnum = createEEnum(DATA_TYPE);
@@ -5984,6 +6041,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getValue_List(), this.getList(), null, "list", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Table(), this.getLookupTable(), null, "table", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Map(), this.getMap(), null, "map", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getValue_Quantity(), this.getQuantity(), null, "quantity", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getValue_Null(), ecorePackage.getEBoolean(), "null", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getValue_Language(), ecorePackage.getEString(), "language", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
@@ -6023,6 +6081,10 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEAttribute(getNumber_Exponential(), ecorePackage.getEBoolean(), "exponential", null, 0, 1, org.integratedmodelling.kim.kim.Number.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getNumber_ExpNegative(), ecorePackage.getEBoolean(), "expNegative", null, 0, 1, org.integratedmodelling.kim.kim.Number.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getNumber_Exp(), ecorePackage.getEInt(), "exp", null, 0, 1, org.integratedmodelling.kim.kim.Number.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(quantityEClass, Quantity.class, "Quantity", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getQuantity_Value(), this.getNumber(), null, "value", null, 0, 1, Quantity.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getQuantity_Unit(), this.getUnit(), null, "unit", null, 0, 1, Quantity.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     // Initialize enums and add enum literals
     initEEnum(dataTypeEEnum, DataType.class, "DataType");

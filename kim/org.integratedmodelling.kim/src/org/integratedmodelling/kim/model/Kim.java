@@ -904,19 +904,19 @@ public enum Kim {
 		case "quality":
 			return EnumSet.of(Type.QUALITY, Type.OBSERVABLE);
 		case "ordering":
-			return EnumSet.of(Type.ORDERING, Type.TRAIT, Type.ATTRIBUTE);
+			return EnumSet.of(Type.ORDERING, Type.TRAIT, Type.ATTRIBUTE, Type.PREDICATE);
 		case "attribute":
-			return EnumSet.of(Type.ATTRIBUTE, Type.TRAIT);
+			return EnumSet.of(Type.ATTRIBUTE, Type.TRAIT, Type.PREDICATE);
 		case "type":
 			return EnumSet.of(Type.CLASS, Type.QUALITY, Type.OBSERVABLE);
 		case "identity":
-			return EnumSet.of(Type.IDENTITY, Type.TRAIT);
+			return EnumSet.of(Type.IDENTITY, Type.TRAIT, Type.PREDICATE);
 		case "role":
-			return EnumSet.of(Type.ROLE);
+			return EnumSet.of(Type.ROLE, Type.PREDICATE);
 		case "realm":
-			return EnumSet.of(Type.REALM, Type.TRAIT);
+			return EnumSet.of(Type.REALM, Type.TRAIT, Type.PREDICATE);
 		case "domain":
-			return EnumSet.of(Type.DOMAIN);
+			return EnumSet.of(Type.DOMAIN, Type.PREDICATE);
 		case "energy":
 			return EnumSet.of(Type.ENERGY, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "entropy":
@@ -1004,7 +1004,7 @@ public enum Kim {
 		case "extent":
 			return EnumSet.of(Type.EXTENT);
 		case "observability":
-			return EnumSet.of(Type.OBSERVABILITY, Type.DENIABLE, Type.TRAIT);
+			return EnumSet.of(Type.OBSERVABILITY, Type.DENIABLE, Type.TRAIT, Type.PREDICATE);
 		}
 
 		throw new UnsupportedOperationException("internal error: type " + string + " not handled");

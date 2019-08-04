@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Path;
 
@@ -44,6 +45,11 @@ public abstract class Observation extends ObservedArtifact implements IObservati
     private long             creationTime;
     private long             exitTime;
 
+	/*
+	 * Any modification that needs to be reported to clients is recorded here
+	 */
+	private List<ObservationChange> modificationsToReport = new ArrayList<>();
+    
     public String getUrn() {
         return "local:observation:" + getParentIdentity(Session.class).getId() + ":" + getId();
     }
@@ -59,6 +65,10 @@ public abstract class Observation extends ObservedArtifact implements IObservati
         this.setExitTime(-1);
     }
 
+    protected void reportChange(ObservationChange change) {
+    	this.modificationsToReport.add(change);
+    }
+    
     protected void touch() {
         this.timestamp = System.currentTimeMillis();
     }
@@ -217,5 +227,21 @@ public abstract class Observation extends ObservedArtifact implements IObservati
     public void setExitTime(long exitTime) {
         this.exitTime = exitTime;
     }
+    
+	/**
+	 * Get any modification that still needs to be reported and reset our list to
+	 * empty.
+	 * 
+	 * @return
+	 */
+	public List<ObservationChange> getChangesAndReset() {
+		List<ObservationChange> ret = this.modificationsToReport;
+		this.modificationsToReport = new ArrayList<>();
+		return ret;
+	}
+
+	public void evaluateChanges() {
+		// does nothing here; overridden in each final class
+	}
 
 }

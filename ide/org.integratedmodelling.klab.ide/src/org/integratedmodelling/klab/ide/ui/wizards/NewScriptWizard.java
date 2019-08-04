@@ -28,6 +28,9 @@ package org.integratedmodelling.klab.ide.ui.wizards;
 
 import java.io.File;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Display;
 import org.integratedmodelling.kim.api.IKimNamespace;
@@ -52,7 +55,7 @@ public class NewScriptWizard extends Wizard {
     private String path;
 
     public NewScriptWizard(ENavigatorItem folder, IKimProject target, Role role) {
-        setWindowTitle("Create a new k.LAB Namespace");
+        setWindowTitle("Create a new k.LAB " + role.name().toLowerCase());
         this.target = target;
         this.role = role;
         this.path = "";
@@ -82,8 +85,14 @@ public class NewScriptWizard extends Wizard {
                 File file = message.getPayload(ProjectModificationNotification.class).getFile();
                 Activator.loader().add(file);
                 Display.getDefault().asyncExec(() -> {
-                    Eclipse.INSTANCE.openFile(Eclipse.INSTANCE.getIFile(file), 0);
-                    KlabNavigator.refresh();
+                	IFile ifile = Eclipse.INSTANCE.getIFile(file);
+					try {
+						ifile.getParent().refreshLocal(IFolder.DEPTH_INFINITE, null);
+	                    Eclipse.INSTANCE.openFile(ifile, 0);
+	                    KlabNavigator.refresh();
+					} catch (CoreException e) {
+						Eclipse.INSTANCE.handleException(e);
+					}
                 });
             }, IMessage.MessageClass.ProjectLifecycle,
                     role == Role.SCRIPT ? IMessage.Type.CreateScript : IMessage.Type.CreateTestCase, request);

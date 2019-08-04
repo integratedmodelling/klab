@@ -80,6 +80,10 @@ public class ComputableResource extends KimStatement implements IComputableResou
 	// all that follows can only be set on a copy as they are runtime-dependent.
 	private String targetId;
 	private IObservable target;
+	// this is the observable of the original actuator, which is only used when the
+	// resource is a filter (because that will differ from the observable of the
+	// actuator the resource is used in).
+	private IObservable originalObservable;
 	private boolean copy = false;
 
 	/**
@@ -118,6 +122,7 @@ public class ComputableResource extends KimStatement implements IComputableResou
 		ret.externalParameters = this.externalParameters;
 		// ret.type = this.type;
 		ret.resolutionMode = this.resolutionMode;
+		ret.originalObservable = this.originalObservable;
 		return ret;
 	}
 
@@ -742,7 +747,16 @@ public class ComputableResource extends KimStatement implements IComputableResou
 
 	@Override
 	public String toString() {
-		return "<" + getType() + " -> " + (target == null ? "default" : target) + " [" + dataflowId + "]>";
+		return "<" + getType() + " -> " + (target == null ? "default" : target) + " [" + dataflowId + "]>"
+				+ (serviceCall == null ? "" : (" " + serviceCall));
+	}
+
+	public IObservable getOriginalObservable() {
+		return originalObservable;
+	}
+
+	public void setOriginalObservable(IObservable originalObservable) {
+		this.originalObservable = originalObservable;
 	}
 
 //	public IComputableResource withFilterTarget(IObservable observable) {

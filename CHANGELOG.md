@@ -28,14 +28,25 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 ### Added
+- Logics for instantiation and subsequent resolution of attributes in direct observations
+  wired in. Many fixes to resolution and kbox search to support the implicit inherencies
+  required, including to the Description activity API.
+- Syntactic support in k.IM for quantities with units, such as 10.year, to be used in 
+  function and annotation parameters.
 ### Changed
 - Revised k.IM syntax for restrictions and allowed arbitrary properties to be defined
   through it, which is discouraged but should remain possible. Implementation still
   ignores all that. Put stubs in the docs to document why using attributes, roles and
   the like is a better strategy that does not introduce opaque semantics.
+- Queries for concrete attributes applied to objects produce observation groups that
+  are **views** of the main group containing all observations of the same base type, regardless
+  of attributes.
+- Predicates (and only predicates) will resolve more specific predicates, even if the
+  resolving concept is abstract.
 ### Fixed
 - Fix declaration of presence dereifier (which caused a number->boolean conversion being
   inserted, and false being produced overall).
+- Fixed new Eclipse lack of sync upon creation of scripts and test cases.
 ### Removed
 
 ## [0.10.0.176] -- 2019/07/30

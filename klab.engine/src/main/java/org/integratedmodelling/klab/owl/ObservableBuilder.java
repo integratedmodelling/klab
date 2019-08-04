@@ -1469,9 +1469,8 @@ public class ObservableBuilder implements IObservable.Builder {
 						+ Concepts.INSTANCE.getDisplayName(other), declaration);
 			}
 			cleanId = getCleanId(inherent);
-			cId += "Of" + cleanId;
-			cDs += "Of" + cleanId;
-			// uId += "Of" + cleanId;
+			cId += (distributedInherency ? "OfEach" : "Of") + cleanId;
+			cDs += (distributedInherency ? "OfEach" : "Of") + cleanId;
 		}
 
 		if (context != null) {
@@ -1621,12 +1620,12 @@ public class ObservableBuilder implements IObservable.Builder {
 			}
 		}
 
-		if (distributedInherency) {
-			// TODO revise - this must have proper declaration etc.
-			// distinguish the label to avoid conflicts; semantically we are the same, so
-			// the display label remains unchanged.
-			cId += "Classifier";
-		}
+//		if (distributedInherency) {
+//			// TODO revise - this must have proper declaration etc.
+//			// distinguish the label to avoid conflicts; semantically we are the same, so
+//			// the display label remains unchanged.
+//			cId += "Classifier";
+//		}
 
 		List<IAxiom> axioms = new ArrayList<>();
 		axioms.add(Axiom.ClassAssertion(conceptId, type));

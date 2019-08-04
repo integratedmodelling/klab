@@ -87,13 +87,6 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 		if (resource.getCondition() != null) {
 			ret.getParameters().put(resource.isNegated() ? "unlesscondition" : "ifcondition", resource.getCondition());
 		}
-
-		if (classifier) {
-			ret.getParameters().put("base", Observables.INSTANCE.getBaseObservable(observable.getType()));
-			if (((Observable)observable).getTargetPredicate() != null) {
-				ret.getParameters().put("target", ((Observable)observable).getTargetPredicate());
-			}
-		}
 		
 		return ret;
 	}

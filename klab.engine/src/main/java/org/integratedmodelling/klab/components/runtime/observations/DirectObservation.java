@@ -33,11 +33,6 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 	 */
 	private Set<IConcept> predicatesToResolve = new LinkedHashSet<>();
 
-	/*
-	 * Any modification that needs to be reported to clients is recorded here
-	 */
-	private List<ObservationChange> modificationsToReport = new ArrayList<>();
-
 	protected DirectObservation(String name, Observable observable, Scale scale, IRuntimeContext context) {
 		super(observable, scale, context);
 		this.name = name;
@@ -90,18 +85,6 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 			// record the modification
 			
 		}
-	}
-
-	/**
-	 * Get any modification that still needs to be reported and reset our list to
-	 * empty.
-	 * 
-	 * @return
-	 */
-	public List<ObservationChange> getChangesAndReset() {
-		List<ObservationChange> ret = this.modificationsToReport;
-		this.modificationsToReport = new ArrayList<>();
-		return ret;
 	}
 
 	public IConcept nextPredicateToResolve() {

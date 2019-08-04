@@ -308,4 +308,13 @@ public interface IRuntimeContext extends IComputationContext {
 	 * @return
 	 */
 	ObservationGroup getObservationGroup(IObservable observable, IScale scale);
+
+	/**
+	 * Add the predicate to the passed observation. If the predicate wasn't there
+	 * already, resolve it and run the resulting dataflow.
+	 * 
+	 * @param target
+	 * @param predicate a concrete trait or role
+	 */
+	void newPredicate(IDirectObservation target, IConcept predicate);
 }

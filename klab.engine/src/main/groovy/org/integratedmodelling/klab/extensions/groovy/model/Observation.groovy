@@ -1,7 +1,11 @@
 package org.integratedmodelling.klab.extensions.groovy.model
 
+import org.integratedmodelling.kim.api.IKimConcept.Type
+import org.integratedmodelling.klab.Roles
+import org.integratedmodelling.klab.Traits
+import org.integratedmodelling.klab.api.knowledge.IConcept
+import org.integratedmodelling.klab.api.knowledge.ISemantic
 import org.integratedmodelling.klab.api.model.IModel
-import org.integratedmodelling.klab.api.observations.IDirectObservation
 import org.integratedmodelling.klab.api.observations.IObservation
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor
 import org.integratedmodelling.klab.engine.runtime.code.groovy.Wrapper
@@ -26,6 +30,25 @@ abstract class Observation<T extends IObservation> extends Wrapper<T> {
     }
 
     
+	def isa(Object o) {
+		
+		if (o instanceof Concept) {
+			o = ((Concept)o).concept;
+		}
+		if (!(o instanceof ISemantic)) {
+			return false;
+		}
+		IConcept c = ((ISemantic)o).getType();
+		if (c.is(Type.TRAIT)) {
+			return Traits.INSTANCE.hasTrait(unwrap().getObservable().getType(), c);
+		}
+		if (c.is(Type.ROLE)) {
+			return Roles.INSTANCE.hasRole(unwrap().getObservable().getType(), c);
+		}
+		return unwrap().getObservable().getType().is(c);
+	}
+	
+	
     def size() {
         // gimmick to be able to call size() on a selection even if it results in one observation.
         return 1;

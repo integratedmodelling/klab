@@ -36,16 +36,18 @@ import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
+import org.integratedmodelling.klab.api.model.contextualization.IPredicateClassifier;
+import org.integratedmodelling.klab.api.model.contextualization.IPredicateResolver;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IActivity;
-import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
@@ -132,7 +134,11 @@ public class Actuator implements IActuator {
 	// this is for documentation templates, not saved
 	private transient IRuntimeContext currentContext;
 
+	/*
+	 * this gets a copy of the original model resource, so we can do things to it.
+	 */
 	public void addComputation(IComputableResource resource) {
+		((ComputableResource) resource).setOriginalObservable(this.observable);
 		computedResources.add(resource);
 		IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource, this);
 		computationStrategy.add(new Pair<>(serviceCall, resource));
@@ -545,6 +551,47 @@ public class Actuator implements IActuator {
 					ctx.link(ctx.getContextObservation(), ret);
 				}
 			}
+		} else if (contextualizer instanceof IPredicateClassifier) {
+
+			/*
+			 * these are filters, so ret must be filled in already
+			 */
+			IConcept abstractPredicate = Observables.INSTANCE
+					.getBaseObservable(((ComputableResource) resource).getOriginalObservable().getType());
+			IConcept targetPredicate = ((Observable) ((ComputableResource) resource).getOriginalObservable())
+					.getTargetPredicate();
+
+			boolean ok = ((IPredicateClassifier<?>) contextualizer).initialize((IObjectArtifact) ret, abstractPredicate,
+					targetPredicate, ctx);
+
+			if (ok) {
+				for (IArtifact target : ret) {
+
+					@SuppressWarnings("rawtypes")
+					IConcept c = ((IPredicateClassifier) contextualizer).classify(abstractPredicate,
+							(IDirectObservation) target, ctx);
+					if (c != null) {
+						// attribute and resolve
+						ctx.newPredicate((IDirectObservation)target, c);
+					}
+				}
+			}
+
+			/*
+			 * Tell the observation group to revise its situation and enqueue any
+			 * modification messages.
+			 */
+			((Observation) ret).evaluateChanges();
+			
+			/*
+			 * TODO if we had a concrete target, we create a view and report that as a new
+			 * observation.
+			 */
+
+		} else if (contextualizer instanceof IPredicateResolver) {
+
+			System.out.println("KOKKODEO");
+
 		}
 
 		/**
@@ -1093,9 +1140,9 @@ public class Actuator implements IActuator {
 
 				((Report) context.getReport()).include(observation);
 			} else {
-				
+
 				// TODO notify a change in an observation group, if any happened
-				
+
 			}
 
 			if (product instanceof ObservationGroup) {
@@ -1196,7 +1243,7 @@ public class Actuator implements IActuator {
 
 	private boolean hasDependency(IActuator dependency) {
 		for (IActuator actuator : actuators) {
-			if (((Actuator)actuator).getObservable().canResolve(((Actuator)dependency).observable)) {
+			if (((Actuator) actuator).getObservable().canResolve(((Actuator) dependency).observable)) {
 				return true;
 			}
 		}

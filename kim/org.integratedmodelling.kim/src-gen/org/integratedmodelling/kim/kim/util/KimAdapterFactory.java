@@ -53,6 +53,7 @@ import org.integratedmodelling.kim.kim.ObserveStatementBody;
 import org.integratedmodelling.kim.kim.OwlImport;
 import org.integratedmodelling.kim.kim.ParameterList;
 import org.integratedmodelling.kim.kim.PropertyStatement;
+import org.integratedmodelling.kim.kim.Quantity;
 import org.integratedmodelling.kim.kim.REL_OPERATOR;
 import org.integratedmodelling.kim.kim.Statement;
 import org.integratedmodelling.kim.kim.Table;
@@ -392,6 +393,11 @@ public class KimAdapterFactory extends AdapterFactoryImpl
       public Adapter caseNumber(org.integratedmodelling.kim.kim.Number object)
       {
         return createNumberAdapter();
+      }
+      @Override
+      public Adapter caseQuantity(Quantity object)
+      {
+        return createQuantityAdapter();
       }
       @Override
       public Adapter defaultCase(EObject object)
@@ -1206,6 +1212,21 @@ public class KimAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createNumberAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.Quantity <em>Quantity</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.Quantity
+   * @generated
+   */
+  public Adapter createQuantityAdapter()
   {
     return null;
   }

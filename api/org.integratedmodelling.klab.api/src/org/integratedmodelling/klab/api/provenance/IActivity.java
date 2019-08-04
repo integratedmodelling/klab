@@ -81,6 +81,15 @@ public interface IActivity extends IProvenance.Node {
 
 		IResolutionScope.Mode mode;
 
+		/**
+		 * Return the resolution mode for this description activity.
+		 * 
+		 * @return
+		 */
+		public IResolutionScope.Mode getResolutionMode() {
+			return mode;
+		}
+		
 		Description(IResolutionScope.Mode mode) {
 			this.mode = mode;
 		}

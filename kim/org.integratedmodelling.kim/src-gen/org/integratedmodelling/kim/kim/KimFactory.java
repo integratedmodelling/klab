@@ -502,6 +502,15 @@ public interface KimFactory extends EFactory
   Number createNumber();
 
   /**
+   * Returns a new object of class '<em>Quantity</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Quantity</em>'.
+   * @generated
+   */
+  Quantity createQuantity();
+
+  /**
    * Returns the package supported by this factory.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

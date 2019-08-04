@@ -51,6 +51,7 @@ import org.integratedmodelling.kim.kim.ObserveStatementBody;
 import org.integratedmodelling.kim.kim.OwlImport;
 import org.integratedmodelling.kim.kim.ParameterList;
 import org.integratedmodelling.kim.kim.PropertyStatement;
+import org.integratedmodelling.kim.kim.Quantity;
 import org.integratedmodelling.kim.kim.REL_OPERATOR;
 import org.integratedmodelling.kim.kim.Statement;
 import org.integratedmodelling.kim.kim.Table;
@@ -495,6 +496,13 @@ public class KimSwitch<T> extends Switch<T>
       {
         org.integratedmodelling.kim.kim.Number number = (org.integratedmodelling.kim.kim.Number)theEObject;
         T result = caseNumber(number);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.QUANTITY:
+      {
+        Quantity quantity = (Quantity)theEObject;
+        T result = caseQuantity(quantity);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -1346,6 +1354,22 @@ public class KimSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseNumber(org.integratedmodelling.kim.kim.Number object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Quantity</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Quantity</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseQuantity(Quantity object)
   {
     return null;
   }

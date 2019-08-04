@@ -3896,13 +3896,22 @@ public interface KimPackage extends EPackage
   int VALUE__MAP = 7;
 
   /**
+   * The feature id for the '<em><b>Quantity</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__QUANTITY = 8;
+
+  /**
    * The feature id for the '<em><b>Null</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VALUE__NULL = 8;
+  int VALUE__NULL = 9;
 
   /**
    * The feature id for the '<em><b>Language</b></em>' attribute.
@@ -3911,7 +3920,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__LANGUAGE = 9;
+  int VALUE__LANGUAGE = 10;
 
   /**
    * The number of structural features of the '<em>Value</em>' class.
@@ -3920,7 +3929,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE_FEATURE_COUNT = 10;
+  int VALUE_FEATURE_COUNT = 11;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.FunctionImpl <em>Function</em>}' class.
@@ -4262,6 +4271,43 @@ public interface KimPackage extends EPackage
   int NUMBER_FEATURE_COUNT = 8;
 
   /**
+   * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.QuantityImpl <em>Quantity</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kim.kim.impl.QuantityImpl
+   * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getQuantity()
+   * @generated
+   */
+  int QUANTITY = 53;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int QUANTITY__VALUE = 0;
+
+  /**
+   * The feature id for the '<em><b>Unit</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int QUANTITY__UNIT = 1;
+
+  /**
+   * The number of structural features of the '<em>Quantity</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int QUANTITY_FEATURE_COUNT = 2;
+
+  /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.DataType <em>Data Type</em>}' enum.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4269,7 +4315,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getDataType()
    * @generated
    */
-  int DATA_TYPE = 53;
+  int DATA_TYPE = 54;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.UnitOp <em>Unit Op</em>}' enum.
@@ -4279,7 +4325,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUnitOp()
    * @generated
    */
-  int UNIT_OP = 54;
+  int UNIT_OP = 55;
 
 
   /**
@@ -8361,6 +8407,17 @@ public interface KimPackage extends EPackage
   EReference getValue_Map();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Value#getQuantity <em>Quantity</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Quantity</em>'.
+   * @see org.integratedmodelling.kim.kim.Value#getQuantity()
+   * @see #getValue()
+   * @generated
+   */
+  EReference getValue_Quantity();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Value#isNull <em>Null</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -8716,6 +8773,38 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EAttribute getNumber_Exp();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.Quantity <em>Quantity</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Quantity</em>'.
+   * @see org.integratedmodelling.kim.kim.Quantity
+   * @generated
+   */
+  EClass getQuantity();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Quantity#getValue <em>Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Value</em>'.
+   * @see org.integratedmodelling.kim.kim.Quantity#getValue()
+   * @see #getQuantity()
+   * @generated
+   */
+  EReference getQuantity_Value();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Quantity#getUnit <em>Unit</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Unit</em>'.
+   * @see org.integratedmodelling.kim.kim.Quantity#getUnit()
+   * @see #getQuantity()
+   * @generated
+   */
+  EReference getQuantity_Unit();
 
   /**
    * Returns the meta object for enum '{@link org.integratedmodelling.kim.kim.DataType <em>Data Type</em>}'.
@@ -11855,6 +11944,14 @@ public interface KimPackage extends EPackage
     EReference VALUE__MAP = eINSTANCE.getValue_Map();
 
     /**
+     * The meta object literal for the '<em><b>Quantity</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE__QUANTITY = eINSTANCE.getValue_Quantity();
+
+    /**
      * The meta object literal for the '<em><b>Null</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -12129,6 +12226,32 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute NUMBER__EXP = eINSTANCE.getNumber_Exp();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.QuantityImpl <em>Quantity</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kim.kim.impl.QuantityImpl
+     * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getQuantity()
+     * @generated
+     */
+    EClass QUANTITY = eINSTANCE.getQuantity();
+
+    /**
+     * The meta object literal for the '<em><b>Value</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference QUANTITY__VALUE = eINSTANCE.getQuantity_Value();
+
+    /**
+     * The meta object literal for the '<em><b>Unit</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference QUANTITY__UNIT = eINSTANCE.getQuantity_Unit();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.DataType <em>Data Type</em>}' enum.

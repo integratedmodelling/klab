@@ -252,8 +252,7 @@ public class Observable implements IObservable {
 			} else if (observable.is(Type.PROCESS)) {
 				observationType = IActivity.Description.SIMULATION;
 			} else if (observable.is(Type.TRAIT) || observable.is(Type.ROLE)) {
-				boolean distributed = Boolean
-						.parseBoolean(observable.getMetadata().get(NS.INHERENCY_IS_DISTRIBUTED, "false"));
+				boolean distributed = Observables.INSTANCE.hasDistributedInherency(observable);
 				observationType = distributed ? IActivity.Description.CLASSIFICATION : IActivity.Description.CHARACTERIZATION;
 			}
 		}

@@ -324,15 +324,14 @@ ObservableSemantics:
 		('named' name=(LOWERCASE_ID|STRING))?
 	);
 
-
 ValueOperator:
 	(modifier=VALUE_OPERATOR | downTo='down' 'to') 
-		(comparisonValue=Number | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')')) |
+		(comparisonValue=Number| comparisonQuantity=Quantity | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')')) |
 	total='total'
 ;
 
 /** 
- * Same as full observablesemantics above but with annotations and without 'as' (using 
+ * Same as full observable semantics above but with annotations and without 'as' (using 
  * contextualizer-specific annotations for role in models).
  */
 AnnotatedObservableSemantics returns ObservableSemantics:
@@ -762,6 +761,7 @@ ValueWithIdAndConcept returns Value:
 	list=List |
 	table=LookupTable |
 	map=Map |
+	quantity=Quantity |
 	null?='unknown';
 
 Value:
@@ -771,6 +771,7 @@ Value:
 	id=(LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID) |
 	list=List |
 	table=LookupTable |
+	quantity=Quantity |
 	map=Map |
 	null?='unknown';
 
@@ -780,6 +781,7 @@ LiteralValueWithConcept returns Value:
 	concept=ConceptDeclaration |
 	function=Function |
 	expr=EXPR |
+	quantity=Quantity |
 	id=(LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID) /* |
 	list=List |
 	table=LookupTable |
@@ -962,6 +964,10 @@ Currency:
 
 Number:
 	('+' | negative?='-')? => real=INT (=> long?='l')? => (decimal?='.' decimalPart=INT)? => (exponential?=('e' | 'E') ('+' | expNegative?='-')? exp=INT)?;
+
+Quantity:
+	value=Number '.' unit=Unit
+;
 
 terminal LOWERCASE_ID:
 	('a'..'z') ('a'..'z' | '0'..'9'| '_')*;

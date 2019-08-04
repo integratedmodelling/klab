@@ -222,14 +222,14 @@ public class ResolutionScope implements IResolutionScope {
 
 	/**
 	 * Get an empty resolution scope. FOR TESTING ONLY.
+	 * 
 	 * @param monitor
 	 * @return
 	 */
 	public static ResolutionScope create(IMonitor monitor) {
 		return new ResolutionScope(monitor);
 	}
-	
-	
+
 	/**
 	 * Get a root scope with the scale of an existing subject used as a context for
 	 * the next observations.
@@ -244,7 +244,7 @@ public class ResolutionScope implements IResolutionScope {
 			throws KlabException {
 		return new ResolutionScope(observer, monitor, scenarios);
 	}
-	
+
 	private ResolutionScope(IMonitor monitor) throws KlabException {
 		this.coverage = Coverage.empty(Scale.create());
 		this.monitor = monitor;
@@ -319,7 +319,7 @@ public class ResolutionScope implements IResolutionScope {
 	public final ResolutionScope empty() {
 		return new ResolutionScope(this, 0.0);
 	}
-	
+
 	public boolean isResolving(String modelName) {
 		return beingResolved.contains(modelName);
 	}
@@ -389,14 +389,10 @@ public class ResolutionScope implements IResolutionScope {
 	/**
 	 * Return a scope to resolve a relationship that will link the passed subjects.
 	 * 
-	 * @param observable
-	 *            must be a relationship observable
-	 * @param scale
-	 *            scale of the relationship
-	 * @param source
-	 *            the source subject
-	 * @param target
-	 *            the target subject
+	 * @param observable must be a relationship observable
+	 * @param scale      scale of the relationship
+	 * @param source     the source subject
+	 * @param target     the target subject
 	 * @return a new scope
 	 */
 	public ResolutionScope getChildScope(Observable observable, Scale scale, Subject source, Subject target,
@@ -469,6 +465,21 @@ public class ResolutionScope implements IResolutionScope {
 		return ret;
 	}
 
+	/**
+	 * 
+	 * @param observer
+	 * @return a scope to resolve the passed observer
+	 * @throws KlabException
+	 */
+	public ResolutionScope getChildScope(IDirectObservation observer, Mode mode) throws KlabException {
+
+		ResolutionScope ret = new ResolutionScope(this, true);
+		ret.context = (DirectObservation) observer;
+		ret.coverage = Coverage.full(observer.getScale());
+		ret.mode = mode;
+		return ret;
+	}
+	
 	@Override
 	public Collection<String> getScenarios() {
 		return scenarios;
@@ -602,7 +613,7 @@ public class ResolutionScope implements IResolutionScope {
 	private ResolutionScope getAdditionalScope(IObservable o) {
 		ResolutionScope ret = new ResolutionScope(this);
 		ret.observable = (Observable) o;
-		ret.mode = o.getType().is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION;
+		ret.mode = o.getDescription().getResolutionMode();
 		return ret;
 	}
 
@@ -1009,7 +1020,7 @@ public class ResolutionScope implements IResolutionScope {
 					if (baseOb != null) {
 						IConcept domain = baseOb.getDomain();
 						if (domain != null) {
-							newName = resolvable.getReferenceName() +  "__" + Concepts.INSTANCE.getCodeName(domain);
+							newName = resolvable.getReferenceName() + "__" + Concepts.INSTANCE.getCodeName(domain);
 						}
 					}
 					domainsTested = true;
@@ -1024,7 +1035,7 @@ public class ResolutionScope implements IResolutionScope {
 					if (baseOb != null) {
 						String namespace = baseOb.getNamespace();
 						if (namespace != null) {
-							newName = resolvable.getReferenceName() +  "__" + namespace.replaceAll("\\.", "_");
+							newName = resolvable.getReferenceName() + "__" + namespace.replaceAll("\\.", "_");
 						}
 					}
 					namespacesTested = true;
@@ -1034,12 +1045,12 @@ public class ResolutionScope implements IResolutionScope {
 					/*
 					 * worst case, resort to numbers - should be very unlikely
 					 */
-					newName = resolvable.getReferenceName() +  "__" + (i++);
+					newName = resolvable.getReferenceName() + "__" + (i++);
 				}
 			} while (knownObservables.containsKey(newName));
 
 			System.out.println("SUPERCIUCK HAS BEEN RENAMED " + newName);
-			
+
 			ret = new Observable(resolvable);
 			ret.setReferenceName(newName);
 

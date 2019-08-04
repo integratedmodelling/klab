@@ -13,7 +13,6 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.provenance.IActivity;
-import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.services.IObservableService;
@@ -65,8 +64,7 @@ public class ObservationStrategy {
 		List<ObservationStrategy> ret = new ArrayList<>();
 
 		for (IObservable dep : model.getDependencies()) {
-			ret.add(new ObservationStrategy((Observable) dep,
-					dep.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
+			ret.add(new ObservationStrategy((Observable) dep, dep.getDescription().getResolutionMode()));
 		}
 
 		if (observable.is(Type.RELATIONSHIP)) {
@@ -88,8 +86,7 @@ public class ObservationStrategy {
 			IConcept dep = observable.getInherentType();
 			if (((Model) model).findDependency(dep) == null) {
 				ret.add(new ObservationStrategy(Observable.promote(dep),
-						// this is always countable, but leave it.
-						dep.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
+						observable.getDescription().getResolutionMode()));
 			}
 		}
 
@@ -107,8 +104,7 @@ public class ObservationStrategy {
 			} else if (operator.getSecond() instanceof IObservable) {
 				IObservable dep = (IObservable) operator.getSecond();
 				if (((Model) model).findDependency(dep) == null) {
-					ret.add(new ObservationStrategy((Observable) dep,
-							dep.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
+					ret.add(new ObservationStrategy((Observable) dep, dep.getDescription().getResolutionMode()));
 				}
 			}
 		}
@@ -148,7 +144,7 @@ public class ObservationStrategy {
 			}
 
 			ObservationStrategy alternative = new ObservationStrategy(target, mode);
-			
+
 			for (Pair<ValueOperator, Object> operator : operators) {
 				alternative.computation.add(Klab.INSTANCE.getRuntimeProvider().getOperatorResolver(target,
 						operator.getFirst(), operator.getSecond()));
@@ -199,7 +195,8 @@ public class ObservationStrategy {
 						.withTargetPredicate(targetAttribute).withDistributedInherency(observable.is(Type.COUNTABLE))
 						.buildObservable();
 
-				ObservationStrategy alternative = new ObservationStrategy(target, mode);
+				ObservationStrategy alternative = new ObservationStrategy(target,
+						observable.getDescription().getResolutionMode());
 
 				alternative.observables.add(filter);
 

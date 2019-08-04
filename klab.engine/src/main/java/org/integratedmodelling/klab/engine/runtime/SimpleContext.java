@@ -599,5 +599,11 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 		return new ObservationGroup((Observable)observable, (Scale)scale, this, IArtifact.Type.OBJECT);
 	}
 
+	@Override
+	public void newPredicate(IDirectObservation target, IConcept c) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

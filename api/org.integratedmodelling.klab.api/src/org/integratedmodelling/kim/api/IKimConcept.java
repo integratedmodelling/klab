@@ -31,6 +31,10 @@ public interface IKimConcept extends IKimStatement {
 		 */
 		OBSERVABLE,
 		/**
+		 * Predicates are traits, roles and domains.
+		 */
+		PREDICATE,
+		/**
 		 * 
 		 */
 		QUALITY,
