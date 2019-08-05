@@ -55,6 +55,7 @@ import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
+import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
@@ -565,6 +566,7 @@ public class Actuator implements IActuator {
 					targetPredicate, ctx);
 
 			if (ok) {
+				
 				for (IArtifact target : ret) {
 
 					@SuppressWarnings("rawtypes")
@@ -572,7 +574,7 @@ public class Actuator implements IActuator {
 							(IDirectObservation) target, ctx);
 					if (c != null) {
 						// attribute and resolve
-						ctx.newPredicate((IDirectObservation)target, c);
+						ctx.newPredicate((IDirectObservation) target, c);
 					}
 				}
 			}
@@ -582,16 +584,21 @@ public class Actuator implements IActuator {
 			 * modification messages.
 			 */
 			((Observation) ret).evaluateChanges();
-			
-			/*
-			 * TODO if we had a concrete target, we create a view and report that as a new
-			 * observation.
-			 */
 
 		} else if (contextualizer instanceof IPredicateResolver) {
 
-			System.out.println("KOKKODEO");
-
+			/*
+			 * This is called from a dataflow meant to resolve the attribute, so ret is the
+			 * observation being characterized and the attribute is there because createTarget() 
+			 * has added it.
+			 */
+			IConcept predicate = Observables.INSTANCE.getBaseObservable(observable.getType());
+			if (!((IPredicateResolver<IDirectObservation>) contextualizer).resolve(predicate, (IDirectObservation) ret,
+					ctx)) {
+				// strip the attribute that the classifier added
+				((DirectObservation)ret).removePredicate(predicate);
+			}
+			((Observation)ret).evaluateChanges();
 		}
 
 		/**

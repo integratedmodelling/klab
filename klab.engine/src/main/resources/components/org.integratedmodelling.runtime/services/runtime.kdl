@@ -94,6 +94,26 @@ filter object classifier
 		
 }
 
+filter object characterizer
+	"Characterize an object based on having a particular predicate. Only does side-effect observations."
+	label 'Characterize' 
+{
+	optional import object artifact
+		"The object artifact whose objects we classify" 
+	
+	concept expression code 
+		"The expression producing the concrete semantics for the base predicate"
+		
+    optional boolean expression ifcondition 
+		"A condition to check before executing the code" 
+
+	optional boolean expression unlesscondition 
+		"A negative conditions to check before executing the code" 
+		
+	class org.integratedmodelling.klab.components.runtime.contextualizers.ExpressionCharacterizer
+		
+}
+
 filter value categorize 
 	"Aggregate values of one state when they correspond to the same value of another."
 	label "Aggregate by $classifier"

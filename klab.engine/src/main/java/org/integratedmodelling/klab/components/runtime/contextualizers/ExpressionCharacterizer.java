@@ -75,7 +75,7 @@ public class ExpressionCharacterizer implements IPredicateResolver<IDirectObserv
 			}
 			condition = processor.describe(condCode, expressionContext, false);
 		}
-		
+
 		for (String key : parameters.keySet()) {
 			if (!key.startsWith("_") && !prototypeParameters.contains(key)) {
 				if (additionalParameters == null) {
@@ -92,7 +92,9 @@ public class ExpressionCharacterizer implements IPredicateResolver<IDirectObserv
 	public boolean resolve(IConcept predicate, IDirectObservation observation, IComputationContext context) {
 
 		/*
-		 * run expression, ensure it returns an OK concept, if so return it.
+		 * run expression for the side effects. If it returns a boolean, take it as the
+		 * return value, otherwise return true unless the condition returned false. In all
+		 * cases returning false will remove the predicate.
 		 */
 		boolean ok = true;
 
@@ -109,8 +111,13 @@ public class ExpressionCharacterizer implements IPredicateResolver<IDirectObserv
 		}
 
 		if (ok) {
-			expression.override("self", observation, "scale", observation.getScale(), "space",
+
+			Object ret = expression.override("self", observation, "scale", observation.getScale(), "space",
 					observation.getScale().getSpace()).eval(context, context, additionalParameters);
+
+			if (ret instanceof Boolean) {
+				ok = (Boolean) ret;
+			}
 		}
 
 		return ok;

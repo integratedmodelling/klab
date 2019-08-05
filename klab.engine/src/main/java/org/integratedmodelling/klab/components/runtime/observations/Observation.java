@@ -48,7 +48,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	/*
 	 * Any modification that needs to be reported to clients is recorded here
 	 */
-	private List<ObservationChange> modificationsToReport = new ArrayList<>();
+	protected List<ObservationChange> modificationsToReport = new ArrayList<>();
     
     public String getUrn() {
         return "local:observation:" + getParentIdentity(Session.class).getId() + ":" + getId();

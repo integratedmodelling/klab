@@ -1,3 +1,4 @@
+[#chapter-modeler]
 = Building reusable knowledge with k.Modeler
 :doctype: book
 

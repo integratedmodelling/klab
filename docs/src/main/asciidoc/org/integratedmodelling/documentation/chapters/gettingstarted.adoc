@@ -3,6 +3,7 @@
 
 == As a k.LAB user
 
+[#setup-modelers]
 == As a k.LAB modeler
 
 == As a k.LAB content contributor

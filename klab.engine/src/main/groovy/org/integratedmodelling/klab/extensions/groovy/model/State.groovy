@@ -21,10 +21,10 @@ class State extends Observation<IState> {
 		super(obs, binding);
 	}
 
-    State(String id, Binding binding) {
-        super(id, binding)
-    }
-    
+	State(String id, Binding binding) {
+		super(id, binding)
+	}
+
 	String toString() {
 		return unwrap().toString();
 	}
@@ -73,7 +73,7 @@ class State extends Observation<IState> {
 		return this;
 	}
 
-	
+
 	/**
 	 * Return the state with the appropriate type, aggregating as necessary. If we
 	 * have a time pointer, use that.
@@ -137,9 +137,14 @@ class State extends Observation<IState> {
 	 * @return
 	 */
 	def leftShift(Object value) {
-		throw new KlabUnimplementedException("groovy.State:leftShift");
-		setTimePointer();
-		States.set(unwrap(), value, timePointer);
+		if (value instanceof Concept ) {
+			value = ((Concept)value).concept;
+		}
+		if (value instanceof IConcept || value instanceof Number || value instanceof Boolean || value instanceof String) {
+			unwrap().fill(value);
+		} else {
+			throw new KlabUnimplementedException("groovy:State:leftShift: value not recognizable POD");
+		}
 	}
 
 

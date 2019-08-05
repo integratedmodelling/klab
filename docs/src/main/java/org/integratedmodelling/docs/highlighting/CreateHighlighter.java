@@ -19,8 +19,9 @@ import org.integratedmodelling.klab.engine.Engine;
 import com.google.common.base.Charsets;
 
 /**
- * TODO create the highlight.js configuration for the current Kim grammar,
- * optionally with color coding for all the worldview concepts.
+ * Run this within the Maven workflow to create the highlight.js configuration
+ * for the current Kim grammar, with color coding for all the worldview
+ * concepts used in the docs.
  * 
  * @author Ferd
  *
@@ -34,13 +35,13 @@ public class CreateHighlighter {
 	static public void main(String[] args) throws IOException {
 
 		Engine engine = Engine.start();
-		
+
 		/*
 		 * load template as a string
 		 */
 		URL url = com.google.common.io.Resources.getResource("highlight/template/template.txt");
 		String template = com.google.common.io.Resources.toString(url, Charsets.UTF_8);
-		
+
 		/*
 		 * determine output file name
 		 */
@@ -85,6 +86,8 @@ public class CreateHighlighter {
 		 * write output
 		 */
 		System.out.println(template);
+		
+		engine.stop();
 
 	}
 
@@ -114,12 +117,12 @@ public class CreateHighlighter {
 	}
 
 	private static String substitute(String template, Section section, Set<String> words) {
-		
+
 		int n = 0;
 		StringBuffer set = new StringBuffer(1024);
 		for (String word : words) {
 
-			// add 5, then switch to a new line 
+			// add 5, then switch to a new line
 			if ((n % 5) == 0) {
 				if (n > 0) {
 					set.append("' + \n");
@@ -128,16 +131,15 @@ public class CreateHighlighter {
 			} else {
 				set.append(" ");
 			}
-			
+
 			set.append(word);
-			n ++;
+			n++;
 		}
-		
+
 		if (!set.toString().endsWith("'")) {
 			set.append("'");
 		}
-				
-		
+
 		return template.replaceAll("__" + section.name() + "__", set.toString());
 	}
 

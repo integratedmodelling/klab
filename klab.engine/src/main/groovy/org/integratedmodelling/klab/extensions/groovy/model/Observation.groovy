@@ -83,7 +83,7 @@ abstract class Observation<T extends IObservation> extends Wrapper<T> {
     }
 
     def getScale() {
-        return new Scale(obs.getScale(), binding);
+        return new Scale(unwrap().getScale(), binding);
     }
 
     def isSibling(Observation o) {

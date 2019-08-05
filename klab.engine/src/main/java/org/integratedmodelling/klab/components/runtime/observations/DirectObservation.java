@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
+import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -17,6 +21,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Triple;
 
 public abstract class DirectObservation extends Observation implements IDirectObservation {
 
@@ -53,6 +58,16 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 		return getRuntimeContext().getChildren(this, cls);
 	}
 
+	public IObservation getChildArtifact(String name) {
+		for (IArtifact artifact : this.getRuntimeContext().getChildArtifactsOf(this)) {
+			if ((artifact instanceof IDirectObservation && ((IDirectObservation) artifact).getName().equals(name))
+					|| (artifact instanceof IState && ((IState) artifact).getObservable().getName().equals(name))) {
+				return (IObservation) artifact;
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public IArtifact.Type getType() {
 		return IArtifact.Type.OBJECT;
@@ -75,16 +90,60 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 	 * Add a predicate, adjust the observable as needed and enqueue a modification
 	 * message for the clients.
 	 * 
-	 * @param c
+	 * @param predicate
 	 */
-	public void addPredicate(IConcept c) {
-		if (this.predicatesToResolve.add(c)) {
+	public void addPredicate(IConcept predicate) {
 
-			// the observable gets the trait or role
-			
+		if (this.predicatesToResolve.add(predicate)) {
+
+			IObservable.Builder builder = getObservable().getBuilder(getRuntimeContext().getMonitor());
+
+			if (predicate.is(IKimConcept.Type.ROLE)) {
+				builder.withRole(predicate);
+			} else if (predicate.is(IKimConcept.Type.TRAIT)) {
+				builder.withTrait(predicate);
+			}
+
+			this.setObservable((Observable) builder.buildObservable());
+
 			// record the modification
-			
+			ObservationChange change = new ObservationChange();
+			change.setNewAttributes(new ArrayList<>());
+			change.getNewAttributes()
+					.add(new Triple<>(predicate.toString(), Concepts.INSTANCE.getDisplayLabel(predicate),
+							predicate.getMetadata().get(IMetadata.DC_COMMENT, String.class)));
+			change.setNewSemantics(this.getObservable().getDefinition());
+			this.reportChange(change);
 		}
+	}
+
+	public void removePredicate(IConcept predicate) {
+
+		if (this.predicatesToResolve.remove(predicate)) {
+
+			IObservable.Builder builder = getObservable().getBuilder(getRuntimeContext().getMonitor())
+					.without(predicate);
+
+			this.setObservable((Observable) builder.buildObservable());
+
+			/*
+			 * this can, so far, only be called when the previous addition is rejected due
+			 * to a characterizer returning false, so it should just remove the
+			 * notification, after ensuring that there is a notification for the
+			 * attribution. Otherwise add another with the changed semantics.
+			 */
+			if (!findAndRemoveAttribution(predicate)) {
+				ObservationChange change = new ObservationChange();
+				change.setNewSemantics(this.getObservable().getDefinition());
+				this.reportChange(change);
+			}
+		}
+
+	}
+
+	private boolean findAndRemoveAttribution(IConcept predicate) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	public IConcept nextPredicateToResolve() {
