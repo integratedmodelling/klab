@@ -605,5 +605,11 @@ public class SimpleContext extends Parameters<String> implements IRuntimeContext
 		
 	}
 
+	@Override
+	public IObservation getObservationGroupView(Observable observable, IObservation ret) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

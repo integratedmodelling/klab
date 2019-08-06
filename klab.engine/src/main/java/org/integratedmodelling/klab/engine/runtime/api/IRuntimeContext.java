@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.components.runtime.observations.DirectObserv
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.model.Model;
+import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Provenance;
 import org.integratedmodelling.klab.utils.Pair;
 import org.jgrapht.Graph;
@@ -298,16 +299,17 @@ public interface IRuntimeContext extends IComputationContext {
 
 	/**
 	 * Get the observation group for the main observable in the passed observable.
-	 * This will use the observable after stripping any attributes or predicates. If
-	 * the group was created before, its 'new' flag (TBD) will have been set to
-	 * false so that the notifier knows whether to send the full group data or a
-	 * change notification.
+	 * This will create a main group using the main observable after stripping any
+	 * attributes or predicates. If the group was created before, its 'new' flag
+	 * (TBD) will have been set to false so that the notifier knows whether to send
+	 * the full group data or a change notification. If the observable has additional
+	 * predicates, it will then return a view that filters only those.
 	 * 
 	 * @param observable
 	 * @param scale
 	 * @return
 	 */
-	ObservationGroup getObservationGroup(IObservable observable, IScale scale);
+	IObservation getObservationGroup(IObservable observable, IScale scale);
 
 	/**
 	 * Add the predicate to the passed observation. If the predicate wasn't there
@@ -317,4 +319,13 @@ public interface IRuntimeContext extends IComputationContext {
 	 * @param predicate a concrete trait or role
 	 */
 	void newPredicate(IDirectObservation target, IConcept predicate);
+
+	/**
+	 * Return a view if needed.
+	 * 
+	 * @param observable
+	 * @param ret
+	 * @return
+	 */
+	IObservation getObservationGroupView(Observable observable, IObservation ret);
 }

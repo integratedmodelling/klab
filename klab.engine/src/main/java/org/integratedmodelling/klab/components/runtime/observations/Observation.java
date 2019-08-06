@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.IComputationContext;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.Session;
+import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeContext;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Observable;
@@ -49,6 +50,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	 * Any modification that needs to be reported to clients is recorded here
 	 */
 	protected List<ObservationChange> modificationsToReport = new ArrayList<>();
+	protected List<IModificationListener> modificationListeners = new ArrayList<>();
     
     public String getUrn() {
         return "local:observation:" + getParentIdentity(Session.class).getId() + ":" + getId();
@@ -240,6 +242,10 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 		return ret;
 	}
 
+	public void addModificationListener(IModificationListener listener) {
+		this.modificationListeners.add(listener);
+	}
+	
 	public void evaluateChanges() {
 		// does nothing here; overridden in each final class
 	}

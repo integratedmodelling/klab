@@ -36,7 +36,7 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 	 * Use a linked hash set to return them for resolution in order of addition -
 	 * probably not useful but who knows.
 	 */
-	private Set<IConcept> predicatesToResolve = new LinkedHashSet<>();
+	private Set<IConcept> predicates = new LinkedHashSet<>();
 
 	protected DirectObservation(String name, Observable observable, Scale scale, IRuntimeContext context) {
 		super(observable, scale, context);
@@ -94,7 +94,7 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 	 */
 	public void addPredicate(IConcept predicate) {
 
-		if (this.predicatesToResolve.add(predicate)) {
+		if (this.predicates.add(predicate)) {
 
 			IObservable.Builder builder = getObservable().getBuilder(getRuntimeContext().getMonitor());
 
@@ -117,9 +117,13 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 		}
 	}
 
+	public Set<IConcept> getPredicates() {
+		return this.predicates;
+	}
+	
 	public void removePredicate(IConcept predicate) {
 
-		if (this.predicatesToResolve.remove(predicate)) {
+		if (this.predicates.remove(predicate)) {
 
 			IObservable.Builder builder = getObservable().getBuilder(getRuntimeContext().getMonitor())
 					.without(predicate);
@@ -145,15 +149,15 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 		// TODO Auto-generated method stub
 		return false;
 	}
-
-	public IConcept nextPredicateToResolve() {
-		IConcept ret = null;
-		if (!predicatesToResolve.isEmpty()) {
-			ret = predicatesToResolve.iterator().next();
-			predicatesToResolve.remove(ret);
-		}
-		return ret;
-	}
+//
+//	public IConcept nextPredicateToResolve() {
+//		IConcept ret = null;
+//		if (!predicatesToResolve.isEmpty()) {
+//			ret = predicatesToResolve.iterator().next();
+//			predicatesToResolve.remove(ret);
+//		}
+//		return ret;
+//	}
 
 	/**
 	 * The set of IDs of any subjective observation that contain this as an

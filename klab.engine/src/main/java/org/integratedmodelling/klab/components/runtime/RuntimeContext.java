@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.apache.commons.collections.IteratorUtils;
 import org.integratedmodelling.kim.api.IComputableResource;
@@ -16,6 +17,8 @@ import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.Roles;
+import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression.Context;
@@ -47,6 +50,7 @@ import org.integratedmodelling.klab.components.runtime.observations.Configuratio
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
+import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.components.time.extents.Scheduler;
@@ -437,7 +441,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		}
 
 		ret = (ICountableObservation) dataflow.withMetadata(metadata).run(scale, ((Monitor) monitor).get(subtask));
-		
+
 		if (ret != null) {
 			((DirectObservation) ret).setName(name);
 		}
@@ -514,9 +518,6 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		}
 
 		if (dataflow != null) {
-
-			System.out.println(dataflow.getKdlCode());
-
 			dataflow.run(scale, ((Monitor) monitor).get(subtask));
 		}
 
@@ -715,7 +716,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 				ret.semantics.put(id, ((Actuator) a).getObservable());
 			}
 		}
-		
+
 		for (IActuator a : actuator.getOutputs()) {
 			String id = a.getAlias() == null ? a.getName() : a.getAlias();
 			ret.semantics.put(id, ((Actuator) a).getObservable());
@@ -737,6 +738,9 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		List<T> ret = new ArrayList<>();
 		if (artifact instanceof ObservationGroup) {
 			return IteratorUtils.toList(((ObservationGroup) artifact).iterator());
+		}
+		if (artifact instanceof ObservationGroupView) {
+			return IteratorUtils.toList(((ObservationGroupView) artifact).iterator());
 		}
 		for (DefaultEdge edge : this.structure.incomingEdgesOf(artifact)) {
 			IArtifact source = this.structure.getEdgeSource(edge);
@@ -1013,12 +1017,51 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 	}
 
 	@Override
-	public ObservationGroup getObservationGroup(IObservable observable, IScale scale) {
+	public IObservation getObservationGroupView(Observable observable, IObservation ret) {
+
+		Pair<String, IArtifact> previous = findArtifact(observable);
+		if (previous != null) {
+			return (IObservation)previous.getSecond();
+		}
+		
+		IConcept mainObservable = ret.getObservable().getType();
+		if (!mainObservable.equals(observable.getType())) {
+			final Set<IConcept> filtered = new HashSet<>();
+			filtered.addAll(Traits.INSTANCE.getDirectTraits(observable.getType()));
+			filtered.addAll(Roles.INSTANCE.getDirectRoles(observable.getType()));
+			if (!filtered.isEmpty()) {
+				
+				ret = new ObservationGroupView((Observable) observable, (ObservationGroup) ret,
+						new Function<IArtifact, Boolean>() {
+							@Override
+							public Boolean apply(IArtifact t) {
+								return t instanceof DirectObservation
+										&& filtered.containsAll(((DirectObservation) t).getPredicates());
+							}
+						});
+				
+				/*
+				 * register the view as a regular observation
+				 */
+				this.observations.put(ret.getId(), ret);
+				this.catalog.put(observable.getName(), ret);
+				this.structure.addVertex(ret);
+				if (contextSubject != null) {
+					this.structure.addEdge(ret,
+							contextSubject instanceof ObservationGroup ? contextSubject.getContext() : contextSubject);
+				}
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public IObservation getObservationGroup(IObservable observable, IScale scale) {
 		IConcept mainObservable = Observables.INSTANCE.getBaseObservable(observable.getType());
-		ObservationGroup ret = groups.get(mainObservable);
+		IObservation ret = groups.get(mainObservable);
 		if (ret == null) {
 			ret = new ObservationGroup(Observable.promote(mainObservable), (Scale) scale, this, IArtifact.Type.OBJECT);
-			groups.put(mainObservable, ret);
+			groups.put(mainObservable, (ObservationGroup) ret);
 		}
 		return ret;
 	}
@@ -1031,9 +1074,9 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 			observation = getObservationGroup(observable, scale);
 		} else if (observable.is(Type.TRAIT) || observable.is(Type.ROLE)) {
 			/*
-			 * TODO this should happen when a predicate observation is made explicitly from a
-			 * root-level query, i.e. when 'dropping' attributes on individual observations is 
-			 * enabled.
+			 * TODO this should happen when a predicate observation is made explicitly from
+			 * a root-level query, i.e. when 'dropping' attributes on individual
+			 * observations is enabled.
 			 */
 			Logging.INSTANCE.warn("unexpected call to createTarget: check logics");
 		} else {

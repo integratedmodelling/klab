@@ -585,6 +585,11 @@ public class Actuator implements IActuator {
 			 */
 			((Observation) ret).evaluateChanges();
 
+			/*
+			 * ensure we return a view if that's necessary
+			 */
+			ret = ctx.getObservationGroupView((Observable)observable, (IObservation)ret);
+			
 		} else if (contextualizer instanceof IPredicateResolver) {
 
 			/*

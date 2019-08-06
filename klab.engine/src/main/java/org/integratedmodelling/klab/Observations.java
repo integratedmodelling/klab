@@ -50,6 +50,7 @@ import org.integratedmodelling.klab.components.geospace.processing.osm.Nominatim
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
+import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
 import org.integratedmodelling.klab.data.classification.Discretization;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
@@ -76,6 +77,7 @@ import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
+import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.klab.utils.Utils;
 
@@ -237,7 +239,7 @@ public enum Observations implements IObservationService {
 			ret.setObservationType(ObservationReference.ObservationType.CONFIGURATION);
 		} else if (observation instanceof IRelationship) {
 			ret.setObservationType(ObservationReference.ObservationType.RELATIONSHIP);
-		} else if (observation instanceof ObservationGroup) {
+		} else if (observation instanceof ObservationGroup || observation instanceof ObservationGroupView) {
 			ret.setObservationType(ObservationReference.ObservationType.GROUP);
 		}
 
@@ -266,12 +268,21 @@ public enum Observations implements IObservationService {
 		ret.setParentId(parent == null ? null : parent.getId());
 
 		if (observation instanceof ObservationGroup) {
-			ret.setLabel(StringUtils.capitalize(
-					English.plural(observation.getObservable().getType().getName())));
+			ret.setLabel(StringUtils.capitalize(English.plural(observation.getObservable().getType().getName())));
 		} else {
+			
 			ret.setLabel(observation instanceof IDirectObservation ? ((IDirectObservation) observation).getName()
 					: observation.getObservable().getName());
 			ret.setLabel(StringUtils.capitalize(ret.getLabel().replaceAll("_", " ")));
+			
+			if (observation instanceof ObservationGroupView) {
+				// pluralize the last word, then tell me I don't care for details.
+				String[] sss = ret.getLabel().split("\\s+");
+				if (sss.length > 0) {
+					sss[sss.length-1] = English.plural(sss[sss.length-1]);
+					ret.setLabel(StringUtils.join(sss, ' '));
+				}
+			}
 		}
 		if (observation.getObservable().getUnit() != null) {
 			ret.setLabel(ret.getLabel() + " in " + ((Unit) observation.getObservable().getUnit()).toUTFString());
@@ -360,7 +371,8 @@ public enum Observations implements IObservationService {
 			 * 
 			 * TODO these should also be optional settings.
 			 */
-			if (observation instanceof IDirectObservation && !(observation instanceof ObservationGroup)) {
+			if (observation instanceof IDirectObservation
+					&& !(observation instanceof ObservationGroup || observation instanceof ObservationGroupView)) {
 				String shape = ((Shape) space.getShape()).simplifyIfNecessary(1000, 2000).getJTSGeometry().toString();
 				ret.setEncodedShape(shape);
 				ret.setSpatialProjection(space.getProjection().getSimpleSRS());

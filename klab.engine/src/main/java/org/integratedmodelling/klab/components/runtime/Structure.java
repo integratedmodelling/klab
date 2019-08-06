@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
+import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -76,9 +77,15 @@ public class Structure extends DefaultDirectedGraph<IArtifact, DefaultEdge> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<IArtifact> getChildArtifacts(IObservation artifact) {
+		
 		if (artifact instanceof ObservationGroup) {
 			return IteratorUtils.toList(((ObservationGroup)artifact).iterator());
 		}
+		
+		if (artifact instanceof ObservationGroupView) {
+			return IteratorUtils.toList(((ObservationGroupView)artifact).iterator());
+		}		
+		
 		List<IArtifact> ret = new ArrayList<>();
 		Set<String> groupIds = new HashSet<>();
 		for (DefaultEdge edge : incomingEdgesOf(artifact)) {
