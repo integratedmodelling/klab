@@ -139,7 +139,10 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 					if (active.isComputed() || ((Actuator) active).isMerging()) {
 						active.compute(ctx.getTargetArtifact(), ctx);
 					}
-					((Actuator) active).notifyArtifacts(i == order.size() - 1, ctx);
+					if (!(monitor.getIdentity().is(IIdentity.Type.TASK)
+							&& ((AbstractTask<?>) monitor.getIdentity()).isChildTask())) {
+						((Actuator) active).notifyArtifacts(i == order.size() - 1, ctx);
+					}
 					i++;
 				}
 
@@ -186,7 +189,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				ret = UrnResolver.getServiceCall(resource.getUrn(), resource.getCondition(), resource.isNegated());
 			}
 		} else if (resource.getExpression() != null) {
-			ret = ExpressionResolver.getServiceCall(resource, ((Actuator)target).getObservable());
+			ret = ExpressionResolver.getServiceCall(resource, ((Actuator) target).getObservable());
 		} else if (resource.getLiteral() != null) {
 			ret = LiteralStateResolver.getServiceCall(resource.getLiteral(), resource.getCondition(),
 					resource.isNegated());
@@ -432,17 +435,17 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public IComputableResource getOperatorResolver(IObservable classifiedObservable, ValueOperator operator,
 			Object operand) {
-		
+
 		if (operator == ValueOperator.BY) {
 
 			if (!(operand instanceof IConcept)) {
 				throw new IllegalArgumentException("Cannot classify an observable by anything else than a concept");
 			}
-			
+
 			IConcept aggregator = (IConcept) operand;
 			if (aggregator.is(Type.CLASS) || aggregator.is(Type.TRAIT) || aggregator.is(Type.PRESENCE)) {
 				return new ComputableResource(

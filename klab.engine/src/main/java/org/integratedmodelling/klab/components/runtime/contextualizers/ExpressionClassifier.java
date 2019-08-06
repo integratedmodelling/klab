@@ -53,6 +53,12 @@ public class ExpressionClassifier implements IPredicateClassifier<IDirectObserva
 			IComputationContext context, Map<String, Object> additional) {
 		this.expressionDescriptor = code;
 		this.conditionDescriptor = condition;
+		if (this.expression == null) {
+			this.expression = expressionDescriptor.compile();
+			if (conditionDescriptor != null) {
+				this.condition = conditionDescriptor.compile();
+			}
+		}
 	}
 
 	@Override
@@ -66,34 +72,26 @@ public class ExpressionClassifier implements IPredicateClassifier<IDirectObserva
 		/*
 		 * run expression, ensure it returns an OK concept, if so return it.
 		 */
-
 		boolean ok = true;
-		if (this.expression == null) {
-			this.expression = expressionDescriptor.compile();
-			if (conditionDescriptor != null) {
-				this.condition = conditionDescriptor.compile();
-			}
-		}
 		if (condition != null) {
-			Object ret = condition.override("self", observation, "scale", observation.getScale(), "space", observation.getScale().getSpace())
-					.eval(context, context, additionalParameters);
+			Object ret = condition.override("self", observation, "scale", observation.getScale(), "space",
+					observation.getScale().getSpace()).eval(context, context, additionalParameters);
 			ok = ret instanceof Boolean && ((Boolean) ret);
 		}
-		
-		Object ret = ok 
-				? expression.override("self", observation, "scale", observation.getScale(), "space", observation.getScale().getSpace())
-						.eval(context, context, additionalParameters) 
-				: null;
+
+		Object ret = ok ? expression.override("self", observation, "scale", observation.getScale(), "space",
+				observation.getScale().getSpace()).eval(context, context, additionalParameters) : null;
 
 		if (ret == null) {
 			return null;
 		}
-						
-		if (ret instanceof IConcept && ((IConcept)ret).is(abstractPredicate)) {
-			return (IConcept)ret;
+
+		if (ret instanceof IConcept && ((IConcept) ret).is(abstractPredicate)) {
+			return (IConcept) ret;
 		}
-		
-		throw new IllegalStateException("classification expression does not return a concept or a subtype of " + abstractPredicate);
+
+		throw new IllegalStateException(
+				"classification expression does not return a concept or a subtype of " + abstractPredicate);
 	}
 
 	@Override

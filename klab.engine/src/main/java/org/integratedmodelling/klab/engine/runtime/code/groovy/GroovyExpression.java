@@ -152,6 +152,9 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 			try {
 				Binding binding = script.get().getBinding();
 
+				@SuppressWarnings("unchecked")
+				Map<String, Object> artifactTable = (Map<String, Object>) binding.getVariable("_p");
+
 				if (overriding != null) {
 					// caller has overridden some wrapped variables.
 					for (int i = 0; i < overriding.length; i++) {
@@ -160,9 +163,17 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 						} else if (overriding[i + 1] instanceof IConcept) {
 							binding.setVariable((String) overriding[i],
 									getConceptPeer((IConcept) overriding[i + 1], binding));
-						} else if (firstTime && mustWrap(overriding[i + 1])) {
-							Wrapper.wrap(overriding[i + 1], (String) overriding[i], binding);
-							overridingIds.add((String) overriding[i]);
+						} else if (mustWrap(overriding[i + 1])) {
+							if (firstTime) {
+								Object wrapped = Wrapper.wrap(overriding[i + 1], (String) overriding[i], binding);
+								overridingIds.add((String) overriding[i]);
+								// also add to the artifact table unless it's there already.
+								if (!artifactTable.containsKey(overriding[i])) {
+									artifactTable.put(overriding[i].toString(), wrapped);
+								}
+							}
+							// set the overriding object in any case.
+							binding.setVariable("_j" + overriding[i], overriding[i + 1]);
 						} else if (overriding[i + 1] == null) {
 							binding.setVariable((String) overriding[i], null);
 						}
@@ -274,24 +285,24 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 
 		/*
 		 * Any artifacts used in non-scalar context goes into the _p map. We should
-		 * rename it to _nonscalars just for clarity.
+		 * rename it to _nonscalars or _artifacts just for clarity.
 		 */
-		Map<String, Object> nonscalar = new HashMap<>();
+		Map<String, Object> artifactTable = new HashMap<>();
 		for (String identifier : this.descriptor.getIdentifiers()) {
 			if (this.descriptor.isNonscalar(identifier)) {
 				IArtifact artifact = context.getArtifact(identifier);
 				if (artifact != null) {
-					nonscalar.put(identifier, Wrapper.wrap(artifact, identifier, bindings));
+					artifactTable.put(identifier, Wrapper.wrap(artifact, identifier, bindings));
 				}
 			}
 		}
 
 		if (parameters.containsKey("self") && parameters.get("self") instanceof IObservation
-				&& !nonscalar.containsKey("self")) {
-			nonscalar.put("self", Wrapper.wrap(parameters.get("self"), "self", bindings));
+				&& !artifactTable.containsKey("self")) {
+			artifactTable.put("self", Wrapper.wrap(parameters.get("self"), "self", bindings));
 		}
 
-		bindings.setVariable("_p", nonscalar);
+		bindings.setVariable("_p", artifactTable);
 		bindings.setVariable("_exp", this);
 		bindings.setVariable("_ns", context.getNamespace());
 		bindings.setVariable("_c", context);

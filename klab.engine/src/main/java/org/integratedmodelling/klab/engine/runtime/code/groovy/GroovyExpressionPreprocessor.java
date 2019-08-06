@@ -232,11 +232,7 @@ public class GroovyExpressionPreprocessor {
 				IKimConcept.Type type = getIdentifierType(ret, context);
 				boolean canBeScalar = (type == IKimConcept.Type.QUALITY || type == IKimConcept.Type.TRAIT
 						|| type == IKimConcept.Type.CLASS) || !contextual;
-				// if (!(context != null && (type == IKimConcept.Type.QUALITY || type ==
-				// IKimConcept.Type.TRAIT)
-				// && contextual)) {
 				ret = translateParameter(ret, canBeScalar && scalarIds.contains(ret) && !this.methodCall);
-				// }
 				break;
 			case URN:
 				ret = translateUrn(ret);

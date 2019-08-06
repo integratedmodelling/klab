@@ -154,9 +154,9 @@ public class ModelKbox extends ObservableKbox {
 
 		initialize(context.getMonitor());
 
-		// Contextualize the observable if it's a quality - also used to
+		// Contextualize the observable unless it's a subject - also used to
 		// establish semantic distance in the matcher
-		if (context.getContext() != null && observable.is(Type.QUALITY)) {
+		if (context.getContext() != null && !observable.is(Type.SUBJECT)) {
 			observable = Observables.INSTANCE.contextualizeTo(observable,
 					context.getContext().getObservable().getType(), context.getMonitor());
 		}

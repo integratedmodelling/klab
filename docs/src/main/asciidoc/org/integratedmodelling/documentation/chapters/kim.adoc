@@ -1,14 +1,14 @@
 = The k.IM semantic modeling language
 :doctype: book
 
-All knowledge used by k.LAB is specified in k.IM, a small declarative language designed to be easily readable (even by non-k.LAB users!) because its syntax is closely follows the rules of the English language. Knowledge of k.IM is not required in order to _use_ k.LAB to make observations; it is, however, necessary to contribute to conceptualizations, build models and annotate resources. This section describes in detail how k.IM is designed and how to write conceptualizations, data annotations and model logics in it.
+All knowledge used by k.LAB is specified in k.IM, a small, declarative language designed to be used with the concepts from a shared <<TBD,worldview>> to build easily readable statements (even by k.IM-illiterate readers). Readability is obtained by manipulating real-life concepts using a syntax that is closely modeled after the rules and conventions of the English grammar. Knowledge of k.IM is not required in order to _use_ k.LAB to make observations; it is, however, necessary to contribute to conceptualizations, build models and annotate resources. This section describes in detail how k.IM is designed and how to write conceptualizations, data annotations and model logics in it.
 
 [#section-kim-overview]
 == Overview
 
-k.IM is a _declarative_ language: when k.LAB reads k.IM source code, it does not _do_ anything visible to the user, or produce any outputs of relevance. It merely ingests the knowledge specified in the k.IM statements, validates it, and catalogs it for later use. In that sense, k.IM can be considered a language to build a database of semantic statements (a _knowledge base_) that can be used to do what k.LAB does: _contextualize_ concepts to produce their observations, as you have learned <<chapter-overview,previously>>. Because k.LAB is a _distributed_ system, made up of many networked nodes that talk to each other, that knowledge can become available also to any other user connected to the same network, according to where k.IM code is stored and to rules and preferences set in k.IM itself. All k.IM code on public nodes of the k.LAB network contributes to a _distributed knowledge base_, which every user can exploit to make observations and build upon to produce new knowledge.
+k.IM is a _declarative_ language: when k.LAB reads correct k.IM source code, it does not _do_ anything visible to the user, or produce any outputs of relevance. It merely ingests the knowledge specified in the k.IM statements, validates it, and catalogs it for later use. In that sense, k.IM can be considered a language to build a database of semantically coherent "facts" (a _knowledge base_) that can be used to do what k.LAB does: _contextualize_ concepts to produce their observations, as you have learned <<chapter-overview,previously>>. Because k.LAB is a _distributed_ system, made up of many networked nodes that talk to each other, that knowledge can become available also to any other user connected to the same network, according to where k.IM code is stored and to rules and preferences set in k.IM itself. All k.IM code on public nodes of the k.LAB network contributes to a _distributed knowledge base_, which every user can exploit to make observations and build upon to produce new knowledge.
 
-NOTE about English and why English.
+NOTE: about English and why English.
 
 The most important types of knowledge that can be specified (we will use the word _declared_ in the following) in k.IM are *concepts* and *models*. In a nutshell:
 
@@ -168,7 +168,7 @@ The two main types of observation activity are:
 Resolution:: xxxx
 Instantiation:: xxxx
 
-These can be further differentiated according to the observable they apply to, obtaining the taxonomy below:
+These can be further differentiated according to the observable they apply to, obtaining the taxonomy below. The <<TBD,provenance>> analysis in k.LAB uses these categories, corresponding to concepts in the <<TBD,core observation ontology>>, when documenting the process that has built an observation.
 
 [cols="3", options="header"]
 |===
@@ -196,7 +196,7 @@ These can be further differentiated according to the observable they apply to, o
 |Resolution
 |The detection of a particular configuration engendered by other observation in the context.
 
-|Instantiation
+|Acknowledgement
 |Instantiation
 |The acknowledgement of zero or more artifacts representing the observations of a countable type in the context.
 
@@ -204,12 +204,16 @@ These can be further differentiated according to the observable they apply to, o
 |Instantiation
 |The attribution of the concrete value of an abstract predicate to all the observed countables of a type in the context.
 
+|Explanation
+|Resolution
+|The observation of the detailed nature of a specific countable.
+
 |Characterization
 |Resolution
 |The acknowledgement of a classified predicate on a specific countable.
 |===
 
-The categories above will probably read quite abstract, but they merely categorize cognitive activities that we do every day when interacting with reality. The good news is that the observation activity expressed in each model follows directly from the semantics and does not need to be declared explicitly. Yet, it is important to be aware of what each model does, in order to avoid surprises and to understand any error messages. By understanding the semantics stated in k.IM, the observation activity should be transparent, as the syntax rules of k.IM are meant to express the activity in a form that is close to its description in the English language. The following examples should help clarify what models do and how k.IM allows to state that in an intuitive and direct way.
+The categories above may read abstract, but in fact they do nothing but categorize cognitive activities that we perform every day when interacting with reality. The good news is that the observation activity expressed in each model follows directly from the semantics and does not need to be declared explicitly. Yet, it is important to be aware of what each model does, in order to avoid surprises and to understand any error messages. By understanding the semantics stated in k.IM, the observation activity should be transparent, as the syntax rules of k.IM are meant to express the activity in a form that is close to its description in the English language. In the following, we provide examples of models that clarify these different types of observation activities and how k.IM allows to state that in an intuitive and direct way.
 
 NOTE: examples of each type of model and the dependency they may satisfy.
 

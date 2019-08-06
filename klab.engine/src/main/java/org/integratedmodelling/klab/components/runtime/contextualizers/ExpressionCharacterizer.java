@@ -52,6 +52,13 @@ public class ExpressionCharacterizer implements IPredicateResolver<IDirectObserv
 			IComputationContext context, Map<String, Object> additional) {
 		this.expressionDescriptor = code;
 		this.conditionDescriptor = condition;
+		if (this.expression == null) {
+			this.expression = expressionDescriptor.compile();
+			if (conditionDescriptor != null) {
+				this.condition = conditionDescriptor.compile();
+			}
+		}
+
 	}
 
 	@Override
@@ -66,14 +73,19 @@ public class ExpressionCharacterizer implements IPredicateResolver<IDirectObserv
 				.getLanguageProcessor(parameters.get("language", Extensions.DEFAULT_EXPRESSION_LANGUAGE));
 
 		IExpression.Context expressionContext = context.getExpressionContext();
-		Descriptor selector = processor.describe(parameters.get("code", String.class), expressionContext, false);
+
+		/*
+		 * compile in scalar context as this is applied to an individual object (we want
+		 * self to be a variable, not an entry in the artifact table).
+		 */
+		Descriptor selector = processor.describe(parameters.get("code", String.class), expressionContext, true);
 		Descriptor condition = null;
 		if (parameters.get("ifcondition") != null || parameters.get("unlesscondition") != null) {
 			String condCode = parameters.get("ifcondition", String.class);
 			if (condCode == null) {
 				condCode = processor.negate(parameters.get("unlesscondition", String.class));
 			}
-			condition = processor.describe(condCode, expressionContext, false);
+			condition = processor.describe(condCode, expressionContext, true);
 		}
 
 		for (String key : parameters.keySet()) {
@@ -93,17 +105,11 @@ public class ExpressionCharacterizer implements IPredicateResolver<IDirectObserv
 
 		/*
 		 * run expression for the side effects. If it returns a boolean, take it as the
-		 * return value, otherwise return true unless the condition returned false. In all
-		 * cases returning false will remove the predicate.
+		 * return value, otherwise return true unless the condition returned false. In
+		 * all cases returning false will remove the predicate.
 		 */
 		boolean ok = true;
 
-		if (this.expression == null) {
-			this.expression = expressionDescriptor.compile();
-			if (conditionDescriptor != null) {
-				this.condition = conditionDescriptor.compile();
-			}
-		}
 		if (condition != null) {
 			Object ret = condition.override("self", observation, "scale", observation.getScale(), "space",
 					observation.getScale().getSpace()).eval(context, context, additionalParameters);

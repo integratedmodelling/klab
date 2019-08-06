@@ -13,6 +13,7 @@ import org.integratedmodelling.kim.api.IComputableResource;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Dataflows;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -436,6 +437,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		}
 
 		ret = (ICountableObservation) dataflow.withMetadata(metadata).run(scale, ((Monitor) monitor).get(subtask));
+		
 		if (ret != null) {
 			((DirectObservation) ret).setName(name);
 		}
@@ -515,7 +517,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 
 			System.out.println(dataflow.getKdlCode());
 
-			dataflow.run(scale, (Monitor) monitor);
+			dataflow.run(scale, ((Monitor) monitor).get(subtask));
 		}
 
 	}
@@ -713,6 +715,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 				ret.semantics.put(id, ((Actuator) a).getObservable());
 			}
 		}
+		
 		for (IActuator a : actuator.getOutputs()) {
 			String id = a.getAlias() == null ? a.getName() : a.getAlias();
 			ret.semantics.put(id, ((Actuator) a).getObservable());
@@ -897,7 +900,7 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 					preexisting = observation;
 				}
 			} else if ((observable.is(Type.TRAIT) || observable.is(Type.ROLE)) && mode == Mode.RESOLUTION) {
-				// AHA get the target from the scope, add the predicate to it, return that
+				// get the target from the scope, add the predicate to it, return that
 				if (this.target instanceof IDirectObservation) {
 					((DirectObservation) this.target)
 							.addPredicate(Observables.INSTANCE.getBaseObservable(observable.getType()));
@@ -1027,8 +1030,12 @@ public class RuntimeContext extends Parameters<String> implements IRuntimeContex
 		if (observable.is(Type.COUNTABLE)) {
 			observation = getObservationGroup(observable, scale);
 		} else if (observable.is(Type.TRAIT) || observable.is(Type.ROLE)) {
-			// AHA get the target from the scope, add the predicate to it, return that
-			System.out.println("ZIO PUTINO");
+			/*
+			 * TODO this should happen when a predicate observation is made explicitly from a
+			 * root-level query, i.e. when 'dropping' attributes on individual observations is 
+			 * enabled.
+			 */
+			Logging.INSTANCE.warn("unexpected call to createTarget: check logics");
 		} else {
 			observation = DefaultRuntimeProvider.createObservation(observable, scale, this);
 		}

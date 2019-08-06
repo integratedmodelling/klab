@@ -19,16 +19,20 @@ class DirectObservation<T extends IDirectObservation> extends Observation<IDirec
 
 	DirectObservation(String id, Binding binding) {
 		super(id, binding);
-		name = unwrap().name;
+//		name = unwrap().name;
 	}
 
 	DirectObservation(IDirectObservation obs, Binding binding) {
 		super(obs, binding);
-		name = obs.name;
+//		name = obs.name;
 	}
 
 	def deactivate() {
 		unwrap().setActive(false);
+	}
+	
+	def getName() {
+		return unwrap().getName();
 	}
 
 	private void setVar(String s, Object o) {
@@ -58,7 +62,7 @@ class DirectObservation<T extends IDirectObservation> extends Observation<IDirec
 	//    }
 
 	public String toString() {
-		return unwrap() == null ? "[null observation]" : unwrap().toString();
+		return unwrap() == null ? "[null observation]" : "[G] " + unwrap().toString();
 	}
 
 	//    /**
@@ -310,12 +314,12 @@ class DirectObservation<T extends IDirectObservation> extends Observation<IDirec
 		//        IContext context = task.finish();
 	}
 
-	def getFormalName(IObservation observation) {
-		//        if (model != null) {
-		//            return model.getNameFor(observation.getObservable().getLo);
-		//        }
-		return observation.getObservable().getName();
-	}
+//	def getFormalName(IObservation observation) {
+//		//        if (model != null) {
+//		//            return model.getNameFor(observation.getObservable().getLo);
+//		//        }
+//		return observation.getObservable().getName();
+//	}
 
 	def distanceTo (Observation observation) {
 		unwrap().space.getStandardizedDistance(observation.unwrap().space)
@@ -479,8 +483,8 @@ class DirectObservation<T extends IDirectObservation> extends Observation<IDirec
 
 	def propertyMissing(String id) {
 		
-		def artifact = ((org.integratedmodelling.klab.components.runtime.observations.DirectObservation)unwrap())
-			.getChildArtifact(id);
+		def unwrapped = unwrap();
+		def artifact = unwrapped.getChildArtifact(id);
 			
 		if (artifact instanceof IState) {
 			return new State(artifact, binding);
