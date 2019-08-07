@@ -56,10 +56,10 @@ export number flowaccumulation
 
 export value accumulateflow
 
-	"Perform arbitrary calculation on each cell's neighborhood using the order established by
+	"Perform arbitrary calculation on each cell's neighborhood in the order established by
 	 the flow directions, with access to values upstream and in the neighborhood of each 
-	 raster cell through a 'cell' variable that points to an object with plenty of
-	 inspection capabilities."
+	 raster cell through a 'cell' variable that provides access to neighborhood inspection 
+	 capabilities."
 	 
 	 label 'Accumulate upstream flow'
 {
@@ -67,17 +67,18 @@ export value accumulateflow
 		"The D8 numeric code for flow direction"
 
 	value expression evaluate
-		"The expression that determines the value in each cell. The 'cell' variable contains
+		"An expression that returns the value in each cell. The 'cell' variable contains
 		 a proxy to the cell that can produce the neighborhood, the upstream portion of the 
 		 neighborhood, arbitrary neighbors in each direction, and (when the cell is from the
 		 neighborhood) the opposite relative to the focal cell. Each cell knows the values of
-		 all the dependencies in its location. All these values are extracted using space.xxx
-		 where xxx is: neighborhood, upstream, downstream (producing a list of cells); n, s, e, 
-		 w, ne, se, nw, se (producing one cell or null if at the edges), and the name of each
+		 all the dependencies in its location. All these values are extracted using cell.xxx
+		 where xxx is: neighbo[u]rhood, upstream, downstream (producing a list of cells); n, s, e, 
+		 w, ne, se, nw, se (producing one cell or null if at the edges); or the name of each
 		 quality dependency (producing the value of that dependency at the cell). The expression
 		 'xxx.self' where xxx is one of the cells returned by 'cell.upstream' produces the value 
 		 of the target state at each upstream location. That is the only context where using 
-		 'self' makes any sense."
+		 'self' makes any sense, as it will not have been computed unless the cell is from the
+		 upstream neighborhood."
 
 	geometry S2
 

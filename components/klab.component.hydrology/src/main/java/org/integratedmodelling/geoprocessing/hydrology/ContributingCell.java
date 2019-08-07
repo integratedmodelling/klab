@@ -21,6 +21,8 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.utils.Pair;
 
+import groovy.util.Expando;
+
 /**
  * Proxy for a cell with a knowledge of the flow directions and the context and
  * added methods, to be used in Groovy expressions to wrap the regular 'space'
@@ -29,7 +31,7 @@ import org.integratedmodelling.klab.utils.Pair;
  * @author ferdinando.villa
  *
  */
-public class ContributingCell {
+public class ContributingCell extends Expando {
 
 	private Cell delegate;
 	// non-null if this is relative to the focal cell
@@ -99,6 +101,39 @@ public class ContributingCell {
 	 * @return
 	 */
 	public Object getProperty(String state) {
+		
+		switch (state) {
+		case "upstream": return getUpstream();
+		case "downstream": return getUpstream();
+		case "neighborhood": 
+		case "neighbourhood": 
+			return getNeighborhood();
+		case "opposite":
+			return opposite();
+		case "d8":
+			return getD8();
+		case "d8pow":
+			return getD8pow();
+		case "orientation":
+			return orientation;
+		case "nw":
+			return NW();
+		case "sw":
+			return SW();
+		case "ne":
+			return NE();
+		case "se":
+			return SE();
+		case "n":
+			return N();
+		case "w":
+			return W();
+		case "s":
+			return S();
+		case "e":
+			return E();
+		}
+
 		if (states.containsKey(state)) {
 			return states.get(state).get(this.delegate);
 		}
@@ -139,10 +174,6 @@ public class ContributingCell {
 
 	public ISpace at(ILocator locator) {
 		return delegate.at(locator);
-	}
-
-	public Cell E() {
-		return delegate.E();
 	}
 
 	public double getStandardizedArea() {
@@ -219,31 +250,67 @@ public class ContributingCell {
 		return delegate.getStandardizedVolume();
 	}
 
-	public ContributingCell getN() {
-		return new ContributingCell(delegate.N(), this, Orientation.N);
+	public ContributingCell N() {
+		Cell cell = delegate.N();
+		if (cell == null) {
+			return null;
+		}
+		return new ContributingCell(cell, this, Orientation.N);
 	}
 
 	public ContributingCell S() {
+		Cell cell = delegate.S();
+		if (cell == null) {
+			return null;
+		}
 		return new ContributingCell(delegate.S(), this, Orientation.S);
 	}
 
 	public ContributingCell W() {
+		Cell cell = delegate.W();
+		if (cell == null) {
+			return null;
+		}
 		return new ContributingCell(delegate.W(), this, Orientation.W);
 	}
 
+	public ContributingCell E() {
+		Cell cell = delegate.E();
+		if (cell == null) {
+			return null;
+		}
+		return new ContributingCell(delegate.W(), this, Orientation.E);
+	}
+
 	public ContributingCell NE() {
+		Cell cell = delegate.NE();
+		if (cell == null) {
+			return null;
+		}
 		return new ContributingCell(delegate.NE(), this, Orientation.NE);
 	}
 
 	public ContributingCell NW() {
+		Cell cell = delegate.NW();
+		if (cell == null) {
+			return null;
+		}
 		return new ContributingCell(delegate.NW(), this, Orientation.NW);
 	}
 
 	public ContributingCell SE() {
+		Cell cell = delegate.SE();
+		if (cell == null) {
+			return null;
+		}
 		return new ContributingCell(delegate.SE(), this, Orientation.SE);
 	}
 
 	public ContributingCell SW() {
+		Cell cell = delegate.SW();
+		if (cell == null) {
+			return null;
+		}
 		return new ContributingCell(delegate.SW(), this, Orientation.SW);
 	}
 
